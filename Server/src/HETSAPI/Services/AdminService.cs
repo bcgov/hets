@@ -24,13 +24,6 @@ namespace HETSAPI.Services
         /// <param name="path"></param>
         /// <param name="filename"></param>
         /// <returns></returns>
-        IActionResult GetSpreadsheet(string path, string filename);
-
-        /// <summary>
-        /// Return the data file (testing only)
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <response code="200">OK</response>        
-        IActionResult GetData(string filename);
+        IActionResult GetSpreadsheet(string path, string filename);        
     }
 }

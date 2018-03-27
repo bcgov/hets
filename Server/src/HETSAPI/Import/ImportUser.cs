@@ -264,37 +264,36 @@ namespace HETSAPI.Import
 
                 foreach (UserHets item in legacyItems.WithProgress(progress))
                 {
-                    // see if we have this one already
-                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Popt_Id.ToString());
+                    string tempId = item.Popt_Id + "-" + item.Service_Area_Id;
 
-                    // new entry
-                    if (importMap == null && item.Popt_Id != null)
+                    ImportMap importMap = dbContext.ImportMaps.FirstOrDefault(x => x.OldTable == OldTable && 
+                                                                                   x.OldKey == tempId);
+
+                    if (importMap == null)
                     {
-                        string username = NormalizeUserCode(item.User_Cd);
+                        string username = NormalizeUserCode(item.User_Cd).ToUpper();
                         string firstName = GetNamePart(username, firstNames);
                         string lastName = GetNamePart(username, lastNames);
 
+                        User user = null;
                         username = username.ToLower();
 
-                        User instance = dbContext.Users.FirstOrDefault(x => x.SmUserId == username);
+                        CopyToInstance(dbContext, item, ref user, systemId, username, firstName, lastName,
+                            ref maxUserIndex);
 
-                        // if the user exists - move to the next record
-                        if (instance != null) continue;
-
-                        CopyToInstance(dbContext, item, ref instance, systemId, username, firstName, lastName, ref maxUserIndex);
-
-                        if (instance != null)
+                        if (user != null)
                         {
-                            ImportUtility.AddImportMap(dbContext, OldTable, item.Popt_Id, NewTable, instance.Id);
+                            ImportUtility.AddImportMap(dbContext, OldTable, tempId, NewTable, user.Id);
+                            dbContext.SaveChangesForImport();
                         }
-                    }                    
+                    }
                 }
 
                 try
                 {
                     performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
                     ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId, NewTable);
-                    dbContext.SaveChangesForImport();
+                    dbContext.SaveChanges();
                 }
                 catch (Exception e)
                 {
@@ -368,113 +367,187 @@ namespace HETSAPI.Import
         {
             try
             {
-                // File contains multiple records per user (1 for each dsitrict they can access)
-                // We are currently importing 1 only -> where Default_Service_Area = Y
+                // file contains multiple records per user (1 for each dsitrict they can access)
+                // we are currently importing 1 only -> where Default_Service_Area = Y
                 if (oldObject.Default_Service_Area != "Y")
                 {
                     return;
-                }
+                }                
 
-                if (user != null)
+                // check if this user already exists in the db
+                bool userExists = dbContext.Users.Any(x => x.SmUserId == smUserId);
+
+                if (userExists)
                 {
-                    return; // only add new users
+                    user = dbContext.Users.First(x => x.SmUserId == smUserId);
+
+                    // *******************************************************************
+                    // check if this is a different district
+                    // *******************************************************************
+                    int serviceAreaId;
+
+                    try
+                    {
+                        serviceAreaId = int.Parse(oldObject.Service_Area_Id);
+                    }
+                    catch
+                    {
+                        // not mapped correctly
+                        throw new ArgumentException(string.Format("User Error - Invalid Service Area (userId: {0}", user.SmUserId));
+                    }
+                    
+                    ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.MinistryServiceAreaID == serviceAreaId);
+
+                    if (serviceArea == null)
+                    {
+                        // not mapped correctly
+                        throw new ArgumentException(string.Format("User Error - Invalid Service Area (userId: {0}", user.SmUserId));
+                    }
+
+                    int tempUserId = user.Id;
+                    int? tempDistrictId = serviceArea.DistrictId;
+
+                    if (tempDistrictId != null)
+                    {
+                        UserDistrict userDistrict = dbContext.UserDistricts.FirstOrDefault(x => x.User.Id == tempUserId &&
+                                                                                                x.District.Id == tempDistrictId);
+
+                        // ***********************************************
+                        // create user district record
+                        // ***********************************************      
+                        if (userDistrict == null)
+                        {
+                            userDistrict = new UserDistrict
+                            {
+                                UserId = tempUserId,
+                                DistrictId = tempDistrictId,
+                                AppCreateTimestamp = DateTime.UtcNow,
+                                AppCreateUserid = systemId,
+                                AppLastUpdateUserid = systemId,
+                                AppLastUpdateTimestamp = DateTime.UtcNow
+                            };
+
+                            dbContext.UserDistricts.Add(userDistrict);
+                            dbContext.SaveChangesForImport();
+                        }
+                    }
                 }
+                else                                                    
+                {                
+                    user = new User
+                    {
+                        Id = ++maxUserIndex,
+                        Active = true,
+                        SmUserId = smUserId,
+                        SmAuthorizationDirectory = "IDIR"
+                    };
 
-                user = new User
-                {
-                    Id = ++maxUserIndex,
-                    Active = true,
-                    SmUserId = smUserId,
-                    SmAuthorizationDirectory = "IDIR"
-                };
+                    if (!string.IsNullOrEmpty(firstName))
+                    {
+                        user.GivenName = firstName;
+                    }
 
-                if (!string.IsNullOrEmpty(firstName))
-                {
-                    user.GivenName = firstName;
+                    if (!string.IsNullOrEmpty(lastName))
+                    {
+                        user.Surname = lastName;
+                    }
+
+                    // *******************************************************************
+                    // create initials
+                    // *******************************************************************
+                    string temp = "";
+                    if (!string.IsNullOrEmpty(lastName) && lastName.Length > 0)
+                    {
+                        temp = lastName.Substring(0, 1).ToUpper();
+                    }
+
+                    if (!string.IsNullOrEmpty(firstName) && firstName.Length > 0)
+                    {
+                        temp = temp + firstName.Substring(0, 1).ToUpper();
+                    }
+
+                    if (!string.IsNullOrEmpty(temp))
+                    {
+                        user.Initials = temp;
+                    }
+
+                    // *******************************************************************
+                    // map user to the correct service area
+                    // *******************************************************************
+                    int serviceAreaId;
+
+                    try
+                    {
+                        serviceAreaId = int.Parse(oldObject.Service_Area_Id);
+                    }
+                    catch
+                    {
+                        // not mapped correctly
+                        throw new ArgumentException(string.Format("User Error - Invalid Service Area (userId: {0}", user.SmUserId));
+                    }
+
+                    ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.MinistryServiceAreaID == serviceAreaId);
+
+                    if (serviceArea == null)
+                    {
+                        // not mapped correctly
+                        throw new ArgumentException(string.Format("User Error - Invalid Service Area (userId: {0}", user.SmUserId));
+                    }
+
+                    user.DistrictId = serviceArea.DistrictId;
+
+                    // *******************************************************************
+                    // set the user's role
+                    // ** all new users will be added with basic access only
+                    // *******************************************************************
+                    UserRole userRole = new UserRole();
+
+                    Role role = dbContext.Roles.FirstOrDefault(x => x.Name == "HETS Clerk");
+
+                    int roleId = -1;
+
+                    if (role != null)
+                    {
+                        roleId = role.Id;
+                    }
+
+                    // ***********************************************
+                    // create user
+                    // ***********************************************                        
+                    user.AppCreateTimestamp = DateTime.UtcNow;
+                    user.AppCreateUserid = systemId;
+                    user.AppLastUpdateUserid = systemId;
+                    user.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+                    userRole.Role = dbContext.Roles.First(x => x.Id == roleId);
+                    userRole.EffectiveDate = DateTime.UtcNow.AddDays(-1);
+
+                    userRole.AppCreateTimestamp = DateTime.UtcNow;
+                    userRole.AppCreateUserid = systemId;
+                    userRole.AppLastUpdateUserid = systemId;
+                    userRole.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+                    user.UserRoles = new List<UserRole> { userRole };
+                    dbContext.Users.Add(user);
+                    dbContext.SaveChangesForImport();
+
+                    // ***********************************************
+                    // create user district record
+                    // ***********************************************      
+                    UserDistrict userDistrict = new UserDistrict
+                    {
+                        UserId = user.Id,
+                        DistrictId = user.DistrictId,
+                        IsPrimary = true,
+                        AppCreateTimestamp = DateTime.UtcNow,
+                        AppCreateUserid = systemId,
+                        AppLastUpdateUserid = systemId,
+                        AppLastUpdateTimestamp = DateTime.UtcNow
+                    };
+
+                    dbContext.UserDistricts.Add(userDistrict);
+                    dbContext.SaveChangesForImport();
                 }
-
-                if (!string.IsNullOrEmpty(lastName))
-                {
-                    user.Surname = lastName;
-                }
-
-                // *******************************************************************
-                // create initials
-                // *******************************************************************
-                string temp = "";
-                if (!string.IsNullOrEmpty(lastName) && lastName.Length > 0)
-                {
-                    temp = lastName.Substring(0, 1).ToUpper();
-                }
-
-                if (!string.IsNullOrEmpty(firstName) && firstName.Length > 0)
-                {
-                    temp = temp + firstName.Substring(0, 1).ToUpper();
-                }
-
-                if (!string.IsNullOrEmpty(temp))
-                {
-                    user.Initials = temp;
-                }
-            
-                // *******************************************************************
-                // map user to the correct service area
-                // *******************************************************************
-                int serviceAreaId;
-            
-                try
-                {
-                    serviceAreaId = int.Parse(oldObject.Service_Area_Id);
-                }
-                catch
-                {
-                    // not mapped correctly
-                    throw new ArgumentException(string.Format("User Error - Invalid Service Area (userId: {0}", user.SmUserId));
-                }
-
-                ServiceArea serviceArea = dbContext.ServiceAreas.FirstOrDefault(x => x.MinistryServiceAreaID == serviceAreaId);
-
-                if (serviceArea == null)
-                {
-                    // not mapped correctly
-                    throw new ArgumentException(string.Format("User Error - Invalid Service Area (userId: {0}", user.SmUserId));
-                }
-
-                user.DistrictId = serviceArea.DistrictId;
-
-                // *******************************************************************
-                // set the user's role
-                // ** all new users will be added with basic access only
-                // *******************************************************************
-                UserRole userRole = new UserRole();
-
-                Role role = dbContext.Roles.FirstOrDefault(x => x.Name == "HETS Clerk");
-
-                int roleId = -1;
-
-                if (role != null)
-                {
-                    roleId = role.Id;
-                }
-
-                // ***********************************************
-                // create user
-                // ***********************************************                        
-                user.AppCreateTimestamp = DateTime.UtcNow;
-                user.AppCreateUserid = systemId;
-                user.AppLastUpdateUserid = systemId;
-                user.AppLastUpdateTimestamp = DateTime.UtcNow;
-
-                userRole.Role = dbContext.Roles.First(x => x.Id == roleId);
-                userRole.EffectiveDate = DateTime.UtcNow.AddDays(-1);
-
-                userRole.AppCreateTimestamp = DateTime.UtcNow;
-                userRole.AppCreateUserid = systemId;
-                userRole.AppLastUpdateUserid = systemId;
-                userRole.AppLastUpdateTimestamp = DateTime.UtcNow;
-
-                user.UserRoles = new List<UserRole> {userRole};
-                dbContext.Users.Add(user);
             }
             catch (Exception ex)
             {
