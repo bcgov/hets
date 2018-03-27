@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using HETSAPI.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace HETSAPI.Services.Impl
 {
@@ -14,6 +16,7 @@ namespace HETSAPI.Services.Impl
     /// </summary>
     public class UserDistrictService : ServiceBase, IUserDistrictService
     {
+        private readonly HttpContext _httpContext;
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
 
@@ -22,6 +25,7 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         public UserDistrictService(IHttpContextAccessor httpContextAccessor, DbAppContext context, IConfiguration configuration) : base(httpContextAccessor, context)
         {
+            _httpContext = httpContextAccessor.HttpContext;
             _context = context;
             _configuration = configuration;
         }
@@ -351,6 +355,17 @@ namespace HETSAPI.Services.Impl
                 user.DistrictId = userDistrict.DistrictId;
 
                 _context.SaveChanges();
+
+                // create new district switch cookie
+                _httpContext.Response.Cookies.Append(
+                    "HETSDistrict",
+                    userDistrict.DistrictId.ToString(),
+                    new CookieOptions
+                    {
+                        Path = "/",
+                        SameSite = SameSiteMode.None
+                    }
+                );
 
                 return new ObjectResult(new HetsResponse(user));
             }
