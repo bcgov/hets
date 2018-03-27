@@ -105,5 +105,18 @@ namespace HETSAPI.Controllers
         {
             return _service.GetSpreadsheet(path, "UserHETS.xlsx");
         }
+
+        /// <summary>
+        /// Return the data file (testing only)
+        /// </summary>
+        /// <response code="200">OK</response>        
+        [HttpGet]
+        [Route("/api/admin/hetsdata")]
+        [SwaggerOperation("AdminHetData")]
+        [RequiresPermission(Permission.Admin)]
+        public IActionResult AdminHetData()
+        {
+            return _service.GetData("hets-new.zip");
+        }
     }
 }
