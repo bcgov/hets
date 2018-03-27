@@ -436,43 +436,40 @@ var EquipmentDetail = React.createClass({
                   if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
                   return <Row>
-                    <Col lg={4} md={6} sm={12} xs={12}>
+                    <Col lg={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Seniority">{ equipment.seniorityText }</ColDisplay>
                     </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
+                    <Col lg={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Hours YTD">{ equipment.hoursYtd }</ColDisplay>
                     </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
+                    <Col lg={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.lastYear - 1 }</span> }>{ equipment.serviceHoursLastYear }</ColDisplay>
                     </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
+                    <Col lg={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.twoYearsAgo - 1 }</span> }>{ equipment.serviceHoursTwoYearsAgo }</ColDisplay>
                     </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
+                    <Col lg={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.threeYearsAgo - 1 }</span> }>{ equipment.serviceHoursThreeYearsAgo }</ColDisplay>
                     </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
+                    <Col lg={12}>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Years Registered">{ equipment.yearsOfService }</ColDisplay>
+                    </Col>
+                    <Col lg={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Received Date">
                         { formatDateTime(equipment.receivedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
                       </ColDisplay>
                     </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
+                    <Col lg={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Registered Date">
                         { formatDateTime(equipment.approvedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
                       </ColDisplay>
                     </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.threeYearsAgo - 1 }</span> }>{ equipment.serviceHoursThreeYearsAgo }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Years Registered">{ equipment.yearsOfService }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
+                    <Col lg={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Override Status">
                         { equipment.isSeniorityOverridden ? 'Manually Updated' : 'Not Overriden'}
                       </ColDisplay>
                     </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
+                    <Col lg={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Override Reason">{ equipment.seniorityOverrideReason }</ColDisplay>
                     </Col>
                   </Row>;
