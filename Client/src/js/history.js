@@ -16,7 +16,7 @@ export const DOCUMENT = 'Document';
 // History Events
 export const OWNER_ADDED = 'Owner %e was added.';
 export const OWNER_MODIFIED = 'Owner %e was modified.';
-export const OWNER_MODIFIED_STATUS = 'Owner %e status is %e.';
+export const OWNER_MODIFIED_STATUS = 'Owner %e status changed to "%e". Comment: %e';
 export const OWNER_MODIFIED_NAME = 'Owner %e is now %e';
 export const OWNER_EQUIPMENT_ADDED = 'Owner %e added equipment %e.';
 export const OWNER_EQUIPMENT_VERIFIED = 'Owner %e verified equipment %e.';
@@ -48,7 +48,7 @@ export const USER_DELETED = 'User %e was deleted.';
 
 export const EQUIPMENT_ADDED = 'Equipment %e was added.';
 export const EQUIPMENT_MODIFIED = 'Equipment %e was modified.';
-export const EQUIPMENT_STATUS_MODIFIED = 'Equipment %e status is %e.';
+export const EQUIPMENT_STATUS_MODIFIED = 'Equipment %e status changed to "%e". Comment: %e';
 export const EQUIPMENT_SENIORITY_MODIFIED = 'Equipment %e seniority was modified.';
 export const EQUIPMENT_DOCUMENT_ADDED = 'Equipment %e added document %e.';
 export const EQUIPMENT_DOCUMENTS_ADDED = 'Equipment %e added documents.';
@@ -187,8 +187,8 @@ export function ownerModified(owner) {
   return log(owner.historyEntity, OWNER_MODIFIED);
 }
 
-export function ownerModifiedStatus(owner, status) {
-  return log(owner.historyEntity, OWNER_MODIFIED_STATUS, { description: status });
+export function ownerModifiedStatus(owner, status, statusComment) {
+  return log(owner.historyEntity, OWNER_MODIFIED_STATUS, { description: status }, { description: statusComment });
 }
 
 export function ownerContactAdded(owner, contact) {
@@ -279,8 +279,8 @@ export function equipmentSeniorityModified(equipment) {
   return log(equipment.historyEntity, EQUIPMENT_SENIORITY_MODIFIED);
 }
 
-export function equipmentStatusModified(equipment, status) {
-  return log(equipment.historyEntity, EQUIPMENT_STATUS_MODIFIED, { description: status });
+export function equipmentStatusModified(equipment, status, statusComment) {
+  return log(equipment.historyEntity, EQUIPMENT_STATUS_MODIFIED, { description: status }, { description: statusComment });
 }
 
 export function equipmentDocumentAdded(equipment, document) {
