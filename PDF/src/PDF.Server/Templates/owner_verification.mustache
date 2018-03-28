@@ -119,7 +119,10 @@
 
         #equipment-table th {
             font-weight: bold;
-            background-color: #f2f2f2;
+        }
+
+        #equipment-table thead tr {
+            border: 1px solid black;
         }
 
         #equipment-table td {
@@ -242,8 +245,9 @@
                 <table border="1" cellpadding="1" cellspacing="1">
                     <thead>
                         <tr>
-                            <th>Still in use?</th>
+                            <th>Still Owner? Want to Re-register?</th>
                             <th>Equipment Id</th>
+                            <th>Equipment Type</th>
                             <th>Local Area</th>
                             <th>Year/Make/Model/Serial Number/Size</th>
                             <th>Attachments</th>
@@ -254,12 +258,13 @@
                     <tr>
                         <td>Yes/No</td>
                         <td>{{equipmentCode}}</td>
+                        <td>{{equipmentType}}</td>
                         <td>{{localArea.name}}</td>
                         <td>{{year}}/{{make}}/{{model}}/{{serialNumber}}/{{size}}</td>
                         <td id="list-column">
                         {{#equipmentAttachments}}<div style="margin: 0">{{typeName}}</div>{{/equipmentAttachments}}
                         </td>
-                        <td>&nbsp;</td>
+                        <td style="width: 125px">&nbsp;</td>
                     </tr>
                     {{/equipmentList}}
                 </table>
