@@ -48,7 +48,7 @@ export const USER_DELETED = 'User %e was deleted.';
 
 export const EQUIPMENT_ADDED = 'Equipment %e was added.';
 export const EQUIPMENT_MODIFIED = 'Equipment %e was modified.';
-export const EQUIPMENT_STATUS_MODIFIED = 'Equipment %e status is "%e". Comment: %e';
+export const EQUIPMENT_STATUS_MODIFIED = 'Equipment %e status changed to "%e". Comment: %e';
 export const EQUIPMENT_SENIORITY_MODIFIED = 'Equipment %e seniority was modified.';
 export const EQUIPMENT_DOCUMENT_ADDED = 'Equipment %e added document %e.';
 export const EQUIPMENT_DOCUMENTS_ADDED = 'Equipment %e added documents.';
