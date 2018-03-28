@@ -293,7 +293,7 @@ namespace HETSAPI.Import
                 {
                     performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
                     ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId, NewTable);
-                    dbContext.SaveChanges();
+                    dbContext.SaveChangesForImport();
                 }
                 catch (Exception e)
                 {

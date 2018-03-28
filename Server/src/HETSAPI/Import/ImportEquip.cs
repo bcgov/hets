@@ -120,18 +120,19 @@ namespace HETSAPI.Import
                 // get all local areas 
                 // (using active equipment to minimize the results)
                 // ************************************************************
-                IQueryable<LocalArea> localAreas = dbContext.Equipments.AsNoTracking()
+                List<LocalArea> localAreas = dbContext.Equipments.AsNoTracking()
                     .Include(x => x.LocalArea)
                     .Where(x => x.Status == Equipment.StatusApproved &&
                                 x.ArchiveCode == "N")
                     .Select(x => x.LocalArea)
-                    .Distinct();
+                    .Distinct()
+                    .ToList();
                 
                 // ************************************************************************
                 // iterate the data and update the assugnment blocks 
                 // (seniority is already calculated)
                 // ************************************************************************
-                Debug.WriteLine("Recalculating Equipment Block Assignment - Local Area Record Count: " + localAreas.Count());
+                Debug.WriteLine("Recalculating Equipment Block Assignment - Local Area Record Count: " + localAreas.Count);
 
                 foreach (LocalArea localArea in localAreas)
                 {
@@ -690,7 +691,7 @@ namespace HETSAPI.Import
                     item.Addr3 = ImportUtility.ScrambleString(item.Addr3);
                     item.Addr4 = ImportUtility.ScrambleString(item.Addr4);
                     item.Postal = ImportUtility.ScrambleString(item.Postal);
-                    item.Licence = ImportUtility.ScrambleString(item.Licence);
+                    item.Licence = ImportUtility.ScrambleString(ImportUtility.CleanString(item.Licence));
                     item.Operator = ImportUtility.ScrambleString(item.Operator);                    
                 }
 

@@ -569,6 +569,17 @@ namespace HETSAPI.Import
                 }
 
                 // ***********************************************
+                // format company names
+                // ***********************************************
+                if (owner.OrganizationName.EndsWith(" Ltd") ||
+                    owner.OrganizationName.EndsWith(" Ulc") ||
+                    owner.OrganizationName.EndsWith(" Inc") ||
+                    owner.OrganizationName.EndsWith(" Co"))
+                {
+                    owner.OrganizationName = owner.OrganizationName + ".";
+                }
+
+                // ***********************************************
                 // manage contacts
                 // ***********************************************
                 bool contactExists = false;
