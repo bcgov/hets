@@ -1,6 +1,7 @@
 @media print {
   #rental-requests-bar, 
   #equipment-bar, 
+  #equipment-top,
   #owners-bar, 
   #projects-bar,
   #users-bar,
@@ -19,25 +20,6 @@
   }
 
   #rental-requests-detail {
-    h3 {
-      padding: 0 15px;
-    }
-
-    .request-information {
-      padding: 0;
-    }
-
-    #rental-requests-data {
-      .row > div {
-        display: inline-block;
-        width: 50%;
-      }
-    }
-
-    .well {
-      border: none;
-      margin-right: 100px;
-    }
 
     #rotation-list {
       font-size: 10px;
@@ -52,11 +34,31 @@
     }
   }
   
+  div.row {
+    margin: 0 -15px;
+  }
+
   .col-md-6 {
     float: initial;
   }  
 
   #rotation-list td {
     word-break: break-all;
+  }
+  
+  .row:after { 
+    margin-bottom: -25px;
+  }
+
+  [class*='col-']:last-child .row:after {
+    margin-bottom: 0;
+  }
+
+  .table-container {
+    overflow-y: visible !important;
+  }
+
+  div#history-list {
+    max-height: none;
   }
 }
