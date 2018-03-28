@@ -91,6 +91,7 @@ namespace HETSAPI.Services.Impl
                     .ThenInclude(y => y.Region)
                 .Include(x => x.EquipmentType)
                 .Where(x => x.District.Id == districtId)
+                .OrderBy(x => x.DistrictEquipmentName)
                 .ToList();
 
             return new ObjectResult(new HetsResponse(result));

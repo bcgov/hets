@@ -69,10 +69,6 @@
       text-align: center;
     }
 
-    #info {
-      font-size: 14px;
-    }
-
     #info .label {
       font-weight: bold;
       padding-right: 10px;
@@ -85,6 +81,7 @@
       color: #000000;
       text-align: left;
       width: 100%;
+      margin-bottom: 30px;
     }
 
     #rotation-list-table th {
@@ -111,29 +108,22 @@
             <br />
         </div>
 
+        {{#seniorityListRecords}}
+        
         <div id="info">
             <table>
                 <tbody>
                     <tr>
-                        <td class="label">District</td>
-                        <td>Skitmat</td>
-                    </tr>
-                    <tr>
                         <td class="label">Local Area</td>
-                        <td>Kitimat</td>
+                        <td>{{localAreaName}}</td>
                     </tr>
                     <tr>
                         <td class="label">Equipment Type</td>
-                        <td>All</td>
+                        <td>{{districtEquipmentTypeName}}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-
-        {{#seniorityListRecords}}
-        {{localAreaName}}<br />
-        {{districtEquipmentTypeName}}
-        <br />
 
         <table id="rotation-list-table" border="1" cellpadding="1" cellspacing="1">
             <thead>

@@ -26,6 +26,12 @@ namespace HETSAPI.ImportModels
         public string Owner_Cd { get; set; }
 
         /// <summary>
+        /// Owner Code
+        /// </summary>
+        [XmlElement("Company_Name")]
+        public string Company_Name { get; set; }
+        
+        /// <summary>
         /// Owner First Name
         /// </summary>
         [XmlElement("Owner_First_Name")]
@@ -42,6 +48,102 @@ namespace HETSAPI.ImportModels
         /// </summary>
         [XmlElement("Contact_Person")]
         public string Contact_Person { get; set; }
+
+        /// <summary>
+        /// Owner Phone Country Code 
+        /// </summary>
+        [XmlElement("Ph_Country_Code")]
+        public string Ph_Country_Code { get; set; }
+
+        /// <summary>
+        /// Owner Phone Area Code 
+        /// </summary>
+        [XmlElement("Ph_Area_Code")]
+        public string Ph_Area_Code { get; set; }
+
+        /// <summary>
+        /// Owner Phone Number 
+        /// </summary>
+        [XmlElement("Ph_Number")]
+        public string Ph_Number { get; set; }
+
+        /// <summary>
+        /// Owner Phone Extension
+        /// </summary>
+        [XmlElement("Ph_Extension")]
+        public string Ph_Extension { get; set; }
+
+        /// <summary>
+        /// Owner Fax Country Code 
+        /// </summary>
+        [XmlElement("Fax_Country_Code")]
+        public string Fax_Country_Code { get; set; }
+
+        /// <summary>
+        /// Owner Fax Area Code 
+        /// </summary>
+        [XmlElement("Fax_Area_Code")]
+        public string Fax_Area_Code { get; set; }
+
+        /// <summary>
+        /// Owner Fax Number 
+        /// </summary>
+        [XmlElement("Fax_Number")]
+        public string Fax_Number { get; set; }
+
+        /// <summary>
+        /// Owner Fax Extension
+        /// </summary>
+        [XmlElement("Fax_Extension")]
+        public string Fax_Extension { get; set; }
+
+        /// <summary>
+        /// Owner Cell Country Code 
+        /// </summary>
+        [XmlElement("Cell_Country_Code")]
+        public string Cell_Country_Code { get; set; }
+
+        /// <summary>
+        /// Owner Cell Area Code 
+        /// </summary>
+        [XmlElement("Cell_Area_Code")]
+        public string Cell_Area_Code { get; set; }
+
+        /// <summary>
+        /// Owner Cell Number 
+        /// </summary>
+        [XmlElement("Cell_Number")]
+        public string Cell_Number { get; set; }
+
+        /// <summary>
+        /// Owner Cell Extension
+        /// </summary>
+        [XmlElement("Cell_Extension")]
+        public string Cell_Extension { get; set; }
+
+        /// <summary>
+        /// Contact Country Code 
+        /// </summary>
+        [XmlElement("Contact_Country_Code")]
+        public string Contact_Country_Code { get; set; }
+
+        /// <summary>
+        /// Contact Area Code 
+        /// </summary>
+        [XmlElement("Contact_Area_Code")]
+        public string Contact_Area_Code { get; set; }
+
+        /// <summary>
+        /// Contact Number 
+        /// </summary>
+        [XmlElement("Contact_Number")]
+        public string Contact_Number { get; set; }
+
+        /// <summary>
+        /// Contact Extension
+        /// </summary>
+        [XmlElement("Contact_Extension")]
+        public string Contact_Extension { get; set; }         
 
         /// <summary>
         /// Local Area

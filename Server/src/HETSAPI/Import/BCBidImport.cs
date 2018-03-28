@@ -141,7 +141,7 @@ namespace HETSAPI.Import
             ImportLocalArea.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
 
-            // Process local areas
+            // Process cities
             ImportCity.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
 
@@ -153,8 +153,8 @@ namespace HETSAPI.Import
             ImportOwner.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
 
-            // process equipment
-            ImportEquip.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
+            // process equipment types        
+            ImportDistrictEquipmentType.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
 
             // process dump trucks             
@@ -163,6 +163,10 @@ namespace HETSAPI.Import
 
             // Process equipment attachments              
             ImportEquipAttach.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
+            dbContext = new DbAppContext(null, options.Options);
+
+            // process equipment
+            ImportEquip.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(null, options.Options);
 
             // Process projects

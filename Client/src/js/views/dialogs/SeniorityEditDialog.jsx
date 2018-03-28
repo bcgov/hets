@@ -30,6 +30,7 @@ var SeniorityEditDialog = React.createClass({
       serviceHoursTwoYearsAgo: this.props.equipment.serviceHoursTwoYearsAgo,
       serviceHoursThreeYearsAgo: this.props.equipment.serviceHoursThreeYearsAgo,
       approvedDate: this.props.equipment.approvedDate || today(),
+      yearsRegistered: this.props.equipment.yearsOfService,
       isSeniorityOverridden: this.props.equipment.isSeniorityOverridden,
       seniorityOverrideReason: this.props.equipment.seniorityOverrideReason,
 
@@ -37,12 +38,9 @@ var SeniorityEditDialog = React.createClass({
       serviceHoursLastYearError: null,
       serviceHoursTwoYearsAgoError: null,
       serviceHoursThreeYearsAgoError: null,
+      yearsRegisteredError: null,
       overrideReasonError: null,
     };
-  },
-
-  componentDidMount() {
-    // this.input.focus();
   },
 
   updateState(state, callback) {
@@ -54,6 +52,7 @@ var SeniorityEditDialog = React.createClass({
     if (this.state.serviceHoursTwoYearsAgo !== this.props.equipment.serviceHoursTwoYearsAgo) { return true; }
     if (this.state.serviceHoursThreeYearsAgo !== this.props.equipment.serviceHoursThreeYearsAgo) { return true; }
     if (this.state.approvedDate !== this.props.equipment.approvedDate) { return true; }
+    if (this.state.yearsRegistered !== this.props.equipment.yearsRegistered) { return true; }
     if (this.state.isSeniorityOverridden !== this.props.equipment.isSeniorityOverridden) { return true; }
     if (this.state.seniorityOverrideReason !== this.props.equipment.seniorityOverrideReason) { return true; }
 
@@ -66,27 +65,27 @@ var SeniorityEditDialog = React.createClass({
       serviceHoursLastYearError: null,
       serviceHoursTwoYearsAgoError: null,
       serviceHoursThreeYearsAgoError: null,
+      yearsRegisteredError: null,
       overrideReasonError: null,
     });
 
     var valid = true;
-
     // Validate service hours
     if (isBlank(this.state.serviceHoursLastYear)) {
       this.setState({ serviceHoursLastYearError: 'Service hours are required' });
       valid = false;
     }
-
+    
     if (isBlank(this.state.serviceHoursTwoYearsAgo)) {
       this.setState({ serviceHoursTwoYearsAgoError: 'Service hours are required' });
       valid = false;
     }
-
+    
     if (isBlank(this.state.serviceHoursThreeYearsAgo)) {
       this.setState({ serviceHoursThreeYearsAgoError: 'Service hours are required' });
       valid = false;
     }
-
+    
     // Validate registered date
     if (isBlank(this.state.approvedDate)) {
       this.setState({ approvedDateError: 'Registered date is required' });
@@ -98,9 +97,14 @@ var SeniorityEditDialog = React.createClass({
       this.setState({ approvedDateError: 'Registration date must be today or earlier' });
       valid = false;
     }
+    
+    if (this.didChange() && (isBlank(this.state.seniorityOverrideReason) || (this.state.seniorityOverrideReason === this.props.equipment.seniorityOverrideReason))) {
+      this.setState({ overrideReasonError: 'A new reason must be provided each time seniority is manually overriden' });
+      valid = false;
+    }
 
-    if (valid && this.state.isSeniorityOverridden && isBlank(this.state.seniorityOverrideReason)) {
-      this.setState({ overrideReasonError: 'A reason must be provided when seniority is manually overriden' });
+    if (this.state.yearsRegistered < 0) {
+      this.setState({ yearsRegisteredError: 'Years registered must be an integer greater than 0.' });
       valid = false;
     }
 
@@ -117,6 +121,7 @@ var SeniorityEditDialog = React.createClass({
       serviceHoursTwoYearsAgo: this.state.serviceHoursTwoYearsAgo,
       serviceHoursThreeYearsAgo: this.state.serviceHoursThreeYearsAgo,
       approvedDate: toZuluTime(this.state.approvedDate),
+      yearsOfService: this.state.yearsRegistered,
       isSeniorityOverridden: this.state.isSeniorityOverridden,
       seniorityOverrideReason: this.state.seniorityOverrideReason,
     }});
@@ -142,7 +147,7 @@ var SeniorityEditDialog = React.createClass({
             <Row>
               <Col>
                 <FormGroup controlId="serviceHoursLastYear" validationState={ this.state.serviceHoursLastYearError ? 'error' : null }>
-                  <ControlLabel>Hours { this.props.equipment.lastYear } <sup>*</sup></ControlLabel>
+                  <ControlLabel>Hours { this.props.equipment.lastYear - 1 } <sup>*</sup></ControlLabel>
                   <FormInputControl type="number" value={ this.state.serviceHoursLastYear } onChange={ this.serviceHoursChanged } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
                   <HelpBlock>{ this.state.serviceHoursLastYearError }</HelpBlock>
                 </FormGroup>
@@ -151,7 +156,7 @@ var SeniorityEditDialog = React.createClass({
             <Row>
               <Col>
                 <FormGroup controlId="serviceHoursTwoYearsAgo" validationState={ this.state.serviceHoursTwoYearsAgoError ? 'error' : null }>
-                  <ControlLabel>Hours { this.props.equipment.twoYearsAgo } <sup>*</sup></ControlLabel>
+                  <ControlLabel>Hours { this.props.equipment.twoYearsAgo - 1 } <sup>*</sup></ControlLabel>
                   <FormInputControl type="number" value={ this.state.serviceHoursTwoYearsAgo } onChange={ this.serviceHoursChanged } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.serviceHoursTwoYearsAgoError }</HelpBlock>
                 </FormGroup>
@@ -160,7 +165,7 @@ var SeniorityEditDialog = React.createClass({
             <Row>
               <Col>
                 <FormGroup controlId="serviceHoursThreeYearsAgo" validationState={ this.state.serviceHoursThreeYearsAgoError ? 'error' : null }>
-                  <ControlLabel>Hours { this.props.equipment.threeYearsAgo } <sup>*</sup></ControlLabel>
+                  <ControlLabel>Hours { this.props.equipment.threeYearsAgo - 1 } <sup>*</sup></ControlLabel>
                   <FormInputControl type="number" value={ this.state.serviceHoursThreeYearsAgo } onChange={ this.serviceHoursChanged } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.serviceHoursThreeYearsAgoError }</HelpBlock>
                 </FormGroup>
@@ -177,8 +182,17 @@ var SeniorityEditDialog = React.createClass({
             </Row>
             <Row>
               <Col>
+                <FormGroup controlId="yearsRegistered" validationState={ this.state.yearsRegisteredError ? 'error' : null }>
+                  <ControlLabel>Years Registered</ControlLabel>
+                  <FormInputControl type="number" value={ this.state.yearsRegistered } updateState={ this.updateState } />
+                  <HelpBlock>{ this.state.yearsRegisteredError }</HelpBlock>
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
                 <FormGroup controlId="seniorityOverrideReason" validationState={ this.state.overrideReasonError ? 'error' : null }>
-                  <ControlLabel>Override Reason</ControlLabel>
+                  <ControlLabel>Override Reason <sup>*</sup></ControlLabel>
                   <FormInputControl type="text" value={ this.state.seniorityOverrideReason } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.overrideReasonError }</HelpBlock>
                 </FormGroup>

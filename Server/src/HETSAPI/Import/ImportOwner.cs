@@ -419,6 +419,17 @@ namespace HETSAPI.Import
                 }
 
                 // ***********************************************
+                // set company name
+                // ***********************************************
+                string tempCompanyName = ImportUtility.CleanString(oldObject.Company_Name);
+
+                if (!string.IsNullOrEmpty(tempCompanyName))
+                {
+                    tempCompanyName = ImportUtility.GetCapitalCase(tempCompanyName);
+                    owner.OrganizationName = tempCompanyName;
+                }
+
+                // ***********************************************
                 // maintenance contractor
                 // ***********************************************
                 if (oldObject.Maintenance_Contractor != null)
@@ -517,24 +528,31 @@ namespace HETSAPI.Import
                     owner.GivenName = tempOwnerFirstName;
                 }                
 
-                // no company name (yet) will create one for now
-                if (!string.IsNullOrEmpty(owner.OwnerCode) &&
+                // if there is no company name - create one
+                string tempName = "";
+
+                if (string.IsNullOrEmpty(tempCompanyName) &&
+                    !string.IsNullOrEmpty(owner.OwnerCode) &&
                     string.IsNullOrEmpty(tempOwnerLastName))
                 {
                     owner.OrganizationName = owner.OwnerCode;
+                    tempName = owner.OrganizationName;
                 }
-                else if (!string.IsNullOrEmpty(owner.OwnerCode))
+                else if (string.IsNullOrEmpty(tempCompanyName) && !string.IsNullOrEmpty(owner.OwnerCode))
                 {
                     owner.OrganizationName = string.Format("{0} - {1} {2}", owner.OwnerCode, tempOwnerFirstName, tempOwnerLastName);
+                    tempName = owner.OrganizationName;
                 }
-                else
+                else if (string.IsNullOrEmpty(tempCompanyName))
                 {
                     owner.OrganizationName = string.Format("{0} {1}", tempOwnerFirstName, tempOwnerLastName);
+                    tempName = owner.OrganizationName;
                 }                     
 
                 // check if the organization name is actually a "Ltd" or other company name
                 // (in BC Bid the names are somtimes used to store the org)
-                if (owner.OrganizationName.IndexOf(" Ltd", StringComparison.Ordinal) > -1 ||
+                if (!string.IsNullOrEmpty(tempName) &&
+                    owner.OrganizationName.IndexOf(" Ltd", StringComparison.Ordinal) > -1 ||
                     owner.OrganizationName.IndexOf(" Resort", StringComparison.Ordinal) > -1 ||
                     owner.OrganizationName.IndexOf(" Oilfield", StringComparison.Ordinal) > -1 ||
                     owner.OrganizationName.IndexOf(" Nation", StringComparison.Ordinal) > -1 ||
@@ -570,11 +588,18 @@ namespace HETSAPI.Import
                 // only add if they don't already exist
                 if (!contactExists && !string.IsNullOrEmpty(tempOwnerLastName))
                 {
+                    string tempPhone = ImportUtility.FormatPhone(oldObject.Ph_Country_Code, oldObject.Ph_Area_Code, oldObject.Ph_Number, oldObject.Ph_Extension);
+                    string tempFax = ImportUtility.FormatPhone(oldObject.Fax_Country_Code, oldObject.Fax_Area_Code, oldObject.Fax_Number, oldObject.Fax_Extension);
+                    string tempMobile = ImportUtility.FormatPhone(oldObject.Cell_Country_Code, oldObject.Cell_Area_Code, oldObject.Cell_Number, oldObject.Cell_Extension);
+
                     Contact ownerContact = new Contact
                     {                        
                         Role = "Owner",
                         Province = "BC",
                         Notes = "",
+                        WorkPhoneNumber = tempPhone,
+                        MobilePhoneNumber = tempMobile,
+                        FaxPhoneNumber = tempFax,
                         AppCreateUserid = systemId,
                         AppCreateTimestamp = DateTime.UtcNow,
                         AppLastUpdateUserid = systemId,
@@ -605,6 +630,8 @@ namespace HETSAPI.Import
 
                 if (!string.IsNullOrEmpty(tempContactPerson))
                 {
+                    string tempContactPhone = ImportUtility.FormatPhone(oldObject.Contact_Country_Code, oldObject.Contact_Area_Code, oldObject.Contact_Number, oldObject.Contact_Extension);
+
                     // split the name
                     string tempContactFirstName;
                     string tempContactLastName;
@@ -647,7 +674,8 @@ namespace HETSAPI.Import
                             Contact primaryContact = new Contact
                             {
                                 Role = "Primary Contact",
-                                Province = "BC",                                
+                                Province = "BC",           
+                                WorkPhoneNumber = tempContactPhone,
                                 AppCreateUserid = systemId,
                                 AppCreateTimestamp = DateTime.UtcNow,
                                 AppLastUpdateUserid = systemId,

@@ -274,6 +274,7 @@ namespace HETSAPI.Services.Impl
                     .Include(x => x.RentalRequestRotationList)
                         .ThenInclude(y => y.Equipment)
                     .Include(x => x.RentalRequestAttachments)
+                    .Include(x => x.History)
                     .First(a => a.Id == id);
 
                 if (rentalRequest.RentalRequestRotationList != null &&
@@ -305,27 +306,39 @@ namespace HETSAPI.Services.Impl
                 }
 
                 // remove (detele) rental request attachments
-                foreach (RentalRequestAttachment attachment in rentalRequest.RentalRequestAttachments)                    
+                if (rentalRequest.RentalRequestAttachments != null)
                 {
-                    _context.RentalRequestAttachments.Remove(attachment);
+                    foreach (RentalRequestAttachment attachment in rentalRequest.RentalRequestAttachments)
+                    {
+                        _context.RentalRequestAttachments.Remove(attachment);
+                    }
                 }
 
                 // remove (detele) rental request attachments
-                foreach (Attachment attachment in rentalRequest.Attachments)
+                if (rentalRequest.Attachments != null)
                 {
-                    _context.Attachments.Remove(attachment);
+                    foreach (Attachment attachment in rentalRequest.Attachments)
+                    {
+                        _context.Attachments.Remove(attachment);
+                    }
                 }
 
                 // remove (detele) rental request notes
-                foreach (Note note in rentalRequest.Notes)
+                if (rentalRequest.Notes != null)
                 {
-                    _context.Notes.Remove(note);
+                    foreach (Note note in rentalRequest.Notes)
+                    {
+                        _context.Notes.Remove(note);
+                    }
                 }
 
                 // remove (detele) rental request history
-                foreach (History history in rentalRequest.History)
+                if (rentalRequest.History != null)
                 {
-                    _context.Historys.Remove(history);
+                    foreach (History history in rentalRequest.History)
+                    {
+                        _context.Historys.Remove(history);
+                    }
                 }
 
                 // remove (delete) request

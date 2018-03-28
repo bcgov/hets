@@ -133,7 +133,6 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <param name="id">id of Owner to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Owner not found</response>
         public virtual IActionResult OwnersIdGetAsync(int id)
         {
             bool exists = _context.Owners.Any(a => a.Id == id);
@@ -170,9 +169,8 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of Owner to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">Owner not found</response>
         public virtual IActionResult OwnersIdPutAsync(int id, Owner item)
-        {
+        {            
             if (item != null)
             {
                 AdjustRecord(item);
@@ -216,7 +214,7 @@ namespace HETSAPI.Services.Impl
             }
 
             // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));            
         }
 
         /// <summary>
@@ -910,7 +908,6 @@ namespace HETSAPI.Services.Impl
         /// <remarks>Returns attachments for a particular Owner</remarks>
         /// <param name="id">id of Owner to fetch attachments for</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Owner not found</response>
         public virtual IActionResult OwnersIdAttachmentsGetAsync(int id)
         {
             bool exists = _context.Owners.Any(a => a.Id == id);

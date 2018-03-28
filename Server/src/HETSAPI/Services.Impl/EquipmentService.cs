@@ -845,28 +845,21 @@ namespace HETSAPI.Services.Impl
             }
 
             // get all local areas for this region
-            List<LocalArea> localAreas = _context.Equipments
+            IQueryable<LocalArea> localAreas = _context.Equipments
                 .Include(x => x.LocalArea)
                 .Where(x => x.LocalArea.ServiceArea.District.Region.Id == region)
                 .Select(x => x.LocalArea)
-                .Distinct()
-                .ToList();
-
-            // get all district equipment types for this region
-            List<DistrictEquipmentType> equipmentTypes = _context.Equipments                
-                .Include(x => x.DistrictEquipmentType)
-                .Where(x => x.LocalArea.ServiceArea.District.Region.Id == region)              
-                .Select(x => x.DistrictEquipmentType)
-                .Distinct()            
-                .ToList();
-
-            foreach (DistrictEquipmentType equipment in equipmentTypes)
-            {
-                _context.Entry(equipment).Reference(x => x.EquipmentType).Load();
-            }            
-
+                .Distinct();
+            
             foreach (LocalArea localArea in localAreas)
             {
+                // get all district equipment types for this region
+                IQueryable<DistrictEquipmentType> equipmentTypes = _context.Equipments
+                    .Include(x => x.DistrictEquipmentType)
+                    .Where(x => x.LocalArea.Id == localArea.Id)
+                    .Select(x => x.DistrictEquipmentType)
+                    .Distinct();
+
                 foreach (DistrictEquipmentType districtEquipmentType in equipmentTypes)
                 {
                     _context.CalculateSeniorityList(localArea.Id, districtEquipmentType.Id, districtEquipmentType.EquipmentType.Id, _configuration);

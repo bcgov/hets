@@ -555,7 +555,9 @@ namespace HETSAPI.Models
         /// <returns></returns>
         public override int SaveChanges()
         {
-            // update the audit fields for this item.
+            // *************************************************
+            // update the audit fields for this record
+            // *************************************************
             string smUserId = null;
 
             if (_httpContextAccessor != null)
@@ -598,11 +600,35 @@ namespace HETSAPI.Models
                 {
                     DoEquipmentAudit(seniorityAudits, entry, smUserId);
                 }                    
-            }            
+            }
 
-            int result = base.SaveChanges();
+            // *************************************************
+            // attempt to save updates
+            // *************************************************
+            int result;
 
+            try
+            {
+                result = base.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+
+                // e.InnerException.Message	"20180: Concurrency Failure 5"	string
+                if (e.InnerException != null &&
+                    e.InnerException.Message.StartsWith("20180"))
+                {
+                    // concurrency error
+                    throw new HetsDbConcurrencyException("This record has been updated by another user.");
+                }
+
+                throw;
+            }
+
+            // *************************************************
             // manage seniority audit records
+            // *************************************************
             if (seniorityAudits.Count > 0)
             {
                 foreach (SeniorityAudit seniorityAudit in seniorityAudits)

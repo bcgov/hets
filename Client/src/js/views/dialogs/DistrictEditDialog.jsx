@@ -69,7 +69,7 @@ var DistrictEditDialog = React.createClass({
 
   render() {
     var userDistrictsFiltered = _.map(this.props.userDistricts, district => { 
-      if (district.district.id !== this.props.district.district.id) {
+      if (this.state.isNew || district.district.id !== this.props.district.district.id) {
         return district.district.id;
       }
       return;
