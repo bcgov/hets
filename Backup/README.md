@@ -28,7 +28,7 @@ The Backup app performs the following sequence of operations:
 
 1. Create a directory that will be used to store the backup.
 2. Use the `pg_dump` and `gzip` commands to make a backup.
-3. Cull backups older than 31 days
+3. Cull backups more than $NUM_BACKUPS (default 31 - configured in deployment script)
 4. Sleep for a day and repeat
 
 Note that we are just using a simple "sleep" to run the backup periodically. More elegent solutions were looked at briefly, but there was not a lot of time or benefit, so OpenShift Scheduled Jobs, cron and so on are not used. With some more effort they likely could be made to work.
