@@ -18,7 +18,7 @@ import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import Spinner from '../../components/Spinner.jsx';
 
-import { isValidDate } from '../../utils/date';
+import { isValidDate, today } from '../../utils/date';
 import { isBlank } from '../../utils/string';
 
 var RentalRequestsAddDialog = React.createClass({
@@ -43,7 +43,7 @@ var RentalRequestsAddDialog = React.createClass({
       equipmentTypeId: 0,
       count: 1,
       expectedHours: '',
-      expectedStartDate: '',
+      expectedStartDate: today(),
       expectedEndDate: '',
 
       projectError: '',
@@ -67,6 +67,13 @@ var RentalRequestsAddDialog = React.createClass({
 
   updateState(state, callback) {
     this.setState(state, callback);
+  },
+
+  updateEquipmentTypeState(state) {
+    var selectedEquipment =_.find(this.props.districtEquipmentTypes, { id: state.equipmentTypeId });
+    var isDumpTruck = selectedEquipment.equipmentType.isDumpTruck;
+    var expectedHours = isDumpTruck ? 600 : 300;
+    this.setState({ ...state, expectedHours });
   },
 
   didChange() {
@@ -212,7 +219,7 @@ var RentalRequestsAddDialog = React.createClass({
           <Col md={12}>
             <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
               <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
-              <FilterDropdown id="equipmentTypeId" fieldName="districtEquipmentName" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
+              <FilterDropdown id="equipmentTypeId" fieldName="districtEquipmentName" selectedId={ this.state.equipmentTypeId } updateState={ this.updateEquipmentTypeState }
                 items={ districtEquipmentTypes } className="full-width"
               />
               <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
@@ -234,7 +241,7 @@ var RentalRequestsAddDialog = React.createClass({
           <Col md={12}>
             <FormGroup controlId="expectedHours" validationState={ this.state.expectedHoursError ? 'error' : null }>
               <ControlLabel>Expected Hours <sup>*</sup></ControlLabel>
-              <FormInputControl type="number" className="full-width" min={0} defaultValue={ this.state.expectedHours } updateState={ this.updateState }/>
+              <FormInputControl type="number" className="full-width" min={0} value={ this.state.expectedHours } updateState={ this.updateState }/>
               <HelpBlock>{ this.state.expectedHoursError }</HelpBlock>
             </FormGroup>
           </Col>

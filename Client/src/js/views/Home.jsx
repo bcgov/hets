@@ -106,7 +106,7 @@ var Home = React.createClass({
                 items={ districtEquipmentTypes } updateState={ this.updateState} showMaxItems={ 2 } />
               <MultiDropdown id="selectedLocalAreasIds" className="fixed-width small" placeholder="Local Areas"
                 items={ localAreas } updateState={ this.updateState } showMaxItems={ 2 } />
-              <Button id="submit-button" bsStyle="primary" type="submit">Get Rotation List</Button>
+              <Button id="submit-button" bsStyle="primary" type="submit">Seniority List</Button>
             </Form>
           </Col>
         </Row>
