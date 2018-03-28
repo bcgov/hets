@@ -184,7 +184,7 @@ var SeniorityEditDialog = React.createClass({
               <Col>
                 <FormGroup controlId="yearsRegistered" validationState={ this.state.yearsRegisteredError ? 'error' : null }>
                   <ControlLabel>Years Registered</ControlLabel>
-                  <FormInputControl type="number" value={ this.state.yearsRegistered } updateState={ this.updateState } />
+                  <FormInputControl type="float" value={ this.state.yearsRegistered } updateState={ this.updateState } />
                   <HelpBlock>{ this.state.yearsRegisteredError }</HelpBlock>
                 </FormGroup>
               </Col>
