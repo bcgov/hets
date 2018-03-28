@@ -148,7 +148,7 @@ var OwnersDetail = React.createClass({
       ) {
         _.map(equipmentList, equipment => {
           if (equipment.status !== status.status) {
-            Log.equipmentStatusModified(equipment, status.status);
+            Log.equipmentStatusModified(equipment, status.status, status.statusComment);
           }
         });
       }
