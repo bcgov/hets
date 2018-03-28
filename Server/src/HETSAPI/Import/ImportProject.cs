@@ -132,10 +132,13 @@ namespace HETSAPI.Import
                         Models.Project instance = null;
                         CopyToInstance(dbContext, item, ref instance, systemId, ref maxProjectIndex);
                         ImportUtility.AddImportMap(dbContext, OldTable, item.Project_Id.ToString(), NewTable, instance.Id);
+
+                        // save has to be done immediately because we need access to the records
+                        dbContext.SaveChangesForImport();
                     }
 
-                    // save change to database periodically to avoid frequent writing to the database
-                    if (++ii % 500 == 0)
+                    // periodically save change to the progress record
+                    if (++ii % 250 == 0)
                     {
                         try
                         {
@@ -203,7 +206,7 @@ namespace HETSAPI.Import
                 string tempName = ImportUtility.CleanString(oldObject.Job_Desc1).ToUpper();
                 if (!string.IsNullOrEmpty(tempName))
                 {
-                    tempName = ImportUtility.GetCapitalCase(tempName);
+                    tempName = ImportUtility.GetCapitalCase(tempName);                    
                     project.Name = tempName;
                 }
 
@@ -230,7 +233,22 @@ namespace HETSAPI.Import
                 int tempDistrictId = serviceArea.District.Id;
 
                 project.DistrictId = tempDistrictId;
-                
+
+                // ***********************************************
+                // check that we don't have this equipment type 
+                // already (from another service area - but same district)
+                // ***********************************************                
+                Models.Project existingProject = dbContext.Projects.AsNoTracking()
+                    .Include(x => x.District)
+                    .FirstOrDefault(x => x.Name == tempName &&
+                                         x.District.Id == tempDistrictId);
+
+                if (existingProject != null)
+                {
+                    project.Id = existingProject.Id;
+                    return; // not adding a duplicate
+                }
+
                 // ***********************************************
                 // default the project to Active
                 // ***********************************************
