@@ -93,7 +93,7 @@ namespace HETSAPI.ViewModels
         }
 
         /// <summary>
-        /// Function to determine if thsi piece of equipment is hired
+        /// Function to determine if this piece of equipment is hired
         /// </summary>
         public bool CheckIsHired(List<RentalAgreement> rentalAgreements)
         {

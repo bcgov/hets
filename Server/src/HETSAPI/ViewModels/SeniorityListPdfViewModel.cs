@@ -8,8 +8,12 @@ namespace HETSAPI.ViewModels
 {
     public class SeniorityListRecord
     {
+        public string DistrictName { get; set; }
         public string LocalAreaName { get; set; }
         public string DistrictEquipmentTypeName { get; set; }
+        public string YearMinus1 { get; set; }
+        public string YearMinus2 { get; set; }
+        public string YearMinus3 { get; set; }
         public List<SeniorityViewModel> SeniorityList { get; set; }
     }
 
