@@ -114,7 +114,8 @@
         }
 
         #equipment-table table {       
-            border-collapse: collapse;     
+            border-collapse: collapse;   
+            border: 1px solid black;  
             width: 100%;            
         }
 
@@ -123,7 +124,7 @@
         }
 
         #equipment-table thead > tr {
-            border: 1px solid black;
+            border-bottom: 1px solid black;
         }
 
         #equipment-table td {
@@ -246,26 +247,26 @@
                 <table border="1" cellpadding="1">
                     <thead>
                         <tr>
-                            <th style="width: 60px">Still Owner? Want to Re-register?</th>
+                            <th style="width: 100px">Still Owner? Want to Re-register?</th>
                             <th>Equipment Id</th>
                             <th>Equipment Type</th>
                             <th>Local Area</th>
                             <th>Year/Make/Model/Serial Number/Size</th>
                             <th>Attachments</th>
-                            <th>Owner Comments (sold, retired, etc.)</th>
+                            <th style="width: 125px">Owner Comments (sold, retired, etc.)</th>
                         </tr>
                     </thead>
                     {{#equipmentList}}
                     <tr>
-                        <td style="width: 60px">Yes/No</td>
+                        <td>Yes/No</td>
                         <td>{{equipmentCode}}</td>
-                        <td>{{equipmentType}}</td>
+                        <td>{{#districtEquipmentType}}{{districtEquipmentName}}{{/districtEquipmentType}}</td>
                         <td>{{localArea.name}}</td>
                         <td>{{year}}/{{make}}/{{model}}/{{serialNumber}}/{{size}}</td>
                         <td id="list-column">
                         {{#equipmentAttachments}}<div style="margin: 0">{{typeName}}</div>{{/equipmentAttachments}}
                         </td>
-                        <td style="width: 125px">&nbsp;</td>
+                        <td>&nbsp;</td>
                     </tr>
                     {{/equipmentList}}
                 </table>
