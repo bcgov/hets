@@ -102,14 +102,14 @@
             <div id="word-mark">Ministry of Transportation<br>and Infrastruture</div>
         </div>
 
+        {{#seniorityListRecords}}
+        
         <div>
             <br />
-            <div id="form-title">Hired Equipment Seniority List</div>
+            <div id="form-title">Hired Equipment Seniority List - {{districtName}}</div>
             <br />
         </div>
 
-        {{#seniorityListRecords}}
-        
         <div id="info">
             <table>
                 <tbody>
@@ -129,15 +129,14 @@
             <thead>
                 <tr>
                     <th>Block</th>
-                    <th>Last Called
-                    <th>
+                    <th>Last Called</th>
                     <th>Equip ID</th>
                     <th>Company Name</th>
                     <th>Make</th>
                     <th>Size</th>
-                    <th>2015</th>
-                    <th>2016</th>
-                    <th>2017</th>
+                    <th>{{yearMinus3}}</th>
+                    <th>{{yearMinus2}}</th>
+                    <th>{{yearMinus1}}</th>
                     <th>YTD</th>
                     <th>Seniority</th>
                     <th>Years Reg</th>
