@@ -520,8 +520,8 @@ namespace HETSAPI.Services.Impl
 
             // check if we have the rental request that is In Progress
             exists = _context.RentalRequests
-                    .Any(a => a.Id == id &&
-                              a.Status.Equals("In Progress", StringComparison.InvariantCultureIgnoreCase));
+                .Any(a => a.Id == id && 
+                          a.Status.Equals("In Progress", StringComparison.InvariantCultureIgnoreCase));
 
             if (!exists)
             {
@@ -988,17 +988,25 @@ namespace HETSAPI.Services.Impl
             // *******************************************************************************
             bool exists = _context.LocalAreaRotationLists.Any(a => a.LocalArea.Id == item.LocalArea.Id);
 
-            LocalAreaRotationList localAreaRotationList = new LocalAreaRotationList();
+            LocalAreaRotationList localAreaRotationList;
 
             if (exists)
             {
-                localAreaRotationList = _context.LocalAreaRotationLists.AsNoTracking()
+                localAreaRotationList = _context.LocalAreaRotationLists
                     .Include(x => x.LocalArea)
                     .Include(x => x.AskNextBlock1)
                     .Include(x => x.AskNextBlock2)
                     .Include(x => x.AskNextBlockOpen)
                     .FirstOrDefault(x => x.LocalArea.Id == item.LocalArea.Id &&
                                          x.DistrictEquipmentTypeId == item.DistrictEquipmentTypeId);
+            }
+            else
+            {
+                localAreaRotationList = new LocalAreaRotationList
+                {
+                    LocalAreaId = item.LocalAreaId,
+                    DistrictEquipmentTypeId = item.DistrictEquipmentTypeId
+                };
             }
 
             // determine what the next id is
@@ -1032,23 +1040,7 @@ namespace HETSAPI.Services.Impl
                 item.RentalRequestRotationList = item.RentalRequestRotationList.OrderBy(x => x.RotationListSortOrder).ToList();
 
                 item.FirstOnRotationListId = item.RentalRequestRotationList[0].Equipment.Id;
-
-                LocalAreaRotationList newAreaRotationList = new LocalAreaRotationList
-                {
-                    LocalAreaId = item.LocalAreaId,
-                    DistrictEquipmentTypeId = item.DistrictEquipmentTypeId
-                };
-
-                if (nextId != null)
-                {
-                    newAreaRotationList.Id = localAreaRotationList.Id;
-                    newAreaRotationList.AskNextBlock1Id = localAreaRotationList.AskNextBlock1Id;
-                    newAreaRotationList.AskNextBlock1Seniority = localAreaRotationList.AskNextBlock1Seniority;
-                    newAreaRotationList.AskNextBlock2Id = localAreaRotationList.AskNextBlock2Id;
-                    newAreaRotationList.AskNextBlock2Seniority = localAreaRotationList.AskNextBlock2Seniority;
-                    newAreaRotationList.AskNextBlockOpenId = localAreaRotationList.AskNextBlockOpenId;
-                }
-
+                                            
                 // find our next record
                 int nextRecordToAskIndex = 0;
                 bool foundCurrentRecord = false;
@@ -1107,45 +1099,43 @@ namespace HETSAPI.Services.Impl
                 }
 
                 if (item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.BlockNumber == 1 &&
-                    item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.BlockNumber <= numberOfBlocks)
+                    item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.BlockNumber <= numberOfBlocks &&
+                    localAreaRotationList != null)
                 {
-                    newAreaRotationList.AskNextBlock1Id = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.Id;
-                    newAreaRotationList.AskNextBlock1Seniority = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.Seniority;
-                    newAreaRotationList.AskNextBlock2Id = null;
-                    newAreaRotationList.AskNextBlock2Seniority = null;
-                    newAreaRotationList.AskNextBlockOpen = null;
-                    newAreaRotationList.AskNextBlockOpenId = null;
+                    localAreaRotationList.AskNextBlock1Id = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.Id;
+                    localAreaRotationList.AskNextBlock1Seniority = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.Seniority;
+                    localAreaRotationList.AskNextBlock2Id = null;
+                    localAreaRotationList.AskNextBlock2Seniority = null;
+                    localAreaRotationList.AskNextBlockOpen = null;
+                    localAreaRotationList.AskNextBlockOpenId = null;
                 }
                 else if (item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.BlockNumber == 2 &&
-                         item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.BlockNumber <= numberOfBlocks)
+                         item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.BlockNumber <= numberOfBlocks &&
+                         localAreaRotationList != null)
                 {
-                    newAreaRotationList.AskNextBlock2Id = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.Id;
-                    newAreaRotationList.AskNextBlock2Seniority = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.Seniority;
-                    newAreaRotationList.AskNextBlock1Id = null;
-                    newAreaRotationList.AskNextBlock1Seniority = null;
-                    newAreaRotationList.AskNextBlockOpen = null;
-                    newAreaRotationList.AskNextBlockOpenId = null;
+                    localAreaRotationList.AskNextBlock2Id = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.Id;
+                    localAreaRotationList.AskNextBlock2Seniority = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.Seniority;
+                    localAreaRotationList.AskNextBlock1Id = null;
+                    localAreaRotationList.AskNextBlock1Seniority = null;
+                    localAreaRotationList.AskNextBlockOpen = null;
+                    localAreaRotationList.AskNextBlockOpenId = null;
                 }
-                else
+                else if (localAreaRotationList != null)
                 {
-                    newAreaRotationList.AskNextBlockOpenId = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.Id;
-                    newAreaRotationList.AskNextBlock1Id = null;
-                    newAreaRotationList.AskNextBlock1Seniority = null;
-                    newAreaRotationList.AskNextBlock2Id = null;
-                    newAreaRotationList.AskNextBlock2Seniority = null;
+                    localAreaRotationList.AskNextBlockOpenId = item.RentalRequestRotationList[nextRecordToAskIndex].Equipment.Id;
+                    localAreaRotationList.AskNextBlock1Id = null;
+                    localAreaRotationList.AskNextBlock1Seniority = null;
+                    localAreaRotationList.AskNextBlock2Id = null;
+                    localAreaRotationList.AskNextBlock2Seniority = null;
                 }
                 
                 // *******************************************************************************
                 // save the list - Done!           
                 // *******************************************************************************
-                if (nextId == null)
+                if (!exists)
                 {
-                    _context.LocalAreaRotationLists.Add(newAreaRotationList);
-                }
-                else
-                {
-                    _context.LocalAreaRotationLists.Update(newAreaRotationList);
-                }
+                    _context.LocalAreaRotationLists.Add(localAreaRotationList);
+                }                
             }
         }
 
