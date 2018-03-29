@@ -46,7 +46,7 @@ var EquipmentTable = React.createClass({
         { field: 'equipmentCode',        title: 'Equipment ID'  },
         { field: 'equipmentType',        title: 'Type'          },
         { field: 'ownerName',            title: 'Owner'         },
-        { field: 'seniorityString',      title: 'Seniority'     },
+        { field: 'senioritySortOrder',   title: 'Seniority'     },
         { field: 'isHired',              title: 'Hired'         },
         { field: 'make',                 title: 'Make'          },
         { field: 'model',                title: 'Model'         },
