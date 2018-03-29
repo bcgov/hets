@@ -402,6 +402,12 @@ namespace HETSAPI.Models
         public float? YearsOfService { get; set; }
 
         /// <summary>
+        /// Used to check for edits
+        /// </summary>        
+        [NotMapped]
+        public float? OriginalYearsOfService { get; set; }
+
+        /// <summary>
         /// Number of hours of service by this piece of equipment in the previous fiscal year
         /// </summary>
         /// <value>Number of hours of service by this piece of equipment in the previous fiscal year</value>
