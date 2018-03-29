@@ -407,15 +407,15 @@ namespace HETSAPI.Models
 
                 // Equipment Score
                 _equipmentScore.Add("Default", rules.EquipmentScore.Default);
-                _equipmentScore.Add("DumpTruck", rules.EquipmentScore.Default);
+                _equipmentScore.Add("DumpTruck", rules.EquipmentScore.DumpTruck);
 
                 // Block Size
                 _blockSize.Add("Default", rules.BlockSize.Default);
-                _blockSize.Add("DumpTruck", rules.BlockSize.Default);
+                _blockSize.Add("DumpTruck", rules.BlockSize.DumpTruck);
 
                 // Total Blocks"
                 _totalBlocks.Add("Default", rules.TotalBlocks.Default);
-                _totalBlocks.Add("DumpTruck", rules.TotalBlocks.Default);
+                _totalBlocks.Add("DumpTruck", rules.TotalBlocks.DumpTruck);
             }
             catch (Exception e)
             {

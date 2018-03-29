@@ -364,6 +364,7 @@ namespace HETSAPI.Import
                 tempAbbrev = tempAbbrev.Replace("SSP", "SSS");
                 tempAbbrev = tempAbbrev.Replace("TFC", "TFD");
                 tempAbbrev = tempAbbrev.Replace("TRUCKS/", "TRUCKS");
+                tempAbbrev = tempAbbrev.Replace("TDB", "TBD");
 
                 string tempDistrictDescriptionFull = string.Format("{0} - {1}", tempAbbrev, tempDistrictDescriptionOnly);
 
