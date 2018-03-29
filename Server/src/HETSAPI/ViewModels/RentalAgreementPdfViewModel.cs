@@ -26,24 +26,25 @@ namespace HETSAPI.ViewModels
         /// Initializes a new instance of the <see cref="RentalAgreementPdfViewModel" /> class.
         /// </summary>
         /// <param name="id">Id (required).</param>
-        /// <param name="number">A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use..</param>
+        /// <param name="number">A system-generated unique rental agreement number in a format defined by the business as suitable for the business and client to see and use.</param>
         /// <param name="status">The current status of the Rental Agreement, such as Active or Complete.</param>
         /// <param name="equipment">A foreign key reference to the system-generated unique identifier for an Equipment.</param>
         /// <param name="project">A foreign key reference to the system-generated unique identifier for a Project.</param>
         /// <param name="rentalAgreementRates">RentalAgreementRates.</param>
         /// <param name="rentalAgreementConditions">RentalAgreementConditions.</param>
-        /// <param name="note">An optional note to be placed onto the Rental Agreement..</param>
-        /// <param name="estimateStartWork">The estimated start date of the work to be placed on the rental agreement..</param>
-        /// <param name="datedOn">The dated on date to put on the Rental Agreement..</param>
-        /// <param name="estimateHours">The estimated number of hours of work to be put onto the Rental Agreement..</param>
-        /// <param name="equipmentRate">The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table..</param>
-        /// <param name="ratePeriod">The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily..</param>
-        /// <param name="rateComment">A comment about the rate for the piece of equipment..</param>
+        /// <param name="note">An optional note to be placed onto the Rental Agreement.</param>
+        /// <param name="estimateStartWork">The estimated start date of the work to be placed on the rental agreement.</param>
+        /// <param name="datedOn">The dated on date to put on the Rental Agreement.</param>
+        /// <param name="estimateHours">The estimated number of hours of work to be put onto the Rental Agreement.</param>
+        /// <param name="equipmentRate">The dollar rate for the piece of equipment itself for this Rental Agreement. Other rates associated with the Rental Agreement are in the Rental Agreement Rate table.</param>
+        /// <param name="ratePeriod">The period of the rental rate. The vast majority will be hourly, but the rate could apply across a different period, e.g. daily.</param>
+        /// <param name="rateComment">A comment about the rate for the piece of equipment.</param>
+        /// <param name="conditionsPresent">Are there any conditions in this agreement</param>
         public RentalAgreementPdfViewModel(int id, string number = null, string status = null, Equipment equipment = null, 
             Project project = null, List<RentalAgreementRate> rentalAgreementRates = null, 
             List<RentalAgreementCondition> rentalAgreementConditions = null,  
             string note = null, string estimateStartWork = null, string datedOn = null, int? estimateHours = null, 
-            float? equipmentRate = null, string ratePeriod = null, string rateComment = null)
+            float? equipmentRate = null, string ratePeriod = null, string rateComment = null, bool conditionsPresent = false)
         {   
             Id = id;
             Number = number;
@@ -59,6 +60,7 @@ namespace HETSAPI.ViewModels
             EquipmentRate = equipmentRate;
             RatePeriod = ratePeriod;
             RateComment = rateComment;
+            ConditionsPresent = conditionsPresent;
         }
 
         /// <summary>
@@ -370,6 +372,14 @@ namespace HETSAPI.ViewModels
         public string RateComment { get; set; }
 
         /// <summary>
+        /// Are there any conditions in this agreement
+        /// </summary>
+        /// <value>Are there any conditions in this agreement</value>
+        [DataMember(Name = "conditionsPresent")]
+        [MetaData(Description = "Are there any conditions in this agreement.")]
+        public bool ConditionsPresent { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -395,6 +405,7 @@ namespace HETSAPI.ViewModels
             sb.Append("  EquipmentRate: ").Append(EquipmentRate).Append("\n");
             sb.Append("  RatePeriod: ").Append(RatePeriod).Append("\n");
             sb.Append("  RateComment: ").Append(RateComment).Append("\n");
+            sb.Append("  ConditionsPresent: ").Append(ConditionsPresent).Append("\n");
             sb.Append("}\n");
 
             return sb.ToString();
@@ -515,6 +526,10 @@ namespace HETSAPI.ViewModels
                     RateComment == other.RateComment ||
                     RateComment != null &&
                     RateComment.Equals(other.RateComment)
+                ) &&
+                (
+                    ConditionsPresent == other.ConditionsPresent ||
+                    ConditionsPresent.Equals(other.ConditionsPresent)
                 );
         }
 
@@ -605,8 +620,10 @@ namespace HETSAPI.ViewModels
                 if (RateComment != null)
                 {
                     hash = hash * 59 + RateComment.GetHashCode();
-                }                
-                
+                }
+
+                hash = hash * 59 + ConditionsPresent.GetHashCode();
+
                 return hash;
             }
         }
