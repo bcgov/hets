@@ -130,7 +130,6 @@ namespace HETSAPI.Services.Impl
         /// </summary>
         /// <param name="id">id of Project to fetch</param>
         /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
         public virtual IActionResult RentalagreementsIdGetAsync(int id)
         {
             bool exists = _context.RentalAgreements.Any(a => a.Id == id);
@@ -289,7 +288,6 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of Rental Agreement to update</param>
         /// <param name="item"></param>
         /// <response code="200">OK</response>
-        /// <response code="404">Project not found</response>
         public virtual IActionResult RentalagreementsIdPutAsync(int id, RentalAgreement item)
         {
             AdjustRecord(item);
@@ -298,12 +296,40 @@ namespace HETSAPI.Services.Impl
 
             if (exists && id == item.Id)
             {
-                _context.RentalAgreements.Update(item);
+                RentalAgreement agreement = _context.RentalAgreements.First(a => a.Id == id);
+
+                agreement.DatedOn = item.DatedOn;
+                agreement.EquipmentRate = item.EquipmentRate;
+                agreement.EstimateHours = item.EstimateHours;
+                agreement.EstimateStartWork = item.EstimateStartWork;
+                agreement.Note = item.Note;
+                agreement.Number = item.Number;
+                agreement.RateComment = item.RateComment;
+                agreement.RatePeriod = item.RatePeriod;
+                agreement.Status = item.Status;
 
                 // save the changes
                 _context.SaveChanges();
 
-                return new ObjectResult(new HetsResponse(item));
+                // return the latest renrtal agreement
+                RentalAgreement result = _context.RentalAgreements.AsNoTracking()
+                    .Include(x => x.Equipment)
+                    .ThenInclude(y => y.Owner)
+                    .Include(x => x.Equipment)
+                    .ThenInclude(y => y.DistrictEquipmentType)
+                    .ThenInclude(d => d.EquipmentType)
+                    .Include(x => x.Equipment)
+                    .ThenInclude(y => y.EquipmentAttachments)
+                    .Include(x => x.Equipment)
+                    .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.Project)
+                    .ThenInclude(p => p.District.Region)
+                    .Include(x => x.RentalAgreementConditions)
+                    .Include(x => x.RentalAgreementRates)
+                    .Include(x => x.TimeRecords)
+                    .First(a => a.Id == item.Id);
+
+                return new ObjectResult(new HetsResponse(result));
             }
 
             // record not found
@@ -367,7 +393,17 @@ namespace HETSAPI.Services.Impl
 
                 if (exists)
                 {
-                    _context.RentalAgreements.Update(item);
+                    RentalAgreement agreement = _context.RentalAgreements.First(a => a.Id == item.Id);
+
+                    agreement.DatedOn = item.DatedOn;
+                    agreement.EquipmentRate = item.EquipmentRate;
+                    agreement.EstimateHours = item.EstimateHours;
+                    agreement.EstimateStartWork = item.EstimateStartWork;
+                    agreement.Note = item.Note;
+                    agreement.Number = item.Number;
+                    agreement.RateComment = item.RateComment;
+                    agreement.RatePeriod = item.RatePeriod;
+                    agreement.Status = item.Status;
                 }
                 else
                 {
@@ -380,7 +416,25 @@ namespace HETSAPI.Services.Impl
                 // save the changes
                 _context.SaveChanges();
 
-                return new ObjectResult(new HetsResponse(item));
+                // return the latest renrtal agreement
+                RentalAgreement result = _context.RentalAgreements.AsNoTracking()
+                    .Include(x => x.Equipment)
+                    .ThenInclude(y => y.Owner)
+                    .Include(x => x.Equipment)
+                    .ThenInclude(y => y.DistrictEquipmentType)
+                    .ThenInclude(d => d.EquipmentType)
+                    .Include(x => x.Equipment)
+                    .ThenInclude(y => y.EquipmentAttachments)
+                    .Include(x => x.Equipment)
+                    .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
+                    .Include(x => x.Project)
+                    .ThenInclude(p => p.District.Region)
+                    .Include(x => x.RentalAgreementConditions)
+                    .Include(x => x.RentalAgreementRates)
+                    .Include(x => x.TimeRecords)
+                    .First(a => a.Id == item.Id);
+
+                return new ObjectResult(new HetsResponse(result));
             }
 
             // no record to insert
