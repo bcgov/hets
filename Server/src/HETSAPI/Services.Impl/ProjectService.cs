@@ -258,7 +258,12 @@ namespace HETSAPI.Services.Impl
 
             if (exists && id == item.Id)
             {
-                _context.Projects.Update(item);
+                Project project = _context.Projects.First(a => a.Id == id);
+
+                project.Name = item.Name;
+                project.ProvincialProjectNumber = item.ProvincialProjectNumber;
+                project.Status = item.Status;
+                project.Information = item.Information;
 
                 // save the changes
                 _context.SaveChanges();
@@ -287,7 +292,12 @@ namespace HETSAPI.Services.Impl
 
                 if (exists)
                 {
-                    _context.Projects.Update(item);
+                    Project project = _context.Projects.First(a => a.Id == item.Id);
+
+                    project.Name = item.Name;
+                    project.ProvincialProjectNumber = item.ProvincialProjectNumber;
+                    project.Status = item.Status;
+                    project.Information = item.Information;
                 }
                 else
                 {
