@@ -95,7 +95,10 @@ namespace HETSAPI.Services.Impl
 
             if (exists && id == item.Id)
             {
-                _context.Notes.Update(item);
+                Note note = _context.Notes.First(x => x.Id == item.Id);
+
+                // update note data
+                note.Text = item.Text;
 
                 // save the changes
                 _context.SaveChanges();
