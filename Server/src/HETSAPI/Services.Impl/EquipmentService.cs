@@ -1342,6 +1342,8 @@ namespace HETSAPI.Services.Impl
 
             IQueryable<Equipment> data = _context.Equipments.AsNoTracking()
                 .Include(x => x.LocalArea)
+                    .ThenInclude(y => y.ServiceArea)
+                        .ThenInclude(z => z.District)
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(y => y.EquipmentType)
                 .Include(x => x.Owner)
@@ -1361,17 +1363,51 @@ namespace HETSAPI.Services.Impl
             }
 
             // **********************************************************************
+            // determine the year header values
+            // * start by getting the current fiscal year
+            // **********************************************************************
+            // determine end of current fscal year
+            DateTime fiscalEnd;
+
+            if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
+            {
+                fiscalEnd = new DateTime(DateTime.UtcNow.Year, 3, 31);
+            }
+            else
+            {
+                fiscalEnd = new DateTime(DateTime.UtcNow.AddYears(1).Year, 3, 31);
+            }
+
+            string yearMinus1 = string.Format("{0}/{1}", fiscalEnd.AddYears(-1).Year.ToString(),
+                fiscalEnd.Year.ToString().Substring(2, 2));
+
+            string yearMinus2 = string.Format("{0}/{1}", fiscalEnd.AddYears(-2).Year.ToString(),
+                fiscalEnd.AddYears(-1).Year.ToString().Substring(2, 2));
+
+            string yearMinus3 = string.Format("{0}/{1}", fiscalEnd.AddYears(-3).Year.ToString(),
+                fiscalEnd.AddYears(-2).Year.ToString().Substring(2, 2));
+
+            // **********************************************************************
             // convert Equipment Model to Pdf View Model
             // **********************************************************************
             SeniorityListPdfViewModel seniorityList = new SeniorityListPdfViewModel();
             SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);            
             SeniorityListRecord listRecord = new SeniorityListRecord();
 
+            // get last called data
+            LocalAreaRotationList rotation = null;
+
             foreach (Equipment item in data)
             {
                 if (listRecord.LocalAreaName != item.LocalArea.Name ||
                     listRecord.DistrictEquipmentTypeName != item.DistrictEquipmentType.DistrictEquipmentName)
                 {
+                    rotation = _context.LocalAreaRotationLists.AsNoTracking()
+                        .Include(x => x.LocalArea)
+                        .Include(x => x.DistrictEquipmentType)
+                        .FirstOrDefault(x => x.LocalArea.Id == item.LocalArea.Id &&
+                                             x.DistrictEquipmentType.Id == item.DistrictEquipmentType.Id);
+
                     if (!string.IsNullOrEmpty(listRecord.LocalAreaName))
                     {
                         if (seniorityList.SeniorityListRecords == null)
@@ -1386,11 +1422,20 @@ namespace HETSAPI.Services.Impl
                     {
                         LocalAreaName = item.LocalArea.Name,
                         DistrictEquipmentTypeName = item.DistrictEquipmentType.DistrictEquipmentName,
+                        YearMinus1 = yearMinus1,
+                        YearMinus2 = yearMinus2,
+                        YearMinus3 = yearMinus3,
                         SeniorityList = new List<SeniorityViewModel>()
                     };
+
+                    if (item.LocalArea.ServiceArea != null &&
+                        item.LocalArea.ServiceArea.District != null)
+                    {
+                        listRecord.DistrictName = item.LocalArea.ServiceArea.District.Name;
+                    }
                 }
 
-                listRecord.SeniorityList.Add(item.ToSeniorityViewModel(scoringRules, _context));
+                listRecord.SeniorityList.Add(item.ToSeniorityViewModel(scoringRules, rotation, _context));
             }
 
             // add last record
@@ -1402,6 +1447,23 @@ namespace HETSAPI.Services.Impl
                 }
 
                 seniorityList.SeniorityListRecords.Add(listRecord);
+            }
+
+            // sort seniority lists
+            foreach (SeniorityListRecord list in seniorityList.SeniorityListRecords)
+            {
+                list.SeniorityList = list.SeniorityList.OrderByDescending(x => x.SenioritySortOrder).ToList();
+            }
+
+            // fix the ask next (if no rotation list existed
+            foreach (SeniorityListRecord list in seniorityList.SeniorityListRecords)
+            {
+                bool askNextExists = list.SeniorityList.Exists(x => x.LastCalled == "Y");
+
+                if (!askNextExists && list.SeniorityList.Count > 0)
+                {
+                    list.SeniorityList[0].LastCalled = "Y";
+                }                
             }
 
             // **********************************************************************

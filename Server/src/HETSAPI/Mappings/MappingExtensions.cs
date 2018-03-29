@@ -464,9 +464,11 @@ namespace HETSAPI.Mappings
         /// </summary>
         /// <param name="model"></param>
         /// <param name="scoringRules"></param>
-        /// <param name="context"></param>
+        /// <param name="rotationList"></param>
+        /// <param name="context"></param>        
         /// <returns></returns>
-        public static SeniorityViewModel ToSeniorityViewModel(this Equipment model, SeniorityScoringRules scoringRules, DbAppContext context)
+        public static SeniorityViewModel ToSeniorityViewModel(this Equipment model, SeniorityScoringRules scoringRules,
+            LocalAreaRotationList rotationList, DbAppContext context)
         {
             var dto = new SeniorityViewModel();
 
@@ -502,6 +504,32 @@ namespace HETSAPI.Mappings
                 {
                     numberInBlock = (int)model.NumberInBlock;
                 }
+
+                // *************************************************************
+                // check if this record/owner was call last
+                // *************************************************************
+                bool callNext = false;
+
+                if (rotationList != null && 
+                    blockNumber == 1 && 
+                    rotationList.AskNextBlock1Id == model.Id)
+                {
+                    callNext = true;
+                }
+                else if (rotationList != null && 
+                         numberOfBlocks > 1 &&
+                         blockNumber == 2 && 
+                         rotationList.AskNextBlock2Id == model.Id)
+                {
+                    callNext = true;
+                }
+                else if (rotationList != null &&
+                         rotationList.AskNextBlockOpenId == model.Id)
+                {
+                    callNext = true;
+                }
+
+                dto.LastCalled = callNext ? "Y" : " ";
 
                 // *************************************************************
                 // Map data to view model
