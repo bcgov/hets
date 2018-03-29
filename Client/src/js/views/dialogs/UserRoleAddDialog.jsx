@@ -8,6 +8,7 @@ import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../../api';
+import * as Constant from '../../constants';
 
 import DateControl from '../../components/DateControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
@@ -21,6 +22,7 @@ import { isBlank, notBlank } from '../../utils/string';
 var UserRoleAddDialog = React.createClass({
   propTypes: {
     roles: React.PropTypes.object,
+    currentUser: React.PropTypes.object,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
@@ -97,9 +99,13 @@ var UserRoleAddDialog = React.createClass({
   },
 
   render() {
+    var isAdministrator = _.some(this.props.currentUser.userRoles, { roleName: Constant.ADMINISTRATOR_ROLE });
+    
     if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-    var roles = _.sortBy(this.props.roles, 'name');
+    var filteredRoles = isAdministrator ? this.props.roles : _.reject(this.props.roles, { name: Constant.ADMINISTRATOR_ROLE });
+
+    var roles = _.sortBy(filteredRoles, 'name');
 
     return <EditDialog id="add-role" show={ this.props.show } title={ <strong>Add Role</strong> }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
@@ -139,6 +145,7 @@ var UserRoleAddDialog = React.createClass({
 
 function mapStateToProps(state) {
   return {
+    currentUser: state.user,
     roles: state.lookups.roles,
   };
 }
