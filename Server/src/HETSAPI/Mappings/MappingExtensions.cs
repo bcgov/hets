@@ -156,7 +156,8 @@ namespace HETSAPI.Mappings
                 dto.RentalAgreementConditions = model.RentalAgreementConditions;
                 dto.RentalAgreementRates = model.RentalAgreementRates;
                 dto.Status = model.Status;
-
+                dto.ConditionsPresent = model.RentalAgreementConditions.Count > 0;
+                
                 dto.CalculateTotals();
                 dto.FixOther();
             }

@@ -451,11 +451,19 @@ namespace HETSAPI.Services.Impl
                     .ThenInclude(a => a.EquipmentAttachments)
                 .Include(x => x.EquipmentList)
                     .ThenInclude(l => l.LocalArea)
+                .Include(x => x.EquipmentList)
+                    .ThenInclude(y => y.DistrictEquipmentType)
                 .Include(x => x.LocalArea)
                     .ThenInclude(s => s.ServiceArea)
                         .ThenInclude(d => d.District)
                 .Where(x => items.Contains(x.Id))
-                .ToList();            
+                .ToList();
+
+            // strip out inactive and archived equipment
+            foreach (Owner owner in owners)
+            {
+                owner.EquipmentList = owner.EquipmentList.Where(x => x.Status == Equipment.StatusApproved).ToList();
+            }
 
             if (owners.Count > 0)
             {
@@ -463,7 +471,7 @@ namespace HETSAPI.Services.Impl
                 {
                     // missing district - data error [HETS-16]
                     return new ObjectResult(new HetsResponse("HETS-16", ErrorViewModel.GetDescription("HETS-16", _configuration)));
-                }
+                }                
 
                 // generate pdf document name [unique portion only]
                 string fileName = "OwnerVerification_" + DateTime.Now.Year + DateTime.Now.Month + DateTime.Now.Day;
