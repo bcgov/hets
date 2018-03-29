@@ -113,7 +113,6 @@ namespace HETSAPI.Services.Impl
         /// <param name="id">id of Project to update</param>	
         /// <param name="item"></param>	
         /// <response code="200">OK</response>	
-        /// <response code="404">Project not found</response>	
         public virtual IActionResult RentalagreementratesIdPutAsync(int id, RentalAgreementRate item)
         {	
             AdjustRecord(item);	
