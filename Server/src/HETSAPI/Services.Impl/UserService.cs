@@ -181,7 +181,8 @@ namespace HETSAPI.Services.Impl
                             found = true;
                         }
                     }
-                    if (found == false)
+
+                    if (!found)
                     {
                         _context.UserFavourites.Remove(item);
                     }

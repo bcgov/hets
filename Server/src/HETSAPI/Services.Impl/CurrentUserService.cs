@@ -3,7 +3,6 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using HETSAPI.Models;
 using System.Security.Claims;
-using HETSAPI.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using HETSAPI.Mappings;

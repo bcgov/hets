@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using Swashbuckle.AspNetCore.Annotations;
 using HETSAPI.Authorization;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using HETSAPI.Services;

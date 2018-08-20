@@ -43,7 +43,6 @@ namespace FrontEnd.Handlers
                 _logger.LogInformation("Api Path: " + requestPath);
 
                 // set http security headers   
-                context.Response.Headers[HeaderNames.CacheControl] = "no-cache";
                 context.Response.Headers[HeaderNames.CacheControl] = "no-cache, no-store, must-revalidate, private";
                 context.Response.Headers[HeaderNames.Pragma] = "no-cache";
                 context.Response.Headers[HeaderNames.Expires] = "-1";

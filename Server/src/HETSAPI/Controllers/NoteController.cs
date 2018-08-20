@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Annotations;
 using HETSAPI.Models;
 using HETSAPI.Services;
 using HETSAPI.Authorization;

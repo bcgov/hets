@@ -1,11 +1,11 @@
 ﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using System.Reflection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using HETSAPI.ViewModels;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace HETSAPI.Controllers
 {
@@ -49,7 +49,8 @@ namespace HETSAPI.Controllers
 
             try
             {
-                originalUrl = ((Frame)HttpContext.Features).RawTarget;
+                IHttpRequestFeature httpRequestFeature = HttpContext.Features.Get<IHttpRequestFeature>();
+                originalUrl = httpRequestFeature.RawTarget;
             }
             catch
             {
