@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace HETSAPI.Migrations
 {
