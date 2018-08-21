@@ -13,6 +13,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HETSAPI", "Server\src\HETSA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "test", "Server\test\test.csproj", "{0A46E790-6D5C-4614-AA7B-3F85F2C1D22E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HETSImport", "Server\src\HETSImport\HETSImport.csproj", "{E659AEE9-D954-4BD5-8C59-E4C25C36ADCF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HETSData", "Server\src\HETSData\HETSData.csproj", "{09D4D642-E285-4211-B6B0-DA39D9735736}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +54,18 @@ Global
 		{0A46E790-6D5C-4614-AA7B-3F85F2C1D22E}.Local|Any CPU.Build.0 = Debug|Any CPU
 		{0A46E790-6D5C-4614-AA7B-3F85F2C1D22E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A46E790-6D5C-4614-AA7B-3F85F2C1D22E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E659AEE9-D954-4BD5-8C59-E4C25C36ADCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E659AEE9-D954-4BD5-8C59-E4C25C36ADCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E659AEE9-D954-4BD5-8C59-E4C25C36ADCF}.Local|Any CPU.ActiveCfg = Debug|Any CPU
+		{E659AEE9-D954-4BD5-8C59-E4C25C36ADCF}.Local|Any CPU.Build.0 = Debug|Any CPU
+		{E659AEE9-D954-4BD5-8C59-E4C25C36ADCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E659AEE9-D954-4BD5-8C59-E4C25C36ADCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09D4D642-E285-4211-B6B0-DA39D9735736}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09D4D642-E285-4211-B6B0-DA39D9735736}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09D4D642-E285-4211-B6B0-DA39D9735736}.Local|Any CPU.ActiveCfg = Debug|Any CPU
+		{09D4D642-E285-4211-B6B0-DA39D9735736}.Local|Any CPU.Build.0 = Debug|Any CPU
+		{09D4D642-E285-4211-B6B0-DA39D9735736}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09D4D642-E285-4211-B6B0-DA39D9735736}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
