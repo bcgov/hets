@@ -4,7 +4,8 @@
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>PDF.Server</AssemblyName>    
     <PackageId>PDF.Server</PackageId>    
-    <StartupObject>PDF.Server.Program</StartupObject>
+    <StartupObject>PDF.Server.Program</StartupObject>    
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Templates\owner_verification.mustache" />

@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using HETSCommon;
-using System;
+﻿using System;
 using System.Net.Http;
 using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using HETSCommon;
 
 namespace FrontEnd.Controllers
 {
@@ -14,12 +14,11 @@ namespace FrontEnd.Controllers
     /// Version Controller
     /// </summary>
     [Route("version")]
-    [Route("hets/version")]
     public class VersionController : Controller
     {        
         private readonly Uri _apiServerUri;
         private readonly ILogger _logger;
-        private readonly IConfigurationRoot _configuration;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
         /// Version Controller Constructor
@@ -27,7 +26,7 @@ namespace FrontEnd.Controllers
         /// <param name="apiServerOptions"></param>
         /// <param name="loggerFactory"></param>
         /// <param name="configuration"></param>
-        public VersionController(IOptions<ApiProxyServerOptions> apiServerOptions, ILoggerFactory loggerFactory, IConfigurationRoot configuration)
+        public VersionController(IOptions<ApiProxyServerOptions> apiServerOptions, ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _apiServerUri = apiServerOptions.Value.ToUri();
             _logger = loggerFactory.CreateLogger(typeof(VersionController));
@@ -39,7 +38,7 @@ namespace FrontEnd.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public virtual IActionResult GetVersion()
+        public virtual IActionResult Index()
         {
             _logger.LogInformation("[GetVersion] Get version");
 
@@ -61,7 +60,7 @@ namespace FrontEnd.Controllers
 
         private ApplicationVersionInfo GetApplicationVersionInfo()
         {
-            Assembly assembly = this.GetType().GetTypeInfo().Assembly;
+            Assembly assembly = GetType().GetTypeInfo().Assembly;
             return assembly.GetApplicationVersionInfo();
         }
     }
