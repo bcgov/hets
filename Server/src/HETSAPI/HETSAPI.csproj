@@ -10,6 +10,7 @@
     <AssemblyName>HETSAPI</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>HETSAPI</PackageId>
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

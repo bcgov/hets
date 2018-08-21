@@ -6,6 +6,7 @@
     <AssemblyName>test</AssemblyName>
     <PackageId>test</PackageId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <Configurations>Debug;Release</Configurations>
     
   </PropertyGroup>
 

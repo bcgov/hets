@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
@@ -6,8 +7,6 @@ using HETSAPI.Authorization;
 using HETSAPI.Helpers;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
-using Microsoft.AspNetCore.Hosting;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace HETSAPI.Controllers
 {

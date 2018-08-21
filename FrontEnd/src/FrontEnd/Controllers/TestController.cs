@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using HETSCommon;
+using FrontEnd.Model;
 
 namespace FrontEnd.Controllers
 {
@@ -7,21 +8,23 @@ namespace FrontEnd.Controllers
     /// Test Controller
     /// </summary>
     [Route("test")]
-    [Route("hets/test")]
     public class TestController : Controller
     {
         /// <summary>
-        /// Echos request headers
+        /// Echo all request headers
         /// </summary>
         /// <returns>
         /// The request headers formatted as html
         /// </returns>
         [HttpGet]
-        [Route("headers")]
-        [Produces("text/html")]
-        public virtual IActionResult EchoHeaders()
+        public virtual IActionResult Index()
         {
-            return Ok(Request.Headers.ToHtml());
+            TestModel home = new TestModel
+            {
+                Headers = Request.Headers.ToHtml()
+            };
+
+            return View(home);
         }
     }
 }

@@ -2,20 +2,24 @@
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://localhost:8080/",
+      "sslPort": 0
+    },
     "iisExpress": {
-      "applicationUrl": "http://localhost:55217/",
+      "applicationUrl": "http://localhost:8080/",
       "sslPort": 0
     }
   },
   "profiles": {
     "IIS Express": {
-      "commandName": "IISExpress",
+      "commandName": "IIS",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "DATABASE_SERVICE_NAME": "localhost",
         "POSTGRESQL_DATABASE": "hets",
+        "ASPNETCORE_ENVIRONMENT": "Development",
         "POSTGRESQL_USER": "user6DA",
+        "DATABASE_SERVICE_NAME": "localhost",
         "POSTGRESQL_PASSWORD": "IhUFdcC0wGJeIMDJ"
       }
     }

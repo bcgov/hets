@@ -8,32 +8,22 @@ namespace HETSCommon
     {
         public static string ToHtml(this IHeaderDictionary headers)
         {
-            string content = HeadersToHtml(headers);
-            string html = CloseHtml(content);
-            return html;
+            return HeadersToHtml(headers);
         }
 
         private static string HeadersToHtml(IHeaderDictionary headers)
         {
             StringBuilder html = new StringBuilder();
+
             html.AppendLine("<b>Request Headers:</b>");
             html.AppendLine("<ul style=\"list-style-type:none\">");
+
             foreach (var item in headers)
             {
                 html.AppendFormat("<li><b>{0}</b> = {1}</li>\r\n", item.Key, ExpandValue(item.Value));
             }
-            html.AppendLine("</ul>");
-            return html.ToString();
-        }
 
-        private static string CloseHtml(string content)
-        {
-            StringBuilder html = new StringBuilder();
-            html.AppendLine("<html>");
-            html.AppendLine("<body>");
-            html.Append(content);
-            html.AppendLine("</body>");
-            html.AppendLine("</html>");
+            html.AppendLine("</ul>");
             return html.ToString();
         }
 
