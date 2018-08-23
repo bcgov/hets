@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using HETSAPI.Models;
 
-namespace HETSAPI.Seeders
+namespace HetsApi.Seeders
 {
     public class RegionSeeder : Seeder<DbAppContext>
     {        

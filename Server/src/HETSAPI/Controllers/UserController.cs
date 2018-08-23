@@ -6,7 +6,7 @@ using HETSAPI.ViewModels;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
 
-namespace HETSAPI.Controllers
+namespace HetsApi.Controllers
 {
     /// <summary>
     /// User Controller

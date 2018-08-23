@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HETSAPI.Import;
 
-namespace HETSAPI.Seeders
+namespace HetsApi.Seeders
 {
     internal class PermissionSeeder : Seeder<DbAppContext>
     {

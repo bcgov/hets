@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using HETSAPI.Models;
 
-namespace HETSAPI.Services
+namespace HetsApi.Services
 {
     /// <summary>
     /// Contact Service

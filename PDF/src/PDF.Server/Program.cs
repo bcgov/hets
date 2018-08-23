@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace PDF.Server
+namespace Pdf.Server
 {
     /// <summary>
     /// The main Program for the application.

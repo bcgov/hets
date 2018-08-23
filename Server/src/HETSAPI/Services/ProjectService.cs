@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using HETSAPI.Models;
 using HETSAPI.Services.Impl;
 
-namespace HETSAPI.Services
+namespace HetsApi.Services
 {
     /// <summary>
     /// Project Service

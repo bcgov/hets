@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace HETSAPI.Services
+namespace HetsApi.Services
 {
     /// <summary>
     /// 

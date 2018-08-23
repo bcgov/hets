@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.NodeServices;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using PDF.Server.Helpers;
+using Pdf.Server.Helpers;
 
-namespace PDF.Server.Controllers
+namespace Pdf.Server.Controllers
 {    
     /// <summary>
     /// Pdf Controller - Main Pdf generation functionality for HETS

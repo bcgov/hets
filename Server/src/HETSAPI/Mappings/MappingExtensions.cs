@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 
-namespace HETSAPI.Mappings
+namespace HetsApi.Mappings
 {
     /// <summary>
     /// Mapping Extensions used to convert from Models to ViewModels

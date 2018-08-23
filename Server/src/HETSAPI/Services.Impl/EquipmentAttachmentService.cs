@@ -5,7 +5,7 @@ using HETSAPI.Models;
 using HETSAPI.ViewModels;
 using Microsoft.Extensions.Configuration;
 
-namespace HETSAPI.Services.Impl
+namespace HetsApi.Services.Impl
 {
     /// <summary>
     /// Equipment Attachment Service

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using System.IO;
 using System.Text;
 
-namespace HETSAPI.Services.Impl
+namespace HetsApi.Services.Impl
 {
     /// <summary>
     /// Admin Service

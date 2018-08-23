@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 using HETSAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace HETSAPI.Authentication
+namespace HetsApi.Authentication
 {    
     #region SiteMinder Authentication Options
     /// <summary>

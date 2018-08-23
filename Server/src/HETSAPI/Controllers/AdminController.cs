@@ -4,7 +4,7 @@ using HETSAPI.Services;
 using HETSAPI.Authorization;
 using HETSAPI.Models;
 
-namespace HETSAPI.Controllers
+namespace HetsApi.Controllers
 {
     /// <summary>
     /// Administration Controller

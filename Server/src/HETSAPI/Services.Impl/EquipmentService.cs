@@ -16,7 +16,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace HETSAPI.Services.Impl
+namespace HetsApi.Services.Impl
 {
     /// <summary>
     /// Equipment Status Class - required to update the status record only

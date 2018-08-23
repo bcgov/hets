@@ -25,9 +25,9 @@ using System.Reflection;
 using Hangfire.PostgreSql;
 using Hangfire;
 using Hangfire.Console;
-using HETSAPI.Models;
 using HETSAPI.Authorization;
 using HETSAPI.Authentication;
+using HETSData.Models;
 
 namespace HETSAPI
 {

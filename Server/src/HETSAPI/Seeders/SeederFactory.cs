@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace HETSAPI.Seeders
+namespace HetsApi.Seeders
 {
     /// <summary>
     /// This class automattically loades all seeder classes defined in this assembly,

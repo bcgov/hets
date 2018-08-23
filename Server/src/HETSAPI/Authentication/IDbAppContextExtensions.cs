@@ -1,7 +1,7 @@
 ﻿using System;
 using HETSAPI.Models;
 
-namespace HETSAPI.Authentication
+namespace HetsApi.Authentication
 {
     /// <summary>
     /// Db Extension - Validates User Credential against the HETS Database

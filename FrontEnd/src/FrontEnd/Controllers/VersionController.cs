@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using HETSCommon;
+using HetsCommon;
 
 namespace FrontEnd.Controllers
 {

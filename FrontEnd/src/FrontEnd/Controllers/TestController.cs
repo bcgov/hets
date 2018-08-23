@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using HETSCommon;
+using HetsCommon;
 using FrontEnd.Model;
 
 namespace FrontEnd.Controllers

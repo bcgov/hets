@@ -5,7 +5,7 @@ using HETSAPI.Services;
 using HETSAPI.Authorization;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace HETSAPI.Controllers
+namespace HetsApi.Controllers
 {
     /// <summary>
     /// City Controller

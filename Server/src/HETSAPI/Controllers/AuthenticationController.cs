@@ -6,7 +6,7 @@ using System;
 using System.Diagnostics;
 using HETSAPI.Authentication;
 
-namespace HETSAPI.Controllers
+namespace HetsApi.Controllers
 {
     /// <summary>
     /// Development Environment Authentication Service

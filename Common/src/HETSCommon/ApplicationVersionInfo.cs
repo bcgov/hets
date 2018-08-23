@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace HETSCommon
+namespace HetsCommon
 {
     public class ApplicationVersionInfo : VersionInfo
     {
@@ -13,6 +13,6 @@ namespace HETSCommon
         public string InformationalVersion { get; set; }
         public string TargetFramework { get; set; }
         public string ImageRuntimeVersion { get; set; }
-        public IEnumerable<VersionInfo> Dependancies { get; set; }
+        public IEnumerable<VersionInfo> Dependencies { get; set; }
     }
 }

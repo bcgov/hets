@@ -8,7 +8,7 @@ using HETSAPI.Helpers;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 
-namespace HETSAPI.Controllers
+namespace HetsApi.Controllers
 {
     /// <summary>
     /// This controller is used to handle importing data from the previous system (BC Bid)

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 
-namespace HETSAPI.Authorization
+namespace HetsApi.Authorization
 {
     /// <summary>
     /// Permission Handler Extension

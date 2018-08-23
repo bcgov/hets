@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 
-namespace HETSAPI.Models
+namespace HetsApi.Models
 {
     /// <summary>
     /// User Model Extension

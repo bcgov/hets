@@ -3,19 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PDF.Server", "PDF\src\PDF.Server\PDF.Server.csproj", "{F2B090E2-59B6-40E5-A4B6-1DE0721DA23A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pdf.Server", "PDF\src\PDF.Server\Pdf.Server.csproj", "{F2B090E2-59B6-40E5-A4B6-1DE0721DA23A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HETSCommon", "Common\src\HETSCommon\HETSCommon.csproj", "{65231186-F1B1-4388-BA8D-C63E9703B7C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsCommon", "Common\src\HETSCommon\HetsCommon.csproj", "{65231186-F1B1-4388-BA8D-C63E9703B7C5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrontEnd", "FrontEnd\src\FrontEnd\FrontEnd.csproj", "{31E26099-EEBF-4A4E-9D5A-48F2DBDD2B6B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HETSAPI", "Server\src\HETSAPI\HETSAPI.csproj", "{994D37A5-1446-4949-8575-DD514D82F102}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsApi", "Server\src\HETSAPI\HetsApi.csproj", "{994D37A5-1446-4949-8575-DD514D82F102}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "test", "Server\test\test.csproj", "{0A46E790-6D5C-4614-AA7B-3F85F2C1D22E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsData", "Server\src\HETSData\HetsData.csproj", "{09D4D642-E285-4211-B6B0-DA39D9735736}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HETSImport", "Server\src\HETSImport\HETSImport.csproj", "{E659AEE9-D954-4BD5-8C59-E4C25C36ADCF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HETSData", "Server\src\HETSData\HETSData.csproj", "{09D4D642-E285-4211-B6B0-DA39D9735736}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsImport", "Server\src\HetsImport\HetsImport.csproj", "{5E52D55F-FF29-4A1D-9415-9D0B09CCF603}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,24 +46,18 @@ Global
 		{994D37A5-1446-4949-8575-DD514D82F102}.Local|Any CPU.Build.0 = Debug|Any CPU
 		{994D37A5-1446-4949-8575-DD514D82F102}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{994D37A5-1446-4949-8575-DD514D82F102}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0A46E790-6D5C-4614-AA7B-3F85F2C1D22E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0A46E790-6D5C-4614-AA7B-3F85F2C1D22E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0A46E790-6D5C-4614-AA7B-3F85F2C1D22E}.Local|Any CPU.ActiveCfg = Debug|Any CPU
-		{0A46E790-6D5C-4614-AA7B-3F85F2C1D22E}.Local|Any CPU.Build.0 = Debug|Any CPU
-		{0A46E790-6D5C-4614-AA7B-3F85F2C1D22E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0A46E790-6D5C-4614-AA7B-3F85F2C1D22E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E659AEE9-D954-4BD5-8C59-E4C25C36ADCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E659AEE9-D954-4BD5-8C59-E4C25C36ADCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E659AEE9-D954-4BD5-8C59-E4C25C36ADCF}.Local|Any CPU.ActiveCfg = Debug|Any CPU
-		{E659AEE9-D954-4BD5-8C59-E4C25C36ADCF}.Local|Any CPU.Build.0 = Debug|Any CPU
-		{E659AEE9-D954-4BD5-8C59-E4C25C36ADCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E659AEE9-D954-4BD5-8C59-E4C25C36ADCF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{09D4D642-E285-4211-B6B0-DA39D9735736}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{09D4D642-E285-4211-B6B0-DA39D9735736}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09D4D642-E285-4211-B6B0-DA39D9735736}.Local|Any CPU.ActiveCfg = Debug|Any CPU
 		{09D4D642-E285-4211-B6B0-DA39D9735736}.Local|Any CPU.Build.0 = Debug|Any CPU
 		{09D4D642-E285-4211-B6B0-DA39D9735736}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09D4D642-E285-4211-B6B0-DA39D9735736}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E52D55F-FF29-4A1D-9415-9D0B09CCF603}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E52D55F-FF29-4A1D-9415-9D0B09CCF603}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E52D55F-FF29-4A1D-9415-9D0B09CCF603}.Local|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E52D55F-FF29-4A1D-9415-9D0B09CCF603}.Local|Any CPU.Build.0 = Debug|Any CPU
+		{5E52D55F-FF29-4A1D-9415-9D0B09CCF603}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E52D55F-FF29-4A1D-9415-9D0B09CCF603}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -9,7 +9,7 @@ using HETSAPI.Services.Impl;
 using HETSAPI.ViewModels;
 using HETSAPI.Mappings;
 
-namespace HETSAPI.Controllers
+namespace HetsApi.Controllers
 {
     /// <summary>
     /// Attachment Upload Controller

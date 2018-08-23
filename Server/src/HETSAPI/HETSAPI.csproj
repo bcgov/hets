@@ -7,7 +7,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <DebugType>portable</DebugType>
     <PreserveCompilationContext>true</PreserveCompilationContext>
-    <AssemblyName>HETSAPI</AssemblyName>
+    <AssemblyName>HetsApi</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>HETSAPI</PackageId>
     <Configurations>Debug;Release</Configurations>
@@ -27,7 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\src\HETSCommon\HETSCommon.csproj" />
+    <ProjectReference Include="..\..\..\Common\src\HETSCommon\HetsCommon.csproj" />
+    <ProjectReference Include="..\HETSData\HetsData.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -72,7 +73,6 @@
     <PackageReference Include="Hangfire.Core" Version="1.6.20" />
     <PackageReference Include="Hangfire.PostgreSql" Version="1.4.8.2" />
     <PackageReference Include="Hangfire.Console" Version="1.4.1" />
-	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>

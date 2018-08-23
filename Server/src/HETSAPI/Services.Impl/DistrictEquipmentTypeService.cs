@@ -7,7 +7,7 @@ using HETSAPI.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
-namespace HETSAPI.Services.Impl
+namespace HetsApi.Services.Impl
 {
     /// <summary>
     /// District Equipment Type Service

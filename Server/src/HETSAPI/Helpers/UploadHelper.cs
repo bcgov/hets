@@ -5,7 +5,7 @@ using System.Text;
 using HETSAPI.ViewModels;
 using Microsoft.AspNetCore.Http;
 
-namespace HETSAPI.Helpers
+namespace HetsApi.Helpers
 {
     /// <summary>
     /// Upload Helper - Upload files for data conversion (from legacy system @ BC Bid)

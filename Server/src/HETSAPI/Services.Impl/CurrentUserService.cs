@@ -9,7 +9,7 @@ using HETSAPI.Mappings;
 using HETSAPI.ViewModels;
 using Microsoft.Extensions.Configuration;
 
-namespace HETSAPI.Services.Impl
+namespace HetsApi.Services.Impl
 { 
     /// <summary>
     /// Current User Service

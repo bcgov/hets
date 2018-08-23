@@ -1,4 +1,4 @@
-﻿namespace HETSAPI.Models
+﻿namespace HetsApi.Models
 {
     /// <summary>
     /// User Extension (to support authorization)

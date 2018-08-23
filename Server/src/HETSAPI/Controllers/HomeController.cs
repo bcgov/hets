@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using HETSAPI.ViewModels;
 
-namespace HETSAPI.Controllers
+namespace HetsApi.Controllers
 {
     /// <summary>
     /// Default home controller for the HETSAPI

@@ -5,7 +5,7 @@ using HETSAPI.Models;
 using HETSAPI.Services;
 using HETSAPI.Authorization;
 
-namespace HETSAPI.Controllers
+namespace HetsApi.Controllers
 {
     /// <summary>
     /// District Equipment Controller

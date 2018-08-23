@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.NodeServices;
 using Newtonsoft.Json.Linq;
 
-namespace PDF.Server.Helpers
+namespace Pdf.Server.Helpers
 {
     public class RenderRequest
     {

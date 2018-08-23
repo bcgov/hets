@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using HETSAPI.ViewModels;
 using Microsoft.AspNetCore.Http.Features;
 
-namespace HETSAPI.Controllers
+namespace HetsApi.Controllers
 {
     /// <summary>
     /// Error Controller for HETS API Application

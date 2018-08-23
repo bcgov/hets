@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace HETSAPI.Services.Impl
+namespace HetsApi.Services.Impl
 {
     /// <summary>
     /// Condition Type Service

@@ -1,4 +1,4 @@
-﻿namespace HETSCommon
+﻿namespace HetsCommon
 {
     public class VersionInfo
     {

@@ -60,6 +60,6 @@
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\src\HETSCommon\HETSCommon.csproj" />
+    <ProjectReference Include="..\..\..\Common\src\HETSCommon\HetsCommon.csproj" />
   </ItemGroup>  
 </Project>

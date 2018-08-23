@@ -6,7 +6,7 @@ using System.Reflection;
 using HETSAPI.Models;
 using HETSCommon;
 
-namespace HETSAPI.Controllers
+namespace HetsApi.Controllers
 {
     /// <summary>
     /// Version Controller

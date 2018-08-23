@@ -7,7 +7,7 @@ using HETSAPI.Services;
 using HETSAPI.Authorization;
 using HETSAPI.Services.Impl;
 
-namespace HETSAPI.Controllers
+namespace HetsApi.Controllers
 {
     /// <summary>
     /// Project Controller

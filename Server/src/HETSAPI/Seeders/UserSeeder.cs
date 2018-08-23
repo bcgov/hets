@@ -5,7 +5,7 @@ using HETSAPI.Models;
 using System;
 using System.Collections.Generic;
 
-namespace HETSAPI.Seeders
+namespace HetsApi.Seeders
 {
     public class UserSeeder : Seeder<DbAppContext>
     {

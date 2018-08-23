@@ -1,6 +1,6 @@
 ﻿using HETSAPI.Models;
 
-namespace HETSAPI.Authentication
+namespace HetsApi.Authentication
 {
     /// <summary>
     /// Object to track and manage the authenticated user session

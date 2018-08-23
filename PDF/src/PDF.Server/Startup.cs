@@ -6,10 +6,10 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace PDF.Server
+namespace Pdf.Server
 {
     /// <summary>
-    /// Startup Pdf Microservice
+    /// Startup Pdf Micro Service
     /// </summary>
     public class Startup
     {

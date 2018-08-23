@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using HETSAPI.Models;
 using HETSAPI.ViewModels;
 
-namespace HETSAPI.Services.Impl
+namespace HetsApi.Services.Impl
 {
     /// <summary>
     /// Equipment Type Service

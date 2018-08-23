@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using HETSAPI.Models;
 
-namespace HETSAPI.Authorization
+namespace HetsApi.Authorization
 {
     /// <summary>
     /// MVC Options Extension

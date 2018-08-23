@@ -3,7 +3,7 @@ using System.Diagnostics;
 using HETSAPI.Models;
 using System.Security.Claims;
 
-namespace HETSAPI.Authorization
+namespace HetsApi.Authorization
 {
     /// <summary>
     /// Calaims Principal Extension
