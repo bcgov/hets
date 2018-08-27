@@ -142,7 +142,7 @@
       "displayName": "DotNet Startup Project",
       "description": "The path to the startup project for the .Net application.",
       "required": true,
-      "value": "Server/src/HETSAPI/HETSAPI.csproj"
+      "value": "Server/src/HetsApi/HetsApi.csproj"
     },
     {
       "name": "OUTPUT_IMAGE_TAG",
