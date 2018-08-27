@@ -112,7 +112,7 @@
       "displayName": "Source Context Directory",
       "description": "The source context directory.",
       "required": false,
-      "value": "/PDF"
+      "value": "/Pdf"
     },
     {
       "name": "SOURCE_IMAGE_KIND",
@@ -147,14 +147,14 @@
       "displayName": "DotNet Startup Project",
       "description": "The path to the startup project for the .Net application.",
       "required": true,
-      "value": "src/PDF.Server/PDF.Server.csproj"
+      "value": "src/Pdf.Server/Pdf.Server.csproj"
     },
     {
       "name": "DOTNET_NPM_TOOLS",
       "displayName": "DotNet Npm Tools",
       "description": "Arguments for npm install.  Typically the folder containing the package.json file.",
       "required": true,
-      "value": "/tmp/src/src/PDF.Server/"
+      "value": "/tmp/src/src/Pdf.Server/"
     },
     {
       "name": "OUTPUT_IMAGE_TAG",
