@@ -6,7 +6,7 @@
     <AssemblyTitle>HETS Common</AssemblyTitle>
     <AssemblyName>HetsCommon</AssemblyName>
 	<TargetFramework>netstandard2.0</TargetFramework>
-    <PackageId>HETSCommon</PackageId>
+    <PackageId>HetsCommon</PackageId>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
