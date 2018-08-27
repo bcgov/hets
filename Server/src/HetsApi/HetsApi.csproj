@@ -9,7 +9,7 @@
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>HetsApi</AssemblyName>
     <OutputType>Exe</OutputType>
-    <PackageId>HETSAPI</PackageId>
+    <PackageId>HetsApi</PackageId>
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 

@@ -3,7 +3,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>Pdf.Server</AssemblyName>    
-    <PackageId>PDF.Server</PackageId>    
+    <PackageId>Pdf.Server</PackageId>    
     <StartupObject>Pdf.Server.Program</StartupObject>    
     <Configurations>Debug;Release</Configurations>    
     <RootNamespace>Pdf.Server</RootNamespace>
