@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
-using HETSAPI.ViewModels;
+using HetsApi.Model;
 
-namespace HETSAPI.Controllers
+namespace HetsApi.Controllers
 {
     /// <summary>
-    /// Default home controller for the HETSAPI
+    /// Default home controller
     /// </summary>
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     [ApiExplorerSettings(IgnoreApi = true)]
@@ -28,7 +28,7 @@ namespace HETSAPI.Controllers
         /// <returns></returns>
         public IActionResult Index()
         {
-            HomeViewModel home = new HomeViewModel
+            HomeModel home = new HomeModel
             {
                 UserId = HttpContext.User.Identity.Name,
                 DevelopmentEnvironment = _env.IsDevelopment()

@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.NodeServices;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using PDF.Server.Helpers;
+using Pdf.Server.Helpers;
 
-namespace PDF.Server.Controllers
+namespace Pdf.Server.Controllers
 {
     /// <summary>
     /// Test Controller - Used to test Pdf generation functionality

@@ -4,7 +4,7 @@
     <Description>Common code for the HETS application.</Description>
     <Copyright>Copyright© 2017, Province of British Columbia.</Copyright>
     <AssemblyTitle>HETS Common</AssemblyTitle>
-    <AssemblyName>HETSCommon</AssemblyName>
+    <AssemblyName>HetsCommon</AssemblyName>
 	<TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>HETSCommon</PackageId>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>

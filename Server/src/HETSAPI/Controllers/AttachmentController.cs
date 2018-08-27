@@ -1,67 +1,89 @@
+using HetsApi.Authorization;
+using HetsApi.Model;
+using HetsData.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Swashbuckle.AspNetCore.Annotations;
-using HETSAPI.Models;
-using HETSAPI.Services;
-using HETSAPI.Authorization;
+using System.Linq;
+using HetsApi.Helpers;
+using Microsoft.AspNetCore.Http;
 
-namespace HETSAPI.Controllers
+namespace HetsApi.Controllers
 {
     /// <summary>
     /// Attachment Controller
     /// </summary>
+    [Route("api/attachments")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class AttachmentController : Controller
     {
-        private readonly IAttachmentService _service;
-
-        /// <summary>
-        /// Attachment Controller Constructor
-        /// </summary>
-        public AttachmentController(IAttachmentService service)
+        private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
+        
+        public AttachmentController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
-            _service = service;
-        }
+            _context = context;
+            _configuration = configuration;
 
-        /// <summary>
-        /// Create bulk attachment records
-        /// </summary>
-        /// <param name="items"></param>
-        /// <response code="201">Attachment created</response>
-        [HttpPost]
-        [Route("/api/attachments/bulk")]
-        [SwaggerOperation("AttachmentsBulkPost")]
-        [RequiresPermission(Permission.Admin)]
-        public virtual IActionResult AttachmentsBulkPost([FromBody]Attachment[] items)
-        {
-            return _service.AttachmentsBulkPostAsync(items);
-        }
+            // set context data
+            HetUser user = ModelHelper.GetUser(context, httpContextAccessor.HttpContext);
+            _context.SmUserId = user.SmUserId;
+            _context.DirectoryName = user.SmAuthorizationDirectory;
+            _context.SmUserGuid = user.Guid;
+        }        
        
         /// <summary>
         /// Delete attachment
         /// </summary>
         /// <param name="id">id of Attachment to delete</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">Attachment not found</response>
         [HttpPost]
-        [Route("/api/attachments/{id}/delete")]
+        [Route("{id}/delete")]
         [SwaggerOperation("AttachmentsIdDeletePost")]
-        [RequiresPermission(Permission.Login)]
+        [SwaggerResponse(200, type: typeof(Attachment))]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult AttachmentsIdDeletePost([FromRoute]int id)
         {
-            return _service.AttachmentsIdDeletePostAsync(id);
+            bool exists = _context.HetAttachment.Any(a => a.AttachmentId == id);
+
+            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            
+            HetAttachment item = _context.HetAttachment.First(a => a.AttachmentId == id);
+
+            if (item != null)
+            {
+                _context.HetAttachment.Remove(item);
+                _context.SaveChanges();
+            }
+
+            // convert to UI model
+            Attachment response = new Attachment();
+            response = (Attachment)ModelHelper.CopyProperties(item, response);
+
+            return new ObjectResult(new HetsResponse(response));            
         }
 
         /// <summary>
-        /// Returns the binary file component of an attachment
+        /// Return the binary file
         /// </summary>
         /// <param name="id">Attachment Id</param>
-        /// <response code="200">OK</response>
         [HttpGet]
-        [Route("/api/attachments/{id}/download")]
+        [Route("{id}/download")]
         [SwaggerOperation("AttachmentsIdDownloadGet")]
         public virtual IActionResult AttachmentsIdDownloadGet([FromRoute]int id)
         {
-            return _service.AttachmentsIdDownloadGetAsync(id);
+            bool exists = _context.HetAttachment.Any(a => a.AttachmentId == id);
+
+            // not found
+            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            
+            HetAttachment attachment = _context.HetAttachment.First(a => a.AttachmentId == id);
+                       
+            FileContentResult result = new FileContentResult(attachment.FileContents, "application/octet-stream")
+            {
+                FileDownloadName = attachment.FileName
+            };
+
+            return result;            
         }
     }
 }

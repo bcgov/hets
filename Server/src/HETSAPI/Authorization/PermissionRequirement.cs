@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
-namespace HETSAPI.Authorization
+namespace HetsApi.Authorization
 {
     /// <summary>
     /// Permission Requirements

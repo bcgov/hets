@@ -1,43 +1,80 @@
-using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Swashbuckle.AspNetCore.Annotations;
-using HETSAPI.Authorization;
-using HETSAPI.Models;
-using HETSAPI.ViewModels;
-using HETSAPI.Services;
+using HetsApi.Authorization;
+using HetsApi.Helpers;
+using HetsApi.Model;
+using HetsData.Model;
+using Microsoft.EntityFrameworkCore;
 
-namespace HETSAPI.Controllers
+namespace HetsApi.Controllers
 {
     /// <summary>
     /// Current User Controller
     /// </summary>
+    [Route("api/users/current")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class CurrentUserController : Controller
     {
-        private readonly ICurrentUserService _service;
+        private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
-        /// <summary>
-        /// Current User Controller Constructor
-        /// </summary>
-        public CurrentUserController(ICurrentUserService service)
+        public CurrentUserController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
-            _service = service;
+            _context = context;
+            _configuration = configuration;    
+            
+            // set context data
+            HetUser user = ModelHelper.GetUser(context, httpContextAccessor.HttpContext);
+            _context.SmUserId = user.SmUserId;
+            _context.DirectoryName = user.SmAuthorizationDirectory;
+            _context.SmUserGuid = user.Guid;
         }
 
         /// <summary>
-        /// Get faviourites for a user (by type)
+        /// Get favourites for a user (by type)
         /// </summary>
         /// <remarks>Returns a users favourites of a given type.  If type is empty, returns all.</remarks>
-        /// <param name="favouritetype">type of favourite to return</param>
-        /// <response code="200">OK</response>
+        /// <param name="favouriteType">type of favourite to return</param>
         [HttpGet]
-        [Route("/api/users/current/favourites/{favouritetype}")]
+        [Route("favourites/{favouriteType}")]
         [SwaggerOperation("UsersCurrentFavouritesFavouriteTypeGet")]
         [SwaggerResponse(200, type: typeof(List<UserFavourite>))]
-        [RequiresPermission(Permission.Login)]
-        public virtual IActionResult UsersCurrentFavouritesFavouriteTypeGet([FromRoute]string favouritetype)
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult UsersCurrentFavouritesFavouriteTypeGet([FromRoute]string favouriteType)
         {
-            return _service.UsersCurrentFavouritesFavouritetypeGetAsync(favouritetype);
+            // get the current user id
+            string userId = _context.SmUserId;
+            
+            // get favourites
+            IEnumerable<HetUserFavourite> favourites = _context.HetUserFavourite.AsNoTracking()
+                .Where(x => x.User.SmUserId == userId)
+                .Select(x => x)
+                .ToList();
+
+            if (favouriteType != null)
+            {
+                favourites = favourites.Where(x => x.Type == favouriteType);
+            }
+
+            // convert to UI model
+            List<UserFavourite> response = new List<UserFavourite>();
+
+            foreach (HetUserFavourite favourite in favourites)
+            {
+                if (favourite != null)
+                {
+                    UserFavourite temp = new UserFavourite();
+                    response.Add((UserFavourite)ModelHelper.CopyProperties(favourite, temp));
+                }
+            }
+
+            return new ObjectResult(response);
         }
 
         /// <summary>
@@ -45,14 +82,38 @@ namespace HETSAPI.Controllers
         /// </summary>
         /// <remarks>Removes a specific user favourite</remarks>
         /// <param name="id">id of Favourite to delete</param>
-        /// <response code="200">OK</response>
         [HttpPost]
-        [Route("/api/users/current/favourites/{id}/delete")]
+        [Route("favourites/{id}/delete")]
         [SwaggerOperation("UsersCurrentFavouritesIdDeletePost")]
-        [RequiresPermission(Permission.Login)]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult UsersCurrentFavouritesIdDeletePost([FromRoute]int id)
         {
-            return _service.UsersCurrentFavouritesIdDeletePostAsync(id);
+            // get the current user id
+            string userId = _context.SmUserId;
+
+            // not found
+            if (userId == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            bool exists = _context.HetUserFavourite
+                .Where(x => x.User.SmUserId == userId)
+                .Any(a => a.UserFavouriteId == id);
+
+            // not found
+            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // delete favourite
+            HetUserFavourite item = _context.HetUserFavourite.First(a => a.UserFavouriteId == id);
+
+            _context.HetUserFavourite.Remove(item);
+
+            // save the changes
+            _context.SaveChanges();
+
+            // convert to UI model
+            UserFavourite response = new UserFavourite();
+            response = (UserFavourite)ModelHelper.CopyProperties(item, response);
+             
+            return new ObjectResult(response);
         }
 
         /// <summary>
@@ -60,15 +121,14 @@ namespace HETSAPI.Controllers
         /// </summary>
         /// <remarks>Create new favourite for the current user</remarks>
         /// <param name="item"></param>
-        /// <response code="200">UserFavourite created</response>
         [HttpPost]
-        [Route("/api/users/current/favourites")]
+        [Route("favourites")]
         [SwaggerOperation("UsersCurrentFavouritesPost")]
         [SwaggerResponse(200, type: typeof(UserFavourite))]
-        [RequiresPermission(Permission.Login)]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult UsersCurrentFavouritesPost([FromBody]UserFavourite item)
         {
-            return _service.UsersCurrentFavouritesPostAsync(item);
+            return UpdateFavourite(item);
         }
 
         /// <summary>
@@ -76,44 +136,156 @@ namespace HETSAPI.Controllers
         /// </summary>
         /// <remarks>Updates a favourite</remarks>
         /// <param name="item"></param>
-        /// <response code="201">UserFavourite created</response>
         [HttpPut]
-        [Route("/api/users/current/favourites")]
+        [Route("favourites")]
         [SwaggerOperation("UsersCurrentFavouritesPut")]
         [SwaggerResponse(200, type: typeof(UserFavourite))]
-        [RequiresPermission(Permission.Login)]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult UsersCurrentFavouritesPut([FromBody]UserFavourite item)
         {
-            return _service.UsersCurrentFavouritesPutAsync(item);
+            return UpdateFavourite(item);
         }
 
         /// <summary>
         /// Get current logged on user
         /// </summary>
         /// <remarks>Get the currently logged in user</remarks>
-        /// <response code="200">OK</response>
         [HttpGet]
-        [Route("/api/users/current")]
+        [Route("")]
         [SwaggerOperation("UsersCurrentGet")]
-        [SwaggerResponse(200, type: typeof(CurrentUserViewModel))]
-        [RequiresPermission(Permission.Login)]
+        [SwaggerResponse(200, type: typeof(CurrentUser))]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult UsersCurrentGet()
         {
-            return _service.UsersCurrentGetAsync();
+            // get the current user id
+            string userId = _context.SmUserId;
+
+            // not found
+            if (userId == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            
+            HetUser currentUser = _context.HetUser
+                .Include(x => x.District)
+                .Include(x => x.HetUserRole)
+                    .ThenInclude(y => y.Role)
+                        .ThenInclude(z => z.HetRolePermission)
+                            .ThenInclude(z => z.Permission)
+                .First(x => x.SmUserId == userId);            
+
+            // remove inactive roles
+            for (int i = currentUser.HetUserRole.Count - 1; i >= 0; i--)
+            {
+                if (currentUser.HetUserRole.ElementAt(i).EffectiveDate > DateTime.UtcNow ||
+                    (currentUser.HetUserRole.ElementAt(i).ExpiryDate != null &&
+                     currentUser.HetUserRole.ElementAt(i).ExpiryDate < DateTime.UtcNow))
+                {
+                    currentUser.HetUserRole.Remove(currentUser.HetUserRole.ElementAt(i));
+                }
+            }
+
+            // convert to UI model
+            CurrentUser response = new CurrentUser();
+            response = (CurrentUser)ModelHelper.CopyProperties(currentUser, response);                        
+
+            // get the name for the current logged in user
+            response.GivenName = User.FindFirst(ClaimTypes.GivenName).Value;
+            response.Surname = User.FindFirst(ClaimTypes.Surname).Value;
+
+            return new ObjectResult(response);
         }
 
         /// <summary>
         /// Logout User - Switch back to Primary
         /// </summary>
-        /// <response code="200">User District switched</response>
         [HttpGet]
-        [Route("/api/users/current/logoff")]
+        [Route("logoff")]
         [SwaggerOperation("UserDistrictsIdLogoffPost")]
         [SwaggerResponse(200, type: typeof(UserDistrict))]
-        [RequiresPermission(Permission.Login)]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult UsersCurrentLogoffPost()
         {
-            return _service.UsersCurrentLogoffPostAsync();
+            // get the current user id
+            string userId = _context.SmUserId;
+
+            // not found
+            if (userId == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // get user district
+            HetUserDistrict userDistrict = _context.HetUserDistrict.AsNoTracking()
+                .Include(x => x.User)
+                .Include(x => x.District)
+                .FirstOrDefault(x => x.User.SmUserId == userId &&
+                                     x.IsPrimary);
+
+            // if we don't find a primary - look for the first one in the list
+            if (userDistrict == null)
+            {
+                userDistrict = _context.HetUserDistrict.AsNoTracking()
+                    .Include(x => x.User)
+                    .Include(x => x.District)
+                    .FirstOrDefault(x => x.User.SmUserId == userId);
+            }
+
+            // update the current district for the user
+            HetUser user = null;
+
+            if (userDistrict != null)
+            {
+                user = _context.HetUser.First(a => a.SmUserId == userId);
+                user.DistrictId = userDistrict.District.DistrictId;
+
+                _context.SaveChanges();
+            }
+
+            // convert to UI model
+            User response = new User();
+            response = (User)ModelHelper.CopyProperties(user, response);            
+
+            return new ObjectResult(response);
         }
+
+        #region Update Favourite
+
+        private IActionResult UpdateFavourite(UserFavourite item)
+        {
+            item.User = null;
+
+            // get the current user id
+            string userId = _context.SmUserId;
+
+            // not found
+            if (userId == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // get user record
+            bool userExists = _context.HetUser.Any(a => a.SmUserId == userId);
+
+            if (userExists)
+            {
+                HetUser user = _context.HetUser.First(a => a.SmUserId == userId);
+                item.User = user;
+            }
+
+            // get favourites
+            bool exists = _context.HetUserFavourite.Any(a => a.UserFavouriteId == item.Id);
+
+            if (exists)
+            {
+                _context.HetUserFavourite.Update(item);
+            }
+            else
+            {
+                _context.HetUserFavourite.Add(item);
+            }
+
+            // save the changes
+            _context.SaveChanges();
+
+            // convert to UI model
+            UserFavourite response = new UserFavourite();
+            response = (UserFavourite)ModelHelper.CopyProperties(item, response);
+
+            return new ObjectResult(response);
+        }
+
+        #endregion
     }
 }

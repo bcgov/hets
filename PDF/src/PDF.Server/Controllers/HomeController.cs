@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
-using PDF.Server.Models;
+using Pdf.Server.Models;
 
-namespace PDF.Server.Controllers
+namespace Pdf.Server.Controllers
 {
     /// <summary>
-    /// Default home controller for the HETSAPI
+    /// Default home controller
     /// </summary>
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class HomeController : Controller

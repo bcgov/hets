@@ -9,14 +9,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using HETSAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using HetsData.Model;
 
-namespace HETSAPI.Authentication
+namespace HetsApi.Authentication
 {    
     #region SiteMinder Authentication Options
+
     /// <summary>
-    /// Options required for setting up SiteMidner Authentication
+    /// Options required for setting up SiteMinder Authentication
     /// </summary>
     public class SiteMinderAuthOptions : AuthenticationSchemeOptions
     {
@@ -30,11 +31,11 @@ namespace HETSAPI.Authentication
         private const string ConstMissingSiteMinderUserIdError = "Missing SiteMinder UserId";
         private const string ConstMissingSiteMinderGuidError = "Missing SiteMinder Guid";
         private const string ConstMissingDbUserIdError = "Could not find UserId in the HETS database";
-        private const string ConstInactivegDbUserIdError = "HETS database UserId is inactive";
+        private const string ConstInactiveDbUserIdError = "HETS database UserId is inactive";
         private const string ConstInvalidPermissions = "HETS UserId does not have valid permissions";
 
         /// <summary>
-        /// DEfault Constructor
+        /// Default Constructor
         /// </summary>
         public SiteMinderAuthOptions()
         {
@@ -45,7 +46,7 @@ namespace HETSAPI.Authentication
             MissingSiteMinderUserIdError = ConstMissingSiteMinderUserIdError;
             MissingSiteMinderGuidError = ConstMissingSiteMinderGuidError;
             MissingDbUserIdError = ConstMissingDbUserIdError;
-            InactivegDbUserIdError = ConstInactivegDbUserIdError;
+            InactiveDbUserIdError = ConstInactiveDbUserIdError;
             InvalidPermissions = ConstInvalidPermissions;
             DevAuthenticationTokenKey = ConstDevAuthenticationTokenKey;
             DevDefaultUserId = ConstDevDefaultUserId;
@@ -99,10 +100,10 @@ namespace HETSAPI.Authentication
         /// <summary>
         /// Inactive Database UserId Error
         /// </summary>
-        public string InactivegDbUserIdError { get; set; }
+        public string InactiveDbUserIdError { get; set; }
 
         /// <summary>
-        /// User does not jave active / valid permissions
+        /// User does not have active / valid permissions
         /// </summary>
         public string InvalidPermissions { get; set; }
 
@@ -112,16 +113,17 @@ namespace HETSAPI.Authentication
         public string DevAuthenticationTokenKey { get; set; }
 
         /// <summary>
-        /// Development Environment efault UserId
+        /// Development Environment default UserId
         /// </summary>
         public string DevDefaultUserId { get; set; }
     }
+
     #endregion    
 
     /// <summary>
-    /// Setup Siteminder Authentication Handler
+    /// Setup SiteMinder Authentication Handler
     /// </summary>
-    public static class SiteminderAuthenticationExtensions
+    public static class SiteMinderAuthenticationExtensions
     {
         /// <summary>
         /// Add Authentication Handler
@@ -129,30 +131,29 @@ namespace HETSAPI.Authentication
         /// <param name="builder"></param>
         /// <param name="configureOptions"></param>
         /// <returns></returns>
-        public static AuthenticationBuilder AddSiteminderAuth(this AuthenticationBuilder builder, Action<SiteMinderAuthOptions> configureOptions)
+        public static AuthenticationBuilder AddSiteMinderAuth(this AuthenticationBuilder builder, Action<SiteMinderAuthOptions> configureOptions)
         {
-            return builder.AddScheme<SiteMinderAuthOptions, SiteminderAuthenticationHandler>(SiteMinderAuthOptions.AuthenticationSchemeName, configureOptions);
+            return builder.AddScheme<SiteMinderAuthOptions, SiteMinderAuthenticationHandler>(SiteMinderAuthOptions.AuthenticationSchemeName, configureOptions);
         }
     }
 
     /// <summary>
-    /// Siteminder Authentication Handler
+    /// SiteMinder Authentication Handler
     /// </summary>
-    public class SiteminderAuthenticationHandler : AuthenticationHandler<SiteMinderAuthOptions>
+    public class SiteMinderAuthenticationHandler : AuthenticationHandler<SiteMinderAuthOptions>
     {
         private readonly ILogger _logger;        
 
         /// <summary>
-        /// Siteminder Authentication Constructir
+        /// SiteMinder Authentication Constructor
         /// </summary>
         /// <param name="configureOptions"></param>
         /// <param name="loggerFactory"></param>
         /// <param name="encoder"></param>
         /// <param name="clock"></param>
-        public SiteminderAuthenticationHandler(IOptionsMonitor<SiteMinderAuthOptions> configureOptions, ILoggerFactory loggerFactory, UrlEncoder encoder, ISystemClock clock)
-            : base(configureOptions, loggerFactory, encoder, clock)
+        public SiteMinderAuthenticationHandler(IOptionsMonitor<SiteMinderAuthOptions> configureOptions, ILoggerFactory loggerFactory, UrlEncoder encoder, ISystemClock clock) : base(configureOptions, loggerFactory, encoder, clock)
         {
-            _logger = loggerFactory.CreateLogger(typeof(SiteminderAuthenticationHandler));                    
+            _logger = loggerFactory.CreateLogger(typeof(SiteMinderAuthenticationHandler));                    
         }
 
         /// <summary>
@@ -161,7 +162,7 @@ namespace HETSAPI.Authentication
         /// <returns></returns>
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            // get siteminder headers
+            // get SiteMinder headers
             _logger.LogDebug("Parsing the HTTP headers for SiteMinder authentication credential");
                   
             SiteMinderAuthOptions options = new SiteMinderAuthOptions();
@@ -169,16 +170,16 @@ namespace HETSAPI.Authentication
             try
             {
                 HttpContext context = Request.HttpContext;
-                IDbAppContext dbAppContext = (DbAppContext)context.RequestServices.GetService(typeof(DbAppContext));
+                DbAppContext dbAppContext = (DbAppContext)context.RequestServices.GetService(typeof(DbAppContext));
                 IHostingEnvironment hostingEnv = (IHostingEnvironment)context.RequestServices.GetService(typeof(IHostingEnvironment));
                 
                 UserSettings userSettings = new UserSettings();
                 string userId = "";
                 string siteMinderGuid = "";
 
-                // **************************************************
-                // If this is an Error or Authentiation API - Ignore
-                // **************************************************
+                // ********************************************************
+                // if this is an Error or Authentication API - Ignore
+                // ********************************************************
                 string url = context.Request.GetDisplayUrl().ToLower();
 
                 if (url.Contains("/authentication/dev") ||
@@ -199,7 +200,7 @@ namespace HETSAPI.Authentication
                 }
 
                 // **************************************************
-                // Check if we have a Dev Environment Cookie
+                // check if we have a Dev Environment Cookie
                 // **************************************************
                 if (hostingEnv.IsDevelopment())
                 {
@@ -213,13 +214,14 @@ namespace HETSAPI.Authentication
                 }                                            
 
                 // **************************************************
-                // Authenticate based on SiteMinder Headers
+                // authenticate based on SiteMinder Headers
                 // **************************************************                
                 if (string.IsNullOrEmpty(userId))
                 {
                     _logger.LogInformation("Parsing the HTTP headers for SiteMinder authentication credential");
 
                     userId = context.Request.Headers[options.SiteMinderUserNameKey];
+
                     if (string.IsNullOrEmpty(userId))
                     {
                         userId = context.Request.Headers[options.SiteMinderUniversalIdKey];
@@ -232,7 +234,7 @@ namespace HETSAPI.Authentication
                     }
 
                     // check if the AD name is in the credential - and remove
-                        int start = userId.IndexOf("\\", StringComparison.Ordinal);
+                    int start = userId.IndexOf("\\", StringComparison.Ordinal);
 
                     if (start > -1)
                     {
@@ -244,7 +246,7 @@ namespace HETSAPI.Authentication
                     siteMinderGuid = context.Request.Headers[options.SiteMinderUserGuidKey];
 
                     // **************************************************
-                    // Validate credentials
+                    // validate credentials
                     // **************************************************
                     if (string.IsNullOrEmpty(userId))
                     {
@@ -260,7 +262,7 @@ namespace HETSAPI.Authentication
                 }
 
                 // **************************************************
-                // Validate credential against database              
+                // validate credential against database              
                 // **************************************************
                 _logger.LogInformation("Validating credential against the HETS db");
 
@@ -276,60 +278,60 @@ namespace HETSAPI.Authentication
 
                 if (!userSettings.HetsUser.Active)
                 {
-                    _logger.LogWarning(options.InactivegDbUserIdError + " (" + userId + ")");
-                    return Task.FromResult(AuthenticateResult.Fail(options.InactivegDbUserIdError));
+                    _logger.LogWarning(options.InactiveDbUserIdError + " (" + userId + ")");
+                    return Task.FromResult(AuthenticateResult.Fail(options.InactiveDbUserIdError));
                 }
 
                 // **************************************************
-                // Update the user back to their default district
+                // update the user back to their default district
                 // **************************************************
                 string tempSwitch = context.Request.Cookies["HETSDistrict"];
 
                 if (string.IsNullOrEmpty(tempSwitch) && userSettings.HetsUser != null)
                 {
-                    UserDistrict userDistrict = dbAppContext.UserDistricts.AsNoTracking()
+                    HetUserDistrict userDistrict = dbAppContext.HetUserDistrict.AsNoTracking()
                         .Include(x => x.User)
                         .Include(x => x.District)
-                        .FirstOrDefault(x => x.User.Id == userSettings.HetsUser.Id &&
+                        .FirstOrDefault(x => x.User.UserId == userSettings.HetsUser.UserId &&
                                              x.IsPrimary);
 
                     // if we don't find a primary - look for the first one in the list
                     if (userDistrict == null)
                     {
-                        userDistrict = dbAppContext.UserDistricts.AsNoTracking()
+                        userDistrict = dbAppContext.HetUserDistrict.AsNoTracking()
                             .Include(x => x.User)
                             .Include(x => x.District)
-                            .FirstOrDefault(x => x.User.Id == userSettings.HetsUser.Id);
+                            .FirstOrDefault(x => x.User.UserId == userSettings.HetsUser.UserId);
                     }
 
                     // update the current district for the user
-                    if (userDistrict != null && userSettings.HetsUser.DistrictId != userDistrict.District.Id)
+                    if (userDistrict != null && userSettings.HetsUser.DistrictId != userDistrict.District.DistrictId)
                     {
                         _logger.LogInformation("Resetting users district back to primary ({0})", userSettings.HetsUser.SmUserId);
 
-                        userSettings.HetsUser.DistrictId = userDistrict.District.Id;
-                        dbAppContext.Users.Update(userSettings.HetsUser);
+                        userSettings.HetsUser.DistrictId = userDistrict.District.DistrictId;
+                        dbAppContext.HetUser.Update(userSettings.HetsUser);
                         dbAppContext.SaveChanges();
                     }
                 }
 
                 // **************************************************
-                // Validate / check user permissions
+                // validate / check user permissions
                 // **************************************************
                 _logger.LogInformation("Validating user permissions");
 
                 ClaimsPrincipal userPrincipal = userSettings.HetsUser.ToClaimsPrincipal(options.Scheme);
 
-                if (!userPrincipal.HasClaim(User.PermissionClaim, Permission.Login) &&
-                    !userPrincipal.HasClaim(User.PermissionClaim, Permission.BusinessLogin) &&
-                    !userPrincipal.HasClaim(User.PermissionClaim, Permission.ImportData))
+                if (!userPrincipal.HasClaim(HetUser.PermissionClaim, HetPermission.Login) &&
+                    !userPrincipal.HasClaim(HetUser.PermissionClaim, HetPermission.BusinessLogin) &&
+                    !userPrincipal.HasClaim(HetUser.PermissionClaim, HetPermission.ImportData))
                 {
                     _logger.LogWarning(options.MissingDbUserIdError + " (" + userId + ")");
                     return Task.FromResult(AuthenticateResult.Fail(options.InvalidPermissions));
                 }                
 
                 // **************************************************
-                // Create authenticated user
+                // create authenticated user
                 // **************************************************
                 _logger.LogInformation("Authentication successful: " + userId);
                 _logger.LogInformation("Setting identity and creating session for: " + userId);                

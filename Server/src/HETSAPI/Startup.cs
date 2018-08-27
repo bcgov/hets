@@ -1,52 +1,30 @@
-//***********************************************************************************************
-// REST API Documentation for the MOTI Hired Equipment Tracking System (HETS) Application
-//***********************************************************************************************
-// The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe 
-// or other piece of equipment they want to hire out to the transportation ministry for day 
-// labour and  emergency projects.  The Hired Equipment Program distributes available work to 
-// local equipment owners. The program is  based on seniority and is designed to deliver work 
-// to registered users fairly and efficiently  through the development of local 
-// area call-out lists. 
-//***********************************************************************************************
-// OpenAPI spec version: v1
-//***********************************************************************************************
-using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.Features;
-using System.Text;
-using System.Reflection;
-using Hangfire.PostgreSql;
+using Newtonsoft.Json.Serialization;
+using Swashbuckle.AspNetCore.Swagger;
 using Hangfire;
+using Hangfire.PostgreSql;
 using Hangfire.Console;
-using HETSAPI.Models;
-using HETSAPI.Authorization;
-using HETSAPI.Authentication;
+using HetsApi.Authorization;
+using HetsApi.Authentication;
+using HetsData.Model;
 
-namespace HETSAPI
+namespace HetsApi
 {
     /// <summary>
-    /// The application Startup class
+    /// Application startup class
     /// </summary>
     public class Startup
     {
         private readonly IHostingEnvironment _hostingEnv;
 
-        /// <summary>
-        /// HETS Configuration
-        /// </summary>
         public IConfigurationRoot Configuration { get; }
 
-        /// <summary>
-        /// Startup HETS Backend Services
-        /// </summary>
-        /// <param name="env"></param>        
         public Startup(IHostingEnvironment env)
         {
             _hostingEnv = env;            
@@ -60,10 +38,6 @@ namespace HETSAPI
             Configuration = builder.Build();
         }
 
-        /// <summary>
-        /// Add services to the container
-        /// </summary>
-        /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
             string connectionString = GetConnectionString();
@@ -71,12 +45,12 @@ namespace HETSAPI
             // add database context
             services.AddDbContext<DbAppContext>(options => options.UseNpgsql(connectionString));
 
-            // setup siteminder authentication (core 2.0)
+            // setup SiteMinder authentication (core 2.0)
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = SiteMinderAuthOptions.AuthenticationSchemeName;
                 options.DefaultChallengeScheme = SiteMinderAuthOptions.AuthenticationSchemeName;
-            }).AddSiteminderAuth(options =>
+            }).AddSiteMinderAuth(options =>
             {
 
             });
@@ -132,9 +106,6 @@ namespace HETSAPI
                     options.DescribeAllEnumsAsStrings();                    
                 });
             }
-
-            // Add application services.
-            services.RegisterApplicationServices();
         }
 
         /// <summary>
@@ -157,50 +128,20 @@ namespace HETSAPI
             // authenticate users
             app.UseAuthentication();
 
-            // update database environment 
-            if (Configuration != null)
+            // enable Hangfire
+            app.UseHangfireServer();
+
+            // disable the back to site link
+            DashboardOptions dashboardOptions = new DashboardOptions
             {
-                string updateDb = Configuration.GetSection("UpdateLocalDb").Value;
-                if (env.IsDevelopment() && updateDb.ToLower() != "false")
-                {
-                    TryMigrateDatabase(app, loggerFactory);
-                }
-                else if (!env.IsDevelopment())
-                {
-                    TryMigrateDatabase(app, loggerFactory);
-                }
-            }
+                AppPath = null,                    
+                Authorization = new[] { new HangfireAuthorizationFilter() }
+            };
 
-            // do not start Hangfire if we are running tests. 
-            bool startHangfire = true;
-
-#if DEBUG                   
-            foreach (var assem in Assembly.GetEntryAssembly().GetReferencedAssemblies())
-            {
-                if (assem.FullName.ToLowerInvariant().StartsWith("xunit"))
-                {
-                    startHangfire = false;
-                    break;
-                }                
-            }        
-#endif
-
-            if (startHangfire)
-            {
-                // enable Hangfire
-                app.UseHangfireServer();
-
-                // disable the back to site link
-                DashboardOptions dashboardOptions = new DashboardOptions
-                {
-                    AppPath = null,                    
-                    Authorization = new[] { new HangfireAuthorizationFilter() }
-                };
-
-                // enable the hangfire dashboard
-                app.UseHangfireDashboard(Configuration.GetSection("Constants:HangfireUrl").Value, dashboardOptions);
-            }
+            // enable the hangfire dashboard
+            app.UseHangfireDashboard(Configuration.GetSection("Constants:HangfireUrl").Value, dashboardOptions);            
             
+            // setup mvc routes
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -219,53 +160,7 @@ namespace HETSAPI
                 });
             }                                
         }
-
-        /// <summary>
-        /// Database Migration
-        /// </summary>
-        /// <param name="app"></param>
-        /// <param name="loggerFactory"></param>
-        private void TryMigrateDatabase(IApplicationBuilder app, ILoggerFactory loggerFactory)
-        {
-            ILogger log = loggerFactory.CreateLogger(typeof(Startup));
-            log.LogInformation("Attempting to migrate the database ...");
-
-            try
-            {
-                using (IServiceScope serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-                {
-                    log.LogInformation("Fetching the application's database context ...");
-                    DbContext context = serviceScope.ServiceProvider.GetService<DbAppContext>();
-
-                    log.LogInformation("Migrating the database ...");
-                    context.Database.Migrate();
-                    log.LogInformation("The database migration complete.");
-
-                    log.LogInformation("Updating the database documentation ...");
-                    DbCommentsUpdater<DbAppContext> updater = new DbCommentsUpdater<DbAppContext>((DbAppContext)context);
-                    updater.UpdateDatabaseDescriptions();
-                    log.LogInformation("The database documentation has been updated.");
-                    
-                    log.LogInformation("Adding/Updating seed data ...");
-                    Seeders.SeedFactory<DbAppContext> seederFactory = new Seeders.SeedFactory<DbAppContext>(Configuration, _hostingEnv, loggerFactory);
-                    seederFactory.Seed((DbAppContext) context);
-                    log.LogInformation("Seeding operations are complete.");
-                }
-
-                log.LogInformation("All database migration activities are complete.");
-            }
-            catch (Exception e)
-            {
-                StringBuilder msg = new StringBuilder();
-                msg.AppendLine("The database migration failed!");
-                msg.AppendLine("The database may not be available and the application will not function as expected.");
-                msg.AppendLine("Please ensure a database is available and the connection string is correct.");
-                msg.AppendLine("If you are running in a development environment, ensure your test database and server configuraiotn match the project's default connection string.");
-
-                log.LogCritical(new EventId(-1, "Database Migration Failed"), e, msg.ToString());
-            }
-        }
-
+        
         /// <summary>
         /// Retrieve database connection string
         /// </summary>
@@ -281,12 +176,11 @@ namespace HETSAPI
 
             if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(database))
             {
-                // When things get cleaned up properly, this is the only call we'll have to make.
                 connectionString = Configuration.GetConnectionString("HETS");
             }
             else
             {
-                // Environment variables override all other settings; same behaviour as the configuration provider when things get cleaned up. 
+                // environment variables override all other settings (OpenShift)
                 connectionString = $"Host={host};Username={username};Password={password};Database={database};";
             }
 

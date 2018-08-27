@@ -5,7 +5,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace HETSAPI.Helpers
+namespace HetsApi.Helpers
 {
     /// <summary>
     /// Comma-Separated Value Binding Helper

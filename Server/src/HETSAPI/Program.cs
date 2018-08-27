@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace HETSAPI
+namespace HetsApi
 {
     /// <summary>
     /// The main Program for the application.

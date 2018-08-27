@@ -1,6 +1,6 @@
-﻿using HETSAPI.Models;
+﻿using HetsData.Model;
 
-namespace HETSAPI.Authentication
+namespace HetsApi.Authentication
 {
     /// <summary>
     /// Object to track and manage the authenticated user session
@@ -25,7 +25,7 @@ namespace HETSAPI.Authentication
         /// <summary>
         /// HETS User Model
         /// </summary>
-        public User HetsUser { get; set; }        
+        public HetUser HetsUser { get; set; }        
     }
 }
 

@@ -1,14 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace HETSCommon
+namespace HetsCommon
 {
     public static class VersionInfoExtensions
     {
@@ -51,12 +51,12 @@ namespace HETSCommon
                 Commit = commit,
                 Description = assembly.GetCustomAttribute<AssemblyDescriptionAttribute>().Description,
                 FileVersion = assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version,
-                FileCreationTime = creationTime.ToString("O"), // Use the round trip format as it includes the time zone.
+                FileCreationTime = creationTime.ToString("O"), // use the round trip format as it includes the time zone
                 InformationalVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion,
                 TargetFramework = assembly.GetCustomAttribute<TargetFrameworkAttribute>().FrameworkName,
                 Title = assembly.GetCustomAttribute<AssemblyTitleAttribute>().Title,
                 ImageRuntimeVersion = assembly.ImageRuntimeVersion,
-                Dependancies = assembly.GetReferencedAssemblies().ToIEnumerableVersionInfo()
+                Dependencies = assembly.GetReferencedAssemblies().ToIEnumerableVersionInfo()
             };
 
             return info;

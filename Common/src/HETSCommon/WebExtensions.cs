@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 
-namespace HETSCommon
+namespace HetsCommon
 {
     public static class WebExtensions
     {
@@ -44,6 +44,7 @@ namespace HETSCommon
                 }
                 value.Append(item);
             }
+
             return value.ToString();
         }
     }

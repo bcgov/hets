@@ -1,6 +1,6 @@
 ﻿using Hangfire.Dashboard;
 
-namespace HETSAPI.Authorization
+namespace HetsApi.Authorization
 {    
     public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
     {

@@ -1,4 +1,4 @@
-﻿namespace PDF.Server.Models
+﻿namespace Pdf.Server.Models
 {
     /// <summary>
     /// Home Page Model

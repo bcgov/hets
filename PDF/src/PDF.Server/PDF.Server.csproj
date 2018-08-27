@@ -2,10 +2,11 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <PreserveCompilationContext>true</PreserveCompilationContext>
-    <AssemblyName>PDF.Server</AssemblyName>    
+    <AssemblyName>Pdf.Server</AssemblyName>    
     <PackageId>PDF.Server</PackageId>    
-    <StartupObject>PDF.Server.Program</StartupObject>    
-    <Configurations>Debug;Release</Configurations>
+    <StartupObject>Pdf.Server.Program</StartupObject>    
+    <Configurations>Debug;Release</Configurations>    
+    <RootNamespace>Pdf.Server</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Templates\owner_verification.mustache" />

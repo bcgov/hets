@@ -1,53 +1,65 @@
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Swashbuckle.AspNetCore.Annotations;
-using HETSAPI.Models;
-using HETSAPI.Services;
-using HETSAPI.Authorization;
+using HetsApi.Authorization;
+using HetsApi.Helpers;
+using HetsApi.Model;
+using HetsData.Model;
 
-namespace HETSAPI.Controllers
+namespace HetsApi.Controllers
 {
     /// <summary>
     /// Contact Controller
     /// </summary>
+    [Route("api/contacts")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class ContactController : Controller
     {
-        private readonly IContactService _service;
+        private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
-        /// <summary>
-        /// Contract Controller Constructor
-        /// </summary>
-        public ContactController(IContactService service)
+        public ContactController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
-            _service = service;
-        }
-
-        /// <summary>
-        /// Create bulk contact records
-        /// </summary>
-        /// <param name="items"></param>
-        /// <response code="201">Contact created</response>
-        [HttpPost]
-        [Route("/api/contacts/bulk")]
-        [SwaggerOperation("ContactsBulkPost")]
-        [RequiresPermission(Permission.Admin)]
-        public virtual IActionResult ContactsBulkPost([FromBody]Contact[] items)
-        {
-            return _service.ContactsBulkPostAsync(items);
+            _context = context;
+            _configuration = configuration;    
+            
+            // set context data
+            HetUser user = ModelHelper.GetUser(context, httpContextAccessor.HttpContext);
+            _context.SmUserId = user.SmUserId;
+            _context.DirectoryName = user.SmAuthorizationDirectory;
+            _context.SmUserGuid = user.Guid;
         }
 
         /// <summary>
         /// Delete contact
         /// </summary>
         /// <param name="id">id of Contact to delete</param>
-        /// <response code="200">OK</response>
         [HttpPost]
-        [Route("/api/contacts/{id}/delete")]
+        [Route("{id}/delete")]
         [SwaggerOperation("ContactsIdDeletePost")]
-        [RequiresPermission(Permission.Login)]
+        [SwaggerResponse(200, type: typeof(Contact))]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult ContactsIdDeletePost([FromRoute]int id)
         {
-            return this._service.ContactsIdDeletePostAsync(id);
-        }
+            bool exists = _context.HetContact.Any(a => a.ContactId == id);
+
+            // not found
+            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            
+            HetContact item = _context.HetContact.First(a => a.ContactId == id);
+
+            _context.HetContact.Remove(item);
+
+            // save the changes
+            _context.SaveChanges();
+
+            // convert to UI model
+            Contact response = new Contact();
+            response = (Contact)ModelHelper.CopyProperties(item, response);
+
+            return new ObjectResult(new HetsResponse(response));
+        }        
     }
 }
