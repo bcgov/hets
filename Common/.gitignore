@@ -276,3 +276,6 @@ __pycache__/
 
 # SonarQube
 *.sonarqube
+
+*.DotSettings
+*.DotSettings.user
