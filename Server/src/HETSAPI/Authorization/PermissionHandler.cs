@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HetsApi.Authorization
 {
@@ -49,7 +49,7 @@ namespace HetsApi.Authorization
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
         {            
             // **************************************************
-            // Check if we have a Dev Environment Cookie
+            // check if we have a Dev Environment Cookie
             // **************************************************
             if (_hostingEnv.IsDevelopment())
             {
@@ -64,9 +64,9 @@ namespace HetsApi.Authorization
                     return;
                 }
             }
-            
+
             // **************************************************
-            // If not - check the users permissions
+            // if not - check the users permissions
             // **************************************************
             if (context.User.HasPermissions(requirement.RequiredPermissions.ToArray()))
             {

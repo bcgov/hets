@@ -1,84 +1,184 @@
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
-using HETSAPI.Models;
-using HETSAPI.Services;
-using HETSAPI.Authorization;
+using HetsApi.Authorization;
+using HetsApi.Helpers;
+using HetsApi.Model;
+using HetsData.Model;
 
 namespace HetsApi.Controllers
 {
     /// <summary>
     /// Equipment Attachment Controller
     /// </summary>
+    [Route("/api/equipmentAttachments")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class EquipmentAttachmentController : Controller
     {
-        private readonly IEquipmentAttachmentService _service;
+        private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
-        /// <summary>
-        /// Equipment Attachment Controller Constructor
-        /// </summary>
-        public EquipmentAttachmentController(IEquipmentAttachmentService service)
+        public EquipmentAttachmentController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
-            _service = service;
+            _context = context;
+            _configuration = configuration;    
+            
+            // set context data
+            HetUser user = ModelHelper.GetUser(context, httpContextAccessor.HttpContext);
+            _context.SmUserId = user.SmUserId;
+            _context.DirectoryName = user.SmAuthorizationDirectory;
+            _context.SmUserGuid = user.Guid;
         }
-
-        /// <summary>
-        /// Create bulk equipment attachment records
-        /// </summary>
-        /// <param name="items"></param>
-        /// <response code="201">EquipmentAttachment created</response>
-        [HttpPost]
-        [Route("/api/equipmentAttachments/bulk")]
-        [SwaggerOperation("EquipmentAttachmentsBulkPost")]
-        [RequiresPermission(Permission.Admin)]
-        public virtual IActionResult EquipmentAttachmentsBulkPost([FromBody]EquipmentAttachment[] items)
-        {
-            return _service.EquipmentAttachmentsBulkPostAsync(items);
-        }        
 
         /// <summary>	
         /// Delete equipment attachment	
         /// </summary>	
-        /// <param name="id">id of EquipmentAttachment to delete</param>	
-        /// <response code="200">OK</response>	
-        [HttpPost]	
-        [Route("/api/equipmentAttachments/{id}/delete")]	
+        /// <param name="id">id of EquipmentAttachment to delete</param>		
+        [HttpPost]
+        [Route("{id}/delete")]
         [SwaggerOperation("EquipmentAttachmentsIdDeletePost")]
-        [RequiresPermission(Permission.Login)]
+        [SwaggerResponse(200, type: typeof(EquipmentAttachment))]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult EquipmentAttachmentsIdDeletePost([FromRoute]int id)
-        {	
-            return _service.EquipmentAttachmentsIdDeletePostAsync(id);	
-        }	
-	        
+        {
+            bool exists = _context.HetEquipmentAttachment.Any(a => a.EquipmentAttachmentId == id);
+
+            // not found
+            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            
+            HetEquipmentAttachment item = _context.HetEquipmentAttachment
+                .Include(x => x.Equipment)
+                .First(a => a.EquipmentAttachmentId == id);
+
+            _context.HetEquipmentAttachment.Remove(item);
+
+            // save the changes
+            _context.SaveChanges();
+
+            // convert to UI model
+            EquipmentAttachment response = new EquipmentAttachment();
+            response = (EquipmentAttachment)ModelHelper.CopyProperties(item, response);
+
+            return new ObjectResult(new HetsResponse(response));
+        }
+
         /// <summary>	
         /// Update equipment attachment	
         /// </summary>	
         /// <param name="id">id of EquipmentAttachment to update</param>	
         /// <param name="item"></param>	
-        /// <response code="200">OK</response>	
-        [HttpPut]	
-        [Route("/api/equipmentAttachments/{id}")]	
-        [SwaggerOperation("EquipmentAttachmentsIdPut")]	
+        [HttpPut]
+        [Route("{id}")]
+        [SwaggerOperation("EquipmentAttachmentsIdPut")]
         [SwaggerResponse(200, type: typeof(EquipmentAttachment))]
-        [RequiresPermission(Permission.Login)]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult EquipmentAttachmentsIdPut([FromRoute]int id, [FromBody]EquipmentAttachment item)
-        {	
-            return _service.EquipmentAttachmentsIdPutAsync(id, item);	
-        }	
-	
+        {
+            if (id != item.Id)
+            {
+                // not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            }
+
+            bool exists = _context.HetEquipmentAttachment.Any(a => a.EquipmentAttachmentId == id);
+
+            if (!exists)
+            {
+                // not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            }
+
+            // get record
+            HetEquipmentAttachment equipmentAttachment = _context.HetEquipmentAttachment
+                .First(x => x.EquipmentAttachmentId == id);
+
+            equipmentAttachment.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
+            equipmentAttachment.Description = item.Description;
+            equipmentAttachment.TypeName = item.TypeName;
+            equipmentAttachment.EquipmentId = item.EquipmentId;      
+
+            _context.HetEquipmentAttachment.Update(equipmentAttachment);
+
+            // save the changes
+            _context.SaveChanges();
+
+            // return the updated condition type record
+            HetEquipmentAttachment updEquipmentAttachment = _context.HetEquipmentAttachment.AsNoTracking()
+                .Include(x => x.Equipment)
+                .FirstOrDefault(a => a.EquipmentAttachmentId == id);
+
+            // convert to UI model
+            EquipmentAttachment response = new EquipmentAttachment();
+            response = (EquipmentAttachment)ModelHelper.CopyProperties(updEquipmentAttachment, response);
+
+            return new ObjectResult(new HetsResponse(response));
+        }
+
         /// <summary>	
         /// Create equipment attachment	
         /// </summary>	
         /// <param name="item"></param>	
-        /// <response code="201">EquipmentAttachment created</response>	
-        [HttpPost]	
-        [Route("/api/equipmentAttachments")]	
-        [SwaggerOperation("EquipmentAttachmentsPost")]	
+        [HttpPost]
+        [Route("")]
+        [SwaggerOperation("EquipmentAttachmentsPost")]
         [SwaggerResponse(200, type: typeof(EquipmentAttachment))]
-        [RequiresPermission(Permission.Login)]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult EquipmentAttachmentsPost([FromBody]EquipmentAttachment item)
-        {	
-            return _service.EquipmentAttachmentsPostAsync(item);	
+        {
+            if (item != null)
+            {
+                // not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            }
+
+            bool exists = _context.HetEquipmentAttachment.Any(a => a.EquipmentAttachmentId == item.Id);
+
+            if (!exists)
+            {
+                // update record
+                HetEquipmentAttachment equipmentAttachment = _context.HetEquipmentAttachment
+                    .First(x => x.EquipmentAttachmentId == item.Id);
+
+                equipmentAttachment.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
+                equipmentAttachment.Description = item.Description;
+                equipmentAttachment.TypeName = item.TypeName;
+                equipmentAttachment.EquipmentId = item.EquipmentId;
+
+                _context.HetEquipmentAttachment.Update(equipmentAttachment);
+            }
+            else
+            {
+                // create record
+                HetEquipmentAttachment equipmentAttachment = new HetEquipmentAttachment
+                {
+                    ConcurrencyControlNumber = item.ConcurrencyControlNumber,
+                    Description = item.Description,
+                    TypeName = item.TypeName,
+                    EquipmentId = item.EquipmentId
+                };
+                
+                _context.HetEquipmentAttachment.Add(equipmentAttachment);
+            }
+            
+            // save the changes
+            _context.SaveChanges();
+
+            // get the id (in the case of new records)
+            int id = item.Id;
+
+            // return the updated condition type record
+            HetEquipmentAttachment updEquipmentAttachment = _context.HetEquipmentAttachment.AsNoTracking()
+                .Include(x => x.Equipment)
+                .FirstOrDefault(a => a.EquipmentAttachmentId == id);
+
+            // convert to UI model
+            EquipmentAttachment response = new EquipmentAttachment();
+            response = (EquipmentAttachment)ModelHelper.CopyProperties(updEquipmentAttachment, response);
+
+            return new ObjectResult(new HetsResponse(response));
         }
     }
 }

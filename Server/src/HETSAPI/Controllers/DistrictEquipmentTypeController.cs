@@ -1,84 +1,130 @@
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
-using HETSAPI.Models;
-using HETSAPI.Services;
-using HETSAPI.Authorization;
+using HetsApi.Authorization;
+using HetsApi.Helpers;
+using HetsApi.Model;
+using HetsData.Model;
 
 namespace HetsApi.Controllers
 {
     /// <summary>
-    /// District Equipment Controller
+    /// District Equipment Type Controller
     /// </summary>
+    [Route("/api/districtEquipmentTypes")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class DistrictEquipmentTypeController : Controller
     {
-        private readonly IDistrictEquipmentTypeService _service;
+        private readonly DbAppContext _context;
+        private readonly IConfiguration _configuration;
 
-        /// <summary>
-        /// District Equipment Type Controller Constructor
-        /// </summary>
-        public DistrictEquipmentTypeController(IDistrictEquipmentTypeService service)
+        public DistrictEquipmentTypeController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
-            _service = service;
-        }
-
-        /// <summary>
-        /// Create bulk district equipment type records
-        /// </summary>
-        /// <param name="items"></param>
-        /// <response code="201">DistrictEquipmentType created</response>
-        [HttpPost]
-        [Route("/api/districtEquipmentTypes/bulk")]
-        [SwaggerOperation("DistrictEquipmentTypesBulkPost")]
-        [RequiresPermission(Permission.Admin)]
-        public virtual IActionResult DistrictEquipmentTypesBulkPost([FromBody]DistrictEquipmentType[] items)
-        {
-            return _service.DistrictEquipmentTypesBulkPostAsync(items);
+            _context = context;
+            _configuration = configuration;    
+            
+            // set context data
+            HetUser user = ModelHelper.GetUser(context, httpContextAccessor.HttpContext);
+            _context.SmUserId = user.SmUserId;
+            _context.DirectoryName = user.SmAuthorizationDirectory;
+            _context.SmUserGuid = user.Guid;
         }
 
         /// <summary>
         /// Get all district equipment types
         /// </summary>
-        /// <response code="200">OK</response>
         [HttpGet]
-        [Route("/api/districtEquipmentTypes")]
+        [Route("")]
         [SwaggerOperation("DistrictEquipmentTypesGet")]
         [SwaggerResponse(200, type: typeof(List<DistrictEquipmentType>))]
-        [RequiresPermission(Permission.Login)]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult DistrictEquipmentTypesGet()
         {
-            return _service.DistrictEquipmentTypesGetAsync();
+            // get current users district id
+            int? districtId = ModelHelper.GetUsersDistrictId(_context, HttpContext);
+
+            // not found
+            if (districtId == null) return new ObjectResult(new List<ConditionType>());
+
+            List<HetDistrictEquipmentType> equipmentTypes = _context.HetDistrictEquipmentType.AsNoTracking()
+                .Include(x => x.District)
+                    .ThenInclude(y => y.Region)
+                .Include(x => x.EquipmentType)
+                .Where(x => x.District.DistrictId == districtId)
+                .OrderBy(x => x.DistrictEquipmentName)
+                .ToList();
+
+            // convert to UI model
+            List<DistrictEquipmentType> response = new List<DistrictEquipmentType>();
+
+            foreach (HetDistrictEquipmentType equipmentType in equipmentTypes)
+            {
+                if (equipmentType != null)
+                {
+                    DistrictEquipmentType temp = new DistrictEquipmentType();
+                    response.Add((DistrictEquipmentType)ModelHelper.CopyProperties(equipmentType, temp));
+                }
+            }
+
+            return new ObjectResult(response);
         }
 
         /// <summary>
         /// Delete district equipment type
         /// </summary>
         /// <param name="id">id of DistrictEquipmentType to delete</param>
-        /// <response code="200">OK</response>
         [HttpPost]
-        [Route("/api/districtEquipmentTypes/{id}/delete")]
+        [Route("{id}/delete")]
         [SwaggerOperation("DistrictEquipmentTypesIdDeletePost")]
-        [RequiresPermission(Permission.DistrictCodeTableManagement)]
+        [SwaggerResponse(200, type: typeof(DistrictEquipmentType))]
+        [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
         public virtual IActionResult DistrictEquipmentTypesIdDeletePost([FromRoute]int id)
         {
-            return _service.DistrictEquipmentTypesIdDeletePostAsync(id);
+            bool exists = _context.HetDistrictEquipmentType.Any(a => a.DistrictEquipmentTypeId == id);
+
+            // not found
+            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            HetDistrictEquipmentType item = _context.HetDistrictEquipmentType.First(a => a.DistrictEquipmentTypeId == id);
+
+            _context.HetDistrictEquipmentType.Remove(item);
+
+            // save the changes
+            _context.SaveChanges();
+
+            // convert to UI model
+            DistrictEquipmentType response = new DistrictEquipmentType();
+            response = (DistrictEquipmentType)ModelHelper.CopyProperties(item, response);
+
+            return new ObjectResult(new HetsResponse(response));
         }
 
         /// <summary>
         /// Get district equipment type by id
         /// </summary>
         /// <param name="id">id of DistrictEquipmentType to fetch</param>
-        /// <response code="200">OK</response>
-        /// <response code="404">DistrictEquipmentType not found</response>
         [HttpGet]
-        [Route("/api/districtEquipmentTypes/{id}")]
+        [Route("{id}")]
         [SwaggerOperation("DistrictEquipmentTypesIdGet")]
         [SwaggerResponse(200, type: typeof(DistrictEquipmentType))]
-        [RequiresPermission(Permission.DistrictCodeTableManagement)]
+        [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
         public virtual IActionResult DistrictEquipmentTypesIdGet([FromRoute]int id)
         {
-            return _service.DistrictEquipmentTypesIdGetAsync(id);
+            HetDistrictEquipmentType equipmentType = _context.HetDistrictEquipmentType.AsNoTracking()
+                .Include(x => x.District)
+                    .ThenInclude(y => y.Region)
+                .Include(x => x.EquipmentType)
+                .FirstOrDefault(a => a.DistrictEquipmentTypeId == id);
+            
+            // convert to UI model
+            DistrictEquipmentType response = new DistrictEquipmentType();
+            response = (DistrictEquipmentType)ModelHelper.CopyProperties(equipmentType, response);
+
+            return new ObjectResult(new HetsResponse(response));
         }
 
         /// <summary>
@@ -86,15 +132,68 @@ namespace HetsApi.Controllers
         /// </summary>
         /// <param name="id">id of DistrictEquipmentType to update (0 to create)</param>
         /// <param name="item"></param>
-        /// <response code="200">OK</response>
         [HttpPost]
-        [Route("/api/districtEquipmentTypes/{id}")]
+        [Route("{id}")]
         [SwaggerOperation("DistrictEquipmentTypesIdPost")]
         [SwaggerResponse(200, type: typeof(DistrictEquipmentType))]
-        [RequiresPermission(Permission.DistrictCodeTableManagement)]
+        [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
         public virtual IActionResult DistrictEquipmentTypesIdPost([FromRoute]int id, [FromBody]DistrictEquipmentType item)
         {
-            return _service.DistrictEquipmentTypesIdPostAsync(id, item);
-        }       
+            if (id != item.Id)
+            {
+                // not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            }
+
+            // add or update equipment type            
+            if (item.Id > 0)
+            {
+                bool exists = _context.HetDistrictEquipmentType.Any(a => a.DistrictEquipmentTypeId == id);
+
+                if (!exists)
+                {
+                    // not found
+                    return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                }
+
+                // get record
+                HetDistrictEquipmentType equipment = _context.HetDistrictEquipmentType.First(x => x.DistrictEquipmentTypeId == id);
+
+                equipment.DistrictEquipmentName = item.DistrictEquipmentName;
+                equipment.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
+                equipment.DistrictId = item.DistrictId;
+                equipment.EquipmentTypeId = item.EquipmentTypeId;
+            }
+            else
+            {
+                HetDistrictEquipmentType equipment = new HetDistrictEquipmentType
+                {
+                    DistrictEquipmentName = item.DistrictEquipmentName,
+                    DistrictId = item.District != null ? item.DistrictId : null,
+                    EquipmentTypeId = item.EquipmentTypeId
+                };
+
+                _context.HetDistrictEquipmentType.Add(equipment);
+            }
+
+            // save the changes
+            _context.SaveChanges();
+
+            // get the id (in the case of new records)
+            id = item.Id;
+
+            // return the updated equipment type record
+            HetDistrictEquipmentType equipmentType = _context.HetDistrictEquipmentType.AsNoTracking()
+                .Include(x => x.District)
+                    .ThenInclude(y => y.Region)
+                .Include(x => x.EquipmentType)
+                .FirstOrDefault(a => a.DistrictEquipmentTypeId == id);
+
+            // convert to UI model
+            DistrictEquipmentType response = new DistrictEquipmentType();
+            response = (DistrictEquipmentType)ModelHelper.CopyProperties(equipmentType, response);
+
+            return new ObjectResult(new HetsResponse(response));
+        }        
     }
 }

@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using System;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Diagnostics;
-using HETSAPI.Authentication;
+using HetsApi.Authentication;
 
 namespace HetsApi.Controllers
 {
     /// <summary>
-    /// Development Environment Authentication Service
+    /// Authentication Controller
     /// </summary>
     [Route("api/authentication")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
@@ -36,8 +36,8 @@ namespace HetsApi.Controllers
         [AllowAnonymous]
         public virtual IActionResult GetDevAuthenticationCookie(string userId)
         {
-            if(!_env.IsDevelopment()) return BadRequest("This API is not available outside a development environment.");
-            
+            if (!_env.IsDevelopment()) return BadRequest("This API is not available outside a development environment.");
+
             if (string.IsNullOrEmpty(userId)) return BadRequest("Missing required userid query parameter.");
 
             if (userId.ToLower() == "default")
@@ -45,15 +45,15 @@ namespace HetsApi.Controllers
 
             string temp = HttpContext.Request.Cookies[_options.DevAuthenticationTokenKey];
             Debug.WriteLine("Current Cookie User: " + temp);
-            
-            // crearte new "dev" user cookie
+
+            // create new "dev" user cookie
             Response.Cookies.Append(
                 _options.DevAuthenticationTokenKey,
                 userId,
                 new CookieOptions
                 {
                     Path = "/",
-                    SameSite = SameSiteMode.None,                    
+                    SameSite = SameSiteMode.None,
                     Expires = DateTime.UtcNow.AddDays(7)
                 }
             );
@@ -68,7 +68,7 @@ namespace HetsApi.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("dev/cleartoken")]
+        [Route("dev/clearToken")]
         [AllowAnonymous]
         public virtual IActionResult ClearDevAuthenticationCookie()
         {
@@ -76,13 +76,13 @@ namespace HetsApi.Controllers
 
             string temp = HttpContext.Request.Cookies[_options.DevAuthenticationTokenKey];
             Debug.WriteLine("Current Cookie User: " + temp);
-            
+
             // expire "dev" user cookie
             Response.Cookies.Append(
                 _options.DevAuthenticationTokenKey,
                 temp,
                 new CookieOptions
-                {       
+                {
                     Path = "/",
                     SameSite = SameSiteMode.None,
                     Expires = DateTime.UtcNow.AddDays(-1)
@@ -95,3 +95,4 @@ namespace HetsApi.Controllers
         }
     }
 }
+

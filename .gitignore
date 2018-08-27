@@ -16,3 +16,6 @@ PDF/.sonarqube
 *.vs*
 launchSettings.json
 applicationHost.config
+
+*.DotSettings
+*.DotSettings.user

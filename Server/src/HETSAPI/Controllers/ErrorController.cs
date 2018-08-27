@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
-using HETSAPI.ViewModels;
 using Microsoft.AspNetCore.Http.Features;
+using HetsApi.Model;
 
 namespace HetsApi.Controllers
 {
     /// <summary>
-    /// Error Controller for HETS API Application
+    /// Error Controller for HetsApi
     /// </summary>
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     [ApiExplorerSettings(IgnoreApi = true)]
@@ -34,7 +34,7 @@ namespace HetsApi.Controllers
         [AllowAnonymous]
         public IActionResult Index()
         {
-            HomeViewModel home = new HomeViewModel();
+            HomeModel home = new HomeModel();
 
             // if we don't have a context - exit
             if (HttpContext == null) return View(home);
@@ -63,6 +63,7 @@ namespace HetsApi.Controllers
             string source = "";
 
             PropertyInfo pi = feature?.Error.GetType().GetProperty("SourceMethod");
+
             if (pi != null)
             {
                 string tempValue = (string)pi.GetValue(feature.Error, null);

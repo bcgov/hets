@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HetsApi.Authorization
 {
@@ -18,8 +18,7 @@ namespace HetsApi.Authorization
         /// Attribute Extension - Permissions Required
         /// </summary>
         /// <param name="permissions"></param>
-        public RequiresPermissionAttribute(params string[] permissions)
-           : base(typeof(ImplementationRequiresPermissionAttribute))
+        public RequiresPermissionAttribute(params string[] permissions) : base(typeof(ImplementationRequiresPermissionAttribute))
         {
             Arguments = new object[] { new PermissionRequirement(permissions) };
         }
@@ -54,8 +53,7 @@ namespace HetsApi.Authorization
                 // check the context - ignore certain paths
                 string url = context.HttpContext.Request.Path;
 
-                Debug.WriteLine(string.Format("Authorizing request (user: {0} | path: {1})",
-                    context.HttpContext.User.Identity.Name, url));
+                Debug.WriteLine("Authorizing request (user: {0} | path: {1})", context.HttpContext.User.Identity.Name, url);
 
                 if (url.Contains("/authentication/dev") ||
                     url.Contains("/error") ||

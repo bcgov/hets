@@ -1,54 +1,62 @@
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using HETSAPI.Models;
-using HETSAPI.Services;
-using HETSAPI.Authorization;
 using Swashbuckle.AspNetCore.Annotations;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using HetsApi.Authorization;
+using HetsApi.Helpers;
+using HetsApi.Model;
+using HetsData.Model;
 
 namespace HetsApi.Controllers
 {
     /// <summary>
     /// City Controller
-    /// </summary>    
+    /// </summary>
+    [Route("api")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class CityController : Controller
     {
-        private readonly ICityService _service;
+        private readonly DbAppContext _context;
 
-        /// <summary>
-        /// City Controller Constructor
-        /// </summary>
-        public CityController(ICityService service)
+        public CityController(DbAppContext context, IHttpContextAccessor httpContextAccessor)
         {
-            _service = service;
-        }
+            _context = context;
 
-        /// <summary>
-        /// Create bulk city records
-        /// </summary>
-        /// <param name="items"></param>
-        /// <response code="201">City created</response>
-        [HttpPost]
-        [Route("/api/cities/bulk")]
-        [SwaggerOperation("CitiesBulkPost")]
-        [RequiresPermission(Permission.Admin)]
-        public virtual IActionResult CitiesBulkPost([FromBody]City[] items)
-        {
-            return _service.CitiesBulkPostAsync(items);
+            // set context data
+            HetUser user = ModelHelper.GetUser(context, httpContextAccessor.HttpContext);
+            _context.SmUserId = user.SmUserId;
+            _context.DirectoryName = user.SmAuthorizationDirectory;
+            _context.SmUserGuid = user.Guid;
         }
 
         /// <summary>
         /// Get all cities
         /// </summary>
-        /// <response code="200">OK</response>
         [HttpGet]
-        [Route("/api/cities")]
+        [Route("cities")]
         [SwaggerOperation("CitiesGet")]
         [SwaggerResponse(200, type: typeof(List<City>))]
-        [RequiresPermission(Permission.Login)]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult CitiesGet()
         {
-            return _service.CitiesGetAsync();
-        }        
+            // get all cities
+            List<HetCity> cities = _context.HetCity.AsNoTracking().ToList();
+
+            // convert to UI model
+            List<City> response = new List<City>();
+
+            foreach (HetCity city in cities)
+            {
+                if (city != null)
+                {
+                    City temp = new City();
+                    response.Add((City)ModelHelper.CopyProperties(city, temp));
+                }
+            }
+
+            return new ObjectResult(response);
+        }
     }
 }

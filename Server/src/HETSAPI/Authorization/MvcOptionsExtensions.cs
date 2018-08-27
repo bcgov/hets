@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using HETSAPI.Models;
+using HetsData.Model;
 
 namespace HetsApi.Authorization
 {
@@ -24,7 +24,8 @@ namespace HetsApi.Authorization
             AuthorizationPolicy requireLoginPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .RequireAssertion(                    
-                    context => context.User.HasOnePermission(Permission.Login, Permission.BusinessLogin, Permission.ImportData)
+                    context => context.User.HasOnePermission(
+                        HetPermission.Login, HetPermission.BusinessLogin, HetPermission.ImportData)
                     )
                 .Build();
 

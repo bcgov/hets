@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using HETSAPI.ViewModels;
 using Microsoft.AspNetCore.Http;
+using HetsApi.Model;
 
 namespace HetsApi.Helpers
 {
@@ -18,9 +18,9 @@ namespace HetsApi.Helpers
         /// <param name="files"></param>
         /// <param name="uploadPath"></param>
         /// <returns></returns>
-        public static HomeViewModel UploadFiles(IList<IFormFile> files, string uploadPath)
+        public static HomeModel UploadFiles(IList<IFormFile> files, string uploadPath)
         {
-            HomeViewModel home = new HomeViewModel();
+            HomeModel home = new HomeModel();
             StringBuilder result = new StringBuilder();
 
             if (string.IsNullOrEmpty(uploadPath))

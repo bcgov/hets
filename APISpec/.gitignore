@@ -1,9 +1,0 @@
-.DS_Store
-~*
-*.bk
-*.bck
-orig.*
-in/*.csv
-api
-model
-target/*

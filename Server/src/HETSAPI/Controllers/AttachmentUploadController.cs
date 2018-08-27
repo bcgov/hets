@@ -1,31 +1,34 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using HETSAPI.Models;
-using HETSAPI.Services.Impl;
-using HETSAPI.ViewModels;
-using HETSAPI.Mappings;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
+using HetsApi.Helpers;
+using HetsApi.Model;
+using HetsData.Model;
 
 namespace HetsApi.Controllers
 {
     /// <summary>
     /// Attachment Upload Controller
     /// </summary>
+    [Route("api")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class AttachmentUploadController
+    public class AttachmentUploadController : Controller
     {
-        private readonly IAttachmentUploadService _service;
-
-        /// <summary>
-        /// Attachment Upload Constructor
-        /// </summary>
-        /// <param name="service"></param>
-        public AttachmentUploadController(IAttachmentUploadService service)
+        private readonly DbAppContext _context;
+        
+        public AttachmentUploadController(DbAppContext context, IHttpContextAccessor httpContextAccessor)
         {
-            _service = service;
+            _context = context;
+
+            // set context data
+            HetUser user = ModelHelper.GetUser(context, httpContextAccessor.HttpContext);
+            _context.SmUserId = user.SmUserId;
+            _context.DirectoryName = user.SmAuthorizationDirectory;
+            _context.SmUserGuid = user.Guid;
         }
 
         /// <summary>
@@ -33,25 +36,75 @@ namespace HetsApi.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="files"></param>
-        /// <returns></returns>
         [HttpPost]
-        [Route("/api/equipment/{id}/attachments")]
+        [Route("equipment/{id}/attachments")]
+        [SwaggerOperation("EquipmentIdAttachmentsPost")]
+        [SwaggerResponse(200, type: typeof(List<Attachment>))]
         public virtual IActionResult EquipmentIdAttachmentsPost([FromRoute] int id, [FromForm]IList<IFormFile> files)
         {
-            return _service.EquipmentIdAttachmentsPostAsync(id, files);
+            // validate the id            
+            bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
+
+            if (!exists) return new StatusCodeResult(404);
+            
+            HetEquipment equipment = _context.HetEquipment
+                .Include(x => x.HetAttachment)
+                .First(a => a.EquipmentId == id);
+
+            foreach (IFormFile file in files)
+            {
+                if (file.Length > 0)
+                {
+                    HetAttachment attachment = new HetAttachment();
+
+                    // strip out extra info in the file name                   
+                    if (!string.IsNullOrEmpty(file.FileName))
+                    {
+                        attachment.FileName = Path.GetFileName(file.FileName);
+                    }
+
+                    // allocate storage for the file and create a memory stream
+                    attachment.FileContents = new byte[file.Length];
+
+                    using (MemoryStream fileStream = new MemoryStream(attachment.FileContents))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    attachment.Type = GetType(attachment.FileName);
+                    attachment.MimeType = GetMimeType(attachment.Type);
+
+                    equipment.HetAttachment.Add(attachment);
+                }
+            }
+
+            _context.SaveChanges();
+
+            // convert to UI model
+            List<Attachment> response = new List<Attachment>();
+
+            foreach (HetAttachment attachment in equipment.HetAttachment)
+            {
+                if (attachment != null)
+                {
+                    Attachment temp = new Attachment();
+                    response.Add((Attachment)ModelHelper.CopyProperties(attachment, temp));
+                }
+            }
+
+            return new ObjectResult(response);            
         }
 
         /// <summary>
         /// Get attachments associated with a piece of equipment
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
         [HttpGet]
-        [Route("/api/equipment/{id}/attachmentsForm")]
+        [Route("equipment/{id}/attachmentsForm")]
         [Produces("text/html")]
         public virtual IActionResult EquipmentIdAttachmentsFormGet([FromRoute] int id)
         {
-            return new ObjectResult("<html><body><form method=\"post\" action=\"/api/equipment/"+id+"/attachments\" enctype=\"multipart/form-data\"><input type=\"file\" name = \"files\" multiple /><input type = \"submit\" value = \"Upload\" /></body></html>");
+            return new ObjectResult("<html><body><form method=\"post\" action=\"/api/equipment/" + id + "/attachments\" enctype=\"multipart/form-data\"><input type=\"file\" name = \"files\" multiple /><input type = \"submit\" value = \"Upload\" /></body></html>");
         }
 
         /// <summary>
@@ -59,21 +112,71 @@ namespace HetsApi.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="files"></param>
-        /// <returns></returns>
         [HttpPost]
-        [Route("/api/projects/{id}/attachments")]
+        [Route("projects/{id}/attachments")]
+        [SwaggerOperation("ProjectIdAttachmentsPost")]
+        [SwaggerResponse(200, type: typeof(List<Attachment>))]
         public virtual IActionResult ProjectIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
-            return _service.ProjectIdAttachmentsPostAsync(id, files);
+            // validate the id            
+            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+
+            if (!exists) return new StatusCodeResult(404);
+            
+            HetProject project = _context.HetProject
+                .Include(x => x.HetAttachment)
+                .First(a => a.ProjectId == id);
+
+            foreach (IFormFile file in files)
+            {
+                if (file.Length > 0)
+                {
+                    HetAttachment attachment = new HetAttachment();
+
+                    // strip out extra info in the file name                   
+                    if (!string.IsNullOrEmpty(file.FileName))
+                    {
+                        attachment.FileName = Path.GetFileName(file.FileName);
+                    }
+
+                    // allocate storage for the file and create a memory stream
+                    attachment.FileContents = new byte[file.Length];
+
+                    using (MemoryStream fileStream = new MemoryStream(attachment.FileContents))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    attachment.Type = GetType(attachment.FileName);
+                    attachment.MimeType = GetMimeType(attachment.Type);
+
+                    project.HetAttachment.Add(attachment);
+                }
+            }
+
+            _context.SaveChanges();
+
+            // convert to UI model
+            List<Attachment> response = new List<Attachment>();
+
+            foreach (HetAttachment attachment in project.HetAttachment)
+            {
+                if (attachment != null)
+                {
+                    Attachment temp = new Attachment();
+                    response.Add((Attachment)ModelHelper.CopyProperties(attachment, temp));
+                }
+            }
+
+            return new ObjectResult(response);            
         }
 
         /// <summary>
         /// Get attachments associated with a project
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
         [HttpGet]
-        [Route("/api/projects/{id}/attachmentsForm")]
+        [Route("projects/{id}/attachmentsForm")]
         [Produces("text/html")]
         public virtual IActionResult ProjectIdAttachmentsFormGet([FromRoute] int id)
         {
@@ -85,21 +188,71 @@ namespace HetsApi.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="files"></param>
-        /// <returns></returns>
         [HttpPost]
-        [Route("/api/owners/{id}/attachments")]
+        [Route("owners/{id}/attachments")]
+        [SwaggerOperation("OwnerIdAttachmentsPost")]
+        [SwaggerResponse(200, type: typeof(List<Attachment>))]
         public virtual IActionResult OwnerIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
-            return _service.OwnerIdAttachmentsPostAsync(id, files);
+            // validate the id            
+            bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
+
+            if (!exists) return new StatusCodeResult(404);
+            
+            HetOwner owner = _context.HetOwner
+                .Include(x => x.HetAttachment)
+                .First(a => a.OwnerId == id);
+
+            foreach (IFormFile file in files)
+            {
+                if (file.Length > 0)
+                {
+                    HetAttachment attachment = new HetAttachment();
+
+                    // strip out extra info in the file name                   
+                    if (!string.IsNullOrEmpty(file.FileName))
+                    {
+                        attachment.FileName = Path.GetFileName(file.FileName);
+                    }
+
+                    // allocate storage for the file and create a memory stream
+                    attachment.FileContents = new byte[file.Length];
+
+                    using (MemoryStream fileStream = new MemoryStream(attachment.FileContents))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    attachment.Type = GetType(attachment.FileName);
+                    attachment.MimeType = GetMimeType(attachment.Type);
+
+                    owner.HetAttachment.Add(attachment);
+                }
+            }
+
+            _context.SaveChanges();
+
+            // convert to UI model
+            List<Attachment> response = new List<Attachment>();
+
+            foreach (HetAttachment attachment in owner.HetAttachment)
+            {
+                if (attachment != null)
+                {
+                    Attachment temp = new Attachment();
+                    response.Add((Attachment)ModelHelper.CopyProperties(attachment, temp));
+                }
+            }
+
+            return new ObjectResult(response);            
         }
 
         /// <summary>
-        /// Get attchments associated with an owner
+        /// Get attachments associated with an owner
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
         [HttpGet]
-        [Route("/api/owners/{id}/attachmentsForm")]
+        [Route("owners/{id}/attachmentsForm")]
         [Produces("text/html")]
         public virtual IActionResult OwnerIdAttachmentsFormGet([FromRoute] int id)
         {
@@ -107,16 +260,67 @@ namespace HetsApi.Controllers
         }
 
         /// <summary>
-        /// Associate an attchment with a rental request
+        /// Associate an attachment with a rental request
         /// </summary>
         /// <param name="id"></param>
         /// <param name="files"></param>
-        /// <returns></returns>
         [HttpPost]
-        [Route("/api/rentalrequests/{id}/attachments")]
+        [Route("rentalRequests/{id}/attachments")]
+        [SwaggerOperation("RentalRequestIdAttachmentsPost")]
+        [SwaggerResponse(200, type: typeof(List<Attachment>))]
         public virtual IActionResult RentalRequestIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
-            return _service.RentalRequestIdAttachmentsPostAsync(id, files);
+            // validate the id            
+            bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);
+
+            if (!exists) return new StatusCodeResult(404);
+            
+            HetRentalRequest rentalRequest = _context.HetRentalRequest
+                .Include(x => x.HetAttachment)
+                .First(a => a.RentalRequestId == id);
+
+            foreach (var file in files)
+            {
+                if (file.Length > 0)
+                {
+                    HetAttachment attachment = new HetAttachment();
+
+                    // strip out extra info in the file name                   
+                    if (!string.IsNullOrEmpty(file.FileName))
+                    {
+                        attachment.FileName = Path.GetFileName(file.FileName);
+                    }
+
+                    // allocate storage for the file and create a memory stream
+                    attachment.FileContents = new byte[file.Length];
+
+                    using (MemoryStream fileStream = new MemoryStream(attachment.FileContents))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    attachment.Type = GetType(attachment.FileName);
+                    attachment.MimeType = GetMimeType(attachment.Type);
+
+                    rentalRequest.HetAttachment.Add(attachment);
+                }
+            }
+
+            _context.SaveChanges();
+
+            // convert to UI model
+            List<Attachment> response = new List<Attachment>();
+
+            foreach (HetAttachment attachment in rentalRequest.HetAttachment)
+            {
+                if (attachment != null)
+                {
+                    Attachment temp = new Attachment();
+                    response.Add((Attachment)ModelHelper.CopyProperties(attachment, temp));
+                }
+            }
+
+            return new ObjectResult(response);           
         }
 
         /// <summary>
@@ -125,288 +329,14 @@ namespace HetsApi.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("/api/rentalrequests/{id}/attachmentsForm")]
+        [Route("rentalRequests/{id}/attachmentsForm")]
         [Produces("text/html")]
         public virtual IActionResult RentalRequestIdAttachmentsFormGet([FromRoute] int id)
         {
-            return new ObjectResult("<html><body><form method=\"post\" action=\"/api/rentalrequests/" + id + "/attachments\" enctype=\"multipart/form-data\"><input type=\"file\" name = \"files\" multiple /><input type = \"submit\" value = \"Upload\" /></body></html>");
-        }
-    }
-
-    /// <summary>
-    /// Attachment Upload Service Interface
-    /// </summary>
-    public interface IAttachmentUploadService
-    {
-        /// <summary>
-        /// Basic file receiver for .NET Core
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="files"></param>
-        /// <returns></returns>
-        IActionResult EquipmentIdAttachmentsPostAsync(int id, IList<IFormFile> files);
-
-        /// <summary>
-        /// Basic file receiver for .NET Core
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="files"></param>
-        /// <returns></returns>
-        IActionResult ProjectIdAttachmentsPostAsync(int id, IList<IFormFile> files);
-
-        /// <summary>
-        /// Basic file receiver for .NET Core
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="files"></param>
-        /// <returns></returns>
-        IActionResult OwnerIdAttachmentsPostAsync(int id, IList<IFormFile> files);
-
-        /// <summary>
-        /// Basic file receiver for .NET Core
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="files"></param>
-        /// <returns></returns>
-        IActionResult RentalRequestIdAttachmentsPostAsync(int id, IList<IFormFile> files);
-    }
-
-    /// <summary>
-    /// Attachment Upload Service
-    /// </summary>
-    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class AttachmentUploadService : ServiceBase, IAttachmentUploadService
-    {
-        private readonly DbAppContext _context;
-
-        /// <summary>
-        /// Attachment Upload Constructor
-        /// </summary>
-        /// <param name="httpContextAccessor"></param>
-        /// <param name="context"></param>
-        public AttachmentUploadService(IHttpContextAccessor httpContextAccessor, DbAppContext context) : base(httpContextAccessor, context)
-        {
-            _context = context;
-        }        
-        
-        /// <summary>
-        /// Basic file receiver for .NET Core
-        /// </summary>
-        /// <param name="id">Equipment Id</param>
-        /// <param name="files">Files to add to attachments</param>
-        /// <returns></returns>
-        public IActionResult EquipmentIdAttachmentsPostAsync(int id, IList<IFormFile> files)
-        {
-            // validate the bus id            
-            bool exists = _context.Equipments.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                Equipment equipment = _context.Equipments
-                    .Include(x => x.Attachments)     
-                    .First(a => a.Id == id);
-
-                foreach (var file in files)
-                {
-                    if (file.Length > 0)
-                    {
-                        Attachment attachment = new Attachment();
-
-                        // strip out extra info in the file name                   
-                        if (!string.IsNullOrEmpty(file.FileName))
-                        {
-                            attachment.FileName = Path.GetFileName(file.FileName);
-                        }
-
-                        // allocate storage for the file and create a memory stream
-                        attachment.FileContents = new byte[file.Length];
-
-                        using (MemoryStream fileStream = new MemoryStream(attachment.FileContents))
-                        {
-                            file.CopyTo(fileStream);
-                        }
-
-                        attachment.Type = GetType(attachment.FileName);
-                        attachment.MimeType = GetMimeType(attachment.Type);
-
-                        equipment.Attachments.Add(attachment);
-                    }
-                }
-
-                _context.SaveChanges();
-
-                List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(equipment.Attachments);
-
-                return new ObjectResult(result);
-            }
-
-            // record not found
-            return new StatusCodeResult(404);
+            return new ObjectResult("<html><body><form method=\"post\" action=\"/api/rentalRequests/" + id + "/attachments\" enctype=\"multipart/form-data\"><input type=\"file\" name = \"files\" multiple /><input type = \"submit\" value = \"Upload\" /></body></html>");
         }
 
-        /// <summary>
-        /// Basic file receiver for .NET Core
-        /// </summary>
-        /// <param name="id">Schoolbus Id</param>
-        /// <param name="files">Files to add to attachments</param>
-        /// <returns></returns>
-        public IActionResult ProjectIdAttachmentsPostAsync(int id, IList<IFormFile> files)
-        {
-            // validate the bus id            
-            bool exists = _context.Projects.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                Project project = _context.Projects
-                    .Include(x => x.Attachments)
-                    .First(a => a.Id == id);
-
-                foreach (var file in files)
-                {
-                    if (file.Length > 0)
-                    {
-                        Attachment attachment = new Attachment();
-
-                        // strip out extra info in the file name                   
-                        if (!string.IsNullOrEmpty(file.FileName))
-                        {
-                            attachment.FileName = Path.GetFileName(file.FileName);
-                        }
-
-                        // allocate storage for the file and create a memory stream
-                        attachment.FileContents = new byte[file.Length];
-
-                        using (MemoryStream fileStream = new MemoryStream(attachment.FileContents))
-                        {
-                            file.CopyTo(fileStream);
-                        }
-
-                        attachment.Type = GetType(attachment.FileName);
-                        attachment.MimeType = GetMimeType(attachment.Type);
-
-                        project.Attachments.Add(attachment);
-                    }
-                }
-
-                _context.SaveChanges();
-
-                List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(project.Attachments);
-
-                return new ObjectResult(result);
-            }
-
-            // record not found
-            return new StatusCodeResult(404);
-        }
-
-        /// <summary>
-        /// Basic file receiver for .NET Core
-        /// </summary>
-        /// <param name="id">Schoolbus Id</param>
-        /// <param name="files">Files to add to attachments</param>
-        /// <returns></returns>
-        public IActionResult RentalRequestIdAttachmentsPostAsync(int id, IList<IFormFile> files)
-        {
-            // validate the bus id            
-            bool exists = _context.RentalRequests.Any(a => a.Id == id);
-
-            if (exists)
-            {
-                RentalRequest rentalRequest = _context.RentalRequests
-                    .Include(x => x.Attachments)
-                    .First(a => a.Id == id);
-
-                foreach (var file in files)
-                {
-                    if (file.Length > 0)
-                    {
-                        Attachment attachment = new Attachment();
-
-                        // strip out extra info in the file name                   
-                        if (!string.IsNullOrEmpty(file.FileName))
-                        {
-                            attachment.FileName = Path.GetFileName(file.FileName);
-                        }
-
-                        // allocate storage for the file and create a memory stream
-                        attachment.FileContents = new byte[file.Length];
-
-                        using (MemoryStream fileStream = new MemoryStream(attachment.FileContents))
-                        {
-                            file.CopyTo(fileStream);
-                        }
-
-                        attachment.Type = GetType(attachment.FileName);
-                        attachment.MimeType = GetMimeType(attachment.Type);
-
-                        rentalRequest.Attachments.Add(attachment);
-                    }
-                }
-
-                _context.SaveChanges();
-
-                List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(rentalRequest.Attachments);
-
-                return new ObjectResult(result);
-            }
-
-            // record not found
-            return new StatusCodeResult(404);
-        }
-
-        /// <summary>
-        /// Basic file receiver for .NET Core
-        /// </summary>
-        /// <param name="id">Owner Id</param>
-        /// <param name="files">Files to add to attachments</param>
-        /// <returns></returns>
-        public IActionResult OwnerIdAttachmentsPostAsync(int id, IList<IFormFile> files)
-        {
-            // validate the bus id            
-            bool exists = _context.Owners.Any(a => a.Id == id);
-            if (exists)
-            {
-                Owner owner = _context.Owners
-                    .Include(x => x.Attachments)
-                    .First(a => a.Id == id);
-
-                foreach (var file in files)
-                {
-                    if (file.Length > 0)
-                    {
-                        Attachment attachment = new Attachment();
-
-                        // strip out extra info in the file name                   
-                        if (!string.IsNullOrEmpty(file.FileName))
-                        {
-                            attachment.FileName = Path.GetFileName(file.FileName);
-                        }
-
-                        // allocate storage for the file and create a memory stream
-                        attachment.FileContents = new byte[file.Length];
-
-                        using (MemoryStream fileStream = new MemoryStream(attachment.FileContents))
-                        {
-                            file.CopyTo(fileStream);
-                        }
-
-                        attachment.Type = GetType(attachment.FileName);
-                        attachment.MimeType = GetMimeType(attachment.Type);
-
-                        owner.Attachments.Add(attachment);
-                    }
-                }
-
-                _context.SaveChanges();
-
-                List<AttachmentViewModel> result = MappingExtensions.GetAttachmentListAsViewModel(owner.Attachments);
-
-                return new ObjectResult(result);
-            }
-
-            // record not found
-            return new StatusCodeResult(404);
-        }
+        #region Get File Extension / Mime Type
 
         private string GetType(string fileName)
         {
@@ -452,5 +382,7 @@ namespace HetsApi.Controllers
 
             return "";
         }
+
+        #endregion
     }
 }

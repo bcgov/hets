@@ -1,4 +1,4 @@
-﻿using HETSAPI.Models;
+﻿using HetsData.Model;
 
 namespace HetsApi.Authentication
 {
@@ -25,7 +25,7 @@ namespace HetsApi.Authentication
         /// <summary>
         /// HETS User Model
         /// </summary>
-        public User HetsUser { get; set; }        
+        public HetUser HetsUser { get; set; }        
     }
 }
 
