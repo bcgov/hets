@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Security.Claims;
 
@@ -7,6 +8,20 @@ namespace HetsData.Model
 {
     public partial class HetUser
     {
+        [NotMapped]
+        public int Id
+        {
+            get => UserId;
+            set
+            {
+                if (value <= 0) throw new ArgumentOutOfRangeException(nameof(value));
+                UserId = value;
+            }
+        }
+
+        [NotMapped]
+        public List<HetUserRole> UserRoles { get; set; }
+
         /// <summary>
         /// User Permission Claim Property
         /// </summary>

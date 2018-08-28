@@ -1,10 +1,11 @@
-using System;
-using HetsData.Model;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HetsApi.Model
+namespace HetsData.Model
 {
-    public sealed class UserDistrict : HetUserDistrict
+    public partial class HetUserDistrict
     {
+        [NotMapped]
         public int Id
         {
             get => UserDistrictId;

@@ -1,10 +1,11 @@
-using System;
-using HetsData.Model;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HetsApi.Model
+namespace HetsData.Model
 {
-    public sealed class Contact : HetContact
+    public partial class HetContact
     {
+        [NotMapped]
         public int Id
         {
             get => ContactId;

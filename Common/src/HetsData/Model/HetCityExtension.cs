@@ -1,10 +1,11 @@
-using System;
-using HetsData.Model;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HetsApi.Model
-{
-    public sealed class City : HetCity
+namespace HetsData.Model
+{    
+    public partial class HetCity
     {
+        [NotMapped]
         public int Id
         {
             get => CityId;

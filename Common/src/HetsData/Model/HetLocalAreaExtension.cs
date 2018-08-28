@@ -1,10 +1,11 @@
-using System;
-using HetsData.Model;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HetsApi.Model
+namespace HetsData.Model
 {
-    public sealed class LocalArea : HetLocalArea
+    public partial class HetLocalArea
     {
+        [NotMapped]
         public int Id
         {
             get => LocalAreaId;

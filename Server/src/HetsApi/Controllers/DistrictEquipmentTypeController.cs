@@ -40,7 +40,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("")]
         [SwaggerOperation("DistrictEquipmentTypesGet")]
-        [SwaggerResponse(200, type: typeof(List<DistrictEquipmentType>))]
+        [SwaggerResponse(200, type: typeof(List<HetDistrictEquipmentType>))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult DistrictEquipmentTypesGet()
         {
@@ -48,7 +48,7 @@ namespace HetsApi.Controllers
             int? districtId = ModelHelper.GetUsersDistrictId(_context, HttpContext);
 
             // not found
-            if (districtId == null) return new ObjectResult(new List<ConditionType>());
+            if (districtId == null) return new ObjectResult(new List<HetDistrictEquipmentType>());
 
             List<HetDistrictEquipmentType> equipmentTypes = _context.HetDistrictEquipmentType.AsNoTracking()
                 .Include(x => x.District)
@@ -56,21 +56,9 @@ namespace HetsApi.Controllers
                 .Include(x => x.EquipmentType)
                 .Where(x => x.District.DistrictId == districtId)
                 .OrderBy(x => x.DistrictEquipmentName)
-                .ToList();
+                .ToList();            
 
-            // convert to UI model
-            List<DistrictEquipmentType> response = new List<DistrictEquipmentType>();
-
-            foreach (HetDistrictEquipmentType equipmentType in equipmentTypes)
-            {
-                if (equipmentType != null)
-                {
-                    DistrictEquipmentType temp = new DistrictEquipmentType();
-                    response.Add((DistrictEquipmentType)ModelHelper.CopyProperties(equipmentType, temp));
-                }
-            }
-
-            return new ObjectResult(response);
+            return new ObjectResult(equipmentTypes);
         }
 
         /// <summary>
@@ -80,7 +68,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/delete")]
         [SwaggerOperation("DistrictEquipmentTypesIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(DistrictEquipmentType))]
+        [SwaggerResponse(200, type: typeof(HetDistrictEquipmentType))]
         [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
         public virtual IActionResult DistrictEquipmentTypesIdDeletePost([FromRoute]int id)
         {
@@ -91,16 +79,9 @@ namespace HetsApi.Controllers
 
             HetDistrictEquipmentType item = _context.HetDistrictEquipmentType.First(a => a.DistrictEquipmentTypeId == id);
 
-            _context.HetDistrictEquipmentType.Remove(item);
+            _context.HetDistrictEquipmentType.Remove(item);            
 
-            // save the changes
-            _context.SaveChanges();
-
-            // convert to UI model
-            DistrictEquipmentType response = new DistrictEquipmentType();
-            response = (DistrictEquipmentType)ModelHelper.CopyProperties(item, response);
-
-            return new ObjectResult(new HetsResponse(response));
+            return new ObjectResult(new HetsResponse(item));
         }
 
         /// <summary>
@@ -110,7 +91,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("{id}")]
         [SwaggerOperation("DistrictEquipmentTypesIdGet")]
-        [SwaggerResponse(200, type: typeof(DistrictEquipmentType))]
+        [SwaggerResponse(200, type: typeof(HetDistrictEquipmentType))]
         [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
         public virtual IActionResult DistrictEquipmentTypesIdGet([FromRoute]int id)
         {
@@ -119,12 +100,8 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.Region)
                 .Include(x => x.EquipmentType)
                 .FirstOrDefault(a => a.DistrictEquipmentTypeId == id);
-            
-            // convert to UI model
-            DistrictEquipmentType response = new DistrictEquipmentType();
-            response = (DistrictEquipmentType)ModelHelper.CopyProperties(equipmentType, response);
-
-            return new ObjectResult(new HetsResponse(response));
+                        
+            return new ObjectResult(new HetsResponse(equipmentType));
         }
 
         /// <summary>
@@ -135,9 +112,9 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}")]
         [SwaggerOperation("DistrictEquipmentTypesIdPost")]
-        [SwaggerResponse(200, type: typeof(DistrictEquipmentType))]
+        [SwaggerResponse(200, type: typeof(HetDistrictEquipmentType))]
         [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
-        public virtual IActionResult DistrictEquipmentTypesIdPost([FromRoute]int id, [FromBody]DistrictEquipmentType item)
+        public virtual IActionResult DistrictEquipmentTypesIdPost([FromRoute]int id, [FromBody]HetDistrictEquipmentType item)
         {
             if (id != item.Id)
             {
@@ -189,11 +166,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.EquipmentType)
                 .FirstOrDefault(a => a.DistrictEquipmentTypeId == id);
 
-            // convert to UI model
-            DistrictEquipmentType response = new DistrictEquipmentType();
-            response = (DistrictEquipmentType)ModelHelper.CopyProperties(equipmentType, response);
-
-            return new ObjectResult(new HetsResponse(response));
+            return new ObjectResult(new HetsResponse(equipmentType));
         }        
     }
 }

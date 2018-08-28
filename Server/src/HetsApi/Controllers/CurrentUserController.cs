@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -44,7 +43,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("favourites/{favouriteType}")]
         [SwaggerOperation("UsersCurrentFavouritesFavouriteTypeGet")]
-        [SwaggerResponse(200, type: typeof(List<UserFavourite>))]
+        [SwaggerResponse(200, type: typeof(List<HetUserFavourite>))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult UsersCurrentFavouritesFavouriteTypeGet([FromRoute]string favouriteType)
         {
@@ -60,21 +59,9 @@ namespace HetsApi.Controllers
             if (favouriteType != null)
             {
                 favourites = favourites.Where(x => x.Type == favouriteType);
-            }
+            }            
 
-            // convert to UI model
-            List<UserFavourite> response = new List<UserFavourite>();
-
-            foreach (HetUserFavourite favourite in favourites)
-            {
-                if (favourite != null)
-                {
-                    UserFavourite temp = new UserFavourite();
-                    response.Add((UserFavourite)ModelHelper.CopyProperties(favourite, temp));
-                }
-            }
-
-            return new ObjectResult(response);
+            return new ObjectResult(favourites);
         }
 
         /// <summary>
@@ -107,13 +94,9 @@ namespace HetsApi.Controllers
             _context.HetUserFavourite.Remove(item);
 
             // save the changes
-            _context.SaveChanges();
-
-            // convert to UI model
-            UserFavourite response = new UserFavourite();
-            response = (UserFavourite)ModelHelper.CopyProperties(item, response);
+            _context.SaveChanges();            
              
-            return new ObjectResult(response);
+            return new ObjectResult(item);
         }
 
         /// <summary>
@@ -124,9 +107,9 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("favourites")]
         [SwaggerOperation("UsersCurrentFavouritesPost")]
-        [SwaggerResponse(200, type: typeof(UserFavourite))]
+        [SwaggerResponse(200, type: typeof(HetUserFavourite))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult UsersCurrentFavouritesPost([FromBody]UserFavourite item)
+        public virtual IActionResult UsersCurrentFavouritesPost([FromBody]HetUserFavourite item)
         {
             return UpdateFavourite(item);
         }
@@ -139,9 +122,9 @@ namespace HetsApi.Controllers
         [HttpPut]
         [Route("favourites")]
         [SwaggerOperation("UsersCurrentFavouritesPut")]
-        [SwaggerResponse(200, type: typeof(UserFavourite))]
+        [SwaggerResponse(200, type: typeof(HetUserFavourite))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult UsersCurrentFavouritesPut([FromBody]UserFavourite item)
+        public virtual IActionResult UsersCurrentFavouritesPut([FromBody]HetUserFavourite item)
         {
             return UpdateFavourite(item);
         }
@@ -153,7 +136,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("")]
         [SwaggerOperation("UsersCurrentGet")]
-        [SwaggerResponse(200, type: typeof(CurrentUser))]
+        [SwaggerResponse(200, type: typeof(HetUser))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult UsersCurrentGet()
         {
@@ -180,17 +163,9 @@ namespace HetsApi.Controllers
                 {
                     currentUser.HetUserRole.Remove(currentUser.HetUserRole.ElementAt(i));
                 }
-            }
+            }            
 
-            // convert to UI model
-            CurrentUser response = new CurrentUser();
-            response = (CurrentUser)ModelHelper.CopyProperties(currentUser, response);                        
-
-            // get the name for the current logged in user
-            response.GivenName = User.FindFirst(ClaimTypes.GivenName).Value;
-            response.Surname = User.FindFirst(ClaimTypes.Surname).Value;
-
-            return new ObjectResult(response);
+            return new ObjectResult(currentUser);
         }
 
         /// <summary>
@@ -199,7 +174,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("logoff")]
         [SwaggerOperation("UserDistrictsIdLogoffPost")]
-        [SwaggerResponse(200, type: typeof(UserDistrict))]
+        [SwaggerResponse(200, type: typeof(HetUser))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult UsersCurrentLogoffPost()
         {
@@ -235,17 +210,13 @@ namespace HetsApi.Controllers
 
                 _context.SaveChanges();
             }
-
-            // convert to UI model
-            User response = new User();
-            response = (User)ModelHelper.CopyProperties(user, response);            
-
-            return new ObjectResult(response);
+            
+            return new ObjectResult(user);
         }
 
         #region Update Favourite
 
-        private IActionResult UpdateFavourite(UserFavourite item)
+        private IActionResult UpdateFavourite(HetUserFavourite item)
         {
             item.User = null;
 
@@ -279,11 +250,7 @@ namespace HetsApi.Controllers
             // save the changes
             _context.SaveChanges();
 
-            // convert to UI model
-            UserFavourite response = new UserFavourite();
-            response = (UserFavourite)ModelHelper.CopyProperties(item, response);
-
-            return new ObjectResult(response);
+            return new ObjectResult(item);
         }
 
         #endregion
