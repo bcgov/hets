@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Hangfire.Console;
 using Hangfire.Server;
 using Hangfire.Console.Progress;
+using HetsData.Helpers;
 using HetsData.Model;
 
 namespace HetsImport.Import
@@ -159,7 +160,7 @@ namespace HetsImport.Import
                         int totalBlocks = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
 
                         // assign blocks
-                        HetSeniorityListExtension.AssignBlocks(dbContext, localArea.LocalAreaId, districtEquipmentType.DistrictEquipmentTypeId, blockSize, totalBlocks, false);
+                        SeniorityListHelper.AssignBlocks(dbContext, localArea.LocalAreaId, districtEquipmentType.DistrictEquipmentTypeId, blockSize, totalBlocks, false);
 
                         // save change to database periodically to avoid frequent writing to the database
                         if (ii++ % 1000 == 0)

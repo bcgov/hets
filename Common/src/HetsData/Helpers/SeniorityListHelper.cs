@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using HetsData.Model;
 using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using HetsData.Model;
 
-namespace HetsApi.Helpers
+namespace HetsData.Helpers
 {
     public class RuleType
     {
