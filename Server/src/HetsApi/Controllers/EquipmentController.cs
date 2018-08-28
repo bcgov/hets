@@ -9,6 +9,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
+using HetsData.Helpers;
 using HetsData.Model;
 
 namespace HetsApi.Controllers
@@ -57,12 +58,12 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetHistory)
                 .FirstOrDefault(a => a.EquipmentId == id);                                    
 
-            //if (equipment != null)
-            //{
-              //  response.IsHired = EquipmentHelper.IsHired(id, _context);
-              //  response.NumberOfBlocks = EquipmentHelper.GetNumberOfBlocks(equipment, _configuration);
-              //  response.HoursYtd = EquipmentHelper.GetYtdServiceHours(id, _context);
-            //}
+            if (equipment != null)
+            {
+                equipment.IsHired = EquipmentHelper.IsHired(id, _context);
+                equipment.NumberOfBlocks = EquipmentHelper.GetNumberOfBlocks(equipment, _configuration);
+                equipment.HoursYtd = EquipmentHelper.GetYtdServiceHours(id, _context);
+            }
 
             return new ObjectResult(equipment);
         }
