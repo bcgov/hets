@@ -117,14 +117,14 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
         public virtual IActionResult ConditionTypesIdPost([FromRoute]int id, [FromBody]HetConditionType item)
         {
-            if (id != item.Id)
+            if (id != item.ConditionTypeId)
             {
                 // record not found
                 return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
             // add or update contact            
-            if (item.Id > 0)
+            if (item.ConditionTypeId > 0)
             {
                 bool exists = _context.HetConditionType.Any(a => a.ConditionTypeId == id);
 
@@ -160,7 +160,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // get the id (in the case of new records)
-            id = item.Id;
+            id = item.ConditionTypeId;
 
             // return the updated condition type record
             HetConditionType conditionType = _context.HetConditionType.AsNoTracking()

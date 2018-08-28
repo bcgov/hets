@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
@@ -20,7 +20,10 @@ namespace HetsData.Model
         public DateTime DbLastUpdateTimestamp { get; set; }
         public string DbLastUpdateUserId { get; set; }
         public string Description { get; set; }
+
+        [JsonProperty("Id")]
         public int ConditionTypeId { get; set; }
+
         public int? DistrictId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
 

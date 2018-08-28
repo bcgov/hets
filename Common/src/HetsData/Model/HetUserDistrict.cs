@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
     public partial class HetUserDistrict
     {
+        [JsonProperty("Id")]
         public int UserDistrictId { get; set; }
+
         public DateTime AppCreateTimestamp { get; set; }
         public string AppCreateUserDirectory { get; set; }
         public string AppCreateUserGuid { get; set; }

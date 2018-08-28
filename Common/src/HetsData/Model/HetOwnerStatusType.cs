@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
     public partial class HetOwnerStatusType
     {
+        [JsonProperty("Id")]
         public int OwnerStatusTypeId { get; set; }
+
         public string OwnerStatusTypeCode { get; set; }
         public string Description { get; set; }
         public string ScreenLabel { get; set; }

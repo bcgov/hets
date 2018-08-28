@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
@@ -10,7 +11,9 @@ namespace HetsData.Model
             HetDistrictEquipmentType = new HashSet<HetDistrictEquipmentType>();
         }
 
+        [JsonProperty("Id")]
         public int EquipmentTypeId { get; set; }
+
         public string Name { get; set; }
         public float? BlueBookRateNumber { get; set; }
         public float? BlueBookSection { get; set; }
@@ -33,6 +36,7 @@ namespace HetsData.Model
         public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
 
+        [JsonIgnore]
         public ICollection<HetDistrictEquipmentType> HetDistrictEquipmentType { get; set; }
     }
 }

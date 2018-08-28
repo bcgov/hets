@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
@@ -15,7 +16,9 @@ namespace HetsData.Model
             HetUserDistrict = new HashSet<HetUserDistrict>();
         }
 
+        [JsonProperty("Id")]
         public int DistrictId { get; set; }
+
         public DateTime? EndDate { get; set; }
         public int MinistryDistrictId { get; set; }
         public string Name { get; set; }
@@ -37,11 +40,23 @@ namespace HetsData.Model
         public int ConcurrencyControlNumber { get; set; }
 
         public HetRegion Region { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetConditionType> HetConditionType { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetDistrictEquipmentType> HetDistrictEquipmentType { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetProject> HetProject { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetServiceArea> HetServiceArea { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetUser> HetUser { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetUserDistrict> HetUserDistrict { get; set; }
     }
 }

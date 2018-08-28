@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
     public partial class HetRentalRequestRotationList
     {
+        [JsonProperty("Id")]
         public int RentalRequestRotationListId { get; set; }
+
         public DateTime? AskedDateTime { get; set; }
         public int? EquipmentId { get; set; }
         public bool? IsForceHire { get; set; }

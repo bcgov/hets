@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
@@ -12,7 +13,9 @@ namespace HetsData.Model
             HetUserRole = new HashSet<HetUserRole>();
         }
 
+        [JsonProperty("Id")]
         public int UserId { get; set; }
+
         public bool Active { get; set; }
         public string Email { get; set; }
         public string GivenName { get; set; }
@@ -37,8 +40,14 @@ namespace HetsData.Model
         public int ConcurrencyControlNumber { get; set; }
 
         public HetDistrict District { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetUserDistrict> HetUserDistrict { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetUserFavourite> HetUserFavourite { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetUserRole> HetUserRole { get; set; }
     }
 }

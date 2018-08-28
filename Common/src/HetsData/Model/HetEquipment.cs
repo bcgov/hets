@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
@@ -20,7 +21,9 @@ namespace HetsData.Model
             HetSeniorityAudit = new HashSet<HetSeniorityAudit>();
         }
 
+        [JsonProperty("Id")]
         public int EquipmentId { get; set; }
+
         public DateTime? ApprovedDate { get; set; }
         public DateTime? ArchiveDate { get; set; }
         public string ArchiveReason { get; set; }
@@ -76,16 +79,38 @@ namespace HetsData.Model
         public HetDistrictEquipmentType DistrictEquipmentType { get; set; }
         public HetLocalArea LocalArea { get; set; }
         public HetOwner Owner { get; set; }
+
+        [JsonIgnore]        
         public ICollection<HetAttachment> HetAttachment { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetEquipmentAttachment> HetEquipmentAttachment { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetHistory> HetHistory { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetLocalAreaRotationList> HetLocalAreaRotationListAskNextBlock1 { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetLocalAreaRotationList> HetLocalAreaRotationListAskNextBlock2 { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetLocalAreaRotationList> HetLocalAreaRotationListAskNextBlockOpen { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetNote> HetNote { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetRentalAgreement> HetRentalAgreement { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetRentalRequest> HetRentalRequest { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetRentalRequestRotationList> HetRentalRequestRotationList { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetSeniorityAudit> HetSeniorityAudit { get; set; }
     }
 }

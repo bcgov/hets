@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
     public partial class HetRolePermission
     {
+        [JsonProperty("Id")]
         public int RolePermissionId { get; set; }
+
         public int? PermissionId { get; set; }
         public int? RoleId { get; set; }
         public DateTime DbCreateTimestamp { get; set; }

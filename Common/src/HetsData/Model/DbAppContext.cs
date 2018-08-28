@@ -8,7 +8,8 @@ namespace HetsData.Model
         {
         }
 
-        public DbAppContext(DbContextOptions<DbAppContext> options) : base(options)
+        public DbAppContext(DbContextOptions<DbAppContext> options)
+            : base(options)
         {
         }
 
@@ -70,7 +71,7 @@ namespace HetsData.Model
         public virtual DbSet<HetUserDistrict> HetUserDistrict { get; set; }
         public virtual DbSet<HetUserFavourite> HetUserFavourite { get; set; }
         public virtual DbSet<HetUserRole> HetUserRole { get; set; }
-
+                
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -5964,8 +5965,12 @@ namespace HetsData.Model
                     .WithMany(p => p.HetUserRole)
                     .HasForeignKey(d => d.UserId);
             });
-
+            
             modelBuilder.HasSequence("HET_EQUIPMENT_ATTACHMENT_HIST_ID_seq");
+
+            modelBuilder.HasSequence("HET_EQUIPMENT_COPY_EQUIPMENT_ID_seq");
+
+            modelBuilder.HasSequence("HET_EQUIPMENT_COPY_HIST_EQUIPMENT_ID_seq");
 
             modelBuilder.HasSequence("HET_EQUIPMENT_HIST_ID_seq");
 

@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
     public partial class HetAttachment
     {
+        [JsonProperty("Id")]
         public int AttachmentId { get; set; }
+
         public string Description { get; set; }
         public int? EquipmentId { get; set; }
         public string FileName { get; set; }

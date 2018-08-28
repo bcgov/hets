@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
     public partial class HetImportMap
     {
+        [JsonProperty("Id")]
         public int ImportMapId { get; set; }
+
         public DateTime DbCreateTimestamp { get; set; }
         public string AppCreateUserDirectory { get; set; }
         public DateTime DbLastUpdateTimestamp { get; set; }
