@@ -28,7 +28,7 @@ namespace HetsApi.Controllers
             _configuration = configuration;    
             
             // set context data
-            HetUser user = ModelHelper.GetUser(context, httpContextAccessor.HttpContext);
+            HetUser user = UserHelper.GetUser(context, httpContextAccessor.HttpContext);
             _context.SmUserId = user.SmUserId;
             _context.DirectoryName = user.SmAuthorizationDirectory;
             _context.SmUserGuid = user.Guid;
@@ -45,7 +45,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult ConditionTypesGet()
         {
             // get current users district id
-            int? districtId = ModelHelper.GetUsersDistrictId(_context, HttpContext);
+            int? districtId = UserHelper.GetUsersDistrictId(_context, HttpContext);
 
             // not found
             if (districtId == null) return new ObjectResult(new List<HetConditionType>());

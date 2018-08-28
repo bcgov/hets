@@ -2,10 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using HetsData.Model;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
-namespace HetsData.Model
+namespace HetsApi.Helpers
 {
     public class RuleType
     {
@@ -21,9 +22,9 @@ namespace HetsData.Model
     }
 
     /// <summary>
-    /// Seniority List Database Model Extension
+    /// Seniority List Helper
     /// </summary>
-    public static class HetSeniorityListExtension
+    public static class SeniorityListHelper
     {
         /// <summary>
         /// Get the Effective Date of the Equipment Seniority
@@ -31,7 +32,7 @@ namespace HetsData.Model
         /// <param name="context"></param>
         /// <param name="equipmentId"></param>
         /// <returns></returns>
-        public static DateTime? GetEquipmentSeniorityEffectiveDate(this DbAppContext context, int equipmentId)
+        public static DateTime? GetEquipmentSeniorityEffectiveDate(DbAppContext context, int equipmentId)
         {
             DateTime? result = null;
             HetEquipment equipment = context.HetEquipment.FirstOrDefault(x => x.EquipmentId == equipmentId);
@@ -50,15 +51,15 @@ namespace HetsData.Model
         /// Hangfire job to do the Annual Rollover tasks
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="connectionstring"></param>
+        /// <param name="connectionString"></param>
         /// <param name="configuration"></param>
-        public static void AnnualRolloverJob(PerformContext context, string connectionstring, IConfiguration configuration)
+        public static void AnnualRolloverJob(PerformContext context, string connectionString, IConfiguration configuration)
         {
             try
             {
                 // open a connection to the database
                 DbContextOptionsBuilder<DbAppContext> options = new DbContextOptionsBuilder<DbAppContext>();
-                options.UseNpgsql(connectionstring);
+                options.UseNpgsql(connectionString);
                 DbAppContext dbContext = new DbAppContext(null, options.Options);
 
                 // get processing rules
