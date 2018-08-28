@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HetsData.Model
-{
-    /// <summary>
-    /// Equipment Database Model Extension
-    /// </summary>
-    public sealed partial class HetEquipment
+{    
+    public partial class HetEquipment
     {        
         /// <summary>
         /// Approved Status Code
@@ -15,6 +11,44 @@ namespace HetsData.Model
         public const string StatusApproved = "Approved";
         public const string StatusArchived = "Archived";
         public const string StatusPending = "Unapproved";
+
+        [NotMapped]
+        public int Id
+        {
+            get => EquipmentId;
+            set
+            {
+                if (value <= 0) throw new ArgumentOutOfRangeException(nameof(value));
+                EquipmentId = value;
+            }
+        }
+
+        [NotMapped]
+        public int SenioritySortOrder { get; set; }
+
+        [NotMapped]
+        public bool IsHired { get; set; }
+
+        [NotMapped]
+        public float? HoursYtd { get; set; }
+
+        [NotMapped]
+        public int NumberOfBlocks { get; set; }
+
+        [NotMapped]
+        public int MaximumHours { get; set; }
+
+        [NotMapped]
+        public string SeniorityString { get; set; }
+
+        [NotMapped]
+        public string OwnerName { get; set; }
+
+        [NotMapped]
+        public string EquipmentType { get; set; }
+
+        [NotMapped]
+        public int AttachmentCount { get; set; }
 
         /// <summary>
         /// Calculate the Seniority for a piece of equipment
@@ -119,7 +153,7 @@ namespace HetsData.Model
                 return true;
             }
 
-            // chenge to service hours
+            // change to service hours
             if (ServiceHoursLastYear != null && ServiceHoursLastYear != changed.ServiceHoursLastYear)
             {
                 return true;
@@ -136,46 +170,7 @@ namespace HetsData.Model
             }
               
             return false;
-        }
-
-        /// <summary>
-        /// Returns the YTD hours for a given year.
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public float GetYtdServiceHours(DbAppContext context)
-        {
-            float result = 0.0F;
-
-            // *******************************************************************************
-            // determine current fscal year - check for existing rotation lists this year
-            // *******************************************************************************
-            DateTime fiscalStart;
-
-            if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
-            {
-                fiscalStart = new DateTime(DateTime.UtcNow.AddYears(-1).Year, 4, 1);
-            }
-            else
-            {
-                fiscalStart = new DateTime(DateTime.UtcNow.Year, 4, 1);
-            }
-
-            // *******************************************************************************
-            // get all the time data for the current fiscal year
-            // *******************************************************************************
-            float? summation = context.HetTimeRecord
-                   .Include(x => x.RentalAgreement.Equipment)
-                   .Where(x => x.RentalAgreement.Equipment.EquipmentId == EquipmentId && 
-                               x.WorkedDate >= fiscalStart)
-                   .Sum(x => x.Hours);
-
-            if (summation != null)
-            {
-                result = (float)summation;
-            }
-
-            return result;
-        }
+        }        
+        
     }
 }

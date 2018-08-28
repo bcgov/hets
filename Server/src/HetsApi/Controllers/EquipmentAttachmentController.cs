@@ -40,7 +40,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/delete")]
         [SwaggerOperation("EquipmentAttachmentsIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(EquipmentAttachment))]
+        [SwaggerResponse(200, type: typeof(HetEquipmentAttachment))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult EquipmentAttachmentsIdDeletePost([FromRoute]int id)
         {
@@ -58,11 +58,7 @@ namespace HetsApi.Controllers
             // save the changes
             _context.SaveChanges();
 
-            // convert to UI model
-            EquipmentAttachment response = new EquipmentAttachment();
-            response = (EquipmentAttachment)ModelHelper.CopyProperties(item, response);
-
-            return new ObjectResult(new HetsResponse(response));
+            return new ObjectResult(new HetsResponse(item));
         }
 
         /// <summary>	
@@ -73,9 +69,9 @@ namespace HetsApi.Controllers
         [HttpPut]
         [Route("{id}")]
         [SwaggerOperation("EquipmentAttachmentsIdPut")]
-        [SwaggerResponse(200, type: typeof(EquipmentAttachment))]
+        [SwaggerResponse(200, type: typeof(HetEquipmentAttachment))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentAttachmentsIdPut([FromRoute]int id, [FromBody]EquipmentAttachment item)
+        public virtual IActionResult EquipmentAttachmentsIdPut([FromRoute]int id, [FromBody]HetEquipmentAttachment item)
         {
             if (id != item.Id)
             {
@@ -110,11 +106,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.Equipment)
                 .FirstOrDefault(a => a.EquipmentAttachmentId == id);
 
-            // convert to UI model
-            EquipmentAttachment response = new EquipmentAttachment();
-            response = (EquipmentAttachment)ModelHelper.CopyProperties(updEquipmentAttachment, response);
-
-            return new ObjectResult(new HetsResponse(response));
+            return new ObjectResult(new HetsResponse(updEquipmentAttachment));
         }
 
         /// <summary>	
@@ -124,9 +116,9 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("")]
         [SwaggerOperation("EquipmentAttachmentsPost")]
-        [SwaggerResponse(200, type: typeof(EquipmentAttachment))]
+        [SwaggerResponse(200, type: typeof(HetEquipmentAttachment))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentAttachmentsPost([FromBody]EquipmentAttachment item)
+        public virtual IActionResult EquipmentAttachmentsPost([FromBody]HetEquipmentAttachment item)
         {
             if (item != null)
             {
@@ -173,12 +165,8 @@ namespace HetsApi.Controllers
             HetEquipmentAttachment updEquipmentAttachment = _context.HetEquipmentAttachment.AsNoTracking()
                 .Include(x => x.Equipment)
                 .FirstOrDefault(a => a.EquipmentAttachmentId == id);
-
-            // convert to UI model
-            EquipmentAttachment response = new EquipmentAttachment();
-            response = (EquipmentAttachment)ModelHelper.CopyProperties(updEquipmentAttachment, response);
-
-            return new ObjectResult(new HetsResponse(response));
+           
+            return new ObjectResult(new HetsResponse(updEquipmentAttachment));
         }
     }
 }

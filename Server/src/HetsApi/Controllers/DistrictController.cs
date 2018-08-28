@@ -40,7 +40,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("")]
         [SwaggerOperation("DistrictsGet")]
-        [SwaggerResponse(200, type: typeof(List<District>))]
+        [SwaggerResponse(200, type: typeof(List<HetDistrict>))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult DistrictsGet()
         {
@@ -48,19 +48,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.Region)
                 .ToList();
 
-            // convert to UI model
-            List<District> response = new List<District>();
-
-            foreach (HetDistrict district in districts)
-            {
-                if (district != null)
-                {
-                    District temp = new District();
-                    response.Add((District)ModelHelper.CopyProperties(district, temp));
-                }
-            }
-
-            return new ObjectResult(response);
+            return new ObjectResult(districts);
         }
 
         /// <summary>
@@ -69,7 +57,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("/api/district/{id}/owners")]
         [SwaggerOperation("DistrictOwnersGet")]
-        [SwaggerResponse(200, type: typeof(List<Owner>))]
+        [SwaggerResponse(200, type: typeof(List<HetOwner>))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult DistrictOwnersGet([FromRoute]int id)
         {
@@ -82,20 +70,8 @@ namespace HetsApi.Controllers
                 .Where(x => x.LocalArea.ServiceArea.District.DistrictId == id)
                 .OrderBy(x => x.OrganizationName)
                 .ToList();
-
-            // convert to UI model
-            List<Owner> response = new List<Owner>();
-
-            foreach (HetOwner owner in owners)
-            {
-                if (owner != null)
-                {
-                    Owner temp = new Owner();
-                    response.Add((Owner)ModelHelper.CopyProperties(owner, temp));
-                }
-            }
-
-            return new ObjectResult(response);
+            
+            return new ObjectResult(owners);
         }
 
         /// <summary>
@@ -104,7 +80,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("/api/district/{id}/localAreas")]
         [SwaggerOperation("DistrictLocalAreasGet")]
-        [SwaggerResponse(200, type: typeof(List<LocalArea>))]
+        [SwaggerResponse(200, type: typeof(List<HetLocalArea>))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult DistrictLocalAreasGet([FromRoute]int id)
         {
@@ -116,21 +92,9 @@ namespace HetsApi.Controllers
             List<HetLocalArea> localAreas = _context.HetLocalArea.AsNoTracking()
                 .Where(x => x.ServiceArea.District.DistrictId == id)
                 .OrderBy(x => x.Name)
-                .ToList();
+                .ToList();            
 
-            // convert to UI model
-            List<LocalArea> response = new List<LocalArea>();
-
-            foreach (HetLocalArea localArea in localAreas)
-            {
-                if (localArea != null)
-                {
-                    LocalArea temp = new LocalArea();
-                    response.Add((LocalArea)ModelHelper.CopyProperties(localArea, temp));
-                }
-            }
-
-            return new ObjectResult(response);
+            return new ObjectResult(localAreas);
         }
     }
 }

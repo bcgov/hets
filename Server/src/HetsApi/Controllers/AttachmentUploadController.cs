@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Helpers;
-using HetsApi.Model;
 using HetsData.Model;
 
 namespace HetsApi.Controllers
@@ -39,7 +38,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("equipment/{id}/attachments")]
         [SwaggerOperation("EquipmentIdAttachmentsPost")]
-        [SwaggerResponse(200, type: typeof(List<Attachment>))]
+        [SwaggerResponse(200, type: typeof(List<HetAttachment>))]
         public virtual IActionResult EquipmentIdAttachmentsPost([FromRoute] int id, [FromForm]IList<IFormFile> files)
         {
             // validate the id            
@@ -79,20 +78,8 @@ namespace HetsApi.Controllers
             }
 
             _context.SaveChanges();
-
-            // convert to UI model
-            List<Attachment> response = new List<Attachment>();
-
-            foreach (HetAttachment attachment in equipment.HetAttachment)
-            {
-                if (attachment != null)
-                {
-                    Attachment temp = new Attachment();
-                    response.Add((Attachment)ModelHelper.CopyProperties(attachment, temp));
-                }
-            }
-
-            return new ObjectResult(response);            
+            
+            return new ObjectResult(equipment.HetAttachment);            
         }
 
         /// <summary>
@@ -115,7 +102,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("projects/{id}/attachments")]
         [SwaggerOperation("ProjectIdAttachmentsPost")]
-        [SwaggerResponse(200, type: typeof(List<Attachment>))]
+        [SwaggerResponse(200, type: typeof(List<HetAttachment>))]
         public virtual IActionResult ProjectIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
             // validate the id            
@@ -154,21 +141,9 @@ namespace HetsApi.Controllers
                 }
             }
 
-            _context.SaveChanges();
+            _context.SaveChanges();            
 
-            // convert to UI model
-            List<Attachment> response = new List<Attachment>();
-
-            foreach (HetAttachment attachment in project.HetAttachment)
-            {
-                if (attachment != null)
-                {
-                    Attachment temp = new Attachment();
-                    response.Add((Attachment)ModelHelper.CopyProperties(attachment, temp));
-                }
-            }
-
-            return new ObjectResult(response);            
+            return new ObjectResult(project.HetAttachment);            
         }
 
         /// <summary>
@@ -191,7 +166,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("owners/{id}/attachments")]
         [SwaggerOperation("OwnerIdAttachmentsPost")]
-        [SwaggerResponse(200, type: typeof(List<Attachment>))]
+        [SwaggerResponse(200, type: typeof(List<HetAttachment>))]
         public virtual IActionResult OwnerIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
             // validate the id            
@@ -232,19 +207,7 @@ namespace HetsApi.Controllers
 
             _context.SaveChanges();
 
-            // convert to UI model
-            List<Attachment> response = new List<Attachment>();
-
-            foreach (HetAttachment attachment in owner.HetAttachment)
-            {
-                if (attachment != null)
-                {
-                    Attachment temp = new Attachment();
-                    response.Add((Attachment)ModelHelper.CopyProperties(attachment, temp));
-                }
-            }
-
-            return new ObjectResult(response);            
+            return new ObjectResult(owner.HetAttachment);            
         }
 
         /// <summary>
@@ -267,7 +230,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("rentalRequests/{id}/attachments")]
         [SwaggerOperation("RentalRequestIdAttachmentsPost")]
-        [SwaggerResponse(200, type: typeof(List<Attachment>))]
+        [SwaggerResponse(200, type: typeof(List<HetAttachment>))]
         public virtual IActionResult RentalRequestIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
             // validate the id            
@@ -308,19 +271,7 @@ namespace HetsApi.Controllers
 
             _context.SaveChanges();
 
-            // convert to UI model
-            List<Attachment> response = new List<Attachment>();
-
-            foreach (HetAttachment attachment in rentalRequest.HetAttachment)
-            {
-                if (attachment != null)
-                {
-                    Attachment temp = new Attachment();
-                    response.Add((Attachment)ModelHelper.CopyProperties(attachment, temp));
-                }
-            }
-
-            return new ObjectResult(response);           
+            return new ObjectResult(rentalRequest.HetAttachment);           
         }
 
         /// <summary>

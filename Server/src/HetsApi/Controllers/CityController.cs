@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
-using HetsApi.Model;
 using HetsData.Model;
 
 namespace HetsApi.Controllers
@@ -37,26 +36,14 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("cities")]
         [SwaggerOperation("CitiesGet")]
-        [SwaggerResponse(200, type: typeof(List<City>))]
+        [SwaggerResponse(200, type: typeof(List<HetCity>))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult CitiesGet()
         {
             // get all cities
             List<HetCity> cities = _context.HetCity.AsNoTracking().ToList();
 
-            // convert to UI model
-            List<City> response = new List<City>();
-
-            foreach (HetCity city in cities)
-            {
-                if (city != null)
-                {
-                    City temp = new City();
-                    response.Add((City)ModelHelper.CopyProperties(city, temp));
-                }
-            }
-
-            return new ObjectResult(response);
+            return new ObjectResult(cities);
         }
     }
 }

@@ -39,7 +39,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/delete")]
         [SwaggerOperation("ContactsIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(Contact))]
+        [SwaggerResponse(200, type: typeof(HetContact))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult ContactsIdDeletePost([FromRoute]int id)
         {
@@ -53,13 +53,9 @@ namespace HetsApi.Controllers
             _context.HetContact.Remove(item);
 
             // save the changes
-            _context.SaveChanges();
+            _context.SaveChanges();            
 
-            // convert to UI model
-            Contact response = new Contact();
-            response = (Contact)ModelHelper.CopyProperties(item, response);
-
-            return new ObjectResult(new HetsResponse(response));
+            return new ObjectResult(new HetsResponse(item));
         }        
     }
 }

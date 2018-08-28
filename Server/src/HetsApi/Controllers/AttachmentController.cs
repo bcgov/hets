@@ -39,7 +39,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/delete")]
         [SwaggerOperation("AttachmentsIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(Attachment))]
+        [SwaggerResponse(200, type: typeof(HetAttachment))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult AttachmentsIdDeletePost([FromRoute]int id)
         {
@@ -55,11 +55,7 @@ namespace HetsApi.Controllers
                 _context.SaveChanges();
             }
 
-            // convert to UI model
-            Attachment response = new Attachment();
-            response = (Attachment)ModelHelper.CopyProperties(item, response);
-
-            return new ObjectResult(new HetsResponse(response));            
+            return new ObjectResult(new HetsResponse(item));            
         }
 
         /// <summary>

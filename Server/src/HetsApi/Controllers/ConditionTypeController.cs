@@ -40,7 +40,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("")]
         [SwaggerOperation("ConditionTypesGet")]
-        [SwaggerResponse(200, type: typeof(List<ConditionType>))]
+        [SwaggerResponse(200, type: typeof(List<HetConditionType>))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult ConditionTypesGet()
         {
@@ -48,7 +48,7 @@ namespace HetsApi.Controllers
             int? districtId = ModelHelper.GetUsersDistrictId(_context, HttpContext);
 
             // not found
-            if (districtId == null) return new ObjectResult(new List<ConditionType>());
+            if (districtId == null) return new ObjectResult(new List<HetConditionType>());
             
             // get condition types for this district
             List<HetConditionType> conditionTypes = _context.HetConditionType.AsNoTracking()
@@ -56,20 +56,8 @@ namespace HetsApi.Controllers
                 .Where(x => x.Active &&
                             x.District.DistrictId == districtId)
                 .ToList();
-
-            // convert to UI model
-            List<ConditionType> response = new List<ConditionType>();
-
-            foreach (HetConditionType condition in conditionTypes)
-            {
-                if (condition != null)
-                {
-                    ConditionType temp = new ConditionType();
-                    response.Add((ConditionType) ModelHelper.CopyProperties(condition, temp));
-                }
-            }
-
-            return new ObjectResult(response);            
+            
+            return new ObjectResult(conditionTypes);            
         }
         
         /// <summary>
@@ -79,7 +67,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/delete")]
         [SwaggerOperation("ConditionTypesIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(ConditionType))]
+        [SwaggerResponse(200, type: typeof(HetConditionType))]
         [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
         public virtual IActionResult ConditionTypesIdDeletePost([FromRoute]int id)
         {
@@ -95,11 +83,7 @@ namespace HetsApi.Controllers
             // save the changes
             _context.SaveChanges();
 
-            // convert to UI model
-            ConditionType response = new ConditionType();
-            response = (ConditionType)ModelHelper.CopyProperties(item, response);
-
-            return new ObjectResult(new HetsResponse(response));
+            return new ObjectResult(new HetsResponse(item));
         }
 
         /// <summary>
@@ -109,7 +93,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("{id}")]
         [SwaggerOperation("ConditionTypesIdGet")]
-        [SwaggerResponse(200, type: typeof(ConditionType))]
+        [SwaggerResponse(200, type: typeof(HetConditionType))]
         [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
         public virtual IActionResult ConditionTypesIdGet([FromRoute]int id)
         {
@@ -118,11 +102,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.District)
                 .FirstOrDefault(x => x.ConditionTypeId == id);
 
-            // convert to UI model
-            ConditionType response = new ConditionType();
-            response = (ConditionType)ModelHelper.CopyProperties(conditionType, response);
-                
-            return new ObjectResult(response);
+            return new ObjectResult(conditionType);
         }
 
         /// <summary>
@@ -133,9 +113,9 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}")]
         [SwaggerOperation("ConditionTypesIdPost")]
-        [SwaggerResponse(200, type: typeof(ConditionType))]
+        [SwaggerResponse(200, type: typeof(HetConditionType))]
         [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
-        public virtual IActionResult ConditionTypesIdPost([FromRoute]int id, [FromBody]ConditionType item)
+        public virtual IActionResult ConditionTypesIdPost([FromRoute]int id, [FromBody]HetConditionType item)
         {
             if (id != item.Id)
             {
@@ -186,12 +166,8 @@ namespace HetsApi.Controllers
             HetConditionType conditionType = _context.HetConditionType.AsNoTracking()
                 .Include(x => x.District)
                 .FirstOrDefault(x => x.ConditionTypeId == id);
-
-            // convert to UI model
-            ConditionType response = new ConditionType();
-            response = (ConditionType)ModelHelper.CopyProperties(conditionType, response);
             
-            return new ObjectResult(response);
+            return new ObjectResult(conditionType);
         }
     }
 }

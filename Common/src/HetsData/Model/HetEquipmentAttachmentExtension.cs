@@ -1,10 +1,11 @@
-using System;
-using HetsData.Model;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HetsApi.Model
+namespace HetsData.Model
 {
-    public sealed class EquipmentAttachment : HetEquipmentAttachment
+    public partial class HetEquipmentAttachment
     {
+        [NotMapped]
         public int Id
         {
             get => EquipmentAttachmentId;

@@ -1,10 +1,11 @@
-using System;
-using HetsData.Model;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HetsApi.Model
+namespace HetsData.Model
 {    
-    public sealed class Attachment : HetAttachment
+    public partial class HetAttachment
     {
+        [NotMapped]
         public int Id
         {
             get => AttachmentId;
@@ -14,15 +15,18 @@ namespace HetsApi.Model
                 AttachmentId = value;
             }
         }
-                
+
+        [NotMapped]
         public int? FileSize { get; set; }
 
+        [NotMapped]
         public string LastUpdateUserid
         {
             get => AppLastUpdateUserid;
             set => AppLastUpdateUserid = value ?? throw new ArgumentNullException(nameof(value));
         }
 
+        [NotMapped]
         public DateTime? LastUpdateTimestamp
         {
             get => AppLastUpdateTimestamp;
@@ -31,7 +35,7 @@ namespace HetsApi.Model
                 if (value != null)
                 {
                     AppLastUpdateTimestamp = (DateTime)value;
-                }                
+                }
             }
         }
     }
