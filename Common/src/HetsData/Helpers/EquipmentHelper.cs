@@ -2,19 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using HetsApi.Model;
-using HetsData.Model;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using HetsData.Model;
 
-namespace HetsApi.Helpers
+namespace HetsData.Helpers
 {
     public static class EquipmentHelper
     {
@@ -114,10 +106,9 @@ namespace HetsApi.Helpers
         #region Clone Equipment Agreements
 
         /// <summary>
-        /// Get renatal agreements associated with an equipment id
+        /// Get rental agreements associated with an equipment id
         /// </summary>
         /// <param name="id">id of Equipment to fetch agreements for</param>
-        /// <response code="200">OK</response>
         public virtual IActionResult EquipmentIdGetAgreementsAsync(int id)
         {
             bool exists = _context.Equipments.Any(a => a.Id == id);
@@ -1127,5 +1118,7 @@ namespace HetsApi.Helpers
         #endregion
 
     */
+
+        
     }
 }
