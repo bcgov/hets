@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
     public partial class HetTimeRecordHist
     {
+        [JsonProperty("Id")]
         public int TimeRecordHistId { get; set; }
+
         public int TimeRecordId { get; set; }
         public DateTime EffectiveDate { get; set; }
         public DateTime? EndDate { get; set; }

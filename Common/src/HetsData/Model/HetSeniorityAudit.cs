@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
     public partial class HetSeniorityAudit
     {
+        [JsonProperty("Id")]
         public int SeniorityAuditId { get; set; }
+
         public int? BlockNumber { get; set; }
         public int? EquipmentId { get; set; }
         public DateTime StartDate { get; set; }

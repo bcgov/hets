@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
@@ -10,7 +11,9 @@ namespace HetsData.Model
             HetRolePermission = new HashSet<HetRolePermission>();
         }
 
+        [JsonProperty("Id")]
         public int PermissionId { get; set; }
+
         public string Code { get; set; }
         public string Description { get; set; }
         public string Name { get; set; }
@@ -28,6 +31,7 @@ namespace HetsData.Model
         public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
 
+        [JsonIgnore]
         public ICollection<HetRolePermission> HetRolePermission { get; set; }
     }
 }

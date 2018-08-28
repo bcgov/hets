@@ -236,7 +236,7 @@ namespace HetsApi.Controllers
             }
 
             // get favourites
-            bool exists = _context.HetUserFavourite.Any(a => a.UserFavouriteId == item.Id);
+            bool exists = _context.HetUserFavourite.Any(a => a.UserFavouriteId == item.UserFavouriteId);
 
             if (exists)
             {

@@ -55,11 +55,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetNote)
                 .Include(x => x.HetAttachment)
                 .Include(x => x.HetHistory)
-                .FirstOrDefault(a => a.EquipmentId == id);            
-            
-            // convert to UI model
-            //Equipment response = new Equipment();
-            //response  = (Equipment)ModelHelper.CopyProperties(equipment, response);
+                .FirstOrDefault(a => a.EquipmentId == id);                                    
 
             //if (equipment != null)
             //{

@@ -73,7 +73,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult EquipmentAttachmentsIdPut([FromRoute]int id, [FromBody]HetEquipmentAttachment item)
         {
-            if (id != item.Id)
+            if (id != item.EquipmentAttachmentId)
             {
                 // not found
                 return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -126,13 +126,14 @@ namespace HetsApi.Controllers
                 return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
-            bool exists = _context.HetEquipmentAttachment.Any(a => a.EquipmentAttachmentId == item.Id);
+            bool exists = _context.HetEquipmentAttachment
+                .Any(a => a.EquipmentAttachmentId == item.EquipmentAttachmentId);
 
             if (!exists)
             {
                 // update record
                 HetEquipmentAttachment equipmentAttachment = _context.HetEquipmentAttachment
-                    .First(x => x.EquipmentAttachmentId == item.Id);
+                    .First(x => x.EquipmentAttachmentId == item.EquipmentAttachmentId);
 
                 equipmentAttachment.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                 equipmentAttachment.Description = item.Description;
@@ -159,7 +160,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // get the id (in the case of new records)
-            int id = item.Id;
+            int id = item.EquipmentAttachmentId;
 
             // return the updated condition type record
             HetEquipmentAttachment updEquipmentAttachment = _context.HetEquipmentAttachment.AsNoTracking()

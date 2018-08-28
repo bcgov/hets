@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
     public partial class HetTimePeriodType
     {
+        [JsonProperty("Id")]
         public int TimePeriodTypeId { get; set; }
+
         public string TimePeriodTypeCode { get; set; }
         public string Description { get; set; }
         public string ScreenLabel { get; set; }

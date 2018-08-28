@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
     public partial class HetPerson
     {
+        [JsonProperty("Id")]
         public int PersonId { get; set; }
+
         public string Surname { get; set; }
         public string FirstName { get; set; }
         public string MiddleNames { get; set; }

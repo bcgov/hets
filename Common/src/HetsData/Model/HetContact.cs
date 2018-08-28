@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
@@ -11,7 +12,9 @@ namespace HetsData.Model
             HetProject = new HashSet<HetProject>();
         }
 
+        [JsonProperty("Id")]
         public int ContactId { get; set; }
+
         public string GivenName { get; set; }
         public string Notes { get; set; }
         public int? OwnerId { get; set; }
@@ -43,7 +46,11 @@ namespace HetsData.Model
 
         public HetOwner Owner { get; set; }
         public HetProject Project { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetOwner> HetOwner { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetProject> HetProject { get; set; }
     }
 }

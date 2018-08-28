@@ -27,3 +27,19 @@ protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         optionsBuilder.UseNpgsql(_connectionString);
     }
 }
+
+
+********************************************
+Step 3: Fix Collection Attributes:
+********************************************
+Tag all collections with the following (replace Name as required):
+[JsonProperty("Id")]
+[JsonProperty("Name")]
+
+
+********************************************
+Step 4: Fix Invalid Collections (created by FK):
+********************************************
+Tag collections with the following:
+
+[JsonIgnore]

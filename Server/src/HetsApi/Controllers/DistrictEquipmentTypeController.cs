@@ -116,14 +116,14 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
         public virtual IActionResult DistrictEquipmentTypesIdPost([FromRoute]int id, [FromBody]HetDistrictEquipmentType item)
         {
-            if (id != item.Id)
+            if (id != item.DistrictEquipmentTypeId)
             {
                 // not found
                 return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
             // add or update equipment type            
-            if (item.Id > 0)
+            if (item.DistrictEquipmentTypeId > 0)
             {
                 bool exists = _context.HetDistrictEquipmentType.Any(a => a.DistrictEquipmentTypeId == id);
 
@@ -157,7 +157,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // get the id (in the case of new records)
-            id = item.Id;
+            id = item.DistrictEquipmentTypeId;
 
             // return the updated equipment type record
             HetDistrictEquipmentType equipmentType = _context.HetDistrictEquipmentType.AsNoTracking()

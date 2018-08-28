@@ -9,17 +9,6 @@ namespace HetsData.Model
     public partial class HetUser
     {
         [NotMapped]
-        public int Id
-        {
-            get => UserId;
-            set
-            {
-                if (value <= 0) throw new ArgumentOutOfRangeException(nameof(value));
-                UserId = value;
-            }
-        }
-
-        [NotMapped]
         public List<HetUserRole> UserRoles { get; set; }
 
         /// <summary>

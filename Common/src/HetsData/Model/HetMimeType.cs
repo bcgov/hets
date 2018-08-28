@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
     public partial class HetMimeType
     {
+        [JsonProperty("Id")]
         public int MimeTypeId { get; set; }
+
         public string MimeTypeCode { get; set; }
         public string Description { get; set; }
         public string ScreenLabel { get; set; }

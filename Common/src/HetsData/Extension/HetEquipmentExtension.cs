@@ -10,18 +10,7 @@ namespace HetsData.Model
         /// </summary>
         public const string StatusApproved = "Approved";
         public const string StatusArchived = "Archived";
-        public const string StatusPending = "Unapproved";
-
-        [NotMapped]
-        public int Id
-        {
-            get => EquipmentId;
-            set
-            {
-                if (value <= 0) throw new ArgumentOutOfRangeException(nameof(value));
-                EquipmentId = value;
-            }
-        }
+        public const string StatusPending = "Unapproved";        
 
         [NotMapped]
         public int SenioritySortOrder { get; set; }

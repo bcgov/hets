@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
@@ -10,7 +11,9 @@ namespace HetsData.Model
             HetTimeRecord = new HashSet<HetTimeRecord>();
         }
 
+        [JsonProperty("Id")]
         public int RentalAgreementRateId { get; set; }
+
         public string Comment { get; set; }
         public string ComponentName { get; set; }
         public DateTime DbCreateTimestamp { get; set; }
@@ -34,6 +37,8 @@ namespace HetsData.Model
         public int ConcurrencyControlNumber { get; set; }
 
         public HetRentalAgreement RentalAgreement { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetTimeRecord> HetTimeRecord { get; set; }
     }
 }

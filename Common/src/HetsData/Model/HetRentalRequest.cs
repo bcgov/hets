@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
@@ -14,7 +15,9 @@ namespace HetsData.Model
             HetRentalRequestRotationList = new HashSet<HetRentalRequestRotationList>();
         }
 
+        [JsonProperty("Id")]
         public int RentalRequestId { get; set; }
+
         public int EquipmentCount { get; set; }
         public int? DistrictEquipmentTypeId { get; set; }
         public DateTime? ExpectedEndDate { get; set; }
@@ -42,10 +45,20 @@ namespace HetsData.Model
         public HetEquipment FirstOnRotationList { get; set; }
         public HetLocalArea LocalArea { get; set; }
         public HetProject Project { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetAttachment> HetAttachment { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetHistory> HetHistory { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetNote> HetNote { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetRentalRequestAttachment> HetRentalRequestAttachment { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetRentalRequestRotationList> HetRentalRequestRotationList { get; set; }
     }
 }

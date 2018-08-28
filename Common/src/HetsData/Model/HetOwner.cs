@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
@@ -15,7 +16,9 @@ namespace HetsData.Model
             HetSeniorityAudit = new HashSet<HetSeniorityAudit>();
         }
 
+        [JsonProperty("Id")]
         public int OwnerId { get; set; }
+
         public string ArchiveReason { get; set; }
         public DateTime? CglendDate { get; set; }
         public DateTime? ArchiveDate { get; set; }
@@ -56,11 +59,23 @@ namespace HetsData.Model
 
         public HetLocalArea LocalArea { get; set; }
         public HetContact PrimaryContact { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetAttachment> HetAttachment { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetContact> HetContact { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetEquipment> HetEquipment { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetHistory> HetHistory { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetNote> HetNote { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetSeniorityAudit> HetSeniorityAudit { get; set; }
     }
 }

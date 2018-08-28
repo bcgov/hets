@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
     public partial class HetUserFavourite
     {
+        [JsonProperty("Id")]
         public int UserFavouriteId { get; set; }
+
         public int? UserId { get; set; }
         public bool? IsDefault { get; set; }
         public string Name { get; set; }

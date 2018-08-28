@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
     public partial class HetNote
     {
+        [JsonProperty("Id")]
         public int NoteId { get; set; }
+
         public int? EquipmentId { get; set; }
         public bool? IsNoLongerRelevant { get; set; }
         public int? OwnerId { get; set; }

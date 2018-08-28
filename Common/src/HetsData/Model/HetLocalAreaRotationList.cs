@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
     public partial class HetLocalAreaRotationList
     {
+        [JsonProperty("Id")]
         public int LocalAreaRotationListId { get; set; }
+
         public int? AskNextBlock1Id { get; set; }
         public float? AskNextBlock1Seniority { get; set; }
         public int? AskNextBlock2Id { get; set; }

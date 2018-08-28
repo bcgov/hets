@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
     public partial class HetRentalAgreementCondition
     {
+        [JsonProperty("Id")]
         public int RentalAgreementConditionId { get; set; }
+
         public string Comment { get; set; }
         public string ConditionName { get; set; }
         public DateTime DbCreateTimestamp { get; set; }
