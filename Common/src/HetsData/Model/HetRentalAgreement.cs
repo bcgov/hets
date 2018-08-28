@@ -20,26 +20,26 @@ namespace HetsData.Model
         public int? EquipmentId { get; set; }
         public int? ProjectId { get; set; }
         public string Status { get; set; }
-        public DateTime DbCreateTimestamp { get; set; }
-        public string AppCreateUserDirectory { get; set; }
+        [JsonIgnore]public DateTime DbCreateTimestamp { get; set; }
+        [JsonIgnore]public string AppCreateUserDirectory { get; set; }
         public DateTime? DatedOn { get; set; }
         public float? EquipmentRate { get; set; }
         public int? EstimateHours { get; set; }
         public DateTime? EstimateStartWork { get; set; }
-        public DateTime DbLastUpdateTimestamp { get; set; }
-        public string AppLastUpdateUserDirectory { get; set; }
+        [JsonIgnore]public DateTime DbLastUpdateTimestamp { get; set; }
+        [JsonIgnore]public string AppLastUpdateUserDirectory { get; set; }
         public string Note { get; set; }
         public string Number { get; set; }
         public string RateComment { get; set; }
         public string RatePeriod { get; set; }
-        public DateTime AppCreateTimestamp { get; set; }
-        public string AppCreateUserGuid { get; set; }
-        public string AppCreateUserid { get; set; }
-        public DateTime AppLastUpdateTimestamp { get; set; }
-        public string AppLastUpdateUserGuid { get; set; }
-        public string AppLastUpdateUserid { get; set; }
-        public string DbCreateUserId { get; set; }
-        public string DbLastUpdateUserId { get; set; }
+        [JsonIgnore]public DateTime AppCreateTimestamp { get; set; }
+        [JsonIgnore]public string AppCreateUserGuid { get; set; }
+        [JsonIgnore]public string AppCreateUserid { get; set; }
+        [JsonIgnore]public DateTime AppLastUpdateTimestamp { get; set; }
+        [JsonIgnore]public string AppLastUpdateUserGuid { get; set; }
+        [JsonIgnore]public string AppLastUpdateUserid { get; set; }
+        [JsonIgnore]public string DbCreateUserId { get; set; }
+        [JsonIgnore]public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
 
         public HetEquipment Equipment { get; set; }

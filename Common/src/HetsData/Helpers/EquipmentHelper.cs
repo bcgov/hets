@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -85,7 +83,7 @@ namespace HetsData.Helpers
             // *******************************************************************************
             // get all the time data for the current fiscal year
             // *******************************************************************************
-            float? summation = context.HetTimeRecord
+            float? summation = context.HetTimeRecord.AsNoTracking()
                 .Include(x => x.RentalAgreement.Equipment)
                 .Where(x => x.RentalAgreement.Equipment.EquipmentId == id &&
                             x.WorkedDate >= fiscalStart)
