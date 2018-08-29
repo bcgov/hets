@@ -59,9 +59,9 @@ namespace HetsApi.Controllers
             if (favouriteType != null)
             {
                 favourites = favourites.Where(x => x.Type == favouriteType);
-            }            
+            }
 
-            return new ObjectResult(favourites);
+            return new ObjectResult(new HetsResponse(favourites));
         }
 
         /// <summary>
@@ -94,9 +94,9 @@ namespace HetsApi.Controllers
             _context.HetUserFavourite.Remove(item);
 
             // save the changes
-            _context.SaveChanges();            
-             
-            return new ObjectResult(item);
+            _context.SaveChanges();
+
+            return new ObjectResult(new HetsResponse(item));
         }
 
         /// <summary>
@@ -163,9 +163,9 @@ namespace HetsApi.Controllers
                 {
                     currentUser.HetUserRole.Remove(currentUser.HetUserRole.ElementAt(i));
                 }
-            }            
+            }
 
-            return new ObjectResult(currentUser);
+            return new ObjectResult(new HetsResponse(currentUser));
         }
 
         /// <summary>
@@ -210,8 +210,8 @@ namespace HetsApi.Controllers
 
                 _context.SaveChanges();
             }
-            
-            return new ObjectResult(user);
+
+            return new ObjectResult(new HetsResponse(user));
         }
 
         #region Update Favourite
@@ -250,7 +250,7 @@ namespace HetsApi.Controllers
             // save the changes
             _context.SaveChanges();
 
-            return new ObjectResult(item);
+            return new ObjectResult(new HetsResponse(item));
         }
 
         #endregion

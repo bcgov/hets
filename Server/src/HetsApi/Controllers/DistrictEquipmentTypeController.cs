@@ -56,9 +56,9 @@ namespace HetsApi.Controllers
                 .Include(x => x.EquipmentType)
                 .Where(x => x.District.DistrictId == districtId)
                 .OrderBy(x => x.DistrictEquipmentName)
-                .ToList();            
+                .ToList();
 
-            return new ObjectResult(equipmentTypes);
+            return new ObjectResult(new HetsResponse(equipmentTypes));
         }
 
         /// <summary>

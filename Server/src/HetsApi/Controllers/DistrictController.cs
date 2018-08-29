@@ -48,7 +48,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.Region)
                 .ToList();
 
-            return new ObjectResult(districts);
+            return new ObjectResult(new HetsResponse(districts));
         }
 
         /// <summary>
@@ -70,8 +70,8 @@ namespace HetsApi.Controllers
                 .Where(x => x.LocalArea.ServiceArea.District.DistrictId == id)
                 .OrderBy(x => x.OrganizationName)
                 .ToList();
-            
-            return new ObjectResult(owners);
+
+            return new ObjectResult(new HetsResponse(owners));
         }
 
         /// <summary>
@@ -92,9 +92,9 @@ namespace HetsApi.Controllers
             List<HetLocalArea> localAreas = _context.HetLocalArea.AsNoTracking()
                 .Where(x => x.ServiceArea.District.DistrictId == id)
                 .OrderBy(x => x.Name)
-                .ToList();            
+                .ToList();
 
-            return new ObjectResult(localAreas);
+            return new ObjectResult(new HetsResponse(localAreas));
         }
     }
 }

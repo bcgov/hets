@@ -56,8 +56,8 @@ namespace HetsApi.Controllers
                 .Where(x => x.Active &&
                             x.District.DistrictId == districtId)
                 .ToList();
-            
-            return new ObjectResult(conditionTypes);            
+
+            return new ObjectResult(new HetsResponse(conditionTypes));        
         }
         
         /// <summary>
@@ -102,7 +102,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.District)
                 .FirstOrDefault(x => x.ConditionTypeId == id);
 
-            return new ObjectResult(conditionType);
+            return new ObjectResult(new HetsResponse(conditionType));
         }
 
         /// <summary>
@@ -166,8 +166,8 @@ namespace HetsApi.Controllers
             HetConditionType conditionType = _context.HetConditionType.AsNoTracking()
                 .Include(x => x.District)
                 .FirstOrDefault(x => x.ConditionTypeId == id);
-            
-            return new ObjectResult(conditionType);
+
+            return new ObjectResult(new HetsResponse(conditionType));
         }
     }
 }
