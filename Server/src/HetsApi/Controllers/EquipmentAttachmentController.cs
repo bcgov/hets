@@ -120,14 +120,10 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult EquipmentAttachmentsPost([FromBody]HetEquipmentAttachment item)
         {
-            if (item != null)
-            {
-                // not found
-                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            }
-
-            bool exists = _context.HetEquipmentAttachment
-                .Any(a => a.EquipmentAttachmentId == item.EquipmentAttachmentId);
+            // not found
+            if (item != null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            
+            bool exists = _context.HetEquipmentAttachment.Any(a => a.EquipmentAttachmentId == item.EquipmentAttachmentId);
 
             if (!exists)
             {

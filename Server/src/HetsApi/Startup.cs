@@ -42,6 +42,9 @@ namespace HetsApi
         {
             string connectionString = GetConnectionString();
 
+            // add http context accessor
+            services.AddHttpContextAccessor();
+
             // add database context
             services.AddDbContext<DbAppContext>(options => options.UseNpgsql(connectionString));
 

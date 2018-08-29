@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
+using HetsApi.Model;
 using HetsData.Model;
 
 namespace HetsApi.Controllers
@@ -43,7 +44,7 @@ namespace HetsApi.Controllers
             // get all cities
             List<HetCity> cities = _context.HetCity.AsNoTracking().ToList();
 
-            return new ObjectResult(cities);
+            return new ObjectResult(new HetsResponse(cities));
         }
     }
 }
