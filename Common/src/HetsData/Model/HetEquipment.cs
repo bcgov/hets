@@ -80,13 +80,13 @@ namespace HetsData.Model
         public HetLocalArea LocalArea { get; set; }
         public HetOwner Owner { get; set; }
 
-        [JsonIgnore]        
+        [JsonProperty("Attachments")]
         public ICollection<HetAttachment> HetAttachment { get; set; }
 
-        [JsonIgnore]
+        [JsonProperty("EquipmentAttachments")]
         public ICollection<HetEquipmentAttachment> HetEquipmentAttachment { get; set; }
 
-        [JsonIgnore]
+        [JsonProperty("History")]
         public ICollection<HetHistory> HetHistory { get; set; }
 
         [JsonIgnore]
@@ -98,7 +98,7 @@ namespace HetsData.Model
         [JsonIgnore]
         public ICollection<HetLocalAreaRotationList> HetLocalAreaRotationListAskNextBlockOpen { get; set; }
 
-        [JsonIgnore]
+        [JsonProperty("Notes")]
         public ICollection<HetNote> HetNote { get; set; }
 
         [JsonIgnore]

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using HetsApi.Helpers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -267,8 +268,8 @@ namespace HetsApi.Authentication
                 _logger.LogInformation("Validating credential against the HETS db");
 
                 userSettings.HetsUser = hostingEnv.IsDevelopment()
-                    ? dbAppContext.LoadUser(userId)
-                    : dbAppContext.LoadUser(userId, siteMinderGuid);
+                    ? UserHelper.GetUser(dbAppContext, userId)
+                    : UserHelper.GetUser(dbAppContext, userId, siteMinderGuid);
 
                 if (userSettings.HetsUser == null)
                 {

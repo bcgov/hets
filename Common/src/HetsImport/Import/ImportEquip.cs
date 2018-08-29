@@ -160,7 +160,7 @@ namespace HetsImport.Import
                         int totalBlocks = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
 
                         // assign blocks
-                        SeniorityListHelper.AssignBlocks(dbContext, localArea.LocalAreaId, districtEquipmentType.DistrictEquipmentTypeId, blockSize, totalBlocks, false);
+                        SeniorityListHelper.AssignBlocks(localArea.LocalAreaId, districtEquipmentType.DistrictEquipmentTypeId, blockSize, totalBlocks, dbContext, false);
 
                         // save change to database periodically to avoid frequent writing to the database
                         if (ii++ % 1000 == 0)

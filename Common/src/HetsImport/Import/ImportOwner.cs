@@ -183,113 +183,6 @@ namespace HetsImport.Import
         }
 
         /// <summary>
-        /// Get the list of mapped records.  
-        /// </summary>
-        /// <param name="dbContext"></param>
-        /// <param name="fileLocation"></param>
-        /// <returns></returns>
-        public static List<ImportMapRecord> GetImportMap(DbAppContext dbContext, string fileLocation)
-        {
-            List<ImportMapRecord> result = new List<ImportMapRecord>();
-            string rootAttr = "ArrayOf" + OldTable;
-            XmlSerializer ser = new XmlSerializer(typeof(ImportModels.Owner[]), new XmlRootAttribute(rootAttr));
-            ser.UnknownAttribute += ImportUtility.UnknownAttribute;
-            ser.UnknownElement += ImportUtility.UnknownElement;
-
-            MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
-            XmlReader reader = new XmlTextReader(memoryStream);
-
-            if (ser.CanDeserialize(reader))
-            {
-                ImportModels.Owner[] legacyItems = (ImportModels.Owner[])ser.Deserialize(reader);
-
-                List<string> keys = new List<string>();
-                Dictionary<string, string> givenNames = new Dictionary<string, string>();
-                Dictionary<string, string> surnames = new Dictionary<string, string>();
-                Dictionary<string, string> orgNames = new Dictionary<string, string>();
-                Dictionary<string, int> oldkeys = new Dictionary<string, int>();
-
-                foreach (ImportModels.Owner item in legacyItems)
-                {
-                    string givenName = item.Owner_First_Name;
-                    string surname = item.Owner_Last_Name;
-                    int oldKey = item.Popt_Id;
-                    string organizationName = "" + item.CGL_Company;
-                    string key = organizationName + " " + givenName + " " + surname;
-
-                    if (!keys.Contains(key))
-                    {
-                        keys.Add(key);
-                        givenNames.Add(key, givenName);
-                        surnames.Add(key, surname);
-                        orgNames.Add(key, organizationName);
-                        oldkeys.Add(key, oldKey);
-                    }
-                }
-
-                keys.Sort();
-                int currentOwner = 0;
-                foreach (string key in keys)
-                {
-                    ImportMapRecord importMapRecordOrganization = new ImportMapRecord
-                    {
-                        TableName = NewTable,
-                        MappedColumn = "OrganizationName",
-                        OriginalValue = orgNames[key],
-                        NewValue = "OwnerFirst" + currentOwner
-                    };
-
-                    result.Add(importMapRecordOrganization);
-
-                    ImportMapRecord importMapRecordFirstName = new ImportMapRecord
-                    {
-                        TableName = NewTable,
-                        MappedColumn = "Owner_First_Name",
-                        OriginalValue = givenNames[key],
-                        NewValue = "OwnerFirst" + currentOwner
-                    };
-
-                    result.Add(importMapRecordFirstName);
-
-                    ImportMapRecord importMapRecordLastName = new ImportMapRecord
-                    {
-                        TableName = NewTable,
-                        MappedColumn = "Owner_Last_Name",
-                        OriginalValue = givenNames[key],
-                        NewValue = "OwnerLast" + currentOwner
-                    };
-
-                    result.Add(importMapRecordLastName);
-
-                    // now update the owner record.
-                    HetImportMap importMap = dbContext.HetImportMap.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == oldkeys[key].ToString());
-
-                    if (importMap != null)
-                    {
-                        HetOwner owner = dbContext.HetOwner.FirstOrDefault(x => x.OwnerId == importMap.NewKey);
-
-                        if (owner != null)
-                        {
-                            owner.GivenName = "OwnerFirst" + currentOwner;
-                            owner.Surname = "OwnerLast" + currentOwner;                           
-
-                            owner.RegisteredCompanyNumber = ImportUtility.ScrambleString(owner.RegisteredCompanyNumber);
-                            owner.WorkSafeBcpolicyNumber = ImportUtility.ScrambleString(owner.WorkSafeBcpolicyNumber);
-                            owner.OrganizationName = "Company " + currentOwner;
-
-                            dbContext.HetOwner.Update(owner);
-                            dbContext.SaveChangesForImport();
-                        }
-                    }
-
-                    currentOwner++;
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
         /// Import Owner Records
         /// </summary>
         /// <param name="performContext"></param>
@@ -555,7 +448,7 @@ namespace HetsImport.Import
                 }                     
 
                 // check if the organization name is actually a "Ltd" or other company name
-                // (in BC Bid the names are somtimes used to store the org)
+                // (in BC Bid the names are sometimes used to store the org)
                 if (!string.IsNullOrEmpty(tempName) &&
                     owner.OrganizationName.IndexOf(" Ltd", StringComparison.Ordinal) > -1 ||
                     owner.OrganizationName.IndexOf(" Resort", StringComparison.Ordinal) > -1 ||
@@ -593,8 +486,8 @@ namespace HetsImport.Import
                 {
                     foreach (HetContact contactItem in owner.HetContact)
                     {
-                        if (!String.Equals(contactItem.GivenName, tempOwnerFirstName, StringComparison.InvariantCultureIgnoreCase) &&
-                            !String.Equals(contactItem.Surname, tempOwnerLastName, StringComparison.InvariantCultureIgnoreCase))
+                        if (!string.Equals(contactItem.GivenName, tempOwnerFirstName, StringComparison.InvariantCultureIgnoreCase) &&
+                            !string.Equals(contactItem.Surname, tempOwnerLastName, StringComparison.InvariantCultureIgnoreCase))
                         {
                             contactExists = true;
                         }
@@ -664,10 +557,10 @@ namespace HetsImport.Import
                     }
 
                     // check if the name is unique
-                    if ((!String.Equals(tempContactFirstName, tempOwnerFirstName, StringComparison.InvariantCultureIgnoreCase) &&
-                         !String.Equals(tempContactLastName, tempOwnerLastName, StringComparison.InvariantCultureIgnoreCase)) ||
-                        (!String.Equals(tempContactFirstName, tempOwnerFirstName, StringComparison.InvariantCultureIgnoreCase) &&
-                         !String.Equals(tempContactFirstName, tempOwnerLastName, StringComparison.InvariantCultureIgnoreCase) &&
+                    if ((!string.Equals(tempContactFirstName, tempOwnerFirstName, StringComparison.InvariantCultureIgnoreCase) &&
+                         !string.Equals(tempContactLastName, tempOwnerLastName, StringComparison.InvariantCultureIgnoreCase)) ||
+                        (!string.Equals(tempContactFirstName, tempOwnerFirstName, StringComparison.InvariantCultureIgnoreCase) &&
+                         !string.Equals(tempContactFirstName, tempOwnerLastName, StringComparison.InvariantCultureIgnoreCase) &&
                          !string.IsNullOrEmpty(tempContactLastName)))
                     {
                         // check if the name(s) already exist
@@ -677,8 +570,8 @@ namespace HetsImport.Import
                         {
                             foreach (HetContact contactItem in owner.HetContact)
                             {
-                                if (String.Equals(contactItem.GivenName, tempContactFirstName, StringComparison.InvariantCultureIgnoreCase) &&
-                                    String.Equals(contactItem.Surname, tempContactLastName, StringComparison.InvariantCultureIgnoreCase))
+                                if (string.Equals(contactItem.GivenName, tempContactFirstName, StringComparison.InvariantCultureIgnoreCase) &&
+                                    string.Equals(contactItem.Surname, tempContactLastName, StringComparison.InvariantCultureIgnoreCase))
                                 {
                                     contactExists = true;
                                 }
