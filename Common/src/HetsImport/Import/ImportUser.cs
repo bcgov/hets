@@ -123,59 +123,7 @@ namespace HetsImport.Import
                 throw;
             }
         }
-
-        /// <summary>
-        /// Get the list of mapped records.  
-        /// </summary>
-        /// <param name="dbContext"></param>
-        /// <param name="fileLocation"></param>
-        /// <returns></returns>
-        public static List<ImportMapRecord> GetImportMap(DbAppContext dbContext, string fileLocation)
-        {
-            List<ImportMapRecord> result = new List<ImportMapRecord>();
-            string rootAttr = "ArrayOf" + OldTable;
-            XmlSerializer ser = new XmlSerializer(typeof(ImportModels.UserHets[]), new XmlRootAttribute(rootAttr));
-            ser.UnknownAttribute += ImportUtility.UnknownAttribute;
-            ser.UnknownElement += ImportUtility.UnknownElement;
-
-            MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
-            XmlReader reader = new XmlTextReader(memoryStream);
-            if (ser.CanDeserialize(reader)  )
-            {
-                ImportModels.UserHets[] legacyItems = (ImportModels.UserHets[])ser.Deserialize(reader);
-                List<string> usernames = new List<string>();
-
-                foreach (ImportModels.UserHets item in legacyItems)
-                {
-                    string username = NormalizeUserCode(item.User_Cd);
-
-                    if (!usernames.Contains(username))
-                    {
-                        usernames.Add(username);
-                    }
-                }
-
-                usernames.Sort();
-                int currentUser = 0; 
-
-                foreach (string username in usernames)
-                {
-                    ImportMapRecord importMapRecord = new ImportMapRecord
-                    {
-                        TableName = NewTable,
-                        MappedColumn = "User_cd",
-                        OriginalValue = username,
-                        NewValue = "User" + currentUser
-                    };
-
-                    currentUser++;
-                    result.Add(importMapRecord);
-                }                   
-            }
-            
-            return result;
-        }
-
+        
         // normalize a user code from the legacy database.
         public static string NormalizeUserCode(string userCode)
         {

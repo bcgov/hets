@@ -11,34 +11,7 @@ using NPOI.XSSF.UserModel;
 using HetsData.Model;
 
 namespace HetsImport.Import
-{
-    /// <summary>
-    /// Pair
-    /// </summary>
-    public class Pair
-    {
-        /// <summary>
-        /// Hours
-        /// </summary>
-        public float Hours { get; set; }
-
-        /// <summary>
-        /// Rate
-        /// </summary>
-        public float Rate  { get; set; }
-
-        /// <summary>
-        /// Pair Constructor
-        /// </summary>
-        /// <param name="hour"></param>
-        /// <param name="rate"></param>
-        public Pair (float hour, float rate)
-        {
-            Hours = hour;
-            Rate = rate;
-        }
-    }
-
+{    
     /// <summary>
     /// Import Utility
     /// </summary>
@@ -70,8 +43,8 @@ namespace HetsImport.Import
         /// <summary>
         /// This is recording where the last import was stopped for specific table
         /// Use BCBidImport.todayDate as newTable entry
-        /// Please note that NewTable entry of the Import_Map table is alerts today's dat: BCBidImport.todayDate for identifying purpose. This means the restarting point inly carew
-        /// what has done for today, not in the past.
+        /// Please note that NewTable entry of the Import_Map table is alerts today's dat: BCBidImport.todayDate for identifying purpose.
+        /// This means the restarting point only cares what has done for today, not in the past.
         /// </summary>
         /// <param name="dbContext"></param>
         /// <param name="oldTable"></param>   This is like "Owner_Progress" for the import progress entry (row) of Import_Map table
@@ -194,82 +167,7 @@ namespace HetsImport.Import
             FileStream fs = new FileStream(destinationPath, FileMode.Create, FileAccess.Write);
             return fs;
         }
-
-        /// <summary>
-        /// Given a userString like: "Espey, Carol (IDIR\cespey)" - format the user and add the user if no in the database
-        /// Return the user or a default system user called "SYSTEM_HETS" as smSystemId
-        /// </summary>
-        /// <param name="dbContext"></param>
-        /// <param name="userString"></param>
-        /// <param name="smSystemId"></param>
-        /// <returns></returns>
-        public static HetUser AddUserFromString(DbAppContext dbContext, string userString, string smSystemId)
-        {
-            // find the smUserId for the <Modified_By>
-            int index;
-
-            try
-            {
-                index = userString.IndexOf(@"(IDIR\", StringComparison.Ordinal);
-            }
-            catch
-            {
-                return dbContext.HetUser.FirstOrDefault(x => string.Equals(x.SmUserId, smSystemId, StringComparison.OrdinalIgnoreCase));
-            }
-
-            if (index >= 0)
-            {
-                try
-                {
-                    int commaPos = userString.IndexOf(@",", StringComparison.Ordinal);
-                    int leftBreakPos = userString.IndexOf(@"(", StringComparison.Ordinal);
-                    int startPos = userString.IndexOf(@"\", StringComparison.Ordinal);
-                    int rightBreakPos = userString.IndexOf(@")", StringComparison.Ordinal);
-                    string surName = userString.Substring(0, commaPos).Trim();
-                    string givenName = userString.Substring(commaPos + 2, leftBreakPos - commaPos - 2).Trim();
-                    string smUserId = userString.Substring(startPos + 1, rightBreakPos - startPos - 1).Trim().ToLower();
-
-                    HetUser user = dbContext.HetUser.FirstOrDefault(x => string.Equals(x.SmUserId, smUserId, StringComparison.OrdinalIgnoreCase));
-
-                    if (user == null)
-                    {
-                        // always add as inactive!
-                        user = new HetUser
-                        {
-                            Surname = surName,
-                            GivenName = givenName,
-                            SmUserId = smUserId,
-                            Active = false,
-                            AppCreateTimestamp = DateTime.UtcNow,
-                            AppCreateUserid = smSystemId,
-                            AppLastUpdateTimestamp = DateTime.UtcNow,                            
-                            AppLastUpdateUserid = smSystemId
-                        };                        
-
-                        dbContext.HetUser.Add(user);
-                        dbContext.SaveChangesForImport();
-                    }
-                    else if (user.Surname == null && surName.Length >= 1)
-                    {
-                        user.Surname = surName;
-                        user.GivenName = givenName;
-                        user.AppLastUpdateTimestamp = DateTime.UtcNow;
-                        user.AppLastUpdateUserid = smSystemId;
-
-                        dbContext.HetUser.Update(user);
-                    }
-
-                    return user;
-                }
-                catch
-                {
-                    return dbContext.HetUser.FirstOrDefault(x => x.SmUserId == smSystemId);
-                }
-            }
-
-            return dbContext.HetUser.FirstOrDefault(x => x.SmUserId == smSystemId);
-        }
-
+        
         /// <summary>
         /// Add a user with smUserId as systemId if not in the database 
         /// </summary>

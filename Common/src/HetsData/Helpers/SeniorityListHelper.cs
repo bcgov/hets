@@ -8,6 +8,8 @@ using HetsData.Model;
 
 namespace HetsData.Helpers
 {
+    #region Seniority List Models
+
     public class RuleType
     {
         public int Default { get; set; }
@@ -21,30 +23,363 @@ namespace HetsData.Helpers
         public RuleType TotalBlocks { get; set; }
     }
 
+    public class SeniorityViewModel
+    {
+        public int Id { get; set; }
+        public string EquipmentType { get; set; }
+        public string OwnerName { get; set; }
+        public int? OwnerId { get; set; }
+        public string SeniorityString { get; set; }
+        public string Seniority { get; set; }
+        public string Make { get; set; }
+        public string Model { get; set; }
+        public string Size { get; set; }
+        public string EquipmentCode { get; set; }
+        public string LastCalled { get; set; }
+        public string YearsRegistered { get; set; }
+        public string YtdHours { get; set; }
+        public string HoursYearMinus1 { get; set; }
+        public string HoursYearMinus2 { get; set; }
+        public string HoursYearMinus3 { get; set; }
+        public int SenioritySortOrder { get; set; }
+    }
+
+    public class SeniorityListRecord
+    {
+        public string DistrictName { get; set; }
+        public string LocalAreaName { get; set; }
+        public string DistrictEquipmentTypeName { get; set; }
+        public string YearMinus1 { get; set; }
+        public string YearMinus2 { get; set; }
+        public string YearMinus3 { get; set; }
+        public List<SeniorityViewModel> SeniorityList { get; set; }
+    }
+
+    public class SeniorityListPdfViewModel
+    {
+        public SeniorityListPdfViewModel()
+        {
+        }
+
+        public SeniorityListPdfViewModel(List<SeniorityListRecord> seniorityListRecords)
+        {
+            SeniorityListRecords = seniorityListRecords;
+        }
+        
+        public List<SeniorityListRecord> SeniorityListRecords { get; set; }
+                
+        public string ToJson()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
+        }
+    }
+
+    #endregion
+
     /// <summary>
     /// Seniority List Helper
     /// </summary>
     public static class SeniorityListHelper
-    {
-        /// <summary>
-        /// Get the Effective Date of the Equipment Seniority
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="equipmentId"></param>
-        /// <returns></returns>
-        public static DateTime? GetEquipmentSeniorityEffectiveDate(DbAppContext context, int equipmentId)
-        {
-            DateTime? result = null;
-            HetEquipment equipment = context.HetEquipment.FirstOrDefault(x => x.EquipmentId == equipmentId);
+    {       
+        #region Manage the Seniority List for a Specific Location
 
-            if (equipment != null)
+        /// <summary>
+        /// Calculate the Seniority List
+        /// </summary>        
+        /// <param name="localAreaId"></param>
+        /// <param name="districtEquipmentTypeId"></param>
+        /// <param name="equipmentTypeId"></param>
+        /// <param name="context"></param>
+        /// <param name="configuration"></param>
+        public static void CalculateSeniorityList(int localAreaId, int districtEquipmentTypeId, 
+            int equipmentTypeId, DbAppContext context, IConfiguration configuration)
+        {
+            try
             {
-                result = equipment.SeniorityEffectiveDate;
+                // validate data
+                if (context != null &&
+                    context.HetLocalArea.Any(x => x.LocalAreaId == localAreaId) &&
+                    context.HetDistrictEquipmentType.Any(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId))
+                {
+                    // get processing rules
+                    SeniorityScoringRules scoringRules = new SeniorityScoringRules(configuration);
+
+                    // get the associated equipment type
+                    HetEquipmentType equipmentTypeRecord = context.HetEquipmentType
+                        .FirstOrDefault(x => x.EquipmentTypeId == equipmentTypeId);
+
+                    if (equipmentTypeRecord != null)
+                    {
+                        // get rules                  
+                        int seniorityScoring = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetEquipmentScore("DumpTruck") : scoringRules.GetEquipmentScore();
+                        int blockSize = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetBlockSize("DumpTruck") : scoringRules.GetBlockSize();
+                        int totalBlocks = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
+
+                        // get all equipment records
+                        IQueryable<HetEquipment> data = context.HetEquipment
+                             .Where(x => x.LocalAreaId == localAreaId &&
+                                         x.DistrictEquipmentTypeId == districtEquipmentTypeId)
+                             .Select(x => x);
+
+                        // update the seniority score
+                        foreach (HetEquipment equipment in data)
+                        {
+                            if (equipment.Status != HetEquipment.StatusApproved)
+                            {
+                                equipment.SeniorityEffectiveDate = DateTime.UtcNow;
+                                equipment.BlockNumber = null;
+                                equipment.Seniority = null;
+                                equipment.NumberInBlock = null;
+                            }
+                            else
+                            {
+                                equipment.CalculateSeniority(seniorityScoring);
+                                equipment.SeniorityEffectiveDate = DateTime.UtcNow;
+                            }
+
+                            context.HetEquipment.Update(equipment);
+                        }
+
+                        context.SaveChanges();
+
+                        // put equipment into the correct blocks
+                        AssignBlocks(localAreaId, districtEquipmentTypeId, blockSize, totalBlocks, context);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ERROR: CalculateSeniorityList");
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Assign blocks for the given local area and equipment type
+        /// </summary>        
+        /// <param name="localAreaId"></param>
+        /// <param name="districtEquipmentTypeId"></param>
+        /// <param name="blockSize"></param>
+        /// <param name="totalBlocks"></param>
+        /// <param name="context"></param>
+        /// <param name="saveChanges"></param>
+        public static void AssignBlocks(int localAreaId, int districtEquipmentTypeId, 
+            int blockSize, int totalBlocks, DbAppContext context, bool saveChanges = true)
+        {
+            try
+            {
+                // get all equipment records
+                List<HetEquipment> data = context.HetEquipment
+                    .Include(x => x.Owner)
+                    .Where(x => x.Status == HetEquipment.StatusApproved &&
+                                x.LocalArea.LocalAreaId == localAreaId &&
+                                x.DistrictEquipmentTypeId == districtEquipmentTypeId)
+                    .OrderByDescending(x => x.Seniority).ThenBy(x => x.ReceivedDate)
+                    .Select(x => x)
+                    .ToList();
+
+                // total blocks only counts the "main" blocks - we need to add 1 more for the remaining records
+                totalBlocks = totalBlocks + 1;
+
+                // instantiate lists to hold equipment by block
+                List<int>[] blocks = new List<int>[totalBlocks];
+
+                foreach (HetEquipment equipment in data)
+                {
+                    // iterate the blocks and add the record
+                    for (int i = 0; i < totalBlocks; i++)
+                    {
+                        if (AddedToBlock(i, totalBlocks, blockSize, blocks, equipment, context, saveChanges))
+                        {
+                            break; // move to next record
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ERROR: AssignBlocks");
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        private static bool AddedToBlock(int currentBlock, int totalBlocks, int blockSize, 
+            List<int>[] blocks, HetEquipment equipment, DbAppContext context, bool saveChanges = true)
+        {
+            try
+            {
+                // check if this record's Owner is null
+                if (equipment.Owner == null)
+                {
+                    return false; // not adding this record to the block
+                }
+
+                if (blocks[currentBlock] == null)
+                {
+                    blocks[currentBlock] = new List<int>();
+                }
+
+                // check if the current block is full
+                if (currentBlock < (totalBlocks - 1) && blocks[currentBlock].Count >= blockSize)
+                {
+                    return false; // not adding this record to the block
+                }
+
+                // check if this record's Owner already exists in the block   
+                if (currentBlock < (totalBlocks - 1) && blocks[currentBlock].Contains(equipment.Owner.OwnerId))
+                {
+                    return false; // not adding this record to the block
+                }
+
+                // add record to the block                        
+                blocks[currentBlock].Add(equipment.Owner.OwnerId);
+
+                // update the equipment record
+                equipment.BlockNumber = currentBlock + 1;
+                equipment.NumberInBlock = blocks[currentBlock].Count;
+
+                context.HetEquipment.Update(equipment);
+
+                if (saveChanges)
+                {
+                    context.SaveChanges();
+                }
+
+                // record added to the block
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ERROR: AddedToBlock");
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        #endregion
+
+        #region Convert full equipment model record to a "Lite" seniority version
+
+        /// <summary>
+        /// Seniority List view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="scoringRules"></param>
+        /// <param name="rotationList"></param>
+        /// <param name="context"></param>        
+        /// <returns></returns>
+        public static SeniorityViewModel ToSeniorityViewModel(HetEquipment model, SeniorityScoringRules scoringRules,
+            HetLocalAreaRotationList rotationList, DbAppContext context)
+        {
+            SeniorityViewModel seniorityViewModel = new SeniorityViewModel();
+
+            if (model == null) return seniorityViewModel;
+
+            int numberOfBlocks = 0;
+
+            // get number of blocks for this equipment type
+            if (model.DistrictEquipmentType != null)
+            {
+                numberOfBlocks = model.DistrictEquipmentType.EquipmentType.IsDumpTruck
+                    ? scoringRules.GetTotalBlocks("DumpTruck") + 1
+                    : scoringRules.GetTotalBlocks() + 1;
             }
 
-            context.Entry(equipment ?? throw new InvalidOperationException()).State = EntityState.Detached;
-            return result;
+            // get equipment seniority
+            float seniority = 0F;
+            if (model.Seniority != null)
+            {
+                seniority = (float)model.Seniority;
+            }
+
+            // get equipment block number
+            int blockNumber = 0;
+            if (model.BlockNumber != null)
+            {
+                blockNumber = (int)model.BlockNumber;
+            }
+
+            // get equipment block number
+            int numberInBlock = 0;
+            if (model.NumberInBlock != null)
+            {
+                numberInBlock = (int)model.NumberInBlock;
+            }
+
+            // *************************************************************
+            // check if this record/owner was call last
+            // *************************************************************
+            bool callNext = false;
+
+            if (rotationList != null &&
+                blockNumber == 1 &&
+                rotationList.AskNextBlock1Id == model.EquipmentId)
+            {
+                callNext = true;
+            }
+            else if (rotationList != null &&
+                     numberOfBlocks > 1 &&
+                     blockNumber == 2 &&
+                     rotationList.AskNextBlock2Id == model.EquipmentId)
+            {
+                callNext = true;
+            }
+            else if (rotationList != null &&
+                     rotationList.AskNextBlockOpenId == model.EquipmentId)
+            {
+                callNext = true;
+            }
+
+            seniorityViewModel.LastCalled = callNext ? "Y" : " ";
+
+            // *************************************************************
+            // Map data to view model
+            // *************************************************************
+            seniorityViewModel.Id = model.EquipmentId;
+
+            if (model.DistrictEquipmentType != null)
+            {
+                seniorityViewModel.EquipmentType = model.DistrictEquipmentType.DistrictEquipmentName;
+            }
+
+            if (model.Owner != null)
+            {
+                seniorityViewModel.OwnerName = model.Owner.OrganizationName;
+                seniorityViewModel.OwnerId = model.OwnerId;
+            }
+
+            seniorityViewModel.SeniorityString = EquipmentHelper.FormatSeniorityString(seniority, blockNumber, numberOfBlocks);
+
+            // format the seniority value
+            seniorityViewModel.Seniority = string.Format("{0:0.###}", model.Seniority);
+
+            seniorityViewModel.Make = model.Make;
+            seniorityViewModel.Model = model.Model;
+            seniorityViewModel.Size = model.Size;
+            seniorityViewModel.EquipmentCode = model.EquipmentCode;
+
+            seniorityViewModel.YearsRegistered = model.YearsOfService.ToString();
+
+            // calculate and format the ytd hours
+            float tempHours = EquipmentHelper.GetYtdServiceHours(model.EquipmentId, context);
+            seniorityViewModel.YtdHours = string.Format("{0:0.###}", tempHours);
+
+            // format the hours
+            seniorityViewModel.HoursYearMinus1 = string.Format("{0:0.###}", model.ServiceHoursLastYear);
+            seniorityViewModel.HoursYearMinus2 = string.Format("{0:0.###}", model.ServiceHoursTwoYearsAgo);
+            seniorityViewModel.HoursYearMinus3 = string.Format("{0:0.###}", model.ServiceHoursThreeYearsAgo);
+
+            // get last called value
+
+
+            seniorityViewModel.SenioritySortOrder = EquipmentHelper.CalculateSenioritySortOrder(blockNumber, numberInBlock);
+
+            return seniorityViewModel;
         }
+
+        #endregion
 
         /*
         /// <summary>
@@ -147,183 +482,6 @@ namespace HetsData.Helpers
             }
         }
         */
-
-        #region Manage the Seniority List for a Specific Location
-
-        /// <summary>
-        /// Calculate the Seniority List
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="localAreaId"></param>
-        /// <param name="districtEquipmentTypeId"></param>
-        /// <param name="equipmentTypeId"></param>
-        /// <param name="configuration"></param>
-        public static void CalculateSeniorityList(this DbAppContext context, int localAreaId, int districtEquipmentTypeId, int equipmentTypeId, IConfiguration configuration)
-        {
-            try
-            {
-                // validate data
-                if (context != null &&
-                    context.HetLocalArea.Any(x => x.LocalAreaId == localAreaId) &&
-                    context.HetDistrictEquipmentType.Any(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId))
-                {
-                    // get processing rules
-                    SeniorityScoringRules scoringRules = new SeniorityScoringRules(configuration);
-
-                    // get the associated equipment type
-                    HetEquipmentType equipmentTypeRecord = context.HetEquipmentType
-                        .FirstOrDefault(x => x.EquipmentTypeId == equipmentTypeId);
-
-                    if (equipmentTypeRecord != null)
-                    {
-                        // get rules                  
-                        int seniorityScoring = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetEquipmentScore("DumpTruck") : scoringRules.GetEquipmentScore();
-                        int blockSize = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetBlockSize("DumpTruck") : scoringRules.GetBlockSize();
-                        int totalBlocks = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
-
-                        // get all equipment records
-                        IQueryable<HetEquipment> data = context.HetEquipment
-                             .Where(x => x.LocalAreaId == localAreaId &&
-                                         x.DistrictEquipmentTypeId == districtEquipmentTypeId)
-                             .Select(x => x);
-
-                        // update the seniority score
-                        foreach (HetEquipment equipment in data)
-                        {
-                            if (equipment.Status != HetEquipment.StatusApproved)
-                            {
-                                equipment.SeniorityEffectiveDate = DateTime.UtcNow;
-                                equipment.BlockNumber = null;
-                                equipment.Seniority = null;
-                                equipment.NumberInBlock = null;
-                            }
-                            else
-                            {
-                                equipment.CalculateSeniority(seniorityScoring);
-                                equipment.SeniorityEffectiveDate = DateTime.UtcNow;
-                            }
-
-                            context.HetEquipment.Update(equipment);
-                        }
-
-                        context.SaveChanges();
-
-                        // put equipment into the correct blocks
-                        AssignBlocks(context, localAreaId, districtEquipmentTypeId, blockSize, totalBlocks);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("ERROR: CalculateSeniorityList");
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Assign blocks for the given local area and equipment type
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="localAreaId"></param>
-        /// <param name="districtEquipmentTypeId"></param>
-        /// <param name="blockSize"></param>
-        /// <param name="totalBlocks"></param>
-        /// <param name="saveChanges"></param>
-        public static void AssignBlocks(DbAppContext context, int localAreaId, int districtEquipmentTypeId, int blockSize, int totalBlocks, bool saveChanges = true)
-        {
-            try
-            {
-                // get all equipment records
-                List<HetEquipment> data = context.HetEquipment
-                    .Include(x => x.Owner)
-                    .Where(x => x.Status == HetEquipment.StatusApproved &&
-                                x.LocalArea.LocalAreaId == localAreaId &&
-                                x.DistrictEquipmentTypeId == districtEquipmentTypeId)
-                    .OrderByDescending(x => x.Seniority).ThenBy(x => x.ReceivedDate)
-                    .Select(x => x)
-                    .ToList();
-
-                // total blocks only counts the "main" blocks - we need to add 1 more for the remaining records
-                totalBlocks = totalBlocks + 1;
-
-                // instantiate lists to hold equipment by block
-                List<int>[] blocks = new List<int>[totalBlocks];
-
-                foreach (HetEquipment equipment in data)
-                {
-                    // iterate the blocks and add the record
-                    for (int i = 0; i < totalBlocks; i++)
-                    {
-                        if (AddedToBlock(context, i, totalBlocks, blockSize, blocks, equipment, saveChanges))
-                        {
-                            break; // move to next record
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("ERROR: AssignBlocks");
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-
-        private static bool AddedToBlock(DbAppContext context, int currentBlock, int totalBlocks,
-            int blockSize, List<int>[] blocks, HetEquipment equipment, bool saveChanges = true)
-        {
-            try
-            {
-                // check if this record's Owner is null
-                if (equipment.Owner == null)
-                {
-                    return false; // not adding this record to the block
-                }
-
-                if (blocks[currentBlock] == null)
-                {
-                    blocks[currentBlock] = new List<int>();
-                }
-
-                // check if the current block is full
-                if (currentBlock < (totalBlocks - 1) && blocks[currentBlock].Count >= blockSize)
-                {
-                    return false; // not adding this record to the block
-                }
-
-                // check if this record's Owner already exists in the block   
-                if (currentBlock < (totalBlocks - 1) && blocks[currentBlock].Contains(equipment.Owner.OwnerId))
-                {
-                    return false; // not adding this record to the block
-                }
-
-                // add record to the block                        
-                blocks[currentBlock].Add(equipment.Owner.OwnerId);
-
-                // update the equipment record
-                equipment.BlockNumber = currentBlock + 1;
-                equipment.NumberInBlock = blocks[currentBlock].Count;
-
-                context.HetEquipment.Update(equipment);
-
-                if (saveChanges)
-                {
-                    context.SaveChanges();
-                }
-
-                // record added to the block
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("ERROR: AddedToBlock");
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-
-        #endregion               
     }
 
     #region Seniority Scoring Rules
