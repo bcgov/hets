@@ -15,7 +15,7 @@ namespace HetsApi.Controllers
     /// <summary>
     /// District Controller
     /// </summary>
-    [Route("/api/districts")]
+    [Route("api/districts")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class DistrictController : Controller
     {
@@ -55,7 +55,7 @@ namespace HetsApi.Controllers
         /// Get all owners by district
         /// </summary>
         [HttpGet]
-        [Route("/api/district/{id}/owners")]
+        [Route("api/district/{id}/owners")]
         [SwaggerOperation("DistrictOwnersGet")]
         [SwaggerResponse(200, type: typeof(List<HetOwner>))]
         [RequiresPermission(HetPermission.Login)]
@@ -78,7 +78,7 @@ namespace HetsApi.Controllers
         /// Get all local areas by district
         /// </summary>
         [HttpGet]
-        [Route("/api/district/{id}/localAreas")]
+        [Route("api/district/{id}/localAreas")]
         [SwaggerOperation("DistrictLocalAreasGet")]
         [SwaggerResponse(200, type: typeof(List<HetLocalArea>))]
         [RequiresPermission(HetPermission.Login)]

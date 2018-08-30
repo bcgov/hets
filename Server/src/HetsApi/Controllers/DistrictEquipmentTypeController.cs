@@ -15,7 +15,7 @@ namespace HetsApi.Controllers
     /// <summary>
     /// District Equipment Type Controller
     /// </summary>
-    [Route("/api/districtEquipmentTypes")]
+    [Route("api/districtEquipmentTypes")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class DistrictEquipmentTypeController : Controller
     {

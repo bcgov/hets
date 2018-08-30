@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using HetsApi.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -39,6 +40,7 @@ namespace HetsApi.Controllers
         [Route("equipment/{id}/attachments")]
         [SwaggerOperation("EquipmentIdAttachmentsPost")]
         [SwaggerResponse(200, type: typeof(List<HetAttachment>))]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult EquipmentIdAttachmentsPost([FromRoute] int id, [FromForm]IList<IFormFile> files)
         {
             // validate the id            
@@ -103,6 +105,7 @@ namespace HetsApi.Controllers
         [Route("projects/{id}/attachments")]
         [SwaggerOperation("ProjectIdAttachmentsPost")]
         [SwaggerResponse(200, type: typeof(List<HetAttachment>))]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult ProjectIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
             // validate the id            
@@ -153,6 +156,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("projects/{id}/attachmentsForm")]
         [Produces("text/html")]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult ProjectIdAttachmentsFormGet([FromRoute] int id)
         {
             return new ObjectResult("<html><body><form method=\"post\" action=\"/api/projects/" + id + "/attachments\" enctype=\"multipart/form-data\"><input type=\"file\" name = \"files\" multiple /><input type = \"submit\" value = \"Upload\" /></body></html>");
@@ -167,6 +171,7 @@ namespace HetsApi.Controllers
         [Route("owners/{id}/attachments")]
         [SwaggerOperation("OwnerIdAttachmentsPost")]
         [SwaggerResponse(200, type: typeof(List<HetAttachment>))]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult OwnerIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
             // validate the id            
@@ -217,6 +222,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("owners/{id}/attachmentsForm")]
         [Produces("text/html")]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult OwnerIdAttachmentsFormGet([FromRoute] int id)
         {
             return new ObjectResult("<html><body><form method=\"post\" action=\"/api/owners/" + id + "/attachments\" enctype=\"multipart/form-data\"><input type=\"file\" name = \"files\" multiple /><input type = \"submit\" value = \"Upload\" /></body></html>");
@@ -231,6 +237,7 @@ namespace HetsApi.Controllers
         [Route("rentalRequests/{id}/attachments")]
         [SwaggerOperation("RentalRequestIdAttachmentsPost")]
         [SwaggerResponse(200, type: typeof(List<HetAttachment>))]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult RentalRequestIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
             // validate the id            
@@ -282,6 +289,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("rentalRequests/{id}/attachmentsForm")]
         [Produces("text/html")]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult RentalRequestIdAttachmentsFormGet([FromRoute] int id)
         {
             return new ObjectResult("<html><body><form method=\"post\" action=\"/api/rentalRequests/" + id + "/attachments\" enctype=\"multipart/form-data\"><input type=\"file\" name = \"files\" multiple /><input type = \"submit\" value = \"Upload\" /></body></html>");
