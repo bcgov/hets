@@ -65,6 +65,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("{id}/download")]
         [SwaggerOperation("AttachmentsIdDownloadGet")]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult AttachmentsIdDownloadGet([FromRoute]int id)
         {
             bool exists = _context.HetAttachment.Any(a => a.AttachmentId == id);

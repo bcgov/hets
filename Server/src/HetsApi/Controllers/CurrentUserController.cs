@@ -72,6 +72,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("favourites/{id}/delete")]
         [SwaggerOperation("UsersCurrentFavouritesIdDeletePost")]
+        [SwaggerResponse(200, type: typeof(HetUserFavourite))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult UsersCurrentFavouritesIdDeletePost([FromRoute]int id)
         {

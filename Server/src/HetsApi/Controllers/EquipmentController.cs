@@ -47,7 +47,7 @@ namespace HetsApi.Controllers
     /// <summary>
     /// Equipment Controller
     /// </summary>
-    [Route("/api/equipment")]
+    [Route("api/equipment")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class EquipmentController : Controller
     {
@@ -250,7 +250,7 @@ namespace HetsApi.Controllers
         /// </summary>
         /// <param name="item"></param>
         [HttpPost]
-        [Route("/api/equipment")]
+        [Route("")]
         [SwaggerOperation("EquipmentPost")]
         [SwaggerResponse(200, type: typeof(HetEquipment))]
         [RequiresPermission(HetPermission.Login)]

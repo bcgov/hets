@@ -14,7 +14,7 @@ namespace HetsApi.Controllers
     /// <summary>
     /// Equipment Attachment Controller
     /// </summary>
-    [Route("/api/equipmentAttachments")]
+    [Route("api/equipmentAttachments")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class EquipmentAttachmentController : Controller
     {

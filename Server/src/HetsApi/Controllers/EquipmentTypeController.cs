@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
@@ -12,39 +11,38 @@ using HetsData.Model;
 namespace HetsApi.Controllers
 {
     /// <summary>
-    /// City Controller
+    /// Equipment Types Controller
     /// </summary>
-    [Route("api/cities")]
+    [Route("api/equipmentTypes")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class CityController : Controller
+    public class EquipmentTypeController : Controller
     {
         private readonly DbAppContext _context;
 
-        public CityController(DbAppContext context, IHttpContextAccessor httpContextAccessor)
+        public EquipmentTypeController(DbAppContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
-
+            
             // set context data
             HetUser user = UserHelper.GetUser(context, httpContextAccessor.HttpContext);
             _context.SmUserId = user.SmUserId;
             _context.DirectoryName = user.SmAuthorizationDirectory;
             _context.SmUserGuid = user.Guid;
         }
-
+        
         /// <summary>
-        /// Get all cities
+        /// Get all equipment types
         /// </summary>
         [HttpGet]
         [Route("")]
-        [SwaggerOperation("CitiesGet")]
-        [SwaggerResponse(200, type: typeof(List<HetCity>))]
+        [SwaggerOperation("EquipmentTypesGet")]
+        [SwaggerResponse(200, type: typeof(List<HetEquipmentType>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult CitiesGet()
+        public virtual IActionResult EquipmentTypesGet()
         {
-            // get all cities
-            List<HetCity> cities = _context.HetCity.AsNoTracking().ToList();
+            List<HetEquipmentType> equipmentTypes = _context.HetEquipmentType.ToList();
 
-            return new ObjectResult(new HetsResponse(cities));
+            return new ObjectResult(new HetsResponse(equipmentTypes));
         }
     }
 }
