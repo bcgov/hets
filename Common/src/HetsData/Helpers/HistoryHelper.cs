@@ -13,7 +13,5 @@ namespace HetsData.Helpers
         public int? AffectedEntityId { get; set; }
     }
 
-    #endregion
-
-    
+    #endregion    
 }

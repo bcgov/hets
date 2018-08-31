@@ -21,29 +21,6 @@ using HetsData.Model;
 
 namespace HetsApi.Controllers
 {
-    #region Parameter Models
-
-    /// <summary>
-    /// Equipment Status Class - required to update the status record only
-    /// </summary>
-    public class EquipmentStatus
-    {
-        public string Status { get; set; }
-        public string StatusComment { get; set; }
-    }
-
-    /// <summary>
-    /// Equipment Rental Agreement Clone Class - required to clone a previous agreement
-    /// </summary>
-    public class EquipmentRentalAgreementClone
-    {
-        public int EquipmentId { get; set; }
-        public int AgreementToCloneId { get; set; }
-        public int RentalAgreementId { get; set; }
-    }
-
-    #endregion
-
     /// <summary>
     /// Equipment Controller
     /// </summary>
@@ -755,6 +732,7 @@ namespace HetsApi.Controllers
         {
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
 
+            // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             return new ObjectResult(new HetsResponse(EquipmentHelper.GetHistoryRecords(id, offset, limit, _context)));
