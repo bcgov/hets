@@ -14,13 +14,13 @@ namespace HetsData.Helpers
         public string Status { get; set; }
         public string StatusComment { get; set; }
     }
-
+    
     public class EquipmentRentalAgreementClone
     {
         public int EquipmentId { get; set; }
         public int AgreementToCloneId { get; set; }
         public int RentalAgreementId { get; set; }
-    }
+    }    
 
     public class DuplicateEquipmentModel
     {
