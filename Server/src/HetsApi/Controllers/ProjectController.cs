@@ -37,7 +37,7 @@ namespace HetsApi.Controllers
             _context.DirectoryName = user.SmAuthorizationDirectory;
             _context.SmUserGuid = user.Guid;
         }
-
+        
         /// <summary>
         /// Get project by id
         /// </summary>
@@ -96,7 +96,7 @@ namespace HetsApi.Controllers
         /// </summary>
         /// <param name="item"></param>
         [HttpPost]
-        [Route("/api/projects")]
+        [Route("")]
         [SwaggerOperation("ProjectsPost")]
         [SwaggerResponse(200, type: typeof(HetProject))]
         [RequiresPermission(HetPermission.Login)]
@@ -1069,6 +1069,6 @@ namespace HetsApi.Controllers
             return new ObjectResult(new HetsResponse(notes));
         }
 
-        #endregion                   
+        #endregion         
     }
 }

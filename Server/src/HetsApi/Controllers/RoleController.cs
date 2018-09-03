@@ -34,7 +34,7 @@ namespace HetsApi.Controllers
             _context.DirectoryName = user.SmAuthorizationDirectory;
             _context.SmUserGuid = user.Guid;
         }
-
+        
         /// <summary>
         /// Get all roles
         /// </summary>
@@ -321,6 +321,6 @@ namespace HetsApi.Controllers
 
             // return role permissions
             return new ObjectResult(new HetsResponse(role));
-        }
+        }        
     }
 }

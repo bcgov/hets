@@ -35,7 +35,7 @@ namespace HetsApi.Controllers
             _context.DirectoryName = user.SmAuthorizationDirectory;
             _context.SmUserGuid = user.Guid;
         }
-
+        
         /// <summary>
         /// Get all districts for the logged on user
         /// </summary>
@@ -310,6 +310,6 @@ namespace HetsApi.Controllers
             );
 
             return new ObjectResult(new HetsResponse(user));            
-        }
+        }        
     }
 }

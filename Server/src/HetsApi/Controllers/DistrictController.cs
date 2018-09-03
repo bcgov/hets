@@ -50,12 +50,12 @@ namespace HetsApi.Controllers
 
             return new ObjectResult(new HetsResponse(districts));
         }
-
+        
         /// <summary>
         /// Get all owners by district
         /// </summary>
         [HttpGet]
-        [Route("api/district/{id}/owners")]
+        [Route("{id}/owners")]
         [SwaggerOperation("DistrictOwnersGet")]
         [SwaggerResponse(200, type: typeof(List<HetOwner>))]
         [RequiresPermission(HetPermission.Login)]
@@ -78,7 +78,7 @@ namespace HetsApi.Controllers
         /// Get all local areas by district
         /// </summary>
         [HttpGet]
-        [Route("api/district/{id}/localAreas")]
+        [Route("{id}/localAreas")]
         [SwaggerOperation("DistrictLocalAreasGet")]
         [SwaggerResponse(200, type: typeof(List<HetLocalArea>))]
         [RequiresPermission(HetPermission.Login)]

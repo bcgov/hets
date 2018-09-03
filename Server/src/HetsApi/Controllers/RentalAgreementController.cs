@@ -46,7 +46,7 @@ namespace HetsApi.Controllers
             _context.DirectoryName = user.SmAuthorizationDirectory;
             _context.SmUserGuid = user.Guid;
         }
-
+        
         /// <summary>
         /// Get rental agreement by id
         /// </summary>
@@ -713,6 +713,6 @@ namespace HetsApi.Controllers
             return new ObjectResult(new HetsResponse(RentalAgreementHelper.GetConditions(id, _context, _configuration)));
         }
 
-        #endregion
+        #endregion        
     }
 }
