@@ -795,7 +795,7 @@ export function addOwnerNote(ownerId, note) {
 }
 
 export function getOwnersByDistrict(districtId) {
-  return new ApiRequest(`district/${districtId}/owners`).get().then((response) => {
+  return new ApiRequest(`/districts/${districtId}/owners`).get().then((response) => {
     var owners = normalize(response.data);
     // Add display fields
     _.map(owners, owner => { parseOwner(owner); });
@@ -1207,7 +1207,7 @@ function parseRentalRequest(rentalRequest) {
 
   rentalRequest.projectId = rentalRequest.projectId || rentalRequest.project.id;
   rentalRequest.projectName = rentalRequest.projectName || rentalRequest.project.name;
-  rentalRequest.projectPath = rentalRequest.projectId ? `projects/${ rentalRequest.projectId }`: '';
+  rentalRequest.projectPath = rentalRequest.projectId ? `/projects/${ rentalRequest.projectId }`: '';
 
   // UI display fields
   rentalRequest.isActive = rentalRequest.status === Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS;
@@ -1806,7 +1806,7 @@ export function getRegions() {
 }
 
 export function getLocalAreas(id) {
-  return new ApiRequest(`district/${id}/localAreas`).get().then(response => {
+  return new ApiRequest(`/districts/${id}/localAreas`).get().then(response => {
     var localAreas = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_LOCAL_AREAS_LOOKUP, localAreas: localAreas });
