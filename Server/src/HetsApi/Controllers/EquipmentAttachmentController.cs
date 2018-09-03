@@ -32,7 +32,7 @@ namespace HetsApi.Controllers
             _context.DirectoryName = user.SmAuthorizationDirectory;
             _context.SmUserGuid = user.Guid;
         }
-
+        
         /// <summary>	
         /// Delete equipment attachment	
         /// </summary>	
@@ -164,6 +164,6 @@ namespace HetsApi.Controllers
                 .FirstOrDefault(a => a.EquipmentAttachmentId == id);
            
             return new ObjectResult(new HetsResponse(updEquipmentAttachment));
-        }
+        }        
     }
 }

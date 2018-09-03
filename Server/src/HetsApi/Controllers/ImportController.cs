@@ -13,8 +13,8 @@ namespace HetsApi.Controllers
     /// <summary>
     /// Import Controller
     /// </summary>
-    [Route("/api")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ImportController : Controller
     {
         private readonly IConfiguration _configuration;
@@ -32,7 +32,6 @@ namespace HetsApi.Controllers
         /// Default action
         /// </summary>
         /// <returns></returns>
-        [Route("/Import")]
         [RequiresPermission(HetPermission.ImportData)]
 
         public IActionResult Index()
@@ -55,7 +54,6 @@ namespace HetsApi.Controllers
         /// </summary>
         /// <param name="files"></param>
         /// <returns></returns>      
-        [Route("/UploadPost")]
         [RequiresPermission(HetPermission.ImportData)]
         public IActionResult UploadPost(IList<IFormFile> files)
         {

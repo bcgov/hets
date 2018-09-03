@@ -60,7 +60,7 @@ namespace HetsApi.Controllers
         {
             return new ObjectResult(new HetsResponse(EquipmentHelper.GetRecord(id, _context, _configuration)));
         }
-
+        
         /// <summary>
         /// Update equipment
         /// </summary>
@@ -1112,6 +1112,6 @@ namespace HetsApi.Controllers
             }
         }
 
-        #endregion   
+        #endregion           
     }
 }

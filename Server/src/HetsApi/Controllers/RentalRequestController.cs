@@ -38,7 +38,7 @@ namespace HetsApi.Controllers
             _context.DirectoryName = user.SmAuthorizationDirectory;
             _context.SmUserGuid = user.Guid;
         }
-
+        
         /// <summary>
         /// Get rental request by id
         /// </summary>
@@ -717,6 +717,6 @@ namespace HetsApi.Controllers
             return new ObjectResult(new HetsResponse(notes));
         }
         
-        #endregion        
+        #endregion          
     }
 }
