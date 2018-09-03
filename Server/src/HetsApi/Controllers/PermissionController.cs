@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.AspNetCore.Http;
+using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;

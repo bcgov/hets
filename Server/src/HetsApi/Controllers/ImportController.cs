@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Model;
-using Microsoft.AspNetCore.Hosting;
 
 namespace HetsApi.Controllers
 {
