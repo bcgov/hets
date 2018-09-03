@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -63,13 +62,7 @@ namespace HetsData.Helpers
             if (owner != null)
             {
                 // remove any archived equipment
-                foreach (HetEquipment equipment in owner.HetEquipment)
-                {
-                    if (equipment.Status.Equals("Archived", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        owner.HetEquipment.Remove(equipment);
-                    }
-                }
+                owner.HetEquipment = owner.HetEquipment.Where(e => e.Status != "Archived").ToList();                
             }
 
             return owner;
