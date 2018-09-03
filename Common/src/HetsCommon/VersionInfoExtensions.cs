@@ -20,15 +20,13 @@ namespace HetsCommon
             try
             {
                 connection.Open();
+
                 info = new DatabaseVersionInfo()
                 {
                     Name = connection.GetType().Name,
                     Version = connection.ServerVersion,
                     Server = connection.DataSource,
-                    Database = connection.Database,
-                    Migrations = database.GetMigrations(),
-                    AppliedMigrations = database.GetAppliedMigrations(),
-                    PendingMigrations = database.GetPendingMigrations()
+                    Database = connection.Database
                 };
             }
             finally

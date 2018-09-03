@@ -47,7 +47,6 @@ namespace HetsData.Helpers
         /// <returns></returns>
         public static HetOwner GetRecord(int id, DbAppContext context, IConfiguration configuration)
         {
-            // does not return Archived Equipment
             HetOwner owner = context.HetOwner.AsNoTracking()
                 .Include(x => x.LocalArea.ServiceArea.District.Region)
                 .Include(x => x.HetEquipment)
