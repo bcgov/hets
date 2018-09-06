@@ -1,0 +1,65 @@
+------------ unique constraints
+--
+CREATE UNIQUE INDEX "HET_LOCAL_AREA_NUMBER_UK"
+    ON public."HET_LOCAL_AREA" 
+    ("LOCAL_AREA_NUMBER")
+    TABLESPACE pg_default;
+    
+alter table "HET_LOCAL_AREA" 
+add constraint "HET_LOCAL_AREA_NUMBER_UK" UNIQUE using index "HET_LOCAL_AREA_NUMBER_UK";
+
+CREATE UNIQUE INDEX "HET_USR_GUID_UK"
+    ON public."HET_USER" 
+    ("GUID")
+    TABLESPACE pg_default;
+
+alter table "HET_USER" 
+add constraint "HET_USR_GUID_UK" UNIQUE using index "HET_USR_GUID_UK";
+
+CREATE UNIQUE INDEX "HET_ROLE_NAME_UK"
+    ON public."HET_ROLE" 
+    ("NAME")
+    TABLESPACE pg_default;
+
+alter table "HET_ROLE" 
+add constraint "HET_ROLE_NAME_UK" UNIQUE using index "HET_ROLE_NAME_UK";
+
+CREATE UNIQUE INDEX "HET_PRM_CODE_UK"
+    ON public."HET_PERMISSION" 
+    ("CODE")
+    TABLESPACE pg_default;
+
+alter table "HET_PERMISSION" 
+add constraint "HET_PRM_CODE_UK" UNIQUE using index "HET_PRM_CODE_UK";
+
+CREATE UNIQUE INDEX "HET_PRM_NAME_UK"
+    ON public."HET_PERMISSION" 
+    ("NAME")
+    TABLESPACE pg_default;
+
+alter table "HET_PERMISSION" 
+add constraint "HET_PRM_NAME_UK" UNIQUE using index "HET_PRM_NAME_UK";
+
+CREATE UNIQUE INDEX "HET_OWN_REGISTERED_COMPANY_NUMBER_UK"
+    ON public."HET_OWNER" 
+    ("REGISTERED_COMPANY_NUMBER")
+    TABLESPACE pg_default;
+
+alter table "HET_OWNER" 
+add constraint "HET_OWN_REGISTERED_COMPANY_NUMBER_UK" UNIQUE using index "HET_OWN_REGISTERED_COMPANY_NUMBER_UK";
+
+CREATE UNIQUE INDEX "HET_OWN_WORK_SAFE_BCPOLICY_NUMBER_UK"
+    ON public."HET_OWNER" 
+    ("WORK_SAFE_BCPOLICY_NUMBER")
+    TABLESPACE pg_default;
+
+alter table "HET_OWNER" 
+add constraint "HET_OWN_WORK_SAFE_BCPOLICY_NUMBER_UK" UNIQUE using index "HET_OWN_WORK_SAFE_BCPOLICY_NUMBER_UK";
+
+CREATE UNIQUE INDEX "HET_RNTAG_NUMBER_UK"
+    ON public."HET_RENTAL_AGREEMENT" 
+    ("NUMBER")
+    TABLESPACE pg_default;
+
+alter table "HET_RENTAL_AGREEMENT" 
+add constraint "HET_RNTAG_NUMBER_UK" UNIQUE using index "HET_RNTAG_NUMBER_UK";

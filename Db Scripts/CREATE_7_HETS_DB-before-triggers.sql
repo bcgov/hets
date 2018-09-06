@@ -64,17 +64,6 @@ CREATE TRIGGER het_distet_br_iu_tr
     EXECUTE PROCEDURE public.het_validate_init_audit_cols();
 
 
--- Trigger: het_dmptrk_br_iu_tr
-
--- DROP TRIGGER het_dmptrk_br_iu_tr ON public."HET_DUMP_TRUCK";
-
-/*CREATE TRIGGER het_dmptrk_br_iu_tr
-    BEFORE INSERT OR UPDATE 
-    ON public."HET_DUMP_TRUCK"
-    FOR EACH ROW
-    EXECUTE PROCEDURE public.het_validate_init_audit_cols();*/
-
-
 -- Trigger: het_eqp_br_iu_tr
 
 -- DROP TRIGGER het_eqp_br_iu_tr ON public."HET_EQUIPMENT";
@@ -106,29 +95,6 @@ CREATE TRIGGER het_eqptyp_br_iu_tr
     ON public."HET_EQUIPMENT_TYPE"
     FOR EACH ROW
     EXECUTE PROCEDURE public.het_validate_init_audit_cols();
-
-
--- Trigger: het_grp_br_iu_tr
-
--- DROP TRIGGER het_grp_br_iu_tr ON public."HET_GROUP";
-
-/*CREATE TRIGGER het_grp_br_iu_tr
-    BEFORE INSERT OR UPDATE 
-    ON public."HET_GROUP"
-    FOR EACH ROW
-    EXECUTE PROCEDURE public.het_validate_init_audit_cols();*/
-
-
--- Trigger: het_grpmbr_br_iu_tr
-
--- DROP TRIGGER het_grpmbr_br_iu_tr ON public."HET_GROUP_MEMBERSHIP";
-
-/*CREATE TRIGGER het_grpmbr_br_iu_tr
-    BEFORE INSERT OR UPDATE 
-    ON public."HET_GROUP_MEMBERSHIP"
-    FOR EACH ROW
-    EXECUTE PROCEDURE public.het_validate_init_audit_cols();*/
-
 
 -- Trigger: het_hist_br_iu_tr
 
@@ -172,18 +138,6 @@ CREATE TRIGGER het_locarl_br_iu_tr
     ON public."HET_LOCAL_AREA_ROTATION_LIST"
     FOR EACH ROW
     EXECUTE PROCEDURE public.het_validate_init_audit_cols();
-
-
--- Trigger: het_lkpl_br_iu_tr
-
--- DROP TRIGGER het_lkpl_br_iu_tr ON public."HET_LOOKUP_LIST";
-
-/*CREATE TRIGGER het_lkpl_br_iu_tr
-    BEFORE INSERT OR UPDATE 
-    ON public."HET_LOOKUP_LIST"
-    FOR EACH ROW
-    EXECUTE PROCEDURE public.het_validate_init_audit_cols();*/
-	
 
 -- Trigger: het_note_br_iu_tr
 
