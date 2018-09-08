@@ -18,17 +18,17 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --
--- Name: SEQUENCE "HET_ATTACHMENT_ID_seq"; Type: ACL; Schema: public; Owner: -
+-- Name: SEQUENCE "HET_DIGITAL_FILE_ID_seq"; Type: ACL; Schema: public; Owner: -
 --
 
-GRANT USAGE ON SEQUENCE public."HET_ATTACHMENT_ID_seq" TO het_application_proxy;
+GRANT USAGE ON SEQUENCE public."HET_DIGITAL_FILE_ID_seq" TO het_application_proxy;
 
 
 --
--- Name: TABLE "HET_ATTACHMENT"; Type: ACL; Schema: public; Owner: -
+-- Name: TABLE "HET_DIGITAL_FILE"; Type: ACL; Schema: public; Owner: -
 --
 
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_ATTACHMENT" TO het_application_proxy;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_DIGITAL_FILE" TO het_application_proxy;
 
 
 --
@@ -165,12 +165,23 @@ GRANT SELECT,INSERT,UPDATE ON TABLE public."HET_EQUIPMENT_HIST" TO het_applicati
 
 
 --
+-- Name: TABLE "HET_EQUIPMENT_STATUS_TYPE"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_EQUIPMENT_STATUS_TYPE" TO het_application_proxy;
+
+--
 -- Name: TABLE "HET_EQUIPMENT_TYPE"; Type: ACL; Schema: public; Owner: -
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_EQUIPMENT_TYPE" TO het_application_proxy;
 
 
+--
+-- Name: SEQUENCE "HET_EQUIPMENT_STATUS_TYPE_ID_seq"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT USAGE ON SEQUENCE public."HET_EQUIPMENT_STATUS_TYPE_ID_seq" TO het_application_proxy;
 --
 -- Name: SEQUENCE "HET_EQUIPMENT_TYPE_ID_seq"; Type: ACL; Schema: public; Owner: -
 --
@@ -235,6 +246,20 @@ GRANT USAGE ON SEQUENCE public."HET_LOCAL_AREA_ROTATION_LIST_ID_seq" TO het_appl
 
 
 --
+-- Name: TABLE "HET_MIME_TYPE"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_MIME_TYPE" TO het_application_proxy;
+
+
+--
+-- Name: SEQUENCE "HET_MIME_TYPE_ID_seq"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT USAGE ON SEQUENCE public."HET_MIME_TYPE_ID_seq" TO het_application_proxy;
+
+
+--
 -- Name: TABLE "HET_NOTE"; Type: ACL; Schema: public; Owner: -
 --
 
@@ -277,6 +302,19 @@ GRANT USAGE ON SEQUENCE public."HET_OWNER_ID_seq" TO het_application_proxy;
 
 
 --
+-- Name: TABLE "HET_OWNER_STATUS_TYPE"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_OWNER_STATUS_TYPE" TO het_application_proxy;
+
+
+--
+-- Name: SEQUENCE "HET_OWNER_STATUS_TYPE_ID_seq"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT USAGE ON SEQUENCE public."HET_OWNER_STATUS_TYPE_ID_seq" TO het_application_proxy;
+
+--
 -- Name: TABLE "HET_PERMISSION"; Type: ACL; Schema: public; Owner: -
 --
 
@@ -305,10 +343,38 @@ GRANT USAGE ON SEQUENCE public."HET_PROJECT_ID_seq" TO het_application_proxy;
 
 
 --
+-- Name: TABLE "HET_PROJECT_STATUS_TYPE"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_PROJECT_STATUS_TYPE" TO het_application_proxy;
+
+
+--
+-- Name: SEQUENCE "HET_PROJECT_STATUS_TYPE_ID_seq"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT USAGE ON SEQUENCE public."HET_PROJECT_STATUS_TYPE_ID_seq" TO het_application_proxy;
+
+
+--
 -- Name: TABLE "HET_PROVINCIAL_RATE_TYPE"; Type: ACL; Schema: public; Owner: -
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_PROVINCIAL_RATE_TYPE" TO het_application_proxy;
+
+
+--
+-- Name: TABLE "HET_RATE_PERIOD_TYPE"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_RATE_PERIOD_TYPE" TO het_application_proxy;
+
+
+--
+-- Name: SEQUENCE "HET_RATE_PERIOD_TYPE_ID_seq"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT USAGE ON SEQUENCE public."HET_RATE_PERIOD_TYPE_ID_seq" TO het_application_proxy;
 
 
 --
@@ -459,10 +525,24 @@ GRANT SELECT,INSERT,UPDATE ON TABLE public."HET_RENTAL_REQUEST_ROTATION_LIST_HIS
 
 
 --
--- Name: SEQUENCE "HET_RENTAL_REQUEST_ROTATION_LIST__seq"; Type: ACL; Schema: public; Owner: -
+-- Name: SEQUENCE "HET_RENTAL_REQUEST_ROTATION_LIST_ID_seq"; Type: ACL; Schema: public; Owner: -
 --
 
-GRANT USAGE ON SEQUENCE public."HET_RENTAL_REQUEST_ROTATION_LIST__seq" TO het_application_proxy;
+GRANT USAGE ON SEQUENCE public."HET_RENTAL_REQUEST_ROTATION_LIST_ID_seq" TO het_application_proxy;
+
+
+--
+-- Name: SEQUENCE "HET_RENTAL_REQUEST_STATUS_TYPE_ID_seq"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT USAGE ON SEQUENCE public."HET_RENTAL_REQUEST_STATUS_TYPE_ID_seq" TO het_application_proxy;
+
+
+--
+-- Name: TABLE "HET_RENTAL_REQUEST_STATUS_TYPE"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT,INSERT,UPDATE ON TABLE public."HET_RENTAL_REQUEST_STATUS_TYPE" TO het_application_proxy;
 
 
 --

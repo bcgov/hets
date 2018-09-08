@@ -20,10 +20,10 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: HET_ATTACHMENT_ID_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: HET_DIGITAL_FILE_DIGITAL_FILE_ID_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public."HET_ATTACHMENT_ID_seq"
+CREATE SEQUENCE public."HET_DIGITAL_FILE_ID_seq"
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -34,12 +34,12 @@ CREATE SEQUENCE public."HET_ATTACHMENT_ID_seq"
 -- Name: HET_ATTACHMENT; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public."HET_ATTACHMENT" (
-    "ATTACHMENT_ID" integer DEFAULT nextval('public."HET_ATTACHMENT_ID_seq"'::regclass) NOT NULL,
+CREATE TABLE public."HET_DIGITAL_FILE" (
+    "DIGITAL_FILE_ID" integer DEFAULT nextval('public."HET_DIGITAL_FILE_ID_seq"'::regclass) NOT NULL,
     "DESCRIPTION" character varying(2048),
     "FILE_NAME" character varying(2048),
     "TYPE" character varying(255),
-    "MIME_TYPE" character varying(255),
+    "MIME_TYPE_ID" integer NOT NULL,
     "FILE_CONTENTS" bytea,
     "EQUIPMENT_ID" integer,
     "OWNER_ID" integer,
@@ -287,7 +287,7 @@ CREATE TABLE public."HET_EQUIPMENT" (
     "IS_SENIORITY_OVERRIDDEN" boolean,
     "SENIORITY_OVERRIDE_REASON" character varying(2048),  
     "APPROVED_DATE" timestamp without time zone,
-    "STATUS" character varying(50),
+	"EQUIPMENT_STATUS_TYPE_ID" integer NOT NULL,
 	"STATUS_COMMENT" character varying(255),
 	"ARCHIVE_DATE" timestamp without time zone,
 	"ARCHIVE_CODE" character varying(50),
@@ -433,7 +433,7 @@ CREATE TABLE public."HET_EQUIPMENT_HIST" (
     "IS_SENIORITY_OVERRIDDEN" boolean,
     "SENIORITY_OVERRIDE_REASON" character varying(2048),  
     "APPROVED_DATE" timestamp without time zone,
-    "STATUS" character varying(50),
+    "EQUIPMENT_STATUS_TYPE_ID" integer NOT NULL,
 	"STATUS_COMMENT" character varying(255),
 	"ARCHIVE_DATE" timestamp without time zone,
 	"ARCHIVE_CODE" character varying(50),
@@ -836,7 +836,7 @@ CREATE TABLE public."HET_OWNER" (
     "CITY" character varying(100),
     "POSTAL_CODE" character varying(15),
     "PROVINCE" character varying(50),        
-	"STATUS" character varying(50),
+	"OWNER_STATUS_TYPE_ID" integer NOT NULL,
 	"STATUS_COMMENT" character varying(255),
 	"ARCHIVE_DATE" timestamp without time zone,
 	"ARCHIVE_CODE" character varying(50),
@@ -992,7 +992,7 @@ CREATE TABLE public."HET_PROJECT" (
     "PROJECT_ID" integer DEFAULT nextval('public."HET_PROJECT_ID_seq"'::regclass) NOT NULL,  
     "PROVINCIAL_PROJECT_NUMBER" character varying(150),
     "NAME" character varying(100),
-    "STATUS" character varying(50),
+    "PROJECT_STATUS_TYPE_ID" integer NOT NULL,
 	"INFORMATION" character varying(2048),    
     "DISTRICT_ID" integer,
 	"PRIMARY_CONTACT_ID" integer,
@@ -1174,9 +1174,9 @@ CREATE TABLE public."HET_RENTAL_AGREEMENT" (
     "NOTE" character varying(2048),    
     "EQUIPMENT_RATE" real,    
     "RATE_COMMENT" character varying(2048),
-    "RATE_PERIOD" character varying(50),	
+    "RATE_PERIOD_TYPE_ID" integer NOT NULL,	
 	"DATED_ON" timestamp without time zone,    
-    "STATUS" character varying(50),
+    "RENTAL_AGREEMENT_STATUS_TYPE_ID" integer NOT NULL,
 	"EQUIPMENT_ID" integer,
     "PROJECT_ID" integer,
 	"APP_CREATE_USER_DIRECTORY" character varying(50) COLLATE pg_catalog."default",
@@ -1292,9 +1292,9 @@ CREATE TABLE public."HET_RENTAL_AGREEMENT_HIST" (
     "NOTE" character varying(2048),    
     "EQUIPMENT_RATE" real,    
     "RATE_COMMENT" character varying(2048),
-    "RATE_PERIOD" character varying(50),	
+    "RATE_PERIOD_TYPE_ID" integer NOT NULL,	
 	"DATED_ON" timestamp without time zone,    
-    "STATUS" character varying(50),
+    "RENTAL_AGREEMENT_STATUS_TYPE_ID" integer NOT NULL,
 	"EQUIPMENT_ID" integer,
     "PROJECT_ID" integer,
 	"APP_CREATE_USER_DIRECTORY" character varying(50) COLLATE pg_catalog."default",
@@ -1332,7 +1332,7 @@ CREATE TABLE public."HET_RENTAL_AGREEMENT_RATE" (
     "COMMENT" character varying(2048),
     "COMPONENT_NAME" character varying(150),
     "RATE" real,
-    "RATE_PERIOD" character varying(50),
+    "RATE_PERIOD_TYPE_ID" integer NOT NULL,
 	"IS_ATTACHMENT" boolean,
     "PERCENT_OF_EQUIPMENT_RATE" real,
 	"IS_INCLUDED_IN_TOTAL" boolean DEFAULT false NOT NULL,    
@@ -1375,7 +1375,7 @@ CREATE TABLE public."HET_RENTAL_AGREEMENT_RATE_HIST" (
     "COMMENT" character varying(2048),
     "COMPONENT_NAME" character varying(150),
     "RATE" real,
-    "RATE_PERIOD" character varying(50),
+    "RATE_PERIOD_TYPE_ID" integer NOT NULL,
 	"IS_ATTACHMENT" boolean,
     "PERCENT_OF_EQUIPMENT_RATE" real,
 	"IS_INCLUDED_IN_TOTAL" boolean DEFAULT false NOT NULL,    
@@ -1454,7 +1454,7 @@ CREATE TABLE public."HET_RENTAL_REQUEST" (
     "EXPECTED_END_DATE" timestamp without time zone,
     "EXPECTED_HOURS" integer,    
     "FIRST_ON_ROTATION_LIST_ID" integer,
-    "STATUS" character varying(50),
+    "RENTAL_REQUEST_STATUS_TYPE_ID" integer NOT NULL,
 	"DISTRICT_EQUIPMENT_TYPE_ID" integer,
 	"LOCAL_AREA_ID" integer,
     "PROJECT_ID" integer,
@@ -1508,10 +1508,10 @@ CREATE TABLE public."HET_RENTAL_REQUEST_ATTACHMENT" (
 );
 
 --
--- Name: HET_RENTAL_REQUEST_ROTATION_L_RENTAL_REQUEST_ROTATION_LIST__seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: HET_RENTAL_REQUEST_ROTATION_L_RENTAL_REQUEST_ROTATION_LIST_ID_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public."HET_RENTAL_REQUEST_ROTATION_LIST__seq"
+CREATE SEQUENCE public."HET_RENTAL_REQUEST_ROTATION_LIST_ID_seq"
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1523,7 +1523,7 @@ CREATE SEQUENCE public."HET_RENTAL_REQUEST_ROTATION_LIST__seq"
 --
 
 CREATE TABLE public."HET_RENTAL_REQUEST_ROTATION_LIST" (
-    "RENTAL_REQUEST_ROTATION_LIST_ID" integer DEFAULT nextval('public."HET_RENTAL_REQUEST_ROTATION_LIST__seq"'::regclass) NOT NULL,
+    "RENTAL_REQUEST_ROTATION_LIST_ID" integer DEFAULT nextval('public."HET_RENTAL_REQUEST_ROTATION_LIST_ID_seq"'::regclass) NOT NULL,
     "ROTATION_LIST_SORT_ORDER" integer NOT NULL,
 	"ASKED_DATE_TIME" timestamp without time zone,            
     "WAS_ASKED" boolean,
@@ -1842,7 +1842,7 @@ CREATE TABLE public."HET_TIME_RECORD" (
     "TIME_RECORD_ID" integer DEFAULT nextval('public."HET_TIME_RECORD_ID_seq"'::regclass) NOT NULL,
     "ENTERED_DATE" timestamp without time zone,
     "WORKED_DATE" timestamp without time zone NOT NULL,
-    "TIME_PERIOD" character varying(20),
+    "TIME_PERIOD_TYPE_ID" integer NOT NULL,
 	"HOURS" real,
     "RENTAL_AGREEMENT_RATE_ID" integer,
     "RENTAL_AGREEMENT_ID" integer,
@@ -1883,7 +1883,7 @@ CREATE TABLE public."HET_TIME_RECORD_HIST" (
     "END_DATE" timestamp without time zone,
     "ENTERED_DATE" timestamp without time zone,
     "WORKED_DATE" timestamp without time zone NOT NULL,
-    "TIME_PERIOD" character varying(20),
+    "TIME_PERIOD_TYPE_ID" integer NOT NULL,
 	"HOURS" real,
     "RENTAL_AGREEMENT_RATE_ID" integer,
     "RENTAL_AGREEMENT_ID" integer,
@@ -2346,11 +2346,11 @@ ALTER TABLE ONLY public."HET_TIME_RECORD_HIST"
     ADD CONSTRAINT "HET_TIME_RECORD_HIST_PK" PRIMARY KEY ("TIME_RECORD_HIST_ID");
 
 --
--- Name: HET_ATTACHMENT PK_HET_ATTACHMENT; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: HET_DIGITAL_FILE PK_HET_DIGITAL_FILE; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public."HET_ATTACHMENT"
-    ADD CONSTRAINT "PK_HET_ATTACHMENT" PRIMARY KEY ("ATTACHMENT_ID");
+ALTER TABLE ONLY public."HET_DIGITAL_FILE"
+    ADD CONSTRAINT "PK_HET_DIGITAL_FILE" PRIMARY KEY ("DIGITAL_FILE_ID");
 
 
 --

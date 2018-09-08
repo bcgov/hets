@@ -700,10 +700,13 @@ namespace HetsApi.Controllers
             foreach (HetAttachment attachment in equipment.HetAttachment)
             {
                 if (attachment != null)
-                {
+                {                    
                     attachment.FileSize = attachment.FileContents.Length;
                     attachment.LastUpdateTimestamp = attachment.AppLastUpdateTimestamp;
                     attachment.LastUpdateUserid = attachment.AppLastUpdateUserid;
+
+                    // don't send the file content
+                    attachment.FileContents = null;
 
                     attachments.Add(attachment);
                 }
