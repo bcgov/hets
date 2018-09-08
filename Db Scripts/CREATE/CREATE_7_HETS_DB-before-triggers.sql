@@ -1,10 +1,10 @@
--- Trigger: het_att_br_iu_tr
+-- Trigger: het_df_br_iu_tr
 
--- DROP TRIGGER het_att_br_iu_tr ON public."HET_ATTACHMENT";
+-- DROP TRIGGER het_df_br_iu_tr ON public."HET_ATTACHMENT";
 
-CREATE TRIGGER het_att_br_iu_tr
+CREATE TRIGGER het_df_br_iu_tr
     BEFORE INSERT OR UPDATE 
-    ON public."HET_ATTACHMENT"
+    ON public."HET_DIGITAL_FILE"
     FOR EACH ROW
     EXECUTE PROCEDURE public.het_validate_init_audit_cols();
 
