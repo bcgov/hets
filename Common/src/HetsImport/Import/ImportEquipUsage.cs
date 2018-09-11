@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Hangfire.Console;
 using Hangfire.Server;
 using Hangfire.Console.Progress;
+using HetsData.Helpers;
 using HetsData.Model;
 
 namespace HetsImport.Import
@@ -329,11 +330,18 @@ namespace HetsImport.Import
                 }
                 else
                 {
+                    int? statusId = StatusHelper.GetStatusId("Complete", "projectStatus", dbContext);
+
+                    if (statusId == null)
+                    {
+                        throw new DataException(string.Format("Status Id cannot be null (Time Sheet Equip Id: {0}", tempId));
+                    }                    
+
                     // create new project
                     project = new HetProject
                     {
                         Information = "Created to support Time Record import from BCBid",
-                        Status = "Complete",
+                        ProjectStatusTypeId = (int)statusId,
                         Name = "Legacy BCBid Project",
                         AppCreateUserid = systemId,
                         AppCreateTimestamp = DateTime.UtcNow,

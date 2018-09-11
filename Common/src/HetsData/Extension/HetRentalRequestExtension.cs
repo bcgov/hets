@@ -11,6 +11,9 @@ namespace HetsData.Model
         public int YesCount { get; set; }
 
         [NotMapped]
-        public int NumberOfBlocks { get; set; }        
+        public int NumberOfBlocks { get; set; }
+
+        [NotMapped]
+        public string Status { get; set; }
     }
 }

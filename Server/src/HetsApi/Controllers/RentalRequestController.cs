@@ -132,7 +132,7 @@ namespace HetsApi.Controllers
             rentalRequest.ExpectedEndDate = item.ExpectedEndDate;
             rentalRequest.ExpectedStartDate = item.ExpectedStartDate;
             rentalRequest.ExpectedHours = item.ExpectedHours;
-            rentalRequest.HetAttachment = item.HetAttachment;
+            rentalRequest.HetDigitalFile = item.HetDigitalFile;
 
             // save the changes
             _context.SaveChanges();
@@ -184,7 +184,7 @@ namespace HetsApi.Controllers
                 ExpectedEndDate = item.ExpectedEndDate,
                 ExpectedStartDate = item.ExpectedStartDate,
                 ExpectedHours = item.ExpectedHours,
-                HetAttachment = item.HetAttachment
+                HetDigitalFile = item.HetDigitalFile
             };
 
             // record not found - build new list
@@ -266,11 +266,11 @@ namespace HetsApi.Controllers
             }
 
             // remove (delete) rental request attachments
-            if (rentalRequest.HetAttachment != null)
+            if (rentalRequest.HetDigitalFile != null)
             {
-                foreach (HetAttachment attachment in rentalRequest.HetAttachment)
+                foreach (HetDigitalFile attachment in rentalRequest.HetDigitalFile)
                 {
-                    _context.HetAttachment.Remove(attachment);
+                    _context.HetDigitalFile.Remove(attachment);
                 }
             }
 
@@ -523,7 +523,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("{id}/attachments")]
         [SwaggerOperation("RentalRequestsIdAttachmentsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetAttachment>))]
+        [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult RentalRequestsIdAttachmentsGet([FromRoute]int id)
         {
@@ -533,13 +533,13 @@ namespace HetsApi.Controllers
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetRentalRequest equipment = _context.HetRentalRequest.AsNoTracking()
-                .Include(x => x.HetAttachment)
+                .Include(x => x.HetDigitalFile)
                 .First(a => a.RentalRequestId == id);
 
             // extract the attachments and update properties for UI
-            List<HetAttachment> attachments = new List<HetAttachment>();
+            List<HetDigitalFile> attachments = new List<HetDigitalFile>();
 
-            foreach (HetAttachment attachment in equipment.HetAttachment)
+            foreach (HetDigitalFile attachment in equipment.HetDigitalFile)
             {
                 if (attachment != null)
                 {

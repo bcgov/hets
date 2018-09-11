@@ -11,6 +11,7 @@ using Hangfire.Console;
 using Hangfire.Server;
 using Hangfire.Console.Progress;
 using HetsData.Model;
+using HetsData.Helpers;
 
 namespace HetsImport.Import
 {
@@ -240,6 +241,7 @@ namespace HetsImport.Import
                 // already (from another service area - but same district)
                 // ***********************************************                
                 HetProject existingProject = dbContext.HetProject.AsNoTracking()
+                    .Include(x => x.ProjectStatusType)
                     .Include(x => x.District)
                     .FirstOrDefault(x => x.Name == tempName &&
                                          x.District.DistrictId == tempDistrictId);
@@ -253,7 +255,14 @@ namespace HetsImport.Import
                 // ***********************************************
                 // default the project to Active
                 // ***********************************************
-                project.Status = "Active";
+                int? statusId = StatusHelper.GetStatusId("Active", "projectStatus", dbContext);
+
+                if (statusId == null)
+                {
+                    throw new DataException(string.Format("Status Id cannot be null (ProjectIndex: {0}", maxProjectIndex));
+                }
+
+                project.ProjectStatusTypeId = (int)statusId;
 
                 // ***********************************************
                 // create project

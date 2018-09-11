@@ -47,6 +47,7 @@ namespace HetsData.Helpers
         public static HetOwner GetRecord(int id, DbAppContext context, IConfiguration configuration)
         {
             HetOwner owner = context.HetOwner.AsNoTracking()
+                .Include(x => x.OwnerStatusType)
                 .Include(x => x.LocalArea.ServiceArea.District.Region)
                 .Include(x => x.HetEquipment)
                     .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
@@ -55,6 +56,8 @@ namespace HetsData.Helpers
                 .Include(x => x.HetEquipment)
                     .ThenInclude(y => y.Owner)
                         .ThenInclude(c => c.PrimaryContact)
+                .Include(x => x.HetEquipment)
+                    .ThenInclude(y => y.EquipmentStatusType)
                 .Include(x => x.HetContact)
                 .Include(x => x.PrimaryContact)
                 .FirstOrDefault(a => a.OwnerId == id);
@@ -62,7 +65,9 @@ namespace HetsData.Helpers
             if (owner != null)
             {
                 // remove any archived equipment
-                owner.HetEquipment = owner.HetEquipment.Where(e => e.Status != "Archived").ToList();                
+                owner.HetEquipment = owner.HetEquipment.Where(e => e.EquipmentStatusType.EquipmentStatusTypeCode != HetEquipment.StatusArchived).ToList();
+
+                owner.Status = owner.OwnerStatusType.OwnerStatusTypeCode;
             }
 
             return owner;
@@ -118,7 +123,7 @@ namespace HetsData.Helpers
                     ownerLite.EquipmentCount = CalculateEquipmentCount(owner.HetEquipment.ToList());
                 }
 
-                ownerLite.Status = owner.Status;
+                ownerLite.Status = owner.OwnerStatusType.Description;
             }
 
             return ownerLite;
@@ -133,7 +138,7 @@ namespace HetsData.Helpers
 
             foreach (HetEquipment equipment in equipmentList)
             {
-                if (equipment.Status != HetEquipment.StatusArchived)
+                if (equipment.EquipmentStatusType.EquipmentStatusTypeCode != HetEquipment.StatusArchived)
                 {
                     ++equipmentCount;
                 }

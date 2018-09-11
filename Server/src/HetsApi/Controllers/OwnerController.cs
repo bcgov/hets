@@ -576,7 +576,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetEquipment)
                     .ThenInclude(x => x.HetNote)
                 .Include(x => x.HetEquipment)
-                    .ThenInclude(x => x.HetAttachment)
+                    .ThenInclude(x => x.HetDigitalFile)
                 .Include(x => x.HetEquipment)
                     .ThenInclude(x => x.HetHistory)
                 .First(a => a.OwnerId == id);
@@ -610,7 +610,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetEquipment)
                     .ThenInclude(y => y.Owner)
                 .Include(x => x.HetNote)
-                .Include(x => x.HetAttachment)
+                .Include(x => x.HetDigitalFile)
                 .Include(x => x.HetHistory)
                 .Include(x => x.HetContact)
                 .First(x => x.OwnerId == id);
@@ -634,7 +634,7 @@ namespace HetsApi.Controllers
                             .Include(x => x.Owner)
                             .Include(x => x.HetEquipmentAttachment)
                             .Include(x => x.HetNote)
-                            .Include(x => x.HetAttachment)
+                            .Include(x => x.HetDigitalFile)
                             .Include(x => x.HetHistory)
                             .First(x => x.EquipmentId == item.EquipmentId);
 
@@ -691,7 +691,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("{id}/attachments")]
         [SwaggerOperation("OwnersIdAttachmentsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetAttachment>))]
+        [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult OwnersIdAttachmentsGet([FromRoute]int id)
         {
@@ -701,13 +701,13 @@ namespace HetsApi.Controllers
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetOwner owner = _context.HetOwner.AsNoTracking()
-                .Include(x => x.HetAttachment)
+                .Include(x => x.HetDigitalFile)
                 .First(a => a.OwnerId == id);
 
             // extract the attachments and update properties for UI
-            List<HetAttachment> attachments = new List<HetAttachment>();
+            List<HetDigitalFile> attachments = new List<HetDigitalFile>();
 
-            foreach (HetAttachment attachment in owner.HetAttachment)
+            foreach (HetDigitalFile attachment in owner.HetDigitalFile)
             {
                 if (attachment != null)
                 {

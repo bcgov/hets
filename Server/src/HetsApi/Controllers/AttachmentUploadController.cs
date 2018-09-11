@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using HetsApi.Authorization;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Helpers;
+using HetsData.Helpers;
 using HetsData.Model;
 
 namespace HetsApi.Controllers
@@ -39,7 +41,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("equipment/{id}/attachments")]
         [SwaggerOperation("EquipmentIdAttachmentsPost")]
-        [SwaggerResponse(200, type: typeof(List<HetAttachment>))]
+        [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult EquipmentIdAttachmentsPost([FromRoute] int id, [FromForm]IList<IFormFile> files)
         {
@@ -49,14 +51,14 @@ namespace HetsApi.Controllers
             if (!exists) return new StatusCodeResult(404);
             
             HetEquipment equipment = _context.HetEquipment
-                .Include(x => x.HetAttachment)
+                .Include(x => x.HetDigitalFile)
                 .First(a => a.EquipmentId == id);
 
             foreach (IFormFile file in files)
             {
                 if (file.Length > 0)
                 {
-                    HetAttachment attachment = new HetAttachment();
+                    HetDigitalFile attachment = new HetDigitalFile();
 
                     // strip out extra info in the file name                   
                     if (!string.IsNullOrEmpty(file.FileName))
@@ -73,15 +75,26 @@ namespace HetsApi.Controllers
                     }
 
                     attachment.Type = GetType(attachment.FileName);
-                    attachment.MimeType = GetMimeType(attachment.Type);
 
-                    equipment.HetAttachment.Add(attachment);
+                    // set the mime type id
+                    string mimeType = GetMimeType(attachment.Type);
+
+                    int? mimeTypeId = StatusHelper.GetMimeTypeId(mimeType, _context);
+
+                    if (mimeTypeId == null)
+                    {
+                        throw new DataException("Mime Type Id cannot be null");
+                    }
+
+                    attachment.MimeTypeId = (int)mimeTypeId;
+
+                    equipment.HetDigitalFile.Add(attachment);
                 }
             }
 
             _context.SaveChanges();
             
-            return new ObjectResult(equipment.HetAttachment);            
+            return new ObjectResult(equipment.HetDigitalFile);            
         }
 
         /// <summary>
@@ -104,7 +117,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("projects/{id}/attachments")]
         [SwaggerOperation("ProjectIdAttachmentsPost")]
-        [SwaggerResponse(200, type: typeof(List<HetAttachment>))]
+        [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult ProjectIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
@@ -114,14 +127,14 @@ namespace HetsApi.Controllers
             if (!exists) return new StatusCodeResult(404);
             
             HetProject project = _context.HetProject
-                .Include(x => x.HetAttachment)
+                .Include(x => x.HetDigitalFile)
                 .First(a => a.ProjectId == id);
 
             foreach (IFormFile file in files)
             {
                 if (file.Length > 0)
                 {
-                    HetAttachment attachment = new HetAttachment();
+                    HetDigitalFile attachment = new HetDigitalFile();
 
                     // strip out extra info in the file name                   
                     if (!string.IsNullOrEmpty(file.FileName))
@@ -138,15 +151,26 @@ namespace HetsApi.Controllers
                     }
 
                     attachment.Type = GetType(attachment.FileName);
-                    attachment.MimeType = GetMimeType(attachment.Type);
 
-                    project.HetAttachment.Add(attachment);
+                    // set the mime type id
+                    string mimeType = GetMimeType(attachment.Type);
+
+                    int? mimeTypeId = StatusHelper.GetMimeTypeId(mimeType, _context);
+
+                    if (mimeTypeId == null)
+                    {
+                        throw new DataException("Mime Type Id cannot be null");
+                    }
+
+                    attachment.MimeTypeId = (int)mimeTypeId;
+
+                    project.HetDigitalFile.Add(attachment);
                 }
             }
 
             _context.SaveChanges();            
 
-            return new ObjectResult(project.HetAttachment);            
+            return new ObjectResult(project.HetDigitalFile);            
         }
 
         /// <summary>
@@ -170,7 +194,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("owners/{id}/attachments")]
         [SwaggerOperation("OwnerIdAttachmentsPost")]
-        [SwaggerResponse(200, type: typeof(List<HetAttachment>))]
+        [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult OwnerIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
@@ -180,14 +204,14 @@ namespace HetsApi.Controllers
             if (!exists) return new StatusCodeResult(404);
             
             HetOwner owner = _context.HetOwner
-                .Include(x => x.HetAttachment)
+                .Include(x => x.HetDigitalFile)
                 .First(a => a.OwnerId == id);
 
             foreach (IFormFile file in files)
             {
                 if (file.Length > 0)
                 {
-                    HetAttachment attachment = new HetAttachment();
+                    HetDigitalFile attachment = new HetDigitalFile();
 
                     // strip out extra info in the file name                   
                     if (!string.IsNullOrEmpty(file.FileName))
@@ -204,15 +228,26 @@ namespace HetsApi.Controllers
                     }
 
                     attachment.Type = GetType(attachment.FileName);
-                    attachment.MimeType = GetMimeType(attachment.Type);
 
-                    owner.HetAttachment.Add(attachment);
+                    // set the mime type id
+                    string mimeType = GetMimeType(attachment.Type);
+
+                    int? mimeTypeId = StatusHelper.GetMimeTypeId(mimeType, _context);
+
+                    if (mimeTypeId == null)
+                    {
+                        throw new DataException("Mime Type Id cannot be null");
+                    }
+
+                    attachment.MimeTypeId = (int)mimeTypeId;
+
+                    owner.HetDigitalFile.Add(attachment);
                 }
             }
 
             _context.SaveChanges();
 
-            return new ObjectResult(owner.HetAttachment);            
+            return new ObjectResult(owner.HetDigitalFile);            
         }
 
         /// <summary>
@@ -236,7 +271,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("rentalRequests/{id}/attachments")]
         [SwaggerOperation("RentalRequestIdAttachmentsPost")]
-        [SwaggerResponse(200, type: typeof(List<HetAttachment>))]
+        [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult RentalRequestIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
@@ -246,14 +281,14 @@ namespace HetsApi.Controllers
             if (!exists) return new StatusCodeResult(404);
             
             HetRentalRequest rentalRequest = _context.HetRentalRequest
-                .Include(x => x.HetAttachment)
+                .Include(x => x.HetDigitalFile)
                 .First(a => a.RentalRequestId == id);
 
-            foreach (var file in files)
+            foreach (IFormFile file in files)
             {
                 if (file.Length > 0)
                 {
-                    HetAttachment attachment = new HetAttachment();
+                    HetDigitalFile attachment = new HetDigitalFile();
 
                     // strip out extra info in the file name                   
                     if (!string.IsNullOrEmpty(file.FileName))
@@ -270,15 +305,26 @@ namespace HetsApi.Controllers
                     }
 
                     attachment.Type = GetType(attachment.FileName);
-                    attachment.MimeType = GetMimeType(attachment.Type);
 
-                    rentalRequest.HetAttachment.Add(attachment);
+                    // set the mime type id
+                    string mimeType = GetMimeType(attachment.Type);
+
+                    int? mimeTypeId = StatusHelper.GetMimeTypeId(mimeType, _context);
+
+                    if (mimeTypeId == null)
+                    {
+                        throw new DataException("Mime Type Id cannot be null");
+                    }
+
+                    attachment.MimeTypeId = (int)mimeTypeId;
+
+                    rentalRequest.HetDigitalFile.Add(attachment);
                 }
             }
 
             _context.SaveChanges();
 
-            return new ObjectResult(rentalRequest.HetAttachment);           
+            return new ObjectResult(rentalRequest.HetDigitalFile);           
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -157,6 +158,7 @@ namespace HetsApi.Controllers
 
             // get record
             HetEquipment equipment = _context.HetEquipment
+                .Include(x => x.EquipmentStatusType)
                 .Include(x => x.LocalArea.ServiceArea.District.Region)
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(d => d.EquipmentType)
@@ -167,9 +169,17 @@ namespace HetsApi.Controllers
             // used for seniority recalculation
             int localAreaId = equipment.LocalArea.LocalAreaId;
             int districtEquipmentTypeId = equipment.DistrictEquipmentType.DistrictEquipmentTypeId;
-            string oldStatus = equipment.Status;
+            string oldStatus = equipment.EquipmentStatusType.EquipmentStatusTypeCode;
 
             // update equipment status
+            int? statusId = StatusHelper.GetStatusId(item.Status, "equipmentStatus", _context);
+
+            if (statusId == null)
+            {
+                throw new DataException("Status Id cannot be null");
+            }
+
+            equipment.EquipmentStatusTypeId = (int)statusId;
             equipment.Status = item.Status;
             equipment.StatusComment = item.StatusComment;
 
@@ -253,7 +263,7 @@ namespace HetsApi.Controllers
             
             // set default values for new piece of Equipment
             // certain fields are set on new record - set defaults (including status = "Inactive")
-            item = EquipmentHelper.SetNewRecordFields(item);
+            item = EquipmentHelper.SetNewRecordFields(item, _context);
 
             // ***********************************************************************************
             // Calculate Years of Service for new record
@@ -512,7 +522,7 @@ namespace HetsApi.Controllers
             agreements[newRentalAgreementIndex].EquipmentRate = agreements[agreementToCloneIndex].EquipmentRate;
             agreements[newRentalAgreementIndex].Note = agreements[agreementToCloneIndex].Note;
             agreements[newRentalAgreementIndex].RateComment = agreements[agreementToCloneIndex].RateComment;
-            agreements[newRentalAgreementIndex].RatePeriod = agreements[agreementToCloneIndex].RatePeriod;
+            agreements[newRentalAgreementIndex].RatePeriodTypeId = agreements[agreementToCloneIndex].RatePeriodTypeId;
 
             // update rates
             agreements[newRentalAgreementIndex].HetRentalAgreementRate = null;
@@ -524,7 +534,7 @@ namespace HetsApi.Controllers
                     Comment = rate.Comment,
                     ComponentName = rate.ComponentName,
                     Rate = rate.Rate,
-                    RatePeriod = rate.RatePeriod,
+                    RatePeriodTypeId = rate.RatePeriodTypeId,
                     IsIncludedInTotal = rate.IsIncludedInTotal,
                     IsAttachment = rate.IsAttachment,
                     PercentOfEquipmentRate = rate.PercentOfEquipmentRate
@@ -681,7 +691,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("{id}/attachments")]
         [SwaggerOperation("EquipmentIdAttachmentsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetAttachment>))]
+        [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult EquipmentIdAttachmentsGet([FromRoute]int id)
         {
@@ -691,13 +701,13 @@ namespace HetsApi.Controllers
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             
             HetEquipment equipment = _context.HetEquipment.AsNoTracking()
-                .Include(x => x.HetAttachment)
+                .Include(x => x.HetDigitalFile)
                 .First(a => a.EquipmentId == id);
 
             // extract the attachments and update properties for UI
-            List<HetAttachment> attachments = new List<HetAttachment>();
+            List<HetDigitalFile> attachments = new List<HetDigitalFile>();
 
-            foreach (HetAttachment attachment in equipment.HetAttachment)
+            foreach (HetDigitalFile attachment in equipment.HetDigitalFile)
             {
                 if (attachment != null)
                 {                    

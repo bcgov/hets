@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -78,10 +79,17 @@ namespace HetsApi.Controllers
             // get record
             HetProject project = _context.HetProject.First(a => a.ProjectId == id);
 
+            int? statusId = StatusHelper.GetStatusId(item.Status, "projectStatus", _context);
+
+            if (statusId == null)
+            {
+                throw new DataException("Status Id cannot be null");
+            }
+
             project.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             project.Name = item.Name;
             project.ProvincialProjectNumber = item.ProvincialProjectNumber;
-            project.Status = item.Status;
+            project.ProjectStatusTypeId = (int)statusId;
             project.Information = item.Information;
 
             // save the changes
@@ -108,11 +116,18 @@ namespace HetsApi.Controllers
             // check if this an update project
             if (item.ProjectId > 0) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
+            int? statusId = StatusHelper.GetStatusId(item.Status, "projectStatus", _context);
+
+            if (statusId == null)
+            {
+                throw new DataException("Status Id cannot be null");
+            }
+
             HetProject project = new HetProject
             {
                 Name = item.Name,
                 ProvincialProjectNumber = item.ProvincialProjectNumber,
-                Status = item.Status,
+                ProjectStatusTypeId = (int)statusId,
                 Information = item.Information
             };
 
@@ -152,6 +167,7 @@ namespace HetsApi.Controllers
             int? districtId = UserHelper.GetUsersDistrictId(_context, _httpContext);
 
             IQueryable<HetProject> data = _context.HetProject.AsNoTracking()
+                .Include(x => x.ProjectStatusType)
                 .Include(x => x.District.Region)
                 .Include(x => x.PrimaryContact)
                 .Include(x => x.HetRentalAgreement)
@@ -213,12 +229,15 @@ namespace HetsApi.Controllers
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             
             List<HetRentalAgreement> agreements = _context.HetProject.AsNoTracking()
+                .Include(x => x.ProjectStatusType)
                 .Include(x => x.HetRentalAgreement)
                     .ThenInclude(e => e.Equipment)
                         .ThenInclude(d => d.DistrictEquipmentType)
                 .Include(x => x.HetRentalAgreement)
                     .ThenInclude(e => e.Equipment)
                         .ThenInclude(a => a.HetEquipmentAttachment)
+                .Include(x => x.HetRentalAgreement)
+                    .ThenInclude(e => e.RentalAgreementStatusType)
                 .First(x => x.ProjectId == id)
                 .HetRentalAgreement
                 .ToList();
@@ -248,10 +267,13 @@ namespace HetsApi.Controllers
 
             // get all agreements for this project
             HetProject project = _context.HetProject
+                .Include(x => x.ProjectStatusType)
                 .Include(x => x.HetRentalAgreement)
                     .ThenInclude(y => y.HetRentalAgreementRate)
                 .Include(x => x.HetRentalAgreement)
                     .ThenInclude(y => y.HetRentalAgreementCondition)
+                .Include(x => x.HetRentalAgreement)
+                    .ThenInclude(e => e.RentalAgreementStatusType)
                 .Include(x => x.HetRentalAgreement)
                     .ThenInclude(y => y.HetTimeRecord)
                 .First(a => a.ProjectId == id);
@@ -298,7 +320,7 @@ namespace HetsApi.Controllers
             agreements[newRentalAgreementIndex].EquipmentRate = agreements[agreementToCloneIndex].EquipmentRate;
             agreements[newRentalAgreementIndex].Note = agreements[agreementToCloneIndex].Note;
             agreements[newRentalAgreementIndex].RateComment = agreements[agreementToCloneIndex].RateComment;
-            agreements[newRentalAgreementIndex].RatePeriod = agreements[agreementToCloneIndex].RatePeriod;
+            agreements[newRentalAgreementIndex].RatePeriodTypeId = agreements[agreementToCloneIndex].RatePeriodTypeId;
 
             // update rates
             agreements[newRentalAgreementIndex].HetRentalAgreementRate = null;
@@ -310,7 +332,7 @@ namespace HetsApi.Controllers
                     Comment = rate.Comment,
                     ComponentName = rate.ComponentName,
                     Rate = rate.Rate,
-                    RatePeriod = rate.RatePeriod,
+                    RatePeriodTypeId = rate.RatePeriodTypeId,
                     IsIncludedInTotal = rate.IsIncludedInTotal,
                     IsAttachment = rate.IsAttachment,
                     PercentOfEquipmentRate = rate.PercentOfEquipmentRate
@@ -465,7 +487,17 @@ namespace HetsApi.Controllers
                 time.RentalAgreementId = rentalAgreementId;
                 time.EnteredDate = DateTime.UtcNow;
                 time.Hours = item.Hours;
-                time.TimePeriod = item.TimePeriod;
+
+                // set the time period type id
+                int? timePeriodTypeId = StatusHelper.GetTimePeriodId(item.TimePeriod, _context);
+
+                if (timePeriodTypeId == null)
+                {
+                    throw new DataException("Time Period Id cannot be null");
+                }
+
+                time.TimePeriodTypeId = (int)timePeriodTypeId;
+
                 time.WorkedDate = item.WorkedDate;
             }
             else // add time record
@@ -647,7 +679,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("{id}/attachments")]
         [SwaggerOperation("ProjectsIdAttachmentsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetAttachment>))]
+        [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult ProjectsIdAttachmentsGet([FromRoute]int id)
         {
@@ -657,13 +689,13 @@ namespace HetsApi.Controllers
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetProject project = _context.HetProject.AsNoTracking()
-                .Include(x => x.HetAttachment)
+                .Include(x => x.HetDigitalFile)
                 .First(a => a.ProjectId == id);
 
             // extract the attachments and update properties for UI
-            List<HetAttachment> attachments = new List<HetAttachment>();
+            List<HetDigitalFile> attachments = new List<HetDigitalFile>();
 
-            foreach (HetAttachment attachment in project.HetAttachment)
+            foreach (HetDigitalFile attachment in project.HetDigitalFile)
             {
                 if (attachment != null)
                 {

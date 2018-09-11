@@ -3,10 +3,10 @@ using HetsApi.Model;
 using HetsData.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Linq;
 using HetsApi.Helpers;
-using Microsoft.AspNetCore.Http;
 
 namespace HetsApi.Controllers
 {
@@ -39,19 +39,19 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/delete")]
         [SwaggerOperation("AttachmentsIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(HetAttachment))]
+        [SwaggerResponse(200, type: typeof(HetDigitalFile))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult AttachmentsIdDeletePost([FromRoute]int id)
         {
-            bool exists = _context.HetAttachment.Any(a => a.AttachmentId == id);
+            bool exists = _context.HetDigitalFile.Any(a => a.DigitalFileId == id);
 
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             
-            HetAttachment item = _context.HetAttachment.First(a => a.AttachmentId == id);
+            HetDigitalFile item = _context.HetDigitalFile.First(a => a.DigitalFileId == id);
 
             if (item != null)
             {
-                _context.HetAttachment.Remove(item);
+                _context.HetDigitalFile.Remove(item);
                 _context.SaveChanges();
             }
 
@@ -68,12 +68,12 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult AttachmentsIdDownloadGet([FromRoute]int id)
         {
-            bool exists = _context.HetAttachment.Any(a => a.AttachmentId == id);
+            bool exists = _context.HetDigitalFile.Any(a => a.DigitalFileId == id);
 
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             
-            HetAttachment attachment = _context.HetAttachment.First(a => a.AttachmentId == id);
+            HetDigitalFile attachment = _context.HetDigitalFile.First(a => a.DigitalFileId == id);
                        
             FileContentResult result = new FileContentResult(attachment.FileContents, "application/octet-stream")
             {

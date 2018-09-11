@@ -60,6 +60,8 @@ namespace HetsData.Helpers
         public static HetRentalAgreement GetRecord(int id, DbAppContext context)
         {
             HetRentalAgreement agreement = context.HetRentalAgreement.AsNoTracking()
+                .Include(x => x.RentalAgreementStatusType)
+                .Include(x => x.RatePeriodType)
                 .Include(x => x.Equipment)
                     .ThenInclude(y => y.Owner)
                 .Include(x => x.Equipment)
@@ -68,13 +70,22 @@ namespace HetsData.Helpers
                 .Include(x => x.Equipment)
                     .ThenInclude(y => y.HetEquipmentAttachment)
                 .Include(x => x.Equipment)
+                    .ThenInclude(y => y.EquipmentStatusType)
+                .Include(x => x.Equipment)
                     .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
                 .Include(x => x.Project)
                     .ThenInclude(p => p.District.Region)
+                .Include(x => x.Project)
+                    .ThenInclude(p => p.ProjectStatusType)
                 .Include(x => x.HetRentalAgreementCondition)
                 .Include(x => x.HetRentalAgreementRate)
                 .Include(x => x.HetTimeRecord)
                 .FirstOrDefault(a => a.RentalAgreementId == id);
+
+            if (agreement != null)
+            {
+                agreement.Status = agreement.RentalAgreementStatusType.RentalAgreementStatusTypeCode;
+            }
 
             return agreement;
         }
@@ -223,6 +234,14 @@ namespace HetsData.Helpers
                     case "hourly":
                     case "hr":
                         return "Hr";
+
+                    case "weekly":
+                    case "wk":
+                        return "Wk";
+
+                    case "monthly":
+                    case "mo":
+                        return "Mo";
                 }
             }
             else
@@ -240,7 +259,7 @@ namespace HetsData.Helpers
             // format the rate
             if (rentalRate.Rate != null)
             {
-                temp = string.Format("$ {0:0.00} / {1}", rentalRate.Rate, FormatRatePeriod(rentalRate.RatePeriod));
+                temp = string.Format("$ {0:0.00} / {1}", rentalRate.Rate, FormatRatePeriod(rentalRate.RatePeriodType.Description));
             }
 
             // format the percent
@@ -278,10 +297,10 @@ namespace HetsData.Helpers
                 pdfModel.Number = agreement.Number;
                 pdfModel.Project = agreement.Project;
                 pdfModel.RateComment = agreement.RateComment;
-                pdfModel.RatePeriod = agreement.RatePeriod;
+                pdfModel.RatePeriod = agreement.RatePeriodType.Description;
                 pdfModel.RentalAgreementConditions = agreement.HetRentalAgreementCondition.ToList();
                 pdfModel.RentalAgreementRates = agreement.HetRentalAgreementRate.ToList();
-                pdfModel.Status = agreement.Status;
+                pdfModel.Status = agreement.RentalAgreementStatusType.Description;
                 pdfModel.ConditionsPresent = agreement.HetRentalAgreementCondition.Count > 0;
 
                 pdfModel = CalculateTotals(pdfModel);
