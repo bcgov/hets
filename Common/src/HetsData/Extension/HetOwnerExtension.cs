@@ -5,6 +5,9 @@ namespace HetsData.Model
     public partial class HetOwner
     {
         [NotMapped]
+        public string Status { get; set; }
+
+        [NotMapped]
         public string ReportDate { get; set; }
         
         [NotMapped]

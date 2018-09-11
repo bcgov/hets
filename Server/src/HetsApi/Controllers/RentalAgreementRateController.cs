@@ -1,3 +1,4 @@
+using System.Data;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -6,6 +7,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
+using HetsData.Helpers;
 using HetsData.Model;
 
 namespace HetsApi.Controllers
@@ -86,7 +88,16 @@ namespace HetsApi.Controllers
             rate.IsIncludedInTotal = item.IsIncludedInTotal;
             rate.PercentOfEquipmentRate = item.PercentOfEquipmentRate;
             rate.Rate = item.Rate;
-            rate.RatePeriod = item.RatePeriod;
+
+            // set the rate period type id
+            int? rateTypeId = StatusHelper.GetRatePeriodId(item.RatePeriod, _context);
+
+            if (rateTypeId == null)
+            {
+                throw new DataException("Rate Period Id cannot be null");
+            }
+
+            rate.RatePeriodTypeId = (int)rateTypeId;
 
             // save the changes	
             _context.SaveChanges();

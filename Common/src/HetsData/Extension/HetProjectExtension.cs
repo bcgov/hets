@@ -9,5 +9,8 @@ namespace HetsData.Model
     {
         [NotMapped]
         public bool CanEditStatus { get; set; }
+
+        [NotMapped]
+        public string Status { get; set; }
     }
 }

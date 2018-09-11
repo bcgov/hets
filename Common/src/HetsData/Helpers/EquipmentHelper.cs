@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -76,13 +77,14 @@ namespace HetsData.Helpers
         {
             // retrieve updated equipment record to return to ui
             HetEquipment equipment = context.HetEquipment.AsNoTracking()
+                .Include(x => x.EquipmentStatusType)
                 .Include(x => x.LocalArea.ServiceArea.District.Region)
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(d => d.EquipmentType)
                 .Include(x => x.Owner)
                 .Include(x => x.HetEquipmentAttachment)
                 .Include(x => x.HetNote)
-                .Include(x => x.HetAttachment)
+                .Include(x => x.HetDigitalFile)
                 .Include(x => x.HetHistory)
                 .FirstOrDefault(a => a.EquipmentId == id);
 
@@ -91,6 +93,7 @@ namespace HetsData.Helpers
                 equipment.IsHired = IsHired(id, context);
                 equipment.NumberOfBlocks = GetNumberOfBlocks(equipment, configuration);
                 equipment.HoursYtd = GetYtdServiceHours(id, context);
+                equipment.Status = equipment.EquipmentStatusType.EquipmentStatusTypeCode;
             }
             
             return equipment;
@@ -206,7 +209,7 @@ namespace HetsData.Helpers
         /// </summary>
         public static bool CheckIsHired(List<HetRentalAgreement> rentalAgreements)
         {
-            int? count = rentalAgreements?.Count(x => x.Status == "Active");
+            int? count = rentalAgreements?.Count(x => x.RentalAgreementStatusType.RentalAgreementStatusTypeCode.Equals("Active", StringComparison.InvariantCultureIgnoreCase));
             return count > 0;
         }
 
@@ -232,7 +235,7 @@ namespace HetsData.Helpers
             // add an "IsHired" flag to indicate if this equipment is currently in use
             IQueryable<HetRentalAgreement> agreements = context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.Equipment)
-                .Where(x => x.Status == "Active");
+                .Where(x => x.RentalAgreementStatusType.RentalAgreementStatusTypeCode.Equals("Active", StringComparison.InvariantCultureIgnoreCase));
 
             return agreements.Any(x => x.Equipment.EquipmentId == id);
         }
@@ -370,7 +373,8 @@ namespace HetsData.Helpers
         /// Set the Equipment fields for a new record for fields that are not provided by the front end
         /// </summary>
         /// <param name="item"></param>
-        public static HetEquipment SetNewRecordFields(HetEquipment item)
+        /// <param name="context"></param>
+        public static HetEquipment SetNewRecordFields(HetEquipment item, DbAppContext context)
         {
             item.ReceivedDate = DateTime.UtcNow;
             item.LastVerifiedDate = DateTime.UtcNow;
@@ -387,7 +391,14 @@ namespace HetsData.Helpers
             item.IsSeniorityOverridden = false;
 
             // new equipment MUST always start as unapproved - it isn't assigned to any block yet
-            item.Status = "Unapproved";
+            int? statusId = StatusHelper.GetStatusId("Unapproved", "equipmentStatus", context);
+
+            if (statusId == null)
+            {
+                throw new DataException("Status Id cannot be null");
+            }
+
+            item.EquipmentStatusTypeId = (int)statusId;
 
             // generate a new equipment code.
             if (item.Owner != null)

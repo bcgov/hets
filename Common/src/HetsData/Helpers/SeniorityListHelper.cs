@@ -56,16 +56,7 @@ namespace HetsData.Helpers
     }
 
     public class SeniorityListPdfViewModel
-    {
-        public SeniorityListPdfViewModel()
-        {
-        }
-
-        public SeniorityListPdfViewModel(List<SeniorityListRecord> seniorityListRecords)
-        {
-            SeniorityListRecords = seniorityListRecords;
-        }
-        
+    {        
         public List<SeniorityListRecord> SeniorityListRecords { get; set; }
                 
         public string ToJson()
@@ -124,7 +115,7 @@ namespace HetsData.Helpers
                         // update the seniority score
                         foreach (HetEquipment equipment in data)
                         {
-                            if (equipment.Status != HetEquipment.StatusApproved)
+                            if (equipment.EquipmentStatusType.EquipmentStatusTypeCode != HetEquipment.StatusApproved)
                             {
                                 equipment.SeniorityEffectiveDate = DateTime.UtcNow;
                                 equipment.BlockNumber = null;
@@ -172,7 +163,7 @@ namespace HetsData.Helpers
                 // get all equipment records
                 List<HetEquipment> data = context.HetEquipment
                     .Include(x => x.Owner)
-                    .Where(x => x.Status == HetEquipment.StatusApproved &&
+                    .Where(x => x.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved &&
                                 x.LocalArea.LocalAreaId == localAreaId &&
                                 x.DistrictEquipmentTypeId == districtEquipmentTypeId)
                     .OrderByDescending(x => x.Seniority).ThenBy(x => x.ReceivedDate)

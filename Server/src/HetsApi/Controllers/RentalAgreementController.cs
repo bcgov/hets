@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -122,6 +123,14 @@ namespace HetsApi.Controllers
             // check if this an update agreement
             if (item.RentalAgreementId > 0) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
+            // set the rate period type id
+            int? rateTypeId = StatusHelper.GetRatePeriodId(item.RatePeriod, _context);
+
+            if (rateTypeId == null)
+            {
+                throw new DataException("Rate Period Id cannot be null");
+            }
+
             HetRentalAgreement agreement = new HetRentalAgreement
             {
                 Number = RentalAgreementHelper.GetRentalAgreementNumber(item.Equipment, _context),
@@ -131,7 +140,7 @@ namespace HetsApi.Controllers
                 EstimateStartWork = item.EstimateStartWork,
                 Note = item.Note,
                 RateComment = item.RateComment,
-                RatePeriod = item.RatePeriod,
+                RatePeriodTypeId = (int)rateTypeId,
                 Status = item.Status,
                 EquipmentId = item.EquipmentId,
                 ProjectId = item.ProjectId
@@ -559,6 +568,16 @@ namespace HetsApi.Controllers
                     rate.PercentOfEquipmentRate = item.PercentOfEquipmentRate;
                     rate.Rate = item.Rate;
                     rate.RatePeriod = item.RatePeriod;
+
+                    // set the rate period type id
+                    int? rateTypeId = StatusHelper.GetRatePeriodId(item.RatePeriod, _context);
+
+                    if (rateTypeId == null)
+                    {
+                        throw new DataException("Rate Period Id cannot be null");
+                    }
+
+                    rate.RatePeriodTypeId = (int)rateTypeId;
                 }
                 else // add rate records
                 {

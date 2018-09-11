@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Hangfire.Console;
 using Hangfire.Console.Progress;
 using Hangfire.Server;
+using HetsData.Helpers;
 using HetsData.Model;
 
 namespace HetsImport.Import
@@ -379,11 +380,18 @@ namespace HetsImport.Import
 
                 if (tempArchive == "Y")
                 {
+                    int? statusId = StatusHelper.GetStatusId("Archived", "ownerStatus", dbContext);
+
+                    if (statusId == null)
+                    {
+                        throw new DataException(string.Format("Status Id cannot be null (OwnerIndex: {0}", maxOwnerIndex));
+                    }
+
                     // archived!
                     owner.ArchiveCode = "Y";
                     owner.ArchiveDate = DateTime.UtcNow;
                     owner.ArchiveReason = "Imported from BC Bid";
-                    owner.Status = "Archived";
+                    owner.OwnerStatusTypeId = (int)statusId;
 
                     string tempArchiveReason = ImportUtility.CleanString(oldObject.Archive_Reason);
 
@@ -394,10 +402,24 @@ namespace HetsImport.Import
                 }
                 else
                 {
+                    int? statusId = StatusHelper.GetStatusId("Approved", "ownerStatus", dbContext);
+
+                    if (statusId == null)
+                    {
+                        throw new DataException(string.Format("Status Id cannot be null (OwnerIndex: {0}", maxOwnerIndex));
+                    }
+
+                    int? statusIdUnapproved = StatusHelper.GetStatusId("Unapproved", "ownerStatus", dbContext);
+
+                    if (statusIdUnapproved == null)
+                    {
+                        throw new DataException(string.Format("Status Id cannot be null (OwnerIndex: {0}", maxOwnerIndex));
+                    }
+
                     owner.ArchiveCode = "N";
                     owner.ArchiveDate = null;
                     owner.ArchiveReason = null;
-                    owner.Status = tempStatus == "A" ? "Approved" : "Unapproved";
+                    owner.OwnerStatusTypeId = tempStatus == "A" ? (int)statusId : (int)statusIdUnapproved;
                     owner.StatusComment = string.Format("Imported from BC Bid ({0})", tempStatus);
                 }
 

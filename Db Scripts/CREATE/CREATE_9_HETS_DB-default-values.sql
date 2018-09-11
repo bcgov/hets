@@ -1519,7 +1519,7 @@ INSERT INTO public."HET_RENTAL_AGREEMENT_STATUS_TYPE"
    "APP_LAST_UPDATE_USER_DIRECTORY", "APP_LAST_UPDATE_USER_GUID", "APP_LAST_UPDATE_USERID", 
    "APP_LAST_UPDATE_TIMESTAMP")
 VALUES 
-  (1, 'In Progress', 'In Progress', 'In Progress', 1, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
+  (1, 'Active', 'Active', 'Active', 1, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
   (2, 'Complete', 'Complete', 'Complete', 2, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW());
 
 ALTER SEQUENCE public."HET_RENTAL_AGREEMENT_STATUS_TYPE_ID_seq" RESTART WITH 2; 
@@ -1534,10 +1534,11 @@ INSERT INTO public."HET_RATE_PERIOD_TYPE"
    "APP_LAST_UPDATE_TIMESTAMP")
 VALUES 
   (1, 'Weekly', 'Weekly', 'Weekly', 1, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
-  (2, 'Daily', 'Daily', 'Daily', 2, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
-  (3, 'Monthly', 'Monthly', 'Monthly', 3, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW());
+  (2, 'Hourly', 'Hourly', 'Hourly', 2, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
+  (3, 'Daily', 'Daily', 'Daily', 3, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
+  (4, 'Monthly', 'Monthly', 'Monthly', 4, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW());
 
-ALTER SEQUENCE public."HET_RATE_PERIOD_TYPE_ID_seq" RESTART WITH 3; 
+ALTER SEQUENCE public."HET_RATE_PERIOD_TYPE_ID_seq" RESTART WITH 4; 
  
 -- **************************************************************************************
 -- TIME PERIOD TYPE

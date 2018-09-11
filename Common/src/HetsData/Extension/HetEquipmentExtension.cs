@@ -10,7 +10,10 @@ namespace HetsData.Model
         /// </summary>
         public const string StatusApproved = "Approved";
         public const string StatusArchived = "Archived";
-        public const string StatusPending = "Unapproved";        
+        public const string StatusPending = "Unapproved";
+
+        [NotMapped]
+        public string Status { get; set; }
 
         [NotMapped]
         public int SenioritySortOrder { get; set; }

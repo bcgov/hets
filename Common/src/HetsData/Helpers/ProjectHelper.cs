@@ -40,21 +40,28 @@ namespace HetsData.Helpers
         /// <returns></returns>
         public static HetProject GetRecord(int id, DbAppContext context)
         {
-            HetProject project = context.HetProject.AsNoTracking()
+            HetProject project = context.HetProject.AsNoTracking()  
+                .Include(x => x.ProjectStatusType)
                 .Include(x => x.District.Region)
                 .Include(x => x.HetContact)
                 .Include(x => x.PrimaryContact)
                 .Include(x => x.HetRentalRequest)
                     .ThenInclude(y => y.DistrictEquipmentType)
                 .Include(x => x.HetRentalRequest)
+                    .ThenInclude(y => y.RentalRequestStatusType)
+                .Include(x => x.HetRentalRequest)
                     .ThenInclude(y => y.HetRentalRequestRotationList)
                 .Include(x => x.HetRentalAgreement)
                     .ThenInclude(y => y.Equipment)
                         .ThenInclude(z => z.DistrictEquipmentType)
+                .Include(x => x.HetRentalAgreement)
+                    .ThenInclude(y => y.RentalAgreementStatusType)
                 .FirstOrDefault(a => a.ProjectId == id);
 
             if (project != null)
             {
+                project.Status = project.ProjectStatusType.ProjectStatusTypeCode;
+
                 // calculate the number of hired (yes or forced hire) equipment
                 // count active requests (In Progress)
                 int countActiveRequests = 0;
@@ -81,8 +88,8 @@ namespace HetsData.Helpers
                     rentalRequest.YesCount = temp;
                     rentalRequest.HetRentalRequestRotationList = null;
 
-                    if (rentalRequest.Status == null ||
-                        rentalRequest.Status.Equals("In Progress", StringComparison.InvariantCultureIgnoreCase))
+                    if (rentalRequest.RentalRequestStatusType.RentalRequestStatusTypeCode == null ||
+                        rentalRequest.RentalRequestStatusType.RentalRequestStatusTypeCode.Equals("In Progress", StringComparison.InvariantCultureIgnoreCase))
                     {
                         countActiveRequests++;
                     }
@@ -93,8 +100,8 @@ namespace HetsData.Helpers
 
                 foreach (HetRentalAgreement rentalAgreement in project.HetRentalAgreement)
                 {
-                    if (rentalAgreement.Status == null ||
-                        rentalAgreement.Status.Equals("Active", StringComparison.InvariantCultureIgnoreCase))
+                    if (rentalAgreement.RentalAgreementStatusType.RentalAgreementStatusTypeCode == null ||
+                        rentalAgreement.RentalAgreementStatusType.RentalAgreementStatusTypeCode.Equals("Active", StringComparison.InvariantCultureIgnoreCase))
                     {
                         countActiveAgreements++;
                     }
@@ -104,7 +111,7 @@ namespace HetsData.Helpers
                 // * If Project.status is currently "Active" AND                
                 //   (All child RentalRequests.Status != "In Progress" AND All child RentalAgreement.status != "Active"))
                 // * If Project.status is currently != "Active"                               
-                if (project.Status.Equals("Active", StringComparison.InvariantCultureIgnoreCase) &&
+                if (project.ProjectStatusType.ProjectStatusTypeCode.Equals("Active", StringComparison.InvariantCultureIgnoreCase) &&
                     (countActiveRequests > 0 || countActiveAgreements > 0))
                 {
                     project.CanEditStatus = false;
@@ -133,7 +140,7 @@ namespace HetsData.Helpers
             if (project != null)
             {
                 projectLite.Id = project.ProjectId;
-                projectLite.Status = project.Status;
+                projectLite.Status = project.ProjectStatusType.Description;
                 projectLite.Name = project.Name;
                 projectLite.PrimaryContact = project.PrimaryContact;
                 projectLite.District = project.District;                

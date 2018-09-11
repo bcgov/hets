@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using HetsData.Model;
 using Microsoft.EntityFrameworkCore;
@@ -40,17 +38,23 @@ namespace HetsData.Helpers
         public static HetRentalRequest GetRecord(int id, DbAppContext context)
         {
             HetRentalRequest request = context.HetRentalRequest.AsNoTracking()
+                .Include(x => x.RentalRequestStatusType)
                 .Include(x => x.LocalArea.ServiceArea.District.Region)
                 .Include(x => x.Project)
                     .ThenInclude(c => c.PrimaryContact)
+                .Include(x => x.Project)
+                    .ThenInclude(c => c.ProjectStatusType)
                 .Include(x => x.HetRentalRequestAttachment)
                 .Include(x => x.DistrictEquipmentType)
                 .Include(x => x.HetRentalRequestRotationList)
                     .ThenInclude(y => y.Equipment)
+                        .ThenInclude(z => z.EquipmentStatusType)
                 .FirstOrDefault(a => a.RentalRequestId == id);
 
             if (request != null)
             {
+                request.Status = request.RentalRequestStatusType.RentalRequestStatusTypeCode;
+
                 // calculate the Yes Count based on the RentalRequestList
                 request.YesCount = CalculateYesCount(request);
 
@@ -154,7 +158,7 @@ namespace HetsData.Helpers
                     requestLite.ProjectId = request.Project.ProjectId;
                 }
 
-                requestLite.Status = request.Status;
+                requestLite.Status = request.RentalRequestStatusType.Description;
                 requestLite.EquipmentCount = request.EquipmentCount;
                 requestLite.ExpectedEndDate = request.ExpectedEndDate;
                 requestLite.ExpectedStartDate = request.ExpectedStartDate;                
@@ -259,7 +263,7 @@ namespace HetsData.Helpers
                     .Where(x => x.DistrictEquipmentType.DistrictEquipmentTypeId == request.DistrictEquipmentType.DistrictEquipmentTypeId &&
                                 x.BlockNumber == currentBlock &&
                                 x.LocalArea.LocalAreaId == request.LocalArea.LocalAreaId &&
-                                x.Status.Equals("Approved", StringComparison.InvariantCultureIgnoreCase))
+                                x.EquipmentStatusType.EquipmentStatusTypeCode.Equals("Approved", StringComparison.InvariantCultureIgnoreCase))
                     .OrderBy(x => x.NumberInBlock)
                     .ToList();
 
@@ -270,7 +274,7 @@ namespace HetsData.Helpers
                 {
                     bool agreementExists = context.HetRentalAgreement
                         .Any(x => x.EquipmentId == blockEquipment[i].EquipmentId &&
-                                  x.Status == "Active");
+                                  x.RentalAgreementStatusType.RentalAgreementStatusTypeCode == "Active");
 
                     if (agreementExists)
                     {
@@ -845,7 +849,7 @@ namespace HetsData.Helpers
                 List<HetRentalRequest> requests = context.HetRentalRequest
                     .Where(x => x.DistrictEquipmentType.DistrictEquipmentTypeId == rentalRequest.DistrictEquipmentType.DistrictEquipmentTypeId &&
                                 x.LocalArea.LocalAreaId == rentalRequest.LocalArea.LocalAreaId &&
-                                x.Status.Equals("In Progress", StringComparison.CurrentCultureIgnoreCase))
+                                x.RentalRequestStatusType.RentalRequestStatusTypeCode.Equals("In Progress", StringComparison.CurrentCultureIgnoreCase))
                     .ToList();
 
                 tempStatus = requests.Count == 0 ? "In Progress" : "New";

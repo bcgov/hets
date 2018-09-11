@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HetsData.Model
 {    
-    public partial class HetAttachment
+    public partial class HetDigitalFile
     {
         [NotMapped]
         public int? FileSize { get; set; }

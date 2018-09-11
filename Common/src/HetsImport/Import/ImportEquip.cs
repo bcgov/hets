@@ -121,8 +121,9 @@ namespace HetsImport.Import
                 // (using active equipment to minimize the results)
                 // ************************************************************
                 List<HetLocalArea> localAreas = dbContext.HetEquipment.AsNoTracking()
+                    .Include(x => x.EquipmentStatusType)
                     .Include(x => x.LocalArea)
-                    .Where(x => x.Status == HetEquipment.StatusApproved &&
+                    .Where(x => x.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved &&
                                 x.ArchiveCode == "N")
                     .Select(x => x.LocalArea)
                     .Distinct()
@@ -137,8 +138,9 @@ namespace HetsImport.Import
                 foreach (HetLocalArea localArea in localAreas)
                 {
                     IQueryable<HetDistrictEquipmentType> equipmentTypes = dbContext.HetEquipment.AsNoTracking()
+                        .Include(x => x.EquipmentStatusType)
                         .Include(x => x.DistrictEquipmentType)
-                        .Where(x => x.Status == HetEquipment.StatusApproved &&
+                        .Where(x => x.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved &&
                                     x.ArchiveCode == "N" &&
                                     x.LocalArea.LocalAreaId == localArea.LocalAreaId)
                         .Select(x => x.DistrictEquipmentType)
@@ -339,11 +341,18 @@ namespace HetsImport.Import
 
                 if (tempArchive == "Y")
                 {
+                    int? statusId = StatusHelper.GetStatusId("Archived", "equipmentStatus", dbContext);
+
+                    if (statusId == null)
+                    {
+                        throw new DataException(string.Format("Status Id cannot be null (EquipmentIndex: {0})", maxEquipmentIndex));
+                    }
+
                     // archived!
                     equipment.ArchiveCode = "Y";
                     equipment.ArchiveDate = DateTime.UtcNow;
                     equipment.ArchiveReason = "Imported from BC Bid";
-                    equipment.Status = "Archived";
+                    equipment.EquipmentStatusTypeId = (int)statusId;
 
                     string tempArchiveReason = ImportUtility.CleanString(oldObject.Archive_Reason);
 
@@ -354,10 +363,24 @@ namespace HetsImport.Import
                 }
                 else
                 {
+                    int? statusId = StatusHelper.GetStatusId("Approved", "equipmentStatus", dbContext);
+
+                    if (statusId == null)
+                    {
+                        throw new DataException(string.Format("Status Id cannot be null (EquipmentIndex: {0})", maxEquipmentIndex));
+                    }
+
+                    int? statusIdUnapproved = StatusHelper.GetStatusId("Unapproved", "equipmentStatus", dbContext);
+
+                    if (statusIdUnapproved == null)
+                    {
+                        throw new DataException(string.Format("Status Id cannot be null (EquipmentIndex: {0})", maxEquipmentIndex));
+                    }
+
                     equipment.ArchiveCode = "N";
                     equipment.ArchiveDate = null;
                     equipment.ArchiveReason = null;
-                    equipment.Status = tempStatus == "A" ? "Approved" : "Unapproved";
+                    equipment.EquipmentStatusTypeId = tempStatus == "A" ? (int)statusId : (int)statusIdUnapproved;
                     equipment.StatusComment = string.Format("Imported from BC Bid ({0})", tempStatus);
                 }
 
@@ -381,7 +404,8 @@ namespace HetsImport.Import
                 }
                 else
                 {
-                    if (equipment.ArchiveCode == "N" && equipment.Status == "Approved")
+                    if (equipment.ArchiveCode == "N" && 
+                        equipment.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved)
                     {
                         throw new DataException(string.Format("Received Date cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
                     }                    
@@ -396,7 +420,8 @@ namespace HetsImport.Import
                 }
                 else
                 {
-                    if (equipment.ArchiveCode == "N" && equipment.Status == "Approved")
+                    if (equipment.ArchiveCode == "N" && 
+                        equipment.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved)
                     {
                         throw new DataException(string.Format("Equipment Code cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
                     }                    
@@ -501,7 +526,8 @@ namespace HetsImport.Import
                     }
                 }
 
-                if (equipment.LocalAreaId == null && equipment.ArchiveCode == "N" && equipment.Status == "Approved")
+                if (equipment.LocalAreaId == null && equipment.ArchiveCode == "N" && 
+                    equipment.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved)
                 {
                     throw new DataException(string.Format("Local Area cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
                 }
@@ -546,7 +572,8 @@ namespace HetsImport.Import
                     }
                 }
 
-                if (equipment.DistrictEquipmentTypeId == null && equipment.ArchiveCode == "N" && equipment.Status == "Approved")
+                if (equipment.DistrictEquipmentTypeId == null && equipment.ArchiveCode == "N" && 
+                    equipment.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved)
                 {
                     throw new DataException(string.Format("Equipment Type cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
                 }
