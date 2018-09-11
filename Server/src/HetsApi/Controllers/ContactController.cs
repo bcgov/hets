@@ -26,7 +26,7 @@ namespace HetsApi.Controllers
             _configuration = configuration;    
             
             // set context data
-            HetUser user = UserHelper.GetUser(context, httpContextAccessor.HttpContext);
+            HetUser user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
             _context.SmUserId = user.SmUserId;
             _context.DirectoryName = user.SmAuthorizationDirectory;
             _context.SmUserGuid = user.Guid;

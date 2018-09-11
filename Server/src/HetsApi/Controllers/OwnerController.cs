@@ -54,7 +54,7 @@ namespace HetsApi.Controllers
             _logger = loggerFactory.CreateLogger<OwnerController>();
 
             // set context data
-            HetUser user = UserHelper.GetUser(context, httpContextAccessor.HttpContext);
+            HetUser user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
             _context.SmUserId = user.SmUserId;
             _context.DirectoryName = user.SmAuthorizationDirectory;
             _context.SmUserGuid = user.Guid;
@@ -300,7 +300,7 @@ namespace HetsApi.Controllers
             int?[] equipmentTypesArray = ArrayHelper.ParseIntArray(equipmentTypes);
 
             // get initial results - must be limited to user's district
-            int? districtId = UserHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
 
             IQueryable<HetOwner> data = _context.HetOwner.AsNoTracking()
                 .Include(x => x.LocalArea)

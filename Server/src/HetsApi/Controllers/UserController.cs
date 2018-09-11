@@ -8,6 +8,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
+using HetsData.Helpers;
 using HetsData.Model;
 
 namespace HetsApi.Controllers
@@ -25,10 +26,10 @@ namespace HetsApi.Controllers
         public UserController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
-            _configuration = configuration;    
-            
+            _configuration = configuration;
+
             // set context data
-            HetUser user = UserHelper.GetUser(context, httpContextAccessor.HttpContext);
+            HetUser user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
             _context.SmUserId = user.SmUserId;
             _context.DirectoryName = user.SmAuthorizationDirectory;
             _context.SmUserGuid = user.Guid;
@@ -44,16 +45,8 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.UserManagement)]
         public virtual IActionResult UsersGet()
         {
-            List<HetUser> users = _context.HetUser.AsNoTracking()
-                .Include(x => x.District)
-                .Include(x => x.HetUserDistrict)
-                .Include(x => x.UserRoles)
-                    .ThenInclude(y => y.Role)
-                        .ThenInclude(z => z.HetRolePermission)
-                            .ThenInclude(z => z.Permission)
-                .ToList();
-
-            return new ObjectResult(new HetsResponse(users));
+            // get all user records and return to UI          
+            return new ObjectResult(new HetsResponse(UserHelper.GetRecords( _context)));            
         }
 
         /// <summary>
@@ -72,17 +65,8 @@ namespace HetsApi.Controllers
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            // get record
-            HetUser user = _context.HetUser.AsNoTracking()
-                .Include(x => x.District)
-                .Include(x => x.HetUserDistrict)
-                .Include(x => x.UserRoles)
-                .ThenInclude(y => y.Role)
-                .ThenInclude(z => z.HetRolePermission)
-                .ThenInclude(z => z.Permission)
-                .First(x => x.UserId == id);
-
-            return new ObjectResult(new HetsResponse(user));
+            // get user record and return to UI          
+            return new ObjectResult(new HetsResponse(UserHelper.GetRecord(id, _context)));
         }
 
         /// <summary>
@@ -102,12 +86,12 @@ namespace HetsApi.Controllers
 
             // get record
             HetUser user = _context.HetUser.AsNoTracking()
-                .Include(x => x.UserRoles)
+                .Include(x => x.HetUserRole)
                 .Include(x => x.HetUserDistrict)
                 .First(x => x.UserId == id);
 
             // delete user roles
-            foreach (HetUserRole item in user.UserRoles)
+            foreach (HetUserRole item in user.HetUserRole)
             {
                 _context.HetUserRole.Remove(item);
             }            
@@ -136,6 +120,12 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.UserManagement)]
         public virtual IActionResult UsersPost([FromBody]HetUser item)
         {
+            // not found
+            if (item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // check if this an update user
+            if (item.UserId > 0) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
             HetUser user = new HetUser
             {
                 Active = item.Active,
@@ -176,17 +166,8 @@ namespace HetsApi.Controllers
 
             int id = user.UserId;
 
-            // get updated user record
-            user = _context.HetUser.AsNoTracking()
-                .Include(x => x.District)
-                .Include(x => x.HetUserDistrict)
-                .Include(x => x.UserRoles)
-                    .ThenInclude(y => y.Role)
-                        .ThenInclude(z => z.HetRolePermission)
-                            .ThenInclude(z => z.Permission)
-                .First(x => x.UserId == id);
-
-            return new ObjectResult(new HetsResponse(user));
+            // get updated user record and return to UI          
+            return new ObjectResult(new HetsResponse(UserHelper.GetRecord(id, _context)));
         }
 
         /// <summary>
@@ -201,6 +182,12 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.UserManagement)]
         public virtual IActionResult UsersIdPut([FromRoute]int id, [FromBody]HetUser item)
         {
+            if (item == null || id != item.UserId)
+            {
+                // not found
+                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            }
+
             bool exists = _context.HetUser.Any(x => x.UserId == id);
 
             // not found
@@ -266,17 +253,8 @@ namespace HetsApi.Controllers
             // save changes
             _context.SaveChanges();
 
-            // get updated user record
-            user = _context.HetUser.AsNoTracking()
-                .Include(x => x.District)
-                .Include(x => x.HetUserDistrict)
-                .Include(x => x.UserRoles)
-                    .ThenInclude(y => y.Role)
-                        .ThenInclude(z => z.HetRolePermission)
-                            .ThenInclude(z => z.Permission)
-                .First(x => x.UserId == id);
-
-            return new ObjectResult(new HetsResponse(user));
+            // get updated user record and return to UI          
+            return new ObjectResult(new HetsResponse(UserHelper.GetRecord(id, _context)));
         }
 
         #region User Search
@@ -299,10 +277,6 @@ namespace HetsApi.Controllers
 
             IQueryable<HetUser> data = _context.HetUser
                 .Include(x => x.District)
-                .Include(x => x.UserRoles)
-                    .ThenInclude(y => y.Role)
-                        .ThenInclude(z => z.HetRolePermission)
-                            .ThenInclude(z => z.Permission)
                 .Select(x => x);
 
             if (districtArray != null && districtArray.Length > 0)
@@ -374,17 +348,11 @@ namespace HetsApi.Controllers
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetUser user = _context.HetUser.AsNoTracking()
-                .Include(x => x.District)
-                .Include(x => x.UserRoles)
-                    .ThenInclude(y => y.Role)
-                        .ThenInclude(z => z.HetRolePermission)
-                            .ThenInclude(z => z.Permission)
-                .First(x => x.UserId == id);
+            HetUser user = UserHelper.GetRecord(id, _context);
 
             List<HetPermission> permissions = new List<HetPermission>();
             
-            foreach (HetUserRole item in user.UserRoles)
+            foreach (HetUserRole item in user.HetUserRole)
             {
                 if (item.Role?.HetRolePermission != null)
                 {
@@ -420,13 +388,10 @@ namespace HetsApi.Controllers
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetUser user = _context.HetUser.AsNoTracking()
-                .Include(x => x.UserRoles)
-                    .ThenInclude(y => y.Role)
-                .First(x => x.UserId == id);
+            HetUser user = UserHelper.GetRecord(id, _context);
 
             // return user roles
-            return new ObjectResult(new HetsResponse(user.UserRoles));
+            return new ObjectResult(new HetsResponse(user.HetUserRole));
         }
 
         /// <summary>
@@ -454,14 +419,11 @@ namespace HetsApi.Controllers
             if (!roleExists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             
             // get record
-            HetUser user = _context.HetUser
-                .Include(x => x.UserRoles)
-                    .ThenInclude(y => y.Role)
-                .First(x => x.UserId == id);
+            HetUser user = UserHelper.GetRecord(id, _context);
 
-            if (user.UserRoles == null)
+            if (user.HetUserRole == null)
             {
-                user.UserRoles = new List<HetUserRole>();
+                user.HetUserRole = new List<HetUserRole>();
             }
 
             // create a new UserRole record
@@ -472,21 +434,18 @@ namespace HetsApi.Controllers
                 ExpiryDate = item.ExpiryDate
             };
 
-            if (!user.UserRoles.Contains(userRole))
+            if (!user.HetUserRole.Contains(userRole))
             {
-                user.UserRoles.Add(userRole);
+                user.HetUserRole.Add(userRole);
             }
 
             _context.SaveChanges();
 
             // return updated roles
-            user = _context.HetUser.AsNoTracking()
-                .Include(x => x.UserRoles)
-                .ThenInclude(y => y.Role)
-                .First(x => x.UserId == id);
+            user = UserHelper.GetRecord(id, _context);
 
             // return user roles
-            return new ObjectResult(new HetsResponse(user.UserRoles));
+            return new ObjectResult(new HetsResponse(user.HetUserRole));
         }
 
         /// <summary>
@@ -508,25 +467,22 @@ namespace HetsApi.Controllers
             if (!exists || items == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetUser user = _context.HetUser
-                .Include(x => x.UserRoles)
-                    .ThenInclude(y => y.Role)
-                .First(x => x.UserId == id);
+            HetUser user = UserHelper.GetRecord(id, _context);
 
-            if (user.UserRoles == null)
+            if (user.HetUserRole == null)
             {
-                user.UserRoles = new List<HetUserRole>();
+                user.HetUserRole = new List<HetUserRole>();
             }
             else
             {
                 // existing data - clear it
-                foreach (HetUserRole userRole in user.UserRoles)
+                foreach (HetUserRole userRole in user.HetUserRole)
                 {
                     HetUserRole delete = _context.HetUserRole.First(x => x.UserRoleId == userRole.UserRoleId);
                     _context.Remove(delete);                    
                 }
 
-                user.UserRoles.Clear();
+                user.HetUserRole.Clear();
             }
 
             foreach (HetUserRole item in items)
@@ -544,9 +500,9 @@ namespace HetsApi.Controllers
                         ExpiryDate = item.ExpiryDate
                     };
 
-                    if (!user.UserRoles.Contains(userRole))
+                    if (!user.HetUserRole.Contains(userRole))
                     {
-                        user.UserRoles.Add(userRole);
+                        user.HetUserRole.Add(userRole);
                     }
                 }
             }
@@ -554,13 +510,10 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // return updated roles
-            user = _context.HetUser.AsNoTracking()
-                .Include(x => x.UserRoles)
-                .ThenInclude(y => y.Role)
-                .First(x => x.UserId == id);
+            user = UserHelper.GetRecord(id, _context);
 
             // return user roles
-            return new ObjectResult(new HetsResponse(user.UserRoles));
+            return new ObjectResult(new HetsResponse(user.HetUserRole));
         }
 
         #endregion

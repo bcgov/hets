@@ -41,13 +41,13 @@ namespace HetsData.Model
 
         public HetDistrict District { get; set; }
 
-        [JsonIgnore]
+        [JsonProperty("UserDistricts")]
         public ICollection<HetUserDistrict> HetUserDistrict { get; set; }
 
         [JsonIgnore]
         public ICollection<HetUserFavourite> HetUserFavourite { get; set; }
 
-        [JsonIgnore]
+        [JsonProperty("UserRoles")]
         public ICollection<HetUserRole> HetUserRole { get; set; }
     }
 }

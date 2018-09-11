@@ -9,17 +9,6 @@ CREATE TRIGGER het_df_br_iu_tr
     EXECUTE PROCEDURE public.het_validate_init_audit_cols();
 
 
--- Trigger: het_city_br_iu_tr
-
--- DROP TRIGGER het_city_br_iu_tr ON public."HET_CITY";
-
-CREATE TRIGGER het_city_br_iu_tr
-    BEFORE INSERT OR UPDATE 
-    ON public."HET_CITY"
-    FOR EACH ROW
-    EXECUTE PROCEDURE public.het_validate_init_audit_cols();
-
-
 -- Trigger: het_cndtyp_br_iu_tr
 
 -- DROP TRIGGER het_cndtyp_br_iu_tr ON public."HET_CONDITION_TYPE";

@@ -30,7 +30,7 @@ namespace HetsApi.Controllers
             _httpContext = httpContextAccessor.HttpContext;
 
             // set context data
-            HetUser user = UserHelper.GetUser(context, httpContextAccessor.HttpContext);
+            HetUser user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
             _context.SmUserId = user.SmUserId;
             _context.DirectoryName = user.SmAuthorizationDirectory;
             _context.SmUserGuid = user.Guid;
@@ -47,7 +47,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult UserDistrictsGet()
         {
             // return for the current user only
-            string userId = UserHelper.GetUserId(_httpContext);
+            string userId = UserAccountHelper.GetUserId(_httpContext);
 
             List<HetUserDistrict> result = _context.HetUserDistrict.AsNoTracking()
                 .Include(x => x.User)
@@ -291,7 +291,7 @@ namespace HetsApi.Controllers
             // get record
             HetUserDistrict userDistrict = _context.HetUserDistrict.First(a => a.UserDistrictId == id);
             
-            string userId = UserHelper.GetUserId(_httpContext);
+            string userId = UserAccountHelper.GetUserId(_httpContext);
 
             HetUser user = _context.HetUser.First(a => a.SmUserId == userId);
             user.DistrictId = userDistrict.DistrictId;

@@ -33,7 +33,7 @@ namespace HetsApi.Controllers
             _httpContext = httpContextAccessor.HttpContext;
 
             // set context data
-            HetUser user = UserHelper.GetUser(context, httpContextAccessor.HttpContext);
+            HetUser user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
             _context.SmUserId = user.SmUserId;
             _context.DirectoryName = user.SmAuthorizationDirectory;
             _context.SmUserGuid = user.Guid;
@@ -321,7 +321,7 @@ namespace HetsApi.Controllers
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
 
             // get initial results - must be limited to user's district
-            int? districtId = UserHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
 
             IQueryable<HetRentalRequest> data = _context.HetRentalRequest.AsNoTracking()
                 .Include(x => x.LocalArea.ServiceArea.District.Region)

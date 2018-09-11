@@ -45,10 +45,6 @@ namespace HetsImport.Import
             dbContext = new DbAppContext(connectionString);
             ImportLocalArea.Import(context, dbContext, fileLocation, SystemId);
 
-            //*** Import Cities from HETS_City.xml (HET_CITY)   
-            dbContext = new DbAppContext(connectionString);
-            ImportCity.Import(context, dbContext, fileLocation, SystemId);
-
             //*** Import Users from User_HETS.xml (HET_USER and HET_USER_ROLE)
             dbContext = new DbAppContext(connectionString);
             ImportUser.Import(context, dbContext, fileLocation, SystemId);            
@@ -97,7 +93,6 @@ namespace HetsImport.Import
             dbContext = new DbAppContext(connectionString);
             ImportServiceArea.ResetSequence(context, dbContext);
             ImportLocalArea.ResetSequence(context, dbContext);
-            ImportCity.ResetSequence(context, dbContext);
             ImportUser.ResetSequence(context, dbContext);
             ImportOwner.ResetSequence(context, dbContext);            
             ImportDistrictEquipmentType.ResetSequence(context, dbContext);
@@ -131,10 +126,6 @@ namespace HetsImport.Import
 
             // Process local areas
             ImportLocalArea.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
-            dbContext = new DbAppContext(connectionString);
-
-            // Process cities
-            ImportCity.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(connectionString);
 
             // Process users

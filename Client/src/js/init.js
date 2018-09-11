@@ -53,7 +53,7 @@ function initializeApp() {
     var districtId = response.district.id;
     // Check permissions?
     // Get lookups.
-    var citiesPromise = Api.getCities();
+    var citiesPromise = null;
     var districtsPromise = Api.getDistricts();
     var regionsPromise = Api.getRegions();
     var serviceAreasPromise = Api.getServiceAreas();

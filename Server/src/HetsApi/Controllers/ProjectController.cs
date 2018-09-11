@@ -33,7 +33,7 @@ namespace HetsApi.Controllers
             _httpContext = httpContextAccessor.HttpContext;
 
             // set context data
-            HetUser user = UserHelper.GetUser(context, httpContextAccessor.HttpContext);
+            HetUser user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
             _context.SmUserId = user.SmUserId;
             _context.DirectoryName = user.SmAuthorizationDirectory;
             _context.SmUserGuid = user.Guid;
@@ -164,7 +164,7 @@ namespace HetsApi.Controllers
             int?[] districtTokens = ArrayHelper.ParseIntArray(districts);
 
             // get initial results - must be limited to user's district
-            int? districtId = UserHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
 
             IQueryable<HetProject> data = _context.HetProject.AsNoTracking()
                 .Include(x => x.ProjectStatusType)
