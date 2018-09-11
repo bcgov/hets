@@ -8,8 +8,8 @@ namespace HetsData.Model
 {
     public partial class HetUser
     {
-        [NotMapped]
-        public List<HetUserRole> UserRoles { get; set; }
+        //[NotMapped]
+        //public List<HetUserRole> UserRoles { get; set; }
 
         /// <summary>
         /// User Permission Claim Property

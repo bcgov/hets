@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HetsApi.Helpers
 {
-    public static class UserHelper
+    public static class UserAccountHelper
     {
         /// <summary>
         /// Get user id from http context

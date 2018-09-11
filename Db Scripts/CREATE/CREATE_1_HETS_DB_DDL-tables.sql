@@ -61,38 +61,6 @@ CREATE TABLE public."HET_DIGITAL_FILE" (
 );
 
 --
--- Name: HET_CITY_ID_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public."HET_CITY_ID_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
---
--- Name: HET_CITY; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public."HET_CITY" (
-    "CITY_ID" integer DEFAULT nextval('public."HET_CITY_ID_seq"'::regclass) NOT NULL,
-    "NAME" character varying(150),
-    "APP_CREATE_USER_DIRECTORY" character varying(50),
-    "APP_CREATE_USER_GUID" character varying(255),
-    "APP_CREATE_USERID" character varying(255),
-    "APP_CREATE_TIMESTAMP" timestamp without time zone DEFAULT '0001-01-01 00:00:00'::timestamp without time zone NOT NULL,
-    "APP_LAST_UPDATE_USER_DIRECTORY" character varying(50),
-    "APP_LAST_UPDATE_USER_GUID" character varying(255),
-    "APP_LAST_UPDATE_USERID" character varying(255),
-    "APP_LAST_UPDATE_TIMESTAMP" timestamp without time zone DEFAULT '0001-01-01 00:00:00'::timestamp without time zone NOT NULL,
-    "DB_CREATE_USER_ID" character varying(63),
-    "DB_CREATE_TIMESTAMP" timestamp without time zone DEFAULT '0001-01-01 00:00:00'::timestamp without time zone NOT NULL,
-    "DB_LAST_UPDATE_TIMESTAMP" timestamp without time zone DEFAULT '0001-01-01 00:00:00'::timestamp without time zone NOT NULL,
-    "DB_LAST_UPDATE_USER_ID" character varying(63),
-    "CONCURRENCY_CONTROL_NUMBER" integer DEFAULT 0 NOT NULL
-);
-
 --
 -- Name: HET_CONDITION_TYPE_ID_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
@@ -2351,15 +2319,6 @@ ALTER TABLE ONLY public."HET_TIME_RECORD_HIST"
 
 ALTER TABLE ONLY public."HET_DIGITAL_FILE"
     ADD CONSTRAINT "PK_HET_DIGITAL_FILE" PRIMARY KEY ("DIGITAL_FILE_ID");
-
-
---
--- Name: HET_CITY PK_HET_CITY; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."HET_CITY"
-    ADD CONSTRAINT "PK_HET_CITY" PRIMARY KEY ("CITY_ID");
-
 
 --
 -- Name: HET_CONDITION_TYPE PK_HET_CONDITION_TYPE; Type: CONSTRAINT; Schema: public; Owner: -

@@ -268,8 +268,8 @@ namespace HetsApi.Authentication
                 _logger.LogInformation("Validating credential against the HETS db");
 
                 userSettings.HetsUser = hostingEnv.IsDevelopment()
-                    ? UserHelper.GetUser(dbAppContext, userId)
-                    : UserHelper.GetUser(dbAppContext, userId, siteMinderGuid);
+                    ? UserAccountHelper.GetUser(dbAppContext, userId)
+                    : UserAccountHelper.GetUser(dbAppContext, userId, siteMinderGuid);
 
                 if (userSettings.HetsUser == null)
                 {

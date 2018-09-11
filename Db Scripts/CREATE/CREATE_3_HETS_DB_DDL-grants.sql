@@ -32,20 +32,6 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_DIGITAL_FILE" TO het_appl
 
 
 --
--- Name: SEQUENCE "HET_CITY_ID_seq"; Type: ACL; Schema: public; Owner: -
---
-
-GRANT USAGE ON SEQUENCE public."HET_CITY_ID_seq" TO het_application_proxy;
-
-
---
--- Name: TABLE "HET_CITY"; Type: ACL; Schema: public; Owner: -
---
-
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_CITY" TO het_application_proxy;
-
-
---
 -- Name: SEQUENCE "HET_CONDITION_TYPE_ID_seq"; Type: ACL; Schema: public; Owner: -
 --
 
