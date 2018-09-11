@@ -1,13 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+	<Description>Conversion code for the HETS application</Description>
+    <Copyright>Copyright© 2017, Province of British Columbia</Copyright>
+    <AssemblyTitle>Hets Import</AssemblyTitle>
+    <AssemblyName>HetsImport</AssemblyName>	
+    <PackageId>HetsImport</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="DotNetCore.NPOI" Version="1.2.0" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.6.20" />
     <PackageReference Include="Hangfire.Console" Version="1.4.1" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.3" />
   </ItemGroup>
 
   <ItemGroup>
