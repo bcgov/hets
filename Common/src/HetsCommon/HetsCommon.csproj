@@ -1,22 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Common code for the HETS application.</Description>
-    <Copyright>Copyright© 2017, Province of British Columbia.</Copyright>
-    <AssemblyTitle>HETS Common</AssemblyTitle>
-    <AssemblyName>HetsCommon</AssemblyName>
-	<TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+	<Description>Common code for the HETS application</Description>
+    <Copyright>Copyright© 2017, Province of British Columbia</Copyright>
+    <AssemblyTitle>Hets Common</AssemblyTitle>
+    <AssemblyName>HetsCommon</AssemblyName>	
     <PackageId>HetsCommon</PackageId>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.1.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.1.2" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
   </ItemGroup>
 
