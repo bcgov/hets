@@ -205,26 +205,6 @@
                     "value": "${ADMIN_PASSWORD}"
                   },
                   {
-                    "name": "UserInitializationFile",
-                    "value": "${USER_INITIALIZATION_FILE}"
-                  },
-                  {
-                    "name": "RegionInitializationFile",
-                    "value": "${REGION_INITIALIZATION_FILE}"
-                  },
-                  {
-                    "name": "DistrictInitializationFile",
-                    "value": "${DISTRICT_INITIALIZATION_FILE}"
-                  },
-                  {
-                    "name": "ConditionsInitializationFile",
-                    "value": "${CONDITIONS_INITIALIZATION_FILE}"
-                  },
-                  {
-                    "name": "EquipmentTypesInitializationFile",
-                    "value": "${EQUIPMENT_INITIALIZATION_FILE}"
-                  },
-                  {
                     "name": "ASPNETCORE_ENVIRONMENT",
                     "value": "${ASPNETCORE_ENVIRONMENT}"
                   },
