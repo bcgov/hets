@@ -351,42 +351,7 @@
       "generate": "expression",
       "from": "[a-zA-Z0-9]{16}"
     },
-    {
-      "name": "USER_INITIALIZATION_FILE",
-      "displayName": "User Initialization File",
-      "description": "The file to be used for initializing user accounts.  This file is loaded from a secret during deployment.",
-      "required": true,
-      "value": "/secrets/users.json"
-    },
-    {
-      "name": "REGION_INITIALIZATION_FILE",
-      "displayName": "Region Initialization File",
-      "description": "The file to be used for initializing regions.  This file is loaded from a secret during deployment.",
-      "required": true,
-      "value": "/secrets/regions.json"
-    },
-    {
-      "name": "DISTRICT_INITIALIZATION_FILE",
-      "displayName": "District Initialization File",
-      "description": "The file to be used for initializing districts.  This file is loaded from a secret during deployment.",
-      "required": true,
-      "value": "/secrets/districts.json"
-    },
-    {
-      "name": "CONDITIONS_INITIALIZATION_FILE",
-      "displayName": "Conditions Initialization File",
-      "description": "The file to be used for initializing conditions.  This file is loaded from a secret during deployment.",
-      "required": true,
-      "value": "/secrets/conditions.json"
-    },
-    {
-      "name": "EQUIPMENT_INITIALIZATION_FILE",
-      "displayName": "Equipment Type Initialization File",
-      "description": "The file to be used for initializing equipment types.  This file is loaded from a secret during deployment.",
-      "required": true,
-      "value": "/secrets/equipment.json"
-    },
-    {
+	{
       "name": "ASPNETCORE_ENVIRONMENT",
       "displayName": "AspNetCore Environment",
       "description": "The ASP Net Core deployment environment setting.",

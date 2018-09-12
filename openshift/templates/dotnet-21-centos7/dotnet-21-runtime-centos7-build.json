@@ -77,7 +77,7 @@
       "displayName": "Name",
       "description": "The name assigned to all of the resources defined in this template.",
       "required": true,
-      "value": "dotnet-20-centos7"
+      "value": "dotnet-21-runtime-centos7"
     },
     {
       "name": "GIT_REPO_URL",
@@ -98,28 +98,28 @@
       "displayName": "Source Context Directory",
       "description": "The source context directory.",
       "required": false,
-      "value": "/2.0/build"
+      "value": "/2.1/runtime"
     },
     {
       "name": "SOURCE_IMAGE_KIND",
       "displayName": "Source Image Kind",
       "description": "The 'kind' (type) of the  source image; typically ImageStreamTag, or DockerImage.",
       "required": true,
-      "value": "ImageStreamTag"
+      "value": "DockerImage"
     },
     {
       "name": "SOURCE_IMAGE_NAME",
       "displayName": "Source Image Name",
       "description": "The name of the source image.",
       "required": true,
-      "value": "dotnet-20-runtime-centos7"
+      "value": "centos"
     },
     {
       "name": "SOURCE_IMAGE_TAG",
       "displayName": "Source Image Tag",
       "description": "The tag of the source image.",
       "required": true,
-      "value": "latest"
+      "value": "7"
     },
     {
       "name": "DOCKER_FILE_PATH",

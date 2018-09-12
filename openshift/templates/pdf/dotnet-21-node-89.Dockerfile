@@ -1,5 +1,5 @@
 FROM registry.access.redhat.com/dotnet/dotnet-20-rhel7
-# This image provides a .NET Core 2.0 and upgraded Node environment you can use 
+# This image provides a .NET Core 2.1 and upgraded Node environment you can use 
 # to run your .NET applications.
 
 ENV DOTNET_CLI_TELEMETRY_OPTOUT 1
