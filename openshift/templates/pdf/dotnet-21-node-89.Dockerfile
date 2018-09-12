@@ -12,10 +12,7 @@ USER 0
 
 # Install git
 RUN yum install -y bzip2 git && \
-    yum clean all -y
-	
-# Remove old version of Node
-RUN rm -R /opt/rh/rh-nodejs6
+    yum clean all -y	
 
 # Install newer version of Node 
 ENV NVM_DIR /usr/local/nvm
