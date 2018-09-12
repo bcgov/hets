@@ -11,8 +11,7 @@ RUN yum install -y readline-devel bzip2 git && \
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION  v8.9.1
 	
-RUN  rm -R /opt/rh/rh-nodejs6 \
-    && mkdir /opt/rh/rh-nodejs6 \
+RUN mkdir /opt/rh/rh-nodejs6 \
     && touch /opt/rh/rh-nodejs6/enable \
     && chmod a+rx /opt/rh/rh-nodejs6/enable \
     && touch ~/.bash_profile \
