@@ -19,12 +19,12 @@
                     {
                         "name": "latest",
                         "annotations": {
-                          "description": "Build and run .NET Core 1.0 applications",
+                          "description": "Build and run .NET Core 2.1 applications",
                           "iconClass": "icon-dotnet",
                           "tags": "builder,.net,dotnet,dotnetcore",
                           "supports":"dotnet",
                           "sampleRepo": "https://github.com/redhat-developer/s2i-dotnetcore.git",
-                          "sampleContextDir": "1.0/test/asp-net-hello-world"
+                          "sampleContextDir": "2.1/test/asp-net-hello-world"
                         },
                         "from": {
                           "kind": "ImageStreamTag",
@@ -34,17 +34,17 @@
                     {
                         "name": "1.0",
                         "annotations": {
-                            "description": "Build and run .NET Core 1.0 applications",
+                            "description": "Build and run .NET Core 2.1 applications",
                             "iconClass": "icon-dotnet",
                             "tags": "builder,.net,dotnet,dotnetcore,rh-dotnetcore10",
-                            "supports":"dotnet:1.0,dotnet",
+                            "supports":"dotnet:2.1,dotnet",
                             "sampleRepo": "https://github.com/redhat-developer/s2i-dotnetcore.git",
                             "sampleContextDir": "1.0/test/asp-net-hello-world",
-                            "version": "1.0"
+                            "version": "2.1"
                         },
                         "from": {
                           "kind": "DockerImage",
-                          "name": "registry.access.redhat.com/dotnet/dotnetcore-10-rhel7:1.0"
+                          "name": "registry.access.redhat.com/dotnet/dotnet-21-runtime-rhel7:latest"
                         }
                     }
                 ]
