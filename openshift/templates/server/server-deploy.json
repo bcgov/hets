@@ -149,14 +149,6 @@
                 {
                   "claimName": "${PERSISTENT_VOLUME_NAME}"
                 }
-              },
-              {
-                "name": "${NAME}-secret-volume",
-                "secret":
-                {
-                  "secretName": "${SECRET_VOLUME_NAME}",
-                  "defaultMode": 420
-                }
               }
             ],
             "containers": [
