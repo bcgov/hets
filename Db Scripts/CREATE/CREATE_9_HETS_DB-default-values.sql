@@ -1359,7 +1359,7 @@ INSERT INTO public."HET_USER"
    "APP_LAST_UPDATE_USER_DIRECTORY", "APP_LAST_UPDATE_USER_GUID", "APP_LAST_UPDATE_USERID", 
    "APP_LAST_UPDATE_TIMESTAMP")
 VALUES 
-  (2, 'Little', 'Mike', 'ML', 'mlittle', 'IDIR', NULL, 'mike.little@gov.bc.ca', true, 10,
+  (2, 'Lyttle', 'Mike', 'ML', 'mlyttle', 'IDIR', NULL, 'mikelyttle@gmail.com', true, 10,
    NULL, NULL, 'HETS', NOW(), 
    NULL, NULL, 'HETS', NOW());
    
