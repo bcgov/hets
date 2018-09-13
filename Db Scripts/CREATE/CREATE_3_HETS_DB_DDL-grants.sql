@@ -298,6 +298,21 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_OWNER_STATUS_TYPE" TO het
 
 GRANT USAGE ON SEQUENCE public."HET_OWNER_STATUS_TYPE_ID_seq" TO het_application_proxy;
 
+
+--
+-- Name: TABLE "HET_PERSON"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_PERSON" TO het_application_proxy;
+
+
+--
+-- Name: SEQUENCE "HET_PERSON_ID_seq"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT USAGE ON SEQUENCE public."HET_PERSON_ID_seq" TO het_application_proxy;
+
+
 --
 -- Name: TABLE "HET_PERMISSION"; Type: ACL; Schema: public; Owner: -
 --
@@ -453,6 +468,20 @@ GRANT USAGE ON SEQUENCE public."HET_RENTAL_AGREEMENT_RATE_ID_seq" TO het_applica
 
 
 --
+-- Name: TABLE "HET_RENTAL_AGREEMENT_STATUS_TYPE"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_RENTAL_AGREEMENT_STATUS_TYPE" TO het_application_proxy;
+
+
+--
+-- Name: SEQUENCE "HET_RENTAL_AGREEMENT_STATUS_TYPE_ID_seq"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT USAGE ON SEQUENCE public."HET_RENTAL_AGREEMENT_STATUS_TYPE_ID_seq" TO het_application_proxy;
+
+
+--
 -- Name: SEQUENCE "HET_RENTAL_AGREEMENT_ID_seq"; Type: ACL; Schema: public; Owner: -
 --
 
@@ -583,6 +612,20 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_SERVICE_AREA" TO het_appl
 --
 
 GRANT USAGE ON SEQUENCE public."HET_SERVICE_AREA_ID_seq" TO het_application_proxy;
+
+
+--
+-- Name: TABLE "HET_TIME_PERIOD_TYPE"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_TIME_PERIOD_TYPE" TO het_application_proxy;
+
+
+--
+-- Name: SEQUENCE "HET_TIME_PERIOD_TYPE_ID_seq"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT USAGE ON SEQUENCE public."HET_TIME_PERIOD_TYPE_ID_seq" TO het_application_proxy;
 
 
 --
