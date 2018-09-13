@@ -152,9 +152,9 @@
     {
       "name": "DOTNET_NPM_TOOLS",
       "displayName": "DotNet Npm Tools",
-      "description": "Arguments for npm install.  Typically the folder containing the package.json file.",
+      "description": "Arguments for npm install.",
       "required": true,
-      "value": "/tmp/src/src/Pdf.Server/"
+      "value": "mustache"
     },
     {
       "name": "OUTPUT_IMAGE_TAG",
