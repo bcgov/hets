@@ -48,7 +48,7 @@ namespace HetsImport.Import
                     using (DbCommand command = dbContext.Database.GetDbConnection().CreateCommand())
                     {
                         // check if this code already exists
-                        command.CommandText = string.Format(@"ALTER SEQUENCE public.""HET_EQUIPMENT_ATTACHMENT_EQUIPMENT_ATTACHMENT_ID_seq"" RESTART WITH {0};", maxKey);
+                        command.CommandText = string.Format(@"SELECT SETVAL('public.""HET_EQUIPMENT_ATTACHMENT_ID_seq""', {0});", maxKey);
 
                         dbContext.Database.OpenConnection();
                         command.ExecuteNonQuery();

@@ -12,6 +12,7 @@ using Hangfire.Server;
 using Hangfire.Console.Progress;
 using HetsData.Model;
 using HetsData.Helpers;
+using HetsImport.ImportModels;
 
 namespace HetsImport.Import
 {
@@ -50,7 +51,7 @@ namespace HetsImport.Import
                     using (DbCommand command = dbContext.Database.GetDbConnection().CreateCommand())
                     {
                         // check if this code already exists
-                        command.CommandText = string.Format(@"ALTER SEQUENCE public.""HET_PROJECT_PROJECT_ID_seq"" RESTART WITH {0};", maxKey);
+                        command.CommandText = string.Format(@"SELECT SETVAL('public.""HET_PROJECT_ID_seq""', {0});", maxKey);
 
                         dbContext.Database.OpenConnection();
                         command.ExecuteNonQuery();
@@ -104,12 +105,12 @@ namespace HetsImport.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(HetProject[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(Project[]), new XmlRootAttribute(rootAttr));
                 ser.UnknownAttribute += ImportUtility.UnknownAttribute;
                 ser.UnknownElement += ImportUtility.UnknownElement;
 
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, fileLocation, rootAttr);
-                ImportModels.Project[] legacyItems = (ImportModels.Project[])ser.Deserialize(memoryStream);
+                Project[] legacyItems = (Project[])ser.Deserialize(memoryStream);
 
                 int ii = startPoint;
 
@@ -121,7 +122,7 @@ namespace HetsImport.Import
 
                 Debug.WriteLine("Importing Project Data. Total Records: " + legacyItems.Length);
 
-                foreach (ImportModels.Project item in legacyItems.WithProgress(progress))
+                foreach (Project item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
                     HetImportMap importMap = dbContext.HetImportMap
@@ -183,7 +184,7 @@ namespace HetsImport.Import
         /// <param name="project"></param>
         /// <param name="systemId"></param>
         /// <param name="maxProjectIndex"></param>
-        private static void CopyToInstance(DbAppContext dbContext, ImportModels.Project oldObject, 
+        private static void CopyToInstance(DbAppContext dbContext, Project oldObject, 
             ref HetProject project, string systemId, ref int maxProjectIndex)
         {
             try
@@ -302,16 +303,16 @@ namespace HetsImport.Import
                 progress.SetValue(0);
 
                 // create serializer and serialize xml file
-                XmlSerializer ser = new XmlSerializer(typeof(ImportModels.Project[]), new XmlRootAttribute(rootAttr));
+                XmlSerializer ser = new XmlSerializer(typeof(Project[]), new XmlRootAttribute(rootAttr));
                 MemoryStream memoryStream = ImportUtility.MemoryStreamGenerator(XmlFileName, OldTable, sourceLocation, rootAttr);
-                ImportModels.Project[] legacyItems = (ImportModels.Project[])ser.Deserialize(memoryStream);
+                Project[] legacyItems = (Project[])ser.Deserialize(memoryStream);
 
                 performContext.WriteLine("Obfuscating Project data");
                 progress.SetValue(0);
 
                 List<ImportMapRecord> importMapRecords = new List<ImportMapRecord>();
 
-                foreach (ImportModels.Project item in legacyItems.WithProgress(progress))
+                foreach (Project item in legacyItems.WithProgress(progress))
                 {
                     item.Created_By = systemId;
 
