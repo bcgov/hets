@@ -172,7 +172,13 @@ namespace HetsData.Model
             HetEquipment original = HetEquipment.AsNoTracking()
                 .Include(x => x.LocalArea)
                 .Include(x => x.Owner)
-                .First(a => a.EquipmentId == tempChangedId);
+                .FirstOrDefault(a => a.EquipmentId == tempChangedId);
+
+            // record doesn't exist
+            if (original == null)
+            {
+                return;
+            }
 
             // compare the old and new
             if (changed.IsSeniorityAuditRequired(original))

@@ -54,7 +54,7 @@ namespace HetsImport.Import
                     using (DbCommand command = dbContext.Database.GetDbConnection().CreateCommand())
                     {
                         // check if this code already exists
-                        command.CommandText = string.Format(@"ALTER SEQUENCE public.""HET_OWNER_OWNER_ID_seq"" RESTART WITH {0};", maxKey);
+                        command.CommandText = string.Format(@"SELECT SETVAL('public.""HET_OWNER_ID_seq""', {0});", maxKey);
 
                         dbContext.Database.OpenConnection();
                         command.ExecuteNonQuery();
@@ -80,7 +80,7 @@ namespace HetsImport.Import
                     using (DbCommand command = dbContext.Database.GetDbConnection().CreateCommand())
                     {
                         // check if this code already exists
-                        command.CommandText = string.Format(@"ALTER SEQUENCE public.""HET_CONTACT_CONTACT_ID_seq"" RESTART WITH {0};", maxKey);
+                        command.CommandText = string.Format(@"SELECT SETVAL('public.""HET_CONTACT_ID_seq""', {0});", maxKey);
 
                         dbContext.Database.OpenConnection();
                         command.ExecuteNonQuery();
@@ -106,7 +106,7 @@ namespace HetsImport.Import
                     using (DbCommand command = dbContext.Database.GetDbConnection().CreateCommand())
                     {
                         // check if this code already exists
-                        command.CommandText = string.Format(@"ALTER SEQUENCE public.""HET_NOTE_NOTE_ID_seq"" RESTART WITH {0};", maxKey);
+                        command.CommandText = string.Format(@"SELECT SETVAL('public.""HET_NOTE_ID_seq""', {0});", maxKey);
 
                         dbContext.Database.OpenConnection();
                         command.ExecuteNonQuery();
@@ -665,7 +665,7 @@ namespace HetsImport.Import
                 owner.AppLastUpdateUserid = systemId;
                 owner.AppLastUpdateTimestamp = DateTime.UtcNow;
 
-                dbContext.HetOwner.Add(owner);                
+                dbContext.HetOwner.Add(owner);
             }
             catch (Exception ex)
             {

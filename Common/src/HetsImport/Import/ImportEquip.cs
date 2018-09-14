@@ -50,7 +50,7 @@ namespace HetsImport.Import
                     using (DbCommand command = dbContext.Database.GetDbConnection().CreateCommand())
                     {
                         // check if this code already exists
-                        command.CommandText = string.Format(@"ALTER SEQUENCE public.""HET_EQUIPMENT_EQUIPMENT_ID_seq"" RESTART WITH {0};", maxKey);
+                        command.CommandText = string.Format(@"SELECT SETVAL('public.""HET_EQUIPMENT_ID_seq""', {0});", maxKey);
 
                         dbContext.Database.OpenConnection();
                         command.ExecuteNonQuery();
@@ -319,6 +319,10 @@ namespace HetsImport.Import
         {
             try
             {
+                int? statusIdApproved = StatusHelper.GetStatusId("Approved", "equipmentStatus", dbContext);
+                int? statusIdUnapproved = StatusHelper.GetStatusId("Unapproved", "equipmentStatus", dbContext);
+                int? statusIdArchived = StatusHelper.GetStatusId("Archived", "equipmentStatus", dbContext);                
+
                 if (oldObject.Equip_Id <= 0)
                 {
                     return;
@@ -341,9 +345,7 @@ namespace HetsImport.Import
 
                 if (tempArchive == "Y")
                 {
-                    int? statusId = StatusHelper.GetStatusId("Archived", "equipmentStatus", dbContext);
-
-                    if (statusId == null)
+                    if (statusIdArchived == null)
                     {
                         throw new DataException(string.Format("Status Id cannot be null (EquipmentIndex: {0})", maxEquipmentIndex));
                     }
@@ -352,7 +354,7 @@ namespace HetsImport.Import
                     equipment.ArchiveCode = "Y";
                     equipment.ArchiveDate = DateTime.UtcNow;
                     equipment.ArchiveReason = "Imported from BC Bid";
-                    equipment.EquipmentStatusTypeId = (int)statusId;
+                    equipment.EquipmentStatusTypeId = (int)statusIdArchived;
 
                     string tempArchiveReason = ImportUtility.CleanString(oldObject.Archive_Reason);
 
@@ -362,16 +364,12 @@ namespace HetsImport.Import
                     }
                 }
                 else
-                {
-                    int? statusId = StatusHelper.GetStatusId("Approved", "equipmentStatus", dbContext);
-
-                    if (statusId == null)
+                {                    
+                    if (statusIdApproved == null)
                     {
                         throw new DataException(string.Format("Status Id cannot be null (EquipmentIndex: {0})", maxEquipmentIndex));
                     }
-
-                    int? statusIdUnapproved = StatusHelper.GetStatusId("Unapproved", "equipmentStatus", dbContext);
-
+                    
                     if (statusIdUnapproved == null)
                     {
                         throw new DataException(string.Format("Status Id cannot be null (EquipmentIndex: {0})", maxEquipmentIndex));
@@ -380,7 +378,7 @@ namespace HetsImport.Import
                     equipment.ArchiveCode = "N";
                     equipment.ArchiveDate = null;
                     equipment.ArchiveReason = null;
-                    equipment.EquipmentStatusTypeId = tempStatus == "A" ? (int)statusId : (int)statusIdUnapproved;
+                    equipment.EquipmentStatusTypeId = tempStatus == "A" ? (int)statusIdApproved : (int)statusIdUnapproved;
                     equipment.StatusComment = string.Format("Imported from BC Bid ({0})", tempStatus);
                 }
 
@@ -404,8 +402,8 @@ namespace HetsImport.Import
                 }
                 else
                 {
-                    if (equipment.ArchiveCode == "N" && 
-                        equipment.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved)
+                    if (equipment.ArchiveCode == "N" &&                         
+                        equipment.EquipmentStatusTypeId == statusIdApproved)
                     {
                         throw new DataException(string.Format("Received Date cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
                     }                    
@@ -421,7 +419,7 @@ namespace HetsImport.Import
                 else
                 {
                     if (equipment.ArchiveCode == "N" && 
-                        equipment.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved)
+                        equipment.EquipmentStatusTypeId == statusIdApproved)
                     {
                         throw new DataException(string.Format("Equipment Code cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
                     }                    
@@ -527,7 +525,7 @@ namespace HetsImport.Import
                 }
 
                 if (equipment.LocalAreaId == null && equipment.ArchiveCode == "N" && 
-                    equipment.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved)
+                    equipment.EquipmentStatusTypeId == statusIdApproved)
                 {
                     throw new DataException(string.Format("Local Area cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
                 }
@@ -572,8 +570,8 @@ namespace HetsImport.Import
                     }
                 }
 
-                if (equipment.DistrictEquipmentTypeId == null && equipment.ArchiveCode == "N" && 
-                    equipment.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved)
+                if (equipment.DistrictEquipmentTypeId == null && equipment.ArchiveCode == "N" &&
+                    equipment.EquipmentStatusTypeId == statusIdApproved)
                 {
                     throw new DataException(string.Format("Equipment Type cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
                 }
@@ -656,7 +654,7 @@ namespace HetsImport.Import
                 equipment.AppLastUpdateUserid = systemId;
                 equipment.AppLastUpdateTimestamp = DateTime.UtcNow;
 
-                dbContext.HetEquipment.Add(equipment);
+                dbContext.HetEquipment.Add(equipment);                
             }
             catch (Exception ex)
             {

@@ -53,7 +53,7 @@ namespace HetsImport.Import
                     using (DbCommand command = dbContext.Database.GetDbConnection().CreateCommand())
                     {
                         // check if this code already exists
-                        command.CommandText = string.Format(@"ALTER SEQUENCE public.""HET_USER_USER_ID_seq"" RESTART WITH {0};", maxKey);
+                        command.CommandText = string.Format(@"SELECT SETVAL('public.""HET_USER_ID_seq""', {0});", maxKey);
 
                         dbContext.Database.OpenConnection();
                         command.ExecuteNonQuery();
@@ -79,7 +79,7 @@ namespace HetsImport.Import
                     using (DbCommand command = dbContext.Database.GetDbConnection().CreateCommand())
                     {
                         // check if this code already exists
-                        command.CommandText = string.Format(@"ALTER SEQUENCE public.""HET_ROLE_ROLE_ID_seq"" RESTART WITH {0};", maxKey);
+                        command.CommandText = string.Format(@"SELECT SETVAL('public.""HET_ROLE_ID_seq""', {0});", maxKey);
 
                         dbContext.Database.OpenConnection();
                         command.ExecuteNonQuery();
@@ -105,7 +105,7 @@ namespace HetsImport.Import
                     using (DbCommand command = dbContext.Database.GetDbConnection().CreateCommand())
                     {
                         // check if this code already exists
-                        command.CommandText = string.Format(@"ALTER SEQUENCE public.""HET_USER_ROLE_USER_ROLE_ID_seq"" RESTART WITH {0};", maxKey);
+                        command.CommandText = string.Format(@"SELECT SETVAL('public.""HET_USER_ROLE_ID_seq""', {0});", maxKey);
 
                         dbContext.Database.OpenConnection();
                         command.ExecuteNonQuery();
@@ -456,7 +456,7 @@ namespace HetsImport.Import
                     // *******************************************************************
                     HetUserRole userRole = new HetUserRole();
 
-                    HetRole role = dbContext.HetRole.FirstOrDefault(x => x.Name == "HETS Clerk");
+                    HetRole role = dbContext.HetRole.FirstOrDefault(x => x.Name == "HETS District User");
 
                     int roleId = -1;
 
