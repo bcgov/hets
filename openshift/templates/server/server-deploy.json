@@ -226,11 +226,6 @@
                   {
                     "name": "${NAME}-docs",
                     "mountPath": "/uploads"
-                  },
-                  {
-                    "name": "${NAME}-secret-volume",
-                    "readOnly": true,
-                    "mountPath": "/secrets"
                   }
                 ]
               }
@@ -288,13 +283,6 @@
       "description": "The size of the persistent volume , e.g. 512Mi, 1Gi, 2Gi.",
       "required": true,
       "value": "1Gi"
-    },
-    {
-      "name": "SECRET_VOLUME_NAME",
-      "displayName": "Secret Volume Name",
-      "description": "The name of the secret to be muonted as a volume during deployment.",
-      "required": true,
-      "value": "hets-secret"
     },
     {
       "name": "DATABASE_SERVICE_NAME",
