@@ -2,3 +2,4 @@
 *_BuildConfig.json
 *_SecretConfig.json
 *.local.*
+*.txt

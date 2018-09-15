@@ -57,24 +57,29 @@ namespace HetsApi.Helpers
             HetUser user = null;
 
             if (!string.IsNullOrEmpty(guid))
+            {
                 user = GetUserByGuid(guid, context);
+            }
 
             if (user == null)
+            {
                 user = GetUserBySmUserId(userId, context);
+            }
 
             if (user == null)
+            {
                 return null;
+            }
 
-            if (guid == null)
-                return user;
-
-            if (!string.IsNullOrEmpty(user.Guid))
+            if (!string.IsNullOrEmpty(guid) && string.IsNullOrEmpty(user.Guid))
             {
                 // self register (write the users Guid to the db)
                 user.Guid = guid;
                 context.SaveChanges();
             }
-            else if (!user.Guid.Equals(guid, StringComparison.OrdinalIgnoreCase))
+            else if (!string.IsNullOrEmpty(user.Guid) &&
+                     !string.IsNullOrEmpty(guid) &&
+                     !user.Guid.Equals(guid, StringComparison.OrdinalIgnoreCase))
             {
                 // invalid account - guid doesn't match user credential
                 return null;

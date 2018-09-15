@@ -2,6 +2,9 @@
 
 CD "C:\Workspace\hets\Db Scripts"
 
+ECHO Delete previous log file
+del log.txt
+
 ECHO Drop database if it exists
 psql -h localhost -U postgres -d postgres -a -q -f .\DROP\DROP_0_HETS_DB.sql > log.txt
 psql -h localhost -U postgres -d postgres -a -q -f .\DROP\DROP_1_HETS_DB.sql >> log.txt
