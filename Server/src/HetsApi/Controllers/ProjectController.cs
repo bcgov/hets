@@ -186,7 +186,12 @@ namespace HetsApi.Controllers
 
             if (status != null)
             {
-                data = data.Where(x => string.Equals(x.Status, status, StringComparison.CurrentCultureIgnoreCase));
+                int? statusId = StatusHelper.GetStatusId(status, "projectStatus", _context);
+
+                if (statusId != null)
+                {
+                    data = data.Where(x => x.ProjectStatusTypeId == statusId);
+                }
             }
 
             if (projectNumber != null)

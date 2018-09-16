@@ -367,7 +367,12 @@ namespace HetsApi.Controllers
 
             if (status != null)
             {
-                data = data.Where(x => string.Equals(x.Status, status, StringComparison.CurrentCultureIgnoreCase));
+                int? statusId = StatusHelper.GetStatusId(status, "equipmentStatus", _context);
+
+                if (statusId != null)
+                {
+                    data = data.Where(x => x.EquipmentStatusTypeId == statusId);
+                }
             }
 
             // is the equipment hired (search criteria)
