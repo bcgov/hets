@@ -307,7 +307,9 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.ServiceArea)
                         .ThenInclude(z => z.District)
                 .Include(x => x.HetEquipment)
+                    .ThenInclude(y => y.EquipmentStatusType)
                 .Include(x => x.PrimaryContact)
+                .Include(x => x.OwnerStatusType)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));               
 
             if (localAreasArray != null && localAreasArray.Length > 0)
