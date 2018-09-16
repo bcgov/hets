@@ -353,7 +353,12 @@ namespace HetsApi.Controllers
 
             if (status != null)
             {
-                data = data.Where(x => String.Equals(x.Status, status, StringComparison.CurrentCultureIgnoreCase));
+                int? statusId = StatusHelper.GetStatusId(status, "rentalRequestStatus", _context);
+
+                if (statusId != null)
+                {
+                    data = data.Where(x => x.RentalRequestStatusTypeId == statusId);
+                }
             }
 
             // convert Rental Request Model to the "RentalRequestLite" Model

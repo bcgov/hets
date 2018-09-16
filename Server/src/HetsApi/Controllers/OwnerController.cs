@@ -317,7 +317,12 @@ namespace HetsApi.Controllers
 
             if (status != null)
             {
-                data = data.Where(x => string.Equals(x.Status, status, StringComparison.CurrentCultureIgnoreCase));
+                int? statusId = StatusHelper.GetStatusId(status, "ownerStatus", _context);
+
+                if (statusId != null)
+                {
+                    data = data.Where(x => x.OwnerStatusTypeId == statusId);
+                }                
             }
 
             if (hired == true)
