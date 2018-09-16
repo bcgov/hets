@@ -272,6 +272,34 @@ GRANT ALL PRIVILEGES ON SEQUENCE public."HET_NOTE_ID_seq" TO het_application_pro
 
 
 --
+-- Name: TABLE "HET_BUSINESS"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_BUSINESS" TO het_application_proxy;
+
+
+--
+-- Name: SEQUENCE "HET_BUSINESS_ID_seq"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL PRIVILEGES ON SEQUENCE public."HET_BUSINESS_ID_seq" TO het_application_proxy;
+
+
+--
+-- Name: TABLE "HET_BUSINESS_USER"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_BUSINESS_USER" TO het_application_proxy;
+
+
+--
+-- Name: SEQUENCE "HET_BUSINESS_USER_ID_seq"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL PRIVILEGES ON SEQUENCE public."HET_BUSINESS_USER_ID_seq" TO het_application_proxy;
+
+
+--
 -- Name: TABLE "HET_OWNER"; Type: ACL; Schema: public; Owner: -
 --
 

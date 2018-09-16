@@ -774,6 +774,85 @@ CREATE TABLE public."HET_NOTE_HIST" (
     "CONCURRENCY_CONTROL_NUMBER" integer NOT NULL DEFAULT 0
 );
 
+
+--
+-- Name: HET_BUSINESS_BUSINESS_ID_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public."HET_BUSINESS_ID_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+--
+-- Name: HET_BUSINESS; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."HET_BUSINESS" (
+    "BUSINESS_ID" integer DEFAULT nextval('public."HET_BUSINESS_ID_seq"'::regclass) NOT NULL,
+    "BCEID_LEGAL_NAME" character varying(150),
+    "BCEID_DOING_BUSINESS_AS" character varying(150),
+	"BCEID_BUSINESS_NUMBER" character varying(50),
+	"BCEID_BUSINESS_GUID" character varying(50),	
+    "APP_CREATE_USER_DIRECTORY" character varying(50) COLLATE pg_catalog."default",
+	"APP_CREATE_USER_GUID" character varying(255) COLLATE pg_catalog."default",
+    "APP_CREATE_USERID" character varying(255) COLLATE pg_catalog."default",    
+	"APP_CREATE_TIMESTAMP" timestamp without time zone NOT NULL DEFAULT '0001-01-01 00:00:00'::timestamp without time zone,    
+	"APP_LAST_UPDATE_USER_DIRECTORY" character varying(50) COLLATE pg_catalog."default",    	
+    "APP_LAST_UPDATE_USER_GUID" character varying(255) COLLATE pg_catalog."default",
+    "APP_LAST_UPDATE_USERID" character varying(255) COLLATE pg_catalog."default",
+    "APP_LAST_UPDATE_TIMESTAMP" timestamp without time zone NOT NULL DEFAULT '0001-01-01 00:00:00'::timestamp without time zone,		
+	"DB_CREATE_USER_ID" character varying(63) COLLATE pg_catalog."default",
+	"DB_CREATE_TIMESTAMP" timestamp without time zone NOT NULL DEFAULT '0001-01-01 00:00:00'::timestamp without time zone,
+	"DB_LAST_UPDATE_TIMESTAMP" timestamp without time zone NOT NULL DEFAULT '0001-01-01 00:00:00'::timestamp without time zone,
+    "DB_LAST_UPDATE_USER_ID" character varying(63) COLLATE pg_catalog."default",
+    "CONCURRENCY_CONTROL_NUMBER" integer NOT NULL DEFAULT 0        
+);
+
+
+--
+-- Name: HET_BUSINESS_BUSINESS_ID_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public."HET_BUSINESS_USER_ID_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+--
+-- Name: HET_BUSINESS; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."HET_BUSINESS_USER" (
+    "BUSINESS_USER_ID" integer DEFAULT nextval('public."HET_BUSINESS_USER_ID_seq"'::regclass) NOT NULL,
+    "BCEID_USER_ID" character varying(150),
+	"BCEID_GUID" character varying(50),
+	"BCEID_DISPLAY_NAME" character varying(150),
+    "BCEID_FIRST_NAME" character varying(150),
+	"BCEID_LAST_NAME" character varying(150),
+	"BCEID_EMAIL" character varying(150),	
+	"BCEID_TELEPHONE" character varying(150),	
+	"BUSINESS_ID" integer,
+    "APP_CREATE_USER_DIRECTORY" character varying(50) COLLATE pg_catalog."default",
+	"APP_CREATE_USER_GUID" character varying(255) COLLATE pg_catalog."default",
+    "APP_CREATE_USERID" character varying(255) COLLATE pg_catalog."default",    
+	"APP_CREATE_TIMESTAMP" timestamp without time zone NOT NULL DEFAULT '0001-01-01 00:00:00'::timestamp without time zone,    
+	"APP_LAST_UPDATE_USER_DIRECTORY" character varying(50) COLLATE pg_catalog."default",    	
+    "APP_LAST_UPDATE_USER_GUID" character varying(255) COLLATE pg_catalog."default",
+    "APP_LAST_UPDATE_USERID" character varying(255) COLLATE pg_catalog."default",
+    "APP_LAST_UPDATE_TIMESTAMP" timestamp without time zone NOT NULL DEFAULT '0001-01-01 00:00:00'::timestamp without time zone,		
+	"DB_CREATE_USER_ID" character varying(63) COLLATE pg_catalog."default",
+	"DB_CREATE_TIMESTAMP" timestamp without time zone NOT NULL DEFAULT '0001-01-01 00:00:00'::timestamp without time zone,
+	"DB_LAST_UPDATE_TIMESTAMP" timestamp without time zone NOT NULL DEFAULT '0001-01-01 00:00:00'::timestamp without time zone,
+    "DB_LAST_UPDATE_USER_ID" character varying(63) COLLATE pg_catalog."default",
+    "CONCURRENCY_CONTROL_NUMBER" integer NOT NULL DEFAULT 0        
+);
+
+
 --
 -- Name: HET_OWNER_OWNER_ID_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
@@ -815,6 +894,8 @@ CREATE TABLE public."HET_OWNER" (
     "WORK_SAFE_BCEXPIRY_DATE" timestamp without time zone,
     "IS_MAINTENANCE_CONTRACTOR" boolean,    
     "MEETS_RESIDENCY" boolean NOT NULL,
+	"BUSINESS_ID" integer,
+	"SHARED_KEY" character varying(50),   
     "APP_CREATE_USER_DIRECTORY" character varying(50) COLLATE pg_catalog."default",
 	"APP_CREATE_USER_GUID" character varying(255) COLLATE pg_catalog."default",
     "APP_CREATE_USERID" character varying(255) COLLATE pg_catalog."default",    
@@ -2421,6 +2502,22 @@ ALTER TABLE ONLY public."HET_MIME_TYPE"
 ALTER TABLE ONLY public."HET_NOTE"
     ADD CONSTRAINT "PK_HET_NOTE" PRIMARY KEY ("NOTE_ID");
 
+	
+--
+-- Name: HET_BUSINESS PK_HET_BUSINESS; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."HET_BUSINESS"
+    ADD CONSTRAINT "PK_HET_BUSINESS" PRIMARY KEY ("BUSINESS_ID");
+
+
+--
+-- Name: HET_BUSINESS_USER PK_HET_BUSINESS_USER; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."HET_BUSINESS_USER"
+    ADD CONSTRAINT "PK_HET_BUSINESS_USER" PRIMARY KEY ("BUSINESS_USER_ID");
+		
 
 --
 -- Name: HET_OWNER PK_HET_OWNER; Type: CONSTRAINT; Schema: public; Owner: -
