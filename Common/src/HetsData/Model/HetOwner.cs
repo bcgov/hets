@@ -43,6 +43,8 @@ namespace HetsData.Model
         public DateTime? WorkSafeBcexpiryDate { get; set; }
         public bool? IsMaintenanceContractor { get; set; }
         public bool MeetsResidency { get; set; }
+        public int? BusinessId { get; set; }
+        public string SharedKey { get; set; }
         [JsonIgnore]public string AppCreateUserDirectory { get; set; }
         [JsonIgnore]public string AppCreateUserGuid { get; set; }
         [JsonIgnore]public string AppCreateUserid { get; set; }
@@ -60,6 +62,7 @@ namespace HetsData.Model
         public HetLocalArea LocalArea { get; set; }
         public HetOwnerStatusType OwnerStatusType { get; set; }
         public HetContact PrimaryContact { get; set; }
+        public HetBusiness Business { get; set; }
 
         [JsonProperty("Contacts")]
         public ICollection<HetContact> HetContact { get; set; }
