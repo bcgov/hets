@@ -158,7 +158,18 @@ CREATE TRIGGER het_bususr_br_iu_tr
     ON public."HET_BUSINESS_USER"
     FOR EACH ROW
     EXECUTE PROCEDURE public.het_validate_init_audit_cols();
-		
+
+
+-- Trigger: het_bususrole_br_iu_tr
+
+-- DROP TRIGGER het_bususrole_br_iu_tr ON public."HET_BUSINESS_USER_ROLE";
+
+CREATE TRIGGER het_bususrole_br_iu_tr
+    BEFORE INSERT OR UPDATE 
+    ON public."HET_BUSINESS_USER_ROLE"
+    FOR EACH ROW
+    EXECUTE PROCEDURE public.het_validate_init_audit_cols();
+			
 
 -- Trigger: het_own_br_iu_tr
 
