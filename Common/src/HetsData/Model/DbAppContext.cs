@@ -22,6 +22,9 @@ namespace HetsData.Model
             _connectionString = connectionString;
         }
 
+        public virtual DbSet<HetBusiness> HetBusiness { get; set; }
+        public virtual DbSet<HetBusinessUser> HetBusinessUser { get; set; }
+        public virtual DbSet<HetBusinessUserRole> HetBusinessUserRole { get; set; }
         public virtual DbSet<HetConditionType> HetConditionType { get; set; }
         public virtual DbSet<HetContact> HetContact { get; set; }
         public virtual DbSet<HetDigitalFile> HetDigitalFile { get; set; }
@@ -83,7 +86,271 @@ namespace HetsData.Model
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            modelBuilder.Entity<HetBusiness>(entity =>
+            {
+                entity.HasKey(e => e.BusinessId);
+
+                entity.ToTable("HET_BUSINESS");
+
+                entity.HasIndex(e => e.BceidBusinessGuid)
+                    .HasName("IX_HET_BUSINESS_BUSINESS_GUID");
+
+                entity.Property(e => e.BusinessId)
+                    .HasColumnName("BUSINESS_ID")
+                    .HasDefaultValueSql("nextval('\"HET_BUSINESS_ID_seq\"'::regclass)");
+
+                entity.Property(e => e.AppCreateTimestamp)
+                    .HasColumnName("APP_CREATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.AppCreateUserDirectory)
+                    .HasColumnName("APP_CREATE_USER_DIRECTORY")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.AppCreateUserGuid)
+                    .HasColumnName("APP_CREATE_USER_GUID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.AppCreateUserid)
+                    .HasColumnName("APP_CREATE_USERID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.AppLastUpdateTimestamp)
+                    .HasColumnName("APP_LAST_UPDATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.AppLastUpdateUserDirectory)
+                    .HasColumnName("APP_LAST_UPDATE_USER_DIRECTORY")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.AppLastUpdateUserGuid)
+                    .HasColumnName("APP_LAST_UPDATE_USER_GUID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.AppLastUpdateUserid)
+                    .HasColumnName("APP_LAST_UPDATE_USERID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.BceidBusinessGuid)
+                    .HasColumnName("BCEID_BUSINESS_GUID")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.BceidBusinessNumber)
+                    .HasColumnName("BCEID_BUSINESS_NUMBER")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.BceidDoingBusinessAs)
+                    .HasColumnName("BCEID_DOING_BUSINESS_AS")
+                    .HasMaxLength(150);
+
+                entity.Property(e => e.BceidLegalName)
+                    .HasColumnName("BCEID_LEGAL_NAME")
+                    .HasMaxLength(150);
+
+                entity.Property(e => e.ConcurrencyControlNumber).HasColumnName("CONCURRENCY_CONTROL_NUMBER");
+
+                entity.Property(e => e.DbCreateTimestamp)
+                    .HasColumnName("DB_CREATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.DbCreateUserId)
+                    .HasColumnName("DB_CREATE_USER_ID")
+                    .HasMaxLength(63);
+
+                entity.Property(e => e.DbLastUpdateTimestamp)
+                    .HasColumnName("DB_LAST_UPDATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.DbLastUpdateUserId)
+                    .HasColumnName("DB_LAST_UPDATE_USER_ID")
+                    .HasMaxLength(63);                
+            });
+
+            modelBuilder.Entity<HetBusinessUser>(entity =>
+            {
+                entity.HasKey(e => e.BusinessUserId);
+
+                entity.ToTable("HET_BUSINESS_USER");
+
+                entity.HasIndex(e => e.BceidGuid)
+                    .HasName("IX_HET_BUSINESS_USER_GUID");
+
+                entity.HasIndex(e => e.BusinessId);
+
+                entity.Property(e => e.BusinessUserId)
+                    .HasColumnName("BUSINESS_USER_ID")
+                    .HasDefaultValueSql("nextval('\"HET_BUSINESS_USER_ID_seq\"'::regclass)");
+
+                entity.Property(e => e.AppCreateTimestamp)
+                    .HasColumnName("APP_CREATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.AppCreateUserDirectory)
+                    .HasColumnName("APP_CREATE_USER_DIRECTORY")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.AppCreateUserGuid)
+                    .HasColumnName("APP_CREATE_USER_GUID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.AppCreateUserid)
+                    .HasColumnName("APP_CREATE_USERID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.AppLastUpdateTimestamp)
+                    .HasColumnName("APP_LAST_UPDATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.AppLastUpdateUserDirectory)
+                    .HasColumnName("APP_LAST_UPDATE_USER_DIRECTORY")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.AppLastUpdateUserGuid)
+                    .HasColumnName("APP_LAST_UPDATE_USER_GUID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.AppLastUpdateUserid)
+                    .HasColumnName("APP_LAST_UPDATE_USERID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.BceidDisplayName)
+                    .HasColumnName("BCEID_DISPLAY_NAME")
+                    .HasMaxLength(150);
+
+                entity.Property(e => e.BceidEmail)
+                    .HasColumnName("BCEID_EMAIL")
+                    .HasMaxLength(150);
+
+                entity.Property(e => e.BceidFirstName)
+                    .HasColumnName("BCEID_FIRST_NAME")
+                    .HasMaxLength(150);
+
+                entity.Property(e => e.BceidGuid)
+                    .HasColumnName("BCEID_GUID")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.BceidLastName)
+                    .HasColumnName("BCEID_LAST_NAME")
+                    .HasMaxLength(150);
+
+                entity.Property(e => e.BceidTelephone)
+                    .HasColumnName("BCEID_TELEPHONE")
+                    .HasMaxLength(150);
+
+                entity.Property(e => e.BceidUserId)
+                    .HasColumnName("BCEID_USER_ID")
+                    .HasMaxLength(150);
+
+                entity.Property(e => e.BusinessId).HasColumnName("BUSINESS_ID");
+
+                entity.Property(e => e.ConcurrencyControlNumber).HasColumnName("CONCURRENCY_CONTROL_NUMBER");
+
+                entity.Property(e => e.DbCreateTimestamp)
+                    .HasColumnName("DB_CREATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.DbCreateUserId)
+                    .HasColumnName("DB_CREATE_USER_ID")
+                    .HasMaxLength(63);
+
+                entity.Property(e => e.DbLastUpdateTimestamp)
+                    .HasColumnName("DB_LAST_UPDATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.DbLastUpdateUserId)
+                    .HasColumnName("DB_LAST_UPDATE_USER_ID")
+                    .HasMaxLength(63);
+
+                entity.HasOne(d => d.Business)
+                    .WithMany(p => p.HetBusinessUser)
+                    .HasForeignKey(d => d.BusinessId)
+                    .HasConstraintName("FK_HET_BUSINESS_USER_BUSINESS_ID");
+            });
+
+            modelBuilder.Entity<HetBusinessUserRole>(entity =>
+            {
+                entity.HasKey(e => e.BusinessUserRoleId);
+
+                entity.ToTable("HET_BUSINESS_USER_ROLE");
+
+                entity.HasIndex(e => e.BusinessUserId)
+                    .HasName("IX_HET_BUSINESS_USER_ROLE_USER_ID");
+
+                entity.HasIndex(e => e.RoleId);
+
+                entity.Property(e => e.BusinessUserRoleId)
+                    .HasColumnName("BUSINESS_USER_ROLE_ID")
+                    .HasDefaultValueSql("nextval('\"HET_BUSINESS_USER_ROLE_ID_seq\"'::regclass)");
+
+                entity.Property(e => e.AppCreateTimestamp)
+                    .HasColumnName("APP_CREATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.AppCreateUserDirectory)
+                    .HasColumnName("APP_CREATE_USER_DIRECTORY")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.AppCreateUserGuid)
+                    .HasColumnName("APP_CREATE_USER_GUID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.AppCreateUserid)
+                    .HasColumnName("APP_CREATE_USERID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.AppLastUpdateTimestamp)
+                    .HasColumnName("APP_LAST_UPDATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.AppLastUpdateUserDirectory)
+                    .HasColumnName("APP_LAST_UPDATE_USER_DIRECTORY")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.AppLastUpdateUserGuid)
+                    .HasColumnName("APP_LAST_UPDATE_USER_GUID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.AppLastUpdateUserid)
+                    .HasColumnName("APP_LAST_UPDATE_USERID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.BusinessUserId).HasColumnName("BUSINESS_USER_ID");
+
+                entity.Property(e => e.ConcurrencyControlNumber).HasColumnName("CONCURRENCY_CONTROL_NUMBER");
+
+                entity.Property(e => e.DbCreateTimestamp)
+                    .HasColumnName("DB_CREATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.DbCreateUserId)
+                    .HasColumnName("DB_CREATE_USER_ID")
+                    .HasMaxLength(63);
+
+                entity.Property(e => e.DbLastUpdateTimestamp)
+                    .HasColumnName("DB_LAST_UPDATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.DbLastUpdateUserId)
+                    .HasColumnName("DB_LAST_UPDATE_USER_ID")
+                    .HasMaxLength(63);
+
+                entity.Property(e => e.EffectiveDate).HasColumnName("EFFECTIVE_DATE");
+
+                entity.Property(e => e.ExpiryDate).HasColumnName("EXPIRY_DATE");
+
+                entity.Property(e => e.RoleId).HasColumnName("ROLE_ID");
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.HetBusinessUserRole)
+                    .HasForeignKey(d => d.RoleId)
+                    .HasConstraintName("FK_HET_BUSINESS_USER_ROLE_ROLE_ID");
+
+                entity.HasOne(d => d.BusinessUser)
+                    .WithMany(p => p.HetBusinessUserRole)
+                    .HasForeignKey(d => d.BusinessUserId)
+                    .HasConstraintName("FK_HET_BUSINESS_USER_ROLE_USER_ID");
+            });
+
             modelBuilder.Entity<HetConditionType>(entity =>
             {
                 entity.HasKey(e => e.ConditionTypeId);
@@ -1929,6 +2196,8 @@ namespace HetsData.Model
 
                 entity.ToTable("HET_OWNER");
 
+                entity.HasIndex(e => e.BusinessId);
+
                 entity.HasIndex(e => e.LocalAreaId);
 
                 entity.HasIndex(e => e.OwnerStatusTypeId)
@@ -1938,10 +2207,6 @@ namespace HetsData.Model
 
                 entity.HasIndex(e => e.RegisteredCompanyNumber)
                     .HasName("HET_OWN_REGISTERED_COMPANY_NUMBER_UK")
-                    .IsUnique();
-
-                entity.HasIndex(e => e.WorkSafeBcpolicyNumber)
-                    .HasName("HET_OWN_WORK_SAFE_BCPOLICY_NUMBER_UK")
                     .IsUnique();
 
                 entity.Property(e => e.OwnerId)
@@ -1997,6 +2262,8 @@ namespace HetsData.Model
                 entity.Property(e => e.ArchiveReason)
                     .HasColumnName("ARCHIVE_REASON")
                     .HasMaxLength(2048);
+
+                entity.Property(e => e.BusinessId).HasColumnName("BUSINESS_ID");
 
                 entity.Property(e => e.CglPolicyNumber)
                     .HasColumnName("CGL_POLICY_NUMBER")
@@ -2064,6 +2331,10 @@ namespace HetsData.Model
                     .HasColumnName("REGISTERED_COMPANY_NUMBER")
                     .HasMaxLength(150);
 
+                entity.Property(e => e.SharedKey)
+                    .HasColumnName("SHARED_KEY")
+                    .HasMaxLength(50);
+
                 entity.Property(e => e.StatusComment)
                     .HasColumnName("STATUS_COMMENT")
                     .HasMaxLength(255);
@@ -2078,21 +2349,10 @@ namespace HetsData.Model
                     .HasColumnName("WORK_SAFE_BCPOLICY_NUMBER")
                     .HasMaxLength(50);
 
-                entity.HasOne(d => d.LocalArea)
+                entity.HasOne(d => d.Business)
                     .WithMany(p => p.HetOwner)
-                    .HasForeignKey(d => d.LocalAreaId)
-                    .HasConstraintName("FK_HET_OWNER_LOCAL_AREA_ID");
-
-                entity.HasOne(d => d.OwnerStatusType)
-                    .WithMany(p => p.HetOwner)
-                    .HasForeignKey(d => d.OwnerStatusTypeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_HET_OWNER_STATUS_TYPE_ID");
-
-                entity.HasOne(d => d.PrimaryContact)
-                    .WithMany(p => p.HetOwner)
-                    .HasForeignKey(d => d.PrimaryContactId)
-                    .HasConstraintName("FK_HET_OWNER_PRIMARY_CONTACT_ID");
+                    .HasForeignKey(d => d.BusinessId)
+                    .HasConstraintName("FK_HET_OWNER_BUSINESS_ID");
             });
 
             modelBuilder.Entity<HetOwnerStatusType>(entity =>
@@ -4862,6 +5122,12 @@ namespace HetsData.Model
                     .HasConstraintName("FK_HET_USER_ROLE_USER_ID");
             });
 
+            modelBuilder.HasSequence("HET_BUSINESS_ID_seq");
+
+            modelBuilder.HasSequence("HET_BUSINESS_USER_ID_seq");
+
+            modelBuilder.HasSequence("HET_BUSINESS_USER_ROLE_ID_seq");
+
             modelBuilder.HasSequence("HET_CITY_ID_seq");
 
             modelBuilder.HasSequence("HET_CONDITION_TYPE_ID_seq");
@@ -4958,3 +5224,4 @@ namespace HetsData.Model
         }
     }
 }
+

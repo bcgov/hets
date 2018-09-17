@@ -10,6 +10,7 @@ namespace HetsData.Model
         {
             HetRolePermission = new HashSet<HetRolePermission>();
             HetUserRole = new HashSet<HetUserRole>();
+            HetBusinessUserRole = new HashSet<HetBusinessUserRole>();
         }
 
         [JsonProperty("Id")]
@@ -36,5 +37,8 @@ namespace HetsData.Model
 
         [JsonIgnore]
         public ICollection<HetUserRole> HetUserRole { get; set; }
+
+        [JsonIgnore]
+        public ICollection<HetBusinessUserRole> HetBusinessUserRole { get; set; }
     }
 }
