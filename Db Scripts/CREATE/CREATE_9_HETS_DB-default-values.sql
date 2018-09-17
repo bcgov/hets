@@ -1294,7 +1294,17 @@ VALUES
    NULL, NULL, 'HETS', NOW(), 
    NULL, NULL, 'HETS', NOW());   
 
-ALTER SEQUENCE public."HET_ROLE_ID_seq" RESTART WITH 5; 
+INSERT INTO public."HET_ROLE"
+  ("ROLE_ID", "NAME", "DESCRIPTION", 
+   "APP_CREATE_USER_DIRECTORY", "APP_CREATE_USER_GUID", "APP_CREATE_USERID", "APP_CREATE_TIMESTAMP", 
+   "APP_LAST_UPDATE_USER_DIRECTORY", "APP_LAST_UPDATE_USER_GUID", "APP_LAST_UPDATE_USERID", 
+   "APP_LAST_UPDATE_TIMESTAMP")
+VALUES 
+  (6, 'Business BCeID User', 'External Business Account', 
+   NULL, NULL, 'HETS', NOW(), 
+   NULL, NULL, 'HETS', NOW());     
+   
+ALTER SEQUENCE public."HET_ROLE_ID_seq" RESTART WITH 6; 
 
 -- **************************************************************************************
 -- ROLE/PERMISSION
@@ -1339,6 +1349,12 @@ VALUES
   (1, 5, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
   (7, 5, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW());   
    
+-- Business User
+INSERT INTO public."HET_ROLE_PERMISSION"
+  ("PERMISSION_ID", "ROLE_ID", "APP_CREATE_USER_DIRECTORY", "APP_CREATE_USER_GUID", "APP_CREATE_USERID", "APP_CREATE_TIMESTAMP", "APP_LAST_UPDATE_USER_DIRECTORY", "APP_LAST_UPDATE_USER_GUID", "APP_LAST_UPDATE_USERID", "APP_LAST_UPDATE_TIMESTAMP")
+VALUES 
+  (8, 6, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW());   
+      
 -- **************************************************************************************
 -- USER
 
