@@ -813,7 +813,7 @@ CREATE TABLE public."HET_BUSINESS" (
 
 
 --
--- Name: HET_BUSINESS_BUSINESS_ID_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: HET_BUSINESS_USER_ID_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public."HET_BUSINESS_USER_ID_seq"
@@ -850,6 +850,43 @@ CREATE TABLE public."HET_BUSINESS_USER" (
 	"DB_LAST_UPDATE_TIMESTAMP" timestamp without time zone NOT NULL DEFAULT '0001-01-01 00:00:00'::timestamp without time zone,
     "DB_LAST_UPDATE_USER_ID" character varying(63) COLLATE pg_catalog."default",
     "CONCURRENCY_CONTROL_NUMBER" integer NOT NULL DEFAULT 0        
+);
+
+
+--
+-- Name: HET_BUSINESS_USER_ROLE_ID_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public."HET_BUSINESS_USER_ROLE_ID_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+--
+-- Name: HET_BUSINESS_USER_ROLE; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."HET_BUSINESS_USER_ROLE" (
+    "BUSINESS_USER_ROLE_ID" integer DEFAULT nextval('public."HET_BUSINESS_USER_ROLE_ID_seq"'::regclass) NOT NULL, 
+    "EFFECTIVE_DATE" timestamp without time zone NOT NULL,
+    "EXPIRY_DATE" timestamp without time zone,
+    "BUSINESS_USER_ID" integer,
+	"ROLE_ID" integer,
+    "APP_CREATE_USER_DIRECTORY" character varying(50) COLLATE pg_catalog."default",
+	"APP_CREATE_USER_GUID" character varying(255) COLLATE pg_catalog."default",
+    "APP_CREATE_USERID" character varying(255) COLLATE pg_catalog."default",    
+	"APP_CREATE_TIMESTAMP" timestamp without time zone NOT NULL DEFAULT '0001-01-01 00:00:00'::timestamp without time zone,    
+	"APP_LAST_UPDATE_USER_DIRECTORY" character varying(50) COLLATE pg_catalog."default",    	
+    "APP_LAST_UPDATE_USER_GUID" character varying(255) COLLATE pg_catalog."default",
+    "APP_LAST_UPDATE_USERID" character varying(255) COLLATE pg_catalog."default",
+    "APP_LAST_UPDATE_TIMESTAMP" timestamp without time zone NOT NULL DEFAULT '0001-01-01 00:00:00'::timestamp without time zone,		
+	"DB_CREATE_USER_ID" character varying(63) COLLATE pg_catalog."default",
+	"DB_CREATE_TIMESTAMP" timestamp without time zone NOT NULL DEFAULT '0001-01-01 00:00:00'::timestamp without time zone,
+	"DB_LAST_UPDATE_TIMESTAMP" timestamp without time zone NOT NULL DEFAULT '0001-01-01 00:00:00'::timestamp without time zone,
+    "DB_LAST_UPDATE_USER_ID" character varying(63) COLLATE pg_catalog."default",
+    "CONCURRENCY_CONTROL_NUMBER" integer NOT NULL DEFAULT 0    
 );
 
 
