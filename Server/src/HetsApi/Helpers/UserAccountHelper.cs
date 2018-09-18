@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using HetsData.Helpers;
 using Microsoft.AspNetCore.Http;
 using HetsData.Model;
 using Microsoft.EntityFrameworkCore;
@@ -75,6 +76,11 @@ namespace HetsApi.Helpers
             {
                 // self register (write the users Guid to the db)
                 user.Guid = guid;
+                user.AppLastUpdateUserDirectory = user.SmAuthorizationDirectory;
+                user.AppLastUpdateUserGuid = guid;
+                user.AppLastUpdateUserid = userId;
+                user.AppLastUpdateTimestamp = DateTime.UtcNow;
+
                 context.SaveChanges();
             }
             else if (!string.IsNullOrEmpty(user.Guid) &&
@@ -120,6 +126,85 @@ namespace HetsApi.Helpers
                 .Where(x => x.SmUserId != null &&
                             x.SmUserId.Equals(smUserId, StringComparison.OrdinalIgnoreCase))
                 .Include(u => u.HetUserRole)
+                    .ThenInclude(r => r.Role)
+                        .ThenInclude(rp => rp.HetRolePermission)
+                            .ThenInclude(p => p.Permission)
+                .FirstOrDefault();
+
+            return user;
+        }
+
+        /// <summary>
+        /// Get business user record
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="userId"></param>
+        /// <param name="businessGuid"></param>
+        /// <param name="guid"></param>        
+        /// <returns></returns>
+        public static HetBusinessUser GetBusinessUser(DbAppContext context, string userId, string businessGuid, string guid = null)
+        {
+            // find the business
+            HetBusiness business = context.HetBusiness.AsNoTracking()
+                .FirstOrDefault(x => x.BceidBusinessGuid == businessGuid);
+
+            if (business == null)
+            {
+                return null;
+            }
+
+            // ok - now find the user
+            HetBusinessUser user = context.HetBusinessUser
+                .FirstOrDefault(x => x.BusinessId == business.BusinessId &&
+                                     x.BceidUserId == userId);
+
+            if (user == null)
+            {
+                // auto register the user
+                user = new HetBusinessUser
+                {
+                    BceidUserId = userId,
+                    BusinessId = business.BusinessId,
+                    BceidGuid = guid,
+                    AppCreateUserDirectory = "BCeID",
+                    AppCreateUserGuid = guid,
+                    AppCreateUserid = userId,
+                    AppCreateTimestamp = DateTime.UtcNow,
+                    AppLastUpdateUserDirectory = "BCeID",
+                    AppLastUpdateUserGuid = guid,
+                    AppLastUpdateUserid = userId,
+                    AppLastUpdateTimestamp = DateTime.UtcNow
+                };
+
+                // to do - add web service call to retrieve remaining user data
+
+                // add the "Business Logon" role
+                HetBusinessUserRole userRole = new HetBusinessUserRole
+                {
+                    RoleId = StatusHelper.GetRoleId("Business BCeID User", context),
+                    EffectiveDate = DateTime.UtcNow.AddMinutes(-10),
+                    AppCreateUserDirectory = "BCeID",
+                    AppCreateUserGuid = guid,
+                    AppCreateUserid = userId,
+                    AppCreateTimestamp = DateTime.UtcNow,
+                    AppLastUpdateUserDirectory = "BCeID",
+                    AppLastUpdateUserGuid = guid,
+                    AppLastUpdateUserid = userId,
+                    AppLastUpdateTimestamp = DateTime.UtcNow
+                };
+
+                user.HetBusinessUserRole.Add(userRole);
+
+                // save record
+                context.HetBusinessUser.Add(user);
+                context.SaveChanges();
+            }
+
+            // get complete user record (with roles) and return
+            user = context.HetBusinessUser
+                .Where(x => x.BusinessId == business.BusinessId &&
+                                     x.BceidUserId == userId)
+                .Include(u => u.HetBusinessUserRole)
                     .ThenInclude(r => r.Role)
                         .ThenInclude(rp => rp.HetRolePermission)
                             .ThenInclude(p => p.Permission)

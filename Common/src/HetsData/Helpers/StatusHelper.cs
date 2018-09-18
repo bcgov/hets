@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using HetsData.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace HetsData.Helpers
 {
@@ -34,7 +35,7 @@ namespace HetsData.Helpers
 
         public static int? GetOwnerStatusId(string status, DbAppContext context)
         {
-            HetOwnerStatusType ownerStatus = context.HetOwnerStatusType
+            HetOwnerStatusType ownerStatus = context.HetOwnerStatusType.AsNoTracking()
                 .FirstOrDefault(x => x.OwnerStatusTypeCode.Equals(status, StringComparison.CurrentCultureIgnoreCase));
 
             return ownerStatus?.OwnerStatusTypeId;
@@ -42,7 +43,7 @@ namespace HetsData.Helpers
 
         public static int? GetEquipmentStatusId(string status, DbAppContext context)
         {
-            HetEquipmentStatusType equipmentStatus = context.HetEquipmentStatusType
+            HetEquipmentStatusType equipmentStatus = context.HetEquipmentStatusType.AsNoTracking()
                 .FirstOrDefault(x => x.EquipmentStatusTypeCode.Equals(status, StringComparison.CurrentCultureIgnoreCase));
 
             return equipmentStatus?.EquipmentStatusTypeId;
@@ -50,7 +51,7 @@ namespace HetsData.Helpers
 
         public static int? GetProjectStatusId(string status, DbAppContext context)
         {
-            HetProjectStatusType projectStatus = context.HetProjectStatusType
+            HetProjectStatusType projectStatus = context.HetProjectStatusType.AsNoTracking()
                 .FirstOrDefault(x => x.ProjectStatusTypeCode.Equals(status, StringComparison.CurrentCultureIgnoreCase));
 
             return projectStatus?.ProjectStatusTypeId;
@@ -58,7 +59,7 @@ namespace HetsData.Helpers
 
         public static int? GetRentalRequestStatusId(string status, DbAppContext context)
         {
-            HetRentalRequestStatusType requestStatus = context.HetRentalRequestStatusType
+            HetRentalRequestStatusType requestStatus = context.HetRentalRequestStatusType.AsNoTracking()
                 .FirstOrDefault(x => x.RentalRequestStatusTypeCode.Equals(status, StringComparison.CurrentCultureIgnoreCase));
 
             return requestStatus?.RentalRequestStatusTypeId;
@@ -66,7 +67,7 @@ namespace HetsData.Helpers
 
         public static int? GetRentalAgreementStatusId(string status, DbAppContext context)
         {
-            HetRentalAgreementStatusType agreementStatus = context.HetRentalAgreementStatusType
+            HetRentalAgreementStatusType agreementStatus = context.HetRentalAgreementStatusType.AsNoTracking()
                 .FirstOrDefault(x => x.RentalAgreementStatusTypeCode.Equals(status, StringComparison.CurrentCultureIgnoreCase));
 
             return agreementStatus?.RentalAgreementStatusTypeId;
@@ -78,7 +79,7 @@ namespace HetsData.Helpers
 
         public static int? GetMimeTypeId(string mimeTypeCode, DbAppContext context)
         {
-            HetMimeType mimeType = context.HetMimeType
+            HetMimeType mimeType = context.HetMimeType.AsNoTracking()
                 .FirstOrDefault(x => x.MimeTypeCode.Equals(mimeTypeCode, StringComparison.CurrentCultureIgnoreCase));
 
             return mimeType?.MimeTypeId;
@@ -90,7 +91,7 @@ namespace HetsData.Helpers
 
         public static int? GetTimePeriodId(string timePeriodCode, DbAppContext context)
         {
-            HetTimePeriodType timePeriod = context.HetTimePeriodType
+            HetTimePeriodType timePeriod = context.HetTimePeriodType.AsNoTracking()
                 .FirstOrDefault(x => x.TimePeriodTypeCode.Equals(timePeriodCode, StringComparison.CurrentCultureIgnoreCase));
 
             return timePeriod?.TimePeriodTypeId;
@@ -102,10 +103,22 @@ namespace HetsData.Helpers
 
         public static int? GetRatePeriodId(string ratePeriodCode, DbAppContext context)
         {
-            HetRatePeriodType timePeriod = context.HetRatePeriodType
+            HetRatePeriodType timePeriod = context.HetRatePeriodType.AsNoTracking()
                 .FirstOrDefault(x => x.RatePeriodTypeCode.Equals(ratePeriodCode, StringComparison.CurrentCultureIgnoreCase));
 
             return timePeriod?.RatePeriodTypeId;
+        }
+
+        #endregion
+
+        #region Get Role Id using a Name
+
+        public static int? GetRoleId(string roleName, DbAppContext context)
+        {
+            HetRole role = context.HetRole.AsNoTracking()
+                .FirstOrDefault(x => x.Name.Equals(roleName, StringComparison.CurrentCultureIgnoreCase));
+
+            return role?.RoleId;
         }
 
         #endregion

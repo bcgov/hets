@@ -40,12 +40,13 @@ namespace HetsApi.Controllers
 
             if (string.IsNullOrEmpty(userId)) return BadRequest("Missing required userid query parameter.");
 
+            userId = userId.Trim();
+
             if (userId.ToLower() == "default")
+            {
                 userId = _options.DevDefaultUserId;
-
-            string temp = HttpContext.Request.Cookies[_options.DevAuthenticationTokenKey];
-            Debug.WriteLine("Current Cookie User: " + temp);
-
+            }
+                        
             // create new "dev" user cookie
             Response.Cookies.Append(
                 _options.DevAuthenticationTokenKey,
@@ -64,6 +65,43 @@ namespace HetsApi.Controllers
         }
 
         /// <summary>
+        /// Injects an authentication token cookie into the response for use with the 
+        /// SiteMinder authentication middleware - Business User
+        /// </summary>
+        [HttpGet]
+        [Route("dev/businessToken/{userid}/{guid}")]
+        [AllowAnonymous]
+        public virtual IActionResult GetDevBusinessCookie(string userId, string guid)
+        {
+            if (!_env.IsDevelopment()) return BadRequest("This API is not available outside a development environment.");
+
+            if (string.IsNullOrEmpty(userId)) return BadRequest("Missing required userid query parameter.");
+            if (string.IsNullOrEmpty(guid)) return BadRequest("Missing required userid query parameter.");
+
+            userId = userId.Trim();
+            guid = guid.Trim();
+
+            string temp = userId + "," + guid;
+
+            // create new "dev" user cookie
+            Response.Cookies.Append(
+                _options.DevBusinessTokenKey,
+                temp,
+                new CookieOptions
+                {
+                    Path = "/",
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTime.UtcNow.AddDays(7)
+                }
+            );
+
+            Debug.WriteLine("New Cookie User: " + userId);
+            Debug.WriteLine("New Cookie Guid: " + guid);
+
+            return Ok();
+        }
+
+        /// <summary>
         /// Clear out any existing dev authentication tokens
         /// </summary>
         /// <returns></returns>
@@ -74,25 +112,54 @@ namespace HetsApi.Controllers
         {
             if (!_env.IsDevelopment()) return BadRequest("This API is not available outside a development environment.");
 
+            // *************************
+            // clear up user cookie
+            // *************************
             string temp = HttpContext.Request.Cookies[_options.DevAuthenticationTokenKey];
-            Debug.WriteLine("Current Cookie User: " + temp);
+            
+            if (temp != null)
+            {
+                Debug.WriteLine("Current Cookie User: " + temp);
 
-            // expire "dev" user cookie
-            Response.Cookies.Append(
-                _options.DevAuthenticationTokenKey,
-                temp,
-                new CookieOptions
-                {
-                    Path = "/",
-                    SameSite = SameSiteMode.None,
-                    Expires = DateTime.UtcNow.AddDays(-1)
-                }
-            );
+                // expire "dev" user cookie
+                Response.Cookies.Append(
+                    _options.DevAuthenticationTokenKey,
+                    temp,
+                    new CookieOptions
+                    {
+                        Path = "/",
+                        SameSite = SameSiteMode.None,
+                        Expires = DateTime.UtcNow.AddDays(-1)
+                    }
+                );
+            }
+
+            // *************************
+            // clear up business cookie
+            // *************************
+            temp = HttpContext.Request.Cookies[_options.DevBusinessTokenKey];
+
+            if (temp != null)
+            {
+                Debug.WriteLine("Current Cookie User: " + temp);
+
+                // expire "dev" user cookie
+                Response.Cookies.Append(
+                    _options.DevBusinessTokenKey,
+                    temp,
+                    new CookieOptions
+                    {
+                        Path = "/",
+                        SameSite = SameSiteMode.None,
+                        Expires = DateTime.UtcNow.AddDays(-1)
+                    }
+                );
+            }
 
             Debug.WriteLine("Cookie Expired!");
 
-            return Ok();
-        }
+            return Ok();            
+        }        
     }
 }
 
