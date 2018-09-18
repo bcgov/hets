@@ -4,7 +4,8 @@
   "description": "Hired Equipment Tracking System JavaScript Web Application",
   "main": "dist/index.html",
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp test",
+    "start": "gulp --apihost localhost --apiport 8080"
   },
   "repository": {
     "type": "git",
