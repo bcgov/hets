@@ -1790,6 +1790,22 @@ export function updateCondition(condition) {
   });
 }
 
+
+////////////////////
+// Business
+////////////////////
+
+export function getOwnerForBusiness(ownerId) {
+  return new ApiRequest(`/business/owner/${ ownerId }`).get().then(response => {
+    var owner = response.data;
+
+    // Add display fields
+    parseOwner(owner);
+    store.dispatch({ type: Action.UPDATE_OWNER, owner: owner });
+  });
+}
+
+
 ////////////////////
 // Look-ups
 ////////////////////
