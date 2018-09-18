@@ -436,6 +436,14 @@ namespace HetsImport.Import
                 // ***********************************************
                 // make, model, year, etc.
                 // ***********************************************
+                string tempType = ImportUtility.CleanString(oldObject.Type);
+
+                if (!string.IsNullOrEmpty(tempType))
+                {
+                    tempType = ImportUtility.GetCapitalCase(tempType);
+                    equipment.Type = tempType;
+                }
+
                 string tempMake = ImportUtility.CleanString(oldObject.Make);
 
                 if (!string.IsNullOrEmpty(tempMake))

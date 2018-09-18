@@ -13,6 +13,11 @@ namespace HetsApi.Authentication
         public bool UserAuthenticated { get; set; }
 
         /// <summary>
+        /// True if user is a business user
+        /// </summary>
+        public bool BusinessUser { get; set; }
+
+        /// <summary>
         /// HETS/SiteMinder User Id
         /// </summary>
         public string UserId { get; set; }
@@ -23,9 +28,19 @@ namespace HetsApi.Authentication
         public string SiteMinderGuid { get; set; }
 
         /// <summary>
+        /// SiteMinder Business Guid
+        /// </summary>
+        public string SiteMinderBusinessGuid { get; set; }
+
+        /// <summary>
         /// HETS User Model
         /// </summary>
-        public HetUser HetsUser { get; set; }        
+        public HetUser HetsUser { get; set; }
+
+        /// <summary>
+        /// HETS Business User Model
+        /// </summary>
+        public HetBusinessUser HetsBusinessUser { get; set; }
     }
 }
 

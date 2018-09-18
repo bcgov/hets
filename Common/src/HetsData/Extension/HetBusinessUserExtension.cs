@@ -5,7 +5,7 @@ using System.Security.Claims;
 
 namespace HetsData.Model
 {
-    public partial class HetUser
+    public partial class HetBusinessUser
     {
         /// <summary>
         /// User Permission Claim Property
@@ -34,19 +34,16 @@ namespace HetsData.Model
 
         private List<Claim> GetClaims()
         {
-            List<Claim> claims = new List<Claim> { new Claim(ClaimTypes.Name, SmUserId) };
+            List<Claim> claims = new List<Claim> { new Claim(ClaimTypes.Name, BceidUserId) };
 
-            if (!string.IsNullOrEmpty(Surname))
-                claims.Add(new Claim(ClaimTypes.Surname, Surname));
+            if (!string.IsNullOrEmpty(BceidDisplayName))
+                claims.Add(new Claim(ClaimTypes.Name, BceidDisplayName));
 
-            if (!string.IsNullOrEmpty(GivenName))
-                claims.Add(new Claim(ClaimTypes.GivenName, GivenName));
+            if (!string.IsNullOrEmpty(BceidEmail))
+                claims.Add(new Claim(ClaimTypes.Email, BceidEmail));
 
-            if (!string.IsNullOrEmpty(Email))
-                claims.Add(new Claim(ClaimTypes.Email, Email));
-
-            if (UserId != 0)
-                claims.Add(new Claim(UseridClaim, UserId.ToString()));
+            if (BusinessId != 0)
+                claims.Add(new Claim(UseridClaim, BusinessId.ToString()));
 
             var permissions = GetActivePermissions()
                 .Select(p => new Claim(PermissionClaim, p.Code)).ToList();
@@ -85,12 +82,12 @@ namespace HetsData.Model
         {
             List<HetRole> roles = new List<HetRole>();
 
-            if (HetUserRole == null)
+            if (HetBusinessUserRole == null)
             {
                 return roles;
             }
 
-            roles = HetUserRole
+            roles = HetBusinessUserRole
                 .Where(x => x.Role != null && 
                             x.EffectiveDate <= DateTime.UtcNow && 
                             (x.ExpiryDate == null || x.ExpiryDate > DateTime.UtcNow))

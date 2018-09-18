@@ -23,17 +23,22 @@ namespace HetsApi.Authentication
     public class SiteMinderAuthOptions : AuthenticationSchemeOptions
     {
         private const string ConstDevAuthenticationTokenKey = "DEV-USER";
+        private const string ConstDevBusinessTokenKey = "BUS-USER";
         private const string ConstDevDefaultUserId = "TMcTesterson";       
         private const string ConstSiteMinderUserGuidKey = "smgov_userguid";
         private const string ConstSiteMinderUniversalIdKey = "sm_universalid";
         private const string ConstSiteMinderUserNameKey = "sm_user";
         private const string ConstSiteMinderUserDisplayNameKey = "smgov_userdisplayname";
 
+        // Business BCeID Headers
+        private const string ConstSiteMinderBusinessGuidKey = "smgov_businessguid";
+
         private const string ConstMissingSiteMinderUserIdError = "Missing SiteMinder UserId";
         private const string ConstMissingSiteMinderGuidError = "Missing SiteMinder Guid";
         private const string ConstMissingDbUserIdError = "Could not find UserId in the HETS database";
         private const string ConstInactiveDbUserIdError = "HETS database UserId is inactive";
         private const string ConstInvalidPermissions = "HETS UserId does not have valid permissions";
+        private const string ConstMissingBusinessIdError = "Invalid Business Record";
 
         /// <summary>
         /// Default Constructor
@@ -44,12 +49,19 @@ namespace HetsApi.Authentication
             SiteMinderUniversalIdKey = ConstSiteMinderUniversalIdKey;
             SiteMinderUserNameKey = ConstSiteMinderUserNameKey;
             SiteMinderUserDisplayNameKey = ConstSiteMinderUserDisplayNameKey;
+
+            // Business BCeID Keys
+            SiteMinderBusinessGuidKey = ConstSiteMinderBusinessGuidKey;
+
             MissingSiteMinderUserIdError = ConstMissingSiteMinderUserIdError;
             MissingSiteMinderGuidError = ConstMissingSiteMinderGuidError;
             MissingDbUserIdError = ConstMissingDbUserIdError;
             InactiveDbUserIdError = ConstInactiveDbUserIdError;
+            MissingBusinessIdError = ConstMissingBusinessIdError;
+
             InvalidPermissions = ConstInvalidPermissions;
             DevAuthenticationTokenKey = ConstDevAuthenticationTokenKey;
+            DevBusinessTokenKey = ConstDevBusinessTokenKey;
             DevDefaultUserId = ConstDevDefaultUserId;
         }        
 
@@ -84,6 +96,11 @@ namespace HetsApi.Authentication
         public string SiteMinderUserDisplayNameKey { get; set; }
 
         /// <summary>
+        /// Business Guid
+        /// </summary>
+        public string SiteMinderBusinessGuidKey { get; set; }
+
+        /// <summary>
         /// Missing SiteMinder UserId Error
         /// </summary>
         public string MissingSiteMinderUserIdError { get; set; }
@@ -99,6 +116,11 @@ namespace HetsApi.Authentication
         public string MissingDbUserIdError { get; set; }
 
         /// <summary>
+        /// Missing Business Id Error
+        /// </summary>
+        public string MissingBusinessIdError { get; set; }
+
+        /// <summary>
         /// Inactive Database UserId Error
         /// </summary>
         public string InactiveDbUserIdError { get; set; }
@@ -112,6 +134,11 @@ namespace HetsApi.Authentication
         /// Development Environment Authentication Key
         /// </summary>
         public string DevAuthenticationTokenKey { get; set; }
+
+        /// <summary>
+        /// Development Environment Authentication Key - Business User
+        /// </summary>
+        public string DevBusinessTokenKey { get; set; }
 
         /// <summary>
         /// Development Environment default UserId
@@ -177,7 +204,8 @@ namespace HetsApi.Authentication
                 UserSettings userSettings = new UserSettings();
                 string userId = "";
                 string siteMinderGuid = "";
-
+                string businessGuid = "";
+                
                 // ********************************************************
                 // if this is an Error or Authentication API - Ignore
                 // ********************************************************
@@ -212,7 +240,28 @@ namespace HetsApi.Authentication
                         _logger.LogInformation("Dev Authentication token found ({0})", temp);
                         userId = temp;
                     }
-                }                                            
+                }
+
+                // **************************************************
+                // check if we have a Dev Environment Cookie
+                // * Business User
+                // **************************************************
+                if (hostingEnv.IsDevelopment())
+                {
+                    string temp = context.Request.Cookies[options.DevBusinessTokenKey];
+
+                    if (!string.IsNullOrEmpty(temp) &&
+                        temp.Contains(','))
+                    {                        
+                        
+
+                        _logger.LogInformation("Dev (Business) Authentication token found ({0})", temp);
+
+                        var credential = temp.Split(',');
+                        userId = credential[0];
+                        businessGuid = credential[1];                                                
+                    }
+                }
 
                 // **************************************************
                 // authenticate based on SiteMinder Headers
@@ -246,9 +295,12 @@ namespace HetsApi.Authentication
 
                     siteMinderGuid = context.Request.Headers[options.SiteMinderUserGuidKey];
 
+                    // check if there is a business guid (Business BCeID)
+                    businessGuid = context.Request.Headers[options.SiteMinderBusinessGuidKey];
+
                     // **************************************************
                     // validate credentials
-                    // **************************************************
+                    // **************************************************                    
                     if (string.IsNullOrEmpty(userId))
                     {
                         _logger.LogError(options.MissingSiteMinderUserIdError);
@@ -269,51 +321,79 @@ namespace HetsApi.Authentication
                 _logger.LogInformation("User Credential: {0}", userId);
                 _logger.LogInformation("SiteMinder Guid: {0}", siteMinderGuid);
 
-                userSettings.HetsUser = UserAccountHelper.GetUser(dbAppContext, userId, siteMinderGuid);
-
-                if (userSettings.HetsUser == null)
+                if (!string.IsNullOrEmpty(businessGuid))
                 {
-                    _logger.LogWarning(options.MissingDbUserIdError + " (" + userId + ")");
-                    return Task.FromResult(AuthenticateResult.Fail(options.MissingDbUserIdError));
-                }
+                    _logger.LogInformation("SiteMinder Business Guid: {0}", businessGuid);
+                    
+                    userSettings.HetsBusinessUser = UserAccountHelper.GetBusinessUser(dbAppContext, userId, businessGuid, siteMinderGuid);
 
-                if (!userSettings.HetsUser.Active)
-                {
-                    _logger.LogWarning(options.InactiveDbUserIdError + " (" + userId + ")");
-                    return Task.FromResult(AuthenticateResult.Fail(options.InactiveDbUserIdError));
-                }
-
-                // **************************************************
-                // update the user back to their default district
-                // **************************************************
-                string tempSwitch = context.Request.Cookies["HETSDistrict"];
-
-                if (string.IsNullOrEmpty(tempSwitch) && userSettings.HetsUser != null)
-                {
-                    HetUserDistrict userDistrict = dbAppContext.HetUserDistrict.AsNoTracking()
-                        .Include(x => x.User)
-                        .Include(x => x.District)
-                        .FirstOrDefault(x => x.User.UserId == userSettings.HetsUser.UserId &&
-                                             x.IsPrimary);
-
-                    // if we don't find a primary - look for the first one in the list
-                    if (userDistrict == null)
+                    if (userSettings.HetsBusinessUser == null)
                     {
-                        userDistrict = dbAppContext.HetUserDistrict.AsNoTracking()
+                        return Task.FromResult(AuthenticateResult.Fail(options.MissingDbUserIdError));
+                    }
+
+                    if (userSettings.HetsBusinessUser != null)
+                    {
+                        userSettings.SiteMinderBusinessGuid = businessGuid;
+                        userSettings.SiteMinderGuid = siteMinderGuid;
+                        userSettings.UserAuthenticated = true;
+                        userSettings.BusinessUser = true;
+                    }                    
+                }
+                else
+                {
+                    userSettings.HetsUser = UserAccountHelper.GetUser(dbAppContext, userId, siteMinderGuid);
+
+                    if (userSettings.HetsUser == null)
+                    {
+                        _logger.LogWarning(options.MissingDbUserIdError + " (" + userId + ")");
+                        return Task.FromResult(AuthenticateResult.Fail(options.MissingDbUserIdError));
+                    }
+
+                    if (!userSettings.HetsUser.Active)
+                    {
+                        _logger.LogWarning(options.InactiveDbUserIdError + " (" + userId + ")");
+                        return Task.FromResult(AuthenticateResult.Fail(options.InactiveDbUserIdError));
+                    }
+
+                    // **************************************************
+                    // update the user back to their default district
+                    // **************************************************
+                    string tempSwitch = context.Request.Cookies["HETSDistrict"];
+
+                    if (string.IsNullOrEmpty(tempSwitch) && userSettings.HetsUser != null)
+                    {
+                        HetUserDistrict userDistrict = dbAppContext.HetUserDistrict.AsNoTracking()
                             .Include(x => x.User)
                             .Include(x => x.District)
-                            .FirstOrDefault(x => x.User.UserId == userSettings.HetsUser.UserId);
+                            .FirstOrDefault(x => x.User.UserId == userSettings.HetsUser.UserId &&
+                                                 x.IsPrimary);
+
+                        // if we don't find a primary - look for the first one in the list
+                        if (userDistrict == null)
+                        {
+                            userDistrict = dbAppContext.HetUserDistrict.AsNoTracking()
+                                .Include(x => x.User)
+                                .Include(x => x.District)
+                                .FirstOrDefault(x => x.User.UserId == userSettings.HetsUser.UserId);
+                        }
+
+                        // update the current district for the user
+                        if (userDistrict != null &&
+                            userSettings.HetsUser.DistrictId != userDistrict.District.DistrictId)
+                        {
+                            _logger.LogInformation("Resetting users district back to primary ({0})",
+                                userSettings.HetsUser.SmUserId);
+
+                            userSettings.HetsUser.DistrictId = userDistrict.District.DistrictId;
+                            dbAppContext.HetUser.Update(userSettings.HetsUser);
+                            dbAppContext.SaveChanges();
+                        }
                     }
 
-                    // update the current district for the user
-                    if (userDistrict != null && userSettings.HetsUser.DistrictId != userDistrict.District.DistrictId)
-                    {
-                        _logger.LogInformation("Resetting users district back to primary ({0})", userSettings.HetsUser.SmUserId);
-
-                        userSettings.HetsUser.DistrictId = userDistrict.District.DistrictId;
-                        dbAppContext.HetUser.Update(userSettings.HetsUser);
-                        dbAppContext.SaveChanges();
-                    }
+                    userSettings.SiteMinderGuid = siteMinderGuid;
+                    userSettings.UserAuthenticated = true;
+                    userSettings.BusinessUser = false;
                 }
 
                 // **************************************************
@@ -321,14 +401,31 @@ namespace HetsApi.Authentication
                 // **************************************************
                 _logger.LogInformation("Validating user permissions");
 
-                ClaimsPrincipal userPrincipal = userSettings.HetsUser.ToClaimsPrincipal(options.Scheme);
+                ClaimsPrincipal userPrincipal;
 
-                if (!userPrincipal.HasClaim(HetUser.PermissionClaim, HetPermission.Login) &&
-                    !userPrincipal.HasClaim(HetUser.PermissionClaim, HetPermission.BusinessLogin) &&
-                    !userPrincipal.HasClaim(HetUser.PermissionClaim, HetPermission.ImportData))
+                if (userSettings.BusinessUser && 
+                    userSettings.UserAuthenticated &&
+                    userSettings.HetsBusinessUser != null)
                 {
-                    _logger.LogWarning(options.MissingDbUserIdError + " (" + userId + ")");
-                    return Task.FromResult(AuthenticateResult.Fail(options.InvalidPermissions));
+                    userPrincipal = userSettings.HetsBusinessUser.ToClaimsPrincipal(options.Scheme);
+
+                    if (!userPrincipal.HasClaim(HetUser.PermissionClaim, HetPermission.BusinessLogin))
+                    {
+                        _logger.LogWarning(options.MissingDbUserIdError + " (" + userId + ")");
+                        return Task.FromResult(AuthenticateResult.Fail(options.InvalidPermissions));
+                    }
+                }
+                else 
+                {
+                    userPrincipal = userSettings.HetsUser.ToClaimsPrincipal(options.Scheme);
+
+                    if (!userPrincipal.HasClaim(HetUser.PermissionClaim, HetPermission.Login) &&
+                        !userPrincipal.HasClaim(HetUser.PermissionClaim, HetPermission.BusinessLogin) &&
+                        !userPrincipal.HasClaim(HetUser.PermissionClaim, HetPermission.ImportData))
+                    {
+                        _logger.LogWarning(options.MissingDbUserIdError + " (" + userId + ")");
+                        return Task.FromResult(AuthenticateResult.Fail(options.InvalidPermissions));
+                    }
                 }                
 
                 // **************************************************
