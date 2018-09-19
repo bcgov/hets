@@ -7,6 +7,7 @@ using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Model;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HetsApi.Controllers
 {
@@ -38,7 +39,7 @@ namespace HetsApi.Controllers
         [Route("")]
         [SwaggerOperation("RegionsGet")]
         [SwaggerResponse(200, type: typeof(List<HetRegion>))]
-        [RequiresPermission(HetPermission.Login)]
+        [AllowAnonymous]
         public virtual IActionResult RegionsGet()
         {
             List<HetRegion> regions = _context.HetRegion.ToList();

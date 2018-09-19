@@ -8,6 +8,7 @@ using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HetsApi.Controllers
 {
@@ -39,7 +40,7 @@ namespace HetsApi.Controllers
         [Route("")]
         [SwaggerOperation("PermissionsGet")]
         [SwaggerResponse(200, type: typeof(List<PermissionLite>))]
-        [RequiresPermission(HetPermission.Login)]
+        [AllowAnonymous]
         public virtual IActionResult PermissionsGet()
         {
             List<HetPermission> permissions = _context.HetPermission.ToList();
