@@ -259,9 +259,6 @@ namespace HetsApi.Controllers
                 if (duplicatesExist) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-08", _configuration)));
             }
 
-            // check if this an update equipment
-            if (item.EquipmentId > 0) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));            
-            
             // set default values for new piece of Equipment
             // certain fields are set on new record - set defaults (including status = "Inactive")
             item = EquipmentHelper.SetNewRecordFields(item, _context);

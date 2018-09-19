@@ -156,9 +156,6 @@ namespace HetsApi.Controllers
             // not found
             if (item == null) return new ObjectResult(new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
 
-            // check if this an update request
-            if (item.RentalRequestId > 0) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-
             // check if we have an existing rental request for the same 
             // local area and equipment type - if so - throw an error
             // Per discussion with the business (19 Jan 2018):
