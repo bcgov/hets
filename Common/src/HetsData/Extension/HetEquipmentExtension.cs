@@ -6,11 +6,12 @@ namespace HetsData.Model
     public partial class HetEquipment
     {        
         /// <summary>
-        /// Approved Status Code
+        /// Status Codes
         /// </summary>
         public const string StatusApproved = "Approved";
         public const string StatusArchived = "Archived";
-        public const string StatusPending = "Unapproved";
+        public const string StatusUnapproved = "Unapproved";
+        public const string StatusPending = "Pending";
 
         [NotMapped]
         public string Status { get; set; }

@@ -7,6 +7,12 @@ namespace HetsData.Model
     /// </summary>
     public sealed partial class HetProject
     {
+        /// <summary>
+        /// Status Codes
+        /// </summary>
+        public const string StatusActive = "Active";
+        public const string StatusComplete = "Complete";
+
         [NotMapped]
         public bool CanEditStatus { get; set; }
 

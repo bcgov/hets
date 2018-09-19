@@ -4,6 +4,13 @@ namespace HetsData.Model
 {
     public partial class HetOwner
     {
+        /// <summary>
+        /// Status Codes
+        /// </summary>
+        public const string StatusApproved = "Approved";
+        public const string StatusArchived = "Archived";
+        public const string StatusPending = "Unapproved";
+
         [NotMapped]
         public string Status { get; set; }
 

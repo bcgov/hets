@@ -166,11 +166,16 @@ namespace HetsApi.Controllers
             // get record
             HetOwner owner = _context.HetOwner.First(x => x.OwnerId != id);
 
+            // get status id
+            int? statusId = StatusHelper.GetStatusId(item.Status, "ownerStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            owner.OwnerStatusTypeId = (int)statusId;
             owner.Status = item.Status;
             owner.StatusComment = item.StatusComment;
 
             // set owner archive attributes (if necessary)
-            if (owner.Status.Equals("Archived", StringComparison.CurrentCultureIgnoreCase))
+            if (owner.Status.Equals(HetOwner.StatusArchived, StringComparison.CurrentCultureIgnoreCase))
             {
                 owner.ArchiveCode = "Y";
                 owner.ArchiveDate = DateTime.UtcNow;
@@ -185,7 +190,7 @@ namespace HetsApi.Controllers
 
             // if the status = Archived or Pending - need to update all associated equipment too
             // (if the Owner is "Activated" - it DOES NOT automatically activate the equipment)
-            if (!item.Status.Equals("Approved", StringComparison.InvariantCultureIgnoreCase))
+            if (!item.Status.Equals(HetOwner.StatusApproved, StringComparison.InvariantCultureIgnoreCase))
             {
                 foreach (HetEquipment equipment in owner.HetEquipment)
                 {
@@ -195,13 +200,17 @@ namespace HetsApi.Controllers
 
                     // if the equipment is already archived - leave it archived
                     // if the equipment is already in the same state as the owner's new state - then ignore
-                    if (!equipment.Status.Equals("Archived", StringComparison.CurrentCultureIgnoreCase) &&
+                    if (!equipment.Status.Equals(HetEquipment.StatusArchived, StringComparison.CurrentCultureIgnoreCase) &&
                         !equipment.Status.Equals(item.Status, StringComparison.InvariantCultureIgnoreCase))
                     {
+                        int? eqStatusId = StatusHelper.GetStatusId(item.Status, "equipmentStatus", _context);
+                        if (eqStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+                        equipment.EquipmentStatusTypeId = (int)eqStatusId;
                         equipment.Status = item.Status;
                         equipment.StatusComment = item.StatusComment;
 
-                        if (equipment.Status.Equals("Archived", StringComparison.CurrentCultureIgnoreCase))
+                        if (equipment.Status.Equals(HetEquipment.StatusArchived, StringComparison.CurrentCultureIgnoreCase))
                         {
                             equipment.ArchiveCode = "Y";
                             equipment.ArchiveDate = DateTime.UtcNow;

@@ -391,7 +391,7 @@ namespace HetsData.Helpers
             item.IsSeniorityOverridden = false;
 
             // new equipment MUST always start as unapproved - it isn't assigned to any block yet
-            int? statusId = StatusHelper.GetStatusId("Unapproved", "equipmentStatus", context);
+            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusUnapproved, "equipmentStatus", context);
 
             if (statusId == null)
             {

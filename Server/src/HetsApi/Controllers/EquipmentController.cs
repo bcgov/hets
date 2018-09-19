@@ -174,17 +174,13 @@ namespace HetsApi.Controllers
 
             // update equipment status
             int? statusId = StatusHelper.GetStatusId(item.Status, "equipmentStatus", _context);
-
-            if (statusId == null)
-            {
-                throw new DataException("Status Id cannot be null");
-            }
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             equipment.EquipmentStatusTypeId = (int)statusId;
             equipment.Status = item.Status;
             equipment.StatusComment = item.StatusComment;
 
-            if (equipment.Status.Equals("Archived", StringComparison.CurrentCultureIgnoreCase))
+            if (equipment.Status.Equals(HetEquipment.StatusArchived, StringComparison.CurrentCultureIgnoreCase))
             {
                 equipment.ArchiveCode = "Y";
                 equipment.ArchiveDate = DateTime.UtcNow;
@@ -203,17 +199,17 @@ namespace HetsApi.Controllers
                 // (if this was a new record with no block/seniority yet)
                 if (equipment.BlockNumber == null &&
                     equipment.Seniority == null &&
-                    equipment.Status.Equals("Approved", StringComparison.CurrentCultureIgnoreCase))
+                    equipment.Status.Equals(HetEquipment.StatusApproved, StringComparison.CurrentCultureIgnoreCase))
                 {
                     // per HETS-536 -> ignore and let the user set the "Approved Date" date
 
                     // recalculation seniority (move into a block)
                     recalculateSeniority = true;
                 }
-                else if ((oldStatus.Equals("Approved", StringComparison.CurrentCultureIgnoreCase) &&
-                          !equipment.Status.Equals("Approved", StringComparison.CurrentCultureIgnoreCase)) ||
-                         (!oldStatus.Equals("Approved", StringComparison.CurrentCultureIgnoreCase) &&
-                          equipment.Status.Equals("Approved", StringComparison.CurrentCultureIgnoreCase)))
+                else if ((oldStatus.Equals(HetEquipment.StatusApproved, StringComparison.CurrentCultureIgnoreCase) &&
+                          !equipment.Status.Equals(HetEquipment.StatusApproved, StringComparison.CurrentCultureIgnoreCase)) ||
+                         (!oldStatus.Equals(HetEquipment.StatusApproved, StringComparison.CurrentCultureIgnoreCase) &&
+                          equipment.Status.Equals(HetEquipment.StatusApproved, StringComparison.CurrentCultureIgnoreCase)))
                 {
                     // recalculation seniority (move into or out of a block)
                     recalculateSeniority = true;
