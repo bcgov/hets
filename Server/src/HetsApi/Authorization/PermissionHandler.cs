@@ -66,6 +66,23 @@ namespace HetsApi.Authorization
             }
 
             // **************************************************
+            // check if we have a Business Dev Environment Cookie
+            // **************************************************
+            if (_hostingEnv.IsDevelopment())
+            {
+                string temp = _httpContext.Request.Cookies["BUS-USER"];
+
+                if (!string.IsNullOrEmpty(temp))
+                {
+                    // access granted
+                    context.Succeed(requirement);
+
+                    await Task.CompletedTask;
+                    return;
+                }
+            }
+
+            // **************************************************
             // if not - check the users permissions
             // **************************************************
             if (context.User.HasPermissions(requirement.RequiredPermissions.ToArray()))

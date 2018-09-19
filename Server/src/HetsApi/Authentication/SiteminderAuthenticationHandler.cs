@@ -252,9 +252,7 @@ namespace HetsApi.Authentication
 
                     if (!string.IsNullOrEmpty(temp) &&
                         temp.Contains(','))
-                    {                        
-                        
-
+                    {                                                
                         _logger.LogInformation("Dev (Business) Authentication token found ({0})", temp);
 
                         var credential = temp.Split(',');

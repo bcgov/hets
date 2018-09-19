@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using HetsCommon;
 using HetsApi.Helpers;
+using HetsApi.Model;
 using HetsData.Model;
 
 namespace HetsApi.Controllers
@@ -27,10 +28,11 @@ namespace HetsApi.Controllers
             _configuration = configuration;
 
             // set context data
-            HetUser user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
+            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
             _context.SmUserId = user.SmUserId;
             _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.Guid;
+            _context.SmUserGuid = user.UserGuid;
+            _context.SmBusinessGuid = user.BusinessGuid;
         }
 
         /// <summary>

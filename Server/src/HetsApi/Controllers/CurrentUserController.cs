@@ -10,6 +10,7 @@ using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Model;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HetsApi.Controllers
 {
@@ -29,10 +30,11 @@ namespace HetsApi.Controllers
             _configuration = configuration;    
             
             // set context data
-            HetUser user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
+            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
             _context.SmUserId = user.SmUserId;
             _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.Guid;
+            _context.SmUserGuid = user.UserGuid;
+            _context.SmBusinessGuid = user.BusinessGuid;
         }
 
         /// <summary>
@@ -137,36 +139,104 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("")]
         [SwaggerOperation("UsersCurrentGet")]
-        [SwaggerResponse(200, type: typeof(HetUser))]
-        [RequiresPermission(HetPermission.Login)]
+        [SwaggerResponse(200, type: typeof(User))]
+        [AllowAnonymous]
         public virtual IActionResult UsersCurrentGet()
         {
             // get the current user id
+            string businessGuid = _context.SmBusinessGuid;
             string userId = _context.SmUserId;
 
             // not found
             if (userId == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
-            HetUser currentUser = _context.HetUser
-                .Include(x => x.District)
-                .Include(x => x.HetUserRole)
-                    .ThenInclude(y => y.Role)
-                        .ThenInclude(z => z.HetRolePermission)
-                            .ThenInclude(z => z.Permission)
-                .First(x => x.SmUserId == userId);            
 
-            // remove inactive roles
-            for (int i = currentUser.HetUserRole.Count - 1; i >= 0; i--)
+            User user = new User();
+
+            if (businessGuid == null)
             {
-                if (currentUser.HetUserRole.ElementAt(i).EffectiveDate > DateTime.UtcNow ||
-                    (currentUser.HetUserRole.ElementAt(i).ExpiryDate != null &&
-                     currentUser.HetUserRole.ElementAt(i).ExpiryDate < DateTime.UtcNow))
+                HetUser currentUser = _context.HetUser
+                    .Include(x => x.District)
+                    .Include(x => x.HetUserRole)
+                        .ThenInclude(y => y.Role)
+                            .ThenInclude(z => z.HetRolePermission)
+                                .ThenInclude(z => z.Permission)
+                    .First(x => x.SmUserId == userId);
+
+                // remove inactive roles
+                for (int i = currentUser.HetUserRole.Count - 1; i >= 0; i--)
                 {
-                    currentUser.HetUserRole.Remove(currentUser.HetUserRole.ElementAt(i));
+                    if (currentUser.HetUserRole.ElementAt(i).EffectiveDate > DateTime.UtcNow ||
+                        (currentUser.HetUserRole.ElementAt(i).ExpiryDate != null &&
+                         currentUser.HetUserRole.ElementAt(i).ExpiryDate < DateTime.UtcNow))
+                    {
+                        currentUser.HetUserRole.Remove(currentUser.HetUserRole.ElementAt(i));
+                    }
+                }
+
+                user.Id = currentUser.UserId;
+                user.SmUserId = currentUser.SmUserId;
+                user.GivenName = currentUser.GivenName;
+                user.Surname = currentUser.Surname;
+                user.DisplayName = currentUser.GivenName + " " + currentUser.Surname;
+                user.UserGuid = currentUser.Guid;
+                user.BusinessUser = false;
+                user.District = currentUser.District;
+                user.HetUserDistrict = currentUser.HetUserDistrict;
+                user.HetUserRole = currentUser.HetUserRole;
+                user.SmAuthorizationDirectory = currentUser.SmAuthorizationDirectory;
+            }
+            else
+            {
+                HetBusinessUser tmpUser = _context.HetBusinessUser.AsNoTracking()
+                    .Include(x => x.HetBusinessUserRole)
+                        .ThenInclude(y => y.Role)
+                            .ThenInclude(z => z.HetRolePermission)
+                                .ThenInclude(z => z.Permission)
+                    .FirstOrDefault(x => x.BceidUserId.Equals(userId, StringComparison.InvariantCultureIgnoreCase));
+
+                if (tmpUser != null)
+                {
+                    // get business
+                    HetBusiness business = _context.HetBusiness.AsNoTracking()
+                        .First(x => x.BusinessId == tmpUser.BusinessId);
+
+                    user.Id = tmpUser.BusinessUserId;
+                    user.SmUserId = tmpUser.BceidUserId;
+                    user.GivenName = tmpUser.BceidFirstName;
+                    user.Surname = tmpUser.BceidLastName;
+                    user.DisplayName = tmpUser.BceidDisplayName;
+                    user.UserGuid = tmpUser.BceidGuid;
+                    user.BusinessUser = true;
+                    user.BusinessId = tmpUser.BusinessId;
+                    user.BusinessGuid = business.BceidBusinessGuid;
+                    user.SmAuthorizationDirectory = "BCeID";
+
+                    int id = 0;
+
+                    foreach (HetBusinessUserRole role in tmpUser.HetBusinessUserRole)
+                    {
+                        id++;
+
+                        HetUserRole userRole = new HetUserRole
+                        {
+                            UserRoleId = id,
+                            UserId = role.BusinessUserId,
+                            RoleId = role.RoleId,
+                            Role = role.Role
+                        };
+
+                        if (user.HetUserRole == null)
+                        {
+                            user.HetUserRole = new List<HetUserRole>();
+                        }
+
+                        user.HetUserRole.Add(userRole);
+                    }
                 }
             }
 
-            return new ObjectResult(new HetsResponse(currentUser));
+
+            return new ObjectResult(new HetsResponse(user));
         }
 
         /// <summary>

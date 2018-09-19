@@ -29,10 +29,11 @@ namespace HetsApi.Controllers
             _configuration = configuration;
 
             // set context data
-            HetUser user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
+            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
             _context.SmUserId = user.SmUserId;
             _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.Guid;
+            _context.SmUserGuid = user.UserGuid;
+            _context.SmBusinessGuid = user.BusinessGuid;
         }
         
         /// <summary>

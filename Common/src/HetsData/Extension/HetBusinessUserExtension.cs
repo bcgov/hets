@@ -34,7 +34,11 @@ namespace HetsData.Model
 
         private List<Claim> GetClaims()
         {
-            List<Claim> claims = new List<Claim> { new Claim(ClaimTypes.Name, BceidUserId) };
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, BceidUserId),
+                new Claim(ClaimTypes.Actor, "BusinessUser")
+            };
 
             if (!string.IsNullOrEmpty(BceidDisplayName))
                 claims.Add(new Claim(ClaimTypes.Name, BceidDisplayName));

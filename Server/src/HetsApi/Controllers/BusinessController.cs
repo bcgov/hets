@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -25,13 +26,14 @@ namespace HetsApi.Controllers
         public BusinessController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
-            _configuration = configuration;    
-            
+            _configuration = configuration;
+
             // set context data
-            HetUser user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
+            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
             _context.SmUserId = user.SmUserId;
             _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.Guid;
+            _context.SmUserGuid = user.UserGuid;
+            _context.SmBusinessGuid = user.BusinessGuid;
         }
 
         /// <summary>
@@ -73,12 +75,13 @@ namespace HetsApi.Controllers
         /// </summary>
         /// <param name="id">id of Business to fetch</param>
         /// <param name="sharedKey"></param>
+        /// <param name="postalCode"></param>
         [HttpGet]
         [Route("{id}/validateOwner")]
         [SwaggerOperation("BusinessIdValidateOwner")]
         [SwaggerResponse(200, type: typeof(HetBusiness))]
         [RequiresPermission(HetPermission.BusinessLogin)]
-        public virtual IActionResult BusinessIdValidateOwner([FromRoute]int id, [FromQuery]string sharedKey)
+        public virtual IActionResult BusinessIdValidateOwner([FromRoute]int id, [FromQuery]string sharedKey, [FromQuery]string postalCode)
         {
             if (string.IsNullOrEmpty(sharedKey))
             {
@@ -86,13 +89,21 @@ namespace HetsApi.Controllers
                 return new ObjectResult(new HetsResponse("HETS-19", ErrorViewModel.GetDescription("HETS-19", _configuration)));
             }
 
+            if (string.IsNullOrEmpty(postalCode))
+            {
+                // postal code not provided
+                return new ObjectResult(new HetsResponse("HETS-22", ErrorViewModel.GetDescription("HETS-22", _configuration)));
+            }
+
             bool exists = _context.HetBusiness.Any(a => a.BusinessId == id);
 
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            // find owner using shred key (exact match)
-            HetOwner owner = _context.HetOwner.FirstOrDefault(a => a.SharedKey.Equals(sharedKey));
+            // find owner using shred key & postal code (exact match)
+            HetOwner owner = _context.HetOwner
+                .FirstOrDefault(a => a.SharedKey.Equals(sharedKey) &&
+                                     a.PostalCode.Trim().Equals(postalCode.Trim(), StringComparison.InvariantCultureIgnoreCase));
 
             // validate the key
             if (owner == null)
