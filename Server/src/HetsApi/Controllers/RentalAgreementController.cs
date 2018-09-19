@@ -89,6 +89,9 @@ namespace HetsApi.Controllers
             // get record
             HetRentalAgreement agreement = _context.HetRentalAgreement.First(a => a.RentalAgreementId == id);
 
+            int? statusId = StatusHelper.GetStatusId(item.Status, "rentalAgreementStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
             agreement.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             agreement.DatedOn = item.DatedOn;
             agreement.EquipmentRate = item.EquipmentRate;
@@ -98,7 +101,7 @@ namespace HetsApi.Controllers
             agreement.Number = item.Number;
             agreement.RateComment = item.RateComment;
             agreement.RatePeriod = item.RatePeriod;
-            agreement.Status = item.Status;
+            agreement.RentalAgreementStatusTypeId = (int)statusId;
 
             // save the changes
             _context.SaveChanges();
@@ -129,6 +132,9 @@ namespace HetsApi.Controllers
                 throw new DataException("Rate Period Id cannot be null");
             }
 
+            int? statusId = StatusHelper.GetStatusId(item.Status, "rentalAgreementStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+        
             HetRentalAgreement agreement = new HetRentalAgreement
             {
                 Number = RentalAgreementHelper.GetRentalAgreementNumber(item.Equipment, _context),
@@ -139,7 +145,7 @@ namespace HetsApi.Controllers
                 Note = item.Note,
                 RateComment = item.RateComment,
                 RatePeriodTypeId = (int)rateTypeId,
-                Status = item.Status,
+                RentalAgreementStatusTypeId = (int)statusId,
                 EquipmentId = item.EquipmentId,
                 ProjectId = item.ProjectId
             };

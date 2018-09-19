@@ -81,11 +81,7 @@ namespace HetsApi.Controllers
             HetProject project = _context.HetProject.First(a => a.ProjectId == id);
 
             int? statusId = StatusHelper.GetStatusId(item.Status, "projectStatus", _context);
-
-            if (statusId == null)
-            {
-                throw new DataException("Status Id cannot be null");
-            }
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             project.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             project.Name = item.Name;
@@ -115,11 +111,8 @@ namespace HetsApi.Controllers
             if (item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             int? statusId = StatusHelper.GetStatusId(item.Status, "projectStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            if (statusId == null)
-            {
-                throw new DataException("Status Id cannot be null");
-            }
 
             HetProject project = new HetProject
             {
