@@ -240,10 +240,7 @@ namespace HetsApi.Controllers
         {
             // not found
             if (item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-
-            // check if this an update equipment
-            if (item.OwnerId > 0) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-
+            
             // create record
             HetOwner owner = new HetOwner
             {

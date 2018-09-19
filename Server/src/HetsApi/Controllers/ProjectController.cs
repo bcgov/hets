@@ -114,9 +114,6 @@ namespace HetsApi.Controllers
             // not found
             if (item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            // check if this an update project
-            if (item.ProjectId > 0) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-
             int? statusId = StatusHelper.GetStatusId(item.Status, "projectStatus", _context);
 
             if (statusId == null)

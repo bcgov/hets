@@ -121,9 +121,6 @@ namespace HetsApi.Controllers
             // not found
             if (item == null) return new ObjectResult(new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
 
-            // check if this an update agreement
-            if (item.RentalAgreementId > 0) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-
             // set the rate period type id
             int? rateTypeId = StatusHelper.GetRatePeriodId(item.RatePeriod, _context);
 
