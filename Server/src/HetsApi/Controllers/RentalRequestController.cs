@@ -12,6 +12,7 @@ using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.ExpressionTranslators.Internal;
 
 namespace HetsApi.Controllers
 {
@@ -125,10 +126,13 @@ namespace HetsApi.Controllers
                 item.Status = "Complete";
                 item.FirstOnRotationList = null;
             }
-                
+
+            int? statusId = StatusHelper.GetStatusId(item.Status, "rentalRequestStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
             // update rental request
             rentalRequest.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
-            rentalRequest.Status = item.Status;
+            rentalRequest.RentalRequestStatusTypeId = (int)statusId;
             rentalRequest.EquipmentCount = item.EquipmentCount;
             rentalRequest.ExpectedEndDate = item.ExpectedEndDate;
             rentalRequest.ExpectedStartDate = item.ExpectedStartDate;
@@ -172,17 +176,20 @@ namespace HetsApi.Controllers
             // in Progress Rental Request already exists
             if (requests.Count > 0) return new StatusCodeResult(405);
 
+            int? statusId = StatusHelper.GetStatusId(item.Status, "rentalRequestStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            
             // create new rental request
             HetRentalRequest rentalRequest = new HetRentalRequest
             {
-                LocalArea = {LocalAreaId = item.LocalArea.LocalAreaId},
-                DistrictEquipmentType = {DistrictEquipmentTypeId = item.DistrictEquipmentType.DistrictEquipmentTypeId},
-                Status = item.Status,
+                LocalAreaId = item.LocalArea.LocalAreaId,
+                ProjectId = item.Project.ProjectId,
+                DistrictEquipmentTypeId = item.DistrictEquipmentType.DistrictEquipmentTypeId,
+                RentalRequestStatusTypeId = (int)statusId,
                 EquipmentCount = item.EquipmentCount,
                 ExpectedEndDate = item.ExpectedEndDate,
                 ExpectedStartDate = item.ExpectedStartDate,
-                ExpectedHours = item.ExpectedHours,
-                HetDigitalFile = item.HetDigitalFile
+                ExpectedHours = item.ExpectedHours
             };
 
             // record not found - build new list

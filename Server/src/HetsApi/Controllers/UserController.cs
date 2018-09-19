@@ -129,37 +129,20 @@ namespace HetsApi.Controllers
                 Active = item.Active,
                 Email = item.Email,
                 GivenName = item.GivenName,
-                Surname = item.Surname,
-                District = item.District,
-                SmUserId = item.SmUserId
-            };
-
-            HetUserDistrict newUserDistrict = new HetUserDistrict
-            {
-                UserId = item.UserId,
+                Surname = item.Surname,                
+                SmUserId = item.SmUserId,
                 DistrictId = item.District.DistrictId
             };
+            
+            HetUserDistrict newUserDistrict = new HetUserDistrict
+            {                
+                DistrictId = item.District.DistrictId,
+                IsPrimary = true
+            };
+            
+            user.HetUserDistrict.Add(newUserDistrict);            
 
-            if (user.HetUserDistrict == null)
-            {
-                user.HetUserDistrict = new List<HetUserDistrict>();
-                newUserDistrict.IsPrimary = true;
-            }
-
-            user.HetUserDistrict.Add(newUserDistrict);
-
-            // create or update user record
-            bool exists = _context.HetUser.Any(x => x.UserId == user.UserId);
-
-            if (exists)
-            {
-                _context.HetUser.Update(user);
-            }
-            else
-            {
-                _context.HetUser.Add(user);
-            }
-
+            _context.HetUser.Add(user);
             _context.SaveChanges();
 
             int id = user.UserId;
