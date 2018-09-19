@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
-using HetsData.Helpers;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
-using HetsData.Model;
 using Microsoft.EntityFrameworkCore;
+using HetsApi.Model;
+using HetsData.Helpers;
+using HetsData.Model;
 
 namespace HetsApi.Helpers
 {
@@ -18,7 +20,19 @@ namespace HetsApi.Helpers
         {
             string userId = httpContext.User.Identity.Name;
             return userId;
-        }        
+        }
+
+        /// <summary>
+        /// Check if this is a Business User
+        /// </summary>
+        /// <param name="httpContext"></param>
+        /// <returns></returns>
+        public static bool IsBusiness(HttpContext httpContext)
+        {
+            return httpContext.User.Claims
+                .Any(claim => claim.Type == ClaimTypes.Actor && 
+                              claim.Value == "BusinessUser");
+        }
 
         /// <summary>
         /// Get user's district id
@@ -39,10 +53,55 @@ namespace HetsApi.Helpers
         /// <param name="context"></param>
         /// <param name="httpContext"></param>
         /// <returns></returns>
-        public static HetUser GetUser(DbAppContext context, HttpContext httpContext)
+        public static User GetUser(DbAppContext context, HttpContext httpContext)
         {
+            User user = new User();
+
+            // is this a business?
+            bool isBusinessUser = IsBusiness(httpContext);
             string userId = GetUserId(httpContext);
-            HetUser user = context.HetUser.FirstOrDefault(x => x.SmUserId == userId);
+
+            if (!isBusinessUser)
+            {                
+                HetUser tmpUser = context.HetUser.AsNoTracking()
+                    .FirstOrDefault(x => x.SmUserId.Equals(userId, StringComparison.InvariantCultureIgnoreCase));
+
+                if (tmpUser != null)
+                {
+                    user.Id = tmpUser.UserId;
+                    user.SmUserId = tmpUser.SmUserId;
+                    user.GivenName = tmpUser.GivenName;
+                    user.Surname = tmpUser.Surname;
+                    user.DisplayName = tmpUser.GivenName + " " + tmpUser.Surname;
+                    user.UserGuid = tmpUser.Guid;
+                    user.BusinessUser = false;
+                    user.SmAuthorizationDirectory = tmpUser.SmAuthorizationDirectory;
+                }
+            }
+            else
+            {
+                HetBusinessUser tmpUser = context.HetBusinessUser.AsNoTracking()
+                    .FirstOrDefault(x => x.BceidUserId.Equals(userId, StringComparison.InvariantCultureIgnoreCase));
+
+                if (tmpUser != null)
+                {
+                    // get business
+                    HetBusiness business = context.HetBusiness.AsNoTracking()
+                        .First(x => x.BusinessId == tmpUser.BusinessId);
+
+                    user.Id = tmpUser.BusinessUserId;
+                    user.SmUserId = tmpUser.BceidUserId;
+                    user.GivenName = tmpUser.BceidFirstName;
+                    user.Surname = tmpUser.BceidLastName;
+                    user.DisplayName = tmpUser.BceidDisplayName;
+                    user.UserGuid = tmpUser.BceidGuid;
+                    user.BusinessUser = true;
+                    user.BusinessId = tmpUser.BusinessId;
+                    user.BusinessGuid = business.BceidBusinessGuid;
+                    user.SmAuthorizationDirectory = "BCeID";
+                }
+            }
+
             return user;
         }
 

@@ -13,6 +13,7 @@ namespace HetsData.Model
         public string SmUserId { get; set; } = null;
         public string DirectoryName { get; set; } = null;
         public string SmUserGuid { get; set; } = null;
+        public string SmBusinessGuid { get; set; } = null;
 
         #region Method for Batch / Bulk Saving of Records
 

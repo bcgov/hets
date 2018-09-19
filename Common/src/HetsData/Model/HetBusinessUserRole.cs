@@ -27,6 +27,8 @@ namespace HetsData.Model
         public int ConcurrencyControlNumber { get; set; }
 
         public HetRole Role { get; set; }
+
+        [JsonIgnore]
         public HetBusinessUser BusinessUser { get; set; }
     }
 }
