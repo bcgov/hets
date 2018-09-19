@@ -9,6 +9,7 @@ using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Model;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HetsApi.Controllers
 {
@@ -44,7 +45,7 @@ namespace HetsApi.Controllers
         [Route("")]
         [SwaggerOperation("UserDistrictsGet")]
         [SwaggerResponse(200, type: typeof(List<HetUserDistrict>))]
-        [RequiresPermission(HetPermission.Login)]
+        [AllowAnonymous]
         public virtual IActionResult UserDistrictsGet()
         {
             // return for the current user only

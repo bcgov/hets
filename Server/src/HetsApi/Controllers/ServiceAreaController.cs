@@ -8,6 +8,7 @@ using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Model;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HetsApi.Controllers
 {
@@ -39,7 +40,7 @@ namespace HetsApi.Controllers
         [Route("")]
         [SwaggerOperation("ServiceAreasGet")]
         [SwaggerResponse(200, type: typeof(List<HetServiceArea>))]
-        [RequiresPermission(HetPermission.Login)]
+        [AllowAnonymous]
         public virtual IActionResult ServiceAreasGet()
         {
             List<HetServiceArea> serviceAreas = _context.HetServiceArea

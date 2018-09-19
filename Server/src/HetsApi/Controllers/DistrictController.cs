@@ -9,6 +9,7 @@ using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Model;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HetsApi.Controllers
 {
@@ -42,7 +43,7 @@ namespace HetsApi.Controllers
         [Route("")]
         [SwaggerOperation("DistrictsGet")]
         [SwaggerResponse(200, type: typeof(List<HetDistrict>))]
-        [RequiresPermission(HetPermission.Login)]
+        [AllowAnonymous]
         public virtual IActionResult DistrictsGet()
         {
             List<HetDistrict> districts = _context.HetDistrict.AsNoTracking()
@@ -82,13 +83,13 @@ namespace HetsApi.Controllers
         [Route("{id}/localAreas")]
         [SwaggerOperation("DistrictLocalAreasGet")]
         [SwaggerResponse(200, type: typeof(List<HetLocalArea>))]
-        [RequiresPermission(HetPermission.Login)]
+        [AllowAnonymous]
         public virtual IActionResult DistrictLocalAreasGet([FromRoute]int id)
         {
             bool exists = _context.HetDistrict.Any(a => a.DistrictId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new ObjectResult(new HetsResponse(new List<HetLocalArea>()));
             
             List<HetLocalArea> localAreas = _context.HetLocalArea.AsNoTracking()
                 .Where(x => x.ServiceArea.District.DistrictId == id)
