@@ -609,6 +609,15 @@ function parseOwner(owner) {
   owner.equipmentList = owner.equipment;
   delete owner.equipment;
 
+  owner.workSafeBCExpiryDate = owner.workSafeBcexpiryDate;
+  delete owner.workSafeBcexpiryDate;
+
+  owner.workSafeBCPolicyNumber = owner.workSafeBcpolicyNumber;
+  delete owner.workSafeBcpolicyNumber;
+  
+  owner.cglEndDate = owner.cglendDate;
+  delete owner.cglendDate;
+
   if (!owner.localArea) { owner.localArea = { id: 0, name: '' }; }
   if (!owner.localArea.serviceArea) { owner.localArea.serviceArea = { id: 0, name: '' }; }
   if (!owner.localArea.serviceArea.district) { owner.localArea.serviceArea.district = { id: 0, name: '' }; }
