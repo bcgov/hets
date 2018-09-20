@@ -21,6 +21,7 @@ var NotesAddDialog = React.createClass({
     return {
       noteId: this.props.note.id || 0,
       note: this.props.note.text || '',
+      concurrencyControlNumber: this.props.note.concurrencyControlNumber || 0,
       noteError: '',
       isNoLongerRelevant: false,
     };
@@ -63,6 +64,7 @@ var NotesAddDialog = React.createClass({
       this.props.onUpdate({
         id: this.state.noteId,
         text: this.state.note,
+        concurrencyControlNumber: this.state.concurrencyControlNumber,
         isNoLongerRelevant: false,
       });
     }

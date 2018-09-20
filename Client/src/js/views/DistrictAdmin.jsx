@@ -50,7 +50,9 @@ var DistrictAdmin = React.createClass({
   },
 
   deleteCondition(condition) {
-    Api.deleteCondition(condition.id);
+    Api.deleteCondition(condition.id).then(() => {
+      Api.getRentalConditions();
+    });
   },
 
   showConditionAddEditDialog() {
@@ -63,11 +65,11 @@ var DistrictAdmin = React.createClass({
 
   onConditionSave(data) {
     let condition = { ...data, district: { id: this.props.currentUser.district.id } };
-    let promise = Api.addCondition(condition);
+    let promise = Api.addCondition;
     if (condition.id !== 0) {
-      promise = Api.updateCondition(condition);
+      promise = Api.updateCondition;
     }
-    promise.then(() => {
+    promise(condition).then(() => {
       Api.getRentalConditions();
       this.closeConditionAddEditDialog();
     });
@@ -91,11 +93,11 @@ var DistrictAdmin = React.createClass({
 
   onDistrictEquipmentTypeSave(data) {
     let equipment = { ...data, district: { id: this.props.currentUser.district.id } };
-    let promise = Api.addDistrictEquipmentType(equipment);
+    let promise = Api.addDistrictEquipmentType;
     if (equipment.id !== 0) {
-      promise = Api.updateDistrictEquipmentType(equipment);
+      promise = Api.updateDistrictEquipmentType;
     }
-    promise.then(() => {
+    promise(equipment).then(() => {
       Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
       this.closeDistrictEquipmentTypeAddEditDialog();
     });
