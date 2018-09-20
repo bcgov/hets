@@ -50,7 +50,9 @@ var DistrictAdmin = React.createClass({
   },
 
   deleteCondition(condition) {
-    Api.deleteCondition(condition.id);
+    Api.deleteCondition(condition.id).then(() => {
+      Api.getRentalConditions();
+    });
   },
 
   showConditionAddEditDialog() {
