@@ -213,7 +213,8 @@ namespace HetsApi.Controllers
             if (role == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             
             // get permissions
-            List<HetPermission> allPermissions = _context.HetPermission.ToList();
+            List<HetPermission> allPermissions = _context.HetPermission.AsNoTracking().ToList();
+
             List<int> permissionIds = items.Select(x => x.PermissionId).ToList();
             List<int> existingPermissionIds = role.HetRolePermission.Select(x => x.Permission.PermissionId).ToList();
             List<int> permissionIdsToAdd = permissionIds.Where(x => !existingPermissionIds.Contains(x)).ToList();
@@ -221,7 +222,8 @@ namespace HetsApi.Controllers
             // permissions to add
             foreach (int permissionId in permissionIdsToAdd)
             {
-                HetPermission permToAdd = allPermissions.FirstOrDefault(x => x.PermissionId == permissionId);
+                HetPermission permToAdd = allPermissions
+                    .FirstOrDefault(x => x.PermissionId == permissionId);
 
                 // invalid permission
                 if (permToAdd == null) throw new ArgumentException("Invalid Permission Code");
@@ -237,7 +239,9 @@ namespace HetsApi.Controllers
             }
 
             // permissions to remove
-            List<HetRolePermission> permissionsToRemove = role.HetRolePermission.Where(x => x.Permission != null && !permissionIds.Contains(x.Permission.PermissionId)).ToList();
+            List<HetRolePermission> permissionsToRemove = role.HetRolePermission
+                .Where(x => x.Permission != null && 
+                            !permissionIds.Contains(x.Permission.PermissionId)).ToList();
 
             foreach (HetRolePermission perm in permissionsToRemove)
             {
@@ -250,7 +254,7 @@ namespace HetsApi.Controllers
             role = _context.HetRole.AsNoTracking()
                 .Where(x => x.RoleId == id)
                 .Include(x => x.HetRolePermission)
-                .ThenInclude(rp => rp.Permission)
+                    .ThenInclude(rp => rp.Permission)
                 .First();
 
             // return role permissions

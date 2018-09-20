@@ -99,14 +99,14 @@ namespace HetsApi.Controllers
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetOwner owner = _context.HetOwner.First(x => x.OwnerId != item.OwnerId);
+            HetOwner owner = _context.HetOwner.First(x => x.OwnerId == item.OwnerId);
 
             int? oldLocalArea = owner.LocalAreaId;
 
             owner.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             owner.CglendDate = item.CglendDate;
             owner.CglPolicyNumber = item.CglPolicyNumber;
-            owner.LocalAreaId = item.LocalArea.LocalAreaId;
+            owner.LocalAreaId = item.LocalAreaId;
             owner.WorkSafeBcexpiryDate = item.WorkSafeBcexpiryDate;
             owner.WorkSafeBcpolicyNumber = item.WorkSafeBcpolicyNumber;
             owner.IsMaintenanceContractor = item.IsMaintenanceContractor;
@@ -123,16 +123,16 @@ namespace HetsApi.Controllers
             owner.Surname = item.Surname;
 
             // we need to update the equipment records to match any change in local area
-            if (oldLocalArea != item.LocalArea.LocalAreaId)
+            if (oldLocalArea != item.LocalAreaId)
             {
                 IQueryable<HetEquipment> equipmentList = _context.HetEquipment
                     .Include(x => x.Owner)
                     .Include(x => x.LocalArea)
-                    .Where(x => x.Owner.OwnerId == id);
+                    .Where(x => x.OwnerId == id);
 
                 foreach (HetEquipment equipment in equipmentList)
                 {
-                    equipment.LocalAreaId = item.LocalArea.LocalAreaId;
+                    equipment.LocalAreaId = item.LocalAreaId;
                 }
             }
 

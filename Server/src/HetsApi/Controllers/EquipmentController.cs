@@ -75,7 +75,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult EquipmentIdPut([FromRoute]int id, [FromBody]HetEquipment item)
         {
-            if (item == null || id != item.DistrictEquipmentTypeId)
+            if (item == null || id != item.EquipmentId)
             {
                 // not found
                 return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -99,7 +99,7 @@ namespace HetsApi.Controllers
             }
 
             // get record
-            HetEquipment equipment = _context.HetEquipment.First(x => x.EquipmentId != item.EquipmentId);
+            HetEquipment equipment = _context.HetEquipment.First(x => x.EquipmentId == item.EquipmentId);
 
             DateTime? originalSeniorityEffectiveDate = equipment.SeniorityEffectiveDate;
             
@@ -119,6 +119,10 @@ namespace HetsApi.Controllers
             equipment.IsSeniorityOverridden = item.IsSeniorityOverridden;
             equipment.SeniorityOverrideReason = item.SeniorityOverrideReason;
             equipment.Type = item.Type;
+            equipment.ServiceHoursLastYear = item.ServiceHoursLastYear;
+            equipment.ServiceHoursTwoYearsAgo = item.ServiceHoursTwoYearsAgo;
+            equipment.ServiceHoursThreeYearsAgo = item.ServiceHoursThreeYearsAgo;
+            equipment.SeniorityEffectiveDate = item.SeniorityEffectiveDate;
 
             // save the changes
             _context.SaveChanges();
@@ -128,7 +132,7 @@ namespace HetsApi.Controllers
                 (originalSeniorityEffectiveDate != null && item.SeniorityEffectiveDate != null && 
                  originalSeniorityEffectiveDate < item.SeniorityEffectiveDate))
             {
-                EquipmentHelper.RecalculateSeniority(item.LocalArea.LocalAreaId, item.DistrictEquipmentType.DistrictEquipmentTypeId, _context, _configuration);
+                EquipmentHelper.RecalculateSeniority(item.LocalAreaId, item.DistrictEquipmentTypeId, _context, _configuration);
             }
 
             // retrieve updated equipment record to return to ui
