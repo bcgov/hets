@@ -63,8 +63,8 @@ var RolesDetail = React.createClass({
 
     this.setState({ loading: true });
     Promise.all([rolePromise, permissionsPromise]).then(() => {
-      var selectedPermissionIds = _.map(this.props.rolePermissions, permission => {
-        return permission.id;
+      var selectedPermissionIds = _.map(this.props.rolePermissions, rolePermission => {
+        return rolePermission.permission.id;
       });
       this.setState({
         loading: false,
@@ -118,8 +118,8 @@ var RolesDetail = React.createClass({
   },
 
   didChangePermissions() {
-    var originalPermissionIds = _.map(this.props.rolePermissions, permission => {
-      return permission.id;
+    var originalPermissionIds = _.map(this.props.rolePermissions, rolePermission => {
+      return rolePermission.permission.id;
     });
     if (_.xor(originalPermissionIds, this.state.selectedPermissionIds).length > 0) { return true; }
 

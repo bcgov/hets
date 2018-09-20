@@ -501,7 +501,7 @@ var OwnersDetail = React.createClass({
               })()}
             </Well>
             <Well>
-              <h3>Equipment ({ owner.numberOfEquipment }) <span className="pull-right">
+              <h3 className="clearfix">Equipment ({ owner.numberOfEquipment }) <span className="pull-right">
                 <Button className="mr-5" title="Verify All Equipment" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</Button>
                 <Button title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></Button>
               </span></h3>
