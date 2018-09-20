@@ -605,6 +605,10 @@ export function deletePhysicalAttachment(attachmentId) {
 ////////////////////
 
 function parseOwner(owner) {
+  // Rename properties
+  owner.equipmentList = owner.equipment;
+  delete owner.equipment;
+
   if (!owner.localArea) { owner.localArea = { id: 0, name: '' }; }
   if (!owner.localArea.serviceArea) { owner.localArea.serviceArea = { id: 0, name: '' }; }
   if (!owner.localArea.serviceArea.district) { owner.localArea.serviceArea.district = { id: 0, name: '' }; }
