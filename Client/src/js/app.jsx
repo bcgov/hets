@@ -27,10 +27,34 @@ import DistrictAdmin from './views/DistrictAdmin.jsx';
 import Version from './views/Version.jsx';
 import FourOhFour from './views/404.jsx';
 
-function hasPermission() {
+function restrictToBusinesses() {
+  // allow access to business users
+  if (store.getState().user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
+    return;
+  }
+
+  // redirect HETS users to home page
+  if (store.getState().user.hasPermission(Constant.PERMISSION_LOGIN)) {
+    hashHistory.push('/');
+  }
+  
+  // TODO: redirect other users to 'unauthorized access' page
+  //hashHistory.push('/');
+}
+
+function restrictToHetsUsers() {
+  // allow access to HETS users
+  if (store.getState().user.hasPermission(Constant.PERMISSION_LOGIN)) {
+    return;
+  }
+  
+  // redirect business users to business page
   if (store.getState().user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
     hashHistory.push(Constant.BUSINESS_LOGIN_PATHNAME);
   }
+  
+  // TODO: redirect other users to 'unauthorized access' page
+  //hashHistory.push('/');
 }
 
 export var showSessionTimoutDialog = function() {
@@ -46,9 +70,9 @@ export function setTimerInterval() {
 const App = <Provider store={ store }>
   <Router history={ hashHistory }>
     <Redirect from="/" to="/home"/>
-    <Route path={ Constant.BUSINESS_LOGIN_PATHNAME } component={ BusinessPortal }/>
-    <Route path={ Constant.BUSINESS_OWNER_PATHNAME } component={ BusinessOwner }/>
-    <Route path="/" component={ Main } onEnter={ hasPermission }>
+    <Route path={ Constant.BUSINESS_LOGIN_PATHNAME } component={ BusinessPortal } onEnter={ restrictToBusinesses } />
+    <Route path={ Constant.BUSINESS_OWNER_PATHNAME } component={ BusinessOwner } onEnter={ restrictToBusinesses } />
+    <Route path="/" component={ Main } onEnter={ restrictToHetsUsers }>
       <Route path={ Constant.HOME_PATHNAME } component={ Home }/>
       <Route path={ Constant.EQUIPMENT_PATHNAME } component={ Equipment }/>
       <Route path={ `${ Constant.EQUIPMENT_PATHNAME }/:equipmentId` } component={ EquipmentDetail }/>
