@@ -164,7 +164,7 @@ namespace HetsApi.Controllers
             // get record
             HetEquipment equipment = _context.HetEquipment
                 .Include(x => x.EquipmentStatusType)
-                .Include(x => x.LocalArea.ServiceArea.District.Region)
+                .Include(x => x.LocalArea)
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(d => d.EquipmentType)
                 .Include(x => x.Owner)

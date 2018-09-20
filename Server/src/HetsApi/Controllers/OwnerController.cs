@@ -249,20 +249,24 @@ namespace HetsApi.Controllers
         {
             // not found
             if (item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
+            // get status id
+            int? statusId = StatusHelper.GetStatusId(HetOwner.StatusPending, "ownerStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
             // create record
             HetOwner owner = new HetOwner
             {
+                OwnerStatusTypeId = (int)statusId,
                 CglendDate = item.CglendDate,
                 CglPolicyNumber = item.CglPolicyNumber,
-                LocalAreaId = item.LocalArea.LocalAreaId,
+                LocalAreaId = item.LocalAreaId,
                 WorkSafeBcexpiryDate = item.WorkSafeBcexpiryDate,
                 WorkSafeBcpolicyNumber = item.WorkSafeBcpolicyNumber,
                 IsMaintenanceContractor = item.IsMaintenanceContractor,
                 OrganizationName = item.OrganizationName,
                 OwnerCode = item.OwnerCode,
                 DoingBusinessAs = item.DoingBusinessAs,
-                RegisteredCompanyNumber = item.RegisteredCompanyNumber,
                 Address1 = item.Address1,
                 Address2 = item.Address2,
                 City = item.City,
@@ -272,9 +276,13 @@ namespace HetsApi.Controllers
                 Surname = item.Surname
             };
 
-            _context.HetOwner.Add(owner);
+            if (!string.IsNullOrEmpty(item.RegisteredCompanyNumber))
+            {
+                owner.RegisteredCompanyNumber = item.RegisteredCompanyNumber;
+            }
 
             // save record
+            _context.HetOwner.Add(owner);
             _context.SaveChanges();
 
             int id = owner.OwnerId;

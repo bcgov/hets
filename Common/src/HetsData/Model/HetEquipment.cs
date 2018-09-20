@@ -76,16 +76,12 @@ namespace HetsData.Model
         [JsonIgnore]public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
 
-        [JsonIgnore]
         public HetDistrictEquipmentType DistrictEquipmentType { get; set; }
 
-        [JsonIgnore]
         public HetEquipmentStatusType EquipmentStatusType { get; set; }
 
-        [JsonIgnore]
         public HetLocalArea LocalArea { get; set; }
 
-        [JsonIgnore]
         public HetOwner Owner { get; set; }
 
         [JsonIgnore]

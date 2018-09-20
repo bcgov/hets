@@ -59,14 +59,12 @@ namespace HetsData.Model
         [JsonIgnore]public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
 
-        [JsonIgnore]
         public HetLocalArea LocalArea { get; set; }
 
         public HetOwnerStatusType OwnerStatusType { get; set; }
 
         public HetContact PrimaryContact { get; set; }
 
-        [JsonIgnore]
         public HetBusiness Business { get; set; }
 
         [JsonProperty("Contacts")]

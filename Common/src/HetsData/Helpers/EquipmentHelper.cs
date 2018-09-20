@@ -78,7 +78,10 @@ namespace HetsData.Helpers
             // retrieve updated equipment record to return to ui
             HetEquipment equipment = context.HetEquipment.AsNoTracking()
                 .Include(x => x.EquipmentStatusType)
-                .Include(x => x.LocalArea.ServiceArea.District.Region)
+                .Include(x => x.LocalArea)
+                    .ThenInclude(y => y.ServiceArea)
+                        .ThenInclude(z => z.District)
+                            .ThenInclude(a => a.Region)
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(d => d.EquipmentType)
                 .Include(x => x.Owner)
@@ -390,6 +393,14 @@ namespace HetsData.Helpers
             item.ArchiveCode = "N";
             item.IsSeniorityOverridden = false;
 
+            int tmpAreaId = item.LocalArea.LocalAreaId;
+            item.LocalAreaId = tmpAreaId;
+            item.LocalArea = null;
+            
+            int tmpEqipId = item.DistrictEquipmentType.DistrictEquipmentTypeId;
+            item.DistrictEquipmentTypeId = tmpEqipId;
+            item.DistrictEquipmentType = null;
+
             // new equipment MUST always start as unapproved - it isn't assigned to any block yet
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusUnapproved, "equipmentStatus", context);
 
@@ -400,7 +411,7 @@ namespace HetsData.Helpers
 
             item.EquipmentStatusTypeId = (int)statusId;
 
-            // generate a new equipment code.
+            // generate a new equipment code
             if (item.Owner != null)
             {
                 int equipmentNumber = 1;
@@ -428,8 +439,13 @@ namespace HetsData.Helpers
 
                 // set the equipment code
                 item.EquipmentCode = GenerateEquipmentCode(item.Owner.OwnerCode, equipmentNumber);
-            }
 
+                // cleanup owner reference
+                int tmpOwnerId = item.Owner.OwnerId;
+                item.OwnerId = tmpOwnerId;
+                item.Owner = null;
+            }
+            
             return item;
         }
 

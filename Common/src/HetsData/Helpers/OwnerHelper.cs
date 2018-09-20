@@ -53,6 +53,7 @@ namespace HetsData.Helpers
                     .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
                 .Include(x => x.HetEquipment)
                     .ThenInclude(y => y.DistrictEquipmentType)
+                        .ThenInclude(z => z.EquipmentType)
                 .Include(x => x.HetEquipment)
                     .ThenInclude(y => y.Owner)
                         .ThenInclude(c => c.PrimaryContact)
@@ -72,6 +73,9 @@ namespace HetsData.Helpers
 
                 foreach (HetEquipment equipment in owner.HetEquipment)
                 {
+                    equipment.IsHired = EquipmentHelper.IsHired(id, context);
+                    equipment.NumberOfBlocks = EquipmentHelper.GetNumberOfBlocks(equipment, configuration);
+                    equipment.HoursYtd = EquipmentHelper.GetYtdServiceHours(id, context);
                     equipment.Status = equipment.EquipmentStatusType.EquipmentStatusTypeCode;
                 }
             }
