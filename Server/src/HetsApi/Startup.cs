@@ -122,7 +122,7 @@ namespace HetsApi
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            // web site error handler             
+            // web site error handler  (Testing: app.UseDeveloperExceptionPage();)
             app.UseWhen(x => !x.Request.Path.Value.StartsWith("/api"), builder =>
             {
                 builder.UseExceptionHandler(Configuration.GetSection("Constants:ErrorUrl").Value);

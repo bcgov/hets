@@ -777,6 +777,7 @@ namespace HetsApi.Controllers
                 contact.Address2 = item.Address2;
                 contact.City = item.City;
                 contact.EmailAddress = item.EmailAddress;
+                contact.WorkPhoneNumber = item.WorkPhoneNumber;
                 contact.FaxPhoneNumber = item.FaxPhoneNumber;
                 contact.GivenName = item.GivenName;
                 contact.MobilePhoneNumber = item.MobilePhoneNumber;
@@ -800,6 +801,7 @@ namespace HetsApi.Controllers
                     Address2 = item.Address2,
                     City = item.City,
                     EmailAddress = item.EmailAddress,
+                    WorkPhoneNumber = item.WorkPhoneNumber,
                     FaxPhoneNumber = item.FaxPhoneNumber,
                     GivenName = item.GivenName,
                     MobilePhoneNumber = item.MobilePhoneNumber,
@@ -974,22 +976,19 @@ namespace HetsApi.Controllers
 
             if (exists)
             {
-                HetProject project = _context.HetProject.AsNoTracking()
-                    .First(a => a.ProjectId == id);
-
                 HetHistory history = new HetHistory
                 {
                     HistoryId = 0,
                     HistoryText = item.HistoryText,
                     CreatedDate = item.CreatedDate,
-                    ProjectId = project.ProjectId
+                    ProjectId = id
                 };
 
                 _context.HetHistory.Add(history);
                 _context.SaveChanges();
             }
 
-            return new ObjectResult(new HetsResponse(EquipmentHelper.GetHistoryRecords(id, null, null, _context)));
+            return new ObjectResult(new HetsResponse(ProjectHelper.GetHistoryRecords(id, null, null, _context)));
         }
 
         #endregion
@@ -1047,10 +1046,6 @@ namespace HetsApi.Controllers
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetProject project = _context.HetProject.AsNoTracking()
-                .Include(x => x.HetNote)
-                .First(x => x.ProjectId == id);
-
             // add or update note
             if (item.NoteId > 0)
             {
@@ -1061,7 +1056,7 @@ namespace HetsApi.Controllers
                 if (note == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                 note.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
-                note.ProjectId = project.ProjectId;
+                note.ProjectId = id;
                 note.Text = item.Text;
                 note.IsNoLongerRelevant = item.IsNoLongerRelevant;
             }
@@ -1069,7 +1064,7 @@ namespace HetsApi.Controllers
             {
                 HetNote note = new HetNote
                 {
-                    ProjectId = project.ProjectId,
+                    ProjectId = id,
                     Text = item.Text,
                     IsNoLongerRelevant = item.IsNoLongerRelevant
                 };
@@ -1080,7 +1075,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // return updated note records
-            project = _context.HetProject.AsNoTracking()
+            HetProject project = _context.HetProject.AsNoTracking()
                 .Include(x => x.HetNote)
                 .First(x => x.ProjectId == id);
 

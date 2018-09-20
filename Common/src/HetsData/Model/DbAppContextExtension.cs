@@ -94,9 +94,8 @@ namespace HetsData.Model
                     if (entry.State == EntityState.Added)
                     {
                         SetAuditProperty(entry.Entity, "AppCreateUserid", SmUserId);
-                        SetAuditProperty(entry.Entity, "AppCreateUpdateUserid", SmUserId);
-                        SetAuditProperty(entry.Entity, "AppCreateUpdateUserDirectory", DirectoryName);
-                        SetAuditProperty(entry.Entity, "AppCreateUpdateUserGuid", SmUserGuid);
+                        SetAuditProperty(entry.Entity, "AppCreateUserDirectory", DirectoryName);
+                        SetAuditProperty(entry.Entity, "AppCreateUserGuid", SmUserGuid);
                         SetAuditProperty(entry.Entity, "AppCreateTimestamp", currentTime);
                         SetAuditProperty(entry.Entity, "ConcurrencyControlNumber", 1);                        
                     }

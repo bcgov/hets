@@ -39,26 +39,30 @@ namespace HetsData.Model
         [JsonIgnore]public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
 
+        [JsonIgnore]
         public HetDistrict District { get; set; }
+
         public HetContact PrimaryContact { get; set; }
+
+        [JsonIgnore]
         public HetProjectStatusType ProjectStatusType { get; set; }
 
         [JsonProperty("Contacts")]
         public ICollection<HetContact> HetContact { get; set; }
 
-        [JsonProperty("Attachments")]
+        [JsonIgnore]
         public ICollection<HetDigitalFile> HetDigitalFile { get; set; }
 
-        [JsonProperty("History")]
+        [JsonIgnore]
         public ICollection<HetHistory> HetHistory { get; set; }
 
-        [JsonProperty("Notes")]
+        [JsonIgnore]
         public ICollection<HetNote> HetNote { get; set; }
 
-        [JsonIgnore]
+        [JsonProperty("RentalAgreements")]
         public ICollection<HetRentalAgreement> HetRentalAgreement { get; set; }
 
-        [JsonIgnore]
+        [JsonProperty("RentalRequests")]
         public ICollection<HetRentalRequest> HetRentalRequest { get; set; }
     }
 }

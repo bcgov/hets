@@ -769,14 +769,14 @@ namespace HetsApi.Controllers
         /// </summary>
         /// <remarks>Adds Owner Contact</remarks>
         /// <param name="id">id of Owner to add a contact for</param>
-        /// <param name="item">Adds to Owner Contact</param>
         /// <param name="primary"></param>
+        /// <param name="item">Adds to Owner Contact</param>
         [HttpPost]
         [Route("{id}/contacts/{primary}")]
         [SwaggerOperation("OwnersIdContactsPost")]
         [SwaggerResponse(200, type: typeof(HetContact))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult OwnersIdContactsPost([FromRoute]int id, [FromBody]HetContact item, bool primary)
+        public virtual IActionResult OwnersIdContactsPost([FromRoute]int id, [FromRoute]bool primary, [FromBody]HetContact item)
         {
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
@@ -786,7 +786,7 @@ namespace HetsApi.Controllers
             int contactId;
 
             // get owner record
-            HetOwner owner = _context.HetOwner.AsNoTracking()
+            HetOwner owner = _context.HetOwner
                 .Include(x => x.HetContact)
                 .First(a => a.OwnerId == id);
             
@@ -806,6 +806,7 @@ namespace HetsApi.Controllers
                 contact.Address2 = item.Address2;
                 contact.City = item.City;
                 contact.EmailAddress = item.EmailAddress;
+                contact.WorkPhoneNumber = item.WorkPhoneNumber;
                 contact.FaxPhoneNumber = item.FaxPhoneNumber;
                 contact.GivenName = item.GivenName;
                 contact.MobilePhoneNumber = item.MobilePhoneNumber;
@@ -828,17 +829,18 @@ namespace HetsApi.Controllers
                     Address2 = item.Address2,
                     City = item.City,
                     EmailAddress = item.EmailAddress,
-                    FaxPhoneNumber = item.FaxPhoneNumber,
+                    WorkPhoneNumber = item.WorkPhoneNumber,
+                FaxPhoneNumber = item.FaxPhoneNumber,
                     GivenName = item.GivenName,
                     MobilePhoneNumber = item.MobilePhoneNumber,
                     PostalCode = item.PostalCode,
                     Province = item.Province,
                     Surname = item.Surname,
-                    Role = item.Role
+                    Role = item.Role,
+                    OwnerId = id
                 };
 
-                owner.HetContact.Add(contact);
-
+                _context.HetContact.Add(contact);
                 _context.SaveChanges();
 
                 contactId = contact.ContactId;
@@ -1002,15 +1004,12 @@ namespace HetsApi.Controllers
 
             if (exists)
             {
-                HetOwner owner = _context.HetOwner.AsNoTracking()
-                    .First(a => a.OwnerId == id);
-
                 HetHistory history = new HetHistory
                 {
                     HistoryId = 0,
                     HistoryText = item.HistoryText,
                     CreatedDate = item.CreatedDate,
-                    OwnerId = owner.OwnerId
+                    OwnerId = id
                 };
 
                 _context.HetHistory.Add(history);
@@ -1075,10 +1074,6 @@ namespace HetsApi.Controllers
             // not found
             if (!exists || item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetOwner owner = _context.HetOwner.AsNoTracking()
-                .Include(x => x.HetNote)
-                .First(x => x.OwnerId == id);
-
             // add or update note
             if (item.NoteId > 0)
             {
@@ -1096,17 +1091,18 @@ namespace HetsApi.Controllers
             {
                 HetNote note = new HetNote
                 {
+                    OwnerId = id,
                     Text = item.Text,
                     IsNoLongerRelevant = item.IsNoLongerRelevant
                 };
 
-                owner.HetNote.Add(note);
+                _context.HetNote.Add(note);
             }
 
             _context.SaveChanges();
 
             // return updated note records
-            owner = _context.HetOwner.AsNoTracking()
+            HetOwner owner = _context.HetOwner.AsNoTracking()
                 .Include(x => x.HetNote)
                 .First(x => x.OwnerId == id);
 

@@ -207,9 +207,23 @@ namespace HetsApi.Helpers
             HetBusiness business = context.HetBusiness.AsNoTracking()
                 .FirstOrDefault(x => x.BceidBusinessGuid == businessGuid);
 
+            // setup the business
             if (business == null)
             {
-                return null;
+                business = new HetBusiness
+                {
+                    BceidBusinessGuid = businessGuid,
+                    AppCreateUserDirectory = "BCeID",
+                    AppCreateUserGuid = guid,
+                    AppCreateUserid = userId,
+                    AppCreateTimestamp = DateTime.UtcNow,
+                    AppLastUpdateUserDirectory = "BCeID",
+                    AppLastUpdateUserGuid = guid,
+                    AppLastUpdateUserid = userId,
+                    AppLastUpdateTimestamp = DateTime.UtcNow
+                };
+
+                // to do - add web service call to retrieve remaining business data
             }
 
             // ok - now find the user
@@ -222,9 +236,9 @@ namespace HetsApi.Helpers
                 // auto register the user
                 user = new HetBusinessUser
                 {
-                    BceidUserId = userId,
-                    BusinessId = business.BusinessId,
+                    BceidUserId = userId,                    
                     BceidGuid = guid,
+                    BusinessId = business.BusinessId,
                     AppCreateUserDirectory = "BCeID",
                     AppCreateUserGuid = guid,
                     AppCreateUserid = userId,
@@ -234,7 +248,7 @@ namespace HetsApi.Helpers
                     AppLastUpdateUserid = userId,
                     AppLastUpdateTimestamp = DateTime.UtcNow
                 };
-
+                
                 // to do - add web service call to retrieve remaining user data
 
                 // add the "Business Logon" role
@@ -253,9 +267,10 @@ namespace HetsApi.Helpers
                 };
 
                 user.HetBusinessUserRole.Add(userRole);
+                business.HetBusinessUser.Add(user);
 
                 // save record
-                context.HetBusinessUser.Add(user);
+                context.HetBusiness.Add(business);
                 context.SaveChanges();
             }
 

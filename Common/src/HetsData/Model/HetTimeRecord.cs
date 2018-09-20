@@ -28,8 +28,13 @@ namespace HetsData.Model
         [JsonIgnore]public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
 
+        [JsonIgnore]
         public HetRentalAgreement RentalAgreement { get; set; }
+
+        [JsonIgnore]
         public HetRentalAgreementRate RentalAgreementRate { get; set; }
+
+        [JsonIgnore]
         public HetTimePeriodType TimePeriodType { get; set; }
     }
 }
