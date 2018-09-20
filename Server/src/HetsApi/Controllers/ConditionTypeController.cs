@@ -81,7 +81,7 @@ namespace HetsApi.Controllers
         
             _context.HetConditionType.Remove(item);
 
-            // save the changes
+            // save changes
             _context.SaveChanges();
 
             return new ObjectResult(new HetsResponse(item));
@@ -142,7 +142,7 @@ namespace HetsApi.Controllers
                 condition.ConditionTypeCode = item.ConditionTypeCode;
                 condition.Description = item.Description;
                 condition.Active = item.Active;
-                condition.DistrictId = item.DistrictId;                
+                condition.DistrictId = item.District.DistrictId;                
             }
             else
             {
@@ -152,7 +152,7 @@ namespace HetsApi.Controllers
                     ConditionTypeCode = item.ConditionTypeCode,
                     Description = item.Description,
                     Active = item.Active,
-                    DistrictId = item.DistrictId
+                    DistrictId = item.District.DistrictId
                 };
                                
                 _context.HetConditionType.Add(condition);

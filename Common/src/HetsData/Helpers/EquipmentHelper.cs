@@ -319,7 +319,7 @@ namespace HetsData.Helpers
         /// <summary>
         /// Recalculates seniority for a specific local area and equipment type
         /// </summary>
-        public static void RecalculateSeniority(int localAreaId, int districtEquipmentTypeId, 
+        public static void RecalculateSeniority(int? localAreaId, int? districtEquipmentTypeId, 
             DbAppContext context, IConfiguration configuration)
         {
             // check if the local area exists

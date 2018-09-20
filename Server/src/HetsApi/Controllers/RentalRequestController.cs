@@ -139,6 +139,30 @@ namespace HetsApi.Controllers
             rentalRequest.ExpectedHours = item.ExpectedHours;
             rentalRequest.HetDigitalFile = item.HetDigitalFile;
 
+            // do we have any attachments (only a single string is ever stored)
+            if (item.HetRentalRequestAttachment != null &&
+                item.HetRentalRequestAttachment.Count > 0)
+            {
+                if (rentalRequest.HetRentalRequestAttachment == null)
+                {
+                    rentalRequest.HetRentalRequestAttachment = new List<HetRentalRequestAttachment>();
+                }
+
+                HetRentalRequestAttachment attachment = new HetRentalRequestAttachment
+                {
+                    Attachment = item.HetRentalRequestAttachment.ElementAt(0).Attachment
+                };
+
+                if (rentalRequest.HetRentalRequestAttachment.Count > 0)
+                {
+                    rentalRequest.HetRentalRequestAttachment.ElementAt(0).Attachment = attachment.Attachment;
+                }
+                else
+                {
+                    rentalRequest.HetRentalRequestAttachment.Add(attachment);
+                }                
+            }
+
             // save the changes
             _context.SaveChanges();
 

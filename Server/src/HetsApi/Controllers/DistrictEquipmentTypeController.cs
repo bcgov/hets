@@ -80,7 +80,10 @@ namespace HetsApi.Controllers
 
             HetDistrictEquipmentType item = _context.HetDistrictEquipmentType.First(a => a.DistrictEquipmentTypeId == id);
 
-            _context.HetDistrictEquipmentType.Remove(item);            
+            _context.HetDistrictEquipmentType.Remove(item);
+
+            // save changes
+            _context.SaveChanges();
 
             return new ObjectResult(new HetsResponse(item));
         }
@@ -136,16 +139,16 @@ namespace HetsApi.Controllers
 
                 equipment.DistrictEquipmentName = item.DistrictEquipmentName;
                 equipment.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
-                equipment.DistrictId = item.DistrictId;
-                equipment.EquipmentTypeId = item.EquipmentTypeId;
+                equipment.DistrictId = item.District.DistrictId;
+                equipment.EquipmentTypeId = item.EquipmentType.EquipmentTypeId;
             }
             else
             {
                 HetDistrictEquipmentType equipment = new HetDistrictEquipmentType
                 {
                     DistrictEquipmentName = item.DistrictEquipmentName,
-                    DistrictId = item.District != null ? item.DistrictId : null,
-                    EquipmentTypeId = item.EquipmentTypeId
+                    DistrictId = item.District.DistrictId,
+                    EquipmentTypeId = item.EquipmentType.EquipmentTypeId
                 };
 
                 _context.HetDistrictEquipmentType.Add(equipment);
