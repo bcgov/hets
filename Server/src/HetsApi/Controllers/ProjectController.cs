@@ -89,6 +89,16 @@ namespace HetsApi.Controllers
             project.ProjectStatusTypeId = (int)statusId;
             project.Information = item.Information;
 
+            if (item.District != null)
+            {
+                project.DistrictId = item.District.DistrictId;
+            }
+
+            if (item.PrimaryContact != null)
+            {
+                project.PrimaryContactId = item.PrimaryContact.ContactId;
+            }
+            
             // save the changes
             _context.SaveChanges();
 
@@ -119,7 +129,8 @@ namespace HetsApi.Controllers
                 Name = item.Name,
                 ProvincialProjectNumber = item.ProvincialProjectNumber,
                 ProjectStatusTypeId = (int)statusId,
-                Information = item.Information
+                Information = item.Information,
+                DistrictId = item.District.DistrictId                
             };
 
             _context.HetProject.Add(project);
