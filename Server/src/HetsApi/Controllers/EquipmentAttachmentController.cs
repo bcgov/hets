@@ -95,7 +95,7 @@ namespace HetsApi.Controllers
             equipmentAttachment.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             equipmentAttachment.Description = item.Description;
             equipmentAttachment.TypeName = item.TypeName;
-            equipmentAttachment.EquipmentId = item.EquipmentId;      
+            equipmentAttachment.EquipmentId = item.Equipment.EquipmentId;      
 
             _context.HetEquipmentAttachment.Update(equipmentAttachment);
 
@@ -122,42 +122,23 @@ namespace HetsApi.Controllers
         public virtual IActionResult EquipmentAttachmentsPost([FromBody]HetEquipmentAttachment item)
         {
             // not found
-            if (item != null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             
-            bool exists = _context.HetEquipmentAttachment.Any(a => a.EquipmentAttachmentId == item.EquipmentAttachmentId);
-
-            if (!exists)
+            // create record
+            HetEquipmentAttachment equipmentAttachment = new HetEquipmentAttachment
             {
-                // update record
-                HetEquipmentAttachment equipmentAttachment = _context.HetEquipmentAttachment
-                    .First(x => x.EquipmentAttachmentId == item.EquipmentAttachmentId);
+                ConcurrencyControlNumber = item.ConcurrencyControlNumber,
+                Description = item.Description,
+                TypeName = item.TypeName,
+                EquipmentId = item.Equipment.EquipmentId
+            };
 
-                equipmentAttachment.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
-                equipmentAttachment.Description = item.Description;
-                equipmentAttachment.TypeName = item.TypeName;
-                equipmentAttachment.EquipmentId = item.EquipmentId;
-
-                _context.HetEquipmentAttachment.Update(equipmentAttachment);
-            }
-            else
-            {
-                // create record
-                HetEquipmentAttachment equipmentAttachment = new HetEquipmentAttachment
-                {
-                    ConcurrencyControlNumber = item.ConcurrencyControlNumber,
-                    Description = item.Description,
-                    TypeName = item.TypeName,
-                    EquipmentId = item.EquipmentId
-                };
-                
-                _context.HetEquipmentAttachment.Add(equipmentAttachment);
-            }
-            
             // save the changes
+            _context.HetEquipmentAttachment.Add(equipmentAttachment);
             _context.SaveChanges();
 
             // get the id (in the case of new records)
-            int id = item.EquipmentAttachmentId;
+            int id = equipmentAttachment.EquipmentAttachmentId;
 
             // return the updated condition type record
             HetEquipmentAttachment updEquipmentAttachment = _context.HetEquipmentAttachment.AsNoTracking()
