@@ -17,6 +17,7 @@ var AttachmentEditDialog = React.createClass({
   getInitialState() {
     return {
       typeName: this.props.attachment.typeName,
+      concurrencyControlNumber: this.props.attachment.concurrencyControlNumber || 0,
       attachmentError: '',
     };
   },
@@ -50,6 +51,7 @@ var AttachmentEditDialog = React.createClass({
     this.props.onSave({
       id: this.props.attachment.id,
       typeName: this.state.typeName,
+      concurrencyControlNumber: this.state.concurrencyControlNumber,
       equipment: { id: this.props.equipment.id },
     });
   },

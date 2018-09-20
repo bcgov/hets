@@ -22,6 +22,7 @@ var DistrictEquipmentTypeAddEditDialog = React.createClass({
       id: this.props.districtEquipmentType.id || 0,
       equipmentTypeId: this.props.districtEquipmentType.equipmentType ? this.props.districtEquipmentType.equipmentType.id : '',
       districtEquipmentName: this.props.districtEquipmentType.districtEquipmentName || '',
+      concurrencyControlNumber: this.props.districtEquipmentType.concurrencyControlNumber || 0,
       equipmentTypeIdError: '',
       districtEquipmentNameError: '',
     };
@@ -66,6 +67,7 @@ var DistrictEquipmentTypeAddEditDialog = React.createClass({
       id: this.state.id,
       equipmentType: { id: this.state.equipmentTypeId },
       districtEquipmentName: this.state.districtEquipmentName,
+      concurrencyControlNumber: this.state.concurrencyControlNumber,
     });
   },
 

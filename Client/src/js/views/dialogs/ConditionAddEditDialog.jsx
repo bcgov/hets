@@ -20,6 +20,7 @@ var ConditionAddEditDialog = React.createClass({
       conditionId: this.props.condition.id,
       typeCode: this.props.condition.conditionTypeCode || '',
       description: this.props.condition.description || '',
+      concurrencyControlNumber: this.props.condition.concurrencyControlNumber || 0,
       typeCodeError: '',
       descriptionError: '',
     };
@@ -64,6 +65,7 @@ var ConditionAddEditDialog = React.createClass({
       id: this.state.conditionId,
       conditionTypeCode: this.state.typeCode,
       description: this.state.description,
+      concurrencyControlNumber: this.state.concurrencyControlNumber,
       active: true,
     });
   },

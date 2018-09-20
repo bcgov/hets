@@ -30,6 +30,7 @@ var ProjectsEditDialog = React.createClass({
       projectStatus: this.props.project.status || Constant.PROJECT_STATUS_CODE_ACTIVE,
       provincialProjectNumber: this.props.project.provincialProjectNumber || '',
       projectInformation: this.props.project.information || '',
+      concurrencyControlNumber: this.props.project.concurrencyControlNumber || 0,
       statusError: '',
       projectNameError: '',
       projectStatusCodeError: '',
@@ -97,6 +98,7 @@ var ProjectsEditDialog = React.createClass({
       status: this.state.projectStatus,
       provincialProjectNumber: this.state.provincialProjectNumber,
       information: this.state.projectInformation,
+      concurrencyControlNumber: this.state.concurrencyControlNumber,
     });
   },
 
