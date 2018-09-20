@@ -843,13 +843,16 @@ namespace HetsData.Helpers
             string tempStatus = "New";
 
             // validate input parameters
-            if (rentalRequest?.LocalArea != null && rentalRequest.DistrictEquipmentType?.EquipmentType != null)
+            if (rentalRequest?.LocalAreaId != null && rentalRequest.DistrictEquipmentTypeId != null)
             {
+                int? statusIdInProgress = StatusHelper.GetStatusId(HetRentalRequest.StatusInProgress, "rentalRequestStatus", context);
+                if (statusIdInProgress == null) return null;
+
                 // check if there is an existing "In Progress" Rental Request
                 List<HetRentalRequest> requests = context.HetRentalRequest
-                    .Where(x => x.DistrictEquipmentType.DistrictEquipmentTypeId == rentalRequest.DistrictEquipmentType.DistrictEquipmentTypeId &&
-                                x.LocalArea.LocalAreaId == rentalRequest.LocalArea.LocalAreaId &&
-                                x.RentalRequestStatusType.RentalRequestStatusTypeCode.Equals("In Progress", StringComparison.CurrentCultureIgnoreCase))
+                    .Where(x => x.DistrictEquipmentType.DistrictEquipmentTypeId == rentalRequest.DistrictEquipmentTypeId &&
+                                x.LocalArea.LocalAreaId == rentalRequest.LocalAreaId &&
+                                x.RentalRequestStatusTypeId == statusIdInProgress)
                     .ToList();
 
                 tempStatus = requests.Count == 0 ? "In Progress" : "New";

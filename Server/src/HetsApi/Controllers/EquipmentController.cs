@@ -766,15 +766,12 @@ namespace HetsApi.Controllers
 
             if (exists)
             {
-                HetEquipment equipment = _context.HetEquipment.AsNoTracking()
-                    .First(a => a.EquipmentId == id);
-
                 HetHistory history = new HetHistory
                 {
                     HistoryId = 0,
                     HistoryText = item.HistoryText,
                     CreatedDate = item.CreatedDate,
-                    EquipmentId = equipment.EquipmentId
+                    EquipmentId = id
                 };
 
                 _context.HetHistory.Add(history);
@@ -839,10 +836,6 @@ namespace HetsApi.Controllers
             // not found
             if (!exists || item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetEquipment equipment = _context.HetEquipment.AsNoTracking()
-                .Include(x => x.HetNote)
-                .First(x => x.EquipmentId == id);
-
             // add or update note
             if (item.NoteId > 0)
             {
@@ -860,17 +853,18 @@ namespace HetsApi.Controllers
             {
                 HetNote note = new HetNote
                 {
+                    EquipmentId = id,
                     Text = item.Text,
                     IsNoLongerRelevant = item.IsNoLongerRelevant
                 };
 
-                equipment.HetNote.Add(note);
+                _context.HetNote.Add(note);
             }
 
             _context.SaveChanges();
 
             // return updated note records
-            equipment = _context.HetEquipment.AsNoTracking()
+            HetEquipment equipment = _context.HetEquipment.AsNoTracking()
                 .Include(x => x.HetNote)
                 .First(x => x.EquipmentId == id);
 

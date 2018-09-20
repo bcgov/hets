@@ -41,19 +41,28 @@ namespace HetsData.Model
         [JsonIgnore]public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
 
+        [JsonIgnore]
         public HetDistrictEquipmentType DistrictEquipmentType { get; set; }
+
+        [JsonIgnore]
         public HetEquipment FirstOnRotationList { get; set; }
+
+        [JsonIgnore]
         public HetLocalArea LocalArea { get; set; }
+
+        [JsonIgnore]
         public HetProject Project { get; set; }
+
+        [JsonIgnore]
         public HetRentalRequestStatusType RentalRequestStatusType { get; set; }
 
-        [JsonProperty("Attachments")]
+        [JsonIgnore]
         public ICollection<HetDigitalFile> HetDigitalFile { get; set; }
 
-        [JsonProperty("History")]
+        [JsonIgnore]
         public ICollection<HetHistory> HetHistory { get; set; }
 
-        [JsonProperty("Notes")]
+        [JsonIgnore]
         public ICollection<HetNote> HetNote { get; set; }
 
         [JsonProperty("RentalRequestAttachments")]

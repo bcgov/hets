@@ -67,7 +67,13 @@ namespace HetsData.Helpers
                 // remove any archived equipment
                 owner.HetEquipment = owner.HetEquipment.Where(e => e.EquipmentStatusType.EquipmentStatusTypeCode != HetEquipment.StatusArchived).ToList();
 
+                // populate the "Status" description
                 owner.Status = owner.OwnerStatusType.OwnerStatusTypeCode;
+
+                foreach (HetEquipment equipment in owner.HetEquipment)
+                {
+                    equipment.Status = equipment.EquipmentStatusType.EquipmentStatusTypeCode;
+                }
             }
 
             return owner;
