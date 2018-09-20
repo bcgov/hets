@@ -190,10 +190,10 @@ namespace HetsData.Helpers
                 if (data[i] != null)
                 {
                     temp.HistoryText = data[i].HistoryText;
-                    temp.Id = data[i].EquipmentId;
+                    temp.Id = data[i].HistoryId;
                     temp.LastUpdateTimestamp = data[i].AppLastUpdateTimestamp;
                     temp.LastUpdateUserid = data[i].AppLastUpdateUserid;
-                    temp.AffectedEntityId = data[i].EquipmentId;
+                    temp.AffectedEntityId = data[i].OwnerId;
                 }
 
                 result.Add(temp);
