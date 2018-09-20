@@ -39,7 +39,6 @@ namespace HetsData.Model
         [JsonIgnore]public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
 
-        [JsonIgnore]
         public HetDistrict District { get; set; }
 
         public HetContact PrimaryContact { get; set; }
