@@ -99,7 +99,7 @@ namespace HetsApi.Controllers
             Debug.WriteLine("New Cookie Guid: " + guid);
 
             return Ok();
-        }
+        }        
 
         /// <summary>
         /// Clear out any existing dev authentication tokens
