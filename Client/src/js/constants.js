@@ -10,8 +10,8 @@ export const ROLES_PATHNAME = 'roles';
 export const VERSION_PATHNAME = 'version';
 export const CONTACTS_PATHNAME = 'contacts';
 export const DOCUMENTS_PATHNAME = 'documents';
-export const BUSINESS_LOGIN_PATHNAME = '/business-login';
-export const BUSINESS_OWNER_PATHNAME = '/business-owner';
+export const BUSINESS_PORTAL_PATHNAME = '/business';
+export const BUSINESS_DETAILS_PATHNAME = '/business/details';
 export const DISTRICT_ADMIN_PATHNAME = 'district-admin';
 export const LOGOUT = (process.env.NODE_ENV === 'production') ? //eslint-disable-line
   'https://logon.gov.bc.ca/clp-cgi/logoff.cgi' : 

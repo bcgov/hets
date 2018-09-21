@@ -50,7 +50,7 @@ function restrictToHetsUsers() {
   
   // redirect business users to business page
   if (store.getState().user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
-    hashHistory.push(Constant.BUSINESS_LOGIN_PATHNAME);
+    hashHistory.push(Constant.BUSINESS_PORTAL_PATHNAME);
   }
   
   // TODO: redirect other users to 'unauthorized access' page
@@ -70,8 +70,8 @@ export function setTimerInterval() {
 const App = <Provider store={ store }>
   <Router history={ hashHistory }>
     <Redirect from="/" to="/home"/>
-    <Route path={ Constant.BUSINESS_LOGIN_PATHNAME } component={ BusinessPortal } onEnter={ restrictToBusinesses } />
-    <Route path={ Constant.BUSINESS_OWNER_PATHNAME } component={ BusinessOwner } onEnter={ restrictToBusinesses } />
+    <Route path={ Constant.BUSINESS_PORTAL_PATHNAME } component={ BusinessPortal } onEnter={ restrictToBusinesses } />
+    <Route path={ `${Constant.BUSINESS_DETAILS_PATHNAME }/:ownerId` } component={ BusinessOwner } onEnter={ restrictToBusinesses } />
     <Route path="/" component={ Main } onEnter={ restrictToHetsUsers }>
       <Route path={ Constant.HOME_PATHNAME } component={ Home }/>
       <Route path={ Constant.EQUIPMENT_PATHNAME } component={ Equipment }/>
