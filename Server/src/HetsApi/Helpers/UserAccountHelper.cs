@@ -6,11 +6,15 @@ using Microsoft.EntityFrameworkCore;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
+using Microsoft.AspNetCore.Hosting;
 
 namespace HetsApi.Helpers
 {
     public static class UserAccountHelper
     {
+        private const string ConstDevBusinessTokenKey = "BUS-USER";
+        private const string ConstSiteMinderBusinessGuidKey = "smgov_businessguid";
+
         /// <summary>
         /// Get user id from http context
         /// </summary>
@@ -32,6 +36,36 @@ namespace HetsApi.Helpers
             return httpContext.User.Claims
                 .Any(claim => claim.Type == ClaimTypes.Actor && 
                               claim.Value == "BusinessUser");
+        }
+
+        /// <summary>
+        /// Get the Business Guid from the Http Headers
+        /// </summary>
+        /// <param name="httpContext"></param>
+        /// <param name="hostingEnv"></param>
+        /// <returns></returns>
+        public static string GetBusinessGuid(HttpContext httpContext, IHostingEnvironment hostingEnv)
+        {
+            string guid = "";
+
+            // check if we have a dev token first
+            if (hostingEnv.IsDevelopment())
+            {
+                string temp = httpContext.Request.Cookies[ConstDevBusinessTokenKey];
+
+                if (!string.IsNullOrEmpty(temp) &&
+                    temp.Contains(','))
+                {
+                    var credential = temp.Split(',');
+                    guid = credential[1];
+                }
+            }
+            else
+            {
+                guid = httpContext.Request.Headers[ConstSiteMinderBusinessGuidKey];
+            }
+
+            return guid;
         }
 
         /// <summary>
