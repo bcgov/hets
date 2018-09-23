@@ -123,6 +123,10 @@ namespace HetsApi.Controllers
             // if the number of hired records is now "over the count" - then close 
             if (hiredCount >= item.EquipmentCount)
             {
+                int? statusIdComplete = StatusHelper.GetStatusId(HetRentalRequest.StatusComplete, "rentalRequestStatus", _context);
+                if (statusIdComplete == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+                item.RentalRequestStatusTypeId = (int)statusIdComplete;
                 item.Status = "Complete";
                 item.FirstOnRotationList = null;
             }
@@ -138,6 +142,7 @@ namespace HetsApi.Controllers
             rentalRequest.ExpectedStartDate = item.ExpectedStartDate;
             rentalRequest.ExpectedHours = item.ExpectedHours;
             rentalRequest.HetDigitalFile = item.HetDigitalFile;
+            rentalRequest.FirstOnRotationList = item.FirstOnRotationList;
 
             // do we have any attachments (only a single string is ever stored)
             if (item.HetRentalRequestAttachment != null &&
@@ -195,8 +200,8 @@ namespace HetsApi.Controllers
             if (statusIdInProgress == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             List<HetRentalRequest> requests = _context.HetRentalRequest
-                .Where(x => x.DistrictEquipmentType.DistrictEquipmentTypeId == item.DistrictEquipmentType.DistrictEquipmentTypeId &&
-                            x.LocalArea.LocalAreaId == item.LocalArea.LocalAreaId &&
+                .Where(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentType.DistrictEquipmentTypeId &&
+                            x.LocalAreaId == item.LocalArea.LocalAreaId &&
                             x.RentalRequestStatusTypeId == statusIdInProgress)
                 .ToList();
 
@@ -264,6 +269,7 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.Equipment)
                 .Include(x => x.HetRentalRequestAttachment)
                 .Include(x => x.HetHistory)
+                .Include(x => x.RentalRequestStatusType)
                 .First(a => a.RentalRequestId == id);
 
             if (rentalRequest.HetRentalRequestRotationList != null &&
@@ -287,7 +293,8 @@ namespace HetsApi.Controllers
                 }
             }
 
-            if (rentalRequest.Status.Equals("Complete", StringComparison.InvariantCulture))
+            if (rentalRequest.RentalRequestStatusType.RentalRequestStatusTypeCode
+                .Equals(HetRentalRequest.StatusComplete, StringComparison.InvariantCulture))
             {
                 // cannot cancel - rental request is complete
                 return new ObjectResult(new HetsResponse("HETS-10", ErrorViewModel.GetDescription("HETS-10", _configuration)));
@@ -454,22 +461,27 @@ namespace HetsApi.Controllers
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
+            int? statusId = StatusHelper.GetStatusId(HetRentalRequest.StatusInProgress, "rentalRequestStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
             // check if we have the rental request that is In Progress
             exists = _context.HetRentalRequest
                 .Any(a => a.RentalRequestId == id &&
-                          a.Status.Equals("In Progress", StringComparison.InvariantCultureIgnoreCase));
+                          a.RentalRequestStatusTypeId == statusId);
 
             // rental request must be "in progress"
             if (!exists) return new ObjectResult(new HetsResponse("HETS-06", ErrorViewModel.GetDescription("HETS-06", _configuration)));
                        
             // get rental request record
-            HetRentalRequest request = _context.HetRentalRequest.AsNoTracking()
+            HetRentalRequest request = _context.HetRentalRequest
                 .Include(x => x.Project)
+                .Include(x => x.LocalArea)
                 .Include(x => x.HetRentalRequestRotationList)
+                    .ThenInclude(x => x.Equipment)
                 .First(a => a.RentalRequestId == id);
 
             // get rotation list record
-            HetRentalRequestRotationList requestRotationList = _context.HetRentalRequestRotationList
+            HetRentalRequestRotationList requestRotationList = _context.HetRentalRequestRotationList                
                 .FirstOrDefault(a => a.RentalRequestRotationListId == item.RentalRequestRotationListId);
 
             // not found
@@ -496,20 +508,28 @@ namespace HetsApi.Controllers
                 // generate the rental agreement number
                 string agreementNumber = RentalAgreementHelper.GetRentalAgreementNumber(item.Equipment, _context);
 
+                int? statusIdAgreement = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
+                if (statusIdAgreement == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+                int? rateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodWeekly, _context);
+                if (rateTypeId == null) return new ObjectResult(new HetsResponse("HETS-24", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
                 // create agreement
                 HetRentalAgreement rentalAgreement = new HetRentalAgreement
                 {
                     ProjectId = request.ProjectId,
                     EquipmentId = tempEquipmentId,
-                    Project = request.Project,
-                    Status = "Active",
+                    RentalAgreementStatusTypeId = (int)statusIdAgreement,
                     Number = agreementNumber,
                     DatedOn = DateTime.UtcNow,
                     EstimateHours = request.ExpectedHours,
-                    EstimateStartWork = request.ExpectedStartDate
+                    EstimateStartWork = request.ExpectedStartDate,
+                    RatePeriodTypeId = (int)rateTypeId
                 };
 
+                // have to save the agreement
                 _context.HetRentalAgreement.Add(rentalAgreement);
+                _context.SaveChanges();
 
                 // relate the new rental agreement to the original rotation list record
                 int tempRentalAgreementId = rentalAgreement.RentalAgreementId;
@@ -537,6 +557,10 @@ namespace HetsApi.Controllers
 
             if (countOfYeses >= equipmentRequestCount)
             {
+                int? statusIdComplete = StatusHelper.GetStatusId(HetRentalRequest.StatusComplete, "rentalRequestStatus", _context);
+                if (statusIdComplete == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+                request.RentalRequestStatusTypeId = (int)statusIdComplete;
                 request.Status = "Complete";
                 request.FirstOnRotationList = null;
             }

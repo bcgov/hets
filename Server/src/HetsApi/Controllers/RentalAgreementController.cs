@@ -179,6 +179,10 @@ namespace HetsApi.Controllers
             HetRentalAgreement agreement = _context.HetRentalAgreement.First(a => a.RentalAgreementId == id);
 
             // release (terminate) rental agreement
+            int? statusIdComplete = StatusHelper.GetStatusId(HetRentalAgreement.StatusComplete, "rentalAgreementStatus", _context);
+            if (statusIdComplete == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            agreement.RentalAgreementStatusTypeId = (int)statusIdComplete;
             agreement.Status = "Complete";
 
             // save the changes

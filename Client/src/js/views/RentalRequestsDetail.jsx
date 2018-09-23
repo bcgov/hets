@@ -314,10 +314,10 @@ var RentalRequestsDetail = React.createClass({
                 }
                 return (
                   <tr key={ listItem.id }>
-                    <td>{ listItem.displayFields.seniority }</td>
+                    <td>{ listItem.equipment.seniority }</td>
                     <td>{ listItem.equipment.hoursYtd }</td>
                     <td><Link to={ `${Constant.EQUIPMENT_PATHNAME}/${listItem.equipment.id}` }>{ listItem.equipment.equipmentCode }</Link></td>
-                    <td>{ listItem.displayFields.equipmentDetails }
+                    <td>{ listItem.equipment.equipmentDetails }
                       { this.state.showAttachments && 
                       <div>
                         Attachments:

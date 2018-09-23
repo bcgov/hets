@@ -43,6 +43,30 @@ namespace HetsData.Model
         [NotMapped]
         public int AttachmentCount { get; set; }
 
+        [NotMapped]
+        public string EquipmentDetails
+        {
+            get
+            {
+                string temp = Year;
+
+                if (!string.IsNullOrEmpty(temp)) temp = temp + " ";
+                temp = temp + Make;
+
+                if (!string.IsNullOrEmpty(Model))
+                {
+                    temp = temp + "/" + Model;
+                }
+
+                if (!string.IsNullOrEmpty(Size))
+                {
+                    temp = temp + "/" + Size;
+                }
+
+                return temp;
+            }
+        }
+
         /// <summary>
         /// Calculate the Seniority for a piece of equipment
         /// Each piece of equipment has a Seniority Score that consists of:
