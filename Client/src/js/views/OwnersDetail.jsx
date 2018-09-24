@@ -353,9 +353,9 @@ var OwnersDetail = React.createClass({
                   <MenuItem key={ i } eventKey={ item }>{ item }</MenuItem>
                 ))}
               </DropdownButton>
-              <Label className={ owner.isMaintenanceContractor ? 'ml-5' : 'hide' }>Maintenance Contractor</Label>
               <Button className="ml-5 mr-5" title="Notes" onClick={ this.openNotesDialog }>Notes ({ Object.keys(this.props.notes).length })</Button>
               <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
+              <Label className={ owner.isMaintenanceContractor ? 'ml-5' : 'hide' }>Maintenance Contractor</Label>
             </Col>
             <Col sm={3}>
               <div className="pull-right">
