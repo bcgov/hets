@@ -329,7 +329,7 @@ namespace HetsImport.Import
                 number = number.Replace("-", "");
                 number = number.Replace(" ", "");
 
-                bool parseNumber = Int32.TryParse(number, out int numberInt);
+                bool parseNumber = int.TryParse(number, out int numberInt);
 
                 if (parseNumber)
                 {
@@ -407,7 +407,7 @@ namespace HetsImport.Import
                     ++index;
                 }
 
-                return new String(chars);
+                return new string(chars);
             }
 
             return null;
@@ -416,22 +416,22 @@ namespace HetsImport.Import
         public static void WriteImportRecordsToExcel (string destinationLocation, List<ImportMapRecord> records, string tableName)
         {
            
-            using (var fs = new FileStream(Path.Combine(destinationLocation, tableName + ".xlsx"), FileMode.Create, FileAccess.Write))
+            using (FileStream fs = new FileStream(Path.Combine(destinationLocation, tableName + ".xlsx"), FileMode.Create, FileAccess.Write))
             {
                 IWorkbook workbook = new XSSFWorkbook();
                 ISheet excelSheet = workbook.CreateSheet(tableName + " Map");
 
-                // Create the header row.
+                // create the header row
                 IRow row = excelSheet.CreateRow(0);
                 row.CreateCell(0).SetCellValue("Table Name");
                 row.CreateCell(1).SetCellValue("Mapped Column");
                 row.CreateCell(2).SetCellValue("Original Value");
                 row.CreateCell(3).SetCellValue("New Value");
 
-                // use the import class to get data.
+                // use the import class to get data
                 int currentRow = 1;
 
-                // convert the list to an excel spreadsheet.
+                // convert the list to an excel spreadsheet
                 foreach (ImportMapRecord record in records)
                 {
                     IRow newRow = excelSheet.CreateRow(currentRow);
