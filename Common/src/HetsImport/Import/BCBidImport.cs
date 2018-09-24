@@ -31,7 +31,8 @@ namespace HetsImport.Import
         /// <param name="fileLocation"></param>
         public static void ImportJob(PerformContext context, string seniorityScoringRules, string connectionString, string fileLocation)
         {
-            DbAppContext dbContext = new DbAppContext(connectionString);
+            DbAppContext dbContext = new DbAppContext(connectionString) {SmUserId = SystemId};
+
             context.WriteLine("Starting Data Import Job");
 
             // adding system Account if not there in the database
@@ -113,7 +114,8 @@ namespace HetsImport.Import
         public static void ObfuscationJob(PerformContext context, string connectionString, string sourceFileLocation, string destinationFileLocation)
         {
             // open a connection to the database.
-            DbAppContext dbContext = new DbAppContext(connectionString);
+            DbAppContext dbContext = new DbAppContext(connectionString) { SmUserId = SystemId };
+
             context.WriteLine("Starting Data Import Job");
 
             // adding system Account if not there in the database
