@@ -106,7 +106,7 @@ namespace HetsApi.Controllers
             owner.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             owner.CglendDate = item.CglendDate;
             owner.CglPolicyNumber = item.CglPolicyNumber;
-            owner.LocalAreaId = item.LocalAreaId;
+            owner.LocalAreaId = item.LocalArea.LocalAreaId;
             owner.WorkSafeBcexpiryDate = item.WorkSafeBcexpiryDate;
             owner.WorkSafeBcpolicyNumber = item.WorkSafeBcpolicyNumber;
             owner.IsMaintenanceContractor = item.IsMaintenanceContractor;
@@ -121,6 +121,7 @@ namespace HetsApi.Controllers
             owner.Province = item.Province;
             owner.GivenName = item.GivenName;
             owner.Surname = item.Surname;
+            owner.MeetsResidency = item.MeetsResidency;
 
             // we need to update the equipment records to match any change in local area
             if (oldLocalArea != item.LocalAreaId)
@@ -260,10 +261,10 @@ namespace HetsApi.Controllers
                 OwnerStatusTypeId = (int)statusId,
                 CglendDate = item.CglendDate,
                 CglPolicyNumber = item.CglPolicyNumber,
-                LocalAreaId = item.LocalAreaId,
+                LocalAreaId = item.LocalArea.LocalAreaId,
                 WorkSafeBcexpiryDate = item.WorkSafeBcexpiryDate,
                 WorkSafeBcpolicyNumber = item.WorkSafeBcpolicyNumber,
-                IsMaintenanceContractor = item.IsMaintenanceContractor,
+                IsMaintenanceContractor = item.IsMaintenanceContractor ?? false,
                 OrganizationName = item.OrganizationName,
                 OwnerCode = item.OwnerCode,
                 DoingBusinessAs = item.DoingBusinessAs,
@@ -273,7 +274,9 @@ namespace HetsApi.Controllers
                 PostalCode = item.PostalCode,
                 Province = item.Province,
                 GivenName = item.GivenName,
-                Surname = item.Surname
+                Surname = item.Surname,
+                ArchiveCode = "N",
+                MeetsResidency = item.MeetsResidency
             };
 
             if (!string.IsNullOrEmpty(item.RegisteredCompanyNumber))
