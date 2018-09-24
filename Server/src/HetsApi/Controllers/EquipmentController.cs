@@ -344,6 +344,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.Owner)
                 .Include(x => x.HetEquipmentAttachment)
                 .Include(x => x.HetRentalAgreement)
+                    .ThenInclude(y => y.RentalAgreementStatusType)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));
 
             // filter results based on search criteria
@@ -377,8 +378,9 @@ namespace HetsApi.Controllers
             if (hired == true)
             {
                 IQueryable<int?> hiredEquipmentQuery = _context.HetRentalAgreement.AsNoTracking()
+                    .Include(x => x.RentalAgreementStatusType)
                     .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId))
-                    .Where(agreement => agreement.Status == "Active")
+                    .Where(agreement => agreement.RentalAgreementStatusType.RentalAgreementStatusTypeCode == HetRentalAgreement.StatusActive)
                     .Select(agreement => agreement.EquipmentId)
                     .Distinct();
 
