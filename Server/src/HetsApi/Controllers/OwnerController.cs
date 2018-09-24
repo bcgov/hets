@@ -165,7 +165,12 @@ namespace HetsApi.Controllers
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetOwner owner = _context.HetOwner.First(x => x.OwnerId != id);
+            HetOwner owner = _context.HetOwner
+                .Include(x => x.HetEquipment)
+                    .ThenInclude(y => y.LocalArea)
+                .Include(x => x.HetEquipment)
+                    .ThenInclude(y => y.DistrictEquipmentType)
+                .First(x => x.OwnerId == id);
 
             // get status id
             int? statusId = StatusHelper.GetStatusId(item.Status, "ownerStatus", _context);
