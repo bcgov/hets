@@ -36,7 +36,6 @@ import Confirm from '../components/Confirm.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 
 import { formatDateTime } from '../utils/date';
-import { concat } from '../utils/string';
 
 /*
 
@@ -355,7 +354,7 @@ var ProjectsDetail = React.createClass({
                         </Link>
                       </td>
                       <td>{ item.equipmentTypeName }</td>
-                      <td>{ `${item.equipment.year} ${concat(item.equipmentMake, concat(item.equipmentModel, item.equipmentSize, '/'), '/')} `}</td>
+                      <td>{ item.equipment.equipmentDetails }</td>
                       <td>{ item.isCompleted ? 
                         'Completed' 
                         : 
