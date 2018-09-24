@@ -314,7 +314,7 @@ var RentalRequestsDetail = React.createClass({
                 }
                 return (
                   <tr key={ listItem.id }>
-                    <td>{ listItem.equipment.seniority }</td>
+                    <td>{ listItem.equipment.seniorityString }</td>
                     <td>{ listItem.equipment.hoursYtd }</td>
                     <td><Link to={ `${Constant.EQUIPMENT_PATHNAME}/${listItem.equipment.id}` }>{ listItem.equipment.equipmentCode }</Link></td>
                     <td>{ listItem.equipment.equipmentDetails }

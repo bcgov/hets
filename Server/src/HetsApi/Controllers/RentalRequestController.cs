@@ -12,7 +12,6 @@ using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
-using Microsoft.EntityFrameworkCore.SqlServer.Query.ExpressionTranslators.Internal;
 
 namespace HetsApi.Controllers
 {
@@ -436,8 +435,11 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
-            return new ObjectResult(new HetsResponse(RentalRequestHelper.GetRecordWithRotationList(id, _context)));
+
+            // get the scoring rules
+            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
+
+            return new ObjectResult(new HetsResponse(RentalRequestHelper.GetRecordWithRotationList(id, scoringRules, _context)));
         }
         
         /// <summary>
@@ -573,8 +575,10 @@ namespace HetsApi.Controllers
             // save the changes
             _context.SaveChanges();
 
-            // return updated rental request
-            return new ObjectResult(new HetsResponse(RentalRequestHelper.GetRecordWithRotationList(id, _context)));
+            // get the scoring rules
+            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
+
+            return new ObjectResult(new HetsResponse(RentalRequestHelper.GetRecordWithRotationList(id, scoringRules, _context)));
         }
         
         #endregion

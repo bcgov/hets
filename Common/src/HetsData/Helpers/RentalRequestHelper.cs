@@ -78,8 +78,9 @@ namespace HetsData.Helpers
         /// Get rental request record
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="scoringRules"></param>
         /// <param name="context"></param>
-        public static HetRentalRequest GetRecordWithRotationList(int id, DbAppContext context)
+        public static HetRentalRequest GetRecordWithRotationList(int id, SeniorityScoringRules scoringRules, DbAppContext context)
         {
             HetRentalRequest request = context.HetRentalRequest.AsNoTracking()
                 .Include(x => x.DistrictEquipmentType)
@@ -118,7 +119,32 @@ namespace HetsData.Helpers
                     {
                         if (rotationList.Equipment != null)
                         {
+                            int numberOfBlocks = 0;
+
+                            // get number of blocks for this equipment type
+                            if (rotationList.Equipment.DistrictEquipmentType != null)
+                            {
+                                numberOfBlocks = rotationList.Equipment.DistrictEquipmentType.EquipmentType.IsDumpTruck
+                                    ? scoringRules.GetTotalBlocks("DumpTruck") + 1
+                                    : scoringRules.GetTotalBlocks() + 1;
+                            }
+
+                            // get equipment seniority
+                            float seniority = 0F;
+                            if (rotationList.Equipment.Seniority != null)
+                            {
+                                seniority = (float)rotationList.Equipment.Seniority;
+                            }
+
+                            // get equipment block number
+                            int blockNumber = 0;
+                            if (rotationList.Equipment.BlockNumber != null)
+                            {
+                                blockNumber = (int)rotationList.Equipment.BlockNumber;
+                            }
+                            
                             rotationList.Equipment.HoursYtd = EquipmentHelper.GetYtdServiceHours(rotationList.Equipment.EquipmentId, context);
+                            rotationList.Equipment.SeniorityString = EquipmentHelper.FormatSeniorityString(seniority, blockNumber, numberOfBlocks);
                         }
                     }
                 }
