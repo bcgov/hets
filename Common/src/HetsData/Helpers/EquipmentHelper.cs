@@ -414,38 +414,46 @@ namespace HetsData.Helpers
             // generate a new equipment code
             if (item.Owner != null)
             {
-                int equipmentNumber = 1;
+                // get equipment owner
+                HetOwner owner = context.HetOwner.AsNoTracking()
+                    .Include(x => x.HetEquipment)
+                    .FirstOrDefault(x => x.OwnerId == item.Owner.OwnerId);
 
-                if (item.Owner.HetEquipment != null)
+                if (owner != null)
                 {
-                    bool looking = true;
-                    equipmentNumber = item.Owner.HetEquipment.Count + 1;
+                    int equipmentNumber = 1;
 
-                    // generate a unique equipment number
-                    while (looking)
+                    if (owner.HetEquipment != null)
                     {
-                        string candidate = GenerateEquipmentCode(item.Owner.OwnerCode, equipmentNumber);
+                        bool looking = true;
+                        equipmentNumber = owner.HetEquipment.Count + 1;
 
-                        if ((item.Owner.HetEquipment).Any(x => x.EquipmentCode == candidate))
+                        // generate a unique equipment number
+                        while (looking)
                         {
-                            equipmentNumber++;
-                        }
-                        else
-                        {
-                            looking = false;
+                            string candidate = GenerateEquipmentCode(owner.OwnerCode, equipmentNumber);
+
+                            if ((owner.HetEquipment).Any(x => x.EquipmentCode == candidate))
+                            {
+                                equipmentNumber++;
+                            }
+                            else
+                            {
+                                looking = false;
+                            }
                         }
                     }
-                }
 
-                // set the equipment code
-                item.EquipmentCode = GenerateEquipmentCode(item.Owner.OwnerCode, equipmentNumber);
+                    // set the equipment code
+                    item.EquipmentCode = GenerateEquipmentCode(owner.OwnerCode, equipmentNumber);                    
+                }
 
                 // cleanup owner reference
                 int tmpOwnerId = item.Owner.OwnerId;
                 item.OwnerId = tmpOwnerId;
                 item.Owner = null;
-            }
-            
+            }            
+
             return item;
         }
 
