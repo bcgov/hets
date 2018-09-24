@@ -212,7 +212,11 @@ namespace HetsData.Helpers
         /// </summary>
         public static bool CheckIsHired(List<HetRentalAgreement> rentalAgreements)
         {
-            int? count = rentalAgreements?.Count(x => x.RentalAgreementStatusType.RentalAgreementStatusTypeCode.Equals("Active", StringComparison.InvariantCultureIgnoreCase));
+            if (rentalAgreements.Count == 0) return false;
+
+            int? count = rentalAgreements.Count(x => x.RentalAgreementStatusType.RentalAgreementStatusTypeCode
+                .Equals(HetRentalAgreement.StatusActive, StringComparison.InvariantCultureIgnoreCase));
+
             return count > 0;
         }
 
