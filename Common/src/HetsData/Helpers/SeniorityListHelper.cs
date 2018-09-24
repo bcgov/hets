@@ -108,9 +108,9 @@ namespace HetsData.Helpers
 
                         // get all equipment records
                         IQueryable<HetEquipment> data = context.HetEquipment
-                             .Where(x => x.LocalAreaId == localAreaId &&
-                                         x.DistrictEquipmentTypeId == districtEquipmentTypeId)
-                             .Select(x => x);
+                            .Include(x => x.EquipmentStatusType)
+                            .Where(x => x.LocalAreaId == localAreaId &&
+                                        x.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
                         // update the seniority score
                         foreach (HetEquipment equipment in data)
