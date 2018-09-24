@@ -323,6 +323,12 @@ namespace HetsImport.Import
                 if (!string.IsNullOrEmpty(tempCompanyName))
                 {
                     tempCompanyName = ImportUtility.GetCapitalCase(tempCompanyName);
+
+                    // fix some capital case names
+                    tempCompanyName = tempCompanyName.Replace("Bc", "BC");
+                    tempCompanyName = tempCompanyName.Replace("Rv", "RV");
+                    tempCompanyName = tempCompanyName.Replace(", & ", " & ");
+
                     owner.OrganizationName = tempCompanyName;
                 }
 
@@ -472,12 +478,12 @@ namespace HetsImport.Import
                 // check if the organization name is actually a "Ltd" or other company name
                 // (in BC Bid the names are sometimes used to store the org)
                 if (!string.IsNullOrEmpty(tempName) &&
-                    owner.OrganizationName.IndexOf(" Ltd", StringComparison.Ordinal) > -1 ||
-                    owner.OrganizationName.IndexOf(" Resort", StringComparison.Ordinal) > -1 ||
-                    owner.OrganizationName.IndexOf(" Oilfield", StringComparison.Ordinal) > -1 ||
-                    owner.OrganizationName.IndexOf(" Nation", StringComparison.Ordinal) > -1 ||
-                    owner.OrganizationName.IndexOf(" Ventures", StringComparison.Ordinal) > -1 ||
-                    owner.OrganizationName.IndexOf(" Indian Band", StringComparison.Ordinal) > -1)
+                    tempName.IndexOf(" Ltd", StringComparison.Ordinal) > -1 ||
+                    tempName.IndexOf(" Resort", StringComparison.Ordinal) > -1 ||
+                    tempName.IndexOf(" Oilfield", StringComparison.Ordinal) > -1 ||
+                    tempName.IndexOf(" Nation", StringComparison.Ordinal) > -1 ||
+                    tempName.IndexOf(" Ventures", StringComparison.Ordinal) > -1 ||
+                    tempName.IndexOf(" Indian Band", StringComparison.Ordinal) > -1)
                 {
                     owner.Surname = null;
                     owner.GivenName = null;
