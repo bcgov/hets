@@ -627,7 +627,7 @@ function parseOwner(owner) {
   if (!owner.equipmentList) { owner.equipmentList = []; }
 
   owner.organizationName = owner.organizationName || '';
-  owner.ownerEquipmentCodePrefix = owner.ownerEquipmentCodePrefix || '';
+  owner.ownerCode = owner.ownerCode || '';
   owner.doingBusinessAs = owner.doingBusinessAs || '';
   owner.registeredCompanyNumber = owner.registeredCompanyNumber || '';
   owner.meetsResidency = owner.meetsResidency || false;
@@ -1798,6 +1798,14 @@ export function updateCondition(condition) {
 // Business
 ////////////////////
 
+export function getBusiness() {
+  return new ApiRequest('/business').get().then(response => {
+    var business = response.data;
+
+    store.dispatch({ type: Action.UPDATE_BUSINESS, business: business });
+  });
+}
+
 export function getOwnerForBusiness(ownerId) {
   return new ApiRequest(`/business/owner/${ ownerId }`).get().then(response => {
     var owner = response.data;
@@ -1805,6 +1813,18 @@ export function getOwnerForBusiness(ownerId) {
     // Add display fields
     parseOwner(owner);
     store.dispatch({ type: Action.UPDATE_OWNER, owner: owner });
+  });
+}
+
+export function validateOwner(secretKey, postalCode) {
+  return new ApiRequest('/business/validateOwner').get({ sharedKey: secretKey, postalCode: postalCode }).then(response => {
+    if (response.responseStatus === 'ERROR') {
+      return Promise.reject(response.error.description);
+    }
+    
+    var business = response.data;
+    parseOwner(business.linkedOwner);
+    store.dispatch({ type: Action.UPDATE_BUSINESS, business: business });
   });
 }
 

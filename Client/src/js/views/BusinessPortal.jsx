@@ -1,102 +1,212 @@
 import React from 'react';
+
 import { connect } from 'react-redux';
-import { PageHeader, Well, Form, FormGroup, FormControl, Button } from 'react-bootstrap';
+
+import { Link } from 'react-router';
+
+import { PageHeader, Well, Row, Col, Form, FormGroup, Alert, Button } from 'react-bootstrap';
+import _ from 'lodash';
+
+import * as Action from '../actionTypes';
+import * as Api from '../api';
+import * as Constant from '../constants';
+import store from '../store';
 
 import Main from './Main.jsx';
 import Spinner from '../components/Spinner.jsx';
+import ColDisplay from '../components/ColDisplay.jsx';
+import SortTable from '../components/SortTable.jsx';
+import FormInputControl from '../components/FormInputControl.jsx';
 
 var BusinessPortal = React.createClass({
   propTypes: {
-    currentUser: React.PropTypes.object,
-    districtOwners: React.PropTypes.array,
+    user: React.PropTypes.object,
+    business: React.PropTypes.object,
+    uiOwners: React.PropTypes.object,
   },
 
   getInitialState() {
     return {
-      waiting: false,
+      loading: false,
+      validating: false,
+      success: false,
       errors: {},
+
+      // owners
+      uiOwners : {
+        sortField: this.props.uiOwners.sortField || 'name',
+        sortDesc: this.props.uiOwners.sortDesc  === true,
+      },
     };
   },
 
-  validateSecretKey(e) {
+  componentDidMount() {
+    this.fetch();
+  },
+
+  fetch() {
+    this.setState({ loading: true, success: false });
+
+    return Api.getBusiness().finally(() => {
+      if (!_.isEmpty(this.props.business)) {
+        this.setState({ success: true });
+      }
+      this.setState({ loading: false });
+    });
+  },
+
+  updateState(state, callback) {
+    this.setState(state, callback);
+  },
+
+  updateOwnersUIState(state, callback) {
+    this.setState({ uiOwners: { ...this.state.uiOwners, ...state }}, () => {
+      store.dispatch({ type: Action.UPDATE_OWNERS_UI, owners: this.state.uiOwners });
+      if (callback) { callback(); }
+    });
+  },
+
+  validateOwner(e) {
     e.preventDefault();
 
-    this.setState({ waiting: true, errors: {} });
+    this.setState({ validating: true, errors: {} });
 
-    // TODO: XHR request
-    new Promise((resolve) => setTimeout(resolve, 5 * 1000)).then(() => {
-      // TODO goto owner details screen on success
+    Api.validateOwner(this.state.secretKey, this.state.postalCode).then(() => {
+      // clear input fields
+      this.inputPostalCode.value = '';
+      this.inputSecretKey.value = '';
     }).catch((err) => {
       console.error(err);
-      this.setState({ errors: { secretKey: 'Error validating secret key' } });
+      this.setState({ errors: { secretKey: err } });
     }).finally(() => {
-      this.setState({ waiting: false });
+      this.setState({ validating: false });
     });
   },
 
   render() {
+    return <Main showNav={false}>
+      <div id="business-portal">
+        <PageHeader>Business Portal</PageHeader>
+        { this.state.loading && <div className="spinner-container"><Spinner/></div> }
+        { !this.state.loading && this.state.success && this.renderPage() }
+        { !this.state.loading && !this.state.success && this.renderError() }
+      </div>
+    </Main>;
+  },
+
+  renderPage() {
+    var business = this.props.business;
     const hasErrors = Object.keys(this.state.errors).length > 0;
-    return (
-      <Main showNav={false}>
-        <div id="business-portal">
-          <PageHeader>Business Portal Home Page</PageHeader>
 
-          <div id="overview">
-            <div id="bceid-box">
-              <h3>Business BCeID</h3>
-              <div id="bceid-logo" />
-              <div id="company-name">{this.props.currentUser.districtName}</div>
+    return <div>
+      <Row>
+        <Col md={12}>
+          <Well id="business-info">
+            <h3>Business Information</h3>
+            {(() => {
+              return <div>
+                <Row>
+                  <Col lg={6} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Legal Name">{ business.bceidLegalName }</ColDisplay>
+                  </Col>
+                  <Col lg={6} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Doing Business As">{ business.bceidDoingBusinessAs }</ColDisplay>
+                  </Col>
+                </Row>
+              </div>;
+            })()}
+          </Well>
+        </Col>
+        <Col md={12}>
+          <Well id="owners">
+            <h3>HETS District Owners Associated With Your BCeID</h3>
+            {(() => {
+              if (_.isEmpty(this.props.business.owners)) { return <Alert bsStyle="success">No district owners associated</Alert>; }
+
+              var owners = _.sortBy(this.props.business.owners, this.state.uiOwners.sortField);
+              if (this.state.uiOwners.sortDesc) {
+                _.reverse(owners);
+              }
+
+              var headers = [
+                { field: 'name',         title: 'Name'  },
+                { field: 'contact',      title: 'Primary Contact' },
+                { field: 'districtName', title: 'District' },
+                { field: 'localArea',    title: 'Local Area'  },
+              ];
+
+              return <SortTable id="owner-list" sortField={ this.state.uiOwners.sortField } sortDesc={ this.state.uiOwners.sortDesc } onSort={ this.updateOwnersUIState } headers={ headers }>
+                {
+                  _.map(owners, (owner) => {
+                    return <tr key={ owner.id }>
+                      <td><Link to={ `${Constant.BUSINESS_DETAILS_PATHNAME }/${owner.id}` }> {owner.organizationName}</Link></td>
+                      <td>{ owner.ownerName }</td>
+                      <td>{ owner.districtName }</td>
+                      <td>{ owner.localArea ? owner.localArea.name : null }</td>
+                    </tr>;
+                  })
+                }
+              </SortTable>;
+            })()}
+          </Well>
+        </Col>
+        <Col md={12}>
+          <Well id="associate-owner">
+            <h3>Associate HETS District Owner</h3>
+            <div id="overview">
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vulputate efficitur
+                diam, sit amet suscipit urna sodales sit amet. Phasellus aliquam sagittis
+                vehicula. Curabitur sit amet nunc vel dui efficitur dignissim eleifend eget nulla.
+                Sed faucibus, augue a blandit consequat, ipsum leo imperdiet ex, et laoreet justo
+                nunc id odio. Pellentesque velit velit, malesuada quis convallis nec, efficitur et
+                justo. Donec eget porta nunc. Nullam tortor metus, gravida id elit vel, faucibus
+                mattis magna. In sed metus in neque laoreet molestie. Maecenas sed metus dapibus,
+                consequat ante et, interdum arcu. Mauris eget iaculis ipsum. Integer non molestie
+                velit. Phasellus sodales viverra ipsum sed egestas. Integer viverra nulla at
+                efficitur cursus. Nunc fermentum lectus at porttitor ultrices.
+              </p>
             </div>
-
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vulputate efficitur
-              diam, sit amet suscipit urna sodales sit amet. Phasellus aliquam sagittis
-              vehicula. Curabitur sit amet nunc vel dui efficitur dignissim eleifend eget nulla.
-              Sed faucibus, augue a blandit consequat, ipsum leo imperdiet ex, et laoreet justo
-              nunc id odio. Pellentesque velit velit, malesuada quis convallis nec, efficitur et
-              justo. Donec eget porta nunc. Nullam tortor metus, gravida id elit vel, faucibus
-              mattis magna. In sed metus in neque laoreet molestie. Maecenas sed metus dapibus,
-              consequat ante et, interdum arcu. Mauris eget iaculis ipsum. Integer non molestie
-              velit. Phasellus sodales viverra ipsum sed egestas. Integer viverra nulla at
-              efficitur cursus. Nunc fermentum lectus at porttitor ultrices.
-            </p>
-          </div>
-
-          <div id="existing-district-owners">
-            <h4>HETS District Owners already associated with your BCeID:</h4>
-            {this.props.districtOwners.map(districtOwner => (
-              <Well>
-                <p>{districtOwner.companyName}</p>
-                <p>{districtOwner.ownerName}</p>
-              </Well> 
-            ))}
-          </div>
-
-          <div id="enter-secret-key">
-            <Form inline onSubmit={this.validateSecretKey}>
-              <FormGroup controlId="secret-key" validationState={this.state.errors.secretKey ? 'error' : null}>
-                <FormControl type="text" placeholder="Please enter your secret key here" disabled={this.state.waiting} />
+            <Form inline onSubmit={this.validateOwner}>
+              <FormGroup controlId="secretKey" validationState={this.state.errors.secretKey ? 'error' : null}>
+                <FormInputControl
+                  type="text"
+                  placeholder="Please enter your secret key here"
+                  disabled={this.state.validating}
+                  defaultValue={ this.state.secretKey }
+                  updateState={ this.updateState }
+                  inputRef={input => this.inputSecretKey = input} />
               </FormGroup>
-              <FormGroup controlId="postal-code" validationState={this.state.errors.postalCode ? 'error' : null}>
-                <FormControl type="text" placeholder="Postal code" disabled={this.state.waiting} />
+              <FormGroup controlId="postalCode" validationState={this.state.errors.postalCode ? 'error' : null}>
+                <FormInputControl
+                  type="text"
+                  placeholder="Postal code"
+                  disabled={this.state.validating}
+                  defaultValue={ this.state.postalCode }
+                  updateState={ this.updateState }
+                  inputRef={input => this.inputPostalCode = input} />
               </FormGroup>
-              <Button type="submit" disabled={this.state.waiting}>
-                Validate {this.state.waiting && <Spinner />}
+              <Button type="submit" disabled={this.state.validating}>
+                Validate {this.state.validating && <Spinner />}
               </Button>
-              {hasErrors && <div>Error with secret key</div>}
             </Form>
-          </div>
-        </div>
-      </Main>
-    );
+            { hasErrors && <div className="validation-error">Secret key validation failed.</div> }
+          </Well>
+        </Col>
+      </Row>
+    </div>;
+  },
+
+  renderError() {
+    return <h1><small>An error was encountered. You may not have permission to access this page.</small></h1>;
   },
 });
 
-
 function mapStateToProps(state) {
   return {
-    currentUser: state.user,
-    districtOwners: [],
+    user: state.user,
+    business: state.models.business,
+    uiOwners: state.ui.owners,
   };
 }
 

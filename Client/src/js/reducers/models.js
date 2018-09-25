@@ -111,6 +111,8 @@ const DEFAULT_MODELS = {
   timeRecord: {
     data: {},
   },
+
+  business: {},
 };
 
 export default function modelsReducer(state = DEFAULT_MODELS, action) {
@@ -331,6 +333,10 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     // Time Record
     case Action.DELETE_TIME_RECORD:
       return { ...state, timeRecord: { data: action.timeRecord } };
+
+    // Businesses
+    case Action.UPDATE_BUSINESS:
+      return { ...state, business: action.business };
   }
   return state;
 }

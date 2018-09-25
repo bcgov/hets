@@ -13,13 +13,17 @@
     height: 40px;
     background: url('/images/gov/bceid_logo.png') no-repeat center center #003366;
   }
+  
+  h3 {
+    font-weight: 600;
+  }
 
-  #enter-secret-key {
-    input#secret-key {
+  #associate-owner {
+    input#secretKey {
       width: 250px;
     }
 
-    input#postal-code {
+    input#postalCode {
       margin-left: 10px;
       width: 120px;
     }
@@ -27,6 +31,11 @@
     button {
       vertical-align: top;
       margin-left: 10px;
+    }
+
+    .validation-error {
+      margin-top: 1em;
+      color: #a94442;
     }
   }
 }
