@@ -16,7 +16,7 @@ import FormInputControl from '../../components/FormInputControl.jsx';
 import { isBlank, onlyLetters } from '../../utils/string';
 
 const HELP_TEXT = {
-  prefix: 'This field must include only letters, up to 5 characters and be unique across all owners',
+  prefix: 'This field must include only letters, up to 7 characters and be unique across all owners',
   residency: 'You have not indicated the owner meets the Residency requirements of the HETS Program. If that is the case, the owner may not be registered in this local area until they have met this requirement. If this check was missed inadvertently, return and activate the checkbox. If the owner does not meet the residency requirement, return and cancel from the Add Owner popup.',
 };
 
@@ -142,23 +142,23 @@ var OwnersAddDialog = React.createClass({
     }
 
     if (isBlank(this.state.ownerCode)) {
-      this.setState({ ownerCodeError: 'Equipment prefix is required' });
+      this.setState({ ownerCodeError: 'Owner code is required' });
       valid = false;
     } else {
-      var prefix = this.state.ownerCode.toLowerCase().trim();
+      var code = this.state.ownerCode.toLowerCase().trim();
 
-      // Prefix must only include letters, up to 5 characters
-      if (!onlyLetters(prefix) || prefix.length > 5) {
-        this.setState({ ownerCodeError: 'This equipment prefix must only include letters, up to 5 characters' });
+      // Must only include letters, up to 7 characters
+      if (!onlyLetters(code) || code.length > 7) {
+        this.setState({ ownerCodeError: 'This owner code must only include letters, up to 7 characters, and has to be unique to each owner' });
         valid = false;
       }
 
-      // Prefix must be unique across all owners
+      // Code must be unique across all owners
       owner = _.find(this.props.owners, (owner) => {
-        return owner.ownerEquipmentCodePrefix.toLowerCase().trim() === prefix;
+        return owner.ownerCode.toLowerCase().trim() === code;
       });
       if (owner) {
-        this.setState({ ownerCodeError: 'This equipment prefix already exists in the system' });
+        this.setState({ ownerCodeError: 'This owner code already exists in the system' });
         valid = false;
       }
     }

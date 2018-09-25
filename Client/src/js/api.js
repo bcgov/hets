@@ -627,7 +627,7 @@ function parseOwner(owner) {
   if (!owner.equipmentList) { owner.equipmentList = []; }
 
   owner.organizationName = owner.organizationName || '';
-  owner.ownerEquipmentCodePrefix = owner.ownerEquipmentCodePrefix || '';
+  owner.ownerCode = owner.ownerCode || '';
   owner.doingBusinessAs = owner.doingBusinessAs || '';
   owner.registeredCompanyNumber = owner.registeredCompanyNumber || '';
   owner.meetsResidency = owner.meetsResidency || false;
