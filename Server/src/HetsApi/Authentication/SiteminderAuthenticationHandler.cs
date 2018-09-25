@@ -204,7 +204,7 @@ namespace HetsApi.Authentication
                 UserSettings userSettings = new UserSettings();
                 string userId = "";
                 string siteMinderGuid = "";
-                string businessGuid = "";
+                string businessGuid = "";                
                 
                 // ********************************************************
                 // if this is an Error or Authentication API - Ignore
@@ -323,7 +323,7 @@ namespace HetsApi.Authentication
                 {
                     _logger.LogInformation("SiteMinder Business Guid: {0}", businessGuid);
                     
-                    userSettings.HetsBusinessUser = UserAccountHelper.GetBusinessUser(dbAppContext, userId, businessGuid, siteMinderGuid);
+                    userSettings.HetsBusinessUser = UserAccountHelper.GetBusinessUser(dbAppContext, context, userId, businessGuid, siteMinderGuid);
 
                     if (userSettings.HetsBusinessUser == null)
                     {

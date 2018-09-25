@@ -2,8 +2,12 @@
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://localhost/Pdf.Server",
+      "sslPort": 0
+    },
     "iisExpress": {
-      "applicationUrl": "http://localhost:17391/",
+      "applicationUrl": "http://localhost:8081",
       "sslPort": 0
     }
   },
