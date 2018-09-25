@@ -124,8 +124,9 @@ namespace HetsApi.Controllers
                 // shared key already used
                 return new ObjectResult(new HetsResponse("HETS-21", ErrorViewModel.GetDescription("HETS-21", _configuration)));
             }
-            
+
             // update owner
+            int ownerId = owner.OwnerId;
             owner.BusinessId = business.BusinessId;
             _context.SaveChanges();
 
@@ -133,6 +134,13 @@ namespace HetsApi.Controllers
             business = _context.HetBusiness.AsNoTracking()
                 .Include(x => x.HetOwner)
                 .FirstOrDefault(a => a.BusinessId == business.BusinessId);
+
+            // get updated owner record (linked owner) and return to the UI too
+            if (business != null)
+            {
+                business.LinkedOwner = _context.HetOwner.AsNoTracking()
+                    .FirstOrDefault(x => x.OwnerId == ownerId);
+            }
 
             return new ObjectResult(new HetsResponse(business));
         }
