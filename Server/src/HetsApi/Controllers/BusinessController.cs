@@ -60,6 +60,10 @@ namespace HetsApi.Controllers
 
             HetBusiness business = _context.HetBusiness.AsNoTracking()
                 .Include(x => x.HetOwner)
+                    .ThenInclude(y => y.PrimaryContact)
+                .Include(x => x.HetOwner)
+                    .ThenInclude(y => y.LocalArea)
+                        .ThenInclude(z => z.ServiceArea.District)
                 .FirstOrDefault(x => x.BceidBusinessGuid == businessGuid);
 
             if (business == null) return new ObjectResult(new HetsResponse(""));
@@ -133,6 +137,10 @@ namespace HetsApi.Controllers
             // get updated business record and return to the UI
             business = _context.HetBusiness.AsNoTracking()
                 .Include(x => x.HetOwner)
+                    .ThenInclude(y => y.PrimaryContact)
+                .Include(x => x.HetOwner)
+                    .ThenInclude(y => y.LocalArea)
+                        .ThenInclude(z => z.ServiceArea.District)
                 .FirstOrDefault(a => a.BusinessId == business.BusinessId);
 
             // get updated owner record (linked owner) and return to the UI too
@@ -147,7 +155,7 @@ namespace HetsApi.Controllers
 
         #endregion
 
-        #region Get Owner an Equipment Data by Business
+        #region Get Owner and Equipment Data by Business
 
         /// <summary>
         /// Get all owners for a business
@@ -200,6 +208,8 @@ namespace HetsApi.Controllers
 
             // check access
             if (!CanAccessOwner(business.BusinessId, id)) return StatusCode(StatusCodes.Status401Unauthorized);
+
+
 
             return new ObjectResult(new HetsResponse(OwnerHelper.GetRecord(id, _context, _configuration)));
         }

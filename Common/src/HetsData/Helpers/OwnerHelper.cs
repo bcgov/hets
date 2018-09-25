@@ -59,6 +59,8 @@ namespace HetsData.Helpers
                         .ThenInclude(c => c.PrimaryContact)
                 .Include(x => x.HetEquipment)
                     .ThenInclude(y => y.EquipmentStatusType)
+                .Include(x => x.HetEquipment)
+                    .ThenInclude(y => y.HetEquipmentAttachment)
                 .Include(x => x.HetContact)
                 .Include(x => x.PrimaryContact)
                 .FirstOrDefault(a => a.OwnerId == id);
