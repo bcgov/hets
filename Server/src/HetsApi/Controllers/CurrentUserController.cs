@@ -155,9 +155,9 @@ namespace HetsApi.Controllers
             _logger.LogDebug("User Id: {0}", userId);
             _logger.LogDebug("Business Guid: {0}", businessGuid);
 
-            // not found
-            if (string.IsNullOrEmpty(userId)) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-
+            // not found - return an HTTP 401 error response
+            if (string.IsNullOrEmpty(userId)) return StatusCode(401);
+            
             User user = new User();
 
             if (string.IsNullOrEmpty(businessGuid))
