@@ -290,11 +290,11 @@ var RentalRequestsDetail = React.createClass({
           rotationList = _.sortBy(rotationList, 'rotationListSortOrder');
           
           var headers = [
-            { field: 'seniority',               title: 'Seniority'         },
+            { field: 'seniorityString',         title: 'Seniority'         },
             { field: 'serviceHoursThisYear',    title: 'YTD Hours'         },
             { field: 'equipmentCode',           title: 'Equipment ID'      },
             { field: 'equipmentDetails',        title: 'Equipment Details' },
-            { field: 'equipmentOwner',           title: 'Owner'             },
+            { field: 'equipmentOwner',          title: 'Owner'             },
             { field: 'primaryContactName',      title: 'Contact'           },
             { field: 'primaryContactWorkPhone', title: 'Work Phone'        },
             { field: 'primaryContactCellPhone', title: 'Cell Phone'        },

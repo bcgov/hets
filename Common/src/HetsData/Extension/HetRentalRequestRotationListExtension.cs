@@ -8,7 +8,7 @@ namespace HetsData.Model
     public sealed partial class HetRentalRequestRotationList
     {
         [NotMapped]
-        public float? Seniority { get; set; }
+        public float? SeniorityFloat { get; set; }
 
         [NotMapped]
         public int? BlockNumber { get; set; }

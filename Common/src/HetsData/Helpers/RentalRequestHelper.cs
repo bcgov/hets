@@ -333,7 +333,7 @@ namespace HetsData.Helpers
                     HetRentalRequestRotationList rentalRequestRotationList = new HetRentalRequestRotationList
                     {
                         EquipmentId = blockEquipment[i].EquipmentId,
-                        Seniority = blockEquipment[i].Seniority,
+                        SeniorityFloat = blockEquipment[i].Seniority,
                         BlockNumber = blockEquipment[i].BlockNumber,
                         AppCreateTimestamp = DateTime.UtcNow,
                         RotationListSortOrder = currentSortOrder
@@ -445,7 +445,7 @@ namespace HetsData.Helpers
                 if (block == 1)
                 {
                     newAreaRotationList.AskNextBlock1Id = rentalRequest.HetRentalRequestRotationList.ElementAt(0).EquipmentId;
-                    newAreaRotationList.AskNextBlock1Seniority = rentalRequest.HetRentalRequestRotationList.ElementAt(0).Seniority;
+                    newAreaRotationList.AskNextBlock1Seniority = rentalRequest.HetRentalRequestRotationList.ElementAt(0).SeniorityFloat;
                     newAreaRotationList.AskNextBlock2Id = null;
                     newAreaRotationList.AskNextBlock2Seniority = null;
                     newAreaRotationList.AskNextBlockOpenId = null;
@@ -455,7 +455,7 @@ namespace HetsData.Helpers
                     newAreaRotationList.AskNextBlock1Id = null;
                     newAreaRotationList.AskNextBlock1Seniority = null;
                     newAreaRotationList.AskNextBlock2Id = rentalRequest.HetRentalRequestRotationList.ElementAt(0).EquipmentId;
-                    newAreaRotationList.AskNextBlock2Seniority = rentalRequest.HetRentalRequestRotationList.ElementAt(0).Seniority;
+                    newAreaRotationList.AskNextBlock2Seniority = rentalRequest.HetRentalRequestRotationList.ElementAt(0).SeniorityFloat;
                     newAreaRotationList.AskNextBlockOpenId = null;
                 }
                 else
@@ -611,9 +611,9 @@ namespace HetsData.Helpers
                 int? equipmentId = rentalRequest.HetRentalRequestRotationList.ElementAt(0).EquipmentId;
                 if (equipmentId != null) nextRecordToAskId[startBlock] = (int)equipmentId;
 
-                if (rentalRequest.HetRentalRequestRotationList.ElementAt(0).Seniority != null)
+                if (rentalRequest.HetRentalRequestRotationList.ElementAt(0).SeniorityFloat != null)
                 {
-                    float? equipmentSeniority = rentalRequest.HetRentalRequestRotationList.ElementAt(0).Seniority;
+                    float? equipmentSeniority = rentalRequest.HetRentalRequestRotationList.ElementAt(0).SeniorityFloat;
                     if (equipmentSeniority != null) nextRecordToAskSeniority[startBlock] = (float)equipmentSeniority;
                 }
 
