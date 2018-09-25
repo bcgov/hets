@@ -11,6 +11,7 @@ using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Model;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace HetsApi.Controllers
 {
@@ -23,12 +24,14 @@ namespace HetsApi.Controllers
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly ILogger _logger;
 
-        public CurrentUserController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public CurrentUserController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory)
         {
             _context = context;
-            _configuration = configuration;    
-            
+            _configuration = configuration;
+            _logger = loggerFactory.CreateLogger(typeof(CurrentUserController));
+
             // set context data
             User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
             _context.SmUserId = user.SmUserId;
@@ -143,9 +146,14 @@ namespace HetsApi.Controllers
         [AllowAnonymous]
         public virtual IActionResult UsersCurrentGet()
         {
+            _logger.LogDebug("Get Current User");
+
             // get the current user id
             string businessGuid = _context.SmBusinessGuid;
             string userId = _context.SmUserId;
+
+            _logger.LogDebug("User Id: {0}", userId);
+            _logger.LogDebug("Business Guid: {0}", businessGuid);
 
             // not found
             if (string.IsNullOrEmpty(userId)) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));

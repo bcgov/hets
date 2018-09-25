@@ -59,6 +59,7 @@ namespace HetsApi.Controllers
             if (businessGuid == null) return new ObjectResult(new HetsResponse(""));
 
             HetBusiness business = _context.HetBusiness.AsNoTracking()
+                .Include(x => x.HetOwner)
                 .FirstOrDefault(x => x.BceidBusinessGuid == businessGuid);
 
             if (business == null) return new ObjectResult(new HetsResponse(""));
