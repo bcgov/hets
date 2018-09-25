@@ -148,11 +148,11 @@ namespace HetsApi.Controllers
             string userId = _context.SmUserId;
 
             // not found
-            if (userId == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (string.IsNullOrEmpty(userId)) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             User user = new User();
 
-            if (businessGuid == null)
+            if (string.IsNullOrEmpty(businessGuid))
             {
                 HetUser currentUser = _context.HetUser
                     .Include(x => x.District)
@@ -246,7 +246,7 @@ namespace HetsApi.Controllers
         [Route("logoff")]
         [SwaggerOperation("UserDistrictsIdLogoffPost")]
         [SwaggerResponse(200, type: typeof(HetUser))]
-        [RequiresPermission(HetPermission.Login)]
+        [AllowAnonymous]
         public virtual IActionResult UsersCurrentLogoffPost()
         {
             // get the current user id

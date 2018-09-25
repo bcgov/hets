@@ -17,6 +17,7 @@ namespace HetsApi.Helpers
         private const string ConstSiteMinderUserDisplayName = "smgov_userdisplayname";
         private const string ConstSiteMinderEmail = "smgov_email";
         private const string ConstSiteMinderBusinessLegalName = "smgov_businesslegalname";
+        private const string ConstSiteMinderBusinessNumber = "smgov_businessnumber";
 
         /// <summary>
         /// Get user id from http context
@@ -263,10 +264,16 @@ namespace HetsApi.Helpers
 
                 // get additional business data
                 string legalName = httpContext.Request.Headers[ConstSiteMinderBusinessLegalName];
-
+                string businessNumber = httpContext.Request.Headers[ConstSiteMinderBusinessNumber];
+                
                 if (!string.IsNullOrEmpty(legalName))
                 {
                     business.BceidLegalName = legalName;
+                }
+
+                if (!string.IsNullOrEmpty(businessNumber))
+                {
+                    business.BceidBusinessNumber = businessNumber;
                 }
             }
 
