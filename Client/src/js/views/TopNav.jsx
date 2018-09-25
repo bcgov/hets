@@ -136,7 +136,7 @@ var TopNav = React.createClass({
 });
 
 TopNav.contextTypes = {
-  router: React.PropTypes.func.isRequired,
+  router: React.PropTypes.object.isRequired,
 };
 
 
