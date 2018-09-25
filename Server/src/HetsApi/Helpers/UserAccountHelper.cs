@@ -14,6 +14,9 @@ namespace HetsApi.Helpers
     {
         private const string ConstDevBusinessTokenKey = "BUS-USER";
         private const string ConstSiteMinderBusinessGuidKey = "smgov_businessguid";
+        private const string ConstSiteMinderUserDisplayName = "smgov_userdisplayname";
+        private const string ConstSiteMinderEmail = "smgov_email";
+        private const string ConstSiteMinderBusinessLegalName = "smgov_businesslegalname";
 
         /// <summary>
         /// Get user id from http context
@@ -231,11 +234,12 @@ namespace HetsApi.Helpers
         /// Get business user record
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="httpContext"></param>
         /// <param name="userId"></param>
         /// <param name="businessGuid"></param>
         /// <param name="guid"></param>        
         /// <returns></returns>
-        public static HetBusinessUser GetBusinessUser(DbAppContext context, string userId, string businessGuid, string guid = null)
+        public static HetBusinessUser GetBusinessUser(DbAppContext context, HttpContext httpContext, string userId, string businessGuid, string guid = null)
         {
             // find the business
             HetBusiness business = context.HetBusiness.AsNoTracking()
@@ -257,7 +261,13 @@ namespace HetsApi.Helpers
                     AppLastUpdateTimestamp = DateTime.UtcNow
                 };
 
-                // to do - add web service call to retrieve remaining business data
+                // get additional business data
+                string legalName = httpContext.Request.Headers[ConstSiteMinderBusinessLegalName];
+
+                if (!string.IsNullOrEmpty(legalName))
+                {
+                    business.BceidLegalName = legalName;
+                }
             }
 
             // ok - now find the user
@@ -282,8 +292,20 @@ namespace HetsApi.Helpers
                     AppLastUpdateUserid = userId,
                     AppLastUpdateTimestamp = DateTime.UtcNow
                 };
-                
-                // to do - add web service call to retrieve remaining user data
+
+                // get additional user data
+                string displayName = httpContext.Request.Headers[ConstSiteMinderUserDisplayName];
+                string email = httpContext.Request.Headers[ConstSiteMinderEmail];
+
+                if (!string.IsNullOrEmpty(displayName))
+                {
+                    user.BceidDisplayName = displayName;
+                }
+
+                if (!string.IsNullOrEmpty(email))
+                {
+                    user.BceidEmail = email;
+                }
 
                 // add the "Business Logon" role
                 HetBusinessUserRole userRole = new HetBusinessUserRole

@@ -40,9 +40,10 @@ namespace HetsData.Helpers
         /// <returns></returns>
         public static HetProject GetRecord(int id, DbAppContext context)
         {
-            HetProject project = context.HetProject.AsNoTracking()  
+            HetProject project = context.HetProject.AsNoTracking() 
                 .Include(x => x.ProjectStatusType)
-                .Include(x => x.District.Region)
+                .Include(x => x.District)
+                    .ThenInclude(x => x.Region)
                 .Include(x => x.HetContact)
                 .Include(x => x.PrimaryContact)
                 .Include(x => x.HetRentalRequest)

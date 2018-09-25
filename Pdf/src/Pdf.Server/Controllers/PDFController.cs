@@ -63,7 +63,6 @@ namespace Pdf.Server.Controllers
                     Html = result,
                     PdfFileName = fileName
                 };
-
                 _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Gen Pdf", fileName);
                 byte[] pdfResponseBytes = PdfDocument.BuildPdf(_configuration, pdfRequest);
 
