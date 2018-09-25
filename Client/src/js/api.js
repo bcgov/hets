@@ -1299,6 +1299,9 @@ export function addRentalRequest(rentalRequest) {
 }
 
 export function updateRentalRequest(rentalRequest) {
+  // remove properties that interfere with deserialization
+  delete rentalRequest.primaryContact;
+
   return new ApiRequest(`/rentalrequests/${ rentalRequest.id }`).put(rentalRequest).then(response => {
     var rentalRequest = response.data;
     // Add display fields
