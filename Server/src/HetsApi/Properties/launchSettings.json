@@ -20,7 +20,7 @@
         "POSTGRESQL_DATABASE": "hets",
         "POSTGRESQL_USER": "trdbhetd",
         "DATABASE_SERVICE_NAME": "localhost",
-        "POSTGRESQL_PASSWORD": "IhUFdcC0wGJeIMDJ"
+        "POSTGRESQL_PASSWORD": "<pwd>"
       }
     }
   }
