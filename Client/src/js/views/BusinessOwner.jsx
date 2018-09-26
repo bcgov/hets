@@ -258,6 +258,7 @@ var BusinessOwner = React.createClass({
                   { field: 'equipmentCode',    title: 'ID'                  },
                   { field: 'typeName',         title: 'Type'                },
                   { field: 'make',             title: 'Make/Model/Size' },
+                  { field: 'attachments',      title: 'Attachments' },
                   { field: 'lastVerifiedDate', title: 'Last Verified'       },
                 ];
 
@@ -268,6 +269,7 @@ var BusinessOwner = React.createClass({
                         <td>{ equipment.equipmentCode }</td>
                         <td>{ equipment.typeName }</td>
                         <td>{ concat(equipment.make, concat(equipment.model, equipment.size, '/'), '/') }</td>
+                        <td>{ _.map(equipment.equipmentAttachments, a => a.description).join(', ') }</td>
                         <td>{ equipment.isApproved ? formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'Not Approved' }</td>
                       </tr>;
                     })
