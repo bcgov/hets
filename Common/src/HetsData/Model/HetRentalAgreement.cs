@@ -44,7 +44,6 @@ namespace HetsData.Model
 
         public HetEquipment Equipment { get; set; }
 
-        [JsonIgnore]
         public HetProject Project { get; set; }
 
         public HetRatePeriodType RatePeriodType { get; set; }
