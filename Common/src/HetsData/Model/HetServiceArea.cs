@@ -17,8 +17,12 @@ namespace HetsData.Model
         public string Name { get; set; }
         public int? AreaNumber { get; set; }
         public int MinistryServiceAreaId { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public DateTime FiscalStartDate { get; set; }
+        public DateTime? FiscalEndDate { get; set; }
+        public string Address { get; set; }
+        public string Phone { get; set; }
+        public string Fax { get; set; }
+        public string SupportingDocuments { get; set; }
         public int? DistrictId { get; set; }
         [JsonIgnore]public string AppCreateUserDirectory { get; set; }
         [JsonIgnore]public string AppCreateUserGuid { get; set; }

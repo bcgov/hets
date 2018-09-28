@@ -6,33 +6,49 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"]</title>    
-    
+    <title>@ViewData["Title"]</title>
+
     <style>
         body {
             background-color: #fff;
             padding: 10px;
             font-family: Helvetica;
             font-size: 12pt;
-        }      
+        }
 
         #requestId, #regionId {
             width: 30px;
         }
-    </style>        
-    
+    </style>
+
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+
     <script language="javascript">
         function updateUserId(userId) {
             userId = userId.trim();
 
             if (userId.length > 0) {
                 window.location.href = "/api/authentication/dev/token/" + userId;
-            }            
+            }
         }
 
         function expireUserId() {
-            window.location.href = "/api/authentication/dev/cleartoken";
-        }        
+            window.location.href = "/api/authentication/dev/clearToken";
+        }
+
+        function generateKeys() {
+            $.ajax({
+                url: "/api/owners/generateKeys",
+                type: "POST",
+                timeout: 600000, // sets timeout to 10 min
+                success: function (response) {
+                    alert(response);
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.responseText);
+                }
+            });
+        }
     </script>
 </head>
 <body>
@@ -55,6 +71,15 @@
     }
 
     @if (Model.DevelopmentEnvironment)
+    {
+        <hr />
+        <div>
+            <h3>Generate Owner Shared Keys</h3>
+            <button onclick="generateKeys();">Generate Keys</button>
+        </div>
+    }
+
+@if (Model.DevelopmentEnvironment)
     {
         <hr />
         <div>

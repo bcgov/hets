@@ -178,9 +178,47 @@ namespace HetsImport.Import
 
                 if (oldObject.FiscalStart != null)
                 {
-                    serviceArea.StartDate = DateTime.ParseExact(oldObject.FiscalStart.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                    serviceArea.FiscalStartDate = DateTime.ParseExact(oldObject.FiscalStart.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
                 }
-            
+
+                if (oldObject.FiscalEnd != null)
+                {
+                    serviceArea.FiscalEndDate = DateTime.ParseExact(oldObject.FiscalEnd.Trim().Substring(0, 10), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                }
+
+                // Address, Phone, etc.
+                serviceArea.Address = oldObject.Address.Trim();
+
+                if (serviceArea.Address.Length > 255)
+                {
+                    serviceArea.Address = serviceArea.Address.Substring(1, 255);
+                }
+
+                serviceArea.Phone = oldObject.Phone.Trim();
+
+                if (serviceArea.Phone.Length > 50)
+                {
+                    serviceArea.Phone = serviceArea.Phone.Substring(1, 50);
+                }
+
+                serviceArea.Phone = ImportUtility.FormatPhone(serviceArea.Phone);
+
+                serviceArea.Fax = oldObject.Fax.Trim();
+
+                if (serviceArea.Fax.Length > 50)
+                {
+                    serviceArea.Fax = serviceArea.Fax.Substring(1, 50);
+                }
+
+                serviceArea.Phone = ImportUtility.FormatPhone(serviceArea.Fax);
+
+                serviceArea.SupportingDocuments = oldObject.Sup_Docs.Trim();
+
+                if (serviceArea.SupportingDocuments.Length > 500)
+                {
+                    serviceArea.SupportingDocuments = serviceArea.SupportingDocuments.Substring(1, 500);
+                }
+
                 serviceArea.AppCreateUserid = systemId;
                 serviceArea.AppCreateTimestamp = DateTime.UtcNow;
                 serviceArea.AppLastUpdateUserid = systemId;
