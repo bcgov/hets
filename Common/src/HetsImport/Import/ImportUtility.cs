@@ -372,6 +372,28 @@ namespace HetsImport.Import
             return tempNumber;
         }
 
+        public static string FormatPhone(string number)
+        {
+            string tempNumber = "";
+
+            if (!string.IsNullOrEmpty(number))
+            {
+                number = number.Replace("(", "");
+                number = number.Replace(")", "");
+                number = number.Replace("-", "");
+                number = number.Replace(" ", "");
+
+                bool parseNumber = int.TryParse(number, out int numberInt);
+
+                if (parseNumber)
+                {
+                    tempNumber = string.Format("{0:(###) ###-####}", numberInt);
+                }                
+            }
+
+            return tempNumber;
+        }
+
         public static void UnknownElement(object sender, XmlElementEventArgs e)
         {
             Console.WriteLine("Unexpected element: {0} as line {1}, column {2}", e.Element.Name, e.LineNumber, e.LinePosition);

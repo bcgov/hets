@@ -4440,6 +4440,10 @@ namespace HetsData.Model
                     .HasColumnName("SERVICE_AREA_ID")
                     .HasDefaultValueSql("nextval('\"HET_SERVICE_AREA_ID_seq\"'::regclass)");
 
+                entity.Property(e => e.Address)
+                    .HasColumnName("ADDRESS")
+                    .HasMaxLength(255);
+
                 entity.Property(e => e.AppCreateTimestamp)
                     .HasColumnName("APP_CREATE_TIMESTAMP")
                     .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
@@ -4494,7 +4498,11 @@ namespace HetsData.Model
 
                 entity.Property(e => e.DistrictId).HasColumnName("DISTRICT_ID");
 
-                entity.Property(e => e.EndDate).HasColumnName("END_DATE");
+                entity.Property(e => e.Fax)
+                    .HasColumnName("FAX")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FiscalEndDate).HasColumnName("FISCAL_END_DATE");
 
                 entity.Property(e => e.MinistryServiceAreaId).HasColumnName("MINISTRY_SERVICE_AREA_ID");
 
@@ -4502,7 +4510,15 @@ namespace HetsData.Model
                     .HasColumnName("NAME")
                     .HasMaxLength(150);
 
-                entity.Property(e => e.StartDate).HasColumnName("START_DATE");
+                entity.Property(e => e.FiscalStartDate).HasColumnName("FISCAL_START_DATE");
+
+                entity.Property(e => e.Phone)
+                    .HasColumnName("PHONE")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.SupportingDocuments)
+                    .HasColumnName("SUPPORTING_DOCUMENTS")
+                    .HasMaxLength(500);
 
                 entity.HasOne(d => d.District)
                     .WithMany(p => p.HetServiceArea)
