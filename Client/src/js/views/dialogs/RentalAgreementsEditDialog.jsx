@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Grid, Row, Col } from 'react-bootstrap';
-import { Form, FormGroup, HelpBlock, ControlLabel, FormControl } from 'react-bootstrap';
+import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import Promise from 'bluebird';
 
@@ -113,7 +113,7 @@ var RentalAgreementsEditDialog = React.createClass({
     return <EditDialog id="rental-agreements-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title={
-        <strong>Rental Agreement</strong>
+        <strong>Rental Agreement Details</strong>
       }>
       {(() => {
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -129,21 +129,6 @@ var RentalAgreementsEditDialog = React.createClass({
                 </FormGroup>
               </Col>
               <Col md={6}>
-                <FormGroup controlId="datedOn" validationState={ this.state.datedOnError ? 'error' : null }>
-                  <ControlLabel>Dated At</ControlLabel>
-                  <DateControl id="datedOn" disabled={ isReadOnly } date={ this.state.datedOn } updateState={ this.updateState } placeholder="mm/dd/yyyy" title="Dated At" />
-                  <HelpBlock>{ this.state.datedOnError }</HelpBlock>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={6}>
-                <FormGroup>
-                  <ControlLabel>Point of Hire</ControlLabel>
-                  <FormControl.Static>{ this.props.rentalAgreement.pointOfHire }</FormControl.Static>
-                </FormGroup>
-              </Col>
-              <Col md={6}>
                 <FormGroup controlId="estimateHours" validationState={ this.state.estimateHoursError ? 'error' : null }>
                   <ControlLabel>Estimated Period Hours <sup>*</sup></ControlLabel>
                   <FormInputControl type="number" min={0} defaultValue={ this.state.estimateHours } readOnly={ isReadOnly } updateState={ this.updateState }/>
@@ -153,15 +138,10 @@ var RentalAgreementsEditDialog = React.createClass({
             </Row>
             <Row>
               <Col md={6}>
-                <FormGroup>
-                  <ControlLabel>District</ControlLabel>
-                  <FormControl.Static>{ this.props.rentalAgreement.districtName }</FormControl.Static>
-                </FormGroup>
-              </Col>
-              <Col md={6}>
-                <FormGroup>
-                  <ControlLabel>WorkSafeBC (WCB) Number</ControlLabel>
-                  <FormControl.Static>{ this.props.rentalAgreement.workSafeBCPolicyNumber }</FormControl.Static>
+                <FormGroup controlId="datedOn" validationState={ this.state.datedOnError ? 'error' : null }>
+                  <ControlLabel>Dated At</ControlLabel>
+                  <DateControl id="datedOn" disabled={ isReadOnly } date={ this.state.datedOn } updateState={ this.updateState } placeholder="mm/dd/yyyy" title="Dated At" />
+                  <HelpBlock>{ this.state.datedOnError }</HelpBlock>
                 </FormGroup>
               </Col>
             </Row>

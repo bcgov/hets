@@ -13,6 +13,7 @@ import { buildApiPath } from '../utils/http.js';
 import AttachmentRatesEditDialog from './dialogs/AttachmentRatesEditDialog.jsx';
 import EquipmentRentalRatesEditDialog from './dialogs/EquipmentRentalRatesEditDialog.jsx';
 import RentalAgreementsEditDialog from './dialogs/RentalAgreementsEditDialog.jsx';
+import RentalAgreementHeaderEditDialog from './dialogs/RentalAgreementHeaderEditDialog.jsx';
 import RentalConditionsEditDialog from './dialogs/RentalConditionsEditDialog.jsx';
 import RentalRatesEditDialog from './dialogs/RentalRatesEditDialog.jsx';
 import CloneDialog from './dialogs/CloneDialog.jsx';
@@ -54,6 +55,7 @@ var RentalAgreementsDetail = React.createClass({
       loading: true,
       rentalAgreementDocumentLoading: false,
 
+      showHeaderEditDialog: false,
       showEditDialog: false,
       showEquipmentRateDialog: false,
       showRentalRateDialog: false,
@@ -88,12 +90,27 @@ var RentalAgreementsDetail = React.createClass({
     this.setState(state, callback);
   },
 
+  openHeaderEditDialog() {
+    this.setState({ showHeaderEditDialog: true });
+  },
+
+  closeHeaderEditDialog() {
+    this.setState({ showHeaderEditDialog: false });
+  },
+
   openEditDialog() {
     this.setState({ showEditDialog: true });
   },
 
   closeEditDialog() {
     this.setState({ showEditDialog: false });
+  },
+
+  saveHeaderEdit(rentalAgreement) {
+    return Api.updateRentalAgreement(rentalAgreement).finally(() => {
+      this.fetch();
+      this.closeHeaderEditDialog();
+    });
   },
 
   saveEdit(rentalAgreement) {
@@ -317,49 +334,95 @@ var RentalAgreementsDetail = React.createClass({
 
           return (
             <Row id="rental-agreements-top">
-              <Col sm={9}>
+              <Col sm={6}>
                 <Label bsStyle={ rentalAgreement.isActive ? 'success' : 'danger' }>{ rentalAgreement.status }</Label>
                 <Unimplemented>
                   <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
                 </Unimplemented>
               </Col>
-              <Col sm={3}>
+              <Col sm={6}>
                 <div className="pull-right">
-                  <Button disabled={ !rentalAgreement.isActive } onClick={ this.openCloneDialog }>Clone</Button>
+                  <Button title="Print PDF" onClick={ this.generateRentalAgreementDocument }><Glyphicon glyph="print" /></Button>
                   <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
+                  <Button title="Generate Another Rental Agreement">Generate Another Rental Agreement</Button>
                 </div>
               </Col>
             </Row>
           );
         })()}
 
-        <Well>
+        <Well id="rental-agreement-header">
           {(() => {
             if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
             return (
-              <Row id="rental-agreements-header">
-                <h3>Rental Agreement</h3>
-                <Col lg={4} md={6} sm={12} xs={12}>
-                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Agreement Number:">{ rentalAgreement.number }</ColDisplay>
+              <div>
+                <h3 className="clearfix">Rental Agreement
+                  <span className="pull-right">
+                    <Button title="Edit Rental Agreement" bsSize="small" onClick={ this.openHeaderEditDialog }><Glyphicon glyph="pencil" /></Button>
+                  </span>
+                </h3>
+                <Row>
+                  <Col lg={6} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Agreement Number:">{ rentalAgreement.number }</ColDisplay>
+                  </Col>
+                  <Col lg={6} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Rental Request:">
+                      <Link to={{ pathname: 'request/' + rentalAgreement.equipment.id }}>View</Link>
+                    </ColDisplay>
+                  </Col>
+                  <Col lg={6} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Project:">{ rentalAgreement.project.name }</ColDisplay>
+                  </Col>
+                  <Col lg={6} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="District:">{ rentalAgreement.districtName }</ColDisplay>
+                  </Col>
+                  <Col lg={6} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Owner:">{ rentalAgreement.ownerName }</ColDisplay>
+                  </Col>
+                  <Col lg={6} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="WorkSafeBC (WCB) Number:">{ rentalAgreement.equipment.owner.workSafeBcpolicyNumber }</ColDisplay>
+                  </Col>
+                  <Col lg={6} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment ID:">
+                      <Link to={{ pathname: 'equipment/' + rentalAgreement.equipment.id }}>{ rentalAgreement.equipment.equipmentCode }</Link>
+                    </ColDisplay>
+                  </Col>
+                  <Col lg={6} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment Serial Number:">{ rentalAgreement.equipment.serialNumber }</ColDisplay>
+                  </Col>
+                  <Col lg={6} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment Yr Mk/Md/Sz:">
+                      {`${rentalAgreement.equipment.year} ${rentalAgreement.equipment.make}/${rentalAgreement.equipment.model}/${rentalAgreement.equipment.size}`}</ColDisplay>
+                  </Col>
+                  <Col lg={6} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Point of Hire:">{ rentalAgreement.pointOfHire }</ColDisplay>
+                  </Col>
+                </Row>
+              </div>
+            );
+          })()}
+        </Well>
+
+        <Well>
+          <h3 className="clearfix">Details
+            <span className="pull-right">
+              <Button title="Edit Details" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
+            </span>
+          </h3>
+          {(() => {
+            if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+
+            return (
+              <Row>
+                <Col lg={6} md={6} sm={12} xs={12}>
+                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Estimated Commencement:">{ formatDateTime(rentalAgreement.estimateStartWork, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
                 </Col>
-                <Col lg={4} md={6} sm={12} xs={12}>
-                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Owner:">{ rentalAgreement.ownerName }</ColDisplay>
+                <Col lg={6} md={6} sm={12} xs={12}>
+                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Estimated Period Hours:">{ rentalAgreement.estimateHours }</ColDisplay>
                 </Col>
-                <Col lg={4} md={6} sm={12} xs={12}>
-                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment ID:">
-                    <Link to={{ pathname: 'equipment/' + rentalAgreement.equipment.id }}>{ rentalAgreement.equipment.equipmentCode }</Link>
-                  </ColDisplay>
-                </Col>
-                <Col lg={4} md={6} sm={12} xs={12}>
-                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment Serial Number:">{ rentalAgreement.equipment.serialNumber }</ColDisplay>
-                </Col>
-                <Col lg={4} md={6} sm={12} xs={12}>
-                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment Yr Mk/Md/Sz:">
-                    {`${rentalAgreement.equipment.year} ${rentalAgreement.equipment.make}/${rentalAgreement.equipment.model}/${rentalAgreement.equipment.size}`}</ColDisplay>
-                </Col>
-                <Col lg={4} md={6} sm={12} xs={12}>
-                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Project:">{ rentalAgreement.project.name }</ColDisplay>
+                <Col lg={6} md={6} sm={12} xs={12}>
+                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Dated On:">{ formatDateTime(rentalAgreement.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
                 </Col>
               </Row>
             );
@@ -544,40 +607,6 @@ var RentalAgreementsDetail = React.createClass({
         </Well>
 
         <Well>
-          <div className="clearfix">
-            <span className="pull-right">
-              <Button title="Edit Rental Agreement" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
-            </span>
-          </div>
-          {(() => {
-            if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
-
-            return (
-              <Row>
-                <Col lg={4} md={6} sm={12} xs={12}>
-                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Estimated Commencement:">{ formatDateTime(rentalAgreement.estimateStartWork, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
-                </Col>
-                <Col lg={4} md={6} sm={12} xs={12}>
-                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Point of Hire:">{ rentalAgreement.pointOfHire }</ColDisplay>
-                </Col>
-                <Col lg={4} md={6} sm={12} xs={12}>
-                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="District:">{ rentalAgreement.districtName }</ColDisplay>
-                </Col>
-                <Col lg={4} md={6} sm={12} xs={12}>
-                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Dated On:">{ formatDateTime(rentalAgreement.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
-                </Col>
-                <Col lg={4} md={6} sm={12} xs={12}>
-                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Estimated Period Hours:">{ rentalAgreement.estimateHours }</ColDisplay>
-                </Col>
-                <Col lg={4} md={6} sm={12} xs={12}>
-                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="WorkSafeBC (WCB) Number:">{ rentalAgreement.workSafeBCPolicyNumber }</ColDisplay>
-                </Col>
-              </Row>
-            );
-          })()}
-        </Well>
-
-        <Well>
           <h3>History <span className="pull-right">
             <Unimplemented>
               <Button title="Add note" bsSize="small" onClick={ this.addNote }><Glyphicon glyph="plus" /></Button>
@@ -606,9 +635,14 @@ var RentalAgreementsDetail = React.createClass({
         </Well>
         <Row id="rental-agreements-footer">
           <div className="pull-right">
-            <Button title="Generate Rental Agreement PDF" onClick={ this.generateRentalAgreementDocument } bsStyle="primary">Generate</Button>
+            <Button title="Print PDF" onClick={ this.generateRentalAgreementDocument }><Glyphicon glyph="print" /></Button>
+            <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
+            <Button title="Generate Another Rental Agreement">Generate Another Rental Agreement</Button>
           </div>
         </Row>
+        { this.state.showHeaderEditDialog &&
+        <RentalAgreementHeaderEditDialog show={ this.state.showHeaderEditDialog } onSave={ this.saveHeaderEdit } onClose={ this.closeHeaderEditDialog } />
+        }
         { this.state.showEditDialog &&
         <RentalAgreementsEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
         }
