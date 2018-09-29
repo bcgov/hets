@@ -102,6 +102,8 @@ namespace HetsApi.Controllers
             agreement.RateComment = item.RateComment;
             agreement.RatePeriod = item.RatePeriod;
             agreement.RentalAgreementStatusTypeId = (int)statusId;
+            agreement.ProjectId = item.ProjectId;
+            agreement.EquipmentId = item.EquipmentId;
 
             // save the changes
             _context.SaveChanges();
