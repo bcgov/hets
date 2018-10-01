@@ -34,7 +34,6 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("import")]
         [SwaggerOperation("AdminImportGet")]
-        [Produces("text/html")]
         [RequiresPermission(HetPermission.Admin)]
         public virtual IActionResult AdminImportGet([FromQuery]string path, [FromQuery]string realTime)
         {
@@ -83,7 +82,6 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("obfuscate")]
         [SwaggerOperation("AdminObfuscateGet")]
-        [Produces("text/html")]
         [RequiresPermission(HetPermission.Admin)]
         public virtual IActionResult AdminObfuscateGet([FromQuery]string sourcePath, [FromQuery]string destinationPath)
         {

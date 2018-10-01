@@ -3048,6 +3048,10 @@ namespace HetsData.Model
 
                 entity.HasIndex(e => e.ProjectId);
 
+                entity.HasIndex(e => e.RentalRequestId);
+
+                entity.HasIndex(e => e.RentalRequestRotationListId);
+
                 entity.HasIndex(e => e.RatePeriodTypeId)
                     .HasName("IX_HET_RENTAL_AGREEMENT_HET_RATE_PERIOD_TYPE_ID");
 
@@ -3136,6 +3140,10 @@ namespace HetsData.Model
 
                 entity.Property(e => e.RentalAgreementStatusTypeId).HasColumnName("RENTAL_AGREEMENT_STATUS_TYPE_ID");
 
+                entity.Property(e => e.RentalRequestId).HasColumnName("RENTAL_REQUEST_ID");
+
+                entity.Property(e => e.RentalRequestRotationListId).HasColumnName("RENTAL_REQUEST_ROTATION_LIST_ID");
+
                 entity.HasOne(d => d.Equipment)
                     .WithMany(p => p.HetRentalAgreement)
                     .HasForeignKey(d => d.EquipmentId)
@@ -3157,6 +3165,16 @@ namespace HetsData.Model
                     .HasForeignKey(d => d.RentalAgreementStatusTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_HET_RENTAL_AGREEMENT_STATUS_TYPE_ID");
+
+                entity.HasOne(d => d.RentalRequest)
+                    .WithMany(p => p.HetRentalAgreement)
+                    .HasForeignKey(d => d.RentalRequestId)
+                    .HasConstraintName("FK_HET_RENTAL_AGREEMENT_RENTAL_REQUEST_ID");
+
+                entity.HasOne(d => d.RentalRequestRotationList)
+                    .WithMany(p => p.HetRentalAgreement)
+                    .HasForeignKey(d => d.RentalRequestRotationListId)
+                    .HasConstraintName("FK_HET_RENTAL_AGREEMENT_RENTAL_REQUEST_ROTATION_LIST_ID");
             });
 
             modelBuilder.Entity<HetRentalAgreementCondition>(entity =>

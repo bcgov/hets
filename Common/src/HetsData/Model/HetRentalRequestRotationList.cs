@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace HetsData.Model
@@ -37,5 +38,8 @@ namespace HetsData.Model
         public HetEquipment Equipment { get; set; }
         public HetRentalAgreement RentalAgreement { get; set; }
         public HetRentalRequest RentalRequest { get; set; }
+
+        [JsonProperty("RentalAgreements")]
+        public ICollection<HetRentalAgreement> HetRentalAgreement { get; set; }
     }
 }

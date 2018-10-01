@@ -516,6 +516,9 @@ namespace HetsApi.Controllers
                 int? rateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodWeekly, _context);
                 if (rateTypeId == null) return new ObjectResult(new HetsResponse("HETS-24", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
+                int requestId = request.RentalRequestId;
+                int rotationId = requestRotationList.RentalRequestRotationListId;
+
                 // create agreement
                 HetRentalAgreement rentalAgreement = new HetRentalAgreement
                 {
@@ -526,8 +529,10 @@ namespace HetsApi.Controllers
                     DatedOn = DateTime.UtcNow,
                     EstimateHours = request.ExpectedHours,
                     EstimateStartWork = request.ExpectedStartDate,
-                    RatePeriodTypeId = (int)rateTypeId
-                };
+                    RatePeriodTypeId = (int)rateTypeId,
+                    RentalRequestId = requestId,
+                    RentalRequestRotationListId = rotationId
+                };                
 
                 // have to save the agreement
                 _context.HetRentalAgreement.Add(rentalAgreement);

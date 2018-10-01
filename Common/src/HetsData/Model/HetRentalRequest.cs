@@ -13,6 +13,7 @@ namespace HetsData.Model
             HetNote = new HashSet<HetNote>();
             HetRentalRequestAttachment = new HashSet<HetRentalRequestAttachment>();
             HetRentalRequestRotationList = new HashSet<HetRentalRequestRotationList>();
+            HetRentalAgreement = new HashSet<HetRentalAgreement>();
         }
 
         [JsonProperty("Id")]
@@ -64,8 +65,11 @@ namespace HetsData.Model
 
         [JsonProperty("RentalRequestAttachments")]
         public ICollection<HetRentalRequestAttachment> HetRentalRequestAttachment { get; set; }
-
+        
         [JsonProperty("RentalRequestRotationList")]
         public ICollection<HetRentalRequestRotationList> HetRentalRequestRotationList { get; set; }
+
+        [JsonProperty("RentalAgreements")]
+        public ICollection<HetRentalAgreement> HetRentalAgreement { get; set; }
     }
 }
