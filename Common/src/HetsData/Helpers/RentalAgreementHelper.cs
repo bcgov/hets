@@ -92,6 +92,49 @@ namespace HetsData.Helpers
 
         #endregion
 
+        #region Get all Blank Rental Agreement records
+
+        /// <summary>
+        /// Get all Blank Rental Agreement records
+        /// </summary>
+        /// <param name="district"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static HetRentalAgreement GetBlankAgreements(HetDistrict district, DbAppContext context)
+        {
+            // validate item
+            int districtId = 0;
+
+            if (district?.DistrictId != null)
+            {
+                districtId = district.DistrictId;
+            }
+            
+            // get all "blank" agreements
+            HetRentalAgreement agreement = context.HetRentalAgreement.AsNoTracking()
+                .Include(x => x.RentalAgreementStatusType)
+                .Include(x => x.RatePeriodType)                
+                .Include(x => x.Equipment)
+                    .ThenInclude(y => y.Owner)
+                .Include(x => x.Equipment)
+                    .ThenInclude(y => y.DistrictEquipmentType)
+                        .ThenInclude(d => d.EquipmentType)
+                .Include(x => x.Project)
+                    .ThenInclude(p => p.District)
+                .Include(x => x.Project)
+                .FirstOrDefault(x => x.Project.District.DistrictId == districtId &&
+                                     x.RentalRequestRotationListId == null);
+
+            if (agreement != null)
+            {
+                agreement.Status = agreement.RentalAgreementStatusType.RentalAgreementStatusTypeCode;
+            }
+
+            return agreement;
+        }
+
+        #endregion
+
         #region Adjust Agreement Pdf
 
         /// <summary>
@@ -401,6 +444,49 @@ namespace HetsData.Helpers
 
                 // format of the Rental Agreement number is YYYY-#-####
                 result = fiscalYear + "-" + localAreaNumber + "-" + currentCount.ToString("D4");
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Get rental agreement
+        /// </summary>
+        /// <param name="district"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static string GetRentalAgreementNumber(HetDistrict district, DbAppContext context)
+        {
+            string result = "";
+
+            // validate item
+            if (district?.DistrictId != null)
+            {
+                DateTime currentTime = DateTime.UtcNow;
+
+                int fiscalYear = currentTime.Year;
+
+                // fiscal year always ends in March
+                if (currentTime.Month > 3)
+                {
+                    fiscalYear++;
+                }
+
+                int districtNumber = district.MinistryDistrictId;
+                int districtId = district.DistrictId;
+
+                DateTime fiscalYearStart = new DateTime(fiscalYear - 1, 1, 1);
+
+                // count the number of rental agreements in the system (for this district)
+                int currentCount = context.HetRentalAgreement
+                    .Include(x => x.Project.District)
+                    .Count(x => x.Project.District.DistrictId == districtId && 
+                                x.AppCreateTimestamp >= fiscalYearStart);
+
+                currentCount++;
+
+                // format of the Rental Agreement number is YYYY-#-#### (new for blank agreements)
+                result = fiscalYear + "-" + districtNumber + "-" + currentCount.ToString("D4");
             }
 
             return result;
