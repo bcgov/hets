@@ -69,7 +69,7 @@ namespace HetsData.Model
         [JsonProperty("RentalRequestRotationList")]
         public ICollection<HetRentalRequestRotationList> HetRentalRequestRotationList { get; set; }
 
-        [JsonProperty("RentalAgreements")]
+        [JsonIgnore]
         public ICollection<HetRentalAgreement> HetRentalAgreement { get; set; }
     }
 }

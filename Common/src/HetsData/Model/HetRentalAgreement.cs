@@ -28,6 +28,7 @@ namespace HetsData.Model
         public int RentalAgreementStatusTypeId { get; set; }
         public int? EquipmentId { get; set; }
         public int? ProjectId { get; set; }
+        public int? DistrictId { get; set; }
         public int? RentalRequestId { get; set; }
         public int? RentalRequestRotationListId { get; set; }
         [JsonIgnore]public string AppCreateUserDirectory { get; set; }
@@ -47,6 +48,7 @@ namespace HetsData.Model
         public HetEquipment Equipment { get; set; }
 
         public HetProject Project { get; set; }
+        public HetDistrict District { get; set; }
 
         public HetRatePeriodType RatePeriodType { get; set; }
 
