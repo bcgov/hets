@@ -81,7 +81,9 @@ var RentalAgreementsDetail = React.createClass({
     var getRentalAgreementPromise = Api.getRentalAgreement(this.props.params.rentalAgreementId);
     var getRentalConditionsPromise = Api.getRentalConditions();
     var getProvincialRateTypesPromise = Api.getProvincialRateTypes();
-    return Promise.all([getRentalAgreementPromise, getRentalConditionsPromise, getProvincialRateTypesPromise]).finally(() => {
+    var getEquipmentListPromise = Api.searchEquipmentList({ status: Constant.EQUIPMENT_STATUS_CODE_APPROVED });
+    var getProjectsPromise = Api.searchProjects({ status: Constant.PROJECT_STATUS_CODE_ACTIVE });
+    return Promise.all([getRentalAgreementPromise, getRentalConditionsPromise, getProvincialRateTypesPromise, getEquipmentListPromise, getProjectsPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -355,6 +357,8 @@ var RentalAgreementsDetail = React.createClass({
           {(() => {
             if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
+            var equipmentDetails = rentalAgreement.equipment && rentalAgreement.equipment.id != 0 ? `${rentalAgreement.equipment.year} ${rentalAgreement.equipment.make}/${rentalAgreement.equipment.model}/${rentalAgreement.equipment.size}` : '';
+
             return (
               <div>
                 <h3 className="clearfix">Rental Agreement
@@ -392,8 +396,7 @@ var RentalAgreementsDetail = React.createClass({
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment Serial Number:">{ rentalAgreement.equipment.serialNumber }</ColDisplay>
                   </Col>
                   <Col lg={6} md={6} sm={12} xs={12}>
-                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment Yr Mk/Md/Sz:">
-                      {`${rentalAgreement.equipment.year} ${rentalAgreement.equipment.make}/${rentalAgreement.equipment.model}/${rentalAgreement.equipment.size}`}</ColDisplay>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment Yr Mk/Md/Sz:">{ equipmentDetails }</ColDisplay>
                   </Col>
                   <Col lg={6} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Point of Hire:">{ rentalAgreement.pointOfHire }</ColDisplay>
