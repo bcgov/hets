@@ -132,6 +132,7 @@ namespace HetsApi.Controllers
             // update owner
             int ownerId = owner.OwnerId;
             owner.BusinessId = business.BusinessId;
+            owner.SharedKey = null;
             _context.SaveChanges();
 
             // get updated business record and return to the UI
