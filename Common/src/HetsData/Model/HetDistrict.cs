@@ -14,6 +14,7 @@ namespace HetsData.Model
             HetServiceArea = new HashSet<HetServiceArea>();
             HetUser = new HashSet<HetUser>();
             HetUserDistrict = new HashSet<HetUserDistrict>();
+            HetRentalAgreement = new HashSet<HetRentalAgreement>();
         }
 
         [JsonProperty("Id")]
@@ -58,5 +59,8 @@ namespace HetsData.Model
 
         [JsonIgnore]
         public ICollection<HetUserDistrict> HetUserDistrict { get; set; }
+
+        [JsonIgnore]
+        public ICollection<HetRentalAgreement> HetRentalAgreement { get; set; }
     }
 }

@@ -1263,6 +1263,7 @@ CREATE TABLE public."HET_RENTAL_AGREEMENT" (
     "RENTAL_AGREEMENT_STATUS_TYPE_ID" integer NOT NULL,
 	"EQUIPMENT_ID" integer,
     "PROJECT_ID" integer,
+	"DISTRICT_ID" integer,
 	"RENTAL_REQUEST_ID" integer,
 	"RENTAL_REQUEST_ROTATION_LIST_ID" integer,
 	"APP_CREATE_USER_DIRECTORY" character varying(50) COLLATE pg_catalog."default",

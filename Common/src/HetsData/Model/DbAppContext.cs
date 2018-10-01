@@ -3048,6 +3048,8 @@ namespace HetsData.Model
 
                 entity.HasIndex(e => e.ProjectId);
 
+                entity.HasIndex(e => e.DistrictId);
+
                 entity.HasIndex(e => e.RentalRequestId);
 
                 entity.HasIndex(e => e.RentalRequestRotationListId);
@@ -3132,6 +3134,8 @@ namespace HetsData.Model
 
                 entity.Property(e => e.ProjectId).HasColumnName("PROJECT_ID");
 
+                entity.Property(e => e.DistrictId).HasColumnName("DISTRICT_ID");
+
                 entity.Property(e => e.RateComment)
                     .HasColumnName("RATE_COMMENT")
                     .HasMaxLength(2048);
@@ -3153,6 +3157,11 @@ namespace HetsData.Model
                     .WithMany(p => p.HetRentalAgreement)
                     .HasForeignKey(d => d.ProjectId)
                     .HasConstraintName("FK_HET_RENTAL_AGREEMENT_PROJECT_ID");
+
+                entity.HasOne(d => d.District)
+                    .WithMany(p => p.HetRentalAgreement)
+                    .HasForeignKey(d => d.DistrictId)
+                    .HasConstraintName("FK_HET_RENTAL_AGREEMENT_DISTRICT_ID");
 
                 entity.HasOne(d => d.RatePeriodType)
                     .WithMany(p => p.HetRentalAgreement)

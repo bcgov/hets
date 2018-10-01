@@ -477,6 +477,7 @@ namespace HetsApi.Controllers
             // get rental request record
             HetRentalRequest request = _context.HetRentalRequest
                 .Include(x => x.Project)
+                    .ThenInclude(x => x.District)
                 .Include(x => x.LocalArea)
                 .Include(x => x.HetRentalRequestRotationList)
                     .ThenInclude(x => x.Equipment)
@@ -518,11 +519,13 @@ namespace HetsApi.Controllers
 
                 int requestId = request.RentalRequestId;
                 int rotationId = requestRotationList.RentalRequestRotationListId;
+                int districtId = request.Project.District.DistrictId;
 
                 // create agreement
                 HetRentalAgreement rentalAgreement = new HetRentalAgreement
                 {
                     ProjectId = request.ProjectId,
+                    DistrictId = districtId,
                     EquipmentId = tempEquipmentId,
                     RentalAgreementStatusTypeId = (int)statusIdAgreement,
                     Number = agreementNumber,
