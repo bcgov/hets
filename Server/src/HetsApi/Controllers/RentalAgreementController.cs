@@ -33,12 +33,14 @@ namespace HetsApi.Controllers
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly HttpContext _httpContext;
         private readonly ILogger _logger;
 
         public RentalAgreementController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory)
         {
             _context = context;
             _configuration = configuration;
+            _httpContext = httpContextAccessor.HttpContext;
             _logger = loggerFactory.CreateLogger<RentalAgreementController>();
 
             // set context data
@@ -750,6 +752,75 @@ namespace HetsApi.Controllers
             return new ObjectResult(new HetsResponse(RentalAgreementHelper.GetConditions(id, _context, _configuration)));
         }
 
-        #endregion        
+        #endregion
+
+        #region Blank Rental Agreement
+
+        /// <summary>
+        /// Create a new blank rental agreement (need a project id)
+        /// </summary>
+        [HttpPost]
+        [Route("createBlankAgreement/{projectId}")]
+        [SwaggerOperation("BlankRentalAgreementPost")]
+        [SwaggerResponse(200, type: typeof(HetRentalAgreement))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult BlankRentalAgreementPost([FromRoute]int projectId)
+        {
+            // validate the project id
+            HetProject project = _context.HetProject.AsNoTracking()
+                .Include(x => x.District)
+                .FirstOrDefault(x => x.ProjectId == projectId);
+
+            if (project == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // set the rate period type id
+            int? rateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodWeekly, _context);
+
+            if (rateTypeId == null)
+            {
+                throw new DataException("Rate Period Id cannot be null");
+            }
+
+            int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));            
+
+            HetRentalAgreement agreement = new HetRentalAgreement
+            {
+                Number = RentalAgreementHelper.GetRentalAgreementNumber(project.District, _context),
+                ProjectId = projectId,
+                RentalAgreementStatusTypeId = (int)statusId,
+                RatePeriodTypeId = (int)rateTypeId
+            };
+
+            // save the changes
+            _context.HetRentalAgreement.Add(agreement);
+            _context.SaveChanges();
+
+            int id = agreement.RentalAgreementId;
+
+            // retrieve updated rental agreement to return to ui
+            return new ObjectResult(new HetsResponse(RentalAgreementHelper.GetRecord(id, _context)));
+        }
+
+        /// <summary>
+        /// Get blank rental agreements (for the current district)
+        /// </summary>
+        [HttpGet]
+        [Route("blankAgreements")]
+        [SwaggerOperation("BlankRentalAgreementGet")]
+        [SwaggerResponse(200, type: typeof(List<HetRentalAgreement>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult BlankRentalAgreementGet()
+        {
+            // get the current district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            HetDistrict district = _context.HetDistrict.AsNoTracking()
+                .FirstOrDefault(x => x.DistrictId.Equals(districtId));
+
+            return new ObjectResult(new HetsResponse(RentalAgreementHelper.GetBlankAgreements(district, _context)));
+        }
+
+        #endregion
     }
 }
