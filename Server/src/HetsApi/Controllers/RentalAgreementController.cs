@@ -767,7 +767,6 @@ namespace HetsApi.Controllers
         public virtual IActionResult BlankRentalAgreementPost()
         {
             // get current users district
-            // get the current district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
 
             HetDistrict district = _context.HetDistrict.AsNoTracking()
@@ -821,6 +820,60 @@ namespace HetsApi.Controllers
                 .FirstOrDefault(x => x.DistrictId.Equals(districtId));
 
             return new ObjectResult(new HetsResponse(RentalAgreementHelper.GetBlankAgreements(district, _context)));
+        }
+
+        /// <summary>
+        /// Delete a blank rental agreement
+        /// </summary>
+        /// <param name="id">id of Blank RentalAgreement to delete</param>
+        [HttpPost]
+        [Route("deleteBlankAgreement/{id}")]
+        [SwaggerOperation("DeleteBlankRentalAgreementPost")]
+        [SwaggerResponse(200, type: typeof(HetRentalAgreement))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult DeleteBlankRentalAgreementPost([FromRoute]int id)
+        {
+            // get current users district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            HetDistrict district = _context.HetDistrict.AsNoTracking()
+                .FirstOrDefault(x => x.DistrictId.Equals(districtId));
+
+            if (district == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // validate agreement id
+            bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
+
+            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // get agreement and validate
+            HetRentalAgreement agreement = _context.HetRentalAgreement
+                .First(a => a.RentalAgreementId == id);
+
+            if (agreement.RentalAgreementStatusTypeId != statusId)
+            {
+                return new ObjectResult(new HetsResponse("HETS-25", ErrorViewModel.GetDescription("HETS-25", _configuration)));
+            }
+
+            if (agreement.DistrictId != districtId)
+            {
+                return new ObjectResult(new HetsResponse("HETS-26", ErrorViewModel.GetDescription("HETS-26", _configuration)));
+            }
+
+            if (agreement.RentalRequestId != null)
+            {
+                return new ObjectResult(new HetsResponse("HETS-27", ErrorViewModel.GetDescription("HETS-27", _configuration)));
+            }
+
+            // delete the agreement
+            _context.HetRentalAgreement.Remove(agreement);
+            _context.SaveChanges();
+            
+            // return rental agreement
+            return new ObjectResult(new HetsResponse(agreement));
         }
 
         #endregion
