@@ -289,6 +289,20 @@ namespace HetsApi.Controllers
                 owner.RegisteredCompanyNumber = item.RegisteredCompanyNumber;
             }
 
+            // get new Secret Key
+            string key = SecretKeyHelper.RandomString(8);
+
+            string temp = owner.OwnerCode;
+
+            if (string.IsNullOrEmpty(temp))
+            {
+                temp = SecretKeyHelper.RandomString(4);
+            }
+
+            key = temp + "-" + DateTime.UtcNow.Year + "-" + key;
+
+            owner.SharedKey = key;
+
             // save record
             _context.HetOwner.Add(owner);
             _context.SaveChanges();
