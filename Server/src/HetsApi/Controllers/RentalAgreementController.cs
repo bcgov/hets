@@ -760,18 +760,20 @@ namespace HetsApi.Controllers
         /// Create a new blank rental agreement (need a project id)
         /// </summary>
         [HttpPost]
-        [Route("createBlankAgreement/{projectId}")]
+        [Route("createBlankAgreement")]
         [SwaggerOperation("BlankRentalAgreementPost")]
         [SwaggerResponse(200, type: typeof(HetRentalAgreement))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult BlankRentalAgreementPost([FromRoute]int projectId)
+        public virtual IActionResult BlankRentalAgreementPost()
         {
-            // validate the project id
-            HetProject project = _context.HetProject.AsNoTracking()
-                .Include(x => x.District)
-                .FirstOrDefault(x => x.ProjectId == projectId);
+            // get current users district
+            // get the current district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
 
-            if (project == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            HetDistrict district = _context.HetDistrict.AsNoTracking()
+                .FirstOrDefault(x => x.DistrictId.Equals(districtId));
+
+            if (district == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // set the rate period type id
             int? rateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodWeekly, _context);
@@ -786,8 +788,8 @@ namespace HetsApi.Controllers
 
             HetRentalAgreement agreement = new HetRentalAgreement
             {
-                Number = RentalAgreementHelper.GetRentalAgreementNumber(project.District, _context),
-                ProjectId = projectId,
+                Number = RentalAgreementHelper.GetRentalAgreementNumber(district, _context),
+                DistrictId = districtId,
                 RentalAgreementStatusTypeId = (int)statusId,
                 RatePeriodTypeId = (int)rateTypeId
             };

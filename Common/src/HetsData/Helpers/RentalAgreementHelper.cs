@@ -113,16 +113,15 @@ namespace HetsData.Helpers
             // get all "blank" agreements
             HetRentalAgreement agreement = context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.RentalAgreementStatusType)
-                .Include(x => x.RatePeriodType)                
+                .Include(x => x.RatePeriodType)     
+                .Include(x => x.District)
                 .Include(x => x.Equipment)
                     .ThenInclude(y => y.Owner)
                 .Include(x => x.Equipment)
                     .ThenInclude(y => y.DistrictEquipmentType)
                         .ThenInclude(d => d.EquipmentType)
                 .Include(x => x.Project)
-                    .ThenInclude(p => p.District)
-                .Include(x => x.Project)
-                .FirstOrDefault(x => x.Project.District.DistrictId == districtId &&
+                .FirstOrDefault(x => x.District.DistrictId == districtId &&
                                      x.RentalRequestRotationListId == null);
 
             if (agreement != null)
