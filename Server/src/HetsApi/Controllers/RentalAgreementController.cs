@@ -21,6 +21,7 @@ using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
+using Microsoft.CodeAnalysis;
 
 namespace HetsApi.Controllers
 {
@@ -816,10 +817,50 @@ namespace HetsApi.Controllers
             // get the current district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
 
-            HetDistrict district = _context.HetDistrict.AsNoTracking()
-                .FirstOrDefault(x => x.DistrictId.Equals(districtId));
+            // get all "blank" agreements
+            List<HetRentalAgreement> agreements = _context.HetRentalAgreement.AsNoTracking()
+                .Include(x => x.RentalAgreementStatusType)
+                .Include(x => x.District)
+                .Where(x => x.District.DistrictId == districtId &&
+                            x.RentalRequestId == null &&
+                            x.RentalRequestRotationListId == null)
+                .ToList();
 
-            return new ObjectResult(new HetsResponse(RentalAgreementHelper.GetBlankAgreements(district, _context)));
+            return new ObjectResult(new HetsResponse(agreements));
+        }
+
+        /// <summary>
+        /// Get blank rental agreements (for the current district)
+        /// By Project Id and District Equipment Type
+        /// </summary>
+        [HttpGet]
+        [Route("blankAgreements/{projectId}/{districtEquipmentTypeId}")]
+        [SwaggerOperation("BlankRentalAgreementLookupGet")]
+        [SwaggerResponse(200, type: typeof(List<HetRentalAgreement>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult BlankRentalAgreementLookupGet([FromRoute]int projectId, [FromRoute]int districtEquipmentTypeId)
+        {
+            // get the current district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            // get "blank" agreements
+            List<HetRentalAgreement> agreements = _context.HetRentalAgreement.AsNoTracking()
+                .Include(x => x.RentalAgreementStatusType)
+                .Include(x => x.District)
+                .Include(x => x.Equipment)
+                    .ThenInclude(y => y.Owner)
+                .Include(x => x.Equipment)
+                    .ThenInclude(y => y.DistrictEquipmentType)
+                        .ThenInclude(d => d.EquipmentType)
+                .Include(x => x.Project)
+                .Where(x => x.District.DistrictId == districtId &&
+                            x.RentalRequestId == null &&
+                            x.RentalRequestRotationListId == null &&
+                            x.ProjectId == projectId &&
+                            x.Equipment.DistrictEquipmentTypeId == districtEquipmentTypeId)
+                .ToList();
+
+            return new ObjectResult(new HetsResponse(agreements));
         }
 
         /// <summary>
