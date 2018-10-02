@@ -147,12 +147,12 @@ namespace HetsData.Helpers
             if (project != null)
             {
                 projectLite.Id = project.ProjectId;
-                projectLite.Status = project.ProjectStatusType.Description;
+                projectLite.Status = project.ProjectStatusType?.Description;
                 projectLite.Name = project.Name;
                 projectLite.PrimaryContact = project.PrimaryContact;
                 projectLite.District = project.District;                
-                projectLite.Requests = project.HetRentalRequest.Count;
-                projectLite.Hires = project.HetRentalAgreement.Count;
+                projectLite.Requests = project.HetRentalRequest?.Count;
+                projectLite.Hires = project.HetRentalAgreement?.Count;
             }
 
             return projectLite;
