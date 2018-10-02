@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -1021,19 +1020,22 @@ namespace HetsApi.Controllers
             }
 
             // sort seniority lists
-            foreach (SeniorityListRecord list in seniorityList.SeniorityListRecords)
+            if (seniorityList.SeniorityListRecords != null)
             {
-                list.SeniorityList = list.SeniorityList.OrderByDescending(x => x.SenioritySortOrder).ToList();
-            }
-
-            // fix the ask next (if no rotation list existed
-            foreach (SeniorityListRecord list in seniorityList.SeniorityListRecords)
-            {
-                bool askNextExists = list.SeniorityList.Exists(x => x.LastCalled == "Y");
-
-                if (!askNextExists && list.SeniorityList.Count > 0)
+                foreach (SeniorityListRecord list in seniorityList.SeniorityListRecords)
                 {
-                    list.SeniorityList[0].LastCalled = "Y";
+                    list.SeniorityList = list.SeniorityList.OrderByDescending(x => x.SenioritySortOrder).ToList();
+                }
+
+                // fix the ask next (if no rotation list existed
+                foreach (SeniorityListRecord list in seniorityList.SeniorityListRecords)
+                {
+                    bool askNextExists = list.SeniorityList.Exists(x => x.LastCalled == "Y");
+
+                    if (!askNextExists && list.SeniorityList.Count > 0)
+                    {
+                        list.SeniorityList[0].LastCalled = "Y";
+                    }
                 }
             }
 

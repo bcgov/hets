@@ -210,7 +210,7 @@ namespace HetsImport.Import
                     serviceArea.Fax = serviceArea.Fax.Substring(1, 50);
                 }
 
-                serviceArea.Phone = ImportUtility.FormatPhone(serviceArea.Fax);
+                serviceArea.Fax = ImportUtility.FormatPhone(serviceArea.Fax);
 
                 serviceArea.SupportingDocuments = oldObject.Sup_Docs.Trim();
 
