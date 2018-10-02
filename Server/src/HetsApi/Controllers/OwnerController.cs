@@ -466,9 +466,17 @@ namespace HetsApi.Controllers
 
                 // get address and contact info
                 string address = owners[0].LocalArea.ServiceArea.Address;
-                address = address.Replace("  ", " ");
-                address = address.Replace("amp;", "and");
-                address = address.Replace("|", " | ");
+
+                if (!string.IsNullOrEmpty(address))
+                {
+                    address = address.Replace("  ", " ");
+                    address = address.Replace("amp;", "and");
+                    address = address.Replace("|", " | ");
+                }
+                else
+                {
+                    address = "";
+                }
 
                 string contact = string.Format("Phone: {0} | Fax: {1}", 
                     owners[0].LocalArea.ServiceArea.Phone,
