@@ -383,11 +383,11 @@ namespace HetsImport.Import
                 number = number.Replace("-", "");
                 number = number.Replace(" ", "");
 
-                bool parseNumber = int.TryParse(number, out int numberInt);
+                bool parseNumber = long.TryParse(number, out long numberLng);
 
                 if (parseNumber)
                 {
-                    tempNumber = string.Format("{0:(###) ###-####}", numberInt);
+                    tempNumber = string.Format("{0:(###) ###-####}", numberLng);
                 }                
             }
 

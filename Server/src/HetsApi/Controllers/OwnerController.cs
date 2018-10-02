@@ -464,6 +464,16 @@ namespace HetsApi.Controllers
                     return new ObjectResult(new HetsResponse("HETS-16", ErrorViewModel.GetDescription("HETS-16", _configuration)));
                 }
 
+                // get address and contact info
+                string address = owners[0].LocalArea.ServiceArea.Address;
+                address = address.Replace("  ", " ");
+                address = address.Replace("amp;", "and");
+                address = address.Replace("|", " | ");
+
+                string contact = string.Format("Phone: {0} | Fax: {1}", 
+                    owners[0].LocalArea.ServiceArea.Phone,
+                    owners[0].LocalArea.ServiceArea.Fax);
+
                 // generate pdf document name [unique portion only]
                 string fileName = "OwnerVerification_" + DateTime.Now.Year + DateTime.Now.Month + DateTime.Now.Day;
 
@@ -475,8 +485,8 @@ namespace HetsApi.Controllers
                     DistrictId = owners[0].LocalArea.ServiceArea.District.DistrictId,
                     MinistryDistrictId = owners[0].LocalArea.ServiceArea.District.MinistryDistrictId,
                     DistrictName = owners[0].LocalArea.ServiceArea.District.Name,
-                    DistrictAddress = "to be completed",
-                    DistrictContact = "to be completed",
+                    DistrictAddress = address,
+                    DistrictContact = contact,
                     Owners = new List<HetOwner>()
                 };
 
