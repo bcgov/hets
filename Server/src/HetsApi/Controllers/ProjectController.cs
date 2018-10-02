@@ -214,9 +214,48 @@ namespace HetsApi.Controllers
             return new ObjectResult(new HetsResponse(result));
         }
 
-        #endregion        
+        #endregion
 
-        # region Clone Project Agreements
+        #region Get all projects by region
+
+        /// <summary>
+        /// Get all projects by district
+        /// </summary>     
+        [HttpGet]
+        [Route("")]
+        [SwaggerOperation("ProjectsGet")]
+        [SwaggerResponse(200, type: typeof(List<HetProject>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult ProjectsGet()
+        {
+            // get initial results - must be limited to user's district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            // only active projects
+            int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+
+            List<HetProject> projects = _context.HetProject.AsNoTracking()                
+                .Where(x => x.DistrictId.Equals(districtId) &&
+                            x.ProjectStatusTypeId.Equals(statusId))
+                .ToList();
+
+            // convert Project Model to the "ProjectLite" Model
+            List<ProjectLite> result = new List<ProjectLite>();
+
+            foreach (HetProject item in projects)
+            {
+                result.Add(ProjectHelper.ToLiteModel(item));
+            }
+
+            // return to the client            
+            return new ObjectResult(new HetsResponse(result));
+        }
+
+        #endregion
+
+        #region Clone Project Agreements
 
         /// <summary>
         /// Get rental agreements associated with a project by id
