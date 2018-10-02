@@ -20,6 +20,7 @@ var Home = React.createClass({
     unapprovedOwners: React.PropTypes.object,
     unapprovedEquipment: React.PropTypes.object,
     districtEquipmentTypes: React.PropTypes.object,
+    rentalAgreement: React.PropTypes.object,
     localAreas: React.PropTypes.object,
     router: React.PropTypes.object,
   },
@@ -51,6 +52,15 @@ var Home = React.createClass({
     };
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: search });
     this.props.router.push({ pathname: Constant.EQUIPMENT_PATHNAME });
+  },
+
+  createRentalAgreement() {
+    Api.addBlankRentalAgreement().then(() => {
+      // Open it up
+      this.props.router.push({
+        pathname: `${ Constant.RENTAL_AGREEMENTS_PATHNAME }/${ this.props.rentalAgreement.id }`,
+      });
+    });
   },
 
   updateState(state) {
@@ -111,6 +121,13 @@ var Home = React.createClass({
           </Col>
         </Row>
       </Well>
+      <Well>
+        <Row>
+          <Col md={12} className="btn-container">
+            <Button onClick={ this.createRentalAgreement }>Rental Agreement</Button>          
+          </Col>
+        </Row>
+      </Well>
     </div>;
   },
 });
@@ -122,6 +139,7 @@ function mapStateToProps(state) {
     search: state.search.owners,
     unapprovedOwners: state.models.owners,
     unapprovedEquipment: state.models.equipmentList,
+    rentalAgreement: state.models.rentalAgreement,
     districtEquipmentTypes: state.lookups.districtEquipmentTypes,
     localAreas: state.lookups.localAreas,
   };

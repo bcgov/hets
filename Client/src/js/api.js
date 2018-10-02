@@ -1612,6 +1612,22 @@ export function generateRentalAgreementDocument(rentalAgreementId) {
 
 
 ////////////////////
+// Blank Rental Agreements
+////////////////////
+
+export function addBlankRentalAgreement() {
+  return new ApiRequest('rentalagreements/createBlankAgreement').post().then((response) => {
+    var agreement = response.data;
+
+    // Add display fields
+    parseRentalAgreement(agreement);
+
+    store.dispatch({ type: Action.UPDATE_RENTAL_AGREEMENT, rentalAgreement: agreement });
+  });
+}
+
+
+////////////////////
 // Rental Rates
 ////////////////////
 
