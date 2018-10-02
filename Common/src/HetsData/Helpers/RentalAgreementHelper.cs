@@ -91,49 +91,7 @@ namespace HetsData.Helpers
         }
 
         #endregion
-
-        #region Get all Blank Rental Agreement records
-
-        /// <summary>
-        /// Get all Blank Rental Agreement records
-        /// </summary>
-        /// <param name="district"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public static HetRentalAgreement GetBlankAgreements(HetDistrict district, DbAppContext context)
-        {
-            // validate item
-            int districtId = 0;
-
-            if (district?.DistrictId != null)
-            {
-                districtId = district.DistrictId;
-            }
-            
-            // get all "blank" agreements
-            HetRentalAgreement agreement = context.HetRentalAgreement.AsNoTracking()
-                .Include(x => x.RentalAgreementStatusType)
-                .Include(x => x.RatePeriodType)     
-                .Include(x => x.District)
-                .Include(x => x.Equipment)
-                    .ThenInclude(y => y.Owner)
-                .Include(x => x.Equipment)
-                    .ThenInclude(y => y.DistrictEquipmentType)
-                        .ThenInclude(d => d.EquipmentType)
-                .Include(x => x.Project)
-                .FirstOrDefault(x => x.District.DistrictId == districtId &&
-                                     x.RentalRequestRotationListId == null);
-
-            if (agreement != null)
-            {
-                agreement.Status = agreement.RentalAgreementStatusType.RentalAgreementStatusTypeCode;
-            }
-
-            return agreement;
-        }
-
-        #endregion
-
+        
         #region Adjust Agreement Pdf
 
         /// <summary>
@@ -456,6 +414,7 @@ namespace HetsData.Helpers
         /// <returns></returns>
         public static string GetRentalAgreementNumber(HetDistrict district, DbAppContext context)
         {
+            int currentCount = 0;
             string result = "";
 
             // validate item
@@ -477,15 +436,24 @@ namespace HetsData.Helpers
                 DateTime fiscalYearStart = new DateTime(fiscalYear - 1, 1, 1);
 
                 // count the number of rental agreements in the system (for this district)
-                int currentCount = context.HetRentalAgreement
+                HetRentalAgreement agreement = context.HetRentalAgreement.AsNoTracking()
                     .Include(x => x.Project.District)
-                    .Count(x => x.Project.District.DistrictId == districtId && 
-                                x.AppCreateTimestamp >= fiscalYearStart);
+                    .OrderBy(x => x.RentalAgreementId)
+                    .LastOrDefault(x => x.DistrictId == districtId && 
+                                        x.AppCreateTimestamp >= fiscalYearStart &&
+                                        x.Number.Contains("-D"));
+
+                if (agreement != null)
+                {
+                    string temp = agreement.Number;
+                    temp = temp.Substring(temp.LastIndexOf('-') + 1);
+                    int.TryParse(temp, out currentCount);
+                }
 
                 currentCount++;
 
                 // format of the Rental Agreement number is YYYY-#-#### (new for blank agreements)
-                result = fiscalYear + "-" + districtNumber + "-" + currentCount.ToString("D4");
+                result = fiscalYear + "-D" + districtNumber + "-" + currentCount.ToString("D4");
             }
 
             return result;

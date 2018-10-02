@@ -1103,6 +1103,59 @@ namespace HetsApi.Controllers
             return new ObjectResult(new HetsResponse(notes));
         }
 
-        #endregion         
+        #endregion
+
+        #region Get Project by Name and District
+
+        /// <summary>
+        /// Get a project by name and district (active only)
+        /// </summary>
+        /// <param name="name">name of the project to find</param>
+        [HttpPost]
+        [Route("projectsByName")]
+        [SwaggerOperation("ProjectsGetByName")]
+        [SwaggerResponse(200, type: typeof(HetRentalAgreement))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult ProjectsGetByName([FromBody]string name)
+        {
+            // get current users district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            HetDistrict district = _context.HetDistrict.AsNoTracking()
+                .FirstOrDefault(x => x.DistrictId.Equals(districtId));
+
+            if (district == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // find agreements
+            IQueryable<HetProject> data = _context.HetProject.AsNoTracking()
+                .Include(x => x.ProjectStatusType)
+                .Include(x => x.District.Region)
+                .Include(x => x.PrimaryContact)
+                .Include(x => x.HetRentalAgreement)
+                .Include(x => x.HetRentalRequest)
+                .Where(x => x.DistrictId.Equals(districtId));
+
+            if (name != null)
+            {
+                // allow for case insensitive search of project name
+                data = data.Where(x => string.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+            // convert Project Model to the "ProjectLite" Model
+            List<ProjectLite> result = new List<ProjectLite>();
+
+            foreach (HetProject item in data)
+            {
+                result.Add(ProjectHelper.ToLiteModel(item));
+            }
+
+            // return to the client            
+            return new ObjectResult(new HetsResponse(result));
+        }
+
+        #endregion
     }
 }
