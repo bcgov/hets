@@ -361,25 +361,35 @@ var RentalAgreementsDetail = React.createClass({
 
             return (
               <div>
-                <h3 className="clearfix">Rental Agreement
-                  <span className="pull-right">
-                    <Button title="Edit Rental Agreement" bsSize="small" onClick={ this.openHeaderEditDialog }><Glyphicon glyph="pencil" /></Button>
-                  </span>
-                </h3>
+                {(() => {
+                  if (rentalAgreement.isBlank) {
+                    return (
+                      <h3 className="clearfix">Rental Agreement
+                        <span className="pull-right">
+                          <Button title="Edit Rental Agreement" bsSize="small" onClick={ this.openHeaderEditDialog }><Glyphicon glyph="pencil" /></Button>
+                        </span>
+                      </h3>
+                    );
+                  }
+                })()}
                 <Row>
                   <Col lg={6} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Agreement Number:">{ rentalAgreement.number }</ColDisplay>
                   </Col>
                   <Col lg={6} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Rental Request:">
-                      <Link to={{ pathname: 'request/' + rentalAgreement.equipment.id }}>View</Link>
+                      {(() => {
+                        if (rentalAgreement.rentalRequestId) { return <Link to={{ pathname: 'rental-requests/' + rentalAgreement.rentalRequestId }}>View</Link>; }
+                        
+                        return <div>Unassociated</div>;
+                      })()}
                     </ColDisplay>
                   </Col>
                   <Col lg={6} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Project:">{ rentalAgreement.project.name }</ColDisplay>
                   </Col>
                   <Col lg={6} md={6} sm={12} xs={12}>
-                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="District:">{ rentalAgreement.districtName }</ColDisplay>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="District:">{ rentalAgreement.district.name }</ColDisplay>
                   </Col>
                   <Col lg={6} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Owner:">{ rentalAgreement.ownerName }</ColDisplay>

@@ -1474,6 +1474,7 @@ export function updateRentalRequestRotationList(rentalRequestRotationList, renta
 ////////////////////
 
 function parseRentalAgreement(agreement) {
+  if (!agreement.district) { agreement.district = { id: 0, name: '' }; }
   if (!agreement.equipment) { agreement.equipment = { id: 0, equipmentCode: '' }; }
   if (!agreement.equipment.owner) { agreement.equipment.owner = { id: 0, organizationName: '' }; }
   if (!agreement.equipment.districtEquipmentType) { agreement.equipment.districtEquipmentType = { id: 0, districtEquipmentName: '' }; }
@@ -1518,6 +1519,7 @@ function parseRentalAgreement(agreement) {
   agreement.status = agreement.status || Constant.RENTAL_AGREEMENT_STATUS_CODE_ACTIVE;  // TODO
   agreement.isActive = agreement.status === Constant.RENTAL_AGREEMENT_STATUS_CODE_ACTIVE;
   agreement.isCompleted = agreement.status === Constant.RENTAL_AGREEMENT_STATUS_CODE_COMPLETED;
+  agreement.isBlank = agreement.rentalRequestRotationListId ? false : true;
   agreement.equipmentId = agreement.equipment.id;
   agreement.equipmentCode = agreement.equipment.equipmentCode;
   agreement.equipmentMake = agreement.equipment.make;
@@ -1528,8 +1530,7 @@ function parseRentalAgreement(agreement) {
   agreement.ownerName = agreement.equipment.owner.organizationName || '';
   agreement.workSafeBCPolicyNumber = agreement.equipment.owner.workSafeBCPolicyNumber || '';
   agreement.pointOfHire = agreement.equipment.localArea.name || '';
-  agreement.districtName = agreement.equipment.localArea.serviceArea.district.name || '';
-
+  
   agreement.projectId = agreement.projectId || agreement.project.id;
   agreement.projectName = agreement.projectName || agreement.project.name;
 
