@@ -293,6 +293,15 @@ var RentalAgreementsDetail = React.createClass({
     });
   },
 
+  generateAnotherAgreement() {
+    Api.generateAnotherRentalAgreement(this.props.rentalAgreement).then(() => {
+      // navigate to the new agreement
+      this.props.router.push({
+        pathname: `${ Constant.RENTAL_AGREEMENTS_PATHNAME }/${ this.props.rentalAgreement.id }`,
+      });
+    });
+  },
+
   openCloneDialog() {
     this.setState({ showCloneDialog: true });
   },
@@ -346,7 +355,7 @@ var RentalAgreementsDetail = React.createClass({
                 <div className="pull-right">
                   <Button title="Print PDF" onClick={ this.generateRentalAgreementDocument }><Glyphicon glyph="print" /></Button>
                   <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
-                  <Button title="Generate Another Rental Agreement">Generate Another Rental Agreement</Button>
+                  <Button title="Generate Another Rental Agreement" onClick={ this.generateAnotherAgreement }>Generate Another Rental Agreement</Button>
                 </div>
               </Col>
             </Row>
@@ -650,7 +659,7 @@ var RentalAgreementsDetail = React.createClass({
           <div className="pull-right">
             <Button title="Print PDF" onClick={ this.generateRentalAgreementDocument }><Glyphicon glyph="print" /></Button>
             <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
-            <Button title="Generate Another Rental Agreement">Generate Another Rental Agreement</Button>
+            <Button title="Generate Another Rental Agreement" onClick={ this.generateAnotherAgreement }>Generate Another Rental Agreement</Button>
           </div>
         </Row>
         { this.state.showHeaderEditDialog &&

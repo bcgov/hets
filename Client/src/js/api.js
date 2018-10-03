@@ -1548,6 +1548,17 @@ function parseRentalAgreement(agreement) {
   agreement.lastTimeRecord = agreement.lastTimeRecord || '';
 }
 
+// reverse the transformations applied by the parse function
+function convertRentalAgreement(agreement) {
+  return {
+    ...agreement,
+    rentalAgreementConditions: _.values(agreement.rentalAgreementConditions),
+    rentalAgreementRates: _.values(agreement.rentalAgreementRates),
+    equipmentId: agreement.equipmentId || null,
+    projectId: agreement.projectId || null,
+  };
+}
+
 export function getRentalAgreement(id) {
   return new ApiRequest(`/rentalagreements/${ id }`).get().then(response => {
     var agreement = response.data;
@@ -1570,8 +1581,21 @@ export function addRentalAgreement(agreement) {
   });
 }
 
+export function generateAnotherRentalAgreement(agreement) {
+  var preparedAgreement = convertRentalAgreement(agreement);
+  return new ApiRequest(`/rentalagreements/updateCloneBlankAgreement/${ agreement.id }`).post(preparedAgreement).then(response => {
+    var agreement = response.data;
+
+    // Add display fields
+    parseRentalAgreement(agreement);
+
+    store.dispatch({ type: Action.GENERATE_ANOTHER_RENTAL_AGREEMENT, rentalAgreement: agreement });
+  });
+}
+
 export function updateRentalAgreement(agreement) {
-  return new ApiRequest(`/rentalagreements/${ agreement.id }`).put({...agreement, rentalAgreementConditions: null, rentalAgreementRates: null }).then(response => {
+  var preparedAgreement = convertRentalAgreement(agreement);
+  return new ApiRequest(`/rentalagreements/${ agreement.id }`).put(preparedAgreement).then(response => {
     var agreement = response.data;
 
     // Add display fields
