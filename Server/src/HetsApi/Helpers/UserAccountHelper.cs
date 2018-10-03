@@ -64,7 +64,9 @@ namespace HetsApi.Helpers
                     guid = credential[1];
                 }
             }
-            else
+
+            // get the guid from the SM headers
+            if (string.IsNullOrEmpty(guid))
             {
                 guid = httpContext.Request.Headers[ConstSiteMinderBusinessGuidKey];
             }
