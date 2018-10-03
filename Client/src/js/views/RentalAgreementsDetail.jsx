@@ -293,6 +293,15 @@ var RentalAgreementsDetail = React.createClass({
     });
   },
 
+  generateAnotherAgreement() {
+    Api.generateAnotherRentalAgreement(this.props.rentalAgreement).then(() => {
+      // navigate to the new agreement
+      this.props.router.push({
+        pathname: `${ Constant.RENTAL_AGREEMENTS_PATHNAME }/${ this.props.rentalAgreement.id }`,
+      });
+    });
+  },
+
   openCloneDialog() {
     this.setState({ showCloneDialog: true });
   },
@@ -346,7 +355,7 @@ var RentalAgreementsDetail = React.createClass({
                 <div className="pull-right">
                   <Button title="Print PDF" onClick={ this.generateRentalAgreementDocument }><Glyphicon glyph="print" /></Button>
                   <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
-                  <Button title="Generate Another Rental Agreement">Generate Another Rental Agreement</Button>
+                  <Button title="Generate Another Rental Agreement" onClick={ this.generateAnotherAgreement }>Generate Another Rental Agreement</Button>
                 </div>
               </Col>
             </Row>
@@ -361,25 +370,35 @@ var RentalAgreementsDetail = React.createClass({
 
             return (
               <div>
-                <h3 className="clearfix">Rental Agreement
-                  <span className="pull-right">
-                    <Button title="Edit Rental Agreement" bsSize="small" onClick={ this.openHeaderEditDialog }><Glyphicon glyph="pencil" /></Button>
-                  </span>
-                </h3>
+                {(() => {
+                  if (rentalAgreement.isBlank) {
+                    return (
+                      <h3 className="clearfix">Rental Agreement
+                        <span className="pull-right">
+                          <Button title="Edit Rental Agreement" bsSize="small" onClick={ this.openHeaderEditDialog }><Glyphicon glyph="pencil" /></Button>
+                        </span>
+                      </h3>
+                    );
+                  }
+                })()}
                 <Row>
                   <Col lg={6} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Agreement Number:">{ rentalAgreement.number }</ColDisplay>
                   </Col>
                   <Col lg={6} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Rental Request:">
-                      <Link to={{ pathname: 'request/' + rentalAgreement.equipment.id }}>View</Link>
+                      {(() => {
+                        if (rentalAgreement.rentalRequestId) { return <Link to={{ pathname: 'rental-requests/' + rentalAgreement.rentalRequestId }}>View</Link>; }
+                        
+                        return <div>Unassociated</div>;
+                      })()}
                     </ColDisplay>
                   </Col>
                   <Col lg={6} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Project:">{ rentalAgreement.project.name }</ColDisplay>
                   </Col>
                   <Col lg={6} md={6} sm={12} xs={12}>
-                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="District:">{ rentalAgreement.districtName }</ColDisplay>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="District:">{ rentalAgreement.district.name }</ColDisplay>
                   </Col>
                   <Col lg={6} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Owner:">{ rentalAgreement.ownerName }</ColDisplay>
@@ -640,7 +659,7 @@ var RentalAgreementsDetail = React.createClass({
           <div className="pull-right">
             <Button title="Print PDF" onClick={ this.generateRentalAgreementDocument }><Glyphicon glyph="print" /></Button>
             <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
-            <Button title="Generate Another Rental Agreement">Generate Another Rental Agreement</Button>
+            <Button title="Generate Another Rental Agreement" onClick={ this.generateAnotherAgreement }>Generate Another Rental Agreement</Button>
           </div>
         </Row>
         { this.state.showHeaderEditDialog &&

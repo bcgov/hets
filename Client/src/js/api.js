@@ -1474,6 +1474,7 @@ export function updateRentalRequestRotationList(rentalRequestRotationList, renta
 ////////////////////
 
 function parseRentalAgreement(agreement) {
+  if (!agreement.district) { agreement.district = { id: 0, name: '' }; }
   if (!agreement.equipment) { agreement.equipment = { id: 0, equipmentCode: '' }; }
   if (!agreement.equipment.owner) { agreement.equipment.owner = { id: 0, organizationName: '' }; }
   if (!agreement.equipment.districtEquipmentType) { agreement.equipment.districtEquipmentType = { id: 0, districtEquipmentName: '' }; }
@@ -1518,6 +1519,7 @@ function parseRentalAgreement(agreement) {
   agreement.status = agreement.status || Constant.RENTAL_AGREEMENT_STATUS_CODE_ACTIVE;  // TODO
   agreement.isActive = agreement.status === Constant.RENTAL_AGREEMENT_STATUS_CODE_ACTIVE;
   agreement.isCompleted = agreement.status === Constant.RENTAL_AGREEMENT_STATUS_CODE_COMPLETED;
+  agreement.isBlank = agreement.rentalRequestRotationListId ? false : true;
   agreement.equipmentId = agreement.equipment.id;
   agreement.equipmentCode = agreement.equipment.equipmentCode;
   agreement.equipmentMake = agreement.equipment.make;
@@ -1528,8 +1530,7 @@ function parseRentalAgreement(agreement) {
   agreement.ownerName = agreement.equipment.owner.organizationName || '';
   agreement.workSafeBCPolicyNumber = agreement.equipment.owner.workSafeBCPolicyNumber || '';
   agreement.pointOfHire = agreement.equipment.localArea.name || '';
-  agreement.districtName = agreement.equipment.localArea.serviceArea.district.name || '';
-
+  
   agreement.projectId = agreement.projectId || agreement.project.id;
   agreement.projectName = agreement.projectName || agreement.project.name;
 
@@ -1545,6 +1546,17 @@ function parseRentalAgreement(agreement) {
 
   // TODO HETS-115 Server needs to send this
   agreement.lastTimeRecord = agreement.lastTimeRecord || '';
+}
+
+// reverse the transformations applied by the parse function
+function convertRentalAgreement(agreement) {
+  return {
+    ...agreement,
+    rentalAgreementConditions: _.values(agreement.rentalAgreementConditions),
+    rentalAgreementRates: _.values(agreement.rentalAgreementRates),
+    equipmentId: agreement.equipmentId || null,
+    projectId: agreement.projectId || null,
+  };
 }
 
 export function getRentalAgreement(id) {
@@ -1569,8 +1581,21 @@ export function addRentalAgreement(agreement) {
   });
 }
 
+export function generateAnotherRentalAgreement(agreement) {
+  var preparedAgreement = convertRentalAgreement(agreement);
+  return new ApiRequest(`/rentalagreements/updateCloneBlankAgreement/${ agreement.id }`).post(preparedAgreement).then(response => {
+    var agreement = response.data;
+
+    // Add display fields
+    parseRentalAgreement(agreement);
+
+    store.dispatch({ type: Action.GENERATE_ANOTHER_RENTAL_AGREEMENT, rentalAgreement: agreement });
+  });
+}
+
 export function updateRentalAgreement(agreement) {
-  return new ApiRequest(`/rentalagreements/${ agreement.id }`).put({...agreement, rentalAgreementConditions: null, rentalAgreementRates: null }).then(response => {
+  var preparedAgreement = convertRentalAgreement(agreement);
+  return new ApiRequest(`/rentalagreements/${ agreement.id }`).put(preparedAgreement).then(response => {
     var agreement = response.data;
 
     // Add display fields
@@ -1607,6 +1632,22 @@ export function releaseRentalAgreement(rentalAgreementId) {
 export function generateRentalAgreementDocument(rentalAgreementId) {
   return new ApiRequest(`rentalagreements/${rentalAgreementId}/pdf`).get().then((response) => {
     return response;
+  });
+}
+
+
+////////////////////
+// Blank Rental Agreements
+////////////////////
+
+export function addBlankRentalAgreement() {
+  return new ApiRequest('rentalagreements/createBlankAgreement').post().then((response) => {
+    var agreement = response.data;
+
+    // Add display fields
+    parseRentalAgreement(agreement);
+
+    store.dispatch({ type: Action.UPDATE_RENTAL_AGREEMENT, rentalAgreement: agreement });
   });
 }
 

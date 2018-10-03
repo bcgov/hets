@@ -277,6 +277,9 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     // Rental Agreements
     case Action.ADD_RENTAL_AGREEMENT:
       return { ...state, rentalAgreement: action.rentalAgreement };
+
+    case Action.GENERATE_ANOTHER_RENTAL_AGREEMENT:
+      return { ...state, rentalAgreement: action.rentalAgreement };
     
     case Action.UPDATE_RENTAL_AGREEMENT:
       return { ...state, rentalAgreement: action.rentalAgreement };

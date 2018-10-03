@@ -62,6 +62,7 @@ namespace HetsData.Helpers
             HetRentalAgreement agreement = context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.RentalAgreementStatusType)
                 .Include(x => x.RatePeriodType)
+                .Include(x => x.District)
                 .Include(x => x.Equipment)
                     .ThenInclude(y => y.Owner)
                 .Include(x => x.Equipment)
