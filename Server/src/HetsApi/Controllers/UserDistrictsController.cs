@@ -149,7 +149,8 @@ namespace HetsApi.Controllers
                     else
                     {
                         // user required
-                        return new ObjectResult(new HetsResponse("HETS-17", ErrorViewModel.GetDescription("HETS-17", _configuration)));
+                        return new ObjectResult(new HetsResponse("HETS-17",
+                            ErrorViewModel.GetDescription("HETS-17", _configuration)));
                     }
 
                     if (item.District != null)
@@ -159,44 +160,45 @@ namespace HetsApi.Controllers
                     else
                     {
                         // district required
-                        return new ObjectResult(new HetsResponse("HETS-18", ErrorViewModel.GetDescription("HETS-18", _configuration)));
+                        return new ObjectResult(new HetsResponse("HETS-18",
+                            ErrorViewModel.GetDescription("HETS-18", _configuration)));
                     }
+                }
 
-                    // manage the primary attribute
-                    if (item.IsPrimary)
+                // manage the primary attribute
+                if (item.IsPrimary)
+                {
+                    userDistricts.ElementAt(index).IsPrimary = true;
+
+                    foreach (HetUserDistrict existingUserDistrict in userDistricts)
                     {
-                        userDistricts.ElementAt(index).IsPrimary = true;
-
-                        foreach (HetUserDistrict existingUserDistrict in userDistricts)
+                        if (existingUserDistrict.IsPrimary && 
+                            existingUserDistrict.UserDistrictId != item.UserDistrictId)
                         {
-                            if (existingUserDistrict.IsPrimary && 
-                                existingUserDistrict.UserDistrictId != item.UserDistrictId)
-                            {
-                                existingUserDistrict.IsPrimary = false;
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        userDistricts[index].IsPrimary = false;
-
-                        foreach (HetUserDistrict existingUserDistrict in userDistricts)
-                        {
-                            if (existingUserDistrict.IsPrimary && 
-                                existingUserDistrict.UserDistrictId != item.UserDistrictId)
-                            {
-                                hasPrimary = true;
-                                break;
-                            }
-                        }
-
-                        if (!hasPrimary)
-                        {
-                            userDistricts[index].IsPrimary = true;
+                            existingUserDistrict.IsPrimary = false;
+                            break;
                         }
                     }
                 }
+                else
+                {
+                    userDistricts[index].IsPrimary = false;
+
+                    foreach (HetUserDistrict existingUserDistrict in userDistricts)
+                    {
+                        if (existingUserDistrict.IsPrimary && 
+                            existingUserDistrict.UserDistrictId != item.UserDistrictId)
+                        {
+                            hasPrimary = true;
+                            break;
+                        }
+                    }
+
+                    if (!hasPrimary)
+                    {
+                        userDistricts[index].IsPrimary = true;
+                    }
+                }                                
             }
             else  // add user district
             {
@@ -225,7 +227,7 @@ namespace HetsApi.Controllers
                         // district required
                         return new ObjectResult(new HetsResponse("HETS-18", ErrorViewModel.GetDescription("HETS-18", _configuration)));
                     }
-
+                
                     if (item.IsPrimary)
                     {
                         item.IsPrimary = true;
