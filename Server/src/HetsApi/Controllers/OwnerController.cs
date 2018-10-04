@@ -433,6 +433,10 @@ namespace HetsApi.Controllers
                 return new ObjectResult(new HetsResponse("HETS-14", ErrorViewModel.GetDescription("HETS-14", _configuration)));
             }
 
+            // get equipment status
+            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
             _logger.LogInformation("Owner Verification Notices Pdf [Owner Count: {0}]", items.Count);
 
             // get owner records
@@ -453,7 +457,7 @@ namespace HetsApi.Controllers
             // strip out inactive and archived equipment
             foreach (HetOwner owner in owners)
             {
-                owner.HetEquipment = owner.HetEquipment.Where(x => x.Status == HetEquipment.StatusApproved).ToList();
+                owner.HetEquipment = owner.HetEquipment.Where(x => x.EquipmentStatusTypeId == statusId).ToList();
             }
 
             if (owners.Count > 0)
