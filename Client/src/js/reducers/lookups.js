@@ -25,6 +25,10 @@ const DEFAULT_LOOKUPS = {
   roles: {},
   projects: {},
   users: {},
+  blankRentalAgreements: {
+    data: {},
+    loading: false,
+  },
 };
 
 export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
@@ -85,6 +89,12 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
 
     case Action.UPDATE_PROVINCIAL_RATE_TYPES_LOOKUP: 
       return { ...state, provincialRateTypes: action.provincialRateTypes };
+
+    case Action.BLANK_RENTAL_AGREEMENTS_LOOKUP_REQUEST: 
+      return { ...state, blankRentalAgreements: { ...state.blankRentalAgreements, loading: true } };
+
+    case Action.UPDATE_BLANK_RENTAL_AGREEMENTS_LOOKUP:
+      return { ...state, blankRentalAgreements: { data: action.blankRentalAgreements, loading: false } };
   }
 
   return state;
