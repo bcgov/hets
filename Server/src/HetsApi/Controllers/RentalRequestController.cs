@@ -310,6 +310,15 @@ namespace HetsApi.Controllers
                 return new ObjectResult(new HetsResponse("HETS-10", ErrorViewModel.GetDescription("HETS-10", _configuration)));
             }
 
+            // remove (delete) rental request rotation list
+            if (rentalRequest.HetRentalRequestRotationList != null)
+            {
+                foreach (HetRentalRequestRotationList rotationList in rentalRequest.HetRentalRequestRotationList)
+                {
+                    _context.HetRentalRequestRotationList.Remove(rotationList);
+                }
+            }
+
             // remove (delete) rental request attachments
             if (rentalRequest.HetRentalRequestAttachment != null)
             {
