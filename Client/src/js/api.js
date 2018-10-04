@@ -1458,14 +1458,12 @@ export function updateRentalRequestRotationList(rentalRequestRotationList, renta
     
     if (response.responseStatus === 'ERROR') {
       store.dispatch({ type: Action.RENTAL_REQUEST_ROTATION_LIST_ERROR, error: response.error });
-      return response.error;
+      return Promise.reject(response.error.description);
     }
-
-    var rentalRequestRotationList = response.data;
-    // Add display fields
+    
+    var rentalRequestRotationList = response.data.rentalRequestRotationList;
 
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rentalRequestRotationList });
-    return Promise.resolve(rentalRequestRotationList);
   });
 }
 
