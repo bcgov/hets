@@ -1538,7 +1538,7 @@ function parseRentalAgreement(agreement) {
   agreement.projectUrl = agreement.projectPath ? `#/${ agreement.projectPath }` : '';
 
   agreement.canEdit = true;
-  agreement.canDelete = false;  // TODO Check with business
+  agreement.canDelete = agreement.isBlank;  // TODO Check with business if associated agreements can be deleted
 
   // Flag element as a rental agreement
   // Rental requests and rentals are merged and shown in a single list on Project Details screen
@@ -1640,8 +1640,18 @@ export function generateRentalAgreementDocument(rentalAgreementId) {
 // Blank Rental Agreements
 ////////////////////
 
+export function getBlankRentalAgreements() {
+  store.dispatch({ type: Action.BLANK_RENTAL_AGREEMENTS_LOOKUP_REQUEST });
+  return new ApiRequest('/rentalAgreements/blankAgreements').get().then(response => {
+    var agreements = normalize(response.data);
+    _.map(agreements, agreement => parseRentalAgreement(agreement));
+
+    store.dispatch({ type: Action.UPDATE_BLANK_RENTAL_AGREEMENTS_LOOKUP, blankRentalAgreements: agreements });
+  });
+}
+
 export function addBlankRentalAgreement() {
-  return new ApiRequest('rentalagreements/createBlankAgreement').post().then((response) => {
+  return new ApiRequest('rentalAgreements/createBlankAgreement').post().then((response) => {
     var agreement = response.data;
 
     // Add display fields
@@ -1649,6 +1659,10 @@ export function addBlankRentalAgreement() {
 
     store.dispatch({ type: Action.UPDATE_RENTAL_AGREEMENT, rentalAgreement: agreement });
   });
+}
+
+export function deleteBlankRentalAgreement(id) {
+  return new ApiRequest(`/rentalAgreements/deleteBlankAgreement/${ id }`).post();
 }
 
 

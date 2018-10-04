@@ -19,6 +19,7 @@ const DEFAULT_STATE = {
   roles: {},
   history: {},
   documents: {},
+  blankRentalAgreements: {},
   showSessionTimeoutDialog: false,
 };
 
@@ -80,6 +81,9 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
 
     case Action.UPDATE_DOCUMENTS_UI:
       return { ...state, documents: action.documents };
+
+    case Action.UPDATE_BLANK_RENTAL_AGREEMENTS_UI:
+      return { ...state, blankRentalAgreements: action.blankRentalAgreements };
 
     // Modals
 

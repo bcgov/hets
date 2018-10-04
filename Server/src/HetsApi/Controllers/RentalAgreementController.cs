@@ -820,6 +820,8 @@ namespace HetsApi.Controllers
             List<HetRentalAgreement> agreements = _context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.RentalAgreementStatusType)
                 .Include(x => x.District)
+                .Include(x => x.Project)
+                .Include(x => x.Equipment)
                 .Where(x => x.District.DistrictId == districtId &&
                             x.RentalRequestId == null &&
                             x.RentalRequestRotationListId == null)
