@@ -626,6 +626,10 @@ namespace HetsApi.Controllers
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
+            // get archive status 
+            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusArchived, "equipmentStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
             HetOwner owner = _context.HetOwner.AsNoTracking()
                 .Include(x => x.HetEquipment)
                     .ThenInclude(x => x.LocalArea.ServiceArea.District.Region)
@@ -643,7 +647,11 @@ namespace HetsApi.Controllers
                     .ThenInclude(x => x.HetHistory)
                 .First(a => a.OwnerId == id);
 
-            return new ObjectResult(new HetsResponse(owner.HetEquipment));            
+            // HETS-701: Archived pieces of equipment should not show up on the Owner's
+            //           equipment list on the Owner edit screen
+            List<HetEquipment> equipments = owner.HetEquipment.Where(x => x.EquipmentStatusTypeId != statusId).ToList();
+
+            return new ObjectResult(new HetsResponse(equipments));            
         }
 
         /// <summary>
