@@ -1616,7 +1616,7 @@ export function getRentalAgreementTimeRecords(rentalAgreementId) {
 export function addRentalAgreementTimeRecords(rentalRequestId, timeRecords) {
   let formattedTimeRecords = formatTimeRecords(timeRecords, rentalRequestId);
   return new ApiRequest(`rentalagreements/${rentalRequestId}/timeRecords`).post(formattedTimeRecords).then(response => {
-    var rentalAgreementTimeRecords = normalize(response.data);
+    var rentalAgreementTimeRecords = normalize(response.data.timeRecords);
 
     store.dispatch({ type: Action.RENTAL_AGREEMENT_TIME_RECORDS, rentalAgreementTimeRecords: rentalAgreementTimeRecords });
     return rentalAgreementTimeRecords;
