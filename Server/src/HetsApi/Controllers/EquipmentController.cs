@@ -101,7 +101,10 @@ namespace HetsApi.Controllers
             HetEquipment equipment = _context.HetEquipment.First(x => x.EquipmentId == item.EquipmentId);
 
             DateTime? originalSeniorityEffectiveDate = equipment.SeniorityEffectiveDate;
-            
+            float? originalServiceHoursLastYear = equipment.ServiceHoursLastYear;
+            float? originalServiceHoursTwoYearsAgo = equipment.ServiceHoursTwoYearsAgo;
+            float? originalServiceHoursThreeYearsAgo = equipment.ServiceHoursThreeYearsAgo;
+
             equipment.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             equipment.ApprovedDate = item.ApprovedDate;
             equipment.EquipmentCode = item.EquipmentCode;
@@ -126,10 +129,33 @@ namespace HetsApi.Controllers
             // save the changes
             _context.SaveChanges();
 
-            // if seniority has changed, update blocks
-            if ((originalSeniorityEffectiveDate == null && item.SeniorityEffectiveDate != null) ||
-                (originalSeniorityEffectiveDate != null && item.SeniorityEffectiveDate != null && 
-                 originalSeniorityEffectiveDate < item.SeniorityEffectiveDate))
+            // check if we need to rework the equipment's seniority
+            bool rebuildSeniority = (originalSeniorityEffectiveDate == null && item.SeniorityEffectiveDate != null) ||
+                                    (originalSeniorityEffectiveDate != null && item.SeniorityEffectiveDate != null &&
+                                     originalSeniorityEffectiveDate != item.SeniorityEffectiveDate);
+
+            if ((originalServiceHoursLastYear == null && item.ServiceHoursLastYear != null) ||
+                (originalServiceHoursLastYear != null && item.ServiceHoursLastYear != null &&
+                 originalServiceHoursLastYear != item.ServiceHoursLastYear))
+            {
+                rebuildSeniority = true;
+            }
+
+            if ((originalServiceHoursTwoYearsAgo == null && item.ServiceHoursTwoYearsAgo != null) ||
+                (originalServiceHoursTwoYearsAgo != null && item.ServiceHoursTwoYearsAgo != null &&
+                 originalServiceHoursTwoYearsAgo != item.ServiceHoursTwoYearsAgo))
+            {
+                rebuildSeniority = true;
+            }
+
+            if ((originalServiceHoursThreeYearsAgo == null && item.ServiceHoursThreeYearsAgo != null) ||
+                (originalServiceHoursThreeYearsAgo != null && item.ServiceHoursThreeYearsAgo != null &&
+                 originalServiceHoursThreeYearsAgo != item.ServiceHoursThreeYearsAgo))
+            {
+                rebuildSeniority = true;
+            }
+
+            if (rebuildSeniority)
             {
                 EquipmentHelper.RecalculateSeniority(item.LocalAreaId, item.DistrictEquipmentTypeId, _context, _configuration);
             }
