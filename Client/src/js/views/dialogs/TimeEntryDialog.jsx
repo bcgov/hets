@@ -96,8 +96,7 @@ var TimeEntryDialog = React.createClass({
 
   onSave() {
     Api.addRentalAgreementTimeRecords(this.props.activeRentalRequest.id, this.state.timeEntry).then(() => {
-      Api.getRentalAgreementTimeRecords(this.props.activeRentalRequest.id);
-      this.setState({ ...this.getInitialState(), showAllTimeRecords: this.state.showAllTimeRecords });
+      this.props.onClose();
     });
   },
 
