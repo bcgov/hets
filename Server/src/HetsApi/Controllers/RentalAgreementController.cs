@@ -94,6 +94,15 @@ namespace HetsApi.Controllers
             int? statusId = StatusHelper.GetStatusId(item.Status, "rentalAgreementStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
+            // get rate period type
+            // set the rate period type id
+            int? rateTypeId = StatusHelper.GetRatePeriodId(item.RatePeriod, _context);
+
+            if (rateTypeId == null)
+            {
+                throw new DataException("Rate Period Id cannot be null");
+            }
+
             agreement.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             agreement.DatedOn = item.DatedOn;
             agreement.EquipmentRate = item.EquipmentRate;
@@ -103,6 +112,7 @@ namespace HetsApi.Controllers
             agreement.Number = item.Number;
             agreement.RateComment = item.RateComment;
             agreement.RatePeriod = item.RatePeriod;
+            agreement.RatePeriodTypeId = (int)rateTypeId;
             agreement.RentalAgreementStatusTypeId = (int)statusId;
             agreement.ProjectId = item.ProjectId;
             agreement.EquipmentId = item.EquipmentId;

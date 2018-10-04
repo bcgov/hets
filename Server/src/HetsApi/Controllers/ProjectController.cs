@@ -548,12 +548,20 @@ namespace HetsApi.Controllers
             }
             else // add time record
             {
+                // set the time period type id
+                int? timePeriodTypeId = StatusHelper.GetTimePeriodId(item.TimePeriod, _context);
+
+                if (timePeriodTypeId == null)
+                {
+                    throw new DataException("Time Period Id cannot be null");
+                }
+
                 HetTimeRecord time = new HetTimeRecord
                 {
                     RentalAgreementId = rentalAgreementId,
                     EnteredDate = DateTime.UtcNow,
                     Hours = item.Hours,
-                    TimePeriod = item.TimePeriod,
+                    TimePeriodTypeId = (int)timePeriodTypeId,
                     WorkedDate = item.WorkedDate
                 };
 

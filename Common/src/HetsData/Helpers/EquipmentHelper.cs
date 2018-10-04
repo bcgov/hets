@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -97,6 +98,11 @@ namespace HetsData.Helpers
                 equipment.NumberOfBlocks = GetNumberOfBlocks(equipment, configuration);
                 equipment.HoursYtd = GetYtdServiceHours(id, context);
                 equipment.Status = equipment.EquipmentStatusType.EquipmentStatusTypeCode;
+
+                if (equipment.Seniority != null && equipment.BlockNumber != null)
+                {
+                    equipment.SeniorityString = FormatSeniorityString((float)equipment.Seniority, (int)equipment.BlockNumber, equipment.NumberOfBlocks);
+                }                
             }
             
             return equipment;
