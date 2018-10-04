@@ -1629,7 +1629,7 @@ INSERT INTO public."HET_RATE_PERIOD_TYPE"
    "APP_LAST_UPDATE_TIMESTAMP")
 VALUES 
   (1, 'Weekly', 'Weekly', 'Weekly', 1, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
-  (2, 'Hourly', 'Hourly', 'Hourly', 2, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
+  (2, 'Hr', 'Hourly', 'Hourly', 2, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
   (3, 'Daily', 'Daily', 'Daily', 3, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
   (4, 'Monthly', 'Monthly', 'Monthly', 4, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW());
 

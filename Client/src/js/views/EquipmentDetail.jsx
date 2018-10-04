@@ -437,7 +437,7 @@ var EquipmentDetail = React.createClass({
 
                   return <Row>
                     <Col lg={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Seniority">{ equipment.seniorityText }</ColDisplay>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Seniority">{ equipment.seniorityString }</ColDisplay>
                     </Col>
                     <Col lg={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Hours YTD">{ equipment.hoursYtd }</ColDisplay>
@@ -461,7 +461,7 @@ var EquipmentDetail = React.createClass({
                     </Col>
                     <Col lg={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Registered Date">
-                        { formatDateTime(equipment.approvedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
+                        { formatDateTime(equipment.seniorityEffectiveDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
                       </ColDisplay>
                     </Col>
                     <Col lg={12}>

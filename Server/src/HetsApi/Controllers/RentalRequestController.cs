@@ -235,6 +235,17 @@ namespace HetsApi.Controllers
 
             rentalRequest.RentalRequestStatusTypeId = (int)statusId;
 
+            if (item.HetRentalRequestAttachment != null &&
+                item.HetRentalRequestAttachment.Count > 0)
+            {
+                HetRentalRequestAttachment attachment = new HetRentalRequestAttachment
+                {
+                    Attachment = item.HetRentalRequestAttachment.ElementAt(0).Attachment
+                };
+
+                rentalRequest.HetRentalRequestAttachment.Add(attachment);
+            }
+
             // save the changes
             _context.HetRentalRequest.Add(rentalRequest);
             _context.SaveChanges();

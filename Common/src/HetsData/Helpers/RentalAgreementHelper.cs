@@ -86,6 +86,7 @@ namespace HetsData.Helpers
             if (agreement != null)
             {
                 agreement.Status = agreement.RentalAgreementStatusType.RentalAgreementStatusTypeCode;
+                agreement.RatePeriod = agreement.RatePeriodType.RatePeriodTypeCode;
             }
 
             return agreement;
