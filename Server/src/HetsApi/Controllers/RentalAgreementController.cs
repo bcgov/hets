@@ -528,6 +528,10 @@ namespace HetsApi.Controllers
                 // not found
                 if (rate == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
+                // set the rate period type id
+                int? rateTypeId = StatusHelper.GetRatePeriodId(item.RatePeriod, _context);
+                if (rateTypeId == null) throw new DataException("Rate Period Id cannot be null");
+
                 rate.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                 rate.Comment = item.Comment;
                 rate.ComponentName = item.ComponentName;
@@ -536,19 +540,27 @@ namespace HetsApi.Controllers
                 rate.PercentOfEquipmentRate = item.PercentOfEquipmentRate;
                 rate.Rate = item.Rate;
                 rate.RatePeriod = item.RatePeriod;
+                rate.RatePeriodTypeId = (int)rateTypeId;
             }
             else // add rate records
             {
+                // set the rate period type id
+                int? rateTypeId = StatusHelper.GetRatePeriodId(item.RatePeriod, _context);
+                if (rateTypeId == null) throw new DataException("Rate Period Id cannot be null");
+
+                int agreementId = item.RentalAgreement.RentalAgreementId;
+
                 HetRentalAgreementRate rate = new HetRentalAgreementRate
                 {
-                    RentalAgreementId = item.RentalAgreementId,
+                    RentalAgreementId = agreementId,
                     Comment = item.Comment,
                     ComponentName = item.ComponentName,
                     IsAttachment = item.IsAttachment,
                     IsIncludedInTotal = item.IsIncludedInTotal,
                     PercentOfEquipmentRate = item.PercentOfEquipmentRate,
                     Rate = item.Rate,
-                    RatePeriod = item.RatePeriod
+                    RatePeriod = item.RatePeriod,
+                    RatePeriodTypeId = (int)rateTypeId
                 };
 
                 _context.HetRentalAgreementRate.Add(rate);
@@ -590,6 +602,10 @@ namespace HetsApi.Controllers
                     // not found
                     if (rate == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
+                    // set the rate period type id
+                    int? rateTypeId = StatusHelper.GetRatePeriodId(item.RatePeriod, _context);
+                    if (rateTypeId == null) throw new DataException("Rate Period Id cannot be null");                    
+
                     rate.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                     rate.Comment = item.Comment;
                     rate.ComponentName = item.ComponentName;
@@ -597,31 +613,30 @@ namespace HetsApi.Controllers
                     rate.IsIncludedInTotal = item.IsIncludedInTotal;
                     rate.PercentOfEquipmentRate = item.PercentOfEquipmentRate;
                     rate.Rate = item.Rate;
-                    rate.RatePeriod = item.RatePeriod;
-
-                    // set the rate period type id
-                    int? rateTypeId = StatusHelper.GetRatePeriodId(item.RatePeriod, _context);
-
-                    if (rateTypeId == null)
-                    {
-                        throw new DataException("Rate Period Id cannot be null");
-                    }
-
+                    rate.RatePeriod = item.RatePeriod;                    
                     rate.RatePeriodTypeId = (int)rateTypeId;
                 }
                 else // add rate records
                 {
+                    // set the rate period type id
+                    // set the rate period type id
+                    int? rateTypeId = StatusHelper.GetRatePeriodId(item.RatePeriod, _context);
+                    if (rateTypeId == null) throw new DataException("Rate Period Id cannot be null");
+
+                    int agreementId = item.RentalAgreement.RentalAgreementId;
+
                     HetRentalAgreementRate rate = new HetRentalAgreementRate
                     {
-                        RentalAgreementId = item.RentalAgreementId,
+                        RentalAgreementId = agreementId,
                         Comment = item.Comment,
                         ComponentName = item.ComponentName,
                         IsAttachment = item.IsAttachment,
                         IsIncludedInTotal = item.IsIncludedInTotal,
                         PercentOfEquipmentRate = item.PercentOfEquipmentRate,
                         Rate = item.Rate,
-                        RatePeriod = item.RatePeriod
-                    };
+                        RatePeriod = item.RatePeriod,
+                        RatePeriodTypeId = (int)rateTypeId
+                };
 
                     _context.HetRentalAgreementRate.Add(rate);
                 }
@@ -692,9 +707,11 @@ namespace HetsApi.Controllers
             }
             else // add condition records
             {
+                int agreementId = item.RentalAgreement.RentalAgreementId;
+
                 HetRentalAgreementCondition condition = new HetRentalAgreementCondition
                 {
-                    RentalAgreementId = item.RentalAgreementId,
+                    RentalAgreementId = agreementId,
                     Comment = item.Comment,
                     ConditionName = item.ConditionName
                 };
@@ -745,9 +762,11 @@ namespace HetsApi.Controllers
                 }
                 else // add condition records
                 {
+                    int agreementId = item.RentalAgreement.RentalAgreementId;
+
                     HetRentalAgreementCondition condition = new HetRentalAgreementCondition
                     {
-                        RentalAgreementId = item.RentalAgreementId,
+                        RentalAgreementId = agreementId,
                         Comment = item.Comment,
                         ConditionName = item.ConditionName
                     };
