@@ -383,7 +383,11 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists || item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
+            // set the time period type id
+            int? timePeriodTypeId = StatusHelper.GetTimePeriodId(item.TimePeriod, _context);
+            if (timePeriodTypeId == null) throw new DataException("Time Period Id cannot be null");
+
             // add or update time record
             if (item.TimeRecordId > 0)
             {
@@ -397,16 +401,18 @@ namespace HetsApi.Controllers
                 time.EnteredDate = DateTime.UtcNow;
                 time.Hours = item.Hours;
                 time.TimePeriod = item.TimePeriod;
+                time.TimePeriodTypeId = (int)timePeriodTypeId;
                 time.WorkedDate = item.WorkedDate;
             }
             else // add time record
             {
                 HetTimeRecord time = new HetTimeRecord
                 {
-                    RentalAgreementId = item.RentalAgreementId,
+                    RentalAgreementId = id,
                     EnteredDate = DateTime.UtcNow,
                     Hours = item.Hours,
                     TimePeriod = item.TimePeriod,
+                    TimePeriodTypeId = (int)timePeriodTypeId,
                     WorkedDate = item.WorkedDate
                 };
 
@@ -440,6 +446,10 @@ namespace HetsApi.Controllers
             // process each time record
             foreach (HetTimeRecord item in items)
             {
+                // set the time period type id
+                int? timePeriodTypeId = StatusHelper.GetTimePeriodId(item.TimePeriod, _context);
+                if (timePeriodTypeId == null) throw new DataException("Time Period Id cannot be null");
+
                 // add or update time record
                 if (item.TimeRecordId > 0)
                 {
@@ -453,16 +463,18 @@ namespace HetsApi.Controllers
                     time.EnteredDate = DateTime.UtcNow;
                     time.Hours = item.Hours;
                     time.TimePeriod = item.TimePeriod;
+                    time.TimePeriodTypeId = (int)timePeriodTypeId;
                     time.WorkedDate = item.WorkedDate;
                 }
                 else // add time record
                 {
                     HetTimeRecord time = new HetTimeRecord
                     {
-                        RentalAgreementId = item.RentalAgreementId,
+                        RentalAgreementId = id,
                         EnteredDate = DateTime.UtcNow,
                         Hours = item.Hours,
                         TimePeriod = item.TimePeriod,
+                        TimePeriodTypeId = (int)timePeriodTypeId,
                         WorkedDate = item.WorkedDate
                     };
 
