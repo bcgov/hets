@@ -34,7 +34,7 @@ var BusinessPortal = React.createClass({
 
       // owners
       uiOwners : {
-        sortField: this.props.uiOwners.sortField || 'name',
+        sortField: this.props.uiOwners.sortField || 'organizationName',
         sortDesc: this.props.uiOwners.sortDesc  === true,
       },
     };
@@ -129,10 +129,10 @@ var BusinessPortal = React.createClass({
               }
 
               var headers = [
-                { field: 'name',         title: 'Name'  },
-                { field: 'contact',      title: 'Primary Contact' },
-                { field: 'districtName', title: 'District' },
-                { field: 'localArea',    title: 'Local Area'  },
+                { field: 'organizationName',   title: 'Name'  },
+                { field: 'primaryContactName', title: 'Primary Contact' },
+                { field: 'districtName',       title: 'District' },
+                { field: 'localAreaName',      title: 'Local Area'  },
               ];
 
               return <SortTable id="owner-list" sortField={ this.state.uiOwners.sortField } sortDesc={ this.state.uiOwners.sortDesc } onSort={ this.updateOwnersUIState } headers={ headers }>
@@ -140,9 +140,9 @@ var BusinessPortal = React.createClass({
                   _.map(owners, (owner) => {
                     return <tr key={ owner.id }>
                       <td><Link to={ `${Constant.BUSINESS_DETAILS_PATHNAME }/${owner.id}` }> {owner.organizationName}</Link></td>
-                      <td>{ owner.ownerName }</td>
+                      <td>{ owner.primaryContactName }</td>
                       <td>{ owner.districtName }</td>
-                      <td>{ owner.localArea ? owner.localArea.name : null }</td>
+                      <td>{ owner.localAreaName }</td>
                     </tr>;
                   })
                 }
