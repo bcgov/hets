@@ -38,6 +38,7 @@ var RentalConditionsEditDialog = React.createClass({
           commentError: '',
         },
       },
+      concurrencyControlNumber: this.props.rentalCondition.concurrencyControlNumber || 0,
     };
   },
 
@@ -97,6 +98,7 @@ var RentalConditionsEditDialog = React.createClass({
         rentalAgreement: { id: this.props.rentalCondition.rentalAgreement.id },
         conditionName: this.state.forms[key].conditionName,
         comment: this.state.forms[key].conditionName === NON_STANDARD_CONDITION ? this.state.forms[key].comment : '',
+        concurrencyControlNumber: this.state.concurrencyControlNumber,
       };
     });
     this.state.isNew ? this.props.onSaveMultiple(conditions) : this.props.onSave(conditions[0]);

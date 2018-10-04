@@ -55,8 +55,9 @@ var RentalRatesEditDialog = React.createClass({
           rateError: '',
           ratePeriodError: '',
           commentError: '',
-        }, 
+        },
       },
+      concurrencyControlNumber: this.props.rentalRate.concurrencyControlNumber || 0,
     };
   },
 
@@ -229,6 +230,7 @@ var RentalRatesEditDialog = React.createClass({
         ratePeriod: this.state.forms[key].ratePeriod,
         comment: this.state.forms[key].comment,
         isIncludedInTotal: this.state.forms[key].isIncludedInTotal,
+        concurrencyControlNumber: this.state.concurrencyControlNumber,
       };
     });
     this.state.isNew ? this.props.onSaveMultiple(attachments) : this.props.onSave(attachments[0]);
