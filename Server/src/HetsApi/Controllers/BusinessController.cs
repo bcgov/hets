@@ -182,6 +182,8 @@ namespace HetsApi.Controllers
             // get business
             List<HetOwner> owners = _context.HetOwner.AsNoTracking()
                 .Include(x => x.Business)
+                .Include(x => x.PrimaryContact)
+                .Include(x => x.LocalArea.ServiceArea.District)
                 .Where(x => x.BusinessId == business.BusinessId)
                 .ToList();
 
@@ -209,8 +211,6 @@ namespace HetsApi.Controllers
 
             // check access
             if (!CanAccessOwner(business.BusinessId, id)) return StatusCode(StatusCodes.Status401Unauthorized);
-
-
 
             return new ObjectResult(new HetsResponse(OwnerHelper.GetRecord(id, _context, _configuration)));
         }

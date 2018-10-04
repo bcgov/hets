@@ -910,6 +910,10 @@ namespace HetsApi.Controllers
             // get users district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
 
+            // get status id
+            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
             // get equipment record
             IQueryable<HetEquipment> data = _context.HetEquipment.AsNoTracking()
                 .Include(x => x.LocalArea)
@@ -920,7 +924,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.Owner)
                 .Include(x => x.HetRentalAgreement)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
-                            x.Status == HetEquipment.StatusApproved)
+                            x.EquipmentStatusTypeId.Equals(statusId))
                 .OrderBy(x => x.LocalArea).ThenBy(x => x.DistrictEquipmentType);
 
             if (localAreasArray != null && localAreasArray.Length > 0)
