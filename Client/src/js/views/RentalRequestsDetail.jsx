@@ -157,16 +157,10 @@ var RentalRequestsDetail = React.createClass({
     let hireOfferUpdated = { ...hireOffer };
     delete hireOfferUpdated.showAllResponseFields;
     delete hireOfferUpdated.displayFields;
-    Api.updateRentalRequestRotationList(hireOfferUpdated, this.props.rentalRequest.data).then((response) => {
-
-      if (response.error) { return; }
-
-      this.fetch();
-      if ((hireOffer.offerResponse === STATUS_YES || hireOffer.offerResponse === STATUS_FORCE_HIRE)) {
-        this.props.router.push({ pathname: `${Constant.RENTAL_AGREEMENTS_PATHNAME}/${response.rentalAgreement.id}` });
-      }
-      this.closeHireOfferDialog();
+    Api.updateRentalRequestRotationList(hireOfferUpdated, this.props.rentalRequest.data).then(() => {
       Log.rentalRequestEquipmentHired(this.props.rentalRequest.data, hireOffer.equipment, hireOffer.offerResponse);
+      this.closeHireOfferDialog();
+      this.fetch();
     });
   },
 

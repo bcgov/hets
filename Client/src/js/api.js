@@ -1458,14 +1458,12 @@ export function updateRentalRequestRotationList(rentalRequestRotationList, renta
     
     if (response.responseStatus === 'ERROR') {
       store.dispatch({ type: Action.RENTAL_REQUEST_ROTATION_LIST_ERROR, error: response.error });
-      return response.error;
+      return Promise.reject(response.error.description);
     }
-
-    var rentalRequestRotationList = response.data;
-    // Add display fields
+    
+    var rentalRequestRotationList = response.data.rentalRequestRotationList;
 
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rentalRequestRotationList });
-    return Promise.resolve(rentalRequestRotationList);
   });
 }
 
@@ -1616,7 +1614,7 @@ export function getRentalAgreementTimeRecords(rentalAgreementId) {
 export function addRentalAgreementTimeRecords(rentalRequestId, timeRecords) {
   let formattedTimeRecords = formatTimeRecords(timeRecords, rentalRequestId);
   return new ApiRequest(`rentalagreements/${rentalRequestId}/timeRecords`).post(formattedTimeRecords).then(response => {
-    var rentalAgreementTimeRecords = normalize(response.data);
+    var rentalAgreementTimeRecords = normalize(response.data.timeRecords);
 
     store.dispatch({ type: Action.RENTAL_AGREEMENT_TIME_RECORDS, rentalAgreementTimeRecords: rentalAgreementTimeRecords });
     return rentalAgreementTimeRecords;
