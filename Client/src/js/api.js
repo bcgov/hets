@@ -1857,6 +1857,7 @@ export function getBusiness() {
   return new ApiRequest('/business').get().then(response => {
     var business = response.data;
 
+    _.map(business.owners, owner => { parseOwner(owner); });
     store.dispatch({ type: Action.UPDATE_BUSINESS, business: business });
   });
 }
@@ -1865,7 +1866,6 @@ export function getOwnerForBusiness(ownerId) {
   return new ApiRequest(`/business/owner/${ ownerId }`).get().then(response => {
     var owner = response.data;
 
-    // Add display fields
     parseOwner(owner);
     store.dispatch({ type: Action.UPDATE_OWNER, owner: owner });
   });
