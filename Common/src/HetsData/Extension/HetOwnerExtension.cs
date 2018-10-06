@@ -34,5 +34,32 @@ namespace HetsData.Model
 
         [NotMapped]
         public string DistrictContact { get; set; }
+
+        [NotMapped]
+        public string PrimaryContactNameBusiness
+        {
+            get
+            {
+                if (PrimaryContact == null)
+                {
+                    return null;
+                }
+
+                string temp = PrimaryContact.GivenName;
+
+                if (!string.IsNullOrEmpty(temp))
+                {
+                    temp = temp + " ";
+                }
+
+                return (temp + PrimaryContact.Surname);
+            }
+        }
+
+        [NotMapped]
+        public string LocalAreaNameBusiness => LocalArea?.Name;
+
+        [NotMapped]
+        public string DistrictNameBusiness => LocalArea?.ServiceArea?.District?.Name;
     }
 }

@@ -140,9 +140,10 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetOwner)
                     .ThenInclude(y => y.PrimaryContact)
                 .Include(x => x.HetOwner)
-                    .ThenInclude(y => y.LocalArea)
-                        .ThenInclude(z => z.ServiceArea.District)
-                .FirstOrDefault(a => a.BusinessId == business.BusinessId);
+                    .ThenInclude(y => y.Business)
+                .Include(x => x.HetOwner)
+                    .ThenInclude(y => y.LocalArea.ServiceArea.District)
+                .FirstOrDefault(a => a.BusinessId == business.BusinessId);            
 
             // get updated owner record (linked owner) and return to the UI too
             if (business != null)
@@ -180,14 +181,16 @@ namespace HetsApi.Controllers
             if (!CanAccessBusiness(business.BusinessId)) return StatusCode(StatusCodes.Status401Unauthorized);            
 
             // get business
-            List<HetOwner> owners = _context.HetOwner.AsNoTracking()
-                .Include(x => x.Business)
-                .Include(x => x.PrimaryContact)
-                .Include(x => x.LocalArea.ServiceArea.District)
-                .Where(x => x.BusinessId == business.BusinessId)
-                .ToList();
+            HetBusiness businessDetail = _context.HetBusiness.AsNoTracking()
+                .Include(x => x.HetOwner)
+                    .ThenInclude(y => y.PrimaryContact)
+                .Include(x => x.HetOwner)
+                    .ThenInclude(y => y.Business)
+                .Include(x => x.HetOwner)
+                    .ThenInclude(y => y.LocalArea.ServiceArea.District)
+                .FirstOrDefault(a => a.BusinessId == business.BusinessId);
 
-            return new ObjectResult(new HetsResponse(owners));
+            return new ObjectResult(new HetsResponse(businessDetail));
         }
 
         /// <summary>
