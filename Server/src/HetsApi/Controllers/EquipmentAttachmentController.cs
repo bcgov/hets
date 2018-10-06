@@ -93,7 +93,7 @@ namespace HetsApi.Controllers
                 .First(x => x.EquipmentAttachmentId == id);
 
             equipmentAttachment.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
-            equipmentAttachment.Description = item.Description;
+            equipmentAttachment.Description = item.TypeName;
             equipmentAttachment.TypeName = item.TypeName;
             equipmentAttachment.EquipmentId = item.Equipment.EquipmentId;      
 
@@ -128,7 +128,7 @@ namespace HetsApi.Controllers
             HetEquipmentAttachment equipmentAttachment = new HetEquipmentAttachment
             {
                 ConcurrencyControlNumber = item.ConcurrencyControlNumber,
-                Description = item.Description,
+                Description = item.TypeName,
                 TypeName = item.TypeName,
                 EquipmentId = item.Equipment.EquipmentId
             };

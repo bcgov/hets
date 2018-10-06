@@ -140,9 +140,9 @@ var BusinessPortal = React.createClass({
                   _.map(owners, (owner) => {
                     return <tr key={ owner.id }>
                       <td><Link to={ `${Constant.BUSINESS_DETAILS_PATHNAME }/${owner.id}` }> {owner.organizationName}</Link></td>
-                      <td>{ owner.primaryContactName }</td>
-                      <td>{ owner.districtName }</td>
-                      <td>{ owner.localAreaName }</td>
+                      <td>{ owner.primaryContactNameBusiness }</td>
+                      <td>{ owner.districtNameBusiness }</td>
+                      <td>{ owner.localAreaNameBusiness }</td>
                     </tr>;
                   })
                 }

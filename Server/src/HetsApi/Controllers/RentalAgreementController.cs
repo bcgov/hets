@@ -237,6 +237,7 @@ namespace HetsApi.Controllers
                     .ThenInclude(p => p.District.Region)
                 .Include(x => x.HetRentalAgreementCondition)
                 .Include(x => x.HetRentalAgreementRate)
+                    .ThenInclude(y => y.RatePeriodType)
                 .FirstOrDefault(a => a.RentalAgreementId == id);
 
             if (rentalAgreement != null)
