@@ -37,6 +37,8 @@ namespace Pdf.Server.Controllers
         {
             try
             {
+                name = CleanName(name);
+
                 string fileName = "RentalAgreement_" + name + ".pdf";
                 _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}]", fileName);
 
@@ -92,6 +94,8 @@ namespace Pdf.Server.Controllers
         {
             try
             {
+                name = CleanName(name);
+
                 string fileName = name + ".pdf";
                 _logger.LogInformation("GetOwnerVerificationPdf [FileName: {0}]", fileName);
 
@@ -148,6 +152,8 @@ namespace Pdf.Server.Controllers
         {
             try
             {
+                name = CleanName(name);
+
                 string fileName = name + ".pdf";
                 _logger.LogInformation("GetSeniorityListPdf [FileName: {0}]", fileName);
 
@@ -195,6 +201,22 @@ namespace Pdf.Server.Controllers
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        private static string CleanName(string name)
+        {
+            name = name.Replace("'", "");
+            name = name.Replace("<", "");
+            name = name.Replace(">", "");
+            name = name.Replace("\"", "");
+            name = name.Replace("|", "");
+            name = name.Replace("?", "");
+            name = name.Replace("*", "");
+            name = name.Replace(":", "");
+            name = name.Replace("/", "");
+            name = name.Replace("\\", "");
+
+            return name;
         }
     }
 }
