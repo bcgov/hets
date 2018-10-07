@@ -263,7 +263,7 @@ namespace HetsApi.Controllers
 
                 // generate pdf document name [unique portion only]
                 string ownerName = rentalAgreement.Equipment.Owner.OrganizationName.Trim().ToLower();
-                ownerName = CleanFileName(ownerName);
+                ownerName = CleanName(ownerName);
                 ownerName = ownerName.Replace(" ", "");
                 ownerName = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(ownerName);
                 string fileName = rentalAgreement.Number + "_" + ownerName;
@@ -320,12 +320,7 @@ namespace HetsApi.Controllers
             // record not found
             return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
-
-        private static string CleanFileName(string fileName)
-        {
-            return Path.GetInvalidFileNameChars().Aggregate(fileName, (current, c) => current.Replace(c.ToString(), string.Empty));
-        }
-
+        
         private static byte[] GetPdf(HttpResponseMessage response)
         {
             try
@@ -340,7 +335,23 @@ namespace HetsApi.Controllers
                 Console.WriteLine(e);
                 throw;
             }
-        }    
+        }
+
+        private static string CleanName(string name)
+        {
+            name = name.Replace("'", "");
+            name = name.Replace("<", "");
+            name = name.Replace(">", "");
+            name = name.Replace("\"", "");
+            name = name.Replace("|", "");
+            name = name.Replace("?", "");
+            name = name.Replace("*", "");
+            name = name.Replace(":", "");
+            name = name.Replace("/", "");
+            name = name.Replace("\\", "");
+
+            return name;
+        }
 
         #endregion
 
