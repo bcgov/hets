@@ -262,7 +262,7 @@ namespace HetsApi.Controllers
                 string targetUrl = pdfHost + pdfUrl;
 
                 // generate pdf document name [unique portion only]
-                string ownerName = rentalAgreement.Equipment.Owner.OrganizationName.Trim().ToLower();
+                string ownerName = rentalAgreement.Equipment?.Owner?.OrganizationName?.Trim().ToLower();
                 ownerName = CleanName(ownerName);
                 ownerName = ownerName.Replace(" ", "");
                 ownerName = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(ownerName);
@@ -339,6 +339,8 @@ namespace HetsApi.Controllers
 
         private static string CleanName(string name)
         {
+            if (name == null) return "";
+
             name = name.Replace("'", "");
             name = name.Replace("<", "");
             name = name.Replace(">", "");
@@ -861,15 +863,19 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("blankAgreements")]
-        [SwaggerOperation("BlankRentalAgreementGet")]
+        [SwaggerOperation("BlankRentalAgreementsGet")]
         [SwaggerResponse(200, type: typeof(List<HetRentalAgreement>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult BlankRentalAgreementGet()
+        public virtual IActionResult BlankRentalAgreementsGet()
         {
             // get the current district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
 
-            // get all "blank" agreements
+            // get active status id
+            int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // get all active "blank" agreements
             List<HetRentalAgreement> agreements = _context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.RentalAgreementStatusType)
                 .Include(x => x.District)
@@ -877,7 +883,8 @@ namespace HetsApi.Controllers
                 .Include(x => x.Equipment)
                 .Where(x => x.District.DistrictId == districtId &&
                             x.RentalRequestId == null &&
-                            x.RentalRequestRotationListId == null)
+                            x.RentalRequestRotationListId == null &&
+                            x.RentalAgreementStatusTypeId == (int)statusId)
                 .ToList();
 
             return new ObjectResult(new HetsResponse(agreements));
@@ -946,6 +953,8 @@ namespace HetsApi.Controllers
 
             // get agreement and validate
             HetRentalAgreement agreement = _context.HetRentalAgreement
+                .Include(a => a.HetRentalAgreementRate)
+                .Include(a => a.HetRentalAgreementCondition)
                 .First(a => a.RentalAgreementId == id);
 
             if (agreement.RentalAgreementStatusTypeId != statusId)
@@ -961,6 +970,18 @@ namespace HetsApi.Controllers
             if (agreement.RentalRequestId != null)
             {
                 return new ObjectResult(new HetsResponse("HETS-27", ErrorViewModel.GetDescription("HETS-27", _configuration)));
+            }
+
+            // delete rate
+            foreach (HetRentalAgreementRate item in agreement.HetRentalAgreementRate)
+            {
+                _context.HetRentalAgreementRate.Remove(item);
+            }
+
+            // delete conditions
+            foreach (HetRentalAgreementCondition item in agreement.HetRentalAgreementCondition)
+            {
+                _context.HetRentalAgreementCondition.Remove(item);
             }
 
             // delete the agreement
