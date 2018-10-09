@@ -157,29 +157,20 @@ var RentalRequestsDetail = React.createClass({
     let hireOfferUpdated = { ...hireOffer };
     delete hireOfferUpdated.showAllResponseFields;
     delete hireOfferUpdated.displayFields;
+    delete hireOfferUpdated.rentalAgreement;
+    
     Api.updateRentalRequestRotationList(hireOfferUpdated, this.props.rentalRequest.data).then(() => {
       Log.rentalRequestEquipmentHired(this.props.rentalRequest.data, hireOffer.equipment, hireOffer.offerResponse);
-      this.closeHireOfferDialog();
-      this.fetch();
-    });
-  },
 
-  saveNewRentalAgreement(rentalRequestRotationList) {
-    var rentalRequest = this.props.rentalRequest.data;
-
-    var newAgreement = {
-      equipment: { id: rentalRequestRotationList.equipment.id },
-      project: { id: rentalRequest.project.id },
-      estimateHours: rentalRequest.expectedHours,
-      estimateStartWork: rentalRequest.expectedStartDate,
-    };
-
-    Api.addRentalAgreement(newAgreement).then(() => {
-      // Update rotation list entry to reference the newly created agreement
-      return Api.updateRentalRequestRotationList({...rentalRequestRotationList, rentalAgreement: { id: this.props.rentalAgreement.id }}, rentalRequest);
-    }).finally(() => {
-      // Open it up
-      this.props.router.push({ pathname: `${Constant.RENTAL_AGREEMENTS_PATHNAME}/${this.props.rentalAgreement.id}` });
+      var rotationListItem = this.props.rentalRequestRotationList.data.find(i => i.id === hireOffer.id);
+      if (rotationListItem && rotationListItem.rentalAgreementId && !hireOfferUpdated.rentalAgreementId) {
+        // navigate to rental agreement if it was newly generated
+        this.props.router.push({ pathname: `${ Constant.RENTAL_AGREEMENTS_PATHNAME }/${ rotationListItem.rentalAgreementId }` });
+      } else {
+        // close popup dialog and refresh page data
+        this.closeHireOfferDialog();
+        this.fetch();
+      }
     });
   },
 

@@ -524,41 +524,47 @@ namespace HetsApi.Controllers
             requestRotationList.WasAsked = item.WasAsked;
             requestRotationList.OfferResponseNote = item.OfferResponseNote;
 
-            // do we need to create a Rental Agreement?
+            // do we need to create or modify a Rental Agreement?
             if (item.IsForceHire == true ||
                 item.OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
-            {                
-                // generate the rental agreement number
-                string agreementNumber = RentalAgreementHelper.GetRentalAgreementNumber(item.Equipment, _context);
+            {
+                // get rental agreement record
+                HetRentalAgreement rentalAgreement = _context.HetRentalAgreement
+                    .FirstOrDefault(a => a.RentalAgreementId == item.RentalAgreementId);
+
+                // create rental agreement if it doesn't exist
+                if (rentalAgreement == null)
+                {
+                    // generate the rental agreement number
+                    string agreementNumber = RentalAgreementHelper.GetRentalAgreementNumber(item.Equipment, _context);
+
+                    int? rateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodWeekly, _context);
+                    if (rateTypeId == null) return new ObjectResult(new HetsResponse("HETS-24", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+                    rentalAgreement = new HetRentalAgreement
+                    {
+                        ProjectId = request.ProjectId,
+                        DistrictId = request.Project.District.DistrictId,
+                        EquipmentId = tempEquipmentId,
+                        Number = agreementNumber,
+                        RatePeriodTypeId = (int)rateTypeId,
+                    };
+
+                    _context.HetRentalAgreement.Add(rentalAgreement);
+                }
 
                 int? statusIdAgreement = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
                 if (statusIdAgreement == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-                int? rateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodWeekly, _context);
-                if (rateTypeId == null) return new ObjectResult(new HetsResponse("HETS-24", ErrorViewModel.GetDescription("HETS-23", _configuration)));
-
-                int requestId = request.RentalRequestId;
-                int rotationId = requestRotationList.RentalRequestRotationListId;
-                int districtId = request.Project.District.DistrictId;
-
-                // create agreement
-                HetRentalAgreement rentalAgreement = new HetRentalAgreement
-                {
-                    ProjectId = request.ProjectId,
-                    DistrictId = districtId,
-                    EquipmentId = tempEquipmentId,
-                    RentalAgreementStatusTypeId = (int)statusIdAgreement,
-                    Number = agreementNumber,
-                    DatedOn = DateTime.UtcNow,
-                    EstimateHours = request.ExpectedHours,
-                    EstimateStartWork = request.ExpectedStartDate,
-                    RatePeriodTypeId = (int)rateTypeId,
-                    RentalRequestId = requestId,
-                    RentalRequestRotationListId = rotationId
-                };                
+                // update rental agreement
+                rentalAgreement.RentalAgreementStatusTypeId = (int)statusIdAgreement;
+                rentalAgreement.DatedOn = DateTime.UtcNow;
+                rentalAgreement.EstimateHours = request.ExpectedHours;
+                rentalAgreement.EstimateStartWork = request.ExpectedStartDate;
+                rentalAgreement.RentalRequestId = request.RentalRequestId;
+                rentalAgreement.RentalRequestRotationListId = requestRotationList.RentalRequestRotationListId;
 
                 // have to save the agreement
-                _context.HetRentalAgreement.Add(rentalAgreement);
                 _context.SaveChanges();
 
                 // relate the new rental agreement to the original rotation list record

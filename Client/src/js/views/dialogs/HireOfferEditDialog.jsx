@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Grid, Row, Col, Radio, Form, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
+import { Grid, Row, Col, Radio, Form, FormGroup, ControlLabel, HelpBlock, Button } from 'react-bootstrap';
 
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -49,6 +49,7 @@ var HireOfferEditDialog = React.createClass({
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     error: React.PropTypes.object,
+    blankRentalAgreements: React.PropTypes.object,
   },
 
   getInitialState() {
@@ -65,6 +66,7 @@ var HireOfferEditDialog = React.createClass({
 
       offerResponseNoteError: '',
       offerRefusalReasonError: '',
+      rentalAgreementError: '',
 
       showConfirmForceHireDialog: false,
       showConfirmMaxHoursHireDialog: false,
@@ -72,6 +74,8 @@ var HireOfferEditDialog = React.createClass({
       equipmentVerifiedActive: false,
       equipmentInformationUpdateNeeded: false,
       equipmentInformationUpdateNeededReason: '',
+
+      rentalAgreementId: null,
     };
   },
 
@@ -80,7 +84,9 @@ var HireOfferEditDialog = React.createClass({
   },
 
   fetch() {
-
+    var projectId = this.props.rentalRequest.projectId;
+    var equipmentId = this.props.hireOffer.equipmentId;
+    Api.getBlankRentalAgreementsForHire(projectId, equipmentId);
   },
 
   updateState(state, callback) {
@@ -96,6 +102,7 @@ var HireOfferEditDialog = React.createClass({
       wasAsked: STATUS_ASKED,
       askedDateTime: value === STATUS_ASKED ? today() : null,
       equipmentVerifiedActive: (value === STATUS_YES || value === STATUS_FORCE_HIRE) ? true : false,
+      rentalAgreementId: null,
     });
   },
 
@@ -132,7 +139,12 @@ var HireOfferEditDialog = React.createClass({
     if (this.state.offerStatus == STATUS_NO && this.state.offerRefusalReason === OTHER && isBlank(this.state.offerResponseNote)) {
       this.setState({ offerResponseNoteError: 'Note is required' });
       valid = false;
-    } 
+    }
+
+    if ((this.state.offerStatus == STATUS_YES || this.state.offerStatus == STATUS_FORCE_HIRE) && !this.state.rentalAgreementId) {
+      this.setState({ rentalAgreementError: 'A rental agreement is required' });
+      valid = false;
+    }
 
     return valid;
   },
@@ -207,6 +219,7 @@ var HireOfferEditDialog = React.createClass({
         offerRefusalReason: this.state.offerRefusalReason,
         offerResponseNote: this.state.offerResponseNote,
         note: this.state.reasonForForceHire,
+        rentalAgreementId: this.state.rentalAgreementId,
       }});
     });
   },
@@ -241,6 +254,22 @@ var HireOfferEditDialog = React.createClass({
         <strong>Response</strong>
       }>
       {(() => {
+        var blankRentalAgreements = _.sortBy(this.props.blankRentalAgreements.data, 'number');
+
+        var agreementChoiceRow = 
+          <Row>
+            <Col md={6}>
+              <FormGroup controlId="rentalAgreementId" validationState={ this.state.rentalAgreementError ? 'error' : null }>
+                <DropdownControl id="rentalAgreementId" disabled={ blankRentalAgreements.length == 0 } updateState={ this.updateState } items={ blankRentalAgreements } selectedId={ this.state.rentalAgreementId } blankLine="Select rental agreement" placeholder="Select rental agreement" />
+                { blankRentalAgreements.length == 0 && <HelpBlock>There are no unassociated rental agreements for this project and equipment.</HelpBlock> }
+                <HelpBlock>{ this.state.rentalAgreementError }</HelpBlock>
+              </FormGroup>
+            </Col>
+            <Col md={6}>
+              <Button onClick={ this.onSave } className="btn-primary">New Rental Agreement</Button>
+            </Col>
+          </Row>;
+
         return <Form>
           <Grid fluid>
             <Col md={12}>
@@ -258,6 +287,7 @@ var HireOfferEditDialog = React.createClass({
                     </FormGroup>
                   </Col>
                 </Row>
+                { this.state.offerStatus == STATUS_FORCE_HIRE && agreementChoiceRow }
                 <Row>
                   <Col md={12}>
                     <FormGroup>
@@ -284,6 +314,7 @@ var HireOfferEditDialog = React.createClass({
                     </FormGroup>
                   </Col>
                 </Row>
+                { this.state.offerStatus == STATUS_YES && agreementChoiceRow }
                 <Row>
                   <Col md={12}>
                     <FormGroup>
@@ -356,6 +387,7 @@ var HireOfferEditDialog = React.createClass({
 function mapStateToProps(state) {
   return {
     rentalRequest: state.models.rentalRequest.data,
+    blankRentalAgreements: state.lookups.blankRentalAgreements,
   };
 }
 

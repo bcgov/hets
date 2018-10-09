@@ -1454,7 +1454,7 @@ export function getRentalRequestRotationList(id) {
 
 export function updateRentalRequestRotationList(rentalRequestRotationList, rentalRequest) {
   store.dispatch({ type: Action.RENTAL_REQUEST_ROTATION_LIST_REQUEST });
-  return new ApiRequest(`/rentalrequests/${ rentalRequest.id }/rentalRequestRotationList`).put({ ...rentalRequestRotationList, note: '', rentalAgreement: null }).then(response => {
+  return new ApiRequest(`/rentalrequests/${ rentalRequest.id }/rentalRequestRotationList`).put({ ...rentalRequestRotationList, note: '' }).then(response => {
     
     if (response.responseStatus === 'ERROR') {
       store.dispatch({ type: Action.RENTAL_REQUEST_ROTATION_LIST_ERROR, error: response.error });
@@ -1643,6 +1643,20 @@ export function getBlankRentalAgreements() {
   return new ApiRequest('/rentalAgreements/blankAgreements').get().then(response => {
     var agreements = normalize(response.data);
     _.map(agreements, agreement => parseRentalAgreement(agreement));
+
+    store.dispatch({ type: Action.UPDATE_BLANK_RENTAL_AGREEMENTS_LOOKUP, blankRentalAgreements: agreements });
+  });
+}
+
+export function getBlankRentalAgreementsForHire(projectId, equipmentId) {
+  store.dispatch({ type: Action.BLANK_RENTAL_AGREEMENTS_LOOKUP_REQUEST });
+
+  return new ApiRequest(`/rentalAgreements/blankAgreements/${ projectId }/${ equipmentId }`).get().then(response => {
+    var agreements = normalize(response.data);
+    _.map(agreements, agreement => {
+      parseRentalAgreement(agreement);
+      agreement.name = agreement.number;
+    });
 
     store.dispatch({ type: Action.UPDATE_BLANK_RENTAL_AGREEMENTS_LOOKUP, blankRentalAgreements: agreements });
   });
