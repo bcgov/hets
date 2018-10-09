@@ -112,10 +112,17 @@ namespace HetsData.Helpers
                             .Where(x => x.LocalAreaId == localAreaId &&
                                         x.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
+                        // get status id
+                        int? eqStatusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", context);
+                        if (eqStatusId == null)
+                        {
+                            throw new ArgumentException("Status Code not found");
+                        }
+
                         // update the seniority score
                         foreach (HetEquipment equipment in data)
                         {
-                            if (equipment.EquipmentStatusType.EquipmentStatusTypeCode != HetEquipment.StatusApproved)
+                            if (equipment.EquipmentStatusTypeId != eqStatusId)
                             {
                                 equipment.SeniorityEffectiveDate = DateTime.UtcNow;
                                 equipment.BlockNumber = null;

@@ -204,12 +204,15 @@ namespace HetsApi.Controllers
                     int localAreaId = equipment.LocalArea.LocalAreaId;
                     int districtEquipmentTypeId = equipment.DistrictEquipmentType.DistrictEquipmentTypeId;
 
+                    // get status id
+                    int? eqStatusId = StatusHelper.GetStatusId(HetEquipment.StatusArchived, "equipmentStatus", _context);
+                    if (eqStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
                     // if the equipment is already archived - leave it archived
                     // if the equipment is already in the same state as the owner's new state - then ignore
-                    if (!equipment.Status.Equals(HetEquipment.StatusArchived, StringComparison.CurrentCultureIgnoreCase) &&
-                        !equipment.Status.Equals(item.Status, StringComparison.InvariantCultureIgnoreCase))
+                    if (!equipment.EquipmentStatusTypeId.Equals(eqStatusId) && !equipment.EquipmentStatusTypeId.Equals(statusId))
                     {
-                        int? eqStatusId = StatusHelper.GetStatusId(item.Status, "equipmentStatus", _context);
+                        eqStatusId = StatusHelper.GetStatusId(item.Status, "equipmentStatus", _context);
                         if (eqStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
                         equipment.EquipmentStatusTypeId = (int)eqStatusId;
