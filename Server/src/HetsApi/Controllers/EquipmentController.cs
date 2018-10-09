@@ -98,8 +98,10 @@ namespace HetsApi.Controllers
             }
 
             // get record
-            HetEquipment equipment = _context.HetEquipment.First(x => x.EquipmentId == item.EquipmentId);
-
+            HetEquipment equipment = _context.HetEquipment
+                .Include(x => x.Owner)
+                .First(x => x.EquipmentId == item.EquipmentId);
+            
             DateTime? originalSeniorityEffectiveDate = equipment.SeniorityEffectiveDate;
             float? originalServiceHoursLastYear = equipment.ServiceHoursLastYear;
             float? originalServiceHoursTwoYearsAgo = equipment.ServiceHoursTwoYearsAgo;
@@ -201,9 +203,20 @@ namespace HetsApi.Controllers
             int districtEquipmentTypeId = equipment.DistrictEquipmentType.DistrictEquipmentTypeId;
             string oldStatus = equipment.EquipmentStatusType.EquipmentStatusTypeCode;
 
+            // check the owner status
+            int? ownStatusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
+            if (ownStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            
             // update equipment status
             int? statusId = StatusHelper.GetStatusId(item.Status, "equipmentStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // can't make the status active if the owner is not active
+            if (equipment.Owner.OwnerStatusTypeId != ownStatusId &&
+                item.Status == HetEquipment.StatusApproved)
+            {
+                return new ObjectResult(new HetsResponse("HETS-28", ErrorViewModel.GetDescription("HETS-28", _configuration)));
+            }
 
             equipment.EquipmentStatusTypeId = (int)statusId;
             equipment.Status = item.Status;
