@@ -399,28 +399,26 @@ namespace HetsApi.Controllers
             // record not found
             if (!roleExists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             
-            // get record
+            // check the user exists
             HetUser user = UserHelper.GetRecord(id, _context);
+            if (user == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            if (user.HetUserRole == null)
+            // check if the user has this role - then add
+            if (user.HetUserRole.All(x => x.RoleId != item.RoleId))
             {
-                user.HetUserRole = new List<HetUserRole>();
-            }
+                // create a new UserRole record
+                HetUserRole userRole = new HetUserRole
+                {
+                    RoleId = item.RoleId,
+                    UserId = id,
+                    EffectiveDate = item.EffectiveDate,
+                    ExpiryDate = item.ExpiryDate
+                };
 
-            // create a new UserRole record
-            HetUserRole userRole = new HetUserRole
-            {
-                RoleId = item.RoleId,
-                EffectiveDate = item.EffectiveDate,
-                ExpiryDate = item.ExpiryDate
-            };
+                _context.HetUserRole.Add(userRole);
 
-            if (!user.HetUserRole.Contains(userRole))
-            {
-                user.HetUserRole.Add(userRole);
-            }
-
-            _context.SaveChanges();
+                _context.SaveChanges();
+            }            
 
             // return updated roles
             user = UserHelper.GetRecord(id, _context);
@@ -430,9 +428,9 @@ namespace HetsApi.Controllers
         }
 
         /// <summary>
-        /// Add roles to a user
+        /// Expire roles for a user
         /// </summary>
-        /// <remarks>Updates the roles for a user</remarks>
+        /// <remarks>Updates the roles' Effective Date for a user</remarks>
         /// <param name="id">id of User to update</param>
         /// <param name="items"></param>
         [HttpPut]
@@ -449,47 +447,29 @@ namespace HetsApi.Controllers
 
             // get record
             HetUser user = UserHelper.GetRecord(id, _context);
+            if (user.HetUserRole == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            if (user.HetUserRole == null)
-            {
-                user.HetUserRole = new List<HetUserRole>();
-            }
-            else
-            {
-                // existing data - clear it
-                foreach (HetUserRole userRole in user.HetUserRole)
-                {
-                    HetUserRole delete = _context.HetUserRole.First(x => x.UserRoleId == userRole.UserRoleId);
-                    _context.Remove(delete);                    
-                }
-
-                user.HetUserRole.Clear();
-            }
-
+            // iterate the roles and update effective date
             foreach (HetUserRole item in items)
             {
                 // check the role id
-                bool roleExists = _context.HetRole.Any(x => x.RoleId == item.RoleId);
+                bool roleExists = _context.HetUserRole.Any(x => x.RoleId == item.RoleId &&
+                                                                x.UserId == id);
 
                 if (roleExists)
                 {
-                    // create a new UserRole
-                    HetUserRole userRole = new HetUserRole
-                    {
-                        RoleId = item.RoleId,
-                        EffectiveDate = item.EffectiveDate,
-                        ExpiryDate = item.ExpiryDate
-                    };
+                    // check if we need to modify the effective date
+                    HetUserRole role = _context.HetUserRole.First(x => x.RoleId == item.RoleId &&
+                                                                       x.UserId == id);
 
-                    if (!user.HetUserRole.Contains(userRole))
+                    if (role.ExpiryDate != item.ExpiryDate)
                     {
-                        user.HetUserRole.Add(userRole);
+                        role.ExpiryDate = item.ExpiryDate;
+                        _context.SaveChanges();
                     }
                 }
             }
-
-            _context.SaveChanges();
-
+            
             // return updated roles
             user = UserHelper.GetRecord(id, _context);
 
