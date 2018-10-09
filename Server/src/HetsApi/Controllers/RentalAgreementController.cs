@@ -885,14 +885,14 @@ namespace HetsApi.Controllers
 
         /// <summary>
         /// Get blank rental agreements (for the current district)
-        /// By Project Id and District Equipment Type
+        /// By Project Id and Equipment Id
         /// </summary>
         [HttpGet]
-        [Route("blankAgreements/{projectId}/{districtEquipmentTypeId}")]
+        [Route("blankAgreements/{projectId}/{equipmentId}")]
         [SwaggerOperation("BlankRentalAgreementLookupGet")]
         [SwaggerResponse(200, type: typeof(List<HetRentalAgreement>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult BlankRentalAgreementLookupGet([FromRoute]int projectId, [FromRoute]int districtEquipmentTypeId)
+        public virtual IActionResult BlankRentalAgreementLookupGet([FromRoute]int projectId, [FromRoute]int equipmentId)
         {
             // get the current district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
@@ -911,7 +911,7 @@ namespace HetsApi.Controllers
                             x.RentalRequestId == null &&
                             x.RentalRequestRotationListId == null &&
                             x.ProjectId == projectId &&
-                            x.Equipment.DistrictEquipmentTypeId == districtEquipmentTypeId)
+                            x.EquipmentId == equipmentId)
                 .ToList();
 
             return new ObjectResult(new HetsResponse(agreements));
