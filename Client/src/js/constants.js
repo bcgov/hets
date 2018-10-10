@@ -26,8 +26,6 @@ export const PERMISSION_ROLES_AND_PERMISSIONS = 'RolesAndPermissions';
 export const PERMISSION_IMPORT_DATA = 'ImportData';
 export const PERMISSION_CODE_TABLE_MANAGEMENT = 'CodeTableManagement';
 export const PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT = 'DistrictCodeTableManagement';
-export const PERMISSION_ASSIGN_INSPECTORS = 'ASSIGN_INSPECTORS';
-export const PERMISSION_RECEIVE_NOTIFICATIONS = 'RECEIVE_NOTIFICATIONS';
 
 // Roles 
 export const ADMINISTRATOR_ROLE = 'Administrator';
