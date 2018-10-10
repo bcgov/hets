@@ -8,6 +8,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
+using HetsData.Helpers;
 using HetsData.Model;
 using Microsoft.AspNetCore.Authorization;
 
@@ -52,7 +53,9 @@ namespace HetsApi.Controllers
 
             return new ObjectResult(new HetsResponse(districts));
         }
-        
+
+        #region Owners by District
+
         /// <summary>
         /// Get all owners by district
         /// </summary>
@@ -76,6 +79,10 @@ namespace HetsApi.Controllers
             return new ObjectResult(new HetsResponse(owners));
         }
 
+        #endregion
+
+        #region Local Areas by District
+
         /// <summary>
         /// Get all local areas by district
         /// </summary>
@@ -98,5 +105,31 @@ namespace HetsApi.Controllers
 
             return new ObjectResult(new HetsResponse(localAreas));
         }
+
+        #endregion
+
+        #region District Rollover
+
+        /// <summary>
+        /// Get district rollover status
+        /// </summary>
+        [HttpGet]
+        [Route("{id}/rolloverStatus")]
+        [SwaggerOperation("RolloverStatusGet")]
+        [SwaggerResponse(200, type: typeof(HetDistrictStatus))]
+        [RequiresPermission(HetPermission.DistrictRollover)]
+        public virtual IActionResult RolloverStatusGet([FromRoute]int id)
+        {
+            bool exists = _context.HetDistrict.Any(a => a.DistrictId == id);
+
+            // not found
+            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // get status of current district
+            return new ObjectResult(new HetsResponse(AnnualRolloverHelper.GetRecord(id, _context)));
+        }
+
+
+        #endregion
     }
 }

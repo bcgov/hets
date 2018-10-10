@@ -1239,7 +1239,18 @@ VALUES
    NULL, NULL, 'HETS', NOW(), 
    NULL, NULL, 'HETS', NOW());
 
-ALTER SEQUENCE public."HET_PERMISSION_ID_seq" RESTART WITH 8; 
+
+INSERT INTO public."HET_PERMISSION"
+  ("PERMISSION_ID", "CODE", "NAME", "DESCRIPTION", 
+   "APP_CREATE_USER_DIRECTORY", "APP_CREATE_USER_GUID", "APP_CREATE_USERID", "APP_CREATE_TIMESTAMP", 
+   "APP_LAST_UPDATE_USER_DIRECTORY", "APP_LAST_UPDATE_USER_GUID", "APP_LAST_UPDATE_USERID", 
+   "APP_LAST_UPDATE_TIMESTAMP")
+VALUES 
+  (9, 'DistrictRollover', 'District Rollover', 'Permission to kickoff the annual district rollover process',
+   NULL, NULL, 'HETS', NOW(), 
+   NULL, NULL, 'HETS', NOW());
+   
+ALTER SEQUENCE public."HET_PERMISSION_ID_seq" RESTART WITH 9; 
 
 -- **************************************************************************************
 -- ROLE
@@ -1319,7 +1330,8 @@ VALUES
   (2, 1, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
   (3, 1, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
   (4, 1, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
-  (5, 1, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW());
+  (5, 1, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
+  (9, 1, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW());
 
 -- Data Conversion
 INSERT INTO public."HET_ROLE_PERMISSION"
@@ -1334,7 +1346,8 @@ VALUES
   (1, 3, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
   (7, 3, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
   (6, 3, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
-  (2, 3, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW());
+  (2, 3, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
+  (9, 3, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW());
  
 -- HETS Clerk
 INSERT INTO public."HET_ROLE_PERMISSION"

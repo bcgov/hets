@@ -831,7 +831,7 @@ namespace HetsData.Model
 
                 entity.Property(e => e.RolloverStartDate).HasColumnName("ROLLOVER_START_DATE");
 
-                entity.Property(e => e.RolloverProgress).HasColumnName("ROLLOVER_PROGRESS");
+                entity.Property(e => e.RolloverEndDate).HasColumnName("ROLLOVER_END_DATE");
 
                 entity.Property(e => e.LocalAreaCount).HasColumnName("LOCAL_AREA_COUNT");
 

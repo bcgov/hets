@@ -11,7 +11,7 @@ namespace HetsData.Model
         public int? CurrentFiscalYear { get; set; }
         public int? NextFiscalYear { get; set; }
         public DateTime RolloverStartDate { get; set; }
-        public int? RolloverProgress { get; set; }
+        public DateTime RolloverEndDate { get; set; }
         public int? LocalAreaCount { get; set; }
         public int? DistrictEquipmentTypeCount { get; set; }
         public int? LocalAreaCompleteCount { get; set; }

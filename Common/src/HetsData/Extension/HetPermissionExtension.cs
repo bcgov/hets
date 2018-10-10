@@ -48,6 +48,11 @@ namespace HetsData.Model
         public const string BusinessLogin = "BusinessLogin";
 
         /// <summary>
+        /// District Rollover Permission
+        /// </summary>
+        public const string DistrictRollover = "DistrictRollover";
+
+        /// <summary>
         /// All Permissions List
         /// </summary>
         public static readonly IEnumerable<HetPermission> AllPermissions = new List<HetPermission>
@@ -99,6 +104,12 @@ namespace HetsData.Model
                 Code = BusinessLogin,
                 Name = "Business Login",
                 Description = "Permission to login to the business or owner facing application"
+            },
+            new HetPermission
+            {
+                Code = DistrictRollover,
+                Name = "District Rollover",
+                Description = "Permission to kickoff the annual district rollover process"
             }
         };
     }
