@@ -50,7 +50,7 @@ function devOnlyPlumber() {
 gulp.task('deps-ok', done => {
   // NOTE: Only checking NPM modules because deps-ok has poor support for the bower.json github
   // shorthand dependency format.
-  const ok = depsOk(process.cwd(), false);
+  const ok = depsOk(process.cwd(), { verbose: false });
   done(ok ? null : new Error('Found outdated installs'));
 });
 
