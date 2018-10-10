@@ -180,6 +180,39 @@ CREATE TABLE public."HET_DISTRICT" (
     "CONCURRENCY_CONTROL_NUMBER" integer NOT NULL DEFAULT 0   
 );
 
+
+--
+-- Name: HET_DISTRICT_STATUS; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."HET_DISTRICT_STATUS" (
+    "DISTRICT_ID" integer,
+    "CURRENT_FISCAL_YEAR" integer,
+	"NEXT_FISCAL_YEAR" integer,
+	"ROLLOVER_START_DATE" timestamp without time zone,
+	"ROLLOVER_PROGRESS" integer, 
+	"LOCAL_AREA_COUNT" integer,
+	"DISTRICT_EQUIPMENT_TYPE_COUNT" integer,
+	"LOCAL_AREA_COMPLETE_COUNT" integer,
+	"DISTRICT_EQUIPMENT_TYPE_COMPLETE_COUNT" integer,
+	"PROGRESS_PERCENTAGE" integer,
+	"DISPLAY_ROLLOVER_MESSAGE" boolean NOT NULL, 
+    "APP_CREATE_USER_DIRECTORY" character varying(50) COLLATE pg_catalog."default",
+	"APP_CREATE_USER_GUID" character varying(255) COLLATE pg_catalog."default",
+    "APP_CREATE_USERID" character varying(255) COLLATE pg_catalog."default",    
+	"APP_CREATE_TIMESTAMP" timestamp without time zone NOT NULL DEFAULT '0001-01-01 00:00:00'::timestamp without time zone,    
+	"APP_LAST_UPDATE_USER_DIRECTORY" character varying(50) COLLATE pg_catalog."default",    	
+    "APP_LAST_UPDATE_USER_GUID" character varying(255) COLLATE pg_catalog."default",
+    "APP_LAST_UPDATE_USERID" character varying(255) COLLATE pg_catalog."default",
+    "APP_LAST_UPDATE_TIMESTAMP" timestamp without time zone NOT NULL DEFAULT '0001-01-01 00:00:00'::timestamp without time zone,		
+	"DB_CREATE_USER_ID" character varying(63) COLLATE pg_catalog."default",
+	"DB_CREATE_TIMESTAMP" timestamp without time zone NOT NULL DEFAULT '0001-01-01 00:00:00'::timestamp without time zone,
+	"DB_LAST_UPDATE_TIMESTAMP" timestamp without time zone NOT NULL DEFAULT '0001-01-01 00:00:00'::timestamp without time zone,
+    "DB_LAST_UPDATE_USER_ID" character varying(63) COLLATE pg_catalog."default",
+    "CONCURRENCY_CONTROL_NUMBER" integer NOT NULL DEFAULT 0
+);
+
+
 --
 -- Name: HET_DISTRICT_EQUIPMENT_TYPE_DISTRICT_EQUIPMENT_TYPE_ID_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
