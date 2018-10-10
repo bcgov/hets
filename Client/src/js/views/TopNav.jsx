@@ -78,7 +78,8 @@ var TopNav = React.createClass({
               </LinkContainer>
               { (this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN) ||
                 this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) ||
-                this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS)) &&
+                this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) ||
+                this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_ROLLOVER)) &&
                 <NavDropdown id="admin-dropdown" title="Administration">
                   { this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) &&
                     <LinkContainer to={{ pathname: `/${ Constant.USERS_PATHNAME }` }}>
@@ -88,6 +89,11 @@ var TopNav = React.createClass({
                   { this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) &&
                     <LinkContainer to={{ pathname: `/${ Constant.ROLES_PATHNAME }` }}>
                       <MenuItem eventKey={ 8 }>Roles and Permissions</MenuItem>
+                    </LinkContainer>
+                  }
+                  { this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_ROLLOVER) &&
+                    <LinkContainer to={{ pathname: `/${ Constant.ROLLOVER_PATHNAME }` }}>
+                      <MenuItem eventKey={ 8 }>Roll Over</MenuItem>
                     </LinkContainer>
                   }
                 </NavDropdown>
