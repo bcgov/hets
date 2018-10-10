@@ -9,6 +9,7 @@ namespace HetsData.Model
         public HetDistrict()
         {
             HetConditionType = new HashSet<HetConditionType>();
+            HetDistrictStatus = new HashSet<HetDistrictStatus>();
             HetDistrictEquipmentType = new HashSet<HetDistrictEquipmentType>();
             HetProject = new HashSet<HetProject>();
             HetServiceArea = new HashSet<HetServiceArea>();
@@ -44,6 +45,9 @@ namespace HetsData.Model
 
         [JsonIgnore]
         public ICollection<HetConditionType> HetConditionType { get; set; }
+
+        [JsonIgnore]
+        public ICollection<HetDistrictStatus> HetDistrictStatus { get; set; }
 
         [JsonIgnore]
         public ICollection<HetDistrictEquipmentType> HetDistrictEquipmentType { get; set; }
