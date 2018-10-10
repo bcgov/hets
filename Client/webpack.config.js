@@ -10,7 +10,15 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const DEV_USER = process.env.HETS_DEV_USER || '';
 
 var webpackPlugins = [
-  new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
+  new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.js' }),
+  new webpack.LoaderOptionsPlugin({
+    options: {
+      eslint: {
+        failOnWarning: IS_PRODUCTION,
+        failOnError: true,
+      },
+    }
+  })
 ];
 
 if(IS_PRODUCTION) {
@@ -29,7 +37,6 @@ if(IS_PRODUCTION) {
     },
   }));
 } else {
-  webpackPlugins.push(new webpack.optimize.OccurenceOrderPlugin());
   webpackPlugins.push(new webpack.HotModuleReplacementPlugin());
   webpackPlugins.push(new webpack.DefinePlugin({
     'process.env':{
@@ -66,21 +73,18 @@ module.exports = {
   },
   plugins: webpackPlugins,
   module: {
-    preLoaders: [
+    rules: [
       {
+        enforce: 'pre',
         test: /\.jsx?$/,
         loader: 'eslint-loader',
         exclude: /node_modules/,
       },
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        loaders: ['react-hot-loader', 'babel-loader'],
+      }
     ],
-    loaders: [{
-      test: /\.jsx?$/,
-      exclude: /node_modules/,
-      loaders: ['react-hot', 'babel'],
-    }],
-  },
-  eslint: {
-    failOnWarning: IS_PRODUCTION,
-    failOnError: true,
   },
 };
