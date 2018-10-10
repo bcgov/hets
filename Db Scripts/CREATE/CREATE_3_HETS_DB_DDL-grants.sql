@@ -78,6 +78,14 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_DISTRICT" TO het_applicat
 GRANT ALL PRIVILEGES ON SEQUENCE public."HET_DISTRICT_ID_seq" TO het_application_proxy;
 
 
+
+--
+-- Name: TABLE "HET_DISTRICT_STATUS"; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."HET_DISTRICT_STATUS" TO het_application_proxy;
+
+
 --
 -- Name: TABLE "HET_DISTRICT_EQUIPMENT_TYPE"; Type: ACL; Schema: public; Owner: -
 --

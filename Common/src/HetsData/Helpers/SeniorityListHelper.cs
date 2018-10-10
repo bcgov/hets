@@ -71,7 +71,7 @@ namespace HetsData.Helpers
     /// Seniority List Helper
     /// </summary>
     public static class SeniorityListHelper
-    {       
+    {
         #region Manage the Seniority List for a Specific Location
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace HetsData.Helpers
         /// <param name="equipmentTypeId"></param>
         /// <param name="context"></param>
         /// <param name="configuration"></param>
-        public static void CalculateSeniorityList(int localAreaId, int districtEquipmentTypeId, 
+        public static void CalculateSeniorityList(int localAreaId, int districtEquipmentTypeId,
             int equipmentTypeId, DbAppContext context, IConfiguration configuration)
         {
             try
@@ -102,9 +102,15 @@ namespace HetsData.Helpers
                     if (equipmentTypeRecord != null)
                     {
                         // get rules                  
-                        int seniorityScoring = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetEquipmentScore("DumpTruck") : scoringRules.GetEquipmentScore();
-                        int blockSize = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetBlockSize("DumpTruck") : scoringRules.GetBlockSize();
-                        int totalBlocks = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
+                        int seniorityScoring = equipmentTypeRecord.IsDumpTruck
+                            ? scoringRules.GetEquipmentScore("DumpTruck")
+                            : scoringRules.GetEquipmentScore();
+                        int blockSize = equipmentTypeRecord.IsDumpTruck
+                            ? scoringRules.GetBlockSize("DumpTruck")
+                            : scoringRules.GetBlockSize();
+                        int totalBlocks = equipmentTypeRecord.IsDumpTruck
+                            ? scoringRules.GetTotalBlocks("DumpTruck")
+                            : scoringRules.GetTotalBlocks();
 
                         // get all equipment records
                         IQueryable<HetEquipment> data = context.HetEquipment
@@ -113,7 +119,8 @@ namespace HetsData.Helpers
                                         x.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
                         // get status id
-                        int? eqStatusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", context);
+                        int? eqStatusId =
+                            StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", context);
                         if (eqStatusId == null)
                         {
                             throw new ArgumentException("Status Code not found");
@@ -162,7 +169,7 @@ namespace HetsData.Helpers
         /// <param name="totalBlocks"></param>
         /// <param name="context"></param>
         /// <param name="saveChanges"></param>
-        public static void AssignBlocks(int localAreaId, int districtEquipmentTypeId, 
+        public static void AssignBlocks(int localAreaId, int districtEquipmentTypeId,
             int blockSize, int totalBlocks, DbAppContext context, bool saveChanges = true)
         {
             try
@@ -203,7 +210,7 @@ namespace HetsData.Helpers
             }
         }
 
-        private static bool AddedToBlock(int currentBlock, int totalBlocks, int blockSize, 
+        private static bool AddedToBlock(int currentBlock, int totalBlocks, int blockSize,
             List<int>[] blocks, HetEquipment equipment, DbAppContext context, bool saveChanges = true)
         {
             try
@@ -289,21 +296,21 @@ namespace HetsData.Helpers
             float seniority = 0F;
             if (model.Seniority != null)
             {
-                seniority = (float)model.Seniority;
+                seniority = (float) model.Seniority;
             }
 
             // get equipment block number
             int blockNumber = 0;
             if (model.BlockNumber != null)
             {
-                blockNumber = (int)model.BlockNumber;
+                blockNumber = (int) model.BlockNumber;
             }
 
             // get equipment block number
             int numberInBlock = 0;
             if (model.NumberInBlock != null)
             {
-                numberInBlock = (int)model.NumberInBlock;
+                numberInBlock = (int) model.NumberInBlock;
             }
 
             // *************************************************************
@@ -348,7 +355,8 @@ namespace HetsData.Helpers
                 seniorityViewModel.OwnerId = model.OwnerId;
             }
 
-            seniorityViewModel.SeniorityString = EquipmentHelper.FormatSeniorityString(seniority, blockNumber, numberOfBlocks);
+            seniorityViewModel.SeniorityString =
+                EquipmentHelper.FormatSeniorityString(seniority, blockNumber, numberOfBlocks);
 
             // format the seniority value
             seniorityViewModel.Seniority = string.Format("{0:0.###}", model.Seniority);
@@ -372,117 +380,17 @@ namespace HetsData.Helpers
             // get last called value
 
 
-            seniorityViewModel.SenioritySortOrder = EquipmentHelper.CalculateSenioritySortOrder(blockNumber, numberInBlock);
+            seniorityViewModel.SenioritySortOrder =
+                EquipmentHelper.CalculateSenioritySortOrder(blockNumber, numberInBlock);
 
             return seniorityViewModel;
         }
 
         #endregion
 
-        /*
-        /// <summary>
-        /// Hangfire job to do the Annual Rollover tasks
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="connectionString"></param>
-        /// <param name="configuration"></param>
-        public static void AnnualRolloverJob(PerformContext context, string connectionString, IConfiguration configuration)
-        {
-            try
-            {
-                // open a connection to the database
-                DbContextOptionsBuilder<DbAppContext> options = new DbContextOptionsBuilder<DbAppContext>();
-                options.UseNpgsql(connectionString);
-                DbAppContext dbContext = new DbAppContext(null, options.Options);
-
-                // get processing rules
-                SeniorityScoringRules scoringRules = new SeniorityScoringRules(configuration);
-
-                // update progress bar
-                IProgressBar progress = context.WriteProgressBar();
-                context.WriteLine("Starting Annual Rollover Job");
-
-                progress.SetValue(0);
-
-                // get all equipment types
-                List<EquipmentType> equipmentTypes = dbContext.EquipmentTypes.ToList();
-
-                // The annual rollover will process all local areas in turn
-                List<LocalArea> localAreas = dbContext.LocalAreas.ToList();
-
-                foreach (LocalArea localArea in localAreas.WithProgress(progress))
-                {
-                    if (localArea.Name != null)
-                    {
-                        context.WriteLine("Local Area: " + localArea.Name);
-                    }
-                    else
-                    {
-                        context.WriteLine("Local Area ID: " + localArea.Id);
-                    }
-
-                    foreach (EquipmentType equipmentType in equipmentTypes)
-                    {
-                        // it this a dump truck? 
-                        bool isDumpTruck = equipmentType.IsDumpTruck;
-
-                        // get rules for scoring and seniority block
-                        int seniorityScoring = isDumpTruck ? scoringRules.GetEquipmentScore("DumpTruck") : scoringRules.GetEquipmentScore();
-                        int blockSize = isDumpTruck ? scoringRules.GetBlockSize("DumpTruck") : scoringRules.GetBlockSize();
-                        int totalBlocks = isDumpTruck ? scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
-
-                        using (DbAppContext etContext = new DbAppContext(null, options.Options))
-                        {
-                            List<Equipment> data = etContext.Equipments
-                                .Include(x => x.LocalArea)
-                                .Include(x => x.DistrictEquipmentType.EquipmentType)
-                                .Where(x => x.Status == Equipment.StatusApproved &&
-                                            x.LocalArea.Id == localArea.Id &&
-                                            x.DistrictEquipmentType.EquipmentType.Id == equipmentType.Id)
-                                .Select(x => x)
-                                .ToList();
-
-                            foreach (Equipment equipment in data)
-                            {
-                                // rollover the year
-                                equipment.ServiceHoursThreeYearsAgo = equipment.ServiceHoursTwoYearsAgo;
-                                equipment.ServiceHoursTwoYearsAgo = equipment.ServiceHoursLastYear;
-                                equipment.ServiceHoursLastYear = equipment.GetYtdServiceHours(dbContext);
-                                equipment.CalculateYearsOfService(DateTime.UtcNow);
-
-                                // blank out the override reason
-                                equipment.SeniorityOverrideReason = "";
-
-                                // update the seniority score
-                                equipment.CalculateSeniority(seniorityScoring);
-
-                                etContext.Equipments.Update(equipment);
-                                etContext.SaveChanges();
-                                etContext.Entry(equipment).State = EntityState.Detached;
-                            }
-                        }
-
-                        // now update the rotation list
-                        using (DbAppContext abContext = new DbAppContext(null, options.Options))
-                        {
-                            int localAreaId = localArea.Id;
-                            int equipmentTypeId = equipmentType.Id;
-
-                            AssignBlocks(abContext, localAreaId, equipmentTypeId, blockSize, totalBlocks);
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-        */
     }
 
-    #region Seniority Scoring Rules
+    #region Seniority Scoring Rules Class
 
     /// <summary>
     /// Object to Manage Scoring Rules
@@ -611,5 +519,5 @@ namespace HetsData.Helpers
         }
     }
 
-    #endregion
+    #endregion    
 }

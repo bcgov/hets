@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace HetsData.Model
 {
@@ -29,6 +27,7 @@ namespace HetsData.Model
         public virtual DbSet<HetContact> HetContact { get; set; }
         public virtual DbSet<HetDigitalFile> HetDigitalFile { get; set; }
         public virtual DbSet<HetDistrict> HetDistrict { get; set; }
+        public virtual DbSet<HetDistrictStatus> HetDistrictStatus { get; set; }
         public virtual DbSet<HetDistrictEquipmentType> HetDistrictEquipmentType { get; set; }
         public virtual DbSet<HetEquipment> HetEquipment { get; set; }
         public virtual DbSet<HetEquipmentAttachment> HetEquipmentAttachment { get; set; }
@@ -763,6 +762,93 @@ namespace HetsData.Model
                     .WithMany(p => p.HetDistrict)
                     .HasForeignKey(d => d.RegionId)
                     .HasConstraintName("FK_HET_DISTRICT_REGION_ID");
+            });
+
+            modelBuilder.Entity<HetDistrictStatus>(entity =>
+            {
+                entity.HasKey(e => e.DistrictId);
+
+                entity.ToTable("HET_DISTRICT_STATUS");
+
+                entity.HasIndex(e => e.DistrictId);
+
+                entity.Property(e => e.DistrictId)
+                    .HasColumnName("DISTRICT_ID");
+
+                entity.Property(e => e.AppCreateTimestamp)
+                    .HasColumnName("APP_CREATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.AppCreateUserDirectory)
+                    .HasColumnName("APP_CREATE_USER_DIRECTORY")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.AppCreateUserGuid)
+                    .HasColumnName("APP_CREATE_USER_GUID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.AppCreateUserid)
+                    .HasColumnName("APP_CREATE_USERID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.AppLastUpdateTimestamp)
+                    .HasColumnName("APP_LAST_UPDATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.AppLastUpdateUserDirectory)
+                    .HasColumnName("APP_LAST_UPDATE_USER_DIRECTORY")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.AppLastUpdateUserGuid)
+                    .HasColumnName("APP_LAST_UPDATE_USER_GUID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.AppLastUpdateUserid)
+                    .HasColumnName("APP_LAST_UPDATE_USERID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.ConcurrencyControlNumber).HasColumnName("CONCURRENCY_CONTROL_NUMBER");
+
+                entity.Property(e => e.DbCreateTimestamp)
+                    .HasColumnName("DB_CREATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.DbCreateUserId)
+                    .HasColumnName("DB_CREATE_USER_ID")
+                    .HasMaxLength(63);
+
+                entity.Property(e => e.DbLastUpdateTimestamp)
+                    .HasColumnName("DB_LAST_UPDATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.DbLastUpdateUserId)
+                    .HasColumnName("DB_LAST_UPDATE_USER_ID")
+                    .HasMaxLength(63);
+
+                entity.Property(e => e.CurrentFiscalYear).HasColumnName("CURRENT_FISCAL_YEAR");
+
+                entity.Property(e => e.NextFiscalYear).HasColumnName("NEXT_FISCAL_YEAR");
+
+                entity.Property(e => e.RolloverStartDate).HasColumnName("ROLLOVER_START_DATE");
+
+                entity.Property(e => e.RolloverEndDate).HasColumnName("ROLLOVER_END_DATE");
+
+                entity.Property(e => e.LocalAreaCount).HasColumnName("LOCAL_AREA_COUNT");
+
+                entity.Property(e => e.DistrictEquipmentTypeCount).HasColumnName("DISTRICT_EQUIPMENT_TYPE_COUNT");
+
+                entity.Property(e => e.LocalAreaCompleteCount).HasColumnName("LOCAL_AREA_COMPLETE_COUNT");
+
+                entity.Property(e => e.DistrictEquipmentTypeCompleteCount).HasColumnName("DISTRICT_EQUIPMENT_TYPE_COMPLETE_COUNT");
+
+                entity.Property(e => e.ProgressPercentage).HasColumnName("PROGRESS_PERCENTAGE");
+
+                entity.Property(e => e.DisplayRolloverMessage).HasColumnName("DISPLAY_ROLLOVER_MESSAGE");
+
+                entity.HasOne(d => d.District)
+                    .WithMany(p => p.HetDistrictStatus)
+                    .HasForeignKey(d => d.DistrictId)
+                    .HasConstraintName("FK_HET_DISTRICT_STATUS_DISTRICT_ID");                
             });
 
             modelBuilder.Entity<HetDistrictEquipmentType>(entity =>

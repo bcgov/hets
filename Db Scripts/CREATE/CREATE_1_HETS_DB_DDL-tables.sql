@@ -190,7 +190,7 @@ CREATE TABLE public."HET_DISTRICT_STATUS" (
     "CURRENT_FISCAL_YEAR" integer,
 	"NEXT_FISCAL_YEAR" integer,
 	"ROLLOVER_START_DATE" timestamp without time zone,
-	"ROLLOVER_PROGRESS" integer, 
+	"ROLLOVER_END_DATE" timestamp without time zone,
 	"LOCAL_AREA_COUNT" integer,
 	"DISTRICT_EQUIPMENT_TYPE_COUNT" integer,
 	"LOCAL_AREA_COMPLETE_COUNT" integer,
