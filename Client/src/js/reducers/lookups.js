@@ -29,6 +29,7 @@ const DEFAULT_LOOKUPS = {
     data: {},
     loading: false,
   },
+  rolloverStatus: {},
 };
 
 export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
@@ -63,6 +64,9 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
 
     case Action.UPDATE_PERMISSIONS_LOOKUP:
       return { ...state, permissions: action.permissions };
+
+    case Action.UPDATE_ROLLOVER_STATUS_LOOKUP:
+      return { ...state, rolloverStatus: action.status };
 
     // Not typical lookups, because they can change within the app, so
     // ensure they're loaded/updated as needed.

@@ -1,0 +1,158 @@
+import React from 'react';
+
+import { connect } from 'react-redux';
+
+import { PageHeader, Button, Well } from 'react-bootstrap';
+
+import * as Api from '../api';
+import * as Constant from '../constants';
+
+import CheckboxControl from '../components/CheckboxControl.jsx';
+import OverlayTrigger from '../components/OverlayTrigger.jsx';
+import Confirm from '../components/Confirm.jsx';
+import Spinner from '../components/Spinner.jsx';
+
+var Rollover = React.createClass({
+  propTypes: {
+    currentUser: React.PropTypes.object,
+    rolloverStatus: React.PropTypes.object,
+    router: React.PropTypes.object,
+  },
+
+  getInitialState() {
+    return {
+      loading: true,
+      checkListStep1: false,
+      checkListStep2: false,
+      checkListStep3: false,
+      refreshStatusTimerId: null,
+    };
+  },
+
+  componentDidMount() {
+    var user = this.props.currentUser;
+    var status = this.props.rolloverStatus;
+
+    Api.getRolloverStatus(this.props.currentUser.district.id).then(() => {
+      this.setState({ loading: false });
+
+      if (!user.hasPermission(Constant.PERMISSION_DISTRICT_ROLLOVER) && !status.rolloverActive) {
+        // redirect to home page
+        this.props.router.push({ pathname: '/' });
+      }
+
+      if (status.rolloverActive && this.state.refreshStatusTimerId === null) {
+        this.startRefreshStatusTimer();
+      }
+    });
+  },
+
+  componentDidUpdate() {
+    if (this.props.rolloverStatus.rolloverActive && this.state.refreshStatusTimerId === null) {
+      this.startRefreshStatusTimer();
+    }
+  },
+
+  startRefreshStatusTimer() {
+    var refreshStatusTimerId = setInterval(this.refreshStatus, 2000); // 2 seconds
+    this.setState({ refreshStatusTimerId: refreshStatusTimerId });
+  },
+
+  refreshStatus() {
+    Api.getRolloverStatus(this.props.currentUser.district.id).then(() => {
+      var rolloverActive = this.props.rolloverStatus.rolloverActive;
+      if (!rolloverActive && this.state.refreshStatusTimerId !== null) {
+        clearInterval(this.state.refreshStatusTimerId);
+        this.setState({ refreshStatusTimerId: null });
+      }
+    });
+  },
+
+  initiateRollover() {
+    Api.initiateRollover(this.props.currentUser.district.id);
+  },
+
+  updateState(state, callback) {
+    this.setState(state, callback);
+  },
+
+  renderContentRolloverActive() {
+    var status = this.props.rolloverStatus;
+
+    return (
+      <div>
+        <div>A roll over is currently in progress.</div>
+        <div id="roll-over-progress" className="progress">
+          <div className="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow={ status.progressPercentage } aria-valuemin="0" aria-valuemax="100" style={ { width: `${ status.progressPercentage }%`} }>
+            <span className="sr-only">{ status.progressPercentage }% Complete</span>
+          </div>
+        </div>
+      </div>
+    ); 
+  },
+
+  renderContentRolloverComplete() {
+    return (
+      <div>
+        <div>A roll over has been completed.</div>
+      </div>
+    ); 
+  },
+
+  renderContent() {
+    var rolloverButtonDisabled = !this.state.checkListStep1 || !this.state.checkListStep2 || !this.state.checkListStep3;
+
+    return (
+      <Well>
+        <h3>Pre-Roll Over Checklist</h3>
+        <div id="checklist">
+          <CheckboxControl id="checkListStep1" checked={ this.state.checkListStep1 } updateState={ this.updateState }>
+            Verify all equipment hours have been entered in the system
+          </CheckboxControl>
+          <CheckboxControl id="checkListStep2" checked={ this.state.checkListStep2 } updateState={ this.updateState }>
+            Save the seniority list (pre-roll over)
+          </CheckboxControl>
+          <CheckboxControl id="checkListStep3" checked={ this.state.checkListStep3 } updateState={ this.updateState }>
+            Take note of any equipment currently hired
+          </CheckboxControl>
+        </div>
+
+        <div id="description">
+          <strong>Note: </strong>
+          <span>The roll over is an important annual process that recalculates the seniority for each piece of equipment across the district at the start of a fiscal year. Once triggered, this process is not reversible. In case you have any questions, please contact the primary coordinator for the process before proceeding with the hired equipment roll over.</span>
+        </div>
+        
+        <div className="clearfix">
+          <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.initiateRollover }><p>Please ensure all processes corresponding to the checklist are complete before rolling over.</p><p>If you are certain all tasks have been completed, click <strong>Yes</strong> to proceed with roll over. Otherwise, click <strong>No</strong>.</p></Confirm> }>
+            <Button className="pull-right" disabled={ rolloverButtonDisabled } title="Roll Over">Roll Over</Button>
+          </OverlayTrigger>
+        </div>
+      </Well>
+    );
+  },
+
+  render() {
+    var status = this.props.rolloverStatus;
+    var user = this.props.currentUser;
+
+    return <div id="roll-over">
+      <PageHeader>{ user.districtName } Roll Over</PageHeader>
+
+      <div className="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3">
+        { this.state.loading ? (<div style={{ textAlign: 'center' }}><Spinner/></div>)
+        : status.rolloverActive ? this.renderContentRolloverActive()
+        : status.rolloverComplete ? this.renderContentRolloverComplete()
+        : this.renderContent() }
+      </div>
+    </div>;
+  },
+});
+
+function mapStateToProps(state) {
+  return {
+    currentUser: state.user,
+    rolloverStatus: state.lookups.rolloverStatus,
+  };
+}
+
+export default connect(mapStateToProps)(Rollover);

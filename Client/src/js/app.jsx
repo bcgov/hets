@@ -23,6 +23,7 @@ import Users from './views/Users.jsx';
 import UsersDetail from './views/UsersDetail.jsx';
 import Roles from './views/Roles.jsx';
 import RolesDetail from './views/RolesDetail.jsx';
+import Rollover from './views/Rollover.jsx';
 import DistrictAdmin from './views/DistrictAdmin.jsx';
 import Version from './views/Version.jsx';
 import FourOhFour from './views/404.jsx';
@@ -89,6 +90,7 @@ const App = <Provider store={ store }>
       <Route path={ `${ Constant.USERS_PATHNAME }/:userId` } component={ UsersDetail }/>
       <Route path={ Constant.ROLES_PATHNAME } component={ Roles }/>
       <Route path={ `${ Constant.ROLES_PATHNAME }/:roleId` } component={ RolesDetail }/>
+      <Route path={ Constant.ROLLOVER_PATHNAME } component={ Rollover } />
       <Route path={ Constant.DISTRICT_ADMIN_PATHNAME } component={ DistrictAdmin } />
       <Route path={ Constant.VERSION_PATHNAME } component={ Version }/>
       <Route path="*" component={ FourOhFour }/>
