@@ -10,12 +10,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Hangfire.Console" Version="1.4.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.1.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Hangfire.Core">
+      <HintPath>..\..\..\..\..\Users\paulm\.nuget\packages\hangfire.core\1.6.20\lib\netstandard1.3\Hangfire.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AspNetCore.Mvc.Core">
       <HintPath>..\..\..\..\..\Users\paulm\.nuget\packages\microsoft.aspnetcore.mvc.core\1.0.4\lib\netstandard1.6\Microsoft.AspNetCore.Mvc.Core.dll</HintPath>
     </Reference>
