@@ -103,6 +103,9 @@ namespace HetsApi.Controllers
 
             int? oldLocalArea = owner.LocalAreaId;
 
+            if (item.RegisteredCompanyNumber == "") item.RegisteredCompanyNumber = null;
+            if (item.WorkSafeBcpolicyNumber == "") item.WorkSafeBcpolicyNumber = null;
+
             owner.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             owner.CglendDate = item.CglendDate;
             owner.CglPolicyNumber = item.CglPolicyNumber;

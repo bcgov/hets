@@ -129,6 +129,40 @@ namespace HetsApi.Controllers
             return new ObjectResult(new HetsResponse(AnnualRolloverHelper.GetRecord(id, _context)));
         }
 
+        /// <summary>
+        /// Dismiss district rollover status message
+        /// </summary>
+        [HttpPost]
+        [Route("{id}/dismissRolloverMessage")]
+        [SwaggerOperation("DismissRolloverMessagePost")]
+        [SwaggerResponse(200, type: typeof(HetDistrictStatus))]
+        [RequiresPermission(HetPermission.DistrictRollover)]
+        public virtual IActionResult DismissRolloverMessagePost([FromRoute]int id)
+        {
+            bool exists = _context.HetDistrictStatus.Any(a => a.DistrictId == id);
+
+            // not found - return new status record
+            if (!exists) return new ObjectResult(new HetsResponse(AnnualRolloverHelper.GetRecord(id, _context)));
+
+            // get record and update
+            HetDistrictStatus status = _context.HetDistrictStatus
+                .First(a => a.DistrictId == id);
+
+            // ensure the process is complete
+            if (status.DisplayRolloverMessage != null && 
+                status.DisplayRolloverMessage == true &&
+                status.ProgressPercentage != null &&
+                status.ProgressPercentage == 100)
+            {
+                status.ProgressPercentage = null;
+                status.DisplayRolloverMessage = false;
+
+                _context.SaveChanges();
+            }
+
+            // get status of current district
+            return new ObjectResult(new HetsResponse(AnnualRolloverHelper.GetRecord(id, _context)));
+        }
 
         #endregion
     }
