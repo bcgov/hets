@@ -141,7 +141,7 @@ namespace HetsImport.Import
                     }                    
 
                     // save change to database periodically to avoid frequent writing to the database
-                    if (++ii % 500 == 0)
+                    if (++ii % 100 == 0)
                     {
                         try
                         {

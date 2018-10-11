@@ -231,8 +231,8 @@ namespace HetsApi.Controllers
                 // add permission
                 HetRolePermission rolePermission = new HetRolePermission
                 {
-                    Permission = permToAdd,
-                    Role = role
+                    PermissionId = permToAdd.PermissionId,
+                    RoleId = role.RoleId
                 };
 
                 _context.HetRolePermission.Add(rolePermission);

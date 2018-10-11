@@ -46,7 +46,8 @@ namespace HetsData.Helpers
                     DistrictId = id,
                     CurrentFiscalYear = fiscalStart.Year,
                     NextFiscalYear = fiscalStart.Year + 1,
-                    DisplayRolloverMessage = false
+                    DisplayRolloverMessage = false,
+                    ProgressPercentage = 100
                 };
 
                 context.HetDistrictStatus.Add(status);

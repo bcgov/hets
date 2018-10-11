@@ -295,6 +295,9 @@ namespace HetsImport.Import
                 // find the equipment record
                 // ***********************************************
                 HetEquipment equipment = dbContext.HetEquipment.AsNoTracking()
+                    .Include(x => x.LocalArea)
+                        .ThenInclude(y => y.ServiceArea)
+                            .ThenInclude(z => z.District)
                     .FirstOrDefault(x => x.EquipmentId == mapEquip.NewKey);
 
                 if (equipment == null)
@@ -331,11 +334,7 @@ namespace HetsImport.Import
                 else
                 {
                     int? statusId = StatusHelper.GetStatusId("Complete", "projectStatus", dbContext);
-
-                    if (statusId == null)
-                    {
-                        throw new DataException(string.Format("Status Id cannot be null (Time Sheet Equip Id: {0}", tempId));
-                    }                    
+                    if (statusId == null) throw new DataException(string.Format("Status Id cannot be null (Time Sheet Equip Id: {0}", tempId));
 
                     // create new project
                     project = new HetProject
@@ -370,13 +369,26 @@ namespace HetsImport.Import
 
                 if (agreement == null)
                 {
+                    int equipmentId = equipment.EquipmentId;
+                    int projectId = project.ProjectId;
+                    int districtId = equipment.LocalArea.ServiceArea.District.DistrictId;
+
+                    int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusComplete, "rentalAgreementStatus", dbContext);
+                    if (statusId == null) throw new DataException(string.Format("Status Id cannot be null (Time Sheet Equip Id: {0}", tempId));                    
+
+                    int? agrRateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodDaily, dbContext);
+                    if (agrRateTypeId == null) throw new DataException("Rate Period Id cannot be null");
+
                     // create a new agreement record
                     agreement = new HetRentalAgreement
                     {
-                        EquipmentId = equipment.EquipmentId,
-                        ProjectId = project.ProjectId,
+                        EquipmentId = equipmentId,
+                        ProjectId = projectId,
+                        DistrictId = districtId,
+                        RentalAgreementStatusTypeId = (int)statusId,
+                        RatePeriodTypeId = (int)agrRateTypeId,
                         Note = "Created to support Time Record import from BCBid",
-                        Number = "Legacy BCBid Agreement",
+                        Number = string.Format("BCBid ({0}-{1})", projectId, equipmentId),
                         DatedOn = enteredDate,
                         AppCreateUserid = systemId,
                         AppCreateTimestamp = DateTime.UtcNow,
@@ -389,16 +401,24 @@ namespace HetsImport.Import
                         project.HetRentalAgreement = new List<HetRentalAgreement>();
                     }
 
-                    project.HetRentalAgreement.Add(agreement);
+                    dbContext.HetRentalAgreement.Add(agreement);
 
                     // save now so we can access it for other time records
-                    dbContext.SaveChangesForImport();
+                    dbContext.SaveChanges();
                 }
 
                 // ***********************************************
                 // create time record
                 // ***********************************************
                 timeRecord = new HetTimeRecord { TimeRecordId = ++maxTimeSheetIndex };
+
+                // ***********************************************
+                // set time period type
+                // ***********************************************
+                int? timePeriodTypeId = StatusHelper.GetTimePeriodId(HetTimePeriodType.PeriodDay, dbContext);
+                if (timePeriodTypeId == null) throw new DataException("Time Period Id cannot be null");
+
+                timeRecord.TimePeriodTypeId = (int)timePeriodTypeId;
 
                 // ***********************************************
                 // set time record attributes
@@ -437,18 +457,16 @@ namespace HetsImport.Import
 
                 // ***********************************************
                 // create time record
-                // ***********************************************                            
+                // ***********************************************  
+                int raId = agreement.RentalAgreementId;
+
+                timeRecord.RentalAgreementId = raId;
                 timeRecord.AppCreateUserid = systemId;
                 timeRecord.AppCreateTimestamp = DateTime.UtcNow;
                 timeRecord.AppLastUpdateUserid = systemId;
                 timeRecord.AppLastUpdateTimestamp = DateTime.UtcNow;
 
-                if (agreement.HetTimeRecord == null)
-                {
-                    agreement.HetTimeRecord = new List<HetTimeRecord>();
-                }
-
-                agreement.HetTimeRecord.Add(timeRecord);
+                dbContext.HetTimeRecord.Add(timeRecord);
             }
             catch (Exception ex)
             {
