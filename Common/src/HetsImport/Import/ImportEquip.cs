@@ -109,7 +109,7 @@ namespace HetsImport.Import
                     dbContext.HetImportMap.Remove(importMap);                    
                 }
 
-                dbContext.SaveChanges();
+                dbContext.SaveChangesForImport();
 
                 // ************************************************************
                 // get processing rules
@@ -149,7 +149,7 @@ namespace HetsImport.Import
                     foreach (HetDistrictEquipmentType districtEquipmentType in equipmentTypes)
                     {
                         // get the associated equipment type
-                        HetEquipmentType equipmentTypeRecord = dbContext.HetEquipmentType
+                        HetEquipmentType equipmentTypeRecord = dbContext.HetEquipmentType.AsNoTracking()
                             .FirstOrDefault(x => x.EquipmentTypeId == districtEquipmentType.EquipmentTypeId);
 
                         if (equipmentTypeRecord == null)
@@ -164,8 +164,8 @@ namespace HetsImport.Import
                         // assign blocks
                         SeniorityListHelper.AssignBlocks(localArea.LocalAreaId, districtEquipmentType.DistrictEquipmentTypeId, blockSize, totalBlocks, dbContext, false);
 
-                        // save change to database periodically to avoid frequent writing to the database
-                        if (ii++ % 1000 == 0)
+                        // save change to database
+                        if (ii++ % 100 == 0)
                         {
                             try
                             {

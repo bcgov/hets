@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
@@ -118,9 +117,9 @@ namespace HetsImport.Import
 
             int maxTimeSheetIndex = 0;
 
-            if (dbContext.HetRentalAgreement.Any())
+            if (dbContext.HetTimeRecord.Any())
             {
-                maxTimeSheetIndex = dbContext.HetRentalAgreement.Max(x => x.RentalAgreementId);
+                maxTimeSheetIndex = dbContext.HetTimeRecord.Max(x => x.TimeRecordId);
             }
 
             try
@@ -173,7 +172,7 @@ namespace HetsImport.Import
                     }
 
                     // save change to database periodically to avoid frequent writing to the database
-                    if (ii++ % 100 == 0)
+                    if (ii++ % 500 == 0)
                     {
                         try
                         {
@@ -195,7 +194,7 @@ namespace HetsImport.Import
                 }
                 catch (Exception e)
                 {
-                    string temp = string.Format("Error saving data (RentalAgreementIndex: {0}): {1}", maxTimeSheetIndex, e.Message);
+                    string temp = string.Format("Error saving data (TimeRecordIndex: {0}): {1}", maxTimeSheetIndex, e.Message);
                     performContext.WriteLine(temp);
                     throw new DataException(temp);
                 }
@@ -256,6 +255,9 @@ namespace HetsImport.Import
                     fiscalStart = new DateTime(DateTime.UtcNow.Year, 4, 1);
                 }
 
+                // we'll load data for the last 3 years
+                fiscalStart = fiscalStart.AddYears(-3);
+
                 string tempRecordDate = oldObject.Worked_Dt;
 
                 if (string.IsNullOrEmpty(tempRecordDate))
@@ -271,10 +273,9 @@ namespace HetsImport.Import
                         recordDate < fiscalStart ||
                         recordDate > fiscalEnd)
                     {
-                        return; // ignore this record - it is outside of the current fiscal year
+                        return; // ignore this record - it is outside of the fiscal years
                     }
                 }
-
                 
                 // ************************************************
                 // get the imported equipment record map
@@ -333,12 +334,15 @@ namespace HetsImport.Import
                 }
                 else
                 {
-                    int? statusId = StatusHelper.GetStatusId("Complete", "projectStatus", dbContext);
+                    int districtId = equipment.LocalArea.ServiceArea.District.DistrictId;
+
+                    int? statusId = StatusHelper.GetStatusId(HetProject.StatusComplete, "projectStatus", dbContext);
                     if (statusId == null) throw new DataException(string.Format("Status Id cannot be null (Time Sheet Equip Id: {0}", tempId));
 
                     // create new project
                     project = new HetProject
                     {
+                        DistrictId = districtId,
                         Information = "Created to support Time Record import from BCBid",
                         ProjectStatusTypeId = (int)statusId,
                         Name = "Legacy BCBid Project",
@@ -348,14 +352,13 @@ namespace HetsImport.Import
                         AppLastUpdateTimestamp = DateTime.UtcNow
                     };
 
-                    dbContext.HetProject.Add(project);
-
                     // save now so we can access it for other time records
-                    dbContext.SaveChanges();
+                    dbContext.HetProject.Add(project);
+                    dbContext.SaveChangesForImport();
 
                     // add mapping record
                     ImportUtility.AddImportMapForProgress(dbContext, ImportProject.OldTable, tempProjectId, project.ProjectId, ImportProject.NewTable);
-                    dbContext.SaveChanges();
+                    dbContext.SaveChangesForImport();
                 }
 
                 // ***********************************************
@@ -379,6 +382,8 @@ namespace HetsImport.Import
                     int? agrRateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodDaily, dbContext);
                     if (agrRateTypeId == null) throw new DataException("Rate Period Id cannot be null");
 
+                    int? year = (ImportUtility.CleanDateTime(oldObject.Worked_Dt))?.Year;
+
                     // create a new agreement record
                     agreement = new HetRentalAgreement
                     {
@@ -388,7 +393,7 @@ namespace HetsImport.Import
                         RentalAgreementStatusTypeId = (int)statusId,
                         RatePeriodTypeId = (int)agrRateTypeId,
                         Note = "Created to support Time Record import from BCBid",
-                        Number = string.Format("BCBid ({0}-{1})", projectId, equipmentId),
+                        Number = string.Format("BCBid{0}-{1}-{2}", projectId, equipmentId, year),
                         DatedOn = enteredDate,
                         AppCreateUserid = systemId,
                         AppCreateTimestamp = DateTime.UtcNow,
@@ -396,15 +401,9 @@ namespace HetsImport.Import
                         AppLastUpdateTimestamp = DateTime.UtcNow
                     };
 
-                    if (project.HetRentalAgreement == null)
-                    {
-                        project.HetRentalAgreement = new List<HetRentalAgreement>();
-                    }
-
-                    dbContext.HetRentalAgreement.Add(agreement);
-
                     // save now so we can access it for other time records
-                    dbContext.SaveChanges();
+                    dbContext.HetRentalAgreement.Add(agreement);
+                    dbContext.SaveChangesForImport();
                 }
 
                 // ***********************************************

@@ -9,6 +9,7 @@ using System.Xml.Serialization;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using HetsData.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace HetsImport.Import
 {    
@@ -106,7 +107,7 @@ namespace HetsImport.Import
                               u.NewKey == sigId &&
                               u.NewTable == newTable
                         orderby int.Parse(u.OldKey) descending
-                        select u)
+                        select u).AsNoTracking()
                     .FirstOrDefault();
 
             // OldKey is recorded where the import progress stopped last time

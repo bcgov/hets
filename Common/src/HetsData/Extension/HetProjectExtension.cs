@@ -11,7 +11,7 @@ namespace HetsData.Model
         /// Status Codes
         /// </summary>
         public const string StatusActive = "Active";
-        public const string StatusComplete = "Complete";
+        public const string StatusComplete = "Completed";
 
         [NotMapped]
         public bool CanEditStatus { get; set; }

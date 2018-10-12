@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using HetsApi.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
+using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
@@ -79,14 +79,8 @@ namespace HetsApi.Controllers
                     attachment.Type = GetType(attachment.FileName);
 
                     // set the mime type id
-                    string mimeType = GetMimeType(attachment.Type);
-
-                    int? mimeTypeId = StatusHelper.GetMimeTypeId(mimeType, _context);
-
-                    if (mimeTypeId == null)
-                    {
-                        throw new DataException("Mime Type Id cannot be null");
-                    }
+                    int? mimeTypeId = StatusHelper.GetMimeTypeId(attachment.Type, _context);
+                    if (mimeTypeId == null) throw new DataException("Mime Type Id cannot be null");
 
                     attachment.MimeTypeId = (int)mimeTypeId;
 
@@ -155,14 +149,8 @@ namespace HetsApi.Controllers
                     attachment.Type = GetType(attachment.FileName);
 
                     // set the mime type id
-                    string mimeType = GetMimeType(attachment.Type);
-
-                    int? mimeTypeId = StatusHelper.GetMimeTypeId(mimeType, _context);
-
-                    if (mimeTypeId == null)
-                    {
-                        throw new DataException("Mime Type Id cannot be null");
-                    }
+                    int? mimeTypeId = StatusHelper.GetMimeTypeId(attachment.Type, _context);
+                    if (mimeTypeId == null) throw new DataException("Mime Type Id cannot be null");
 
                     attachment.MimeTypeId = (int)mimeTypeId;
 
@@ -232,14 +220,8 @@ namespace HetsApi.Controllers
                     attachment.Type = GetType(attachment.FileName);
 
                     // set the mime type id
-                    string mimeType = GetMimeType(attachment.Type);
-
-                    int? mimeTypeId = StatusHelper.GetMimeTypeId(mimeType, _context);
-
-                    if (mimeTypeId == null)
-                    {
-                        throw new DataException("Mime Type Id cannot be null");
-                    }
+                    int? mimeTypeId = StatusHelper.GetMimeTypeId(attachment.Type, _context);
+                    if (mimeTypeId == null) throw new DataException("Mime Type Id cannot be null");
 
                     attachment.MimeTypeId = (int)mimeTypeId;
 
@@ -309,14 +291,8 @@ namespace HetsApi.Controllers
                     attachment.Type = GetType(attachment.FileName);
 
                     // set the mime type id
-                    string mimeType = GetMimeType(attachment.Type);
-
-                    int? mimeTypeId = StatusHelper.GetMimeTypeId(mimeType, _context);
-
-                    if (mimeTypeId == null)
-                    {
-                        throw new DataException("Mime Type Id cannot be null");
-                    }
+                    int? mimeTypeId = StatusHelper.GetMimeTypeId(attachment.Type, _context);
+                    if (mimeTypeId == null) throw new DataException("Mime Type Id cannot be null");
 
                     attachment.MimeTypeId = (int)mimeTypeId;
 
@@ -343,48 +319,16 @@ namespace HetsApi.Controllers
             return new ObjectResult("<html><body><form method=\"post\" action=\"/api/rentalRequests/" + id + "/attachments\" enctype=\"multipart/form-data\"><input type=\"file\" name = \"files\" multiple /><input type = \"submit\" value = \"Upload\" /></body></html>");
         }
 
-        #region Get File Extension / Mime Type
+        #region Get File Extension
 
         private string GetType(string fileName)
         {
             // get extension
             int extStart = fileName.LastIndexOf('.');
+
             if (extStart > 0)
             {
                 return fileName.Substring(extStart + 1).ToLower();
-            }
-
-            return "";
-        }
-
-        private string GetMimeType(string extension)
-        {
-            switch (extension.ToLower())
-            {
-                case "txt":
-                    return "text/plain";
-                case "png":
-                    return "image/png";
-                case "jpeg":
-                    return "image/jpeg";
-                case "jpg":
-                    return "image/jpeg";
-                case "gif":
-                    return "image/gif";
-                case "tif":
-                    return "image/tiff";
-                case "tiff":
-                    return "image/tiff";
-                case "pdf":
-                    return "application/pdf";
-                case "doc":
-                    return "application/msword";
-                case "docx":
-                    return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-                case "xls":
-                    return "application/vnd.ms-excel";
-                case "xlsx":
-                    return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             }
 
             return "";
