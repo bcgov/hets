@@ -316,12 +316,7 @@ namespace HetsImport.Import
                         AppCreateUserid = systemId,
                         AppCreateTimestamp = DateTime.UtcNow
                     };
-                }
-                else
-                {
-                    // record already exists - just testing updates 
-                    Debug.WriteLine("Record Id: " + rotationList.LocalAreaRotationListId);
-                }
+                }                
 
                 // ***********************************************
                 // get the equipment record
@@ -357,26 +352,29 @@ namespace HetsImport.Import
                 }
                             
                 // extract AskNextBlock*Id which is the secondary key of Equip.Id                
+                int equipId = equipment.EquipmentId;
+                float? seniority = equipment.Seniority;
+                
                 switch (blockNum)
                 {
-                    case 1:
-                        rotationList.AskNextBlock1Id = equipment.EquipmentId;
-                        rotationList.AskNextBlock1Seniority = equipment.Seniority;
+                    case 1:                        
+                        rotationList.AskNextBlock1Id = equipId;
+                        rotationList.AskNextBlock1Seniority = seniority;
                         break;
                     case 2:
-                        rotationList.AskNextBlock2Id = equipment.EquipmentId;
-                        rotationList.AskNextBlock2Seniority = equipment.Seniority;
+                        rotationList.AskNextBlock2Id = equipId;
+                        rotationList.AskNextBlock2Seniority = seniority;
                         break;
                     case 3:                        
-                        rotationList.AskNextBlockOpenId = equipment.EquipmentId;
+                        rotationList.AskNextBlockOpenId = equipId;
                         break;                        
                 }
-                
+
                 // ***********************************************
-                // update or create equipment
+                // update or create rotation list
                 // ***********************************************  
-                equipment.AppLastUpdateUserid = systemId;
-                equipment.AppLastUpdateTimestamp = DateTime.UtcNow;
+                rotationList.AppLastUpdateUserid = systemId;
+                rotationList.AppLastUpdateTimestamp = DateTime.UtcNow;
 
                 if (isNew)
                 {

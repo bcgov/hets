@@ -25,11 +25,52 @@ namespace HetsData.Model
         {
             // update the audit fields for this item.
             IEnumerable<EntityEntry> modifiedEntries = ChangeTracker.Entries()
-                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
+                .Where(e => e.State == EntityState.Added || 
+                            e.State == EntityState.Modified);
 
-            Debug.WriteLine("Saving Import Data. Total Entries: " + modifiedEntries.Count());
+            int records = 0;
 
-            int result = SaveChanges();
+            foreach (EntityEntry entry in modifiedEntries)
+            {
+                records++;
+
+                if (AuditableEntity(entry.Entity))
+                {
+                    if (entry.State == EntityState.Added)
+                    {
+                        SetAuditProperty(entry.Entity, "ConcurrencyControlNumber", 1);
+                    }
+                    else
+                    {
+                        int controlNumber = (int)GetAuditProperty(entry.Entity, "ConcurrencyControlNumber");
+                        controlNumber = controlNumber + 1;
+                        SetAuditProperty(entry.Entity, "ConcurrencyControlNumber", controlNumber);
+                    }
+                }                
+            }
+
+            Debug.WriteLine("Saving Import Data. Total Entries: " + records);
+
+            int result;
+
+            try
+            {
+                result = base.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+
+                // e.InnerException.Message	"20180: Concurrency Failure 5"	string
+                if (e.InnerException != null &&
+                    e.InnerException.Message.StartsWith("20180"))
+                {
+                    // concurrency error
+                    throw new HetsDbConcurrencyException("This record has been updated by another user.");
+                }
+
+                throw;
+            }
 
             return result;
         }

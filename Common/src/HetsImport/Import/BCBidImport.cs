@@ -78,11 +78,15 @@ namespace HetsImport.Import
             dbContext = new DbAppContext(connectionString);
             ImportProject.Import(context, dbContext, fileLocation, SystemId);
 
-            //*** Import Blocks / Local Area Rotation List from Block.xml (HET_DISTRICT_ROTATION_LIST)
+            // reset project sequence
             dbContext = new DbAppContext(connectionString);
+            ImportProject.ResetSequence(context, dbContext);
+
+            //*** Import Blocks / Local Area Rotation List from Block.xml (HET_DISTRICT_ROTATION_LIST)
+            dbContext = new DbAppContext(connectionString);            
             ImportBlock.Import(context, dbContext, fileLocation, SystemId);
 
-            //*** Import Equipment Usage (Time) from Equip_Usage.xml (HET_RENTAL_AGREEMENT and HET_TIME_RECORD) 
+            //*** Import Equipment Usage (Time) from Equip_Usage.xml (HET_RENTAL_AGREEMENT and HET_TIME_RECORD)             
             dbContext = new DbAppContext(connectionString);
             ImportEquipUsage.Import(context, dbContext, fileLocation, SystemId);
 

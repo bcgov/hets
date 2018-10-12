@@ -1718,14 +1718,19 @@ ALTER SEQUENCE public."HET_EQUIPMENT_STATUS_TYPE_ID_seq" RESTART WITH 4;
    "APP_LAST_UPDATE_TIMESTAMP")
 VALUES 
   (1, 'PNG', 'image/png', 'PNG', 1, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
-  (2, 'PDF', 'application/pdf', 'PDF', 2, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
-  (3, 'TXT', 'text/plain', 'TXT', 3, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
-  (4, 'DOC', 'application/msword', 'Word Document (*.doc)', 4, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
-  (5, 'DOCX', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'Word Document (*.docx)', 5, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
-  (6, 'XLS', 'application/vnd.ms-excel', 'Excel Workbook (*.xls)', 6, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
-  (7, 'MSWORD', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Excel Workbook (*.xlsx)', 7, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW());
+  (2, 'PDF', 'application/pdf', 'PDF', 2, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),  
+  (3, 'JPEG', 'application/jpeg', 'JPEG', 3, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
+  (4, 'JPG', 'application/jpeg', 'JPG', 4, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),  
+  (5, 'GIF', 'application/gif', 'GIF', 5, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
+  (6, 'TIF', 'application/tiff', 'TIF', 6, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
+  (7, 'TIFF', 'application/tiff', 'TIFF', 7, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),  
+  (8, 'TXT', 'text/plain', 'TXT', 8, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
+  (9, 'DOC', 'application/msword', 'Word Document (*.doc)', 9, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
+  (10, 'DOCX', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'Word Document (*.docx)', 10, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
+  (11, 'XLS', 'application/vnd.ms-excel', 'Excel Workbook (*.xls)', 11, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
+  (12, 'MSWORD', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Excel Workbook (*.xlsx)', 12, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW());
   
-ALTER SEQUENCE public."HET_MIME_TYPE_ID_seq" RESTART WITH 7;   
+ALTER SEQUENCE public."HET_MIME_TYPE_ID_seq" RESTART WITH 12;   
  
 
     
