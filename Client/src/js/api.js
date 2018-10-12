@@ -1869,6 +1869,10 @@ export function getBusiness() {
   return new ApiRequest('/business').get().then(response => {
     var business = response.data;
 
+    if (!_.isObject(business)) {
+      business = { };
+    }
+
     _.map(business.owners, owner => { parseOwner(owner); });
     store.dispatch({ type: Action.UPDATE_BUSINESS, business: business });
   });
