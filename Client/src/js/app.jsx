@@ -27,7 +27,7 @@ import DistrictAdmin from './views/DistrictAdmin.jsx';
 import Version from './views/Version.jsx';
 import FourOhFour from './views/404.jsx';
 
-function restrictToBusinesses() {
+function onEnterBusiness() {
   // allow access to business users
   if (store.getState().user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
     return;
@@ -42,7 +42,7 @@ function restrictToBusinesses() {
   //hashHistory.push('/');
 }
 
-function restrictToHetsUsers() {
+function onEnterApplication() {
   // allow access to HETS users
   if (store.getState().user.hasPermission(Constant.PERMISSION_LOGIN)) {
     return;
@@ -70,9 +70,9 @@ export function setTimerInterval() {
 const App = <Provider store={ store }>
   <Router history={ hashHistory }>
     <Redirect from="/" to="/home"/>
-    <Route path={ Constant.BUSINESS_PORTAL_PATHNAME } component={ BusinessPortal } onEnter={ restrictToBusinesses } />
-    <Route path={ `${Constant.BUSINESS_DETAILS_PATHNAME }/:ownerId` } component={ BusinessOwner } onEnter={ restrictToBusinesses } />
-    <Route path="/" component={ Main } onEnter={ restrictToHetsUsers }>
+    <Route path={ Constant.BUSINESS_PORTAL_PATHNAME } component={ BusinessPortal } onEnter={ onEnterBusiness } />
+    <Route path={ `${Constant.BUSINESS_DETAILS_PATHNAME }/:ownerId` } component={ BusinessOwner } onEnter={ onEnterBusiness } />
+    <Route path="/" component={ Main } onEnter={ onEnterApplication }>
       <Route path={ Constant.HOME_PATHNAME } component={ Home }/>
       <Route path={ Constant.EQUIPMENT_PATHNAME } component={ Equipment }/>
       <Route path={ `${ Constant.EQUIPMENT_PATHNAME }/:equipmentId` } component={ EquipmentDetail }/>
