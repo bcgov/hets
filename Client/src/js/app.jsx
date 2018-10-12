@@ -2,6 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { Router, Route, Redirect, hashHistory } from 'react-router';
 
+import * as Api from './api';
 import * as Constant from './constants';
 import * as Action from './actionTypes';
 import store from './store';
@@ -28,6 +29,35 @@ import DistrictAdmin from './views/DistrictAdmin.jsx';
 import Version from './views/Version.jsx';
 import FourOhFour from './views/404.jsx';
 
+hashHistory.listen(location =>  {
+  if (location.action !== 'POP') {
+    return;
+  }
+
+  redirectIfRolloverActive(location.pathname);
+});
+
+// redirects regular users to rollover page if rollover in progress
+function redirectIfRolloverActive(path) { 
+  var onBusinessPage = path.startsWith(Constant.BUSINESS_PORTAL_PATHNAME);
+  var onRolloverPage = path === '/' + Constant.ROLLOVER_PATHNAME;
+  if (onBusinessPage || onRolloverPage) {
+    return;
+  }
+  
+  var user = store.getState().user;
+  if (!user.district) {
+    return;
+  }
+  
+  Api.getRolloverStatus(user.district.id).then(() => {
+    var rolloverActive = store.getState().lookups.rolloverStatus.rolloverActive;
+    if (rolloverActive) {
+      hashHistory.push('/' + Constant.ROLLOVER_PATHNAME);
+    }
+  });
+}
+
 function onEnterBusiness() {
   // allow access to business users
   if (store.getState().user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
@@ -46,6 +76,7 @@ function onEnterBusiness() {
 function onEnterApplication() {
   // allow access to HETS users
   if (store.getState().user.hasPermission(Constant.PERMISSION_LOGIN)) {
+    redirectIfRolloverActive(hashHistory.getCurrentLocation().pathname);
     return;
   }
   
