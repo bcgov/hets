@@ -56,7 +56,13 @@
     }
   }
 
-  #navbar-current-user {
+  #rollover-notice-button {
+    span {
+      margin-left: 5px;
+    }
+  }
+
+  #navbar-right {
     margin-left: auto;
   }
 
@@ -76,6 +82,12 @@
       margin-bottom: 10px;
     }
 
+  }
+}
+
+#rollover-notice {
+  .btn-primary {
+    width: 100%;
   }
 }
 

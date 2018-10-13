@@ -13,6 +13,7 @@ import * as Api from '../api';
 import Spinner from '../components/Spinner.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
 
+import { formatDateTimeUTCToLocal } from '../utils/date';
 
 var TopNav = React.createClass({
   propTypes: {
@@ -44,6 +45,10 @@ var TopNav = React.createClass({
     });
   },
 
+  dismissRolloverNotice() {
+    Api.dismissRolloverMessage(this.props.currentUser.district.id);
+  },
+
   render() {
     var userDistricts = this.props.currentUserDistricts.data.map(district => { 
       return { ...district, districtName: district.district.name, id: district.district.id }; 
@@ -62,7 +67,7 @@ var TopNav = React.createClass({
           <h1 id="banner">MOTI Hired Equipment Tracking System</h1>
         </div>
         <Navbar id="top-nav">
-          {this.props.showNav &&
+          { this.props.showNav &&
             <Nav>
               <LinkContainer to={{ pathname: `/${ Constant.HOME_PATHNAME }` }} disabled={ navigationDisabled }>
                 <NavItem eventKey={ 1 }>Home</NavItem>
@@ -108,8 +113,22 @@ var TopNav = React.createClass({
               }
             </Nav>
           }
-          {this.props.showNav &&
-            <Nav id="navbar-current-user" pullRight>
+          { this.props.showNav &&
+            <Nav id="navbar-right" pullRight>
+              { this.props.rolloverStatus.displayRolloverMessage && this.props.rolloverStatus.rolloverComplete &&
+                <OverlayTrigger trigger="click" placement="bottom" rootClose overlay={
+                  <Popover id="rollover-notice" title="Roll Over Complete" >
+                    <p>The hired equipment roll over has been completed on { formatDateTimeUTCToLocal(this.props.rolloverStatus.rolloverEndDate, Constant.DATE_TIME_READABLE) }.</p>
+                    <p><strong>Note: </strong>Please save/print out the new seniority lists for all equipments corresponding to each local area.</p>
+                    <Button onClick={ this.dismissRolloverNotice } bsStyle="primary">Dismiss</Button>
+                  </Popover>
+                }>
+                  <Button id="rollover-notice-button" className="mr-5" bsStyle="info" bsSize="xsmall">
+                    Roll Over Complete
+                    <Glyphicon glyph="exclamation-sign" />
+                  </Button>
+                </OverlayTrigger>
+              }
               <Dropdown
                 id="profile-menu"
               >

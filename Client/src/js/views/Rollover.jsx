@@ -12,6 +12,8 @@ import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import Confirm from '../components/Confirm.jsx';
 import Spinner from '../components/Spinner.jsx';
 
+import { formatDateTimeUTCToLocal } from '../utils/date';
+
 var Rollover = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
@@ -72,6 +74,10 @@ var Rollover = React.createClass({
     Api.initiateRollover(this.props.currentUser.district.id);
   },
 
+  dismissRolloverNotice() {
+    Api.dismissRolloverMessage(this.props.currentUser.district.id);
+  },
+
   updateState(state, callback) {
     this.setState(state, callback);
   },
@@ -93,8 +99,10 @@ var Rollover = React.createClass({
 
   renderContentRolloverComplete() {
     return (
-      <div>
-        <div>A roll over has been completed.</div>
+      <div className="text-center">
+        <p>The hired equipment roll over has been completed on { formatDateTimeUTCToLocal(this.props.rolloverStatus.rolloverEndDate, Constant.DATE_TIME_READABLE) }.</p>
+        <p><strong>Note: </strong>Please save/print out the new seniority lists for all equipments corresponding to each local area.</p>
+        <Button onClick={ this.dismissRolloverNotice } bsStyle="primary">Dismiss</Button>
       </div>
     ); 
   },

@@ -1926,6 +1926,14 @@ export function initiateRollover(districtId) {
   });
 }
 
+export function dismissRolloverMessage(districtId) {
+  return new ApiRequest(`/districts/${districtId}/dismissRolloverMessage`).post().then(response => {
+    var status = response.data;
+    parseRolloverStatus(status);
+    store.dispatch({ type: Action.UPDATE_ROLLOVER_STATUS_LOOKUP, status: status });
+  });
+}
+
 
 ////////////////////
 // Look-ups
