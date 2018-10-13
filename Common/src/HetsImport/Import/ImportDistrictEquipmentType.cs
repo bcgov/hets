@@ -119,7 +119,7 @@ namespace HetsImport.Import
                 foreach (ImportModels.EquipType item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
-                    HetImportMap importMap = dbContext.HetImportMap
+                    HetImportMap importMap = dbContext.HetImportMap.AsNoTracking()
                         .FirstOrDefault(x => x.OldTable == OldTable && 
                                              x.OldKey == item.Equip_Type_Id.ToString() &&
                                              x.NewTable == NewTable);
@@ -136,7 +136,7 @@ namespace HetsImport.Import
                     }
 
                     // periodically save change to the status
-                    if (ii++ % 250 == 0)
+                    if (ii++ % 1000 == 0)
                     {
                         try
                         {

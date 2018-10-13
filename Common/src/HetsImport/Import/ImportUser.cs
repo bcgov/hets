@@ -215,7 +215,7 @@ namespace HetsImport.Import
                 {
                     string tempId = item.Popt_Id + "-" + item.Service_Area_Id;
 
-                    HetImportMap importMap = dbContext.HetImportMap
+                    HetImportMap importMap = dbContext.HetImportMap.AsNoTracking()
                         .FirstOrDefault(x => x.OldTable == OldTable && 
                                              x.OldKey == tempId);
 
@@ -228,8 +228,7 @@ namespace HetsImport.Import
                         HetUser user = null;
                         username = username.ToLower();
 
-                        CopyToInstance(dbContext, item, ref user, systemId, username, firstName, lastName,
-                            ref maxUserIndex);
+                        CopyToInstance(dbContext, item, ref user, systemId, username, firstName, lastName, ref maxUserIndex);
 
                         if (user != null)
                         {
@@ -347,7 +346,7 @@ namespace HetsImport.Import
                         throw new ArgumentException(string.Format("User Error - Invalid Service Area (userId: {0}", user.SmUserId));
                     }
 
-                    HetServiceArea serviceArea = dbContext.HetServiceArea
+                    HetServiceArea serviceArea = dbContext.HetServiceArea.AsNoTracking()
                         .FirstOrDefault(x => x.MinistryServiceAreaId == serviceAreaId);
 
                     if (serviceArea == null)
@@ -361,7 +360,7 @@ namespace HetsImport.Import
 
                     if (tempDistrictId != null)
                     {
-                        HetUserDistrict userDistrict = dbContext.HetUserDistrict
+                        HetUserDistrict userDistrict = dbContext.HetUserDistrict.AsNoTracking()
                             .FirstOrDefault(x => x.User.UserId == tempUserId &&
                                                  x.District.DistrictId == tempDistrictId);
 
@@ -439,7 +438,7 @@ namespace HetsImport.Import
                         throw new ArgumentException(string.Format("User Error - Invalid Service Area (userId: {0}", user.SmUserId));
                     }
 
-                    HetServiceArea serviceArea = dbContext.HetServiceArea
+                    HetServiceArea serviceArea = dbContext.HetServiceArea.AsNoTracking()
                         .FirstOrDefault(x => x.MinistryServiceAreaId == serviceAreaId);
 
                     if (serviceArea == null)

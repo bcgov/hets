@@ -103,7 +103,9 @@ namespace HetsImport.Import
                 foreach (ImportModels.ServiceArea item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
-                    HetImportMap importMap = dbContext.HetImportMap.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Service_Area_Id.ToString());                    
+                    HetImportMap importMap = dbContext.HetImportMap.AsNoTracking()
+                        .FirstOrDefault(x => x.OldTable == OldTable && 
+                                             x.OldKey == item.Service_Area_Id.ToString());                    
 
                     // new entry
                     if (importMap == null && item.Service_Area_Cd != "000")
