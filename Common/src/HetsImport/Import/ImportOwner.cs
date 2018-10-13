@@ -235,7 +235,7 @@ namespace HetsImport.Import
                 foreach (ImportModels.Owner item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already.
-                    HetImportMap importMap = dbContext.HetImportMap
+                    HetImportMap importMap = dbContext.HetImportMap.AsNoTracking()
                         .FirstOrDefault(x => x.OldTable == OldTable && 
                                              x.OldKey == item.Popt_Id.ToString());
 
@@ -248,7 +248,7 @@ namespace HetsImport.Import
                     }
 
                     // save change to database periodically to avoid frequent writing to the database
-                    if (++ii % 500 == 0) 
+                    if (++ii % 1000 == 0) 
                     {
                         try
                         {

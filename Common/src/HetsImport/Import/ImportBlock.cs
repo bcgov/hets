@@ -124,7 +124,7 @@ namespace HetsImport.Import
                     string oldUniqueId = string.Format("{0}-{1}-{2}", areaId, equipmentTypeId, createdDate);
 
                     // see if we have this one already
-                    HetImportMap importMap = dbContext.HetImportMap
+                    HetImportMap importMap = dbContext.HetImportMap.AsNoTracking()
                         .FirstOrDefault(x => x.OldTable == OldTable && 
                                              x.OldKey == oldUniqueId);
 
@@ -141,7 +141,7 @@ namespace HetsImport.Import
                     }                    
 
                     // save change to database periodically to avoid frequent writing to the database
-                    if (++ii % 100 == 0)
+                    if (++ii % 1000 == 0)
                     {
                         try
                         {

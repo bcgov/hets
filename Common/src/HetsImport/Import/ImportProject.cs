@@ -125,7 +125,7 @@ namespace HetsImport.Import
                 foreach (Project item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
-                    HetImportMap importMap = dbContext.HetImportMap
+                    HetImportMap importMap = dbContext.HetImportMap.AsNoTracking()
                         .FirstOrDefault(x => x.OldTable == OldTable && 
                                              x.OldKey == item.Project_Id.ToString());
 
@@ -141,7 +141,7 @@ namespace HetsImport.Import
                     }
 
                     // periodically save change to the progress record
-                    if (++ii % 250 == 0)
+                    if (++ii % 1000 == 0)
                     {
                         try
                         {

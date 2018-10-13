@@ -8,6 +8,7 @@ using Hangfire.Console;
 using Hangfire.Server;
 using Hangfire.Console.Progress;
 using HetsData.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace HetsImport.Import
 {
@@ -73,7 +74,9 @@ namespace HetsImport.Import
                     lastEquipmentIndex = item.Equip_Id;
 
                     // see if we have this one already
-                    HetImportMap importMap = dbContext.HetImportMap.FirstOrDefault(x => x.OldTable == OldTable && x.OldKey == item.Equip_Id.ToString());
+                    HetImportMap importMap = dbContext.HetImportMap.AsNoTracking()
+                        .FirstOrDefault(x => x.OldTable == OldTable && 
+                                             x.OldKey == item.Equip_Id.ToString());
 
                     // new entry
                     if (importMap == null && item.Equip_Id > 0)
@@ -83,7 +86,7 @@ namespace HetsImport.Import
                     }
 
                     // save change to database periodically to avoid frequent writing to the database
-                    if (++ii % 500 == 0)
+                    if (++ii % 1000 == 0)
                     {
                         try
                         {

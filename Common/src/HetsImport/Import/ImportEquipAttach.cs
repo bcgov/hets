@@ -121,7 +121,7 @@ namespace HetsImport.Import
                     // see if we have this one already. We used old combine because item.Equip_Id is not unique
                     string oldKeyCombined = (item.Equip_Id ?? 0 * 100 + item.Attach_Seq_Num ?? 0).ToString();
 
-                    HetImportMap importMap = dbContext.HetImportMap
+                    HetImportMap importMap = dbContext.HetImportMap.AsNoTracking()
                         .FirstOrDefault(x => x.OldTable == OldTable && 
                                              x.OldKey == oldKeyCombined);
 

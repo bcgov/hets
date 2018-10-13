@@ -258,7 +258,7 @@ namespace HetsImport.Import
                 foreach (ImportModels.Equip item in legacyItems.WithProgress(progress))
                 {
                     // see if we have this one already
-                    HetImportMap importMap = dbContext.HetImportMap
+                    HetImportMap importMap = dbContext.HetImportMap.AsNoTracking()
                         .FirstOrDefault(x => x.OldTable == OldTable && 
                                              x.OldKey == item.Equip_Id.ToString());
 

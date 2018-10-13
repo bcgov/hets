@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Xml.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Hangfire.Console;
@@ -154,13 +155,13 @@ namespace HetsImport.Import
                     string oldCreatedDate = item.Created_Dt;
 
                     string oldKey = string.Format("{0}-{1}-{2}", oldProjectKey, oldEquipKey, oldCreatedDate);
-                    
-                    HetImportMap importMap = dbContext.HetImportMap
-                        .FirstOrDefault(x => x.OldTable == OldTable && 
+
+                    HetImportMap importMap = dbContext.HetImportMap.AsNoTracking()
+                        .FirstOrDefault(x => x.OldTable == OldTable &&
                                              x.OldKey == oldKey);
 
                     // new entry
-                    if (importMap == null && item.Equip_Id > 0)
+                    if (importMap == null && item.Equip_Id > 0 && item.Project_Id > 0)
                     {
                         HetTimeRecord instance = null;
                         CopyToTimeRecorded(dbContext, item, ref instance, systemId, ref maxTimeSheetIndex);
@@ -168,17 +169,21 @@ namespace HetsImport.Import
                         if (instance != null)
                         {
                             ImportUtility.AddImportMap(dbContext, OldTable, oldKey, NewTable, instance.TimeRecordId);
+                            dbContext.SaveChangesForImport();
                         }
                     }
 
-                    // save change to database periodically to avoid frequent writing to the database
-                    if (ii++ % 500 == 0)
+                    // periodically save change to the status
+                    if (ii++ % 1000 == 0)
                     {
                         try
                         {
                             ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId, NewTable);
                             dbContext.SaveChangesForImport();
-                        }
+
+                            // pause for a while
+                            Thread.Sleep(1000);
+                        }                    
                         catch (Exception e)
                         {
                             performContext.WriteLine("Error saving data " + e.Message);
@@ -235,17 +240,7 @@ namespace HetsImport.Import
                 // so ignore all others
                 // ***********************************************
                 DateTime fiscalStart;
-                DateTime fiscalEnd;                
-
-                if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
-                {
-                    fiscalEnd = new DateTime(DateTime.UtcNow.Year, 3, 31);
-                }
-                else
-                {
-                    fiscalEnd = new DateTime(DateTime.UtcNow.AddYears(1).Year, 3, 31);
-                }
-
+                
                 if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
                 {
                     fiscalStart = new DateTime(DateTime.UtcNow.AddYears(-1).Year, 4, 1);
@@ -256,7 +251,7 @@ namespace HetsImport.Import
                 }
 
                 // we'll load data for the last 3 years
-                fiscalStart = fiscalStart.AddYears(-3);
+                fiscalStart = fiscalStart.AddYears(-2);
 
                 string tempRecordDate = oldObject.Worked_Dt;
 
@@ -269,9 +264,7 @@ namespace HetsImport.Import
                 {
                     DateTime? recordDate = ImportUtility.CleanDateTime(tempRecordDate);
 
-                    if (recordDate == null ||
-                        recordDate < fiscalStart ||
-                        recordDate > fiscalEnd)
+                    if (recordDate == null || recordDate < fiscalStart)
                     {
                         return; // ignore this record - it is outside of the fiscal years
                     }
@@ -289,7 +282,7 @@ namespace HetsImport.Import
 
                 if (mapEquip == null)
                 {
-                    throw new DataException(string.Format("Cannot locate Equipment record (Time Sheet Equip Id: {0}", tempId));
+                    throw new DataException(string.Format("Cannot locate Equipment record (TimeSheet Equip Id: {0}", tempId));
                 }
 
                 // ***********************************************
@@ -303,7 +296,7 @@ namespace HetsImport.Import
 
                 if (equipment == null)
                 {
-                    throw new ArgumentException(string.Format("Cannot locate Equipment record (Time Sheet Equip Id: {0}", tempId));
+                    throw new ArgumentException(string.Format("Cannot locate Equipment record (TimeSheet Equip Id: {0}", tempId));
                 }
 
                 // ************************************************
@@ -368,7 +361,8 @@ namespace HetsImport.Import
 
                 HetRentalAgreement agreement = dbContext.HetRentalAgreement.AsNoTracking()
                     .FirstOrDefault(x => x.EquipmentId == equipment.EquipmentId &&
-                                         x.ProjectId == project.ProjectId);
+                                         x.ProjectId == project.ProjectId &&
+                                         x.DistrictId == equipment.LocalArea.ServiceArea.District.DistrictId);
 
                 if (agreement == null)
                 {
@@ -430,7 +424,7 @@ namespace HetsImport.Import
                 }
                 else
                 {
-                    throw new DataException(string.Format("Worked Date cannot be null (Time Sheet Index: {0}", maxTimeSheetIndex));
+                    throw new DataException(string.Format("Worked Date cannot be null (TimeSheet Index: {0}", maxTimeSheetIndex));
                 }
 
                 // get hours worked
@@ -442,7 +436,7 @@ namespace HetsImport.Import
                 }
                 else
                 {
-                    throw new DataException(string.Format("Hours cannot be null (Time Sheet Index: {0}", maxTimeSheetIndex));
+                    throw new DataException(string.Format("Hours cannot be null (TimeSheet Index: {0}", maxTimeSheetIndex));
                 }                
 
                 if (enteredDate != null)
@@ -451,7 +445,7 @@ namespace HetsImport.Import
                 }
                 else
                 {
-                    throw new DataException(string.Format("Entered Date cannot be null (Time Sheet Index: {0}", maxTimeSheetIndex));
+                    throw new DataException(string.Format("Entered Date cannot be null (TimeSheet Index: {0}", maxTimeSheetIndex));
                 }
 
                 // ***********************************************
