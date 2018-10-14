@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HetsApi.Helpers
+namespace HetsData.Helpers
 {
     public static class SecretKeyHelper
     {

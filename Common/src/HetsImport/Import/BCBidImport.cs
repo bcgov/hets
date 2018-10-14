@@ -52,7 +52,10 @@ namespace HetsImport.Import
 
             //*** Import Owners from Owner.xml (HETS_OWNER and HETS_Contact)
             dbContext = new DbAppContext(connectionString);
-            ImportOwner.Import(context, dbContext, fileLocation, SystemId);            
+            ImportOwner.Import(context, dbContext, fileLocation, SystemId);
+
+            dbContext = new DbAppContext(connectionString);
+            ImportOwner.GenerateSecretKeys(context, dbContext);
 
             //*** Import District Equipment Type from EquipType.xml (HET_DISTRICT_EQUIPMENT_TYPE)
             dbContext = new DbAppContext(connectionString);

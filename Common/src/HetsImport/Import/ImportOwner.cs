@@ -5,7 +5,6 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Hangfire.Console;
@@ -29,6 +28,59 @@ namespace HetsImport.Import
         /// Progress Property
         /// </summary>
         public static string OldTableProgress => OldTable + "_Progress";
+
+        /// <summary>
+        /// Generate secret keys
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        public static void GenerateSecretKeys(PerformContext performContext, DbAppContext dbContext)
+        {
+            try
+            {
+                performContext.WriteLine("Generate New Secret Keys");
+
+                // get records
+                List<HetOwner> owners = dbContext.HetOwner.AsNoTracking()
+                    .Where(x => x.BusinessId == null)
+                    .ToList();
+
+                int i = 0;
+                
+                foreach (HetOwner owner in owners)
+                {
+                    i++;
+                    string key = SecretKeyHelper.RandomString(8);
+
+                    string temp = owner.OwnerCode;
+
+                    if (string.IsNullOrEmpty(temp))
+                    {
+                        temp = SecretKeyHelper.RandomString(4);
+                    }
+
+                    key = temp + "-" + DateTime.UtcNow.Year + "-" + key;
+
+                    // get owner and update
+                    HetOwner ownerRecord = dbContext.HetOwner.First(x => x.OwnerId == owner.OwnerId);
+                    ownerRecord.SharedKey = key;
+
+                    if (i % 500 == 0)
+                    {
+                        dbContext.SaveChangesForImport();
+                    }                    
+                }
+
+                // save remaining updates - done!
+                dbContext.SaveChangesForImport();
+                performContext.WriteLine("*** Done generating New Secret Keys ***");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
 
         /// <summary>
         /// Fix the sequence for the tables populated by the import process
