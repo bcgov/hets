@@ -214,6 +214,61 @@ namespace HetsData.Helpers
                 // done!
                 UpdateStatusComplete(dbContext, status, localAreaCompleteCount, equipmentCompleteCount);
                 progress.SetValue(100);
+
+                // **********************************************************
+                // regenerate Owner Secret Keys for this district
+                // **********************************************************    
+                context.WriteLine("");
+                context.WriteLine("Generate New Secret Keys - District #" + districtId);
+                progress = context.WriteProgressBar();
+
+                progress.SetValue(0);
+                // get records
+                List<HetOwner> owners = dbContext.HetOwner.AsNoTracking()
+                    .Where(x => x.BusinessId == null &&
+                                x.DistrictId == districtId)
+                    .ToList();
+
+                int i = 0;
+                int ownerCount = owners.Count;
+
+                foreach (HetOwner owner in owners)
+                {
+                    i++;
+                    string key = SecretKeyHelper.RandomString(8);
+
+                    string temp = owner.OwnerCode;
+
+                    if (string.IsNullOrEmpty(temp))
+                    {
+                        temp = SecretKeyHelper.RandomString(4);
+                    }
+
+                    key = temp + "-" + DateTime.UtcNow.Year + "-" + key;
+
+                    // get owner and update
+                    HetOwner ownerRecord = dbContext.HetOwner.First(x => x.OwnerId == owner.OwnerId);
+                    ownerRecord.SharedKey = key;
+
+                    if (i % 500 == 0)
+                    {
+                        dbContext.SaveChangesForImport();
+                    }
+
+                    decimal tempProgress = Convert.ToDecimal(i) / Convert.ToDecimal(ownerCount);
+                    tempProgress = tempProgress * 100;
+                    int percentComplete = Convert.ToInt32(tempProgress);
+
+                    if (percentComplete < 1) percentComplete = 1;
+                    if (percentComplete > 99) percentComplete = 100;
+                    
+                    progress.SetValue(percentComplete);
+                }
+
+                // save remaining updates - done!
+                dbContext.SaveChangesForImport();
+                progress.SetValue(100);
+                context.WriteLine("Generate New Secret Keys - Done");
             }
             catch (Exception e)
             {
@@ -245,7 +300,6 @@ namespace HetsData.Helpers
 
                     if (percentComplete < 1) percentComplete = 1;
                     if (percentComplete > 99) percentComplete = 100;
-
                 }
 
                 status.LocalAreaCompleteCount = localAreaCompleteCount;
