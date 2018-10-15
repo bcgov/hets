@@ -330,14 +330,15 @@ namespace HetsApi.Controllers
         /// <param name="owner">Id for a specific Owner</param>
         /// <param name="status">Status</param>
         /// <param name="hired">Hired</param>
+        /// <param name="ownerCode"></param>
         [HttpGet]
         [Route("search")]
         [SwaggerOperation("OwnersSearchGet")]
-        [SwaggerResponse(200, type: typeof(List<HetOwner>))]
+        [SwaggerResponse(200, type: typeof(List<OwnerLite>))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult OwnersSearchGet([FromQuery]string localAreas, 
             [FromQuery]string equipmentTypes, [FromQuery]int? owner, [FromQuery]string status, 
-            [FromQuery]bool? hired)
+            [FromQuery]bool? hired, [FromQuery]string ownerCode = null)
         {
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
             int?[] equipmentTypesArray = ArrayHelper.ParseIntArray(equipmentTypes);
@@ -404,6 +405,11 @@ namespace HetsApi.Controllers
             if (owner != null)
             {
                 data = data.Where(x => x.OwnerId == owner);
+            }
+
+            if (ownerCode != null)
+            {
+                data = data.Where(x => x.OwnerCode.ToLower().Contains(ownerCode.ToLower()));
             }
 
             // convert Owner Model to the "OwnerLite" Model

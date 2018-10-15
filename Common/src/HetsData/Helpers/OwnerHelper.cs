@@ -15,6 +15,7 @@ namespace HetsData.Helpers
         public string OrganizationName { get; set; }
         public string LocalAreaName { get; set; }
         public string PrimaryContactName { get; set; }
+        public string PrimaryContactNumber { get; set; }
         public int EquipmentCount { get; set; }
         public string Status { get; set; }
     }
@@ -128,6 +129,14 @@ namespace HetsData.Helpers
                     }
 
                     ownerLite.PrimaryContactName = tempName;
+
+                    // set phone number
+                    ownerLite.PrimaryContactNumber = owner.PrimaryContact.WorkPhoneNumber;
+
+                    if (string.IsNullOrEmpty(ownerLite.PrimaryContactNumber))
+                    {
+                        ownerLite.PrimaryContactNumber = owner.PrimaryContact.MobilePhoneNumber;
+                    }
                 }
 
                 if (owner.HetEquipment != null)

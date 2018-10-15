@@ -360,6 +360,7 @@ namespace HetsApi.Controllers
         /// <param name="hired">Hired</param>
         /// <param name="notVerifiedSinceDate">Not Verified Since Date</param>
         /// <param name="equipmentId">Equipment Code</param>
+        /// <param name="ownerName"></param>
         [HttpGet]
         [Route("search")]
         [SwaggerOperation("EquipmentSearchGet")]
@@ -367,7 +368,8 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult EquipmentSearchGet([FromQuery]string localAreas, [FromQuery]string types, 
             [FromQuery]string equipmentAttachment, [FromQuery]int? owner, [FromQuery]string status, 
-            [FromQuery]bool? hired, [FromQuery]DateTime? notVerifiedSinceDate, [FromQuery]string equipmentId = null)
+            [FromQuery]bool? hired, [FromQuery]DateTime? notVerifiedSinceDate, 
+            [FromQuery]string equipmentId = null, [FromQuery]string ownerName = null)
         {
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
             int?[] typesArray = ArrayHelper.ParseIntArray(types);
@@ -383,6 +385,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetEquipmentAttachment)
                 .Include(x => x.HetRentalAgreement)
                     .ThenInclude(y => y.RentalAgreementStatusType)
+                .Include(x => x.EquipmentStatusType)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));
 
             // filter results based on search criteria
@@ -400,6 +403,11 @@ namespace HetsApi.Controllers
             if (owner != null)
             {
                 data = data.Where(x => x.Owner.OwnerId == owner);
+            }
+
+            if (ownerName != null)
+            {
+                data = data.Where(x => x.Owner.OrganizationName.ToLower().Contains(ownerName.ToLower()));
             }
 
             if (status != null)

@@ -38,6 +38,9 @@ namespace HetsData.Helpers
 
         public string EquipmentType { get; set; }
 
+        public string LocalArea { get; set; }
+        public string Status { get; set; }
+
         public string OwnerName { get; set; }
 
         public int? OwnerId { get; set; }
@@ -124,6 +127,8 @@ namespace HetsData.Helpers
 
             if (equipment != null)
             {
+                // HETS - 709 [BVT - Adjust the search for Equipment search screen]  
+                /*
                 int numberOfBlocks = 0;
 
                 // get number of blocks for this equipment type
@@ -154,6 +159,7 @@ namespace HetsData.Helpers
                 {
                     numberInBlock = (int)equipment.NumberInBlock;
                 }
+                */
 
                 // map data to light model
                 equipmentLite.Id = equipment.EquipmentId;
@@ -169,9 +175,17 @@ namespace HetsData.Helpers
                     equipmentLite.OwnerId = equipment.OwnerId;
                 }
 
-                equipmentLite.SeniorityString = FormatSeniorityString(seniority, blockNumber, numberOfBlocks);
+                // HETS - 709 [BVT - Adjust the search for Equipment search screen]  
+                //equipmentLite.SeniorityString = FormatSeniorityString(seniority, blockNumber, numberOfBlocks);
+                equipmentLite.SeniorityString = "0";
 
-                equipmentLite.IsHired = CheckIsHired(equipment.HetRentalAgreement.ToList());
+                // HETS - 709 [BVT - Adjust the search for Equipment search screen]  
+                //equipmentLite.IsHired = CheckIsHired(equipment.HetRentalAgreement.ToList());
+                equipmentLite.IsHired = false;
+
+                // HETS - 709 [BVT - Adjust the search for Equipment search screen]  
+                //equipmentLite.SenioritySortOrder = CalculateSenioritySortOrder(blockNumber, numberInBlock);
+                equipmentLite.SenioritySortOrder = 0;
 
                 equipmentLite.Make = equipment.Make;
                 equipmentLite.Model = equipment.Model;
@@ -179,7 +193,8 @@ namespace HetsData.Helpers
                 equipmentLite.EquipmentCode = equipment.EquipmentCode;
                 equipmentLite.AttachmentCount = CalculateAttachmentCount(equipment.HetEquipmentAttachment.ToList());
                 equipmentLite.LastVerifiedDate = equipment.LastVerifiedDate;
-                equipmentLite.SenioritySortOrder = CalculateSenioritySortOrder(blockNumber, numberInBlock);
+                equipmentLite.Status = equipment.EquipmentStatusType.EquipmentStatusTypeCode;
+                equipmentLite.LocalArea = equipment.LocalArea.Name;                
             }
 
             return equipmentLite;
