@@ -280,6 +280,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetRentalRequestAttachment)
                 .Include(x => x.HetHistory)
                 .Include(x => x.RentalRequestStatusType)
+                .Include(x => x.HetNote)
                 .First(a => a.RentalRequestId == id);
 
             if (rentalRequest.HetRentalRequestRotationList != null &&
