@@ -114,7 +114,7 @@ var TopNav = React.createClass({
             </Nav>
           }
           { this.props.showNav &&
-            <Nav id="navbar-right" pullRight>
+            <div id="navbar-right" className="pull-right">
               { this.props.rolloverStatus.displayRolloverMessage && this.props.rolloverStatus.rolloverComplete &&
                 <OverlayTrigger trigger="click" placement="bottom" rootClose overlay={
                   <Popover id="rollover-notice" title="Roll Over Complete" >
@@ -144,7 +144,7 @@ var TopNav = React.createClass({
                   <Button onClick={ this.logout } bsStyle="primary">Logout</Button>
                 </Dropdown.Menu>
               </Dropdown>
-            </Nav>
+            </div>
           }
           <OverlayTrigger trigger="click" placement="bottom" rootClose overlay={
             <Popover id="error-message" title={ this.props.requestError.status + ' – API Error' }>

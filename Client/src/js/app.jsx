@@ -39,7 +39,7 @@ hashHistory.listen(location =>  {
 
 // redirects regular users to rollover page if rollover in progress
 function redirectIfRolloverActive(path) { 
-  var onBusinessPage = path.startsWith(Constant.BUSINESS_PORTAL_PATHNAME);
+  var onBusinessPage = path.indexOf(Constant.BUSINESS_PORTAL_PATHNAME) === 0;
   var onRolloverPage = path === '/' + Constant.ROLLOVER_PATHNAME;
   if (onBusinessPage || onRolloverPage) {
     return;
