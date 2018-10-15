@@ -63,7 +63,12 @@
   }
 
   #navbar-right {
-    margin-left: auto;
+    margin: 0 0 0 auto;
+
+    .dropdown-menu {
+      right: 0;
+      left: auto;
+    }
   }
 
   #profile-menu + .dropdown-menu {
