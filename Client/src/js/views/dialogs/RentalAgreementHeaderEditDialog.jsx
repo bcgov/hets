@@ -100,7 +100,7 @@ var RentalAgreementHeaderEditDialog = React.createClass({
       {(() => {
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-        var projects = _.sortBy(this.props.projects.data, 'name');
+        var projects = _.sortBy(this.props.projects, 'name');
 
         return <Form>
           <Grid fluid>
@@ -129,7 +129,7 @@ var RentalAgreementHeaderEditDialog = React.createClass({
 function mapStateToProps(state) {
   return {
     rentalAgreement: state.models.rentalAgreement,
-    projects: state.models.projects,
+    projects: state.lookups.projects,
     equipmentList: state.models.equipmentList,
   };
 }

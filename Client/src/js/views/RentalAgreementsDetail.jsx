@@ -82,7 +82,7 @@ var RentalAgreementsDetail = React.createClass({
     var getRentalConditionsPromise = Api.getRentalConditions();
     var getProvincialRateTypesPromise = Api.getProvincialRateTypes();
     var getEquipmentListPromise = Api.searchEquipmentList({ status: Constant.EQUIPMENT_STATUS_CODE_APPROVED });
-    var getProjectsPromise = Api.searchProjects({ status: Constant.PROJECT_STATUS_CODE_ACTIVE });
+    var getProjectsPromise = Api.getProjects();
     return Promise.all([getRentalAgreementPromise, getRentalConditionsPromise, getProvincialRateTypesPromise, getEquipmentListPromise, getProjectsPromise]).finally(() => {
       this.setState({ loading: false });
     });
