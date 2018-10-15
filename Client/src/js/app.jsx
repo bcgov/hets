@@ -2,6 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { Router, Route, Redirect, hashHistory } from 'react-router';
 
+import * as Api from './api';
 import * as Constant from './constants';
 import * as Action from './actionTypes';
 import store from './store';
@@ -23,11 +24,41 @@ import Users from './views/Users.jsx';
 import UsersDetail from './views/UsersDetail.jsx';
 import Roles from './views/Roles.jsx';
 import RolesDetail from './views/RolesDetail.jsx';
+import Rollover from './views/Rollover.jsx';
 import DistrictAdmin from './views/DistrictAdmin.jsx';
 import Version from './views/Version.jsx';
 import FourOhFour from './views/404.jsx';
 
-function restrictToBusinesses() {
+hashHistory.listen(location =>  {
+  if (location.action !== 'POP') {
+    return;
+  }
+
+  redirectIfRolloverActive(location.pathname);
+});
+
+// redirects regular users to rollover page if rollover in progress
+function redirectIfRolloverActive(path) { 
+  var onBusinessPage = path.startsWith(Constant.BUSINESS_PORTAL_PATHNAME);
+  var onRolloverPage = path === '/' + Constant.ROLLOVER_PATHNAME;
+  if (onBusinessPage || onRolloverPage) {
+    return;
+  }
+  
+  var user = store.getState().user;
+  if (!user.district) {
+    return;
+  }
+  
+  Api.getRolloverStatus(user.district.id).then(() => {
+    var rolloverActive = store.getState().lookups.rolloverStatus.rolloverActive;
+    if (rolloverActive) {
+      hashHistory.push('/' + Constant.ROLLOVER_PATHNAME);
+    }
+  });
+}
+
+function onEnterBusiness() {
   // allow access to business users
   if (store.getState().user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
     return;
@@ -42,9 +73,10 @@ function restrictToBusinesses() {
   //hashHistory.push('/');
 }
 
-function restrictToHetsUsers() {
+function onEnterApplication() {
   // allow access to HETS users
   if (store.getState().user.hasPermission(Constant.PERMISSION_LOGIN)) {
+    redirectIfRolloverActive(hashHistory.getCurrentLocation().pathname);
     return;
   }
   
@@ -70,9 +102,9 @@ export function setTimerInterval() {
 const App = <Provider store={ store }>
   <Router history={ hashHistory }>
     <Redirect from="/" to="/home"/>
-    <Route path={ Constant.BUSINESS_PORTAL_PATHNAME } component={ BusinessPortal } onEnter={ restrictToBusinesses } />
-    <Route path={ `${Constant.BUSINESS_DETAILS_PATHNAME }/:ownerId` } component={ BusinessOwner } onEnter={ restrictToBusinesses } />
-    <Route path="/" component={ Main } onEnter={ restrictToHetsUsers }>
+    <Route path={ Constant.BUSINESS_PORTAL_PATHNAME } component={ BusinessPortal } onEnter={ onEnterBusiness } />
+    <Route path={ `${Constant.BUSINESS_DETAILS_PATHNAME }/:ownerId` } component={ BusinessOwner } onEnter={ onEnterBusiness } />
+    <Route path="/" component={ Main } onEnter={ onEnterApplication }>
       <Route path={ Constant.HOME_PATHNAME } component={ Home }/>
       <Route path={ Constant.EQUIPMENT_PATHNAME } component={ Equipment }/>
       <Route path={ `${ Constant.EQUIPMENT_PATHNAME }/:equipmentId` } component={ EquipmentDetail }/>
@@ -89,6 +121,7 @@ const App = <Provider store={ store }>
       <Route path={ `${ Constant.USERS_PATHNAME }/:userId` } component={ UsersDetail }/>
       <Route path={ Constant.ROLES_PATHNAME } component={ Roles }/>
       <Route path={ `${ Constant.ROLES_PATHNAME }/:roleId` } component={ RolesDetail }/>
+      <Route path={ Constant.ROLLOVER_PATHNAME } component={ Rollover } />
       <Route path={ Constant.DISTRICT_ADMIN_PATHNAME } component={ DistrictAdmin } />
       <Route path={ Constant.VERSION_PATHNAME } component={ Version }/>
       <Route path="*" component={ FourOhFour }/>

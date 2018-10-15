@@ -1869,6 +1869,10 @@ export function getBusiness() {
   return new ApiRequest('/business').get().then(response => {
     var business = response.data;
 
+    if (!_.isObject(business)) {
+      business = { };
+    }
+
     _.map(business.owners, owner => { parseOwner(owner); });
     store.dispatch({ type: Action.UPDATE_BUSINESS, business: business });
   });
@@ -1892,6 +1896,41 @@ export function validateOwner(secretKey, postalCode) {
     var business = response.data;
     parseOwner(business.linkedOwner);
     store.dispatch({ type: Action.UPDATE_BUSINESS, business: business });
+  });
+}
+
+
+////////////////////
+// Rollovers
+////////////////////
+
+function parseRolloverStatus(status) {
+  status.rolloverInactive = status.progressPercentage == null;
+  status.rolloverActive = status.progressPercentage != null && status.progressPercentage >= 0 && status.progressPercentage < 100;
+  status.rolloverComplete = status.progressPercentage == 100;
+}
+
+export function getRolloverStatus(districtId) {
+  return new ApiRequest(`/districts/${districtId}/rolloverStatus`).get().then(response => {
+    var status = response.data;
+    parseRolloverStatus(status);
+    store.dispatch({ type: Action.UPDATE_ROLLOVER_STATUS_LOOKUP, status: status });
+  });
+}
+
+export function initiateRollover(districtId) {
+  return new ApiRequest(`/districts/${districtId}/annualRollover`).get().then(response => {
+    var status = response;
+    parseRolloverStatus(status);
+    store.dispatch({ type: Action.UPDATE_ROLLOVER_STATUS_LOOKUP, status: status });
+  });
+}
+
+export function dismissRolloverMessage(districtId) {
+  return new ApiRequest(`/districts/${districtId}/dismissRolloverMessage`).post().then(response => {
+    var status = response.data;
+    parseRolloverStatus(status);
+    store.dispatch({ type: Action.UPDATE_ROLLOVER_STATUS_LOOKUP, status: status });
   });
 }
 

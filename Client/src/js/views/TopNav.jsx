@@ -13,6 +13,7 @@ import * as Api from '../api';
 import Spinner from '../components/Spinner.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
 
+import { formatDateTimeUTCToLocal } from '../utils/date';
 
 var TopNav = React.createClass({
   propTypes: {
@@ -21,6 +22,7 @@ var TopNav = React.createClass({
     requestError: React.PropTypes.object,
     showNav: React.PropTypes.bool,
     currentUserDistricts: React.PropTypes.object,
+    rolloverStatus: React.PropTypes.object,
   },
 
   getDefaultProps() {
@@ -43,10 +45,16 @@ var TopNav = React.createClass({
     });
   },
 
+  dismissRolloverNotice() {
+    Api.dismissRolloverMessage(this.props.currentUser.district.id);
+  },
+
   render() {
     var userDistricts = this.props.currentUserDistricts.data.map(district => { 
       return { ...district, districtName: district.district.name, id: district.district.id }; 
     });
+
+    var navigationDisabled = this.props.rolloverStatus.rolloverActive;
 
     return <div id="header">
       <nav id="header-main" className="navbar navbar-default navbar-fixed-top">
@@ -59,48 +67,68 @@ var TopNav = React.createClass({
           <h1 id="banner">MOTI Hired Equipment Tracking System</h1>
         </div>
         <Navbar id="top-nav">
-          {this.props.showNav &&
+          { this.props.showNav &&
             <Nav>
-              <LinkContainer to={{ pathname: `/${ Constant.HOME_PATHNAME }` }}>
+              <LinkContainer to={{ pathname: `/${ Constant.HOME_PATHNAME }` }} disabled={ navigationDisabled }>
                 <NavItem eventKey={ 1 }>Home</NavItem>
               </LinkContainer>
-              <LinkContainer to={{ pathname: `/${ Constant.OWNERS_PATHNAME }` }}>
+              <LinkContainer to={{ pathname: `/${ Constant.OWNERS_PATHNAME }` }} disabled={ navigationDisabled }>
                 <NavItem eventKey={ 2 }>Owners</NavItem>
               </LinkContainer>
-              <LinkContainer to={{ pathname: `/${ Constant.EQUIPMENT_PATHNAME }` }}>
+              <LinkContainer to={{ pathname: `/${ Constant.EQUIPMENT_PATHNAME }` }} disabled={ navigationDisabled }>
                 <NavItem eventKey={ 3 }>Equipment</NavItem>
               </LinkContainer>
-              <LinkContainer to={{ pathname: `/${ Constant.PROJECTS_PATHNAME }` }}>
+              <LinkContainer to={{ pathname: `/${ Constant.PROJECTS_PATHNAME }` }} disabled={ navigationDisabled }>
                 <NavItem eventKey={ 5 }>Projects</NavItem>
               </LinkContainer>
-              <LinkContainer to={{ pathname: `/${ Constant.RENTAL_REQUESTS_PATHNAME }` }}>
+              <LinkContainer to={{ pathname: `/${ Constant.RENTAL_REQUESTS_PATHNAME }` }} disabled={ navigationDisabled }>
                 <NavItem eventKey={ 6 }>Requests</NavItem>
               </LinkContainer>
               { (this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN) ||
                 this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) ||
-                this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS)) &&
-                <NavDropdown id="admin-dropdown" title="Administration">
+                this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) ||
+                this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_ROLLOVER)) &&
+                <NavDropdown id="admin-dropdown" title="Administration" disabled={ navigationDisabled }>
                   { this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) &&
                     <LinkContainer to={{ pathname: `/${ Constant.USERS_PATHNAME }` }}>
                       <MenuItem eventKey={ 7 }>User Management</MenuItem>
                     </LinkContainer>
                   }
                   { this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) &&
-                    <LinkContainer to={{ pathname: `/${ Constant.ROLES_PATHNAME }` }}>
+                    <LinkContainer to={{ pathname: `/${ Constant.ROLES_PATHNAME }` }} disabled={ navigationDisabled }>
                       <MenuItem eventKey={ 8 }>Roles and Permissions</MenuItem>
+                    </LinkContainer>
+                  }
+                  { this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_ROLLOVER) &&
+                    <LinkContainer to={{ pathname: `/${ Constant.ROLLOVER_PATHNAME }` }} disabled={ navigationDisabled }>
+                      <MenuItem eventKey={ 8 }>Roll Over</MenuItem>
                     </LinkContainer>
                   }
                 </NavDropdown>
               }
               { this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) &&
-                <LinkContainer to={{ pathname: `/${ Constant.DISTRICT_ADMIN_PATHNAME }` }}>
+                <LinkContainer to={{ pathname: `/${ Constant.DISTRICT_ADMIN_PATHNAME }` }} disabled={ navigationDisabled }>
                   <NavItem eventKey={ 9 }>District Admin</NavItem>
                 </LinkContainer>
               }
             </Nav>
           }
-          {this.props.showNav &&
-            <Nav id="navbar-current-user" pullRight>
+          { this.props.showNav &&
+            <Nav id="navbar-right" pullRight>
+              { this.props.rolloverStatus.displayRolloverMessage && this.props.rolloverStatus.rolloverComplete &&
+                <OverlayTrigger trigger="click" placement="bottom" rootClose overlay={
+                  <Popover id="rollover-notice" title="Roll Over Complete" >
+                    <p>The hired equipment roll over has been completed on { formatDateTimeUTCToLocal(this.props.rolloverStatus.rolloverEndDate, Constant.DATE_TIME_READABLE) }.</p>
+                    <p><strong>Note: </strong>Please save/print out the new seniority lists for all equipments corresponding to each local area.</p>
+                    <Button onClick={ this.dismissRolloverNotice } bsStyle="primary">Dismiss</Button>
+                  </Popover>
+                }>
+                  <Button id="rollover-notice-button" className="mr-5" bsStyle="info" bsSize="xsmall">
+                    Roll Over Complete
+                    <Glyphicon glyph="exclamation-sign" />
+                  </Button>
+                </OverlayTrigger>
+              }
               <Dropdown
                 id="profile-menu"
               >
@@ -146,6 +174,7 @@ function mapStateToProps(state) {
     showWorkingIndicator: state.ui.requests.waiting,
     requestError: state.ui.requests.error,
     currentUserDistricts: state.models.currentUserDistricts,
+    rolloverStatus: state.lookups.rolloverStatus,
   };
 }
 

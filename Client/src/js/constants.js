@@ -7,6 +7,7 @@ export const RENTAL_AGREEMENTS_PATHNAME = 'rental-agreements';
 export const PROJECTS_PATHNAME = 'projects';
 export const USERS_PATHNAME = 'users';
 export const ROLES_PATHNAME = 'roles';
+export const ROLLOVER_PATHNAME = 'roll-over';
 export const VERSION_PATHNAME = 'version';
 export const CONTACTS_PATHNAME = 'contacts';
 export const DOCUMENTS_PATHNAME = 'documents';
@@ -26,8 +27,7 @@ export const PERMISSION_ROLES_AND_PERMISSIONS = 'RolesAndPermissions';
 export const PERMISSION_IMPORT_DATA = 'ImportData';
 export const PERMISSION_CODE_TABLE_MANAGEMENT = 'CodeTableManagement';
 export const PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT = 'DistrictCodeTableManagement';
-export const PERMISSION_ASSIGN_INSPECTORS = 'ASSIGN_INSPECTORS';
-export const PERMISSION_RECEIVE_NOTIFICATIONS = 'RECEIVE_NOTIFICATIONS';
+export const PERMISSION_DISTRICT_ROLLOVER = 'DistrictRollover';
 
 // Roles 
 export const ADMINISTRATOR_ROLE = 'Administrator';
