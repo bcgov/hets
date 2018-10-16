@@ -140,6 +140,9 @@ namespace HetsData.Helpers
                 // process all local areas and equipment types
                 foreach (HetLocalArea localArea in localAreas.WithProgress(progress))
                 {
+                    // re-open the connection
+                    dbContext = new DbAppContext(connectionString);
+
                     if (localArea.Name != null)
                     {
                         context.WriteLine("Local Area: " + localArea.Name);
@@ -218,6 +221,9 @@ namespace HetsData.Helpers
                 // **********************************************************
                 // regenerate Owner Secret Keys for this district
                 // **********************************************************    
+                // re-open the connection
+                dbContext = new DbAppContext(connectionString);
+
                 context.WriteLine("");
                 context.WriteLine("Generate New Secret Keys - District #" + districtId);
                 progress = context.WriteProgressBar();
@@ -265,7 +271,7 @@ namespace HetsData.Helpers
                     progress.SetValue(percentComplete);
                 }
 
-                // save remaining updates - done!
+                // save remaining updates - done!                
                 dbContext.SaveChangesForImport();
                 progress.SetValue(100);
                 context.WriteLine("Generate New Secret Keys - Done");
