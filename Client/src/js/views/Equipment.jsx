@@ -98,7 +98,6 @@ var Equipment = React.createClass({
   },
 
   componentDidMount() {
-    this.fetch();
     var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
     var ownersPromise = Api.getOwnersByDistrict(this.props.currentUser.district.id);
     var favouritesPromise = Api.getFavourites('equipment');

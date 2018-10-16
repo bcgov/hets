@@ -138,7 +138,6 @@ var RentalRequests = React.createClass({
           return;
         }
       }
-      this.fetch();
     });
   },
 

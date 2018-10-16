@@ -97,7 +97,6 @@ var Owners = React.createClass({
           return;
         }
       }
-      this.fetch();
     });
   },
 

@@ -75,7 +75,6 @@ var Projects = React.createClass({
           return;
         }
       }
-      this.fetch();
     });
   },
 
