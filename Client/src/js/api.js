@@ -415,9 +415,6 @@ export function searchEquipmentList(params) {
   return new ApiRequest('/equipment/search').get(params).then(response => {
     var equipmentList = normalize(response.data);
 
-    // Add display fields
-    _.map(equipmentList, equip => { parseEquipment(equip); });
-
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST, equipmentList: equipmentList });
   });
 }
