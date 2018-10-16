@@ -1,10 +1,18 @@
 import * as Action from '../actionTypes';
 
 const DEFAULT_SEARCHES = {
-  equipmentList: {},
-  owners: {},
-  projects: {},
-  rentalRequests: {},
+  equipmentList: {
+    clear: true,
+  },
+  owners: {
+    clear: true,
+  },
+  projects: {
+    clear: true,
+  },
+  rentalRequests: {
+    clear: true,
+  },
   users: {},
   roles: {},
 };

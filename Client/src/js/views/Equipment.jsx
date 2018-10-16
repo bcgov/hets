@@ -38,18 +38,31 @@ var Equipment = React.createClass({
   },
 
   getInitialState() {
+    // if the search prop has the 'clear' property set, clear out existing search results and use default search parameters
+    // otherwise, display previous search results and initialize search parameters from the store
+    var clear = true;
+
+    if (this.props.search.clear) {
+      // clear existing search results
+      store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST, equipmentList: {} });
+    } else {
+      clear = false;
+      // restore default 'clear' value for future visits to the page
+      store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: { ...this.props.search, clear: true }});
+    }
+
     return {
       showAddDialog: false,
       search: {
-        selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
-        selectedEquipmentTypesIds: this.props.search.selectedEquipmentTypesIds || [],
-        equipmentAttachment: this.props.search.equipmentAttachment || '',
-        ownerId: this.props.search.ownerId || 0,
-        ownerName: this.props.search.ownerName || 'Owner',
-        lastVerifiedDate: this.props.search.lastVerifiedDate || '',
-        hired: this.props.search.hired || false,
-        statusCode: this.props.search.statusCode || Constant.EQUIPMENT_STATUS_CODE_APPROVED,
-        equipmentId: this.props.search.equipmentId || '',
+        selectedLocalAreasIds: !clear && this.props.search.selectedLocalAreasIds || [],
+        selectedEquipmentTypesIds: !clear && this.props.search.selectedEquipmentTypesIds || [],
+        equipmentAttachment: !clear && this.props.search.equipmentAttachment || '',
+        ownerId: !clear && this.props.search.ownerId || 0,
+        ownerName: !clear && this.props.search.ownerName || 'Owner',
+        lastVerifiedDate: !clear && this.props.search.lastVerifiedDate || '',
+        hired: !clear && this.props.search.hired || false,
+        statusCode: !clear && this.props.search.statusCode || Constant.EQUIPMENT_STATUS_CODE_APPROVED,
+        equipmentId: !clear && this.props.search.equipmentId || '',
       },
       ui : {
         sortField: this.props.ui.sortField || 'seniorityText',

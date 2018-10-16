@@ -50,13 +50,26 @@ var RentalRequests = React.createClass({
   },
 
   getInitialState() {
+    // if the search prop has the 'clear' property set, clear out existing search results and use default search parameters
+    // otherwise, display previous search results and initialize search parameters from the store
+    var clear = true;
+
+    if (this.props.search.clear) {
+      // clear existing search results
+      store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS, rentalRequests: {} });
+    } else {
+      clear = false;
+      // restore default 'clear' value for future visits to the page
+      store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_SEARCH, rentalRequests: { ...this.props.search, clear: true }});
+    }
+
     return {
       showAddDialog: false,
       search: {
-        selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
-        projectName: this.props.search.projectName || '',
-        status: this.props.search.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
-        dateRange: this.props.search.dateRange || '',
+        selectedLocalAreasIds: !clear && this.props.search.selectedLocalAreasIds || [],
+        projectName: !clear && this.props.search.projectName || '',
+        status: !clear && this.props.search.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
+        dateRange: !clear && this.props.search.dateRange || '',
       },
       ui : {
         sortField: this.props.ui.sortField || 'localAreaName',
