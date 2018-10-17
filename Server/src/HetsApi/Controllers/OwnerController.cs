@@ -338,7 +338,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult OwnersSearchGet([FromQuery]string localAreas, 
             [FromQuery]string equipmentTypes, [FromQuery]int? owner, [FromQuery]string status, 
-            [FromQuery]bool? hired, [FromQuery]string ownerCode = null)
+            [FromQuery]bool? hired, [FromQuery]string ownerName = null, [FromQuery]string ownerCode = null)
         {
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
             int?[] equipmentTypesArray = ArrayHelper.ParseIntArray(equipmentTypes);
@@ -405,6 +405,11 @@ namespace HetsApi.Controllers
             if (owner != null)
             {
                 data = data.Where(x => x.OwnerId == owner);
+            }
+
+            if (ownerName != null)
+            {
+                data = data.Where(x => x.OrganizationName.ToLower().Contains(ownerName.ToLower()));
             }
 
             if (ownerCode != null)
