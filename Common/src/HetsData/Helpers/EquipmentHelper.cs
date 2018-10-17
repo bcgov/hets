@@ -55,6 +55,8 @@ namespace HetsData.Helpers
 
         public string Size { get; set; }
 
+        public string Year { get; set; }
+
         public string EquipmentCode { get; set; }
 
         public int AttachmentCount { get; set; }
@@ -190,6 +192,7 @@ namespace HetsData.Helpers
                 equipmentLite.Make = equipment.Make;
                 equipmentLite.Model = equipment.Model;
                 equipmentLite.Size = equipment.Size;
+                equipmentLite.Year = equipment.Year;
                 equipmentLite.EquipmentCode = equipment.EquipmentCode;
                 equipmentLite.AttachmentCount = CalculateAttachmentCount(equipment.HetEquipmentAttachment.ToList());
                 equipmentLite.LastVerifiedDate = equipment.LastVerifiedDate;
