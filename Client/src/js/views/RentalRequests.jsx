@@ -26,6 +26,7 @@ import Mailto from '../components/Mailto.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import TooltipButton from '../components/TooltipButton.jsx';
 
 import { formatDateTime, startOfCurrentFiscal, endOfCurrentFiscal, startOfPreviousFiscal, endOfPreviousFiscal, toZuluTime } from '../utils/date';
 
@@ -281,7 +282,9 @@ var RentalRequests = React.createClass({
     return <div id="rental-requests-list">
       <PageHeader>Rental Requests { resultCount }
         <ButtonGroup id="rental-requests-buttons">
-          <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+          <TooltipButton onClick={ this.print } disabled={ !this.props.rentalRequests.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
+            <Glyphicon glyph="print" title="Print" />
+          </TooltipButton>
         </ButtonGroup>
       </PageHeader>
       <Well id="rental-requests-bar" bsSize="small" className="clearfix">

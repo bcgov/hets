@@ -23,6 +23,7 @@ import FilterDropdown from '../components/FilterDropdown.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import TooltipButton from '../components/TooltipButton.jsx';
 
 var Owners = React.createClass({
   propTypes: {
@@ -260,9 +261,13 @@ var Owners = React.createClass({
     return <div id="owners-list">
       <PageHeader>Owners { resultCount }
         <div id="owners-buttons">
-          <Button onClick={ this.verifyOwners.bind(this, ownerList) }>Status Letters</Button>
+          <TooltipButton className="mr-5" onClick={ this.verifyOwners.bind(this, ownerList) } disabled={ !this.props.ownerList.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
+            Status Letters
+          </TooltipButton>
           <ButtonGroup>
-            <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+            <TooltipButton onClick={ this.print } disabled={ !this.props.ownerList.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
+              <Glyphicon glyph="print" title="Print" />
+            </TooltipButton>
           </ButtonGroup>
         </div>
       </PageHeader>

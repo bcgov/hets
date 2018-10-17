@@ -20,6 +20,7 @@ import Favourites from '../components/Favourites.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import TooltipButton from '../components/TooltipButton.jsx';
 
 var Projects = React.createClass({
   propTypes: {
@@ -201,7 +202,9 @@ var Projects = React.createClass({
     return <div id="projects-list">
       <PageHeader>Projects { resultCount }
         <ButtonGroup id="projects-buttons">
-          <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+          <TooltipButton onClick={ this.print } disabled={ !this.props.projects.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
+            <Glyphicon glyph="print" title="Print" />
+          </TooltipButton>
         </ButtonGroup>
       </PageHeader>
       <Well id="projects-bar" bsSize="small" className="clearfix">

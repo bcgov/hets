@@ -21,6 +21,8 @@ import FilterDropdown from '../components/FilterDropdown.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import Spinner from '../components/Spinner.jsx';
+import TooltipButton from '../components/TooltipButton.jsx';
+
 import EquipmentTable from './EquipmentTable.jsx';
 
 import { toZuluTime } from '../utils/date';
@@ -189,11 +191,13 @@ var Equipment = React.createClass({
     if (this.props.equipmentList.loaded) {
       resultCount = '(' + Object.keys(this.props.equipmentList.data).length + ')';
     }
-
+    
     return <div id="equipment-list">
       <PageHeader>Equipment { resultCount }
         <ButtonGroup id="equipment-buttons">
-          <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+          <TooltipButton onClick={ this.print } disabled={ !this.props.equipmentList.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
+            <Glyphicon glyph="print" title="Print" />
+          </TooltipButton>
         </ButtonGroup>
       </PageHeader>
       <Well id="equipment-bar" bsSize="small" className="clearfix">
