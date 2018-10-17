@@ -25,6 +25,7 @@ import FormInputControl from '../components/FormInputControl.jsx';
 import Mailto from '../components/Mailto.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
+import Spinner from '../components/Spinner.jsx';
 
 import { formatDateTime, startOfCurrentFiscal, endOfCurrentFiscal, startOfPreviousFiscal, endOfPreviousFiscal, toZuluTime } from '../utils/date';
 
@@ -56,7 +57,7 @@ var RentalRequests = React.createClass({
 
     if (this.props.search.clear) {
       // clear existing search results
-      store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS, rentalRequests: {} });
+      store.dispatch({ type: Action.CLEAR_RENTAL_REQUESTS });
     } else {
       clear = false;
       // restore default 'clear' value for future visits to the page
@@ -204,16 +205,81 @@ var RentalRequests = React.createClass({
     window.print();
   },
 
+  renderResults() {
+    var addRentalRequestButton = <Button title="Add Rental Request" bsSize="xsmall" onClick={ this.openAddDialog }>
+      <Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong>
+    </Button>;
+
+    if (Object.keys(this.props.rentalRequests.data).length === 0) { return <Alert bsStyle="success">No Rental Requests { addRentalRequestButton }</Alert>; }
+
+    var rentalRequests = _.sortBy(this.props.rentalRequests.data, rentalRequest => {
+      var sortValue = rentalRequest[this.state.ui.sortField];
+      if (typeof sortValue === 'string') {
+        return sortValue.toLowerCase();
+      }
+      return sortValue;
+    });
+
+    if (this.state.ui.sortDesc) {
+      _.reverse(rentalRequests);
+    }
+
+    return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
+      { field: 'localAreaName',          title: 'Local Area'                                      },
+      { field: 'equipmentCount',         title: 'Pieces',          style: { textAlign: 'center' } },
+      { field: 'districtEquipmentName',  title: 'Equipment Type'                                  },
+      { field: 'expectedStartDate',      title: 'Start Date',      style: { textAlign: 'center' } },
+      { field: 'expectedEndDate',        title: 'End Date',        style: { textAlign: 'center' } },
+      { field: 'projectName',            title: 'Project'                                         },
+      { field: 'primaryContactName',     title: 'Primary Contact'                                 },
+      { field: 'status',                 title: 'Status',          style: { textAlign: 'center' } },
+      { field: 'addRentalRequest',       title: 'Add Project',     style: { textAlign: 'right'  },
+        node: addRentalRequestButton,
+      },
+    ]}>
+      {
+        _.map(rentalRequests, (request) => {
+          return <tr key={ request.id } className={ request.isActive ? null : 'info' }>
+            <td>{ request.localAreaName }</td>
+            <td style={{ textAlign: 'center' }}>{ request.equipmentCount }</td>
+            <td>{ request.districtEquipmentName }</td>
+            <td style={{ textAlign: 'center' }}>{ formatDateTime(request.expectedStartDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
+            <td style={{ textAlign: 'center' }}>{ formatDateTime(request.expectedEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
+            <td>
+              <Link to={ request.projectPath }>{ request.projectName }</Link>
+            </td>
+            <td>
+              {
+                request.primaryContactName ?
+                  <Mailto email={ request.primaryContactEmail }>{ request.primaryContactName }</Mailto> :
+                  'None'
+              }
+            </td>
+            <td style={{ textAlign: 'center' }}>{ request.status }</td>
+            <td style={{ textAlign: 'right' }}>
+              <ButtonGroup>
+                <EditButton name="Rental Request" hide={ !request.canView } view pathname={ `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ request.id }` }/>
+              </ButtonGroup>
+            </td>
+          </tr>;
+        })
+      }
+    </SortTable>;
+  },
+
   render() {
     // Constrain the local area drop downs to those in the District of the current logged in user
     var localAreas = _.chain(this.props.localAreas)
       .sortBy('name')
       .value();
 
-    var numRentalRequests = this.props.rentalRequests.loading ? '...' : Object.keys(this.props.rentalRequests.data).length;
+    var resultCount = '';
+    if (this.props.rentalRequests.loaded) {
+      resultCount = '(' + Object.keys(this.props.rentalRequests.data).length + ')';
+    }
 
     return <div id="rental-requests-list">
-      <PageHeader>Rental Requests ({ numRentalRequests })
+      <PageHeader>Rental Requests { resultCount }
         <ButtonGroup id="rental-requests-buttons">
           <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
         </ButtonGroup>
@@ -260,65 +326,13 @@ var RentalRequests = React.createClass({
       </Well>
 
       {(() => {
-        var addRentalRequestButton = <Button title="Add Rental Request" bsSize="xsmall" onClick={ this.openAddDialog }>
-          <Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong>
-        </Button>;
 
-        if (Object.keys(this.props.rentalRequests.data).length === 0) { return <Alert bsStyle="success">No Rental Requests { addRentalRequestButton }</Alert>; }
-
-        var rentalRequests = _.sortBy(this.props.rentalRequests.data, rentalRequest => {
-          var sortValue = rentalRequest[this.state.ui.sortField];
-          if (typeof sortValue === 'string') {
-            return sortValue.toLowerCase();
-          }
-          return sortValue;
-        });
-
-        if (this.state.ui.sortDesc) {
-          _.reverse(rentalRequests);
+        if (this.props.rentalRequests.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+        
+        if (this.props.rentalRequests.loaded) {
+          return this.renderResults();
         }
 
-        return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-          { field: 'localAreaName',          title: 'Local Area'                                      },
-          { field: 'equipmentCount',         title: 'Pieces',          style: { textAlign: 'center' } },
-          { field: 'districtEquipmentName',  title: 'Equipment Type'                                  },
-          { field: 'expectedStartDate',      title: 'Start Date',      style: { textAlign: 'center' } },
-          { field: 'expectedEndDate',        title: 'End Date',        style: { textAlign: 'center' } },
-          { field: 'projectName',            title: 'Project'                                         },
-          { field: 'primaryContactName',     title: 'Primary Contact'                                 },
-          { field: 'status',                 title: 'Status',          style: { textAlign: 'center' } },
-          { field: 'addRentalRequest',       title: 'Add Project',     style: { textAlign: 'right'  },
-            node: addRentalRequestButton,
-          },
-        ]}>
-          {
-            _.map(rentalRequests, (request) => {
-              return <tr key={ request.id } className={ request.isActive ? null : 'info' }>
-                <td>{ request.localAreaName }</td>
-                <td style={{ textAlign: 'center' }}>{ request.equipmentCount }</td>
-                <td>{ request.districtEquipmentName }</td>
-                <td style={{ textAlign: 'center' }}>{ formatDateTime(request.expectedStartDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
-                <td style={{ textAlign: 'center' }}>{ formatDateTime(request.expectedEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
-                <td>
-                  <Link to={ request.projectPath }>{ request.projectName }</Link>
-                </td>
-                <td>
-                  {
-                    request.primaryContactName ?
-                      <Mailto email={ request.primaryContactEmail }>{ request.primaryContactName }</Mailto> :
-                      'None'
-                  }
-                </td>
-                <td style={{ textAlign: 'center' }}>{ request.status }</td>
-                <td style={{ textAlign: 'right' }}>
-                  <ButtonGroup>
-                    <EditButton name="Rental Request" hide={ !request.canView } view pathname={ `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ request.id }` }/>
-                  </ButtonGroup>
-                </td>
-              </tr>;
-            })
-          }
-        </SortTable>;
       })()}
       <RentalRequestsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewRequest } onClose={ this.closeAddDialog } />
     </div>;

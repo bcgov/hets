@@ -38,7 +38,7 @@ var Projects = React.createClass({
 
     if (this.props.search.clear) {
       // clear existing search results
-      store.dispatch({ type: Action.UPDATE_PROJECTS, projects: {} });
+      store.dispatch({ type: Action.CLEAR_PROJECTS });
     } else {
       clear = false;
       // restore default 'clear' value for future visits to the page
@@ -140,11 +140,66 @@ var Projects = React.createClass({
     window.print();
   },
 
+  renderResults() {
+    var addProjectButton = <Button title="Add Project" bsSize="xsmall" onClick={ this.openAddDialog }>
+      <Glyphicon glyph="plus" />&nbsp;<strong>Add Project</strong>
+    </Button>;
+
+    if (Object.keys(this.props.projects.data).length === 0) { 
+      return <Alert bsStyle="success">No Projects { addProjectButton }</Alert>; 
+    }
+
+    var projects = _.sortBy(this.props.projects.data, project => {
+      var sortValue = project[this.state.ui.sortField];
+      if (typeof sortValue === 'string') {
+        return sortValue.toLowerCase();
+      }
+      return sortValue;
+    });
+    
+    if (this.state.ui.sortDesc) {
+      _.reverse(projects);
+    }
+
+    return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
+      { field: 'name',                   title: 'Project'                                        },
+      { field: 'primaryContactName',     title: 'Primary Contact'                                },
+      { field: 'primaryContactPhone',    title: 'Contact #'                                      },
+      { field: 'hires',          title: 'Hires',          style: { textAlign: 'center' } },
+      { field: 'requests',       title: 'Requests',       style: { textAlign: 'center' } },
+      { field: 'status',                 title: 'Status',         style: { textAlign: 'center' } },
+      { field: 'addProject',             title: 'Add Project',    style: { textAlign: 'right'  },
+        node: addProjectButton,
+      },
+    ]}>
+      {
+        _.map(projects, (project) => {
+          return <tr key={ project.id } className={ project.isActive ? null : 'info' }>
+            <td>{ project.name }</td>
+            <td>{ project.primaryContactName }</td>
+            <td>{ project.primaryContactPhone }</td>
+            <td style={{ textAlign: 'center' }}>{ project.hires }</td>
+            <td style={{ textAlign: 'center' }}>{ project.requests }</td>
+            <td style={{ textAlign: 'center' }}>{ project.status }</td>
+            <td style={{ textAlign: 'right' }}>
+              <ButtonGroup>
+                <EditButton name="Project" hide={ !project.canView } view pathname={ `${ Constant.PROJECTS_PATHNAME }/${ project.id }` }/>
+              </ButtonGroup>
+            </td>
+          </tr>;
+        })
+      }
+    </SortTable>;
+  },
+
   render() {
-    var numProjects = this.props.projects.loading ? '...' : Object.keys(this.props.projects.data).length;
+    var resultCount = '';
+    if (this.props.projects.loaded) {
+      resultCount = '(' + Object.keys(this.props.projects.data).length + ')';
+    }
 
     return <div id="projects-list">
-      <PageHeader>Projects ({ numProjects })
+      <PageHeader>Projects { resultCount }
         <ButtonGroup id="projects-buttons">
           <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
         </ButtonGroup>
@@ -171,58 +226,15 @@ var Projects = React.createClass({
       </Well>
 
       {(() => {
-        var addProjectButton = <Button title="Add Project" bsSize="xsmall" onClick={ this.openAddDialog }>
-          <Glyphicon glyph="plus" />&nbsp;<strong>Add Project</strong>
-        </Button>;
 
         if (this.props.projects.loading || this.props.favourites.loading) { 
           return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
         }
-        if (Object.keys(this.props.projects.data).length === 0 && this.props.projects.success) { 
-          return <Alert bsStyle="success">No Projects { addProjectButton }</Alert>; 
+
+        if (this.props.projects.loaded) {
+          return this.renderResults();
         }
 
-        var projects = _.sortBy(this.props.projects.data, project => {
-          var sortValue = project[this.state.ui.sortField];
-          if (typeof sortValue === 'string') {
-            return sortValue.toLowerCase();
-          }
-          return sortValue;
-        });
-        
-        if (this.state.ui.sortDesc) {
-          _.reverse(projects);
-        }
-
-        return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-          { field: 'name',                   title: 'Project'                                        },
-          { field: 'primaryContactName',     title: 'Primary Contact'                                },
-          { field: 'primaryContactPhone',    title: 'Contact #'                                      },
-          { field: 'hires',          title: 'Hires',          style: { textAlign: 'center' } },
-          { field: 'requests',       title: 'Requests',       style: { textAlign: 'center' } },
-          { field: 'status',                 title: 'Status',         style: { textAlign: 'center' } },
-          { field: 'addProject',             title: 'Add Project',    style: { textAlign: 'right'  },
-            node: addProjectButton,
-          },
-        ]}>
-          {
-            _.map(projects, (project) => {
-              return <tr key={ project.id } className={ project.isActive ? null : 'info' }>
-                <td>{ project.name }</td>
-                <td>{ project.primaryContactName }</td>
-                <td>{ project.primaryContactPhone }</td>
-                <td style={{ textAlign: 'center' }}>{ project.hires }</td>
-                <td style={{ textAlign: 'center' }}>{ project.requests }</td>
-                <td style={{ textAlign: 'center' }}>{ project.status }</td>
-                <td style={{ textAlign: 'right' }}>
-                  <ButtonGroup>
-                    <EditButton name="Project" hide={ !project.canView } view pathname={ `${ Constant.PROJECTS_PATHNAME }/${ project.id }` }/>
-                  </ButtonGroup>
-                </td>
-              </tr>;
-            })
-          }
-        </SortTable>;
       })()}
       { this.state.showAddDialog &&
         <ProjectsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewProject } onClose={ this.closeAddDialog } />

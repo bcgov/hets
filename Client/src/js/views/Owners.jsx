@@ -45,7 +45,7 @@ var Owners = React.createClass({
 
     if (this.props.search.clear) {
       // clear existing search results
-      store.dispatch({ type: Action.UPDATE_OWNERS, owners: {} });
+      store.dispatch({ type: Action.CLEAR_OWNERS });
     } else {
       clear = false;
       // restore default 'clear' value for future visits to the page
@@ -190,6 +190,42 @@ var Owners = React.createClass({
     });
   },
 
+  renderResults(ownerList) {
+    var addOwnerButton = <Button title="Add Owner" bsSize="xsmall" onClick={ this.openAddDialog }>
+      <Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong>
+    </Button>;
+
+    if (Object.keys(this.props.ownerList.data).length === 0) { return <Alert bsStyle="success">No owners { addOwnerButton }</Alert>; }
+
+    return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
+      { field: 'localAreaName',          title: 'Local Area'                                      },
+      { field: 'organizationName',       title: 'Company'                                         },
+      { field: 'primaryContactName',     title: 'Primary Contact'                                 },
+      { field: 'equipmentCount',         title: 'Equipment',       style: { textAlign: 'center' } },
+      { field: 'status',                 title: 'Status',          style: { textAlign: 'center' } },
+      { field: 'addOwner',               title: 'Add Owner',       style: { textAlign: 'right'  },
+        node: addOwnerButton,
+      },
+    ]}>
+      {
+        _.map(ownerList, (owner) => {
+          return <tr key={ owner.id } className={ owner.status === Constant.OWNER_STATUS_CODE_APPROVED ? null : 'info' }>
+            <td>{ owner.localAreaName }</td>
+            <td>{ owner.organizationName }</td>
+            <td>{ owner.primaryContactName }</td>
+            <td style={{ textAlign: 'center' }}>{ owner.equipmentCount }</td>
+            <td style={{ textAlign: 'center' }}>{ owner.status }</td>
+            <td style={{ textAlign: 'right' }}>
+              <ButtonGroup>
+                <EditButton name="Owner" view pathname={ `${ Constant.OWNERS_PATHNAME }/${ owner.id }` }/>
+              </ButtonGroup>
+            </td>
+          </tr>;
+        })
+      }
+    </SortTable>;
+  },
+
   render() {
     // Constrain the local area drop downs to those in the District of the current logged in user
     var localAreas = _.chain(this.props.localAreas)
@@ -205,7 +241,10 @@ var Owners = React.createClass({
       .sortBy('districtEquipmentName')
       .value();
 
-    var numOwners = this.props.ownerList.loading ? '...' : Object.keys(this.props.ownerList.data).length;
+    var resultCount = '';
+    if (this.props.ownerList.loaded) {
+      resultCount = '(' + Object.keys(this.props.ownerList.data).length + ')';
+    }
 
     var ownerList = _.sortBy(this.props.ownerList.data, owner => {
       if (typeof owner[this.state.ui.sortField] === 'string') {
@@ -219,7 +258,7 @@ var Owners = React.createClass({
     }
 
     return <div id="owners-list">
-      <PageHeader>Owners ({ numOwners })
+      <PageHeader>Owners { resultCount }
         <div id="owners-buttons">
           <Button onClick={ this.verifyOwners.bind(this, ownerList) }>Status Letters</Button>
           <ButtonGroup>
@@ -254,39 +293,11 @@ var Owners = React.createClass({
       </Well>
 
       {(() => {
-        var addOwnerButton = <Button title="Add Owner" bsSize="xsmall" onClick={ this.openAddDialog }>
-          <Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong>
-        </Button>;
         if (this.props.owners.loading || this.props.ownerList.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-        if (Object.keys(this.props.ownerList.data).length === 0) { return <Alert bsStyle="success">No owners { addOwnerButton }</Alert>; }
-
-        return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-          { field: 'localAreaName',          title: 'Local Area'                                      },
-          { field: 'organizationName',       title: 'Company'                                         },
-          { field: 'primaryContactName',     title: 'Primary Contact'                                 },
-          { field: 'equipmentCount',         title: 'Equipment',       style: { textAlign: 'center' } },
-          { field: 'status',                 title: 'Status',          style: { textAlign: 'center' } },
-          { field: 'addOwner',               title: 'Add Owner',       style: { textAlign: 'right'  },
-            node: addOwnerButton,
-          },
-        ]}>
-          {
-            _.map(ownerList, (owner) => {
-              return <tr key={ owner.id } className={ owner.status === Constant.OWNER_STATUS_CODE_APPROVED ? null : 'info' }>
-                <td>{ owner.localAreaName }</td>
-                <td>{ owner.organizationName }</td>
-                <td>{ owner.primaryContactName }</td>
-                <td style={{ textAlign: 'center' }}>{ owner.equipmentCount }</td>
-                <td style={{ textAlign: 'center' }}>{ owner.status }</td>
-                <td style={{ textAlign: 'right' }}>
-                  <ButtonGroup>
-                    <EditButton name="Owner" view pathname={ `${ Constant.OWNERS_PATHNAME }/${ owner.id }` }/>
-                  </ButtonGroup>
-                </td>
-              </tr>;
-            })
-          }
-        </SortTable>;
+        
+        if (this.props.ownerList.loaded) {
+          return this.renderResults(ownerList);
+        }
       })()}
       { this.state.showAddDialog &&
         <OwnersAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewOwner } onClose={ this.closeAddDialog } />

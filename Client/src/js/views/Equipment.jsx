@@ -44,7 +44,7 @@ var Equipment = React.createClass({
 
     if (this.props.search.clear) {
       // clear existing search results
-      store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST, equipmentList: {} });
+      store.dispatch({ type: Action.CLEAR_EQUIPMENT_LIST });
     } else {
       clear = false;
       // restore default 'clear' value for future visits to the page
@@ -158,6 +158,20 @@ var Equipment = React.createClass({
     window.print();
   },
 
+  renderResults() {
+    if (Object.keys(this.props.equipmentList.data).length === 0) { 
+      return <Alert bsStyle="success">No equipment</Alert>; 
+    }
+    
+    return (
+      <EquipmentTable
+        ui={this.state.ui}
+        updateUIState={this.updateUIState}
+        equipmentList={this.props.equipmentList.data}
+      />
+    );
+  },
+
   render() {
     // Constrain the local area drop downs to those in the District of the current logged in user
     var localAreas = _.chain(this.props.localAreas)
@@ -171,10 +185,13 @@ var Equipment = React.createClass({
       .sortBy('districtEquipmentName')
       .value();
 
-    var numResults = this.props.equipmentList.loading ? '...' : Object.keys(this.props.equipmentList.data).length;
+    var resultCount = '';
+    if (this.props.equipmentList.loaded) {
+      resultCount = '(' + Object.keys(this.props.equipmentList.data).length + ')';
+    }
 
     return <div id="equipment-list">
-      <PageHeader>Equipment ({ numResults })
+      <PageHeader>Equipment { resultCount }
         <ButtonGroup id="equipment-buttons">
           <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
         </ButtonGroup>
@@ -229,18 +246,10 @@ var Equipment = React.createClass({
           return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
         }
 
-        if (Object.keys(this.props.equipmentList.data).length === 0 && this.props.equipmentList.success) { 
-          return <Alert bsStyle="success">No equipment</Alert>; 
+        if (this.props.equipmentList.loaded) {
+          return this.renderResults();
         }
         
-        return (
-          <EquipmentTable
-            ui={this.state.ui}
-            updateUIState={this.updateUIState}
-            equipmentList={this.props.equipmentList.data}
-          />
-        );
-
       })()}
 
     </div>;
