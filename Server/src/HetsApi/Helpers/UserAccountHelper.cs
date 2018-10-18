@@ -278,6 +278,27 @@ namespace HetsApi.Helpers
                     business.BceidBusinessNumber = businessNumber;
                 }
             }
+            else
+            {
+                // update business information
+                string legalName = httpContext.Request.Headers[ConstSiteMinderBusinessLegalName];
+                string businessNumber = httpContext.Request.Headers[ConstSiteMinderBusinessNumber];
+
+                if (!string.IsNullOrEmpty(legalName))
+                {
+                    business.BceidLegalName = legalName;
+                }
+
+                if (!string.IsNullOrEmpty(businessNumber))
+                {
+                    business.BceidBusinessNumber = businessNumber;
+                }
+
+                business.AppLastUpdateUserDirectory = "BCeID";
+                business.AppLastUpdateUserGuid = guid;
+                business.AppLastUpdateUserid = userId;
+                business.AppLastUpdateTimestamp = DateTime.UtcNow;
+            }
 
             // ok - now find the user
             HetBusinessUser user = context.HetBusinessUser
@@ -338,11 +359,29 @@ namespace HetsApi.Helpers
                 context.HetBusiness.Add(business);
                 context.SaveChanges();
             }
+            else
+            {
+                // update the user
+                string displayName = httpContext.Request.Headers[ConstSiteMinderUserDisplayName];
+                string email = httpContext.Request.Headers[ConstSiteMinderEmail];
+
+                if (!string.IsNullOrEmpty(displayName))
+                {
+                    user.BceidDisplayName = displayName;
+                }
+
+                if (!string.IsNullOrEmpty(email))
+                {
+                    user.BceidEmail = email;
+                }
+
+                context.SaveChanges();
+            }
 
             // get complete user record (with roles) and return
             user = context.HetBusinessUser
                 .Where(x => x.BusinessId == business.BusinessId &&
-                                     x.BceidUserId == userId)
+                            x.BceidUserId == userId)
                 .Include(u => u.HetBusinessUserRole)
                     .ThenInclude(r => r.Role)
                         .ThenInclude(rp => rp.HetRolePermission)
