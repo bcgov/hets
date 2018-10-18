@@ -1,31 +1,24 @@
 #rental-requests-list {
   #rental-requests-filters {
-    margin-top: -10px;
-
-    > div {
-      margin-top: 10px;
-    }
-
-    > label {
-      margin-top: 17px;
+    label {
+      margin-top: 7px;
       margin-left: 10px;
       float: left;
     }
 
     > button {
-      margin-top: 10px;
       margin-left: 20px;
     }
 
     > input {
       float: left;
       min-width: 175px;
-      margin: 10px 0 0 5px;
+      margin-left: 5px;
       width: auto;
     }
   }
 
-  #rental-requests-date-filters {
+  #rental-requests-custom-date-filters {
     margin-top: 10px;
 
     label {
@@ -44,12 +37,6 @@
 
   #rental-requests-faves {
     float: right;
-  }
-
-  #search-button {
-    float: right;
-    width: 105px;
-    margin-top: 10px;
   }
 }
 

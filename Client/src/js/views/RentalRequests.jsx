@@ -298,13 +298,14 @@ var RentalRequests = React.createClass({
                   <DropdownControl id="status" title={ this.state.search.status } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
                     items={[ Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS, Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ]} />
                   <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
-                </ButtonToolbar>
-              </Row>
-              <Row>
-                <ButtonToolbar id="rental-requests-date-filters">
                   <DropdownControl id="dateRange" title={ this.state.search.dateRange } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Expected Start Date"
                     items={[ WITHIN_30_DAYS, THIS_MONTH, THIS_QUARTER, THIS_FISCAL, LAST_MONTH, LAST_QUARTER, LAST_FISCAL, CUSTOM ]}
                   />
+                  <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
+                </ButtonToolbar>
+              </Row>
+              <Row>
+                <ButtonToolbar id="rental-requests-custom-date-filters">
                   {(() => {
                     if (this.state.search.dateRange === CUSTOM) {
                       return <span>
@@ -319,9 +320,6 @@ var RentalRequests = React.createClass({
             <Col sm={2}>
               <Row id="rental-requests-faves">
                 <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
-              </Row>
-              <Row id="rental-requests-search">
-                <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
               </Row>
             </Col>
           </Row>
