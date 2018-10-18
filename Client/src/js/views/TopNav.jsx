@@ -40,8 +40,10 @@ var TopNav = React.createClass({
   },
 
   logout() {
-    Api.logoffUser().then(() => {
-      window.location.href = Constant.LOGOUT;
+    Api.logoffUser().then(logoffUrl => {
+      if (logoffUrl) {
+        window.location.href = logoffUrl;
+      }
     });
   },
 
