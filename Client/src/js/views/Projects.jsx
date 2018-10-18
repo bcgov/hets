@@ -50,7 +50,7 @@ var Projects = React.createClass({
       showAddDialog: false,
       search: {
         statusCode: !clear && this.props.search.statusCode || Constant.PROJECT_STATUS_CODE_ACTIVE,
-        projectName: !clear && this.props.search.projectName,
+        projectName: !clear && this.props.search.projectName || '',
         projectNumber: !clear && this.props.search.projectNumber || '',
       },
       ui : {
