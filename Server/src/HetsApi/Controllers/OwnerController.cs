@@ -535,7 +535,7 @@ namespace HetsApi.Controllers
                     owner.MinistryDistrictId = model.MinistryDistrictId;
                     owner.DistrictName = model.DistrictName;
                     owner.DistrictAddress = model.DistrictAddress;
-                    owner.DistrictContact = model.DistrictAddress;
+                    owner.DistrictContact = model.DistrictContact;
 
                     model.Owners.Add(owner);
                 }
