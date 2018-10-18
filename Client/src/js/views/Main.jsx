@@ -7,7 +7,6 @@ import $ from 'jquery';
 import store from '../store';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
-import * as Constant from '../constants';
 
 import TopNav from './TopNav.jsx';
 import Footer from './Footer.jsx';
