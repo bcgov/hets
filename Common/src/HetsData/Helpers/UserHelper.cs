@@ -6,6 +6,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HetsData.Helpers
 {
+    #region User Models
+
+    public class LogoffModel
+    {
+        public string LogoffUrl { get; set; }
+    }
+
+    #endregion
+
     public static class UserHelper
     {
         #region Get all User records (plus associated records)

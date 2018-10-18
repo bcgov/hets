@@ -9,8 +9,10 @@ using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
+using HetsData.Helpers;
 using HetsData.Model;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace HetsApi.Controllers
@@ -25,12 +27,14 @@ namespace HetsApi.Controllers
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
+        private readonly IHostingEnvironment _env;
 
-        public CurrentUserController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory)
+        public CurrentUserController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory, IHostingEnvironment env)
         {
             _context = context;
             _configuration = configuration;
             _logger = loggerFactory.CreateLogger(typeof(CurrentUserController));
+            _env = env;
 
             // set context data
             User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
@@ -253,7 +257,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("logoff")]
         [SwaggerOperation("UserDistrictsIdLogoffPost")]
-        [SwaggerResponse(200, type: typeof(HetUser))]
+        [SwaggerResponse(200, type: typeof(LogoffModel))]
         [AllowAnonymous]
         public virtual IActionResult UsersCurrentLogoffPost()
         {
@@ -279,18 +283,26 @@ namespace HetsApi.Controllers
                     .FirstOrDefault(x => x.User.SmUserId == userId);
             }
 
-            // update the current district for the user
-            HetUser user = null;
-
+            // update the current district for the user            
             if (userDistrict != null)
             {
-                user = _context.HetUser.First(a => a.SmUserId == userId);
+                HetUser user = _context.HetUser.First(a => a.SmUserId == userId);
                 user.DistrictId = userDistrict.District.DistrictId;
 
                 _context.SaveChanges();
             }
 
-            return new ObjectResult(new HetsResponse(user));
+            // get the correct logoff url and return
+            string logoffUrl = _configuration.GetSection("Constants:LogoffUrl-Default").Value;
+
+            if (_env.IsProduction())
+            {
+                logoffUrl = _configuration.GetSection("Constants:LogoffUrl-Production").Value;
+            }
+
+            LogoffModel response = new LogoffModel {LogoffUrl = logoffUrl};
+
+            return new ObjectResult(new HetsResponse(response));
         }
 
         #region Update Favourite
