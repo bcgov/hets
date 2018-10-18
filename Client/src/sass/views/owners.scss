@@ -16,14 +16,17 @@
       margin-top: 10px;
       margin-left: 20px;
     }
+
+    > input {
+      float: left;
+      min-width: 175px;
+      margin: 10px 0 0 5px;
+      width: auto;
+    }
   }
 
   #owners-buttons {
     float: right;
-
-    > button {
-      margin-right: 5px;
-    }
 
     .btn-group > button {
       width: 40px;

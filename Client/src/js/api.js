@@ -415,17 +415,9 @@ export function searchEquipmentList(params) {
   return new ApiRequest('/equipment/search').get(params).then(response => {
     var equipmentList = normalize(response.data);
 
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST, equipmentList: equipmentList });
-  });
-}
-
-export function getEquipmentList() {
-  store.dispatch({ type: Action.EQUIPMENT_LIST_REQUEST });
-  return new ApiRequest('/equipment').get().then(response => {
-    var equipmentList = normalize(response.data);
-
-    // Add display fields
-    _.map(equipmentList, equip => { parseEquipment(equip); });
+    _.map(equipmentList, equipment => { 
+      equipment.details = [equipment.make, equipment.model, equipment.size, equipment.year].join('/');
+    });
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST, equipmentList: equipmentList });
   });

@@ -62,6 +62,7 @@ var Home = React.createClass({
 
   goToUnapprovedOwners() {
     var search = {
+      clear: false,
       statusCode: Constant.OWNER_STATUS_CODE_PENDING,
     };
     store.dispatch({ type: Action.UPDATE_OWNERS_SEARCH, owners: search });
@@ -70,6 +71,7 @@ var Home = React.createClass({
 
   goToUnapprovedEquipment() {
     var search = {
+      clear: false,
       statusCode: Constant.EQUIPMENT_STATUS_CODE_PENDING,
     };
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: search });

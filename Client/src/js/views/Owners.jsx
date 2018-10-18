@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form } from 'react-bootstrap';
 
 import _ from 'lodash';
-import Promise from 'bluebird';
 
 import OwnersAddDialog from './dialogs/OwnersAddDialog.jsx';
 
@@ -19,10 +18,11 @@ import CheckboxControl from '../components/CheckboxControl.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
 import EditButton from '../components/EditButton.jsx';
 import Favourites from '../components/Favourites.jsx';
-import FilterDropdown from '../components/FilterDropdown.jsx';
+import FormInputControl from '../components/FormInputControl.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import TooltipButton from '../components/TooltipButton.jsx';
 
 var Owners = React.createClass({
   propTypes: {
@@ -30,7 +30,6 @@ var Owners = React.createClass({
     ownerList: React.PropTypes.object,
     owner: React.PropTypes.object,
     localAreas: React.PropTypes.object,
-    districtEquipmentTypes: React.PropTypes.object,
     owners: React.PropTypes.object,
     favourites: React.PropTypes.object,
     search: React.PropTypes.object,
@@ -39,16 +38,28 @@ var Owners = React.createClass({
   },
 
   getInitialState() {
+    // if the search prop has the 'clear' property set, clear out existing search results and use default search parameters
+    // otherwise, display previous search results and initialize search parameters from the store
+    var clear = true;
+
+    if (this.props.search.clear) {
+      // clear existing search results
+      store.dispatch({ type: Action.CLEAR_OWNERS });
+    } else {
+      clear = false;
+      // restore default 'clear' value for future visits to the page
+      store.dispatch({ type: Action.UPDATE_OWNERS_SEARCH, owners: { ...this.props.search, clear: true }});
+    }
+    
     return {
       showAddDialog: false,
 
       search: {
-        selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
-        selectedEquipmentTypesIds: this.props.search.selectedEquipmentTypesIds || [],
-        ownerId: this.props.search.ownerId || 0,
-        ownerName: this.props.search.ownerName || 'Owner',
-        hired: this.props.search.hired || false,
-        statusCode: this.props.search.statusCode || Constant.OWNER_STATUS_CODE_APPROVED,
+        selectedLocalAreasIds: !clear && this.props.search.selectedLocalAreasIds || [],
+        ownerCode: !clear && this.props.search.ownerCode || '',
+        ownerName: !clear && this.props.search.ownerName || '',
+        hired: !clear && this.props.search.hired || false,
+        statusCode: !clear && this.props.search.statusCode || Constant.OWNER_STATUS_CODE_APPROVED,
       },
 
       ui : {
@@ -61,8 +72,12 @@ var Owners = React.createClass({
   buildSearchParams() {
     var searchParams = {};
 
-    if (this.state.search.ownerId) {
-      searchParams.owner = this.state.search.ownerId;
+    if (this.state.search.ownerCode) {
+      searchParams.ownerCode = this.state.search.ownerCode;
+    }
+
+    if (this.state.search.ownerName) {
+      searchParams.ownerName = this.state.search.ownerName;
     }
 
     if (this.state.search.hired) {
@@ -76,19 +91,12 @@ var Owners = React.createClass({
     if (this.state.search.selectedLocalAreasIds.length > 0) {
       searchParams.localareas = this.state.search.selectedLocalAreasIds;
     }
-    if (this.state.search.selectedEquipmentTypesIds.length > 0) {
-      searchParams.equipmenttypes = this.state.search.selectedEquipmentTypesIds;
-    }
 
     return searchParams;
   },
 
   componentDidMount() {
-    var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
-    var ownersPromise = Api.getOwnersByDistrict(this.props.currentUser.district.id);
-    var favouritesPromise = Api.getFavourites('owner');
-
-    Promise.all([equipmentTypesPromise, ownersPromise, favouritesPromise]).then(() => {
+    Api.getFavourites('owner').then(() => {
       // If this is the first load, then look for a default favourite
       if (!this.props.search.loaded) {
         var favourite = _.find(this.props.favourites, (favourite) => { return favourite.isDefault; });
@@ -97,7 +105,6 @@ var Owners = React.createClass({
           return;
         }
       }
-      this.fetch();
     });
   },
 
@@ -178,22 +185,56 @@ var Owners = React.createClass({
     });
   },
 
+  renderResults(ownerList) {
+    var addOwnerButton = <Button title="Add Owner" bsSize="xsmall" onClick={ this.openAddDialog }>
+      <Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong>
+    </Button>;
+
+    if (Object.keys(this.props.ownerList.data).length === 0) { return <Alert bsStyle="success">No owners { addOwnerButton }</Alert>; }
+
+    return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
+      { field: 'ownerCode',              title: 'Owner Code'                                      },
+      { field: 'localAreaName',          title: 'Local Area'                                      },
+      { field: 'organizationName',       title: 'Company Name'                                    },
+      { field: 'primaryContactName',     title: 'Primary Contact Name'                            },
+      { field: 'primaryContactNumber',   title: 'Primary Contact Number'                          },
+      { field: 'equipmentCount',         title: 'Equipment',       style: { textAlign: 'center' } },
+      { field: 'status',                 title: 'Status',          style: { textAlign: 'center' } },
+      { field: 'addOwner',               title: 'Add Owner',       style: { textAlign: 'right'  },
+        node: addOwnerButton,
+      },
+    ]}>
+      {
+        _.map(ownerList, (owner) => {
+          return <tr key={ owner.id } className={ owner.status === Constant.OWNER_STATUS_CODE_APPROVED ? null : 'info' }>
+            <td>{ owner.ownerCode }</td>
+            <td>{ owner.localAreaName }</td>
+            <td>{ owner.organizationName }</td>
+            <td>{ owner.primaryContactName }</td>
+            <td>{ owner.primaryContactNumber }</td>
+            <td style={{ textAlign: 'center' }}>{ owner.equipmentCount }</td>
+            <td style={{ textAlign: 'center' }}>{ owner.status }</td>
+            <td style={{ textAlign: 'right' }}>
+              <ButtonGroup>
+                <EditButton name="Owner" view pathname={ `${ Constant.OWNERS_PATHNAME }/${ owner.id }` }/>
+              </ButtonGroup>
+            </td>
+          </tr>;
+        })
+      }
+    </SortTable>;
+  },
+
   render() {
     // Constrain the local area drop downs to those in the District of the current logged in user
     var localAreas = _.chain(this.props.localAreas)
       .sortBy('name')
       .value();
 
-    var owners = _.chain(this.props.owners.data)
-      .sortBy('organizationName')
-      .value();
-
-    var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes.data)
-      .filter(type => type.district.id == this.props.currentUser.district.id)
-      .sortBy('districtEquipmentName')
-      .value();
-
-    var numOwners = this.props.ownerList.loading ? '...' : Object.keys(this.props.ownerList.data).length;
+    var resultCount = '';
+    if (this.props.ownerList.loaded) {
+      resultCount = '(' + Object.keys(this.props.ownerList.data).length + ')';
+    }
 
     var ownerList = _.sortBy(this.props.ownerList.data, owner => {
       if (typeof owner[this.state.ui.sortField] === 'string') {
@@ -207,11 +248,15 @@ var Owners = React.createClass({
     }
 
     return <div id="owners-list">
-      <PageHeader>Owners ({ numOwners })
+      <PageHeader>Owners { resultCount }
         <div id="owners-buttons">
-          <Button onClick={ this.verifyOwners.bind(this, ownerList) }>Status Letters</Button>
+          <TooltipButton className="mr-5" onClick={ this.verifyOwners.bind(this, ownerList) } disabled={ !this.props.ownerList.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
+            Status Letters
+          </TooltipButton>
           <ButtonGroup>
-            <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+            <TooltipButton onClick={ this.print } disabled={ !this.props.ownerList.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
+              <Glyphicon glyph="print" title="Print" />
+            </TooltipButton>
           </ButtonGroup>
         </div>
       </PageHeader>
@@ -224,10 +269,8 @@ var Owners = React.createClass({
                   items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
                 <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
                   items={[ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ]} />
-                <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="districtEquipmentName"
-                  items={ districtEquipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-                <FilterDropdown id="ownerId" placeholder="Owner" fieldName="organizationName" blankLine="(All)"
-                  items={ owners } selectedId={ this.state.search.ownerId } updateState={ this.updateSearchState } />
+                <FormInputControl id="ownerCode" type="text" placeholder="Owner Code" value={ this.state.search.ownerCode } updateState={ this.updateSearchState } />
+                <FormInputControl id="ownerName" type="text" placeholder="Company Name" value={ this.state.search.ownerName } updateState={ this.updateSearchState } />
                 <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
                 <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
               </ButtonToolbar>
@@ -242,39 +285,11 @@ var Owners = React.createClass({
       </Well>
 
       {(() => {
-        var addOwnerButton = <Button title="Add Owner" bsSize="xsmall" onClick={ this.openAddDialog }>
-          <Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong>
-        </Button>;
-        if (this.props.owners.loading || this.props.ownerList.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-        if (Object.keys(this.props.ownerList.data).length === 0) { return <Alert bsStyle="success">No owners { addOwnerButton }</Alert>; }
-
-        return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-          { field: 'localAreaName',          title: 'Local Area'                                      },
-          { field: 'organizationName',       title: 'Company'                                         },
-          { field: 'primaryContactName',     title: 'Primary Contact'                                 },
-          { field: 'equipmentCount',         title: 'Equipment',       style: { textAlign: 'center' } },
-          { field: 'status',                 title: 'Status',          style: { textAlign: 'center' } },
-          { field: 'addOwner',               title: 'Add Owner',       style: { textAlign: 'right'  },
-            node: addOwnerButton,
-          },
-        ]}>
-          {
-            _.map(ownerList, (owner) => {
-              return <tr key={ owner.id } className={ owner.status === Constant.OWNER_STATUS_CODE_APPROVED ? null : 'info' }>
-                <td>{ owner.localAreaName }</td>
-                <td>{ owner.organizationName }</td>
-                <td>{ owner.primaryContactName }</td>
-                <td style={{ textAlign: 'center' }}>{ owner.equipmentCount }</td>
-                <td style={{ textAlign: 'center' }}>{ owner.status }</td>
-                <td style={{ textAlign: 'right' }}>
-                  <ButtonGroup>
-                    <EditButton name="Owner" view pathname={ `${ Constant.OWNERS_PATHNAME }/${ owner.id }` }/>
-                  </ButtonGroup>
-                </td>
-              </tr>;
-            })
-          }
-        </SortTable>;
+        if (this.props.ownerList.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+        
+        if (this.props.ownerList.loaded) {
+          return this.renderResults(ownerList);
+        }
       })()}
       { this.state.showAddDialog &&
         <OwnersAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewOwner } onClose={ this.closeAddDialog } />
@@ -289,7 +304,6 @@ function mapStateToProps(state) {
     ownerList: state.models.owners,
     owner: state.models.owner,
     localAreas: state.lookups.localAreas,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
     owners: state.lookups.owners,
     favourites: state.models.favourites,
     search: state.search.owners,

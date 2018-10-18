@@ -23,7 +23,7 @@ const DEFAULT_MODELS = {
   equipmentList: {
     data: {}, 
     loading: false,
-    success: false,
+    loaded: false,
   },
   equipment: {},
   equipmentPhysicalAttachments: {},
@@ -38,6 +38,7 @@ const DEFAULT_MODELS = {
   owners: {
     data: {},
     loading: false,
+    loaded: false,
   },
   owner: {},
   ownerNotes: {},
@@ -46,8 +47,8 @@ const DEFAULT_MODELS = {
 
   projects: {
     data: {},
-    loading: false, 
-    success: false,
+    loading: false,
+    loaded: false,
   },
   project: {},
   projectEquipment: {
@@ -70,7 +71,7 @@ const DEFAULT_MODELS = {
   rentalRequests: {
     data: {},
     loading: false,
-    success: false,
+    loaded: false,
   },
   rentalRequest: {
     data: {},
@@ -177,11 +178,14 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     
     // Equipment
     case Action.EQUIPMENT_LIST_REQUEST:
-      return { ...state, equipmentList: { ...state.equipmentList, loading: true } };
+      return { ...state, equipmentList: { ...state.equipmentList, loading: true, loaded: false } };
     
     case Action.UPDATE_EQUIPMENT_LIST:
-      return { ...state, equipmentList: { data: action.equipmentList, loading: false, success: true } };
+      return { ...state, equipmentList: { data: action.equipmentList, loading: false, loaded: true } };
     
+    case Action.CLEAR_EQUIPMENT_LIST:
+      return { ...state, equipmentList: { data: {}, loading: false, loaded: false } };
+
     case Action.ADD_EQUIPMENT: case Action.UPDATE_EQUIPMENT:
       return { ...state, equipment: action.equipment };
 
@@ -206,10 +210,13 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     
     // Owners
     case Action.OWNERS_REQUEST:
-      return { ...state, owners: { ...state.owners, loading: true } };
+      return { ...state, owners: { ...state.owners, loading: true, loaded: false } };
     
     case Action.UPDATE_OWNERS:
-      return { ...state, owners: { data: action.owners, loading: false } };
+      return { ...state, owners: { data: action.owners, loading: false, loaded: true } };
+    
+    case Action.CLEAR_OWNERS:
+      return { ...state, owners: { data: {}, loading: false, loaded: false } };
     
     case Action.ADD_OWNER: case Action.UPDATE_OWNER: case Action.DELETE_OWNER:
       return { ...state, owner: action.owner };
@@ -219,10 +226,13 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     
     // Projects
     case Action.PROJECTS_REQUEST: 
-      return { ...state, projects: { ...state.projects, loading: true } };
+      return { ...state, projects: { ...state.projects, loading: true, loaded: false } };
     
     case Action.UPDATE_PROJECTS:
-      return { ...state, projects: { data: action.projects, loading: false, success: true } };
+      return { ...state, projects: { data: action.projects, loading: false, loaded: true } };
+    
+    case Action.CLEAR_PROJECTS:
+      return { ...state, projects: { data: {}, loading: false, loaded: false } };
     
     case Action.ADD_PROJECT: case Action.UPDATE_PROJECT:
       return { ...state, project: action.project };
@@ -244,10 +254,13 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     
     // Rental Requests
     case Action.RENTAL_REQUESTS_REQUEST: 
-      return { ...state, rentalRequests: { ...state.rentalRequests, loading: true, error: false, errorMessage: {} } };
+      return { ...state, rentalRequests: { ...state.rentalRequests, loading: true, loaded: false } };
     
     case Action.UPDATE_RENTAL_REQUESTS:
-      return { ...state, rentalRequests: { data: action.rentalRequests, loading: false, success: true } };
+      return { ...state, rentalRequests: { data: action.rentalRequests, loading: false, loaded: true } };
+    
+    case Action.CLEAR_RENTAL_REQUESTS:
+      return { ...state, rentalRequests: { data: {}, loading: false, loaded: false } };
     
     case Action.RENTAL_REQUEST_REQUEST: 
       return { ...state, rentalRequest: { ...state.rentalRequest, loading: true, success: false, error: false, errorMessage: '' } };

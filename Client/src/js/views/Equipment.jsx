@@ -17,10 +17,11 @@ import CheckboxControl from '../components/CheckboxControl.jsx';
 import DateControl from '../components/DateControl.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
 import Favourites from '../components/Favourites.jsx';
-import FilterDropdown from '../components/FilterDropdown.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import Spinner from '../components/Spinner.jsx';
+import TooltipButton from '../components/TooltipButton.jsx';
+
 import EquipmentTable from './EquipmentTable.jsx';
 
 import { toZuluTime } from '../utils/date';
@@ -38,18 +39,30 @@ var Equipment = React.createClass({
   },
 
   getInitialState() {
+    // if the search prop has the 'clear' property set, clear out existing search results and use default search parameters
+    // otherwise, display previous search results and initialize search parameters from the store
+    var clear = true;
+
+    if (this.props.search.clear) {
+      // clear existing search results
+      store.dispatch({ type: Action.CLEAR_EQUIPMENT_LIST });
+    } else {
+      clear = false;
+      // restore default 'clear' value for future visits to the page
+      store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: { ...this.props.search, clear: true }});
+    }
+
     return {
       showAddDialog: false,
       search: {
-        selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
-        selectedEquipmentTypesIds: this.props.search.selectedEquipmentTypesIds || [],
-        equipmentAttachment: this.props.search.equipmentAttachment || '',
-        ownerId: this.props.search.ownerId || 0,
-        ownerName: this.props.search.ownerName || 'Owner',
-        lastVerifiedDate: this.props.search.lastVerifiedDate || '',
-        hired: this.props.search.hired || false,
-        statusCode: this.props.search.statusCode || Constant.EQUIPMENT_STATUS_CODE_APPROVED,
-        equipmentId: this.props.search.equipmentId || '',
+        selectedLocalAreasIds: !clear && this.props.search.selectedLocalAreasIds || [],
+        selectedEquipmentTypesIds: !clear && this.props.search.selectedEquipmentTypesIds || [],
+        equipmentAttachment: !clear && this.props.search.equipmentAttachment || '',
+        ownerName: !clear && this.props.search.ownerName || '',
+        lastVerifiedDate: !clear && this.props.search.lastVerifiedDate || '',
+        hired: !clear && this.props.search.hired || false,
+        statusCode: !clear && this.props.search.statusCode || Constant.EQUIPMENT_STATUS_CODE_APPROVED,
+        equipmentId: !clear && this.props.search.equipmentId || '',
       },
       ui : {
         sortField: this.props.ui.sortField || 'seniorityText',
@@ -65,8 +78,8 @@ var Equipment = React.createClass({
       searchParams.equipmentAttachment = this.state.search.equipmentAttachment;
     }
 
-    if (this.state.search.ownerId) {
-      searchParams.owner = this.state.search.ownerId;
+    if (this.state.search.ownerName) {
+      searchParams.ownerName = this.state.search.ownerName;
     }
 
     if (this.state.search.hired) {
@@ -98,12 +111,10 @@ var Equipment = React.createClass({
   },
 
   componentDidMount() {
-    this.fetch();
     var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
-    var ownersPromise = Api.getOwnersByDistrict(this.props.currentUser.district.id);
     var favouritesPromise = Api.getFavourites('equipment');
 
-    Promise.all([equipmentTypesPromise, ownersPromise, favouritesPromise]).then(() => {
+    Promise.all([equipmentTypesPromise, favouritesPromise]).then(() => {
       // If this is the first load, then look for a default favourite
       if (!this.props.search.loaded) {
         var favourite = _.find(this.props.favourites, (favourite) => { return favourite.isDefault; });
@@ -146,25 +157,42 @@ var Equipment = React.createClass({
     window.print();
   },
 
+  renderResults() {
+    if (Object.keys(this.props.equipmentList.data).length === 0) { 
+      return <Alert bsStyle="success">No equipment</Alert>; 
+    }
+    
+    return (
+      <EquipmentTable
+        ui={this.state.ui}
+        updateUIState={this.updateUIState}
+        equipmentList={this.props.equipmentList.data}
+      />
+    );
+  },
+
   render() {
     // Constrain the local area drop downs to those in the District of the current logged in user
     var localAreas = _.chain(this.props.localAreas)
       .sortBy('name')
       .value();
 
-    var owners = _.chain(this.props.owners.data).sortBy('organizationName').value();
-
     var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes.data)
       .filter(type => type.district.id == this.props.currentUser.district.id)
       .sortBy('districtEquipmentName')
       .value();
 
-    var numResults = this.props.equipmentList.loading ? '...' : Object.keys(this.props.equipmentList.data).length;
-
+    var resultCount = '';
+    if (this.props.equipmentList.loaded) {
+      resultCount = '(' + Object.keys(this.props.equipmentList.data).length + ')';
+    }
+    
     return <div id="equipment-list">
-      <PageHeader>Equipment ({ numResults })
+      <PageHeader>Equipment { resultCount }
         <ButtonGroup id="equipment-buttons">
-          <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+          <TooltipButton onClick={ this.print } disabled={ !this.props.equipmentList.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
+            <Glyphicon glyph="print" title="Print" />
+          </TooltipButton>
         </ButtonGroup>
       </PageHeader>
       <Well id="equipment-bar" bsSize="small" className="clearfix">
@@ -180,9 +208,8 @@ var Equipment = React.createClass({
                   />
                   <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="districtEquipmentName"
                     items={ districtEquipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-                  <FilterDropdown id="ownerId" placeholder="Owner" fieldName="organizationName" blankLine="(All)"
-                    items={ owners } selectedId={ this.state.search.ownerId } updateState={ this.updateSearchState } />
-                  <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
+                  <FormInputControl id="ownerName" type="text" placeholder="Company Name" value={ this.state.search.ownerName } updateState={ this.updateSearchState } />
+                <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
                 </ButtonToolbar>
               </Row>
               <Row>
@@ -213,22 +240,14 @@ var Equipment = React.createClass({
 
       {(() => {
 
-        if (this.props.equipmentList.loading || this.props.owners.loading) { 
+        if (this.props.equipmentList.loading) { 
           return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
         }
 
-        if (Object.keys(this.props.equipmentList.data).length === 0 && this.props.equipmentList.success) { 
-          return <Alert bsStyle="success">No equipment</Alert>; 
+        if (this.props.equipmentList.loaded) {
+          return this.renderResults();
         }
         
-        return (
-          <EquipmentTable
-            ui={this.state.ui}
-            updateUIState={this.updateUIState}
-            equipmentList={this.props.equipmentList.data}
-          />
-        );
-
       })()}
 
     </div>;
@@ -242,7 +261,6 @@ function mapStateToProps(state) {
     equipmentList: state.models.equipmentList,
     localAreas: state.lookups.localAreas,
     districtEquipmentTypes: state.lookups.districtEquipmentTypes,
-    owners: state.lookups.owners,
     favourites: state.models.favourites,
     search: state.search.equipmentList,
     ui: state.ui.equipmentList,
