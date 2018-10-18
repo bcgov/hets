@@ -17,7 +17,6 @@ import CheckboxControl from '../components/CheckboxControl.jsx';
 import DateControl from '../components/DateControl.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
 import Favourites from '../components/Favourites.jsx';
-import FilterDropdown from '../components/FilterDropdown.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import Spinner from '../components/Spinner.jsx';
@@ -59,8 +58,7 @@ var Equipment = React.createClass({
         selectedLocalAreasIds: !clear && this.props.search.selectedLocalAreasIds || [],
         selectedEquipmentTypesIds: !clear && this.props.search.selectedEquipmentTypesIds || [],
         equipmentAttachment: !clear && this.props.search.equipmentAttachment || '',
-        ownerId: !clear && this.props.search.ownerId || 0,
-        ownerName: !clear && this.props.search.ownerName || 'Owner',
+        ownerName: !clear && this.props.search.ownerName || '',
         lastVerifiedDate: !clear && this.props.search.lastVerifiedDate || '',
         hired: !clear && this.props.search.hired || false,
         statusCode: !clear && this.props.search.statusCode || Constant.EQUIPMENT_STATUS_CODE_APPROVED,
@@ -80,8 +78,8 @@ var Equipment = React.createClass({
       searchParams.equipmentAttachment = this.state.search.equipmentAttachment;
     }
 
-    if (this.state.search.ownerId) {
-      searchParams.owner = this.state.search.ownerId;
+    if (this.state.search.ownerName) {
+      searchParams.ownerName = this.state.search.ownerName;
     }
 
     if (this.state.search.hired) {
@@ -114,10 +112,9 @@ var Equipment = React.createClass({
 
   componentDidMount() {
     var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
-    var ownersPromise = Api.getOwnersByDistrict(this.props.currentUser.district.id);
     var favouritesPromise = Api.getFavourites('equipment');
 
-    Promise.all([equipmentTypesPromise, ownersPromise, favouritesPromise]).then(() => {
+    Promise.all([equipmentTypesPromise, favouritesPromise]).then(() => {
       // If this is the first load, then look for a default favourite
       if (!this.props.search.loaded) {
         var favourite = _.find(this.props.favourites, (favourite) => { return favourite.isDefault; });
@@ -180,8 +177,6 @@ var Equipment = React.createClass({
       .sortBy('name')
       .value();
 
-    var owners = _.chain(this.props.owners.data).sortBy('organizationName').value();
-
     var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes.data)
       .filter(type => type.district.id == this.props.currentUser.district.id)
       .sortBy('districtEquipmentName')
@@ -213,9 +208,8 @@ var Equipment = React.createClass({
                   />
                   <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="districtEquipmentName"
                     items={ districtEquipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-                  <FilterDropdown id="ownerId" placeholder="Owner" fieldName="organizationName" blankLine="(All)"
-                    items={ owners } selectedId={ this.state.search.ownerId } updateState={ this.updateSearchState } />
-                  <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
+                  <FormInputControl id="ownerName" type="text" placeholder="Company Name" value={ this.state.search.ownerName } updateState={ this.updateSearchState } />
+                <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
                 </ButtonToolbar>
               </Row>
               <Row>
@@ -246,7 +240,7 @@ var Equipment = React.createClass({
 
       {(() => {
 
-        if (this.props.equipmentList.loading || this.props.owners.loading) { 
+        if (this.props.equipmentList.loading) { 
           return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
         }
 
@@ -267,7 +261,6 @@ function mapStateToProps(state) {
     equipmentList: state.models.equipmentList,
     localAreas: state.lookups.localAreas,
     districtEquipmentTypes: state.lookups.districtEquipmentTypes,
-    owners: state.lookups.owners,
     favourites: state.models.favourites,
     search: state.search.equipmentList,
     ui: state.ui.equipmentList,

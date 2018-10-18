@@ -43,37 +43,35 @@ var EquipmentTable = React.createClass({
 
     return (
       <SortTable sortField={ this.props.ui.sortField } sortDesc={ this.props.ui.sortDesc } onSort={ this.props.updateUIState } headers={[
-        { field: 'equipmentCode',        title: 'Equipment ID'  },
-        { field: 'equipmentType',        title: 'Type'          },
-        { field: 'ownerName',            title: 'Owner'         },
-        { field: 'senioritySortOrder',   title: 'Seniority'     },
-        { field: 'isHired',              title: 'Hired'         },
-        { field: 'make',                 title: 'Make'          },
-        { field: 'model',                title: 'Model'         },
-        { field: 'size',                 title: 'Size'          },
-        { field: 'attachmentCount',      title: 'Attachments'   },
-        { field: 'lastVerifiedDate',     title: 'Last Verified' },
-        { field: 'blank'                                        },
+        { field: 'equipmentCode',    title: 'Equipment ID'         },
+        { field: 'localArea',        title: 'Local Area'           },
+        { field: 'ownerName',        title: 'Company Name'         },
+        { field: 'equipmentType',    title: 'Equipment Type'       },
+        { field: 'details',          title: 'Make/Model/Size/Year' },
+        { field: 'attachmentCount',  title: 'Attachments'          },
+        { field: 'status',           title: 'Status'               },
+        { field: 'lastVerifiedDate', title: 'Last Verified'        },
+        { field: 'blank'                                           },
       ]}>
         {
           _.map(equipmentList, (equip) => {
-            return <tr key={ equip.id }>
-              <td>{ equip.equipmentCode }</td>
-              <td>{ equip.equipmentType }</td>
-              <td><Link to={`${Constant.OWNERS_PATHNAME}/${equip.ownerId}`}>{ equip.ownerName }</Link></td>
-              <td>{ equip.seniorityString }</td>
-              <td>{ equip.isHired ? 'Y' : 'N' }</td>
-              <td>{ equip.make }</td>
-              <td>{ equip.model }</td>
-              <td>{ equip.size }</td>
-              <td>{ equip.attachmentCount }</td>
-              <td>{ formatDateTime(equip.lastVerifiedDate, 'YYYY-MMM-DD') }</td>
-              <td style={{ textAlign: 'right' }}>
-                <LinkContainer to={{ pathname: 'equipment/' + equip.id }}>
-                  <Button title="View Equipment" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
-                </LinkContainer>
-              </td>
-            </tr>;
+            return (
+              <tr key={ equip.id } className={ equip.status === Constant.EQUIPMENT_STATUS_CODE_APPROVED ? null : 'info' }>
+                <td>{ equip.equipmentCode }</td>
+                <td>{ equip.localArea }</td>
+                <td><Link to={`${Constant.OWNERS_PATHNAME}/${equip.ownerId}`}>{ equip.ownerName }</Link></td>
+                <td>{ equip.equipmentType }</td>
+                <td>{ equip.details }</td>
+                <td>{ equip.attachmentCount }</td>
+                <td>{ equip.status }</td>
+                <td>{ formatDateTime(equip.lastVerifiedDate, 'YYYY-MMM-DD') }</td>
+                <td style={{ textAlign: 'right' }}>
+                  <LinkContainer to={{ pathname: 'equipment/' + equip.id }}>
+                    <Button title="View Equipment" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
+                  </LinkContainer>
+                </td>
+              </tr>
+            );
           })
         }
       </SortTable>

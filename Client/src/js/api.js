@@ -415,6 +415,10 @@ export function searchEquipmentList(params) {
   return new ApiRequest('/equipment/search').get(params).then(response => {
     var equipmentList = normalize(response.data);
 
+    _.map(equipmentList, equipment => { 
+      equipment.details = [equipment.make, equipment.model, equipment.size, equipment.year].join('/');
+    });
+
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST, equipmentList: equipmentList });
   });
 }
