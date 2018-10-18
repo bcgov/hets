@@ -14,9 +14,6 @@ export const DOCUMENTS_PATHNAME = 'documents';
 export const BUSINESS_PORTAL_PATHNAME = '/business';
 export const BUSINESS_DETAILS_PATHNAME = '/business/details';
 export const DISTRICT_ADMIN_PATHNAME = 'district-admin';
-export const LOGOUT = (process.env.NODE_ENV === 'production') ? //eslint-disable-line
-  'https://logon.gov.bc.ca/clp-cgi/logoff.cgi' : 
-  'https://logontest.gov.bc.ca/clp-cgi/logoff.cgi';
 
 // Permissions
 export const PERMISSION_LOGIN = 'Login';
