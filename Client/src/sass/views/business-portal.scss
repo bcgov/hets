@@ -1,24 +1,14 @@
 #business-portal {
-  #bceid-box {
-    border: 1px solid #d2d2d2;
-    border-radius: 5px;
-    padding: 4px 8px;
-    float: left;
-    margin-right: 20px;
-    text-align: center;
-  }
-
-  #bceid-logo {
-    width: 100px;
-    height: 40px;
-    background: url('/images/gov/bceid_logo.png') no-repeat center center #003366;
-  }
   
   h3 {
     font-weight: 600;
   }
 
   #associate-owner {
+    a {
+      font-weight: 700;
+    }
+
     input#secretKey {
       width: 250px;
     }

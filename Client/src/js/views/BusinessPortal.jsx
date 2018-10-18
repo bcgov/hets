@@ -155,16 +155,19 @@ var BusinessPortal = React.createClass({
             <h3>Associate HETS District Owner</h3>
             <div id="overview">
               <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vulputate efficitur
-                diam, sit amet suscipit urna sodales sit amet. Phasellus aliquam sagittis
-                vehicula. Curabitur sit amet nunc vel dui efficitur dignissim eleifend eget nulla.
-                Sed faucibus, augue a blandit consequat, ipsum leo imperdiet ex, et laoreet justo
-                nunc id odio. Pellentesque velit velit, malesuada quis convallis nec, efficitur et
-                justo. Donec eget porta nunc. Nullam tortor metus, gravida id elit vel, faucibus
-                mattis magna. In sed metus in neque laoreet molestie. Maecenas sed metus dapibus,
-                consequat ante et, interdum arcu. Mauris eget iaculis ipsum. Integer non molestie
-                velit. Phasellus sodales viverra ipsum sed egestas. Integer viverra nulla at
-                efficitur cursus. Nunc fermentum lectus at porttitor ultrices.
+                The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or other piece of equipment they want to hire out to the Ministry Transportation and Infrastructure for day labour and emergency projects.
+              </p>
+              <p>
+                The Hired Equipment Program distributes available work to local equipment owners. The program is based on seniority and is designed to deliver work to registered users fairly and efficiently through the development of local area call-out lists.  Details about the Hired Equipment Program can be found <a href="https://www2.gov.bc.ca/gov/content/industry/construction-industry/transportation-infrastructure/hired-equipment-program">here</a>.
+              </p>
+              <p>
+                If you are NEW to the Hired Equipment Program, contact your <a href="https://www2.gov.bc.ca/gov/content/industry/construction-industry/transportation-infrastructure/hired-equipment-program/need-help">local district office</a> to register your company and equipment.
+              </p>
+              <p>
+                If you are REGISTERED with the Hired Equipment Program and this is your first time to the site, enter your Secret Key and Postal Code to validate your account, then select your account.
+              </p>
+              <p>
+                For RETURNING equipment owners, select your company above to view your account.
               </p>
             </div>
             <Form inline onSubmit={this.validateOwner}>
