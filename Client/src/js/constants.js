@@ -95,3 +95,6 @@ export function setHeaderHeight(num) {
 
 // Session
 export const SESSION_TIMOUT = 7200000; // 120 minutes
+
+// Max Field Lengths
+export const MAX_LENGTH_NOTE_TEXT = 2048;

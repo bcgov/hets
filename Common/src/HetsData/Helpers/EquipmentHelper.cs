@@ -91,6 +91,7 @@ namespace HetsData.Helpers
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(d => d.EquipmentType)
                 .Include(x => x.Owner)
+                    .ThenInclude(x => x.OwnerStatusType)
                 .Include(x => x.HetEquipmentAttachment)
                 .Include(x => x.HetNote)
                 .Include(x => x.HetDigitalFile)
@@ -107,7 +108,13 @@ namespace HetsData.Helpers
                 if (equipment.Seniority != null && equipment.BlockNumber != null)
                 {
                     equipment.SeniorityString = FormatSeniorityString((float)equipment.Seniority, (int)equipment.BlockNumber, equipment.NumberOfBlocks);
-                }                
+                }
+
+                if (equipment.Owner != null)
+                {
+                    // populate the "Status" description
+                    equipment.Owner.Status = equipment.Owner.OwnerStatusType.OwnerStatusTypeCode;
+                }
             }
             
             return equipment;
