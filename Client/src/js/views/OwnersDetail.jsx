@@ -345,6 +345,7 @@ var OwnersDetail = React.createClass({
           return <Row id="owners-top">
             <Col sm={9}>
               <DropdownButton
+                id="status-dropdown"
                 bsStyle={ this.getStatusDropdownStyle() }
                 title={ owner.status }
                 onSelect={ this.updateStatusState }
