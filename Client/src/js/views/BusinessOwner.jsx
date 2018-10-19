@@ -19,7 +19,6 @@ import ColDisplay from '../components/ColDisplay.jsx';
 import SortTable from '../components/SortTable.jsx';
 
 import { formatDateTime } from '../utils/date';
-import { concat } from '../utils/string';
 
 var BusinessOwner = React.createClass({
   propTypes: {
@@ -255,11 +254,11 @@ var BusinessOwner = React.createClass({
                 }
 
                 var headers = [
-                  { field: 'equipmentCode',    title: 'ID'                  },
-                  { field: 'typeName',         title: 'Type'                },
-                  { field: 'make',             title: 'Make/Model/Size' },
-                  { field: 'attachments',      title: 'Attachments' },
-                  { field: 'lastVerifiedDate', title: 'Last Verified'       },
+                  { field: 'equipmentCode',    title: 'ID'                   },
+                  { field: 'typeName',         title: 'Type'                 },
+                  { field: 'details',          title: 'Make/Model/Size/Year' },
+                  { field: 'attachments',      title: 'Attachments'          },
+                  { field: 'lastVerifiedDate', title: 'Last Verified'        },
                 ];
 
                 return <SortTable id="equipment-list" sortField={ this.state.uiEquipment.sortField } sortDesc={ this.state.uiEquipment.sortDesc } onSort={ this.updateEquipmentUIState } headers={ headers }>
@@ -268,7 +267,7 @@ var BusinessOwner = React.createClass({
                       return <tr key={ equipment.id }>
                         <td>{ equipment.equipmentCode }</td>
                         <td>{ equipment.typeName }</td>
-                        <td>{ concat(equipment.make, concat(equipment.model, equipment.size, '/'), '/') }</td>
+                        <td>{ equipment.details }</td>
                         <td>{ _.map(equipment.equipmentAttachments, a => a.description).join(', ') }</td>
                         <td>{ equipment.isApproved ? formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'Not Approved' }</td>
                       </tr>;
