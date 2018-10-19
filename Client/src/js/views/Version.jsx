@@ -159,7 +159,7 @@ var Version = React.createClass({
             </Row>
           </Well>
           <Button onClick={ this.showRaw }>Show Raw Versions</Button>
-          <Well style={{ marginTop: '20px' }} className={ this.state.showRawSection ? '' : 'hide' }>
+          <Well style={{ marginTop: '20px', wordWrap: 'break-word' }} className={ this.state.showRawSection ? '' : 'hide' }>
             <div>{ JSON.stringify(this.props.version) }</div>
           </Well>
         </div>;
