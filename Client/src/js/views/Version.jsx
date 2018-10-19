@@ -110,52 +110,52 @@ var Version = React.createClass({
           <Well>
             <h3>Client</h3>
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Name">MOTI Hired Equipment Tracking System</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Name">MOTI Hired Equipment Tracking System</ColDisplay>
             </Row>
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Build Time">{ formatDateTime(this.state.buildTime, Constant.DATE_TIME_READABLE) }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Build Time">{ formatDateTime(this.state.buildTime, Constant.DATE_TIME_READABLE) }</ColDisplay>
             </Row>
             {/*
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Version">{ this.state.version }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Version">{ this.state.version }</ColDisplay>
             </Row>
 */}
             { /*
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Git Commit">{ this.state.commit }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Git Commit">{ this.state.commit }</ColDisplay>
             </Row>
             */ }
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="User Agent">{ navigator.userAgent }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="User Agent">{ navigator.userAgent }</ColDisplay>
             </Row>
           </Well>
           <Well>
             <h3>Application</h3>
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Name">{ applicationVersion.title }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Name">{ applicationVersion.title }</ColDisplay>
             </Row>
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Build Time">{ formatDateTime(applicationVersion.fileCreationTime, Constant.DATE_TIME_READABLE) }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Build Time">{ formatDateTime(applicationVersion.fileCreationTime, Constant.DATE_TIME_READABLE) }</ColDisplay>
             </Row>
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Version">{ applicationVersion.informationalVersion }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Version">{ applicationVersion.informationalVersion }</ColDisplay>
             </Row>
             { /*
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Git Commit">{ applicationVersion.commit }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Git Commit">{ applicationVersion.commit }</ColDisplay>
             </Row>
             */ }
           </Well>
           <Well>
             <h3>Database</h3>
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Name">{ databaseVersion.database }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Name">{ databaseVersion.database }</ColDisplay>
             </Row>
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Server">{ databaseVersion.server }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Server">{ databaseVersion.server }</ColDisplay>
             </Row>
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Version">{ databaseVersion.version }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Version">{ databaseVersion.version }</ColDisplay>
             </Row>
           </Well>
           <Button onClick={ this.showRaw }>Show Raw Versions</Button>
