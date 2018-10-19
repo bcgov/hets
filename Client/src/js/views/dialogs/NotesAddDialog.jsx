@@ -5,6 +5,8 @@ import { Form, Row, Col, FormGroup, ControlLabel, HelpBlock } from 'react-bootst
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
+import * as Constant from '../../constants';
+
 import { isBlank } from '../../utils/string';
 
 var NotesAddDialog = React.createClass({
@@ -71,6 +73,8 @@ var NotesAddDialog = React.createClass({
   },
 
   render() {
+    var maxLength = Constant.MAX_LENGTH_NOTE_TEXT;
+
     return <EditDialog id="notes" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } isValid={ this.isValid } didChange={ this.didChange }
       title= {
@@ -81,8 +85,9 @@ var NotesAddDialog = React.createClass({
           <Form>
             <FormGroup controlId="note" validationState={ this.state.noteError ? 'error' : null }>
               <ControlLabel>Note</ControlLabel>
-              <FormInputControl value={ this.state.note } componentClass="textarea" updateState={ this.updateState } /> 
+              <FormInputControl value={ this.state.note } componentClass="textarea" updateState={ this.updateState } maxLength={ maxLength } /> 
               <HelpBlock>{ this.state.noteError }</HelpBlock>
+              <p>Maximum { maxLength } characters.</p>
             </FormGroup>
           </Form>
         </Col> 
