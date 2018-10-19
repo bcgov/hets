@@ -21,9 +21,16 @@ var EditDialog = React.createClass({
     children: React.PropTypes.node,
   },
 
+  getInitialState() {
+    return {
+      saving: false,
+    };
+  },
+
   save() {
     if (this.props.isValid()) {
       if (this.props.didChange()) {
+        this.setState({ saving: true });
         this.props.onSave();
       } else {
         this.props.onClose();
@@ -33,7 +40,7 @@ var EditDialog = React.createClass({
 
   render() {
     var props = _.omit(this.props, 'className', 'onSave', 'didChange', 'isValid', 'updateState', 'saveText', 'closeText');
-
+    
     return (
       <ModalDialog 
         backdrop="static" 
@@ -43,7 +50,7 @@ var EditDialog = React.createClass({
           <span>
             <Button onClick={ this.props.onClose }>{ this.props.closeText || 'Close' }</Button>
             {
-              this.props.readOnly || <Button bsStyle="primary" onClick={ this.save }>{ this.props.saveText || 'Save' }</Button>
+              this.props.readOnly || <Button bsStyle="primary" onClick={ this.save } disabled={ this.state.saving }>{ this.props.saveText || 'Save' }</Button>
             }
           </span>
         }
