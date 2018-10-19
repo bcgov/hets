@@ -2044,7 +2044,7 @@ export function getProvincialRateTypes() {
 
 export function getVersion() {
   return new ApiRequest('/version').get().then(response => {
-    store.dispatch({ type: Action.UPDATE_VERSION, version: response.data });
+    store.dispatch({ type: Action.UPDATE_VERSION, version: response });
   });
 }
 
