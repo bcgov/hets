@@ -102,12 +102,8 @@ var Version = React.createClass({
           applicationVersion = this.props.version.applicationVersions[0];
         }
         var databaseVersion = {};
-        var lastMigration = '';
         if (this.props.version.databaseVersions && this.props.version.databaseVersions.length > 0) {
           databaseVersion = this.props.version.databaseVersions[0];
-          if (databaseVersion.appliedMigrations && databaseVersion.appliedMigrations.length > 0) {
-            lastMigration = databaseVersion.appliedMigrations[databaseVersion.appliedMigrations.length - 1];
-          }
         }
 
         return <div id="version-details">
@@ -160,9 +156,6 @@ var Version = React.createClass({
             </Row>
             <Row>
               <ColDisplay md={12} labelProps={{ md: 2 }} label="Version">{ databaseVersion.version }</ColDisplay>
-            </Row>
-            <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Last Migration">{ lastMigration }</ColDisplay>
             </Row>
           </Well>
           <Button onClick={ this.showRaw }>Show Raw Versions</Button>
