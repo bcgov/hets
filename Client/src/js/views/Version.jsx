@@ -124,9 +124,11 @@ var Version = React.createClass({
               <ColDisplay md={12} labelProps={{ md: 2 }} label="Version">{ this.state.version }</ColDisplay>
             </Row>
 */}
+            { /*
             <Row>
               <ColDisplay md={12} labelProps={{ md: 2 }} label="Git Commit">{ this.state.commit }</ColDisplay>
             </Row>
+            */ }
             <Row>
               <ColDisplay md={12} labelProps={{ md: 2 }} label="User Agent">{ navigator.userAgent }</ColDisplay>
             </Row>
@@ -142,9 +144,11 @@ var Version = React.createClass({
             <Row>
               <ColDisplay md={12} labelProps={{ md: 2 }} label="Version">{ applicationVersion.informationalVersion }</ColDisplay>
             </Row>
+            { /*
             <Row>
               <ColDisplay md={12} labelProps={{ md: 2 }} label="Git Commit">{ applicationVersion.commit }</ColDisplay>
             </Row>
+            */ }
           </Well>
           <Well>
             <h3>Database</h3>
