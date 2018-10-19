@@ -2,9 +2,8 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Well, Row, Col } from 'react-bootstrap';
-import { Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
-
+import { PageHeader, Well, Row } from 'react-bootstrap';
+import { Button, Glyphicon } from 'react-bootstrap';
 
 import $ from 'jquery';
 
@@ -77,22 +76,14 @@ var Version = React.createClass({
 
   render: function() {
     return <div id="version">
-      <PageHeader>
-        <Row id="version-header">
-          <Col md={11}>Version</Col>
-          <Col md={1}>
-            <div id="version-buttons">
-              <ButtonGroup>
-                <Unimplemented>
-                  <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
-                </Unimplemented>
-                <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-              </ButtonGroup>
-            </div>
-          </Col>
-        </Row>
+      <PageHeader id="version-header">Version
+        <div id="version-buttons" style={ { float: 'right' } }>
+          <Unimplemented>
+            <Button className="mr-5" onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
+          </Unimplemented>
+          <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+        </div>
       </PageHeader>
-
 
       {(() => {
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
