@@ -105,17 +105,7 @@ var Version = React.createClass({
             </Row>
             <Row>
               <ColDisplay labelProps={{ md: 2 }} label="Build Time">{ formatDateTime(this.state.buildTime, Constant.DATE_TIME_READABLE) }</ColDisplay>
-            </Row>
-            {/*
-            <Row>
-              <ColDisplay labelProps={{ md: 2 }} label="Version">{ this.state.version }</ColDisplay>
-            </Row>
-*/}
-            { /*
-            <Row>
-              <ColDisplay labelProps={{ md: 2 }} label="Git Commit">{ this.state.commit }</ColDisplay>
-            </Row>
-            */ }
+            </Row>            
             <Row>
               <ColDisplay labelProps={{ md: 2 }} label="User Agent">{ navigator.userAgent }</ColDisplay>
             </Row>
@@ -130,12 +120,16 @@ var Version = React.createClass({
             </Row>
             <Row>
               <ColDisplay labelProps={{ md: 2 }} label="Version">{ applicationVersion.informationalVersion }</ColDisplay>
-            </Row>
-            { /*
+            </Row>            
             <Row>
-              <ColDisplay labelProps={{ md: 2 }} label="Git Commit">{ applicationVersion.commit }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Framework">{ applicationVersion.targetFramework }</ColDisplay>
             </Row>
-            */ }
+			<Row>
+              <ColDisplay labelProps={{ md: 2 }} label="HETS Release">{ applicationVersion.buildVersion }</ColDisplay>
+            </Row>
+			<Row>
+              <ColDisplay labelProps={{ md: 2 }} label="HETS Environment">{ applicationVersion.environment }</ColDisplay>
+            </Row>
           </Well>
           <Well>
             <h3>Database</h3>
@@ -146,7 +140,13 @@ var Version = React.createClass({
               <ColDisplay labelProps={{ md: 2 }} label="Server">{ databaseVersion.server }</ColDisplay>
             </Row>
             <Row>
-              <ColDisplay labelProps={{ md: 2 }} label="Version">{ databaseVersion.version }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Postgres Version">{ databaseVersion.version }</ColDisplay>
+            </Row>
+			<Row>
+              <ColDisplay labelProps={{ md: 2 }} label="HETS Release">{ databaseVersion.buildVersion }</ColDisplay>
+            </Row>
+			<Row>
+              <ColDisplay labelProps={{ md: 2 }} label="HETS Environment">{ databaseVersion.environment }</ColDisplay>
             </Row>
           </Well>
           <Button onClick={ this.showRaw }>Show Raw Versions</Button>
