@@ -1452,7 +1452,18 @@ VALUES
    NULL, NULL, 'HETS', NOW(), 
    NULL, NULL, 'HETS', NOW());     
    
-ALTER SEQUENCE public."HET_USER_ID_seq" RESTART WITH 7; 
+  
+INSERT INTO public."HET_USER"
+  ("USER_ID", "SURNAME", "GIVEN_NAME", "INITIALS", "SM_USER_ID", "SM_AUTHORIZATION_DIRECTORY", "GUID", "EMAIL", "ACTIVE", "DISTRICT_ID", 
+   "APP_CREATE_USER_DIRECTORY", "APP_CREATE_USER_GUID", "APP_CREATE_USERID", "APP_CREATE_TIMESTAMP", 
+   "APP_LAST_UPDATE_USER_DIRECTORY", "APP_LAST_UPDATE_USER_GUID", "APP_LAST_UPDATE_USERID", 
+   "APP_LAST_UPDATE_TIMESTAMP")
+VALUES 
+  (8, 'Barabas', 'Julian', 'CA', 'jbarabas', 'IDIR', NULL, 'julian.barabas@gov.bc.ca', true, 10,
+   NULL, NULL, 'HETS', NOW(), 
+   NULL, NULL, 'HETS', NOW());       
+   
+ALTER SEQUENCE public."HET_USER_ID_seq" RESTART WITH 8; 
    
 -- **************************************************************************************
 -- USER/ROLE
@@ -1527,6 +1538,16 @@ VALUES
    NULL, NULL, 'HETS', NOW(), 
    NULL, NULL, 'HETS', NOW());     
    
+INSERT INTO public."HET_USER_ROLE"
+  ("EFFECTIVE_DATE", "EXPIRY_DATE", "USER_ID", "ROLE_ID", 
+   "APP_CREATE_USER_DIRECTORY", "APP_CREATE_USER_GUID", "APP_CREATE_USERID", "APP_CREATE_TIMESTAMP", 
+   "APP_LAST_UPDATE_USER_DIRECTORY", "APP_LAST_UPDATE_USER_GUID", "APP_LAST_UPDATE_USERID", 
+   "APP_LAST_UPDATE_TIMESTAMP")
+VALUES 
+  ('1900-01-01', NULL, 8, 1,
+   NULL, NULL, 'HETS', NOW(), 
+   NULL, NULL, 'HETS', NOW());        
+   
 -- **************************************************************************************
 -- USER/DISTRICT
 
@@ -1599,6 +1620,16 @@ VALUES
   (7, 10, true,
    NULL, NULL, 'HETS', NOW(), 
    NULL, NULL, 'HETS', NOW());
+      
+INSERT INTO public."HET_USER_DISTRICT"
+  ("USER_ID", "DISTRICT_ID", "IS_PRIMARY",
+   "APP_CREATE_USER_DIRECTORY", "APP_CREATE_USER_GUID", "APP_CREATE_USERID", "APP_CREATE_TIMESTAMP", 
+   "APP_LAST_UPDATE_USER_DIRECTORY", "APP_LAST_UPDATE_USER_GUID", "APP_LAST_UPDATE_USERID", 
+   "APP_LAST_UPDATE_TIMESTAMP")
+VALUES 
+  (8, 10, true,
+   NULL, NULL, 'HETS', NOW(), 
+   NULL, NULL, 'HETS', NOW());   
    
 -- **************************************************************************************
 -- PROVINCIAL RATE TYPE

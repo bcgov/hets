@@ -263,7 +263,7 @@ namespace HetsApi.Controllers
             if (item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get status id
-            int? statusId = StatusHelper.GetStatusId(HetOwner.StatusPending, "ownerStatus", _context);
+            int? statusId = StatusHelper.GetStatusId(item.Status, "ownerStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // create record
@@ -285,7 +285,7 @@ namespace HetsApi.Controllers
                 PostalCode = item.PostalCode,
                 Province = item.Province,
                 GivenName = item.GivenName,
-                Surname = item.Surname,
+                Surname = item.Surname,                
                 ArchiveCode = "N",
                 MeetsResidency = item.MeetsResidency
             };
@@ -293,7 +293,7 @@ namespace HetsApi.Controllers
             if (!string.IsNullOrEmpty(item.RegisteredCompanyNumber))
             {
                 owner.RegisteredCompanyNumber = item.RegisteredCompanyNumber;
-            }
+            }            
 
             // get new Secret Key
             string key = SecretKeyHelper.RandomString(8);
@@ -308,6 +308,18 @@ namespace HetsApi.Controllers
             key = temp + "-" + DateTime.UtcNow.Year + "-" + key;
 
             owner.SharedKey = key;
+
+            // create a new primary contact record
+            HetContact primaryContact = new HetContact
+            {
+                Role = "Primary Contact",
+                Province = "BC",
+                WorkPhoneNumber = item.PrimaryContactPhone,
+                Surname = item.Surname,
+                GivenName = item.GivenName
+            };            
+
+            owner.PrimaryContact = primaryContact;
 
             // save record
             _context.HetOwner.Add(owner);
@@ -330,6 +342,7 @@ namespace HetsApi.Controllers
         /// <param name="owner">Id for a specific Owner</param>
         /// <param name="status">Status</param>
         /// <param name="hired">Hired</param>
+        /// <param name="ownerName"></param>
         /// <param name="ownerCode"></param>
         [HttpGet]
         [Route("search")]
