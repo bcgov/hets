@@ -148,7 +148,7 @@ var BusinessOwner = React.createClass({
               <h3>Owner Information</h3>
               {(() => {
                 return <div id="owners-data">
-                  <Row>
+                  <Row className="equal-height">
                     <Col lg={4} md={6} sm={12} xs={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Company">{ owner.organizationName }</ColDisplay>
                     </Col>
@@ -188,7 +188,7 @@ var BusinessOwner = React.createClass({
             <Well>
               <h3>Policy</h3>
               {(() => {
-                return <Row id="owners-policy">
+                return <Row id="owners-policy" className="equal-height">
                   <Col lg={4} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="WCB Number">{ owner.workSafeBCPolicyNumber }</ColDisplay>
                   </Col>
