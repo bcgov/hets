@@ -32,7 +32,6 @@ import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 
 import { formatDateTime, today, toZuluTime } from '../utils/date';
-import { concat } from '../utils/string';
 
 /*
 
@@ -345,6 +344,7 @@ var OwnersDetail = React.createClass({
           return <Row id="owners-top">
             <Col sm={9}>
               <DropdownButton
+                id="status-dropdown"
                 bsStyle={ this.getStatusDropdownStyle() }
                 title={ owner.status }
                 onSelect={ this.updateStatusState }
@@ -516,10 +516,10 @@ var OwnersDetail = React.createClass({
                 }
 
                 var headers = [
-                  { field: 'equipmentCode',    title: 'ID'                  },
-                  { field: 'typeName',         title: 'Type'                },
-                  { field: 'make',             title: 'Make/Model/Size' },
-                  { field: 'lastVerifiedDate', title: 'Last Verified'       },
+                  { field: 'equipmentCode',    title: 'ID'                   },
+                  { field: 'typeName',         title: 'Type'                 },
+                  { field: 'details',          title: 'Make/Model/Size/Year' },
+                  { field: 'lastVerifiedDate', title: 'Last Verified'        },
                   { field: 'blank' },
                 ];
 
@@ -533,7 +533,7 @@ var OwnersDetail = React.createClass({
                       return <tr key={ equipment.id }>
                         <td><Link to={ location }>{ equipment.equipmentCode }</Link></td>
                         <td>{ equipment.typeName }</td>
-                        <td>{ concat(equipment.make, concat(equipment.model, equipment.size, '/'), '/') }</td>
+                        <td>{ equipment.details }</td>
                         <td>{ equipment.isApproved ? formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'Not Approved' }</td>
                         <td style={{ textAlign: 'right' }}>
                           <Button title="Verify Equipment" bsSize="xsmall" onClick={ this.equipmentVerify.bind(this, equipment) }><Glyphicon glyph="ok" /> OK</Button>

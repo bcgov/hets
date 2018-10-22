@@ -361,6 +361,7 @@ function parseEquipment(equipment) {
   equipment.districtName = equipment.localArea.serviceArea.district.name;
   equipment.lastVerifiedDate = equipment.lastVerifiedDate || '';
   equipment.daysSinceVerified = daysAgo(equipment.lastVerifiedDate);
+  equipment.details = [equipment.make || '-', equipment.model || '-', equipment.size || '-', equipment.year || '-'].join('/');
 
   // Seniority data
   equipment.serviceHoursThisYear = equipment.serviceHoursThisYear || 0;
@@ -416,7 +417,7 @@ export function searchEquipmentList(params) {
     var equipmentList = normalize(response.data);
 
     _.map(equipmentList, equipment => { 
-      equipment.details = [equipment.make, equipment.model, equipment.size, equipment.year].join('/');
+      equipment.details = [equipment.make || '-', equipment.model || '-', equipment.size || '-', equipment.year || '-'].join('/');
     });
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST, equipmentList: equipmentList });
@@ -2044,7 +2045,7 @@ export function getProvincialRateTypes() {
 
 export function getVersion() {
   return new ApiRequest('/version').get().then(response => {
-    store.dispatch({ type: Action.UPDATE_VERSION, version: response.data });
+    store.dispatch({ type: Action.UPDATE_VERSION, version: response });
   });
 }
 

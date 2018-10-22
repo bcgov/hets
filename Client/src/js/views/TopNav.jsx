@@ -89,7 +89,8 @@ var TopNav = React.createClass({
               { (this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN) ||
                 this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) ||
                 this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) ||
-                this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_ROLLOVER)) &&
+                this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_ROLLOVER) ||
+                this.props.currentUser.hasPermission(Constant.PERMISSION_VERSION)) &&
                 <NavDropdown id="admin-dropdown" title="Administration" disabled={ navigationDisabled }>
                   { this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) &&
                     <LinkContainer to={{ pathname: `/${ Constant.USERS_PATHNAME }` }}>
@@ -106,11 +107,16 @@ var TopNav = React.createClass({
                       <MenuItem eventKey={ 8 }>Roll Over</MenuItem>
                     </LinkContainer>
                   }
+                  { this.props.currentUser.hasPermission(Constant.PERMISSION_VERSION) &&
+                    <LinkContainer to={{ pathname: `/${ Constant.VERSION_PATHNAME }` }} disabled={ navigationDisabled }>
+                      <MenuItem eventKey={ 9 }>Version Info</MenuItem>
+                    </LinkContainer>
+                  }
                 </NavDropdown>
               }
               { this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) &&
                 <LinkContainer to={{ pathname: `/${ Constant.DISTRICT_ADMIN_PATHNAME }` }} disabled={ navigationDisabled }>
-                  <NavItem eventKey={ 9 }>District Admin</NavItem>
+                  <NavItem eventKey={ 10 }>District Admin</NavItem>
                 </LinkContainer>
               }
             </Nav>

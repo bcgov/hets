@@ -25,6 +25,7 @@ export const PERMISSION_IMPORT_DATA = 'ImportData';
 export const PERMISSION_CODE_TABLE_MANAGEMENT = 'CodeTableManagement';
 export const PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT = 'DistrictCodeTableManagement';
 export const PERMISSION_DISTRICT_ROLLOVER = 'DistrictRollover';
+export const PERMISSION_VERSION = 'Version';
 
 // Roles 
 export const ADMINISTRATOR_ROLE = 'Administrator';

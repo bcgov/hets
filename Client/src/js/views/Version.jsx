@@ -2,9 +2,8 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Well, Row, Col } from 'react-bootstrap';
-import { Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
-
+import { PageHeader, Well, Row } from 'react-bootstrap';
+import { Button, Glyphicon } from 'react-bootstrap';
 
 import $ from 'jquery';
 
@@ -77,22 +76,14 @@ var Version = React.createClass({
 
   render: function() {
     return <div id="version">
-      <PageHeader>
-        <Row id="version-header">
-          <Col md={11}>Version</Col>
-          <Col md={1}>
-            <div id="version-buttons">
-              <ButtonGroup>
-                <Unimplemented>
-                  <Button onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
-                </Unimplemented>
-                <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-              </ButtonGroup>
-            </div>
-          </Col>
-        </Row>
+      <PageHeader id="version-header">Version
+        <div id="version-buttons" style={ { float: 'right' } }>
+          <Unimplemented>
+            <Button className="mr-5" onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
+          </Unimplemented>
+          <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+        </div>
       </PageHeader>
-
 
       {(() => {
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -102,67 +93,64 @@ var Version = React.createClass({
           applicationVersion = this.props.version.applicationVersions[0];
         }
         var databaseVersion = {};
-        var lastMigration = '';
         if (this.props.version.databaseVersions && this.props.version.databaseVersions.length > 0) {
           databaseVersion = this.props.version.databaseVersions[0];
-          if (databaseVersion.appliedMigrations && databaseVersion.appliedMigrations.length > 0) {
-            lastMigration = databaseVersion.appliedMigrations[databaseVersion.appliedMigrations.length - 1];
-          }
         }
 
         return <div id="version-details">
           <Well>
             <h3>Client</h3>
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Name">MOTI Hired Equipment Tracking System</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Name">MOTI Hired Equipment Tracking System</ColDisplay>
             </Row>
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Build Time">{ formatDateTime(this.state.buildTime, Constant.DATE_TIME_READABLE) }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Build Time">{ formatDateTime(this.state.buildTime, Constant.DATE_TIME_READABLE) }</ColDisplay>
             </Row>
             {/*
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Version">{ this.state.version }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Version">{ this.state.version }</ColDisplay>
             </Row>
 */}
+            { /*
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Git Commit">{ this.state.commit }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Git Commit">{ this.state.commit }</ColDisplay>
             </Row>
+            */ }
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="User Agent">{ navigator.userAgent }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="User Agent">{ navigator.userAgent }</ColDisplay>
             </Row>
           </Well>
           <Well>
             <h3>Application</h3>
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Name">{ applicationVersion.title }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Name">{ applicationVersion.title }</ColDisplay>
             </Row>
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Build Time">{ formatDateTime(applicationVersion.fileCreationTime, Constant.DATE_TIME_READABLE) }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Build Time">{ formatDateTime(applicationVersion.fileCreationTime, Constant.DATE_TIME_READABLE) }</ColDisplay>
             </Row>
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Version">{ applicationVersion.informationalVersion }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Version">{ applicationVersion.informationalVersion }</ColDisplay>
             </Row>
+            { /*
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Git Commit">{ applicationVersion.commit }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Git Commit">{ applicationVersion.commit }</ColDisplay>
             </Row>
+            */ }
           </Well>
           <Well>
             <h3>Database</h3>
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Name">{ databaseVersion.database }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Name">{ databaseVersion.database }</ColDisplay>
             </Row>
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Server">{ databaseVersion.server }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Server">{ databaseVersion.server }</ColDisplay>
             </Row>
             <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Version">{ databaseVersion.version }</ColDisplay>
-            </Row>
-            <Row>
-              <ColDisplay md={12} labelProps={{ md: 2 }} label="Last Migration">{ lastMigration }</ColDisplay>
+              <ColDisplay labelProps={{ md: 2 }} label="Version">{ databaseVersion.version }</ColDisplay>
             </Row>
           </Well>
           <Button onClick={ this.showRaw }>Show Raw Versions</Button>
-          <Well style={{ marginTop: '20px' }} className={ this.state.showRawSection ? '' : 'hide' }>
+          <Well style={{ marginTop: '20px', wordWrap: 'break-word' }} className={ this.state.showRawSection ? '' : 'hide' }>
             <div>{ JSON.stringify(this.props.version) }</div>
           </Well>
         </div>;
