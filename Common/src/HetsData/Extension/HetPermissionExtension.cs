@@ -53,6 +53,11 @@ namespace HetsData.Model
         public const string DistrictRollover = "DistrictRollover";
 
         /// <summary>
+        /// Version Page Permission
+        /// </summary>
+        public const string Version = "Version";
+
+        /// <summary>
         /// All Permissions List
         /// </summary>
         public static readonly IEnumerable<HetPermission> AllPermissions = new List<HetPermission>
@@ -110,6 +115,12 @@ namespace HetsData.Model
                 Code = DistrictRollover,
                 Name = "District Rollover",
                 Description = "Permission to kickoff the annual district rollover process"
+            },
+            new HetPermission
+            {
+                Code = Version,
+                Name = "Version",
+                Description = "Permission to view application's version page"
             }
         };
     }

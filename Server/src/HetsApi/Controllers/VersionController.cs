@@ -7,6 +7,7 @@ using HetsCommon;
 using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Model;
+using Microsoft.AspNetCore.Hosting;
 
 namespace HetsApi.Controllers
 {
@@ -21,11 +22,13 @@ namespace HetsApi.Controllers
 
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IHostingEnvironment _env;
 
-        public VersionController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public VersionController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IHostingEnvironment env)
         {
             _context = context;
             _configuration = configuration;
+            _env = env;
 
             // set context data
             User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
@@ -51,6 +54,35 @@ namespace HetsApi.Controllers
             ProductVersionInfo info = new ProductVersionInfo();
             info.ApplicationVersions.Add(GetApplicationVersionInfo());
             info.DatabaseVersions.Add(GetDatabaseVersionInfo());
+
+            string buildVersion = _configuration.GetSection("Constants:Version-Application").Value;
+            string dbVersion = _configuration.GetSection("Constants:Version-Database").Value;
+            string environment = "";
+
+            if (_env.IsProduction())
+            {
+                environment = "Production";
+            }
+            else if (_env.IsStaging())
+            {
+                environment = "Test";
+            }
+            else if (_env.IsDevelopment())
+            {
+                environment = "Development";
+            }
+
+            if (info.ApplicationVersions[0] != null)
+            {
+                info.ApplicationVersions[0].BuildVersion = buildVersion;
+                info.ApplicationVersions[0].Environment = environment;
+            }
+
+            if (info.DatabaseVersions[0] != null)
+            {
+                info.DatabaseVersions[0].BuildVersion = dbVersion;
+                info.DatabaseVersions[0].Environment = environment;
+            }
 
             return Ok(info);
         }
@@ -80,7 +112,7 @@ namespace HetsApi.Controllers
 
         private ApplicationVersionInfo GetApplicationVersionInfo()
         {
-            Assembly assembly = GetType().GetTypeInfo().Assembly;
+            Assembly assembly = GetType().GetTypeInfo().Assembly;            
             return assembly.GetApplicationVersionInfo(CommitId);
         }
 

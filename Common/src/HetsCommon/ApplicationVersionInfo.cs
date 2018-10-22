@@ -13,6 +13,10 @@ namespace HetsCommon
         public string InformationalVersion { get; set; }
         public string TargetFramework { get; set; }
         public string ImageRuntimeVersion { get; set; }
+
+        public string BuildVersion { get; set; }
+        public string Environment { get; set; }
+
         public IEnumerable<VersionInfo> Dependencies { get; set; }
     }
 }
