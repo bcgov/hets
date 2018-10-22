@@ -283,7 +283,7 @@ var ProjectsDetail = React.createClass({
           <Row>
             <Col md={12}>
               <Well>
-                <h3>Project Information <span className="pull-right">
+                <h3 className="clearfix">Project Information <span className="pull-right">
                   <Button title="Edit Project" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
                 </span></h3>
                 {(() => {
@@ -293,7 +293,7 @@ var ProjectsDetail = React.createClass({
                     { project.primaryContactName }
                   </a>;
 
-                  return <Row id="projects-data">
+                  return <Row id="projects-data" className="equal-height">
                     <Col lg={4} md={6} sm={12} xs={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Project">{ project.name }</ColDisplay>
                     </Col>

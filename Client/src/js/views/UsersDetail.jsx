@@ -246,11 +246,11 @@ var UsersDetail = React.createClass({
         <Row>
           <Col md={12}>
             <Well>
-              <h3>General <span className="pull-right"><Button title="Edit User" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button></span></h3>
+              <h3 className="clearfix">General <span className="pull-right"><Button title="Edit User" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button></span></h3>
               {(() => {
                 if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-                return <Row id="user-data">
+                return <Row id="user-data" className="equal-height">
                   <Col lg={4} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Given Name">{ user.givenName }</ColDisplay>
                   </Col>

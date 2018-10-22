@@ -381,7 +381,7 @@ var RentalAgreementsDetail = React.createClass({
                     );
                   }
                 })()}
-                <Row>
+                <Row className="equal-height">
                   <Col lg={6} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Agreement Number:">{ rentalAgreement.number }</ColDisplay>
                   </Col>
@@ -436,7 +436,7 @@ var RentalAgreementsDetail = React.createClass({
             if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
             return (
-              <Row>
+              <Row className="equal-height">
                 <Col lg={6} md={6} sm={12} xs={12}>
                   <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Estimated Commencement:">{ formatDateTime(rentalAgreement.estimateStartWork, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
                 </Col>

@@ -381,14 +381,14 @@ var OwnersDetail = React.createClass({
         <Row>
           <Col md={12}>
             <Well>
-              <h3>Owner Information <span className="pull-right">
+              <h3 className="clearfix">Owner Information <span className="pull-right">
                 <Button title="Edit Owner" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
               </span></h3>
               {(() => {
                 if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
                 return <div id="owners-data">
-                  <Row>
+                  <Row className="equal-height">
                     <Col lg={4} md={6} sm={12} xs={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Company">{ owner.organizationName }</ColDisplay>
                     </Col>
@@ -426,13 +426,13 @@ var OwnersDetail = React.createClass({
           </Col>
           <Col md={12}>
             <Well>
-              <h3>Policy <span className="pull-right">
+              <h3 className="clearfix">Policy <span className="pull-right">
                 <Button title="Edit Policy Information" bsSize="small" onClick={ this.openPolicyDialog }><Glyphicon glyph="pencil" /></Button>
               </span></h3>
               {(() => {
                 if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
-                return <Row id="owners-policy">
+                return <Row id="owners-policy" className="equal-height">
                   <Col lg={4} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="WCB Number">{ owner.workSafeBCPolicyNumber }</ColDisplay>
                   </Col>

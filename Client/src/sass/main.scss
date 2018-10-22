@@ -108,6 +108,14 @@ a.light {
 
 // Spacing End
 
+.row.equal-height {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .text-label {
   font-weight: bold;
   margin: 5px 0;

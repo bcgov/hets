@@ -315,13 +315,13 @@ var EquipmentDetail = React.createClass({
           <Row>
             <Col md={12}>
               <Well>
-                <h3>Equipment Information <span className="pull-right">
+                <h3 className="clearfix">Equipment Information <span className="pull-right">
                   <Button title="Edit Equipment" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
                 </span></h3>
                 {(() => {
                   if (this.state.loading) { return <div className="spinner-container"><Spinner /></div>; }
 
-                  return <Row>
+                  return <Row className="equal-height">
                     <Col lg={4} md={6} sm={12} xs={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment Type">{ equipment.typeName }</ColDisplay>
                     </Col>
@@ -338,14 +338,14 @@ var EquipmentDetail = React.createClass({
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Size">{ equipment.size }</ColDisplay>
                     </Col>
                     { equipment.isDumpTruck &&
-                      <div>
-                        <Col lg={4} md={6} sm={12} xs={12}>
-                          <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Licenced GVW">{ equipment.licencedGvw }</ColDisplay>
-                        </Col>
-                        <Col lg={4} md={6} sm={12} xs={12}>
-                          <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Truck Legal Capacity">{ equipment.legalCapacity }</ColDisplay>
-                        </Col>
-                      </div>
+                      <Col lg={4} md={6} sm={12} xs={12}>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Licenced GVW">{ equipment.licencedGvw }</ColDisplay>
+                      </Col>
+                    }
+                    { equipment.isDumpTruck &&
+                      <Col lg={4} md={6} sm={12} xs={12}>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Truck Legal Capacity">{ equipment.legalCapacity }</ColDisplay>
+                      </Col>
                     }
                     <Col lg={4} md={6} sm={12} xs={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Type">{ equipment.type }</ColDisplay>
