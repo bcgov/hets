@@ -560,21 +560,7 @@ namespace HetsImport.Import
                         {
                             int tempEquipmentId = distEquipType.DistrictEquipmentTypeId;
                             equipment.DistrictEquipmentTypeId = tempEquipmentId;
-                        }
-
-                        // is this a dump truck?
-                        if (!string.IsNullOrEmpty(oldObject.Reg_Dump_Trk) && oldObject.Reg_Dump_Trk == "Y")
-                        {
-                            // update the equipment type record -> IsDumpTruck = True
-                            HetEquipmentType equipType = dbContext.HetEquipmentType
-                                .FirstOrDefault(x => x.EquipmentTypeId == distEquipType.EquipmentTypeId);
-
-                            if (equipType != null)
-                            {
-                                equipType.IsDumpTruck = true;
-                                dbContext.HetEquipmentType.Update(equipType);
-                            }
-                        }
+                        }                        
                     }
                 }
 
