@@ -327,6 +327,17 @@ namespace HetsApi.Controllers
 
             int id = owner.OwnerId;
 
+            // update contact record
+            int? contactId = owner.PrimaryContact.ContactId;
+
+            HetContact contact = _context.HetContact.FirstOrDefault(x => x.ContactId == contactId);
+
+            if (contact != null)
+            {
+                contact.OwnerId = id;
+                _context.SaveChanges();
+            }
+
             // retrieve updated owner record to return to ui
             return new ObjectResult(new HetsResponse(OwnerHelper.GetRecord(id, _context, _configuration)));
         }
