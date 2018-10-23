@@ -248,14 +248,14 @@ var RentalRequestsAddDialog = React.createClass({
           <Col md={12}>
             <FormGroup controlId="expectedStartDate" validationState={ this.state.expectedStartDateError ? 'error' : null }>
               <ControlLabel>Start Date <sup>*</sup></ControlLabel>
-              <DateControl id="expectedStartDate" date={ this.state.expectedStartDate } updateState={ this.updateState } placeholder="mm/dd/yyyy" title="Dated At" />
+              <DateControl id="expectedStartDate" date={ this.state.expectedStartDate } updateState={ this.updateState } title="Dated At" />
               <HelpBlock>{ this.state.expectedStartDateError }</HelpBlock>
             </FormGroup>
           </Col>
           <Col md={12}>
             <FormGroup controlId="expectedEndDate" validationState={ this.state.expectedEndDateError ? 'error' : null }>
               <ControlLabel>End Date</ControlLabel>
-              <DateControl id="expectedEndDate" date={ this.state.expectedEndDate } updateState={ this.updateState } placeholder="mm/dd/yyyy" title="Dated At" />
+              <DateControl id="expectedEndDate" date={ this.state.expectedEndDate } updateState={ this.updateState } title="Dated At" />
               <HelpBlock>{ this.state.expectedEndDateError }</HelpBlock>
             </FormGroup>
           </Col>

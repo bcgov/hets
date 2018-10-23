@@ -48,7 +48,7 @@ var DateControl = React.createClass({
 
     var format = this.props.format || 'YYYY-MM-DD';
 
-    var placeholder = this.props.placeholder;
+    var placeholder = this.props.placeholder || 'yyyy-mm-dd';
     var disabled = this.props.disabled;
 
     return <div className={ `date-control ${this.props.className || ''}` } id={ this.props.id }>

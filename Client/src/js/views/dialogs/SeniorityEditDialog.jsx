@@ -175,7 +175,7 @@ var SeniorityEditDialog = React.createClass({
               <Col>
                 <FormGroup validationState={ this.state.seniorityDateError ? 'error' : null }>
                   <ControlLabel>Registered Date <sup>*</sup></ControlLabel>
-                  <DateControl id="seniorityEffectiveDate" date={ this.state.seniorityEffectiveDate } updateState={ this.updateState } placeholder="mm/dd/yyyy" title="registered date"/>
+                  <DateControl id="seniorityEffectiveDate" date={ this.state.seniorityEffectiveDate } updateState={ this.updateState } title="registered date"/>
                   <HelpBlock>{ this.state.seniorityDateError }</HelpBlock>
                 </FormGroup>
               </Col>

@@ -74,8 +74,7 @@ var ReleaseExtendHireDialog = React.createClass({
                 <DateControl 
                   id="endHireDate"
                   date={ this.state.endHireDate }
-                  updateState={ this.updateState } 
-                  placeholder="mm/dd/yyyy" 
+                  updateState={ this.updateState }
                   title={ this.props.releaseHire ? 'End Hire Date' : 'Extend Hire Until' } 
                 />
               </FormGroup>

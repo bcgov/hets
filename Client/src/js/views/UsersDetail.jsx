@@ -443,7 +443,7 @@ var ExpireOverlay = React.createClass({
     return <Popover id="users-role-popover" title="Set Expiry Date" { ...props }>
       <Form inline>
         <FormGroup controlId="expiryDate" validationState={ this.state.expiryDateError ? 'error' : null }>
-          <DateControl id="expiryDate" date={ this.state.expiryDate } updateState={ this.updateState } placeholder="mm/dd/yyyy" title="Expiry Date"/>
+          <DateControl id="expiryDate" date={ this.state.expiryDate } updateState={ this.updateState } title="Expiry Date"/>
           <HelpBlock>{ this.state.expiryDateError }</HelpBlock>
         </FormGroup>
         <Button bsStyle="primary" onClick={ this.saveUserRole } className="pull-right">Save</Button>

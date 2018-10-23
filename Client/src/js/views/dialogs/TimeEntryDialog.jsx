@@ -255,8 +255,7 @@ var TimeEntryDialog = React.createClass({
                         name='date'
                         isValidDate={ isValidDate } 
                         date={ this.state.timeEntry[key].date }
-                        updateState={ this.updateTimeEntryState } 
-                        placeholder="mm/dd/yyyy"   
+                        updateState={ this.updateTimeEntryState }
                       />
                       <HelpBlock>{ this.state.timeEntry[key].errorDate }</HelpBlock>
                     </FormGroup>

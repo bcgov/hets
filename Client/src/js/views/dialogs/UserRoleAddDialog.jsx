@@ -125,14 +125,14 @@ var UserRoleAddDialog = React.createClass({
             <Col md={4}>
               <FormGroup controlId="effectiveDate" validationState={ this.state.effectiveDateError ? 'error' : null }>
                 <ControlLabel>Effective Date <sup>*</sup></ControlLabel>
-                <DateControl id="effectiveDate" date={ this.state.effectiveDate } updateState={ this.updateState } placeholder="mm/dd/yyyy" title="effective date"/>
+                <DateControl id="effectiveDate" date={ this.state.effectiveDate } updateState={ this.updateState } title="effective date"/>
                 <HelpBlock>{ this.state.effectiveDateError }</HelpBlock>
               </FormGroup>
             </Col>
             <Col md={4}>
               <FormGroup controlId="expiryDate" validationState={ this.state.expiryDateError ? 'error' : null }>
                 <ControlLabel>Expiry Date</ControlLabel>
-                <DateControl id="expiryDate" date={ this.state.expiryDate } updateState={ this.updateState } placeholder="mm/dd/yyyy" title="expiry date"/>
+                <DateControl id="expiryDate" date={ this.state.expiryDate } updateState={ this.updateState } title="expiry date"/>
                 <HelpBlock>{ this.state.expiryDateError }</HelpBlock>
               </FormGroup>
             </Col>

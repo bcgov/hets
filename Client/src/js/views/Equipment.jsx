@@ -214,7 +214,7 @@ var Equipment = React.createClass({
               </Row>
               <Row>
                 <ButtonToolbar id="equipment-filters-second-row">
-                  <DateControl id="lastVerifiedDate" date={ this.state.search.lastVerifiedDate } updateState={ this.updateSearchState } placeholder="mm/dd/yyyy" label="Not Verified Since:" title="Last Verified Date"/>
+                  <DateControl id="lastVerifiedDate" date={ this.state.search.lastVerifiedDate } updateState={ this.updateSearchState } label="Not Verified Since:" title="Last Verified Date"/>
                   <div className="input-container">
                     <ControlLabel>Attachment:</ControlLabel>
                     <FormInputControl id="equipmentAttachment" type="text" value={ this.state.search.equipmentAttachment } updateState={ this.updateSearchState } />
