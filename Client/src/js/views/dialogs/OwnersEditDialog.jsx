@@ -163,11 +163,11 @@ var OwnersEditDialog = React.createClass({
           <HelpBlock>{ this.state.organizationNameError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="givenName">
-          <ControlLabel>First Name</ControlLabel>
+          <ControlLabel>Owner First Name</ControlLabel>
           <FormInputControl type="text" value={ this.state.givenName } updateState={ this.updateState } />
         </FormGroup>
         <FormGroup controlId="surname">
-          <ControlLabel>Last Name</ControlLabel>
+          <ControlLabel>Owner Last Name</ControlLabel>
           <FormInputControl type="text" value={ this.state.surname } updateState={ this.updateState } />
         </FormGroup>
         <FormGroup controlId="address1" validationState={ this.state.address1Error ? 'error' : null }>
