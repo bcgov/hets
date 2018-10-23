@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
@@ -57,6 +58,72 @@ namespace HetsImport.Import
 
                 performContext.WriteLine("*** Done resetting HET_SERVICE_AREA database sequence after import ***");
                 Debug.WriteLine("Resetting HET_SERVICE_AREA database sequence after import - Done!");
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Create the district status records
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        /// <param name="systemId"></param>
+        public static void ResetDistrictStatus(PerformContext performContext, DbAppContext dbContext, string systemId)
+        {
+            try
+            {
+                performContext.WriteLine("*** Creating HET_DISTRICT_STATUS records after import ***");
+                Debug.WriteLine("Creating HET_DISTRICT_STATUS records after import");
+
+                // determine the current fiscal year
+                DateTime fiscalStart;
+
+                if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
+                {
+                    fiscalStart = new DateTime(DateTime.UtcNow.AddYears(-1).Year, 4, 1);
+                }
+                else
+                {
+                    fiscalStart = new DateTime(DateTime.UtcNow.Year, 4, 1);
+                }
+
+                if (dbContext.HetDistrict.Any())
+                {
+                    List<HetDistrict> districts = dbContext.HetDistrict.AsNoTracking().ToList();
+
+                    foreach (HetDistrict district in districts)
+                    {
+                        int id = district.DistrictId;
+
+                        // check if the record already exists
+                        bool exists = dbContext.HetDistrictStatus.Any(x => x.DistrictId == id);
+                        if (exists) continue;                        
+
+                        // add new status record
+                        HetDistrictStatus status = new HetDistrictStatus
+                        {
+                            DistrictId = id,
+                            CurrentFiscalYear = fiscalStart.Year,
+                            NextFiscalYear = fiscalStart.Year + 1,
+                            DisplayRolloverMessage = false,
+                            AppCreateUserid = systemId,
+                            AppCreateTimestamp = DateTime.UtcNow,
+                            AppLastUpdateUserid = systemId,
+                            AppLastUpdateTimestamp = DateTime.UtcNow
+                        };
+
+                        dbContext.HetDistrictStatus.Add(status);
+                        dbContext.SaveChanges();
+                    }
+                }
+
+                performContext.WriteLine("*** Done creating HET_DISTRICT_STATUS records after import ***");
+                Debug.WriteLine("Creating HET_DISTRICT_STATUS records after import - Done!");
             }
             catch (Exception e)
             {

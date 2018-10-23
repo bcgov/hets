@@ -37,7 +37,11 @@ namespace HetsImport.Import
 
             // adding system Account if not there in the database
             ImportUtility.InsertSystemUser(dbContext, SystemId);
-            
+
+            // Create District status record
+            dbContext = new DbAppContext(connectionString);
+            ImportServiceArea.ResetDistrictStatus(context, dbContext, SystemId);
+
             //*** Import Service Areas from ServiceArea.xml (HET_SERVICE_AREA)
             dbContext = new DbAppContext(connectionString);
             ImportServiceArea.Import(context, dbContext, fileLocation, SystemId);
