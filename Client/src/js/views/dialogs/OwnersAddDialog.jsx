@@ -9,6 +9,7 @@ import _ from 'lodash';
 import * as Constant from '../../constants';
 
 import CheckboxControl from '../../components/CheckboxControl.jsx';
+import DropdownControl from '../../components/DropdownControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
@@ -38,19 +39,24 @@ var OwnersAddDialog = React.createClass({
 
     return {
       name: '',
+      doingBusinessAs: '',
       givenName: '',
       surname: '',
       address1: '',
       address2: '',
       city: '',
-      province: '',
+      province: 'BC',
       postalCode: '',
       ownerCode: '',
       // localAreaId: defaultLocalAreaId.id || 0,
       localAreaId: 0,
       meetsResidency: true,
-      doingBusinessAs: '',
       registeredCompanyNumber: '',
+      workSafeBCPolicyNumber: '',
+      primaryContactPhone: '',
+      primaryContactGivenName: '',
+      primaryContactSurname: '',
+      status: Constant.OWNER_STATUS_CODE_APPROVED,
 
       nameError: '',
       address1Error: '',
@@ -60,7 +66,8 @@ var OwnersAddDialog = React.createClass({
       ownerCodeError: '',
       localAreaError: '',
       residencyError: '',
-      statusError: '',
+      workSafeBCPolicyNumberError: '',
+      primaryContactPhoneError: '',
     };
   },
 
@@ -74,17 +81,22 @@ var OwnersAddDialog = React.createClass({
 
   didChange() {
     if (this.state.organizationName !== '') { return true; }
+    if (this.state.doingBusinessAs !== '') { return true; }
     if (this.state.givenName !== '') { return true; }
     if (this.state.surname !== '') { return true; }
     if (this.state.address1 !== '') { return true; }
     if (this.state.address2 !== '') { return true; }
     if (this.state.city !== '') { return true; }
-    if (this.state.province !== '') { return true; }
+    if (this.state.province !== 'BC') { return true; }
     if (this.state.postalCode !== '') { return true; }
     if (this.state.ownerCode !== '') { return true; }
     if (this.state.localAreaId !== 0) { return true; }
-    if (this.state.doingBusinessAs !== '') { return true; }
     if (this.state.registeredCompanyNumber !== '') { return true; }
+    if (this.state.workSafeBCPolicyNumber != '') { return true; }
+    if (this.state.primaryContactGivenName !== '') { return true; }
+    if (this.state.primaryContactSurname !== '') { return true; }
+    if (this.state.primaryContactPhone !== '') { return true; }
+    if (this.state.status != Constant.OWNER_STATUS_CODE_APPROVED) { return true; }
 
     return false;
   },
@@ -103,7 +115,10 @@ var OwnersAddDialog = React.createClass({
       ownerCodeError: '',
       localAreaError: '',
       residencyError: '',
-      statusError: '',
+      workSafeBCPolicyNumberError: '',
+      primaryContactGivenNameError: '',
+      primaryContactSurnameError: '',
+      primaryContactPhoneError: '',
     });
 
     if (isBlank(this.state.name)) {
@@ -173,12 +188,36 @@ var OwnersAddDialog = React.createClass({
       valid = false;
     }
 
+    if (isBlank(this.state.workSafeBCPolicyNumber)) {
+      this.setState({ workSafeBCPolicyNumberError: 'WCB number is required' });
+      valid = false;
+    }
+
+    if (isBlank(this.state.primaryContactGivenName)) {
+      this.setState({ primaryContactGivenNameError: 'First name is required' });
+      valid = false;
+    }
+
+    if (isBlank(this.state.primaryContactSurname)) {
+      this.setState({ primaryContactSurnameError: 'Last name is required' });
+      valid = false;
+    }
+    
+    if (isBlank(this.state.primaryContactPhone)) {
+      this.setState({ primaryContactPhoneError: 'Phone number is required' });
+      valid = false;
+    } else if (!Constant.NANP_REGEX.test(this.state.primaryContactPhone)) {
+      this.setState({ primaryContactPhoneError: 'Invalid phone number' });
+      valid = false;
+    }
+
     return valid;
   },
 
   onSave() {
     this.props.onSave({
       organizationName: this.state.name,
+      doingBusinessAs: this.state.doingBusinessAs,
       givenName: this.state.givenName,
       surname: this.state.surname,
       address1: this.state.address1,
@@ -189,9 +228,12 @@ var OwnersAddDialog = React.createClass({
       ownerCode: this.state.ownerCode,
       localArea: { id: this.state.localAreaId },
       meetsResidency: this.state.meetsResidency,
-      status: Constant.OWNER_STATUS_CODE_PENDING,
       registeredCompanyNumber: this.state.registeredCompanyNumber,
-      doingBusinessAs: this.state.doingBusinessAs,
+      workSafeBCPolicyNumber: this.state.workSafeBCPolicyNumber,
+      primaryContactGivenName: this.state.primaryContactGivenName,
+      primaryContactSurname: this.state.primaryContactSurname,
+      primaryContactPhone: this.state.primaryContactPhone,
+      status: this.state.status,
     });
   },
 
@@ -212,12 +254,16 @@ var OwnersAddDialog = React.createClass({
           <FormInputControl type="text" value={ this.state.name } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
           <HelpBlock>{ this.state.nameError }</HelpBlock>
         </FormGroup>
+        <FormGroup controlId="doingBusinessAs">
+          <ControlLabel>Doing Business As</ControlLabel>
+          <FormInputControl type="text" value={ this.state.doingBusinessAs } updateState={ this.updateState } />
+        </FormGroup>
         <FormGroup controlId="givenName">
-          <ControlLabel>First Name</ControlLabel>
+          <ControlLabel>Owner First Name</ControlLabel>
           <FormInputControl type="text" value={ this.state.givenName } updateState={ this.updateState } />
         </FormGroup>
         <FormGroup controlId="surname">
-          <ControlLabel>Last Name</ControlLabel>
+          <ControlLabel>Owner Last Name</ControlLabel>
           <FormInputControl type="text" value={ this.state.surname } updateState={ this.updateState } />
         </FormGroup>
         <FormGroup controlId="address1" validationState={ this.state.address1Error ? 'error' : null }>
@@ -254,9 +300,32 @@ var OwnersAddDialog = React.createClass({
           <FilterDropdown id="localAreaId" items={ localAreas } selectedId={ this.state.localAreaId } updateState={ this.updateState } className="full-width" />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
         </FormGroup>
-        <FormGroup controlId="doingBusinessAs">
-          <ControlLabel>Doing Business As</ControlLabel>
-          <FormInputControl type="text" value={ this.state.doingBusinessAs } updateState={ this.updateState } />
+        <FormGroup controlId="workSafeBCPolicyNumber" validationState={ this.state.workSafeBCPolicyNumberError ? 'error' : null }>
+          <ControlLabel>WCB Number <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" value={ this.state.workSafeBCPolicyNumber } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+          <HelpBlock>{ this.state.workSafeBCPolicyNumberError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="primaryContactGivenName" validationState={ this.state.primaryContactGivenNameError ? 'error' : null }>
+          <ControlLabel>Primary Contact First Name <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" value={ this.state.primaryContactGivenName } updateState={ this.updateState } />
+          <HelpBlock>{ this.state.primaryContactGivenNameError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="primaryContactSurname" validationState={ this.state.primaryContactSurnameError ? 'error' : null }>
+          <ControlLabel>Primary Contact Last Name <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" value={ this.state.primaryContactSurname } updateState={ this.updateState } />
+          <HelpBlock>{ this.state.primaryContactSurnameError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="primaryContactPhone" validationState={ this.state.primaryContactPhoneError ? 'error' : null }>
+          <ControlLabel>Primary Contact Phone <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" defaultValue={ this.state.primaryContactPhone } placeholder="250-555-1212x123" updateState={ this.updateState }/>
+          <HelpBlock>{ this.state.primaryContactPhoneError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="status" validationState={ this.state.projectStatusCodeError ? 'error' : null }>
+          <ControlLabel>Status</ControlLabel>
+          <DropdownControl id="status" title={ this.state.status } updateState={ this.updateState }
+            value={ this.state.status }
+            items={[ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ]}
+          />
         </FormGroup>
         <FormGroup controlId="registeredCompanyNumber">
           <ControlLabel>Registered BC Company Number</ControlLabel>

@@ -36,6 +36,12 @@ namespace HetsData.Model
         public string DistrictContact { get; set; }
 
         [NotMapped]
+        public string PrimaryContactGivenName { get; set; }
+
+        [NotMapped]
+        public string PrimaryContactSurname { get; set; }
+
+        [NotMapped]
         public string PrimaryContactPhone { get; set; }
 
         [NotMapped]

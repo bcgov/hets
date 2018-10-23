@@ -315,8 +315,8 @@ namespace HetsApi.Controllers
                 Role = "Primary Contact",
                 Province = "BC",
                 WorkPhoneNumber = item.PrimaryContactPhone,
-                Surname = item.Surname,
-                GivenName = item.GivenName
+                Surname = item.PrimaryContactSurname,
+                GivenName = item.PrimaryContactGivenName
             };            
 
             owner.PrimaryContact = primaryContact;
