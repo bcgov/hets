@@ -124,7 +124,7 @@ var RentalAgreementsEditDialog = React.createClass({
               <Col md={6}>
                 <FormGroup controlId="estimateStartWork" validationState={ this.state.estimateStartWorkError ? 'error' : null }>
                   <ControlLabel>Estimated Commencement</ControlLabel>
-                  <DateControl id="estimateStartWork" disabled={ isReadOnly } date={ this.state.estimateStartWork } updateState={ this.updateState } placeholder="mm/dd/yyyy" title="Estimated Commencement" />
+                  <DateControl id="estimateStartWork" disabled={ isReadOnly } date={ this.state.estimateStartWork } updateState={ this.updateState } title="Estimated Commencement" />
                   <HelpBlock>{ this.state.estimateStartWorkError }</HelpBlock>
                 </FormGroup>
               </Col>
@@ -140,7 +140,7 @@ var RentalAgreementsEditDialog = React.createClass({
               <Col md={6}>
                 <FormGroup controlId="datedOn" validationState={ this.state.datedOnError ? 'error' : null }>
                   <ControlLabel>Dated At</ControlLabel>
-                  <DateControl id="datedOn" disabled={ isReadOnly } date={ this.state.datedOn } updateState={ this.updateState } placeholder="mm/dd/yyyy" title="Dated At" />
+                  <DateControl id="datedOn" disabled={ isReadOnly } date={ this.state.datedOn } updateState={ this.updateState } title="Dated At" />
                   <HelpBlock>{ this.state.datedOnError }</HelpBlock>
                 </FormGroup>
               </Col>

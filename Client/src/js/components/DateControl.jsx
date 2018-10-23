@@ -1,6 +1,7 @@
 import React from 'react';
 import { ControlLabel, InputGroup, Button, Glyphicon } from 'react-bootstrap';
 
+import _ from 'lodash';
 import Moment from 'moment';
 import DateTime from 'react-datetime';
 
@@ -26,9 +27,23 @@ var DateControl = React.createClass({
   },
 
   dateChanged(date) {
-    var moment = Moment(date);
-    var dateString = (moment && moment.isValid()) ? moment.format(this.props.format || 'YYYY-MM-DD') : date;
+    // ignore invalid dates
+    if (_.isString(date) || !date || !date.isValid()) {
+      return;
+    }
+    
+    var dateString = date.format(this.props.format || 'YYYY-MM-DD');
+    this.notifyValueChanged(dateString);
+  },
+  
+  dateBlurred(date) {
+    // when focus leaves input, if date is invalid, reset value to empty string
+    if (_.isString(date) || !date || !date.isValid()) {
+      this.notifyValueChanged('');
+    }
+  },
 
+  notifyValueChanged(dateString) {
     // On change listener
     if (this.props.onChange) {
       this.props.onChange(dateString, this.props.id);
@@ -44,11 +59,9 @@ var DateControl = React.createClass({
 
   render() {
     var date = Moment.utc(this.props.date);
-    if (!date || !date.isValid()) { date = ''; }
-
     var format = this.props.format || 'YYYY-MM-DD';
 
-    var placeholder = this.props.placeholder;
+    var placeholder = this.props.placeholder || 'yyyy-mm-dd';
     var disabled = this.props.disabled;
 
     return <div className={ `date-control ${this.props.className || ''}` } id={ this.props.id }>
@@ -57,7 +70,7 @@ var DateControl = React.createClass({
         if (this.props.label) { return <ControlLabel>{ this.props.label }</ControlLabel>; }
       })()}
       <InputGroup>
-        <DateTime value={ date } dateFormat={ format } timeFormat={ false } closeOnSelect={ true } onChange={ this.dateChanged }
+        <DateTime value={ date } dateFormat={ format } timeFormat={ false } closeOnSelect={ true } onChange={ this.dateChanged } onBlur={ this.dateBlurred }
           inputProps={{ placeholder: placeholder, disabled: disabled, ref: input => { this.input = input; } }} isValidDate={ this.props.isValidDate }
         />
         <InputGroup.Button>

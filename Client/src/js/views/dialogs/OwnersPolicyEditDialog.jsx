@@ -103,7 +103,7 @@ var OwnersPolicyEditDialog = React.createClass({
         </FormGroup>
         <FormGroup controlId="workSafeBCExpiryDate" validationState={ this.state.workSafeBCExpiryDateError ? 'error' : null }>
           <ControlLabel>WCB Expiry Date</ControlLabel>
-          <DateControl id="workSafeBCExpiryDate" date={ this.state.workSafeBCExpiryDate } updateState={ this.updateState } placeholder="mm/dd/yyyy" />
+          <DateControl id="workSafeBCExpiryDate" date={ this.state.workSafeBCExpiryDate } updateState={ this.updateState } />
           <HelpBlock>{ this.state.workSafeBCExpiryDateError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="cglPolicyNumber">
@@ -112,7 +112,7 @@ var OwnersPolicyEditDialog = React.createClass({
         </FormGroup>
         <FormGroup controlId="cglEndDate" validationState={ this.state.cglEndDateError ? 'error' : null }>
           <ControlLabel>CGL Policy End Date</ControlLabel>
-          <DateControl id="cglEndDate" date={ this.state.cglEndDate } updateState={ this.updateState } placeholder="mm/dd/yyyy" />
+          <DateControl id="cglEndDate" date={ this.state.cglEndDate } updateState={ this.updateState } />
           <HelpBlock>{ this.state.cglEndDateError }</HelpBlock>
         </FormGroup>
       </Form>
