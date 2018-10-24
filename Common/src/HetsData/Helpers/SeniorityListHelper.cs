@@ -29,11 +29,10 @@ namespace HetsData.Helpers
         public string EquipmentType { get; set; }
         public string OwnerName { get; set; }
         public int? OwnerId { get; set; }
-        public string SeniorityString { get; set; }
+        public string Block { get; set; }
         public string Seniority { get; set; }
-        public string Make { get; set; }
-        public string Model { get; set; }
-        public string Size { get; set; }
+        public string IsHired { get; set; }
+        public string YearMakeModelSize { get; set; }
         public string EquipmentCode { get; set; }
         public string LastCalled { get; set; }
         public string YearsRegistered { get; set; }
@@ -56,7 +55,9 @@ namespace HetsData.Helpers
     }
 
     public class SeniorityListPdfViewModel
-    {        
+    {     
+        public string PrintedOn { get; set; }
+
         public List<SeniorityListRecord> SeniorityListRecords { get; set; }
                 
         public string ToJson()
@@ -291,14 +292,7 @@ namespace HetsData.Helpers
                     ? scoringRules.GetTotalBlocks("DumpTruck") + 1
                     : scoringRules.GetTotalBlocks() + 1;
             }
-
-            // get equipment seniority
-            float seniority = 0F;
-            if (model.Seniority != null)
-            {
-                seniority = (float) model.Seniority;
-            }
-
+            
             // get equipment block number
             int blockNumber = 0;
             if (model.BlockNumber != null)
@@ -314,7 +308,7 @@ namespace HetsData.Helpers
             }
 
             // *************************************************************
-            // check if this record/owner was call last
+            // check if this record/owner was called last
             // *************************************************************
             bool callNext = false;
 
@@ -340,7 +334,7 @@ namespace HetsData.Helpers
             seniorityViewModel.LastCalled = callNext ? "Y" : " ";
 
             // *************************************************************
-            // Map data to view model
+            // map data to view model
             // *************************************************************
             seniorityViewModel.Id = model.EquipmentId;
 
@@ -355,18 +349,20 @@ namespace HetsData.Helpers
                 seniorityViewModel.OwnerId = model.OwnerId;
             }
 
-            seniorityViewModel.SeniorityString =
-                EquipmentHelper.FormatSeniorityString(seniority, blockNumber, numberOfBlocks);
-
+            seniorityViewModel.Block = blockNumber == numberOfBlocks ? "Open" : blockNumber.ToString();            
+            
             // format the seniority value
             seniorityViewModel.Seniority = string.Format("{0:0.###}", model.Seniority);
 
-            seniorityViewModel.Make = model.Make;
-            seniorityViewModel.Model = model.Model;
-            seniorityViewModel.Size = model.Size;
+            // format year / make / model / size
+            seniorityViewModel.YearMakeModelSize = $"{model.Year}/{model.Make}/{model.Model}/{model.Size}";
+
             seniorityViewModel.EquipmentCode = model.EquipmentCode;
 
             seniorityViewModel.YearsRegistered = model.YearsOfService.ToString();
+
+            // Determine if this equipment is currently hired
+            seniorityViewModel.IsHired = EquipmentHelper.IsHired(model.EquipmentId, context) ? "Y" : "N";
 
             // calculate and format the ytd hours
             float tempHours = EquipmentHelper.GetYtdServiceHours(model.EquipmentId, context);
@@ -377,17 +373,13 @@ namespace HetsData.Helpers
             seniorityViewModel.HoursYearMinus2 = string.Format("{0:0.###}", model.ServiceHoursTwoYearsAgo);
             seniorityViewModel.HoursYearMinus3 = string.Format("{0:0.###}", model.ServiceHoursThreeYearsAgo);
 
-            // get last called value
-
-
-            seniorityViewModel.SenioritySortOrder =
-                EquipmentHelper.CalculateSenioritySortOrder(blockNumber, numberInBlock);
+            // add the correct sorting order (numeric)
+            seniorityViewModel.SenioritySortOrder = EquipmentHelper.CalculateSenioritySortOrder(blockNumber, numberInBlock);
 
             return seniorityViewModel;
         }
 
         #endregion
-
     }
 
     #region Seniority Scoring Rules Class
