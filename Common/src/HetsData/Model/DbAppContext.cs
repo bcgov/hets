@@ -2946,6 +2946,8 @@ namespace HetsData.Model
                     .HasColumnName("DESCRIPTION")
                     .HasMaxLength(200);
 
+                entity.Property(e => e.Overtime).HasColumnName("OVERTIME");
+
                 entity.Property(e => e.IsInTotalEditable).HasColumnName("IS_IN_TOTAL_EDITABLE");
 
                 entity.Property(e => e.IsIncludedInTotal).HasColumnName("IS_INCLUDED_IN_TOTAL");
