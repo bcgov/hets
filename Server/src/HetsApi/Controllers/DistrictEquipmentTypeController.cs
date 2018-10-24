@@ -53,11 +53,42 @@ namespace HetsApi.Controllers
 
             List<HetDistrictEquipmentType> equipmentTypes = _context.HetDistrictEquipmentType.AsNoTracking()
                 .Include(x => x.District)
-                    .ThenInclude(y => y.Region)
                 .Include(x => x.EquipmentType)
+                .Include(x => x.HetEquipment)
+                    .ThenInclude(y => y.LocalArea)
                 .Where(x => x.District.DistrictId == districtId)
                 .OrderBy(x => x.DistrictEquipmentName)
                 .ToList();
+
+            foreach (HetDistrictEquipmentType equipmentType in equipmentTypes)
+            {
+                equipmentType.EquipmentCount = equipmentType.HetEquipment.Count;
+
+                foreach(HetEquipment equipment in equipmentType.HetEquipment)
+                {                    
+                    LocalAreaEquipment localAreaEquipment = equipmentType.LocalAreas
+                        .FirstOrDefault(x => x.Id == equipment.LocalAreaId);
+
+                    if (localAreaEquipment == null)
+                    {
+                        localAreaEquipment = new LocalAreaEquipment
+                        {
+                            Id = equipment.LocalArea.LocalAreaId,
+                            Name = equipment.LocalArea.Name,
+                            EquipmentCount = 1
+                        };
+
+                        equipmentType.LocalAreas.Add(localAreaEquipment);
+                    }
+                    else
+                    {
+                        localAreaEquipment.EquipmentCount = localAreaEquipment.EquipmentCount + 1;
+                    }
+                }
+
+                // remove unnecessary data
+                equipmentType.HetEquipment = null;
+            }
 
             return new ObjectResult(new HetsResponse(equipmentTypes));
         }
