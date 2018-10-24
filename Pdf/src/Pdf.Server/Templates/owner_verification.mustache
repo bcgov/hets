@@ -143,10 +143,27 @@
         #equipment-table th {
             font-weight: bold;
             background-color: #f2f2f2;
+            border-right-color: #000000;
+            border-right-style: solid;
+            border-bottom-width: 1px;
+            padding: 5px 1px 5px 1px;
+            border-bottom: solid;
+            border-bottom-width: 1px;
+            border-bottom-color: #000000;
+            border-top: solid;
+            border-top-width: 1px;
+            border-top-color: #000000;
         }
 
         #equipment-table td {
             vertical-align: top;
+            border-right-color: #000000;
+            border-right-style: solid;
+            border-bottom-width: 1px;
+            padding: 5px 1px 20px 1px;
+            border-bottom: solid; 
+            border-bottom-width: 1px;
+            border-bottom-color: #000000;
         }
 
         #list-column ul {
@@ -327,6 +344,8 @@
 
             <br />
             <br />
+            <br />
+            <br />
 
             <div id="non-equipment-table">
                 <table border="1" cellpadding="1" cellspacing="1">
@@ -446,19 +465,19 @@
                 <table border="1" cellpadding="1" cellspacing="1">
                     <thead>
                         <tr>
-                            <th style="width: 200px">Still own this unit & wish to re-register?</th>
+                            <th style="width: 180px">Still own this unit & wish to re-register?</th>
                             <th>Equipment Id</th>
                             <th>Equipment Type</th>
                             <th>Local Area</th>
                             <th>Year/Make/Model/Serial Number/Size</th>
                             <th>Attachments</th>
-                            <th style="width: 200px">Owner Comments (sold, retired, etc.)</th>
+                            <th style="width: 220px">Owner Comments (sold, retired, etc.)</th>
                         </tr>
                     </thead>
                     <tr><td colspan="7">&nbsp;</td></tr>
                     {{#equipment}}
                     <tr>
-                        <td>&nbsp;Yes&nbsp;&nbsp;No&nbsp;</td>
+                        <td>&nbsp;Yes&nbsp;&nbsp;&nbsp;No&nbsp;</td>
                         <td>{{equipmentCode}}</td>
                         <td>{{#districtEquipmentType}}{{districtEquipmentName}}{{/districtEquipmentType}}</td>
                         <td>{{localArea.name}}</td>
@@ -468,11 +487,15 @@
                         </td>
                         <td>&nbsp;</td>
                     </tr>
+
                     <tr><td colspan="7" style="border-bottom: solid; border-bottom-width: 1px; border-bottom-color: #000;">&nbsp;</td></tr>
                     {{/equipment}}
                 </table>
             </div>
 
+            <br />
+            <br />
+            <br />
             <br />
             <br />
 
