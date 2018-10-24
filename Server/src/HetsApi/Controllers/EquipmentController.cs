@@ -1148,6 +1148,8 @@ namespace HetsApi.Controllers
                         FileDownloadName = fileName
                     };
 
+                    Response.Headers.Add("Content-Disposition", "inline; filename=" + fileName);
+
                     return pdfResult;
                 }
 
