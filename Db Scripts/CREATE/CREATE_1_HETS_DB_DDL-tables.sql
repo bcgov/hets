@@ -1175,6 +1175,7 @@ CREATE TABLE public."HET_PROVINCIAL_RATE_TYPE" (
     "DESCRIPTION" character varying(200),
 	"PERIOD_TYPE" character varying(20),
     "RATE" real,
+	"OVERTIME" boolean NOT NULL,
     "IS_INCLUDED_IN_TOTAL" boolean NOT NULL,
     "IS_PERCENT_RATE" boolean NOT NULL,
     "IS_RATE_EDITABLE" boolean NOT NULL,    

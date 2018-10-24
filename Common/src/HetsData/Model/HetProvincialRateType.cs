@@ -10,6 +10,7 @@ namespace HetsData.Model
         public string Description { get; set; }
         public string PeriodType { get; set; }
         public float? Rate { get; set; }
+        public bool Overtime { get; set; }
         public bool IsIncludedInTotal { get; set; }
         public bool IsPercentRate { get; set; }
         public bool IsRateEditable { get; set; }
