@@ -1000,14 +1000,14 @@ namespace HetsApi.Controllers
                 fiscalEnd = new DateTime(DateTime.UtcNow.AddYears(1).Year, 3, 31);
             }
 
-            string yearMinus1 = string.Format("{0}/{1}", fiscalEnd.AddYears(-1).Year.ToString(),
-                fiscalEnd.Year.ToString().Substring(2, 2));
-
-            string yearMinus2 = string.Format("{0}/{1}", fiscalEnd.AddYears(-2).Year.ToString(),
+            string yearMinus1 = string.Format("{0}/{1}", fiscalEnd.AddYears(-2).Year.ToString(),
                 fiscalEnd.AddYears(-1).Year.ToString().Substring(2, 2));
 
-            string yearMinus3 = string.Format("{0}/{1}", fiscalEnd.AddYears(-3).Year.ToString(),
+            string yearMinus2 = string.Format("{0}/{1}", fiscalEnd.AddYears(-3).Year.ToString(),
                 fiscalEnd.AddYears(-2).Year.ToString().Substring(2, 2));
+
+            string yearMinus3 = string.Format("{0}/{1}", fiscalEnd.AddYears(-4).Year.ToString(),
+                fiscalEnd.AddYears(-3).Year.ToString().Substring(2, 2));
 
             // **********************************************************************
             // convert Equipment Model to Pdf View Model
@@ -1075,7 +1075,7 @@ namespace HetsApi.Controllers
             {
                 foreach (SeniorityListRecord list in seniorityList.SeniorityListRecords)
                 {
-                    list.SeniorityList = list.SeniorityList.OrderByDescending(x => x.SenioritySortOrder).ToList();
+                    list.SeniorityList = list.SeniorityList.OrderBy(x => x.SenioritySortOrder).ToList();
                 }
 
                 // fix the ask next (if no rotation list existed
@@ -1089,6 +1089,8 @@ namespace HetsApi.Controllers
                     }
                 }
             }
+
+            seniorityList.PrintedOn = string.Format("{0:dd-MM-yyyy H:mm:ss}", DateTime.Now);
 
             // **********************************************************************
             // create the payload and call the pdf service
@@ -1135,7 +1137,7 @@ namespace HetsApi.Controllers
                     // convert to string and log
                     string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
 
-                    fileName = fileName + ".pdf";
+                    fileName = fileName + string.Format("-{0:yyyy-MM-dd-H-mm}", DateTime.Now) + ".pdf";
 
                     _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Filename: {0}", fileName);
                     _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Size: {0}", pdfResponse.Length);

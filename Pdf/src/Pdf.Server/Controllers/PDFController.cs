@@ -143,7 +143,7 @@ namespace Pdf.Server.Controllers
         /// <summary>
         /// Get HETS Seniority List
         /// </summary>
-        /// <param name="seniorityListJson">Serialized senioritylist data</param>
+        /// <param name="seniorityListJson">Serialized seniority list data</param>
         /// <param name="name">Unique name for the generated Pdf (Result: name + '.pdf')</param>
         /// <returns></returns>
         [HttpPost]
