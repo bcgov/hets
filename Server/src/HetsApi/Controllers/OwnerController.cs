@@ -528,7 +528,7 @@ namespace HetsApi.Controllers
                     owners[0].LocalArea.ServiceArea.Fax);
 
                 // generate pdf document name [unique portion only]
-                string fileName = "OwnerVerification_" + DateTime.Now.Year + DateTime.Now.Month + DateTime.Now.Day;
+                string fileName = "OwnerVerification";
 
                 // setup model for submission to the Pdf service
                 OwnerVerificationPdfViewModel model = new OwnerVerificationPdfViewModel
@@ -560,6 +560,11 @@ namespace HetsApi.Controllers
                     owner.DistrictName = model.DistrictName;
                     owner.DistrictAddress = model.DistrictAddress;
                     owner.DistrictContact = model.DistrictContact;
+
+                    if (!string.IsNullOrEmpty(owner.SharedKey))
+                    {
+                        owner.SharedKeyHeader = "Secret Key: ";
+                    }
 
                     model.Owners.Add(owner);
                 }
@@ -604,7 +609,7 @@ namespace HetsApi.Controllers
                         // convert to string and log
                         string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
 
-                        fileName = fileName + ".pdf";
+                        fileName = fileName + string.Format("-{0:yyyy-MM-dd-H-mm}", DateTime.Now) + ".pdf";
 
                         _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Filename: {0}", fileName);
                         _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Size: {0}", pdfResponse.Length);
@@ -614,6 +619,8 @@ namespace HetsApi.Controllers
                         {
                             FileDownloadName = fileName
                         };
+
+                        Response.Headers.Add("Content-Disposition", "inline; filename=" + fileName);
 
                         return result;
                     }

@@ -70,5 +70,8 @@ namespace HetsData.Model
 
         [NotMapped]
         public string DistrictNameBusiness => LocalArea?.ServiceArea?.District?.Name;
+
+        [NotMapped]
+        public string SharedKeyHeader { get; set; }
     }
 }
