@@ -30,6 +30,7 @@ import TableControl from '../components/TableControl.jsx';
 import Confirm from '../components/Confirm.jsx';
 import History from '../components/History.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
+import TooltipButton from '../components/TooltipButton.jsx';
 
 import { formatDateTime } from '../utils/date';
 import { concat } from '../utils/string';
@@ -178,6 +179,31 @@ var RentalRequestsDetail = React.createClass({
     window.print();
   },
 
+  printSeniorityList() {
+    var localAreaIds = [ this.props.rentalRequest.data.localAreaId ];
+    var districtEquipmentTypeIds = [ this.props.rentalRequest.data.districtEquipmentTypeId ];
+    Api.equipmentSeniorityListPdf(localAreaIds, districtEquipmentTypeIds).then(response => {
+      var blob = new Blob([response], {type: 'image/pdf'});
+      if (window.navigator.msSaveBlob) {
+        blob = window.navigator.msSaveBlob([response], 'seniority_list.pdf');
+      }
+      //Create a link element, hide it, direct 
+      //it towards the blob, and then 'click' it programatically
+      let a = document.createElement('a');
+      a.style = 'display: none';
+      document.body.appendChild(a);
+      //Create a DOMString representing the blob 
+      //and point the link element towards it
+      let url = window.URL.createObjectURL(blob);
+      a.href = url;
+      a.download = 'seniority_list.pdf';
+      //programatically click the link to trigger the download
+      a.click();
+      //release the reference to the file by revoking the Object URL
+      window.URL.revokeObjectURL(url);
+    });
+  },
+
   addRequest() {
 
   },
@@ -261,7 +287,14 @@ var RentalRequestsDetail = React.createClass({
 
       <Well>
         <h3>Hire Rotation List <span className="pull-right">
-          <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+          <TooltipButton onClick={ this.print } disabled={ this.state.loading } disabledTooltip={ 'Please wait for the request information to finish loading.' }>
+            <Glyphicon glyph="print" title="Print Hire Rotation List" className="mr-5" />
+            <span>Hire Rotation List</span>
+          </TooltipButton>
+          <TooltipButton onClick={ this.printSeniorityList } disabled={ this.state.loading } disabledTooltip={ 'Please wait for the request information to finish loading.' }>
+            <Glyphicon glyph="print" title="Print Seniority List" className="mr-5" />
+            <span>Seniority List</span>
+          </TooltipButton>
           <CheckboxControl id="showAttachments" inline updateState={ this.updateState }><small>Show Attachments</small></CheckboxControl>
         </span></h3>
         {(() => {
