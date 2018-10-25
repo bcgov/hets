@@ -25,7 +25,6 @@ import store from '../store';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
-import PageOrientation from '../components/PageOrientation.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TableControl from '../components/TableControl.jsx';
 import Confirm from '../components/Confirm.jsx';
@@ -199,7 +198,6 @@ var RentalRequestsDetail = React.createClass({
     var rentalRequest = this.props.rentalRequest.data;
     
     return <div id="rental-requests-detail">
-      <PageOrientation type="landscape" />
       <Row id="rental-requests-top">
         <Col sm={10}>
           <Label bsStyle={ rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default' }>{ rentalRequest.status }</Label>
