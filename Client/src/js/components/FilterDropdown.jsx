@@ -42,9 +42,10 @@ var FilterDropdown = React.createClass({
   componentDidUpdate(prevProps, prevState) {
     if (!_.isEqual(this.props.items, prevProps.items)) {
       var items = this.props.items || [];
+      var id = this.props.selectedId === undefined ? prevState.selectedId : this.props.selectedId;
       this.setState({
         items: items,
-        title: this.buildTitle(items, prevState.selectedId),
+        title: this.buildTitle(items, id),
       });
     } else if (this.props.selectedId !== prevProps.selectedId) {
       this.setState({
