@@ -148,6 +148,14 @@ var RentalRequestsAddDialog = React.createClass({
 
     return valid;
   },
+  
+  onLocalAreaSelected(localArea) {
+    // clear the selected equipment type if it's not included in the types for the new local area
+    var districtEquipmentTypes = this.getFilteredEquipmentTypes(localArea.id);
+    if (_.filter(districtEquipmentTypes, type => type.id === this.state.equipmentTypeId).length === 0) {
+      this.setState({ equipmentTypeId: 0 });
+    }
+  },
 
   onProjectSelected(/* project */) {
     // TODO Restrict the available local areas to a project service area
@@ -170,6 +178,13 @@ var RentalRequestsAddDialog = React.createClass({
     });
   },
 
+  getFilteredEquipmentTypes(localAreaId) {
+    return _.chain(this.props.districtEquipmentTypes)
+      .filter(type => type.equipmentCount > 0 && !localAreaId || _.filter(type.localAreas, localArea => localArea.id === localAreaId && localArea.equipmentCount > 0).length > 0)
+      .sortBy('districtEquipmentName')
+      .value();
+  },
+
   render() {
     if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
@@ -178,10 +193,7 @@ var RentalRequestsAddDialog = React.createClass({
       .sortBy('name')
       .value();
 
-    var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes)
-      .filter(type => type.district.id == this.props.currentUser.district.id)
-      .sortBy('districtEquipmentName')
-      .value();
+    var districtEquipmentTypes = this.getFilteredEquipmentTypes(this.state.localAreaId);
 
     var projects = _.sortBy(this.props.projects.data, 'name');
 
@@ -210,7 +222,7 @@ var RentalRequestsAddDialog = React.createClass({
           <Col md={12}>
             <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
               <ControlLabel>Local Area <sup>*</sup></ControlLabel>
-              <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } updateState={ this.updateState }
+              <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } onSelect={ this.onLocalAreaSelected } updateState={ this.updateState }
                 items={ localAreas } className="full-width"
               />
               <HelpBlock>{ this.state.localAreaError }</HelpBlock>
