@@ -39,17 +39,17 @@ var FilterDropdown = React.createClass({
     this.setState({ title: title });
   },
 
-  componentWillReceiveProps(nextProps) {
-    if (!_.isEqual(nextProps.items, this.props.items)) {
-      var items = nextProps.items || [];
+  componentDidUpdate(prevProps, prevState) {
+    if (!_.isEqual(this.props.items, prevProps.items)) {
+      var items = this.props.items || [];
       this.setState({
         items: items,
-        title: this.buildTitle(items, this.state.selectedId),
+        title: this.buildTitle(items, prevState.selectedId),
       });
-    } else if (nextProps.selectedId !== this.props.selectedId) {
+    } else if (this.props.selectedId !== prevProps.selectedId) {
       this.setState({
-        selectedId: nextProps.selectedId,
-        title: this.buildTitle(this.props.items, nextProps.selectedId),
+        selectedId: this.props.selectedId,
+        title: this.buildTitle(prevProps.items, this.props.selectedId),
       });
     }
   },
