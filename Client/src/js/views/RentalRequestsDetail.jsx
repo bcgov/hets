@@ -223,36 +223,36 @@ var RentalRequestsDetail = React.createClass({
           var requestAttachments = rentalRequest.rentalRequestAttachments && rentalRequest.rentalRequestAttachments[0] ? rentalRequest.rentalRequestAttachments[0].attachment : 'None';
 
           return <Row id="rental-requests-data" className="equal-height">
-            <Col lg={4} md={6} sm={12} xs={12}>
+            <Col lg={6} md={6} sm={6} xs={12}>
               <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Project"><strong>{ rentalRequest.project && rentalRequest.project.name }</strong></ColDisplay>
             </Col>
-            <Col lg={4} md={6} sm={12} xs={12}>
+            <Col lg={6} md={6} sm={6} xs={12}>
               <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Provincial Project Number"><strong>{ rentalRequest.project && rentalRequest.project.provincialProjectNumber }</strong></ColDisplay>
             </Col>
-            <Col lg={4} md={6} sm={12} xs={12}>
+            <Col lg={6} md={6} sm={6} xs={12}>
               <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ rentalRequest.projectPrimaryContactRole || 'Primary Contact' }>
                 { concat(rentalRequest.projectPrimaryContactName, rentalRequest.projectPrimaryContactPhone, ', ') }
               </ColDisplay>
             </Col>
-            <Col lg={4} md={6} sm={12} xs={12}>
+            <Col lg={6} md={6} sm={6} xs={12}>
               <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Local Area">{ rentalRequest.localAreaName }</ColDisplay>
             </Col>
-            <Col lg={4} md={6} sm={12} xs={12}>
+            <Col lg={6} md={6} sm={6} xs={12}>
               <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment Type">{ rentalRequest.equipmentTypeName }</ColDisplay>
             </Col>
-            <Col lg={4} md={6} sm={12} xs={12}>
+            <Col lg={6} md={6} sm={6} xs={12}>
               <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Attachment(s)">{ requestAttachments }</ColDisplay>
             </Col>
-            <Col lg={4} md={6} sm={12} xs={12}>
+            <Col lg={6} md={6} sm={6} xs={12}>
               <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Count">{ rentalRequest.equipmentCount }</ColDisplay>
             </Col>
-            <Col lg={4} md={6} sm={12} xs={12}>
+            <Col lg={6} md={6} sm={6} xs={12}>
               <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Expected Hours">{ rentalRequest.expectedHours }</ColDisplay>
             </Col>
-            <Col lg={4} md={6} sm={12} xs={12}>
+            <Col lg={6} md={6} sm={6} xs={12}>
               <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Expected Start Date">{  formatDateTime(rentalRequest.expectedStartDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
             </Col>
-            <Col lg={4} md={6} sm={12} xs={12}>
+            <Col lg={6} md={6} sm={6} xs={12}>
               <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Expected End Date">{ formatDateTime(rentalRequest.expectedEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
             </Col>
           </Row>;
@@ -260,7 +260,7 @@ var RentalRequestsDetail = React.createClass({
       </Well>
 
       <Well>
-        <h3>Request Status <span className="pull-right">
+        <h3>Hire Rotation List <span className="pull-right">
           <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
           <CheckboxControl id="showAttachments" inline updateState={ this.updateState }><small>Show Attachments</small></CheckboxControl>
         </span></h3>

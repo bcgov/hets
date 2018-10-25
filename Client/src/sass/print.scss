@@ -1,3 +1,7 @@
+@page {
+  size: landscape;
+}
+
 @media print {
   #rental-requests-bar, 
   #equipment-bar, 
@@ -13,24 +17,61 @@
   .checkbox-control {
      display: none;
    }
+
+  h1 {
+    font-size: 18px;
+  }
+
+  h2 {
+    font-size: 16px;
+  }
+
+  h3 {
+    font-size: 14px;
+  }
+
+  h4 {
+    font-size: 12px;
+  }
+
+  a {
+    text-decoration: none !important;
+  }
   
   .template {
     margin: 0;
     width: 100%
   }
 
-  #rental-requests-detail {
+  @for $i from 1 through 12 {
+    .col-sm-#{$i} {
+      float: left;
+      width: #{percentage(round($i * 8.33) / 100)};
+    }
+  }
 
-    #rotation-list {
+  .row {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+  }
+
+  .well {
+    padding: 10px;
+  }
+
+  #rental-requests-detail {
+    #rental-requests-top, #rental-requests-data {
       font-size: 10px;
     }
 
-    thead > tr > th:last-child {
-      display: none;
+    #rotation-list {
+      font-size: 8px;
     }
-
-    tbody > tr > td:nth-child(4) {
-      max-width: 150px;
+    
+    @supports (size: landscape) {
+      #rotation-list {
+        font-size: 10px;
+      }
     }
   }
   
@@ -40,12 +81,26 @@
 
   .col-md-6 {
     float: initial;
-  }  
-
-  #rotation-list td {
-    word-break: break-all;
   }
-  
+
+  #rotation-list {
+    th:last-child, td:last-child {
+      display: none;
+    }
+
+    th, td {
+      padding: 2px;
+    }
+    
+    td {
+      word-break: break-all;
+    }
+
+    td:nth-child(4) {
+      min-width: 150px;
+    }
+  }
+
   .row:after { 
     margin-bottom: -25px;
   }
