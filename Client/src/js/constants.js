@@ -2,18 +2,17 @@
 export const HOME_PATHNAME = 'home';
 export const OWNERS_PATHNAME = 'owners';
 export const EQUIPMENT_PATHNAME = 'equipment';
+export const PROJECTS_PATHNAME = 'projects';
+export const CONTACTS_PATHNAME = 'contacts';
 export const RENTAL_REQUESTS_PATHNAME = 'rental-requests';
 export const RENTAL_AGREEMENTS_PATHNAME = 'rental-agreements';
-export const PROJECTS_PATHNAME = 'projects';
 export const USERS_PATHNAME = 'users';
 export const ROLES_PATHNAME = 'roles';
 export const ROLLOVER_PATHNAME = 'roll-over';
+export const DISTRICT_ADMIN_PATHNAME = 'district-admin';
 export const VERSION_PATHNAME = 'version';
-export const CONTACTS_PATHNAME = 'contacts';
-export const DOCUMENTS_PATHNAME = 'documents';
 export const BUSINESS_PORTAL_PATHNAME = '/business';
 export const BUSINESS_DETAILS_PATHNAME = '/business/details';
-export const DISTRICT_ADMIN_PATHNAME = 'district-admin';
 
 // Permissions
 export const PERMISSION_LOGIN = 'Login';
