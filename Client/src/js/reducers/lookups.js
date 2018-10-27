@@ -17,7 +17,7 @@ const DEFAULT_LOOKUPS = {
     loading: false,
   },
   provincialRateTypes: [],
-
+  overtimeRateTypes: [],
   owners: { 
     data: {},
     loading: false,
@@ -93,6 +93,9 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
 
     case Action.UPDATE_PROVINCIAL_RATE_TYPES_LOOKUP: 
       return { ...state, provincialRateTypes: action.provincialRateTypes };
+
+    case Action.UPDATE_OVERTIME_RATE_TYPES_LOOKUP: 
+      return { ...state, overtimeRateTypes: action.overtimeRateTypes };
 
     case Action.BLANK_RENTAL_AGREEMENTS_LOOKUP_REQUEST: 
       return { ...state, blankRentalAgreements: { ...state.blankRentalAgreements, loading: true } };
