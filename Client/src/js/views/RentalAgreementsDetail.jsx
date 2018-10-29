@@ -25,23 +25,13 @@ import ColDisplay from '../components/ColDisplay.jsx';
 import DeleteButton from '../components/DeleteButton.jsx';
 import EditButton from '../components/EditButton.jsx';
 import Spinner from '../components/Spinner.jsx';
-import Unimplemented from '../components/Unimplemented.jsx';
 
 import { formatDateTime } from '../utils/date';
 import { formatCurrency } from '../utils/string';
 
-/*
-
-TODO:
-* Email / Notes / History / Conditions
-
-*/
-
 var RentalAgreementsDetail = React.createClass({
   propTypes: {
     rentalAgreement: React.PropTypes.object,
-    notes: React.PropTypes.object,
-    history: React.PropTypes.object,
     rentalConditions: React.PropTypes.array,
     params: React.PropTypes.object,
     ui: React.PropTypes.object,
@@ -275,18 +265,6 @@ var RentalAgreementsDetail = React.createClass({
     });
   },
 
-  email() {
-
-  },
-
-  addNote() {
-
-  },
-
-  showNotes() {
-
-  },
-
   generateRentalAgreementDocument() {
     Api.generateRentalAgreementDocument(this.props.params.rentalAgreementId).finally(() => {
       window.open(buildApiPath(`/rentalagreements/${ this.props.params.rentalAgreementId }/pdf`));
@@ -345,13 +323,12 @@ var RentalAgreementsDetail = React.createClass({
 
           return (
             <Row id="rental-agreements-top">
-              <Col sm={6}>
-                <Label bsStyle={ rentalAgreement.isActive ? 'success' : 'danger' }>{ rentalAgreement.status }</Label>
-                <Unimplemented>
-                  <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
-                </Unimplemented>
+              <Col xs={2}>
+                <div style={ { margin: '6px 0' }}>
+                  <Label bsStyle={ rentalAgreement.isActive ? 'success' : 'danger' }>{ rentalAgreement.status }</Label>
+                </div>
               </Col>
-              <Col sm={6}>
+              <Col xs={10}>
                 <div className="pull-right">
                   <Button title="Print PDF" onClick={ this.generateRentalAgreementDocument }><Glyphicon glyph="print" /></Button>
                   <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
@@ -628,33 +605,6 @@ var RentalAgreementsDetail = React.createClass({
           })()}
         </Well>
 
-        <Well>
-          <h3>History <span className="pull-right">
-            <Unimplemented>
-              <Button title="Add note" bsSize="small" onClick={ this.addNote }><Glyphicon glyph="plus" /></Button>
-            </Unimplemented>
-          </span></h3>
-          {(() => {
-            if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
-            if (Object.keys(this.props.history || []).length === 0) { return <Alert bsStyle="success">No history</Alert>; }
-
-            var history = _.sortBy(this.props.history, 'createdDate');
-
-            const HistoryEntry = ({ createdDate, historyText }) => (
-              <Row>
-                <ColDisplay md={12} labelProps={{ md: 2 }} label={ formatDateTime(createdDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }>
-                  { historyText }
-                </ColDisplay>
-              </Row>
-            );
-
-            return <div id="rental-agreements-history">
-              {
-                _.map(history, (entry) => <HistoryEntry { ...entry } />)
-              }
-            </div>;
-          })()}
-        </Well>
         <Row id="rental-agreements-footer">
           <div className="pull-right">
             <Button title="Print PDF" onClick={ this.generateRentalAgreementDocument }><Glyphicon glyph="print" /></Button>
@@ -720,8 +670,6 @@ var RentalAgreementsDetail = React.createClass({
 function mapStateToProps(state) {
   return {
     rentalAgreement: state.models.rentalAgreement,
-    notes: state.models.rentalAgreementNotes,
-    history: state.models.rentalAgreementHistory,
     rentalConditions: state.lookups.rentalConditions.data,
     provincialRateTypes: state.lookups.provincialRateTypes,
   };
