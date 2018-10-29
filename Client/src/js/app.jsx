@@ -20,6 +20,7 @@ import ProjectsDetail from './views/ProjectsDetail.jsx';
 import RentalRequests from './views/RentalRequests.jsx';
 import RentalRequestsDetail from './views/RentalRequestsDetail.jsx';
 import RentalAgreementsDetail from './views/RentalAgreementsDetail.jsx';
+import OvertimeRates from './views/OvertimeRates.jsx';
 import Users from './views/Users.jsx';
 import UsersDetail from './views/UsersDetail.jsx';
 import Roles from './views/Roles.jsx';
@@ -117,6 +118,7 @@ const App = <Provider store={ store }>
       <Route path={ Constant.RENTAL_REQUESTS_PATHNAME } component={ RentalRequests }/>
       <Route path={ `${ Constant.RENTAL_REQUESTS_PATHNAME }/:rentalRequestId` } component={ RentalRequestsDetail }/>
       <Route path={ `${ Constant.RENTAL_AGREEMENTS_PATHNAME }/:rentalAgreementId` } component={ RentalAgreementsDetail }/>
+      <Route path={ Constant.OVERTIME_RATES_PATHNAME } component={ OvertimeRates } />
       <Route path={ Constant.USERS_PATHNAME } component={ Users }/>
       <Route path={ `${ Constant.USERS_PATHNAME }/:userId` } component={ UsersDetail }/>
       <Route path={ Constant.ROLES_PATHNAME } component={ Roles }/>

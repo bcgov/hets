@@ -2039,6 +2039,18 @@ export function getProvincialRateTypes() {
   });
 }
 
+export function getOvertimeRateTypes() {
+  return new ApiRequest('/provincialratetypes/overtime').get().then(response => {
+    store.dispatch({ type: Action.UPDATE_OVERTIME_RATE_TYPES_LOOKUP, overtimeRateTypes: response.data });
+  });
+}
+
+export function updateOvertimeRateType(rate) {
+  return new ApiRequest(`/provincialratetypes/${rate.id}`).put(rate).then(response => {
+    return response;
+  });
+}
+
 ////////////////////
 // Version
 ////////////////////

@@ -2,18 +2,18 @@
 export const HOME_PATHNAME = 'home';
 export const OWNERS_PATHNAME = 'owners';
 export const EQUIPMENT_PATHNAME = 'equipment';
+export const PROJECTS_PATHNAME = 'projects';
+export const CONTACTS_PATHNAME = 'contacts';
 export const RENTAL_REQUESTS_PATHNAME = 'rental-requests';
 export const RENTAL_AGREEMENTS_PATHNAME = 'rental-agreements';
-export const PROJECTS_PATHNAME = 'projects';
+export const OVERTIME_RATES_PATHNAME = 'overtime-rates';
 export const USERS_PATHNAME = 'users';
 export const ROLES_PATHNAME = 'roles';
 export const ROLLOVER_PATHNAME = 'roll-over';
+export const DISTRICT_ADMIN_PATHNAME = 'district-admin';
 export const VERSION_PATHNAME = 'version';
-export const CONTACTS_PATHNAME = 'contacts';
-export const DOCUMENTS_PATHNAME = 'documents';
 export const BUSINESS_PORTAL_PATHNAME = '/business';
 export const BUSINESS_DETAILS_PATHNAME = '/business/details';
-export const DISTRICT_ADMIN_PATHNAME = 'district-admin';
 
 // Permissions
 export const PERMISSION_LOGIN = 'Login';
@@ -57,6 +57,9 @@ export const RENTAL_AGREEMENT_STATUS_CODE_ACTIVE = 'Active';
 export const RENTAL_AGREEMENT_STATUS_CODE_COMPLETED = 'Completed';
 export const RENTAL_RATE_PERIOD_HOURLY = 'Hr';
 export const RENTAL_RATE_PERIOD_DAILY = 'Daily';
+export const RENTAL_RATE_PERIOD_WEEKLY = 'Weekly';
+export const RENTAL_RATE_PERIOD_MONTHLY = 'Monthly';
+export const RENTAL_RATE_PERIOD_NEGOTIATED = 'Negotiated';
 
 // Users
 export const USER_STATUS_ACTIVE = 'Active';
@@ -77,6 +80,7 @@ export const DATE_TIME_LOG = 'YYYY/MM/DD HH:mm:ss';
 // RegEx
 export const EMAIL_REGEX = /\S+@\S+\.\S+/;
 export const NANP_REGEX = /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/;
+export const MONEY_REGEX = /^\d+(\.\d\d?)?$/;
 
 // Conditions
 export const NON_STANDARD_CONDITION = 'Other';

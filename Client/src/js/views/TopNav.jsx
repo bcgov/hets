@@ -92,24 +92,29 @@ var TopNav = React.createClass({
                 this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_ROLLOVER) ||
                 this.props.currentUser.hasPermission(Constant.PERMISSION_VERSION)) &&
                 <NavDropdown id="admin-dropdown" title="Administration" disabled={ navigationDisabled }>
+                  { this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN) &&
+                    <LinkContainer to={{ pathname: `/${ Constant.OVERTIME_RATES_PATHNAME }` }}>
+                      <MenuItem eventKey={ 7 }>Manage OT Rates</MenuItem>
+                    </LinkContainer>
+                  }
                   { this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) &&
                     <LinkContainer to={{ pathname: `/${ Constant.USERS_PATHNAME }` }}>
-                      <MenuItem eventKey={ 7 }>User Management</MenuItem>
+                      <MenuItem eventKey={ 8 }>User Management</MenuItem>
                     </LinkContainer>
                   }
                   { this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) &&
                     <LinkContainer to={{ pathname: `/${ Constant.ROLES_PATHNAME }` }} disabled={ navigationDisabled }>
-                      <MenuItem eventKey={ 8 }>Roles and Permissions</MenuItem>
+                      <MenuItem eventKey={ 9 }>Roles and Permissions</MenuItem>
                     </LinkContainer>
                   }
                   { this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_ROLLOVER) &&
                     <LinkContainer to={{ pathname: `/${ Constant.ROLLOVER_PATHNAME }` }} disabled={ navigationDisabled }>
-                      <MenuItem eventKey={ 8 }>Roll Over</MenuItem>
+                      <MenuItem eventKey={ 10 }>Roll Over</MenuItem>
                     </LinkContainer>
                   }
                   { this.props.currentUser.hasPermission(Constant.PERMISSION_VERSION) &&
                     <LinkContainer to={{ pathname: `/${ Constant.VERSION_PATHNAME }` }} disabled={ navigationDisabled }>
-                      <MenuItem eventKey={ 9 }>Version Info</MenuItem>
+                      <MenuItem eventKey={ 11 }>Version Info</MenuItem>
                     </LinkContainer>
                   }
                 </NavDropdown>
