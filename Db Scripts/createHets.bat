@@ -17,7 +17,7 @@ ECHO Create Tables / Indexes / Etc.
 psql -h localhost -U postgres -d hets -a -q -f .\CREATE\CREATE_1_HETS_DB_DDL-tables.sql >> log.txt
 psql -h localhost -U postgres -d hets -a -q -f .\CREATE\CREATE_2_HETS_DB_DDL-fk_ix.sql >> log.txt
 
-ECHO Setup grants and add users (DEV)
+ECHO Setup grants and add users
 psql -h localhost -U postgres -d hets -a -q -f .\CREATE\CREATE_3_HETS_DB_DDL-grants.sql >> log.txt
 psql -h localhost -U postgres -d hets -a -q -f .\CREATE\CREATE_4_HETS_DB-add-user.sql >> log.txt
 
