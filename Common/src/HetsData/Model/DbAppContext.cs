@@ -3597,6 +3597,10 @@ namespace HetsData.Model
                     .HasColumnName("DB_LAST_UPDATE_USER_ID")
                     .HasMaxLength(63);
 
+                entity.Property(e => e.Overtime).HasColumnName("OVERTIME");
+
+                entity.Property(e => e.Active).HasColumnName("ACTIVE");
+
                 entity.Property(e => e.IsAttachment).HasColumnName("IS_ATTACHMENT");
 
                 entity.Property(e => e.IsIncludedInTotal).HasColumnName("IS_INCLUDED_IN_TOTAL");
@@ -3692,6 +3696,10 @@ namespace HetsData.Model
                 entity.Property(e => e.EffectiveDate).HasColumnName("EFFECTIVE_DATE");
 
                 entity.Property(e => e.EndDate).HasColumnName("END_DATE");
+
+                entity.Property(e => e.Overtime).HasColumnName("OVERTIME");
+
+                entity.Property(e => e.Active).HasColumnName("ACTIVE");
 
                 entity.Property(e => e.IsAttachment).HasColumnName("IS_ATTACHMENT");
 

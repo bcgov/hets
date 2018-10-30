@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace HetsData.Model
 {
@@ -15,5 +17,9 @@ namespace HetsData.Model
 
         [NotMapped]
         public string RatePeriod { get; set; }
+
+        [NotMapped]
+        [JsonProperty("OvertimeRates")]
+        public ICollection<HetRentalAgreementRate> HetRentalAgreementOvertimeRate { get; set; }
     }
 }

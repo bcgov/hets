@@ -1499,6 +1499,8 @@ CREATE TABLE public."HET_RENTAL_AGREEMENT_RATE_HIST" (
     "COMPONENT_NAME" character varying(150),
     "RATE" real,
     "RATE_PERIOD_TYPE_ID" integer NOT NULL,
+	"OVERTIME" boolean DEFAULT false,
+	"ACTIVE" boolean DEFAULT false,
 	"IS_ATTACHMENT" boolean,
     "PERCENT_OF_EQUIPMENT_RATE" real,
 	"IS_INCLUDED_IN_TOTAL" boolean DEFAULT false NOT NULL,    
