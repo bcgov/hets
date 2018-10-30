@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -94,8 +93,7 @@ namespace HetsApi.Controllers
             int? statusId = StatusHelper.GetStatusId(item.Status, "rentalAgreementStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            // get rate period type
-            // set the rate period type id
+            // get rate period type for the agreement
             int? rateTypeId = StatusHelper.GetRatePeriodId(item.RatePeriod, _context);
 
             if (rateTypeId == null)
@@ -103,6 +101,7 @@ namespace HetsApi.Controllers
                 throw new DataException("Rate Period Id cannot be null");
             }
 
+            // update the agreement record
             agreement.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             agreement.DatedOn = item.DatedOn;
             agreement.EquipmentRate = item.EquipmentRate;
@@ -116,6 +115,60 @@ namespace HetsApi.Controllers
             agreement.RentalAgreementStatusTypeId = (int)statusId;
             agreement.ProjectId = item.ProjectId;
             agreement.EquipmentId = item.EquipmentId;
+
+            // update the agreement overtime records (default overtime flag)
+            if (item.HetRentalAgreementOvertimeRate != null)
+            {
+                foreach (HetRentalAgreementRate rate in item.HetRentalAgreementOvertimeRate)
+                {
+                    // set the rate period type id
+                    int? ratePeriodTypeId = StatusHelper.GetRatePeriodId(rate.RatePeriod, _context);
+                    if (ratePeriodTypeId == null) throw new DataException("Rate Period Id cannot be null");
+
+                    foreach (HetRentalAgreementRate agreementRate in agreement.HetRentalAgreementOvertimeRate)
+                    {
+                        if (agreementRate.RentalAgreementRateId == rate.RentalAgreementRateId)
+                        {                            
+                            agreementRate.ConcurrencyControlNumber = rate.ConcurrencyControlNumber;
+                            agreementRate.Comment = rate.Comment;
+                            agreementRate.ComponentName = rate.ComponentName;
+                            agreementRate.Overtime = true;
+                            agreementRate.Active = rate.Active;
+                            agreementRate.IsAttachment = rate.IsAttachment;
+                            agreementRate.IsIncludedInTotal = rate.IsIncludedInTotal;
+                            agreementRate.PercentOfEquipmentRate = rate.PercentOfEquipmentRate;
+                            agreementRate.Rate = rate.Rate;
+                            agreementRate.RatePeriod = rate.RatePeriod;
+                            agreementRate.RatePeriodTypeId = (int)ratePeriodTypeId;
+
+                            break;
+                        }
+                    }
+
+                    // add the rate
+                    HetRentalAgreementRate newAgreementRate = new HetRentalAgreementRate
+                    {
+                        ConcurrencyControlNumber = rate.ConcurrencyControlNumber,
+                        Comment = rate.Comment,
+                        ComponentName = rate.ComponentName,
+                        Overtime = true,
+                        Active = rate.Active,
+                        IsAttachment = rate.IsAttachment,
+                        IsIncludedInTotal = rate.IsIncludedInTotal,
+                        PercentOfEquipmentRate = rate.PercentOfEquipmentRate,
+                        Rate = rate.Rate,
+                        RatePeriod = rate.RatePeriod,
+                        RatePeriodTypeId = (int)ratePeriodTypeId
+                    };
+
+                    if (agreement.HetRentalAgreementRate == null)
+                    {
+                        agreement.HetRentalAgreementRate = new List<HetRentalAgreementRate>();
+                    }
+
+                    agreement.HetRentalAgreementRate.Add(newAgreementRate);
+                }
+            }
 
             // save the changes
             _context.SaveChanges();
@@ -149,6 +202,7 @@ namespace HetsApi.Controllers
             int? statusId = StatusHelper.GetStatusId(item.Status, "rentalAgreementStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
         
+            // create agreement
             HetRentalAgreement agreement = new HetRentalAgreement
             {
                 Number = RentalAgreementHelper.GetRentalAgreementNumber(item.Equipment, _context),
@@ -163,7 +217,41 @@ namespace HetsApi.Controllers
                 EquipmentId = item.EquipmentId,
                 ProjectId = item.ProjectId
             };
-                    
+
+            // agreement overtime records (default overtime flag)
+            if (item.HetRentalAgreementOvertimeRate != null)
+            {
+                foreach (HetRentalAgreementRate rate in item.HetRentalAgreementOvertimeRate)
+                {
+                    // set the rate period type id
+                    int? ratePeriodTypeId = StatusHelper.GetRatePeriodId(rate.RatePeriod, _context);
+                    if (ratePeriodTypeId == null) throw new DataException("Rate Period Id cannot be null");                    
+
+                    // add the rate
+                    HetRentalAgreementRate newAgreementRate = new HetRentalAgreementRate
+                    {
+                        ConcurrencyControlNumber = rate.ConcurrencyControlNumber,
+                        Comment = rate.Comment,
+                        ComponentName = rate.ComponentName,
+                        Overtime = true,
+                        Active = rate.Active,
+                        IsAttachment = rate.IsAttachment,
+                        IsIncludedInTotal = rate.IsIncludedInTotal,
+                        PercentOfEquipmentRate = rate.PercentOfEquipmentRate,
+                        Rate = rate.Rate,
+                        RatePeriod = rate.RatePeriod,
+                        RatePeriodTypeId = (int)ratePeriodTypeId
+                    };
+
+                    if (agreement.HetRentalAgreementRate == null)
+                    {
+                        agreement.HetRentalAgreementRate = new List<HetRentalAgreementRate>();
+                    }
+
+                    agreement.HetRentalAgreementRate.Add(newAgreementRate);
+                }
+            }
+
             // save the changes
             _context.SaveChanges();
 
@@ -558,9 +646,11 @@ namespace HetsApi.Controllers
                 int? rateTypeId = StatusHelper.GetRatePeriodId(item.RatePeriod, _context);
                 if (rateTypeId == null) throw new DataException("Rate Period Id cannot be null");
 
-                rate.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
+                rate.ConcurrencyControlNumber = item.ConcurrencyControlNumber;                
                 rate.Comment = item.Comment;
                 rate.ComponentName = item.ComponentName;
+                rate.Overtime = item.Overtime;
+                rate.Active = item.Active;
                 rate.IsAttachment = item.IsAttachment;
                 rate.IsIncludedInTotal = item.IsIncludedInTotal;
                 rate.PercentOfEquipmentRate = item.PercentOfEquipmentRate;
@@ -581,6 +671,8 @@ namespace HetsApi.Controllers
                     RentalAgreementId = agreementId,
                     Comment = item.Comment,
                     ComponentName = item.ComponentName,
+                    Overtime = item.Overtime,
+                    Active = item.Active,
                     IsAttachment = item.IsAttachment,
                     IsIncludedInTotal = item.IsIncludedInTotal,
                     PercentOfEquipmentRate = item.PercentOfEquipmentRate,
@@ -635,6 +727,8 @@ namespace HetsApi.Controllers
                     rate.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                     rate.Comment = item.Comment;
                     rate.ComponentName = item.ComponentName;
+                    rate.Overtime = item.Overtime;
+                    rate.Active = item.Active;
                     rate.IsAttachment = item.IsAttachment;
                     rate.IsIncludedInTotal = item.IsIncludedInTotal;
                     rate.PercentOfEquipmentRate = item.PercentOfEquipmentRate;
@@ -656,6 +750,8 @@ namespace HetsApi.Controllers
                         RentalAgreementId = agreementId,
                         Comment = item.Comment,
                         ComponentName = item.ComponentName,
+                        Overtime = item.Overtime,
+                        Active = item.Active,
                         IsAttachment = item.IsAttachment,
                         IsIncludedInTotal = item.IsIncludedInTotal,
                         PercentOfEquipmentRate = item.PercentOfEquipmentRate,
@@ -848,6 +944,40 @@ namespace HetsApi.Controllers
                 RatePeriodTypeId = (int)rateTypeId
             };
 
+            // add overtime rates
+            List<HetProvincialRateType> overtime = _context.HetProvincialRateType.AsNoTracking()
+                .Where(x => x.Overtime)
+                .ToList();
+
+            // agreement overtime records (default overtime flag)            
+            foreach (HetProvincialRateType rate in overtime)
+            {
+                // set the rate period type id
+                int? ratePeriodTypeId = StatusHelper.GetRatePeriodId(rate.PeriodType, _context);
+                if (ratePeriodTypeId == null) throw new DataException("Rate Period Id cannot be null");
+
+                // add the rate
+                HetRentalAgreementRate newAgreementRate = new HetRentalAgreementRate
+                {
+                    Comment = rate.Description,
+                    ComponentName = rate.RateType,
+                    Overtime = true,
+                    Active = rate.Active,
+                    IsAttachment = false,
+                    IsIncludedInTotal = rate.IsIncludedInTotal,
+                    Rate = rate.Rate,
+                    RatePeriod = rate.PeriodType,
+                    RatePeriodTypeId = (int)ratePeriodTypeId
+                };
+
+                if (agreement.HetRentalAgreementRate == null)
+                {
+                    agreement.HetRentalAgreementRate = new List<HetRentalAgreementRate>();
+                }
+
+                agreement.HetRentalAgreementRate.Add(newAgreementRate);
+            }            
+
             // save the changes
             _context.HetRentalAgreement.Add(agreement);
             _context.SaveChanges();
@@ -884,7 +1014,7 @@ namespace HetsApi.Controllers
                 .Where(x => x.District.DistrictId == districtId &&
                             x.RentalRequestId == null &&
                             x.RentalRequestRotationListId == null &&
-                            x.RentalAgreementStatusTypeId == (int)statusId)
+                            x.RentalAgreementStatusTypeId == statusId)
                 .ToList();
 
             return new ObjectResult(new HetsResponse(agreements));
@@ -1111,6 +1241,8 @@ namespace HetsApi.Controllers
 
                         curRate.ConcurrencyControlNumber = newRate.ConcurrencyControlNumber;
                         curRate.Comment = newRate.Comment;
+                        curRate.Overtime = newRate.Overtime;
+                        curRate.Active = newRate.Active;
                         curRate.Rate = newRate.Rate;
                         curRate.RatePeriodTypeId = newRate.RatePeriodTypeId;
                         curRate.PercentOfEquipmentRate = newRate.PercentOfEquipmentRate;
@@ -1149,6 +1281,8 @@ namespace HetsApi.Controllers
                         RentalAgreementId = id,
                         Comment = newRate.Comment,
                         Rate = newRate.Rate,
+                        Overtime = newRate.Overtime,
+                        Active = newRate.Active,
                         RatePeriodTypeId = newRate.RatePeriodTypeId,
                         PercentOfEquipmentRate = newRate.PercentOfEquipmentRate,
                         ComponentName = newRate.ComponentName,
@@ -1156,6 +1290,60 @@ namespace HetsApi.Controllers
                     };
 
                     _context.HetRentalAgreementRate.Add(rate);
+                }
+            }
+
+            // update the agreement overtime records (default overtime flag)
+            if (agreement.HetRentalAgreementOvertimeRate != null)
+            {
+                foreach (HetRentalAgreementRate rate in agreement.HetRentalAgreementOvertimeRate)
+                {
+                    // set the rate period type id
+                    int? ratePeriodTypeId = StatusHelper.GetRatePeriodId(rate.RatePeriod, _context);
+                    if (ratePeriodTypeId == null) throw new DataException("Rate Period Id cannot be null");
+
+                    foreach (HetRentalAgreementRate agreementRate in agreementUpd.HetRentalAgreementOvertimeRate)
+                    {
+                        if (agreementRate.RentalAgreementRateId == rate.RentalAgreementRateId)
+                        {
+                            agreementRate.ConcurrencyControlNumber = rate.ConcurrencyControlNumber;
+                            agreementRate.Comment = rate.Comment;
+                            agreementRate.ComponentName = rate.ComponentName;
+                            agreementRate.Overtime = true;
+                            agreementRate.Active = rate.Active;
+                            agreementRate.IsAttachment = rate.IsAttachment;
+                            agreementRate.IsIncludedInTotal = rate.IsIncludedInTotal;
+                            agreementRate.PercentOfEquipmentRate = rate.PercentOfEquipmentRate;
+                            agreementRate.Rate = rate.Rate;
+                            agreementRate.RatePeriod = rate.RatePeriod;
+                            agreementRate.RatePeriodTypeId = (int)ratePeriodTypeId;
+
+                            break;
+                        }
+                    }
+
+                    // add the rate
+                    HetRentalAgreementRate newAgreementRate = new HetRentalAgreementRate
+                    {
+                        ConcurrencyControlNumber = rate.ConcurrencyControlNumber,
+                        Comment = rate.Comment,
+                        ComponentName = rate.ComponentName,
+                        Overtime = true,
+                        Active = rate.Active,
+                        IsAttachment = rate.IsAttachment,
+                        IsIncludedInTotal = rate.IsIncludedInTotal,
+                        PercentOfEquipmentRate = rate.PercentOfEquipmentRate,
+                        Rate = rate.Rate,
+                        RatePeriod = rate.RatePeriod,
+                        RatePeriodTypeId = (int)ratePeriodTypeId
+                    };
+
+                    if (agreementUpd.HetRentalAgreementRate == null)
+                    {
+                        agreementUpd.HetRentalAgreementRate = new List<HetRentalAgreementRate>();
+                    }
+
+                    agreementUpd.HetRentalAgreementRate.Add(newAgreementRate);
                 }
             }
 

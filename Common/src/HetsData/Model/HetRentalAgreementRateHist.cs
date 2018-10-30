@@ -15,6 +15,8 @@ namespace HetsData.Model
         public string ComponentName { get; set; }
         public float? Rate { get; set; }
         public int RatePeriodTypeId { get; set; }
+        public bool Overtime { get; set; }
+        public bool Active { get; set; }
         public bool? IsAttachment { get; set; }
         public float? PercentOfEquipmentRate { get; set; }
         public bool IsIncludedInTotal { get; set; }

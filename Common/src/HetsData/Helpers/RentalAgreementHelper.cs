@@ -87,6 +87,9 @@ namespace HetsData.Helpers
             {
                 agreement.Status = agreement.RentalAgreementStatusType.RentalAgreementStatusTypeCode;
                 agreement.RatePeriod = agreement.RatePeriodType.RatePeriodTypeCode;
+
+                agreement.HetRentalAgreementOvertimeRate = agreement.HetRentalAgreementRate.Where(x => x.Overtime).ToList();
+                agreement.HetRentalAgreementRate = agreement.HetRentalAgreementRate.Where(x => !x.Overtime).ToList();
             }
 
             return agreement;
