@@ -585,10 +585,7 @@ namespace HetsApi.Controllers
                     Comment = rate.Comment,
                     ComponentName = rate.ComponentName,
                     Rate = rate.Rate,
-                    RatePeriodTypeId = rate.RatePeriodTypeId,
                     IsIncludedInTotal = rate.IsIncludedInTotal,
-                    IsAttachment = rate.IsAttachment,
-                    PercentOfEquipmentRate = rate.PercentOfEquipmentRate
                 };
 
                 if (agreements[newRentalAgreementIndex].HetRentalAgreementRate == null)

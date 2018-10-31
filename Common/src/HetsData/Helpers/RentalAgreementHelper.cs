@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -146,17 +145,15 @@ namespace HetsData.Helpers
             // 3. records not included
             // **********************************************
             agreement.RentalAgreementRatesOvertime = agreement.RentalAgreementRates
-                .FindAll(x => x.ComponentName.StartsWith("Overtime", true, CultureInfo.InvariantCulture))
+                .FindAll(x => x.Overtime)
                 .OrderBy(x => x.RentalAgreementRateId).ToList();
 
             agreement.RentalAgreementRatesWithTotal = agreement.RentalAgreementRates
-                .FindAll(x => x.IsIncludedInTotal &&
-                              !x.ComponentName.StartsWith("Overtime", true, CultureInfo.InvariantCulture))
+                .FindAll(x => x.IsIncludedInTotal && !x.Overtime)
                 .OrderBy(x => x.RentalAgreementRateId).ToList();
 
             agreement.RentalAgreementRatesWithoutTotal = agreement.RentalAgreementRates
-                .FindAll(x => !x.IsIncludedInTotal &&
-                              !x.ComponentName.StartsWith("Overtime", true, CultureInfo.InvariantCulture))
+                .FindAll(x => !x.IsIncludedInTotal && !x.Overtime)
                 .OrderBy(x => x.RentalAgreementRateId).ToList();
 
             // **********************************************
@@ -166,20 +163,10 @@ namespace HetsData.Helpers
 
             foreach (HetRentalAgreementRate rentalRate in agreement.RentalAgreementRatesWithTotal)
             {
-                if (rentalRate.PercentOfEquipmentRate != null &&
-                    agreement.EquipmentRate != null &&
-                    rentalRate.PercentOfEquipmentRate > 0)
-                {
-                    rentalRate.Rate = (float)rentalRate.PercentOfEquipmentRate * ((float)agreement.EquipmentRate / 100);
-                    temp = temp + (float)rentalRate.Rate;
-                }
-                else if (rentalRate.Rate != null)
-                {
-                    temp = temp + (float)rentalRate.Rate;
-                }
-
+                if (rentalRate.Rate != null)  temp = temp + (float)rentalRate.Rate;
+                
                 // format the rate / percent at the same time
-                rentalRate.RateString = FormatRateString(rentalRate);
+                rentalRate.RateString = FormatRateString(rentalRate, agreement);
             }
 
             // add the base amount to the total too
@@ -201,26 +188,12 @@ namespace HetsData.Helpers
             // **********************************************
             foreach (HetRentalAgreementRate rentalRate in agreement.RentalAgreementRatesOvertime)
             {
-                if (rentalRate.PercentOfEquipmentRate != null &&
-                    agreement.EquipmentRate != null &&
-                    rentalRate.PercentOfEquipmentRate > 0)
-                {
-                    rentalRate.Rate = (float)rentalRate.PercentOfEquipmentRate * ((float)agreement.EquipmentRate / 100);
-                }
-
-                rentalRate.RateString = FormatRateString(rentalRate);
+                rentalRate.RateString = FormatRateString(rentalRate, agreement);
             }
 
             foreach (HetRentalAgreementRate rentalRate in agreement.RentalAgreementRatesWithoutTotal)
             {
-                if (rentalRate.PercentOfEquipmentRate != null &&
-                    agreement.EquipmentRate != null &&
-                    rentalRate.PercentOfEquipmentRate > 0)
-                {
-                    rentalRate.Rate = (float)rentalRate.PercentOfEquipmentRate * ((float)agreement.EquipmentRate / 100);
-                }
-
-                rentalRate.RateString = FormatRateString(rentalRate);
+                rentalRate.RateString = FormatRateString(rentalRate, agreement);
             }
 
             return agreement;
@@ -234,7 +207,7 @@ namespace HetsData.Helpers
                 {
                     case "daily":
                     case "dy":
-                        return "Dy";
+                        return "Day";
 
                     case "hourly":
                     case "hr":
@@ -246,7 +219,11 @@ namespace HetsData.Helpers
 
                     case "monthly":
                     case "mo":
-                        return "Mo";
+                        return "Mth";
+
+                    case "negotiated":
+                    case "neg":
+                        return "Neg";
                 }
             }
             else
@@ -257,21 +234,14 @@ namespace HetsData.Helpers
             return period;
         }
 
-        private static string FormatRateString(HetRentalAgreementRate rentalRate)
+        private static string FormatRateString(HetRentalAgreementRate rentalRate, RentalAgreementPdfViewModel agreement)
         {
             string temp = "";
 
             // format the rate
             if (rentalRate.Rate != null)
             {
-                temp = string.Format("$ {0:0.00} / {1}", rentalRate.Rate, FormatRatePeriod(rentalRate.RatePeriodType.Description));
-            }
-
-            // format the percent
-            if (rentalRate.PercentOfEquipmentRate != null &&
-                rentalRate.PercentOfEquipmentRate > 0)
-            {
-                temp = string.Format("({0:0.00}%) ", rentalRate.PercentOfEquipmentRate) + temp;
+                temp = string.Format("$ {0:0.00} / {1}", rentalRate.Rate, FormatRatePeriod(agreement.RatePeriod));
             }
 
             return temp;
