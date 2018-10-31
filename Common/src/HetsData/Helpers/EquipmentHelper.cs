@@ -314,22 +314,37 @@ namespace HetsData.Helpers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="context"></param>
-        public static float GetYtdServiceHours(int id, DbAppContext context)
+        /// <param name="rolloverDate"></param>
+        public static float GetYtdServiceHours(int id, DbAppContext context, DateTime? rolloverDate = null)
         {
             float result = 0.0F;
 
             // *******************************************************************************
             // determine current fiscal year - check for existing rotation lists this year
+            // * the rollover uses the dates from the status table (rolloverDate)
             // *******************************************************************************
-            DateTime fiscalStart;
+            DateTime currentDateTime = DateTime.UtcNow;
+            if (rolloverDate != null) currentDateTime = (DateTime)rolloverDate;
 
-            if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
+            DateTime fiscalStart;
+            DateTime fiscalEnd;
+
+            if (currentDateTime.Month == 1 || currentDateTime.Month == 2 || currentDateTime.Month == 3)
             {
-                fiscalStart = new DateTime(DateTime.UtcNow.AddYears(-1).Year, 4, 1);
+                fiscalStart = new DateTime(currentDateTime.AddYears(-1).Year, 4, 1);
             }
             else
             {
-                fiscalStart = new DateTime(DateTime.UtcNow.Year, 4, 1);
+                fiscalStart = new DateTime(currentDateTime.Year, 4, 1);
+            }
+
+            if (currentDateTime.Month == 1 || currentDateTime.Month == 2 || currentDateTime.Month == 3)
+            {
+                fiscalEnd = new DateTime(currentDateTime.Year, 3, 31);
+            }
+            else
+            {
+                fiscalEnd = new DateTime(currentDateTime.AddYears(1).Year, 3, 31);
             }
 
             // *******************************************************************************
@@ -338,7 +353,8 @@ namespace HetsData.Helpers
             float? summation = context.HetTimeRecord.AsNoTracking()
                 .Include(x => x.RentalAgreement.Equipment)
                 .Where(x => x.RentalAgreement.Equipment.EquipmentId == id &&
-                            x.WorkedDate >= fiscalStart)
+                            x.WorkedDate >= fiscalStart &&
+                            x.WorkedDate <= fiscalEnd)
                 .Sum(x => x.Hours);
 
             if (summation != null)
