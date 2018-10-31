@@ -122,6 +122,22 @@ namespace HetsData.Helpers
                     return;                    
                 }
 
+                // determine the "Rollover Date" (required for testing)
+                DateTime rolloverDate;
+
+                if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
+                {
+                    if (status.NextFiscalYear == null) status.NextFiscalYear = DateTime.UtcNow.Year;
+
+                    rolloverDate = new DateTime((int)status.NextFiscalYear, DateTime.UtcNow.Month, DateTime.UtcNow.Day);
+                }
+                else
+                {
+                    if (status.CurrentFiscalYear == null) status.CurrentFiscalYear = DateTime.UtcNow.Year;
+
+                    rolloverDate = new DateTime((int)status.CurrentFiscalYear, DateTime.UtcNow.Month, DateTime.UtcNow.Day);
+                }
+
                 // get all district equipment types
                 List<HetDistrictEquipmentType> equipmentTypes = dbContext.HetDistrictEquipmentType.AsNoTracking()
                     .Include(x => x.EquipmentType)
@@ -180,7 +196,7 @@ namespace HetsData.Helpers
                                 // rollover the year
                                 equipment.ServiceHoursThreeYearsAgo = equipment.ServiceHoursTwoYearsAgo;
                                 equipment.ServiceHoursTwoYearsAgo = equipment.ServiceHoursLastYear;
-                                equipment.ServiceHoursLastYear = EquipmentHelper.GetYtdServiceHours(equipment.EquipmentId, dbContext);
+                                equipment.ServiceHoursLastYear = EquipmentHelper.GetYtdServiceHours(equipment.EquipmentId, dbContext, rolloverDate);
                                 equipment.CalculateYearsOfService(DateTime.UtcNow);
 
                                 // blank out the override reason
