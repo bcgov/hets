@@ -174,15 +174,12 @@ namespace HetsImport.Import
                     }
 
                     // periodically save change to the status
-                    if (ii++ % 1000 == 0)
+                    if (ii++ % 2000 == 0)
                     {
                         try
                         {
                             ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId, NewTable);
                             dbContext.SaveChangesForImport();
-
-                            // pause for a while
-                            Thread.Sleep(1000);
                         }                    
                         catch (Exception e)
                         {
