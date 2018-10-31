@@ -30,7 +30,13 @@ namespace HetsImport.ImportModels
         /// </summary>
         [XmlElement("Company_Name")]
         public string Company_Name { get; set; }
-        
+
+        /// <summary>
+        /// DBA Name
+        /// </summary>
+        [XmlElement("Operating_AS")]
+        public string Operating_AS { get; set; }
+
         /// <summary>
         /// Owner First Name
         /// </summary>

@@ -385,6 +385,17 @@ namespace HetsImport.Import
                 }
 
                 // ***********************************************
+                // DBA Name
+                // ***********************************************
+                string tempDbaName = ImportUtility.CleanString(oldObject.Operating_AS);
+
+                if (!string.IsNullOrEmpty(tempDbaName))
+                {
+                    tempDbaName = ImportUtility.GetCapitalCase(tempDbaName);
+                    owner.DoingBusinessAs = tempDbaName;
+                }
+
+                // ***********************************************
                 // maintenance contractor
                 // ***********************************************
                 if (oldObject.Maintenance_Contractor != null)
