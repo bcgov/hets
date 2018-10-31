@@ -310,10 +310,12 @@ namespace HetsData.Helpers
                 int listSize = blockEquipment.Count;
 
                 // check if any items have "Active" contracts - and drop them from the list
+                // * ensure we ignore "blank" rental agreements (i.e. rental request is null)
                 for (int i = listSize - 1; i >= 0; i--)
                 {
                     bool agreementExists = context.HetRentalAgreement
                         .Any(x => x.EquipmentId == blockEquipment[i].EquipmentId &&
+                                  x.RentalRequestId != null &&
                                   x.RentalAgreementStatusTypeId == statusIdRentalAgreement);
 
                     if (agreementExists)
