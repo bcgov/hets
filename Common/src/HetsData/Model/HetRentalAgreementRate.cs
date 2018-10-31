@@ -15,13 +15,10 @@ namespace HetsData.Model
         public int RentalAgreementRateId { get; set; }
 
         public string Comment { get; set; }
-        public string ComponentName { get; set; }
+        [JsonIgnore] public string ComponentName { get; set; }
         public float? Rate { get; set; }
-        public int RatePeriodTypeId { get; set; }
         public bool Overtime { get; set; }
         public bool Active { get; set; }
-        public bool? IsAttachment { get; set; }
-        public float? PercentOfEquipmentRate { get; set; }
         public bool IsIncludedInTotal { get; set; }
         public int? RentalAgreementId { get; set; }
         [JsonIgnore]public string AppCreateUserDirectory { get; set; }
@@ -38,7 +35,6 @@ namespace HetsData.Model
         [JsonIgnore]public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
 
-        public HetRatePeriodType RatePeriodType { get; set; }
         public HetRentalAgreement RentalAgreement { get; set; }
 
         [JsonIgnore]

@@ -1696,9 +1696,10 @@ VALUES
   (1, 'Weekly', 'Weekly', 'Weekly', 1, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
   (2, 'Hr', 'Hourly', 'Hourly', 2, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
   (3, 'Daily', 'Daily', 'Daily', 3, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
-  (4, 'Monthly', 'Monthly', 'Monthly', 4, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW());
+  (4, 'Monthly', 'Monthly', 'Monthly', 4, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW()),
+  (5, 'Negotiated', 'Negotiated', 'Negotiated', 5, true, NULL, NULL, 'HETS', NOW(), NULL, NULL, 'HETS', NOW());
 
-ALTER SEQUENCE public."HET_RATE_PERIOD_TYPE_ID_seq" RESTART WITH 4; 
+ALTER SEQUENCE public."HET_RATE_PERIOD_TYPE_ID_seq" RESTART WITH 5; 
  
 -- **************************************************************************************
 -- TIME PERIOD TYPE

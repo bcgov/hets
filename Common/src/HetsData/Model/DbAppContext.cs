@@ -3530,9 +3530,6 @@ namespace HetsData.Model
 
                 entity.ToTable("HET_RENTAL_AGREEMENT_RATE");
 
-                entity.HasIndex(e => e.RatePeriodTypeId)
-                    .HasName("IX_HET_RENTAL_AGREEMENT_RATE_HET_RATE_PERIOD_TYPE_ID");
-
                 entity.HasIndex(e => e.RentalAgreementId);
 
                 entity.Property(e => e.RentalAgreementRateId)
@@ -3601,24 +3598,12 @@ namespace HetsData.Model
 
                 entity.Property(e => e.Active).HasColumnName("ACTIVE");
 
-                entity.Property(e => e.IsAttachment).HasColumnName("IS_ATTACHMENT");
-
                 entity.Property(e => e.IsIncludedInTotal).HasColumnName("IS_INCLUDED_IN_TOTAL");
-
-                entity.Property(e => e.PercentOfEquipmentRate).HasColumnName("PERCENT_OF_EQUIPMENT_RATE");
 
                 entity.Property(e => e.Rate).HasColumnName("RATE");
 
-                entity.Property(e => e.RatePeriodTypeId).HasColumnName("RATE_PERIOD_TYPE_ID");
-
                 entity.Property(e => e.RentalAgreementId).HasColumnName("RENTAL_AGREEMENT_ID");
-
-                entity.HasOne(d => d.RatePeriodType)
-                    .WithMany(p => p.HetRentalAgreementRate)
-                    .HasForeignKey(d => d.RatePeriodTypeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_HET_RENTAL_RATE_AGREEMENT_PERIOD_TYPE_ID");
-
+                
                 entity.HasOne(d => d.RentalAgreement)
                     .WithMany(p => p.HetRentalAgreementRate)
                     .HasForeignKey(d => d.RentalAgreementId)
@@ -3701,15 +3686,9 @@ namespace HetsData.Model
 
                 entity.Property(e => e.Active).HasColumnName("ACTIVE");
 
-                entity.Property(e => e.IsAttachment).HasColumnName("IS_ATTACHMENT");
-
                 entity.Property(e => e.IsIncludedInTotal).HasColumnName("IS_INCLUDED_IN_TOTAL");
 
-                entity.Property(e => e.PercentOfEquipmentRate).HasColumnName("PERCENT_OF_EQUIPMENT_RATE");
-
                 entity.Property(e => e.Rate).HasColumnName("RATE");
-
-                entity.Property(e => e.RatePeriodTypeId).HasColumnName("RATE_PERIOD_TYPE_ID");
 
                 entity.Property(e => e.RentalAgreementId).HasColumnName("RENTAL_AGREEMENT_ID");
 

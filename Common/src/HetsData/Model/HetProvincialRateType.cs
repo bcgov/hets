@@ -8,7 +8,7 @@ namespace HetsData.Model
         public string RateType { get; set; }
         public bool Active { get; set; }
         public string Description { get; set; }
-        public string PeriodType { get; set; }
+        [JsonIgnore] public string PeriodType { get; set; }
         public float? Rate { get; set; }
         public bool Overtime { get; set; }
         public bool IsIncludedInTotal { get; set; }

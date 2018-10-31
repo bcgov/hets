@@ -1,5 +1,4 @@
-﻿using System;
-using Hangfire.Console;
+﻿using Hangfire.Console;
 using Hangfire.Server;
 using HetsData.Model;
 
@@ -11,11 +10,6 @@ namespace HetsImport.Import
     public static class BcBidImport
     {
         private const string SystemId = "SYSTEM_HETS";
-
-        /// <summary>
-        /// Returns current date in a standard format for all conversion routines
-        /// </summary>
-        public static string TodayDate => DateTime.Now.ToString("yyyy-MM-dd");
 
         /// <summary>
         /// Returns the common "SigId" for all conversion routines

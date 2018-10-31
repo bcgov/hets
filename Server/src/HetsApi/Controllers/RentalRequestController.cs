@@ -551,6 +551,33 @@ namespace HetsApi.Controllers
                         RatePeriodTypeId = (int)rateTypeId,
                     };
 
+                    // add overtime rates
+                    List<HetProvincialRateType> overtime = _context.HetProvincialRateType.AsNoTracking()
+                        .Where(x => x.Overtime)
+                        .ToList();
+
+                    // agreement overtime records (default overtime flag)            
+                    foreach (HetProvincialRateType rate in overtime)
+                    {
+                        // add the rate
+                        HetRentalAgreementRate newAgreementRate = new HetRentalAgreementRate
+                        {
+                            Comment = rate.Description,
+                            ComponentName = rate.RateType,
+                            Overtime = true,
+                            Active = rate.Active,
+                            IsIncludedInTotal = rate.IsIncludedInTotal,
+                            Rate = rate.Rate
+                        };
+
+                        if (rentalAgreement.HetRentalAgreementRate == null)
+                        {
+                            rentalAgreement.HetRentalAgreementRate = new List<HetRentalAgreementRate>();
+                        }
+
+                        rentalAgreement.HetRentalAgreementRate.Add(newAgreementRate);
+                    }
+
                     _context.HetRentalAgreement.Add(rentalAgreement);
                 }
 
