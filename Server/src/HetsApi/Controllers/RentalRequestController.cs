@@ -205,7 +205,7 @@ namespace HetsApi.Controllers
                 .ToList();
 
             // in Progress Rental Request already exists
-            if (requests.Count > 0) return new StatusCodeResult(405);
+            if (requests.Count > 0) return new ObjectResult(new HetsResponse("HETS-28", ErrorViewModel.GetDescription("HETS-28", _configuration)));
 
             int? statusId = StatusHelper.GetStatusId(item.Status, "rentalRequestStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
