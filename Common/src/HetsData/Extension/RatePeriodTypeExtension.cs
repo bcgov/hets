@@ -11,7 +11,7 @@ namespace HetsData.Model
         /// Rate Period Types
         /// </summary>
         public const string PeriodWeekly = "Weekly";
-        public const string PeriodHourly = "Hourly";
+        public const string PeriodHourly = "Hr";
         public const string PeriodDaily = "Daily";
         public const string PeriodMonthly = "Monthly";
     }
