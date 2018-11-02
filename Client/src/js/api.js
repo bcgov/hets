@@ -1275,16 +1275,16 @@ export function getRentalRequest(id) {
 export function addRentalRequest(rentalRequest) {
   store.dispatch({ type: Action.RENTAL_REQUEST_REQUEST });
   return new ApiRequest('/rentalrequests').post(rentalRequest).then(response => {
+    if (response.responseStatus === 'ERROR') {
+      store.dispatch({ type: Action.ADD_RENTAL_REQUEST_ERROR, errorMessage: response.error.description });
+      return Promise.reject(new Error(response.error.description));
+    }
+    
     var rentalRequest = response.data;
     // Add display fields
     parseRentalRequest(rentalRequest);
     store.dispatch({ type: Action.ADD_RENTAL_REQUEST, rentalRequest: rentalRequest });
     return rentalRequest;
-  }).catch((error) => {
-    if (error.status === 405) {
-      store.dispatch({ type: Action.ADD_RENTAL_REQUEST_ERROR, errorMessage: 'A rental request already exists for this area and equipment type.' });
-      return Promise.reject(error);
-    }
   });
 }
 

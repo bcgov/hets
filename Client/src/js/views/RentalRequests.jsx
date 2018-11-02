@@ -194,12 +194,12 @@ var RentalRequests = React.createClass({
 
   saveNewRequest(request) {
     Api.addRentalRequest(request).then(() => {
-      // Open it up
       Log.rentalRequestAdded(this.props.rentalRequest.data);
+      // Open it up
       this.props.router.push({
         pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ this.props.rentalRequest.data.id }`,
       });
-    });
+    }).catch(err => console.log(err.message));
   },
 
   print() {
