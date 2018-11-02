@@ -1641,10 +1641,10 @@ INSERT INTO public."HET_PROVINCIAL_RATE_TYPE"
    "APP_LAST_UPDATE_USER_DIRECTORY", "APP_LAST_UPDATE_USER_GUID", "APP_LAST_UPDATE_USERID", 
    "APP_LAST_UPDATE_TIMESTAMP")
 VALUES 
-  ('OVERTIME_12HR', true, true, 'Overtime After 12 Hours', false, false, false, 'Weekly', 48, false,
+  ('OVERTIME_8HR', true, true, 'Overtime After 8 Hours', false, false, false, 'Weekly', 36, false,
    NULL, NULL, 'HETS', NOW(), 
-   NULL, NULL, 'HETS', NOW());
- 
+   NULL, NULL, 'HETS', NOW()); 
+   
 INSERT INTO public."HET_PROVINCIAL_RATE_TYPE"
   ("RATE_TYPE", "ACTIVE", "OVERTIME", "DESCRIPTION", "IS_INCLUDED_IN_TOTAL", "IS_PERCENT_RATE",
    "IS_RATE_EDITABLE", "PERIOD_TYPE", "RATE", "IS_IN_TOTAL_EDITABLE",
@@ -1652,9 +1652,9 @@ INSERT INTO public."HET_PROVINCIAL_RATE_TYPE"
    "APP_LAST_UPDATE_USER_DIRECTORY", "APP_LAST_UPDATE_USER_GUID", "APP_LAST_UPDATE_USERID", 
    "APP_LAST_UPDATE_TIMESTAMP")
 VALUES 
-  ('OVERTIME_8HR', true, true, 'Overtime After 8 Hours', false, false, false, 'Weekly', 36, false,
+  ('OVERTIME_12HR', true, true, 'Overtime After 12 Hours', false, false, false, 'Weekly', 48, false,
    NULL, NULL, 'HETS', NOW(), 
-   NULL, NULL, 'HETS', NOW()); 
+   NULL, NULL, 'HETS', NOW());
    
 -- **************************************************************************************
 -- RENTAL REQUEST STATUS
