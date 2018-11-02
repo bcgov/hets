@@ -882,7 +882,7 @@ namespace HetsApi.Controllers
             if (district == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // set the rate period type id
-            int? rateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodWeekly, _context);
+            int? rateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodHourly, _context);
 
             if (rateTypeId == null)
             {
