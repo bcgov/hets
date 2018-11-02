@@ -1542,6 +1542,7 @@ function convertRentalAgreement(agreement) {
     ...agreement,
     rentalAgreementConditions: _.values(agreement.rentalAgreementConditions),
     rentalAgreementRates: _.values(agreement.rentalAgreementRates),
+    overtimeRates: _.values(agreement.overtimeRates),
     equipmentId: agreement.equipmentId || null,
     projectId: agreement.projectId || null,
   };
@@ -1585,7 +1586,7 @@ export function updateRentalAgreement(agreement) {
   var preparedAgreement = convertRentalAgreement(agreement);
   return new ApiRequest(`/rentalagreements/${ agreement.id }`).put(preparedAgreement).then(response => {
     var agreement = response.data;
-
+    
     // Add display fields
     parseRentalAgreement(agreement);
 
@@ -1680,22 +1681,14 @@ function parseRentalRate(rentalRate, parent = {}) {
   rentalRate.path = rentalRate.rentalAgreement.path ? `${ rentalRate.rentalAgreement.path }/${ Constant.RENTAL_RATES_PATHNAME }/${ rentalRate.id }` : null;
   rentalRate.url = rentalRate.path ? `#/${ rentalRate.path }` : null;
 
-  rentalRate.componentName = rentalRate.componentName || '';
-  rentalRate.isAttachment = rentalRate.isAttachment || false;
   rentalRate.rate = rentalRate.rate || 0.0;
   rentalRate.percentOfEquipmentRate = rentalRate.percentOfEquipmentRate || 0;
-  rentalRate.ratePeriod = rentalRate.ratePeriod || Constant.RENTAL_RATE_PERIOD_HOURLY;  // One of: Hr, Daily
+  rentalRate.ratePeriod = rentalRate.ratePeriod || Constant.RENTAL_RATE_PERIOD_HOURLY;
   rentalRate.comment = rentalRate.comment || '';
 
   // UI display fields
   rentalRate.rentalAgreementId = rentalRate.rentalAgreement.id;
   rentalRate.rentalAgreementNumber = rentalRate.rentalAgreement.number;
-  rentalRate.dollarValue = 0;
-  if (rentalRate.rate > 0) {
-    rentalRate.dollarValue = rentalRate.rate;
-  } else if (rentalRate.percentOfEquipmentRate > 0) {
-    rentalRate.dollarValue = rentalRate.rentalAgreement.equipmentRate * rentalRate.percentOfEquipmentRate / 100;
-  }
 
   rentalRate.canEdit = true;
   rentalRate.canDelete = true;

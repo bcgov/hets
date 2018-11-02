@@ -24,7 +24,7 @@ var EquipmentRentalRatesEditDialog = React.createClass({
   getInitialState() {
     return {
       equipmentRate: this.props.rentalAgreement.equipmentRate || 0,
-      ratePeriod: this.props.rentalAgreement.ratePeriod || '',
+      ratePeriod: this.props.rentalAgreement.ratePeriod || Constant.RENTAL_RATE_PERIOD_HOURLY,
       rateComment: this.props.rentalAgreement.rateComment || '',
 
       equipmentRateError: '',
@@ -83,6 +83,7 @@ var EquipmentRentalRatesEditDialog = React.createClass({
   render() {
     // Read-only if the user cannot edit the rental agreement
     var isReadOnly = !this.props.rentalAgreement.canEdit && this.props.rentalAgreement.id !== 0;
+    var ratePeriods = [ Constant.RENTAL_RATE_PERIOD_HOURLY, Constant.RENTAL_RATE_PERIOD_DAILY, Constant.RENTAL_RATE_PERIOD_WEEKLY, Constant.RENTAL_RATE_PERIOD_MONTHLY, Constant.RENTAL_RATE_PERIOD_NEGOTIATED ];
 
     return <EditDialog id="rental-agreements-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
@@ -102,9 +103,8 @@ var EquipmentRentalRatesEditDialog = React.createClass({
             <Col md={2}>
               <FormGroup controlId="ratePeriod" validationState={ this.state.ratePeriodError ? 'error' : null }>
                 <ControlLabel>Period <sup>*</sup></ControlLabel>
-                {/*TODO - use lookup list*/}
                 <DropdownControl id="ratePeriod" disabled={ isReadOnly } title={ this.state.ratePeriod } updateState={ this.updateState }
-                  items={[ Constant.RENTAL_RATE_PERIOD_HOURLY, Constant.RENTAL_RATE_PERIOD_DAILY ]} />
+                  items={ ratePeriods } />
                 <HelpBlock>{ this.state.ratePeriodError }</HelpBlock>
               </FormGroup>
             </Col>

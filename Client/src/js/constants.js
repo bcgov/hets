@@ -103,3 +103,4 @@ export const SESSION_TIMOUT = 7200000; // 120 minutes
 
 // Max Field Lengths
 export const MAX_LENGTH_NOTE_TEXT = 2048;
+export const MAX_LENGTH_RENTAL_AGREEMENT_NOTE = 150;

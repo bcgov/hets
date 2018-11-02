@@ -147,7 +147,7 @@ var RentalConditionsEditDialog = React.createClass({
               <Row>
                 <Col md={12}>
                   <FormGroup controlId={`conditionName${key}`} validationState={ this.state.forms[key].conditionNameError ? 'error' : null }>
-                    <ControlLabel>Rate Component <sup>*</sup></ControlLabel>
+                    <ControlLabel>Conditions <sup>*</sup></ControlLabel>
                     {/*TODO - use lookup list*/}
                     <DropdownControl id={`conditionName${key}`}  disabled={ isReadOnly } updateState={ this.updateState }
                       items={ conditions } title={ this.state.forms[key].conditionName } className="full-width" />

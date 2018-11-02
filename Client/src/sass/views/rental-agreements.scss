@@ -10,7 +10,13 @@
   }
 
   #rental-agreements-note {
-    margin-bottom: 10px;
+    margin: 10px 0;
+  }
+
+  #overtime-rates {
+    .overtime-rate {
+      margin-right: 20px;
+    }
   }
 
   .label {
@@ -47,5 +53,21 @@
   [class*='col-'] {
     padding-left: 7px;
     padding-right: 7px;
+  }
+}
+
+#rental-agreements-overtime-notes-edit {
+  #overtime-rate-edit {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e5e5e5;
+
+    .checkbox-control {
+      display: inline-block;
+      margin-right: 20px;
+    }
+  }
+  
+  #note-edit {
+    margin-top: 20px;
   }
 }
