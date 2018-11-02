@@ -56,15 +56,20 @@ namespace HetsApi.Controllers
                 .Include(x => x.EquipmentType)
                 .Include(x => x.HetEquipment)
                     .ThenInclude(y => y.LocalArea)
+                .Include(x => x.HetEquipment)
+                    .ThenInclude(x => x.EquipmentStatusType)
                 .Where(x => x.District.DistrictId == districtId)
                 .OrderBy(x => x.DistrictEquipmentName)
                 .ToList();
 
             foreach (HetDistrictEquipmentType equipmentType in equipmentTypes)
             {
-                equipmentType.EquipmentCount = equipmentType.HetEquipment.Count;
+                var approvedEquipment = equipmentType.HetEquipment
+                    .Where(x => x.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved);
 
-                foreach(HetEquipment equipment in equipmentType.HetEquipment)
+                equipmentType.EquipmentCount = approvedEquipment.Count();
+
+                foreach(HetEquipment equipment in approvedEquipment)
                 {                    
                     LocalAreaEquipment localAreaEquipment = equipmentType.LocalAreas
                         .FirstOrDefault(x => x.Id == equipment.LocalAreaId);
