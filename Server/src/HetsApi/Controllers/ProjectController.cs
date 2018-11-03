@@ -378,6 +378,8 @@ namespace HetsApi.Controllers
                     Comment = rate.Comment,
                     ComponentName = rate.ComponentName,
                     Rate = rate.Rate,
+                    Overtime = rate.Overtime,
+                    Active = rate.Active,
                     IsIncludedInTotal = rate.IsIncludedInTotal
                 };
 
