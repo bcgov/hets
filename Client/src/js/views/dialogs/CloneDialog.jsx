@@ -19,7 +19,6 @@ import { formatDateTime } from '../../utils/date';
 var CloneDialog = React.createClass({
   propTypes: {
     onSave: React.PropTypes.func.isRequired,
-    onUpdate: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     rentalAgreement: React.PropTypes.object,
