@@ -282,7 +282,7 @@ var RentalAgreementsDetail = React.createClass({
 
     var buttons = 
       <div className="pull-right">
-        { isAssociated && <Button disabled={ !rentalAgreement.isActive } onClick={ this.openCloneDialog }>Clone</Button> }
+        { isAssociated && <Button disabled={ !rentalAgreement.isActive } onClick={ this.openCloneDialog }>Copy Other Rental Agreement</Button> }
         <Button title="Print PDF" onClick={ this.generateRentalAgreementDocument }><Glyphicon glyph="print" /></Button>
         <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
         <Button title="Generate Another Rental Agreement" onClick={ this.generateAnotherAgreement }>Generate Another Rental Agreement</Button>
