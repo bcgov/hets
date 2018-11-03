@@ -258,25 +258,35 @@ var RentalAgreementsDetail = React.createClass({
       agreementToCloneId: rentalAgreementCloneId,
       rentalAgreementId: this.props.rentalAgreement.id,
     };
-    var clonePromise = Api.cloneProjectRentalAgreement(data);
+    var clonePromise = Api.cloneProjectRentalAgreement;
 
     if (type === Constant.BY_EQUIPMENT) {
       data.equipmentId = this.props.rentalAgreement.equipment.id;      
-      clonePromise = Api.cloneEquipmentRentalAgreement(data);
+      clonePromise = Api.cloneEquipmentRentalAgreement;
     }
 
     this.setState({ cloneRentalAgreementError: '' });
-    clonePromise.then(() => {
+    clonePromise(data).then(() => {
       this.closeCloneDialog();
-    })
-      .catch((error) => {
-        this.setState({ cloneRentalAgreementError: error });
-      });
+      this.fetch();
+    }).catch((error) => {
+      this.setState({ cloneRentalAgreementError: error.message });
+    });
   },
 
   render() {
     var rentalAgreement = this.props.rentalAgreement;
     var rentalConditions = this.props.rentalConditions;
+
+    var isAssociated = rentalAgreement.rentalRequestId > 0;
+
+    var buttons = 
+      <div className="pull-right">
+        { isAssociated && <Button disabled={ !rentalAgreement.isActive } onClick={ this.openCloneDialog }>Copy Other Rental Agreement</Button> }
+        <Button title="Print PDF" onClick={ this.generateRentalAgreementDocument }><Glyphicon glyph="print" /></Button>
+        <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
+        <Button title="Generate Another Rental Agreement" onClick={ this.generateAnotherAgreement }>Generate Another Rental Agreement</Button>
+      </div>;
 
     return (
       <div id="rental-agreements-detail">
@@ -292,11 +302,7 @@ var RentalAgreementsDetail = React.createClass({
                 </div>
               </Col>
               <Col xs={10}>
-                <div className="pull-right">
-                  <Button title="Print PDF" onClick={ this.generateRentalAgreementDocument }><Glyphicon glyph="print" /></Button>
-                  <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
-                  <Button title="Generate Another Rental Agreement" onClick={ this.generateAnotherAgreement }>Generate Another Rental Agreement</Button>
-                </div>
+                { buttons }
               </Col>
             </Row>
           );
@@ -310,17 +316,17 @@ var RentalAgreementsDetail = React.createClass({
 
             return (
               <div>
-                {(() => {
-                  if (rentalAgreement.isBlank) {
-                    return (
-                      <h3 className="clearfix">Rental Agreement
-                        <span className="pull-right">
-                          <Button title="Edit Rental Agreement" bsSize="small" onClick={ this.openHeaderEditDialog }><Glyphicon glyph="pencil" /></Button>
-                        </span>
-                      </h3>
-                    );
-                  }
-                })()}
+                <h3 className="clearfix">Rental Agreement
+                  {(() => {
+                    if (rentalAgreement.isBlank) {
+                      return (
+                          <span className="pull-right">
+                            <Button title="Edit Rental Agreement" bsSize="small" onClick={ this.openHeaderEditDialog }><Glyphicon glyph="pencil" /></Button>
+                          </span>
+                      );
+                    }
+                  })()}
+                </h3>
                 <Row className="equal-height">
                   <Col lg={6} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Agreement Number:">{ rentalAgreement.number }</ColDisplay>
@@ -328,7 +334,7 @@ var RentalAgreementsDetail = React.createClass({
                   <Col lg={6} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Rental Request:">
                       {(() => {
-                        if (rentalAgreement.rentalRequestId) { return <Link to={{ pathname: 'rental-requests/' + rentalAgreement.rentalRequestId }}>View</Link>; }
+                        if (isAssociated) { return <Link to={{ pathname: 'rental-requests/' + rentalAgreement.rentalRequestId }}>View</Link>; }
                         
                         return <div>Unassociated</div>;
                       })()}
@@ -574,11 +580,7 @@ var RentalAgreementsDetail = React.createClass({
         </Well>
 
         <Row id="rental-agreements-footer">
-          <div className="pull-right">
-            <Button title="Print PDF" onClick={ this.generateRentalAgreementDocument }><Glyphicon glyph="print" /></Button>
-            <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
-            <Button title="Generate Another Rental Agreement" onClick={ this.generateAnotherAgreement }>Generate Another Rental Agreement</Button>
-          </div>
+          { buttons }
         </Row>
         { this.state.showHeaderEditDialog &&
         <RentalAgreementHeaderEditDialog show={ this.state.showHeaderEditDialog } onSave={ this.saveHeaderEdit } onClose={ this.closeHeaderEditDialog } />

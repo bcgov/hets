@@ -346,7 +346,7 @@ namespace HetsApi.Controllers
             // *Can't clone into an Agreement if it isn't Active
             // *Can't clone into an Agreement if it has existing time records
             // ******************************************************************
-            if (!agreements[newRentalAgreementIndex].Status
+            if (!agreements[newRentalAgreementIndex].RentalAgreementStatusType.Description
                 .Equals("Active", StringComparison.InvariantCultureIgnoreCase))
             {
                 // (RENTAL AGREEMENT) is not active
@@ -378,6 +378,8 @@ namespace HetsApi.Controllers
                     Comment = rate.Comment,
                     ComponentName = rate.ComponentName,
                     Rate = rate.Rate,
+                    Overtime = rate.Overtime,
+                    Active = rate.Active,
                     IsIncludedInTotal = rate.IsIncludedInTotal
                 };
 

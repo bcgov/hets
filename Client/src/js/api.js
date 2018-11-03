@@ -535,7 +535,7 @@ export function cloneEquipmentRentalAgreement(data) {
   return new ApiRequest(`/equipment/${ data.equipmentId }/rentalAgreementClone`).post(data).then(response => {
 
     if (response.responseStatus === 'ERROR') {
-      return Promise.reject('There was an error cloning the rental agreement.');
+      return Promise.reject(new Error('There was an error cloning the rental agreement.'));
     }
 
     var agreement = response.data;
@@ -1170,7 +1170,7 @@ export function cloneProjectRentalAgreement(data) {
   return new ApiRequest(`/projects/${ data.projectId }/rentalAgreementClone`).post(data).then(response => {
 
     if (response.responseStatus === 'ERROR') {
-      return Promise.reject('There was an error cloning the rental agreement.');
+      return Promise.reject(new Error('There was an error cloning the rental agreement.'));
     }
 
     var agreement = response.data;
