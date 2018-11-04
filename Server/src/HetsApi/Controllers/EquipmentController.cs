@@ -85,18 +85,6 @@ namespace HetsApi.Controllers
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            // check for duplicates (serial number)
-            if (!string.IsNullOrEmpty(item.SerialNumber))
-            {
-                bool duplicatesExist = _context.HetEquipment
-                    .Any(x => x.SerialNumber == item.SerialNumber && 
-                              x.EquipmentId != item.EquipmentId &&
-                              x.ArchiveCode == "N");
-
-                // duplicate equipment error
-                if (duplicatesExist) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-08", _configuration)));                
-            }
-
             // get record
             HetEquipment equipment = _context.HetEquipment
                 .Include(x => x.Owner)
@@ -284,18 +272,6 @@ namespace HetsApi.Controllers
         {
             // not found
             if (item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-
-            // check for duplicates (serial number)
-            if (!string.IsNullOrEmpty(item.SerialNumber))
-            {
-                bool duplicatesExist = _context.HetEquipment
-                    .Any(x => x.SerialNumber == item.SerialNumber &&
-                              x.EquipmentId != item.EquipmentId &&
-                              x.ArchiveCode == "N");
-
-                // duplicate equipment error
-                if (duplicatesExist) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-08", _configuration)));
-            }
 
             // set default values for new piece of Equipment
             // certain fields are set on new record - set defaults (including status = "Inactive")

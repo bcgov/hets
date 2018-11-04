@@ -99,41 +99,6 @@ namespace HetsData.Helpers
         #region Adjust Agreement Pdf
 
         /// <summary>
-        /// Look for "Other" and replace with Comment text
-        /// </summary>
-        public static RentalAgreementPdfViewModel FixOther(RentalAgreementPdfViewModel agreement)
-        {
-            foreach (HetRentalAgreementRate rentalRate in agreement.RentalAgreementRatesWithTotal)
-            {
-                if (rentalRate.ComponentName.Equals("Other", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    rentalRate.ComponentName = rentalRate.Comment;
-                    rentalRate.Comment = "";
-                }
-            }
-
-            foreach (HetRentalAgreementRate rentalRate in agreement.RentalAgreementRatesWithoutTotal)
-            {
-                if (rentalRate.ComponentName.Equals("Other", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    rentalRate.ComponentName = rentalRate.Comment;
-                    rentalRate.Comment = "";
-                }
-            }
-
-            foreach (HetRentalAgreementCondition condition in agreement.RentalAgreementConditions)
-            {
-                if (condition.ConditionName.Equals("Other", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    condition.ConditionName = condition.Comment;
-                    condition.Comment = "";
-                }
-            }
-
-            return agreement;
-        }
-
-        /// <summary>
         /// Uses the rates data to calculate the totals and setup the required data for printing
         /// </summary>
         public static RentalAgreementPdfViewModel CalculateTotals(RentalAgreementPdfViewModel agreement)
@@ -279,7 +244,6 @@ namespace HetsData.Helpers
                 pdfModel.ConditionsPresent = agreement.HetRentalAgreementCondition.Count > 0;
 
                 pdfModel = CalculateTotals(pdfModel);
-                pdfModel = FixOther(pdfModel);
             }
 
             return pdfModel;
