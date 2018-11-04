@@ -335,7 +335,22 @@ namespace HetsImport.Import
                 if (oldObject.Equip_Id == 19165)
                 {
                     oldObject.Owner_Popt_Id = 8786195;
-                }          
+                }
+
+                // ***********************************************
+                // equipment code
+                // ***********************************************
+                string tempEquipmentCode = ImportUtility.CleanString(oldObject.Equip_Cd).ToUpper();
+
+                if (!string.IsNullOrEmpty(tempEquipmentCode))
+                {
+                    equipment.EquipmentCode = tempEquipmentCode;
+                }
+                else
+                {
+                    // must have an equipment code: HETS-817
+                    return;
+                }
 
                 // ***********************************************
                 // set the equipment status
@@ -408,23 +423,7 @@ namespace HetsImport.Import
                         throw new DataException(string.Format("Received Date cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
                     }                    
                 }
-
-                // equipment code
-                string tempEquipmentCode = ImportUtility.CleanString(oldObject.Equip_Cd).ToUpper();
-
-                if (!string.IsNullOrEmpty(tempEquipmentCode))
-                {
-                    equipment.EquipmentCode = tempEquipmentCode;
-                }
-                else
-                {
-                    if (equipment.ArchiveCode == "N" && 
-                        equipment.EquipmentStatusTypeId == statusIdApproved)
-                    {
-                        throw new DataException(string.Format("Equipment Code cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
-                    }                    
-                }
-
+                
                 // pay rate
                 float? tempPayRate = ImportUtility.GetFloatValue(oldObject.Pay_Rate);
 

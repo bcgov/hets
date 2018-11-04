@@ -366,6 +366,11 @@ namespace HetsImport.Import
                 {
                     owner.OwnerCode = tempOwnerCode;
                 }
+                else
+                {
+                    // must have an owner code: HETS-817
+                    return;
+                }
 
                 // ***********************************************
                 // set company name
