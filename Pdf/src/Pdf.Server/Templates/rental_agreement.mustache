@@ -6,18 +6,18 @@
   <style>
 
   @page {
-    margin: 1cm 1cm 2cm 1cm;
+    margin: 0cm 1cm 0cm 1cm;
     size: letter;
     
     @bottom-right {
       margin: 0 1cm 0 0;
-      font-size: 12px;
+      font-size: 10px;
       content: counter(page) "/" counter(pages);
     }
    
     @bottom-left {
       margin: 0 0 0 1cm;
-      font-size: 12px;
+      font-size: 10px;
       content: "H0246(2018/10/06)";
     }
   }
@@ -133,7 +133,7 @@
 
   #see-other-side {
     width: 100%;
-    margin: 10px 0;
+    margin: 6px 0;
     text-align: center;
   }
 
@@ -211,8 +211,8 @@
   }
 
   .signature {
-    margin-top: 14px;
-    margin-bottom: 4px;
+    margin-top: 12px;
+    margin-bottom: 2px;
     border-top: 1px solid black;
     font-size: 11px;
     font-style: italic;
@@ -285,13 +285,13 @@
                 <td class="align-top">
                     <table class="inner-table" style="width: 500px;">
                         <tr>
-                            <td class="label m-tb-5" style="padding-right: 5px; width: 200px;">Name of Registered Owner or Firm:</td>
+                            <td class="label m-tb-5" style="padding-right: 5px; width: 225px;">Name of Registered Owner or Firm:</td>
                             <td class="value m-tb-5">{{equipment.owner.organizationName}}</td>
                         </tr>
                     </table>
                     <table class="inner-table" style="margin-top: 15px; width: 500px;">
                         <tr>
-                            <td class="label m-tb-5" style="padding-right: 5px; width: 200px;">Address:</td>
+                            <td class="label m-tb-5" style="padding-right: 5px; width: 225px;">Address:</td>
                             <td class="value m-tb-5">
                                 {{equipment.owner.address1}} {{equipment.owner.address2}}<br />
                                 {{equipment.owner.city}}, {{equipment.owner.province}}  {{equipment.owner.postalCode}}
@@ -335,7 +335,7 @@
     <p style="margin-top: 12px; margin-bottom: 12px;">I hereby agree to rent to the Ministry of Transportation and Infrastructure of the Province of British Columbia the following equipment at the rental rates as shown:</p>
 
     <div id="table-block">
-        <table id="main-table" style="height: 400px">
+        <table id="main-table" style="height: 300px">
             <tr>
                 <th>Equipment</th>
                 <th style="width: 150px">Rate</th>
@@ -346,7 +346,7 @@
                 <td class="rate">{{baseRateString}}</td>
                 <td>{{rateComment}}</td>
             </tr>
-            <tr style="height: 15px"><td></td><td></td><td></td></tr>
+            <tr style="height: 10px"><td></td><td></td><td></td></tr>
             {{#rentalAgreementRatesWithTotal}}
             <tr>
                 <td>{{componentName}}</td>
@@ -354,13 +354,13 @@
                 <td>{{comment}}</td>
             </tr>
             {{/rentalAgreementRatesWithTotal}}
-            <tr style="height: 15px"><td></td><td></td><td></td></tr>
+            <tr style="height: 10px"><td></td><td></td><td></td></tr>
             <tr>
                 <td></td>
                 <td class="rate bold">{{agreementTotalString}}</td>
                 <td class="bold">Total</td>
             </tr>
-            <tr style="height: 15px"><td></td><td></td><td></td></tr>
+            <tr style="height: 10px"><td></td><td></td><td></td></tr>
             {{#rentalAgreementRatesWithoutTotal}}
             <tr>
                 <td>{{componentName}}</td>
@@ -368,17 +368,17 @@
                 <td>{{comment}}</td>
             </tr>
             {{/rentalAgreementRatesWithoutTotal}}
-            <tr style="height: 15px"><td></td><td></td><td></td></tr>
+            <tr style="height: 10px"><td></td><td></td><td></td></tr>
             {{#rentalAgreementConditions}}
             <tr>
                 <td></td>
                 <td></td>
                 <td>{{conditionName}}</td>
             </tr>
-            <tr style="height: 15px"><td></td><td></td><td></td></tr>
+            <tr style="height: 10px"><td></td><td></td><td></td></tr>
             {{/rentalAgreementConditions}}
-            <tr style="height: 15px"><td></td><td></td><td></td></tr>
-            <tr style="height: 15px"><td></td><td></td><td></td></tr>
+            <tr style="height: 10px"><td></td><td></td><td></td></tr>
+            <tr style="height: 10px"><td></td><td></td><td></td></tr>
             {{#rentalAgreementRatesOvertime}}
             <tr>
                 <td>{{componentName}}</td>
