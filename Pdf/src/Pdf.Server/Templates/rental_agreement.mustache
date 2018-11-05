@@ -209,25 +209,20 @@
     float: right;
   }
 
-  .w60 {
-    width: 65%;
-  }
-
-  .w40 {
-    width: 35%;
-  }
-
   .signature {
-    margin-top: 20px;
-    margin-bottom: 2px;
+    margin-top: 25px;
     border-top: 1px solid black;
     font-size: 11px;
     font-style: italic;
     text-align: center;
   }
 
+  .signaturedate {
+    margin-top: 14px;
+  }
+
   .align-top {
-    vertical-align: top;
+   vertical-align: top;
   }
 
   #page-2 {
@@ -245,7 +240,7 @@
 </head>
 <body>
 
-<div id="box">
+<td id="box">
   <span id="inner">
     <table id="header" class="hide-table">
       <tbody>
@@ -408,31 +403,42 @@
 certification clause: <b>This is to certify that the property and/or services ordered/purchased hereby are for the use of, and are being purchased by
 the Ministry of Transportation and Infrastructure with Crown funds, and are subject to applicable taxes.</b></p>
 
-    <div class="clearfix">
-      <div class="left w60">Valid WCB Registration Number: <span class="underline uppercase">{{equipment.owner.workSafeBCPolicyNumber}}</span></div>
-      <div class="right w40 signature">(Owner or Representative)</div>
-    </div>
-
-    <div class="clearfix">
-      <div class="left w60">
-        <div class="left">Dated at:&nbsp;</div>
-        <div class="left w40 signature">(Place)</div>
-        <div class="left"> on <span class="underline">{{datedOn}}</span></div>
-      </div>
-      <div class="right w40 signature">(District Official)</div>
-    </div>
-  </div>
-
-  <table style="width: 100%; margin: 0; border: solid; border-width: 1px;">
-      <tr>
-          <td class="left w40"><b>Original Copy To Owner</b></td>
-          <td class="right w60">
-              <div class="right">Within Guide Rates</div>
-              <div class="right underline w40">&nbsp;</div>
-              <div class="right">Rental Authorized By:&nbsp;</div>
-          </td>
-      </tr>
-  </table>
+    <table style="width: 100%; margin: 10px 0 0 0; padding: 0; border: none; border-width: 0;">
+        <tr style="height: 10px;">
+            <td style="width: 300px; border-right: none;">Valid WCB Registration Number: <span class="underline uppercase">{{equipment.owner.workSafeBCPolicyNumber}}</span></td>
+            <td style="width: 120px; border-right: none;">&nbsp;</td>
+            <td style="width: 200px; text-align: center; border-right: none;"><div class="signature">(Owner or Representative)</div></td>
+        </tr>        
+        <tr style="height: 10px;">
+            <td style="width: 300px; border-right: none; margin: 0; padding: 0;">
+                <table style="margin: 0; padding: 0; border: hidden; border-width: 0;">
+                    <tr>
+                        <td style="width: 65px; border-right: none;">Dated at:&nbsp;</td>
+                        <td style="width: 100px; border-right: none;"><div class="signature">(Place)</div></td>
+                        <td style="width: 15px; border-right: none;">on</td>
+                        <td style="width: 70px; border-right: none;">
+                            <div class="underline">{{datedOn}}</div>
+                        </td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </table>
+            </td>
+            <td style="width: 120px; border-right: none;">&nbsp;</td>
+            <td style="width: 200px; text-align: center; border-right: none;"><div class="signature">(District Official)</div></td>
+        </tr>
+        <tr style="height: 20px;">
+            <td style="border-right: none;">&nbsp;</td>
+            <td style="border-right: none;">&nbsp;</td>
+            <td style="border-right: none;">&nbsp;</td>
+        </tr>
+        <tr style="height: 10px;">
+            <td style="width: 300px; border-right: none;"><b>Original Copy To Owner</b></td>
+            <td style="width: 120px; text-align: right; border-right: none;">Rental Authorized By:&nbsp;</td>
+            <td style="width: 200px; border-right: none;">
+                <div class="underline" style="float:left; width: 100px;">&nbsp;</div>&nbsp;Within Guide Rates
+            </td>
+        </tr>
+    </table>
 
   <div id="page-2">
     <h2>Standard Equipment Rental Agreement</h2>
