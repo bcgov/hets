@@ -517,7 +517,7 @@ namespace HetsApi.Controllers
             requestRotationList.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             requestRotationList.EquipmentId = tempEquipmentId;
             requestRotationList.IsForceHire = item.IsForceHire;
-            requestRotationList.AskedDateTime = item.AskedDateTime;
+            requestRotationList.AskedDateTime = DateTime.UtcNow;
             requestRotationList.Note = item.Note;
             requestRotationList.OfferRefusalReason = item.OfferRefusalReason;
             requestRotationList.OfferResponse = item.OfferResponse;
