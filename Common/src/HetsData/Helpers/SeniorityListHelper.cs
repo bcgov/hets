@@ -277,7 +277,7 @@ namespace HetsData.Helpers
         /// <param name="context"></param>        
         /// <returns></returns>
         public static SeniorityViewModel ToSeniorityViewModel(HetEquipment model, SeniorityScoringRules scoringRules,
-            HetLocalAreaRotationList rotationList, DbAppContext context)
+            HetRentalRequestRotationList rotationList, DbAppContext context)
         {
             SeniorityViewModel seniorityViewModel = new SeniorityViewModel();
 
@@ -310,28 +310,8 @@ namespace HetsData.Helpers
             // *************************************************************
             // check if this record/owner was called last
             // *************************************************************
-            bool callNext = false;
-
-            if (rotationList != null &&
-                blockNumber == 1 &&
-                rotationList.AskNextBlock1Id == model.EquipmentId)
-            {
-                callNext = true;
-            }
-            else if (rotationList != null &&
-                     numberOfBlocks > 1 &&
-                     blockNumber == 2 &&
-                     rotationList.AskNextBlock2Id == model.EquipmentId)
-            {
-                callNext = true;
-            }
-            else if (rotationList != null &&
-                     rotationList.AskNextBlockOpenId == model.EquipmentId)
-            {
-                callNext = true;
-            }
-
-            seniorityViewModel.LastCalled = callNext ? "Y" : " ";
+            bool callLast = rotationList != null && rotationList.EquipmentId == model.EquipmentId;
+            seniorityViewModel.LastCalled = callLast ? "Y" : " ";
 
             // *************************************************************
             // map data to view model
