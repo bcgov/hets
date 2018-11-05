@@ -163,7 +163,7 @@ var RentalRequestsDetail = React.createClass({
     Api.updateRentalRequestRotationList(hireOfferUpdated, this.props.rentalRequest.data).then(() => {
       Log.rentalRequestEquipmentHired(this.props.rentalRequest.data, hireOffer.equipment, hireOffer.offerResponse);
 
-      var rotationListItem = this.props.rentalRequestRotationList.data.find(i => i.id === hireOffer.id);
+      var rotationListItem = _.find(this.props.rentalRequestRotationList.data, i => i.id === hireOffer.id);
       if (rotationListItem && rotationListItem.rentalAgreementId && !hireOfferUpdated.rentalAgreementId) {
         // navigate to rental agreement if it was newly generated
         this.props.router.push({ pathname: `${ Constant.RENTAL_AGREEMENTS_PATHNAME }/${ rotationListItem.rentalAgreementId }` });
