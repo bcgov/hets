@@ -1,4 +1,5 @@
 import React from 'react';
+import Promise from 'bluebird';
 
 import { Button } from 'react-bootstrap';
 
@@ -24,14 +25,22 @@ var EditDialog = React.createClass({
   getInitialState() {
     return {
       saving: false,
+      savePromise: Promise.resolve(),
     };
+  },
+
+  componentWillUnmount() {
+    this.state.savePromise.cancel();
   },
 
   save() {
     if (this.props.isValid()) {
       if (this.props.didChange()) {
-        this.setState({ saving: true });
-        this.props.onSave();
+        var onSaveCompleted = () => this.setState({ saving: false });
+        this.setState({
+          saving: true,
+          savePromise: Promise.resolve(this.props.onSave()).delay(1000).then(onSaveCompleted, onSaveCompleted),
+        });
       } else {
         this.props.onClose();
       }
