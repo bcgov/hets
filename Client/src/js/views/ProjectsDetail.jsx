@@ -201,10 +201,13 @@ var ProjectsDetail = React.createClass({
   saveNewRequest(request) {
     Api.addRentalRequest(request).then((response) => {
       Log.projectRentalRequestAdded(this.props.project, response);
+      
       // Open it up
       this.props.router.push({
         pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ response.id }`,
       });
+
+      return null;
     }).catch(err => console.log(err.message));
   },
 

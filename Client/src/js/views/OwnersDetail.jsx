@@ -30,6 +30,7 @@ import EditButton from '../components/EditButton.jsx';
 import History from '../components/History.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import TooltipButton from '../components/TooltipButton.jsx';
 
 import { formatDateTime, today, toZuluTime } from '../utils/date';
 
@@ -333,7 +334,10 @@ var OwnersDetail = React.createClass({
 
   render() {
     var owner = this.props.owner;
-
+    var isApproved = this.props.owner.status === Constant.OWNER_STATUS_CODE_APPROVED;
+    var restrictEquipmentAddTooltip = 'Equipment can only be added to an approved owner.';
+    var restrictEquipmentVerifyTooltip = 'Equipment can only be verified for an approved owner.';
+    
     return <div id="owners-detail">
       <div>
         {(() => {
@@ -502,8 +506,8 @@ var OwnersDetail = React.createClass({
             </Well>
             <Well>
               <h3 className="clearfix">Equipment ({ owner.numberOfEquipment }) <span className="pull-right">
-                <Button className="mr-5" title="Verify All Equipment" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</Button>
-                <Button title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></Button>
+                <TooltipButton disabled={ !isApproved } disabledTooltip={ restrictEquipmentVerifyTooltip } className="mr-5" title="Verify All Equipment" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</TooltipButton>
+                <TooltipButton disabled={ !isApproved } disabledTooltip={ restrictEquipmentAddTooltip } title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></TooltipButton>
               </span></h3>
               {(() => {
                 if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
@@ -536,7 +540,7 @@ var OwnersDetail = React.createClass({
                         <td>{ equipment.details }</td>
                         <td>{ equipment.isApproved ? formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'Not Approved' }</td>
                         <td style={{ textAlign: 'right' }}>
-                          <Button title="Verify Equipment" bsSize="xsmall" onClick={ this.equipmentVerify.bind(this, equipment) }><Glyphicon glyph="ok" /> OK</Button>
+                          <TooltipButton disabled={ !isApproved } disabledTooltip={ restrictEquipmentVerifyTooltip } title="Verify Equipment" bsSize="xsmall" onClick={ this.equipmentVerify.bind(this, equipment) }><Glyphicon glyph="ok" /> OK</TooltipButton>
                         </td>
                       </tr>;
                     })
