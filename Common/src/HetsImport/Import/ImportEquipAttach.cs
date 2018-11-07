@@ -212,7 +212,7 @@ namespace HetsImport.Import
 
                 if (equipment == null)
                 {
-                    throw new ArgumentException(string.Format("Cannot locate Equipment record (EquipAttach Equip Id: {0}", tempId));
+                    return; // ignore and move to the next record
                 }
 
                 // ************************************************

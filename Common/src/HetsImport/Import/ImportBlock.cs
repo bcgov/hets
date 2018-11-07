@@ -285,7 +285,7 @@ namespace HetsImport.Import
 
                 if (mapEquipType == null)
                 {
-                    throw new DataException(string.Format("Equipment Type Id cannot be null (BlockIndex: {0})", maxBlockIndex));
+                    return; // ignore and move to the next record
                 }
 
                 HetDistrictEquipmentType equipmentType = dbContext.HetDistrictEquipmentType.AsNoTracking()

@@ -156,8 +156,8 @@ namespace HetsImport.Import
                 HetEquipment equipment = dbContext.HetEquipment.FirstOrDefault(x => x.EquipmentId == map.NewKey);
 
                 if (equipment == null)
-                {                
-                    throw new ArgumentException(string.Format("Cannot locate Equipment record (DumpTruck Equip Id: {0}", tempId));
+                {
+                    return; // ignore and move to the next record
                 }
 
                 // set dump truck attributes
