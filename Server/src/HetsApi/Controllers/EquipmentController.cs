@@ -1065,18 +1065,7 @@ namespace HetsApi.Controllers
                 foreach (SeniorityListRecord list in seniorityList.SeniorityListRecords)
                 {
                     list.SeniorityList = list.SeniorityList.OrderBy(x => x.SenioritySortOrder).ToList();
-                }
-
-                // fix the ask next (if no rotation list existed
-                foreach (SeniorityListRecord list in seniorityList.SeniorityListRecords)
-                {
-                    bool askNextExists = list.SeniorityList.Exists(x => x.LastCalled == "Y");
-
-                    if (!askNextExists && list.SeniorityList.Count > 0)
-                    {
-                        list.SeniorityList[0].LastCalled = "Y";
-                    }
-                }
+                }                
             }
 
             seniorityList.PrintedOn = string.Format("{0:dd-MM-yyyy H:mm:ss}", DateTime.Now);
