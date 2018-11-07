@@ -185,11 +185,7 @@ var Owners = React.createClass({
     });
   },
 
-  renderResults(ownerList) {
-    var addOwnerButton = <Button title="Add Owner" bsSize="xsmall" onClick={ this.openAddDialog }>
-      <Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong>
-    </Button>;
-
+  renderResults(ownerList, addOwnerButton) {
     if (Object.keys(this.props.ownerList.data).length === 0) { return <Alert bsStyle="success">No owners { addOwnerButton }</Alert>; }
 
     return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
@@ -286,10 +282,16 @@ var Owners = React.createClass({
 
       {(() => {
         if (this.props.ownerList.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+
+        var addOwnerButton = <Button title="Add Owner" bsSize="xsmall" onClick={ this.openAddDialog }>
+          <Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong>
+        </Button>;
         
         if (this.props.ownerList.loaded) {
-          return this.renderResults(ownerList);
+          return this.renderResults(ownerList, addOwnerButton);
         }
+
+        return <div id="add-button-container">{ addOwnerButton }</div>;
       })()}
       { this.state.showAddDialog &&
         <OwnersAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewOwner } onClose={ this.closeAddDialog } />
