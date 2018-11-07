@@ -14,7 +14,6 @@ import * as Constant from '../constants';
 import * as Log from '../history';
 import store from '../store';
 
-import CheckboxControl from '../components/CheckboxControl.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
 import EditButton from '../components/EditButton.jsx';
 import Favourites from '../components/Favourites.jsx';
@@ -58,7 +57,6 @@ var Owners = React.createClass({
         selectedLocalAreasIds: !clear && this.props.search.selectedLocalAreasIds || [],
         ownerCode: !clear && this.props.search.ownerCode || '',
         ownerName: !clear && this.props.search.ownerName || '',
-        hired: !clear && this.props.search.hired || false,
         statusCode: !clear && this.props.search.statusCode || Constant.OWNER_STATUS_CODE_APPROVED,
       },
 
@@ -78,10 +76,6 @@ var Owners = React.createClass({
 
     if (this.state.search.ownerName) {
       searchParams.ownerName = this.state.search.ownerName;
-    }
-
-    if (this.state.search.hired) {
-      searchParams.hired = this.state.search.hired;
     }
 
     if (this.state.search.statusCode) {
@@ -271,7 +265,6 @@ var Owners = React.createClass({
                   items={[ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ]} />
                 <FormInputControl id="ownerCode" type="text" placeholder="Owner Code" value={ this.state.search.ownerCode } updateState={ this.updateSearchState } />
                 <FormInputControl id="ownerName" type="text" placeholder="Company Name" value={ this.state.search.ownerName } updateState={ this.updateSearchState } />
-                <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
                 <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
               </ButtonToolbar>
             </Form>
