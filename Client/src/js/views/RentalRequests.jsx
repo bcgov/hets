@@ -209,11 +209,7 @@ var RentalRequests = React.createClass({
     window.print();
   },
 
-  renderResults() {
-    var addRentalRequestButton = <Button title="Add Rental Request" bsSize="xsmall" onClick={ this.openAddDialog }>
-      <Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong>
-    </Button>;
-
+  renderResults(addRentalRequestButton) {
     if (Object.keys(this.props.rentalRequests.data).length === 0) { return <Alert bsStyle="success">No Rental Requests { addRentalRequestButton }</Alert>; }
 
     var rentalRequests = _.sortBy(this.props.rentalRequests.data, rentalRequest => {
@@ -330,13 +326,17 @@ var RentalRequests = React.createClass({
       </Well>
 
       {(() => {
-
         if (this.props.rentalRequests.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+
+        var addRentalRequestButton = <Button title="Add Rental Request" bsSize="xsmall" onClick={ this.openAddDialog }>
+          <Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong>
+        </Button>;
         
         if (this.props.rentalRequests.loaded) {
-          return this.renderResults();
+          return this.renderResults(addRentalRequestButton);
         }
 
+        return <div id="add-button-container">{ addRentalRequestButton }</div>;
       })()}
       <RentalRequestsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewRequest } onClose={ this.closeAddDialog } />
     </div>;
