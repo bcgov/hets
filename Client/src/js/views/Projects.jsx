@@ -141,11 +141,7 @@ var Projects = React.createClass({
     window.print();
   },
 
-  renderResults() {
-    var addProjectButton = <Button title="Add Project" bsSize="xsmall" onClick={ this.openAddDialog }>
-      <Glyphicon glyph="plus" />&nbsp;<strong>Add Project</strong>
-    </Button>;
-
+  renderResults(addProjectButton) {
     if (Object.keys(this.props.projects.data).length === 0) { 
       return <Alert bsStyle="success">No Projects { addProjectButton }</Alert>; 
     }
@@ -229,15 +225,19 @@ var Projects = React.createClass({
       </Well>
 
       {(() => {
-
         if (this.props.projects.loading || this.props.favourites.loading) { 
           return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
         }
+        
+        var addProjectButton = <Button title="Add Project" bsSize="xsmall" onClick={ this.openAddDialog }>
+          <Glyphicon glyph="plus" />&nbsp;<strong>Add Project</strong>
+        </Button>;
 
         if (this.props.projects.loaded) {
-          return this.renderResults();
+          return this.renderResults(addProjectButton);
         }
 
+        return <div id="add-button-container">{ addProjectButton }</div>;
       })()}
       { this.state.showAddDialog &&
         <ProjectsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewProject } onClose={ this.closeAddDialog } />
