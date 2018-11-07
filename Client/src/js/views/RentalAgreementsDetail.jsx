@@ -32,7 +32,9 @@ import { formatCurrency } from '../utils/string';
 
 var RentalAgreementsDetail = React.createClass({
   propTypes: {
+    currentUser: React.PropTypes.object,
     rentalAgreement: React.PropTypes.object,
+    blankRentalAgreements: React.PropTypes.object,
     rentalConditions: React.PropTypes.array,
     params: React.PropTypes.object,
     ui: React.PropTypes.object,
@@ -67,10 +69,11 @@ var RentalAgreementsDetail = React.createClass({
   fetch() {
     this.setState({ loading: true });
     var getRentalAgreementPromise = Api.getRentalAgreement(this.props.params.rentalAgreementId);
+    var getBlankRentalAgreementsPromise = Api.getBlankRentalAgreements();
     var getRentalConditionsPromise = Api.getRentalConditions();
     var getEquipmentListPromise = Api.searchEquipmentList({ status: Constant.EQUIPMENT_STATUS_CODE_APPROVED });
     var getProjectsPromise = Api.getProjects();
-    return Promise.all([getRentalAgreementPromise, getRentalConditionsPromise, getEquipmentListPromise, getProjectsPromise]).finally(() => {
+    return Promise.all([getRentalAgreementPromise, getBlankRentalAgreementsPromise, getRentalConditionsPromise, getEquipmentListPromise, getProjectsPromise]).finally(() => {
       this.setState({ loading: false });
     });
   },
@@ -279,13 +282,14 @@ var RentalAgreementsDetail = React.createClass({
     var rentalConditions = this.props.rentalConditions;
 
     var isAssociated = rentalAgreement.rentalRequestId > 0;
+    var agreementCount = Object.keys(this.props.blankRentalAgreements.data).length;
 
     var buttons = 
       <div className="pull-right">
         { isAssociated && <Button disabled={ !rentalAgreement.isActive } onClick={ this.openCloneDialog }>Copy Other Rental Agreement</Button> }
         <Button title="Print PDF" onClick={ this.generateRentalAgreementDocument }><Glyphicon glyph="print" /></Button>
         <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
-        <Button title="Generate Another Rental Agreement" onClick={ this.generateAnotherAgreement }>Generate Another Rental Agreement</Button>
+        { agreementCount < Constant.MAX_UNASSOCIATED_RENTAL_AGREEMENTS && this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN) && <Button title="Generate Another Rental Agreement" onClick={ this.generateAnotherAgreement }>Generate Another Rental Agreement</Button> }
       </div>;
 
     return (
@@ -635,7 +639,9 @@ var RentalAgreementsDetail = React.createClass({
 
 function mapStateToProps(state) {
   return {
+    currentUser: state.user,
     rentalAgreement: state.models.rentalAgreement,
+    blankRentalAgreements: state.lookups.blankRentalAgreements,
     rentalConditions: state.lookups.rentalConditions.data,
   };
 }
