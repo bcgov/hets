@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Grid, Row, Col, Radio, Form, FormGroup, ControlLabel, HelpBlock, Button } from 'react-bootstrap';
+import { Grid, Row, Col, Radio, Form, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
 
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -140,8 +140,9 @@ var HireOfferEditDialog = React.createClass({
       this.setState({ offerResponseNoteError: 'Note is required' });
       valid = false;
     }
-
-    if ((this.state.offerStatus == STATUS_YES || this.state.offerStatus == STATUS_FORCE_HIRE) && !this.state.rentalAgreementId) {
+    
+    var blankRentalAgreementCount = _.keys(this.props.blankRentalAgreements.data).length;
+    if ((this.state.offerStatus == STATUS_YES || this.state.offerStatus == STATUS_FORCE_HIRE) && blankRentalAgreementCount > 0 && !this.state.rentalAgreementId) {
       this.setState({ rentalAgreementError: 'A rental agreement is required' });
       valid = false;
     }
@@ -255,20 +256,12 @@ var HireOfferEditDialog = React.createClass({
       }>
       {(() => {
         var blankRentalAgreements = _.sortBy(this.props.blankRentalAgreements.data, 'number');
-
-        var agreementChoiceRow = 
-          <Row>
-            <Col md={6}>
-              <FormGroup controlId="rentalAgreementId" validationState={ this.state.rentalAgreementError ? 'error' : null }>
-                <DropdownControl id="rentalAgreementId" disabled={ blankRentalAgreements.length == 0 } updateState={ this.updateState } items={ blankRentalAgreements } selectedId={ this.state.rentalAgreementId } blankLine="Select rental agreement" placeholder="Select rental agreement" />
-                { blankRentalAgreements.length == 0 && <HelpBlock>There are no unassociated rental agreements for this project and equipment.</HelpBlock> }
-                <HelpBlock>{ this.state.rentalAgreementError }</HelpBlock>
-              </FormGroup>
-            </Col>
-            <Col md={6}>
-              <Button onClick={ this.onSave } className="btn-primary">New Rental Agreement</Button>
-            </Col>
-          </Row>;
+        
+        var agreementChoiceRow = _.keys(blankRentalAgreements).length === 0 ? null :
+          <FormGroup controlId="rentalAgreementId" validationState={ this.state.rentalAgreementError ? 'error' : null }>
+            <DropdownControl id="rentalAgreementId" updateState={ this.updateState } items={ blankRentalAgreements } selectedId={ this.state.rentalAgreementId } blankLine="Select rental agreement" placeholder="Select rental agreement" />
+            <HelpBlock>{ this.state.rentalAgreementError }</HelpBlock>
+          </FormGroup>;
 
         return <Form>
           <Grid fluid>
