@@ -483,6 +483,7 @@ namespace HetsApi.Controllers
             // get owner records
             List<HetOwner> owners = _context.HetOwner.AsNoTracking()
                 .Include(x => x.PrimaryContact)
+                .Include(x => x.Business)
                 .Include(x => x.HetEquipment)
                     .ThenInclude(a => a.HetEquipmentAttachment)
                 .Include(x => x.HetEquipment)
@@ -564,6 +565,16 @@ namespace HetsApi.Controllers
                     if (!string.IsNullOrEmpty(owner.SharedKey))
                     {
                         owner.SharedKeyHeader = "Secret Key: ";
+                    }
+                    else
+                    {
+                        //"Business Name: label and value instead"
+                        owner.SharedKeyHeader = "Business Name: ";
+
+                        if (!string.IsNullOrEmpty(owner.Business.BceidLegalName))
+                        {
+                            owner.SharedKeyHeader = "Business Name: " + owner.Business.BceidLegalName;
+                        }
                     }
 
                     model.Owners.Add(owner);
