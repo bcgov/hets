@@ -132,9 +132,11 @@ var EquipmentDetail = React.createClass({
   },
 
   saveEdit(equipment) {
-    Api.updateEquipment(equipment).finally(() => {
+    return Api.updateEquipment(equipment).then(() => {
       Log.equipmentModified(this.props.equipment);
       this.closeEditDialog();
+
+      return null;
     });
   },
 
