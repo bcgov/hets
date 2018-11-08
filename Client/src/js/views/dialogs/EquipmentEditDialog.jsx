@@ -42,12 +42,19 @@ var EquipmentEditDialog = React.createClass({
       pupLegalCapacity: this.props.equipment.pupLegalCapacity || '',
 
       serialNumberError: null,
+      duplicateSerialNumber: false,
       yearError: null,
     };
   },
 
   componentDidMount() {
     this.input.focus();
+  },
+
+  componentDidUpdate(prevProps, prevState) {
+    if (!_.isEqual(this.state.serialNumber, prevState.serialNumber)) {
+      this.setState({ duplicateSerialNumber: false, serialNumberError: '' });
+    }
   },
 
   updateState(state, callback) {
@@ -91,31 +98,44 @@ var EquipmentEditDialog = React.createClass({
     return valid;
   },
 
-  onSave() {
-    Api.equipmentDuplicateCheck(this.props.equipment.id, this.state.serialNumber).then((response) => {
+  checkForDuplicatesAndSave() {
+    if (this.state.duplicateSerialNumber) {
+      // proceed regardless of duplicates
+      this.setState({ duplicateSerialNumber: false });
+      return this.onSave();
+    }
+
+    return Api.equipmentDuplicateCheck(this.props.equipment.id, this.state.serialNumber).then((response) => {
       if (response.data.length > 0) {
         var districts = response.data.map((district) => {
           return district.districtName;
         });
         this.setState({ 
           serialNumberError: `Serial number is currently in use in the following district(s): ${districts.join(', ')}`,
+          duplicateSerialNumber: true,
         });
-        return;
+        return null;
+      } else {
+        this.setState({ duplicateSerialNumber: false });
+        return this.onSave();
       }
-      this.props.onSave({ ...this.props.equipment, ...{
-        localArea: { id: this.state.localAreaId },
-        serialNumber: this.state.serialNumber,
-        make: this.state.make,
-        size: this.state.size,
-        model: this.state.model,
-        year: this.state.year,
-        licencePlate: this.state.licencePlate,
-        type: this.state.type,
-        licencedGvw: this.state.licencedGvw,
-        legalCapacity: this.state.legalCapacity,
-        pupLegalCapacity: this.state.pupLegalCapacity,
-      }});
     });
+  },
+
+  onSave() {
+    return this.props.onSave({ ...this.props.equipment, ...{
+      localArea: { id: this.state.localAreaId },
+      serialNumber: this.state.serialNumber,
+      make: this.state.make,
+      size: this.state.size,
+      model: this.state.model,
+      year: this.state.year,
+      licencePlate: this.state.licencePlate,
+      type: this.state.type,
+      licencedGvw: this.state.licencedGvw,
+      legalCapacity: this.state.legalCapacity,
+      pupLegalCapacity: this.state.pupLegalCapacity,
+    }});
   },
 
   render() {
@@ -124,7 +144,8 @@ var EquipmentEditDialog = React.createClass({
     var localAreas = _.sortBy(this.props.localAreas, 'name');
 
     return <EditDialog id="equipment-edit" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
+      onClose={ this.props.onClose } onSave={ this.checkForDuplicatesAndSave } didChange={ this.didChange } isValid={ this.isValid }
+      saveText={ this.state.duplicateSerialNumber ? 'Proceed Anyways' : 'Save' }
       title= { 
         <strong>Equipment Id: <small>{ equipment.equipmentCode }</small></strong>
       }>

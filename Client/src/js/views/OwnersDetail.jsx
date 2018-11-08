@@ -243,7 +243,7 @@ var OwnersDetail = React.createClass({
   },
 
   saveNewEquipment(equipment) {
-    Api.addEquipment(equipment).then(() => {
+    return Api.addEquipment(equipment).then(() => {
       // Open it up
       Log.ownerEquipmentAdded(this.props.owner, this.props.equipment);
       Log.equipmentAdded(this.props.equipment);
@@ -251,6 +251,8 @@ var OwnersDetail = React.createClass({
         pathname: `${Constant.EQUIPMENT_PATHNAME}/${this.props.equipment.id}`,
         state: { returnUrl: `${Constant.OWNERS_PATHNAME}/${this.props.owner.id}` },
       });
+
+      return null;
     });
   },
 
