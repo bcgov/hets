@@ -63,10 +63,12 @@ namespace Pdf.Server.Controllers
                 PdfRequest pdfRequest = new PdfRequest()
                 {
                     Html = result,
+                    RenderJsUrl = _configuration.GetSection("Constants").GetSection("PdfJsUrl").Value,
                     PdfFileName = fileName
                 };
+
                 _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Gen Pdf", fileName);
-                byte[] pdfResponseBytes = PdfDocument.BuildPdf(_configuration, pdfRequest);
+                byte[] pdfResponseBytes = await PdfDocument.BuildPdf(_nodeServices, pdfRequest);
 
                 // convert to string and log
                 string pdfResponse = System.Text.Encoding.Default.GetString(pdfResponseBytes);
@@ -120,11 +122,12 @@ namespace Pdf.Server.Controllers
                 PdfRequest pdfRequest = new PdfRequest()
                 {
                     Html = result,
+                    RenderJsUrl = _configuration.GetSection("Constants").GetSection("PdfJsUrl").Value,
                     PdfFileName = fileName
                 };
 
                 _logger.LogInformation("GetOwnerVerificationPdf [FileName: {0}] - Gen Pdf", fileName);
-                byte[] pdfResponseBytes = PdfDocument.BuildPdf(_configuration, pdfRequest);
+                byte[] pdfResponseBytes = await PdfDocument.BuildPdf(_nodeServices, pdfRequest);
 
                 // convert to string and log
                 string pdfResponse = System.Text.Encoding.Default.GetString(pdfResponseBytes);
@@ -183,11 +186,12 @@ namespace Pdf.Server.Controllers
                 PdfRequest pdfRequest = new PdfRequest()
                 {
                     Html = result,
+                    RenderJsUrl = _configuration.GetSection("Constants").GetSection("PdfJsUrl").Value,
                     PdfFileName = fileName
                 };
 
                 _logger.LogInformation("GetSeniorityListPdf [FileName: {0}] - Gen Pdf", fileName);
-                byte[] pdfResponseBytes = PdfDocument.BuildPdf(_configuration, pdfRequest);
+                byte[] pdfResponseBytes = await PdfDocument.BuildPdf(_nodeServices, pdfRequest);
 
                 // convert to string and log
                 string pdfResponse = System.Text.Encoding.Default.GetString(pdfResponseBytes);
