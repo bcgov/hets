@@ -530,7 +530,10 @@ namespace HetsApi.Controllers
             // * Can't clone into an Agreement if it isn't Active
             // * Can't clone into an Agreement if it has existing time records
             // ******************************************************************
-            if (!agreements[newRentalAgreementIndex].Status.Equals("Active", StringComparison.InvariantCultureIgnoreCase))
+            int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            if (agreements[newRentalAgreementIndex].RentalAgreementStatusTypeId != statusId)
             {
                 // (RENTAL AGREEMENT) is not active
                 return new ObjectResult(new HetsResponse("HETS-12", ErrorViewModel.GetDescription("HETS-12", _configuration)));
