@@ -12,11 +12,11 @@ USER 0
 
 # Install git
 RUN yum install -y bzip2 git && \
-    yum clean all -y \
+    yum clean all -y
 
 # Install libfontconfig
 RUN yum install fontconfig freetype freetype-devel fontconfig-devel libstdc++ && \
-    yum clean all -y \
+    yum clean all -y
 
 # Install newer version of Node 
 ENV NVM_DIR /usr/local/nvm
