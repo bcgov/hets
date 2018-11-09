@@ -5,33 +5,36 @@
   <title>{{title}}</title>
   <style>
 
-  @page {
-    margin: 1cm 1cm 1cm 1cm;
-    size: letter;
+      @page {
+          margin: 1cm 1cm 1cm 1cm;
+          size: letter;
 
-    @bottom-right {
-        margin: 0;
-        font-family: sans-serif;
-        font-size: 10px;
-        content: counter(page) "/" counter(pages);
-    }
+          @bottom-right {
+              margin: 0;
+              font-family: sans-serif;
+              letter-spacing: normal;
+              font-size: 8pt;
+              content: counter(page) "/" counter(pages);
+          }
 
-    @bottom-left {
-        margin: 0;
-        font-family: sans-serif;
-        font-size: 10px;
-        content: "H0246(2018/10/06)";
-    }
-  }
+          @bottom-left {
+              margin: 0;
+              font-family: sans-serif;
+              letter-spacing: normal;
+              font-size: 8pt;
+              content: "H0246(2018/10/06)";
+          }
+      }
 
-  body {
-    background-color: white;
-    color: black;
-    font-family: sans-serif;
-    font-size: 12px;
-    padding: 0;
-    white-space: normal;
-  }
+      body {
+          background-color: white;
+          color: black;
+          font-family: sans-serif;
+          letter-spacing: normal;
+          font-size: 12pt;
+          padding: 0;
+          white-space: normal;
+      }
 
   table.hide-table {
     position: relative;
@@ -86,25 +89,26 @@
     margin-top: 10px;
   }
 
-  #word-mark {
-    float: left;
-    margin-top: 9px;
-    padding-left: 10px;
-    padding-top: 3px;
-    padding-bottom: 3px;
-    font-family: serif;
-    font-size: 17px;
-    line-height: 15px;
-    color: #355980;
-    border-left: 2px solid #999;
-    text-align: center;
-  }
+    #word-mark {
+        float: left;
+        margin-top: 9px;
+        padding-left: 10px;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        font-family: sans-serif;
+        letter-spacing: normal;
+        font-size: 16pt;
+        line-height: 20px;
+        color: #355980;
+        border-left: 2px solid #999;
+        text-align: center;
+    }
 
   #form-title {
     margin-top: 12px;
-    font-size: 16px;
+    font-size: 12pt;
     font-weight: bold;
-    line-height: 15px;
+    line-height: 20px;
     color: #355980;
     text-align: right;
   }
@@ -123,7 +127,7 @@
 
   #note {
     margin-top: 4px;
-    font-size: 14px;
+    font-size: 12pt;
     font-weight: bold;
     float: left;
     width: 40px;
@@ -161,7 +165,7 @@
 
   p {
     margin: 5px 0;
-    font-size: 11px;
+    font-size: 10pt;
     white-space: normal;
   }
 
@@ -212,7 +216,7 @@
   .signature {
     margin-top: 25px;
     border-top: 1px solid black;
-    font-size: 11px;
+    font-size: 10pt;
     font-style: italic;
     text-align: center;
   }
@@ -226,7 +230,7 @@
   }
 
   #page-2 {
-    font-size: 12px;
+    font-size: 12pt;
   }
 
   @media print {

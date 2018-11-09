@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.NodeServices;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 
 namespace Pdf.Server.Helpers
 {    
@@ -12,6 +9,7 @@ namespace Pdf.Server.Helpers
     {
         public string Html { get; set; }
         public string PdfFileName { get; set; }
+        public string RenderJsUrl { get; set; }
     }    
 
     /// <summary>
@@ -19,7 +17,7 @@ namespace Pdf.Server.Helpers
     /// </summary>
     public static class PdfDocument
     {
-        public static byte[] BuildPdf(IConfigurationRoot configuration, PdfRequest request)
+        public static async Task<byte[]> BuildPdf(INodeServices nodeServices, PdfRequest request)
         {
             try
             {                
@@ -33,33 +31,10 @@ namespace Pdf.Server.Helpers
                 {
                     throw new ArgumentException("Missing Html content");
                 }
-                
-                // pass the request on to the new (weasy) Pdf Micro Service
-                string pdfService = configuration["Constants:WeasyPdfService"];
 
-                if (string.IsNullOrEmpty(pdfService))
-                {
-                    throw new ArgumentException("Missing PdfService setting (WeasyPdfService)");
-                }
-
-                // append new filename
-                pdfService = pdfService + "?filename=" + request.PdfFileName;                
-
-                // call the microservice                
-                HttpClient client = new HttpClient();
-                StringContent stringContent = new StringContent(request.Html);
-                HttpResponseMessage response = client.PostAsync(pdfService, stringContent).Result;
-
-                // success
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    var bytetask = response.Content.ReadAsByteArrayAsync();
-                    bytetask.Wait();
-
-                    return bytetask.Result;
-                }
-
-                throw new ApplicationException("PdfService Error (" + response.StatusCode + ")");
+                // call report js to generate pdf response
+                byte[] result = await nodeServices.InvokeAsync<byte[]>(request.RenderJsUrl, request.Html);
+                return result;               
             }
             catch (Exception e)
             {

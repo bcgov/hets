@@ -318,6 +318,14 @@ namespace HetsApi.Controllers
 
             int id = item.EquipmentId;
 
+            // HETS-834 - BVT - New Equipment Added default to APPROVED
+            // * (already Set to approved)
+            // * Update all equipment blocks, etc.
+            // recalculation seniority (if required)
+            int? localAreaId = item.LocalAreaId;
+            int? districtEquipmentTypeId = item.DistrictEquipmentTypeId;
+            EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration);            
+
             // retrieve updated equipment record to return to ui   
             return new ObjectResult(new HetsResponse(EquipmentHelper.GetRecord(id, _context, _configuration)));
         }
