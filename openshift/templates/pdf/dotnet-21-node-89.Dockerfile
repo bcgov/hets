@@ -12,7 +12,9 @@ USER 0
 
 # Install git
 RUN yum install -y bzip2 git && \
-    yum clean all -y	
+    yum clean all -y \
+
+RUN yum install libfontconfig
 
 # Install newer version of Node 
 ENV NVM_DIR /usr/local/nvm
@@ -25,8 +27,7 @@ RUN touch ~/.bash_profile \
     && nvm install $NODE_VERSION \
     && nvm alias default $NODE_VERSION \
     && nvm use default \
-    && npm install -g autorest \
-    && yum install libfontconfig
+    && npm install -g autorest    
 
 RUN chmod -R a+rwx /usr/local/nvm
 RUN mkdir -p /opt/app-root
