@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { browserHistory } from 'react-router';
+import { browserHistory, Link } from 'react-router';
 
 import { Well, Row, Col } from 'react-bootstrap';
 import { Alert, Button, ButtonGroup, Glyphicon, Label, DropdownButton, MenuItem } from 'react-bootstrap';
@@ -301,7 +301,7 @@ var EquipmentDetail = React.createClass({
                     <h1>Equipment Id: <small>{ equipment.equipmentCode } ({ equipment.typeName })</small></h1>
                   </Col>
                   <Col xs={12}>
-                    <h1>Company: <small>{ equipment.organizationName }</small></h1>
+                    <h1>Company: <Link to={`${Constant.OWNERS_PATHNAME}/${equipment.ownerId}`}><small>{ equipment.organizationName }</small></Link></h1>
                   </Col>
                   <Col xs={12}>
                     <strong>District Office:</strong> { equipment.districtName }

@@ -48,6 +48,8 @@ var EquipmentAddDialog = React.createClass({
       equipmentTypeError: '',
       serialNumberError: '',
       duplicateSerialNumber: false,
+      makeError: '',
+      modelError: '',
       yearError: '',
     };
   },
@@ -91,6 +93,8 @@ var EquipmentAddDialog = React.createClass({
       localAreaError: '',
       equipmentTypeError: '',
       serialNumberError: '',
+      makeError: '',
+      modelError: '',
       yearError: '',
     });
 
@@ -106,7 +110,20 @@ var EquipmentAddDialog = React.createClass({
       valid = false;
     }
 
-    if (notBlank(this.state.year) && !isValidYear(this.state.year)) {
+    if (isBlank(this.state.make)) {
+      this.setState({ makeError: 'Make is required.' });
+      valid = false;
+    }
+
+    if (isBlank(this.state.model)) {
+      this.setState({ modelError: 'Model is required.' });
+      valid = false;
+    }
+
+    if (isBlank(this.state.year)) {
+      this.setState({ yearError: 'Year is required.' });
+      valid = false;
+    } else if (notBlank(this.state.year) && !isValidYear(this.state.year)) {
       this.setState({ yearError: 'This is not a valid year.' });
       valid = false;
     }
@@ -207,16 +224,18 @@ var EquipmentAddDialog = React.createClass({
           />
           <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
         </FormGroup>
-        <FormGroup controlId="make">
-          <ControlLabel>Make</ControlLabel>
+        <FormGroup controlId="make" validationState={ this.state.makeError ? 'error' : null }>
+          <ControlLabel>Make <sup>*</sup></ControlLabel>
           <FormInputControl type="text" defaultValue={ this.state.make } updateState={ this.updateState }/>
+          <HelpBlock>{ this.state.makeError }</HelpBlock>
         </FormGroup>
-        <FormGroup controlId="model">
-          <ControlLabel>Model</ControlLabel>
+        <FormGroup controlId="model" validationState={ this.state.modelError ? 'error' : null }>
+          <ControlLabel>Model <sup>*</sup></ControlLabel>
           <FormInputControl type="text" defaultValue={ this.state.model } updateState={ this.updateState }/>
+          <HelpBlock>{ this.state.modelError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="year" validationState={ this.state.yearError ? 'error' : null }>
-          <ControlLabel>Year</ControlLabel>
+          <ControlLabel>Year <sup>*</sup></ControlLabel>
           <FormInputControl type="text" defaultValue={ this.state.year } updateState={ this.updateState }/>
           <HelpBlock>{ this.state.yearError }</HelpBlock>
         </FormGroup>
