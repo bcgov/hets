@@ -6,7 +6,7 @@ module.exports = function (callback, html) {
         console.log("createPdf.js: get jsreport module");
         var jsreport = require('jsreport-core')({
             "tasks": {
-                "strategy": "in-process",
+                "strategy": "dedicated-process",
                 "timeout": 120000,
                 "allowedModules": []
             },
