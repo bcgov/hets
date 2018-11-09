@@ -45,7 +45,10 @@ namespace Pdf.Server
             services.AddSingleton(provider => Configuration);
 
             // enable Node Services
-            services.AddNodeServices();
+            services.AddNodeServices(options =>
+            {
+                options.InvocationTimeoutMilliseconds = 90000;
+            });
 
             services.AddMvc().
                 AddJsonOptions(
