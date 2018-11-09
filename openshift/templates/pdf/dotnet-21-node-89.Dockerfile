@@ -25,7 +25,7 @@ RUN touch ~/.bash_profile \
     && nvm install $NODE_VERSION \
     && nvm alias default $NODE_VERSION \
     && nvm use default \
-    && npm install -g autorest
+    && npm install -g autorest \
     && yum install libfontconfig
 
 RUN chmod -R a+rwx /usr/local/nvm
