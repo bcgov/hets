@@ -23,7 +23,7 @@ ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION  v10.13.0
 
 RUN touch ~/.bash_profile \
-    && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash \
+    && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash \
     && . $NVM_DIR/nvm.sh \
     && nvm ls-remote \
     && nvm install $NODE_VERSION \
