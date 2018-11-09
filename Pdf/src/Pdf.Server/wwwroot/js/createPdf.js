@@ -7,12 +7,12 @@ module.exports = function (callback, html) {
         var jsreport = require('jsreport-core')({
             "tasks": {
                 "strategy": "in-process",
-                "timeout": 50000,
+                "timeout": 120000,
                 "allowedModules": []
             },
             "scripts": {
                 "allowedModules": [],
-                "timeout": 50000
+                "timeout": 120000
             }
         });
 
