@@ -451,8 +451,11 @@ namespace HetsData.Helpers
             item.DistrictEquipmentTypeId = tmpEqipId;
             item.DistrictEquipmentType = null;
 
-            // new equipment MUST always start as unapproved - it isn't assigned to any block yet
-            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusUnapproved, "equipmentStatus", context);
+            // [Original: new equipment MUST always start as unapproved - it isn't assigned to any block yet]
+            // HETS-834 - BVT - New Equipment Added default to APPROVED
+            // * Set to Approved
+            // * Update all equipment blocks, etc.
+            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", context);
 
             if (statusId == null)
             {

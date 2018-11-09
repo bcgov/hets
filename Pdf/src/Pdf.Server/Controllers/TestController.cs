@@ -32,7 +32,7 @@ namespace Pdf.Server.Controllers
                 PdfFileName = "HelloWorld"
             };
 
-            byte[] pdfResponse = PdfDocument.BuildPdf(_configuration, pdfRequest);
+            byte[] pdfResponse = null;// PdfDocument.BuildPdf(_configuration, pdfRequest);
 
             return File(pdfResponse, "application/pdf");
         }
@@ -64,7 +64,7 @@ namespace Pdf.Server.Controllers
                     PdfFileName = "TestTemplate"
                 };
 
-                byte[] pdfResponse = PdfDocument.BuildPdf(_configuration, pdfRequest);
+                byte[] pdfResponse = null; //PdfDocument.BuildPdf(_configuration, pdfRequest);
 
                 return File(pdfResponse, "application/pdf");
             }
