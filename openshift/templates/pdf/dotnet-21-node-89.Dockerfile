@@ -39,7 +39,7 @@ RUN chown -R 1001:0 /opt/app-root && fix-permissions /opt/app-root
 # Run container by default as user with id 1001 (default)
 USER 1001
 
-env PATH "/usr/local/nvm/versions/node/v10.13.0/bin/:$PATH" 
+env PATH "/usr/local/nvm/versions/node/v10.13.0/bin:$PATH" 
 
 # Directory with the sources is set as the working directory.
 WORKDIR /opt/app-root/src
