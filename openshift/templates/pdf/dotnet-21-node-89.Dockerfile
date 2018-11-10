@@ -28,6 +28,7 @@ RUN touch ~/.bash_profile \
     && npm install -g autorest    
 	
 RUN yum -y --setopt=tsflags=nodocs install wget && \
+    yum -y --setopt=tsflags=nodocs install gnupg libgconf-2-4 && \
     wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
     yum -y install ./google-chrome-stable_current_x86_64.rpm	
 
@@ -37,6 +38,8 @@ RUN chmod -R a+rwx /usr/local/nvm
 RUN mkdir -p /opt/app-root
 RUN chmod -R a+rwx /opt/app-root
 RUN chown -R 1001:0 /opt/app-root && fix-permissions /opt/app-root
+
+RUN sed -i -e 's+/opt/rh/rh-nodejs8/root/usr/bin:/opt/rh/rh-dotnet21/root/usr/bin:+ ' $PATH
 
 # Run container by default as user with id 1001 (default)
 USER 1001
