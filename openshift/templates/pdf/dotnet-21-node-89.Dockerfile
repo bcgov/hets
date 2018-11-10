@@ -20,6 +20,7 @@ RUN yum install -y fontconfig freetype freetype-devel fontconfig-devel libstdc++
 
 # Install liberation-fonts
 RUN yum -y install liberation-* && \
+    yum -y install mstcore-fonts-2.0-3.noarch.rpm
     yum clean all -y		
 	
 # Install newer version of Node 
@@ -41,6 +42,8 @@ RUN yum -y --setopt=tsflags=nodocs install wget && \
     yum clean all -y		
 
 ENV chrome:launchOptions:args --no-sandbox	
+
+RUN rm -rf /var/cache/yum
 
 RUN chmod -R a+rwx /usr/local/nvm
 RUN mkdir -p /opt/app-root
