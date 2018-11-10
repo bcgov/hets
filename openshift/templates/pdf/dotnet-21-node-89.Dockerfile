@@ -18,6 +18,15 @@ RUN yum install -y bzip2 git && \
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION  v10.13.0
 
+cat << EOF > /etc/yum.repos.d/google-chrome.repo
+[google-chrome]
+name=google-chrome
+baseurl=http://dl.google.com/linux/chrome/rpm/stable/x86_64
+enabled=1
+gpgcheck=1
+gpgkey=https://dl.google.com/linux/linux_signing_key.pub
+EOF
+
 RUN touch ~/.bash_profile \
     && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash \
     && . $NVM_DIR/nvm.sh \
