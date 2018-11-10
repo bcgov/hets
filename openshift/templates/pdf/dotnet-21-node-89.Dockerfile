@@ -18,15 +18,6 @@ RUN yum install -y bzip2 git && \
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION  v10.13.0
 
-cat << EOF > /etc/yum.repos.d/google-chrome.repo
-[google-chrome]
-name=google-chrome
-baseurl=http://dl.google.com/linux/chrome/rpm/stable/x86_64
-enabled=1
-gpgcheck=1
-gpgkey=https://dl.google.com/linux/linux_signing_key.pub
-EOF
-
 RUN touch ~/.bash_profile \
     && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash \
     && . $NVM_DIR/nvm.sh \
@@ -36,7 +27,9 @@ RUN touch ~/.bash_profile \
     && nvm use default \
     && npm install -g autorest    
 	
-RUN yum install google-chrome-stable
+RUN yum -y --setopt=tsflags=nodocs install wget && \
+    wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
+    yum -y install ./google-chrome-stable_current_x86_64.rpm	
 
 ENV chrome:launchOptions:args --no-sandbox	
 
@@ -55,3 +48,8 @@ WORKDIR /opt/app-root/src
 
 # Set the default CMD to print the usage of the language image.
 CMD /usr/libexec/s2i/usage
+
+# Display installed versions
+RUN google-chrome --version
+RUN node --version
+RUN npm --version
