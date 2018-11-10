@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Runtime.InteropServices;
+using jsreport.AspNetCore;
+using jsreport.Binary;
+using jsreport.Local;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,8 +64,9 @@ namespace Pdf.Server
                         
                         // ReferenceLoopHandling is set to Ignore to prevent JSON parser issues with the user / roles model.
                         opts.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                    });            
+                    });
 
+            
             // Configure Swagger - only required in the Development Environment
             if (_hostingEnv.IsDevelopment())
             {                

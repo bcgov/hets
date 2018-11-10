@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.NodeServices;
 using System.Threading.Tasks;
+using jsreport.Local;
 using Microsoft.Extensions.Configuration;
 using Pdf.Server.Helpers;
 
@@ -24,7 +25,7 @@ namespace Pdf.Server.Controllers
 
         [HttpGet]
         [Route("pdf/testPdf")]
-        public IActionResult TestPdf()
+        public async Task<IActionResult> TestPdf()
         {
             PdfRequest pdfRequest = new PdfRequest()
             {
@@ -32,7 +33,7 @@ namespace Pdf.Server.Controllers
                 PdfFileName = "HelloWorld"
             };
 
-            byte[] pdfResponse = null;// PdfDocument.BuildPdf(_configuration, pdfRequest);
+            byte[] pdfResponse = await PdfDocument.BuildPdf(pdfRequest);
 
             return File(pdfResponse, "application/pdf");
         }
@@ -46,7 +47,7 @@ namespace Pdf.Server.Controllers
                 // *************************************************************
                 // Create output using json and mustache template
                 // *************************************************************
-                RenderRequest request = new RenderRequest()
+                HtmlRequest request = new HtmlRequest()
                 {
                     JsonString = "{\"title\": \"Sample Template\", \"name\": \"McTesty\"}",
                     RenderJsUrl = _configuration.GetSection("Constants").GetSection("RenderJsUrl").Value,
@@ -64,7 +65,7 @@ namespace Pdf.Server.Controllers
                     PdfFileName = "TestTemplate"
                 };
 
-                byte[] pdfResponse = null; //PdfDocument.BuildPdf(_configuration, pdfRequest);
+                byte[] pdfResponse = await PdfDocument.BuildPdf(pdfRequest);
 
                 return File(pdfResponse, "application/pdf");
             }
