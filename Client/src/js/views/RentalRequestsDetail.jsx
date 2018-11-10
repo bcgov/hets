@@ -307,15 +307,16 @@ var RentalRequestsDetail = React.createClass({
           // Sort in rotation list order
           rotationList = _.sortBy(rotationList, 'rotationListSortOrder');
           
+          // use spans for table headers so we can force them to wrap when printing
           var headers = [
             { field: 'seniorityString',         title: 'Seniority'         },
-            { field: 'serviceHoursThisYear',    title: 'YTD Hours'         },
-            { field: 'equipmentCode',           title: 'Equipment ID'      },
-            { field: 'equipmentDetails',        title: 'Equipment Details' },
+            { field: 'serviceHoursThisYear',    node: <div><span>YTD</span> <span>Hours</span></div> },
+            { field: 'equipmentCode',           node: <div><span>Equipment</span> <span>ID</span></div> },
+            { field: 'equipmentDetails',        node: <div><span>Equipment</span> <span>Details</span></div> },
             { field: 'equipmentOwner',          title: 'Owner'             },
             { field: 'primaryContactName',      title: 'Contact'           },
-            { field: 'primaryContactWorkPhone', title: 'Work Phone'        },
-            { field: 'primaryContactCellPhone', title: 'Cell Phone'        },
+            { field: 'primaryContactWorkPhone', node: <div><span>Work</span> <span>Phone</span></div> },
+            { field: 'primaryContactCellPhone', node: <div><span>Cell</span> <span>Phone</span></div> },
             { field: 'status',                  title: 'Status'            },
           ];
 

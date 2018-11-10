@@ -91,6 +91,10 @@
     th, td {
       padding: 2px;
     }
+
+    th span {
+      display: block;
+    }
     
     td {
       word-break: break-all;
