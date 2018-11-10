@@ -20,8 +20,20 @@ RUN yum install -y fontconfig freetype freetype-devel fontconfig-devel libstdc++
 
 # Install liberation-fonts
 RUN yum -y install liberation-* && \    
-    yum clean all -y		
+    yum clean all -y	
+
+# Install wget
+RUN yum -y --setopt=tsflags=nodocs install wget
+    yum clean all -y	
 	
+# Install cabextract
+RUN yum -y install cabextract && \    
+    yum clean all -y		
+
+# Install xorg-x11-font-utils 
+RUN yum -y install xorg-x11-font-utils && \    
+    yum clean all -y	
+		
 # Install newer version of Node 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION  v10.13.0
@@ -35,14 +47,16 @@ RUN touch ~/.bash_profile \
     && nvm use default \
     && npm install -g autorest    
 	
-RUN yum -y --setopt=tsflags=nodocs install wget && \
-    yum -y install cabextract xorg-x11-font-utils && \
-	wget https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm && \
+# Install microsoft fonts	
+RUN wget https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm && \
 	yum -y install ./msttcore-fonts-installer-2.6-1.noarch.rpm && \
-    wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
-    yum -y install ./google-chrome-stable_current_x86_64.rpm && \
     yum clean all -y		
 
+# Install chrome
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
+    yum -y install ./google-chrome-stable_current_x86_64.rpm && \
+    yum clean all -y	
+	
 ENV chrome:launchOptions:args --no-sandbox	
 
 RUN rm -rf /var/cache/yum
