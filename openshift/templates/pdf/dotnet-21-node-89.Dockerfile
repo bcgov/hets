@@ -19,8 +19,7 @@ RUN yum install -y fontconfig freetype freetype-devel fontconfig-devel libstdc++
     yum clean all -y
 
 # Install liberation-fonts
-RUN yum -y install liberation-* && \
-    yum -y install mstcore-fonts-2.0-3.noarch.rpm && \
+RUN yum -y install liberation-* && \    
     yum clean all -y		
 	
 # Install newer version of Node 
@@ -37,6 +36,9 @@ RUN touch ~/.bash_profile \
     && npm install -g autorest    
 	
 RUN yum -y --setopt=tsflags=nodocs install wget && \
+    yum -y install cabextract xorg-x11-font-utils && \
+	wget https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm && \
+	yum -y install ./msttcore-fonts-installer-2.6-1.noarch.rpm && \
     wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
     yum -y install ./google-chrome-stable_current_x86_64.rpm && \
     yum clean all -y		
