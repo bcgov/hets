@@ -1,10 +1,15 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Runtime.InteropServices;
+using jsreport.AspNetCore;
+using jsreport.Binary;
+using jsreport.Local;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Pdf.Server
 {
@@ -44,7 +49,10 @@ namespace Pdf.Server
             services.AddSingleton(provider => Configuration);
 
             // enable Node Services
-            services.AddNodeServices();
+            services.AddNodeServices(options =>
+            {
+                options.InvocationTimeoutMilliseconds = 90000;
+            });
 
             services.AddMvc().
                 AddJsonOptions(
@@ -56,8 +64,9 @@ namespace Pdf.Server
                         
                         // ReferenceLoopHandling is set to Ignore to prevent JSON parser issues with the user / roles model.
                         opts.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                    });            
+                    });
 
+            
             // Configure Swagger - only required in the Development Environment
             if (_hostingEnv.IsDevelopment())
             {                

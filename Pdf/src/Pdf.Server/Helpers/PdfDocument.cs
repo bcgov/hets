@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using jsreport.Binary;
+using jsreport.Local;
+using jsreport.Types;
 
 namespace Pdf.Server.Helpers
 {    
@@ -12,6 +12,7 @@ namespace Pdf.Server.Helpers
     {
         public string Html { get; set; }
         public string PdfFileName { get; set; }
+        public string RenderJsUrl { get; set; }
     }    
 
     /// <summary>
@@ -19,7 +20,7 @@ namespace Pdf.Server.Helpers
     /// </summary>
     public static class PdfDocument
     {
-        public static byte[] BuildPdf(IConfigurationRoot configuration, PdfRequest request)
+        public static async Task<byte[]> BuildPdf(PdfRequest request)
         {
             try
             {                
@@ -33,33 +34,41 @@ namespace Pdf.Server.Helpers
                 {
                     throw new ArgumentException("Missing Html content");
                 }
-                
-                // pass the request on to the new (weasy) Pdf Micro Service
-                string pdfService = configuration["Constants:WeasyPdfService"];
 
-                if (string.IsNullOrEmpty(pdfService))
+                // report server
+                ILocalUtilityReportingService rs = new LocalReporting()
+                    .UseBinary(RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
+                        JsReportBinary.GetBinary() :
+                        jsreport.Binary.Linux.JsReportBinary.GetBinary())
+                    .Configure(cfg => cfg.FileSystemStore().BaseUrlAsWorkingDirectory())
+                    .AsUtility()
+                    .Create();
+
+                // call report js to generate pdf response
+                Report report = await rs.RenderAsync(new RenderRequest()
                 {
-                    throw new ArgumentException("Missing PdfService setting (WeasyPdfService)");
-                }
+                    Template = new Template
+                    {
+                        Recipe = Recipe.ChromePdf,
+                        Engine = Engine.None,
+                        Content = request.Html
+                    },
+                    Options = new RenderOptions
+                    {                                                
+                        Timeout = 90000
+                    }                
+                });
 
-                // append new filename
-                pdfService = pdfService + "?filename=" + request.PdfFileName;                
+                if (report == null) throw new ArgumentNullException(nameof(report));
 
-                // call the microservice                
-                HttpClient client = new HttpClient();
-                StringContent stringContent = new StringContent(request.Html);
-                HttpResponseMessage response = client.PostAsync(pdfService, stringContent).Result;
+                MemoryStream memoryStream = new MemoryStream();
+                await report.Content.CopyToAsync(memoryStream);
+                memoryStream.Seek(0, SeekOrigin.Begin);
 
-                // success
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    var bytetask = response.Content.ReadAsByteArrayAsync();
-                    bytetask.Wait();
+                await rs.KillAsync();
 
-                    return bytetask.Result;
-                }
-
-                throw new ApplicationException("PdfService Error (" + response.StatusCode + ")");
+                //return result;               
+                return memoryStream.ToArray();
             }
             catch (Exception e)
             {

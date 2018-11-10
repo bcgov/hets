@@ -1,0 +1,35 @@
+﻿{
+  "store": { "provider": "fs" },
+  "httpPort": 3000,
+  "allowLocalFilesAccess": true,
+  "blobStorage": { "provider": "fs" },
+  "logger": {
+    "console": {
+      "transport": "console",
+      "level": "debug"
+    },
+    "file": {
+      "transport": "file",
+      "level": "info",
+      "filename": "logs/reporter.log"
+    },
+    "error": {
+      "transport": "file",
+      "level": "error",
+      "filename": "logs/error.log"
+    }
+  },
+  "chrome": {
+    "timeout": 180000
+  },
+  "templatingEngines": {
+    "numberOfWorkers": 2,
+    "timeout": 10000,
+    "strategy": "http-server"
+  },
+  "extensions": {
+    "studio": {
+      "entityTreeOrder": [ "templates", "data", "scripts", "assets", "images" ]
+    }
+  }
+}

@@ -45,7 +45,7 @@ namespace Pdf.Server.Controllers
                 // *************************************************************
                 // Create output using json and mustache template
                 // *************************************************************
-                RenderRequest request = new RenderRequest()
+                HtmlRequest request = new HtmlRequest()
                 {
                     JsonString = rentalAgreementJson,
                     RenderJsUrl = _configuration.GetSection("Constants").GetSection("RenderJsUrl").Value,
@@ -63,10 +63,12 @@ namespace Pdf.Server.Controllers
                 PdfRequest pdfRequest = new PdfRequest()
                 {
                     Html = result,
+                    RenderJsUrl = _configuration.GetSection("Constants").GetSection("PdfJsUrl").Value,
                     PdfFileName = fileName
                 };
+
                 _logger.LogInformation("GetRentalAgreementPdf [FileName: {0}] - Gen Pdf", fileName);
-                byte[] pdfResponseBytes = PdfDocument.BuildPdf(_configuration, pdfRequest);
+                byte[] pdfResponseBytes = await PdfDocument.BuildPdf(pdfRequest);
 
                 // convert to string and log
                 string pdfResponse = System.Text.Encoding.Default.GetString(pdfResponseBytes);
@@ -102,7 +104,7 @@ namespace Pdf.Server.Controllers
                 // *************************************************************
                 // Create output using json and mustache template
                 // *************************************************************
-                RenderRequest request = new RenderRequest()
+                HtmlRequest request = new HtmlRequest()
                 {
                     JsonString = ownersJson,
                     RenderJsUrl = _configuration.GetSection("Constants").GetSection("RenderJsUrl").Value,
@@ -120,11 +122,12 @@ namespace Pdf.Server.Controllers
                 PdfRequest pdfRequest = new PdfRequest()
                 {
                     Html = result,
+                    RenderJsUrl = _configuration.GetSection("Constants").GetSection("PdfJsUrl").Value,
                     PdfFileName = fileName
                 };
 
                 _logger.LogInformation("GetOwnerVerificationPdf [FileName: {0}] - Gen Pdf", fileName);
-                byte[] pdfResponseBytes = PdfDocument.BuildPdf(_configuration, pdfRequest);
+                byte[] pdfResponseBytes = await PdfDocument.BuildPdf(pdfRequest);
 
                 // convert to string and log
                 string pdfResponse = System.Text.Encoding.Default.GetString(pdfResponseBytes);
@@ -165,7 +168,7 @@ namespace Pdf.Server.Controllers
                     seniorityListJson = @"{""Empty"": ""true""}";
                 }
 
-                RenderRequest request = new RenderRequest()
+                HtmlRequest request = new HtmlRequest()
                 {
                     JsonString = seniorityListJson,
                     RenderJsUrl = _configuration.GetSection("Constants").GetSection("RenderJsUrl").Value,
@@ -183,11 +186,12 @@ namespace Pdf.Server.Controllers
                 PdfRequest pdfRequest = new PdfRequest()
                 {
                     Html = result,
+                    RenderJsUrl = _configuration.GetSection("Constants").GetSection("PdfJsUrl").Value,
                     PdfFileName = fileName
                 };
 
                 _logger.LogInformation("GetSeniorityListPdf [FileName: {0}] - Gen Pdf", fileName);
-                byte[] pdfResponseBytes = PdfDocument.BuildPdf(_configuration, pdfRequest);
+                byte[] pdfResponseBytes = await PdfDocument.BuildPdf(pdfRequest);
 
                 // convert to string and log
                 string pdfResponse = System.Text.Encoding.Default.GetString(pdfResponseBytes);
