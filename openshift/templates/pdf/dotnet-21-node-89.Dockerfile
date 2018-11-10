@@ -20,7 +20,7 @@ RUN yum install -y fontconfig freetype freetype-devel fontconfig-devel libstdc++
 
 # Install liberation-fonts
 RUN yum -y install liberation-* && \
-    yum -y install mstcore-fonts-2.0-3.noarch.rpm
+    yum -y install mstcore-fonts-2.0-3.noarch.rpm && \
     yum clean all -y		
 	
 # Install newer version of Node 
