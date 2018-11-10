@@ -14,6 +14,10 @@ USER 0
 RUN yum install -y bzip2 git && \
     yum clean all -y
 
+# Install libfontconfig
+RUN yum install -y fontconfig freetype freetype-devel fontconfig-devel libstdc++ && \
+    yum clean all -y	
+	
 # Install newer version of Node 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION  v10.13.0
@@ -28,7 +32,7 @@ RUN touch ~/.bash_profile \
     && npm install -g autorest    
 	
 RUN yum -y --setopt=tsflags=nodocs install wget && \
-    yum -y --setopt=tsflags=nodocs install gnupg libgconf-2-4 && \
+    yum -y --setopt=tsflags=nodocs install fontconfig && \
     wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
     yum -y install ./google-chrome-stable_current_x86_64.rpm	
 
