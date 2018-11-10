@@ -23,7 +23,7 @@ RUN yum -y install liberation-* && \
     yum clean all -y	
 
 # Install wget
-RUN yum -y --setopt=tsflags=nodocs install wget
+RUN yum -y --setopt=tsflags=nodocs install wget && \
     yum clean all -y	
 	
 # Install cabextract
