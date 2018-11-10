@@ -15,8 +15,12 @@ RUN yum install -y bzip2 git && \
     yum clean all -y
 
 # Install libfontconfig
-RUN yum install -y fontconfig freetype freetype-devel fontconfig-devel libstdc++ liberation-fonts && \
-    yum clean all -y	
+RUN yum install -y fontconfig freetype freetype-devel fontconfig-devel libstdc++ && \
+    yum clean all -y
+
+# Install liberation-fonts
+RUN yum -y install liberation-* && \
+    yum clean all -y		
 	
 # Install newer version of Node 
 ENV NVM_DIR /usr/local/nvm
@@ -33,7 +37,8 @@ RUN touch ~/.bash_profile \
 	
 RUN yum -y --setopt=tsflags=nodocs install wget && \
     wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
-    yum -y install ./google-chrome-stable_current_x86_64.rpm	
+    yum -y install ./google-chrome-stable_current_x86_64.rpm && \
+    yum clean all -y		
 
 ENV chrome:launchOptions:args --no-sandbox	
 
