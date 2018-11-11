@@ -31,8 +31,10 @@ RUN wget http://ftp.tu-chemnitz.de/pub/linux/dag/redhat/el7/en/x86_64/rpmforge/R
     yum -y install cabextract-1.4-1.el7.rf.x86_64.rpm && \    
     yum clean all -y		
 
-# Install xorg-x11-font-utils 
-RUN yum -y install xorg-x11-font-utils && \    
+# Install xorg-x11-fonts
+RUN yum -y install xorg-x11-font-utils fontpackages-filesystem ipa-gothic-fonts && \
+    yum -y install xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-fonts-misc && \
+    yum -y install xorg-x11-fonts-Type1 xorg-x11-utils && \
     yum clean all -y	
 	
 # Install microsoft fonts	
@@ -67,7 +69,7 @@ RUN mkdir -p /opt/app-root
 RUN chmod -R a+rwx /opt/app-root
 RUN chown -R 1001:0 /opt/app-root && fix-permissions /opt/app-root
 
-RUN sed -i -e 's+/opt/rh/rh-nodejs8/root/usr/bin:/opt/rh/rh-dotnet21/root/usr/bin:+ ' $PATH
+RUN echo $PATH | sed -e 's|/opt/rh/rh-nodejs8/root/usr/bin:||g'
 
 # Run container by default as user with id 1001 (default)
 USER 1001
