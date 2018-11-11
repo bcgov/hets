@@ -57,6 +57,10 @@ RUN yum -y install adwaita-cursor-theme adwaita-icon-theme alsa-lib at at-spi2-a
 	yum -y install time trousers xdg-utils xkeyboard-config && \	
     yum clean all -y	
 				
+# Install libstdc++6
+RUN yum -y install libstdc++6 && \
+    yum clean all -y	
+				
 # Install chrome
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
     rpm -ih --nodeps ./google-chrome-stable_current_x86_64.rpm && \
