@@ -42,6 +42,21 @@ RUN wget https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fo
 	yum -y install ./msttcore-fonts-installer-2.6-1.noarch.rpm && \
     yum clean all -y		
 
+# Install additional chrome dependencies
+RUN yum -y install adwaita-cursor-theme adwaita-icon-theme alsa-lib at at-spi2-atk at-spi2-core atk && \
+    yum -y install avahi-libs bc cairo cairo-gobject colord-libs cups-client cups-libs && \
+    yum -y install dconf desktop-file-utils ed emacs-filesystem file file-libs fribidi && \
+	yum -y install gdk-pixbuf2 glib-networking glib2 gnutls graphite2 gsettings-desktop-schemas && \
+	yum -y install gtk-update-icon-cache gtk3 harfbuzz hicolor-icon-theme hostname jasper-libs && \
+	yum -y install jbigkit-libs json-glib lcms2 libXScrnSaver libXcomposite libXcursor libXft && \
+	yum -y install libappindicator-gtk3 libdbusmenu libdbusmenu-gtk3 libepoxy libgusb libindicator-gtk3 && \
+	yum -y install libjpeg-turbo libmodman libpipeline libproxy libsoup libthai libtiff libusbx && \
+	yum -y install libwayland-cursor libwayland-egl libxkbcommon m4 mailx make man-db && \	
+	yum -y install mariadb-libs nettle pango patch pixman postfix psmisc redhat-lsb-core && \
+	yum -y install redhat-lsb-submod-security rest spax systemd-sysv sysvinit-tools && \
+	yum -y install time trousers xdg-utils xkeyboard-config && \	
+    yum clean all -y	
+			
 # Install chrome
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
     yum -y install ./google-chrome-stable_current_x86_64.rpm --skip-broken && \
