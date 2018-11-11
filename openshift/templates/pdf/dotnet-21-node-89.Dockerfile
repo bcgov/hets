@@ -62,7 +62,7 @@ RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.
     rpm -ih --nodeps ./google-chrome-stable_current_x86_64.rpm && \
     yum clean all -y	
 	
-RUN yum update && \
+RUN yum -y update && \
     yum clean all -y			
 	
 ENV chrome:launchOptions:args --no-sandbox	
