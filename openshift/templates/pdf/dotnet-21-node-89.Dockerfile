@@ -27,7 +27,8 @@ RUN yum -y --setopt=tsflags=nodocs install wget && \
     yum clean all -y	
 	
 # Install cabextract
-RUN yum -y install cabextract && \    
+RUN wget http://ftp.tu-chemnitz.de/pub/linux/dag/redhat/el7/en/x86_64/rpmforge/RPMS/cabextract-1.4-1.el7.rf.x86_64.rpm && \
+    yum -y install cabextract-1.4-1.el7.rf.x86_64.rpm && \    
     yum clean all -y		
 
 # Install xorg-x11-font-utils 
