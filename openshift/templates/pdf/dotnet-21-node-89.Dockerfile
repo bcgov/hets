@@ -34,7 +34,19 @@ RUN wget http://ftp.tu-chemnitz.de/pub/linux/dag/redhat/el7/en/x86_64/rpmforge/R
 # Install xorg-x11-font-utils 
 RUN yum -y install xorg-x11-font-utils && \    
     yum clean all -y	
-		
+	
+# Install microsoft fonts	
+RUN wget https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm && \
+	yum -y install ./msttcore-fonts-installer-2.6-1.noarch.rpm && \
+    yum clean all -y		
+
+# Install chrome
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
+    yum -y install ./google-chrome-stable_current_x86_64.rpm --skip-broken && \
+    yum clean all -y	
+	
+ENV chrome:launchOptions:args --no-sandbox	
+	
 # Install newer version of Node 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION  v10.13.0
@@ -47,18 +59,6 @@ RUN touch ~/.bash_profile \
     && nvm alias default $NODE_VERSION \
     && nvm use default \
     && npm install -g autorest    
-	
-# Install microsoft fonts	
-RUN wget https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm && \
-	yum -y install ./msttcore-fonts-installer-2.6-1.noarch.rpm && \
-    yum clean all -y		
-
-# Install chrome
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
-    yum -y install ./google-chrome-stable_current_x86_64.rpm && \
-    yum clean all -y	
-	
-ENV chrome:launchOptions:args --no-sandbox	
 
 RUN rm -rf /var/cache/yum
 
