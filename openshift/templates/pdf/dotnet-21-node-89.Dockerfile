@@ -59,7 +59,7 @@ RUN yum -y install adwaita-cursor-theme adwaita-icon-theme alsa-lib at at-spi2-a
 			
 # Install chrome
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
-    yum -y install ./google-chrome-stable_current_x86_64.rpm --skip-broken && \
+    rpm -ih --nodeps ./google-chrome-stable_current_x86_64.rpm && \
     yum clean all -y	
 	
 ENV chrome:launchOptions:args --no-sandbox	
@@ -98,6 +98,6 @@ WORKDIR /opt/app-root/src
 CMD /usr/libexec/s2i/usage
 
 # Display installed versions
-RUN google-chrome --version
+RUN google-chrome-stable --version
 RUN node --version
 RUN npm --version
