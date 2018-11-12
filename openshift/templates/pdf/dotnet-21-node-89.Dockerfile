@@ -63,7 +63,7 @@ RUN yum -y install adwaita-cursor-theme adwaita-icon-theme alsa-lib at at-spi2-a
     yum clean all -y	
 				
 # Install libstdc++6
-RUN yum -y install libstdc++.so.6 libgconf-2.so.4 libgtk-x11-2.0.so.0 lsb && \
+RUN yum -y install libstdc++.so.6 libgconf-2.so.4 libgdk-x11-2.0.so.0 libgtk-x11-2.0.so.0 lsb && \
     yum clean all -y	
 				
 # Install chrome
