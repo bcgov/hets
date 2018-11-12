@@ -45,7 +45,7 @@ RUN yum -y install xorg-x11-font-utils fontpackages-filesystem ipa-gothic-fonts 
 # Install microsoft fonts	
 RUN wget https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm && \
 	yum -y install ./msttcore-fonts-installer-2.6-1.noarch.rpm && \
-    yum clean all -y		
+    yum clean all -y			
 
 # Install additional chrome dependencies
 RUN yum -y install adwaita-cursor-theme adwaita-icon-theme alsa-lib at at-spi2-atk at-spi2-core atk && \
@@ -67,8 +67,8 @@ RUN yum -y install libstdc++.so.6 && \
     yum clean all -y	
 				
 # Install chrome
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable-63.0.3239.108-1.x86_64.rpm && \
-    rpm -ih --nodeps ./google-chrome-stable-63.0.3239.108-1.x86_64.rpm && \
+RUN wget http://orion.lcg.ufrj.br/RPMS/myrpms/google/google-chrome-stable-69.0.3497.81-1.x86_64.rpm && \
+    rpm -ih --nodeps ./google-chrome-stable-69.0.3497.81-1.x86_64.rpm && \
     yum clean all -y				
 	
 ENV chrome:launchOptions:args --no-sandbox	
