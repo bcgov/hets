@@ -30,6 +30,11 @@ RUN touch ~/.bash_profile \
     && nvm alias default $NODE_VERSION \
     && nvm use default \
     && npm install -g autorest    
+
+# Install cabextract
+RUN wget http://ftp.tu-chemnitz.de/pub/linux/dag/redhat/el7/en/x86_64/rpmforge/RPMS/cabextract-1.4-1.el7.rf.x86_64.rpm && \
+    yum -y install cabextract-1.4-1.el7.rf.x86_64.rpm && \    
+    yum clean all -y	
 	
 # Install liberation-fonts
 RUN yum -y install liberation-* && \    
