@@ -55,7 +55,7 @@ namespace Pdf.Server.Helpers
                     },
                     Options = new RenderOptions
                     {                                                
-                        Timeout = 90000
+                        Timeout = 180000
                     }                
                 });
 

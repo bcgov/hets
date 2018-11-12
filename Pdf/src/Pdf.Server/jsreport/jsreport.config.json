@@ -1,15 +1,15 @@
 ﻿{
-  "store": { "provider": "fs" },  
+  "store": { "provider": "fs" },
   "allowLocalFilesAccess": true,
   "blobStorage": { "provider": "fs" },
   "logger": {
     "console": {
       "transport": "console",
-      "level": "debug"
+      "level": "information"
     },
     "file": {
       "transport": "file",
-      "level": "debug",
+      "level": "information",
       "filename": "logs/reporter.log"
     },
     "error": {
@@ -17,7 +17,7 @@
       "level": "error",
       "filename": "logs/error.log"
     }
-  },
+  },  
   "chrome": {
     "timeout": 180000
   },
