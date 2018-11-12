@@ -67,8 +67,8 @@ RUN yum -y install libstdc++.so.6 && \
     yum clean all -y	
 				
 # Install chrome
-RUN wget http://orion.lcg.ufrj.br/RPMS/myrpms/google/google-chrome-stable-69.0.3497.81-1.x86_64.rpm && \
-    rpm -ih --nodeps ./google-chrome-stable-69.0.3497.81-1.x86_64.rpm && \
+RUN wget http://orion.lcg.ufrj.br/RPMS/myrpms/google/google-chrome-stable-56.0.2924.76-1.x86_64.rpm && \
+    rpm -ih --nodeps ./google-chrome-stable-56.0.2924.76-1.x86_64.rpm && \
     yum clean all -y				
 	
 ENV chrome:launchOptions:args --no-sandbox	
