@@ -63,7 +63,7 @@ RUN yum -y install adwaita-cursor-theme adwaita-icon-theme alsa-lib at at-spi2-a
     yum clean all -y	
 				
 # Install libstdc++6
-RUN yum -y install libstdc++.so.6 libgconf-2.so.4 && \
+RUN yum -y install libstdc++.so.6 libgconf-2.so.4 libgdk-x11-2.0.so.0 libgtk-x11-2.0.so.0 lsb && \
     yum clean all -y	
 				
 # Install chrome
@@ -92,8 +92,6 @@ RUN chmod -R a+rwx /usr/local/nvm
 RUN mkdir -p /opt/app-root
 RUN chmod -R a+rwx /opt/app-root
 RUN chown -R 1001:0 /opt/app-root && fix-permissions /opt/app-root
-
-RUN echo $PATH | sed -e 's|/opt/rh/rh-nodejs8/root/usr/bin:||g'
 
 # Run container by default as user with id 1001 (default)
 USER 1001
