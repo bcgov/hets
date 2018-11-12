@@ -13,10 +13,15 @@ USER 0
 # Install git
 RUN yum install -y bzip2 git && \
     yum clean all -y
+
+# Install wget
+RUN yum -y --setopt=tsflags=nodocs install wget && \
+    yum clean all -y
 	
 # Install epel-release	
-RUN yum -y install epel-release	&& \
-    yum clean all -y		
+RUN wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm	&& \
+    yum -y install epel-release-latest-7.noarch.rpm && \   
+    yum clean all -y
 		
 # Install libfontconfig
 RUN yum install -y fontconfig freetype freetype-devel fontconfig-devel libstdc++ && \
@@ -25,11 +30,7 @@ RUN yum install -y fontconfig freetype freetype-devel fontconfig-devel libstdc++
 # Install liberation-fonts
 RUN yum -y install liberation-* && \    
     yum clean all -y	
-
-# Install wget
-RUN yum -y --setopt=tsflags=nodocs install wget && \
-    yum clean all -y	
-	
+		
 # Install cabextract
 RUN wget http://ftp.tu-chemnitz.de/pub/linux/dag/redhat/el7/en/x86_64/rpmforge/RPMS/cabextract-1.4-1.el7.rf.x86_64.rpm && \
     yum -y install cabextract-1.4-1.el7.rf.x86_64.rpm && \    
