@@ -45,11 +45,6 @@ RUN wget https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fo
 	yum -y install ./msttcore-fonts-installer-2.6-1.noarch.rpm && \
     yum clean all -y			
 	
-# Install chrome
-RUN wget -qO- https://intoli.com/install-google-chrome.sh | bash		
-	
-ENV chrome:launchOptions:args --no-sandbox	
-
 RUN rm -rf /var/cache/yum
 
 RUN chmod -R a+rwx /usr/local/nvm
@@ -69,6 +64,5 @@ WORKDIR /opt/app-root/src
 CMD /usr/libexec/s2i/usage
 
 # Display installed versions
-RUN google-chrome-stable --version
 RUN node --version
 RUN npm --version

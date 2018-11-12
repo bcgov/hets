@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.NodeServices;
 using System.Threading.Tasks;
-using jsreport.Local;
 using Microsoft.Extensions.Configuration;
 using Pdf.Server.Helpers;
 
@@ -30,10 +29,11 @@ namespace Pdf.Server.Controllers
             PdfRequest pdfRequest = new PdfRequest()
             {
                 Html = "<h1>Hello World<h1>",
+                RenderJsUrl = _configuration.GetSection("Constants").GetSection("PdfJsUrl").Value,
                 PdfFileName = "HelloWorld"
             };
 
-            byte[] pdfResponse = await PdfDocument.BuildPdf(pdfRequest);
+            byte[] pdfResponse = await PdfDocument.BuildPdf(_nodeServices, pdfRequest);
 
             return File(pdfResponse, "application/pdf");
         }
@@ -65,7 +65,7 @@ namespace Pdf.Server.Controllers
                     PdfFileName = "TestTemplate"
                 };
 
-                byte[] pdfResponse = await PdfDocument.BuildPdf(pdfRequest);
+                byte[] pdfResponse = await PdfDocument.BuildPdf(_nodeServices, pdfRequest);
 
                 return File(pdfResponse, "application/pdf");
             }

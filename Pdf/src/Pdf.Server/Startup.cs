@@ -1,8 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using jsreport.AspNetCore;
-using jsreport.Binary;
-using jsreport.Local;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -107,6 +103,7 @@ namespace Pdf.Server
             {
                 string swaggerApi = Configuration.GetSection("Constants:SwaggerApiUrl").Value;
                 app.UseSwagger();
+
                 app.UseSwaggerUI(options =>
                 {
                     options.SwaggerEndpoint(swaggerApi, "PDF REST API v1");
