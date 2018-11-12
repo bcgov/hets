@@ -63,7 +63,7 @@ RUN yum -y install adwaita-cursor-theme adwaita-icon-theme alsa-lib at at-spi2-a
     yum clean all -y	
 				
 # Install libstdc++6
-RUN yum -y install libstdc++6 && \
+RUN yum -y install libstdc++.so.6 && \
     yum clean all -y	
 				
 # Install chrome
