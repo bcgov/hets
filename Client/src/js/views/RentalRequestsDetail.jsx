@@ -318,6 +318,7 @@ var RentalRequestsDetail = React.createClass({
             { field: 'primaryContactWorkPhone', node: <div><span>Work</span> <span>Phone</span></div> },
             { field: 'primaryContactCellPhone', node: <div><span>Cell</span> <span>Phone</span></div> },
             { field: 'status',                  title: 'Status'            },
+            { field: '',                        title: 'Comments'          },
           ];
 
           var numberEquipmentAvailableForNormalHire = rentalRequest.equipmentCount - rentalRequest.yesCount;
@@ -394,6 +395,7 @@ var RentalRequestsDetail = React.createClass({
                         })()}
                       </ButtonGroup>
                     </td>
+                    <td></td>
                   </tr>
                 );
               })

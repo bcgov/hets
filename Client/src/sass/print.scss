@@ -84,9 +84,6 @@
   }
 
   #rotation-list {
-    th:last-child, td:last-child {
-      display: none;
-    }
     th, td {
       padding: 2px;
     }
@@ -101,6 +98,15 @@
     
     td:nth-child(4) {
       width: 310px;
+    }
+    
+    th:nth-child(9), td:nth-child(9) {
+      display: none;
+    }
+    
+    th:last-child, td:last-child {
+      display: table-cell !important;
+      min-width: 100px;
     }
   }
 
