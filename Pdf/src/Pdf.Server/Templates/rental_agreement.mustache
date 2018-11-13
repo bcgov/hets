@@ -31,7 +31,7 @@
           color: black;
           font-family: sans-serif;
           letter-spacing: normal;
-          font-size: 8pt;
+          font-size: 7pt;
           padding: 0;
           white-space: normal;
       }
@@ -342,33 +342,31 @@
 
     <div id="table-block">
         <table id="main-table" style="height: 400px">
-            <tr>
-                <th>Equipment</th>
+            <tr style="height: 20px;">
+                <th style="width: 350px">Equipment</th>
                 <th style="width: 150px">Rate</th>
-                <th>Comments</th>
+                <th style="width: 350px">Comments</th>
             </tr>
-            <tr>
+            <tr style="height: 20px;">
                 <td>{{equipment.year}} {{equipment.make}}/{{equipment.model}}/{{equipment.size}}/{{equipment.serialNumber}}</td>
                 <td class="rate">{{baseRateString}}</td>
                 <td>{{rateComment}}</td>
             </tr>
-            <tr style="height: 10px"><td></td><td></td><td></td></tr>
             {{#rentalAgreementRatesWithTotal}}
-            <tr>
+            <tr style="height: 10px;">
                 <td>{{componentName}}</td>
                 <td class="rate">{{rateString}}</td>
                 <td>{{comment}}</td>
             </tr>
             {{/rentalAgreementRatesWithTotal}}
-            <tr style="height: 10px"><td></td><td></td><td></td></tr>
-            <tr>
+            <tr style="height: 10px;">
                 <td></td>
                 <td class="rate bold">{{agreementTotalString}}</td>
                 <td class="bold">Total</td>
             </tr>
             <tr style="height: 10px"><td></td><td></td><td></td></tr>
             {{#rentalAgreementRatesWithoutTotal}}
-            <tr>
+            <tr style="height: 10px;">
                 <td>{{componentName}}</td>
                 <td class="rate">{{rateString}}</td>
                 <td>{{comment}}</td>
@@ -376,17 +374,15 @@
             {{/rentalAgreementRatesWithoutTotal}}
             <tr style="height: 10px"><td></td><td></td><td></td></tr>
             {{#rentalAgreementConditions}}
-            <tr>
+            <tr style="height: 10px;">
                 <td></td>
                 <td></td>
                 <td>{{conditionName}}</td>
             </tr>
-            <tr style="height: 10px"><td></td><td></td><td></td></tr>
             {{/rentalAgreementConditions}}
             <tr style="height: 10px"><td></td><td></td><td></td></tr>
-            <tr style="height: 10px"><td></td><td></td><td></td></tr>
             {{#rentalAgreementRatesOvertime}}
-            <tr valign="bottom">
+            <tr valign="bottom" style="height: 10px;">
                 <td>{{componentName}}</td>
                 <td class="rate">{{rateString}}</td>
                 <td>{{comment}}</td>
