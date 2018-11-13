@@ -9,8 +9,8 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "mustache": "^2.3.0",
-    "jsreport-core": "2.2.0",
-    "jsreport-phantom-pdf": "1.9.8"
+    "mustache": "2.3.0",
+    "jsreport-core": "1.5.1",
+    "jsreport-phantom-pdf": "1.4.6"
   }
 }

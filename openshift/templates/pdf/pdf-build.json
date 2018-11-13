@@ -154,7 +154,7 @@
       "displayName": "DotNet Npm Tools",
       "description": "Arguments for npm install.",
       "required": true,
-      "value": "mustache jsreport-chrome-pdf"
+      "value": "mustache@2.3.0 jsreport-core@1.5.1 jsreport-phantom-pdf@1.4.6"
     },
     {
       "name": "OUTPUT_IMAGE_TAG",
