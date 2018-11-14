@@ -40,7 +40,8 @@
   
   .template {
     margin: 0;
-    width: 100%
+    width: 100%;
+    font-size: 10px;
   }
 
   @for $i from 1 through 12 {
@@ -60,10 +61,6 @@
   }
 
   #rental-requests-detail {
-    #rental-requests-top, #rental-requests-data {
-      font-size: 10px;
-    }
-
     #rotation-list {
       font-size: 8px;
     }
