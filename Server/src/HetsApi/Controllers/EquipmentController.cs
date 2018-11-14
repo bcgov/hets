@@ -956,7 +956,10 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetRentalAgreement)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
                             x.EquipmentStatusTypeId.Equals(statusId))
-                .OrderBy(x => x.LocalArea).ThenBy(x => x.DistrictEquipmentType);
+                .OrderBy(x => x.LocalArea)
+                    .ThenBy(x => x.DistrictEquipmentType)
+                    .ThenBy(x => x.BlockNumber)
+                    .ThenByDescending(x => x.NumberInBlock);
 
             if (localAreasArray != null && localAreasArray.Length > 0)
             {
@@ -999,37 +1002,16 @@ namespace HetsApi.Controllers
             SeniorityListPdfViewModel seniorityList = new SeniorityListPdfViewModel();
             SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
             SeniorityListRecord listRecord = new SeniorityListRecord();
-            
-            foreach (HetEquipment item in data)
-            {
-                // get last called data
-                HetRentalRequestRotationList rotation = null;
 
+            // manage the rotation list data
+            HetRentalRequestRotationList rotation = null;
+            int currentBlock = -1;
+
+            foreach (HetEquipment item in data)
+            {                                                
                 if (listRecord.LocalAreaName != item.LocalArea.Name ||
                     listRecord.DistrictEquipmentTypeName != item.DistrictEquipmentType.DistrictEquipmentName)
-                {
-                    // HETS-824 = BVT - Corrections to Seniority List PDF
-                    //   * This column should contain "Y" against the equipment that
-                    //     last responded (whether Yes/No) in a block
-                    //   * For "Forced Hire" there will be no changes to this
-                    //     column in the seniority list (as if nothing happened and nobody got called)
-                    //   * Must be this fiscal year
-                    rotation = _context.HetRentalRequestRotationList.AsNoTracking()
-                        .Include(x => x.Equipment)
-                        .Include(x => x.RentalRequest)
-                            .ThenInclude(x => x.LocalArea)
-                        .Include(x => x.RentalRequest)
-                            .ThenInclude(x => x.DistrictEquipmentType)
-                        .OrderByDescending(x => x.RotationListSortOrder)
-                        .FirstOrDefault(x => x.RentalRequest.LocalArea.LocalAreaId == item.LocalArea.LocalAreaId &&
-                                             x.RentalRequest.DistrictEquipmentType.DistrictEquipmentTypeId == item.DistrictEquipmentType.DistrictEquipmentTypeId &&
-                                             x.IsForceHire == false &&
-                                             x.WasAsked == true &&
-                                             x.Equipment.BlockNumber == item.BlockNumber &&
-                                             (x.OfferResponse == "Yes" || x.OfferResponse == "No") &&
-                                             x.AskedDateTime >= fiscalEnd.AddYears(-1).AddDays(1) &&
-                                             x.AskedDateTime <= fiscalEnd);
-
+                {                    
                     if (!string.IsNullOrEmpty(listRecord.LocalAreaName))
                     {
                         if (seniorityList.SeniorityListRecords == null)
@@ -1054,6 +1036,22 @@ namespace HetsApi.Controllers
                     {
                         listRecord.DistrictName = item.LocalArea.ServiceArea.District.Name;
                     }
+                    
+                    // get the rotation info for the first block
+                    currentBlock = (int)item.BlockNumber;
+
+                    rotation = GetRotationList(_context, item.LocalArea.LocalAreaId,
+                        item.DistrictEquipmentType.DistrictEquipmentTypeId,
+                        currentBlock, fiscalEnd);                                                           
+                }
+                else if (item.BlockNumber != null && currentBlock != item.BlockNumber)
+                {
+                    // get the rotation info for the next block
+                    currentBlock = (int)item.BlockNumber;
+
+                    rotation = GetRotationList(_context, item.LocalArea.LocalAreaId,
+                        item.DistrictEquipmentType.DistrictEquipmentTypeId,
+                        currentBlock, fiscalEnd);                    
                 }
 
                 listRecord.SeniorityList.Add(SeniorityListHelper.ToSeniorityViewModel(item, scoringRules, rotation, _context));
@@ -1151,6 +1149,42 @@ namespace HetsApi.Controllers
             {
                 Debug.Write("Error generating pdf: " + ex.Message);
                 return new ObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
+            }
+        }
+
+        private static HetRentalRequestRotationList GetRotationList(DbAppContext context,
+            int localAreaId, int districtEquipmentTypeId, int currentBlock, DateTime fiscalEnd)
+        {
+            try
+            {
+                // HETS-824 = BVT - Corrections to Seniority List PDF
+                //   * This column should contain "Y" against the equipment that
+                //     last responded (whether Yes/No) in a block
+                //   * For "Forced Hire" there will be no changes to this
+                //     column in the seniority list (as if nothing happened and nobody got called)
+                //   * Must be this fiscal year
+                HetRentalRequestRotationList blockRotation = context.HetRentalRequestRotationList.AsNoTracking()
+                    .Include(x => x.Equipment)
+                    .Include(x => x.RentalRequest)
+                    .ThenInclude(x => x.LocalArea)
+                    .Include(x => x.RentalRequest)
+                    .ThenInclude(x => x.DistrictEquipmentType)
+                    .OrderByDescending(x => x.RotationListSortOrder)
+                    .FirstOrDefault(x => x.RentalRequest.LocalArea.LocalAreaId == localAreaId &&
+                                         x.RentalRequest.DistrictEquipmentType.DistrictEquipmentTypeId == districtEquipmentTypeId &&
+                                         x.IsForceHire == false &&
+                                         x.WasAsked == true &&
+                                         x.Equipment.BlockNumber == currentBlock &&
+                                         (x.OfferResponse == "Yes" || x.OfferResponse == "No") &&
+                                         x.AskedDateTime >= fiscalEnd.AddYears(-1).AddDays(1) &&
+                                         x.AskedDateTime <= fiscalEnd);
+
+                return blockRotation;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
 
