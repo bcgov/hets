@@ -122,12 +122,12 @@
         <table id="rotation-list-table">
             <thead>
                 <tr>
-                    <th>Block</th>
-                    <th>Working Now</th>
-                    <th>Last Called</th>
-                    <th>Equip ID</th>
-                    <th>Company Name</th>
-                    <th>Yr/Mk/Md/Sz</th>
+                    <th width="50px">Block</th>
+                    <th width="70px">Equip ID</th>
+                    <th width="70px">Working Now</th>
+                    <th width="70px">Last Called</th>                    
+                    <th width="200px">Company Name</th>
+                    <th width="300px">Yr/Mk/Md/Sz</th>
                     <th>{{yearMinus3}}</th>
                     <th>{{yearMinus2}}</th>
                     <th>{{yearMinus1}}</th>
@@ -140,9 +140,9 @@
                 {{#seniorityList}}
                 <tr>
                     <td>{{block}}</td>
-                    <td>{{isHired}}</td>
-                    <td>{{lastCalled}}</td>
                     <td>{{equipmentCode}}</td>
+                    <td>{{isHired}}</td>
+                    <td>{{lastCalled}}</td>                    
                     <td>{{ownerName}}</td>
                     <td>{{yearMakeModelSize}}</td>
                     <td>{{hoursYearMinus3}}</td>
