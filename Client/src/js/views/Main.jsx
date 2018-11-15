@@ -42,6 +42,7 @@ var Main = React.createClass({
         window.location.href = logoffUrl;
       }
     });
+    store.dispatch({ type: Action.CLOSE_SESSION_TIMEOUT_DIALOG });
   },
 
   render: function() {
@@ -61,7 +62,7 @@ var Main = React.createClass({
       >
         Your session will time out in 
         <Countdown 
-          time={300} 
+          time={300}
           onEnd={ this.onEndSession }
         />. Would you like to keep the session active or end the session?
       </ConfirmDialog>
