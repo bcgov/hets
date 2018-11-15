@@ -243,6 +243,14 @@ namespace HetsData.Helpers
                 pdfModel.Status = agreement.RentalAgreementStatusType.Description;
                 pdfModel.ConditionsPresent = agreement.HetRentalAgreementCondition.Count > 0;
 
+                foreach (HetRentalAgreementCondition condition in pdfModel.RentalAgreementConditions)
+                {
+                    if (!string.IsNullOrEmpty(condition.Comment))
+                    {
+                        condition.ConditionName = condition.Comment;
+                    }
+                }
+
                 pdfModel = CalculateTotals(pdfModel);
             }
 
