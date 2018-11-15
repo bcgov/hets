@@ -20,6 +20,7 @@ using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace HetsApi.Controllers
 {
@@ -910,17 +911,37 @@ namespace HetsApi.Controllers
 
             if (district == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            // set the rate period type id
-            int? rateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodHourly, _context);
+            // get active status id
+            int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            if (rateTypeId == null)
+            // HETS-825 - MAX number of Blank Rental Agreements and limit the functionality to ADMINS only
+            // * Limit Blank rental agreements to a maximum of 3
+            List<HetRentalAgreement> agreements = _context.HetRentalAgreement.AsNoTracking()
+                .Include(x => x.RentalAgreementStatusType)
+                .Include(x => x.District)
+                .Include(x => x.Project)
+                .Include(x => x.Equipment)
+                .Where(x => x.District.DistrictId == districtId &&
+                            x.RentalRequestId == null &&
+                            x.RentalRequestRotationListId == null &&
+                            x.RentalAgreementStatusTypeId == statusId)
+                .ToList();
+
+            string tempMax = _configuration.GetSection("Constants:Maximum-Blank-Agreements").Value;
+            bool isNumeric = int.TryParse(tempMax, out int max);
+            if (!isNumeric) max = 3; // default to 3
+
+            if (agreements.Count >= max)
             {
-                throw new DataException("Rate Period Id cannot be null");
+                return new ObjectResult(new HetsResponse("HETS-29", ErrorViewModel.GetDescription("HETS-29", _configuration)));
             }
 
-            int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));            
+            // set the rate period type id
+            int? rateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodHourly, _context);
+            if (rateTypeId == null) return new ObjectResult(new HetsResponse("HETS-24", ErrorViewModel.GetDescription("HETS-24", _configuration)));
 
+            // create new agreement
             HetRentalAgreement agreement = new HetRentalAgreement
             {
                 Number = RentalAgreementHelper.GetRentalAgreementNumber(district, _context),

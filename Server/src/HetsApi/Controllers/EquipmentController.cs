@@ -1235,7 +1235,7 @@ namespace HetsApi.Controllers
                     .ThenInclude(x => x.LocalArea)
                     .Include(x => x.RentalRequest)
                     .ThenInclude(x => x.DistrictEquipmentType)
-                    .OrderByDescending(x => x.RotationListSortOrder)
+                    .OrderByDescending(x => x.RentalRequestId).ThenByDescending(x => x.RotationListSortOrder)
                     .FirstOrDefault(x => x.RentalRequest.LocalArea.LocalAreaId == localAreaId &&
                                          x.RentalRequest.DistrictEquipmentType.DistrictEquipmentTypeId == districtEquipmentTypeId &&
                                          x.IsForceHire == false &&
