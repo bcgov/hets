@@ -569,10 +569,13 @@ namespace HetsApi.Controllers
             {
                 HetRentalAgreementRate temp = new HetRentalAgreementRate
                 {
+                    RentalAgreementId = id,
                     Comment = rate.Comment,
                     ComponentName = rate.ComponentName,
                     Rate = rate.Rate,
-                    IsIncludedInTotal = rate.IsIncludedInTotal,
+                    Overtime = rate.Overtime,
+                    Active = rate.Active,
+                    IsIncludedInTotal = rate.IsIncludedInTotal
                 };
 
                 if (agreements[newRentalAgreementIndex].HetRentalAgreementRate == null)
@@ -581,6 +584,69 @@ namespace HetsApi.Controllers
                 }
 
                 agreements[newRentalAgreementIndex].HetRentalAgreementRate.Add(temp);
+            }
+
+            // update overtime rates (and add if they don't exist)   
+            List<HetProvincialRateType> overtime = _context.HetProvincialRateType.AsNoTracking()
+                .Where(x => x.Overtime)
+                .ToList();
+
+            foreach (HetProvincialRateType overtimeRate in overtime)
+            {
+                bool found = false;
+
+                if (agreements[newRentalAgreementIndex] != null &&
+                    agreements[newRentalAgreementIndex].HetRentalAgreementRate != null)
+                {
+                    found = agreements[newRentalAgreementIndex].HetRentalAgreementRate.Any(x => x.ComponentName == overtimeRate.RateType);
+                }
+
+                if (found)
+                {
+                    HetRentalAgreementRate rate = agreements[newRentalAgreementIndex].HetRentalAgreementRate
+                        .First(x => x.ComponentName == overtimeRate.RateType);
+
+                    rate.Rate = overtimeRate.Rate;
+                }
+                else
+                {
+                    HetRentalAgreementRate newRate = new HetRentalAgreementRate
+                    {
+                        RentalAgreementId = id,
+                        Comment = overtimeRate.Description,
+                        Rate = overtimeRate.Rate,
+                        ComponentName = overtimeRate.RateType,
+                        Active = overtimeRate.Active,
+                        IsIncludedInTotal = overtimeRate.IsIncludedInTotal,
+                        Overtime = overtimeRate.Overtime
+                    };
+
+                    if (agreements[newRentalAgreementIndex].HetRentalAgreementRate == null)
+                    {
+                        agreements[newRentalAgreementIndex].HetRentalAgreementRate = new List<HetRentalAgreementRate>();
+                    }
+
+                    agreements[newRentalAgreementIndex].HetRentalAgreementRate.Add(newRate);
+                }
+            }
+
+            // remove non-existent overtime rates
+            List<string> remove =
+                (from overtimeRate in agreements[newRentalAgreementIndex].HetRentalAgreementRate
+                 where overtimeRate.Overtime
+                 let found = overtime.Any(x => x.RateType == overtimeRate.ComponentName)
+                 where !found
+                 select overtimeRate.ComponentName).ToList();
+
+            if (remove.Count > 0 &&
+                agreements[newRentalAgreementIndex] != null &&
+                agreements[newRentalAgreementIndex].HetRentalAgreementRate != null)            
+            {
+                foreach (string component in remove)
+                {
+                    agreements[newRentalAgreementIndex].HetRentalAgreementRate.Remove(
+                        agreements[newRentalAgreementIndex].HetRentalAgreementRate.First(x => x.ComponentName == component));
+                }
             }
 
             // update conditions

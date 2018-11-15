@@ -81,11 +81,14 @@ namespace HetsApi.Controllers
             HetRentalAgreementRate rate = _context.HetRentalAgreementRate.First(a => a.RentalAgreementRateId == id);
 
             rate.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
+
             rate.Comment = item.Comment;
             rate.ComponentName = item.ComponentName;
             rate.IsIncludedInTotal = item.IsIncludedInTotal;
-            rate.Rate = item.Rate;            
-
+            rate.Rate = item.Rate;
+            rate.Active = true;
+            rate.Overtime = false;
+            
             // save the changes	
             _context.SaveChanges();
 
