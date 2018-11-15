@@ -13,6 +13,8 @@ import Footer from './Footer.jsx';
 import ConfirmDialog from './dialogs/ConfirmDialog.jsx';
 import Countdown from '../components/Countdown.jsx';
 
+import { resetSessionTimeoutTimer } from '../app.jsx';
+
 var Main = React.createClass({
   propTypes: {
     children: React.PropTypes.object,
@@ -31,8 +33,8 @@ var Main = React.createClass({
   },
   
   onCloseSessionTimeoutDialog() {
-    // Temporary: endpoint to keep session active
-    Api.getCurrentUser();
+    Api.keepAlive();
+    resetSessionTimeoutTimer();
     store.dispatch({ type: Action.CLOSE_SESSION_TIMEOUT_DIALOG });
   },
 

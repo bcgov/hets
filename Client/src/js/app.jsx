@@ -90,14 +90,21 @@ function onEnterApplication() {
   //hashHistory.push('/');
 }
 
-export var showSessionTimoutDialog = function() {
+function keepAlive() {
+  Api.keepAlive();
+}
+
+window.setInterval(keepAlive, Constant.SESSION_KEEP_ALIVE_INTERVAL);
+
+function showSessionTimoutDialog() {
   store.dispatch({ type: Action.SHOW_SESSION_TIMEOUT_DIALOG });
-};
+}
 
-export var sessionTimer = window.setInterval(showSessionTimoutDialog, Constant.SESSION_TIMOUT);
+var sessionTimeoutTimer = window.setInterval(showSessionTimoutDialog, Constant.SESSION_TIMEOUT);
 
-export function setTimerInterval() {
-  sessionTimer = window.setInterval(showSessionTimoutDialog, Constant.SESSION_TIMOUT);
+export function resetSessionTimeoutTimer() {
+  window.clearInterval(sessionTimeoutTimer);
+  sessionTimeoutTimer = window.setInterval(showSessionTimoutDialog, Constant.SESSION_TIMEOUT);
 }
 
 const App = <Provider store={ store }>
