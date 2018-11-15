@@ -94,10 +94,14 @@ namespace HetsApi.Controllers
 
             // populate overtime rates
             agreement.HetRentalAgreementOvertimeRate = agreement.HetRentalAgreementRate.Where(x => x.Overtime).ToList();
-            agreement.HetRentalAgreementRate = agreement.HetRentalAgreementRate.Where(x => !x.Overtime).ToList();
             
             int? statusId = StatusHelper.GetStatusId(item.Status, "rentalAgreementStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // get overtime records
+            List<HetProvincialRateType> overtime = _context.HetProvincialRateType.AsNoTracking()
+                .Where(x => x.Overtime)
+                .ToList();
 
             // get rate period type for the agreement
             int? rateTypeId = StatusHelper.GetRatePeriodId(item.RatePeriod, _context);
@@ -127,40 +131,52 @@ namespace HetsApi.Controllers
             {
                 foreach (HetRentalAgreementRate rate in item.HetRentalAgreementOvertimeRate)
                 {
-                    foreach (HetRentalAgreementRate agreementRate in agreement.HetRentalAgreementOvertimeRate)
+                    bool found = false;
+
+                    foreach (HetRentalAgreementRate agreementRate in agreement.HetRentalAgreementRate)
                     {
                         if (agreementRate.RentalAgreementRateId == rate.RentalAgreementRateId)
-                        {                            
+                        {
                             agreementRate.ConcurrencyControlNumber = rate.ConcurrencyControlNumber;
                             agreementRate.Comment = rate.Comment;
-                            agreementRate.ComponentName = rate.ComponentName;
                             agreementRate.Overtime = true;
                             agreementRate.Active = rate.Active;
                             agreementRate.IsIncludedInTotal = rate.IsIncludedInTotal;
-                            agreementRate.Rate = rate.Rate;
+                            agreementRate.Rate = rate.Rate;                            
 
+                            found = true;
                             break;
                         }
                     }
 
-                    // add the rate
-                    HetRentalAgreementRate newAgreementRate = new HetRentalAgreementRate
+                    if (!found)
                     {
-                        ConcurrencyControlNumber = rate.ConcurrencyControlNumber,
-                        Comment = rate.Comment,
-                        ComponentName = rate.ComponentName,
-                        Overtime = true,
-                        Active = rate.Active,
-                        IsIncludedInTotal = rate.IsIncludedInTotal,
-                        Rate = rate.Rate
-                    };
+                        // add the rate
+                        HetRentalAgreementRate newAgreementRate = new HetRentalAgreementRate
+                        {
+                            ConcurrencyControlNumber = rate.ConcurrencyControlNumber,
+                            Comment = rate.Comment,
+                            ComponentName = rate.ComponentName,
+                            Overtime = true,
+                            Active = true,
+                            IsIncludedInTotal = rate.IsIncludedInTotal,
+                            Rate = rate.Rate
+                        };
 
-                    if (agreement.HetRentalAgreementRate == null)
-                    {
-                        agreement.HetRentalAgreementRate = new List<HetRentalAgreementRate>();
+                        HetProvincialRateType overtimeRate = overtime.FirstOrDefault(x => x.Description == rate.Comment);
+
+                        if (overtimeRate != null)
+                        {
+                            newAgreementRate.ComponentName = overtimeRate.RateType;
+                        }
+
+                        if (agreement.HetRentalAgreementRate == null)
+                        {
+                            agreement.HetRentalAgreementRate = new List<HetRentalAgreementRate>();
+                        }
+
+                        agreement.HetRentalAgreementRate.Add(newAgreementRate);
                     }
-
-                    agreement.HetRentalAgreementRate.Add(newAgreementRate);
                 }
             }
 
@@ -193,6 +209,12 @@ namespace HetsApi.Controllers
                 throw new DataException("Rate Period Id cannot be null");
             }
 
+            // get overtime records
+            List<HetProvincialRateType> overtime = _context.HetProvincialRateType.AsNoTracking()
+                .Where(x => x.Overtime)
+                .ToList();
+
+            // get status for new agreement
             int? statusId = StatusHelper.GetStatusId(item.Status, "rentalAgreementStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
         
@@ -224,10 +246,17 @@ namespace HetsApi.Controllers
                         Comment = rate.Comment,
                         ComponentName = rate.ComponentName,
                         Overtime = true,
-                        Active = rate.Active,
+                        Active = true,
                         IsIncludedInTotal = rate.IsIncludedInTotal,
                         Rate = rate.Rate
                     };
+
+                    HetProvincialRateType overtimeRate = overtime.FirstOrDefault(x => x.Description == rate.Comment);
+
+                    if (overtimeRate != null)
+                    {
+                        newAgreementRate.ComponentName = overtimeRate.RateType;
+                    }
 
                     if (agreement.HetRentalAgreementRate == null)
                     {
@@ -630,8 +659,8 @@ namespace HetsApi.Controllers
                 rate.ConcurrencyControlNumber = item.ConcurrencyControlNumber;                
                 rate.Comment = item.Comment;
                 rate.ComponentName = item.ComponentName;
-                rate.Overtime = item.Overtime;
-                rate.Active = item.Active;
+                rate.Overtime = false;
+                rate.Active = true;
                 rate.IsIncludedInTotal = item.IsIncludedInTotal;
                 rate.Rate = item.Rate;
             }
@@ -648,8 +677,8 @@ namespace HetsApi.Controllers
                     RentalAgreementId = agreementId,
                     Comment = item.Comment,
                     ComponentName = item.ComponentName,
-                    Overtime = item.Overtime,
-                    Active = item.Active,
+                    Overtime = false,
+                    Active = true,
                     IsIncludedInTotal = item.IsIncludedInTotal,
                     Rate = item.Rate
                 };
@@ -696,8 +725,8 @@ namespace HetsApi.Controllers
                     rate.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                     rate.Comment = item.Comment;
                     rate.ComponentName = item.ComponentName;
-                    rate.Overtime = item.Overtime;
-                    rate.Active = item.Active;
+                    rate.Overtime = false;
+                    rate.Active = true;
                     rate.IsIncludedInTotal = item.IsIncludedInTotal;
                     rate.Rate = item.Rate;                 
                 }
@@ -710,8 +739,8 @@ namespace HetsApi.Controllers
                         RentalAgreementId = agreementId,
                         Comment = item.Comment,
                         ComponentName = item.ComponentName,
-                        Overtime = item.Overtime,
-                        Active = item.Active,
+                        Overtime = false,
+                        Active = true,
                         IsIncludedInTotal = item.IsIncludedInTotal,
                         Rate = item.Rate
                 };
