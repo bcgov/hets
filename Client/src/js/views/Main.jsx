@@ -13,6 +13,8 @@ import Footer from './Footer.jsx';
 import ConfirmDialog from './dialogs/ConfirmDialog.jsx';
 import Countdown from '../components/Countdown.jsx';
 
+import { resetSessionTimeoutTimer } from '../app.jsx';
+
 var Main = React.createClass({
   propTypes: {
     children: React.PropTypes.object,
@@ -31,8 +33,8 @@ var Main = React.createClass({
   },
   
   onCloseSessionTimeoutDialog() {
-    // Temporary: endpoint to keep session active
-    Api.getCurrentUser();
+    Api.keepAlive();
+    resetSessionTimeoutTimer();
     store.dispatch({ type: Action.CLOSE_SESSION_TIMEOUT_DIALOG });
   },
 
@@ -42,6 +44,7 @@ var Main = React.createClass({
         window.location.href = logoffUrl;
       }
     });
+    store.dispatch({ type: Action.CLOSE_SESSION_TIMEOUT_DIALOG });
   },
 
   render: function() {
@@ -61,7 +64,7 @@ var Main = React.createClass({
       >
         Your session will time out in 
         <Countdown 
-          time={300} 
+          time={300}
           onEnd={ this.onEndSession }
         />. Would you like to keep the session active or end the session?
       </ConfirmDialog>
