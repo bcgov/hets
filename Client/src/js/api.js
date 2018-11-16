@@ -68,6 +68,11 @@ export function getCurrentUser() {
   });
 }
 
+export function keepAlive() {
+   // endpoint to keep session active
+  return new ApiRequest('/users/current').get(null, { keepAlive: true });
+}
+
 export function searchUsers(params) {
   return new ApiRequest('/users/search').get(params).then(response => {
     var users = normalize(response.data);
