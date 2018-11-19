@@ -76,7 +76,7 @@ var ContactsEditDialog = React.createClass({
     if (isBlank(number)) {
       return true;
     }
-    return Constant.NANP_REGEX.test(number);
+    return Constant.NANP_REGEX.test(number) && formatPhoneNumber(number).length <= Constant.MAX_LENGTH_PHONE_NUMBER;
   },
 
   isValid() {
