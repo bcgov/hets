@@ -5,7 +5,7 @@ import * as Log from './history';
 import store from './store';
 
 import { ApiRequest } from './utils/http';
-import { lastFirstName, firstLastName, concat, formatPhoneNumber } from './utils/string';
+import { lastFirstName, firstLastName, concat } from './utils/string';
 import { daysAgo, sortableDateTime, today } from './utils/date';
 
 import _ from 'lodash';
@@ -829,8 +829,8 @@ export function verifyOwners(owners) {
 function parseContact(contact, parent) {
   contact.name = firstLastName(contact.givenName, contact.surname);
   contact.phone = contact.workPhoneNumber ?
-    `${ formatPhoneNumber(contact.workPhoneNumber) } (w)` :
-    (contact.mobilePhoneNumber ? `${ formatPhoneNumber(contact.mobilePhoneNumber) } (c)` : '');
+    `${ contact.workPhoneNumber } (w)` :
+    (contact.mobilePhoneNumber ? `${ contact.mobilePhoneNumber } (c)` : '');
 
   var parentPath = '';
   var primaryContactId = 0;
