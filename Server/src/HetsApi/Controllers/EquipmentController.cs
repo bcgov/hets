@@ -114,7 +114,10 @@ namespace HetsApi.Controllers
             equipment.ServiceHoursLastYear = item.ServiceHoursLastYear;
             equipment.ServiceHoursTwoYearsAgo = item.ServiceHoursTwoYearsAgo;
             equipment.ServiceHoursThreeYearsAgo = item.ServiceHoursThreeYearsAgo;
-            equipment.SeniorityEffectiveDate = item.SeniorityEffectiveDate;
+            equipment.SeniorityEffectiveDate = item.SeniorityEffectiveDate;            
+            equipment.LicencedGvw = item.LicencedGvw;
+            equipment.LegalCapacity = item.LegalCapacity;
+            equipment.PupLegalCapacity = item.PupLegalCapacity;
 
             // save the changes
             _context.SaveChanges();
