@@ -293,11 +293,15 @@ namespace HetsApi.Controllers
             }
 
             // get the correct logoff url and return
-            string logoffUrl = _configuration.GetSection("Constants:LogoffUrl-Default").Value;
+            string logoffUrl = _configuration.GetSection("Constants:LogoffUrl-Development").Value;
 
             if (_env.IsProduction())
             {
                 logoffUrl = _configuration.GetSection("Constants:LogoffUrl-Production").Value;
+            }
+            else if (_env.IsStaging())
+            {
+                logoffUrl = _configuration.GetSection("Constants:LogoffUrl-Test").Value;
             }
 
             LogoffModel response = new LogoffModel {LogoffUrl = logoffUrl};
