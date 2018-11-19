@@ -701,28 +701,63 @@ namespace HetsApi.Controllers
         /// <summary>
         /// Get all duplicate equipment records
         /// </summary>
-        /// <param name="id">id of Equipment to fetch Equipment Attachments for</param>
+        /// <param name="id">id of Equipment to fetch duplicates for</param>
         /// <param name="serialNumber"></param>
+        /// <param name="typeId">District Equipment Type Id</param>
         [HttpGet]
-        [Route("{id}/duplicates/{serialNumber}")]
+        [Route("{id}/duplicates/{serialNumber}/{typeId}")]
         [SwaggerOperation("EquipmentIdEquipmentDuplicatesGet")]
         [SwaggerResponse(200, type: typeof(List<DuplicateEquipmentModel>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentIdEquipmentDuplicatesGet([FromRoute]int id, [FromRoute]string serialNumber)
+        public virtual IActionResult EquipmentIdEquipmentDuplicatesGet([FromRoute]int id, [FromRoute]string serialNumber, [FromRoute]int? typeId)
         {
             bool exists = _context.HetEquipment.Any(x => x.EquipmentId == id);
 
             // not found [id > 0 -> need to allow for new records too]
             if (!exists && id > 0) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
+            // HETS-845 - Verify Duplicate serial # functionality
+            // Validate among the following:
+            // * Same equipment types
+            // * Among approved equipment
+
+            // get status id
+            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
             // get equipment duplicates
-            List<HetEquipment> equipmentDuplicates = _context.HetEquipment.AsNoTracking()
-                .Include(x => x.LocalArea.ServiceArea.District)
-                .Include(x => x.Owner)
-                .Where(x => x.SerialNumber == serialNumber &&
-                            x.EquipmentId != id &&
-                            x.ArchiveCode == "N")
-                .ToList();
+            List<HetEquipment> equipmentDuplicates;
+
+            if (typeId != null && typeId > 0)
+            {
+                HetDistrictEquipmentType equipmentType = _context.HetDistrictEquipmentType.AsNoTracking()
+                    .Include(x => x.EquipmentType)
+                    .FirstOrDefault(x => x.DistrictEquipmentTypeId == typeId);
+
+                int? equipmentTypeId = equipmentType?.EquipmentTypeId;
+
+                // get equipment duplicates
+                equipmentDuplicates = _context.HetEquipment.AsNoTracking()
+                    .Include(x => x.LocalArea.ServiceArea.District)
+                    .Include(x => x.Owner)
+                    .Include(x => x.DistrictEquipmentType)
+                    .Where(x => x.SerialNumber == serialNumber &&
+                                x.EquipmentId != id &&
+                                x.DistrictEquipmentType.EquipmentTypeId == equipmentTypeId &&
+                                x.EquipmentStatusTypeId == statusId)
+                    .ToList();
+            }
+            else
+            {
+                equipmentDuplicates = _context.HetEquipment.AsNoTracking()
+                    .Include(x => x.LocalArea.ServiceArea.District)
+                    .Include(x => x.Owner)
+                    .Include(x => x.DistrictEquipmentType)
+                    .Where(x => x.SerialNumber == serialNumber &&
+                                x.EquipmentId != id &&
+                                x.EquipmentStatusTypeId == statusId)
+                    .ToList();
+            }                        
 
             List<DuplicateEquipmentModel> duplicates = new List<DuplicateEquipmentModel>();
             int idCount = -1;

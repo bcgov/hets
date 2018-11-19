@@ -105,7 +105,7 @@ var EquipmentEditDialog = React.createClass({
       return this.onSave();
     }
 
-    return Api.equipmentDuplicateCheck(this.props.equipment.id, this.state.serialNumber).then((response) => {
+    return Api.equipmentDuplicateCheck(this.props.equipment.id, this.state.serialNumber, this.state.equipmentTypeId).then((response) => {
       if (response.data.length > 0) {
         var districts = response.data.map((district) => {
           return district.districtName;
