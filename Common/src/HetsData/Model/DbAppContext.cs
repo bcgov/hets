@@ -5081,6 +5081,8 @@ namespace HetsData.Model
 
                 entity.HasIndex(e => e.UserId);
 
+                entity.HasIndex(e => e.DistrictId);
+
                 entity.Property(e => e.UserFavouriteId)
                     .HasColumnName("USER_FAVOURITE_ID")
                     .HasDefaultValueSql("nextval('\"HET_USER_FAVOURITE_ID_seq\"'::regclass)");
@@ -5147,6 +5149,8 @@ namespace HetsData.Model
 
                 entity.Property(e => e.UserId).HasColumnName("USER_ID");
 
+                entity.Property(e => e.DistrictId).HasColumnName("DISTRICT_ID");
+
                 entity.Property(e => e.Value)
                     .HasColumnName("VALUE")
                     .HasMaxLength(2048);
@@ -5155,6 +5159,11 @@ namespace HetsData.Model
                     .WithMany(p => p.HetUserFavourite)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK_HET_USER_FAVOURITE_USER_ID");
+
+                entity.HasOne(d => d.District)
+                    .WithMany(p => p.HetUserFavourite)
+                    .HasForeignKey(d => d.DistrictId)
+                    .HasConstraintName("FK_HET_USER_FAVOURITE_DISTRICT_ID");
             });
 
             modelBuilder.Entity<HetUserRole>(entity =>
