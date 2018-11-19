@@ -106,3 +106,7 @@ export const SESSION_TIMOUT = 7200000; // 120 minutes
 export const MAX_LENGTH_NOTE_TEXT = 2048;
 export const MAX_LENGTH_PHONE_NUMBER = 20;
 export const MAX_LENGTH_RENTAL_AGREEMENT_NOTE = 150;
+
+// Max File Sizes
+export const MAX_ATTACHMENT_FILE_SIZE = 5242880; // 5 MB
+export const MAX_ATTACHMENT_FILE_SIZE_READABLE = '5 MB';
