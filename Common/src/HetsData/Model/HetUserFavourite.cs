@@ -13,6 +13,7 @@ namespace HetsData.Model
         public string Value { get; set; }
         public bool? IsDefault { get; set; }
         public int? UserId { get; set; }
+        public int? DistrictId { get; set; }
         [JsonIgnore]public string AppCreateUserDirectory { get; set; }
         [JsonIgnore]public string AppCreateUserGuid { get; set; }
         [JsonIgnore]public string AppCreateUserid { get; set; }
@@ -29,5 +30,8 @@ namespace HetsData.Model
 
         [JsonIgnore]
         public HetUser User { get; set; }
+
+        [JsonIgnore]
+        public HetDistrict District { get; set; }
     }
 }
