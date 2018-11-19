@@ -10,7 +10,7 @@ import * as Constant from '../../constants';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
-import { isBlank } from '../../utils/string';
+import { isBlank, formatPhoneNumber } from '../../utils/string';
 
 var ContactsEditDialog = React.createClass({
   propTypes: {
@@ -72,6 +72,13 @@ var ContactsEditDialog = React.createClass({
     return false;
   },
 
+  isValidPhoneNumber(number) {
+    if (isBlank(number)) {
+      return true;
+    }
+    return Constant.NANP_REGEX.test(number);
+  },
+
   isValid() {
     this.setState({
       givenNameError: false,
@@ -97,17 +104,17 @@ var ContactsEditDialog = React.createClass({
     // Check the phone numbers against the North American Numbering Plan format. We basically want to
     // make sure that there's the right number of digits to make an actual phone number. Note for testers:
     // an area code and an exchange code cannot start with 0 or 1.
-    if (!isBlank(this.state.workPhoneNumber) && !Constant.NANP_REGEX.test(this.state.workPhoneNumber)) {
+    if (!this.isValidPhoneNumber(this.state.workPhoneNumber)) {
       this.setState({ workPhoneNumberError: 'Invalid phone number' });
       valid = false;
     }
 
-    if (!isBlank(this.state.mobilePhoneNumber) && !Constant.NANP_REGEX.test(this.state.mobilePhoneNumber)) {
+    if (!this.isValidPhoneNumber(this.state.mobilePhoneNumber)) {
       this.setState({ mobilePhoneNumberError: 'Invalid phone number' });
       valid = false;
     }
 
-    if (!isBlank(this.state.faxPhoneNumber) && !Constant.NANP_REGEX.test(this.state.faxPhoneNumber)) {
+    if (!this.isValidPhoneNumber(this.state.faxPhoneNumber)) {
       this.setState({ faxPhoneNumberError: 'Invalid phone number' });
       valid = false;
     }
@@ -138,9 +145,9 @@ var ContactsEditDialog = React.createClass({
       role: this.state.role,
       notes: this.state.notes,
       emailAddress: this.state.emailAddress,
-      workPhoneNumber: this.state.workPhoneNumber,
-      mobilePhoneNumber: this.state.mobilePhoneNumber,
-      faxPhoneNumber: this.state.faxPhoneNumber,
+      workPhoneNumber: formatPhoneNumber(this.state.workPhoneNumber),
+      mobilePhoneNumber: formatPhoneNumber(this.state.mobilePhoneNumber),
+      faxPhoneNumber: formatPhoneNumber(this.state.faxPhoneNumber),
       isPrimary: this.state.isPrimary,
     }});
   },

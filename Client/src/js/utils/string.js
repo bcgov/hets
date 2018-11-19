@@ -60,7 +60,10 @@ export function formatPhoneNumber(str) {
   var match = phoneNumber.match(Constant.NANP_REGEX);
   if (match) {
     match.shift();
-    return match.filter(x => { return x; }).join('-');
+
+    var extension = match.pop();
+    var number = match.filter(x => { return x; }).join('-');
+    return extension ? number + 'x' + extension : number;
   }
   return phoneNumber;
 }
