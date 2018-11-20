@@ -32,7 +32,7 @@ import History from '../components/History.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
 
-import { formatDateTime } from '../utils/date';
+import { formatDateTime, formatDateTimeUTCToLocal } from '../utils/date';
 import { concat } from '../utils/string';
 
 /*
@@ -183,9 +183,11 @@ var RentalRequestsDetail = React.createClass({
     var localAreaIds = [ this.props.rentalRequest.data.localAreaId ];
     var districtEquipmentTypeIds = [ this.props.rentalRequest.data.districtEquipmentTypeId ];
     Api.equipmentSeniorityListPdf(localAreaIds, districtEquipmentTypeIds).then(response => {
+      var filename = 'SeniorityList-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.pdf';
+
       var blob = new Blob([response], {type: 'image/pdf'});
       if (window.navigator.msSaveBlob) {
-        blob = window.navigator.msSaveBlob([response], 'seniority_list.pdf');
+        blob = window.navigator.msSaveBlob([response], filename);
       }
       //Create a link element, hide it, direct 
       //it towards the blob, and then 'click' it programatically
@@ -196,7 +198,7 @@ var RentalRequestsDetail = React.createClass({
       //and point the link element towards it
       let url = window.URL.createObjectURL(blob);
       a.href = url;
-      a.download = 'seniority_list.pdf';
+      a.download = filename;
       //programatically click the link to trigger the download
       a.click();
       //release the reference to the file by revoking the Object URL
