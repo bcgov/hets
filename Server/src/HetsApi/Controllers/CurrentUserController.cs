@@ -28,6 +28,7 @@ namespace HetsApi.Controllers
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
         private readonly IHostingEnvironment _env;
+        private readonly HttpContext _httpContext;
 
         public CurrentUserController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory, IHostingEnvironment env)
         {
@@ -35,9 +36,10 @@ namespace HetsApi.Controllers
             _configuration = configuration;
             _logger = loggerFactory.CreateLogger(typeof(CurrentUserController));
             _env = env;
+            _httpContext = httpContextAccessor.HttpContext;
 
             // set context data
-            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
+            User user = UserAccountHelper.GetUser(context, _httpContext);
             _context.SmUserId = user.SmUserId;
             _context.DirectoryName = user.SmAuthorizationDirectory;
             _context.SmUserGuid = user.UserGuid;
@@ -58,12 +60,15 @@ namespace HetsApi.Controllers
         {
             // get the current user id
             string userId = _context.SmUserId;
-            
+
+            // get initial results - must be limited to user's district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
             // get favourites
             IEnumerable<HetUserFavourite> favourites = _context.HetUserFavourite.AsNoTracking()
-                .Where(x => x.User.SmUserId == userId)
-                .Select(x => x)
-                .ToList();
+                .Include(x => x.User)
+                .Where(x => x.User.SmUserId == userId &&
+                            x.DistrictId == districtId);
 
             if (favouriteType != null)
             {
@@ -293,11 +298,15 @@ namespace HetsApi.Controllers
             }
 
             // get the correct logoff url and return
-            string logoffUrl = _configuration.GetSection("Constants:LogoffUrl-Default").Value;
+            string logoffUrl = _configuration.GetSection("Constants:LogoffUrl-Development").Value;
 
             if (_env.IsProduction())
             {
                 logoffUrl = _configuration.GetSection("Constants:LogoffUrl-Production").Value;
+            }
+            else if (_env.IsStaging())
+            {
+                logoffUrl = _configuration.GetSection("Constants:LogoffUrl-Test").Value;
             }
 
             LogoffModel response = new LogoffModel {LogoffUrl = logoffUrl};
@@ -317,31 +326,59 @@ namespace HetsApi.Controllers
             // not found
             if (userId == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
+            // get initial results - must be limited to user's district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
             // get user record
             bool userExists = _context.HetUser.Any(a => a.SmUserId == userId);
 
-            if (userExists)
-            {
-                HetUser user = _context.HetUser.First(a => a.SmUserId == userId);
-                item.User = user;
-            }
-
+            if (!userExists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            
+            HetUser user = _context.HetUser.AsNoTracking()
+                .First(a => a.SmUserId == userId);
+            
             // get favourites
             bool exists = _context.HetUserFavourite.Any(a => a.UserFavouriteId == item.UserFavouriteId);
 
+            HetUserFavourite favourite;
+
             if (exists)
             {
-                _context.HetUserFavourite.Update(item);
+                favourite = _context.HetUserFavourite
+                    .First(a => a.UserFavouriteId == item.UserFavouriteId);
+
+                favourite.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
+                favourite.Value = item.Value;
+                favourite.Name = item.Name;
+                favourite.IsDefault = item.IsDefault;
+                
+                _context.HetUserFavourite.Update(favourite);
             }
             else
             {
-                _context.HetUserFavourite.Add(item);
+                favourite = new HetUserFavourite
+                {
+                    UserId = user.UserId,
+                    DistrictId = districtId,
+                    Type = item.Type,
+                    Value = item.Value,
+                    Name = item.Name,
+                    IsDefault = item.IsDefault
+                };
+
+                _context.HetUserFavourite.Add(favourite);
             }
 
             // save the changes
             _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(item));
+            int favouriteId = favourite.UserFavouriteId;
+
+            // get record and return
+            favourite = _context.HetUserFavourite.AsNoTracking()
+                .First(x => x.UserFavouriteId == favouriteId);
+
+            return new ObjectResult(new HetsResponse(favourite));
         }
 
         #endregion

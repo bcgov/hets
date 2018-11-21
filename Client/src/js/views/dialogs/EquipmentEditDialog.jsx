@@ -43,6 +43,8 @@ var EquipmentEditDialog = React.createClass({
 
       serialNumberError: null,
       duplicateSerialNumber: false,
+      makeError: '',
+      modelError: '',
       yearError: null,
     };
   },
@@ -80,7 +82,9 @@ var EquipmentEditDialog = React.createClass({
   isValid() {
     this.setState({
       serialNumberError: null,
-      licencePlateError: null,
+      makeError: '',
+      modelError: '',
+      yearError: '',
     });
 
     var valid = true;
@@ -90,7 +94,20 @@ var EquipmentEditDialog = React.createClass({
       valid = false;
     }
 
-    if (notBlank(this.state.year) && !isValidYear(this.state.year)) {
+    if (isBlank(this.state.make)) {
+      this.setState({ makeError: 'Make is required.' });
+      valid = false;
+    }
+
+    if (isBlank(this.state.model)) {
+      this.setState({ modelError: 'Model is required.' });
+      valid = false;
+    }
+
+    if (isBlank(this.state.year)) {
+      this.setState({ yearError: 'Year is required.' });
+      valid = false;
+    } else if (notBlank(this.state.year) && !isValidYear(this.state.year)) {
       this.setState({ yearError: 'This is not a valid year.' });
       valid = false;
     }
@@ -105,7 +122,7 @@ var EquipmentEditDialog = React.createClass({
       return this.onSave();
     }
 
-    return Api.equipmentDuplicateCheck(this.props.equipment.id, this.state.serialNumber).then((response) => {
+    return Api.equipmentDuplicateCheck(this.props.equipment.id, this.state.serialNumber, this.state.equipmentTypeId).then((response) => {
       if (response.data.length > 0) {
         var districts = response.data.map((district) => {
           return district.districtName;
@@ -166,25 +183,27 @@ var EquipmentEditDialog = React.createClass({
             </Row>
             <Row>
               <Col md={12}>
-                <FormGroup controlId="make">
-                  <ControlLabel>Make</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.make } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>                  
+                <FormGroup controlId="make" validationState={ this.state.makeError ? 'error' : null }>
+                  <ControlLabel>Make <sup>*</sup></ControlLabel>
+                  <FormInputControl type="text" defaultValue={ this.state.make } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
+                  <HelpBlock>{ this.state.makeError }</HelpBlock>
                 </FormGroup>
               </Col>
             </Row>
             <Row>
               <Col md={12}>
-                <FormGroup controlId="model">
-                  <ControlLabel>Model</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.model } updateState={ this.updateState }/>                  
+                <FormGroup controlId="model" validationState={ this.state.modelError ? 'error' : null }>
+                  <ControlLabel>Model <sup>*</sup></ControlLabel>
+                  <FormInputControl type="text" defaultValue={ this.state.model } updateState={ this.updateState }/>
+                  <HelpBlock>{ this.state.modelError }</HelpBlock>
                 </FormGroup>
               </Col>
             </Row>
             <Row>
               <Col md={12}>
                 <FormGroup controlId="year" validationState={ this.state.yearError ? 'error' : null }>
-                  <ControlLabel>Year</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.year } updateState={ this.updateState }/>                  
+                  <ControlLabel>Year <sup>*</sup></ControlLabel>
+                  <FormInputControl type="text" defaultValue={ this.state.year } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.yearError }</HelpBlock>
                 </FormGroup>
               </Col>

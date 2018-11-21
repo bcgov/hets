@@ -5,7 +5,7 @@ import * as Log from './history';
 import store from './store';
 
 import { ApiRequest } from './utils/http';
-import { lastFirstName, firstLastName, concat, formatPhoneNumber } from './utils/string';
+import { lastFirstName, firstLastName, concat } from './utils/string';
 import { daysAgo, sortableDateTime, today } from './utils/date';
 
 import _ from 'lodash';
@@ -66,6 +66,11 @@ export function getCurrentUser() {
     store.dispatch({ type: Action.UPDATE_CURRENT_USER, user: user });
     return user;
   });
+}
+
+export function keepAlive() {
+   // endpoint to keep session active
+  return new ApiRequest('/users/current').get(null, { keepAlive: true });
 }
 
 export function searchUsers(params) {
@@ -507,8 +512,8 @@ export function addEquipmentNote(equipmentId, note) {
   });
 }
 
-export function equipmentDuplicateCheck(id, serialNumber) {
-  return new ApiRequest(`/equipment/${id}/duplicates/${serialNumber}`).get().then((response => {
+export function equipmentDuplicateCheck(id, serialNumber, typeId) {
+  return new ApiRequest(`/equipment/${id}/duplicates/${serialNumber}/${typeId}`).get().then((response => {
     return response;
   }));
 }
@@ -829,8 +834,8 @@ export function verifyOwners(owners) {
 function parseContact(contact, parent) {
   contact.name = firstLastName(contact.givenName, contact.surname);
   contact.phone = contact.workPhoneNumber ?
-    `${ formatPhoneNumber(contact.workPhoneNumber) } (w)` :
-    (contact.mobilePhoneNumber ? `${ formatPhoneNumber(contact.mobilePhoneNumber) } (c)` : '');
+    `${ contact.workPhoneNumber } (w)` :
+    (contact.mobilePhoneNumber ? `${ contact.mobilePhoneNumber } (c)` : '');
 
   var parentPath = '';
   var primaryContactId = 0;

@@ -23,6 +23,8 @@ import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
 
+import { formatDateTimeUTCToLocal } from '../utils/date';
+
 var Owners = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
@@ -156,9 +158,11 @@ var Owners = React.createClass({
       return owner.id;
     });
     Api.verifyOwners(owners).then((response) => {
+      var filename = 'StatusLetters-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.pdf';
+
       var blob;
       if (window.navigator.msSaveBlob) {
-        blob = window.navigator.msSaveBlob(response, 'owner_status_letters.pdf');
+        blob = window.navigator.msSaveBlob(response, filename);
       } else {
         blob = new Blob([response], {type: 'image/pdf'}); 
       }
@@ -171,7 +175,7 @@ var Owners = React.createClass({
       //and point the link element towards it
       let url = window.URL.createObjectURL(blob);
       a.href = url;
-      a.download = 'ownersVerificationLetters.pdf';
+      a.download = filename;
       //programatically click the link to trigger the download
       a.click();
       //release the reference to the file by revoking the Object URL

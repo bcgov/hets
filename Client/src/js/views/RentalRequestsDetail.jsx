@@ -32,7 +32,7 @@ import History from '../components/History.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
 
-import { formatDateTime } from '../utils/date';
+import { formatDateTime, formatDateTimeUTCToLocal } from '../utils/date';
 import { concat } from '../utils/string';
 
 /*
@@ -183,9 +183,11 @@ var RentalRequestsDetail = React.createClass({
     var localAreaIds = [ this.props.rentalRequest.data.localAreaId ];
     var districtEquipmentTypeIds = [ this.props.rentalRequest.data.districtEquipmentTypeId ];
     Api.equipmentSeniorityListPdf(localAreaIds, districtEquipmentTypeIds).then(response => {
+      var filename = 'SeniorityList-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.pdf';
+
       var blob = new Blob([response], {type: 'image/pdf'});
       if (window.navigator.msSaveBlob) {
-        blob = window.navigator.msSaveBlob([response], 'seniority_list.pdf');
+        blob = window.navigator.msSaveBlob([response], filename);
       }
       //Create a link element, hide it, direct 
       //it towards the blob, and then 'click' it programatically
@@ -196,7 +198,7 @@ var RentalRequestsDetail = React.createClass({
       //and point the link element towards it
       let url = window.URL.createObjectURL(blob);
       a.href = url;
-      a.download = 'seniority_list.pdf';
+      a.download = filename;
       //programatically click the link to trigger the download
       a.click();
       //release the reference to the file by revoking the Object URL
@@ -250,10 +252,7 @@ var RentalRequestsDetail = React.createClass({
 
           return <Row id="rental-requests-data" className="equal-height">
             <Col lg={6} md={6} sm={6} xs={12}>
-              <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Project"><strong>{ rentalRequest.project && rentalRequest.project.name }</strong></ColDisplay>
-            </Col>
-            <Col lg={6} md={6} sm={6} xs={12}>
-              <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Provincial Project Number"><strong>{ rentalRequest.project && rentalRequest.project.provincialProjectNumber }</strong></ColDisplay>
+              <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Local Area">{ rentalRequest.localAreaName }</ColDisplay>
             </Col>
             <Col lg={6} md={6} sm={6} xs={12}>
               <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ rentalRequest.projectPrimaryContactRole || 'Primary Contact' }>
@@ -261,22 +260,25 @@ var RentalRequestsDetail = React.createClass({
               </ColDisplay>
             </Col>
             <Col lg={6} md={6} sm={6} xs={12}>
-              <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Local Area">{ rentalRequest.localAreaName }</ColDisplay>
+              <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment Type">{ rentalRequest.equipmentTypeName }</ColDisplay>
             </Col>
             <Col lg={6} md={6} sm={6} xs={12}>
-              <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment Type">{ rentalRequest.equipmentTypeName }</ColDisplay>
+              <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Quantity">{ rentalRequest.equipmentCount }</ColDisplay>
             </Col>
             <Col lg={6} md={6} sm={6} xs={12}>
               <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Attachment(s)">{ requestAttachments }</ColDisplay>
             </Col>
             <Col lg={6} md={6} sm={6} xs={12}>
-              <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Count">{ rentalRequest.equipmentCount }</ColDisplay>
-            </Col>
-            <Col lg={6} md={6} sm={6} xs={12}>
               <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Expected Hours">{ rentalRequest.expectedHours }</ColDisplay>
             </Col>
             <Col lg={6} md={6} sm={6} xs={12}>
+              <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Project"><strong>{ rentalRequest.project && rentalRequest.project.name }</strong></ColDisplay>
+            </Col>
+            <Col lg={6} md={6} sm={6} xs={12}>
               <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Expected Start Date">{  formatDateTime(rentalRequest.expectedStartDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
+            </Col>
+            <Col lg={6} md={6} sm={6} xs={12}>
+              <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Provincial Project Number"><strong>{ rentalRequest.project && rentalRequest.project.provincialProjectNumber }</strong></ColDisplay>
             </Col>
             <Col lg={6} md={6} sm={6} xs={12}>
               <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Expected End Date">{ formatDateTime(rentalRequest.expectedEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
@@ -307,16 +309,18 @@ var RentalRequestsDetail = React.createClass({
           // Sort in rotation list order
           rotationList = _.sortBy(rotationList, 'rotationListSortOrder');
           
+          // use spans for table headers so we can force them to wrap when printing
           var headers = [
-            { field: 'seniorityString',         title: 'Seniority'         },
-            { field: 'serviceHoursThisYear',    title: 'YTD Hours'         },
-            { field: 'equipmentCode',           title: 'Equipment ID'      },
-            { field: 'equipmentDetails',        title: 'Equipment Details' },
+            { field: 'seniorityString',         title: 'Block'             },
+            { field: 'serviceHoursThisYear',    node: <div><span>YTD</span> <span>Hours</span></div> },
+            { field: 'equipmentCode',           node: <div><span>Equip.</span> <span>ID</span></div> },
+            { field: 'equipmentDetails',        node: <div><span>Equip.</span> <span>Details</span></div> },
             { field: 'equipmentOwner',          title: 'Owner'             },
             { field: 'primaryContactName',      title: 'Contact'           },
-            { field: 'primaryContactWorkPhone', title: 'Work Phone'        },
-            { field: 'primaryContactCellPhone', title: 'Cell Phone'        },
+            { field: 'primaryContactWorkPhone', node: <div><span>Work</span> <span>Phone</span></div> },
+            { field: 'primaryContactCellPhone', node: <div><span>Cell</span> <span>Phone</span></div> },
             { field: 'status',                  title: 'Status'            },
+            { field: '',                        title: 'Comments'          },
           ];
 
           var numberEquipmentAvailableForNormalHire = rentalRequest.equipmentCount - rentalRequest.yesCount;
@@ -393,6 +397,7 @@ var RentalRequestsDetail = React.createClass({
                         })()}
                       </ButtonGroup>
                     </td>
+                    <td></td>
                   </tr>
                 );
               })

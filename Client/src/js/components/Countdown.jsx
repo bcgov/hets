@@ -11,6 +11,7 @@ var Countdown = React.createClass({
       timeLeft: this.props.time,
       minutes: parseInt(this.props.time / 60, 10),
       seconds: parseInt(this.props.time % 60, 10) < 10 ? '0' + parseInt(this.props.time % 60, 10) : parseInt(this.props.time % 60, 10),
+      fired: false,
     };
   },
 
@@ -32,8 +33,9 @@ var Countdown = React.createClass({
 
       this.setState({ minutes, seconds });
 
-      if (--timeLeft < 0) {
+      if (--timeLeft < 0 && !this.state.fired) {
         this.props.onEnd();
+        this.setState({ fired: true });
       }
     }.bind(this), 1000);
     this.setState({ interval });

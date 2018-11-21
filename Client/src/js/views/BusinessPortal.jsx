@@ -154,12 +154,15 @@ var BusinessPortal = React.createClass({
           <Well id="associate-owner">
             <h3>Associate HETS District Owner</h3>
             <div id="overview">
-              <p>
-                The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or other piece of equipment they want to hire out to the Ministry Transportation and Infrastructure for day labour and emergency projects.
-              </p>
-              <p>
-                The Hired Equipment Program distributes available work to local equipment owners. The program is based on seniority and is designed to deliver work to registered users fairly and efficiently through the development of local area call-out lists.  Details about the Hired Equipment Program can be found <a href="https://www2.gov.bc.ca/gov/content/industry/construction-industry/transportation-infrastructure/hired-equipment-program">here</a>.
-              </p>
+              <Row>
+                <img id="hets-logo" title="Hired Equipment Tracking System" alt="Hired Equipment Tracking System" src="images/gov/hets.jpg"/>
+                <p>
+                  The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or other piece of equipment they want to hire out to the Ministry Transportation and Infrastructure for day labour and emergency projects.
+                </p>
+                <p>
+                  The Hired Equipment Program distributes available work to local equipment owners. The program is based on seniority and is designed to deliver work to registered users fairly and efficiently through the development of local area call-out lists.  Details about the Hired Equipment Program can be found <a href="https://www2.gov.bc.ca/gov/content/industry/construction-industry/transportation-infrastructure/hired-equipment-program">here</a>.
+                </p>
+              </Row>
               <p>
                 If you are NEW to the Hired Equipment Program, contact your <a href="https://www2.gov.bc.ca/gov/content/industry/construction-industry/transportation-infrastructure/hired-equipment-program/need-help">local district office</a> to register your company and equipment.
               </p>
@@ -175,6 +178,7 @@ var BusinessPortal = React.createClass({
                 <FormInputControl
                   type="text"
                   placeholder="Please enter your secret key here"
+                  className="mr-5"
                   disabled={this.state.validating}
                   defaultValue={ this.state.secretKey }
                   updateState={ this.updateState }
@@ -184,6 +188,7 @@ var BusinessPortal = React.createClass({
                 <FormInputControl
                   type="text"
                   placeholder="Postal code"
+                  className="mr-5"
                   disabled={this.state.validating}
                   defaultValue={ this.state.postalCode }
                   updateState={ this.updateState }

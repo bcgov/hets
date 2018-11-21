@@ -549,7 +549,7 @@ namespace HetsData.Helpers
                             // find this record in the new list...
                             for (int j = 0; j < rentalRequest.HetRentalRequestRotationList.Count; j++)
                             {
-                                if (previousRentalRequest.HetRentalRequestRotationList.ElementAt(blockRecordOneIndex).Equipment.EquipmentId == rentalRequest.HetRentalRequestRotationList.ElementAt(j).Equipment.EquipmentId)
+                                if (previousRentalRequest.HetRentalRequestRotationList.ElementAt(blockRecordOneIndex).Equipment.EquipmentId == rentalRequest.HetRentalRequestRotationList.ElementAt(j).EquipmentId)
                                 {
                                     nextRecordToAskIndex[b] = j;
                                     break;

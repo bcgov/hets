@@ -59,7 +59,7 @@ var RentalRequestsAddDialog = React.createClass({
   componentDidMount() {
     this.setState({ loading: true });
     var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
-    var projectsPromise = Api.searchProjects();
+    var projectsPromise = Api.getProjects();
     Promise.all([equipmentTypesPromise, projectsPromise]).then(() => {
       this.setState({ loading: false });
     });
@@ -80,7 +80,7 @@ var RentalRequestsAddDialog = React.createClass({
     if (this.state.projectId !== 0) { return true; }
     if (this.state.localAreaId !== 0) { return true; }
     if (this.state.equipmentTypeId !== 0) { return true; }
-    if (this.state.count !== 0) { return true; }
+    if (this.state.count !== 1) { return true; }
     if (this.state.expectedHours !== this.props.rentalRequest.expectedHours) { return true; }
     if (this.state.expectedStartDate !== this.props.rentalRequest.expectedStartDate) { return true; }
     if (this.state.expectedEndDate !== this.props.rentalRequest.expectedEndDate) { return true; }
@@ -118,10 +118,10 @@ var RentalRequestsAddDialog = React.createClass({
     }
 
     if (isBlank(this.state.count)) {
-      this.setState({ countError: 'Equipment count is required' });
+      this.setState({ countError: 'Equipment quantity is required' });
       valid = false;
     } else if (this.state.count < 1) {
-      this.setState({ countError: 'Equipment count not valid' });
+      this.setState({ countError: 'Equipment quantity not valid' });
       valid = false;
     }
 
@@ -195,7 +195,7 @@ var RentalRequestsAddDialog = React.createClass({
 
     var districtEquipmentTypes = this.getFilteredEquipmentTypes(this.state.localAreaId);
 
-    var projects = _.sortBy(this.props.projects.data, 'name');
+    var projects = _.sortBy(this.props.projects, 'name');
 
     const { project } = this.props;
 
@@ -239,7 +239,7 @@ var RentalRequestsAddDialog = React.createClass({
           </Col>
           <Col md={12}>
             <FormGroup controlId="count" validationState={ this.state.countError ? 'error' : null }>
-              <ControlLabel>Count <sup>*</sup></ControlLabel>
+              <ControlLabel>Quantity <sup>*</sup></ControlLabel>
               <FormInputControl type="number" min="0" value={ this.state.count } updateState={ this.updateState } />
               <HelpBlock>{ this.state.countError }</HelpBlock>
             </FormGroup>
@@ -286,7 +286,7 @@ function mapStateToProps(state) {
     currentUser: state.user,
     localAreas: state.lookups.localAreas,
     districtEquipmentTypes: state.lookups.districtEquipmentTypes.data,
-    projects: state.models.projects,
+    projects: state.lookups.projects,
   };
 }
 
