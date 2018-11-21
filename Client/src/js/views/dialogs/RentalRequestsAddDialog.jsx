@@ -80,7 +80,7 @@ var RentalRequestsAddDialog = React.createClass({
     if (this.state.projectId !== 0) { return true; }
     if (this.state.localAreaId !== 0) { return true; }
     if (this.state.equipmentTypeId !== 0) { return true; }
-    if (this.state.count !== 0) { return true; }
+    if (this.state.count !== 1) { return true; }
     if (this.state.expectedHours !== this.props.rentalRequest.expectedHours) { return true; }
     if (this.state.expectedStartDate !== this.props.rentalRequest.expectedStartDate) { return true; }
     if (this.state.expectedEndDate !== this.props.rentalRequest.expectedEndDate) { return true; }
