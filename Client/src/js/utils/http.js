@@ -6,7 +6,7 @@ import store from '../store';
 
 import * as Constant from '../constants';
 
-import { sessionTimer, setTimerInterval } from '../app.jsx';
+import { resetSessionTimeoutTimer } from '../app.jsx';
 
 const ROOT_API_PREFIX = location.pathname === '/' ? '' : location.pathname.split('/').slice(0, -1).join('/');
 
@@ -157,8 +157,9 @@ export function request(path, options) {
 }
 
 export function jsonRequest(path, options) {
-  window.clearInterval(sessionTimer);
-  setTimerInterval();
+  if (!options.keepAlive) {
+    resetSessionTimeoutTimer();
+  }
 
   var jsonHeaders = {
     'Accept': 'application/json',

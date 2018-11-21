@@ -2123,6 +2123,7 @@ CREATE TABLE public."HET_USER_FAVOURITE" (
     "VALUE" character varying(2048),    
 	"IS_DEFAULT" boolean,
 	"USER_ID" integer,
+	"DISTRICT_ID" integer,
 	"APP_CREATE_USER_DIRECTORY" character varying(50) COLLATE pg_catalog."default",
 	"APP_CREATE_USER_GUID" character varying(255) COLLATE pg_catalog."default",
     "APP_CREATE_USERID" character varying(255) COLLATE pg_catalog."default",    

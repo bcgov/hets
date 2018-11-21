@@ -68,6 +68,11 @@ export function getCurrentUser() {
   });
 }
 
+export function keepAlive() {
+   // endpoint to keep session active
+  return new ApiRequest('/users/current').get(null, { keepAlive: true });
+}
+
 export function searchUsers(params) {
   return new ApiRequest('/users/search').get(params).then(response => {
     var users = normalize(response.data);
@@ -507,8 +512,8 @@ export function addEquipmentNote(equipmentId, note) {
   });
 }
 
-export function equipmentDuplicateCheck(id, serialNumber) {
-  return new ApiRequest(`/equipment/${id}/duplicates/${serialNumber}`).get().then((response => {
+export function equipmentDuplicateCheck(id, serialNumber, typeId) {
+  return new ApiRequest(`/equipment/${id}/duplicates/${serialNumber}/${typeId}`).get().then((response => {
     return response;
   }));
 }

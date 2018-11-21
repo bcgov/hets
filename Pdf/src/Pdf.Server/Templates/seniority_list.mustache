@@ -19,7 +19,7 @@
       background-color: white;
       color: black;
       font-family: sans-serif;
-      font-size: 12px;
+      font-size: 10pt;
       white-space: normal;
     }
 
@@ -32,7 +32,7 @@
       display: inline-block;
       margin-top: 0px;
       margin-right: 0px;
-      font-size: 12px;
+      font-size: 10pt;
       line-height: 14px;
       color: #000;
       vertical-align: top;
@@ -46,7 +46,7 @@
 
     #form-title {
       margin-top: 0px;
-      font-size: 14px;
+      font-size: 12pt;
       font-weight: bold;
       line-height: 16px;
       color: #000000;
@@ -58,21 +58,34 @@
       padding-right: 10px;
     }
 
-    #rotation-list-table {
-      margin-top: 12px;
-      font-size: 12px;
-      line-height: 12px;
-      color: #000000;
-      text-align: left;
-      width: 100%;
-      margin-bottom: 30px;
-    }
+      #rotation-list-table {
+          margin-top: 10pt;
+          font-size: 10pt;
+          line-height: 12px;
+          color: #000000;
+          text-align: left;
+          width: 100%;
+          margin-bottom: 30px;
+          border-collapse: collapse;
+          width: 100%;
+      }
 
-    #rotation-list-table th {
-      font-weight: bold;
-      background-color: #f2f2f2;
-    }
+      #rotation-list-table th {
+          font-weight: bold;
+          background-color: #f2f2f2;
+          padding: 5px 2px 5px 2px;
+          border: solid;
+          border-width: 1px;
+          border-color: #000000;
+      }
 
+      #rotation-list-table td {
+          vertical-align: top;
+          padding: 5px 2px 5px 2px;
+          border-style: solid;
+          border-width: 1px;
+          border-color: #000000;
+      }
   </style>
 </head>
 <body>
@@ -106,15 +119,15 @@
             </table>
         </div>
 
-        <table id="rotation-list-table" border="1" cellpadding="1" cellspacing="1">
+        <table id="rotation-list-table">
             <thead>
                 <tr>
-                    <th>Block</th>
-                    <th>Working Now</th>
-                    <th>Last Called</th>
-                    <th>Equip ID</th>
-                    <th>Company Name</th>
-                    <th>Yr/Mk/Md/Sz</th>
+                    <th width="50px">Block</th>
+                    <th width="90px">Equip ID</th>
+                    <th width="70px">Working Now</th>
+                    <th width="70px">Last Called</th>                    
+                    <th width="200px">Company Name</th>
+                    <th width="260px">Yr/Mk/Md/Sz</th>
                     <th>{{yearMinus3}}</th>
                     <th>{{yearMinus2}}</th>
                     <th>{{yearMinus1}}</th>
@@ -127,9 +140,9 @@
                 {{#seniorityList}}
                 <tr>
                     <td>{{block}}</td>
-                    <td>{{isHired}}</td>
-                    <td>{{lastCalled}}</td>
                     <td>{{equipmentCode}}</td>
+                    <td>{{isHired}}</td>
+                    <td>{{lastCalled}}</td>                    
                     <td>{{ownerName}}</td>
                     <td>{{yearMakeModelSize}}</td>
                     <td>{{hoursYearMinus3}}</td>

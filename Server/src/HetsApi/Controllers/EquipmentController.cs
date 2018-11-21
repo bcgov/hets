@@ -114,7 +114,10 @@ namespace HetsApi.Controllers
             equipment.ServiceHoursLastYear = item.ServiceHoursLastYear;
             equipment.ServiceHoursTwoYearsAgo = item.ServiceHoursTwoYearsAgo;
             equipment.ServiceHoursThreeYearsAgo = item.ServiceHoursThreeYearsAgo;
-            equipment.SeniorityEffectiveDate = item.SeniorityEffectiveDate;
+            equipment.SeniorityEffectiveDate = item.SeniorityEffectiveDate;            
+            equipment.LicencedGvw = item.LicencedGvw;
+            equipment.LegalCapacity = item.LegalCapacity;
+            equipment.PupLegalCapacity = item.PupLegalCapacity;
 
             // save the changes
             _context.SaveChanges();
@@ -317,6 +320,14 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             int id = item.EquipmentId;
+
+            // HETS-834 - BVT - New Equipment Added default to APPROVED
+            // * (already Set to approved)
+            // * Update all equipment blocks, etc.
+            // recalculation seniority (if required)
+            int? localAreaId = item.LocalAreaId;
+            int? districtEquipmentTypeId = item.DistrictEquipmentTypeId;
+            EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration);            
 
             // retrieve updated equipment record to return to ui   
             return new ObjectResult(new HetsResponse(EquipmentHelper.GetRecord(id, _context, _configuration)));
@@ -561,10 +572,13 @@ namespace HetsApi.Controllers
             {
                 HetRentalAgreementRate temp = new HetRentalAgreementRate
                 {
+                    RentalAgreementId = id,
                     Comment = rate.Comment,
                     ComponentName = rate.ComponentName,
                     Rate = rate.Rate,
-                    IsIncludedInTotal = rate.IsIncludedInTotal,
+                    Overtime = rate.Overtime,
+                    Active = rate.Active,
+                    IsIncludedInTotal = rate.IsIncludedInTotal
                 };
 
                 if (agreements[newRentalAgreementIndex].HetRentalAgreementRate == null)
@@ -573,6 +587,69 @@ namespace HetsApi.Controllers
                 }
 
                 agreements[newRentalAgreementIndex].HetRentalAgreementRate.Add(temp);
+            }
+
+            // update overtime rates (and add if they don't exist)   
+            List<HetProvincialRateType> overtime = _context.HetProvincialRateType.AsNoTracking()
+                .Where(x => x.Overtime)
+                .ToList();
+
+            foreach (HetProvincialRateType overtimeRate in overtime)
+            {
+                bool found = false;
+
+                if (agreements[newRentalAgreementIndex] != null &&
+                    agreements[newRentalAgreementIndex].HetRentalAgreementRate != null)
+                {
+                    found = agreements[newRentalAgreementIndex].HetRentalAgreementRate.Any(x => x.ComponentName == overtimeRate.RateType);
+                }
+
+                if (found)
+                {
+                    HetRentalAgreementRate rate = agreements[newRentalAgreementIndex].HetRentalAgreementRate
+                        .First(x => x.ComponentName == overtimeRate.RateType);
+
+                    rate.Rate = overtimeRate.Rate;
+                }
+                else
+                {
+                    HetRentalAgreementRate newRate = new HetRentalAgreementRate
+                    {
+                        RentalAgreementId = id,
+                        Comment = overtimeRate.Description,
+                        Rate = overtimeRate.Rate,
+                        ComponentName = overtimeRate.RateType,
+                        Active = overtimeRate.Active,
+                        IsIncludedInTotal = overtimeRate.IsIncludedInTotal,
+                        Overtime = overtimeRate.Overtime
+                    };
+
+                    if (agreements[newRentalAgreementIndex].HetRentalAgreementRate == null)
+                    {
+                        agreements[newRentalAgreementIndex].HetRentalAgreementRate = new List<HetRentalAgreementRate>();
+                    }
+
+                    agreements[newRentalAgreementIndex].HetRentalAgreementRate.Add(newRate);
+                }
+            }
+
+            // remove non-existent overtime rates
+            List<string> remove =
+                (from overtimeRate in agreements[newRentalAgreementIndex].HetRentalAgreementRate
+                 where overtimeRate.Overtime
+                 let found = overtime.Any(x => x.RateType == overtimeRate.ComponentName)
+                 where !found
+                 select overtimeRate.ComponentName).ToList();
+
+            if (remove.Count > 0 &&
+                agreements[newRentalAgreementIndex] != null &&
+                agreements[newRentalAgreementIndex].HetRentalAgreementRate != null)            
+            {
+                foreach (string component in remove)
+                {
+                    agreements[newRentalAgreementIndex].HetRentalAgreementRate.Remove(
+                        agreements[newRentalAgreementIndex].HetRentalAgreementRate.First(x => x.ComponentName == component));
+                }
             }
 
             // update conditions
@@ -627,28 +704,63 @@ namespace HetsApi.Controllers
         /// <summary>
         /// Get all duplicate equipment records
         /// </summary>
-        /// <param name="id">id of Equipment to fetch Equipment Attachments for</param>
+        /// <param name="id">id of Equipment to fetch duplicates for</param>
         /// <param name="serialNumber"></param>
+        /// <param name="typeId">District Equipment Type Id</param>
         [HttpGet]
-        [Route("{id}/duplicates/{serialNumber}")]
+        [Route("{id}/duplicates/{serialNumber}/{typeId}")]
         [SwaggerOperation("EquipmentIdEquipmentDuplicatesGet")]
         [SwaggerResponse(200, type: typeof(List<DuplicateEquipmentModel>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentIdEquipmentDuplicatesGet([FromRoute]int id, [FromRoute]string serialNumber)
+        public virtual IActionResult EquipmentIdEquipmentDuplicatesGet([FromRoute]int id, [FromRoute]string serialNumber, [FromRoute]int? typeId)
         {
             bool exists = _context.HetEquipment.Any(x => x.EquipmentId == id);
 
             // not found [id > 0 -> need to allow for new records too]
             if (!exists && id > 0) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
+            // HETS-845 - Verify Duplicate serial # functionality
+            // Validate among the following:
+            // * Same equipment types
+            // * Among approved equipment
+
+            // get status id
+            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
             // get equipment duplicates
-            List<HetEquipment> equipmentDuplicates = _context.HetEquipment.AsNoTracking()
-                .Include(x => x.LocalArea.ServiceArea.District)
-                .Include(x => x.Owner)
-                .Where(x => x.SerialNumber == serialNumber &&
-                            x.EquipmentId != id &&
-                            x.ArchiveCode == "N")
-                .ToList();
+            List<HetEquipment> equipmentDuplicates;
+
+            if (typeId != null && typeId > 0)
+            {
+                HetDistrictEquipmentType equipmentType = _context.HetDistrictEquipmentType.AsNoTracking()
+                    .Include(x => x.EquipmentType)
+                    .FirstOrDefault(x => x.DistrictEquipmentTypeId == typeId);
+
+                int? equipmentTypeId = equipmentType?.EquipmentTypeId;
+
+                // get equipment duplicates
+                equipmentDuplicates = _context.HetEquipment.AsNoTracking()
+                    .Include(x => x.LocalArea.ServiceArea.District)
+                    .Include(x => x.Owner)
+                    .Include(x => x.DistrictEquipmentType)
+                    .Where(x => x.SerialNumber == serialNumber &&
+                                x.EquipmentId != id &&
+                                x.DistrictEquipmentType.EquipmentTypeId == equipmentTypeId &&
+                                x.EquipmentStatusTypeId == statusId)
+                    .ToList();
+            }
+            else
+            {
+                equipmentDuplicates = _context.HetEquipment.AsNoTracking()
+                    .Include(x => x.LocalArea.ServiceArea.District)
+                    .Include(x => x.Owner)
+                    .Include(x => x.DistrictEquipmentType)
+                    .Where(x => x.SerialNumber == serialNumber &&
+                                x.EquipmentId != id &&
+                                x.EquipmentStatusTypeId == statusId)
+                    .ToList();
+            }                        
 
             List<DuplicateEquipmentModel> duplicates = new List<DuplicateEquipmentModel>();
             int idCount = -1;
@@ -948,7 +1060,10 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetRentalAgreement)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
                             x.EquipmentStatusTypeId.Equals(statusId))
-                .OrderBy(x => x.LocalArea).ThenBy(x => x.DistrictEquipmentType);
+                .OrderBy(x => x.LocalArea)
+                    .ThenBy(x => x.DistrictEquipmentType)
+                    .ThenBy(x => x.BlockNumber)
+                    .ThenByDescending(x => x.NumberInBlock);
 
             if (localAreasArray != null && localAreasArray.Length > 0)
             {
@@ -991,37 +1106,16 @@ namespace HetsApi.Controllers
             SeniorityListPdfViewModel seniorityList = new SeniorityListPdfViewModel();
             SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
             SeniorityListRecord listRecord = new SeniorityListRecord();
-            
-            foreach (HetEquipment item in data)
-            {
-                // get last called data
-                HetRentalRequestRotationList rotation = null;
 
+            // manage the rotation list data
+            HetRentalRequestRotationList rotation = null;
+            int currentBlock = -1;
+
+            foreach (HetEquipment item in data)
+            {                                                
                 if (listRecord.LocalAreaName != item.LocalArea.Name ||
                     listRecord.DistrictEquipmentTypeName != item.DistrictEquipmentType.DistrictEquipmentName)
-                {
-                    // HETS-824 = BVT - Corrections to Seniority List PDF
-                    //   * This column should contain "Y" against the equipment that
-                    //     last responded (whether Yes/No) in a block
-                    //   * For "Forced Hire" there will be no changes to this
-                    //     column in the seniority list (as if nothing happened and nobody got called)
-                    //   * Must be this fiscal year
-                    rotation = _context.HetRentalRequestRotationList.AsNoTracking()
-                        .Include(x => x.Equipment)
-                        .Include(x => x.RentalRequest)
-                            .ThenInclude(x => x.LocalArea)
-                        .Include(x => x.RentalRequest)
-                            .ThenInclude(x => x.DistrictEquipmentType)
-                        .OrderByDescending(x => x.RotationListSortOrder)
-                        .FirstOrDefault(x => x.RentalRequest.LocalArea.LocalAreaId == item.LocalArea.LocalAreaId &&
-                                             x.RentalRequest.DistrictEquipmentType.DistrictEquipmentTypeId == item.DistrictEquipmentType.DistrictEquipmentTypeId &&
-                                             x.IsForceHire == false &&
-                                             x.WasAsked == true &&
-                                             x.Equipment.BlockNumber == item.BlockNumber &&
-                                             (x.OfferResponse == "Yes" || x.OfferResponse == "No") &&
-                                             x.AskedDateTime >= fiscalEnd.AddYears(-1).AddDays(1) &&
-                                             x.AskedDateTime <= fiscalEnd);
-
+                {                    
                     if (!string.IsNullOrEmpty(listRecord.LocalAreaName))
                     {
                         if (seniorityList.SeniorityListRecords == null)
@@ -1046,6 +1140,22 @@ namespace HetsApi.Controllers
                     {
                         listRecord.DistrictName = item.LocalArea.ServiceArea.District.Name;
                     }
+                    
+                    // get the rotation info for the first block
+                    currentBlock = (int)item.BlockNumber;
+
+                    rotation = GetRotationList(_context, item.LocalArea.LocalAreaId,
+                        item.DistrictEquipmentType.DistrictEquipmentTypeId,
+                        currentBlock, fiscalEnd);                                                           
+                }
+                else if (item.BlockNumber != null && currentBlock != item.BlockNumber)
+                {
+                    // get the rotation info for the next block
+                    currentBlock = (int)item.BlockNumber;
+
+                    rotation = GetRotationList(_context, item.LocalArea.LocalAreaId,
+                        item.DistrictEquipmentType.DistrictEquipmentTypeId,
+                        currentBlock, fiscalEnd);                    
                 }
 
                 listRecord.SeniorityList.Add(SeniorityListHelper.ToSeniorityViewModel(item, scoringRules, rotation, _context));
@@ -1143,6 +1253,42 @@ namespace HetsApi.Controllers
             {
                 Debug.Write("Error generating pdf: " + ex.Message);
                 return new ObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
+            }
+        }
+
+        private static HetRentalRequestRotationList GetRotationList(DbAppContext context,
+            int localAreaId, int districtEquipmentTypeId, int currentBlock, DateTime fiscalEnd)
+        {
+            try
+            {
+                // HETS-824 = BVT - Corrections to Seniority List PDF
+                //   * This column should contain "Y" against the equipment that
+                //     last responded (whether Yes/No) in a block
+                //   * For "Forced Hire" there will be no changes to this
+                //     column in the seniority list (as if nothing happened and nobody got called)
+                //   * Must be this fiscal year
+                HetRentalRequestRotationList blockRotation = context.HetRentalRequestRotationList.AsNoTracking()
+                    .Include(x => x.Equipment)
+                    .Include(x => x.RentalRequest)
+                    .ThenInclude(x => x.LocalArea)
+                    .Include(x => x.RentalRequest)
+                    .ThenInclude(x => x.DistrictEquipmentType)
+                    .OrderByDescending(x => x.RentalRequestId).ThenByDescending(x => x.RotationListSortOrder)
+                    .FirstOrDefault(x => x.RentalRequest.LocalArea.LocalAreaId == localAreaId &&
+                                         x.RentalRequest.DistrictEquipmentType.DistrictEquipmentTypeId == districtEquipmentTypeId &&
+                                         x.IsForceHire == false &&
+                                         x.WasAsked == true &&
+                                         x.Equipment.BlockNumber == currentBlock &&
+                                         (x.OfferResponse == "Yes" || x.OfferResponse == "No") &&
+                                         x.AskedDateTime >= fiscalEnd.AddYears(-1).AddDays(1) &&
+                                         x.AskedDateTime <= fiscalEnd);
+
+                return blockRotation;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
 
