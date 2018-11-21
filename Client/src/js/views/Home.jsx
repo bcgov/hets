@@ -120,7 +120,7 @@ var Home = React.createClass({
       //Create a link element, hide it, direct 
       //it towards the blob, and then 'click' it programatically
       let a = document.createElement('a');
-      a.style = 'display: none';
+      a.style.cssText = 'display: none';
       document.body.appendChild(a);
       //Create a DOMString representing the blob 
       //and point the link element towards it
