@@ -14,6 +14,8 @@ while true; do
 		echo "Cannot create backup directory in $FINAL_BACKUP_DIR." 1>&2
 		exit 1;
 	fi;	
+	
+	export PGPASSWORD=$POSTGRESQL_PASSWORD
 
 	if ! pg_dump --host="$DATABASE_SERVICE_NAME" --port="5432" --username="postgres" --dbname="$POSTGRESQL_DATABASE" --blobs --format="c" --compress="9" --file="$DBFILE.bak"; then
 		echo "[!!ERROR!!] Failed to backup database $POSTGRESQL_DATABASE" 
