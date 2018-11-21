@@ -261,7 +261,7 @@ var RentalRequestsDetail = React.createClass({
               <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment Type">{ rentalRequest.equipmentTypeName }</ColDisplay>
             </Col>
             <Col lg={6} md={6} sm={6} xs={12}>
-              <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Count">{ rentalRequest.equipmentCount }</ColDisplay>
+              <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Quantity">{ rentalRequest.equipmentCount }</ColDisplay>
             </Col>
             <Col lg={6} md={6} sm={6} xs={12}>
               <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Attachment(s)">{ requestAttachments }</ColDisplay>

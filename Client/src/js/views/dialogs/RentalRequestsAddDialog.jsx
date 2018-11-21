@@ -118,10 +118,10 @@ var RentalRequestsAddDialog = React.createClass({
     }
 
     if (isBlank(this.state.count)) {
-      this.setState({ countError: 'Equipment count is required' });
+      this.setState({ countError: 'Equipment quantity is required' });
       valid = false;
     } else if (this.state.count < 1) {
-      this.setState({ countError: 'Equipment count not valid' });
+      this.setState({ countError: 'Equipment quantity not valid' });
       valid = false;
     }
 
@@ -239,7 +239,7 @@ var RentalRequestsAddDialog = React.createClass({
           </Col>
           <Col md={12}>
             <FormGroup controlId="count" validationState={ this.state.countError ? 'error' : null }>
-              <ControlLabel>Count <sup>*</sup></ControlLabel>
+              <ControlLabel>Quantity <sup>*</sup></ControlLabel>
               <FormInputControl type="number" min="0" value={ this.state.count } updateState={ this.updateState } />
               <HelpBlock>{ this.state.countError }</HelpBlock>
             </FormGroup>
