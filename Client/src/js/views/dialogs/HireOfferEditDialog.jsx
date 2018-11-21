@@ -107,7 +107,7 @@ var HireOfferEditDialog = React.createClass({
   },
 
   didChange() {
-    if (this.state.isForceHire !== this.props.hireOffer.equipmentCount) { return true; }
+    if (this.state.isForceHire !== this.props.hireOffer.isForceHire) { return true; }
     if (this.state.wasAsked !== this.props.hireOffer.wasAsked) { return true; }
     if (this.state.askedDateTime !== this.props.hireOffer.askedDateTime) { return true; }
     if (this.state.offerResponse !== this.props.hireOffer.offerResponse) { return true; }
