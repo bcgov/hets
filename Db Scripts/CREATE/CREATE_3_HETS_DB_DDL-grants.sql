@@ -772,7 +772,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.counter TO het_application_pro
 -- Name: SEQUENCE counter_id_seq; Type: ACL; Schema: public; Owner: -
 --
 
-GRANT USAGE ON SEQUENCE public.counter_id_seq TO het_application_proxy;
+GRANT ALL ON SEQUENCE public.counter_id_seq TO het_application_proxy;
 
 
 --
@@ -786,7 +786,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.hash TO het_application_proxy;
 -- Name: SEQUENCE hash_id_seq; Type: ACL; Schema: public; Owner: -
 --
 
-GRANT USAGE ON SEQUENCE public.hash_id_seq TO het_application_proxy;
+GRANT ALL ON SEQUENCE public.hash_id_seq TO het_application_proxy;
 
 
 --
@@ -800,7 +800,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.job TO het_application_proxy;
 -- Name: SEQUENCE job_id_seq; Type: ACL; Schema: public; Owner: -
 --
 
-GRANT USAGE ON SEQUENCE public.job_id_seq TO het_application_proxy;
+GRANT ALL ON SEQUENCE public.job_id_seq TO het_application_proxy;
 
 
 --
@@ -814,7 +814,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.jobparameter TO het_applicatio
 -- Name: SEQUENCE jobparameter_id_seq; Type: ACL; Schema: public; Owner: -
 --
 
-GRANT USAGE ON SEQUENCE public.jobparameter_id_seq TO het_application_proxy;
+GRANT ALL ON SEQUENCE public.jobparameter_id_seq TO het_application_proxy;
 
 
 --
@@ -828,7 +828,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.jobqueue TO het_application_pr
 -- Name: SEQUENCE jobqueue_id_seq; Type: ACL; Schema: public; Owner: -
 --
 
-GRANT USAGE ON SEQUENCE public.jobqueue_id_seq TO het_application_proxy;
+GRANT ALL ON SEQUENCE public.jobqueue_id_seq TO het_application_proxy;
 
 
 --
@@ -842,7 +842,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.list TO het_application_proxy;
 -- Name: SEQUENCE list_id_seq; Type: ACL; Schema: public; Owner: -
 --
 
-GRANT USAGE ON SEQUENCE public.list_id_seq TO het_application_proxy;
+GRANT ALL ON SEQUENCE public.list_id_seq TO het_application_proxy;
 
 
 --
@@ -877,7 +877,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.set TO het_application_proxy;
 -- Name: SEQUENCE set_id_seq; Type: ACL; Schema: public; Owner: -
 --
 
-GRANT USAGE ON SEQUENCE public.set_id_seq TO het_application_proxy;
+GRANT ALL ON SEQUENCE public.set_id_seq TO het_application_proxy;
 
 
 --
@@ -891,7 +891,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.state TO het_application_proxy
 -- Name: SEQUENCE state_id_seq; Type: ACL; Schema: public; Owner: -
 --
 
-GRANT USAGE ON SEQUENCE public.state_id_seq TO het_application_proxy;
+GRANT ALL ON SEQUENCE public.state_id_seq TO het_application_proxy;
 
 
 --
