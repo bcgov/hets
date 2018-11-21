@@ -205,7 +205,30 @@ namespace HetsApi.Controllers
                 .ToList();
 
             // in Progress Rental Request already exists
-            if (requests.Count > 0) return new ObjectResult(new HetsResponse("HETS-28", ErrorViewModel.GetDescription("HETS-28", _configuration)));
+            if (requests.Count > 0)
+            {
+                int quantity = requests[0].EquipmentCount;
+                int hiredCount = 0;
+
+                foreach (HetRentalRequestRotationList equipment in requests[0].HetRentalRequestRotationList)
+                {
+                    if (equipment.OfferResponse != null &&
+                        equipment.OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        hiredCount++;
+                    }
+
+                    if (equipment.IsForceHire != null &&
+                        equipment.IsForceHire == true)
+                    {
+                        hiredCount++;
+                    }
+                }
+
+                // ...Currently {0} of {1} requested equipment have been hired....
+                string message = string.Format(ErrorViewModel.GetDescription("HETS-28", _configuration), hiredCount, quantity);
+                return new ObjectResult(new HetsResponse("HETS-28", message));
+            }
 
             int? statusId = StatusHelper.GetStatusId(item.Status, "rentalRequestStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
