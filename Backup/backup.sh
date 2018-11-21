@@ -17,7 +17,7 @@ while true; do
 	
 	export PGPASSWORD=$POSTGRESQL_PASSWORD
 
-	if ! pg_dump --host="$DATABASE_SERVICE_NAME" --port="5432" --username="postgres" --dbname="$POSTGRESQL_DATABASE" --blobs --format="c" --compress="9" --file="$DBFILE.bak"; then
+	if ! pg_dump --host="$DATABASE_SERVICE_NAME" --port="5432" --username="$POSTGRESQL_USER" --dbname="$POSTGRESQL_DATABASE" --blobs --format="c" --compress="9" --file="$DBFILE.bak"; then
 		echo "[!!ERROR!!] Failed to backup database $POSTGRESQL_DATABASE" 
 	else
 		echo "Database backup written to $DBFILE.bak"
