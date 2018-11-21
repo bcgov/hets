@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Pdf.Server.Helpers
 {
-    public class RenderRequest
+    public class HtmlRequest
     {
         public string JsonString { get; set; }
         public string Template { get; set; }
@@ -18,7 +18,7 @@ namespace Pdf.Server.Helpers
     {
         // Read Template
         // Pass data + template to mustache and generate output        
-        public static async Task<string> RenderDocument(INodeServices nodeServices, RenderRequest request)
+        public static async Task<string> RenderDocument(INodeServices nodeServices, HtmlRequest request)
         {
             try
             {

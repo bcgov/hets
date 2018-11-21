@@ -13,26 +13,23 @@ while true; do
 	if ! mkdir -p $FINAL_BACKUP_DIR; then
 		echo "Cannot create backup directory in $FINAL_BACKUP_DIR." 1>&2
 		exit 1;
-	fi;
-
+	fi;	
+	
 	export PGPASSWORD=$POSTGRESQL_PASSWORD
 
-
-
-	if ! pg_dump -Fp -h "$DATABASE_SERVICE_NAME" -U "$POSTGRESQL_USER" "$POSTGRESQL_DATABASE" | gzip > $DBFILE.sql.gz.in_progress; then
+	if ! pg_dump --host="$DATABASE_SERVICE_NAME" --port="5432" --username="$POSTGRESQL_USER" --dbname="$POSTGRESQL_DATABASE" --blobs --format="c" --compress="9" --file="$DBFILE.bak"; then
 		echo "[!!ERROR!!] Failed to backup database $POSTGRESQL_DATABASE" 
 	else
-		mv $DBFILE.sql.gz.in_progress $DBFILE.sql.gz
-		echo "Database backup written to $DBFILE.sql.gz"
+		echo "Database backup written to $DBFILE.bak"
 		
 		# cull backups to a limit of NUM_BACKUPS
-		find ${BACKUP_DIR}* | grep gz | sort -r | sed "1,${NUM_BACKUPS}d" | xargs rm -rf
+		find ${BACKUP_DIR}* | grep bak | sort -r | sed "1,${NUM_BACKUPS}d" | xargs rm -rf
 		
 		# cull backup folders to a limit of NUM_BACKUPS
-		find /backups | grep 20 | grep -v gz | grep -v trash | sort -r | sed "1,${NUM_BACKUPS}d" | xargs rm -rf
+		find /backups | grep 20 | grep -v bak | grep -v trash | sort -r | sed "1,${NUM_BACKUPS}d" | xargs rm -rf
 	fi;
 	echo "Current Backups:"
-	ls -alh ${BACKUP_DIR}/*/*sql.gz*
+	ls -alh ${BACKUP_DIR}/*/*.bak*
 	echo "===================="
 
 	# 24 hrs

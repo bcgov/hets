@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Pdf.Server
 {
@@ -44,7 +45,10 @@ namespace Pdf.Server
             services.AddSingleton(provider => Configuration);
 
             // enable Node Services
-            services.AddNodeServices();
+            services.AddNodeServices(options =>
+            {
+                options.InvocationTimeoutMilliseconds = 90000;
+            });
 
             services.AddMvc().
                 AddJsonOptions(
@@ -56,8 +60,9 @@ namespace Pdf.Server
                         
                         // ReferenceLoopHandling is set to Ignore to prevent JSON parser issues with the user / roles model.
                         opts.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                    });            
+                    });
 
+            
             // Configure Swagger - only required in the Development Environment
             if (_hostingEnv.IsDevelopment())
             {                
@@ -98,6 +103,7 @@ namespace Pdf.Server
             {
                 string swaggerApi = Configuration.GetSection("Constants:SwaggerApiUrl").Value;
                 app.UseSwagger();
+
                 app.UseSwaggerUI(options =>
                 {
                     options.SwaggerEndpoint(swaggerApi, "PDF REST API v1");
