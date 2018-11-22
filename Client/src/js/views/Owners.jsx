@@ -156,11 +156,11 @@ var Owners = React.createClass({
       return owner.id;
     });
     Api.verifyOwners(owners).then((response) => {
-      var blob;
+      var blob = new Blob([response], {type: 'image/pdf'});
       if (window.navigator.msSaveBlob) {
-        blob = window.navigator.msSaveBlob(response, 'owner_status_letters.pdf');
-      } else {
-        blob = new Blob([response], {type: 'image/pdf'}); 
+        // ie11
+        window.navigator.msSaveBlob(blob, 'owner_status_letters.pdf');
+        return;
       }
       //Create a link element, hide it, direct 
       //it towards the blob, and then 'click' it programatically
