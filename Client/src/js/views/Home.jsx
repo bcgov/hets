@@ -115,12 +115,14 @@ var Home = React.createClass({
     Api.equipmentSeniorityListPdf(this.state.selectedLocalAreasIds, this.state.selectedEquipmentTypesIds).then(response => {
       var blob = new Blob([response], {type: 'image/pdf'});
       if (window.navigator.msSaveBlob) {
-        blob = window.navigator.msSaveBlob([response], 'seniority_list.pdf');
+        // ie11
+        window.navigator.msSaveBlob(blob, 'seniority_list.pdf');
+        return;
       }
       //Create a link element, hide it, direct 
       //it towards the blob, and then 'click' it programatically
       let a = document.createElement('a');
-      a.style = 'display: none';
+      a.style.cssText = 'display: none';
       document.body.appendChild(a);
       //Create a DOMString representing the blob 
       //and point the link element towards it
