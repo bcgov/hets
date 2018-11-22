@@ -4,7 +4,6 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Xml.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Hangfire.Console;
