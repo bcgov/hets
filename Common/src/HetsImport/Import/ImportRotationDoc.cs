@@ -211,7 +211,7 @@ namespace HetsImport.Import
                 {
                     tempResponse = "Force Hire";
                 }
-                else if (noteType.ToUpper() != "NOHIRE")
+                else if (noteType.ToUpper() == "NOHIRE")
                 {
                     tempResponse = "No Hire";
                 }
@@ -253,6 +253,11 @@ namespace HetsImport.Import
                             tempResponse = "Other";
                             break;
                     }
+                }
+
+                if (string.IsNullOrEmpty(tempResponse))
+                {
+                    tempResponse = noteType;
                 }
 
                 rotationDoc.OfferRefusalReason = tempResponse;

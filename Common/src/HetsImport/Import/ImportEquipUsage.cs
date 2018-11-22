@@ -150,7 +150,7 @@ namespace HetsImport.Import
                 {
                     // see if we have this one already
                     string oldProjectKey = item.Project_Id.ToString();
-                    string oldEquipKey = item.Project_Id.ToString();
+                    string oldEquipKey = item.Equip_Id.ToString();
                     string oldCreatedDate = item.Created_Dt;
 
                     string oldKey = string.Format("{0}-{1}-{2}", oldProjectKey, oldEquipKey, oldCreatedDate);
@@ -168,30 +168,19 @@ namespace HetsImport.Import
                         if (instance != null)
                         {
                             ImportUtility.AddImportMap(dbContext, OldTable, oldKey, NewTable, instance.TimeRecordId);
-                            dbContext.SaveChangesForImport();
                         }
-                    }
 
-                    // periodically save change to the status
-                    if (ii++ % 2000 == 0)
-                    {
-                        try
-                        {
-                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId, NewTable);
-                            dbContext.SaveChangesForImport();
-                        }                    
-                        catch (Exception e)
-                        {
-                            performContext.WriteLine("Error saving data " + e.Message);
-                        }
-                    }
+                        ii++;
+                        ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId, NewTable);
+                        dbContext.SaveChanges();
+                    }                                        
                 }
 
                 try
                 {
                     performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
                     ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId, NewTable);
-                    dbContext.SaveChangesForImport();
+                    dbContext.SaveChanges();
                 }
                 catch (Exception e)
                 {
@@ -246,8 +235,8 @@ namespace HetsImport.Import
                     fiscalStart = new DateTime(DateTime.UtcNow.Year, 4, 1);
                 }
 
-                // we'll load data for the last 3 years
-                fiscalStart = fiscalStart.AddYears(-2);
+                // we'll load data for the last 2 years
+                fiscalStart = fiscalStart.AddYears(-1);
 
                 string tempRecordDate = oldObject.Worked_Dt;
 
@@ -343,11 +332,11 @@ namespace HetsImport.Import
 
                     // save now so we can access it for other time records
                     dbContext.HetProject.Add(project);
-                    dbContext.SaveChangesForImport();
+                    dbContext.SaveChanges();
 
                     // add mapping record
                     ImportUtility.AddImportMapForProgress(dbContext, ImportProject.OldTable, tempProjectId, project.ProjectId, ImportProject.NewTable);
-                    dbContext.SaveChangesForImport();
+                    dbContext.SaveChanges();
                 }
 
                 // ***********************************************
@@ -393,7 +382,7 @@ namespace HetsImport.Import
 
                     // save now so we can access it for other time records
                     dbContext.HetRentalAgreement.Add(agreement);
-                    dbContext.SaveChangesForImport();
+                    dbContext.SaveChanges();
                 }
 
                 // ***********************************************

@@ -635,6 +635,18 @@ namespace HetsImport.Import
                 equipment.ServiceHoursThreeYearsAgo = tempServiceHoursThreeYearsAgo ?? 0.0F;
 
                 // ***********************************************
+                // using the "to date" field to store the
+                // equipment "Last_Dt" (hopefully the last time
+                // this equipment was hired)
+                // ***********************************************                
+                DateTime? tempLastDate = ImportUtility.CleanDateTime(oldObject.Last_Dt);
+
+                if (tempLastDate != null)
+                {
+                    equipment.ToDate = (DateTime)tempLastDate;
+                }
+
+                // ***********************************************
                 // set last verified date (default to March 31, 2018)
                 // ***********************************************                
                 equipment.LastVerifiedDate = DateTime.Parse("2018-03-31 0:00:01");                        
