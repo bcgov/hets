@@ -247,7 +247,7 @@ namespace HetsImport.Import
 
                 if (!string.IsNullOrEmpty(tempRecordDate))
                 {
-                    DateTime? recordDate = ImportUtility.CleanDateTime(tempRecordDate);
+                    DateTime? recordDate = ImportUtility.CleanDate(tempRecordDate);
 
                     if (recordDate == null || recordDate < fiscalStart)
                     {
@@ -342,7 +342,7 @@ namespace HetsImport.Import
                 // ***********************************************
                 // find or create the rental agreement
                 // ***********************************************
-                DateTime? enteredDate = ImportUtility.CleanDateTime(oldObject.Entered_Dt); // use for the agreement
+                DateTime? enteredDate = ImportUtility.CleanDate(oldObject.Entered_Dt); // use for the agreement
 
                 HetRentalAgreement agreement = dbContext.HetRentalAgreement.AsNoTracking()
                     .FirstOrDefault(x => x.EquipmentId == equipment.EquipmentId &&
@@ -361,7 +361,7 @@ namespace HetsImport.Import
                     int? agrRateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodDaily, dbContext);
                     if (agrRateTypeId == null) throw new DataException("Rate Period Id cannot be null");
 
-                    int? year = (ImportUtility.CleanDateTime(oldObject.Worked_Dt))?.Year;
+                    int? year = (ImportUtility.CleanDate(oldObject.Worked_Dt))?.Year;
 
                     // create a new agreement record
                     agreement = new HetRentalAgreement
@@ -401,7 +401,7 @@ namespace HetsImport.Import
                 // ***********************************************
                 // set time record attributes
                 // ***********************************************
-                DateTime? workedDate = ImportUtility.CleanDateTime(oldObject.Worked_Dt);
+                DateTime? workedDate = ImportUtility.CleanDate(oldObject.Worked_Dt);
 
                 if (workedDate != null)
                 {

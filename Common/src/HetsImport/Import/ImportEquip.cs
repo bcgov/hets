@@ -407,9 +407,9 @@ namespace HetsImport.Import
                     equipment.LicencePlate = tempLicense;
                 }
 
-                equipment.ApprovedDate = ImportUtility.CleanDateTime(oldObject.Approved_Dt);
+                equipment.ApprovedDate = ImportUtility.CleanDate(oldObject.Approved_Dt);
 
-                DateTime? tempReceivedDate = ImportUtility.CleanDateTime(oldObject.Received_Dt);
+                DateTime? tempReceivedDate = ImportUtility.CleanDate(oldObject.Received_Dt);
 
                 if (tempReceivedDate != null)
                 {
@@ -423,7 +423,21 @@ namespace HetsImport.Import
                         throw new DataException(string.Format("Received Date cannot be null (EquipmentIndex: {0}", maxEquipmentIndex));
                     }                    
                 }
-                
+
+                // get the created date and use the timestamp to fix the 
+                DateTime? tempCreatedDate = ImportUtility.CleanDateTime(oldObject.Created_Dt);
+
+                if (tempCreatedDate != null)
+                {
+                    int hours = Convert.ToInt32(tempCreatedDate?.ToString("HH"));
+                    int minutes = Convert.ToInt32(tempCreatedDate?.ToString("mm"));
+                    int secs = Convert.ToInt32(tempCreatedDate?.ToString("ss"));
+
+                    equipment.ReceivedDate = equipment.ReceivedDate.AddHours(hours);
+                    equipment.ReceivedDate = equipment.ReceivedDate.AddMinutes(minutes);
+                    equipment.ReceivedDate = equipment.ReceivedDate.AddSeconds(secs);                    
+                }
+
                 // pay rate
                 float? tempPayRate = ImportUtility.GetFloatValue(oldObject.Pay_Rate);
 
@@ -639,7 +653,7 @@ namespace HetsImport.Import
                 // equipment "Last_Dt" (hopefully the last time
                 // this equipment was hired)
                 // ***********************************************                
-                DateTime? tempLastDate = ImportUtility.CleanDateTime(oldObject.Last_Dt);
+                DateTime? tempLastDate = ImportUtility.CleanDate(oldObject.Last_Dt);
 
                 if (tempLastDate != null)
                 {

@@ -2436,6 +2436,10 @@ namespace HetsData.Model
 
                 entity.Property(e => e.BusinessId).HasColumnName("BUSINESS_ID");
 
+                entity.Property(e => e.CglCompanyName)
+                    .HasColumnName("CGL_COMPANY")
+                    .HasMaxLength(50);
+
                 entity.Property(e => e.CglPolicyNumber)
                     .HasColumnName("CGL_POLICY_NUMBER")
                     .HasMaxLength(50);

@@ -86,21 +86,9 @@ namespace HetsImport.Import
                         ImportUtility.AddImportMap(dbContext, OldTable, item.Note_Id.ToString(), NewTable, rotationDoc.NoteId);
                     }
 
-                    // save change to database periodically to avoid frequent writing to the database
-                    if (++ii % 1000 == 0) 
-                    {
-                        try
-                        {
-                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId, NewTable);
-                            dbContext.SaveChangesForImport();
-                        }
-                        catch (Exception e)
-                        {
-                            string temp = string.Format("Error saving data (Index: {0}): {1}", maxIndex, e.Message);
-                            performContext.WriteLine(temp);
-                            throw new DataException(temp);
-                        }
-                    }
+                    // save change to database
+                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId, NewTable);
+                    dbContext.SaveChanges();                    
                 }
 
                 try
@@ -181,7 +169,7 @@ namespace HetsImport.Import
                 }
 
                 // asked date
-                DateTime? createdDate = ImportUtility.CleanDateTime(oldObject.Created_Dt);
+                DateTime? createdDate = ImportUtility.CleanDate(oldObject.Created_Dt);
 
                 if (createdDate == null ||
                     createdDate < fiscalStart)
@@ -344,11 +332,11 @@ namespace HetsImport.Import
 
                     // save now so we can access it for other time records
                     dbContext.HetProject.Add(project);
-                    dbContext.SaveChangesForImport();
+                    dbContext.SaveChanges();
 
                     // add mapping record
                     ImportUtility.AddImportMapForProgress(dbContext, ImportProject.OldTable, tempProjectId, project.ProjectId, ImportProject.NewTable);
-                    dbContext.SaveChangesForImport();
+                    dbContext.SaveChanges();
                 }
 
                 // ***********************************************

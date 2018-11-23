@@ -471,8 +471,8 @@ namespace HetsImport.Import
                 // ***********************************************
                 // set other attributes
                 // ***********************************************   
-                owner.WorkSafeBcexpiryDate = ImportUtility.CleanDateTime(oldObject.CGL_End_Dt);
-                owner.CglendDate = ImportUtility.CleanDateTime(oldObject.CGL_End_Dt);
+                owner.WorkSafeBcexpiryDate = ImportUtility.CleanDate(oldObject.CGL_End_Dt);
+                owner.CglendDate = ImportUtility.CleanDate(oldObject.CGL_End_Dt);
 
                 owner.WorkSafeBcpolicyNumber = ImportUtility.CleanString(oldObject.WCB_Num);
 
@@ -480,6 +480,14 @@ namespace HetsImport.Import
                 {
                     owner.WorkSafeBcpolicyNumber = null;
                 }
+
+                string tempCglCompanyName = ImportUtility.CleanString(oldObject.CGL_Company);
+                tempCglCompanyName = ImportUtility.GetCapitalCase(tempCglCompanyName);                
+
+                if (!string.IsNullOrEmpty(tempCglCompanyName))
+                {
+                    owner.CglCompanyName = tempCglCompanyName;
+                }                
 
                 owner.CglPolicyNumber = ImportUtility.CleanString(oldObject.CGL_Policy);
 

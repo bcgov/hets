@@ -43,12 +43,22 @@ namespace FrontEnd.Handlers
                 _logger.LogInformation("Api Path: " + requestPath);
 
                 // set http security headers   
-                context.Response.Headers[HeaderNames.CacheControl] = "no-cache, no-store, must-revalidate, private";
-                context.Response.Headers[HeaderNames.Pragma] = "no-cache";
-                context.Response.Headers[HeaderNames.Expires] = "-1";
+                if (requestPath.Contains("/fonts") ||
+                    requestPath.Contains("/images"))
+                {
+                    context.Response.Headers[HeaderNames.CacheControl] = "private, max-age=60";
+                    context.Response.Headers[HeaderNames.Expires] = "60";                    
+                }
+                else
+                {
+                    context.Response.Headers[HeaderNames.CacheControl] = "no-cache, no-store, must-revalidate, private";
+                    context.Response.Headers[HeaderNames.Pragma] = "no-cache";
+                    context.Response.Headers[HeaderNames.Expires] = "-1";
+                }
+
                 context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
                 context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
-                context.Response.Headers["X-Content-Type-Options"] = "nosniff";                
+                context.Response.Headers["X-Content-Type-Options"] = "nosniff";
 
                 await _proxy.Invoke(context);                                
             }

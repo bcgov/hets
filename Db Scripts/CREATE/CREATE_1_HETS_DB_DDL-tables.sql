@@ -958,6 +958,7 @@ CREATE TABLE public."HET_OWNER" (
 	"ARCHIVE_REASON" character varying(2048),
 	"LOCAL_AREA_ID" integer,    
     "PRIMARY_CONTACT_ID" integer,    
+	"CGL_COMPANY" character varying(255),    
     "CGL_POLICY_NUMBER" character varying(50),    
 	"CGLEND_DATE" timestamp without time zone,
     "WORK_SAFE_BCPOLICY_NUMBER" character varying(50),    
