@@ -140,19 +140,10 @@ namespace HetsImport.Import
                         }
                     }                    
 
-                    // save change to database periodically to avoid frequent writing to the database
-                    if (++ii % 1000 == 0)
-                    {
-                        try
-                        {
-                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId, NewTable);
-                            dbContext.SaveChangesForImport();
-                        }
-                        catch (Exception e)
-                        {
-                            performContext.WriteLine("Error saving data " + e.Message);
-                        }
-                    }
+                    // save change to database
+                    ++ii;                    
+                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId, NewTable);
+                    dbContext.SaveChangesForImport();                    
                 }
 
                 try
@@ -240,7 +231,7 @@ namespace HetsImport.Import
 
                 if (!string.IsNullOrEmpty(tempRecordDate))
                 {
-                    DateTime? recordDate = ImportUtility.CleanDateTime(tempRecordDate);
+                    DateTime? recordDate = ImportUtility.CleanDate(tempRecordDate);
 
                     if (recordDate == null ||
                         recordDate < fiscalStart ||
