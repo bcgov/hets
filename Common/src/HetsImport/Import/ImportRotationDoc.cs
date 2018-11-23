@@ -86,7 +86,7 @@ namespace HetsImport.Import
                         ImportUtility.AddImportMap(dbContext, OldTable, item.Note_Id.ToString(), NewTable, rotationDoc.NoteId);
                     }
 
-                    // save change to database
+                    ii++;
                     ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId, NewTable);
                     dbContext.SaveChanges();                    
                 }
