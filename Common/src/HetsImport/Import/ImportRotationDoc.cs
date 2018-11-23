@@ -348,6 +348,7 @@ namespace HetsImport.Import
                 rotationDoc.AppLastUpdateTimestamp = DateTime.UtcNow;
 
                 dbContext.BcbidRotationDoc.Add(rotationDoc);
+                dbContext.SaveChanges();
             }
             catch (Exception ex)
             {
