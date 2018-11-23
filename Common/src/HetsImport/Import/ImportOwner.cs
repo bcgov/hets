@@ -38,7 +38,21 @@ namespace HetsImport.Import
         {
             try
             {
-                performContext.WriteLine("Generate New Secret Keys");
+                performContext.WriteLine("*** Generating New Secret Keys ***");
+                Debug.WriteLine("Generating New Secret Keys");
+
+                int ii = 0;
+                string _oldTableProgress = "SecretKeys_Progress";
+                string _newTable = "SecretKeys";
+
+                // check if the secret keys have already been completed
+                int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, _oldTableProgress, BcBidImport.SigId, _newTable);
+
+                if (startPoint == BcBidImport.SigId)    // this means the assignment job is complete
+                {
+                    performContext.WriteLine("*** Generating New Secret Key is complete from the former process ***");
+                    return;
+                }
 
                 // get records
                 List<HetOwner> owners = dbContext.HetOwner.AsNoTracking()
@@ -68,12 +82,40 @@ namespace HetsImport.Import
                     if (i % 500 == 0)
                     {
                         dbContext.SaveChangesForImport();
-                    }                    
+                    }
+
+                    // save change to database
+                    if (ii++ % 100 == 0)
+                    {
+                        try
+                        {
+                            Debug.WriteLine("Generating New Secret Keys - Index: " + ii);
+                            ImportUtility.AddImportMapForProgress(dbContext, _oldTableProgress, ii.ToString(), BcBidImport.SigId, _newTable);
+                            dbContext.SaveChangesForImport();
+                        }
+                        catch (Exception e)
+                        {
+                            performContext.WriteLine("Error saving data " + e.Message);
+                        }
+                    }
                 }
 
-                // save remaining updates - done!
-                dbContext.SaveChangesForImport();
-                performContext.WriteLine("*** Done generating New Secret Keys ***");
+                // ************************************************************
+                // save final set of updates
+                // ************************************************************
+                try
+                {
+                    performContext.WriteLine("*** Done generating New Secret Keys ***");
+                    Debug.WriteLine("Generating New Secret Keys is Done");
+                    ImportUtility.AddImportMapForProgress(dbContext, _oldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId, _newTable);
+                    dbContext.SaveChangesForImport();
+                }
+                catch (Exception e)
+                {
+                    string temp = string.Format("Error saving data (Record: {0}): {1}", ii, e.Message);
+                    performContext.WriteLine(temp);
+                    throw new DataException(temp);
+                }
             }
             catch (Exception e)
             {
@@ -429,8 +471,8 @@ namespace HetsImport.Import
                 // ***********************************************
                 // set other attributes
                 // ***********************************************   
-                owner.WorkSafeBcexpiryDate = ImportUtility.CleanDateTime(oldObject.CGL_End_Dt);
-                owner.CglendDate = ImportUtility.CleanDateTime(oldObject.CGL_End_Dt);
+                owner.WorkSafeBcexpiryDate = ImportUtility.CleanDate(oldObject.CGL_End_Dt);
+                owner.CglendDate = ImportUtility.CleanDate(oldObject.CGL_End_Dt);
 
                 owner.WorkSafeBcpolicyNumber = ImportUtility.CleanString(oldObject.WCB_Num);
 
@@ -438,6 +480,14 @@ namespace HetsImport.Import
                 {
                     owner.WorkSafeBcpolicyNumber = null;
                 }
+
+                string tempCglCompanyName = ImportUtility.CleanString(oldObject.CGL_Company);
+                tempCglCompanyName = ImportUtility.GetCapitalCase(tempCglCompanyName);                
+
+                if (!string.IsNullOrEmpty(tempCglCompanyName))
+                {
+                    owner.CglCompanyName = tempCglCompanyName;
+                }                
 
                 owner.CglPolicyNumber = ImportUtility.CleanString(oldObject.CGL_Policy);
 

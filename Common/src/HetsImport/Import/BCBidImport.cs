@@ -31,7 +31,7 @@ namespace HetsImport.Import
 
             // adding system Account if not there in the database
             ImportUtility.InsertSystemUser(dbContext, SystemId);
-
+            
             // Create District status record
             dbContext = new DbAppContext(connectionString);
             ImportServiceArea.ResetDistrictStatus(context, dbContext, SystemId);
@@ -82,6 +82,10 @@ namespace HetsImport.Import
             // reset project sequence
             dbContext = new DbAppContext(connectionString);
             ImportProject.ResetSequence(context, dbContext);
+
+            //*** Import Rotation Docs from Rotation_Doc.xml (BCBID_ROTATION_DOC)
+            dbContext = new DbAppContext(connectionString);
+            ImportRotationDoc.Import(context, dbContext, fileLocation, SystemId);
 
             //*** Import Blocks / Local Area Rotation List from Block.xml (HET_DISTRICT_ROTATION_LIST)
             dbContext = new DbAppContext(connectionString);            
@@ -161,6 +165,10 @@ namespace HetsImport.Import
 
             // Process projects
             ImportProject.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
+            dbContext = new DbAppContext(connectionString);
+
+            // Process rotation docs
+            ImportRotationDoc.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(connectionString);
 
             // Process blocks

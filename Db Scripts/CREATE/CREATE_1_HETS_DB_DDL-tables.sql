@@ -958,6 +958,7 @@ CREATE TABLE public."HET_OWNER" (
 	"ARCHIVE_REASON" character varying(2048),
 	"LOCAL_AREA_ID" integer,    
     "PRIMARY_CONTACT_ID" integer,    
+	"CGL_COMPANY" character varying(255),    
     "CGL_POLICY_NUMBER" character varying(50),    
 	"CGLEND_DATE" timestamp without time zone,
     "WORK_SAFE_BCPOLICY_NUMBER" character varying(50),    
@@ -2398,6 +2399,34 @@ CREATE TABLE public.state (
     updatecount integer DEFAULT 0 NOT NULL
 );
 
+--
+-- Name: BCBID_ROTATION_DOC; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."BCBID_ROTATION_DOC" (
+    "NOTE_ID" integer NOT NULL,
+    "NOTE_TYPE" character varying(255),
+    "REASON" character varying(255),
+	"ASKED_DATE_TIME" timestamp without time zone,            
+    "WAS_ASKED" boolean,
+	"OFFER_REFUSAL_REASON" character varying(50),
+	"IS_FORCE_HIRE" boolean,
+    "EQUIPMENT_ID" integer,
+	"PROJECT_ID" integer,    
+    "APP_CREATE_USER_DIRECTORY" character varying(50),
+    "APP_CREATE_USER_GUID" character varying(255),
+    "APP_CREATE_USERID" character varying(255),
+    "APP_CREATE_TIMESTAMP" timestamp without time zone DEFAULT '0001-01-01 00:00:00'::timestamp without time zone NOT NULL,
+    "APP_LAST_UPDATE_USER_DIRECTORY" character varying(50),
+    "APP_LAST_UPDATE_USER_GUID" character varying(255),
+    "APP_LAST_UPDATE_USERID" character varying(255),
+    "APP_LAST_UPDATE_TIMESTAMP" timestamp without time zone DEFAULT '0001-01-01 00:00:00'::timestamp without time zone NOT NULL,
+    "DB_CREATE_USER_ID" character varying(63),
+    "DB_CREATE_TIMESTAMP" timestamp without time zone DEFAULT '0001-01-01 00:00:00'::timestamp without time zone NOT NULL,
+    "DB_LAST_UPDATE_TIMESTAMP" timestamp without time zone DEFAULT '0001-01-01 00:00:00'::timestamp without time zone NOT NULL,
+    "DB_LAST_UPDATE_USER_ID" character varying(63),
+    "CONCURRENCY_CONTROL_NUMBER" integer DEFAULT 0 NOT NULL
+);
 
 --
 -- Name: HET_EQUIPMENT_ATTACHMENT_HIST HET_EQUIPMENT_ATTACHMENT_HIST_PK; Type: CONSTRAINT; Schema: public; Owner: -

@@ -163,10 +163,11 @@ namespace HetsImport.Import
 
             // manage the id value for new user records
             int maxUserIndex = 0;
-
+            
             if (dbContext.HetUser.Any())
             {
                 maxUserIndex = dbContext.HetUser.Max(x => x.UserId);
+                maxUserIndex = maxUserIndex + 1;
             }
 
             try

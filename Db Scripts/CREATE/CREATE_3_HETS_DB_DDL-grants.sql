@@ -895,6 +895,13 @@ GRANT ALL ON SEQUENCE public.state_id_seq TO het_application_proxy;
 
 
 --
+-- Name: TABLE BCBID_ROTATION_DOC; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public."BCBID_ROTATION_DOC" TO het_application_proxy;
+
+
+--
 -- PostgreSQL database dump complete
 --
 
