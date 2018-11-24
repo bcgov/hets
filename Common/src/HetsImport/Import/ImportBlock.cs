@@ -196,50 +196,13 @@ namespace HetsImport.Import
                 {
                     return; // ignore these records
                 }
-
-                // ***********************************************
-                // we only need records from the current fiscal
-                // so ignore all others
-                // ***********************************************
-                DateTime fiscalStart;
-                DateTime fiscalEnd;
-
-                if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
-                {
-                    fiscalEnd = new DateTime(DateTime.UtcNow.Year, 3, 31);
-                }
-                else
-                {
-                    fiscalEnd = new DateTime(DateTime.UtcNow.AddYears(1).Year, 3, 31);
-                }                
-
-                if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
-                {
-                    fiscalStart = new DateTime(DateTime.UtcNow.AddYears(-1).Year, 4, 1);
-                }
-                else
-                {
-                    fiscalStart = new DateTime(DateTime.UtcNow.Year, 4, 1);
-                }
-
+                
                 string tempRecordDate = oldObject.Created_Dt;
 
                 if (string.IsNullOrEmpty(tempRecordDate))
                 {
                     return; // ignore if we don't have a created date
-                }
-
-                if (!string.IsNullOrEmpty(tempRecordDate))
-                {
-                    DateTime? recordDate = ImportUtility.CleanDate(tempRecordDate);
-
-                    if (recordDate == null ||
-                        recordDate < fiscalStart ||
-                        recordDate > fiscalEnd)
-                    {
-                        return; // ignore this record - it is outside of the current fiscal year
-                    }
-                }
+                }                
 
                 // ***********************************************
                 // get the area record
