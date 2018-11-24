@@ -45,8 +45,8 @@ namespace HetsImport.Import
                 return;
             }
 
-            int maxIndex = 0;            
-            
+            int maxIndex = startPoint;            
+
             try
             {
                 string rootAttr = "ArrayOf" + OldTable;
