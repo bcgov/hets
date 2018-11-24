@@ -86,9 +86,12 @@ namespace HetsImport.Import
                         ImportUtility.AddImportMap(dbContext, OldTable, item.Note_Id.ToString(), NewTable, rotationDoc.NoteId);
                     }
 
-                    ii++;
-                    ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId, NewTable);
-                    dbContext.SaveChanges();                    
+                    // save change to database
+                    if (++ii % 2000 == 0)
+                    {                        
+                        ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId, NewTable);
+                        dbContext.SaveChangesForImport();
+                    }
                 }
 
                 try
@@ -332,11 +335,11 @@ namespace HetsImport.Import
 
                     // save now so we can access it for other time records
                     dbContext.HetProject.Add(project);
-                    dbContext.SaveChanges();
+                    dbContext.SaveChangesForImport();
 
                     // add mapping record
                     ImportUtility.AddImportMapForProgress(dbContext, ImportProject.OldTable, tempProjectId, project.ProjectId, ImportProject.NewTable);
-                    dbContext.SaveChanges();
+                    dbContext.SaveChangesForImport();
                 }
 
                 // ***********************************************
@@ -348,7 +351,6 @@ namespace HetsImport.Import
                 rotationDoc.AppLastUpdateTimestamp = DateTime.UtcNow;
 
                 dbContext.BcbidRotationDoc.Add(rotationDoc);
-                dbContext.SaveChanges();
             }
             catch (Exception ex)
             {
