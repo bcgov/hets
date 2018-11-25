@@ -210,7 +210,7 @@ namespace HetsImport.Import
                 if (!string.IsNullOrEmpty(tempName))
                 {
                     tempName = ImportUtility.GetCapitalCase(tempName);                    
-                    project.Name = tempName;
+                    project.Name = tempName + " (CONVERTED)";
                 }
 
                 // project information
@@ -256,7 +256,7 @@ namespace HetsImport.Import
                 // ***********************************************
                 // default the project to Active
                 // ***********************************************
-                int? statusId = StatusHelper.GetStatusId("Active", "projectStatus", dbContext);
+                int? statusId = StatusHelper.GetStatusId(HetProject.StatusComplete, "projectStatus", dbContext);
 
                 if (statusId == null)
                 {
