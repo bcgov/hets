@@ -205,7 +205,7 @@ namespace HetsImport.Import
             }
         }
 
-        public static DateTime? CleanDateTime(string dateTimeField)
+        public static DateTime? CleanDate(string dateTimeField)
         {
             if (dateTimeField != null && dateTimeField != "1900-01-01T00:00:00")
             {
@@ -218,7 +218,24 @@ namespace HetsImport.Import
             }
 
             return null;
-        }        
+        }
+
+        public static DateTime? CleanDateTime(string dateTimeField)
+        {
+            if (dateTimeField != null && dateTimeField != "1900-01-01T00:00:00")
+            {
+                dateTimeField = dateTimeField.Trim();
+
+                if (dateTimeField.Length >= 10)
+                {
+                    dateTimeField = dateTimeField.Replace('T', ' ');
+
+                    return DateTime.ParseExact(dateTimeField.Substring(0, 19), "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+                }
+            }
+
+            return null;
+        }
 
         public static float? GetFloatValue(string floatField)
         {

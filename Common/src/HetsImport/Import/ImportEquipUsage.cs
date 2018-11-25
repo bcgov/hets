@@ -4,7 +4,6 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Xml.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Hangfire.Console;
@@ -151,7 +150,7 @@ namespace HetsImport.Import
                 {
                     // see if we have this one already
                     string oldProjectKey = item.Project_Id.ToString();
-                    string oldEquipKey = item.Project_Id.ToString();
+                    string oldEquipKey = item.Equip_Id.ToString();
                     string oldCreatedDate = item.Created_Dt;
 
                     string oldKey = string.Format("{0}-{1}-{2}", oldProjectKey, oldEquipKey, oldCreatedDate);
@@ -169,30 +168,22 @@ namespace HetsImport.Import
                         if (instance != null)
                         {
                             ImportUtility.AddImportMap(dbContext, OldTable, oldKey, NewTable, instance.TimeRecordId);
-                            dbContext.SaveChangesForImport();
                         }
-                    }
 
-                    // periodically save change to the status
-                    if (ii++ % 2000 == 0)
-                    {
-                        try
+                        // save change to database
+                        if (++ii % 2000 == 0)
                         {
                             ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId, NewTable);
-                            dbContext.SaveChangesForImport();
-                        }                    
-                        catch (Exception e)
-                        {
-                            performContext.WriteLine("Error saving data " + e.Message);
+                            dbContext.SaveChanges();
                         }
-                    }
+                    }                                        
                 }
 
                 try
                 {
                     performContext.WriteLine("*** Importing " + XmlFileName + " is Done ***");
                     ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId, NewTable);
-                    dbContext.SaveChangesForImport();
+                    dbContext.SaveChanges();
                 }
                 catch (Exception e)
                 {
@@ -247,8 +238,8 @@ namespace HetsImport.Import
                     fiscalStart = new DateTime(DateTime.UtcNow.Year, 4, 1);
                 }
 
-                // we'll load data for the last 3 years
-                fiscalStart = fiscalStart.AddYears(-2);
+                // we'll load data for the last 2 years
+                fiscalStart = fiscalStart.AddYears(-1);
 
                 string tempRecordDate = oldObject.Worked_Dt;
 
@@ -259,7 +250,7 @@ namespace HetsImport.Import
 
                 if (!string.IsNullOrEmpty(tempRecordDate))
                 {
-                    DateTime? recordDate = ImportUtility.CleanDateTime(tempRecordDate);
+                    DateTime? recordDate = ImportUtility.CleanDate(tempRecordDate);
 
                     if (recordDate == null || recordDate < fiscalStart)
                     {
@@ -354,7 +345,7 @@ namespace HetsImport.Import
                 // ***********************************************
                 // find or create the rental agreement
                 // ***********************************************
-                DateTime? enteredDate = ImportUtility.CleanDateTime(oldObject.Entered_Dt); // use for the agreement
+                DateTime? enteredDate = ImportUtility.CleanDate(oldObject.Entered_Dt); // use for the agreement
 
                 HetRentalAgreement agreement = dbContext.HetRentalAgreement.AsNoTracking()
                     .FirstOrDefault(x => x.EquipmentId == equipment.EquipmentId &&
@@ -373,7 +364,7 @@ namespace HetsImport.Import
                     int? agrRateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodDaily, dbContext);
                     if (agrRateTypeId == null) throw new DataException("Rate Period Id cannot be null");
 
-                    int? year = (ImportUtility.CleanDateTime(oldObject.Worked_Dt))?.Year;
+                    int? year = (ImportUtility.CleanDate(oldObject.Worked_Dt))?.Year;
 
                     // create a new agreement record
                     agreement = new HetRentalAgreement
@@ -413,7 +404,7 @@ namespace HetsImport.Import
                 // ***********************************************
                 // set time record attributes
                 // ***********************************************
-                DateTime? workedDate = ImportUtility.CleanDateTime(oldObject.Worked_Dt);
+                DateTime? workedDate = ImportUtility.CleanDate(oldObject.Worked_Dt);
 
                 if (workedDate != null)
                 {

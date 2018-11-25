@@ -337,11 +337,16 @@
                 <th style="width: 150px">Rate</th>
                 <th style="width: 350px">Comments</th>
             </tr>
-            <tr style="height: 15px;">
-                <td>{{equipment.year}} {{equipment.make}}/{{equipment.model}}/{{equipment.size}}/{{equipment.serialNumber}}</td>
+            <tr style="height: 15px; vertical-align: top;">
+                <td>
+                    <p>{{equipment.year}} {{equipment.make}}/{{equipment.model}}/{{equipment.size}}/{{equipment.serialNumber}}</p>
+                    <br />
+                    <p>{{note}}</p>
+                </td>
                 <td class="rate">{{baseRateString}}</td>
                 <td>{{rateComment}}</td>
             </tr>
+            
             {{#rentalAgreementRatesWithTotal}}
             <tr style="height: 8px;">
                 <td>{{componentName}}</td>
@@ -349,12 +354,14 @@
                 <td>{{comment}}</td>
             </tr>
             {{/rentalAgreementRatesWithTotal}}
+            
             <tr style="height: 8px;">
                 <td></td>
                 <td class="rate bold">{{agreementTotalString}}</td>
                 <td class="bold">Total</td>
             </tr>
             <tr style="height: 8px"><td></td><td></td><td></td></tr>
+            
             {{#rentalAgreementRatesWithoutTotal}}
             <tr style="height: 8px;">
                 <td>{{componentName}}</td>
@@ -363,6 +370,7 @@
             </tr>
             {{/rentalAgreementRatesWithoutTotal}}
             <tr style="height: 8px"><td></td><td></td><td></td></tr>
+
             {{#rentalAgreementConditions}}
             <tr style="height: 8px;">
                 <td></td>
@@ -382,6 +390,8 @@
 
   <div id="lower-text-block">
     <p>The above listed equipment will be used for Project #<span class="uppercase bold">{{project.provincialProjectNumber}} {{project.name}}</span> within the <span class="uppercase bold">{{project.district.name}}</span> District for an estimated period of <span class="bold">{{estimateHours}}</span> hours commencing <span class="bold">{{estimateStartWork}}</span>. Point of hire is <span class="uppercase underline bold">{{equipment.localArea.name}}</span></p>
+
+    <p>&nbsp;</p>
 
     <p style="margin: 10px 0 8px 0; text-align: center"><span class="uppercase bold">AGREEMENT ON TRANSPORTATION</span></pstyle="margin:>
 
