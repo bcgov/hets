@@ -91,6 +91,10 @@ namespace HetsImport.Import
             dbContext = new DbAppContext(connectionString);            
             ImportBlock.Import(context, dbContext, fileLocation, SystemId);
 
+            //*** Recreate "Last Called" records
+            dbContext = new DbAppContext(connectionString);
+            ImportBlock.ProcessLastCalled(context, dbContext, SystemId);
+
             //*** Import Equipment Usage (Time) from Equip_Usage.xml (HET_RENTAL_AGREEMENT and HET_TIME_RECORD)             
             dbContext = new DbAppContext(connectionString);
             ImportEquipUsage.Import(context, dbContext, fileLocation, SystemId);
