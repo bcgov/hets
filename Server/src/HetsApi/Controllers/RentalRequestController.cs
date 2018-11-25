@@ -223,8 +223,8 @@ namespace HetsApi.Controllers
                 ExpectedHours = item.ExpectedHours
             };
 
-            // record not found - build new list
-            rentalRequest.HetRentalRequestRotationList = RentalRequestHelper.CreateRotationList(rentalRequest, _context, _configuration);
+            // build new list
+            rentalRequest = RentalRequestHelper.CreateRotationList(rentalRequest, _context, _configuration);
 
             // check if we have an existing "In Progress" request
             // for the same Local Area and Equipment Type
