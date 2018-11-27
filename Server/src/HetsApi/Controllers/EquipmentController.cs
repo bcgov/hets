@@ -361,6 +361,10 @@ namespace HetsApi.Controllers
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
             int?[] typesArray = ArrayHelper.ParseIntArray(types);
 
+            // get agreement status
+            int? agreementStatusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
+            if (agreementStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
             // get initial results - must be limited to user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
 
@@ -407,19 +411,17 @@ namespace HetsApi.Controllers
                 }
             }
 
-            // is the equipment hired (search criteria)
             if (hired == true)
             {
                 IQueryable<int?> hiredEquipmentQuery = _context.HetRentalAgreement.AsNoTracking()
-                    .Include(x => x.RentalAgreementStatusType)
                     .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId))
-                    .Where(agreement => agreement.RentalAgreementStatusType.RentalAgreementStatusTypeCode == HetRentalAgreement.StatusActive)
+                    .Where(agreement => agreement.RentalAgreementStatusTypeId == agreementStatusId)
                     .Select(agreement => agreement.EquipmentId)
                     .Distinct();
 
                 data = data.Where(e => hiredEquipmentQuery.Contains(e.EquipmentId));
             }
-
+                        
             if (typesArray != null && typesArray.Length > 0)
             {
                 data = data.Where(x => typesArray.Contains(x.DistrictEquipmentType.DistrictEquipmentTypeId));
@@ -442,7 +444,7 @@ namespace HetsApi.Controllers
 
             foreach (HetEquipment item in data)
             {
-                result.Add(EquipmentHelper.ToLiteModel(item, scoringRules));
+                result.Add(EquipmentHelper.ToLiteModel(item, scoringRules, (int)agreementStatusId, _context));
             }
 
             // return to the client            
