@@ -86,7 +86,7 @@ namespace HetsData.Helpers
                 .Include(x => x.LocalArea)
                     .ThenInclude(y => y.ServiceArea)
                         .ThenInclude(z => z.District)
-                            .ThenInclude(a => a.Region)
+                            .ThenInclude(a => a.Region)                
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(d => d.EquipmentType)
                 .Include(x => x.Owner)
@@ -114,6 +114,26 @@ namespace HetsData.Helpers
                     // populate the "Status" description
                     equipment.Owner.Status = equipment.Owner.OwnerStatusType.OwnerStatusTypeCode;
                 }
+
+                // set fiscal year headers
+                if (equipment.LocalArea?.ServiceArea?.District != null)
+                {
+                    int districtId = equipment.LocalArea.ServiceArea.District.DistrictId;
+
+                    HetDistrictStatus district = context.HetDistrictStatus.AsNoTracking()
+                        .FirstOrDefault(x => x.DistrictId == districtId);
+
+                    if (district?.NextFiscalYear != null)
+                    {
+                        int fiscalYear = (int)district.NextFiscalYear; // status table uses the start of the tear
+
+                        equipment.YearMinus1 = string.Format("{0}/{1}", fiscalYear - 2, fiscalYear - 1);
+                        equipment.YearMinus2 = string.Format("{0}/{1}", fiscalYear - 3, fiscalYear - 2);
+                        equipment.YearMinus3 = string.Format("{0}/{1}", fiscalYear - 4, fiscalYear - 3);                        
+                    }
+                }
+                
+                
             }
             
             return equipment;
