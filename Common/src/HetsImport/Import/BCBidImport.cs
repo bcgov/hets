@@ -55,6 +55,9 @@ namespace HetsImport.Import
             dbContext = new DbAppContext(connectionString);
             ImportOwner.GenerateSecretKeys(context, dbContext);
 
+            dbContext = new DbAppContext(connectionString);
+            ImportOwner.FixPrimaryContacts(context, dbContext);
+
             //*** Import District Equipment Type from EquipType.xml (HET_DISTRICT_EQUIPMENT_TYPE)
             dbContext = new DbAppContext(connectionString);
             ImportDistrictEquipmentType.Import(context, dbContext, fileLocation, SystemId);
@@ -97,11 +100,7 @@ namespace HetsImport.Import
 
             //*** Import Equipment Usage (Time) from Equip_Usage.xml (HET_RENTAL_AGREEMENT and HET_TIME_RECORD)             
             dbContext = new DbAppContext(connectionString);
-            ImportEquipUsage.Import(context, dbContext, fileLocation, SystemId);
-
-            // *** Fix Contact Foreign Key Relationships
-            dbContext = new DbAppContext(connectionString);
-            ImportOwner.FixPrimaryContacts(context, dbContext);
+            ImportEquipUsage.Import(context, dbContext, fileLocation, SystemId);            
 
             // *** Final Step - fix the database sequences
             dbContext = new DbAppContext(connectionString);
