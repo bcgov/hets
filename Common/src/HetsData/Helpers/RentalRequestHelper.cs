@@ -589,7 +589,8 @@ namespace HetsData.Helpers
                     {
                         if (lastRecordAskedId[b] == rentalRequest.HetRentalRequestRotationList.ElementAt(j).Equipment.EquipmentId)
                         {
-                            if (rentalRequest.HetRentalRequestRotationList.ElementAt(j + 1) != null)
+                            if (rentalRequest.HetRentalRequestRotationList.Count > (j + 1) &&
+                                rentalRequest.HetRentalRequestRotationList.ElementAt(j + 1) != null)
                             {
                                 nextRecordToAskIndex[b] = j + 1;
                                 nextRecordToAskId[b] = rentalRequest.HetRentalRequestRotationList.ElementAt(j + 1).Equipment.EquipmentId;

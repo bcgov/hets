@@ -58,8 +58,15 @@ var TopNav = React.createClass({
 
     var navigationDisabled = this.props.rolloverStatus.rolloverActive;
 
+    var environmentClass = '';
+    if (this.props.currentUser.environment === 'Development') {
+      environmentClass = 'env-dev';
+    } else if (this.props.currentUser.environment === 'Test') {
+      environmentClass = 'env-test';
+    }
+
     return <div id="header">
-      <nav id="header-main" className="navbar navbar-default navbar-fixed-top">
+      <nav id="header-main" className="navbar navbar-fixed-top">
         <div className="container">
           <div id="logo">
             <a href="http://www2.gov.bc.ca/gov/content/home">
@@ -68,7 +75,7 @@ var TopNav = React.createClass({
           </div>
           <h1 id="banner">MOTI Hired Equipment Tracking System</h1>
         </div>
-        <Navbar id="top-nav">
+        <Navbar id="top-nav" className={ environmentClass }>
           { this.props.showNav &&
             <Nav>
               <LinkContainer to={{ pathname: `/${ Constant.HOME_PATHNAME }` }} disabled={ navigationDisabled }>
