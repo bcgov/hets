@@ -1173,7 +1173,10 @@ namespace HetsApi.Controllers
                 }                
             }
 
-            seniorityList.PrintedOn = string.Format("{0:dd-MM-yyyy H:mm:ss}", DateTime.UtcNow);
+            TimeZoneInfo zone = TimeZoneInfo.Local;
+            string temp = zone.BaseUtcOffset.Hours.ToString();
+
+            seniorityList.PrintedOn = string.Format("{0:dd-MM-yyyy H:mm:ss} {1}", DateTime.Now, temp);
 
             // **********************************************************************
             // create the payload and call the pdf service
