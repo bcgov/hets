@@ -1,5 +1,13 @@
 @import './mixins.scss';
 
+$nav-background-color: #38598a;
+$nav-background-color-test: #448a38;
+$nav-background-color-dev: #8a3844;
+
+$nav-active-background-color: #5475a7;
+$nav-active-background-color-test: #60a654;
+$nav-active-background-color-dev: #a65460;
+
 #banner {
   float: left;
   margin-top: 20px;
@@ -10,7 +18,7 @@
 
 #top-nav {
   margin-bottom: 0;
-  background-color: #38598a;
+  background-color: $nav-background-color;
   border-radius: 0;
   border: 0;
   border-top: 2px solid #fcba19;
@@ -86,7 +94,87 @@
       width: 100%;
       margin-bottom: 10px;
     }
+  }
+  
+  .navbar-nav > li > a {
+    color: #fff;
+  }
+  .navbar-nav > li > a:hover {
+    color: #fff;
+    text-decoration: underline;
+  }
+  .navbar-nav > li > a:focus {
+    color: #fff;
+  }
+  .navbar-nav > li > .dropdown-menu {
+    color: #fff;
+    background-color: $nav-background-color;
+    font-size: 13px;
+  }
+  .navbar-nav > li > .dropdown-menu > li > a {
+    color: #fff;
+  }
+  .navbar-nav > li > .dropdown-menu > li > a:hover,
+  .navbar-nav > li > .dropdown-menu > li > a:focus {
+    color: #fff;
+    background-color: $nav-active-background-color;
+    text-decoration: underline;
+  }
+  .navbar-nav > .active > a {
+    color: #fff;
+    background-color: $nav-active-background-color;
+    text-decoration: underline;
+  }
+  .navbar-nav > .active > a:hover,
+  .navbar-nav > .active > a:focus {
+    color: #fff;
+    background-color: $nav-active-background-color;
+  }
+  .navbar-nav > .open > a {
+    color: #fff;
+    background-color: $nav-background-color;
+    text-decoration: underline;
+  }
+  .navbar-nav > .open > a:hover,
+  .navbar-nav > .open > a:focus {
+    color: #fff;
+    background-color: $nav-background-color;
+  }
+  
+  &.env-test {
+    background-color: $nav-background-color-test;
 
+    .navbar-nav > li > .dropdown-menu,
+    .navbar-nav > .open > a,
+    .navbar-nav > .open > a:hover,
+    .navbar-nav > .open > a:focus {
+      background-color: $nav-background-color-test;
+    }
+    .navbar-nav > li > .dropdown-menu > li > a:hover,
+    .navbar-nav > li > .dropdown-menu > li > a:focus,
+    .navbar-nav > .active > a,
+    .navbar-nav > .active > a:hover,
+    .navbar-nav > .active > a:focus {
+      background-color: $nav-active-background-color-test;
+    }
+  }
+
+  &.env-dev {
+    background-color: $nav-background-color-dev;
+
+    .navbar-nav > li > .dropdown-menu,
+    .navbar-nav > .open > a,
+    .navbar-nav > .open > a:hover,
+    .navbar-nav > .open > a:focus {
+      background-color: $nav-background-color-dev;
+    }
+    .navbar-nav > li > .dropdown-menu > li > a:hover,
+    .navbar-nav > li > .dropdown-menu > li > a:focus,
+    .navbar-nav > .active > a,
+    .navbar-nav > .active > a:hover,
+    .navbar-nav > .active > a:focus {
+      background-color: $nav-active-background-color-dev;
+    }
   }
 }
 
@@ -94,49 +182,4 @@
   .btn-primary {
     width: 100%;
   }
-}
-
-.navbar-default .navbar-nav > li > a {
-  color: #fff;
-}
-.navbar-default .navbar-nav > li > a:hover {
-  color: #fff;
-  text-decoration: underline;
-}
-.navbar-default .navbar-nav > li > a:focus {
-  color: #fff;
-}
-.navbar-default .navbar-nav > li > .dropdown-menu {
-  color: #fff;
-  background-color: #38598a;
-  font-size: 13px;
-}
-.navbar-default .navbar-nav > li > .dropdown-menu > li > a {
-  color: #fff;
-}
-.navbar-default .navbar-nav > li > .dropdown-menu > li > a:hover,
-.navbar-default .navbar-nav > li > .dropdown-menu > li > a:focus {
-  color: #fff;
-  background-color: #5475a7;
-  text-decoration: underline;
-}
-.navbar-default .navbar-nav > .active > a {
-  color: #fff;
-  background-color: #5475a7;
-  text-decoration: underline;
-}
-.navbar-default .navbar-nav > .active > a:hover,
-.navbar-default .navbar-nav > .active > a:focus {
-  color: #fff;
-  background-color: #5475a7;
-}
-.navbar-default .navbar-nav > .open > a {
-  color: #fff;
-  background-color: #38598a;
-  text-decoration: underline;
-}
-.navbar-default .navbar-nav > .open > a:hover,
-.navbar-default .navbar-nav > .open > a:focus {
-  color: #fff;
-  background-color: #38598a;
 }
