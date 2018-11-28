@@ -640,13 +640,13 @@ namespace HetsImport.Import
                     }
                 }
 
+                string tempPhone = ImportUtility.FormatPhone(oldObject.Ph_Country_Code, oldObject.Ph_Area_Code, oldObject.Ph_Number, oldObject.Ph_Extension);
+                string tempFax = ImportUtility.FormatPhone(oldObject.Fax_Country_Code, oldObject.Fax_Area_Code, oldObject.Fax_Number, oldObject.Fax_Extension);
+                string tempMobile = ImportUtility.FormatPhone(oldObject.Cell_Country_Code, oldObject.Cell_Area_Code, oldObject.Cell_Number, oldObject.Cell_Extension);
+
                 // only add if they don't already exist
                 if (!contactExists && !string.IsNullOrEmpty(tempOwnerLastName))
-                {
-                    string tempPhone = ImportUtility.FormatPhone(oldObject.Ph_Country_Code, oldObject.Ph_Area_Code, oldObject.Ph_Number, oldObject.Ph_Extension);
-                    string tempFax = ImportUtility.FormatPhone(oldObject.Fax_Country_Code, oldObject.Fax_Area_Code, oldObject.Fax_Number, oldObject.Fax_Extension);
-                    string tempMobile = ImportUtility.FormatPhone(oldObject.Cell_Country_Code, oldObject.Cell_Area_Code, oldObject.Cell_Number, oldObject.Cell_Extension);
-
+                {                    
                     HetContact ownerContact = new HetContact
                     {                        
                         Role = "Owner",
@@ -726,11 +726,21 @@ namespace HetsImport.Import
 
                         if (!contactExists)
                         {
+                            string tempPhoneNumber = "";
+
+                            if (tempPhone != tempContactPhone && !string.IsNullOrEmpty(tempContactPhone))
+                            {
+                                tempPhoneNumber = tempContactPhone;
+                            }
+
                             HetContact primaryContact = new HetContact
                             {
                                 Role = "Primary Contact",
                                 Province = "BC",           
-                                WorkPhoneNumber = tempContactPhone,
+                                WorkPhoneNumber = tempPhone,
+                                MobilePhoneNumber = tempMobile,
+                                FaxPhoneNumber = tempFax,
+                                Notes = tempPhoneNumber,
                                 AppCreateUserid = systemId,
                                 AppCreateTimestamp = DateTime.UtcNow,
                                 AppLastUpdateUserid = systemId,
