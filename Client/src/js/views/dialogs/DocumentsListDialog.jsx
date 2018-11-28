@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Alert, Button, ButtonGroup, Glyphicon, ProgressBar } from 'react-bootstrap';
+import { Alert, Button, ButtonGroup, Glyphicon, ProgressBar, HelpBlock } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -44,6 +44,7 @@ var DocumentsListDialog = React.createClass({
         sortField: this.props.ui.sortField || 'timestampSort',
         sortDesc: this.props.ui.sortDesc !== false,
       },
+      uploadError: '',
     };
   },
 
@@ -101,6 +102,14 @@ var DocumentsListDialog = React.createClass({
   },
 
   uploadFiles(files) {
+    this.setState({ uploadError: '' });
+
+    var invalidFiles = _.filter(files, file => file.size > Constant.MAX_ATTACHMENT_FILE_SIZE);
+    if (invalidFiles.length > 0) {
+      this.setState({ uploadError: 'One of the selected files is too large.' });
+      return;
+    }
+
     this.setState({ uploadInProgress: true, percentUploaded: 0 });
 
     var options = {
@@ -138,6 +147,8 @@ var DocumentsListDialog = React.createClass({
             <div className="file-picker-container">
               <FilePicker onFilesSelected={ this.uploadFiles }/>
               <div>Select one or more files{ parent.name ? ` to attach to ${ parent.name }` : null }</div>
+              <HelpBlock>The maximum size of each file is { Constant.MAX_ATTACHMENT_FILE_SIZE_READABLE }.</HelpBlock>
+              { this.state.uploadError && <div className="has-error"><HelpBlock>{ this.state.uploadError }</HelpBlock></div> }
             </div>
           }
           <div>

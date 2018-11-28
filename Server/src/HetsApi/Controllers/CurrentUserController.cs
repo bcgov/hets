@@ -201,6 +201,18 @@ namespace HetsApi.Controllers
                 user.HetUserDistrict = currentUser.HetUserDistrict;
                 user.HetUserRole = currentUser.HetUserRole;
                 user.SmAuthorizationDirectory = currentUser.SmAuthorizationDirectory;
+
+                // set environment
+                user.Environment = "Development";
+
+                if (_env.IsProduction())
+                {
+                    user.Environment = "Production";
+                }
+                else if (_env.IsStaging())
+                {
+                    user.Environment = "Test";
+                }
             }
             else
             {
@@ -251,7 +263,6 @@ namespace HetsApi.Controllers
                     }
                 }
             }
-
 
             return new ObjectResult(new HetsResponse(user));
         }
