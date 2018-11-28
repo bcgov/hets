@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -90,7 +91,7 @@ namespace HetsData.Helpers
                 .Include(x => x.LocalArea)
                     .ThenInclude(y => y.ServiceArea)
                         .ThenInclude(z => z.District)
-                            .ThenInclude(a => a.Region)
+                            .ThenInclude(a => a.Region)                
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(d => d.EquipmentType)
                 .Include(x => x.Owner)
@@ -118,6 +119,26 @@ namespace HetsData.Helpers
                     // populate the "Status" description
                     equipment.Owner.Status = equipment.Owner.OwnerStatusType.OwnerStatusTypeCode;
                 }
+
+                // set fiscal year headers
+                if (equipment.LocalArea?.ServiceArea?.District != null)
+                {
+                    int districtId = equipment.LocalArea.ServiceArea.District.DistrictId;
+
+                    HetDistrictStatus district = context.HetDistrictStatus.AsNoTracking()
+                        .FirstOrDefault(x => x.DistrictId == districtId);
+
+                    if (district?.NextFiscalYear != null)
+                    {
+                        int fiscalYear = (int)district.NextFiscalYear; // status table uses the start of the tear
+
+                        equipment.YearMinus1 = string.Format("{0}/{1}", fiscalYear - 2, fiscalYear - 1);
+                        equipment.YearMinus2 = string.Format("{0}/{1}", fiscalYear - 3, fiscalYear - 2);
+                        equipment.YearMinus3 = string.Format("{0}/{1}", fiscalYear - 4, fiscalYear - 3);                        
+                    }
+                }
+                
+                
             }
             
             return equipment;
@@ -435,7 +456,7 @@ namespace HetsData.Helpers
         /// <param name="equipmentNumber"></param>
         public static string GenerateEquipmentCode(string ownerEquipmentCodePrefix, int equipmentNumber)
         {
-            string result = ownerEquipmentCodePrefix + "-" + equipmentNumber.ToString("D4");
+            string result = ownerEquipmentCodePrefix + equipmentNumber.ToString("D3");
             return result;
         }
 
@@ -490,18 +511,42 @@ namespace HetsData.Helpers
             {
                 // get equipment owner
                 HetOwner owner = context.HetOwner.AsNoTracking()
-                    .Include(x => x.HetEquipment)
-                    .FirstOrDefault(x => x.OwnerId == item.Owner.OwnerId);
+                    .FirstOrDefault(x => x.OwnerId == item.Owner.OwnerId);                
 
                 if (owner != null)
                 {
+                    string ownerCode = owner.OwnerCode;
                     int equipmentNumber = 1;
 
-                    if (owner.HetEquipment != null)
+                    // get the last "added" equipment record
+                    HetEquipment lastEquipment = context.HetEquipment.AsNoTracking()                        
+                        .OrderByDescending(x => x.EquipmentCode)
+                        .FirstOrDefault(x => x.OwnerId == owner.OwnerId);
+
+                    if (lastEquipment != null)
                     {
                         bool looking = true;
-                        equipmentNumber = owner.HetEquipment.Count + 1;
 
+                        // parse last equipment records id
+                        if (lastEquipment.EquipmentCode.StartsWith(ownerCode))
+                        {
+                            string temp = lastEquipment.EquipmentCode.Replace(ownerCode, "");
+                            bool isNumeric = int.TryParse(temp, out int lastEquipmentNumber);
+                            if (isNumeric) equipmentNumber = lastEquipmentNumber + 1;
+                        }
+                        else
+                        {
+                            char[] testChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+                            int index = lastEquipment.EquipmentCode.IndexOfAny(testChars);
+
+                            if (index >= 0)
+                            {
+                                string temp = lastEquipment.EquipmentCode.Substring(index, lastEquipment.EquipmentCode.Length);
+                                bool isNumeric = int.TryParse(temp, out int lastEquipmentNumber);
+                                if (isNumeric) equipmentNumber = lastEquipmentNumber + 1;
+                            }
+                        }
+                        
                         // generate a unique equipment number
                         while (looking)
                         {
