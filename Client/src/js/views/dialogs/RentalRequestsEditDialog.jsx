@@ -68,13 +68,13 @@ var RentalRequestsEditDialog = React.createClass({
     var valid = true;
 
     if (isBlank(this.state.equipmentCount)) {
-      this.setState({ equipmentCountError: 'Count is required' });
+      this.setState({ equipmentCountError: 'Quantity is required' });
       valid = false;
     } else if (this.state.equipmentCount < 1) {
-      this.setState({ equipmentCountError: 'Count not valid' });
+      this.setState({ equipmentCountError: 'Quantity not valid' });
       valid = false;
     } else if (this.state.equipmentCount < this.props.rentalRequest.yesCount) {
-      this.setState({ equipmentCountError: 'Count can not be less than number of equipment already hired' });
+      this.setState({ equipmentCountError: 'Quantity can not be less than number of equipment already hired' });
       valid = false;
     }
 
@@ -146,7 +146,7 @@ var RentalRequestsEditDialog = React.createClass({
             <Row>
               <Col md={12}>
                 <FormGroup controlId="equipmentCount" validationState={ this.state.equipmentCountError ? 'error' : null }>
-                  <ControlLabel>Count <sup>*</sup></ControlLabel>
+                  <ControlLabel>Quantity <sup>*</sup></ControlLabel>
                   <FormInputControl type="number" min={0} defaultValue={ this.state.equipmentCount } readOnly={ isReadOnly } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
                   <HelpBlock>{ this.state.equipmentCountError }</HelpBlock>
                 </FormGroup>

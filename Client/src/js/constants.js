@@ -77,6 +77,7 @@ export const DATE_ZULU = 'YYYY-MM-DDThh:mm:ss[Z]';
 export const DATE_TIME_ISO_8601 = 'YYYY-MM-DDTHH:mm:ss';
 export const DATE_TIME_READABLE = 'MMMM D, YYYY [at] h:mm:ss A';
 export const DATE_TIME_LOG = 'YYYY/MM/DD HH:mm:ss';
+export const DATE_TIME_FILENAME = 'YYYY-MM-DD-HHmmss';
 
 // RegEx
 export const EMAIL_REGEX = /\S+@\S+\.\S+/;
@@ -105,4 +106,9 @@ export const SESSION_KEEP_ALIVE_INTERVAL = 600000; // 10 minutes
 
 // Max Field Lengths
 export const MAX_LENGTH_NOTE_TEXT = 2048;
+export const MAX_LENGTH_PHONE_NUMBER = 20;
 export const MAX_LENGTH_RENTAL_AGREEMENT_NOTE = 150;
+
+// Max File Sizes
+export const MAX_ATTACHMENT_FILE_SIZE = 5242880; // 5 MB
+export const MAX_ATTACHMENT_FILE_SIZE_READABLE = '5 MB';
