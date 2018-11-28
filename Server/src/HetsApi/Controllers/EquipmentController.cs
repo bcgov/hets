@@ -1175,8 +1175,8 @@ namespace HetsApi.Controllers
                 }                
             }
 
-            seniorityList.PrintedOn = string.Format("{0:dd-MM-yyyy H:mm:ss}", DateTime.Now);
-
+            seniorityList.PrintedOn = string.Format("{0:dd-MM-yyyy H:mm:ss}", DateTime.Now.AddHours(-8));
+            
             // **********************************************************************
             // create the payload and call the pdf service
             // **********************************************************************
