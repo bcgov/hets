@@ -210,18 +210,7 @@ SELECT DISTINCT "DISTRICT_ID" AS DISTRICT_ID,
    'COND_2', 'Travel as per time card, if applicable', true,
    NULL, NULL, 'HETS', NOW(), 
    NULL, NULL, 'HETS', NOW()
-FROM public."HET_DISTRICT";
-   
-INSERT INTO public."HET_CONDITION_TYPE"
-  ("DISTRICT_ID", "CONDITION_TYPE_CODE", "DESCRIPTION", "ACTIVE", 
-   "APP_CREATE_USER_DIRECTORY", "APP_CREATE_USER_GUID", "APP_CREATE_USERID", "APP_CREATE_TIMESTAMP", 
-   "APP_LAST_UPDATE_USER_DIRECTORY", "APP_LAST_UPDATE_USER_GUID", "APP_LAST_UPDATE_USERID", 
-   "APP_LAST_UPDATE_TIMESTAMP")
-SELECT DISTINCT "DISTRICT_ID" AS DISTRICT_ID,
-   'COND_NS', 'Non Standard Condition', true,
-   NULL, NULL, 'HETS', NOW(), 
-   NULL, NULL, 'HETS', NOW()
-FROM public."HET_DISTRICT";
+FROM public."HET_DISTRICT";   
 
 -- **************************************************************************************
 -- EQUIPMENT TYPE
