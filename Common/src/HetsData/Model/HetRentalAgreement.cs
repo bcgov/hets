@@ -11,7 +11,7 @@ namespace HetsData.Model
             HetRentalAgreementCondition = new HashSet<HetRentalAgreementCondition>();
             HetRentalAgreementRate = new HashSet<HetRentalAgreementRate>();
             HetRentalRequestRotationList = new HashSet<HetRentalRequestRotationList>();
-            HetTimeRecord = new HashSet<HetTimeRecord>();
+            HetTimeRecord = new HashSet<HetTimeRecord>();            
         }
 
         [JsonProperty("Id")]
