@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace HetsData.Model
+﻿namespace HetsData.Model
 {
     /// <summary>
     /// Rate Period Type Database Model Extension
