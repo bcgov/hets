@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace HetsData.Model
 {
     public partial class HetRentalAgreement
-    {
+    {        
         /// <summary>
         /// Status Codes
         /// </summary>
