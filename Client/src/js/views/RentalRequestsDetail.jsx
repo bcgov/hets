@@ -359,7 +359,7 @@ var RentalRequestsDetail = React.createClass({
                       }
                     </td>
                     <td>{ owner && owner.organizationName }</td>
-                    <td>{ owner && owner.primaryContact && `${owner.primaryContact.givenName} ${owner.primaryContact.surname}` }</td>
+                    <td>{ listItem.displayFields.primaryContactName }</td>
                     <td>{ owner && owner.primaryContact && owner.primaryContact.workPhoneNumber }</td>
                     <td>{ owner && owner.primaryContact && owner.primaryContact.mobilePhoneNumber }</td>
                     <td>
