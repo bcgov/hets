@@ -348,6 +348,7 @@ namespace HetsApi.Controllers
         /// <param name="notVerifiedSinceDate">Not Verified Since Date</param>
         /// <param name="equipmentId">Equipment Code</param>
         /// <param name="ownerName"></param>
+        /// <param name="projectName"></param>
         [HttpGet]
         [Route("search")]
         [SwaggerOperation("EquipmentSearchGet")]
@@ -356,7 +357,8 @@ namespace HetsApi.Controllers
         public virtual IActionResult EquipmentSearchGet([FromQuery]string localAreas, [FromQuery]string types, 
             [FromQuery]string equipmentAttachment, [FromQuery]int? owner, [FromQuery]string status, 
             [FromQuery]bool? hired, [FromQuery]DateTime? notVerifiedSinceDate, 
-            [FromQuery]string equipmentId = null, [FromQuery]string ownerName = null)
+            [FromQuery]string equipmentId = null, [FromQuery]string ownerName = null,
+            [FromQuery]string projectName = null)
         {
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
             int?[] typesArray = ArrayHelper.ParseIntArray(types);
@@ -411,7 +413,20 @@ namespace HetsApi.Controllers
                 }
             }
 
-            if (hired == true)
+            if (projectName != null)
+            {
+                IQueryable<int?> hiredEquipmentQuery = _context.HetRentalAgreement.AsNoTracking()
+                    .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId))
+                    .Where(agreement => agreement.RentalAgreementStatusTypeId == agreementStatusId)
+                    .Select(agreement => agreement.EquipmentId)
+                    .Distinct();
+
+                data = data.Where(e => hiredEquipmentQuery.Contains(e.EquipmentId));
+
+                data = data.Where(x => x.HetRentalAgreement
+                    .Any(y => y.Project.Name.ToLower().Contains(projectName.ToLower())));
+            }
+            else if (hired == true)
             {
                 IQueryable<int?> hiredEquipmentQuery = _context.HetRentalAgreement.AsNoTracking()
                     .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId))
