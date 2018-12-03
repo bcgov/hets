@@ -82,7 +82,7 @@
       margin: 0;
     }
     
-    th:last-child, td:last-child {
+    th:nth-child(2), td:nth-child(2), th:last-child, td:last-child {
       display: none;
     }
   }

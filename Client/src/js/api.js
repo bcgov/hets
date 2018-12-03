@@ -1432,15 +1432,20 @@ function parseRotationListItem(item, numberOfBlocks) {
       url: `#/${ Constant.EQUIPMENT_PATHNAME }/${ item.equipment.id }`,
     }),
   };
+
   item.displayFields = {};
   item.displayFields.equipmentDetails = concat(item.equipment.year, concat(item.equipment.make, concat(item.equipment.model, concat(item.equipment.serialNumber, item.equipment.size, '/'), '/'), '/'), ' ');
   item.displayFields.seniority = getSeniorityDisplayName(item.equipment.blockNumber, numberOfBlocks, item.equipment.seniority, item.equipment.numberInBlock);
+  item.displayFields.block = item.equipment.seniorityString && item.equipment.seniorityString.substring(0, item.equipment.seniorityString.indexOf(' '));
+
+  var primaryContact = item.equipment.owner && item.equipment.owner.primaryContact;
+  item.displayFields.primaryContactName = primaryContact ? firstLastName(primaryContact.givenName, primaryContact.surname) : '';
 }
 
 export function getRentalRequestRotationList(id) {
   return new ApiRequest(`/rentalrequests/${id}/rotationList`).get().then(response => {
     var rotationList = response.data;
-
+    
     _.map(rotationList.rentalRequestRotationList, item => parseRotationListItem(item, rotationList.numberOfBlocks));
     
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rotationList });
