@@ -440,20 +440,25 @@ var OwnersDetail = React.createClass({
 
                 return <Row id="owners-policy" className="equal-height">
                   <Col lg={4} md={6} sm={12} xs={12}>
-                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="WCB Number">{ owner.workSafeBCPolicyNumber }</ColDisplay>
+                    <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="WCB Number">{ owner.workSafeBCPolicyNumber }</ColDisplay>
                   </Col>
                   <Col lg={4} md={6} sm={12} xs={12}>
-                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="WCB Expiry Date">
+                    <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="WCB Expiry Date">
                       { formatDateTime(owner.workSafeBCExpiryDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
                     </ColDisplay>
                   </Col>
                   <Col lg={4} md={6} sm={12} xs={12}>
-                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="CGL Policy Number">
+                    <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="CGL Insurance Company">
+                      { owner.cglCompanyName }
+                    </ColDisplay>
+                  </Col>
+                  <Col lg={4} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="CGL Policy Number">
                       { owner.cglPolicyNumber }
                     </ColDisplay>
                   </Col>
                   <Col lg={4} md={6} sm={12} xs={12}>
-                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="CGL Policy End Date">
+                    <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="CGL Policy End Date">
                       { formatDateTime(owner.cglEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
                     </ColDisplay>
                   </Col>
