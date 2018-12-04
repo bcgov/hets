@@ -48,7 +48,7 @@ namespace HetsApi
             // add database context
             services.AddDbContext<DbAppContext>(options => options.UseNpgsql(connectionString));
 
-            // setup SiteMinder authentication (core 2.0)
+            // setup SiteMinder authentication (core 2.0+)
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = SiteMinderAuthOptions.AuthenticationSchemeName;
@@ -120,7 +120,7 @@ namespace HetsApi
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            loggerFactory.AddDebug();             
 
             // web site error handler  (Testing: app.UseDeveloperExceptionPage();)
             app.UseWhen(x => !x.Request.Path.Value.StartsWith("/api"), builder =>
