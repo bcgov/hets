@@ -5,10 +5,6 @@ import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-bootstrap';
 import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
-import Promise from 'bluebird';
-
-import * as Api from '../../api';
-
 import DateControl from '../../components/DateControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
@@ -40,14 +36,7 @@ var RentalAgreementsEditDialog = React.createClass({
   },
 
   componentDidMount() {
-    this.fetch();
-  },
-
-  fetch() {
-    this.setState({ loading: true });
-    Api.getOwner(this.props.rentalAgreement.ownerId).finally(() => {
-      this.setState({ loading: false });
-    });
+    this.setState({ loading: false });
   },
 
   updateState(state, callback) {
@@ -94,16 +83,11 @@ var RentalAgreementsEditDialog = React.createClass({
   },
 
   onSave() {
-    // HACK Alert! this just ensures that the normalized data doesn't mess up the PUT call
-    Promise.resolve({ ...this.props.owner, ...{
-      contacts: null, // this just ensures that the normalized data doesn't mess up the PUT call
-    }}).then(() => {
-      this.props.onSave({ ...this.props.rentalAgreement, ...{
-        estimateStartWork: this.state.estimateStartWork,
-        estimateHours: this.state.estimateHours,
-        datedOn: this.state.datedOn,
-      }});
-    });
+    this.props.onSave({ ...this.props.rentalAgreement, ...{
+      estimateStartWork: this.state.estimateStartWork,
+      estimateHours: this.state.estimateHours,
+      datedOn: this.state.datedOn,
+    }});
   },
 
   render() {
@@ -155,7 +139,6 @@ var RentalAgreementsEditDialog = React.createClass({
 function mapStateToProps(state) {
   return {
     rentalAgreement: state.models.rentalAgreement,
-    owner: state.models.owner,
   };
 }
 

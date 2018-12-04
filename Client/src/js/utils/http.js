@@ -177,6 +177,8 @@ export function jsonRequest(path, options) {
       return;
     } else if (xhr.responseType === Constant.RESPONSE_TYPE_BLOB) {
       return xhr.response;
+    } else if (options.ignoreResponse) {
+      return null;
     } else {
       return xhr.responseText ? JSON.parse(xhr.responseText) : null;
     }
