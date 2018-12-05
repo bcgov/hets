@@ -4,12 +4,16 @@ namespace HetsData.Helpers
 {
     public static class SecretKeyHelper
     {
-        private const string AllowedChars = "123456789ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz!@$#%&";
-        
-        public static string RandomString(int maxLength)
-        {
-            Random rnd = new Random(DateTime.UtcNow.Millisecond);
+        private const string AllowedChars = "123456789ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghkmnpqrsuvwxyz@#";
 
+        public static string RandomString(int maxLength, int id)
+        {
+            // seed random number generator
+            decimal temp = (DateTime.Now.Millisecond * 1000 / id) + (id * DateTime.Now.Millisecond);
+            int seed = Convert.ToInt32(Math.Round(temp, 0));
+            Random rnd = new Random(seed);
+
+            // create random string
             char[] chars = new char[maxLength];
 
             for (int i = 0; i < maxLength; i++)
