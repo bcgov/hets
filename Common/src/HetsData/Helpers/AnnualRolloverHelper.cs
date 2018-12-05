@@ -237,7 +237,6 @@ namespace HetsData.Helpers
                 // **********************************************************
                 // regenerate Owner Secret Keys for this district
                 // **********************************************************    
-                // re-open the connection
                 dbContext = new DbAppContext(connectionString);
 
                 context.WriteLine("");
@@ -248,7 +247,7 @@ namespace HetsData.Helpers
                 // get records
                 List<HetOwner> owners = dbContext.HetOwner.AsNoTracking()
                     .Where(x => x.BusinessId == null &&
-                                x.DistrictId == districtId)
+                                x.LocalArea.ServiceArea.DistrictId == districtId)
                     .ToList();
 
                 int i = 0;
@@ -257,26 +256,22 @@ namespace HetsData.Helpers
                 foreach (HetOwner owner in owners)
                 {
                     i++;
-                    string key = SecretKeyHelper.RandomString(8);
+                    string key = SecretKeyHelper.RandomString(8, owner.OwnerId);
 
                     string temp = owner.OwnerCode;
 
                     if (string.IsNullOrEmpty(temp))
                     {
-                        temp = SecretKeyHelper.RandomString(4);
+                        temp = SecretKeyHelper.RandomString(4, owner.OwnerId);
                     }
 
-                    key = temp + "-" + DateTime.UtcNow.Year + "-" + key;
+                    key = temp + "-" + (rolloverDate.Year + 1) + "-" + key;
 
                     // get owner and update
                     HetOwner ownerRecord = dbContext.HetOwner.First(x => x.OwnerId == owner.OwnerId);
                     ownerRecord.SharedKey = key;
-
-                    if (i % 500 == 0)
-                    {
-                        dbContext.SaveChangesForImport();
-                    }
-
+                    dbContext.HetOwner.Update(ownerRecord);
+                    
                     decimal tempProgress = Convert.ToDecimal(i) / Convert.ToDecimal(ownerCount);
                     tempProgress = tempProgress * 100;
                     int percentComplete = Convert.ToInt32(tempProgress);
