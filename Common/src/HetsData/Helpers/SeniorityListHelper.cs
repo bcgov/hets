@@ -239,6 +239,14 @@ namespace HetsData.Helpers
                     return false; // not adding this record to the block
                 }
 
+                // (HETS-877) check if this is a maintenance contractor - can only be in the last block
+                if (currentBlock < (totalBlocks - 1) && 
+                    equipment.Owner.IsMaintenanceContractor != null &&
+                    equipment.Owner.IsMaintenanceContractor == true)
+                {
+                    return false; // not adding this record to the block
+                }
+
                 // add record to the block                        
                 blocks[currentBlock].Add(equipment.Owner.OwnerId);
 

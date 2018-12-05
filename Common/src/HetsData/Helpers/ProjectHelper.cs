@@ -112,6 +112,13 @@ namespace HetsData.Helpers
                     {
                         countActiveAgreements++;
                     }
+
+                    // workaround for converted records from Bc Bid
+                    if (rentalAgreement.Number.StartsWith("BCBid"))
+                    {
+                        rentalAgreement.RentalRequestId = -1;
+                        rentalAgreement.RentalRequestRotationListId = -1;
+                    }
                 }
 
                 // Only allow editing the "Status" field under the following conditions:

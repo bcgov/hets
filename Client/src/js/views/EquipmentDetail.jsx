@@ -445,13 +445,13 @@ var EquipmentDetail = React.createClass({
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Hours YTD">{ equipment.hoursYtd }</ColDisplay>
                     </Col>
                     <Col lg={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.lastYear - 1 }</span> }>{ equipment.serviceHoursLastYear }</ColDisplay>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.yearMinus1 }</span> }>{ equipment.serviceHoursLastYear }</ColDisplay>
                     </Col>
                     <Col lg={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.twoYearsAgo - 1 }</span> }>{ equipment.serviceHoursTwoYearsAgo }</ColDisplay>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.yearMinus2 }</span> }>{ equipment.serviceHoursTwoYearsAgo }</ColDisplay>
                     </Col>
                     <Col lg={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.threeYearsAgo - 1 }</span> }>{ equipment.serviceHoursThreeYearsAgo }</ColDisplay>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.yearMinus3 }</span> }>{ equipment.serviceHoursThreeYearsAgo }</ColDisplay>
                     </Col>
                     <Col lg={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Years Registered">{ equipment.yearsOfService }</ColDisplay>

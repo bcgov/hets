@@ -10,18 +10,18 @@
       
       @top-right {
         margin: 0 1cm 0 0;
-        font-size: 12px;
+        font-size: 8pt;
         content: counter(page) "/" counter(pages);
       }
     }
 
-    body {
-      background-color: white;
-      color: black;
-      font-family: sans-serif;
-      font-size: 10pt;
-      white-space: normal;
-    }
+      body {
+          background-color: white;
+          color: black;
+          font-family: Myriad-Pro, Calibri, Arial, 'sans serif';
+          font-size: 8pt;
+          white-space: normal;
+      }
 
     #header {
       position: relative;
@@ -32,7 +32,7 @@
       display: inline-block;
       margin-top: 0px;
       margin-right: 0px;
-      font-size: 10pt;
+      font-size: 8pt;
       line-height: 14px;
       color: #000;
       vertical-align: top;
@@ -59,9 +59,9 @@
     }
 
       #rotation-list-table {
-          margin-top: 10pt;
-          font-size: 10pt;
-          line-height: 12px;
+          margin-top: 10px;
+          font-size: 7pt;
+          line-height: 10px;
           color: #000000;
           text-align: left;
           width: 100%;
@@ -70,22 +70,25 @@
           width: 100%;
       }
 
-      #rotation-list-table th {
-          font-weight: bold;
-          background-color: #f2f2f2;
-          padding: 5px 2px 5px 2px;
-          border: solid;
-          border-width: 1px;
-          border-color: #000000;
-      }
+          #rotation-list-table th {
+              font-weight: bold;
+              background-color: #f2f2f2;
+              padding: 5px 2px 5px 2px;
+              border-top: solid;
+              border-top-width: 1px;
+              border-top-color: gainsboro;
+              border-bottom: solid;
+              border-bottom-width: 1px;
+              border-bottom-color: gainsboro;
+          }
 
-      #rotation-list-table td {
-          vertical-align: top;
-          padding: 5px 2px 5px 2px;
-          border-style: solid;
-          border-width: 1px;
-          border-color: #000000;
-      }
+          #rotation-list-table td {
+              vertical-align: top;
+              padding: 5px 2px 5px 2px;
+              border-bottom: solid;
+              border-bottom-width: 1px;
+              border-bottom-color: gainsboro;
+          }
   </style>
 </head>
 <body>
@@ -123,11 +126,11 @@
             <thead>
                 <tr>
                     <th width="50px">Block</th>
-                    <th width="90px">Equip ID</th>
-                    <th width="70px">Working Now</th>
-                    <th width="70px">Last Called</th>                    
-                    <th width="200px">Company Name</th>
-                    <th width="260px">Yr/Mk/Md/Sz</th>
+                    <th width="80px">Equip ID</th>
+                    <th width="60px">Working Now</th>
+                    <th width="60px">Last Called</th>                    
+                    <th width="260px">Company Name</th>
+                    <th width="420px">Yr/Mk/Md/Sz</th>
                     <th>{{yearMinus3}}</th>
                     <th>{{yearMinus2}}</th>
                     <th>{{yearMinus1}}</th>

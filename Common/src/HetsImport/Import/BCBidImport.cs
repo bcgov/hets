@@ -31,7 +31,7 @@ namespace HetsImport.Import
 
             // adding system Account if not there in the database
             ImportUtility.InsertSystemUser(dbContext, SystemId);
-
+            
             // Create District status record
             dbContext = new DbAppContext(connectionString);
             ImportServiceArea.ResetDistrictStatus(context, dbContext, SystemId);
@@ -54,6 +54,9 @@ namespace HetsImport.Import
 
             dbContext = new DbAppContext(connectionString);
             ImportOwner.GenerateSecretKeys(context, dbContext);
+
+            dbContext = new DbAppContext(connectionString);
+            ImportOwner.FixPrimaryContacts(context, dbContext);
 
             //*** Import District Equipment Type from EquipType.xml (HET_DISTRICT_EQUIPMENT_TYPE)
             dbContext = new DbAppContext(connectionString);
@@ -83,17 +86,21 @@ namespace HetsImport.Import
             dbContext = new DbAppContext(connectionString);
             ImportProject.ResetSequence(context, dbContext);
 
+            //*** Import Rotation Docs from Rotation_Doc.xml (BCBID_ROTATION_DOC)
+            dbContext = new DbAppContext(connectionString);
+            ImportRotationDoc.Import(context, dbContext, fileLocation, SystemId);
+
             //*** Import Blocks / Local Area Rotation List from Block.xml (HET_DISTRICT_ROTATION_LIST)
             dbContext = new DbAppContext(connectionString);            
             ImportBlock.Import(context, dbContext, fileLocation, SystemId);
 
+            //*** Recreate "Last Called" records
+            dbContext = new DbAppContext(connectionString);
+            ImportBlock.ProcessLastCalled(context, dbContext, SystemId);
+
             //*** Import Equipment Usage (Time) from Equip_Usage.xml (HET_RENTAL_AGREEMENT and HET_TIME_RECORD)             
             dbContext = new DbAppContext(connectionString);
-            ImportEquipUsage.Import(context, dbContext, fileLocation, SystemId);
-
-            // *** Fix Contact Foreign Key Relationships
-            dbContext = new DbAppContext(connectionString);
-            ImportOwner.FixPrimaryContacts(context, dbContext);
+            ImportEquipUsage.Import(context, dbContext, fileLocation, SystemId);            
 
             // *** Final Step - fix the database sequences
             dbContext = new DbAppContext(connectionString);
@@ -161,6 +168,10 @@ namespace HetsImport.Import
 
             // Process projects
             ImportProject.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
+            dbContext = new DbAppContext(connectionString);
+
+            // Process rotation docs
+            ImportRotationDoc.Obfuscate(context, dbContext, sourceFileLocation, destinationFileLocation, SystemId);
             dbContext = new DbAppContext(connectionString);
 
             // Process blocks

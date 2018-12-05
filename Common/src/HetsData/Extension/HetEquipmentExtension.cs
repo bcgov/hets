@@ -44,6 +44,15 @@ namespace HetsData.Model
         public int AttachmentCount { get; set; }
 
         [NotMapped]
+        public string YearMinus1 { get; set; }
+
+        [NotMapped]
+        public string YearMinus2 { get; set; }
+
+        [NotMapped]
+        public string YearMinus3 { get; set; }
+
+        [NotMapped]
         public string EquipmentDetails
         {
             get

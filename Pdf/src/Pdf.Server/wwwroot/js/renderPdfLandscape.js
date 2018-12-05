@@ -26,7 +26,7 @@
                 engine: 'none',
                 recipe: 'phantom-pdf',
                 phantom: {
-                    "orientation": "portrait",
+                    "orientation": "landscape",
                     "format": "A4"
                 }
             },

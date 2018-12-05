@@ -127,7 +127,7 @@ namespace Pdf.Server.Controllers
                 };
 
                 _logger.LogInformation("GetOwnerVerificationPdf [FileName: {0}] - Gen Pdf", fileName);
-                byte[] pdfResponseBytes = await PdfDocument.BuildPdf(_nodeServices, pdfRequest);
+                byte[] pdfResponseBytes = await PdfDocument.BuildPdf(_nodeServices, pdfRequest, true);
 
                 // convert to string and log
                 string pdfResponse = System.Text.Encoding.Default.GetString(pdfResponseBytes);
@@ -191,7 +191,7 @@ namespace Pdf.Server.Controllers
                 };
 
                 _logger.LogInformation("GetSeniorityListPdf [FileName: {0}] - Gen Pdf", fileName);
-                byte[] pdfResponseBytes = await PdfDocument.BuildPdf(_nodeServices, pdfRequest);
+                byte[] pdfResponseBytes = await PdfDocument.BuildPdf(_nodeServices, pdfRequest, true);
 
                 // convert to string and log
                 string pdfResponse = System.Text.Encoding.Default.GetString(pdfResponseBytes);
