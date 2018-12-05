@@ -51,6 +51,21 @@ namespace HetsApi.Controllers
             
             HetContact item = _context.HetContact.First(a => a.ContactId == id);
 
+            // check if this is a project - and if this is a "primary contact"
+            if (item.ProjectId != null && item.ProjectId > 0)
+            {
+                int projectId = (int)item.ProjectId;
+
+                HetProject project = _context.HetProject
+                    .FirstOrDefault(x => x.ProjectId == projectId);
+
+                if (project != null && project.PrimaryContactId == id)
+                {
+                    project.PrimaryContactId = null;
+                    _context.HetProject.Update(project);
+                }
+            }
+
             _context.HetContact.Remove(item);
 
             // save the changes
