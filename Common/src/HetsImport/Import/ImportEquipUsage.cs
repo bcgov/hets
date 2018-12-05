@@ -238,9 +238,6 @@ namespace HetsImport.Import
                     fiscalStart = new DateTime(DateTime.UtcNow.Year, 4, 1);
                 }
 
-                // we'll load data for the last 2 years
-                fiscalStart = fiscalStart.AddYears(-1);
-
                 string tempRecordDate = oldObject.Worked_Dt;
 
                 if (string.IsNullOrEmpty(tempRecordDate))

@@ -296,13 +296,13 @@ namespace HetsApi.Controllers
             }            
 
             // get new Secret Key
-            string key = SecretKeyHelper.RandomString(8);
+            string key = SecretKeyHelper.RandomString(8, item.OrganizationName.Length);
 
             string temp = owner.OwnerCode;
 
             if (string.IsNullOrEmpty(temp))
             {
-                temp = SecretKeyHelper.RandomString(4);
+                temp = SecretKeyHelper.RandomString(4, item.OrganizationName.Length);
             }
 
             key = temp + "-" + DateTime.UtcNow.Year + "-" + key;
@@ -1262,13 +1262,13 @@ namespace HetsApi.Controllers
             foreach (HetOwner owner in owners)
             {
                 i++;
-                string key = SecretKeyHelper.RandomString(8);
+                string key = SecretKeyHelper.RandomString(8, owner.OwnerId);
 
                 string temp = owner.OwnerCode;
 
                 if (string.IsNullOrEmpty(temp))
                 {
-                    temp = SecretKeyHelper.RandomString(4);
+                    temp = SecretKeyHelper.RandomString(4, owner.OwnerId);
                 }
 
                 key = temp + "-" + DateTime.UtcNow.Year + "-" + key;
