@@ -49,6 +49,7 @@ var EquipmentTable = React.createClass({
         { field: 'equipmentType',    title: 'Equipment Type'       },
         { field: 'details',          title: 'Make/Model/Size/Year' },
         { field: 'attachmentCount',  title: 'Attachments'          },
+        { field: 'projectName',      title: 'Project'               },
         { field: 'status',           title: 'Status'               },
         { field: 'lastVerifiedDate', title: 'Last Verified'        },
         { field: 'blank'                                           },
@@ -63,6 +64,7 @@ var EquipmentTable = React.createClass({
                 <td>{ equip.equipmentType }</td>
                 <td>{ equip.details }</td>
                 <td>{ equip.attachmentCount }</td>
+                <td><Link to={`${Constant.PROJECTS_PATHNAME}/${equip.projectId}`}>{ equip.projectName }</Link></td>
                 <td>{ equip.status }</td>
                 <td>{ formatDateTime(equip.lastVerifiedDate, 'YYYY-MMM-DD') }</td>
                 <td style={{ textAlign: 'right' }}>

@@ -14,6 +14,7 @@ import Spinner from '../components/Spinner.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
 
 import { formatDateTimeUTCToLocal } from '../utils/date';
+import { currentPathStartsWith } from '../utils/routes';
 
 var TopNav = React.createClass({
   propTypes: {
@@ -78,20 +79,20 @@ var TopNav = React.createClass({
         <Navbar id="top-nav" className={ environmentClass }>
           { this.props.showNav &&
             <Nav>
-              <LinkContainer to={{ pathname: `/${ Constant.HOME_PATHNAME }` }} disabled={ navigationDisabled }>
-                <NavItem eventKey={ 1 }>Home</NavItem>
+              <LinkContainer to={{ pathname: `/${ Constant.HOME_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.HOME_PATHNAME) }>
+                <NavItem>Home</NavItem>
               </LinkContainer>
-              <LinkContainer to={{ pathname: `/${ Constant.OWNERS_PATHNAME }` }} disabled={ navigationDisabled }>
-                <NavItem eventKey={ 2 }>Owners</NavItem>
+              <LinkContainer to={{ pathname: `/${ Constant.OWNERS_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.OWNERS_PATHNAME) }>
+                <NavItem>Owners</NavItem>
               </LinkContainer>
-              <LinkContainer to={{ pathname: `/${ Constant.EQUIPMENT_PATHNAME }` }} disabled={ navigationDisabled }>
-                <NavItem eventKey={ 3 }>Equipment</NavItem>
+              <LinkContainer to={{ pathname: `/${ Constant.EQUIPMENT_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.EQUIPMENT_PATHNAME) }>
+                <NavItem>Equipment</NavItem>
               </LinkContainer>
-              <LinkContainer to={{ pathname: `/${ Constant.PROJECTS_PATHNAME }` }} disabled={ navigationDisabled }>
-                <NavItem eventKey={ 5 }>Projects</NavItem>
+              <LinkContainer to={{ pathname: `/${ Constant.PROJECTS_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.PROJECTS_PATHNAME) }>
+                <NavItem>Projects</NavItem>
               </LinkContainer>
-              <LinkContainer to={{ pathname: `/${ Constant.RENTAL_REQUESTS_PATHNAME }` }} disabled={ navigationDisabled }>
-                <NavItem eventKey={ 6 }>Requests</NavItem>
+              <LinkContainer to={{ pathname: `/${ Constant.RENTAL_REQUESTS_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.RENTAL_REQUESTS_PATHNAME) }>
+                <NavItem>Requests</NavItem>
               </LinkContainer>
               { (this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN) ||
                 this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) ||
@@ -100,35 +101,35 @@ var TopNav = React.createClass({
                 this.props.currentUser.hasPermission(Constant.PERMISSION_VERSION)) &&
                 <NavDropdown id="admin-dropdown" title="Administration" disabled={ navigationDisabled }>
                   { this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN) &&
-                    <LinkContainer to={{ pathname: `/${ Constant.OVERTIME_RATES_PATHNAME }` }}>
-                      <MenuItem eventKey={ 7 }>Manage OT Rates</MenuItem>
+                    <LinkContainer to={{ pathname: `/${ Constant.OVERTIME_RATES_PATHNAME }` }} active={ currentPathStartsWith(Constant.OVERTIME_RATES_PATHNAME) }>
+                      <MenuItem>Manage OT Rates</MenuItem>
                     </LinkContainer>
                   }
                   { this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) &&
-                    <LinkContainer to={{ pathname: `/${ Constant.USERS_PATHNAME }` }}>
-                      <MenuItem eventKey={ 8 }>User Management</MenuItem>
+                    <LinkContainer to={{ pathname: `/${ Constant.USERS_PATHNAME }` }} active={ currentPathStartsWith(Constant.USERS_PATHNAME) }>
+                      <MenuItem>User Management</MenuItem>
                     </LinkContainer>
                   }
                   { this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) &&
-                    <LinkContainer to={{ pathname: `/${ Constant.ROLES_PATHNAME }` }} disabled={ navigationDisabled }>
-                      <MenuItem eventKey={ 9 }>Roles and Permissions</MenuItem>
+                    <LinkContainer to={{ pathname: `/${ Constant.ROLES_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.ROLES_PATHNAME) }>
+                      <MenuItem>Roles and Permissions</MenuItem>
                     </LinkContainer>
                   }
                   { this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_ROLLOVER) &&
-                    <LinkContainer to={{ pathname: `/${ Constant.ROLLOVER_PATHNAME }` }} disabled={ navigationDisabled }>
-                      <MenuItem eventKey={ 10 }>Roll Over</MenuItem>
+                    <LinkContainer to={{ pathname: `/${ Constant.ROLLOVER_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.ROLLOVER_PATHNAME) }>
+                      <MenuItem>Roll Over</MenuItem>
                     </LinkContainer>
                   }
                   { this.props.currentUser.hasPermission(Constant.PERMISSION_VERSION) &&
-                    <LinkContainer to={{ pathname: `/${ Constant.VERSION_PATHNAME }` }} disabled={ navigationDisabled }>
-                      <MenuItem eventKey={ 11 }>Version Info</MenuItem>
+                    <LinkContainer to={{ pathname: `/${ Constant.VERSION_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.VERSION_PATHNAME) }>
+                      <MenuItem>Version Info</MenuItem>
                     </LinkContainer>
                   }
                 </NavDropdown>
               }
               { this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) &&
-                <LinkContainer to={{ pathname: `/${ Constant.DISTRICT_ADMIN_PATHNAME }` }} disabled={ navigationDisabled }>
-                  <NavItem eventKey={ 10 }>District Admin</NavItem>
+                <LinkContainer to={{ pathname: `/${ Constant.DISTRICT_ADMIN_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.DISTRICT_ADMIN_PATHNAME) }>
+                  <NavItem>District Admin</NavItem>
                 </LinkContainer>
               }
             </Nav>

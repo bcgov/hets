@@ -92,18 +92,21 @@
     td {
       word-break: break-all;
     }
-    
-    td:nth-child(4) {
-      width: 310px;
+
+    th:first-child, td:first-child, th:nth-child(10), td:nth-child(10) {
+      display: none;
+    }
+
+    th:nth-child(2), td:nth-child(2), th:last-child, td:last-child {
+      display: table-cell !important;
     }
     
-    th:nth-child(9), td:nth-child(9) {
-      display: none;
+    td:nth-child(5) {
+      width: 250px;
     }
     
     th:last-child, td:last-child {
-      display: table-cell !important;
-      min-width: 100px;
+      min-width: 150px;
     }
   }
 
