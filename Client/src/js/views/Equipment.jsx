@@ -63,6 +63,7 @@ var Equipment = React.createClass({
         hired: !clear && this.props.search.hired || false,
         statusCode: !clear && this.props.search.statusCode || Constant.EQUIPMENT_STATUS_CODE_APPROVED,
         equipmentId: !clear && this.props.search.equipmentId || '',
+        projectName: !clear && this.props.search.projectName || '',
       },
       ui : {
         sortField: this.props.ui.sortField || 'seniorityText',
@@ -100,6 +101,10 @@ var Equipment = React.createClass({
 
     if (this.state.search.equipmentId) {
       searchParams.equipmentId = this.state.search.equipmentId;
+    }
+
+    if (this.state.search.projectName) {
+      searchParams.projectName = this.state.search.projectName;
     }
 
     var notVerifiedSinceDate = Moment(this.state.search.lastVerifiedDate);
@@ -222,6 +227,10 @@ var Equipment = React.createClass({
                   <div className="input-container">
                     <ControlLabel>Equipment Id:</ControlLabel>
                     <FormInputControl id="equipmentId" type="text" value={ this.state.search.equipmentId } updateState={ this.updateSearchState } />
+                  </div>
+                  <div className="input-container">
+                    <ControlLabel>Project Name:</ControlLabel>
+                    <FormInputControl id="projectName" type="text" value={ this.state.search.projectName } updateState={ this.updateSearchState } />
                   </div>
                 </ButtonToolbar>
               </Row>

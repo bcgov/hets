@@ -107,6 +107,7 @@ namespace HetsApi.Controllers
             if (item.WorkSafeBcpolicyNumber == "") item.WorkSafeBcpolicyNumber = null;
 
             owner.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
+            owner.CglCompanyName = item.CglCompanyName;
             owner.CglendDate = item.CglendDate;
             owner.CglPolicyNumber = item.CglPolicyNumber;
             owner.LocalAreaId = item.LocalArea.LocalAreaId;
@@ -270,6 +271,7 @@ namespace HetsApi.Controllers
             HetOwner owner = new HetOwner
             {
                 OwnerStatusTypeId = (int)statusId,
+                CglCompanyName = item.CglCompanyName,
                 CglendDate = item.CglendDate,
                 CglPolicyNumber = item.CglPolicyNumber,
                 LocalAreaId = item.LocalArea.LocalAreaId,

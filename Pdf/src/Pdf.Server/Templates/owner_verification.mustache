@@ -12,9 +12,9 @@
         body {
             background-color: white;
             color: black;
-            font-family: sans-serif;
-            letter-spacing: normal;
+            font-family: Myriad-Pro, Calibri, Arial, 'sans serif';
             font-size: 12pt;
+            letter-spacing: normal;
             white-space: normal;
         }
 
@@ -134,36 +134,37 @@
             vertical-align: top;
         }
 
-        #equipment-table {
-            margin-top: 12px;
-            font-size: 10pt;
-            letter-spacing: normal;
-            line-height: 12px;
-            color: #000000;
-            text-align: left;
-            width: 100%;
+        #equipment-table {            
+          margin-top: 10px;
+          font-size: 10pt;
+          line-height: 10px;
+          color: #000000;
+          text-align: left;
+          width: 100%;
+          margin-bottom: 30px;
+          border-collapse: collapse;
+          width: 100%;
         }
 
-        #equipment-table table {       
-            border-collapse: collapse;   
-            width: 100%;            
-        }
-
-        #equipment-table th {
-            font-weight: bold;
-            background-color: #f2f2f2;
-            padding: 5px 2px 5px 2px;
-            border: solid;
-            border-width: 1px;
-            border-color: #000000;            
-        }
+            #equipment-table th {
+                font-weight: bold;
+                background-color: #f2f2f2;
+                line-height: 20px;
+                padding: 5px 2px 5px 2px;
+                border-top: solid;
+                border-top-width: 1px;
+                border-top-color: gainsboro;
+                border-bottom: solid;
+                border-bottom-width: 1px;
+                border-bottom-color: gainsboro;
+            }
 
         #equipment-table td {
-            vertical-align: top;
-            padding: 5px 2px 30px 2px;
-            border-style: solid;
-            border-width: 1px;
-            border-color: #000000;
+             vertical-align: top;
+             padding: 5px 2px 5px 2px;
+             border-bottom: solid;
+             border-bottom-width: 1px;
+             border-bottom-color: gainsboro;
         }
 
         #list-column ul {
@@ -461,34 +462,32 @@
 
             <br />
 
-            <div id="equipment-table">
-                <table border="1" cellpadding="1" cellspacing="1">
-                    <thead>
-                        <tr>
-                            <th style="width: 180px">Still own this unit & wish to re-register?</th>
-                            <th>Equipment Id</th>
-                            <th>Equipment Type</th>
-                            <th>Local Area</th>
-                            <th>Year/Make/Model/Serial Number/Size</th>
-                            <th>Attachments</th>
-                            <th style="width: 220px">Owner Comments (sold, retired, etc.)</th>
-                        </tr>
-                    </thead>
-                    {{#equipment}}
+            <table id="equipment-table">
+                <thead>
                     <tr>
-                        <td>&nbsp;Yes&nbsp;&nbsp;&nbsp;No&nbsp;</td>
-                        <td>{{equipmentCode}}</td>
-                        <td>{{#districtEquipmentType}}{{districtEquipmentName}}{{/districtEquipmentType}}</td>
-                        <td>{{localArea.name}}</td>
-                        <td>{{year}}/{{make}}/{{model}}/{{serialNumber}}/{{size}}</td>
-                        <td id="list-column">
-                            {{#equipmentAttachments}}<div style="margin: 0">{{typeName}}</div>{{/equipmentAttachments}}
-                        </td>
-                        <td>&nbsp;</td>
+                        <th style="width: 180px; padding: 5px 10px 5px 2px;">Still own this unit & wish to re-register?</th>
+                        <th>Equipment Id</th>
+                        <th>Equipment Type</th>
+                        <th>Local Area</th>
+                        <th>Year/Make/Model/Serial Number/Size</th>
+                        <th>Attachments</th>
+                        <th style="width: 220px">Owner Comments (sold, retired, etc.)</th>
                     </tr>
-                    {{/equipment}}
-                </table>
-            </div>
+                </thead>
+                {{#equipment}}
+                <tr>
+                    <td>&nbsp;Yes&nbsp;&nbsp;&nbsp;No&nbsp;</td>
+                    <td>{{equipmentCode}}</td>
+                    <td>{{#districtEquipmentType}}{{districtEquipmentName}}{{/districtEquipmentType}}</td>
+                    <td>{{localArea.name}}</td>
+                    <td>{{year}}/{{make}}/{{model}}/{{serialNumber}}/{{size}}</td>
+                    <td id="list-column">
+                        {{#equipmentAttachments}}<div style="margin: 2px 0 4px 0;">{{typeName}}</div>{{/equipmentAttachments}}
+                    </td>
+                    <td>&nbsp;</td>
+                </tr>
+                {{/equipment}}
+            </table>
 
             <br />
             <br />

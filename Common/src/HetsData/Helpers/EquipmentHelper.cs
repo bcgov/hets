@@ -64,6 +64,10 @@ namespace HetsData.Helpers
         public DateTime? LastVerifiedDate { get; set; }
 
         public int SenioritySortOrder { get; set; }
+
+        public string ProjectName { get; set; }
+
+        public int ProjectId { get; set; }
     }
 
     #endregion
@@ -149,8 +153,11 @@ namespace HetsData.Helpers
         /// </summary>
         /// <param name="equipment"></param>
         /// <param name="scoringRules"></param>
+        /// <param name="agreementStatusId"></param>
+        /// <param name="context"></param>
         /// <returns></returns>
-        public static EquipmentLite ToLiteModel(HetEquipment equipment, SeniorityScoringRules scoringRules)
+        public static EquipmentLite ToLiteModel(HetEquipment equipment, SeniorityScoringRules scoringRules, 
+            int agreementStatusId, DbAppContext context)
         {
             EquipmentLite equipmentLite = new EquipmentLite();
 
@@ -224,7 +231,21 @@ namespace HetsData.Helpers
                 equipmentLite.AttachmentCount = CalculateAttachmentCount(equipment.HetEquipmentAttachment.ToList());
                 equipmentLite.LastVerifiedDate = equipment.LastVerifiedDate;
                 equipmentLite.Status = equipment.EquipmentStatusType.EquipmentStatusTypeCode;
-                equipmentLite.LocalArea = equipment.LocalArea.Name;                
+                equipmentLite.LocalArea = equipment.LocalArea.Name;
+
+                // get project                
+                HetRentalAgreement agreement = context.HetRentalAgreement
+                    .AsNoTracking()
+                    .Include(x => x.Project)
+                    .Include(x => x.Equipment)
+                    .FirstOrDefault(x => x.RentalAgreementStatusTypeId == agreementStatusId &&
+                                         x.EquipmentId == equipmentLite.Id);
+
+                if (agreement?.Project != null)
+                {
+                    equipmentLite.ProjectId = agreement.Project.ProjectId;
+                    equipmentLite.ProjectName = agreement.Project.Name;
+                }
             }
 
             return equipmentLite;
