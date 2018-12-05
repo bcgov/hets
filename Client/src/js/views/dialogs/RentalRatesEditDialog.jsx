@@ -163,7 +163,7 @@ var RentalRatesEditDialog = React.createClass({
                 <Col md={2}>
                   <FormGroup controlId={`rate${key}`} validationState={ this.state.forms[key].rateError ? 'error' : null }>
                     <ControlLabel>Rate <sup>*</sup></ControlLabel>
-                    <FormInputControl type="float" min={ 0 } value={ this.state.forms[key].rate } readOnly={ isReadOnly } updateState={ this.updateState } />
+                    <FormInputControl type="float" min={ 0 } defaultValue={ this.state.forms[key].rate.toFixed(2) } readOnly={ isReadOnly } updateState={ this.updateState } />
                     <HelpBlock>{ this.state.forms[key].rateError }</HelpBlock>
                   </FormGroup>
                 </Col>

@@ -95,18 +95,6 @@ CREATE TRIGGER het_hist_br_iu_tr
     FOR EACH ROW
     EXECUTE PROCEDURE public.het_validate_init_audit_cols();
 
-
--- Trigger: het_impm_br_iu_tr
-
--- DROP TRIGGER het_impm_br_iu_tr ON public."HET_IMPORT_MAP";
-
-CREATE TRIGGER het_impm_br_iu_tr
-    BEFORE INSERT OR UPDATE 
-    ON public."HET_IMPORT_MAP"
-    FOR EACH ROW
-    EXECUTE PROCEDURE public.het_validate_init_audit_cols();
-
-
 -- Trigger: het_loca_br_iu_tr
 
 -- DROP TRIGGER het_loca_br_iu_tr ON public."HET_LOCAL_AREA";

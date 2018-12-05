@@ -16,7 +16,7 @@ namespace Pdf.Server.Helpers
     /// </summary>
     public static class PdfDocument
     {
-        public static async Task<byte[]> BuildPdf(INodeServices nodeServices, PdfRequest request)
+        public static async Task<byte[]> BuildPdf(INodeServices nodeServices, PdfRequest request, bool landscape = false)
         {
             try
             {
@@ -31,8 +31,11 @@ namespace Pdf.Server.Helpers
                     throw new ArgumentException("Missing Html content");
                 }
 
+                string jsUrl = request.RenderJsUrl;
+                if (landscape) jsUrl = jsUrl.Replace(".js", "Landscape.js");
+
                 // call report js to generate pdf response
-                byte[] result = await nodeServices.InvokeAsync<byte[]>(request.RenderJsUrl, request.Html);
+                byte[] result = await nodeServices.InvokeAsync<byte[]>(jsUrl, request.Html);
                 return result;
             }
             catch (Exception e)

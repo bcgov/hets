@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Hangfire.Console;
 using Hangfire.Server;
 using Hangfire.Console.Progress;
+using HetsData.Helpers;
 using HetsData.Model;
 
 namespace HetsImport.Import
@@ -58,6 +60,219 @@ namespace HetsImport.Import
 
                 performContext.WriteLine("*** Done resetting HET_LOCAL_AREA_ROTATION_LIST database sequence after import ***");
                 Debug.WriteLine("Resetting HET_LOCAL_AREA_ROTATION_LIST database sequence after import - Done!");
+            }
+            catch (Exception e)
+            {
+                performContext.WriteLine("*** ERROR ***");
+                performContext.WriteLine(e.ToString());
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Create Last Called
+        /// </summary>
+        /// <param name="performContext"></param>
+        /// <param name="dbContext"></param>
+        /// <param name="systemId"></param>
+        public static void ProcessLastCalled(PerformContext performContext, DbAppContext dbContext, string systemId)
+        {
+            try
+            {
+                performContext.WriteLine("*** Recreating Last Called ***");
+                Debug.WriteLine("Recreating Last Called");
+
+                int ii = 0;
+                string _oldTableProgress = "LastCalled_Progress";
+                string _newTable = "LastCalled";
+
+                // check if the last called has already been completed
+                int startPoint = ImportUtility.CheckInterMapForStartPoint(dbContext, _oldTableProgress, BcBidImport.SigId, _newTable);
+
+                if (startPoint == BcBidImport.SigId)    // this means the assignment job is complete
+                {
+                    performContext.WriteLine("*** Recreating Last Called is complete from the former process ***");
+                    return;
+                }
+                
+                // ************************************************************
+                // get all last called records
+                // ************************************************************
+                List<HetLocalAreaRotationList> rotationList = dbContext.HetLocalAreaRotationList.AsNoTracking()
+                    .Distinct()
+                    .ToList();
+
+                // ************************************************************************
+                // iterate the data and create rotation requests
+                // ************************************************************************
+                Debug.WriteLine("Recreating Last Called - Rotation List Record Count: " + rotationList.Count);
+
+                // get status
+                int? statusIdComplete = StatusHelper.GetStatusId(HetRentalRequest.StatusComplete, "rentalRequestStatus", dbContext);
+
+                if (statusIdComplete == null)
+                {
+                    throw new DataException("Status Id cannot be null");
+                }
+
+                foreach (HetLocalAreaRotationList listItem in rotationList)
+                {
+                    HetRentalRequest request = new HetRentalRequest
+                    {
+                        LocalAreaId = listItem.LocalAreaId,
+                        DistrictEquipmentTypeId = listItem.DistrictEquipmentTypeId,
+                        RentalRequestStatusTypeId = (int) statusIdComplete,
+                        ExpectedStartDate = DateTime.Now,
+                        ExpectedEndDate = DateTime.Now,
+                        EquipmentCount = 1,
+                        ExpectedHours = 0,
+                        AppCreateUserid = systemId,
+                        AppCreateTimestamp = DateTime.UtcNow,
+                        AppLastUpdateUserid = systemId,
+                        AppLastUpdateTimestamp = DateTime.UtcNow
+                    };
+
+                    dbContext.HetRentalRequest.Add(request);
+
+                    // save change to database
+                    if (ii++ % 100 == 0)
+                    {
+                        Debug.WriteLine("Recreating Last Called - Index: " + ii);
+                        ImportUtility.AddImportMapForProgress(dbContext, _oldTableProgress, ii.ToString(), BcBidImport.SigId, _newTable);
+                        dbContext.SaveChangesForImport();                        
+                    }                    
+                }
+
+                // save remaining requests
+                dbContext.SaveChangesForImport();
+
+                // ************************************************************************
+                // iterate the data and create "last called" records
+                // ************************************************************************                                
+                foreach (HetLocalAreaRotationList listItem in rotationList)
+                {
+                    // get request
+                    HetRentalRequest request = dbContext.HetRentalRequest.AsNoTracking()
+                        .FirstOrDefault(x => x.LocalAreaId == listItem.LocalAreaId &&
+                                             x.DistrictEquipmentTypeId == listItem.DistrictEquipmentTypeId);
+
+                    if (request == null)
+                    {
+                        throw new DataException("Rental request cannot be null");
+                    }
+
+                    // block 1
+                    if (listItem.AskNextBlock1Id != null)
+                    {
+                        // create last call record
+                        HetRentalRequestRotationList rotation = new HetRentalRequestRotationList
+                        {
+                            RentalRequestId = request.RentalRequestId,
+                            EquipmentId = listItem.AskNextBlock1Id,
+                            BlockNumber = 1,
+                            RotationListSortOrder = 1,
+                            AskedDateTime = DateTime.Now,
+                            WasAsked = true,
+                            OfferResponse = "Yes",
+                            OfferResponseDatetime = DateTime.Now,
+                            IsForceHire = false,
+                            Note = "CONVERSION",
+                            AppCreateUserid = systemId,
+                            AppCreateTimestamp = DateTime.UtcNow,
+                            AppLastUpdateUserid = systemId,
+                            AppLastUpdateTimestamp = DateTime.UtcNow
+                        };
+
+                        dbContext.HetRentalRequestRotationList.Add(rotation);
+                    }
+
+                    // block 2
+                    if (listItem.AskNextBlock2Id != null)
+                    {
+                        // create last call record
+                        HetRentalRequestRotationList rotation = new HetRentalRequestRotationList
+                        {
+                            RentalRequestId = request.RentalRequestId,
+                            EquipmentId = listItem.AskNextBlock2Id,
+                            BlockNumber = 2,
+                            RotationListSortOrder = 2,
+                            AskedDateTime = DateTime.Now,
+                            WasAsked = true,
+                            OfferResponse = "Yes",
+                            OfferResponseDatetime = DateTime.Now,
+                            IsForceHire = false,
+                            Note = "CONVERSION",
+                            AppCreateUserid = systemId,
+                            AppCreateTimestamp = DateTime.UtcNow,
+                            AppLastUpdateUserid = systemId,
+                            AppLastUpdateTimestamp = DateTime.UtcNow
+                        };
+
+                        dbContext.HetRentalRequestRotationList.Add(rotation);
+                    }
+
+                    // open block
+                    if (listItem.AskNextBlockOpenId != null)
+                    {
+                        // get equipment record
+                        HetEquipment equipment = dbContext.HetEquipment.AsNoTracking()
+                            .FirstOrDefault(x => x.EquipmentId == listItem.AskNextBlockOpenId);
+
+                        if (equipment == null)
+                        {
+                            throw new DataException("Equipment cannot be null");
+                        }
+
+                        // create last call record
+                        HetRentalRequestRotationList rotation = new HetRentalRequestRotationList
+                        {
+                            RentalRequestId = request.RentalRequestId,
+                            EquipmentId = listItem.AskNextBlockOpenId,
+                            BlockNumber = equipment.BlockNumber,
+                            RotationListSortOrder = 3,
+                            AskedDateTime = DateTime.Now,
+                            WasAsked = true,
+                            OfferResponse = "Yes",
+                            OfferResponseDatetime = DateTime.Now,
+                            IsForceHire = false,
+                            Note = "CONVERSION",
+                            AppCreateUserid = systemId,
+                            AppCreateTimestamp = DateTime.UtcNow,
+                            AppLastUpdateUserid = systemId,
+                            AppLastUpdateTimestamp = DateTime.UtcNow
+                        };
+
+                        dbContext.HetRentalRequestRotationList.Add(rotation);
+                    }
+
+                    // save change to database
+                    if (ii++ % 100 == 0)
+                    {
+                        Debug.WriteLine("Recreating Last Called - Index: " + ii);
+                        ImportUtility.AddImportMapForProgress(dbContext, _oldTableProgress, ii.ToString(), BcBidImport.SigId, _newTable);
+                        dbContext.SaveChangesForImport();
+                    }
+                }
+
+                // save remaining requests
+                dbContext.SaveChangesForImport();
+
+                // ************************************************************
+                // save final set of updates
+                // ************************************************************
+                try
+                {
+                    performContext.WriteLine("*** Recreating Last Called is Done ***");
+                    Debug.WriteLine("Recreating Last Called is Done");
+                    ImportUtility.AddImportMapForProgress(dbContext, _oldTableProgress, BcBidImport.SigId.ToString(), BcBidImport.SigId, _newTable);
+                    dbContext.SaveChangesForImport();
+                }
+                catch (Exception e)
+                {
+                    string temp = string.Format("Error saving data (Record: {0}): {1}", ii, e.Message);
+                    performContext.WriteLine(temp);
+                    throw new DataException(temp);
+                }
             }
             catch (Exception e)
             {
@@ -140,18 +355,11 @@ namespace HetsImport.Import
                         }
                     }                    
 
-                    // save change to database periodically to avoid frequent writing to the database
-                    if (++ii % 1000 == 0)
+                    // save change to database                    
+                    if (++ii % 2000 == 0)
                     {
-                        try
-                        {
-                            ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId, NewTable);
-                            dbContext.SaveChangesForImport();
-                        }
-                        catch (Exception e)
-                        {
-                            performContext.WriteLine("Error saving data " + e.Message);
-                        }
+                        ImportUtility.AddImportMapForProgress(dbContext, OldTableProgress, ii.ToString(), BcBidImport.SigId, NewTable);
+                        dbContext.SaveChangesForImport();
                     }
                 }
 
@@ -205,50 +413,13 @@ namespace HetsImport.Import
                 {
                     return; // ignore these records
                 }
-
-                // ***********************************************
-                // we only need records from the current fiscal
-                // so ignore all others
-                // ***********************************************
-                DateTime fiscalStart;
-                DateTime fiscalEnd;
-
-                if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
-                {
-                    fiscalEnd = new DateTime(DateTime.UtcNow.Year, 3, 31);
-                }
-                else
-                {
-                    fiscalEnd = new DateTime(DateTime.UtcNow.AddYears(1).Year, 3, 31);
-                }                
-
-                if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
-                {
-                    fiscalStart = new DateTime(DateTime.UtcNow.AddYears(-1).Year, 4, 1);
-                }
-                else
-                {
-                    fiscalStart = new DateTime(DateTime.UtcNow.Year, 4, 1);
-                }
-
+                
                 string tempRecordDate = oldObject.Created_Dt;
 
                 if (string.IsNullOrEmpty(tempRecordDate))
                 {
                     return; // ignore if we don't have a created date
-                }
-
-                if (!string.IsNullOrEmpty(tempRecordDate))
-                {
-                    DateTime? recordDate = ImportUtility.CleanDateTime(tempRecordDate);
-
-                    if (recordDate == null ||
-                        recordDate < fiscalStart ||
-                        recordDate > fiscalEnd)
-                    {
-                        return; // ignore this record - it is outside of the current fiscal year
-                    }
-                }
+                }                
 
                 // ***********************************************
                 // get the area record

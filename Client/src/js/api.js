@@ -1624,9 +1624,7 @@ export function releaseRentalAgreement(rentalAgreementId) {
 }
 
 export function generateRentalAgreementDocument(rentalAgreementId) {
-  return new ApiRequest(`rentalagreements/${rentalAgreementId}/pdf`).get().then((response) => {
-    return response;
-  });
+  return new ApiRequest(`rentalagreements/${rentalAgreementId}/pdf`).get(null, { ignoreResponse: true });
 }
 
 
@@ -1954,6 +1952,7 @@ export function getRegions() {
 export function getLocalAreas(id) {
   return new ApiRequest(`/districts/${id}/localAreas`).get().then(response => {
     var localAreas = normalize(response.data);
+    _.map(localAreas, area => area.name = `${ area.serviceAreaId } - ${ area.name }`);
 
     store.dispatch({ type: Action.UPDATE_LOCAL_AREAS_LOOKUP, localAreas: localAreas });
   });

@@ -1045,6 +1045,15 @@ namespace HetsApi.Controllers
             // get users district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
 
+            // get fiscal year
+            HetDistrictStatus district = _context.HetDistrictStatus.AsNoTracking()
+                .FirstOrDefault(x => x.DistrictId == districtId);
+
+            if (district?.NextFiscalYear == null) return new ObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
+
+            int fiscalYear = (int)district.NextFiscalYear; // status table uses the start of the tear
+            DateTime fiscalEnd = new DateTime(fiscalYear, 3, 31);
+
             // get status id
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
@@ -1053,7 +1062,7 @@ namespace HetsApi.Controllers
             IQueryable<HetEquipment> data = _context.HetEquipment.AsNoTracking()
                 .Include(x => x.LocalArea)
                     .ThenInclude(y => y.ServiceArea)
-                        .ThenInclude(z => z.District)
+                        .ThenInclude(z => z.District)                
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(y => y.EquipmentType)
                 .Include(x => x.Owner)
@@ -1077,28 +1086,11 @@ namespace HetsApi.Controllers
 
             // **********************************************************************
             // determine the year header values
-            // * start by getting the current fiscal year
-            // **********************************************************************
-            // determine end of current fiscal year
-            DateTime fiscalEnd;
-
-            if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
-            {
-                fiscalEnd = new DateTime(DateTime.UtcNow.Year, 3, 31);
-            }
-            else
-            {
-                fiscalEnd = new DateTime(DateTime.UtcNow.AddYears(1).Year, 3, 31);
-            }
-
-            string yearMinus1 = string.Format("{0}/{1}", fiscalEnd.AddYears(-2).Year.ToString(),
-                fiscalEnd.AddYears(-1).Year.ToString().Substring(2, 2));
-
-            string yearMinus2 = string.Format("{0}/{1}", fiscalEnd.AddYears(-3).Year.ToString(),
-                fiscalEnd.AddYears(-2).Year.ToString().Substring(2, 2));
-
-            string yearMinus3 = string.Format("{0}/{1}", fiscalEnd.AddYears(-4).Year.ToString(),
-                fiscalEnd.AddYears(-3).Year.ToString().Substring(2, 2));
+            // * use the district status table
+            // **********************************************************************            
+            string yearMinus1 = string.Format("{0}/{1}", fiscalYear - 2, fiscalYear - 1);
+            string yearMinus2 = string.Format("{0}/{1}", fiscalYear - 3, fiscalYear - 2);
+            string yearMinus3 = string.Format("{0}/{1}", fiscalYear - 4, fiscalYear - 3);
 
             // **********************************************************************
             // convert Equipment Model to Pdf View Model
@@ -1181,8 +1173,8 @@ namespace HetsApi.Controllers
                 }                
             }
 
-            seniorityList.PrintedOn = string.Format("{0:dd-MM-yyyy H:mm:ss}", DateTime.Now);
-
+            seniorityList.PrintedOn = string.Format("{0:dd-MM-yyyy H:mm:ss}", DateTime.Now.AddHours(-8));
+            
             // **********************************************************************
             // create the payload and call the pdf service
             // **********************************************************************

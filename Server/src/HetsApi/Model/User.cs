@@ -15,6 +15,7 @@ namespace HetsApi.Model
         public string SmAuthorizationDirectory { get; set; }
         public int? BusinessId { get; set; }
         public string BusinessGuid { get; set; }
+        public string Environment { get; set; }
 
         /// <summary>
         /// Business user flag
