@@ -1436,7 +1436,6 @@ function parseRotationListItem(item, numberOfBlocks) {
   item.displayFields = {};
   item.displayFields.equipmentDetails = concat(item.equipment.year, concat(item.equipment.make, concat(item.equipment.model, concat(item.equipment.serialNumber, item.equipment.size, '/'), '/'), '/'), ' ');
   item.displayFields.seniority = getSeniorityDisplayName(item.equipment.blockNumber, numberOfBlocks, item.equipment.seniority, item.equipment.numberInBlock);
-  item.displayFields.block = item.equipment.seniorityString && item.equipment.seniorityString.substring(0, item.equipment.seniorityString.indexOf(' '));
 
   var primaryContact = item.equipment.owner && item.equipment.owner.primaryContact;
   item.displayFields.primaryContactName = primaryContact ? firstLastName(primaryContact.givenName, primaryContact.surname) : '';
