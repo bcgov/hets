@@ -346,10 +346,13 @@ var RentalRequestsDetail = React.createClass({
                       <div>
                         Attachments:
                         { listItem.equipment.equipmentAttachments && listItem.equipment.equipmentAttachments.map((item, i) => (
-                          <span key={item.id}> { item.typeName }
-                            { ((i + 1) < listItem.equipment.equipmentAttachments.length) &&
-                            <span>,</span>
-                            }
+                          <span key={item.id}>
+                            <span> </span>
+                            <span className="attachment">{ item.typeName }
+                              { ((i + 1) < listItem.equipment.equipmentAttachments.length) &&
+                              <span>,</span>
+                              }
+                            </span>
                           </span>
                         ))}
                         { (!listItem.equipment.equipmentAttachments || listItem.equipment.equipmentAttachments.length === 0)  &&
