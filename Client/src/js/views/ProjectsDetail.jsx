@@ -452,7 +452,7 @@ var ProjectsDetail = React.createClass({
                           <td>{ contact.role }</td>
                           <td style={{ textAlign: 'right' }}>
                             <ButtonGroup>
-                              <DeleteButton name="Contact" hide={ !contact.canDelete || contact.isPrimary } onConfirm={ this.deleteContact.bind(this, contact) } />
+                              <DeleteButton name="Contact" hide={ !contact.canDelete  } onConfirm={ this.deleteContact.bind(this, contact) } />
                               <EditButton name="Contact" view={ !contact.canEdit } onClick={ this.openContactDialog.bind(this, contact.id) } />
                             </ButtonGroup>
                           </td>

@@ -226,7 +226,7 @@ var RentalRequests = React.createClass({
 
     return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
       { field: 'localAreaName',          title: 'Local Area'                                      },
-      { field: 'equipmentCount',         title: 'Pieces',          style: { textAlign: 'center' } },
+      { field: 'equipmentCount',         title: 'Quantity',        style: { textAlign: 'center' } },
       { field: 'districtEquipmentName',  title: 'Equipment Type'                                  },
       { field: 'expectedStartDate',      title: 'Start Date',      style: { textAlign: 'center' } },
       { field: 'expectedEndDate',        title: 'End Date',        style: { textAlign: 'center' } },
