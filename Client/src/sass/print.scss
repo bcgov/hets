@@ -1,5 +1,6 @@
 @page {
   size: landscape;
+  margin: 5mm;
 }
 
 @media print {
@@ -61,6 +62,11 @@
   }
 
   #rental-requests-detail {
+    .well {
+      padding: 0;
+      border: none;
+    }
+
     #rotation-list {
       font-size: 8px;
     }
