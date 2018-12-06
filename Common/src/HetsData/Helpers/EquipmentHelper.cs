@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -524,7 +523,7 @@ namespace HetsData.Helpers
                         .FirstOrDefault(x => x.OwnerId == owner.OwnerId);
 
                     if (lastEquipment != null)
-                    {
+                    {                        
                         bool looking = true;
 
                         // parse last equipment records id
@@ -539,18 +538,20 @@ namespace HetsData.Helpers
                             char[] testChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
                             int index = lastEquipment.EquipmentCode.IndexOfAny(testChars);
 
-                            if (index >= 0)
+                            if (index >= 0 && lastEquipment.EquipmentCode.Length > index)
                             {
-                                string temp = lastEquipment.EquipmentCode.Substring(index, lastEquipment.EquipmentCode.Length);
+                                string temp = lastEquipment.EquipmentCode.Substring(index, lastEquipment.EquipmentCode.Length - index);
                                 bool isNumeric = int.TryParse(temp, out int lastEquipmentNumber);
                                 if (isNumeric) equipmentNumber = lastEquipmentNumber + 1;
+
+                                ownerCode = lastEquipment.EquipmentCode.Substring(0, index);
                             }
                         }
                         
                         // generate a unique equipment number
                         while (looking)
                         {
-                            string candidate = GenerateEquipmentCode(owner.OwnerCode, equipmentNumber);
+                            string candidate = GenerateEquipmentCode(ownerCode, equipmentNumber);
 
                             if ((owner.HetEquipment).Any(x => x.EquipmentCode == candidate))
                             {
@@ -564,7 +565,7 @@ namespace HetsData.Helpers
                     }
 
                     // set the equipment code
-                    item.EquipmentCode = GenerateEquipmentCode(owner.OwnerCode, equipmentNumber);                    
+                    item.EquipmentCode = GenerateEquipmentCode(ownerCode, equipmentNumber);                    
                 }
 
                 // cleanup owner reference
