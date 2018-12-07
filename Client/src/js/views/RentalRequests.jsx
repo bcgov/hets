@@ -52,26 +52,13 @@ var RentalRequests = React.createClass({
   },
 
   getInitialState() {
-    // if the search prop has the 'clear' property set, clear out existing search results and use default search parameters
-    // otherwise, display previous search results and initialize search parameters from the store
-    var clear = true;
-
-    if (this.props.search.clear) {
-      // clear existing search results
-      store.dispatch({ type: Action.CLEAR_RENTAL_REQUESTS });
-    } else {
-      clear = false;
-      // restore default 'clear' value for future visits to the page
-      store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_SEARCH, rentalRequests: { ...this.props.search, clear: true }});
-    }
-
     return {
       showAddDialog: false,
       search: {
-        selectedLocalAreasIds: !clear && this.props.search.selectedLocalAreasIds || [],
-        projectName: !clear && this.props.search.projectName || '',
-        status: !clear && this.props.search.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
-        dateRange: !clear && this.props.search.dateRange || '',
+        selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
+        projectName: this.props.search.projectName || '',
+        status: this.props.search.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
+        dateRange: this.props.search.dateRange || '',
       },
       ui : {
         sortField: this.props.ui.sortField,
@@ -146,10 +133,10 @@ var RentalRequests = React.createClass({
   componentDidMount() {
     Api.getFavourites('rentalRequests').then(() => {
       // If this is the first load, then look for a default favourite
-      if (!this.props.search.loaded) {
-        var favourite = _.find(this.props.favourites, (favourite) => { return favourite.isDefault; });
-        if (favourite) {
-          this.loadFavourite(favourite);
+      if (_.isEmpty(this.props.search)) {
+        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
+        if (defaultFavourite) {
+          this.loadFavourite(defaultFavourite);
           return;
         }
       }

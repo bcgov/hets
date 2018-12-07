@@ -20,6 +20,11 @@ const DEFAULT_MODELS = {
     success: false,
   },
 
+  unapprovedEquipmentList: {
+    data: {},
+    loading: false,
+    loaded: false,
+  },
   equipmentList: {
     data: {}, 
     loading: false,
@@ -35,6 +40,11 @@ const DEFAULT_MODELS = {
     data: {},
   },
 
+  unapprovedOwners: {
+    data: {},
+    loading: false,
+    loaded: false,
+  },
   owners: {
     data: {},
     loading: false,
@@ -177,6 +187,12 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, document: action.document };
     
     // Equipment
+    case Action.UNAPPROVED_EQUIPMENT_REQUEST:
+      return { ...state, unapprovedEquipmentList: { ...state.equipmentList, loading: true, loaded: false } };
+
+    case Action.UPDATE_UNAPPROVED_EQUIPMENT:
+      return { ...state, unapprovedEquipmentList: { data: action.equipmentList, loading: false, loaded: true } };
+    
     case Action.EQUIPMENT_LIST_REQUEST:
       return { ...state, equipmentList: { ...state.equipmentList, loading: true, loaded: false } };
     
@@ -209,6 +225,12 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
     
     // Owners
+    case Action.UNAPPROVED_OWNERS_REQUEST:
+      return { ...state, unapprovedOwners: { ...state.owners, loading: true, loaded: false } };
+  
+    case Action.UPDATE_UNAPPROVED_OWNERS:
+      return { ...state, unapprovedOwners: { data: action.owners, loading: false, loaded: true } };
+      
     case Action.OWNERS_REQUEST:
       return { ...state, owners: { ...state.owners, loading: true, loaded: false } };
     
