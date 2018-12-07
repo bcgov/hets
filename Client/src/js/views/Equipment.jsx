@@ -190,7 +190,7 @@ var Equipment = React.createClass({
       <Well id="equipment-bar" bsSize="small" className="clearfix">
         <Form onSubmit={ this.search }>
           <Row>
-            <Col md={10}>
+            <Col xs={9} sm={10} id="equipment-filters">
               <Row>
                 <ButtonToolbar id="equipment-filters-first-row">
                   <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
@@ -201,7 +201,7 @@ var Equipment = React.createClass({
                   <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="districtEquipmentName"
                     items={ districtEquipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
                   <FormInputControl id="ownerName" type="text" placeholder="Company Name" value={ this.state.search.ownerName } updateState={ this.updateSearchState } />
-                <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
+                  <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
                 </ButtonToolbar>
               </Row>
               <Row>
@@ -222,12 +222,12 @@ var Equipment = React.createClass({
                 </ButtonToolbar>
               </Row>
             </Col>
-            <Col md={2}>
-              <Row id="equipment-faves">
+            <Col xs={3} sm={2} id="equipment-search-buttons">
+              <Row>
                 <Favourites id="equipment-faves-dropdown" type="equipment" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
               </Row>
-              <Row id="equipment-search">
-                <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
+              <Row>
+                <Button id="search-button" className="pull-right" bsStyle="primary" type="submit">Search</Button>
               </Row>
             </Col>
           </Row>

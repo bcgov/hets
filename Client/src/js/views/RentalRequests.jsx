@@ -276,7 +276,7 @@ var RentalRequests = React.createClass({
       <Well id="rental-requests-bar" bsSize="small" className="clearfix">
         <Form onSubmit={ this.search }>
           <Row>
-            <Col sm={10}>
+            <Col xs={9} sm={10}>
               <Row>
                 <ButtonToolbar id="rental-requests-filters">
                   <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
@@ -290,23 +290,21 @@ var RentalRequests = React.createClass({
                   <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
                 </ButtonToolbar>
               </Row>
-              <Row>
-                <ButtonToolbar id="rental-requests-custom-date-filters">
-                  {(() => {
-                    if (this.state.search.dateRange === CUSTOM) {
-                      return <span>
+              {(() => {
+                if (this.state.search.dateRange === CUSTOM) {
+                  return <Row>
+                    <ButtonToolbar id="rental-requests-custom-date-filters">
+                      <span>
                         <DateControl id="startDate" date={ this.state.search.startDate } updateState={ this.updateSearchState } label="From:" title="start date"/>
                         <DateControl id="endDate" date={ this.state.search.endDate } updateState={ this.updateSearchState } label="To:" title="end date"/>
-                      </span>;
-                    }
-                  })()}
-                </ButtonToolbar>
-              </Row>
+                      </span>
+                    </ButtonToolbar>
+                  </Row>;
+                }
+              })()}
             </Col>
-            <Col sm={2}>
-              <Row id="rental-requests-faves">
-                <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
-              </Row>
+            <Col xs={3} sm={2}>
+              <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
             </Col>
           </Row>
         </Form>

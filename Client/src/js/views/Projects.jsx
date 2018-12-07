@@ -193,7 +193,7 @@ var Projects = React.createClass({
       <Well id="projects-bar" bsSize="small" className="clearfix">
         <Row>
           <Form onSubmit={ this.search }>
-            <Col sm={10}>
+            <Col xs={9} sm={10}>
               <ButtonToolbar id="projects-filters">
                 <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
                   items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
@@ -203,10 +203,8 @@ var Projects = React.createClass({
               </ButtonToolbar>
             </Col>
           </Form>
-          <Col sm={2}>
-            <Row id="projects-faves">
-              <Favourites id="projects-faves-dropdown" type="project" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
-            </Row>
+          <Col xs={3} sm={2}>
+            <Favourites id="projects-faves-dropdown" type="project" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
           </Col>
         </Row>
       </Well>
