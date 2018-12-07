@@ -147,7 +147,7 @@ var SeniorityEditDialog = React.createClass({
             <Row>
               <Col>
                 <FormGroup controlId="serviceHoursLastYear" validationState={ this.state.serviceHoursLastYearError ? 'error' : null }>
-                  <ControlLabel>Hours { this.props.equipment.lastYear - 1 } <sup>*</sup></ControlLabel>
+                  <ControlLabel>Hours { this.props.equipment.yearMinus1 } <sup>*</sup></ControlLabel>
                   <FormInputControl type="number" value={ this.state.serviceHoursLastYear } onChange={ this.serviceHoursChanged } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
                   <HelpBlock>{ this.state.serviceHoursLastYearError }</HelpBlock>
                 </FormGroup>
@@ -156,7 +156,7 @@ var SeniorityEditDialog = React.createClass({
             <Row>
               <Col>
                 <FormGroup controlId="serviceHoursTwoYearsAgo" validationState={ this.state.serviceHoursTwoYearsAgoError ? 'error' : null }>
-                  <ControlLabel>Hours { this.props.equipment.twoYearsAgo - 1 } <sup>*</sup></ControlLabel>
+                  <ControlLabel>Hours { this.props.equipment.yearMinus2 } <sup>*</sup></ControlLabel>
                   <FormInputControl type="number" value={ this.state.serviceHoursTwoYearsAgo } onChange={ this.serviceHoursChanged } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.serviceHoursTwoYearsAgoError }</HelpBlock>
                 </FormGroup>
@@ -165,7 +165,7 @@ var SeniorityEditDialog = React.createClass({
             <Row>
               <Col>
                 <FormGroup controlId="serviceHoursThreeYearsAgo" validationState={ this.state.serviceHoursThreeYearsAgoError ? 'error' : null }>
-                  <ControlLabel>Hours { this.props.equipment.threeYearsAgo - 1 } <sup>*</sup></ControlLabel>
+                  <ControlLabel>Hours { this.props.equipment.yearMinus3 } <sup>*</sup></ControlLabel>
                   <FormInputControl type="number" value={ this.state.serviceHoursThreeYearsAgo } onChange={ this.serviceHoursChanged } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.serviceHoursThreeYearsAgoError }</HelpBlock>
                 </FormGroup>
