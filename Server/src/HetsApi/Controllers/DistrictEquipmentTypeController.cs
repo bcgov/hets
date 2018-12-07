@@ -64,12 +64,13 @@ namespace HetsApi.Controllers
 
             foreach (HetDistrictEquipmentType equipmentType in equipmentTypes)
             {
-                var approvedEquipment = equipmentType.HetEquipment
+                IEnumerable<HetEquipment> approvedEquipment = equipmentType.HetEquipment
                     .Where(x => x.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved);
 
-                equipmentType.EquipmentCount = approvedEquipment.Count();
+                List<HetEquipment> hetEquipments = approvedEquipment.ToList();
+                equipmentType.EquipmentCount = hetEquipments.Count;
 
-                foreach(HetEquipment equipment in approvedEquipment)
+                foreach(HetEquipment equipment in hetEquipments)
                 {                    
                     LocalAreaEquipment localAreaEquipment = equipmentType.LocalAreas
                         .FirstOrDefault(x => x.Id == equipment.LocalAreaId);
