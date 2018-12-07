@@ -74,7 +74,7 @@ var RentalRequests = React.createClass({
         dateRange: !clear && this.props.search.dateRange || '',
       },
       ui : {
-        sortField: this.props.ui.sortField || 'localAreaName',
+        sortField: this.props.ui.sortField,
         sortDesc: this.props.ui.sortDesc === true,
       },
     };

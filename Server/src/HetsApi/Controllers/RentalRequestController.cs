@@ -416,6 +416,7 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.EquipmentType)
                 .Include(x => x.Project.PrimaryContact)
                 .Include(x => x.RentalRequestStatusType)
+                .OrderByDescending(x => x.AppCreateTimestamp)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));            
 
             if (localAreasArray != null && localAreasArray.Length > 0)
