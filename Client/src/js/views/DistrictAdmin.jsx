@@ -134,8 +134,9 @@ var DistrictAdmin = React.createClass({
 
           return (
             <TableControl headers={[
-              { field: 'districtEquipmentName',         title: 'District Equipment Name'  },
-              { field: 'equipmentType',                 title: 'Equipment Type'           },
+              { field: 'districtEquipmentName',           title: 'Equipment Type/Description'  },              
+              { field: 'equipmentType.blueBookSection',   title: 'Blue Book Section Number'  },
+              { field: 'equipmentType.name',              title: 'Blue Book Section Name'  },
               { field: 'addDistrictEquipmentType', title: 'Add District Equipment Type',  style: { textAlign: 'right'  },
                 node: addDistrictEquipmentButton,
               },
@@ -144,7 +145,8 @@ var DistrictAdmin = React.createClass({
                 _.map(this.props.districtEquipmentTypes.data, (equipment) => {
                   return <tr key={ equipment.id }>
                     <td>{ equipment.districtEquipmentName }</td>
-                    <td>{ equipment.equipmentType.name }</td>
+                    <td>{ equipment.equipmentType.blueBookSection }</td>
+					<td>{ equipment.equipmentType.name }</td>
                     <td style={{ textAlign: 'right' }}>
                       <ButtonGroup>
                         <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteDistrictEquipmentType.bind(this, equipment) }/> }>
