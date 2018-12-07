@@ -324,6 +324,10 @@ namespace HetsApi.Controllers
         {
             _logger.LogInformation("Rental Agreement Pdf [Id: {0}]", id);
 
+            // get user info - agreement city
+            User user = UserAccountHelper.GetUser(_context, _httpContext);
+            string agreementCity = user.AgreementCity;
+
             HetRentalAgreement rentalAgreement = _context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.RatePeriodType)
                 .Include(x => x.RentalAgreementStatusType)
@@ -345,7 +349,7 @@ namespace HetsApi.Controllers
             if (rentalAgreement != null)
             {
                 // construct the view model
-                RentalAgreementPdfViewModel rentalAgreementPdfViewModel = RentalAgreementHelper.ToPdfModel(rentalAgreement);
+                RentalAgreementPdfViewModel rentalAgreementPdfViewModel = RentalAgreementHelper.ToPdfModel(rentalAgreement, agreementCity);
 
                 string payload = JsonConvert.SerializeObject(rentalAgreementPdfViewModel, new JsonSerializerSettings
                 {

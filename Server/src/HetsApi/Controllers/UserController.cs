@@ -131,7 +131,8 @@ namespace HetsApi.Controllers
                 GivenName = item.GivenName,
                 Surname = item.Surname,                
                 SmUserId = item.SmUserId,
-                DistrictId = item.District.DistrictId
+                DistrictId = item.District.DistrictId,
+                AgreementCity = item.AgreementCity
             };
             
             HetUserDistrict newUserDistrict = new HetUserDistrict
@@ -186,6 +187,7 @@ namespace HetsApi.Controllers
             user.GivenName = item.GivenName;
             user.Surname = item.Surname;
             user.SmUserId = item.SmUserId;
+            user.AgreementCity = item.AgreementCity;
 
             if (item.District != null)
             {

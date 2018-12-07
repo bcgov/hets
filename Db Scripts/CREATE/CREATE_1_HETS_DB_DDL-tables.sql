@@ -2050,6 +2050,7 @@ CREATE TABLE public."HET_USER" (
 	"SM_AUTHORIZATION_DIRECTORY" character varying(255),
 	"GUID" character varying(255),
 	"EMAIL" character varying(255),	
+	"AGREEMENT_CITY" character varying(255),	
 	"ACTIVE" boolean NOT NULL,
     "DISTRICT_ID" integer,
     "APP_CREATE_USER_DIRECTORY" character varying(50) COLLATE pg_catalog."default",
