@@ -350,9 +350,14 @@ namespace HetsApi.Controllers
             owner.SharedKey = key;
 
             // create a new primary contact record
+            if (string.IsNullOrEmpty(item.PrimaryContactRole))
+            {
+                item.PrimaryContactRole = "Contact";
+            }
+
             HetContact primaryContact = new HetContact
             {
-                Role = "Primary Contact",
+                Role = item.PrimaryContactRole,
                 Province = "BC",
                 WorkPhoneNumber = item.PrimaryContactPhone,
                 Surname = item.PrimaryContactSurname,
