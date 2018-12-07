@@ -102,6 +102,7 @@ namespace HetsApi.Controllers
             HetOwner owner = _context.HetOwner.First(x => x.OwnerId == item.OwnerId);
 
             int? oldLocalArea = owner.LocalAreaId;
+            bool? oldIsMaintenanceContractor = owner.IsMaintenanceContractor;
 
             if (item.RegisteredCompanyNumber == "") item.RegisteredCompanyNumber = null;
             if (item.WorkSafeBcpolicyNumber == "") item.WorkSafeBcpolicyNumber = null;
@@ -138,6 +139,43 @@ namespace HetsApi.Controllers
                 foreach (HetEquipment equipment in equipmentList)
                 {
                     equipment.LocalAreaId = item.LocalAreaId;
+                }
+            }
+
+            // do we need to update the block assignment?
+            if (oldIsMaintenanceContractor != item.IsMaintenanceContractor)
+            {
+                // get equipment active status
+                int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
+                if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+                // get processing rules
+                SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
+
+                // get active equipment
+                IQueryable<HetEquipment> equipmentListB = _context.HetEquipment
+                    .Include(x => x.Owner)
+                    .Include(x => x.LocalArea)
+                    .Include(x => x.DistrictEquipmentType)
+                        .ThenInclude(y => y.EquipmentType)
+                    .Where(x => x.OwnerId == id &&
+                                x.EquipmentStatusTypeId == statusId);
+
+                foreach (HetEquipment equipment in equipmentListB)
+                {                         
+                    int localAreaId = equipment.LocalArea.LocalAreaId;
+                    int districtEquipmentTypeId = equipment.DistrictEquipmentType.DistrictEquipmentTypeId;
+
+                    // get rules                  
+                    int blockSize = equipment.DistrictEquipmentType.EquipmentType.IsDumpTruck
+                        ? scoringRules.GetBlockSize("DumpTruck")
+                        : scoringRules.GetBlockSize();
+                    int totalBlocks = equipment.DistrictEquipmentType.EquipmentType.IsDumpTruck
+                        ? scoringRules.GetTotalBlocks("DumpTruck")
+                        : scoringRules.GetTotalBlocks();
+
+                    // update block assignments
+                    SeniorityListHelper.AssignBlocks(localAreaId, districtEquipmentTypeId, blockSize, totalBlocks, _context);
                 }
             }
 
