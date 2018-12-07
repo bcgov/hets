@@ -116,6 +116,7 @@ namespace HetsApi.Helpers
                     user.UserGuid = tmpUser.Guid;
                     user.BusinessUser = false;
                     user.SmAuthorizationDirectory = tmpUser.SmAuthorizationDirectory;
+                    user.AgreementCity = tmpUser.AgreementCity;
                 }
             }
             else

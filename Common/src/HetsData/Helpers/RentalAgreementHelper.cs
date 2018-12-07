@@ -27,6 +27,7 @@ namespace HetsData.Helpers
         public string Note { get; set; }
         public string EstimateStartWork { get; set; }
         public string DatedOn { get; set; }
+        public string AgreementCity { get; set; }
         public int? EstimateHours { get; set; }
         public float? EquipmentRate { get; set; }
         public string RatePeriod { get; set; }
@@ -221,13 +222,14 @@ namespace HetsData.Helpers
         /// </summary>
         /// <param name="agreement"></param>
         /// <returns></returns>
-        public static RentalAgreementPdfViewModel ToPdfModel(this HetRentalAgreement agreement)
+        public static RentalAgreementPdfViewModel ToPdfModel(this HetRentalAgreement agreement, string agreementCity)
         {
             RentalAgreementPdfViewModel pdfModel = new RentalAgreementPdfViewModel();
 
             if (agreement != null)
             {
                 pdfModel.DatedOn = ConvertDate(agreement.DatedOn);
+                pdfModel.AgreementCity = agreementCity;
                 pdfModel.Equipment = agreement.Equipment;
                 pdfModel.EquipmentRate = agreement.EquipmentRate;
                 pdfModel.EstimateHours = agreement.EstimateHours;

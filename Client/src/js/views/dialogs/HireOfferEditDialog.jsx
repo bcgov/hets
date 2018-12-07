@@ -272,32 +272,6 @@ var HireOfferEditDialog = React.createClass({
                   <Col md={12}>
                     <FormGroup>
                       <Radio 
-                        onChange={ this.offerStatusChanged.bind(this, STATUS_FORCE_HIRE) } 
-                        checked={ this.state.offerStatus == STATUS_FORCE_HIRE }
-                      >
-                        Force Hire
-                      </Radio>
-                    </FormGroup>
-                  </Col>
-                </Row>
-                { this.state.offerStatus == STATUS_FORCE_HIRE && agreementChoiceRow }
-                <Row>
-                  <Col md={12}>
-                    <FormGroup>
-                      <Radio 
-                        onChange={ this.offerStatusChanged.bind(this, STATUS_ASKED) } 
-                        checked={ this.state.offerStatus == STATUS_ASKED }
-                        disabled={ !this.props.hireOffer.showAllResponseFields && !this.props.hireOffer.offerResponse }
-                      >
-                        Asked
-                      </Radio>
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md={12}>
-                    <FormGroup>
-                      <Radio 
                         onChange={ this.offerStatusChanged.bind(this, STATUS_YES) } 
                         checked={ this.state.offerStatus == STATUS_YES }
                         disabled={ !this.props.hireOffer.showAllResponseFields && !this.props.hireOffer.offerResponse }
@@ -321,22 +295,48 @@ var HireOfferEditDialog = React.createClass({
                     </FormGroup>
                   </Col>
                 </Row>
+                { this.state.offerStatus == STATUS_NO &&
+                  <Row>
+                    <Col md={12}>
+                      <FormGroup validationState={ this.state.offerRefusalReasonError ? 'error' : null }>
+                        {/*TODO - use lookup list*/}
+                        <ControlLabel>Refusal Reason</ControlLabel>
+                        <DropdownControl id="offerRefusalReason" className="full-width" disabled={ isReadOnly } title={ this.state.offerRefusalReason } updateState={ this.updateState }
+                          items={ refusalReasons } />
+                        <HelpBlock>{ this.state.offerRefusalReasonError }</HelpBlock>
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                }
+                <Row>
+                  <Col md={12}>
+                    <FormGroup>
+                      <Radio 
+                        onChange={ this.offerStatusChanged.bind(this, STATUS_FORCE_HIRE) } 
+                        checked={ this.state.offerStatus == STATUS_FORCE_HIRE }
+                      >
+                        Force Hire
+                      </Radio>
+                    </FormGroup>
+                  </Col>
+                </Row>
+                { this.state.offerStatus == STATUS_FORCE_HIRE && agreementChoiceRow }
+                <Row>
+                  <Col md={12}>
+                    <FormGroup>
+                      <Radio 
+                        onChange={ this.offerStatusChanged.bind(this, STATUS_ASKED) } 
+                        checked={ this.state.offerStatus == STATUS_ASKED }
+                        disabled={ !this.props.hireOffer.showAllResponseFields && !this.props.hireOffer.offerResponse }
+                      >
+                        Asked
+                      </Radio>
+                    </FormGroup>
+                  </Col>
+                </Row>
                 <HelpBlock>{ this.state.offerResponseError }</HelpBlock>
               </FormGroup>
             </Col>
-            { this.state.offerStatus == STATUS_NO &&
-              <Row>
-                <Col md={12}>
-                  <FormGroup validationState={ this.state.offerRefusalReasonError ? 'error' : null }>
-                    {/*TODO - use lookup list*/}
-                    <ControlLabel>Refusal Reason</ControlLabel>
-                    <DropdownControl id="offerRefusalReason" className="full-width" disabled={ isReadOnly } title={ this.state.offerRefusalReason } updateState={ this.updateState }
-                      items={ refusalReasons } />
-                    <HelpBlock>{ this.state.offerRefusalReasonError }</HelpBlock>
-                  </FormGroup>
-                </Col>
-              </Row>
-            }
             <Row>
               <Col md={12}>
                 <FormGroup controlId="offerResponseNote" validationState={ this.state.offerResponseNoteError ? 'error' : null }>

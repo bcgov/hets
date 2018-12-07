@@ -159,7 +159,7 @@ var TimeEntryDialog = React.createClass({
     const isValidDate = function( current ){
       return current.day() === 6 && current.isBefore(new Date());
     };
-    var sortedTimeRecords = _.sortBy(rentalAgreementTimeRecords.timeRecords, 'enteredDate').reverse();
+    var sortedTimeRecords = _.sortBy(rentalAgreementTimeRecords.timeRecords, 'workedDate').reverse();
 
     const TimeRecordItem = ({ timeRecord }) => {
       return (

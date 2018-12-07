@@ -12,6 +12,7 @@ namespace HetsApi.Model
         public string GivenName { get; set; }
         public string DisplayName { get; set; }
         public string UserGuid { get; set; }
+        public string AgreementCity { get; set; }
         public string SmAuthorizationDirectory { get; set; }
         public int? BusinessId { get; set; }
         public string BusinessGuid { get; set; }
