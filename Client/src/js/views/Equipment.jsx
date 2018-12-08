@@ -127,6 +127,25 @@ var Equipment = React.createClass({
     this.fetch();
   },
 
+  clearSearch() {
+    var defaultSearchParameters = { 
+      selectedLocalAreasIds:[],
+      selectedEquipmentTypesIds: [],
+      equipmentAttachment: '',
+      ownerName: '',
+      lastVerifiedDate: '',
+      hired: false,
+      statusCode: Constant.EQUIPMENT_STATUS_CODE_APPROVED,
+      equipmentId: '',
+      projectName: '',
+    };
+
+    this.setState({ search: defaultSearchParameters }, () => {
+      store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: this.state.search });
+      store.dispatch({ type: Action.CLEAR_EQUIPMENT_LIST });
+    });
+  },
+
   updateSearchState(state, callback) {
     this.setState({ search: { ...this.state.search, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: this.state.search });
@@ -228,6 +247,9 @@ var Equipment = React.createClass({
               </Row>
               <Row>
                 <Button id="search-button" className="pull-right" bsStyle="primary" type="submit">Search</Button>
+              </Row>
+              <Row>
+                <Button id="clear-search-button" className="pull-right" onClick={ this.clearSearch }>Clear</Button>
               </Row>
             </Col>
           </Row>

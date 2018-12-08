@@ -86,7 +86,20 @@ var Projects = React.createClass({
   search(e) {
     e.preventDefault();
     this.fetch(); 
-  },  
+  },
+
+  clearSearch() {
+    var defaultSearchParameters = {
+      statusCode: Constant.PROJECT_STATUS_CODE_ACTIVE,
+      projectName: '',
+      projectNumber: '',
+    };
+
+    this.setState({ search: defaultSearchParameters }, () => {
+      store.dispatch({ type: Action.UPDATE_PROJECTS_SEARCH, projects: this.state.search });
+      store.dispatch({ type: Action.CLEAR_PROJECTS });
+    });
+  },
 
   updateSearchState(state, callback) {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () =>{
@@ -200,6 +213,7 @@ var Projects = React.createClass({
                 <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
                 <FormInputControl id="projectNumber" type="text" placeholder="Project number" value={ this.state.search.projectNumber } updateState={ this.updateSearchState }></FormInputControl>
                 <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
+                <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
               </ButtonToolbar>
             </Col>
           </Form>

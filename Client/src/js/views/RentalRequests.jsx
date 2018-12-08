@@ -152,6 +152,20 @@ var RentalRequests = React.createClass({
     this.fetch();
   },
 
+  clearSearch() {
+    var defaultSearchParameters = {
+      selectedLocalAreasIds: [],
+      projectName: '',
+      status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
+      dateRange: '',
+    };
+    
+    this.setState({ search: defaultSearchParameters }, () => {
+      store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_SEARCH, rentalRequests: this.state.search });
+      store.dispatch({ type: Action.CLEAR_RENTAL_REQUESTS });
+    });
+  },
+
   updateSearchState(state, callback) {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () =>{
       store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_SEARCH, rentalRequests: this.state.search });
@@ -288,6 +302,7 @@ var RentalRequests = React.createClass({
                     items={[ WITHIN_30_DAYS, THIS_MONTH, THIS_QUARTER, THIS_FISCAL, LAST_MONTH, LAST_QUARTER, LAST_FISCAL, CUSTOM ]}
                   />
                   <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
+                  <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
                 </ButtonToolbar>
               </Row>
               {(() => {

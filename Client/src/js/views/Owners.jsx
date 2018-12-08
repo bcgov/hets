@@ -100,6 +100,20 @@ var Owners = React.createClass({
     this.fetch();
   },
 
+  clearSearch() {
+    var defaultSearchParameters = {
+      selectedLocalAreasIds: [],
+      ownerCode: '',
+      ownerName: '',
+      statusCode: Constant.OWNER_STATUS_CODE_APPROVED,
+    };
+
+    this.setState({ search: defaultSearchParameters }, () => {
+      store.dispatch({ type: Action.UPDATE_OWNERS_SEARCH, owners: this.state.search });
+      store.dispatch({ type: Action.CLEAR_OWNERS });
+    });
+  },
+
   updateSearchState(state, callback) {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () => {
       store.dispatch({ type: Action.UPDATE_OWNERS_SEARCH, owners: this.state.search });
@@ -254,6 +268,7 @@ var Owners = React.createClass({
                 <FormInputControl id="ownerCode" type="text" placeholder="Owner Code" value={ this.state.search.ownerCode } updateState={ this.updateSearchState } />
                 <FormInputControl id="ownerName" type="text" placeholder="Company Name" value={ this.state.search.ownerName } updateState={ this.updateSearchState } />
                 <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
+                <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
               </ButtonToolbar>
             </Form>
           </Col>
