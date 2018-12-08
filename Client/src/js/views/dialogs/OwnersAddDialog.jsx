@@ -56,6 +56,7 @@ var OwnersAddDialog = React.createClass({
       primaryContactPhone: '',
       primaryContactGivenName: '',
       primaryContactSurname: '',
+      primaryContactRole: '',
       status: Constant.OWNER_STATUS_CODE_APPROVED,
 
       nameError: '',
@@ -96,6 +97,7 @@ var OwnersAddDialog = React.createClass({
     if (this.state.primaryContactGivenName !== '') { return true; }
     if (this.state.primaryContactSurname !== '') { return true; }
     if (this.state.primaryContactPhone !== '') { return true; }
+    if (this.state.primaryContactRole !== '') { return true; }
     if (this.state.status != Constant.OWNER_STATUS_CODE_APPROVED) { return true; }
 
     return false;
@@ -233,6 +235,7 @@ var OwnersAddDialog = React.createClass({
       primaryContactGivenName: this.state.primaryContactGivenName,
       primaryContactSurname: this.state.primaryContactSurname,
       primaryContactPhone: this.state.primaryContactPhone,
+      primaryContactRole: this.state.primaryContactRole,
       status: this.state.status,
     });
   },
@@ -319,6 +322,10 @@ var OwnersAddDialog = React.createClass({
           <ControlLabel>Primary Contact Phone <sup>*</sup></ControlLabel>
           <FormInputControl type="text" defaultValue={ this.state.primaryContactPhone } placeholder="250-555-1212x123" updateState={ this.updateState }/>
           <HelpBlock>{ this.state.primaryContactPhoneError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="primaryContactRole">
+          <ControlLabel>Primary Contact Role</ControlLabel>
+          <FormInputControl type="text" value={ this.state.primaryContactRole } updateState={ this.updateState } />
         </FormGroup>
         <FormGroup controlId="status" validationState={ this.state.projectStatusCodeError ? 'error' : null }>
           <ControlLabel>Status</ControlLabel>
