@@ -508,66 +508,9 @@ namespace HetsData.Helpers
             // generate a new equipment code
             if (item.Owner != null)
             {
-                // get equipment owner
-                HetOwner owner = context.HetOwner.AsNoTracking()
-                    .FirstOrDefault(x => x.OwnerId == item.Owner.OwnerId);                
-
-                if (owner != null)
-                {
-                    string ownerCode = owner.OwnerCode;
-                    int equipmentNumber = 1;
-
-                    // get the last "added" equipment record
-                    HetEquipment lastEquipment = context.HetEquipment.AsNoTracking()                        
-                        .OrderByDescending(x => x.EquipmentCode)
-                        .FirstOrDefault(x => x.OwnerId == owner.OwnerId);
-
-                    if (lastEquipment != null)
-                    {                        
-                        bool looking = true;
-
-                        // parse last equipment records id
-                        if (lastEquipment.EquipmentCode.StartsWith(ownerCode))
-                        {
-                            string temp = lastEquipment.EquipmentCode.Replace(ownerCode, "");
-                            bool isNumeric = int.TryParse(temp, out int lastEquipmentNumber);
-                            if (isNumeric) equipmentNumber = lastEquipmentNumber + 1;
-                        }
-                        else
-                        {
-                            char[] testChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-                            int index = lastEquipment.EquipmentCode.IndexOfAny(testChars);
-
-                            if (index >= 0 && lastEquipment.EquipmentCode.Length > index)
-                            {
-                                string temp = lastEquipment.EquipmentCode.Substring(index, lastEquipment.EquipmentCode.Length - index);
-                                bool isNumeric = int.TryParse(temp, out int lastEquipmentNumber);
-                                if (isNumeric) equipmentNumber = lastEquipmentNumber + 1;
-
-                                ownerCode = lastEquipment.EquipmentCode.Substring(0, index);
-                            }
-                        }
-                        
-                        // generate a unique equipment number
-                        while (looking)
-                        {
-                            string candidate = GenerateEquipmentCode(ownerCode, equipmentNumber);
-
-                            if ((owner.HetEquipment).Any(x => x.EquipmentCode == candidate))
-                            {
-                                equipmentNumber++;
-                            }
-                            else
-                            {
-                                looking = false;
-                            }
-                        }
-                    }
-
-                    // set the equipment code
-                    item.EquipmentCode = GenerateEquipmentCode(ownerCode, equipmentNumber);                    
-                }
-
+                // set the equipment code
+                item.EquipmentCode = GetEquipmentCode(item.Owner.OwnerId, context);                    
+                
                 // cleanup owner reference
                 int tmpOwnerId = item.Owner.OwnerId;
                 item.OwnerId = tmpOwnerId;
@@ -575,6 +518,76 @@ namespace HetsData.Helpers
             }            
 
             return item;
+        }
+
+        #endregion
+
+        #region Get new equipment code
+
+        public static string GetEquipmentCode(int ownerId, DbAppContext context)
+        {
+            // get equipment owner
+            HetOwner owner = context.HetOwner.AsNoTracking()
+                .FirstOrDefault(x => x.OwnerId == ownerId);
+
+            if (owner != null)
+            {
+                string ownerCode = owner.OwnerCode;
+                int equipmentNumber = 1;
+
+                // get the last "added" equipment record
+                HetEquipment lastEquipment = context.HetEquipment.AsNoTracking()
+                    .OrderByDescending(x => x.EquipmentCode)
+                    .FirstOrDefault(x => x.OwnerId == owner.OwnerId);
+
+                if (lastEquipment != null)
+                {
+                    bool looking = true;
+
+                    // parse last equipment records id
+                    if (lastEquipment.EquipmentCode.StartsWith(ownerCode))
+                    {
+                        string temp = lastEquipment.EquipmentCode.Replace(ownerCode, "");
+                        bool isNumeric = int.TryParse(temp, out int lastEquipmentNumber);
+                        if (isNumeric) equipmentNumber = lastEquipmentNumber + 1;
+                    }
+                    else
+                    {
+                        char[] testChars = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+                        int index = lastEquipment.EquipmentCode.IndexOfAny(testChars);
+
+                        if (index >= 0 && lastEquipment.EquipmentCode.Length > index)
+                        {
+                            string temp = lastEquipment.EquipmentCode.Substring(index,
+                                lastEquipment.EquipmentCode.Length - index);
+                            bool isNumeric = int.TryParse(temp, out int lastEquipmentNumber);
+                            if (isNumeric) equipmentNumber = lastEquipmentNumber + 1;
+
+                            ownerCode = lastEquipment.EquipmentCode.Substring(0, index);
+                        }
+                    }
+
+                    // generate a unique equipment number
+                    while (looking)
+                    {
+                        string candidate = GenerateEquipmentCode(ownerCode, equipmentNumber);
+
+                        if ((owner.HetEquipment).Any(x => x.EquipmentCode == candidate))
+                        {
+                            equipmentNumber++;
+                        }
+                        else
+                        {
+                            looking = false;
+                        }
+                    }
+                }
+               
+                // return the new equipment code
+                return GenerateEquipmentCode(ownerCode, equipmentNumber);
+            }
+
+            return null;
         }
 
         #endregion

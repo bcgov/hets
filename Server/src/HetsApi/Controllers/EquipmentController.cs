@@ -1068,7 +1068,7 @@ namespace HetsApi.Controllers
 
             if (district?.NextFiscalYear == null) return new ObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
 
-            int fiscalYear = (int)district.NextFiscalYear; // status table uses the start of the tear
+            int fiscalYear = (int)district.NextFiscalYear; // status table uses the start of the year
             DateTime fiscalEnd = new DateTime(fiscalYear, 3, 31);
 
             // get status id
