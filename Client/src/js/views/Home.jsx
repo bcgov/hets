@@ -50,8 +50,8 @@ var Home = React.createClass({
   },
 
   fetch() {
-    Api.searchOwners({status: Constant.OWNER_STATUS_CODE_PENDING});
-    Api.searchEquipmentList({status: Constant.EQUIPMENT_STATUS_CODE_PENDING});
+    Api.getUnapprovedOwners();
+    Api.getUnapprovedEquipment();
     Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
     this.fetchBlankRentalAgreements();
   },
@@ -61,20 +61,28 @@ var Home = React.createClass({
   },
 
   goToUnapprovedOwners() {
-    var search = {
-      clear: false,
-      statusCode: Constant.OWNER_STATUS_CODE_PENDING,
-    };
-    store.dispatch({ type: Action.UPDATE_OWNERS_SEARCH, owners: search });
+    var unapprovedStatus = Constant.OWNER_STATUS_CODE_PENDING;
+
+    // update search parameters
+    store.dispatch({ type: Action.UPDATE_OWNERS_SEARCH, owners: { statusCode: unapprovedStatus } });
+    
+    // perform search
+    Api.searchOwners({ status: unapprovedStatus });
+    
+    // navigate to search page
     this.props.router.push({ pathname: Constant.OWNERS_PATHNAME });
   },
 
   goToUnapprovedEquipment() {
-    var search = {
-      clear: false,
-      statusCode: Constant.EQUIPMENT_STATUS_CODE_PENDING,
-    };
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: search });
+    var unapprovedStatus = Constant.EQUIPMENT_STATUS_CODE_PENDING;
+    
+    // update search parameters
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: { statusCode: Constant.EQUIPMENT_STATUS_CODE_PENDING } });
+    
+    // perform search
+    Api.searchEquipmentList({ status: unapprovedStatus });
+
+    // navigate to search page
     this.props.router.push({ pathname: Constant.EQUIPMENT_PATHNAME });
   },
 
@@ -221,8 +229,8 @@ var Home = React.createClass({
       <Well>
         <Row>
           <Col md={6} className="btn-container">
-            <Button onClick={ this.goToUnapprovedOwners }>Unapproved owners ({Object.keys(this.props.unapprovedOwners.data).length})</Button>
-            <Button onClick={ this.goToUnapprovedEquipment }>Unapproved equipment ({Object.keys(this.props.unapprovedEquipment.data).length})</Button>          
+            <Button onClick={ this.goToUnapprovedOwners }>Unapproved owners { this.props.unapprovedOwners.loaded && `(${ Object.keys(this.props.unapprovedOwners.data).length })` }</Button>
+            <Button onClick={ this.goToUnapprovedEquipment }>Unapproved equipment { this.props.unapprovedEquipment.loaded && `(${ Object.keys(this.props.unapprovedEquipment.data).length })` }</Button>          
           </Col>
           <Col md={6} className="btn-container">
             <Form className="rotation-list-form" onSubmit={ this.getRotationList }>
@@ -245,8 +253,8 @@ function mapStateToProps(state) {
   return {
     currentUser: state.user,
     search: state.search.owners,
-    unapprovedOwners: state.models.owners,
-    unapprovedEquipment: state.models.equipmentList,
+    unapprovedOwners: state.models.unapprovedOwners,
+    unapprovedEquipment: state.models.unapprovedEquipmentList,
     rentalAgreement: state.models.rentalAgreement,
     rentalAgreements: state.models.rentalAgreements,
     districtEquipmentTypes: state.lookups.districtEquipmentTypes,

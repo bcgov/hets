@@ -1,27 +1,18 @@
 #projects-list {
   #projects-filters {
-    margin-top: -10px;
-
     > div {
-      margin-top: 10px;
-    }
-
-    > label {
-      margin-top: 17px;
-      margin-left: 10px;
-      float: left;
+      margin: 5px;
     }
 
     > button {
-      margin-top: 10px;
-      margin-left: 20px;
+      margin: 5px;
     }
 
     > input {
       float: left;
       min-width: 175px;
+      margin: 5px;
       width: auto;
-      margin: 10px 0 0 5px;
     }
   }
 
@@ -31,10 +22,6 @@
     .btn {
       width: 40px;
     }
-  }
-
-  #projects-faves {
-    float: right;
   }
 
   #add-button-container {

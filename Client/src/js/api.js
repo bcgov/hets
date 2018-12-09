@@ -429,6 +429,19 @@ export function searchEquipmentList(params) {
   });
 }
 
+export function getUnapprovedEquipment() {
+  store.dispatch({ type: Action.UNAPPROVED_EQUIPMENT_REQUEST });
+  return new ApiRequest('/equipment/search').get({ status: Constant.EQUIPMENT_STATUS_CODE_PENDING }).then(response => {
+    var equipmentList = normalize(response.data);
+
+    _.map(equipmentList, equipment => { 
+      equipment.details = [equipment.make || '-', equipment.model || '-', equipment.size || '-', equipment.year || '-'].join('/');
+    });
+
+    store.dispatch({ type: Action.UPDATE_UNAPPROVED_EQUIPMENT, equipmentList: equipmentList });
+  });
+}
+
 export function getEquipment(equipmentId) {
   return new ApiRequest(`/equipment/${ equipmentId }`).get().then(response => {
     var equipment = response.data;
@@ -677,6 +690,14 @@ export function searchOwners(params) {
   return new ApiRequest('/owners/search').get(params).then(response => {
     var owners = normalize(response.data);
     store.dispatch({ type: Action.UPDATE_OWNERS, owners: owners });
+  });
+}
+
+export function getUnapprovedOwners() {
+  store.dispatch({ type: Action.UNAPPROVED_OWNERS_REQUEST });
+  return new ApiRequest('/owners/search').get({ status: Constant.OWNER_STATUS_CODE_PENDING }).then(response => {
+    var owners = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_UNAPPROVED_OWNERS, owners: owners });
   });
 }
 

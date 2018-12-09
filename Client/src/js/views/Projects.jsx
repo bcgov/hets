@@ -33,25 +33,12 @@ var Projects = React.createClass({
   },
 
   getInitialState() {
-    // if the search prop has the 'clear' property set, clear out existing search results and use default search parameters
-    // otherwise, display previous search results and initialize search parameters from the store
-    var clear = true;
-
-    if (this.props.search.clear) {
-      // clear existing search results
-      store.dispatch({ type: Action.CLEAR_PROJECTS });
-    } else {
-      clear = false;
-      // restore default 'clear' value for future visits to the page
-      store.dispatch({ type: Action.UPDATE_PROJECTS_SEARCH, projects: { ...this.props.search, clear: true }});
-    }
-
     return {
       showAddDialog: false,
       search: {
-        statusCode: !clear && this.props.search.statusCode || Constant.PROJECT_STATUS_CODE_ACTIVE,
-        projectName: !clear && this.props.search.projectName || '',
-        projectNumber: !clear && this.props.search.projectNumber || '',
+        statusCode: this.props.search.statusCode || Constant.PROJECT_STATUS_CODE_ACTIVE,
+        projectName: this.props.search.projectName || '',
+        projectNumber: this.props.search.projectNumber || '',
       },
       ui : {
         sortField: this.props.ui.sortField || 'name',
@@ -82,10 +69,10 @@ var Projects = React.createClass({
   componentDidMount() {
     Api.getFavourites('project').then(() => {
       // If this is the first load, then look for a default favourite
-      if (!this.props.search.loaded) {
-        var favourite = _.find(this.props.favourites, (favourite) => { return favourite.isDefault; });
-        if (favourite) {
-          this.loadFavourite(favourite);
+      if (_.isEmpty(this.props.search)) {
+        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
+        if (defaultFavourite) {
+          this.loadFavourite(defaultFavourite);
           return;
         }
       }
@@ -99,7 +86,20 @@ var Projects = React.createClass({
   search(e) {
     e.preventDefault();
     this.fetch(); 
-  },  
+  },
+
+  clearSearch() {
+    var defaultSearchParameters = {
+      statusCode: Constant.PROJECT_STATUS_CODE_ACTIVE,
+      projectName: '',
+      projectNumber: '',
+    };
+
+    this.setState({ search: defaultSearchParameters }, () => {
+      store.dispatch({ type: Action.UPDATE_PROJECTS_SEARCH, projects: this.state.search });
+      store.dispatch({ type: Action.CLEAR_PROJECTS });
+    });
+  },
 
   updateSearchState(state, callback) {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () =>{
@@ -206,20 +206,19 @@ var Projects = React.createClass({
       <Well id="projects-bar" bsSize="small" className="clearfix">
         <Row>
           <Form onSubmit={ this.search }>
-            <Col sm={10}>
+            <Col xs={9} sm={10}>
               <ButtonToolbar id="projects-filters">
                 <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
                   items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
                 <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
                 <FormInputControl id="projectNumber" type="text" placeholder="Project number" value={ this.state.search.projectNumber } updateState={ this.updateSearchState }></FormInputControl>
                 <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
+                <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
               </ButtonToolbar>
             </Col>
           </Form>
-          <Col sm={2}>
-            <Row id="projects-faves">
-              <Favourites id="projects-faves-dropdown" type="project" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
-            </Row>
+          <Col xs={3} sm={2}>
+            <Favourites id="projects-faves-dropdown" type="project" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
           </Col>
         </Row>
       </Well>
