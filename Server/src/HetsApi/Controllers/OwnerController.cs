@@ -77,6 +77,37 @@ namespace HetsApi.Controllers
         }
 
         /// <summary>
+        /// Get all owners for this district
+        /// </summary>
+        [HttpGet]
+        [Route("lite")]
+        [SwaggerOperation("OwnersGetLite")]
+        [SwaggerResponse(200, type: typeof(List<OwnerLiteList>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult OwnersGetLite()
+        {
+            // get users district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            // get active status
+            int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // get all active owners for this district
+            IEnumerable<OwnerLiteList> owners = _context.HetOwner.AsNoTracking()
+                .Where(x => x.LocalArea.ServiceArea.DistrictId == districtId &&
+                            x.OwnerStatusTypeId == statusId)
+                .OrderBy(x => x.OwnerCode)
+                .Select(x => new OwnerLiteList
+                {
+                    OwnerCode = x.OwnerCode,
+                    Id = x.OwnerId
+                });
+                    
+            return new ObjectResult(new HetsResponse(owners));
+        }
+
+        /// <summary>
         /// Update owner
         /// </summary>
         /// <param name="id">id of Owner to update</param>
