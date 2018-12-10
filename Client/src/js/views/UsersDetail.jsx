@@ -266,6 +266,9 @@ var UsersDetail = React.createClass({
                   <Col lg={4} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="District">{ user.districtName }</ColDisplay>
                   </Col>
+                  <Col lg={4} md={6} sm={12} xs={12}>
+                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Location">{ user.agreementCity }</ColDisplay>
+                  </Col>
                 </Row>;
               })()}
             </Well>
