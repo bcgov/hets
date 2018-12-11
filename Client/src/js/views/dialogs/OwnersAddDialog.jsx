@@ -50,6 +50,7 @@ var OwnersAddDialog = React.createClass({
       ownerCode: '',
       // localAreaId: defaultLocalAreaId.id || 0,
       localAreaId: 0,
+      isMaintenanceContractor: false,
       meetsResidency: true,
       registeredCompanyNumber: '',
       workSafeBCPolicyNumber: '',
@@ -229,6 +230,7 @@ var OwnersAddDialog = React.createClass({
       postalCode: this.state.postalCode,
       ownerCode: this.state.ownerCode,
       localArea: { id: this.state.localAreaId },
+      isMaintenanceContractor: this.state.isMaintenanceContractor,
       meetsResidency: this.state.meetsResidency,
       registeredCompanyNumber: this.state.registeredCompanyNumber,
       workSafeBCPolicyNumber: this.state.workSafeBCPolicyNumber,
@@ -337,6 +339,9 @@ var OwnersAddDialog = React.createClass({
         <FormGroup controlId="registeredCompanyNumber">
           <ControlLabel>Registered BC Company Number</ControlLabel>
           <FormInputControl type="text" value={ this.state.registeredCompanyNumber } updateState={ this.updateState } />
+        </FormGroup>
+        <FormGroup controlId="isMaintenanceContractor">
+          <CheckboxControl id="isMaintenanceContractor" checked={ this.state.isMaintenanceContractor } updateState={ this.updateState }>Maintenance Contractor</CheckboxControl>
         </FormGroup>
         <FormGroup controlId="meetsResidency" validationState={ this.state.residencyError ? 'error' : null }>
           <CheckboxControl id="meetsResidency" checked={ this.state.meetsResidency } updateState={ this.updateState }>Meets Residency</CheckboxControl>
