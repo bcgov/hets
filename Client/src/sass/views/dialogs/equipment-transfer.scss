@@ -1,0 +1,16 @@
+#equipment-transfer {
+  #select-equipment {
+    .checkbox {
+      margin: 0;
+      text-align: center;
+    }
+
+    tr th:first-child .checkbox {
+      margin-bottom: -2px;
+
+      label {
+        font-weight: bold;
+      }
+    }
+  }
+}

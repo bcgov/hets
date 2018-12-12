@@ -101,7 +101,8 @@ namespace HetsApi.Controllers
                 .Select(x => new OwnerLiteList
                 {
                     OwnerCode = x.OwnerCode,
-                    Id = x.OwnerId
+                    Id = x.OwnerId,
+                    LocalAreaId = x.LocalAreaId,
                 });
                     
             return new ObjectResult(new HetsResponse(owners));

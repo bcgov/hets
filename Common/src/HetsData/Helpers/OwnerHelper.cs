@@ -23,7 +23,8 @@ namespace HetsData.Helpers
     public class OwnerLiteList
     {
         public int Id { get; set; }
-        public string OwnerCode { get; set; }        
+        public string OwnerCode { get; set; }
+        public int? LocalAreaId { get; set; }
     }
 
     public class OwnerVerificationPdfViewModel
