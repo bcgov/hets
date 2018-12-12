@@ -386,7 +386,7 @@ namespace HetsApi.Authentication
 
                             userSettings.HetsUser.DistrictId = userDistrict.District.DistrictId;
                             dbAppContext.HetUser.Update(userSettings.HetsUser);
-                            dbAppContext.SaveChanges();
+                            dbAppContext.SaveChanges();                            
                         }
                     }
 
