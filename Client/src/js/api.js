@@ -1993,7 +1993,10 @@ export function getServiceAreas() {
 
 export function getEquipmentTypes() {
   return new ApiRequest('/equipmenttypes').get().then(response => {
-    var equipmentTypes = normalize(response.data);
+    var equipmentTypes = _.mapValues(normalize(response.data), x => {
+      x.blueBookSectionAndName = `${x.blueBookSection} - ${x.name}`;
+      return x;
+    });
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_TYPES_LOOKUP, equipmentTypes: equipmentTypes });
   });

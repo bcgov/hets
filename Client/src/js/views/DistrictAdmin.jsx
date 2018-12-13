@@ -19,7 +19,7 @@ import DistrictEquipmentTypeAddEditDialog from './dialogs/DistrictEquipmentTypeA
 var DistrictAdmin = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
-    rentalConditions: React.PropTypes.array,
+    rentalConditions: React.PropTypes.object,
     districtEquipmentTypes: React.PropTypes.object,
     equipmentTypes: React.PropTypes.object,
     router: React.PropTypes.object,
@@ -111,7 +111,7 @@ var DistrictAdmin = React.createClass({
 
   render() {
     var equipmentTypes = _.chain(this.props.equipmentTypes)
-      .sortBy('name')
+      .sortBy('blueBookSection')
       .value();
 
     if (!this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) { 
