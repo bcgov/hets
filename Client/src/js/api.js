@@ -685,6 +685,14 @@ function parseOwner(owner) {
   owner.canDelete = false; // TODO Needs input from Business whether this is needed.
 }
 
+export function getOwnersLite() {
+  store.dispatch({ type: Action.OWNERS_LITE_REQUEST });
+  return new ApiRequest('/owners/lite').get().then(response => {
+    var owners = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_OWNERS_LITE, owners: owners });
+  });
+}
+
 export function searchOwners(params) {
   store.dispatch({ type: Action.OWNERS_REQUEST });
   return new ApiRequest('/owners/search').get(params).then(response => {
@@ -709,17 +717,6 @@ export function getOwner(ownerId) {
     parseOwner(owner);
 
     store.dispatch({ type: Action.UPDATE_OWNER, owner: owner });
-  });
-}
-
-export function getOwners() {
-  store.dispatch({ type: Action.OWNERS_LOOKUP_REQUEST });
-  return new ApiRequest('/owners').get().then(response => {
-    var owners = normalize(response.data);
-    // Add display fields
-    _.map(owners, owner => { parseOwner(owner); });
-
-    store.dispatch({ type: Action.UPDATE_OWNERS_LOOKUP, owners: owners });
   });
 }
 
@@ -802,6 +799,18 @@ export function addOwnerDocument(ownerId, files) {
   return new ApiRequest(`/owners/${ ownerId }/attachments`).post(files);
 }
 
+export function getOwnerEquipment(ownerId) {
+  return new ApiRequest(`/owners/${ ownerId }/equipment`).get().then(response => {
+    var equipmentList = normalize(response.data);
+
+    _.map(equipmentList, equipment => { 
+      equipment.details = [equipment.make || '-', equipment.model || '-', equipment.size || '-', equipment.year || '-'].join('/');
+    });
+    
+    store.dispatch({ type: Action.UPDATE_OWNER_EQUIPMENT, equipment: equipmentList });
+  });
+}
+
 export function updateOwnerEquipment(owner, equipmentArray) {
   return new ApiRequest(`/owners/${ owner.id }/equipment`).put(equipmentArray).then(() => {
     // After updating the owner's equipment, refresh the owner state.
@@ -844,6 +853,17 @@ export function changeOwnerStatus(status) {
 
 export function verifyOwners(owners) {
   return new ApiRequest('owners/verificationPdf').post(owners, { responseType: Constant.RESPONSE_TYPE_BLOB }).then((response) => {
+    return response;
+  });
+}
+
+export function transferEquipment(donorOwnerId, recipientOwnerId, equipment, includeSeniority) {
+  return new ApiRequest(`owners/${donorOwnerId}/equipmentTransfer/${recipientOwnerId}/${includeSeniority}`).post(equipment).then((response) => {
+    if (response.responseStatus === 'ERROR') {
+      store.dispatch({ type: Action.EQUIPMENT_TRANSFER_ERROR, errorMessage: response.error.description });
+      return Promise.reject(new Error(response.error.description));
+    }
+    
     return response;
   });
 }
