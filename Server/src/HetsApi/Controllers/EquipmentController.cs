@@ -213,7 +213,7 @@ namespace HetsApi.Controllers
             equipment.Status = item.Status;
             equipment.StatusComment = item.StatusComment;
 
-            if (equipment.Status.Equals(HetEquipment.StatusArchived, StringComparison.CurrentCultureIgnoreCase))
+            if (equipment.Status.Equals(HetEquipment.StatusArchived))
             {
                 equipment.ArchiveCode = "Y";
                 equipment.ArchiveDate = DateTime.UtcNow;
@@ -232,17 +232,17 @@ namespace HetsApi.Controllers
                 // (if this was a new record with no block/seniority yet)
                 if (equipment.BlockNumber == null &&
                     equipment.Seniority == null &&
-                    equipment.Status.Equals(HetEquipment.StatusApproved, StringComparison.CurrentCultureIgnoreCase))
+                    equipment.Status.Equals(HetEquipment.StatusApproved))
                 {
                     // per HETS-536 -> ignore and let the user set the "Approved Date" date
 
                     // recalculation seniority (move into a block)
                     recalculateSeniority = true;
                 }
-                else if ((oldStatus.Equals(HetEquipment.StatusApproved, StringComparison.CurrentCultureIgnoreCase) &&
-                          !equipment.Status.Equals(HetEquipment.StatusApproved, StringComparison.CurrentCultureIgnoreCase)) ||
-                         (!oldStatus.Equals(HetEquipment.StatusApproved, StringComparison.CurrentCultureIgnoreCase) &&
-                          equipment.Status.Equals(HetEquipment.StatusApproved, StringComparison.CurrentCultureIgnoreCase)))
+                else if ((oldStatus.Equals(HetEquipment.StatusApproved) &&
+                          !equipment.Status.Equals(HetEquipment.StatusApproved)) ||
+                         (!oldStatus.Equals(HetEquipment.StatusApproved) &&
+                          equipment.Status.Equals(HetEquipment.StatusApproved)))
                 {
                     // recalculation seniority (move into or out of a block)
                     recalculateSeniority = true;
@@ -1279,9 +1279,9 @@ namespace HetsApi.Controllers
                 HetRentalRequestRotationList blockRotation = context.HetRentalRequestRotationList.AsNoTracking()
                     .Include(x => x.Equipment)
                     .Include(x => x.RentalRequest)
-                    .ThenInclude(x => x.LocalArea)
+                        .ThenInclude(x => x.LocalArea)
                     .Include(x => x.RentalRequest)
-                    .ThenInclude(x => x.DistrictEquipmentType)
+                        .ThenInclude(x => x.DistrictEquipmentType)
                     .OrderByDescending(x => x.RentalRequestId).ThenByDescending(x => x.RotationListSortOrder)
                     .FirstOrDefault(x => x.RentalRequest.LocalArea.LocalAreaId == localAreaId &&
                                          x.RentalRequest.DistrictEquipmentType.DistrictEquipmentTypeId == districtEquipmentTypeId &&
