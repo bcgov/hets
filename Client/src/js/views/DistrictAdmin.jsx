@@ -121,7 +121,7 @@ var DistrictAdmin = React.createClass({
 
   render() {
     var equipmentTypes = _.chain(this.props.equipmentTypes)
-      .sortBy('name')
+      .sortBy('blueBookSection')
       .value();
 
     if (!this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) { 
