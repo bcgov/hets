@@ -285,8 +285,8 @@ namespace HetsData.Helpers
         {
             if (rentalAgreements.Count == 0) return false;
 
-            int? count = rentalAgreements.Count(x => x.RentalAgreementStatusType.RentalAgreementStatusTypeCode
-                .Equals(HetRentalAgreement.StatusActive, StringComparison.InvariantCultureIgnoreCase));
+            int? count = rentalAgreements.Count(x => x.RentalAgreementStatusType.RentalAgreementStatusTypeCode 
+                .Equals(HetRentalAgreement.StatusActive));
 
             return count > 0;
         }
@@ -312,10 +312,9 @@ namespace HetsData.Helpers
         {
             // add an "IsHired" flag to indicate if this equipment is currently in use
             IQueryable<HetRentalAgreement> agreements = context.HetRentalAgreement.AsNoTracking()
-                .Include(x => x.Equipment)
-                .Where(x => x.RentalAgreementStatusType.RentalAgreementStatusTypeCode.Equals("Active", StringComparison.InvariantCultureIgnoreCase));
+                .Where(x => x.RentalAgreementStatusType.RentalAgreementStatusTypeCode.Equals(HetRentalAgreement.StatusActive));
 
-            return agreements.Any(x => x.Equipment.EquipmentId == id);
+            return agreements.Any(x => x.EquipmentId == id);
         }
 
         #endregion
@@ -393,7 +392,7 @@ namespace HetsData.Helpers
             // *******************************************************************************
             float? summation = context.HetTimeRecord.AsNoTracking()
                 .Include(x => x.RentalAgreement.Equipment)
-                .Where(x => x.RentalAgreement.Equipment.EquipmentId == id &&
+                .Where(x => x.RentalAgreement.EquipmentId == id &&
                             x.WorkedDate >= fiscalStart &&
                             x.WorkedDate <= fiscalEnd)
                 .Sum(x => x.Hours);

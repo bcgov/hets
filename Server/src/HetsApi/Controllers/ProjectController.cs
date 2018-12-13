@@ -178,12 +178,12 @@ namespace HetsApi.Controllers
             
             if (districtTokens != null && districts.Length > 0)
             {
-                data = data.Where(x => districtTokens.Contains(x.District.DistrictId));
+                data = data.Where(x => districtTokens.Contains(x.DistrictId));
             }
 
             if (project != null)
             {
-                data = data.Where(x => x.Name.ToLowerInvariant().Contains(project.ToLowerInvariant()));
+                data = data.Where(x => x.Name.ToLower().Contains(project.ToLower()));
             }
 
             if (status != null)
@@ -199,7 +199,7 @@ namespace HetsApi.Controllers
             if (projectNumber != null)
             {
                 // allow for case insensitive search of project name
-                data = data.Where(x => string.Equals(x.ProvincialProjectNumber, projectNumber, StringComparison.CurrentCultureIgnoreCase));
+                data = data.Where(x => x.ProvincialProjectNumber.ToLower().Equals(projectNumber.ToLower()));
             }
 
             // convert Project Model to the "ProjectLite" Model

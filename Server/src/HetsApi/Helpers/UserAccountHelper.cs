@@ -104,7 +104,7 @@ namespace HetsApi.Helpers
             if (!isBusinessUser)
             {                
                 HetUser tmpUser = context.HetUser.AsNoTracking()
-                    .FirstOrDefault(x => x.SmUserId.Equals(userId, StringComparison.InvariantCultureIgnoreCase));
+                    .FirstOrDefault(x => x.SmUserId.ToLower().Equals(userId.ToLower()));
 
                 if (tmpUser != null)
                 {
@@ -122,7 +122,7 @@ namespace HetsApi.Helpers
             else
             {
                 HetBusinessUser tmpUser = context.HetBusinessUser.AsNoTracking()
-                    .FirstOrDefault(x => x.BceidUserId.Equals(userId, StringComparison.InvariantCultureIgnoreCase));
+                    .FirstOrDefault(x => x.BceidUserId.ToLower().Equals(userId.ToLower()));
 
                 if (tmpUser != null)
                 {
@@ -204,7 +204,7 @@ namespace HetsApi.Helpers
         {
             HetUser user = context.HetUser
                 .Where(x => x.Guid != null &&
-                            x.Guid.Equals(guid, StringComparison.OrdinalIgnoreCase))
+                            x.Guid.Equals(guid))
                 .Include(u => u.HetUserRole)
                     .ThenInclude(r => r.Role)
                         .ThenInclude(rp => rp.HetRolePermission)
@@ -224,7 +224,7 @@ namespace HetsApi.Helpers
         {
             HetUser user = context.HetUser
                 .Where(x => x.SmUserId != null &&
-                            x.SmUserId.Equals(smUserId, StringComparison.OrdinalIgnoreCase))
+                            x.SmUserId.ToLower().Equals(smUserId.ToLower()))
                 .Include(u => u.HetUserRole)
                     .ThenInclude(r => r.Role)
                         .ThenInclude(rp => rp.HetRolePermission)

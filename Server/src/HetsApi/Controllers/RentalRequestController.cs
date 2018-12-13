@@ -426,7 +426,7 @@ namespace HetsApi.Controllers
 
             if (project != null)
             {
-                data = data.Where(x => x.Project.Name.ToLowerInvariant().Contains(project.ToLowerInvariant()));
+                data = data.Where(x => x.Project.Name.ToLower().Contains(project.ToLower()));
             }
 
             if (startDate != null)
