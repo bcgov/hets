@@ -35,7 +35,7 @@ var OwnersEditDialog = React.createClass({
       province: owner.province || '',
       postalCode: owner.postalCode || '',
       localAreaId: owner.localArea.id || 0,
-      isMaintenanceContractor: false,
+      isMaintenanceContractor: owner.isMaintenanceContractor || false,
       doingBusinessAs: owner.doingBusinessAs || '',
       registeredCompanyNumber: owner.registeredCompanyNumber || '',
       status: owner.status || '',
