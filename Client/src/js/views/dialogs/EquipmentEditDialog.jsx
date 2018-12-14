@@ -30,6 +30,7 @@ var EquipmentEditDialog = React.createClass({
       isNew: this.props.equipment.id === 0,
 
       localAreaId: this.props.equipment.localArea.id || 0,
+      equipmentTypeId: this.props.equipment.districtEquipmentTypeId || null,
       serialNumber: this.props.equipment.serialNumber || '',
       make: this.props.equipment.make || '',
       size: this.props.equipment.size || '',
@@ -124,9 +125,11 @@ var EquipmentEditDialog = React.createClass({
 
     return Api.equipmentDuplicateCheck(this.props.equipment.id, this.state.serialNumber, this.state.equipmentTypeId).then((response) => {
       if (response.data.length > 0) {
-        var districts = response.data.map((district) => {
-          return district.districtName;
-        });
+        var districts = _.chain(response.data)
+          .map(district => district.districtName)
+          .uniq()
+          .value();
+        
         this.setState({ 
           serialNumberError: `Serial number is currently in use in the following district(s): ${districts.join(', ')}`,
           duplicateSerialNumber: true,

@@ -761,7 +761,7 @@ namespace HetsApi.Controllers
                     .Include(x => x.LocalArea.ServiceArea.District)
                     .Include(x => x.Owner)
                     .Include(x => x.DistrictEquipmentType)
-                    .Where(x => x.SerialNumber == serialNumber &&
+                    .Where(x => x.SerialNumber.ToLower() == serialNumber.ToLower() &&
                                 x.EquipmentId != id &&
                                 x.DistrictEquipmentType.EquipmentTypeId == equipmentTypeId &&
                                 x.EquipmentStatusTypeId == statusId)
@@ -773,7 +773,7 @@ namespace HetsApi.Controllers
                     .Include(x => x.LocalArea.ServiceArea.District)
                     .Include(x => x.Owner)
                     .Include(x => x.DistrictEquipmentType)
-                    .Where(x => x.SerialNumber == serialNumber &&
+                    .Where(x => x.SerialNumber.ToLower() == serialNumber.ToLower() &&
                                 x.EquipmentId != id &&
                                 x.EquipmentStatusTypeId == statusId)
                     .ToList();
