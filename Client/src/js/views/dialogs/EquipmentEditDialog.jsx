@@ -125,9 +125,11 @@ var EquipmentEditDialog = React.createClass({
 
     return Api.equipmentDuplicateCheck(this.props.equipment.id, this.state.serialNumber, this.state.equipmentTypeId).then((response) => {
       if (response.data.length > 0) {
-        var districts = response.data.map((district) => {
-          return district.districtName;
-        });
+        var districts = _.chain(response.data)
+          .map(district => district.districtName)
+          .uniq()
+          .value();
+        
         this.setState({ 
           serialNumberError: `Serial number is currently in use in the following district(s): ${districts.join(', ')}`,
           duplicateSerialNumber: true,
