@@ -30,6 +30,7 @@ var EquipmentEditDialog = React.createClass({
       isNew: this.props.equipment.id === 0,
 
       localAreaId: this.props.equipment.localArea.id || 0,
+      equipmentTypeId: this.props.equipment.districtEquipmentTypeId || null,
       serialNumber: this.props.equipment.serialNumber || '',
       make: this.props.equipment.make || '',
       size: this.props.equipment.size || '',
