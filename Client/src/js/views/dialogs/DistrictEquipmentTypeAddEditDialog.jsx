@@ -2,9 +2,13 @@ import React from 'react';
 
 import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
+import _ from 'lodash';
+
 import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+
+const PROHIBITED_SECTIONS = [ 1.2, 1.8, 2.3, 2.6, 3.3, 6.3, 7.4, 8.2, 9.3, 11.2, 12.2, 13.5, 13.6, 16.3 ];
 
 var DistrictEquipmentTypeAddEditDialog = React.createClass({
   propTypes: {
@@ -20,7 +24,7 @@ var DistrictEquipmentTypeAddEditDialog = React.createClass({
       isNew: this.props.districtEquipmentType.id === 0,
 
       id: this.props.districtEquipmentType.id || 0,
-      equipmentTypeId: this.props.districtEquipmentType.equipmentType ? this.props.districtEquipmentType.equipmentType.id : '',
+      equipmentTypeId: this.props.districtEquipmentType.equipmentType ? this.props.districtEquipmentType.equipmentType.id : undefined,
       districtEquipmentName: this.props.districtEquipmentType.districtEquipmentName || '',
       concurrencyControlNumber: this.props.districtEquipmentType.concurrencyControlNumber || 0,
       equipmentTypeIdError: '',
@@ -33,7 +37,7 @@ var DistrictEquipmentTypeAddEditDialog = React.createClass({
   },
 
   didChange() {
-    if (this.state.isNew && this.state.equipmentTypeId !== '') { return true; }
+    if (this.state.isNew && this.state.equipmentTypeId !== undefined) { return true; }
     if (this.state.isNew && this.state.districtEquipmentName !== '') { return true; }
     if (!this.state.isNew && this.state.equipmentTypeId !== this.props.districtEquipmentType.equipmentType.id) { return true; }
     if (!this.state.isNew && this.state.districtEquipmentName !== this.props.districtEquipmentType.districtEquipmentName) { return true; }
@@ -49,13 +53,19 @@ var DistrictEquipmentTypeAddEditDialog = React.createClass({
 
     var valid = true;
 
-    if (this.state.equipmentTypeId === '') {
-      this.setState({ equipmentTypeIdError: 'Equipment type is required' });
+    if (this.state.equipmentTypeId === undefined) {
+      this.setState({ equipmentTypeIdError: 'Blue book section is required' });
       valid = false;
+    } else {
+      var equipmentType = _.find(this.props.equipmentTypes, { id: this.state.equipmentTypeId });
+      if (equipmentType && _.includes(PROHIBITED_SECTIONS, equipmentType.blueBookSection)) {
+        this.setState({ equipmentTypeIdError: 'Equipment types cannot be created for this blue book section' });
+        valid = false;
+      }
     }
 
     if (this.state.districtEquipmentName === '') {
-      this.setState({ districtEquipmentNameError: 'District equipment name is required' });
+      this.setState({ districtEquipmentNameError: 'Equipment type/description is required' });
       valid = false;
     }
 
@@ -79,15 +89,15 @@ var DistrictEquipmentTypeAddEditDialog = React.createClass({
       }>
       <Form>
         <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeIdError ? 'error' : null }>
-          <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
-          <FilterDropdown id="equipmentTypeId" fieldName="name" selectedId={ parseInt(this.state.equipmentTypeId, 10) } updateState={ this.updateState }
+          <ControlLabel>Blue Book Section <sup>*</sup></ControlLabel>
+          <FilterDropdown id="equipmentTypeId" fieldName="blueBookSectionAndName" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
             items={ this.props.equipmentTypes }
             className="full-width"
           />
           <HelpBlock>{ this.state.equipmentTypeIdError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="districtEquipmentName" validationState={ this.state.districtEquipmentNameError ? 'error' : null }>
-          <ControlLabel>District Equipment Name <sup>*</sup></ControlLabel>
+          <ControlLabel>Equipment Type/Description <sup>*</sup></ControlLabel>
           <FormInputControl type="text" value={ this.state.districtEquipmentName } updateState={ this.updateState }/>
           <HelpBlock>{ this.state.districtEquipmentNameError }</HelpBlock>
         </FormGroup>

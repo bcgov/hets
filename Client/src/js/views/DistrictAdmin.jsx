@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Button, ButtonGroup, Glyphicon, Well, Alert } from 'react-bootstrap';
+import { PageHeader, Button, ButtonGroup, Glyphicon, Well, Alert, Row, Col } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -15,11 +15,12 @@ import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import Confirm from '../components/Confirm.jsx';
 import ConditionAddEditDialog from './dialogs/ConditionAddEditDialog.jsx';
 import DistrictEquipmentTypeAddEditDialog from './dialogs/DistrictEquipmentTypeAddEditDialog.jsx';
+import EquipmentTransferDialog from './dialogs/EquipmentTransferDialog.jsx';
 
 var DistrictAdmin = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
-    rentalConditions: React.PropTypes.array,
+    rentalConditions: React.PropTypes.object,
     districtEquipmentTypes: React.PropTypes.object,
     equipmentTypes: React.PropTypes.object,
     router: React.PropTypes.object,
@@ -29,6 +30,7 @@ var DistrictAdmin = React.createClass({
     return {
       showConditionAddEditDialog: false,
       showDistrictEquipmentTypeAddEditDialog: false,
+      showEquipmentTransferDialog: false,
       condition: {},
       districtEquipmentType: {},
     };
@@ -61,6 +63,14 @@ var DistrictAdmin = React.createClass({
 
   closeConditionAddEditDialog() {
     this.setState({ showConditionAddEditDialog: false });
+  },
+
+  showEquipmentTransferDialog() {
+    this.setState({ showEquipmentTransferDialog: true });
+  },
+
+  closeEquipmentTransferDialog() {
+    this.setState({ showEquipmentTransferDialog: false });
   },
 
   onConditionSave(data) {
@@ -111,7 +121,7 @@ var DistrictAdmin = React.createClass({
 
   render() {
     var equipmentTypes = _.chain(this.props.equipmentTypes)
-      .sortBy('name')
+      .sortBy('blueBookSection')
       .value();
 
     if (!this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) { 
@@ -133,9 +143,10 @@ var DistrictAdmin = React.createClass({
           if (Object.keys(this.props.districtEquipmentTypes.data).length === 0) { return <Alert bsStyle="success">No users { addDistrictEquipmentButton }</Alert>; }
 
           return (
-            <TableControl headers={[
-              { field: 'districtEquipmentName',         title: 'District Equipment Name'  },
-              { field: 'equipmentType',                 title: 'Equipment Type'           },
+            <TableControl id="district-equipment-types" headers={[
+              { field: 'districtEquipmentName',           title: 'Equipment Type/Description'  },              
+              { field: 'equipmentType.blueBookSection',   title: 'Blue Book Section Number'  },
+              { field: 'equipmentType.name',              title: 'Blue Book Section Name'  },
               { field: 'addDistrictEquipmentType', title: 'Add District Equipment Type',  style: { textAlign: 'right'  },
                 node: addDistrictEquipmentButton,
               },
@@ -144,7 +155,8 @@ var DistrictAdmin = React.createClass({
                 _.map(this.props.districtEquipmentTypes.data, (equipment) => {
                   return <tr key={ equipment.id }>
                     <td>{ equipment.districtEquipmentName }</td>
-                    <td>{ equipment.equipmentType.name }</td>
+                    <td>{ equipment.equipmentType.blueBookSection }</td>
+					<td>{ equipment.equipmentType.name }</td>
                     <td style={{ textAlign: 'right' }}>
                       <ButtonGroup>
                         <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteDistrictEquipmentType.bind(this, equipment) }/> }>
@@ -160,8 +172,7 @@ var DistrictAdmin = React.createClass({
           );
         })()}
       </Well>
-
-
+      
       <Well>
         <h3>Manage Conditions</h3>
         {(() => {
@@ -200,13 +211,28 @@ var DistrictAdmin = React.createClass({
         })()}
       </Well>
 
+      <Well className="clearfix">
+        <h3>Equipment Transfer (Bulk)</h3>
+        <Row>
+          <Col xs={9}>Bulk transfer will enable the user to transfer equipment associated with one owner code to another owner code.</Col>
+          <Col xs={3}><span className="pull-right"><Button onClick={ this.showEquipmentTransferDialog }>Equipment Transfer</Button></span></Col>
+        </Row>
+      </Well>
+
+      { this.state.showEquipmentTransferDialog &&
+        <EquipmentTransferDialog
+          show={ this.state.showEquipmentTransferDialog }
+          onClose={ this.closeEquipmentTransferDialog }
+        />
+      }
+
       { this.state.showConditionAddEditDialog &&
         <ConditionAddEditDialog
           show={this.state.showConditionAddEditDialog}
           onClose={this.closeConditionAddEditDialog}
           onSave={this.onConditionSave}
           condition={this.state.condition}
-        />        
+        />
       }
       { this.state.showDistrictEquipmentTypeAddEditDialog &&
         <DistrictEquipmentTypeAddEditDialog

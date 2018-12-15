@@ -6,6 +6,7 @@ import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import _ from 'lodash';
 
+import CheckboxControl from '../../components/CheckboxControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
@@ -34,6 +35,7 @@ var OwnersEditDialog = React.createClass({
       province: owner.province || '',
       postalCode: owner.postalCode || '',
       localAreaId: owner.localArea.id || 0,
+      isMaintenanceContractor: owner.isMaintenanceContractor || false,
       doingBusinessAs: owner.doingBusinessAs || '',
       registeredCompanyNumber: owner.registeredCompanyNumber || '',
       status: owner.status || '',
@@ -69,6 +71,7 @@ var OwnersEditDialog = React.createClass({
     if (this.state.localAreaId !== owner.localArea.id) { return true; }
     if (this.state.doingBusinessAs !== owner.doingBusinessAs) { return true; }
     if (this.state.registeredCompanyNumber !== owner.registeredCompanyNumber) { return true; }
+    if (this.state.isMaintenanceContractor !== owner.isMaintenanceContractor) { return true; }
 
     return false;
   },
@@ -137,6 +140,7 @@ var OwnersEditDialog = React.createClass({
       province: this.state.province,
       postalCode: this.state.postalCode,
       localArea: { id: this.state.localAreaId },
+      isMaintenanceContractor: this.state.isMaintenanceContractor,
       doingBusinessAs: this.state.doingBusinessAs,
       registeredCompanyNumber: this.state.registeredCompanyNumber,
       status: this.state.status,
@@ -206,6 +210,9 @@ var OwnersEditDialog = React.createClass({
         <FormGroup controlId="registeredCompanyNumber">
           <ControlLabel>Registered BC Company Number</ControlLabel>
           <FormInputControl type="text" value={ this.state.registeredCompanyNumber } updateState={ this.updateState } />
+        </FormGroup>
+        <FormGroup controlId="isMaintenanceContractor">
+          <CheckboxControl id="isMaintenanceContractor" checked={ this.state.isMaintenanceContractor } updateState={ this.updateState }>Maintenance Contractor</CheckboxControl>
         </FormGroup>
       </Form>
     </EditDialog>;

@@ -416,6 +416,7 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.EquipmentType)
                 .Include(x => x.Project.PrimaryContact)
                 .Include(x => x.RentalRequestStatusType)
+                .OrderByDescending(x => x.AppCreateTimestamp)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));            
 
             if (localAreasArray != null && localAreasArray.Length > 0)
@@ -425,7 +426,7 @@ namespace HetsApi.Controllers
 
             if (project != null)
             {
-                data = data.Where(x => x.Project.Name.ToLowerInvariant().Contains(project.ToLowerInvariant()));
+                data = data.Where(x => x.Project.Name.ToLower().Contains(project.ToLower()));
             }
 
             if (startDate != null)

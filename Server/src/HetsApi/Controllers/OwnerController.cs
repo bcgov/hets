@@ -18,6 +18,7 @@ using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HetsApi.Controllers
 {
@@ -76,6 +77,38 @@ namespace HetsApi.Controllers
         }
 
         /// <summary>
+        /// Get all owners for this district
+        /// </summary>
+        [HttpGet]
+        [Route("lite")]
+        [SwaggerOperation("OwnersGetLite")]
+        [SwaggerResponse(200, type: typeof(List<OwnerLiteList>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult OwnersGetLite()
+        {
+            // get users district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            // get active status
+            int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // get all active owners for this district
+            IEnumerable<OwnerLiteList> owners = _context.HetOwner.AsNoTracking()
+                .Where(x => x.LocalArea.ServiceArea.DistrictId == districtId &&
+                            x.OwnerStatusTypeId == statusId)
+                .OrderBy(x => x.OwnerCode)
+                .Select(x => new OwnerLiteList
+                {
+                    OwnerCode = x.OwnerCode,
+                    Id = x.OwnerId,
+                    LocalAreaId = x.LocalAreaId,
+                });
+                    
+            return new ObjectResult(new HetsResponse(owners));
+        }
+
+        /// <summary>
         /// Update owner
         /// </summary>
         /// <param name="id">id of Owner to update</param>
@@ -102,11 +135,13 @@ namespace HetsApi.Controllers
             HetOwner owner = _context.HetOwner.First(x => x.OwnerId == item.OwnerId);
 
             int? oldLocalArea = owner.LocalAreaId;
+            bool? oldIsMaintenanceContractor = owner.IsMaintenanceContractor;
 
             if (item.RegisteredCompanyNumber == "") item.RegisteredCompanyNumber = null;
             if (item.WorkSafeBcpolicyNumber == "") item.WorkSafeBcpolicyNumber = null;
 
             owner.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
+            owner.CglCompanyName = item.CglCompanyName;
             owner.CglendDate = item.CglendDate;
             owner.CglPolicyNumber = item.CglPolicyNumber;
             owner.LocalAreaId = item.LocalArea.LocalAreaId;
@@ -137,6 +172,43 @@ namespace HetsApi.Controllers
                 foreach (HetEquipment equipment in equipmentList)
                 {
                     equipment.LocalAreaId = item.LocalAreaId;
+                }
+            }
+
+            // do we need to update the block assignment?
+            if (oldIsMaintenanceContractor != item.IsMaintenanceContractor)
+            {
+                // get equipment active status
+                int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
+                if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+                // get processing rules
+                SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
+
+                // get active equipment
+                IQueryable<HetEquipment> equipmentListB = _context.HetEquipment
+                    .Include(x => x.Owner)
+                    .Include(x => x.LocalArea)
+                    .Include(x => x.DistrictEquipmentType)
+                        .ThenInclude(y => y.EquipmentType)
+                    .Where(x => x.OwnerId == id &&
+                                x.EquipmentStatusTypeId == statusId);
+
+                foreach (HetEquipment equipment in equipmentListB)
+                {                         
+                    int localAreaId = equipment.LocalArea.LocalAreaId;
+                    int districtEquipmentTypeId = equipment.DistrictEquipmentType.DistrictEquipmentTypeId;
+
+                    // get rules                  
+                    int blockSize = equipment.DistrictEquipmentType.EquipmentType.IsDumpTruck
+                        ? scoringRules.GetBlockSize("DumpTruck")
+                        : scoringRules.GetBlockSize();
+                    int totalBlocks = equipment.DistrictEquipmentType.EquipmentType.IsDumpTruck
+                        ? scoringRules.GetTotalBlocks("DumpTruck")
+                        : scoringRules.GetTotalBlocks();
+
+                    // update block assignments
+                    SeniorityListHelper.AssignBlocks(localAreaId, districtEquipmentTypeId, blockSize, totalBlocks, _context);
                 }
             }
 
@@ -270,6 +342,7 @@ namespace HetsApi.Controllers
             HetOwner owner = new HetOwner
             {
                 OwnerStatusTypeId = (int)statusId,
+                CglCompanyName = item.CglCompanyName,
                 CglendDate = item.CglendDate,
                 CglPolicyNumber = item.CglPolicyNumber,
                 LocalAreaId = item.LocalArea.LocalAreaId,
@@ -310,9 +383,14 @@ namespace HetsApi.Controllers
             owner.SharedKey = key;
 
             // create a new primary contact record
+            if (string.IsNullOrEmpty(item.PrimaryContactRole))
+            {
+                item.PrimaryContactRole = "Contact";
+            }
+
             HetContact primaryContact = new HetContact
             {
-                Role = "Primary Contact",
+                Role = item.PrimaryContactRole,
                 Province = "BC",
                 WorkPhoneNumber = item.PrimaryContactPhone,
                 Surname = item.PrimaryContactSurname,
@@ -810,6 +888,253 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             return new ObjectResult(new HetsResponse(items));            
+        }
+
+        #endregion
+
+        #region Transfer Equipment Records
+
+        /// <summary>
+        /// Equipment Transfer
+        /// </summary>
+        /// <remarks>Transfers an Owners Equipment</remarks>
+        /// <param name="id">id of Owner to transfer Equipment from</param>
+        /// <param name="targetOwnerId">id owner to transfer equipment to</param>
+        /// <param name="includeSeniority"></param>
+        /// <param name="items">equipment to transfer</param>
+        [HttpPost]
+        [Route("{id}/equipmentTransfer/{targetOwnerId}/{includeSeniority}")]
+        [SwaggerOperation("OwnersIdEquipmentTransferPost")]
+        [SwaggerResponse(200, type: typeof(List<HetEquipment>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult OwnersIdEquipmentTransferPost([FromRoute]int id, [FromRoute]int targetOwnerId,
+            [FromRoute]bool includeSeniority, [FromBody]HetEquipment[] items)
+        {
+            bool ownerExists = _context.HetOwner.Any(a => a.OwnerId == id);
+            bool targetOwnerExists = _context.HetOwner.Any(a => a.OwnerId == targetOwnerId);
+
+            // not found
+            if (!ownerExists || !targetOwnerExists || items == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            if (id == targetOwnerId) return new ObjectResult(new HetsResponse("HETS-34", ErrorViewModel.GetDescription("HETS-34", _configuration)));
+
+            // get active owner status type            
+            int? ownerStatusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
+            if (ownerStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // get active equipment status type            
+            int? equipmentStatusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
+            if (equipmentStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // get archive equipment status type            
+            int? equipmentArchiveStatusId = StatusHelper.GetStatusId(HetEquipment.StatusArchived, "equipmentStatus", _context);
+            if (equipmentArchiveStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));            
+
+            //***************************************************************
+            // HETS-706: BVT Bulk Transfer
+            //***************************************************************
+            // Equipment Transfer Only:
+            // * Equipment Transfer only can only happen between two "Approved"
+            //   owner codes in the same district
+            // * The selected equipment will be archived for the old owner,
+            //   reason for change of status - "Bulk transfer to <new owner code>
+            // * The selected equipment will be added to the new owner, with the
+            //   Equip ID <newOwner code>-XXXX, as a brand new "Approved" equipment
+            // * The seniority will re-start from this point
+            // * The seniority and Hire Rotation List will be adjusted accordingly
+            // * Set the registration date to the current registration date
+            //***************************************************************
+            // Equipment and Seniority Transfer:
+            // * All of the above (plus)
+            // * This newly added equipment will also retain the
+            //   seniority information:
+            //     YTD / YTD1 / YTD2 / YTD3 / YTD3 /
+            //     Years Registered / Seniority
+            //***************************************************************
+
+            // get owner and new owner
+            HetOwner currentOwner = _context.HetOwner.AsNoTracking()
+                .Include(x => x.HetEquipment)
+                .Include(x => x.LocalArea.ServiceArea.District)
+                .First(a => a.OwnerId == id);
+
+            HetOwner targetOwner = _context.HetOwner.AsNoTracking()
+                .Include(x => x.HetEquipment)
+                .Include(x => x.LocalArea.ServiceArea.District)
+                .First(a => a.OwnerId == targetOwnerId);            
+
+            // check they are in the same district
+            if (currentOwner.LocalArea.ServiceArea.District.DistrictId !=
+                targetOwner.LocalArea.ServiceArea.District.DistrictId)
+            {
+                return new ObjectResult(new HetsResponse("HETS-31", ErrorViewModel.GetDescription("HETS-31", _configuration)));
+            }
+
+            // check they are both active
+            if (currentOwner.OwnerStatusTypeId != ownerStatusId &&
+                targetOwner.OwnerStatusTypeId != ownerStatusId)
+            {
+                return new ObjectResult(new HetsResponse("HETS-32", ErrorViewModel.GetDescription("HETS-32", _configuration)));
+            }
+
+            // check all pieces of equipment in the provided list belong to this owner
+            foreach (HetEquipment equipmentToTransfer in items)
+            {
+                if (equipmentToTransfer.OwnerId != currentOwner.OwnerId)
+                {
+                    return new ObjectResult(new HetsResponse("HETS-33", ErrorViewModel.GetDescription("HETS-33", _configuration)));
+                }
+            }
+
+            //***************************************************************
+            // get fiscal year
+            //***************************************************************
+            HetDistrictStatus district = _context.HetDistrictStatus.AsNoTracking()
+                .FirstOrDefault(x => x.DistrictId == currentOwner.LocalArea.ServiceArea.District.DistrictId);
+
+            if (district?.CurrentFiscalYear == null) return new ObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
+
+            int fiscalYear = (int)district.CurrentFiscalYear; // status table uses the start of the year
+            DateTime fiscalStart = new DateTime(fiscalYear, 4, 1);
+
+            //***************************************************************
+            // process each piece of equipment in the provided list
+            //***************************************************************
+            foreach (HetEquipment item in items)
+            {
+                // get full equipment record
+                HetEquipment equipmentToTransfer = _context.HetEquipment
+                    .Include(x => x.HetEquipmentAttachment)
+                    .First(x => x.EquipmentId == item.EquipmentId);
+
+                // get new owner code
+                string newEquipmentCode = EquipmentHelper.GetEquipmentCode(targetOwner.OwnerId, _context);
+
+                // create a "copy" of the record
+                HetEquipment newEquipment = new HetEquipment
+                {
+                    OwnerId = targetOwnerId,
+                    LocalAreaId = equipmentToTransfer.LocalAreaId,
+                    EquipmentStatusTypeId = (int)equipmentStatusId,
+                    ApprovedDate = DateTime.UtcNow,
+                    EquipmentCode = newEquipmentCode,
+                    DistrictEquipmentTypeId = equipmentToTransfer.DistrictEquipmentTypeId,
+                    Make = equipmentToTransfer.Make,
+                    Model = equipmentToTransfer.Model,
+                    Operator = equipmentToTransfer.Operator,
+                    ReceivedDate = equipmentToTransfer.ReceivedDate,
+                    LicencePlate = equipmentToTransfer.LicencePlate,
+                    SerialNumber = equipmentToTransfer.SerialNumber,
+                    Size = equipmentToTransfer.Size,
+                    PayRate = equipmentToTransfer.PayRate,
+                    RefuseRate = equipmentToTransfer.RefuseRate,
+                    YearsOfService = 0,
+                    Year = equipmentToTransfer.Year,
+                    LastVerifiedDate = equipmentToTransfer.LastVerifiedDate,
+                    IsSeniorityOverridden = false,
+                    SeniorityOverrideReason = "",
+                    Type = equipmentToTransfer.Type,
+                    ServiceHoursLastYear = 0,
+                    ServiceHoursTwoYearsAgo = 0,
+                    ServiceHoursThreeYearsAgo = 0,
+                    SeniorityEffectiveDate = DateTime.UtcNow,
+                    LicencedGvw = equipmentToTransfer.LicencedGvw,
+                    LegalCapacity = equipmentToTransfer.LegalCapacity,
+                    PupLegalCapacity = equipmentToTransfer.PupLegalCapacity
+                };
+
+                foreach (HetEquipmentAttachment attachment in equipmentToTransfer.HetEquipmentAttachment)
+                {
+                    if (newEquipment.HetEquipmentAttachment == null)
+                    {
+                        newEquipment.HetEquipmentAttachment = new List<HetEquipmentAttachment>();
+                    }
+
+                    HetEquipmentAttachment newAttachment = new HetEquipmentAttachment
+                    {
+                        Description = attachment.TypeName,
+                        TypeName = attachment.TypeName
+                    };
+
+                    newEquipment.HetEquipmentAttachment.Add(newAttachment);
+                }
+
+                // seniority information:
+                //   YTD / YTD1 / YTD2 / YTD3 / YTD3 /
+                //   Years Registered / Seniority
+                if (includeSeniority)
+                {
+                    newEquipment.ServiceHoursLastYear = equipmentToTransfer.ServiceHoursLastYear;
+                    newEquipment.ServiceHoursTwoYearsAgo = equipmentToTransfer.ServiceHoursTwoYearsAgo;
+                    newEquipment.ServiceHoursThreeYearsAgo = equipmentToTransfer.ServiceHoursThreeYearsAgo;
+                    newEquipment.YearsOfService = equipmentToTransfer.YearsOfService;
+                    newEquipment.Seniority = equipmentToTransfer.Seniority;
+                    newEquipment.ApprovedDate = equipmentToTransfer.ApprovedDate;                    
+                }
+
+                using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
+                {
+
+                    // update new record
+                    _context.HetEquipment.Add(newEquipment);
+                    _context.SaveChanges();
+
+                    if (includeSeniority)
+                    {
+                        int newEquipmentId = newEquipment.EquipmentId;
+
+                        // we also need to update all of the associated rental agreements
+                        // (for this fiscal year)
+                        IQueryable<HetRentalAgreement> agreements = _context.HetRentalAgreement
+                            .Where(x => x.EquipmentId == item.EquipmentId &&
+                                        x.DatedOn >= fiscalStart);
+
+                        foreach (HetRentalAgreement agreement in agreements)
+                        {
+                            agreement.EquipmentId = newEquipmentId;
+                            _context.HetRentalAgreement.Update(agreement);
+                        }
+                    }
+
+                    // update original equipment record
+                    equipmentToTransfer.EquipmentStatusTypeId = (int) equipmentArchiveStatusId;
+                    equipmentToTransfer.ArchiveCode = "Y";
+                    equipmentToTransfer.ArchiveDate = DateTime.UtcNow;
+                    equipmentToTransfer.ArchiveReason = "Bulk transfer to " + targetOwner.OwnerCode;
+
+                    // save archived equipment record
+                    _context.HetEquipment.Update(equipmentToTransfer);
+                    _context.SaveChanges();
+
+                    transaction.Commit();
+                }
+            }                        
+
+            //***************************************************************
+            // we need to update seniority for all local areas and
+            // district equipment types
+            //***************************************************************
+            List<int> districtEquipmentTypes = new List<int>();
+
+            foreach (HetEquipment equipmentToTransfer in items)
+            {
+                if (equipmentToTransfer.LocalAreaId != null &&
+                    equipmentToTransfer.DistrictEquipmentTypeId != null)
+                {
+                    int localAreaId = (int)equipmentToTransfer.LocalAreaId;
+                    int districtEquipmentTypeId = (int)equipmentToTransfer.DistrictEquipmentTypeId;
+
+                    // check whether we've processed this district already
+                    if (districtEquipmentTypes.Contains(districtEquipmentTypeId)) continue;
+                    districtEquipmentTypes.Add(districtEquipmentTypeId);
+
+                    // recalculate seniority
+                    EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration);
+                }                
+            }
+
+            // return original items
+            return new ObjectResult(new HetsResponse(items));
         }
 
         #endregion

@@ -5047,6 +5047,10 @@ namespace HetsData.Model
 
                 entity.Property(e => e.DistrictId).HasColumnName("DISTRICT_ID");
 
+                entity.Property(e => e.AgreementCity)
+                    .HasColumnName("AGREEMENT_CITY")
+                    .HasMaxLength(255);
+
                 entity.Property(e => e.Email)
                     .HasColumnName("EMAIL")
                     .HasMaxLength(255);

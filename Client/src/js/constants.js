@@ -105,6 +105,7 @@ export const SESSION_TIMEOUT = 7200000; // 120 minutes
 export const SESSION_KEEP_ALIVE_INTERVAL = 600000; // 10 minutes
 
 // Max Field Lengths
+export const MAX_LENGTH_CGL_COMPANY_NAME = 150;
 export const MAX_LENGTH_NOTE_TEXT = 2048;
 export const MAX_LENGTH_PHONE_NUMBER = 20;
 export const MAX_LENGTH_RENTAL_AGREEMENT_NOTE = 150;

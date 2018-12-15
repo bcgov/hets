@@ -204,13 +204,14 @@ namespace HetsApi.Authentication
                 UserSettings userSettings = new UserSettings();
                 string userId = "";
                 string siteMinderGuid = "";
-                string businessGuid = "";                
-                
+                string businessGuid = "";
+
+                string url = context.Request.GetDisplayUrl().ToLower();
+                _logger.LogWarning("Timestamp: {0:dd-MM-yyyy HH:mm:ss.FFFF} | Url: {1}", DateTime.Now, url);
+
                 // ********************************************************
                 // if this is an Error or Authentication API - Ignore
-                // ********************************************************
-                string url = context.Request.GetDisplayUrl().ToLower();
-
+                // ********************************************************               
                 if (url.Contains("/authentication/dev") ||
                     url.Contains("/error") ||
                     url.Contains("/hangfire") ||
@@ -385,7 +386,7 @@ namespace HetsApi.Authentication
 
                             userSettings.HetsUser.DistrictId = userDistrict.District.DistrictId;
                             dbAppContext.HetUser.Update(userSettings.HetsUser);
-                            dbAppContext.SaveChanges();
+                            dbAppContext.SaveChanges();                            
                         }
                     }
 

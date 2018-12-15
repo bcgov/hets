@@ -330,139 +330,180 @@
 
     <p style="margin: 8px 0 8px 0;">I hereby agree to rent to the Ministry of Transportation and Infrastructure of the Province of British Columbia the following equipment at the rental rates as shown:</p>
 
-    <div id="table-block">
-        <table id="main-table" style="height: 400px">
-            <tr style="height: 10px;">
-                <th style="width: 350px">Equipment</th>
-                <th style="width: 150px">Rate</th>
-                <th style="width: 350px">Comments</th>
-            </tr>
-            <tr style="height: 15px; vertical-align: top;">
-                <td>
-                    <p>{{equipment.year}} {{equipment.make}}/{{equipment.model}}/{{equipment.size}}/{{equipment.serialNumber}}</p>
-                    <br />
-                    <p>{{note}}</p>
-                </td>
-                <td class="rate">{{baseRateString}}</td>
-                <td>{{rateComment}}</td>
-            </tr>
-            
-            {{#rentalAgreementRatesWithTotal}}
-            <tr style="height: 8px;">
-                <td>{{componentName}}</td>
-                <td class="rate">{{rateString}}</td>
-                <td>{{comment}}</td>
-            </tr>
-            {{/rentalAgreementRatesWithTotal}}
-            
-            <tr style="height: 8px;">
-                <td></td>
-                <td class="rate bold">{{agreementTotalString}}</td>
-                <td class="bold">Total</td>
-            </tr>
-            <tr style="height: 8px"><td></td><td></td><td></td></tr>
-            
-            {{#rentalAgreementRatesWithoutTotal}}
-            <tr style="height: 8px;">
-                <td>{{componentName}}</td>
-                <td class="rate">{{rateString}}</td>
-                <td>{{comment}}</td>
-            </tr>
-            {{/rentalAgreementRatesWithoutTotal}}
-            <tr style="height: 8px"><td></td><td></td><td></td></tr>
-
-            {{#rentalAgreementConditions}}
-            <tr style="height: 8px;">
-                <td></td>
-                <td></td>
-                <td>{{conditionName}}</td>
-            </tr>
-            {{/rentalAgreementConditions}}
-            
-            <tr style="height: 10px"><td></td><td></td><td></td></tr>            
-            <tr valign="bottom" style="height: 8px;">
-                <td>{{#rentalAgreementRatesOvertime}}<br />{{componentName}}{{/rentalAgreementRatesOvertime}}</td>
-                <td class="rate">{{#rentalAgreementRatesOvertime}}<br />{{rateString}}{{/rentalAgreementRatesOvertime}}</td>
-                <td>{{#rentalAgreementRatesOvertime}}<br />{{comment}}{{/rentalAgreementRatesOvertime}}</td>
-            </tr>
-        </table>
+    <div style="position: absolute; visibility: visible; left: 12px; top: 300px; width: 300px; z-index: 200;">
+        {{note}}
     </div>
 
-  <div id="lower-text-block">
-    <p>The above listed equipment will be used for Project #<span class="uppercase bold">{{project.provincialProjectNumber}} {{project.name}}</span> within the <span class="uppercase bold">{{project.district.name}}</span> District for an estimated period of <span class="bold">{{estimateHours}}</span> hours commencing <span class="bold">{{estimateStartWork}}</span>. Point of hire is <span class="uppercase underline bold">{{equipment.localArea.name}}</span></p>
+        <div id="table-block">
+            <table id="main-table" style="height: 400px">
+                <tr style="height: 10px;">
+                    <th style="width: 350px">Equipment</th>
+                    <th style="width: 150px">Rate</th>
+                    <th style="width: 350px">Comments</th>
+                </tr>
+                <tr style="height: 15px; vertical-align: top;">
+                    <td>
+                        <p>{{equipment.year}} {{equipment.make}}/{{equipment.model}}/{{equipment.size}}/{{equipment.serialNumber}}</p>
+                    </td>
+                    <td class="rate">{{baseRateString}}</td>
+                    <td>{{rateComment}}</td>
+                </tr>
 
-    <p>&nbsp;</p>
+                {{#rentalAgreementRatesWithTotal}}
+                <tr style="height: 8px;">
+                    <td>{{componentName}}</td>
+                    <td class="rate">{{rateString}}</td>
+                    <td>{{comment}}</td>
+                </tr>
+                {{/rentalAgreementRatesWithTotal}}
 
-    <p style="margin: 10px 0 8px 0; text-align: center"><span class="uppercase bold">AGREEMENT ON TRANSPORTATION</span></pstyle="margin:>
+                <tr style="height: 8px;">
+                    <td></td>
+                    <td class="rate bold">{{agreementTotalString}}</td>
+                    <td class="bold">Total</td>
+                </tr>
+                <tr style="height: 8px"><td></td><td></td><td></td></tr>
 
-    <p>The Ministry agrees to pay moving costs in excess of 5% of the total equipment rental paid excluding applicable taxes. Total equipment rental is defined as the all found rate (equipment + operator) plus attachments if applicable for all invoices paid on that project. It does not include fuel cost adjustments, operator overtime, travel time, labourer rates or taxes. These costs include (specific to the project) moving of equipment from the point of hire and return to the point of hire. (original mob and demob) Permit and/or pilot car charges are acceptable reimbursements. If the job duration is one day or less, moving charges are paid in full as well as all internal moves, within and/or between sites.</p>
+                {{#rentalAgreementRatesWithoutTotal}}
+                <tr style="height: 8px;">
+                    <td>{{componentName}}</td>
+                    <td class="rate">{{rateString}}</td>
+                    <td>{{comment}}</td>
+                </tr>
+                {{/rentalAgreementRatesWithoutTotal}}
+                <tr style="height: 8px"><td></td><td></td><td></td></tr>
 
-    <p style="margin: 10px 0 8px 0; text-align: center"><span class="uppercase"><b>OWNER</b> &mdash; PLEASE SEE OTHER SIDE <b>FOR OTHER PROVISIONS</b></span></p>
+                {{#rentalAgreementConditions}}
+                <tr style="height: 8px;">
+                    <td></td>
+                    <td></td>
+                    <td>{{conditionName}}</td>
+                </tr>
+                {{/rentalAgreementConditions}}
 
-    <p>Owner/operator must submit invoice to the Ministry's district office upon completion of project or at intervals no shorter than one week. Please note following
-certification clause: <b>This is to certify that the property and/or services ordered/purchased hereby are for the use of, and are being purchased by
-the Ministry of Transportation and Infrastructure with Crown funds, and are subject to applicable taxes.</b></p>
+                <tr style="height: 10px"><td></td><td></td><td></td></tr>
+                <tr valign="bottom" style="height: 8px;">
+                    <td>{{#rentalAgreementRatesOvertime}}<br />{{componentName}}{{/rentalAgreementRatesOvertime}}</td>
+                    <td class="rate">{{#rentalAgreementRatesOvertime}}<br />{{rateString}}{{/rentalAgreementRatesOvertime}}</td>
+                    <td>{{#rentalAgreementRatesOvertime}}<br />{{comment}}{{/rentalAgreementRatesOvertime}}</td>
+                </tr>
+            </table>
+        </div>
 
-    <table style="width: 100%; margin: 10px 0 0 0; padding: 0; border: none; border-width: 0;">
-        <tr style="height: 20px;">
-            <td style="width: 330px; border-right: none;">Valid WCB Registration Number: <span class="underline uppercase">{{equipment.owner.workSafeBcpolicyNumber}}</span></td>
-            <td style="width: 120px; border-right: none;">&nbsp;</td>
-            <td style="width: 200px; text-align: center; border-right: none;"><div class="signature">(Owner or Representative)</div></td>
-        </tr>        
-        <tr style="height: 15px;">
-            <td style="width: 330px; border-right: none; margin: 0; padding: 0;">
-                <table style="margin: 0; padding: 0; border: hidden; border-width: 0;">
-                    <tr>
-                        <td style="width: 65px; border-right: none;">Dated at:&nbsp;</td>
-                        <td style="width: 110px; border-right: none;"><div class="signature">(Place)</div></td>
-                        <td style="width: 15px; border-right: none;">on</td>
-                        <td style="width: 80px; border-right: none; text-wrap: none;">
-                            <div class="underline">{{datedOn}}</div>
-                        </td>
-                        <td>&nbsp;</td>
-                    </tr>
-                </table>
-            </td>
-            <td style="width: 120px; border-right: none;">&nbsp;</td>
-            <td style="width: 200px; text-align: center; border-right: none;"><div class="signature">(District Official)</div></td>
-        </tr>
-        <tr style="height: 25px;">
-            <td style="border-right: none;">&nbsp;</td>
-            <td style="border-right: none;">&nbsp;</td>
-            <td style="border-right: none;">&nbsp;</td>
-        </tr>
-        <tr style="height: 20px;">
-            <td style="width: 330px; border-right: none;"><b>Original Copy To Owner</b></td>
-            <td style="width: 120px; text-align: right; border-right: none; text-wrap: none;">Rental Authorized By:&nbsp;</td>
-            <td style="width: 200px; border-right: none;">
-                <div class="underline" style="float:left; width: 130px; text-wrap: none;">&nbsp;</div>&nbsp;Within Guide Rates
-            </td>
-        </tr>
-    </table>
-  </div>
+        <div id="lower-text-block">
+            <p>The above listed equipment will be used for Project #<span class="uppercase bold">{{project.provincialProjectNumber}} {{project.name}}</span> within the <span class="uppercase bold">{{project.district.name}}</span> District for an estimated period of <span class="bold">{{estimateHours}}</span> hours commencing <span class="bold">{{estimateStartWork}}</span>. Point of hire is <span class="uppercase underline bold">{{equipment.localArea.name}}</span></p>
 
-  <div id="page-2">
-    <h2>Standard Equipment Rental Agreement</h2>
-    <h3>OTHER PROVISIONS</h3>
-    <ol>
-      <li>The above agreement will be cancelled and the Ministry of Transportation and Infrastructure will accept no obligation on any moving costs if equipment is not in good working condition, the operator is not satisfactory, or equipment is taken off the project by the owner before 200 working-hours are completed without approval of district official. Costs for return to the point of hire will not be chargeable if paid by the owners next customer.</li>
-      <li>The owner shall at the owner's expense, obtain and maintain in force during the term of this agreement, the following insurance in form and content acceptable to the Ministry and issued by companies duly licensed to transact business in the Province of British Columbia: Comprehensive (Commercial) General Liability insurance including non-owned automobile and contractual liability insurance. Her Majesty the Queen in right of the Province of British Columbia, as represented by the Minister of Transportation and Infrastructure together with any employees, agents and servants of the Minister, shall be added as an Additional Named Insured. Such liability insurance shall have inclusive limits of not less than TWO MILLION DOLLARS ($2,000,000.00) per occurrence for bodily injury, death and property damage, including loss of use thereof, which may arise directly or indirectly out of the work or operations of the Contractor or the Additional Named Insured under this agreement.
-      <br><br>
-      Automobile liability insurance is required with inclusive limits of not less than TWO MILLION DOLLARS ($2,000,000.00) on a Standard Owner’s Form Automobile Policy providing third party liability and accident benefits insurance for all licensed vehicles owned, rented or used in the performance of this agreement.
-      <br><br>
-      "All risks" property insurance against risks of loss and damage for all equipment rented to the Ministry of Transportation and Infrastructure. The following Waiver of Subrogation must be added: "In the event of any third party loss or damage or any physical loss or damage to the Contractors Equipment, the settlement or payment of the subsequent claim shall be made without the right of subrogation against Her Majesty the Queen as represented by the Minister or any of the employees, servants, or agents of the Minister."
-      <br><br>
-      Evidence that the insurance requirements have been met, by way of a duly completed Ministry Certificate of Insurance (H0111), shall be filed with an authorized Ministry Representative upon execution of this agreement. For vehicles insured through the Insurance Corporation of British Columbia, an APV47 (Autoplan Certificate) or a copy of vehicle registration/insurance certificate will be acceptable for evidence of Automobile Liability Insurance.</li>
-      <li>The owner shall be solely responsible for all damages occurring to the rental equipment and shall indemnify and save harmless the Ministry from and against any and all losses, claims, damages, actions, causes of action, costs and expenses the Ministry may sustain, incur, suffer or be put to at any time or times, whether before, during or after completion date or sooner termination of this agreement, where the same or any of them are based upon, arise out of, or occur by reason of any act or omission of the Owner or of any employee, agent, servant, officer, director, shareholder or subcontractor of the owner pursuant to this agreement.</li>
-      <li>All equipment owners and operators must comply with applicable Motor Vehicle, Passenger Transportation, Commercial Transport and Mines Acts and Regulations, and all applicable Federal Regulations.</li>
-      <li>It is expressly understood that the owner/operator under this Agreement shall comply with all safety requirements and regulations of the Ministry of Transportation and Infrastructure, and the current Work Safe BC Industrial Health and Safety Regulations, including the Maintenance of required log books.</li>
-      <li>The owner/operator must provide a valid Work Safe BC Registration number, and by signing this form hereby confirms that Work Safe BC Registration is current and not in arrears.</li>
-      <li>It is expressly understood that the required Work Safe BC and insurance coverage must be in place at all times during execution of the work. If there is noncompliance at the agreed commencement time and date, this agreement becomes nil and void and the work will be offered to others in accordance with the Ministry Hired Equipment Policy.</li>
-      <li>Any and all schedules attached to this agreement is an integral part of this agreement as if set out at length in the body of this agreement.</li>
-      <li>Maximum hours for rental agreement shall not exceed 600 hours for gravel trucks and 300 hours for other equipment.</li>
-    </ol>
-  </div>
-</div>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+
+            <p style="margin: 10px 0 8px 0; text-align: center"><span class="uppercase bold">AGREEMENT ON TRANSPORTATION</span></pstyle="margin:>
+
+            <p>The Ministry agrees to pay moving costs in excess of 5% of the total equipment rental paid excluding applicable taxes. Total equipment rental is defined as the all found rate (equipment + operator) plus attachments if applicable for all invoices paid on that project. It does not include fuel cost adjustments, operator overtime, travel time, labourer rates or taxes. These costs include (specific to the project) moving of equipment from the point of hire and return to the point of hire. (original mob and demob) Permit and/or pilot car charges are acceptable reimbursements. If the job duration is one day or less, moving charges are paid in full as well as all internal moves, within and/or between sites.</p>
+
+            <p style="margin: 10px 0 8px 0; text-align: center"><span class="uppercase"><b>OWNER</b> &mdash; PLEASE SEE OTHER SIDE <b>FOR OTHER PROVISIONS</b></span></p>
+
+            <p>
+                Owner/operator must submit invoice to the Ministry's district office upon completion of project or at intervals no shorter than one week. Please note following
+                certification clause: <b>
+                    This is to certify that the property and/or services ordered/purchased hereby are for the use of, and are being purchased by
+                    the Ministry of Transportation and Infrastructure with Crown funds, and are subject to applicable taxes.
+                </b>
+            </p>
+
+            <table style="width: 100%; margin: 10px 0 0 0; padding: 0; border: none; border-width: 0;">
+                <tr style="height: 40px;">
+                    <td style="width: 330px; border-right: none;">&nbsp;</td>
+                    <td style="width: 120px; border-right: none;">&nbsp;</td>
+                    <td style="width: 330px; border-right: none;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="border-right: none; margin: 0; padding: 0;">
+                        <table style="margin: 0; padding: 0; border: hidden; border-width: 0;">
+                            <tr>
+                                <td style="width: 190px; border-right: none;">Valid WCB Registration Number:&nbsp;</td>
+                                <td style="width: 120px; border-right: none; align-content: center;">
+                                    <div class="underline">{{equipment.owner.workSafeBcpolicyNumber}}</div>
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="border-right: none;">&nbsp;</td>
+                    <td style="text-align: center; border-right: none;">
+                        <div class="signature">(Owner or Representative)</div>
+                    </td>
+                </tr>
+                <tr style="height: 40px;">
+                    <td style="border-right: none;">&nbsp;</td>
+                    <td style="border-right: none;">&nbsp;</td>
+                    <td style="border-right: none;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="border-right: none; margin: 0; padding: 0;">
+                        <table style="margin: 0; padding: 0; border: hidden; border-width: 0;">
+                            <tr>
+                                <td style="width: 55px; border-right: none;">Dated at:&nbsp;</td>
+                                <td style="width: 110px; border-right: none; align-content: center;">
+                                    <div class="underline">{{agreementCity}}</div>
+                                </td>
+                                <td style="width: 15px; border-right: none;">on</td>
+                                <td style="width: 110px; border-right: none; text-wrap: none;">
+                                    <div class="underline">{{datedOn}}</div>
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="border-right: none;">&nbsp;</td>
+                    <td style="text-align: center; border-right: none;"><div class="signature">(District Official)</div></td>
+                </tr>
+                <tr style="height: 50px;">
+                    <td style="border-right: none;">&nbsp;</td>
+                    <td style="border-right: none;">&nbsp;</td>
+                    <td style="border-right: none;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="border-right: none;"><b>Original Copy To Owner</b></td>
+                    <td style="border-right: none;">&nbsp;</td>
+                    <td style="border-right: none; margin: 0; padding: 0;">
+                        <table style="margin: 0; padding: 0; border: hidden; border-width: 0;">
+                            <tr>
+                                <td style="width: 90px; border-right: none; text-wrap: none;">Rental Authorized By:&nbsp;</td>
+                                <td style="width: 150px; border-right: none; align-content: center;">
+                                    <div class="underline">&nbsp;</div>
+                                </td>
+                                <td style="width: 90px; border-right: none; text-wrap: none;">&nbsp;Within Guide Rates</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="page-2">
+            <h2>Standard Equipment Rental Agreement</h2>
+            <h3>OTHER PROVISIONS</h3>
+            <ol>
+                <li>The above agreement will be cancelled and the Ministry of Transportation and Infrastructure will accept no obligation on any moving costs if equipment is not in good working condition, the operator is not satisfactory, or equipment is taken off the project by the owner before 200 working-hours are completed without approval of district official. Costs for return to the point of hire will not be chargeable if paid by the owners next customer.</li>
+                <li>
+                    The owner shall at the owner's expense, obtain and maintain in force during the term of this agreement, the following insurance in form and content acceptable to the Ministry and issued by companies duly licensed to transact business in the Province of British Columbia: Comprehensive (Commercial) General Liability insurance including non-owned automobile and contractual liability insurance. Her Majesty the Queen in right of the Province of British Columbia, as represented by the Minister of Transportation and Infrastructure together with any employees, agents and servants of the Minister, shall be added as an Additional Named Insured. Such liability insurance shall have inclusive limits of not less than TWO MILLION DOLLARS ($2,000,000.00) per occurrence for bodily injury, death and property damage, including loss of use thereof, which may arise directly or indirectly out of the work or operations of the Contractor or the Additional Named Insured under this agreement.
+                    <br><br>
+                    Automobile liability insurance is required with inclusive limits of not less than TWO MILLION DOLLARS ($2,000,000.00) on a Standard Owner’s Form Automobile Policy providing third party liability and accident benefits insurance for all licensed vehicles owned, rented or used in the performance of this agreement.
+                    <br><br>
+                    "All risks" property insurance against risks of loss and damage for all equipment rented to the Ministry of Transportation and Infrastructure. The following Waiver of Subrogation must be added: "In the event of any third party loss or damage or any physical loss or damage to the Contractors Equipment, the settlement or payment of the subsequent claim shall be made without the right of subrogation against Her Majesty the Queen as represented by the Minister or any of the employees, servants, or agents of the Minister."
+                    <br><br>
+                    Evidence that the insurance requirements have been met, by way of a duly completed Ministry Certificate of Insurance (H0111), shall be filed with an authorized Ministry Representative upon execution of this agreement. For vehicles insured through the Insurance Corporation of British Columbia, an APV47 (Autoplan Certificate) or a copy of vehicle registration/insurance certificate will be acceptable for evidence of Automobile Liability Insurance.
+                </li>
+                <li>The owner shall be solely responsible for all damages occurring to the rental equipment and shall indemnify and save harmless the Ministry from and against any and all losses, claims, damages, actions, causes of action, costs and expenses the Ministry may sustain, incur, suffer or be put to at any time or times, whether before, during or after completion date or sooner termination of this agreement, where the same or any of them are based upon, arise out of, or occur by reason of any act or omission of the Owner or of any employee, agent, servant, officer, director, shareholder or subcontractor of the owner pursuant to this agreement.</li>
+                <li>All equipment owners and operators must comply with applicable Motor Vehicle, Passenger Transportation, Commercial Transport and Mines Acts and Regulations, and all applicable Federal Regulations.</li>
+                <li>It is expressly understood that the owner/operator under this Agreement shall comply with all safety requirements and regulations of the Ministry of Transportation and Infrastructure, and the current Work Safe BC Industrial Health and Safety Regulations, including the Maintenance of required log books.</li>
+                <li>The owner/operator must provide a valid Work Safe BC Registration number, and by signing this form hereby confirms that Work Safe BC Registration is current and not in arrears.</li>
+                <li>It is expressly understood that the required Work Safe BC and insurance coverage must be in place at all times during execution of the work. If there is noncompliance at the agreed commencement time and date, this agreement becomes nil and void and the work will be offered to others in accordance with the Ministry Hired Equipment Policy.</li>
+                <li>Any and all schedules attached to this agreement is an integral part of this agreement as if set out at length in the body of this agreement.</li>
+                <li>Maximum hours for rental agreement shall not exceed 600 hours for gravel trucks and 300 hours for other equipment.</li>
+            </ol>
+        </div>
+    </div>
 
 </body>
 </html>

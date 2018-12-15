@@ -52,29 +52,16 @@ var RentalRequests = React.createClass({
   },
 
   getInitialState() {
-    // if the search prop has the 'clear' property set, clear out existing search results and use default search parameters
-    // otherwise, display previous search results and initialize search parameters from the store
-    var clear = true;
-
-    if (this.props.search.clear) {
-      // clear existing search results
-      store.dispatch({ type: Action.CLEAR_RENTAL_REQUESTS });
-    } else {
-      clear = false;
-      // restore default 'clear' value for future visits to the page
-      store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_SEARCH, rentalRequests: { ...this.props.search, clear: true }});
-    }
-
     return {
       showAddDialog: false,
       search: {
-        selectedLocalAreasIds: !clear && this.props.search.selectedLocalAreasIds || [],
-        projectName: !clear && this.props.search.projectName || '',
-        status: !clear && this.props.search.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
-        dateRange: !clear && this.props.search.dateRange || '',
+        selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
+        projectName: this.props.search.projectName || '',
+        status: this.props.search.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
+        dateRange: this.props.search.dateRange || '',
       },
       ui : {
-        sortField: this.props.ui.sortField || 'localAreaName',
+        sortField: this.props.ui.sortField,
         sortDesc: this.props.ui.sortDesc === true,
       },
     };
@@ -146,10 +133,10 @@ var RentalRequests = React.createClass({
   componentDidMount() {
     Api.getFavourites('rentalRequests').then(() => {
       // If this is the first load, then look for a default favourite
-      if (!this.props.search.loaded) {
-        var favourite = _.find(this.props.favourites, (favourite) => { return favourite.isDefault; });
-        if (favourite) {
-          this.loadFavourite(favourite);
+      if (_.isEmpty(this.props.search)) {
+        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
+        if (defaultFavourite) {
+          this.loadFavourite(defaultFavourite);
           return;
         }
       }
@@ -163,6 +150,20 @@ var RentalRequests = React.createClass({
   search(e) {
     e.preventDefault();
     this.fetch();
+  },
+
+  clearSearch() {
+    var defaultSearchParameters = {
+      selectedLocalAreasIds: [],
+      projectName: '',
+      status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
+      dateRange: '',
+    };
+    
+    this.setState({ search: defaultSearchParameters }, () => {
+      store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_SEARCH, rentalRequests: this.state.search });
+      store.dispatch({ type: Action.CLEAR_RENTAL_REQUESTS });
+    });
   },
 
   updateSearchState(state, callback) {
@@ -226,7 +227,7 @@ var RentalRequests = React.createClass({
 
     return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
       { field: 'localAreaName',          title: 'Local Area'                                      },
-      { field: 'equipmentCount',         title: 'Pieces',          style: { textAlign: 'center' } },
+      { field: 'equipmentCount',         title: 'Quantity',        style: { textAlign: 'center' } },
       { field: 'districtEquipmentName',  title: 'Equipment Type'                                  },
       { field: 'expectedStartDate',      title: 'Start Date',      style: { textAlign: 'center' } },
       { field: 'expectedEndDate',        title: 'End Date',        style: { textAlign: 'center' } },
@@ -289,7 +290,7 @@ var RentalRequests = React.createClass({
       <Well id="rental-requests-bar" bsSize="small" className="clearfix">
         <Form onSubmit={ this.search }>
           <Row>
-            <Col sm={10}>
+            <Col xs={9} sm={10}>
               <Row>
                 <ButtonToolbar id="rental-requests-filters">
                   <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
@@ -301,25 +302,24 @@ var RentalRequests = React.createClass({
                     items={[ WITHIN_30_DAYS, THIS_MONTH, THIS_QUARTER, THIS_FISCAL, LAST_MONTH, LAST_QUARTER, LAST_FISCAL, CUSTOM ]}
                   />
                   <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
+                  <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
                 </ButtonToolbar>
               </Row>
-              <Row>
-                <ButtonToolbar id="rental-requests-custom-date-filters">
-                  {(() => {
-                    if (this.state.search.dateRange === CUSTOM) {
-                      return <span>
+              {(() => {
+                if (this.state.search.dateRange === CUSTOM) {
+                  return <Row>
+                    <ButtonToolbar id="rental-requests-custom-date-filters">
+                      <span>
                         <DateControl id="startDate" date={ this.state.search.startDate } updateState={ this.updateSearchState } label="From:" title="start date"/>
                         <DateControl id="endDate" date={ this.state.search.endDate } updateState={ this.updateSearchState } label="To:" title="end date"/>
-                      </span>;
-                    }
-                  })()}
-                </ButtonToolbar>
-              </Row>
+                      </span>
+                    </ButtonToolbar>
+                  </Row>;
+                }
+              })()}
             </Col>
-            <Col sm={2}>
-              <Row id="rental-requests-faves">
-                <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
-              </Row>
+            <Col xs={3} sm={2}>
+              <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
             </Col>
           </Row>
         </Form>

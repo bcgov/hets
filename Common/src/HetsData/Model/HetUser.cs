@@ -23,6 +23,7 @@ namespace HetsData.Model
         public string SmAuthorizationDirectory { get; set; }
         public string Guid { get; set; }
         public string Email { get; set; }
+        public string AgreementCity { get; set; }
         public bool Active { get; set; }
         public int? DistrictId { get; set; }
         [JsonIgnore]public string AppCreateUserDirectory { get; set; }

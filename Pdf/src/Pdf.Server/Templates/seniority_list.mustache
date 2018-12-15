@@ -15,17 +15,17 @@
       }
     }
 
-      body {
-          background-color: white;
-          color: black;
-          font-family: Myriad-Pro, Calibri, Arial, 'sans serif';
-          font-size: 8pt;
-          white-space: normal;
-      }
+    body {
+        background-color: white;
+        color: black;
+        font-family: Myriad-Pro, Calibri, Arial, 'sans serif';
+        font-size: 8pt;
+        white-space: normal;
+    }
 
     #header {
-      position: relative;
-      text-align: right;
+        position: relative;
+        text-align: right;
     }
 
     #printedOn {
@@ -58,37 +58,50 @@
       padding-right: 10px;
     }
 
-      #rotation-list-table {
-          margin-top: 10px;
-          font-size: 7pt;
-          line-height: 10px;
-          color: #000000;
-          text-align: left;
-          width: 100%;
-          margin-bottom: 30px;
-          border-collapse: collapse;
-          width: 100%;
-      }
+    #area-district-table {
+        page-break-inside: avoid;   
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        border-collapse: collapse;
+    }
 
-          #rotation-list-table th {
-              font-weight: bold;
-              background-color: #f2f2f2;
-              padding: 5px 2px 5px 2px;
-              border-top: solid;
-              border-top-width: 1px;
-              border-top-color: gainsboro;
-              border-bottom: solid;
-              border-bottom-width: 1px;
-              border-bottom-color: gainsboro;
-          }
+    #rotation-list-table {
+        margin-top: 18px;
+        font-size: 7pt;
+        line-height: 10px;
+        color: #000000;
+        text-align: left;
+        width: 100%;
+        margin-bottom: 30px;
+        border-collapse: collapse;       
+    }
+    
+    #rotation-list-table thead {
+        height: 0.6cm; 
+        display: table-header-group;        
+    }
 
-          #rotation-list-table td {
-              vertical-align: top;
-              padding: 5px 2px 5px 2px;
-              border-bottom: solid;
-              border-bottom-width: 1px;
-              border-bottom-color: gainsboro;
-          }
+    #rotation-list-table th {
+        height: 0.6cm; 
+        font-weight: bold;
+        background-color: #f2f2f2;
+        padding: 5px 2px 5px 2px;
+        border-top: solid;
+        border-top-width: 1px;
+        border-top-color: gainsboro;
+        border-bottom: solid;
+        border-bottom-width: 1px;
+        border-bottom-color: gainsboro;
+    }
+              
+    #rotation-list-table td {
+        vertical-align: top;
+        padding: 5px 2px 5px 2px;
+        border-bottom: solid;
+        border-bottom-width: 1px;
+        border-bottom-color: gainsboro;
+    }
   </style>
 </head>
 <body>
@@ -100,63 +113,69 @@
         </div>
 
         {{#seniorityListRecords}}
-        
-        <div>
-            <br />
-            <div id="form-title">Hired Equipment Seniority List - {{districtName}}</div>
-            <br />
-        </div>
+        <table id="area-district-table">
+            <tr>
+                <td>
 
-        <div id="info">
-            <table>
-                <tbody>
-                    <tr>
-                        <td class="label">Local Area</td>
-                        <td>{{localAreaName}}</td>
-                    </tr>
-                    <tr>
-                        <td class="label">Equipment Type</td>
-                        <td>{{districtEquipmentTypeName}}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                    <div>
+                        <br />
+                        <div id="form-title">Hired Equipment Seniority List - {{districtName}}</div>
+                        <br />
+                    </div>
 
-        <table id="rotation-list-table">
-            <thead>
-                <tr>
-                    <th width="50px">Block</th>
-                    <th width="80px">Equip ID</th>
-                    <th width="60px">Working Now</th>
-                    <th width="60px">Last Called</th>                    
-                    <th width="260px">Company Name</th>
-                    <th width="420px">Yr/Mk/Md/Sz</th>
-                    <th>{{yearMinus3}}</th>
-                    <th>{{yearMinus2}}</th>
-                    <th>{{yearMinus1}}</th>
-                    <th>YTD</th>
-                    <th>Seniority</th>
-                    <th>Years Reg</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#seniorityList}}
-                <tr>
-                    <td>{{block}}</td>
-                    <td>{{equipmentCode}}</td>
-                    <td>{{isHired}}</td>
-                    <td>{{lastCalled}}</td>                    
-                    <td>{{ownerName}}</td>
-                    <td>{{yearMakeModelSize}}</td>
-                    <td>{{hoursYearMinus3}}</td>
-                    <td>{{hoursYearMinus2}}</td>
-                    <td>{{hoursYearMinus1}}</td>
-                    <td>{{ytdHours}}</td>
-                    <td>{{seniority}}</td>
-                    <td>{{yearsRegistered}}</td>
-                </tr>
-                {{/seniorityList}}
-            </tbody>
+                    <div id="info">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td class="label">Local Area</td>
+                                    <td>{{localAreaName}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label">Equipment Type</td>
+                                    <td>{{districtEquipmentTypeName}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <table id="rotation-list-table">
+                        <thead>
+                            <tr>
+                                <th width="50px">Block</th>
+                                <th width="80px">Equip ID</th>
+                                <th width="60px">Working</th>
+                                <th width="60px">Last Called</th>
+                                <th width="260px">Company Name</th>
+                                <th width="420px">Yr/Mk/Md/Sz</th>
+                                <th>{{yearMinus3}}</th>
+                                <th>{{yearMinus2}}</th>
+                                <th>{{yearMinus1}}</th>
+                                <th>YTD</th>
+                                <th>Seniority</th>
+                                <th>Years Reg</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#seniorityList}}
+                            <tr>
+                                <td>{{block}}</td>
+                                <td>{{equipmentCode}}</td>
+                                <td>{{isHired}}</td>
+                                <td>{{lastCalled}}</td>
+                                <td>{{ownerName}}</td>
+                                <td>{{yearMakeModelSize}}</td>
+                                <td>{{hoursYearMinus3}}</td>
+                                <td>{{hoursYearMinus2}}</td>
+                                <td>{{hoursYearMinus1}}</td>
+                                <td>{{ytdHours}}</td>
+                                <td>{{seniority}}</td>
+                                <td>{{yearsRegistered}}</td>
+                            </tr>
+                            {{/seniorityList}}
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
         </table>
         {{/seniorityListRecords}}
 

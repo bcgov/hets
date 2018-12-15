@@ -50,12 +50,14 @@ var OwnersAddDialog = React.createClass({
       ownerCode: '',
       // localAreaId: defaultLocalAreaId.id || 0,
       localAreaId: 0,
+      isMaintenanceContractor: false,
       meetsResidency: true,
       registeredCompanyNumber: '',
       workSafeBCPolicyNumber: '',
       primaryContactPhone: '',
       primaryContactGivenName: '',
       primaryContactSurname: '',
+      primaryContactRole: '',
       status: Constant.OWNER_STATUS_CODE_APPROVED,
 
       nameError: '',
@@ -96,6 +98,7 @@ var OwnersAddDialog = React.createClass({
     if (this.state.primaryContactGivenName !== '') { return true; }
     if (this.state.primaryContactSurname !== '') { return true; }
     if (this.state.primaryContactPhone !== '') { return true; }
+    if (this.state.primaryContactRole !== '') { return true; }
     if (this.state.status != Constant.OWNER_STATUS_CODE_APPROVED) { return true; }
 
     return false;
@@ -227,12 +230,14 @@ var OwnersAddDialog = React.createClass({
       postalCode: this.state.postalCode,
       ownerCode: this.state.ownerCode,
       localArea: { id: this.state.localAreaId },
+      isMaintenanceContractor: this.state.isMaintenanceContractor,
       meetsResidency: this.state.meetsResidency,
       registeredCompanyNumber: this.state.registeredCompanyNumber,
       workSafeBCPolicyNumber: this.state.workSafeBCPolicyNumber,
       primaryContactGivenName: this.state.primaryContactGivenName,
       primaryContactSurname: this.state.primaryContactSurname,
       primaryContactPhone: this.state.primaryContactPhone,
+      primaryContactRole: this.state.primaryContactRole,
       status: this.state.status,
     });
   },
@@ -320,6 +325,10 @@ var OwnersAddDialog = React.createClass({
           <FormInputControl type="text" defaultValue={ this.state.primaryContactPhone } placeholder="250-555-1212x123" updateState={ this.updateState }/>
           <HelpBlock>{ this.state.primaryContactPhoneError }</HelpBlock>
         </FormGroup>
+        <FormGroup controlId="primaryContactRole">
+          <ControlLabel>Primary Contact Role</ControlLabel>
+          <FormInputControl type="text" value={ this.state.primaryContactRole } updateState={ this.updateState } />
+        </FormGroup>
         <FormGroup controlId="status" validationState={ this.state.projectStatusCodeError ? 'error' : null }>
           <ControlLabel>Status</ControlLabel>
           <DropdownControl id="status" title={ this.state.status } updateState={ this.updateState }
@@ -330,6 +339,9 @@ var OwnersAddDialog = React.createClass({
         <FormGroup controlId="registeredCompanyNumber">
           <ControlLabel>Registered BC Company Number</ControlLabel>
           <FormInputControl type="text" value={ this.state.registeredCompanyNumber } updateState={ this.updateState } />
+        </FormGroup>
+        <FormGroup controlId="isMaintenanceContractor">
+          <CheckboxControl id="isMaintenanceContractor" checked={ this.state.isMaintenanceContractor } updateState={ this.updateState }>Maintenance Contractor</CheckboxControl>
         </FormGroup>
         <FormGroup controlId="meetsResidency" validationState={ this.state.residencyError ? 'error' : null }>
           <CheckboxControl id="meetsResidency" checked={ this.state.meetsResidency } updateState={ this.updateState }>Meets Residency</CheckboxControl>

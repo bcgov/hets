@@ -168,7 +168,9 @@ var Favourites = React.createClass({
 
   render() {
     var title = this.props.title || 'Favourites';
-    return <Dropdown id={ this.props.id } className={ `favourites ${ this.props.className || '' }` } title={ title } pullRight={ this.props.pullRight }
+    var className = `favourites ${ this.props.className || '' } ${ this.props.pullRight ? 'pull-right' : '' }`;
+    
+    return <Dropdown id={ this.props.id } className={ className } title={ title }
       open={ this.state.open } onToggle={ this.toggle }
     >
       <Dropdown.Toggle>{ title }</Dropdown.Toggle>

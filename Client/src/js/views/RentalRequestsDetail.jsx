@@ -311,7 +311,8 @@ var RentalRequestsDetail = React.createClass({
           
           // use spans for table headers so we can force them to wrap when printing
           var headers = [
-            { field: 'seniorityString',         title: 'Block'             },
+            { field: 'seniorityString',         title: 'Seniority'         },
+            { field: 'block',                   title: 'Blk'               },
             { field: 'serviceHoursThisYear',    node: <div><span>YTD</span> <span>Hours</span></div> },
             { field: 'equipmentCode',           node: <div><span>Equip.</span> <span>ID</span></div> },
             { field: 'equipmentDetails',        node: <div><span>Equip.</span> <span>Details</span></div> },
@@ -337,6 +338,7 @@ var RentalRequestsDetail = React.createClass({
                 return (
                   <tr key={ listItem.id }>
                     <td>{ listItem.equipment.seniorityString }</td>
+                    <td>{ listItem.equipment.blockNumber }</td>
                     <td>{ listItem.equipment.hoursYtd }</td>
                     <td><Link to={ `${Constant.EQUIPMENT_PATHNAME}/${listItem.equipment.id}` }>{ listItem.equipment.equipmentCode }</Link></td>
                     <td>{ listItem.equipment.equipmentDetails }
@@ -344,10 +346,13 @@ var RentalRequestsDetail = React.createClass({
                       <div>
                         Attachments:
                         { listItem.equipment.equipmentAttachments && listItem.equipment.equipmentAttachments.map((item, i) => (
-                          <span key={item.id}> { item.typeName }
-                            { ((i + 1) < listItem.equipment.equipmentAttachments.length) &&
-                            <span>,</span>
-                            }
+                          <span key={item.id}>
+                            <span> </span>
+                            <span className="attachment">{ item.typeName }
+                              { ((i + 1) < listItem.equipment.equipmentAttachments.length) &&
+                              <span>,</span>
+                              }
+                            </span>
                           </span>
                         ))}
                         { (!listItem.equipment.equipmentAttachments || listItem.equipment.equipmentAttachments.length === 0)  &&
@@ -357,7 +362,7 @@ var RentalRequestsDetail = React.createClass({
                       }
                     </td>
                     <td>{ owner && owner.organizationName }</td>
-                    <td>{ owner && owner.primaryContact && `${owner.primaryContact.givenName} ${owner.primaryContact.surname}` }</td>
+                    <td>{ listItem.displayFields.primaryContactName }</td>
                     <td>{ owner && owner.primaryContact && owner.primaryContact.workPhoneNumber }</td>
                     <td>{ owner && owner.primaryContact && owner.primaryContact.mobilePhoneNumber }</td>
                     <td>

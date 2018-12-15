@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using HetsData.Model;
 using Microsoft.EntityFrameworkCore;
@@ -76,7 +75,7 @@ namespace HetsData.Helpers
                     foreach (HetRentalRequestRotationList equipment in rentalRequest.HetRentalRequestRotationList)
                     {
                         if (equipment.OfferResponse != null &&
-                            equipment.OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
+                            equipment.OfferResponse.ToLower().Equals("yes"))
                         {
                             temp++;
                         }
@@ -93,7 +92,7 @@ namespace HetsData.Helpers
 
                     if (rentalRequest.RentalRequestStatusType.RentalRequestStatusTypeCode == null ||
                         rentalRequest.RentalRequestStatusType.RentalRequestStatusTypeCode
-                            .Equals(HetRentalRequest.StatusInProgress, StringComparison.InvariantCultureIgnoreCase))
+                            .Equals(HetRentalRequest.StatusInProgress))
                     {
                         countActiveRequests++;
                     }
@@ -108,7 +107,7 @@ namespace HetsData.Helpers
 
                     if (rentalAgreement.RentalAgreementStatusType.RentalAgreementStatusTypeCode == null ||
                         rentalAgreement.RentalAgreementStatusType.RentalAgreementStatusTypeCode
-                            .Equals(HetRentalAgreement.StatusActive, StringComparison.InvariantCultureIgnoreCase))
+                            .Equals(HetRentalAgreement.StatusActive))
                     {
                         countActiveAgreements++;
                     }
@@ -125,7 +124,7 @@ namespace HetsData.Helpers
                 // * If Project.status is currently "Active" AND                
                 //   (All child RentalRequests.Status != "In Progress" AND All child RentalAgreement.status != "Active"))
                 // * If Project.status is currently != "Active"                               
-                if (project.ProjectStatusType.ProjectStatusTypeCode.Equals(HetProject.StatusActive, StringComparison.InvariantCultureIgnoreCase) &&
+                if (project.ProjectStatusType.ProjectStatusTypeCode.Equals(HetProject.StatusActive) &&
                     (countActiveRequests > 0 || countActiveAgreements > 0))
                 {
                     project.CanEditStatus = false;

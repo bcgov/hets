@@ -38,6 +38,7 @@ var UsersEditDialog = React.createClass({
       smUserId: !isNew ? this.props.user.smUserId : '',
       email: !isNew ? this.props.user.email : '',
       districtId: !isNew ? this.props.user.district.id : 0,
+      agreementCity: !isNew ? this.props.user.agreementCity : '',
 
       status: !isNew && this.props.user.active ? Constant.USER_STATUS_ACTIVE : Constant.USER_STATUS_ARCHIVED,
 
@@ -71,6 +72,7 @@ var UsersEditDialog = React.createClass({
     if (this.state.smUserId !== this.props.user.smUserId) { return true; }
     if (this.state.email !== this.props.user.email) { return true; }
     if (this.state.districtId !== this.props.user.districtId) { return true; }
+    if (this.state.agreementCity !== this.props.user.agreementCity) { return true; }
 
     return false;
   },
@@ -122,6 +124,7 @@ var UsersEditDialog = React.createClass({
       smUserId: this.state.smUserId,
       email: this.state.email,
       district: { id: this.state.districtId },
+      agreementCity: this.state.agreementCity,
     }});
   },
 
@@ -177,6 +180,12 @@ var UsersEditDialog = React.createClass({
                   <FilterDropdown id="districtId" placeholder="None" blankLine
                     items={ districts } selectedId={ this.state.districtId } updateState={ this.updateState }  className="full-width" />
                   <HelpBlock>{ this.state.districtIdError }</HelpBlock>
+                </FormGroup>
+              </Col>
+              <Col md={12}>
+                <FormGroup controlId="agreementCity">
+                  <ControlLabel>Location</ControlLabel>
+                  <FormInputControl type="text" defaultValue={ this.state.agreementCity } updateState={ this.updateState }/>
                 </FormGroup>
               </Col>
             </Row>

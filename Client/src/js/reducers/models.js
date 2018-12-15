@@ -20,6 +20,11 @@ const DEFAULT_MODELS = {
     success: false,
   },
 
+  unapprovedEquipmentList: {
+    data: {},
+    loading: false,
+    loaded: false,
+  },
   equipmentList: {
     data: {}, 
     loading: false,
@@ -34,13 +39,29 @@ const DEFAULT_MODELS = {
   equipmentRentalAgreements: {
     data: {},
   },
+  equipmentTransfer: {},
 
+  unapprovedOwners: {
+    data: {},
+    loading: false,
+    loaded: false,
+  },
   owners: {
     data: {},
     loading: false,
     loaded: false,
   },
+  ownersLite: {
+    data: {},
+    loading: false,
+    loaded: false,
+  },
   owner: {},
+  ownerEquipment: {
+    data: {},
+    loading: false,
+    loaded: false,
+  },
   ownerNotes: {},
   ownerAttachments: {},
   ownerHistory: {},
@@ -177,6 +198,12 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, document: action.document };
     
     // Equipment
+    case Action.UNAPPROVED_EQUIPMENT_REQUEST:
+      return { ...state, unapprovedEquipmentList: { ...state.equipmentList, loading: true, loaded: false } };
+
+    case Action.UPDATE_UNAPPROVED_EQUIPMENT:
+      return { ...state, unapprovedEquipmentList: { data: action.equipmentList, loading: false, loaded: true } };
+    
     case Action.EQUIPMENT_LIST_REQUEST:
       return { ...state, equipmentList: { ...state.equipmentList, loading: true, loaded: false } };
     
@@ -208,12 +235,33 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.DELETE_EQUIPMENT_ATTACHMENT:
       return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
     
+    case Action.EQUIPMENT_TRANSFER_ERROR:
+      return { ...state, equipmentTransfer: { ...state.equipmentTransfer, error: true, errorMessage: action.errorMessage } };
+    
     // Owners
+    case Action.UNAPPROVED_OWNERS_REQUEST:
+      return { ...state, unapprovedOwners: { ...state.owners, loading: true, loaded: false } };
+  
+    case Action.UPDATE_UNAPPROVED_OWNERS:
+      return { ...state, unapprovedOwners: { data: action.owners, loading: false, loaded: true } };
+      
     case Action.OWNERS_REQUEST:
       return { ...state, owners: { ...state.owners, loading: true, loaded: false } };
     
     case Action.UPDATE_OWNERS:
       return { ...state, owners: { data: action.owners, loading: false, loaded: true } };
+      
+    case Action.OWNERS_LITE_REQUEST:
+      return { ...state, ownersLite: { ...state.ownersLite, loading: true, loaded: false } };
+
+    case Action.OWNER_EQUIPMENT_REQUEST:
+      return { ...state, ownerEquipment: { data: action.equipment, loading: true, loaded: false } };
+
+    case Action.UPDATE_OWNER_EQUIPMENT:
+      return { ...state, ownerEquipment: { data: action.equipment, loading: false, loaded: true } };
+    
+    case Action.UPDATE_OWNERS_LITE:
+      return { ...state, ownersLite: { data: action.owners, loading: false, loaded: true } };
     
     case Action.CLEAR_OWNERS:
       return { ...state, owners: { data: {}, loading: false, loaded: false } };

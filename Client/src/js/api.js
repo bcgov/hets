@@ -429,6 +429,19 @@ export function searchEquipmentList(params) {
   });
 }
 
+export function getUnapprovedEquipment() {
+  store.dispatch({ type: Action.UNAPPROVED_EQUIPMENT_REQUEST });
+  return new ApiRequest('/equipment/search').get({ status: Constant.EQUIPMENT_STATUS_CODE_PENDING }).then(response => {
+    var equipmentList = normalize(response.data);
+
+    _.map(equipmentList, equipment => { 
+      equipment.details = [equipment.make || '-', equipment.model || '-', equipment.size || '-', equipment.year || '-'].join('/');
+    });
+
+    store.dispatch({ type: Action.UPDATE_UNAPPROVED_EQUIPMENT, equipmentList: equipmentList });
+  });
+}
+
 export function getEquipment(equipmentId) {
   return new ApiRequest(`/equipment/${ equipmentId }`).get().then(response => {
     var equipment = response.data;
@@ -672,11 +685,27 @@ function parseOwner(owner) {
   owner.canDelete = false; // TODO Needs input from Business whether this is needed.
 }
 
+export function getOwnersLite() {
+  store.dispatch({ type: Action.OWNERS_LITE_REQUEST });
+  return new ApiRequest('/owners/lite').get().then(response => {
+    var owners = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_OWNERS_LITE, owners: owners });
+  });
+}
+
 export function searchOwners(params) {
   store.dispatch({ type: Action.OWNERS_REQUEST });
   return new ApiRequest('/owners/search').get(params).then(response => {
     var owners = normalize(response.data);
     store.dispatch({ type: Action.UPDATE_OWNERS, owners: owners });
+  });
+}
+
+export function getUnapprovedOwners() {
+  store.dispatch({ type: Action.UNAPPROVED_OWNERS_REQUEST });
+  return new ApiRequest('/owners/search').get({ status: Constant.OWNER_STATUS_CODE_PENDING }).then(response => {
+    var owners = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_UNAPPROVED_OWNERS, owners: owners });
   });
 }
 
@@ -688,17 +717,6 @@ export function getOwner(ownerId) {
     parseOwner(owner);
 
     store.dispatch({ type: Action.UPDATE_OWNER, owner: owner });
-  });
-}
-
-export function getOwners() {
-  store.dispatch({ type: Action.OWNERS_LOOKUP_REQUEST });
-  return new ApiRequest('/owners').get().then(response => {
-    var owners = normalize(response.data);
-    // Add display fields
-    _.map(owners, owner => { parseOwner(owner); });
-
-    store.dispatch({ type: Action.UPDATE_OWNERS_LOOKUP, owners: owners });
   });
 }
 
@@ -781,6 +799,18 @@ export function addOwnerDocument(ownerId, files) {
   return new ApiRequest(`/owners/${ ownerId }/attachments`).post(files);
 }
 
+export function getOwnerEquipment(ownerId) {
+  return new ApiRequest(`/owners/${ ownerId }/equipment`).get().then(response => {
+    var equipmentList = normalize(response.data);
+
+    _.map(equipmentList, equipment => { 
+      equipment.details = [equipment.make || '-', equipment.model || '-', equipment.size || '-', equipment.year || '-'].join('/');
+    });
+    
+    store.dispatch({ type: Action.UPDATE_OWNER_EQUIPMENT, equipment: equipmentList });
+  });
+}
+
 export function updateOwnerEquipment(owner, equipmentArray) {
   return new ApiRequest(`/owners/${ owner.id }/equipment`).put(equipmentArray).then(() => {
     // After updating the owner's equipment, refresh the owner state.
@@ -823,6 +853,17 @@ export function changeOwnerStatus(status) {
 
 export function verifyOwners(owners) {
   return new ApiRequest('owners/verificationPdf').post(owners, { responseType: Constant.RESPONSE_TYPE_BLOB }).then((response) => {
+    return response;
+  });
+}
+
+export function transferEquipment(donorOwnerId, recipientOwnerId, equipment, includeSeniority) {
+  return new ApiRequest(`owners/${donorOwnerId}/equipmentTransfer/${recipientOwnerId}/${includeSeniority}`).post(equipment).then((response) => {
+    if (response.responseStatus === 'ERROR') {
+      store.dispatch({ type: Action.EQUIPMENT_TRANSFER_ERROR, errorMessage: response.error.description });
+      return Promise.reject(new Error(response.error.description));
+    }
+    
     return response;
   });
 }
@@ -1432,15 +1473,19 @@ function parseRotationListItem(item, numberOfBlocks) {
       url: `#/${ Constant.EQUIPMENT_PATHNAME }/${ item.equipment.id }`,
     }),
   };
+
   item.displayFields = {};
   item.displayFields.equipmentDetails = concat(item.equipment.year, concat(item.equipment.make, concat(item.equipment.model, concat(item.equipment.serialNumber, item.equipment.size, '/'), '/'), '/'), ' ');
   item.displayFields.seniority = getSeniorityDisplayName(item.equipment.blockNumber, numberOfBlocks, item.equipment.seniority, item.equipment.numberInBlock);
+
+  var primaryContact = item.equipment.owner && item.equipment.owner.primaryContact;
+  item.displayFields.primaryContactName = primaryContact ? firstLastName(primaryContact.givenName, primaryContact.surname) : '';
 }
 
 export function getRentalRequestRotationList(id) {
   return new ApiRequest(`/rentalrequests/${id}/rotationList`).get().then(response => {
     var rotationList = response.data;
-
+    
     _.map(rotationList.rentalRequestRotationList, item => parseRotationListItem(item, rotationList.numberOfBlocks));
     
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rotationList });
@@ -1968,7 +2013,10 @@ export function getServiceAreas() {
 
 export function getEquipmentTypes() {
   return new ApiRequest('/equipmenttypes').get().then(response => {
-    var equipmentTypes = normalize(response.data);
+    var equipmentTypes = _.mapValues(normalize(response.data), x => {
+      x.blueBookSectionAndName = `${x.blueBookSection} - ${x.name}`;
+      return x;
+    });
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_TYPES_LOOKUP, equipmentTypes: equipmentTypes });
   });
