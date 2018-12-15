@@ -690,7 +690,7 @@ namespace HetsData.Helpers
             // process the start block first
             for (int i = nextRecordToAskIndex[startBlock]; i < rentalRequest.HetRentalRequestRotationList.Count; i++)
             {
-                if (rentalRequest.HetRentalRequestRotationList.ElementAt(i).BlockNumber != startBlock + 1)
+                if (rentalRequest.HetRentalRequestRotationList.ElementAt(i).BlockNumber != startBlock)
                 {
                     break; // done with the start block / start index to end of block
                 }
@@ -702,7 +702,7 @@ namespace HetsData.Helpers
             // finish the "first set" of records in the start block (before the index)            
             for (int i = 0; i < nextRecordToAskIndex[startBlock]; i++)
             {
-                if (rentalRequest.HetRentalRequestRotationList.ElementAt(i).BlockNumber != startBlock + 1)
+                if (rentalRequest.HetRentalRequestRotationList.ElementAt(i).BlockNumber != startBlock)
                 {
                     continue; // move to the next record
                 }
@@ -711,9 +711,11 @@ namespace HetsData.Helpers
                 rentalRequest.HetRentalRequestRotationList.ElementAt(i).RotationListSortOrder = masterSortOrder;
             }
 
-            // process blocks after the start block
-            for (int b = startBlock + 1; b < numberOfBlocks; b++)
+            // process other blocks
+            for (int b = 0; b < numberOfBlocks; b++)
             {
+                if (b + 1 == startBlock) continue; // already processed
+
                 for (int i = nextRecordToAskIndex[b]; i < rentalRequest.HetRentalRequestRotationList.Count; i++)
                 {
                     if (i < 0 || rentalRequest.HetRentalRequestRotationList.ElementAt(i).BlockNumber != b + 1)
