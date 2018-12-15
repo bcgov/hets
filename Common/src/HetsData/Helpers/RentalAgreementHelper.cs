@@ -144,10 +144,11 @@ namespace HetsData.Helpers
             agreement.AgreementTotal = temp;
 
             // format the base rate
-            agreement.BaseRateString = string.Format("$ {0:0.00} / {1}", agreement.EquipmentRate, FormatRatePeriod(agreement.RatePeriod));
+            agreement.BaseRateString = $"$ {agreement.EquipmentRate:0.00} / {FormatRatePeriod(agreement.RatePeriod)}";
 
             // format the total
-            agreement.AgreementTotalString = string.Format("$ {0:0.00} / {1}", agreement.AgreementTotal, FormatRatePeriod(agreement.RatePeriod));
+            agreement.AgreementTotalString =
+                $"$ {agreement.AgreementTotal:0.00} / {FormatRatePeriod(agreement.RatePeriod)}";
 
             // **********************************************
             // format the rate / percent values
@@ -221,6 +222,7 @@ namespace HetsData.Helpers
         /// Printed rental agreement view agreement
         /// </summary>
         /// <param name="agreement"></param>
+        /// <param name="agreementCity"></param>
         /// <returns></returns>
         public static RentalAgreementPdfViewModel ToPdfModel(this HetRentalAgreement agreement, string agreementCity)
         {
@@ -326,30 +328,43 @@ namespace HetsData.Helpers
             // validate item.
             if (equipment?.LocalArea != null)
             {
-                DateTime currentTime = DateTime.UtcNow;
-
-                int fiscalYear = currentTime.Year;
-
-                // fiscal year always ends in March.
-                if (currentTime.Month > 3)
-                {
-                    fiscalYear++;
-                }
-
-                int localAreaNumber = equipment.LocalArea.LocalAreaNumber;
                 int localAreaId = equipment.LocalArea.LocalAreaId;
 
-                DateTime fiscalYearStart = new DateTime(fiscalYear - 1, 1, 1);
+                // get the district
+                HetLocalArea localArea = context.HetLocalArea.AsNoTracking()
+                    .Include(x => x.ServiceArea)
+                        .ThenInclude(y => y.District)
+                    .First(x => x.LocalAreaId == localAreaId);
 
-                // count the number of rental agreements in the system
+                int? districtId = localArea.ServiceArea.DistrictId;
+                int ministryDistrictId = localArea.ServiceArea.District.MinistryDistrictId;
+                if (districtId == null) return result;
+
+                // get fiscal year
+                HetDistrictStatus status = context.HetDistrictStatus.AsNoTracking()
+                .First(x => x.DistrictId == districtId);
+
+                int? fiscalYear = status.CurrentFiscalYear;
+                if (fiscalYear == null) return result;
+
+                // fiscal year in the status table stores the "start" of the year
+                DateTime fiscalYearStart = new DateTime((int)fiscalYear, 4, 1);
+                fiscalYear = fiscalYear + 1;                
+
+                // count the number of rental agreements in the system in this district
                 int currentCount = context.HetRentalAgreement
-                    .Include(x => x.Equipment.LocalArea)
-                    .Count(x => x.Equipment.LocalArea.LocalAreaId == localAreaId && x.AppCreateTimestamp >= fiscalYearStart);
+                    .Count(x => x.DistrictId == districtId && 
+                                x.AppCreateTimestamp >= fiscalYearStart);
 
                 currentCount++;
 
-                // format of the Rental Agreement number is YYYY-#-####
-                result = fiscalYear + "-" + localAreaNumber + "-" + currentCount.ToString("D4");
+                // format of the Rental Agreement number is:
+                // * FY-DD-####
+                //   FY = last 2 digits of the year
+                //   DD - District(2 digits - 1 to 11)
+                result = fiscalYear.ToString().Substring(2, 2) + "-" +
+                         ministryDistrictId + "-" + 
+                         currentCount.ToString("D4");
             }
 
             return result;
