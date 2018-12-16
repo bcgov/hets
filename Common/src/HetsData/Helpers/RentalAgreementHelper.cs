@@ -459,8 +459,15 @@ namespace HetsData.Helpers
 
         #region Get Agreement Time Records
 
-        public static TimeRecordLite GetTimeRecords(int id, DbAppContext context, IConfiguration configuration)
+        public static TimeRecordLite GetTimeRecords(int id, int? districtId, DbAppContext context, IConfiguration configuration)
         {
+            // get fiscal year
+            HetDistrictStatus status = context.HetDistrictStatus.AsNoTracking()
+                .First(x => x.DistrictId == districtId);
+
+            int? fiscalYear = status.CurrentFiscalYear;
+            
+            // get agreement and time records
             HetRentalAgreement agreement = context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.Equipment)
                     .ThenInclude(y => y.DistrictEquipmentType)
@@ -498,12 +505,17 @@ namespace HetsData.Helpers
                 projectNumber = agreement.Project.ProvincialProjectNumber;
             }
 
-            TimeRecordLite timeRecord = new TimeRecordLite
-            {
-                TimeRecords = new List<HetTimeRecord>()
-            };
+            // fiscal year in the status table stores the "start" of the year
+            TimeRecordLite timeRecord = new TimeRecordLite();
 
-            timeRecord.TimeRecords.AddRange(agreement.HetTimeRecord);
+            if (fiscalYear != null)
+            {
+                DateTime fiscalYearStart = new DateTime((int)fiscalYear, 4, 1);
+
+                timeRecord.TimeRecords = new List<HetTimeRecord>();                
+                timeRecord.TimeRecords.AddRange(agreement.HetTimeRecord.Where(x => x.WorkedDate >= fiscalYearStart));
+            }
+
             timeRecord.EquipmentCode = equipmentCode;
             timeRecord.ProjectName = projectName;
             timeRecord.ProvincialProjectNumber = projectNumber;

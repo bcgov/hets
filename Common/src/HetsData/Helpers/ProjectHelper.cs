@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using HetsData.Model;
 using Microsoft.EntityFrameworkCore;
@@ -37,9 +38,10 @@ namespace HetsData.Helpers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="context"></param>
+        /// <param name="districtId"></param>
         /// <returns></returns>
-        public static HetProject GetRecord(int id, DbAppContext context)
-        {
+        public static HetProject GetRecord(int id, DbAppContext context, int? districtId = 0)
+        {            
             HetProject project = context.HetProject.AsNoTracking() 
                 .Include(x => x.ProjectStatusType)
                 .Include(x => x.District)
@@ -133,6 +135,22 @@ namespace HetsData.Helpers
                 else
                 {
                     project.CanEditStatus = true;
+                }
+            }
+
+            // get fiscal year
+            if (districtId > 0)
+            {                
+                HetDistrictStatus status = context.HetDistrictStatus.AsNoTracking()
+                    .First(x => x.DistrictId == districtId);
+
+                int? fiscalYear = status.CurrentFiscalYear;
+
+                // fiscal year in the status table stores the "start" of the year
+                if (fiscalYear != null && project != null)
+                {
+                    DateTime fiscalYearStart = new DateTime((int) fiscalYear, 4, 1);
+                    project.FiscalYearStartDate = fiscalYearStart;
                 }
             }
 

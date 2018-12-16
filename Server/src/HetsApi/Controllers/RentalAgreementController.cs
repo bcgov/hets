@@ -481,9 +481,12 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-           
+
+            // get current district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
             // return time records
-            return new ObjectResult(new HetsResponse(RentalAgreementHelper.GetTimeRecords(id, _context, _configuration)));
+            return new ObjectResult(new HetsResponse(RentalAgreementHelper.GetTimeRecords(id, districtId, _context, _configuration)));
         }
 
         /// <summary>
@@ -507,6 +510,9 @@ namespace HetsApi.Controllers
             // set the time period type id
             int? timePeriodTypeId = StatusHelper.GetTimePeriodId(item.TimePeriod, _context);
             if (timePeriodTypeId == null) throw new DataException("Time Period Id cannot be null");
+
+            // get current district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
 
             // add or update time record
             if (item.TimeRecordId > 0)
@@ -542,7 +548,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // retrieve updated time records to return to ui
-            return new ObjectResult(new HetsResponse(RentalAgreementHelper.GetTimeRecords(id, _context, _configuration)));
+            return new ObjectResult(new HetsResponse(RentalAgreementHelper.GetTimeRecords(id, districtId, _context, _configuration)));
         }
 
         /// <summary>
@@ -562,7 +568,10 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists || items == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-                        
+
+            // get current district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
             // process each time record
             foreach (HetTimeRecord item in items)
             {
@@ -605,7 +614,7 @@ namespace HetsApi.Controllers
             }
 
             // retrieve updated time records to return to ui
-            return new ObjectResult(new HetsResponse(RentalAgreementHelper.GetTimeRecords(id, _context, _configuration)));
+            return new ObjectResult(new HetsResponse(RentalAgreementHelper.GetTimeRecords(id, districtId, _context, _configuration)));
         }
 
         #endregion
