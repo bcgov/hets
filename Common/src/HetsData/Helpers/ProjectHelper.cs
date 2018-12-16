@@ -16,6 +16,7 @@ namespace HetsData.Helpers
         public int? Hires { get; set; }
         public int? Requests { get; set; }
         public string Status { get; set; }
+        public string ProvincialProjectNumber { get; set; }
     }
 
     public class ProjectRentalAgreementClone
@@ -159,6 +160,7 @@ namespace HetsData.Helpers
                 projectLite.District = project.District;                
                 projectLite.Requests = project.HetRentalRequest?.Count;
                 projectLite.Hires = project.HetRentalAgreement?.Count;
+                projectLite.ProvincialProjectNumber = project.ProvincialProjectNumber;
             }
 
             return projectLite;
