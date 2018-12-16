@@ -199,7 +199,7 @@ namespace HetsApi.Controllers
             if (projectNumber != null)
             {
                 // allow for case insensitive search of project name
-                data = data.Where(x => x.ProvincialProjectNumber.ToLower().Equals(projectNumber.ToLower()));
+                data = data.Where(x => x.ProvincialProjectNumber.ToLower().Contains(projectNumber.ToLower()));
             }
 
             // convert Project Model to the "ProjectLite" Model
