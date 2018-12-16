@@ -61,7 +61,51 @@ namespace HetsApi.Controllers
         {
             return new ObjectResult(new HetsResponse(EquipmentHelper.GetRecord(id, _context, _configuration)));
         }
-        
+
+        /// <summary>
+        /// Get all equipment for this district that are associated with a project (lite)
+        /// </summary>
+        [HttpGet]
+        [Route("liteTs")]
+        [SwaggerOperation("EquipmentGetLiteTs")]
+        [SwaggerResponse(200, type: typeof(List<EquipmentLiteList>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult EquipmentGetLiteTs()
+        {
+            // get users district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            // get active status
+            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            int? projectStatusId = StatusHelper.GetStatusId(HetProject.StatusActive, "projectStatus", _context);
+            if (projectStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            int? agreementStatusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
+            if (agreementStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // get all active owners for this district (and any projects they're associated with)
+            IEnumerable<EquipmentLiteList> equipment = _context.HetRentalAgreement.AsNoTracking()
+                .Include(x => x.Project)
+                .Include(x => x.Equipment)
+                .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
+                            x.Equipment.EquipmentStatusTypeId == statusId &&
+                            x.Project.ProjectStatusTypeId == projectStatusId &&
+                            x.RentalAgreementStatusTypeId == agreementStatusId)
+                .OrderBy(x => x.Equipment.EquipmentCode)
+                .Select(x => new EquipmentLiteList
+                {
+                    EquipmentCode = x.Equipment.EquipmentCode,
+                    Id = x.Equipment.EquipmentId,
+                    OwnerId = x.Equipment.OwnerId,
+                    ProjectId = x.ProjectId
+                });
+
+            return new ObjectResult(new HetsResponse(equipment));
+        }
+
+
         /// <summary>
         /// Update equipment
         /// </summary>

@@ -41,16 +41,6 @@ namespace HetsData.Helpers
         public string Line { get; set; }
     }
 
-    public class TimeRecordLite
-    {
-        public string EquipmentCode { get; set; }
-        public string ProjectName { get; set; }
-        public string ProvincialProjectNumber { get; set; }
-        public float? HoursYtd { get; set; }
-        public int MaximumHours { get; set; }
-        public List<HetTimeRecord> TimeRecords { get; set; }
-    }
-
     #endregion
 
     public static class RentalAgreementHelper
