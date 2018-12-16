@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using HetsData.Model;
@@ -24,7 +25,7 @@ namespace HetsData.Helpers
         public string BaseRateString { get; set; }
         public List<HetRentalAgreementRate> RentalAgreementRatesWithoutTotal { get; set; }
         public List<HetRentalAgreementCondition> RentalAgreementConditions { get; set; }
-        public string Note { get; set; }
+        public List<NoteLine> Note { get; set; }
         public string EstimateStartWork { get; set; }
         public string DatedOn { get; set; }
         public string AgreementCity { get; set; }
@@ -33,6 +34,11 @@ namespace HetsData.Helpers
         public string RatePeriod { get; set; }
         public string RateComment { get; set; }
         public bool ConditionsPresent { get; set; }
+    }
+
+    public class NoteLine
+    {
+        public string Line { get; set; }
     }
 
     public class TimeRecordLite
@@ -208,7 +214,7 @@ namespace HetsData.Helpers
             // format the rate
             if (rentalRate.Rate != null)
             {
-                temp = string.Format("$ {0:0.00} / {1}", rentalRate.Rate, FormatRatePeriod(agreement.RatePeriod));
+                temp = $"$ {rentalRate.Rate:0.00} / {FormatRatePeriod(agreement.RatePeriod)}";
             }
 
             return temp;
@@ -230,19 +236,45 @@ namespace HetsData.Helpers
 
             if (agreement != null)
             {
-                pdfModel.DatedOn = ConvertDate(agreement.DatedOn);
-                pdfModel.AgreementCity = agreementCity;
+                pdfModel.DatedOn = ConvertDate(agreement.DatedOn);                
                 pdfModel.Equipment = agreement.Equipment;
                 pdfModel.EquipmentRate = agreement.EquipmentRate;
                 pdfModel.EstimateHours = agreement.EstimateHours;
                 pdfModel.EstimateStartWork = ConvertDate(agreement.EstimateStartWork);
-                pdfModel.Id = agreement.RentalAgreementId;
-                pdfModel.Note = agreement.Note;
+                pdfModel.Id = agreement.RentalAgreementId;                
                 pdfModel.Number = agreement.Number;
                 pdfModel.Project = agreement.Project;
                 pdfModel.RateComment = agreement.RateComment;
                 pdfModel.RatePeriod = agreement.RatePeriodType.Description;
-                pdfModel.RentalAgreementConditions = agreement.HetRentalAgreementCondition.ToList();
+
+                // set the agreement city
+                if (string.IsNullOrEmpty(agreementCity))
+                {
+                    agreementCity = " ";
+                }
+
+                pdfModel.AgreementCity = agreementCity;
+
+                // format the note
+                if (!string.IsNullOrEmpty(agreement.Note))
+                {                    
+                    string temp = Regex.Replace(agreement.Note, @"\n", "<BR>");
+                    string[] tempArray = temp.Split("<BR>");
+
+                    pdfModel.Note = new List<NoteLine>();
+
+                    foreach (string row in tempArray)
+                    {
+                        NoteLine line = new NoteLine { Line = row };
+                        pdfModel.Note.Add(line);
+                    }
+                }
+                
+                // ensure they are ordered the way they were added
+                pdfModel.RentalAgreementConditions = agreement.HetRentalAgreementCondition
+                    .OrderBy(x => x.RentalAgreementConditionId)
+                    .ToList();
+
                 pdfModel.RentalAgreementRates = agreement.HetRentalAgreementRate.ToList();
                 pdfModel.Status = agreement.RentalAgreementStatusType.Description;
                 pdfModel.ConditionsPresent = agreement.HetRentalAgreementCondition.Count > 0;
@@ -305,7 +337,7 @@ namespace HetsData.Helpers
 
                 }
 
-                result = dt.ToString("yyyy-MM-dd");
+                result = dt.ToString("yyyy-MMM-dd").ToUpper();
             }
 
             return result;

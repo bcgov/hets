@@ -128,7 +128,7 @@
     #lower-text-block {
         position: fixed;
         margin: auto;
-        top: 700px;
+        top: 660px;
         left: 0;
     }
     
@@ -328,10 +328,12 @@
         </tbody>
     </table>
 
-    <p style="margin: 8px 0 8px 0;">I hereby agree to rent to the Ministry of Transportation and Infrastructure of the Province of British Columbia the following equipment at the rental rates as shown:</p>
+    <p style="margin: 20px 0 20px 0;">I hereby agree to rent to the Ministry of Transportation and Infrastructure of the Province of British Columbia the following equipment at the rental rates as shown:</p>
 
     <div style="position: absolute; visibility: visible; left: 12px; top: 300px; width: 300px; z-index: 200;">
-        {{note}}
+        {{#note}}
+        {{line}}<br />
+        {{/note}}
     </div>
 
         <div id="table-block">
@@ -411,7 +413,7 @@
             </p>
 
             <table style="width: 100%; margin: 10px 0 0 0; padding: 0; border: none; border-width: 0;">
-                <tr style="height: 40px;">
+                <tr style="height: 60px;">
                     <td style="width: 330px; border-right: none;">&nbsp;</td>
                     <td style="width: 120px; border-right: none;">&nbsp;</td>
                     <td style="width: 330px; border-right: none;">&nbsp;</td>
@@ -433,7 +435,7 @@
                         <div class="signature">(Owner or Representative)</div>
                     </td>
                 </tr>
-                <tr style="height: 40px;">
+                <tr style="height: 60px;">
                     <td style="border-right: none;">&nbsp;</td>
                     <td style="border-right: none;">&nbsp;</td>
                     <td style="border-right: none;">&nbsp;</td>
@@ -457,7 +459,7 @@
                     <td style="border-right: none;">&nbsp;</td>
                     <td style="text-align: center; border-right: none;"><div class="signature">(District Official)</div></td>
                 </tr>
-                <tr style="height: 50px;">
+                <tr style="height: 60px;">
                     <td style="border-right: none;">&nbsp;</td>
                     <td style="border-right: none;">&nbsp;</td>
                     <td style="border-right: none;">&nbsp;</td>
@@ -465,17 +467,7 @@
                 <tr>
                     <td style="border-right: none;"><b>Original Copy To Owner</b></td>
                     <td style="border-right: none;">&nbsp;</td>
-                    <td style="border-right: none; margin: 0; padding: 0;">
-                        <table style="margin: 0; padding: 0; border: hidden; border-width: 0;">
-                            <tr>
-                                <td style="width: 90px; border-right: none; text-wrap: none;">Rental Authorized By:&nbsp;</td>
-                                <td style="width: 150px; border-right: none; align-content: center;">
-                                    <div class="underline">&nbsp;</div>
-                                </td>
-                                <td style="width: 90px; border-right: none; text-wrap: none;">&nbsp;Within Guide Rates</td>
-                            </tr>
-                        </table>
-                    </td>
+                    <td style="text-align: center; border-right: none;"><div class="signature">(HETS Clerk)</div></td>
                 </tr>
             </table>
         </div>
