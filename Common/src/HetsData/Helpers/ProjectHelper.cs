@@ -20,6 +20,12 @@ namespace HetsData.Helpers
         public string ProvincialProjectNumber { get; set; }
     }
 
+    public class ProjectLiteList
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }        
+    }
+
     public class ProjectRentalAgreementClone
     {
         public int ProjectId { get; set; }

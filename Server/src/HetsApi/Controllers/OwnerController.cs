@@ -92,19 +92,63 @@ namespace HetsApi.Controllers
             // get active status
             int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
-
-            // get all active owners for this district
+            
+            // get all active owners for this district (and any projects they're associated with)
             IEnumerable<OwnerLiteList> owners = _context.HetOwner.AsNoTracking()
                 .Where(x => x.LocalArea.ServiceArea.DistrictId == districtId &&
-                            x.OwnerStatusTypeId == statusId)
+                            x.OwnerStatusTypeId == statusId)                
                 .OrderBy(x => x.OwnerCode)
                 .Select(x => new OwnerLiteList
                 {
                     OwnerCode = x.OwnerCode,
                     Id = x.OwnerId,
-                    LocalAreaId = x.LocalAreaId,
-                });
+                    LocalAreaId = x.LocalAreaId
+                });            
                     
+            return new ObjectResult(new HetsResponse(owners));
+        }
+
+        /// <summary>
+        /// Get all owners for this district that are associated with a project (lite)
+        /// </summary>
+        [HttpGet]
+        [Route("liteTs")]
+        [SwaggerOperation("OwnersGetLiteTs")]
+        [SwaggerResponse(200, type: typeof(List<OwnerLiteList>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult OwnersGetLiteTs()
+        {
+            // get users district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            // get active status
+            int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            int? projectStatusId = StatusHelper.GetStatusId(HetProject.StatusActive, "projectStatus", _context);
+            if (projectStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            int? agreementStatusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
+            if (agreementStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // get all active owners for this district (and any projects they're associated with)
+            IEnumerable<OwnerLiteList> owners = _context.HetRentalAgreement.AsNoTracking()
+                .Include(x => x.Project)
+                .Include(x => x.Equipment)
+                    .ThenInclude(y => y.Owner)
+                .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
+                            x.Equipment.Owner.OwnerStatusTypeId == statusId &&
+                            x.Project.ProjectStatusTypeId == projectStatusId &&
+                            x.RentalAgreementStatusTypeId == agreementStatusId)
+                .OrderBy(x => x.Equipment.Owner.OwnerCode)
+                .Select(x => new OwnerLiteList
+                {
+                    OwnerCode = x.Equipment.Owner.OwnerCode,
+                    Id = x.Equipment.Owner.OwnerId,
+                    LocalAreaId = x.Equipment.LocalAreaId,
+                    ProjectId = x.ProjectId
+                });
+
             return new ObjectResult(new HetsResponse(owners));
         }
 
