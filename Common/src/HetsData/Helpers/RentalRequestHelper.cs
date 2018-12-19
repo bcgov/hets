@@ -141,6 +141,13 @@ namespace HetsData.Helpers
                             if (rotationList.Equipment.BlockNumber != null)
                             {
                                 blockNumber = (int)rotationList.Equipment.BlockNumber;
+
+                                //HETS-968 - Rotation list -Wrong Block number for Open block
+                                if (blockNumber == numberOfBlocks)
+                                {
+                                    blockNumber = 3;
+                                    rotationList.Equipment.BlockNumber = blockNumber;
+                                }                                
                             }
                             
                             rotationList.Equipment.HoursYtd = EquipmentHelper.GetYtdServiceHours(rotationList.Equipment.EquipmentId, context);
@@ -409,7 +416,8 @@ namespace HetsData.Helpers
                             x.Equipment.BlockNumber == block &&
                             x.WasAsked == true &&
                             x.IsForceHire != true)
-                .OrderByDescending(x => x.RentalRequestId).ThenByDescending(x => x.RotationListSortOrder)
+                .OrderByDescending(x => x.RentalRequestId)
+                .ThenByDescending(x => x.RotationListSortOrder)
                 .FirstOrDefault();
 
             // return the equipment record that was last asked for this block
@@ -578,6 +586,8 @@ namespace HetsData.Helpers
                 {
                     for (int j = 0; j < rentalRequest.HetRentalRequestRotationList.Count; j++)
                     {
+                        if (rentalRequest.HetRentalRequestRotationList.ElementAt(j).BlockNumber != (b + 1)) continue; // move to next record
+
                         if (!IsEquipmentHired(rentalRequest.HetRentalRequestRotationList.ElementAt(j).EquipmentId, context))
                         {
                             int temp = rentalRequest.HetRentalRequestRotationList.ElementAt(j).EquipmentId ?? -1;
@@ -586,6 +596,8 @@ namespace HetsData.Helpers
                             {
                                 nextRecordToAskId[b] = temp;
                                 nextRecordToAskBlock[b] = b;
+
+                                break;
                             }                            
                         }
                     }
