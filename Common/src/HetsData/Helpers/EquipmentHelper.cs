@@ -268,13 +268,10 @@ namespace HetsData.Helpers
             // 2 - 323.333
             // Open - 21.333
             // The last block is always open
+            // HETS-968 - Rotation list -Wrong Block number for Open block
+            if (blockNumber == numberOfBlocks) blockNumber = 3;
 
-            if (blockNumber < numberOfBlocks)
-            {
-                return string.Format("{0} - {1:0.###}", blockNumber, seniority);
-            }
-
-            return string.Format("Open - {0:0.###}", seniority);
+            return $"{blockNumber} - {seniority:0.###}";                        
         }
 
         /// <summary>

@@ -337,10 +337,11 @@ namespace HetsData.Helpers
                 seniorityViewModel.OwnerId = model.OwnerId;
             }
 
-            seniorityViewModel.Block = blockNumber == numberOfBlocks ? "Open" : blockNumber.ToString();            
+            // replacing Open with 3 (HETS-968 Rotation list -Wrong Block number for Open block)           
+            seniorityViewModel.Block = blockNumber == numberOfBlocks ? "3" : blockNumber.ToString();            
             
             // format the seniority value
-            seniorityViewModel.Seniority = string.Format("{0:0.###}", model.Seniority);
+            seniorityViewModel.Seniority = $"{model.Seniority:0.###}";
 
             // format year / make / model / size
             seniorityViewModel.YearMakeModelSize = $"{model.Year}/{model.Make}/{model.Model}/{model.Size}";
