@@ -58,13 +58,14 @@
       padding-right: 10px;
     }
 
-    #area-district-table {
-        page-break-inside: avoid;   
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        border-collapse: collapse;
-    }
+      #area-district-table {
+          page-break-after: always;
+          page-break-inside: avoid;
+          width: 100%;
+          margin: 0;
+          padding: 0;
+          border-collapse: collapse;
+      }
 
     #rotation-list-table {
         margin-top: 18px;
@@ -82,7 +83,7 @@
         display: table-header-group;        
     }
 
-    #rotation-list-table th {
+    #rotation-list-table-header th {
         height: 0.6cm; 
         font-weight: bold;
         background-color: #f2f2f2;
@@ -95,13 +96,13 @@
         border-bottom-color: gainsboro;
     }
               
-    #rotation-list-table td {
+    #rotation-list-table-body td {
         vertical-align: top;
         padding: 5px 2px 5px 2px;
         border-bottom: solid;
         border-bottom-width: 1px;
         border-bottom-color: gainsboro;
-    }
+    }      
   </style>
 </head>
 <body>
@@ -139,40 +140,36 @@
                     </div>
 
                     <table id="rotation-list-table">
-                        <thead>
-                            <tr>
-                                <th width="50px">Block</th>
-                                <th width="80px">Equip ID</th>
-                                <th width="60px">Working</th>
-                                <th width="60px">Last Called</th>
-                                <th width="260px">Company Name</th>
-                                <th width="420px">Yr/Mk/Md/Sz</th>
-                                <th>{{yearMinus3}}</th>
-                                <th>{{yearMinus2}}</th>
-                                <th>{{yearMinus1}}</th>
-                                <th>YTD</th>
-                                <th>Seniority</th>
-                                <th>Years Reg</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{#seniorityList}}
-                            <tr>
-                                <td>{{block}}</td>
-                                <td>{{equipmentCode}}</td>
-                                <td>{{isHired}}</td>
-                                <td>{{lastCalled}}</td>
-                                <td>{{ownerName}}</td>
-                                <td>{{yearMakeModelSize}}</td>
-                                <td>{{hoursYearMinus3}}</td>
-                                <td>{{hoursYearMinus2}}</td>
-                                <td>{{hoursYearMinus1}}</td>
-                                <td>{{ytdHours}}</td>
-                                <td>{{seniority}}</td>
-                                <td>{{yearsRegistered}}</td>
-                            </tr>
-                            {{/seniorityList}}
-                        </tbody>
+                        <tr id="rotation-list-table-header">
+                            <th width="50px">Block</th>
+                            <th width="80px">Equip ID</th>
+                            <th width="60px">Working</th>
+                            <th width="60px">Last Called</th>
+                            <th width="260px">Company Name</th>
+                            <th width="420px">Yr/Mk/Md/Sz</th>
+                            <th style="word-wrap: break-word;">{{yearMinus3}}</th>
+                            <th style="word-wrap: break-word;">{{yearMinus2}}</th>
+                            <th style="word-wrap: break-word;">{{yearMinus1}}</th>
+                            <th>YTD</th>
+                            <th>Seniority</th>
+                            <th>Years Reg</th>
+                        </tr>
+                        {{#seniorityList}}
+                        <tr id="rotation-list-table-body">
+                            <td>{{block}}</td>
+                            <td>{{equipmentCode}}</td>
+                            <td>{{isHired}}</td>
+                            <td>{{lastCalled}}</td>
+                            <td>{{ownerName}}</td>
+                            <td>{{yearMakeModelSize}}</td>
+                            <td>{{hoursYearMinus3}}</td>
+                            <td>{{hoursYearMinus2}}</td>
+                            <td>{{hoursYearMinus1}}</td>
+                            <td>{{ytdHours}}</td>
+                            <td>{{seniority}}</td>
+                            <td>{{yearsRegistered}}</td>
+                        </tr>
+                        {{/seniorityList}}
                     </table>
                 </td>
             </tr>
