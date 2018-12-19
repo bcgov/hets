@@ -141,6 +141,13 @@ namespace HetsData.Helpers
                             if (rotationList.Equipment.BlockNumber != null)
                             {
                                 blockNumber = (int)rotationList.Equipment.BlockNumber;
+
+                                //HETS-968 - Rotation list -Wrong Block number for Open block
+                                if (blockNumber == numberOfBlocks)
+                                {
+                                    blockNumber = 3;
+                                    rotationList.Equipment.BlockNumber = blockNumber;
+                                }                                
                             }
                             
                             rotationList.Equipment.HoursYtd = EquipmentHelper.GetYtdServiceHours(rotationList.Equipment.EquipmentId, context);
