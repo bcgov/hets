@@ -1024,7 +1024,7 @@ namespace HetsApi.Controllers
 
         /// <summary>
         /// Get blank rental agreements (for the current district)
-        /// By Project Id and Equipment Id
+        /// By Project Id and Equipment Id (ACTIVE AGREEMENTS ONLY)
         /// </summary>
         [HttpGet]
         [Route("blankAgreements/{projectId}/{equipmentId}")]
@@ -1035,6 +1035,10 @@ namespace HetsApi.Controllers
         {
             // get the current district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            // get agreement status
+            int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get "blank" agreements
             List<HetRentalAgreement> agreements = _context.HetRentalAgreement.AsNoTracking()
@@ -1050,7 +1054,8 @@ namespace HetsApi.Controllers
                             x.RentalRequestId == null &&
                             x.RentalRequestRotationListId == null &&
                             x.ProjectId == projectId &&
-                            x.EquipmentId == equipmentId)
+                            x.EquipmentId == equipmentId &&
+                            x.RentalAgreementStatusTypeId == statusId)
                 .ToList();
 
             return new ObjectResult(new HetsResponse(agreements));

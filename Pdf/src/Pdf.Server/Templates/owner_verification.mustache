@@ -134,32 +134,34 @@
             vertical-align: top;
         }
 
-        #equipment-table {            
-          margin-top: 10px;
-          font-size: 10pt;
-          line-height: 10px;
-          color: #000000;
-          text-align: left;
-          width: 100%;
-          margin-bottom: 30px;
-          border-collapse: collapse;
-          width: 100%;
+        #equipment-table {
+            margin-top: 10px;
+            font-size: 10pt;
+            letter-spacing: normal;
+            color: #000000;
+            text-align: left;
+            width: 100%;
+            margin-bottom: 30px;
+            border-collapse: collapse;
+            width: 100%;
+        }       
+
+        #equipment-table-header td {
+            page-break-inside: avoid;
+            font-weight: bold;
+            background-color: #f2f2f2;
+            height: 1.1cm; 
+            padding: 5px 2px 5px 2px;
+            border-top: solid;
+            border-top-width: 1px;
+            border-top-color: gainsboro;
+            border-bottom: solid;
+            border-bottom-width: 1px;
+            border-bottom-color: gainsboro;            
         }
 
-            #equipment-table th {
-                font-weight: bold;
-                background-color: #f2f2f2;
-                line-height: 20px;
-                padding: 5px 2px 5px 2px;
-                border-top: solid;
-                border-top-width: 1px;
-                border-top-color: gainsboro;
-                border-bottom: solid;
-                border-bottom-width: 1px;
-                border-bottom-color: gainsboro;
-            }
-
-        #equipment-table td {
+        #equipment-table-body td {
+            page-break-inside: avoid;
              vertical-align: top;
              padding: 5px 2px 5px 2px;
              border-bottom: solid;
@@ -463,19 +465,18 @@
             <br />
 
             <table id="equipment-table">
-                <thead>
-                    <tr>
-                        <th style="width: 180px; padding: 5px 10px 5px 2px;">Still own this unit & wish to re-register?</th>
-                        <th>Equipment Id</th>
-                        <th>Equipment Type</th>
-                        <th>Local Area</th>
-                        <th>Year/Make/Model/Serial Number/Size</th>
-                        <th>Attachments</th>
-                        <th style="width: 220px">Owner Comments (sold, retired, etc.)</th>
-                    </tr>
-                </thead>
+                <tr id="equipment-table-header">
+                    <td style="width: 180px; padding: 5px 10px 5px 2px;">Still own this unit & wish to re-register?</td>
+                    <td>Equipment Id</td>
+                    <td>Equipment Type</td>
+                    <td>Local Area</td>
+                    <td>Year/Make/Model/Serial Number/Size</td>
+                    <td>Attachments</td>
+                    <td style="width: 220px">Owner Comments (sold, retired, etc.)</td>
+                </tr>
+
                 {{#equipment}}
-                <tr>
+                <tr id="equipment-table-body">
                     <td>&nbsp;Yes&nbsp;&nbsp;&nbsp;No&nbsp;</td>
                     <td>{{equipmentCode}}</td>
                     <td>{{#districtEquipmentType}}{{districtEquipmentName}}{{/districtEquipmentType}}</td>
