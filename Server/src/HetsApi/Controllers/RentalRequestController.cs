@@ -247,8 +247,22 @@ namespace HetsApi.Controllers
             };
 
             // build new list
-            rentalRequest = RentalRequestHelper.CreateRotationList(rentalRequest, _context, _configuration);
+            try
+            {
+                rentalRequest = RentalRequestHelper.CreateRotationList(rentalRequest, _context, _configuration);
+            }
+            catch (Exception e)
+            {
+                // check if this a "no available equipment exception"               
+                if (e.Message == "HETS-35")
+                {
+                    return new ObjectResult(new HetsResponse("HETS-35", ErrorViewModel.GetDescription("HETS-35", _configuration)));
+                }
 
+                Console.WriteLine(e);
+                throw;
+            }
+            
             // check if we have an existing "In Progress" request
             // for the same Local Area and Equipment Type
             string tempStatus = RentalRequestHelper.RentalRequestStatus(rentalRequest, _context);

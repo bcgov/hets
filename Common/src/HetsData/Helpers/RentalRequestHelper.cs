@@ -655,8 +655,14 @@ namespace HetsData.Helpers
                 }
             }
 
+            // check we have equipment still after removing everything
+            if (rentalRequest.HetRentalRequestRotationList.Count <= 0)
+            {
+                throw new ArgumentException("HETS-35"); // no more records available
+            }
+
             // *****************************************************************
-            // 4. Default the index to the first record if nothing is selected
+            // 3. Default the index to the first record if nothing is selected
             // *****************************************************************
             for (int b = 0; b < numberOfBlocks; b++)
             {
@@ -664,7 +670,7 @@ namespace HetsData.Helpers
                 {
                     if (rentalRequest.HetRentalRequestRotationList.ElementAt(0) != null)
                     {
-                        nextRecordToAskId[b] = 0;
+                        nextRecordToAskIndex[b] = 0;
                         nextRecordToAskId[b] = rentalRequest.HetRentalRequestRotationList.ElementAt(0).Equipment.EquipmentId;
 
                         if (rentalRequest.HetRentalRequestRotationList.ElementAt(0).Equipment.Seniority == null)
@@ -678,12 +684,13 @@ namespace HetsData.Helpers
                         }
 
                         if (startBlock == -1) startBlock = b;
+                        break; // done
                     }
                 }
             }            
 
             // *****************************************************************
-            // 5. Update the local area rotation list
+            // 4. Update the local area rotation list
             // *****************************************************************
             rentalRequest.FirstOnRotationListId = nextRecordToAskId[startBlock];
 
@@ -694,7 +701,7 @@ namespace HetsData.Helpers
                 newAreaRotationList);
             
             // *****************************************************************
-            // 6. Reset the rotation list sort order
+            // 5. Reset the rotation list sort order
             //    ** starting @ nextRecordToAskIndex
             // *****************************************************************
             int masterSortOrder = 0;
