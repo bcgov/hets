@@ -221,6 +221,7 @@ namespace HetsData.Helpers
         /// Printed rental agreement view agreement
         /// </summary>
         /// <param name="agreement"></param>
+        /// <param name="agreementCity"></param>
         /// <returns></returns>
         public static RentalAgreementPdfViewModel ToPdfModel(this HetRentalAgreement agreement, string agreementCity)
         {
