@@ -132,6 +132,9 @@ var TopNav = React.createClass({
                   <NavItem>District Admin</NavItem>
                 </LinkContainer>
               }
+              <LinkContainer to={{ pathname: `/${ Constant.TIME_ENTRY_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.TIME_ENTRY_PATHNAME) }>
+                <NavItem>Time Entry</NavItem>
+              </LinkContainer>
             </Nav>
           }
           { this.props.showNav &&

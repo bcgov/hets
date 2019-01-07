@@ -118,6 +118,12 @@ const DEFAULT_MODELS = {
   rentalCondition: {},
   rentalConditions: {},
 
+  timeEntries: {
+    data: {},
+    loading: false,
+    loaded: false,
+  },
+
   roles: {},
   role: {},
   rolePermissions: {},
@@ -324,6 +330,16 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.UPDATE_RENTAL_REQUEST_NOTES: 
       return { ...state, rentalRequestNotes: action.notes };
+    
+    // Time Entries
+    case Action.TIME_ENTRIES_REQUEST: 
+      return { ...state, timeEntries: { ...state.timeEntries, loading: true, loaded: false } };
+    
+    case Action.UPDATE_TIME_ENTRIES:
+      return { ...state, timeEntries: { data: action.timeEntries, loading: false, loaded: true } };
+    
+    case Action.CLEAR_TIME_ENTRIES:
+      return { ...state, timeEntries: { data: {}, loading: false, loaded: false } };
     
     // Rotation List
     case Action.RENTAL_REQUEST_ROTATION_LIST_REQUEST:
