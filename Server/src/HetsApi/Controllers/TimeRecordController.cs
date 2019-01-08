@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -101,6 +102,15 @@ namespace HetsApi.Controllers
             int? agreementStatusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
             if (agreementStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
+            // get fiscal year
+            HetDistrictStatus district = _context.HetDistrictStatus.AsNoTracking()
+                .FirstOrDefault(x => x.DistrictId == districtId);
+
+            if (district?.CurrentFiscalYear == null) return new ObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
+
+            int fiscalYear = (int)district.CurrentFiscalYear; // status table uses the start of the year
+            DateTime fiscalStart = new DateTime(fiscalYear, 3, 31); // look for all records AFTER the 31st
+
             // only return active equipment / projects and agreements
             IQueryable<HetTimeRecord> data = _context.HetTimeRecord.AsNoTracking()
                 .Include(x => x.RentalAgreement)
@@ -118,7 +128,8 @@ namespace HetsApi.Controllers
                 .Where(x => x.RentalAgreement.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
                             x.RentalAgreement.Equipment.EquipmentStatusTypeId == statusId &&
                             x.RentalAgreement.Project.ProjectStatusTypeId == projectStatusId &&
-                            x.RentalAgreement.RentalAgreementStatusTypeId == agreementStatusId);
+                            x.RentalAgreement.RentalAgreementStatusTypeId == agreementStatusId &&
+                            x.WorkedDate > fiscalStart);
 
             if (localAreasArray != null && localAreasArray.Length > 0)
             {

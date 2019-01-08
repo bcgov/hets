@@ -1149,9 +1149,9 @@ namespace HetsApi.Controllers
             // determine the year header values
             // * use the district status table
             // **********************************************************************            
-            string yearMinus1 = string.Format("{0}/{1}", fiscalYear - 2, fiscalYear - 1);
-            string yearMinus2 = string.Format("{0}/{1}", fiscalYear - 3, fiscalYear - 2);
-            string yearMinus3 = string.Format("{0}/{1}", fiscalYear - 4, fiscalYear - 3);
+            string yearMinus1 = $"{fiscalYear - 2}/{fiscalYear - 1}";
+            string yearMinus2 = $"{fiscalYear - 3}/{fiscalYear - 2}";
+            string yearMinus3 = $"{fiscalYear - 4}/{fiscalYear - 3}";
 
             // **********************************************************************
             // convert Equipment Model to Pdf View Model
