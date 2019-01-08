@@ -7,6 +7,7 @@ const DEFAULT_LOOKUPS = {
   serviceAreas: {},
   localAreas: {},
   equipmentTypes: {},
+  equipmentLite: {},
   districtEquipmentTypes: {
     data: {},
     loading: false,
@@ -22,6 +23,7 @@ const DEFAULT_LOOKUPS = {
     data: {},
     loading: false,
   },
+  ownersLite: {},
   roles: {},
   projects: {},
   users: {},
@@ -75,6 +77,12 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
 
     case Action.UPDATE_OWNERS_LOOKUP:
       return { ...state, owners: { data: action.owners, loading: false } };
+
+    case Action.UPDATE_OWNERS_LITE_LOOKUP:
+      return { ...state, ownersLite: action.owners };
+
+    case Action.UPDATE_EQUIPMENT_LITE_LOOKUP:
+      return { ...state, equipmentLite: action.equipment };
 
     case Action.UPDATE_ROLES_LOOKUP:
       return { ...state, roles: action.roles };
