@@ -90,12 +90,27 @@ var TimeEntryDialog = React.createClass({
         timeEntryErrorsObj[key] = state;
         valid = false;
       } else {
-        var date = Moment(timeEntry[key].date);
+        var date = Moment.utc(timeEntry[key].date);
         if (date.isBefore(this.state.fiscalYearStartDate)) {
           let state = { ...timeEntry[key], errorDate: 'Date must be in the current fiscal year' };
           timeEntryErrorsObj[key] = state;
           valid = false;
         }
+        Object.keys(timeEntry).forEach((otherKey) => {
+          if (key !== otherKey && timeEntry[key].date === timeEntry[otherKey].date) {
+            let state = { ...timeEntry[key], errorDate: 'Time record for this date already exists' };
+            timeEntryErrorsObj[key] = state;
+            valid = false;
+          }
+        });
+        Object.keys(this.props.rentalAgreementTimeRecords.timeRecords).forEach((index) => {
+          var existingDate = Moment.utc(this.props.rentalAgreementTimeRecords.timeRecords[index].workedDate);
+          if (date.isSame(existingDate)) {
+            let state = { ...timeEntry[key], errorDate: 'Time record for this date already exists' };
+            timeEntryErrorsObj[key] = state;
+            valid = false;
+          }
+        });
       }
     });
     this.setState({ timeEntry: timeEntryErrorsObj });
