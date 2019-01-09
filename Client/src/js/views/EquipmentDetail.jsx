@@ -33,6 +33,7 @@ import Spinner from '../components/Spinner.jsx';
 import History from '../components/History.jsx';
 
 import { formatDateTime } from '../utils/date';
+import { formatHours } from '../utils/string';
 
 /*
 
@@ -442,16 +443,16 @@ var EquipmentDetail = React.createClass({
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Seniority">{ equipment.seniorityString }</ColDisplay>
                     </Col>
                     <Col lg={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Hours YTD">{ equipment.hoursYtd }</ColDisplay>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Hours YTD">{ formatHours(equipment.hoursYtd) }</ColDisplay>
                     </Col>
                     <Col lg={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.yearMinus1 }</span> }>{ equipment.serviceHoursLastYear }</ColDisplay>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.yearMinus1 }</span> }>{ formatHours(equipment.serviceHoursLastYear) }</ColDisplay>
                     </Col>
                     <Col lg={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.yearMinus2 }</span> }>{ equipment.serviceHoursTwoYearsAgo }</ColDisplay>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.yearMinus2 }</span> }>{ formatHours(equipment.serviceHoursTwoYearsAgo) }</ColDisplay>
                     </Col>
                     <Col lg={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.yearMinus3 }</span> }>{ equipment.serviceHoursThreeYearsAgo }</ColDisplay>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.yearMinus3 }</span> }>{ formatHours(equipment.serviceHoursThreeYearsAgo) }</ColDisplay>
                     </Col>
                     <Col lg={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Years Registered">{ equipment.yearsOfService }</ColDisplay>

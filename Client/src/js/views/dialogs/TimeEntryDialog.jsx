@@ -12,7 +12,7 @@ import DateControl from '../../components/DateControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import DeleteButton from '../../components/DeleteButton.jsx';
 
-import { isBlank } from '../../utils/string';
+import { isBlank, formatHours } from '../../utils/string';
 import { formatDateTime } from '../../utils/date';
 
 var TimeEntryDialog = React.createClass({
@@ -95,7 +95,12 @@ var TimeEntryDialog = React.createClass({
   },
 
   onSave() {
-    Api.addRentalAgreementTimeRecords(this.props.activeRentalRequest.id, this.state.timeEntry).then(() => {
+    var timeEntry = { ...this.state.timeEntry };
+    Object.keys(timeEntry).forEach((key) => {
+      timeEntry[key].hours = (timeEntry[key].hours || 0).toFixed(2);
+    });
+
+    Api.addRentalAgreementTimeRecords(this.props.activeRentalRequest.id, timeEntry).then(() => {
       this.props.onClose();
     });
   },
@@ -168,7 +173,7 @@ var TimeEntryDialog = React.createClass({
             <div>{ formatDateTime(timeRecord.workedDate, 'YYYY-MMM-DD') }</div>
           </Col>
           <Col xs={3}>
-            <div>{ timeRecord.hours }</div>
+            <div>{ formatHours(timeRecord.hours) }</div>
           </Col>
           <Col xs={6}>
             <DeleteButton name="Document" onConfirm={ this.deleteTimeRecord.bind(this, timeRecord) }/>
@@ -199,7 +204,7 @@ var TimeEntryDialog = React.createClass({
               <Col xs={3}>
                 <div className="text-label">YTD Hours</div>
                 <div className={ this.getHoursYtdClassName() ? 'highlight' : '' }>
-                  { rentalAgreementTimeRecords.hoursYtd }{ this.getHoursYtdClassName() }
+                  { formatHours(rentalAgreementTimeRecords.hoursYtd) }{ this.getHoursYtdClassName() }
                 </div>
               </Col>
               <Col xs={3}>              
@@ -266,7 +271,7 @@ var TimeEntryDialog = React.createClass({
                       <FormInputControl 
                         id={`hours${key}`} 
                         name='hours'
-                        type="number" 
+                        type="float"
                         value={ this.state.timeEntry[key].hours }
                         updateState={ this.updateTimeEntryState } 
                       />

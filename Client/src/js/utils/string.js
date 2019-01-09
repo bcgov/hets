@@ -77,3 +77,7 @@ export function formatCurrency(number) {
   if (number === null || number === undefined) { return ''; }
   return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(number);
 }
+
+export function formatHours(number) {
+  return (number || 0).toFixed(2);
+}
