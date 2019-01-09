@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { Grid, Row, Col, Form, FormGroup, ControlLabel, HelpBlock, Button, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
 
+import Moment from 'moment';
+
 import * as Api from '../../api';
 
 import FormInputControl from '../../components/FormInputControl.jsx';
@@ -19,9 +21,8 @@ var TimeEntryDialog = React.createClass({
   propTypes: {
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool.isRequired,
-    projects: React.PropTypes.object,
-    equipmentList: React.PropTypes.object,
-    activeRentalRequest: React.PropTypes.object,
+    activeRentalRequest: React.PropTypes.object.isRequired,
+    fiscalYearStartDate: React.PropTypes.string.isRequired,
     rentalAgreementTimeRecords: React.PropTypes.object,
   },
 
@@ -29,6 +30,7 @@ var TimeEntryDialog = React.createClass({
     return {
       showAllTimeRecords: false,
       numberOfInputs: 1,
+      fiscalYearStartDate: Moment(this.props.fiscalYearStartDate),
       timeEntry: {
         1: {
           hours: '',
@@ -87,6 +89,28 @@ var TimeEntryDialog = React.createClass({
         let state = { ...timeEntry[key], errorDate: 'Date is required' };
         timeEntryErrorsObj[key] = state;
         valid = false;
+      } else {
+        var date = Moment.utc(timeEntry[key].date);
+        if (date.isBefore(this.state.fiscalYearStartDate)) {
+          let state = { ...timeEntry[key], errorDate: 'Date must be in the current fiscal year' };
+          timeEntryErrorsObj[key] = state;
+          valid = false;
+        }
+        Object.keys(timeEntry).forEach((otherKey) => {
+          if (key !== otherKey && timeEntry[key].date === timeEntry[otherKey].date) {
+            let state = { ...timeEntry[key], errorDate: 'Time record for this date already exists' };
+            timeEntryErrorsObj[key] = state;
+            valid = false;
+          }
+        });
+        Object.keys(this.props.rentalAgreementTimeRecords.timeRecords).forEach((index) => {
+          var existingDate = Moment.utc(this.props.rentalAgreementTimeRecords.timeRecords[index].workedDate);
+          if (date.isSame(existingDate)) {
+            let state = { ...timeEntry[key], errorDate: 'Time record for this date already exists' };
+            timeEntryErrorsObj[key] = state;
+            valid = false;
+          }
+        });
       }
     });
     this.setState({ timeEntry: timeEntryErrorsObj });
