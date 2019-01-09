@@ -10,7 +10,7 @@ import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { daysFromToday, isValidDate, toZuluTime, today } from '../../utils/date';
-import { isBlank } from '../../utils/string';
+import { isBlank, formatHours } from '../../utils/string';
 
 var SeniorityEditDialog = React.createClass({
   propTypes: {
@@ -25,7 +25,7 @@ var SeniorityEditDialog = React.createClass({
     return {
       isNew: this.props.equipment.id === 0,
 
-      serviceHoursThisYear: this.props.equipment.serviceHoursThisYear,
+      hoursYtd: this.props.equipment.hoursYtd,
       serviceHoursLastYear: this.props.equipment.serviceHoursLastYear,
       serviceHoursTwoYearsAgo: this.props.equipment.serviceHoursTwoYearsAgo,
       serviceHoursThreeYearsAgo: this.props.equipment.serviceHoursThreeYearsAgo,
@@ -117,9 +117,9 @@ var SeniorityEditDialog = React.createClass({
 
   onSave() {
     this.props.onSave({ ...this.props.equipment, ...{
-      serviceHoursLastYear: this.state.serviceHoursLastYear,
-      serviceHoursTwoYearsAgo: this.state.serviceHoursTwoYearsAgo,
-      serviceHoursThreeYearsAgo: this.state.serviceHoursThreeYearsAgo,
+      serviceHoursLastYear: (this.state.serviceHoursLastYear || 0).toFixed(2),
+      serviceHoursTwoYearsAgo: (this.state.serviceHoursTwoYearsAgo || 0).toFixed(2),
+      serviceHoursThreeYearsAgo: (this.state.serviceHoursThreeYearsAgo || 0).toFixed(2),
       seniorityEffectiveDate: toZuluTime(this.state.seniorityEffectiveDate),
       yearsOfService: this.state.yearsRegistered,
       isSeniorityOverridden: this.state.isSeniorityOverridden,
@@ -140,7 +140,7 @@ var SeniorityEditDialog = React.createClass({
               <Col>
                 <FormGroup>
                   <ControlLabel>Hours YTD</ControlLabel>
-                  <FormControl.Static>{ this.state.serviceHoursThisYear }</FormControl.Static>
+                  <FormControl.Static>{ formatHours(this.state.hoursYtd) }</FormControl.Static>
                 </FormGroup>
               </Col>
             </Row>
@@ -148,7 +148,7 @@ var SeniorityEditDialog = React.createClass({
               <Col>
                 <FormGroup controlId="serviceHoursLastYear" validationState={ this.state.serviceHoursLastYearError ? 'error' : null }>
                   <ControlLabel>Hours { this.props.equipment.yearMinus1 } <sup>*</sup></ControlLabel>
-                  <FormInputControl type="number" value={ this.state.serviceHoursLastYear } onChange={ this.serviceHoursChanged } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
+                  <FormInputControl type="float" value={ this.state.serviceHoursLastYear } onChange={ this.serviceHoursChanged } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
                   <HelpBlock>{ this.state.serviceHoursLastYearError }</HelpBlock>
                 </FormGroup>
               </Col>
@@ -157,7 +157,7 @@ var SeniorityEditDialog = React.createClass({
               <Col>
                 <FormGroup controlId="serviceHoursTwoYearsAgo" validationState={ this.state.serviceHoursTwoYearsAgoError ? 'error' : null }>
                   <ControlLabel>Hours { this.props.equipment.yearMinus2 } <sup>*</sup></ControlLabel>
-                  <FormInputControl type="number" value={ this.state.serviceHoursTwoYearsAgo } onChange={ this.serviceHoursChanged } updateState={ this.updateState }/>
+                  <FormInputControl type="float" value={ this.state.serviceHoursTwoYearsAgo } onChange={ this.serviceHoursChanged } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.serviceHoursTwoYearsAgoError }</HelpBlock>
                 </FormGroup>
               </Col>
@@ -166,7 +166,7 @@ var SeniorityEditDialog = React.createClass({
               <Col>
                 <FormGroup controlId="serviceHoursThreeYearsAgo" validationState={ this.state.serviceHoursThreeYearsAgoError ? 'error' : null }>
                   <ControlLabel>Hours { this.props.equipment.yearMinus3 } <sup>*</sup></ControlLabel>
-                  <FormInputControl type="number" value={ this.state.serviceHoursThreeYearsAgo } onChange={ this.serviceHoursChanged } updateState={ this.updateState }/>
+                  <FormInputControl type="float" value={ this.state.serviceHoursThreeYearsAgo } onChange={ this.serviceHoursChanged } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.serviceHoursThreeYearsAgoError }</HelpBlock>
                 </FormGroup>
               </Col>
