@@ -15,7 +15,6 @@ import * as Api from '../api';
 import * as Constant from '../constants';
 import * as Log from '../history';
 import store from '../store';
-import { refresh } from '../actions/actions';
 
 import DateControl from '../components/DateControl.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
@@ -190,7 +189,7 @@ var RentalRequests = React.createClass({
 
   closeAddDialog() {
     this.setState({ showAddDialog: false });
-    store.dispatch(refresh(Action.ADD_RENTAL_REQUEST_REFRESH));
+    store.dispatch({ type: Action.ADD_RENTAL_REQUEST_REFRESH });
   },
 
   saveNewRequest(request) {
