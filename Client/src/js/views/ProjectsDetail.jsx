@@ -196,6 +196,7 @@ var ProjectsDetail = React.createClass({
 
   closeAddRequestDialog() {
     this.setState({ showAddRequestDialog: false });
+    store.dispatch({ type: Action.ADD_RENTAL_REQUEST_REFRESH });
   },
 
   saveNewRequest(request) {
