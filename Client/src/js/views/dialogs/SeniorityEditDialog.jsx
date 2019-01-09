@@ -25,7 +25,7 @@ var SeniorityEditDialog = React.createClass({
     return {
       isNew: this.props.equipment.id === 0,
 
-      serviceHoursThisYear: this.props.equipment.serviceHoursThisYear,
+      hoursYtd: this.props.equipment.hoursYtd,
       serviceHoursLastYear: this.props.equipment.serviceHoursLastYear,
       serviceHoursTwoYearsAgo: this.props.equipment.serviceHoursTwoYearsAgo,
       serviceHoursThreeYearsAgo: this.props.equipment.serviceHoursThreeYearsAgo,
@@ -140,7 +140,7 @@ var SeniorityEditDialog = React.createClass({
               <Col>
                 <FormGroup>
                   <ControlLabel>Hours YTD</ControlLabel>
-                  <FormControl.Static>{ formatHours(this.state.serviceHoursThisYear) }</FormControl.Static>
+                  <FormControl.Static>{ formatHours(this.state.hoursYtd) }</FormControl.Static>
                 </FormGroup>
               </Col>
             </Row>
