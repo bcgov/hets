@@ -94,6 +94,11 @@ var TopNav = React.createClass({
               <LinkContainer to={{ pathname: `/${ Constant.RENTAL_REQUESTS_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.RENTAL_REQUESTS_PATHNAME) }>
                 <NavItem>Requests</NavItem>
               </LinkContainer>
+              { this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) &&
+                <LinkContainer to={{ pathname: `/${ Constant.DISTRICT_ADMIN_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.DISTRICT_ADMIN_PATHNAME) }>
+                  <NavItem>District Admin</NavItem>
+                </LinkContainer>
+              }
               { (this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN) ||
                 this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) ||
                 this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) ||
@@ -126,11 +131,6 @@ var TopNav = React.createClass({
                     </LinkContainer>
                   }
                 </NavDropdown>
-              }
-              { this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) &&
-                <LinkContainer to={{ pathname: `/${ Constant.DISTRICT_ADMIN_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.DISTRICT_ADMIN_PATHNAME) }>
-                  <NavItem>District Admin</NavItem>
-                </LinkContainer>
               }
             </Nav>
           }
