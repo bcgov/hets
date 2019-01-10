@@ -1279,5 +1279,51 @@ namespace HetsApi.Controllers
         }
 
         #endregion
+
+        #region Search Rental Requests
+
+        /// <summary>
+        /// Find the latest agreement by project and equipment id
+        /// </summary>
+        /// <remarks>Used for the time entry page.</remarks>
+        /// <param name="equipmentId">Equipment Id</param>
+        /// <param name="projectId">Project Id</param>
+        [HttpGet]
+        [Route("latest/{projectId}/{equipmentId}")]
+        [SwaggerOperation("RentalAgreementLatestGet")]
+        [SwaggerResponse(200, type: typeof(List<RentalRequestLite>))]
+        public virtual IActionResult RentalRequestsSearchGet([FromRoute]int projectId, [FromRoute]int equipmentId)
+        {
+            // find the latest rental agreement
+            HetRentalAgreement agreement = _context.HetRentalAgreement.AsNoTracking()                
+                .OrderByDescending(x => x.AppCreateTimestamp)
+                .FirstOrDefault(x => x.EquipmentId == equipmentId &&
+                                     x.ProjectId == projectId);
+
+            // if nothing exists - return an error message
+            if (agreement == null) return new ObjectResult(new HetsResponse("HETS-35", ErrorViewModel.GetDescription("HETS-35", _configuration)));
+
+            // get user's district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            // get fiscal year
+            HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
+                .First(x => x.DistrictId == districtId);
+
+            int? fiscalYearStart = status.CurrentFiscalYear;
+            if (fiscalYearStart == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            DateTime fiscalStart = new DateTime((int)fiscalYearStart, 4, 1);
+
+            // validate that agreement is in the current fiscal year
+            DateTime agreementDate = agreement.DatedOn ?? agreement.DbCreateTimestamp;
+
+            if (agreementDate < fiscalStart) return new ObjectResult(new HetsResponse("HETS-36", ErrorViewModel.GetDescription("HETS-36", _configuration)));
+
+            // return to the client            
+            return new ObjectResult(new HetsResponse(agreement));
+        }
+
+        #endregion
     }
 }

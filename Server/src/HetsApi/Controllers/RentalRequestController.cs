@@ -578,7 +578,7 @@ namespace HetsApi.Controllers
                     string agreementNumber = RentalAgreementHelper.GetRentalAgreementNumber(item.Equipment, _context);
 
                     int? rateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodHourly, _context);
-                    if (rateTypeId == null) return new ObjectResult(new HetsResponse("HETS-24", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+                    if (rateTypeId == null) return new ObjectResult(new HetsResponse("HETS-24", ErrorViewModel.GetDescription("HETS-24", _configuration)));
 
                     rentalAgreement = new HetRentalAgreement
                     {
