@@ -63,6 +63,37 @@ namespace HetsApi.Controllers
         }
 
         /// <summary>
+        /// Get all approved equipment for this district (lite)
+        /// </summary>
+        [HttpGet]
+        [Route("lite")]
+        [SwaggerOperation("EquipmentGetLite")]
+        [SwaggerResponse(200, type: typeof(List<EquipmentExtraLite>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult EquipmentGetLite()
+        {
+            // get user's district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            // get approved status
+            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // get all approved equipment for this district
+            IEnumerable<EquipmentExtraLite> equipment = _context.HetEquipment.AsNoTracking()
+                .Where(x => x.LocalArea.ServiceArea.DistrictId == districtId &&
+                            x.EquipmentStatusTypeId == statusId)
+                .OrderBy(x => x.EquipmentCode)
+                .Select(x => new EquipmentExtraLite
+                {
+                    EquipmentCode = x.EquipmentCode,
+                    Id = x.EquipmentId,
+                });
+
+            return new ObjectResult(new HetsResponse(equipment));
+        }
+
+        /// <summary>
         /// Get all equipment for this district that are associated with a project (lite)
         /// </summary>
         [HttpGet]
@@ -104,7 +135,6 @@ namespace HetsApi.Controllers
 
             return new ObjectResult(new HetsResponse(equipment));
         }
-
 
         /// <summary>
         /// Update equipment

@@ -77,6 +77,13 @@ namespace HetsData.Helpers
         public int ProjectId { get; set; }
     }
 
+    public class EquipmentExtraLite
+    {
+        public int Id { get; set; }
+
+        public string EquipmentCode { get; set; }
+    }
+
     #endregion
 
     public static class EquipmentHelper
