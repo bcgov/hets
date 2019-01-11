@@ -577,6 +577,10 @@ namespace HetsApi.Controllers
                     // generate the rental agreement number
                     string agreementNumber = RentalAgreementHelper.GetRentalAgreementNumber(item.Equipment, _context);
 
+                    // get user info - agreement city
+                    User user = UserAccountHelper.GetUser(_context, _httpContext);
+                    string agreementCity = user.AgreementCity;
+
                     int? rateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodHourly, _context);
                     if (rateTypeId == null) return new ObjectResult(new HetsResponse("HETS-24", ErrorViewModel.GetDescription("HETS-24", _configuration)));
 
@@ -587,6 +591,7 @@ namespace HetsApi.Controllers
                         EquipmentId = tempEquipmentId,
                         Number = agreementNumber,
                         RatePeriodTypeId = (int)rateTypeId,
+                        AgreementCity = agreementCity
                     };
 
                     // add overtime rates

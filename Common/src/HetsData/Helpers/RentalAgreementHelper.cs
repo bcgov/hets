@@ -218,9 +218,8 @@ namespace HetsData.Helpers
         /// Printed rental agreement view agreement
         /// </summary>
         /// <param name="agreement"></param>
-        /// <param name="agreementCity"></param>
         /// <returns></returns>
-        public static RentalAgreementPdfViewModel ToPdfModel(this HetRentalAgreement agreement, string agreementCity)
+        public static RentalAgreementPdfViewModel ToPdfModel(this HetRentalAgreement agreement)
         {
             RentalAgreementPdfViewModel pdfModel = new RentalAgreementPdfViewModel();
 
@@ -236,15 +235,8 @@ namespace HetsData.Helpers
                 pdfModel.Project = agreement.Project;
                 pdfModel.RateComment = agreement.RateComment;
                 pdfModel.RatePeriod = agreement.RatePeriodType.Description;
-
-                // set the agreement city
-                if (string.IsNullOrEmpty(agreementCity))
-                {
-                    agreementCity = " ";
-                }
-
-                pdfModel.AgreementCity = agreementCity;
-
+                pdfModel.AgreementCity = agreement.AgreementCity;
+                
                 // format the note
                 if (!string.IsNullOrEmpty(agreement.Note))
                 {                    

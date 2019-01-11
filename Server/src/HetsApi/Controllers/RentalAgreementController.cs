@@ -114,6 +114,7 @@ namespace HetsApi.Controllers
             // update the agreement record
             agreement.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             agreement.DatedOn = item.DatedOn;
+            agreement.AgreementCity = item.AgreementCity.Trim();
             agreement.EquipmentRate = item.EquipmentRate;
             agreement.EstimateHours = item.EstimateHours;
             agreement.EstimateStartWork = item.EstimateStartWork;
@@ -217,12 +218,17 @@ namespace HetsApi.Controllers
             // get status for new agreement
             int? statusId = StatusHelper.GetStatusId(item.Status, "rentalAgreementStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
-        
+
+            // get user info - agreement city
+            User user = UserAccountHelper.GetUser(_context, _httpContext);
+            string agreementCity = user.AgreementCity;
+
             // create agreement
             HetRentalAgreement agreement = new HetRentalAgreement
             {
                 Number = RentalAgreementHelper.GetRentalAgreementNumber(item.Equipment, _context),
                 DatedOn = item.DatedOn,
+                AgreementCity = agreementCity,
                 EquipmentRate = item.EquipmentRate,
                 EstimateHours = item.EstimateHours,
                 EstimateStartWork = item.EstimateStartWork,
@@ -322,11 +328,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult RentalAgreementsIdPdfGet([FromRoute]int id)
         {
-            _logger.LogInformation("Rental Agreement Pdf [Id: {0}]", id);
-
-            // get user info - agreement city
-            User user = UserAccountHelper.GetUser(_context, _httpContext);
-            string agreementCity = user.AgreementCity;
+            _logger.LogInformation("Rental Agreement Pdf [Id: {0}]", id);            
 
             HetRentalAgreement rentalAgreement = _context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.RatePeriodType)
@@ -349,7 +351,7 @@ namespace HetsApi.Controllers
             if (rentalAgreement != null)
             {
                 // construct the view model
-                RentalAgreementPdfViewModel rentalAgreementPdfViewModel = RentalAgreementHelper.ToPdfModel(rentalAgreement, agreementCity);
+                RentalAgreementPdfViewModel rentalAgreementPdfViewModel = RentalAgreementHelper.ToPdfModel(rentalAgreement);
 
                 string payload = JsonConvert.SerializeObject(rentalAgreementPdfViewModel, new JsonSerializerSettings
                 {
@@ -1189,7 +1191,8 @@ namespace HetsApi.Controllers
                 RateComment = oldAgreement.RateComment?.Trim(),
                 EquipmentRate = oldAgreement.EquipmentRate,
                 Note = oldAgreement.Note?.Trim(),
-                DatedOn = oldAgreement.DatedOn
+                DatedOn = oldAgreement.DatedOn,
+                AgreementCity = oldAgreement.AgreementCity
             };
 
             foreach (HetRentalAgreementCondition condition in oldAgreement.HetRentalAgreementCondition)
