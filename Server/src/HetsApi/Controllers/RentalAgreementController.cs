@@ -111,10 +111,17 @@ namespace HetsApi.Controllers
                 throw new DataException("Rate Period Id cannot be null");
             }
 
+            string city = item.AgreementCity;
+
+            if (!string.IsNullOrEmpty(city))
+            {
+                city = city.Trim();
+            }
+
             // update the agreement record
             agreement.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             agreement.DatedOn = item.DatedOn;
-            agreement.AgreementCity = item.AgreementCity.Trim();
+            agreement.AgreementCity = city;
             agreement.EquipmentRate = item.EquipmentRate;
             agreement.EstimateHours = item.EstimateHours;
             agreement.EstimateStartWork = item.EstimateStartWork;
