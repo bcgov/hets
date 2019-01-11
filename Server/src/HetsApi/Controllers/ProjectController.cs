@@ -365,7 +365,8 @@ namespace HetsApi.Controllers
 
             // ******************************************************************
             // clone agreement
-            // ******************************************************************           
+            // ******************************************************************  
+            agreements[newRentalAgreementIndex].AgreementCity = agreements[agreementToCloneIndex].AgreementCity;
             agreements[newRentalAgreementIndex].EquipmentRate = agreements[agreementToCloneIndex].EquipmentRate;
             agreements[newRentalAgreementIndex].Note = agreements[agreementToCloneIndex].Note;
             agreements[newRentalAgreementIndex].RateComment = agreements[agreementToCloneIndex].RateComment;
