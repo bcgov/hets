@@ -453,6 +453,30 @@ export function getEquipment(equipmentId) {
   });
 }
 
+export function getEquipmentLite() {
+  return new ApiRequest('/equipment/lite').get().then(response => {
+    var equipment = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
+  });
+}
+
+export function getEquipmentLiteProjects() {
+  return new ApiRequest('/equipment/liteProjects').get().then(response => {
+    var equipment = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
+  });
+}
+
+export function getEquipmentLiteTs() {
+  return new ApiRequest('/equipment/liteTs').get().then(response => {
+    var equipment = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
+  });
+}
+
 export function addEquipment(equipment) {
   return new ApiRequest('/equipment').post(equipment).then(response => {
     var equipment = response.data;
@@ -690,14 +714,6 @@ export function getOwnersLite() {
   return new ApiRequest('/owners/lite').get().then(response => {
     var owners = normalize(response.data);
     store.dispatch({ type: Action.UPDATE_OWNERS_LITE, owners: owners });
-  });
-}
-
-export function getEquipmentLite() {
-  return new ApiRequest('/equipment/lite').get().then(response => {
-    var equipment = normalize(response.data);
-
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
   });
 }
 
@@ -1631,6 +1647,18 @@ export function getRentalAgreement(id) {
   });
 }
 
+export function getLatestRentalAgreement(equipmentId, projectId) {
+  return new ApiRequest(`/rentalagreements/latest/${ projectId }/${ equipmentId }`).get().then(response => {
+    if (response.responseStatus === 'ERROR') {
+      return Promise.reject(new Error(response.error.description));
+    }
+    
+    var agreement = response.data;
+
+    store.dispatch({ type: Action.UPDATE_RENTAL_AGREEMENT, rentalAgreement: agreement });
+  });
+}
+
 export function addRentalAgreement(agreement) {
   return new ApiRequest('/rentalagreements').post(agreement).then(response => {
     var agreement = response.data;
@@ -2059,14 +2087,6 @@ export function getOwnersLiteTs() {
     var owners = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_OWNERS_LITE_LOOKUP, owners: owners });
-  });
-}
-
-export function getEquipmentLiteTs() {
-  return new ApiRequest('/equipment/liteTs').get().then(response => {
-    var equipment = normalize(response.data);
-
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
   });
 }
 
