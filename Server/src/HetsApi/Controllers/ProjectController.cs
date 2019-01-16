@@ -51,7 +51,10 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult ProjectsIdGet([FromRoute]int id)
         {
-            return new ObjectResult(new HetsResponse(ProjectHelper.GetRecord(id, _context)));            
+            // get current district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            return new ObjectResult(new HetsResponse(ProjectHelper.GetRecord(id, _context, districtId)));            
         }
 
         /// <summary>
@@ -199,7 +202,7 @@ namespace HetsApi.Controllers
             if (projectNumber != null)
             {
                 // allow for case insensitive search of project name
-                data = data.Where(x => x.ProvincialProjectNumber.ToLower().Equals(projectNumber.ToLower()));
+                data = data.Where(x => x.ProvincialProjectNumber.ToLower().Contains(projectNumber.ToLower()));
             }
 
             // convert Project Model to the "ProjectLite" Model
@@ -362,7 +365,8 @@ namespace HetsApi.Controllers
 
             // ******************************************************************
             // clone agreement
-            // ******************************************************************           
+            // ******************************************************************  
+            agreements[newRentalAgreementIndex].AgreementCity = agreements[agreementToCloneIndex].AgreementCity;
             agreements[newRentalAgreementIndex].EquipmentRate = agreements[agreementToCloneIndex].EquipmentRate;
             agreements[newRentalAgreementIndex].Note = agreements[agreementToCloneIndex].Note;
             agreements[newRentalAgreementIndex].RateComment = agreements[agreementToCloneIndex].RateComment;
@@ -520,6 +524,19 @@ namespace HetsApi.Controllers
 
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
+            // get current district and fiscal year
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            // get fiscal year
+            HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
+                .First(x => x.DistrictId == districtId);
+
+            int? fiscalYear = status.CurrentFiscalYear;
+            if (fiscalYear == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // fiscal year in the status table stores the "start" of the year
+            DateTime fiscalYearStart = new DateTime((int)fiscalYear, 4, 1);
+
             HetProject project = _context.HetProject.AsNoTracking()
                 .Include(x => x.HetRentalAgreement)
                     .ThenInclude(t => t.HetTimeRecord)
@@ -530,7 +547,8 @@ namespace HetsApi.Controllers
 
             foreach (HetRentalAgreement rentalAgreement in project.HetRentalAgreement)
             {
-                timeRecords.AddRange(rentalAgreement.HetTimeRecord);
+                // only add records from this fiscal year
+                timeRecords.AddRange(rentalAgreement.HetTimeRecord.Where(x => x.WorkedDate >= fiscalYearStart));
             }
 
             return new ObjectResult(new HetsResponse(timeRecords));            

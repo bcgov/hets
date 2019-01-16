@@ -503,6 +503,7 @@ var ProjectsDetail = React.createClass({
           show={ this.state.showTimeEntryDialog }
           onClose={ this.closeTimeEntryDialog }
           activeRentalRequest={ this.state.rentalRequest }
+          fiscalYearStartDate={ this.props.project.fiscalYearStartDate }
         />
         }
         { this.state.showNotesDialog &&

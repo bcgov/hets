@@ -10,6 +10,14 @@ namespace HetsData.Helpers
 {
     #region Equipment Models
 
+    public class EquipmentLiteList
+    {
+        public int Id { get; set; }
+        public string EquipmentCode { get; set; }
+        public int? OwnerId { get; set; }
+        public int? ProjectId { get; set; }
+    }
+
     public class EquipmentStatus
     {
         public string Status { get; set; }

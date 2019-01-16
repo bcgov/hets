@@ -94,6 +94,9 @@ var TopNav = React.createClass({
               <LinkContainer to={{ pathname: `/${ Constant.RENTAL_REQUESTS_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.RENTAL_REQUESTS_PATHNAME) }>
                 <NavItem>Requests</NavItem>
               </LinkContainer>
+              <LinkContainer to={{ pathname: `/${ Constant.TIME_ENTRY_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.TIME_ENTRY_PATHNAME) }>
+                <NavItem>Time Entry</NavItem>
+              </LinkContainer>
               { this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) &&
                 <LinkContainer to={{ pathname: `/${ Constant.DISTRICT_ADMIN_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.DISTRICT_ADMIN_PATHNAME) }>
                   <NavItem>District Admin</NavItem>
