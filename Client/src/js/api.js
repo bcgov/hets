@@ -693,6 +693,14 @@ export function getOwnersLite() {
   });
 }
 
+export function getEquipmentLite() {
+  return new ApiRequest('/equipment/lite').get().then(response => {
+    var equipment = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
+  });
+}
+
 export function searchOwners(params) {
   store.dispatch({ type: Action.OWNERS_REQUEST });
   return new ApiRequest('/owners/search').get(params).then(response => {
