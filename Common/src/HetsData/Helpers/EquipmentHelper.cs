@@ -18,6 +18,13 @@ namespace HetsData.Helpers
         public int? ProjectId { get; set; }
     }
 
+    public class EquipmentLiteProjects
+    {
+        public int Id { get; set; }
+        public string EquipmentCode { get; set; }
+        public List<int> ProjectIds { get; set; }
+    }
+
     public class EquipmentStatus
     {
         public string Status { get; set; }

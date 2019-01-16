@@ -94,6 +94,45 @@ namespace HetsApi.Controllers
         }
 
         /// <summary>
+        /// Get all approved equipment for this district and their associated active projects
+        /// </summary>
+        [HttpGet]
+        [Route("liteProjects")]
+        [SwaggerOperation("EquipmentGetLiteProjects")]
+        [SwaggerResponse(200, type: typeof(List<EquipmentLiteProjects>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult EquipmentGetLiteProjects()
+        {
+            // get users district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            // get active status
+            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            int? projectStatusId = StatusHelper.GetStatusId(HetProject.StatusActive, "projectStatus", _context);
+            if (projectStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // get all approved equipment for this district (and any projects they're associated with)
+            IEnumerable<EquipmentLiteProjects> equipment = _context.HetRentalAgreement.AsNoTracking()
+                .Include(x => x.Equipment)
+                .Where(x => x.EquipmentId != null &&
+                            x.ProjectId != null &&
+                            x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
+                            x.Equipment.EquipmentStatusTypeId == statusId &&
+                            x.Project.ProjectStatusTypeId == projectStatusId)
+                .GroupBy(x => x.EquipmentId, (id, agreements) => new EquipmentLiteProjects
+                {
+                    EquipmentCode = agreements.First().Equipment.EquipmentCode,
+                    Id = id.Value,
+                    ProjectIds = agreements.Select(y => y.ProjectId.Value).ToList(),
+                })
+                .OrderBy(x => x.EquipmentCode);
+
+            return new ObjectResult(new HetsResponse(equipment));
+        }
+
+        /// <summary>
         /// Get all equipment for this district that are associated with a project (lite)
         /// </summary>
         [HttpGet]

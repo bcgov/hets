@@ -71,7 +71,7 @@ var ProjectsDetail = React.createClass({
 
       contact: {},
       
-      rentalRequest: {},
+      rentalAgreement: {},
 
       // Contacts
       uiContacts : {
@@ -219,8 +219,8 @@ var ProjectsDetail = React.createClass({
     });
   },
 
-  openTimeEntryDialog(rentalRequest) {
-    this.setState({ rentalRequest: rentalRequest }, () => {
+  openTimeEntryDialog(rentalAgreement) {
+    this.setState({ rentalAgreement: rentalAgreement }, () => {
       this.setState({ showTimeEntryDialog: true });
     });
   },
@@ -502,8 +502,8 @@ var ProjectsDetail = React.createClass({
         <TimeEntryDialog
           show={ this.state.showTimeEntryDialog }
           onClose={ this.closeTimeEntryDialog }
-          activeRentalRequest={ this.state.rentalRequest }
-          fiscalYearStartDate={ this.props.project.fiscalYearStartDate }
+          multipleEntryAllowed={ false }
+          rentalAgreementId={ this.state.rentalAgreement.id }
         />
         }
         { this.state.showNotesDialog &&

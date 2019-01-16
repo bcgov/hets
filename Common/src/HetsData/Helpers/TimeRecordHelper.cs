@@ -26,6 +26,7 @@ namespace HetsData.Helpers
         public int LocalAreaId { get; set; }
         public int ServiceAreaId { get; set; }
         public int OwnerId { get; set; }
+        public int RentalAgreementId { get; set; }
         public string OwnerName { get; set; }
         public string OwnerCode { get; set; }
         public int EquipmentId { get; set; }
@@ -58,6 +59,7 @@ namespace HetsData.Helpers
                 timeLite.Hours = timeRecord.Hours;
                 timeLite.WorkedDate = timeRecord.WorkedDate;
                 timeLite.EnteredDate = timeRecord.EnteredDate;
+                timeLite.RentalAgreementId = timeRecord.RentalAgreement.RentalAgreementId;
                 timeLite.LocalAreaId = timeRecord.RentalAgreement.Equipment.LocalArea.LocalAreaId;
                 timeLite.LocalAreaName = timeRecord.RentalAgreement.Equipment.LocalArea.Name;
                 timeLite.ServiceAreaId = timeRecord.RentalAgreement.Equipment.LocalArea.ServiceArea.ServiceAreaId;
