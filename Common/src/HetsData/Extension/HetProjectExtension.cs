@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HetsData.Model
 {
@@ -18,5 +19,8 @@ namespace HetsData.Model
 
         [NotMapped]
         public string Status { get; set; }
+
+        [NotMapped]
+        public DateTime FiscalYearStartDate { get; set; }
     }
 }

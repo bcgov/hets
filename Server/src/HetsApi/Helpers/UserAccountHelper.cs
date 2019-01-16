@@ -7,6 +7,7 @@ using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HetsApi.Helpers
 {
@@ -175,13 +176,36 @@ namespace HetsApi.Helpers
             if (!string.IsNullOrEmpty(guid) && string.IsNullOrEmpty(user.Guid))
             {
                 // self register (write the users Guid to the db)
+                int updUserId = user.UserId;                
+
+                using (IDbContextTransaction transaction = context.Database.BeginTransaction())
+                {
+                    // lock the table during this transaction
+                    context.Database.ExecuteSqlCommand(@"LOCK TABLE ""HET_USER"" IN EXCLUSIVE MODE;");
+
+                    HetUser updUser = context.HetUser.First(x => x.UserId == updUserId);
+
+                    updUser.Guid = guid;
+                    updUser.AppLastUpdateUserDirectory = user.SmAuthorizationDirectory;
+                    updUser.AppLastUpdateUserGuid = guid;
+                    updUser.AppLastUpdateUserid = userId;
+                    updUser.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+                    context.HetUser.Update(updUser);
+
+                    // update user record
+                    context.SaveChanges();
+
+                    // commit
+                    transaction.Commit();
+                }
+                
+                // update the user object for the current session
                 user.Guid = guid;
                 user.AppLastUpdateUserDirectory = user.SmAuthorizationDirectory;
                 user.AppLastUpdateUserGuid = guid;
                 user.AppLastUpdateUserid = userId;
-                user.AppLastUpdateTimestamp = DateTime.UtcNow;
-
-                context.SaveChanges();
+                user.AppLastUpdateTimestamp = DateTime.UtcNow;                
             }
             else if (!string.IsNullOrEmpty(user.Guid) &&
                      !string.IsNullOrEmpty(guid) &&
@@ -191,6 +215,8 @@ namespace HetsApi.Helpers
                 return null;
             }
 
+            // detach user and return
+            context.Entry(user).State = EntityState.Detached;
             return user;
         }
 
@@ -202,7 +228,7 @@ namespace HetsApi.Helpers
         /// <returns></returns>
         public static HetUser GetUserByGuid(string guid, DbAppContext context)
         {
-            HetUser user = context.HetUser
+            HetUser user = context.HetUser.AsNoTracking()
                 .Where(x => x.Guid != null &&
                             x.Guid.Equals(guid))
                 .Include(u => u.HetUserRole)
@@ -222,7 +248,7 @@ namespace HetsApi.Helpers
         /// <returns></returns>
         public static HetUser GetUserBySmUserId(string smUserId, DbAppContext context)
         {
-            HetUser user = context.HetUser
+            HetUser user = context.HetUser.AsNoTracking()
                 .Where(x => x.SmUserId != null &&
                             x.SmUserId.ToLower().Equals(smUserId.ToLower()))
                 .Include(u => u.HetUserRole)
@@ -380,7 +406,7 @@ namespace HetsApi.Helpers
             }
 
             // get complete user record (with roles) and return
-            user = context.HetBusinessUser
+            user = context.HetBusinessUser.AsNoTracking()
                 .Where(x => x.BusinessId == business.BusinessId &&
                             x.BceidUserId == userId)
                 .Include(u => u.HetBusinessUserRole)
@@ -389,6 +415,12 @@ namespace HetsApi.Helpers
                             .ThenInclude(p => p.Permission)
                 .FirstOrDefault();
 
+            // detach user and return
+            if (user != null)
+            {
+                context.Entry(user).State = EntityState.Detached;
+            }
+            
             return user;
         }
     }

@@ -3277,6 +3277,10 @@ namespace HetsData.Model
 
                 entity.Property(e => e.DatedOn).HasColumnName("DATED_ON");
 
+                entity.Property(e => e.AgreementCity)
+                    .HasColumnName("AGREEMENT_CITY")
+                    .HasMaxLength(255);
+
                 entity.Property(e => e.DbCreateTimestamp)
                     .HasColumnName("DB_CREATE_TIMESTAMP")
                     .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
@@ -3563,6 +3567,10 @@ namespace HetsData.Model
                 entity.Property(e => e.ConcurrencyControlNumber).HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                 entity.Property(e => e.DatedOn).HasColumnName("DATED_ON");
+
+                entity.Property(e => e.AgreementCity)
+                    .HasColumnName("AGREEMENT_CITY")
+                    .HasMaxLength(255);
 
                 entity.Property(e => e.DbCreateTimestamp)
                     .HasColumnName("DB_CREATE_TIMESTAMP")

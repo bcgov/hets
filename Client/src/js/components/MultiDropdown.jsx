@@ -32,7 +32,7 @@ var MultiDropdown = React.createClass({
       title: '',
       filterTerm: '',
       maxItemsForTitle: this.props.showMaxItems || MAX_ITEMS_FOR_TITLE,
-      allSelected: selectedIds.length === items.length,
+      allSelected: selectedIds.length === items.length && selectedIds.length > 0,
       fieldName: fieldName,
       open: false,
     };
@@ -51,7 +51,8 @@ var MultiDropdown = React.createClass({
         items: items,
         title: this.buildTitle(items, this.state.selectedIds),
       });
-    } else if (!_.isEqual(nextProps.selectedIds, this.props.selectedIds)) {
+    }
+    if (!_.isEqual(nextProps.selectedIds, this.props.selectedIds)) {
       this.setState({
         selectedIds: nextProps.selectedIds,
         title: this.buildTitle(this.props.items, nextProps.selectedIds),
@@ -64,7 +65,7 @@ var MultiDropdown = React.createClass({
 
     if (num === 0) {
       return this.props.placeholder || 'Select items';
-    } else if (num === this.props.items.length) {
+    } else if (num === items.length) {
       return 'All selected';
     } else if (num > this.state.maxItemsForTitle) {
       return `(${num}) selected`;
@@ -86,7 +87,7 @@ var MultiDropdown = React.createClass({
     this.setState({
       selectedIds: selectedIds,
       title: this.buildTitle(this.props.items, selectedIds),
-      allSelected: selectedIds.length === this.props.items.length,
+      allSelected: selectedIds.length === this.props.items.length && selectedIds.length > 0,
     });
 
     this.sendSelected(selectedIds);

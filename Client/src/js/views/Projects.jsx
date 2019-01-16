@@ -159,13 +159,14 @@ var Projects = React.createClass({
     }
 
     return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-      { field: 'name',                   title: 'Project'                                        },
-      { field: 'primaryContactName',     title: 'Primary Contact'                                },
-      { field: 'primaryContactPhone',    title: 'Contact #'                                      },
-      { field: 'hires',          title: 'Hires',          style: { textAlign: 'center' } },
-      { field: 'requests',       title: 'Requests',       style: { textAlign: 'center' } },
-      { field: 'status',                 title: 'Status',         style: { textAlign: 'center' } },
-      { field: 'addProject',             title: 'Add Project',    style: { textAlign: 'right'  },
+      { field: 'name',                     title: 'Project'                                        },
+      { field: 'provincialProjectNumber',  title: 'Project Number'                                 },
+      { field: 'primaryContactName',       title: 'Primary Contact'                                },
+      { field: 'primaryContactPhone',      title: 'Contact #'                                      },
+      { field: 'hires',                    title: 'Hires',          style: { textAlign: 'center' } },
+      { field: 'requests',                 title: 'Requests',       style: { textAlign: 'center' } },
+      { field: 'status',                   title: 'Status',         style: { textAlign: 'center' } },
+      { field: 'addProject',               title: 'Add Project',    style: { textAlign: 'right'  },
         node: addProjectButton,
       },
     ]}>
@@ -173,6 +174,7 @@ var Projects = React.createClass({
         _.map(projects, (project) => {
           return <tr key={ project.id } className={ project.isActive ? null : 'info' }>
             <td>{ project.name }</td>
+			<td>{ project.provincialProjectNumber }</td>
             <td>{ project.primaryContactName }</td>
             <td>{ project.primaryContactPhone }</td>
             <td style={{ textAlign: 'center' }}>{ project.hires }</td>

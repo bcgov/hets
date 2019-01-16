@@ -43,7 +43,7 @@ namespace HetsApi.Controllers
         [Route("")]
         [SwaggerOperation("UsersGet")]
         [SwaggerResponse(200, type: typeof(List<HetUser>))]
-        [RequiresPermission(HetPermission.UserManagement)]
+        [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult UsersGet()
         {
             // get all user records and return to UI          

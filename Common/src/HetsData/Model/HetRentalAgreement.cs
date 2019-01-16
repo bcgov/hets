@@ -25,6 +25,7 @@ namespace HetsData.Model
         public string RateComment { get; set; }
         public int RatePeriodTypeId { get; set; }
         public DateTime? DatedOn { get; set; }
+        public string AgreementCity { get; set; }
         public int RentalAgreementStatusTypeId { get; set; }
         public int? EquipmentId { get; set; }
         public int? ProjectId { get; set; }

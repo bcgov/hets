@@ -3,6 +3,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using System.Transactions;
 using HetsApi.Helpers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using HetsData.Model;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HetsApi.Authentication
 {    
@@ -381,12 +383,28 @@ namespace HetsApi.Authentication
                         if (userDistrict != null &&
                             userSettings.HetsUser.DistrictId != userDistrict.District.DistrictId)
                         {
-                            _logger.LogInformation("Resetting users district back to primary ({0})",
-                                userSettings.HetsUser.SmUserId);
+                            int districtId = userDistrict.District.DistrictId;
+                            int updUserId = userSettings.HetsUser.UserId;
 
-                            userSettings.HetsUser.DistrictId = userDistrict.District.DistrictId;
-                            dbAppContext.HetUser.Update(userSettings.HetsUser);
-                            dbAppContext.SaveChanges();                            
+                            _logger.LogInformation("Resetting users district back to primary ({0})", userSettings.HetsUser.SmUserId);
+
+                            userSettings.HetsUser.DistrictId = districtId;                                                     
+
+                            using (IDbContextTransaction transaction = dbAppContext.Database.BeginTransaction())
+                            {
+                                // lock the table during this transaction
+                                dbAppContext.Database.ExecuteSqlCommand(@"LOCK TABLE ""HET_USER"" IN EXCLUSIVE MODE;");
+
+                                HetUser user = dbAppContext.HetUser.First(x => x.UserId == updUserId);
+                                user.DistrictId = districtId;
+                                dbAppContext.HetUser.Update(user);
+
+                                // update user record
+                                dbAppContext.SaveChanges();
+
+                                // commit
+                                transaction.Commit();
+                            }
                         }
                     }
 
