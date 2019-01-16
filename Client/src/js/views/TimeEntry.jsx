@@ -8,6 +8,8 @@ import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, 
 
 import _ from 'lodash';
 
+import TimeEntryDialog from './dialogs/TimeEntryDialog.jsx';
+
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
@@ -37,7 +39,9 @@ var TimeEntry = React.createClass({
   getInitialState() {
     return {
       loaded: false,
-      showAddDialog: false,
+      showTimeEntryDialog: false,
+      allowMultipleTimeEntries: false,
+      rentalAgreementId: null,
       search: {
         projectIds: this.props.search.projectIds || [],
         localAreaIds: this.props.search.localAreaIds || [],
@@ -134,23 +138,20 @@ var TimeEntry = React.createClass({
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
   },
 
-  openAddDialog() {
-    this.setState({ showAddDialog: true });
+  openTimeEntryDialog(rentalAgreementId) {
+    this.setState({
+      rentalAgreementId: rentalAgreementId,
+      allowMultipleTimeEntries: rentalAgreementId ? false : true,
+      showTimeEntryDialog: true,
+    });
   },
 
-  closeAddDialog() {
-    this.setState({ showAddDialog: false });
+  closeTimeEntryDialog() {
+    this.setState({ showTimeEntryDialog: false });
+    if (this.props.timeEntries.loaded) {
+      this.fetch();
+    }
   },
-
-  // saveNewProject(project) {
-    // Api.addProject(project).then(() => {
-    //   Log.projectAdded(this.props.project);
-    //   // Open it up
-    //   this.props.router.push({
-    //     pathname: `${ Constant.PROJECTS_PATHNAME }/${ this.props.project.id }`,
-    //   });
-    // });
-  // },
 
   print() {
     window.print();
@@ -197,7 +198,11 @@ var TimeEntry = React.createClass({
             <td>{ entry.hours }</td>
             <td>{ formatDateTime(entry.workedDate, 'YYYY-MMM-DD') }</td>
             <td>{ formatDateTime(entry.enteredDate, 'YYYY-MMM-DD') }</td>
-            <td></td>
+            <td style={{ textAlign: 'right' }}>
+              <ButtonGroup>
+                <Button title="Edit Time" bsSize="xsmall" onClick={ this.openTimeEntryDialog.bind(this, entry.rentalAgreementId) }><Glyphicon glyph="edit" /></Button>
+              </ButtonGroup>
+            </td>
           </tr>;
         })
       }
@@ -229,7 +234,7 @@ var TimeEntry = React.createClass({
   },
 
   updateProjectSearchState(state) {
-    this.updateSearchState(state, this.filterSelectedOwner);
+    this.updateSearchState(state, this.filterSelectedOwners);
   },
 
   updateLocalAreaSearchState(state) {
@@ -314,7 +319,7 @@ var TimeEntry = React.createClass({
           return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
         }
         
-        var addTimeEntryButton = <Button title="Add Time" bsSize="xsmall" onClick={ this.openAddDialog }>
+        var addTimeEntryButton = <Button title="Add Time" bsSize="xsmall" onClick={ this.openTimeEntryDialog.bind(this, null) }>
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Time</strong>
         </Button>;
 
@@ -324,8 +329,13 @@ var TimeEntry = React.createClass({
 
         return <div id="add-button-container">{ addTimeEntryButton }</div>;
       })()}
-      {
-        //this.state.showAddDialog && <ProjectsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewProject } onClose={ this.closeAddDialog } />
+      { this.state.showTimeEntryDialog &&
+      <TimeEntryDialog
+        show={ this.state.showTimeEntryDialog }
+        onClose={ this.closeTimeEntryDialog }
+        multipleEntryAllowed={ this.state.allowMultipleTimeEntries }
+        rentalAgreementId={ this.state.rentalAgreementId }
+      />
       }
     </div>;
   },
