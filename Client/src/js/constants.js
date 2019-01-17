@@ -11,6 +11,7 @@ export const USERS_PATHNAME = 'users';
 export const ROLES_PATHNAME = 'roles';
 export const ROLLOVER_PATHNAME = 'roll-over';
 export const DISTRICT_ADMIN_PATHNAME = 'district-admin';
+export const SENIORITY_LIST_PATHNAME = 'reports/seniority-list';
 export const TIME_ENTRY_PATHNAME = 'time-entry';
 export const VERSION_PATHNAME = 'version';
 export const BUSINESS_PORTAL_PATHNAME = '/business';

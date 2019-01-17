@@ -98,6 +98,9 @@ var TopNav = React.createClass({
                 <NavItem>Time Entry</NavItem>
               </LinkContainer>
               <NavDropdown id="reports-dropdown" title="Reports" disabled={ navigationDisabled }>
+                <LinkContainer to={{ pathname: `/${ Constant.SENIORITY_LIST_PATHNAME }` }} active={ currentPathStartsWith(Constant.SENIORITY_LIST_PATHNAME) }>
+                  <MenuItem>Seniority List</MenuItem>
+                </LinkContainer>
               </NavDropdown>
               { this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) &&
                 <LinkContainer to={{ pathname: `/${ Constant.DISTRICT_ADMIN_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.DISTRICT_ADMIN_PATHNAME) }>
