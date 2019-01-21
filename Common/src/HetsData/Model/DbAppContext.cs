@@ -1008,6 +1008,8 @@ namespace HetsData.Model
 
                 entity.Property(e => e.EquipmentTypeId).HasColumnName("EQUIPMENT_TYPE_ID");
 
+                entity.Property(e => e.Deleted).HasColumnName("DELETED");
+
                 entity.HasOne(d => d.District)
                     .WithMany(p => p.HetDistrictEquipmentType)
                     .HasForeignKey(d => d.DistrictId)
