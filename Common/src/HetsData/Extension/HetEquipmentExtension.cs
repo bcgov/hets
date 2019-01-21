@@ -14,6 +14,9 @@ namespace HetsData.Model
         public const string StatusPending = "Pending";
 
         [NotMapped]
+        public int EquipmentNumber { get; set; }
+
+        [NotMapped]
         public string Status { get; set; }
 
         [NotMapped]
