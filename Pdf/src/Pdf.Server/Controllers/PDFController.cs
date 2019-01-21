@@ -148,10 +148,11 @@ namespace Pdf.Server.Controllers
         /// </summary>
         /// <param name="seniorityListJson">Serialized seniority list data</param>
         /// <param name="name">Unique name for the generated Pdf (Result: name + '.pdf')</param>
+        /// <param name="counterCopy">If true, use the Counter Copy template</param>
         /// <returns></returns>
         [HttpPost]
-        [Route("pdf/seniorityList/{name}")]
-        public async Task<IActionResult> GetSeniorityListPdf([FromBody]string seniorityListJson, [FromRoute]string name)
+        [Route("pdf/seniorityList/{name}/{counterCopy}")]
+        public async Task<IActionResult> GetSeniorityListPdf([FromBody]string seniorityListJson, [FromRoute]string name, [FromRoute]bool counterCopy = false)
         {
             try
             {
@@ -174,6 +175,11 @@ namespace Pdf.Server.Controllers
                     RenderJsUrl = _configuration.GetSection("Constants").GetSection("RenderJsUrl").Value,
                     Template = _configuration.GetSection("Constants").GetSection("SeniorityListTemplate").Value
                 };
+
+                if (counterCopy)
+                {
+                    request.Template = _configuration.GetSection("Constants").GetSection("SeniorityListCcTemplate").Value;
+                }
 
                 _logger.LogInformation("GetSeniorityListPdf [FileName: {0}] - Render Html", fileName);
                 string result = await TemplateHelper.RenderDocument(_nodeServices, request);

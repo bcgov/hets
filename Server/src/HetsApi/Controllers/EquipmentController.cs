@@ -1150,7 +1150,7 @@ namespace HetsApi.Controllers
             }
 
             return new ObjectResult(new HetsResponse(notes));
-        }        
+        }
 
         #endregion
 
@@ -1162,11 +1162,12 @@ namespace HetsApi.Controllers
         /// <remarks>Returns a PDF version of the seniority list</remarks>
         /// <param name="localAreas">Local Areas (comma separated list of id numbers)</param>
         /// <param name="types">Equipment Types (comma separated list of id numbers)</param>
+        /// <param name="counterCopy">If true, use the Counter Copy template</param>
         [HttpGet]
         [Route("seniorityListPdf")]
         [SwaggerOperation("EquipmentSeniorityListPdfGet")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentSeniorityListPdfGet([FromQuery]string localAreas, [FromQuery]string types)
+        public virtual IActionResult EquipmentSeniorityListPdfGet([FromQuery]string localAreas, [FromQuery]string types, [FromQuery]bool counterCopy = false)
         {
             _logger.LogInformation("Equipment Seniority List Pdf");
 
@@ -1304,7 +1305,7 @@ namespace HetsApi.Controllers
                 }                
             }
 
-            seniorityList.PrintedOn = string.Format("{0:dd-MM-yyyy H:mm:ss}", DateTime.Now.AddHours(-8));
+            seniorityList.PrintedOn = $"{DateTime.Now.AddHours(-8):dd-MM-yyyy H:mm:ss}";
             
             // **********************************************************************
             // create the payload and call the pdf service
@@ -1323,12 +1324,12 @@ namespace HetsApi.Controllers
             // pass the request on to the Pdf Micro Service
             string pdfHost = _configuration["PDF_SERVICE_NAME"];
             string pdfUrl = _configuration.GetSection("Constants:SeniorityListPdfUrl").Value;
-            string targetUrl = pdfHost + pdfUrl;
+            string targetUrl = $"{pdfHost}{pdfUrl}";
 
             // generate pdf document name [unique portion only]
             string fileName = "HETS_SeniorityList";
 
-            targetUrl = targetUrl + "/" + fileName;
+            targetUrl = $"{targetUrl}/{fileName}/{counterCopy}";
 
             _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Service Url: {0}", targetUrl);
 

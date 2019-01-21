@@ -15,6 +15,7 @@
     <None Remove="Templates\rental_agreement.mustache" />
     <None Remove="Templates\sample.mustache" />
     <None Remove="Templates\seniority_list.mustache" />
+    <None Remove="Templates\seniority_list_cc.mustache" />
   </ItemGroup>
 
   <ItemGroup>
@@ -49,6 +50,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Templates\owner_verification.mustache" />
+    <EmbeddedResource Include="Templates\seniority_list_cc.mustache" />
     <EmbeddedResource Include="Templates\seniority_list.mustache" />
     <EmbeddedResource Include="Templates\rental_agreement.mustache" />
     <EmbeddedResource Include="Templates\sample.mustache" />
