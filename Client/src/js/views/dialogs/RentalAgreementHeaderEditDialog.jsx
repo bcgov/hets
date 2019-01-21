@@ -7,6 +7,8 @@ import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import _ from 'lodash';
 
+import * as Api from '../../api';
+
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import DropdownControl from '../../components/DropdownControl.jsx';
@@ -18,7 +20,7 @@ var RentalAgreementHeaderEditDialog = React.createClass({
   propTypes: {
     rentalAgreement: React.PropTypes.object.isRequired,
     projects: React.PropTypes.object,
-    equipmentList: React.PropTypes.object,
+    equipment: React.PropTypes.object,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
@@ -26,12 +28,18 @@ var RentalAgreementHeaderEditDialog = React.createClass({
 
   getInitialState() {
     return {
-      loading: false,
+      loaded: false,
       projectId: this.props.rentalAgreement.projectId || '',
       equipmentCode: this.props.rentalAgreement.equipment.equipmentCode || '',
 
       equipmentCodeError: '',
     };
+  },
+
+  componentDidMount() {
+    Api.getEquipmentLite().then(() => {
+      this.setState({ loaded: true });
+    });
   },
 
   updateState(state, callback) {
@@ -61,7 +69,7 @@ var RentalAgreementHeaderEditDialog = React.createClass({
 
   getEquipment(equipmentCode) {
     var code = equipmentCode.toLowerCase().trim();
-    var equipment = _.find(this.props.equipmentList.data, (e) => {
+    var equipment = _.find(this.props.equipment, (e) => {
       return e.equipmentCode.toLowerCase().trim() === code;
     });
     return equipment;
@@ -98,7 +106,7 @@ var RentalAgreementHeaderEditDialog = React.createClass({
         <strong>Rental Agreement</strong>
       }>
       {(() => {
-        if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+        if (!this.state.loaded) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
         var projects = _.sortBy(this.props.projects, 'name');
 
@@ -130,7 +138,7 @@ function mapStateToProps(state) {
   return {
     rentalAgreement: state.models.rentalAgreement,
     projects: state.lookups.projects,
-    equipmentList: state.models.equipmentList,
+    equipment: state.lookups.equipmentLite,
   };
 }
 

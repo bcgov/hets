@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using HetsData.Model;
@@ -87,6 +88,7 @@ namespace HetsData.Helpers
                     equipment.NumberOfBlocks = EquipmentHelper.GetNumberOfBlocks(equipment, configuration);
                     equipment.HoursYtd = EquipmentHelper.GetYtdServiceHours(id, context);
                     equipment.Status = equipment.EquipmentStatusType.EquipmentStatusTypeCode;
+                    equipment.EquipmentNumber = int.Parse(Regex.Match(equipment.EquipmentCode, @"\d+").Value);
                 }
             }
 
