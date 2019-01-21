@@ -462,6 +462,7 @@ namespace HetsApi.Controllers
         /// <param name="equipmentId">Equipment Code</param>
         /// <param name="ownerName"></param>
         /// <param name="projectName"></param>
+        /// <param name="twentyYears"></param>
         [HttpGet]
         [Route("search")]
         [SwaggerOperation("EquipmentSearchGet")]
@@ -471,7 +472,7 @@ namespace HetsApi.Controllers
             [FromQuery]string equipmentAttachment, [FromQuery]int? owner, [FromQuery]string status, 
             [FromQuery]bool? hired, [FromQuery]DateTime? notVerifiedSinceDate, 
             [FromQuery]string equipmentId = null, [FromQuery]string ownerName = null,
-            [FromQuery]string projectName = null)
+            [FromQuery]string projectName = null, [FromQuery]bool twentyYears = false)
         {
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
             int?[] typesArray = ArrayHelper.ParseIntArray(types);
@@ -564,6 +565,15 @@ namespace HetsApi.Controllers
             if (equipmentId != null)
             {
                 data = data.Where(x => x.EquipmentCode.ToLower().Contains(equipmentId.ToLower()));
+            }
+
+            // HETS-942 - Search for Equipment > 20 yrs
+            // ** only return equipment that are 20 years and older (using the equipment Year)
+            if (twentyYears)
+            {
+                int twentyYearsInt = DateTime.Now.Year - 20;
+                data = data.Where(x => x.Year == null ||
+                                       int.Parse(x.Year) <= twentyYearsInt);
             }
 
             // convert Equipment Model to the "EquipmentLite" Model
