@@ -242,7 +242,7 @@ namespace HetsData.Helpers
                 pdfModel.RateComment = agreement.RateComment;
                 pdfModel.RatePeriod = agreement.RatePeriodType.Description;
                 pdfModel.RentalAgreementConditions = agreement.HetRentalAgreementCondition.ToList();
-                pdfModel.RentalAgreementRates = agreement.HetRentalAgreementRate.ToList();
+                pdfModel.RentalAgreementRates = agreement.HetRentalAgreementRate.Where(x => x.Active).ToList();
                 pdfModel.Status = agreement.RentalAgreementStatusType.Description;
                 pdfModel.ConditionsPresent = agreement.HetRentalAgreementCondition.Count > 0;
 
@@ -252,7 +252,7 @@ namespace HetsData.Helpers
                     {
                         condition.ConditionName = condition.Comment;
                     }
-                }
+                }                
 
                 pdfModel = CalculateTotals(pdfModel);
             }
