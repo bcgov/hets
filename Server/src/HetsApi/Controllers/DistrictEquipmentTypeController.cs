@@ -10,7 +10,6 @@ using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HetsApi.Controllers
 {
@@ -137,8 +136,20 @@ namespace HetsApi.Controllers
                 return new ObjectResult(new HetsResponse("HETS-37", ErrorViewModel.GetDescription("HETS-37", _configuration)));
             }
 
-            // else "SOFT" delete record
-            item.Deleted = true;
+            equipment = _context.HetEquipment.AsNoTracking()
+                .FirstOrDefault(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentTypeId);
+
+            // delete the record if no equipment is attached
+            if (equipment == null)
+            {
+                _context.HetDistrictEquipmentType.Remove(item);
+            }
+            else
+            {
+                // else "SOFT" delete record
+                item.Deleted = true;
+            }
+            
             _context.SaveChanges();
 
             return new ObjectResult(new HetsResponse(item));
