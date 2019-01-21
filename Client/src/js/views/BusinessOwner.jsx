@@ -48,7 +48,7 @@ var BusinessOwner = React.createClass({
 
       // Equipment
       uiEquipment : {
-        sortField: this.props.uiEquipment.sortField || 'equipmentCode',
+        sortField: this.props.uiEquipment.sortField || 'equipmentNumber',
         sortDesc: this.props.uiEquipment.sortDesc  === true,
       },
     };
@@ -254,7 +254,7 @@ var BusinessOwner = React.createClass({
                 }
 
                 var headers = [
-                  { field: 'equipmentCode',    title: 'ID'                   },
+                  { field: 'equipmentNumber',    title: 'ID'                   },
                   { field: 'typeName',         title: 'Type'                 },
                   { field: 'details',          title: 'Make/Model/Size/Year' },
                   { field: 'attachments',      title: 'Attachments'          },
