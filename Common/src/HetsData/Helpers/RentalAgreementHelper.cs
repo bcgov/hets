@@ -218,6 +218,7 @@ namespace HetsData.Helpers
         /// Printed rental agreement view agreement
         /// </summary>
         /// <param name="agreement"></param>
+        /// <param name="agreementCity"></param>
         /// <returns></returns>
         public static RentalAgreementPdfViewModel ToPdfModel(this HetRentalAgreement agreement, string agreementCity)
         {
@@ -230,7 +231,6 @@ namespace HetsData.Helpers
                 pdfModel.EquipmentRate = agreement.EquipmentRate;
                 pdfModel.EstimateHours = agreement.EstimateHours;
                 pdfModel.EstimateStartWork = ConvertDate(agreement.EstimateStartWork);
-                pdfModel.Note = agreement.Note;
                 pdfModel.Number = agreement.Number;
                 pdfModel.Project = agreement.Project;
                 pdfModel.RateComment = agreement.RateComment;
@@ -256,7 +256,6 @@ namespace HetsData.Helpers
                 pdfModel.RentalAgreementConditions = agreement.HetRentalAgreementCondition
                     .OrderBy(x => x.RentalAgreementConditionId)
                     .ToList();
-
 
                 pdfModel.RentalAgreementRates = agreement.HetRentalAgreementRate.Where(x => x.Active).ToList();
                 pdfModel.Status = agreement.RentalAgreementStatusType.Description;
