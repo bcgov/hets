@@ -219,18 +219,18 @@ namespace HetsData.Helpers
         /// </summary>
         /// <param name="agreement"></param>
         /// <returns></returns>
-        public static RentalAgreementPdfViewModel ToPdfModel(this HetRentalAgreement agreement)
+        public static RentalAgreementPdfViewModel ToPdfModel(this HetRentalAgreement agreement, string agreementCity)
         {
             RentalAgreementPdfViewModel pdfModel = new RentalAgreementPdfViewModel();
 
             if (agreement != null)
             {
-                pdfModel.DatedOn = ConvertDate(agreement.DatedOn);                
+                pdfModel.AgreementCity = agreementCity;           
                 pdfModel.Equipment = agreement.Equipment;
                 pdfModel.EquipmentRate = agreement.EquipmentRate;
                 pdfModel.EstimateHours = agreement.EstimateHours;
                 pdfModel.EstimateStartWork = ConvertDate(agreement.EstimateStartWork);
-                pdfModel.Id = agreement.RentalAgreementId;                
+                pdfModel.Note = agreement.Note;
                 pdfModel.Number = agreement.Number;
                 pdfModel.Project = agreement.Project;
                 pdfModel.RateComment = agreement.RateComment;
@@ -257,7 +257,8 @@ namespace HetsData.Helpers
                     .OrderBy(x => x.RentalAgreementConditionId)
                     .ToList();
 
-                pdfModel.RentalAgreementRates = agreement.HetRentalAgreementRate.ToList();
+
+                pdfModel.RentalAgreementRates = agreement.HetRentalAgreementRate.Where(x => x.Active).ToList();
                 pdfModel.Status = agreement.RentalAgreementStatusType.Description;
                 pdfModel.ConditionsPresent = agreement.HetRentalAgreementCondition.Count > 0;
 
@@ -267,7 +268,7 @@ namespace HetsData.Helpers
                     {
                         condition.ConditionName = condition.Comment;
                     }
-                }
+                }                
 
                 pdfModel = CalculateTotals(pdfModel);
             }
