@@ -588,8 +588,13 @@ export function cloneEquipmentRentalAgreement(data) {
   });
 }
 
-export function equipmentSeniorityListPdf(localAreas, types) {
-  return new ApiRequest('/equipment/seniorityListPdf').get({ localareas: localAreas, types: types }, { responseType: Constant.RESPONSE_TYPE_BLOB }).then(response => {
+export function equipmentSeniorityListPdf(localAreas, types, counterCopy) {
+  var params = { localareas: localAreas, types: types };
+  if (counterCopy) {
+    params.counterCopy = counterCopy;
+  }
+
+  return new ApiRequest('/equipment/seniorityListPdf').get(params, { responseType: Constant.RESPONSE_TYPE_BLOB }).then(response => {
     return response;
   });
 }

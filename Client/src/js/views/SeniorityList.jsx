@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Well, PageHeader, Row, Col, Button, Form } from 'react-bootstrap';
+import { Well, PageHeader, Row, Col, Button } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -47,13 +47,14 @@ var SeniorityList = React.createClass({
       .value();
   },
 
-  getRotationList(e) {
-    e.preventDefault();
-    Api.equipmentSeniorityListPdf(this.state.selectedLocalAreaIds, this.state.selectedEquipmentTypeIds).then(response => {
+  getRotationList(counterCopy) {
+    Api.equipmentSeniorityListPdf(this.state.selectedLocalAreaIds, this.state.selectedEquipmentTypeIds, counterCopy).then(response => {
+      var filename = counterCopy ? 'counter_copy.pdf' : 'seniority_list.pdf';
+
       var blob = new Blob([response], {type: 'image/pdf'});
       if (window.navigator.msSaveBlob) {
         // ie11
-        window.navigator.msSaveBlob(blob, 'seniority_list.pdf');
+        window.navigator.msSaveBlob(blob, filename);
         return;
       }
       //Create a link element, hide it, direct 
@@ -65,7 +66,7 @@ var SeniorityList = React.createClass({
       //and point the link element towards it
       let url = window.URL.createObjectURL(blob);
       a.href = url;
-      a.download = 'seniority_list.pdf';
+      a.download = filename;
       //programatically click the link to trigger the download
       a.click();
       //release the reference to the file by revoking the Object URL
@@ -85,13 +86,12 @@ var SeniorityList = React.createClass({
       <Well>
         <Row>
           <Col md={12} className="btn-container">
-            <Form className="rotation-list-form" onSubmit={ this.getRotationList }>
-              <MultiDropdown id="selectedLocalAreaIds" className="fixed-width small" placeholder="Local Areas" items={ localAreas }
-                selectedIds={ this.state.selectedLocalAreaIds } updateState={ this.updateState } onChange={ this.onLocalAreasChanged } showMaxItems={ 2 } />
-              <MultiDropdown id="selectedEquipmentTypeIds" className="fixed-width" placeholder="Equipment Types" fieldName="districtEquipmentName"
-                items={ districtEquipmentTypes } selectedIds={ this.state.selectedEquipmentTypeIds } updateState={ this.updateState } showMaxItems={ 2 } />
-              <Button id="submit-button" bsStyle="primary" type="submit">Seniority List</Button>
-            </Form>
+            <MultiDropdown id="selectedLocalAreaIds" className="fixed-width small" placeholder="Local Areas" items={ localAreas }
+              selectedIds={ this.state.selectedLocalAreaIds } updateState={ this.updateState } onChange={ this.onLocalAreasChanged } showMaxItems={ 2 } />
+            <MultiDropdown id="selectedEquipmentTypeIds" className="fixed-width" placeholder="Equipment Types" fieldName="districtEquipmentName"
+              items={ districtEquipmentTypes } selectedIds={ this.state.selectedEquipmentTypeIds } updateState={ this.updateState } showMaxItems={ 2 } />
+              <Button onClick={ () => this.getRotationList(false) } bsStyle="primary">Seniority List</Button>
+              <Button onClick={ () => this.getRotationList(true) } bsStyle="primary">Seniority List (Counter Copy)</Button>
           </Col>
         </Row>
       </Well>
