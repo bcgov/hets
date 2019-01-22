@@ -2109,6 +2109,10 @@ export function updateDistrictEquipmentType(equipment) {
 
 export function deleteDistrictEquipmentType(equipment) {
   return new ApiRequest(`/districtequipmenttypes/${equipment.id}/delete`).post().then(response => {
+    if (response.responseStatus === 'ERROR') {
+      return Promise.reject(new Error(response.error.description));
+    }
+    
     return response;
   });
 }
