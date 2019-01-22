@@ -1,0 +1,21 @@
+#seniority-list
+{
+  .btn-container {
+    padding: 7px;
+  }
+  
+  .btn {
+    margin-right: 5px;
+  }
+
+  .fixed-width {
+
+    &.small .dropdown-toggle {
+      width: 125px;
+    }
+    
+    .dropdown-toggle {
+      width: 150px;
+    }
+  }
+}

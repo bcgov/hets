@@ -28,6 +28,7 @@ import RolesDetail from './views/RolesDetail.jsx';
 import Rollover from './views/Rollover.jsx';
 import DistrictAdmin from './views/DistrictAdmin.jsx';
 import TimeEntry from './views/TimeEntry.jsx';
+import SeniorityList from './views/SeniorityList.jsx';
 import Version from './views/Version.jsx';
 import FourOhFour from './views/404.jsx';
 
@@ -134,6 +135,7 @@ const App = <Provider store={ store }>
       <Route path={ Constant.ROLLOVER_PATHNAME } component={ Rollover } />
       <Route path={ Constant.DISTRICT_ADMIN_PATHNAME } component={ DistrictAdmin } />
       <Route path={ Constant.TIME_ENTRY_PATHNAME } component={ TimeEntry } />
+      <Route path={ Constant.SENIORITY_LIST_PATHNAME } component={ SeniorityList } />
       <Route path={ Constant.VERSION_PATHNAME } component={ Version }/>
       <Route path="*" component={ FourOhFour }/>
     </Route>
