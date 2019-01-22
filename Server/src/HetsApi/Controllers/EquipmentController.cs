@@ -1304,7 +1304,7 @@ namespace HetsApi.Controllers
                 }                
             }
 
-            seniorityList.PrintedOn = string.Format("{0:dd-MM-yyyy H:mm:ss}", DateTime.Now.AddHours(-8));
+            seniorityList.PrintedOn = $"{DateTime.Now.AddHours(-8):dd-MM-yyyy H:mm:ss}";
             
             // **********************************************************************
             // create the payload and call the pdf service
@@ -1351,7 +1351,7 @@ namespace HetsApi.Controllers
                     // convert to string and log
                     string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
 
-                    fileName = fileName + string.Format("-{0:yyyy-MM-dd-H-mm}", DateTime.Now) + ".pdf";
+                    fileName = fileName + $"-{DateTime.Now:yyyy-MM-dd-H-mm}" + ".pdf";
 
                     _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Filename: {0}", fileName);
                     _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Size: {0}", pdfResponse.Length);
