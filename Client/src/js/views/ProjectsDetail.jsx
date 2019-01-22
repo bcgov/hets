@@ -341,6 +341,7 @@ var ProjectsDetail = React.createClass({
                       </td>
                       <td>{ item.localAreaName }</td>
                       <td>{ item.equipmentTypeName }</td>
+                      <td>{ item.equipmentCount }</td>
                       <td>TBD</td>
                       <td>N/A</td>
                       <td>N/A</td>
@@ -364,6 +365,7 @@ var ProjectsDetail = React.createClass({
                       </td>
                       <td>{ item.localAreaName }</td>
                       <td>{ item.equipmentTypeName }</td>
+                      <td>&nbsp;</td>
                       <td>{ item.equipment.equipmentDetails }</td>
                       <td>{ item.isCompleted ? 
                         'Completed' 
@@ -399,6 +401,7 @@ var ProjectsDetail = React.createClass({
                     { field: 'equipmentCode',     title: 'ID'               },
                     { field: 'localAreaName',     title: 'Local Area'       },
                     { field: 'equipmentTypeName', title: 'Type'             },
+					{ field: 'equipmentCount',    title: 'Count'            },
                     { field: 'equipmentMake',     title: 'Year Make/Model/Size'  },
                     { field: 'lastTimeRecord',    title: 'Time Entry'       },
                     { field: 'release',           title: 'Release'          },
