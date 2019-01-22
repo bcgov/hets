@@ -20,6 +20,9 @@ namespace HetsData.Model
         public int NumberOfBlocks { get; set; }
 
         [NotMapped]
-        public string Status { get; set; }        
+        public string Status { get; set; }
+
+        [NotMapped]
+        public string LocalAreaName { get; set; }
     }
 }

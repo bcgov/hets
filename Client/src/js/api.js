@@ -1300,7 +1300,7 @@ function parseRentalRequest(rentalRequest) {
   rentalRequest.isActive = rentalRequest.status === Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS;
   rentalRequest.isCompleted = rentalRequest.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
   rentalRequest.isCancelled = rentalRequest.status === Constant.RENTAL_REQUEST_STATUS_CODE_CANCELLED;
-  rentalRequest.localAreaName = rentalRequest.localArea.name;
+  rentalRequest.localAreaName = rentalRequest.localAreaName || rentalRequest.localArea.name;
   rentalRequest.equipmentTypeName = rentalRequest.equipmentTypeName || rentalRequest.districtEquipmentType.districtEquipmentName;
 
   // Primary contact for the rental request/project
