@@ -83,9 +83,9 @@ var TimeEntryDialog = React.createClass({
 
   fetchEquipmentAndProjects() {
     var equipmentPromise = Api.getEquipmentLiteProjects();
-    var ownersPromise = Api.getOwnersLiteTs();
+    var projectsPromise = Api.getProjects();
 
-    return Promise.all([ equipmentPromise, ownersPromise ]);
+    return Promise.all([ equipmentPromise, projectsPromise ]);
   },
 
   fetchTimeRecords() {
