@@ -295,7 +295,7 @@ var TimeEntry = React.createClass({
           <Form onSubmit={ this.search }>
             <Col xs={9} sm={10}>
               <ButtonToolbar id="time-entry-filters">
-                <MultiDropdown id="projectIds" placeholder="Projects"
+                <MultiDropdown id="projectIds" placeholder="Projects" fieldName="label"
                   items={ projects } selectedIds={ this.state.search.projectIds } updateState={ this.updateProjectSearchState } showMaxItems={ 2 } />
                 <MultiDropdown id="localAreaIds" placeholder="Local Areas"
                   items={ localAreas } selectedIds={ this.state.search.localAreaIds } updateState={ this.updateLocalAreaSearchState } showMaxItems={ 2 } />
