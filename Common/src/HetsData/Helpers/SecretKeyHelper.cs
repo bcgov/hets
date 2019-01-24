@@ -4,7 +4,7 @@ namespace HetsData.Helpers
 {
     public static class SecretKeyHelper
     {
-        private const string AllowedChars = "123456789ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghkmnpqrsuvwxyz@#";
+        private const string AllowedChars = "23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghkmnpqrsuvwxyz@#";
 
         public static string RandomString(int maxLength, int id)
         {

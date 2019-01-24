@@ -647,9 +647,7 @@ namespace HetsApi.Controllers
                     address = "";
                 }
 
-                string contact = string.Format("Phone: {0} | Fax: {1}", 
-                    owners[0].LocalArea.ServiceArea.Phone,
-                    owners[0].LocalArea.ServiceArea.Fax);
+                string contact = $"Phone: {owners[0].LocalArea.ServiceArea.Phone} | Fax: {owners[0].LocalArea.ServiceArea.Fax}";
 
                 // generate pdf document name [unique portion only]
                 string fileName = "OwnerVerification";
@@ -743,7 +741,7 @@ namespace HetsApi.Controllers
                         // convert to string and log
                         string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
 
-                        fileName = fileName + string.Format("-{0:yyyy-MM-dd-H-mm}", DateTime.Now) + ".pdf";
+                        fileName = fileName + $"-{DateTime.Now:yyyy-MM-dd-H-mm}" + ".pdf";
 
                         _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Filename: {0}", fileName);
                         _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Size: {0}", pdfResponse.Length);
