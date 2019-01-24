@@ -39,7 +39,7 @@ namespace HetsApi.Helpers
         public static bool IsBusiness(HttpContext httpContext)
         {
             return httpContext.User.Claims
-                .Any(claim => claim.Type == ClaimTypes.Actor && 
+                .Any(claim => claim.Type == ClaimTypes.Actor &&
                               claim.Value == "BusinessUser");
         }
 
@@ -103,7 +103,7 @@ namespace HetsApi.Helpers
             string userId = GetUserId(httpContext);
 
             if (!isBusinessUser)
-            {                
+            {
                 HetUser tmpUser = context.HetUser.AsNoTracking()
                     .FirstOrDefault(x => x.SmUserId.ToLower().Equals(userId.ToLower()));
 
@@ -273,14 +273,14 @@ namespace HetsApi.Helpers
         {
             // find the business
             HetBusiness business = context.HetBusiness.AsNoTracking()
-                .FirstOrDefault(x => x.BceidBusinessGuid == businessGuid);
+                .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             // setup the business
             if (business == null)
             {
                 business = new HetBusiness
                 {
-                    BceidBusinessGuid = businessGuid,
+                    BceidBusinessGuid = businessGuid.ToLower().Trim(),
                     AppCreateUserDirectory = "BCeID",
                     AppCreateUserGuid = guid,
                     AppCreateUserid = userId,
@@ -294,7 +294,7 @@ namespace HetsApi.Helpers
                 // get additional business data
                 string legalName = httpContext.Request.Headers[ConstSiteMinderBusinessLegalName];
                 string businessNumber = httpContext.Request.Headers[ConstSiteMinderBusinessNumber];
-                
+
                 if (!string.IsNullOrEmpty(legalName))
                 {
                     business.BceidLegalName = legalName;
@@ -304,6 +304,10 @@ namespace HetsApi.Helpers
                 {
                     business.BceidBusinessNumber = businessNumber;
                 }
+
+                // save record
+                context.HetBusiness.Add(business);
+                context.SaveChanges();
             }
             else
             {
@@ -325,6 +329,8 @@ namespace HetsApi.Helpers
                 business.AppLastUpdateUserGuid = guid;
                 business.AppLastUpdateUserid = userId;
                 business.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+                context.SaveChanges();
             }
 
             // ok - now find the user
@@ -337,7 +343,7 @@ namespace HetsApi.Helpers
                 // auto register the user
                 user = new HetBusinessUser
                 {
-                    BceidUserId = userId,                    
+                    BceidUserId = userId,
                     BceidGuid = guid,
                     BusinessId = business.BusinessId,
                     AppCreateUserDirectory = "BCeID",
@@ -367,7 +373,7 @@ namespace HetsApi.Helpers
                 // add the "Business Logon" role
                 HetBusinessUserRole userRole = new HetBusinessUserRole
                 {
-                    RoleId = StatusHelper.GetRoleId("Business BCeID User", context),
+                    RoleId = StatusHelper.GetRoleId("Business BCeID", context),
                     EffectiveDate = DateTime.UtcNow.AddMinutes(-10),
                     AppCreateUserDirectory = "BCeID",
                     AppCreateUserGuid = guid,
@@ -380,10 +386,9 @@ namespace HetsApi.Helpers
                 };
 
                 user.HetBusinessUserRole.Add(userRole);
-                business.HetBusinessUser.Add(user);
 
                 // save record
-                context.HetBusiness.Add(business);
+                context.HetBusinessUser.Add(user);
                 context.SaveChanges();
             }
             else
