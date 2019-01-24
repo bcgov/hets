@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, ControlLabel, Form } from 'react-bootstrap';
+import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, ControlLabel, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 import _ from 'lodash';
 import Moment from 'moment';
@@ -48,6 +48,7 @@ var Equipment = React.createClass({
         ownerName: this.props.search.ownerName || '',
         lastVerifiedDate: this.props.search.lastVerifiedDate || '',
         hired: this.props.search.hired || false,
+        twentyYears: this.props.search.twentyYears || false,
         statusCode: this.props.search.statusCode || Constant.EQUIPMENT_STATUS_CODE_APPROVED,
         equipmentId: this.props.search.equipmentId || '',
         projectName: this.props.search.projectName || '',
@@ -72,6 +73,10 @@ var Equipment = React.createClass({
 
     if (this.state.search.hired) {
       searchParams.hired = this.state.search.hired;
+    }
+
+    if (this.state.search.twentyYears) {
+      searchParams.twentyYears = this.state.search.twentyYears;
     }
 
     if (this.state.search.statusCode) {
@@ -135,6 +140,7 @@ var Equipment = React.createClass({
       ownerName: '',
       lastVerifiedDate: '',
       hired: false,
+      twentyYears: false,
       statusCode: Constant.EQUIPMENT_STATUS_CODE_APPROVED,
       equipmentId: '',
       projectName: '',
@@ -221,6 +227,11 @@ var Equipment = React.createClass({
                     items={ districtEquipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
                   <FormInputControl id="ownerName" type="text" placeholder="Company Name" value={ this.state.search.ownerName } updateState={ this.updateSearchState } />
                   <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
+                  <OverlayTrigger placement="top" rootClose overlay={ <Tooltip id="old-equipment-tooltip">Equipment 20 years or older</Tooltip> }>
+                    <span>
+                      <CheckboxControl inline id="twentyYears" checked={ this.state.search.twentyYears } updateState={ this.updateSearchState }>20+ Years</CheckboxControl>
+                    </span>
+                  </OverlayTrigger>
                 </ButtonToolbar>
               </Row>
               <Row>

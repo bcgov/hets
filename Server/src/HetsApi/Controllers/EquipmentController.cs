@@ -572,7 +572,7 @@ namespace HetsApi.Controllers
             if (twentyYears)
             {
                 int twentyYearsInt = DateTime.Now.Year - 20;
-                data = data.Where(x => x.Year == null ||
+                data = data.Where(x => string.IsNullOrWhiteSpace(x.Year) ||
                                        int.Parse(x.Year) <= twentyYearsInt);
             }
 
