@@ -115,7 +115,7 @@ namespace HetsData.Helpers
         public static int? GetRoleId(string roleName, DbAppContext context)
         {
             HetRole role = context.HetRole.AsNoTracking()
-                .FirstOrDefault(x => x.Name.ToLower().Equals(roleName.ToLower()));
+                .FirstOrDefault(x => x.Name.ToLower().Contains(roleName.ToLower()));
 
             return role?.RoleId;
         }
