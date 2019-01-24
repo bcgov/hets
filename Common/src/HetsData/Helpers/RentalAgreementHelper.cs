@@ -151,7 +151,7 @@ namespace HetsData.Helpers
             // **********************************************
             foreach (HetRentalAgreementRate rentalRate in agreement.RentalAgreementRatesOvertime)
             {
-                rentalRate.RateString = FormatRateString(rentalRate, agreement);
+                rentalRate.RateString = FormatOvertimeRateString(rentalRate);
             }
 
             foreach (HetRentalAgreementRate rentalRate in agreement.RentalAgreementRatesWithoutTotal)
@@ -205,6 +205,20 @@ namespace HetsData.Helpers
             if (rentalRate.Rate != null)
             {
                 temp = $"$ {rentalRate.Rate:0.00} / {FormatRatePeriod(agreement.RatePeriod)}";
+            }
+
+            return temp;
+        }
+
+        // HETS-1017 - Updates to Rental Agreement -> Overtime is always in Hours (/Hr)
+        private static string FormatOvertimeRateString(HetRentalAgreementRate rentalRate)
+        {
+            string temp = "";
+
+            // format the rate
+            if (rentalRate.Rate != null)
+            {
+                temp = $"$ {rentalRate.Rate:0.00} / Hr";
             }
 
             return temp;
@@ -268,8 +282,8 @@ namespace HetsData.Helpers
                     {
                         condition.ConditionName = condition.Comment;
                     }
-                }                
-
+                }
+                
                 pdfModel = CalculateTotals(pdfModel);
             }
 
