@@ -64,7 +64,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetOwner)
                     .ThenInclude(y => y.LocalArea)
                         .ThenInclude(z => z.ServiceArea.District)
-                .FirstOrDefault(x => x.BceidBusinessGuid == businessGuid);
+                .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             if (business == null) return new ObjectResult(new HetsResponse(""));
 
@@ -101,14 +101,14 @@ namespace HetsApi.Controllers
                 return new ObjectResult(new HetsResponse("HETS-22", ErrorViewModel.GetDescription("HETS-22", _configuration)));
             }
 
-            bool exists = _context.HetBusiness.Any(a => a.BceidBusinessGuid == businessGuid);
+            bool exists = _context.HetBusiness.Any(a => a.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get business
             HetBusiness business = _context.HetBusiness.AsNoTracking()
-                .First(x => x.BceidBusinessGuid == businessGuid);
+                .First(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             // find owner using shred key & postal code (exact match)
             HetOwner owner = _context.HetOwner
@@ -173,7 +173,7 @@ namespace HetsApi.Controllers
             string businessGuid = UserAccountHelper.GetBusinessGuid(_httpContext, _env);
 
             HetBusiness business = _context.HetBusiness.AsNoTracking()
-                .FirstOrDefault(x => x.BceidBusinessGuid == businessGuid);
+                .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             if (business == null) return StatusCode(StatusCodes.Status401Unauthorized);
             
@@ -208,7 +208,7 @@ namespace HetsApi.Controllers
             string businessGuid = UserAccountHelper.GetBusinessGuid(_httpContext, _env);
 
             HetBusiness business = _context.HetBusiness.AsNoTracking()
-                .FirstOrDefault(x => x.BceidBusinessGuid == businessGuid);
+                .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             if (business == null) return StatusCode(StatusCodes.Status401Unauthorized);
 
@@ -234,7 +234,7 @@ namespace HetsApi.Controllers
             string businessGuid = UserAccountHelper.GetBusinessGuid(_httpContext, _env);
 
             HetBusiness business = _context.HetBusiness.AsNoTracking()
-                .FirstOrDefault(x => x.BceidBusinessGuid == businessGuid);
+                .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             if (business == null) return StatusCode(StatusCodes.Status401Unauthorized);
 
