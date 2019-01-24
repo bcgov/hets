@@ -178,7 +178,7 @@ var TimeEntry = React.createClass({
       { field: 'localAreaLabel',          title: 'Local Area'                               },
       { field: 'ownerCode',               title: 'Owner Code'                               },
       { field: 'ownerName',               title: 'Company Name'                             },
-      { field: 'equipmentCode',           title: 'Equip. ID'                                },
+      { field: 'sortableEquipmentCode',   title: 'Equip. ID'                                },
       { field: 'equipmentDetails',        title: 'Make/Model/Size/Year'                     },
       { field: 'provincialProjectNumber', title: 'Project #'                                },
       { field: 'hours',                   title: 'Hours'                                    },
