@@ -7,6 +7,7 @@ using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HetsApi.Helpers
 {
@@ -38,7 +39,7 @@ namespace HetsApi.Helpers
         public static bool IsBusiness(HttpContext httpContext)
         {
             return httpContext.User.Claims
-                .Any(claim => claim.Type == ClaimTypes.Actor && 
+                .Any(claim => claim.Type == ClaimTypes.Actor &&
                               claim.Value == "BusinessUser");
         }
 
@@ -102,7 +103,7 @@ namespace HetsApi.Helpers
             string userId = GetUserId(httpContext);
 
             if (!isBusinessUser)
-            {                
+            {
                 HetUser tmpUser = context.HetUser.AsNoTracking()
                     .FirstOrDefault(x => x.SmUserId.ToLower().Equals(userId.ToLower()));
 
@@ -175,13 +176,36 @@ namespace HetsApi.Helpers
             if (!string.IsNullOrEmpty(guid) && string.IsNullOrEmpty(user.Guid))
             {
                 // self register (write the users Guid to the db)
+                int updUserId = user.UserId;
+
+                using (IDbContextTransaction transaction = context.Database.BeginTransaction())
+                {
+                    // lock the table during this transaction
+                    context.Database.ExecuteSqlCommand(@"LOCK TABLE ""HET_USER"" IN EXCLUSIVE MODE;");
+
+                    HetUser updUser = context.HetUser.First(x => x.UserId == updUserId);
+
+                    updUser.Guid = guid;
+                    updUser.AppLastUpdateUserDirectory = user.SmAuthorizationDirectory;
+                    updUser.AppLastUpdateUserGuid = guid;
+                    updUser.AppLastUpdateUserid = userId;
+                    updUser.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+                    context.HetUser.Update(updUser);
+
+                    // update user record
+                    context.SaveChanges();
+
+                    // commit
+                    transaction.Commit();
+                }
+
+                // update the user object for the current session
                 user.Guid = guid;
                 user.AppLastUpdateUserDirectory = user.SmAuthorizationDirectory;
                 user.AppLastUpdateUserGuid = guid;
                 user.AppLastUpdateUserid = userId;
                 user.AppLastUpdateTimestamp = DateTime.UtcNow;
-
-                context.SaveChanges();
             }
             else if (!string.IsNullOrEmpty(user.Guid) &&
                      !string.IsNullOrEmpty(guid) &&
@@ -191,6 +215,8 @@ namespace HetsApi.Helpers
                 return null;
             }
 
+            // detach user and return
+            context.Entry(user).State = EntityState.Detached;
             return user;
         }
 
@@ -202,7 +228,7 @@ namespace HetsApi.Helpers
         /// <returns></returns>
         public static HetUser GetUserByGuid(string guid, DbAppContext context)
         {
-            HetUser user = context.HetUser
+            HetUser user = context.HetUser.AsNoTracking()
                 .Where(x => x.Guid != null &&
                             x.Guid.Equals(guid))
                 .Include(u => u.HetUserRole)
@@ -222,7 +248,7 @@ namespace HetsApi.Helpers
         /// <returns></returns>
         public static HetUser GetUserBySmUserId(string smUserId, DbAppContext context)
         {
-            HetUser user = context.HetUser
+            HetUser user = context.HetUser.AsNoTracking()
                 .Where(x => x.SmUserId != null &&
                             x.SmUserId.ToLower().Equals(smUserId.ToLower()))
                 .Include(u => u.HetUserRole)
@@ -247,14 +273,14 @@ namespace HetsApi.Helpers
         {
             // find the business
             HetBusiness business = context.HetBusiness.AsNoTracking()
-                .FirstOrDefault(x => x.BceidBusinessGuid == businessGuid);
+                .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             // setup the business
             if (business == null)
             {
                 business = new HetBusiness
                 {
-                    BceidBusinessGuid = businessGuid,
+                    BceidBusinessGuid = businessGuid.ToLower().Trim(),
                     AppCreateUserDirectory = "BCeID",
                     AppCreateUserGuid = guid,
                     AppCreateUserid = userId,
@@ -268,7 +294,7 @@ namespace HetsApi.Helpers
                 // get additional business data
                 string legalName = httpContext.Request.Headers[ConstSiteMinderBusinessLegalName];
                 string businessNumber = httpContext.Request.Headers[ConstSiteMinderBusinessNumber];
-                
+
                 if (!string.IsNullOrEmpty(legalName))
                 {
                     business.BceidLegalName = legalName;
@@ -278,6 +304,10 @@ namespace HetsApi.Helpers
                 {
                     business.BceidBusinessNumber = businessNumber;
                 }
+
+                // save record
+                context.HetBusiness.Add(business);
+                context.SaveChanges();
             }
             else
             {
@@ -299,6 +329,8 @@ namespace HetsApi.Helpers
                 business.AppLastUpdateUserGuid = guid;
                 business.AppLastUpdateUserid = userId;
                 business.AppLastUpdateTimestamp = DateTime.UtcNow;
+
+                context.SaveChanges();
             }
 
             // ok - now find the user
@@ -311,7 +343,7 @@ namespace HetsApi.Helpers
                 // auto register the user
                 user = new HetBusinessUser
                 {
-                    BceidUserId = userId,                    
+                    BceidUserId = userId,
                     BceidGuid = guid,
                     BusinessId = business.BusinessId,
                     AppCreateUserDirectory = "BCeID",
@@ -341,7 +373,7 @@ namespace HetsApi.Helpers
                 // add the "Business Logon" role
                 HetBusinessUserRole userRole = new HetBusinessUserRole
                 {
-                    RoleId = StatusHelper.GetRoleId("Business BCeID User", context),
+                    RoleId = StatusHelper.GetRoleId("Business BCeID", context),
                     EffectiveDate = DateTime.UtcNow.AddMinutes(-10),
                     AppCreateUserDirectory = "BCeID",
                     AppCreateUserGuid = guid,
@@ -354,10 +386,9 @@ namespace HetsApi.Helpers
                 };
 
                 user.HetBusinessUserRole.Add(userRole);
-                business.HetBusinessUser.Add(user);
 
                 // save record
-                context.HetBusiness.Add(business);
+                context.HetBusinessUser.Add(user);
                 context.SaveChanges();
             }
             else
@@ -380,7 +411,7 @@ namespace HetsApi.Helpers
             }
 
             // get complete user record (with roles) and return
-            user = context.HetBusinessUser
+            user = context.HetBusinessUser.AsNoTracking()
                 .Where(x => x.BusinessId == business.BusinessId &&
                             x.BceidUserId == userId)
                 .Include(u => u.HetBusinessUserRole)
@@ -388,6 +419,12 @@ namespace HetsApi.Helpers
                         .ThenInclude(rp => rp.HetRolePermission)
                             .ThenInclude(p => p.Permission)
                 .FirstOrDefault();
+
+            // detach user and return
+            if (user != null)
+            {
+                context.Entry(user).State = EntityState.Detached;
+            }
 
             return user;
         }
