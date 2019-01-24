@@ -9,6 +9,7 @@ import _ from 'lodash';
 import * as Api from '../api';
 import * as Constant from '../constants';
 
+import ModalDialog from '../components/ModalDialog.jsx';
 import TableControl from '../components/TableControl.jsx';
 import Spinner from '../components/Spinner.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
@@ -93,6 +94,10 @@ var DistrictAdmin = React.createClass({
     this.setState({ showDistrictEquipmentTypeAddEditDialog: false });
   },
 
+  closeDistrictEquipmentTypeErrorDialog() {
+    this.setState({ showDistrictEquipmentTypeErrorDialog: false });
+  },
+
   addDistrictEquipmentType() {
     this.setState({ districtEquipmentType: { id: 0 } }, this.showDistrictEquipmentTypeAddEditDialog());
   },
@@ -116,6 +121,8 @@ var DistrictAdmin = React.createClass({
   deleteDistrictEquipmentType(equipment) {
     Api.deleteDistrictEquipmentType(equipment).then(() => {
       Api.getDistrictEquipmentTypes(this.props.currentUser.district.id); 
+    }).catch(err => {
+      this.setState({ showDistrictEquipmentTypeErrorDialog: true, districtEquipmentTypeError: err.message });
     });
   },
 
@@ -225,7 +232,6 @@ var DistrictAdmin = React.createClass({
           onClose={ this.closeEquipmentTransferDialog }
         />
       }
-
       { this.state.showConditionAddEditDialog &&
         <ConditionAddEditDialog
           show={this.state.showConditionAddEditDialog}
@@ -242,6 +248,20 @@ var DistrictAdmin = React.createClass({
           districtEquipmentType={this.state.districtEquipmentType}
           equipmentTypes={equipmentTypes}
         />   
+      }
+      { this.state.showDistrictEquipmentTypeErrorDialog &&
+        <ModalDialog
+          title='Error'
+          show={this.state.showDistrictEquipmentTypeErrorDialog}
+          onClose={this.closeDistrictEquipmentTypeErrorDialog}
+          footer={
+            <span>
+              <Button onClick={ this.closeDistrictEquipmentTypeErrorDialog }>{ 'Close' }</Button>
+            </span>
+          }
+        >
+          <div>{ this.state.districtEquipmentTypeError }</div>
+        </ModalDialog>
       }
     </div>;
   },
