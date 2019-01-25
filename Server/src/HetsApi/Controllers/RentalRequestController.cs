@@ -885,7 +885,89 @@ namespace HetsApi.Controllers
 
             return new ObjectResult(new HetsResponse(notes));
         }
-        
-        #endregion          
+
+        #endregion
+
+        #region Rental Request Hiring Report
+
+        /// <summary>
+        /// Rental Request Hiring Report
+        /// </summary>
+        /// <remarks>Used for the rental request search page.</remarks>
+        /// <param name="localAreas">Local Areas (comma separated list of id numbers)</param>
+        /// <param name="projects">Projects (comma separated list of id numbers)</param>
+        /// <param name="owners">Owners (comma separated list of id numbers)</param>
+        /// <param name="equipment">Equipment (comma separated list of id numbers)</param>
+        [HttpGet]
+        [Route("hireReport")]
+        [SwaggerOperation("RentalRequestsHiresGet")]
+        [SwaggerResponse(200, type: typeof(List<RentalRequestLite>))]
+        public virtual IActionResult RentalRequestsHiresGet([FromQuery]string localAreas, [FromQuery]string projects, 
+            [FromQuery]string owners, [FromQuery]string equipment)
+        {
+            int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
+            int?[] projectArray = ArrayHelper.ParseIntArray(projects);
+            int?[] ownerArray = ArrayHelper.ParseIntArray(owners);
+            int?[] equipmentArray = ArrayHelper.ParseIntArray(equipment);
+           
+            // get initial results - must be limited to user's district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            // get fiscal year
+            HetDistrictStatus district = _context.HetDistrictStatus.AsNoTracking()
+                .FirstOrDefault(x => x.DistrictId == districtId);
+
+            if (district?.CurrentFiscalYear == null) return new ObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
+
+            int fiscalYear = (int)district.CurrentFiscalYear; // status table uses the start of the year
+            DateTime fiscalStart = new DateTime(fiscalYear, 3, 31); // look for all records AFTER the 31st
+
+            IQueryable<HetRentalRequestRotationList> data = _context.HetRentalRequestRotationList.AsNoTracking()
+                .Include(x => x.RentalRequest)
+                    .ThenInclude(y => y.LocalArea)
+                        .ThenInclude(z => z.ServiceArea)
+                .Include(x => x.RentalRequest)
+                    .ThenInclude(y => y.Project)
+                .Include(y => y.Equipment)
+                .Include(y => y.Equipment)
+                    .ThenInclude(z => z.Owner)
+                .Where(x => x.RentalRequest.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
+                            x.AskedDateTime > fiscalStart &&
+                            (x.IsForceHire == true || x.OfferResponse.ToLower() == "no"));
+
+            if (localAreasArray != null && localAreasArray.Length > 0)
+            {
+                data = data.Where(x => localAreasArray.Contains(x.RentalRequest.LocalAreaId));
+            }
+
+            if (projectArray != null && projectArray.Length > 0)
+            {
+                data = data.Where(x => projectArray.Contains(x.RentalRequest.ProjectId));
+            }
+
+            if (ownerArray != null && ownerArray.Length > 0)
+            {
+                data = data.Where(x => ownerArray.Contains(x.Equipment.OwnerId));                
+            }
+
+            if (equipmentArray != null && equipmentArray.Length > 0)
+            {
+                data = data.Where(x => equipmentArray.Contains(x.EquipmentId));
+            }
+
+            // convert Rental Request Model to the "RentalRequestHires" Model
+            List<RentalRequestHires> result = new List<RentalRequestHires>();
+
+            foreach (HetRentalRequestRotationList item in data)
+            {
+                result.Add(RentalRequestHelper.ToHiresModel(item));
+            }
+
+            // return to the client            
+            return new ObjectResult(new HetsResponse(result));
+        }
+
+        #endregion
+
     }
 }

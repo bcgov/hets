@@ -22,7 +22,21 @@ namespace HetsData.Helpers
         public int? ProjectId { get; set; }
         public DateTime? ExpectedStartDate { get; set; }
         public DateTime? ExpectedEndDate { get; set; }
-    }    
+    }
+
+    public class RentalRequestHires
+    {
+        public string LocalAreaName { get; set; }
+        public string OwnerCode { get; set; }
+        public string CompanyName { get; set; }
+        public string EquipmentCode { get; set; }
+        public string EquipmentDescription { get; set; }
+        public string ProjectNumber { get; set; }
+        public DateTime? NoteDate { get; set; }
+        public string NoteType { get; set; }
+        public string Reason { get; set; }
+        public string UserId { get; set; }
+    }
 
     #endregion
 
@@ -195,6 +209,55 @@ namespace HetsData.Helpers
                 requestLite.EquipmentCount = request.EquipmentCount;
                 requestLite.ExpectedEndDate = request.ExpectedEndDate;
                 requestLite.ExpectedStartDate = request.ExpectedStartDate;                
+            }
+
+            return requestLite;
+        }
+
+        #endregion
+
+        #region Convert full equipment record to a "Hires" version
+
+        /// <summary>
+        /// Convert to Rental Request Hires (Lite) Model
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public static RentalRequestHires ToHiresModel(HetRentalRequestRotationList request)
+        {
+            RentalRequestHires requestLite = new RentalRequestHires();
+
+            if (request != null)
+            {                
+                requestLite.LocalAreaName = request.RentalRequest.LocalArea.Name;
+                
+                // owner data
+                requestLite.OwnerCode = request.Equipment.Owner.OwnerCode;
+                requestLite.CompanyName = request.Equipment.Owner.OrganizationName;
+                
+                // equipment data
+                requestLite.EquipmentCode = request.Equipment.EquipmentCode;
+                requestLite.EquipmentDescription = $"{request.Equipment.Make}/{request.Equipment.Model}/{request.Equipment.Size}/{request.Equipment.Year}";
+                
+                // project data
+                requestLite.ProjectNumber = request.RentalRequest.Project.ProvincialProjectNumber;
+
+                requestLite.NoteDate = request.OfferResponseDatetime;
+
+                // Note Type -
+                // * Not hired (for recording the response NO for hiring.
+                // * Force Hire -For force hiring an equipment
+                requestLite.NoteType = "Not Hired"; // default
+                requestLite.Reason = request.OfferRefusalReason;
+
+                if (request.IsForceHire != null && request.IsForceHire == true)
+                {
+                    requestLite.NoteType = "Force Hire";
+                    requestLite.Reason = request.OfferResponseNote;
+                }
+
+                
+                requestLite.UserId = request.AppCreateUserid;
             }
 
             return requestLite;
