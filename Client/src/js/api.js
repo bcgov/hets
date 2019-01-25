@@ -74,6 +74,7 @@ export function keepAlive() {
 }
 
 export function searchUsers(params) {
+  store.dispatch({ type: Action.USERS_REQUEST });
   return new ApiRequest('/users/search').get(params).then(response => {
     var users = normalize(response.data);
 

@@ -81,19 +81,19 @@ var TimeEntry = React.createClass({
     var projectsPromise = Api.getProjects();
     var ownersPromise = Api.getOwnersLiteTs();
     var equipmentPromise = Api.getEquipmentLiteTs();
-    //var favouritesPromise = Api.Api.getFavourites('timeEntry');
+    var favouritesPromise = Api.getFavourites('timeEntry');
 
-    return Promise.all([ projectsPromise, ownersPromise, equipmentPromise]).then(() => {
+    return Promise.all([ projectsPromise, ownersPromise, equipmentPromise, favouritesPromise]).then(() => {
       this.setState({ loaded: true });
 
-      // // If this is the first load, then look for a default favourite
-      // if (_.isEmpty(this.props.search)) {
-      //   var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
-      //   if (defaultFavourite) {
-      //     this.loadFavourite(defaultFavourite);
-      //     return;
-      //   }
-      // }
+      // If this is the first load, then look for a default favourite
+      if (_.isEmpty(this.props.search)) {
+        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
+        if (defaultFavourite) {
+          this.loadFavourite(defaultFavourite);
+          return;
+        }
+      }
     });
   },
 
@@ -309,13 +309,13 @@ var TimeEntry = React.createClass({
             </Col>
           </Form>
           <Col xs={3} sm={2}>
-            <Favourites id="time-entry-faves-dropdown" type="time-entry" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+            <Favourites id="time-entry-faves-dropdown" type="timeEntry" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
           </Col>
         </Row>
       </Well>
 
       {(() => {
-        if (this.props.timeEntries.loading || this.props.favourites.loading) { 
+        if (this.props.timeEntries.loading || !this.state.loaded) { 
           return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
         }
         
