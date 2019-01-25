@@ -1,11 +1,13 @@
 #seniority-list
 {
   .btn-container {
-    padding: 7px;
-  }
-  
-  .btn {
-    margin-right: 5px;
+    > div {
+      margin: 5px;
+    }
+
+    > button {
+      margin: 5px;
+    }
   }
 
   .fixed-width {
