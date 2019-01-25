@@ -75,10 +75,10 @@ var Users = React.createClass({
 
     Promise.all([favouritesPromise]).then(() => {
       // If this is the first load, then look for a default favourite
-      if (!this.props.search.loaded) {
-        var favourite = _.find(this.props.favourites, (favourite) => { return favourite.isDefault; });
-        if (favourite) {
-          this.loadFavourite(favourite);
+      if (_.isEmpty(this.props.search)) {
+        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
+        if (defaultFavourite) {
+          this.loadFavourite(defaultFavourite);
           return;
         }
       }
