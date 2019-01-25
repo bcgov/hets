@@ -1659,5 +1659,68 @@ namespace HetsApi.Controllers
         }
 
         #endregion
+
+        #region Wcb / Cgl Report
+
+        /// <summary>
+        /// Owner Wcb / Cgl Report
+        /// </summary>
+        /// <remarks>Used for the rental request search page.</remarks>
+        /// <param name="localAreas">Local Areas (comma separated list of id numbers)</param>
+        /// <param name="owners">Owners (comma separated list of id numbers)</param>
+        /// <param name="wcbExpiry">Find owners whose WCB policy expires before this date</param>
+        /// <param name="cglExpiry">Find owners whose CGL policy expires before this date</param>
+        [HttpGet]
+        [Route("wcbCglReport")]
+        [SwaggerOperation("OwnerWcbCglGet")]
+        [SwaggerResponse(200, type: typeof(List<OwnerWcbCgl>))]
+        public virtual IActionResult OwnerWcbCglGet([FromQuery]string localAreas, [FromQuery]string owners, 
+            [FromQuery]DateTime wcbExpiry, [FromQuery]DateTime cglExpiry)
+        {
+            int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
+            int?[] ownerArray = ArrayHelper.ParseIntArray(owners);
+
+            // owner status
+            int? statusId = StatusHelper.GetStatusId(HetOwner.StatusArchived, "ownerStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // default the dates if they weren't entered
+            if (wcbExpiry == DateTime.MinValue) { wcbExpiry = DateTime.Now; }
+            if (cglExpiry == DateTime.MinValue) { cglExpiry = DateTime.Now; }
+
+            // get initial results - must be limited to user's district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            
+            IQueryable<HetOwner> data = _context.HetOwner.AsNoTracking()
+                .Include(y => y.LocalArea.ServiceArea)
+                .Include(x => x.PrimaryContact)
+                .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
+                            x.OwnerStatusTypeId != statusId && 
+                            (x.WorkSafeBcexpiryDate == null || x.WorkSafeBcexpiryDate < wcbExpiry) &&
+                            (x.CglendDate == null || x.CglendDate < cglExpiry));
+
+            if (localAreasArray != null && localAreasArray.Length > 0)
+            {
+                data = data.Where(x => localAreasArray.Contains(x.LocalAreaId));
+            }
+            
+            if (ownerArray != null && ownerArray.Length > 0)
+            {
+                data = data.Where(x => ownerArray.Contains(x.OwnerId));
+            }
+
+            // convert Rental Request Model to the "RentalRequestHires" Model
+            List<OwnerWcbCgl> result = new List<OwnerWcbCgl>();
+
+            foreach (HetOwner item in data)
+            {
+                result.Add(OwnerHelper.ToWcbCglModel(item));
+            }
+
+            // return to the client            
+            return new ObjectResult(new HetsResponse(result));
+        }
+
+        #endregion
     }
 }

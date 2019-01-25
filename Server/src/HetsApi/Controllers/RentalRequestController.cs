@@ -901,7 +901,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("hireReport")]
         [SwaggerOperation("RentalRequestsHiresGet")]
-        [SwaggerResponse(200, type: typeof(List<RentalRequestLite>))]
+        [SwaggerResponse(200, type: typeof(List<RentalRequestHires>))]
         public virtual IActionResult RentalRequestsHiresGet([FromQuery]string localAreas, [FromQuery]string projects, 
             [FromQuery]string owners, [FromQuery]string equipment)
         {
@@ -968,6 +968,5 @@ namespace HetsApi.Controllers
         }
 
         #endregion
-
     }
 }

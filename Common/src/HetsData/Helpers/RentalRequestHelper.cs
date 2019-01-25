@@ -26,6 +26,8 @@ namespace HetsData.Helpers
 
     public class RentalRequestHires
     {
+        public int OwnerId { get; set; }
+        public int EquipmentId { get; set; }
         public string LocalAreaName { get; set; }
         public string OwnerCode { get; set; }
         public string CompanyName { get; set; }
@@ -228,7 +230,10 @@ namespace HetsData.Helpers
             RentalRequestHires requestLite = new RentalRequestHires();
 
             if (request != null)
-            {                
+            {
+                requestLite.OwnerId = request.Equipment.OwnerId ?? 0;
+                requestLite.EquipmentId = request.EquipmentId ?? 0;
+
                 requestLite.LocalAreaName = request.RentalRequest.LocalArea.Name;
                 
                 // owner data
@@ -255,7 +260,6 @@ namespace HetsData.Helpers
                     requestLite.NoteType = "Force Hire";
                     requestLite.Reason = request.OfferResponseNote;
                 }
-
                 
                 requestLite.UserId = request.AppCreateUserid;
             }
