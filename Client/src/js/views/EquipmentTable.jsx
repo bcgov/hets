@@ -28,7 +28,6 @@ var EquipmentTable = React.createClass({
   },
 
   render() {
-    
     var equipmentList = _.sortBy(this.props.equipmentList, equipment => {
       var sortValue = equipment[this.props.ui.sortField];
       if (typeof sortValue === 'string') {
@@ -39,19 +38,19 @@ var EquipmentTable = React.createClass({
     
     if (this.props.ui.sortDesc) {
       _.reverse(equipmentList);
-    } 
+    }
 
     return (
       <SortTable sortField={ this.props.ui.sortField } sortDesc={ this.props.ui.sortDesc } onSort={ this.props.updateUIState } headers={[
-        { field: 'equipmentCode',    title: 'Equipment ID'         },
-        { field: 'localArea',        title: 'Local Area'           },
-        { field: 'ownerName',        title: 'Company Name'         },
-        { field: 'equipmentType',    title: 'Equipment Type'       },
-        { field: 'details',          title: 'Make/Model/Size/Year' },
-        { field: 'attachmentCount',  title: 'Attachments'          },
-        { field: 'projectName',      title: 'Project'               },
-        { field: 'status',           title: 'Status'               },
-        { field: 'lastVerifiedDate', title: 'Last Verified'        },
+        { field: 'sortableEquipmentCode', title: 'Equipment ID'         },
+        { field: 'localArea',             title: 'Local Area'           },
+        { field: 'ownerName',             title: 'Company Name'         },
+        { field: 'equipmentType',         title: 'Equipment Type'       },
+        { field: 'details',               title: 'Make/Model/Size/Year' },
+        { field: 'attachmentCount',       title: 'Attachments'          },
+        { field: 'projectName',           title: 'Project'               },
+        { field: 'status',                title: 'Status'               },
+        { field: 'lastVerifiedDate',      title: 'Last Verified'        },
         { field: 'blank'                                           },
       ]}>
         {

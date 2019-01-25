@@ -30,7 +30,7 @@ export const PERMISSION_DISTRICT_ROLLOVER = 'DistrictRollover';
 export const PERMISSION_VERSION = 'Version';
 
 // Roles 
-export const ADMINISTRATOR_ROLE = 'Administrator';
+export const ADMINISTRATOR_ROLE = '4-HETS System Administrator';
 
 // Equipments
 export const EQUIPMENT_DAYS_SINCE_VERIFIED_WARNING = 270;
