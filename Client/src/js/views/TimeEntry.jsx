@@ -115,21 +115,21 @@ var TimeEntry = React.createClass({
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
-      store.dispatch({ type: Action.UPDATE_TIME_ENTRIES_SEARCH, projects: this.state.search });
+      store.dispatch({ type: Action.UPDATE_TIME_ENTRIES_SEARCH, timeEntries: this.state.search });
       store.dispatch({ type: Action.CLEAR_TIME_ENTRIES });
     });
   },
 
   updateSearchState(state, callback) {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () =>{
-      store.dispatch({ type: Action.UPDATE_TIME_ENTRIES_SEARCH, projects: this.state.search });
+      store.dispatch({ type: Action.UPDATE_TIME_ENTRIES_SEARCH, timeEntries: this.state.search });
       if (callback) { callback(); }
     });
   },
 
   updateUIState(state, callback) {
     this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
-      store.dispatch({ type: Action.UPDATE_TIME_ENTRIES_UI, projects: this.state.ui });
+      store.dispatch({ type: Action.UPDATE_TIME_ENTRIES_UI, timeEntries: this.state.ui });
       if (callback) { callback(); }
     });
   },
@@ -178,7 +178,7 @@ var TimeEntry = React.createClass({
       { field: 'localAreaLabel',          title: 'Local Area'                               },
       { field: 'ownerCode',               title: 'Owner Code'                               },
       { field: 'ownerName',               title: 'Company Name'                             },
-      { field: 'equipmentCode',           title: 'Equip. ID'                                },
+      { field: 'sortableEquipmentCode',   title: 'Equip. ID'                                },
       { field: 'equipmentDetails',        title: 'Make/Model/Size/Year'                     },
       { field: 'provincialProjectNumber', title: 'Project #'                                },
       { field: 'hours',                   title: 'Hours'                                    },
@@ -351,7 +351,7 @@ function mapStateToProps(state) {
     timeEntries: state.models.timeEntries,
     favourites: state.models.favourites,
     search: state.search.timeEntries,
-    ui: state.ui.projects,
+    ui: state.ui.timeEntries,
   };
 }
 

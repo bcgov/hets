@@ -416,6 +416,10 @@ function parseEquipment(equipment) {
   equipment.canDelete = false; // TODO Needs input from Business whether this is needed.
 }
 
+function generateSortableEquipmentCode(equipment) {
+  return equipment.ownerCode && equipment.equipmentNumber ? `${equipment.ownerCode}${_.padStart(equipment.equipmentNumber, 3, '0')}` : equipment.equipmentCode;
+}
+
 export function searchEquipmentList(params) {
   store.dispatch({ type: Action.EQUIPMENT_LIST_REQUEST });
   return new ApiRequest('/equipment/search').get(params).then(response => {
@@ -423,6 +427,7 @@ export function searchEquipmentList(params) {
 
     _.map(equipmentList, equipment => { 
       equipment.details = [equipment.make || '-', equipment.model || '-', equipment.size || '-', equipment.year || '-'].join('/');
+      equipment.sortableEquipmentCode = generateSortableEquipmentCode(equipment);
     });
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST, equipmentList: equipmentList });
@@ -1111,6 +1116,7 @@ export function searchTimeEntries(params) {
     _.map(timeEntries, entry => {
       entry.localAreaLabel = `${ entry.serviceAreaId } - ${ entry.localAreaName }`;
       entry.equipmentDetails = [entry.make || '-', entry.model || '-', entry.size || '-', entry.year || '-'].join('/');
+      entry.sortableEquipmentCode = generateSortableEquipmentCode(entry);
     });
 
     store.dispatch({ type: Action.UPDATE_TIME_ENTRIES, timeEntries: timeEntries });

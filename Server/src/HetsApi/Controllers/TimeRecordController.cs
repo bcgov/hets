@@ -93,15 +93,6 @@ namespace HetsApi.Controllers
             // get initial results - must be limited to user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
 
-            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
-
-            int? projectStatusId = StatusHelper.GetStatusId(HetProject.StatusActive, "projectStatus", _context);
-            if (projectStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
-
-            int? agreementStatusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
-            if (agreementStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
-
             // get fiscal year
             HetDistrictStatus district = _context.HetDistrictStatus.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId == districtId);
@@ -125,10 +116,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.RentalAgreement)
                     .ThenInclude(x => x.Equipment)
                         .ThenInclude(z => z.Owner)
-                .Where(x => x.RentalAgreement.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
-                            x.RentalAgreement.Equipment.EquipmentStatusTypeId == statusId &&
-                            x.RentalAgreement.Project.ProjectStatusTypeId == projectStatusId &&
-                            x.RentalAgreement.RentalAgreementStatusTypeId == agreementStatusId &&
+                .Where(x => x.RentalAgreement.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&                           
                             x.WorkedDate > fiscalStart);
 
             if (localAreasArray != null && localAreasArray.Length > 0)

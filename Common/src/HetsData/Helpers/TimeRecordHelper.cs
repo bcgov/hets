@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using HetsData.Model;
 
 namespace HetsData.Helpers
@@ -31,6 +32,7 @@ namespace HetsData.Helpers
         public string OwnerCode { get; set; }
         public int EquipmentId { get; set; }
         public string EquipmentCode { get; set; }
+        public int EquipmentNumber { get; set; }
         public string Make { get; set; }
         public string Model { get; set; }
         public string Size { get; set; }
@@ -70,6 +72,7 @@ namespace HetsData.Helpers
 
                 timeLite.EquipmentId = timeRecord.RentalAgreement.Equipment.EquipmentId;
                 timeLite.EquipmentCode = timeRecord.RentalAgreement.Equipment.EquipmentCode;
+                timeLite.EquipmentNumber = int.Parse(Regex.Match(timeRecord.RentalAgreement.Equipment.EquipmentCode, @"\d+").Value);
                 timeLite.Make = timeRecord.RentalAgreement.Equipment.Make;
                 timeLite.Model = timeRecord.RentalAgreement.Equipment.Model;                
                 timeLite.Size = timeRecord.RentalAgreement.Equipment.Size;
