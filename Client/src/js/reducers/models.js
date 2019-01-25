@@ -3,7 +3,11 @@ import * as Action from '../actionTypes';
 import _ from 'lodash';
 
 const DEFAULT_MODELS = {
-  users: {},
+  users: {
+    data: {},
+    loading: false,
+    loaded: false,
+  },
   user: {},
   userDistricts: {
     data: {}, 
@@ -146,8 +150,14 @@ const DEFAULT_MODELS = {
 export default function modelsReducer(state = DEFAULT_MODELS, action) {
   switch(action.type) {
     // Users
+    case Action.USERS_REQUEST:
+      return { ...state, users: { ...state.users, loading: true, loaded: false } };
+
     case Action.UPDATE_USERS:
-      return { ...state, users: action.users };
+      return { ...state, users: { data: action.users, loading: false, loaded: true } };
+    
+    case Action.CLEAR_USERS:
+      return { ...state, users: { data: {}, loading: false, loaded: false } };
     
     case Action.UPDATE_USER:
       return { ...state, user: action.user };
