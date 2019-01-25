@@ -45,7 +45,7 @@ var Users = React.createClass({
       search: {
         selectedDistrictsIds: this.props.search.selectedDistrictsIds || [],
         surname: this.props.search.surname || '',
-        hideInactive: this.props.search.hideInactive,
+        hideInactive: this.props.search.hideInactive || true,
       },
 
       ui : {
@@ -179,7 +179,7 @@ var Users = React.createClass({
                     <InputGroup.Addon>Surname</InputGroup.Addon>
                     <FormInputControl id="surname" type="text" value={ this.state.search.surname } updateState={ this.updateSearchState }/>
                   </InputGroup>
-                  <CheckboxControl inline id="hideInactive" value={ this.state.search.hideInactive } updateState={ this.updateSearchState }>Hide Inactive</CheckboxControl>
+                  <CheckboxControl inline id="hideInactive" checked={ this.state.search.hideInactive } updateState={ this.updateSearchState }>Hide Inactive</CheckboxControl>
                   <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
                 </ButtonToolbar>
               </Form>
