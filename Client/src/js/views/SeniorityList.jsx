@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Well, PageHeader, Row, Col, Button } from 'react-bootstrap';
+import { Well, PageHeader, Row, Col, ButtonToolbar, Button } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -83,15 +83,17 @@ var SeniorityList = React.createClass({
 
     return <div id="seniority-list">
       <PageHeader>Seniority List</PageHeader>
-      <Well>
+      <Well bsSize="small" className="clearfix">
         <Row>
-          <Col md={12} className="btn-container">
-            <MultiDropdown id="selectedLocalAreaIds" className="fixed-width small" placeholder="Local Areas" items={ localAreas }
-              selectedIds={ this.state.selectedLocalAreaIds } updateState={ this.updateState } onChange={ this.onLocalAreasChanged } showMaxItems={ 2 } />
-            <MultiDropdown id="selectedEquipmentTypeIds" className="fixed-width" placeholder="Equipment Types" fieldName="districtEquipmentName"
-              items={ districtEquipmentTypes } selectedIds={ this.state.selectedEquipmentTypeIds } updateState={ this.updateState } showMaxItems={ 2 } />
+          <Col md={12}>
+            <ButtonToolbar className="btn-container">
+              <MultiDropdown id="selectedLocalAreaIds" className="fixed-width small" placeholder="Local Areas" items={ localAreas }
+                selectedIds={ this.state.selectedLocalAreaIds } updateState={ this.updateState } onChange={ this.onLocalAreasChanged } showMaxItems={ 2 } />
+              <MultiDropdown id="selectedEquipmentTypeIds" className="fixed-width" placeholder="Equipment Types" fieldName="districtEquipmentName"
+                items={ districtEquipmentTypes } selectedIds={ this.state.selectedEquipmentTypeIds } updateState={ this.updateState } showMaxItems={ 2 } />
               <Button onClick={ () => this.getRotationList(false) } bsStyle="primary">Seniority List</Button>
               <Button onClick={ () => this.getRotationList(true) } bsStyle="primary">Seniority List (Counter Copy)</Button>
+            </ButtonToolbar>
           </Col>
         </Row>
       </Well>

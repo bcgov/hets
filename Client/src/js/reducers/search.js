@@ -6,6 +6,7 @@ const DEFAULT_SEARCHES = {
   projects: {},
   rentalRequests: {},
   timeEntries: {},
+  hiringResponses: {},
   users: {},
   roles: {},
 };
@@ -26,6 +27,9 @@ export default function searchReducer(state = DEFAULT_SEARCHES, action) {
 
     case Action.UPDATE_TIME_ENTRIES_SEARCH:
       return { ...state, timeEntries: action.timeEntries };
+
+    case Action.UPDATE_HIRING_RESPONSES_SEARCH:
+      return { ...state, hiringResponses: action.hiringResponses };
 
     case Action.UPDATE_USERS_SEARCH:
       return { ...state, users: action.users };

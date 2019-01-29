@@ -483,6 +483,14 @@ export function getEquipmentLiteTs() {
   });
 }
 
+export function getEquipmentLiteHires() {
+  return new ApiRequest('/equipment/liteHires').get().then(response => {
+    var equipment = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
+  });
+}
+
 export function addEquipment(equipment) {
   return new ApiRequest('/equipment').post(equipment).then(response => {
     var equipment = response.data;
@@ -1121,6 +1129,21 @@ export function searchTimeEntries(params) {
     });
 
     store.dispatch({ type: Action.UPDATE_TIME_ENTRIES, timeEntries: timeEntries });
+  });
+}
+
+export function searchHiringReport(params) {
+  store.dispatch({ type: Action.HIRING_RESPONSES_REQUEST });
+  return new ApiRequest('/rentalRequests/hireReport').get(params).then(response => {
+    var hiringResponses = normalize(response.data);
+
+    _.map(hiringResponses, entry => {
+      entry.localAreaLabel = `${ entry.serviceAreaId } - ${ entry.localAreaName }`;
+      entry.equipmentDetails = [entry.equipmentMake || '-', entry.equipmentModel || '-', entry.equipmentSize || '-', entry.equipmentYear || '-'].join('/');
+      entry.sortableEquipmentCode = generateSortableEquipmentCode(entry);
+    });
+
+    store.dispatch({ type: Action.UPDATE_HIRING_RESPONSES, hiringResponses: hiringResponses });
   });
 }
 

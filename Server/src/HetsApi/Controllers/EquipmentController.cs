@@ -176,6 +176,39 @@ namespace HetsApi.Controllers
         }
 
         /// <summary>
+        /// Get all equipment for this district that are associated with a rotation list (lite)
+        /// </summary>
+        [HttpGet]
+        [Route("liteHires")]
+        [SwaggerOperation("EquipmentGetLiteHires")]
+        [SwaggerResponse(200, type: typeof(List<EquipmentLiteList>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult EquipmentGetLiteHires()
+        {
+            // get users district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            IQueryable<EquipmentLiteList> equipment = _context.HetRentalRequestRotationList.AsNoTracking()
+                .Include(x => x.RentalRequest)
+                    .ThenInclude(y => y.LocalArea)
+                        .ThenInclude(z => z.ServiceArea)
+                .Include(x => x.RentalRequest)
+                    .ThenInclude(y => y.Project)
+                .Include(x => x.Equipment)
+                .Where(x => x.RentalRequest.LocalArea.ServiceArea.DistrictId.Equals(districtId))
+                .OrderBy(x => x.Equipment.EquipmentCode)
+                .Select(x => new EquipmentLiteList
+                {
+                    EquipmentCode = x.Equipment.EquipmentCode,
+                    Id = x.Equipment.EquipmentId,
+                    OwnerId = x.Equipment.OwnerId,
+                    ProjectId = x.RentalRequest.ProjectId.Value,
+                });
+
+            return new ObjectResult(new HetsResponse(equipment));
+        }
+
+        /// <summary>
         /// Update equipment
         /// </summary>
         /// <param name="id">id of Equipment to update</param>

@@ -7,4 +7,14 @@
     float: right;
     margin-top: 10px;
   }
+
+  #time-entry-filters {
+    > div {
+      margin: 5px;
+    }
+
+    > button {
+      margin: 5px;
+    }
+  }
 }
