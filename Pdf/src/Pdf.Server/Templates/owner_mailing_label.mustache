@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Owner Verification Notices</title>
+    <style>
+        @page {
+            margin: 1cm;
+            size: portrait;
+        }
+
+        body {
+            background-color: white;
+            color: black;
+            font-family: Myriad-Pro, Calibri, Arial, 'sans serif';
+            font-size: 12pt;
+            letter-spacing: normal;
+            white-space: normal;
+        }
+
+        #label-table {
+            margin-top: 1in;
+            margin-bottom: 1in;
+            text-align: left;
+            vertical-align: central;
+        }
+
+        @media print {
+            .owner {
+                page-break-before: always;
+            }
+        }
+    </style>
+</head>
+<body>
+    <table id="label-table">
+        {{#labelRow}}
+        <tr>
+            <td style="width: 4in; height: 2in; padding: 5px;">
+                <table>
+                    <tr>
+                        <td>{{ownerColumn1.address1}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ownerColumn1.address2}}{{#ownerColumn1.address2}}, {{/ownerColumn1.address2}}{{ownerColumn1.city}}{{#ownerColumn1.city}}, {{/ownerColumn1.city}}{{ownerColumn1.province}}  {{ownerColumn1.postalCode}}</td>
+                    </tr>
+                </table>
+            </td>
+            <td style="width: 4in; height: 2in; padding: 5px;">
+                <table>
+                    <tr>
+                        <td>{{ownerColumn2.address1}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ownerColumn2.address2}}{{#ownerColumn2.address2}}, {{/ownerColumn2.address2}}{{ownerColumn2.city}}{{#ownerColumn2.city}}, {{/ownerColumn2.city}}{{ownerColumn2.province}}  {{ownerColumn2.postalCode}}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        {{/labelRow}}
+    </table>
+</body>
+</html>

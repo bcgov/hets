@@ -58,6 +58,20 @@ namespace HetsData.Helpers
         public List<HetOwner> Owners { get; set; }
     }
 
+    public class MailingLabelPdfViewModel
+    {
+        public string ReportDate { get; set; }
+        public string Title { get; set; }
+        public int DistrictId { get; set; }
+        public List<MailingLabelRowModel> LabelRow { get; set; }        
+    }
+
+    public class MailingLabelRowModel
+    {
+        public HetOwner OwnerColumn1 { get; set; }
+        public HetOwner OwnerColumn2 { get; set; }
+    }
+
     #endregion
 
     public static class OwnerHelper
