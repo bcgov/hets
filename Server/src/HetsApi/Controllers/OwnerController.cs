@@ -125,11 +125,15 @@ namespace HetsApi.Controllers
             int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            int? projectStatusId = StatusHelper.GetStatusId(HetProject.StatusActive, "projectStatus", _context);
-            if (projectStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            // get fiscal year
+            HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
+                .First(x => x.DistrictId == districtId);
 
-            int? agreementStatusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
-            if (agreementStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            int? fiscalYear = status.CurrentFiscalYear;
+            if (fiscalYear == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // fiscal year in the status table stores the "start" of the year
+            DateTime fiscalYearStart = new DateTime((int)fiscalYear, 3, 31);
 
             // get all active owners for this district (and any projects they're associated with)
             IEnumerable<OwnerLiteList> owners = _context.HetRentalAgreement.AsNoTracking()
@@ -138,8 +142,7 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.Owner)
                 .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
                             x.Equipment.Owner.OwnerStatusTypeId == statusId &&
-                            x.Project.ProjectStatusTypeId == projectStatusId &&
-                            x.RentalAgreementStatusTypeId == agreementStatusId)
+                            x.Project.AppCreateTimestamp > fiscalYearStart)
                 .OrderBy(x => x.Equipment.Owner.OwnerCode)
                 .Select(x => new OwnerLiteList
                 {
