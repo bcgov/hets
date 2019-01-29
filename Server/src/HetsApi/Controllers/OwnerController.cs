@@ -683,6 +683,7 @@ namespace HetsApi.Controllers
                     owner.DistrictName = model.DistrictName;
                     owner.DistrictAddress = model.DistrictAddress;
                     owner.DistrictContact = model.DistrictContact;
+                    owner.LocalAreaName = model.LocalAreaName;
 
                     if (!string.IsNullOrEmpty(owner.SharedKey))
                     {
