@@ -110,22 +110,30 @@ namespace HetsApi.Controllers
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            int? projectStatusId = StatusHelper.GetStatusId(HetProject.StatusActive, "projectStatus", _context);
-            if (projectStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            // get fiscal year
+            HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
+                .First(x => x.DistrictId == districtId);
+
+            int? fiscalYear = status.CurrentFiscalYear;
+            if (fiscalYear == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // fiscal year in the status table stores the "start" of the year
+            DateTime fiscalYearStart = new DateTime((int)fiscalYear, 3, 31);
 
             // get all approved equipment for this district (and any projects they're associated with)
             IEnumerable<EquipmentLiteProjects> equipment = _context.HetRentalAgreement.AsNoTracking()
+                .Include(x => x.Project)
                 .Include(x => x.Equipment)
-                .Where(x => x.EquipmentId != null &&
-                            x.ProjectId != null &&
-                            x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
+                .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
                             x.Equipment.EquipmentStatusTypeId == statusId &&
-                            x.Project.ProjectStatusTypeId == projectStatusId)
-                .GroupBy(x => x.EquipmentId, (id, agreements) => new EquipmentLiteProjects
+                            x.Project.DbCreateTimestamp > fiscalYearStart)
+                .Select(x => new EquipmentLiteProjects
                 {
-                    EquipmentCode = agreements.First().Equipment.EquipmentCode,
-                    Id = id.Value,
-                    ProjectIds = agreements.Select(y => y.ProjectId.Value).ToList(),
+                    EquipmentCode = x.Equipment.EquipmentCode,
+                    Id = x.ProjectId ?? 0,
+                    ProjectIds = _context.HetProject
+                        .Where(y => y.ProjectId == x.ProjectId)
+                        .Select(y => y.ProjectId).ToList()
                 })
                 .OrderBy(x => x.EquipmentCode);
 
@@ -149,11 +157,15 @@ namespace HetsApi.Controllers
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            int? projectStatusId = StatusHelper.GetStatusId(HetProject.StatusActive, "projectStatus", _context);
-            if (projectStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            // get fiscal year
+            HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
+                .First(x => x.DistrictId == districtId);
 
-            int? agreementStatusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
-            if (agreementStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            int? fiscalYear = status.CurrentFiscalYear;
+            if (fiscalYear == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // fiscal year in the status table stores the "start" of the year
+            DateTime fiscalYearStart = new DateTime((int)fiscalYear, 3, 31);
 
             // get all active owners for this district (and any projects they're associated with)
             IEnumerable<EquipmentLiteList> equipment = _context.HetRentalAgreement.AsNoTracking()
@@ -161,8 +173,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.Equipment)
                 .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
                             x.Equipment.EquipmentStatusTypeId == statusId &&
-                            x.Project.ProjectStatusTypeId == projectStatusId &&
-                            x.RentalAgreementStatusTypeId == agreementStatusId)
+                            x.Project.DbCreateTimestamp > fiscalYearStart)
                 .OrderBy(x => x.Equipment.EquipmentCode)
                 .Select(x => new EquipmentLiteList
                 {
