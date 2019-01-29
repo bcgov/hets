@@ -233,8 +233,9 @@ namespace HetsData.Helpers
         /// Convert to Rental Request Hires (Lite) Model
         /// </summary>
         /// <param name="request"></param>
+        /// <param name="user"></param>
         /// <returns></returns>
-        public static RentalRequestHires ToHiresModel(HetRentalRequestRotationList request)
+        public static RentalRequestHires ToHiresModel(HetRentalRequestRotationList request, HetUser user)
         {
             RentalRequestHires requestLite = new RentalRequestHires();
 
@@ -278,6 +279,18 @@ namespace HetsData.Helpers
                 }
                 
                 requestLite.UserId = request.AppCreateUserid;
+
+                if (user != null)
+                {
+                    requestLite.UserName = user.GivenName ?? "";
+
+                    if (requestLite.UserName.Length > 0)
+                    {
+                        requestLite.UserName = requestLite.UserName + " ";
+                    }
+
+                    requestLite.UserName = requestLite.UserName + user.Surname;
+                }                
             }
 
             return requestLite;
