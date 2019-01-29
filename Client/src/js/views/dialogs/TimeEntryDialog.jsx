@@ -83,9 +83,9 @@ var TimeEntryDialog = React.createClass({
 
   fetchEquipmentAndProjects() {
     var equipmentPromise = Api.getEquipmentLiteProjects();
-    var ownersPromise = Api.getOwnersLiteTs();
+    var projectsPromise = Api.getProjects();
 
-    return Promise.all([ equipmentPromise, ownersPromise ]);
+    return Promise.all([ equipmentPromise, projectsPromise ]);
   },
 
   fetchTimeRecords() {
@@ -332,7 +332,7 @@ var TimeEntryDialog = React.createClass({
               <Col xs={6}>
                 <FormGroup controlId="projectId" validationState={ this.state.projectIdError ? 'error' : null }>
                   <ControlLabel>Project <sup>*</sup></ControlLabel>
-                  <FilterDropdown id="projectId" selectedId={ this.state.projectId } updateState={ this.updateState } items={ projects } />
+                  <FilterDropdown id="projectId" fieldName="label" selectedId={ this.state.projectId } updateState={ this.updateState } items={ projects } />
                   <HelpBlock>{ this.state.projectIdError }</HelpBlock>
                 </FormGroup>
               </Col>

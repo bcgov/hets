@@ -260,7 +260,7 @@ var TimeEntry = React.createClass({
   getFilteredOwners() {
     return _.chain(this.props.owners)
       .filter(x => this.matchesProjectFilter(x.projectId) && this.matchesLocalAreaFilter(x.localAreaId))
-      .sortBy('ownerCode')
+      .sortBy('organizationName')
       .value();
   },
 
@@ -295,11 +295,11 @@ var TimeEntry = React.createClass({
           <Form onSubmit={ this.search }>
             <Col xs={9} sm={10}>
               <ButtonToolbar id="time-entry-filters">
-                <MultiDropdown id="projectIds" placeholder="Projects"
+                <MultiDropdown id="projectIds" placeholder="Projects" fieldName="label"
                   items={ projects } selectedIds={ this.state.search.projectIds } updateState={ this.updateProjectSearchState } showMaxItems={ 2 } />
                 <MultiDropdown id="localAreaIds" placeholder="Local Areas"
                   items={ localAreas } selectedIds={ this.state.search.localAreaIds } updateState={ this.updateLocalAreaSearchState } showMaxItems={ 2 } />
-                <MultiDropdown id="ownerIds" placeholder="Companies" fieldName="ownerCode"
+                <MultiDropdown id="ownerIds" placeholder="Companies" fieldName="organizationName"
                   items={ owners } selectedIds={ this.state.search.ownerIds } updateState={ this.updateOwnerSearchState } showMaxItems={ 2 } />
                 <MultiDropdown id="equipmentIds" placeholder="Equipment" fieldName="equipmentCode"
                   items={ equipment } selectedIds={ this.state.search.equipmentIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
