@@ -101,6 +101,9 @@ var TopNav = React.createClass({
                 <LinkContainer to={{ pathname: `/${ Constant.SENIORITY_LIST_PATHNAME }` }} active={ currentPathStartsWith(Constant.SENIORITY_LIST_PATHNAME) }>
                   <MenuItem>Seniority List</MenuItem>
                 </LinkContainer>
+                <LinkContainer to={{ pathname: `/${ Constant.STATUS_LETTERS_REPORT_PATHNAME }` }} active={ currentPathStartsWith(Constant.STATUS_LETTERS_REPORT_PATHNAME) }>
+                  <MenuItem>Status Letters / Mailing Labels</MenuItem>
+                </LinkContainer>
                 <LinkContainer to={{ pathname: `/${ Constant.HIRING_REPORT_PATHNAME }` }} active={ currentPathStartsWith(Constant.HIRING_REPORT_PATHNAME) }>
                   <MenuItem>Owner's Equipment - Reason</MenuItem>
                 </LinkContainer>
