@@ -40,6 +40,7 @@ namespace HetsData.Helpers
     {
         public int Id { get; set; }
         public string OwnerCode { get; set; }
+        public string OrganizationName { get; set; }
         public int? LocalAreaId { get; set; }
         public int? ProjectId  { get; set; }
     }
