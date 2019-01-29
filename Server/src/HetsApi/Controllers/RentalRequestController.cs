@@ -928,9 +928,8 @@ namespace HetsApi.Controllers
                         .ThenInclude(z => z.ServiceArea)
                 .Include(x => x.RentalRequest)
                     .ThenInclude(y => y.Project)
-                .Include(y => y.Equipment)
-                .Include(y => y.Equipment)
-                    .ThenInclude(z => z.Owner)
+                .Include(x => x.Equipment)
+                    .ThenInclude(y => y.Owner)
                 .Where(x => x.RentalRequest.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
                             x.AskedDateTime > fiscalStart &&
                             (x.IsForceHire == true || x.OfferResponse.ToLower() == "no"));
@@ -960,7 +959,10 @@ namespace HetsApi.Controllers
 
             foreach (HetRentalRequestRotationList item in data)
             {
-                result.Add(RentalRequestHelper.ToHiresModel(item));
+                HetUser user = _context.HetUser.AsNoTracking()
+                    .FirstOrDefault(x => x.SmUserId == item.AppCreateUserid);
+
+                result.Add(RentalRequestHelper.ToHiresModel(item, user));
             }
 
             // return to the client            

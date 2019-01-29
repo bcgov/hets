@@ -801,10 +801,10 @@ namespace HetsApi.Controllers
 
         #endregion
 
-        #region Get Verification Pdfs
+        #region Get Mailing Labels Pdfs
 
         /// <summary>
-        /// Get owner verification pdf
+        /// Get owner mailing labels pdf
         /// </summary>
         /// <remarks>Returns a PDF version of the owner mailing labels</remarks>
         /// <param name="parameters">Array of local area and owner ids to generate labels for</param>
