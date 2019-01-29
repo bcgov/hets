@@ -234,16 +234,23 @@ namespace HetsApi.Controllers
             // get initial results - must be limited to user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
 
-            // only active projects
-            int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            // get fiscal year
+            HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
+                .First(x => x.DistrictId == districtId);
 
+            int? fiscalYear = status.CurrentFiscalYear;
+            if (fiscalYear == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            List<HetProject> projects = _context.HetProject.AsNoTracking()                
+            // fiscal year in the status table stores the "start" of the year
+            DateTime fiscalYearStart = new DateTime((int)fiscalYear, 3, 31);
+
+            // HETS-1005 - Time entry tab search issues
+            // * we need retrieve all projects that have been created this year
+            //   since users can add time records to closed projects
+            IQueryable<HetProject> projects = _context.HetProject.AsNoTracking()
                 .Where(x => x.DistrictId.Equals(districtId) &&
-                            x.ProjectStatusTypeId.Equals(statusId))
-                .ToList();
-
+                            x.AppCreateTimestamp > fiscalYearStart);
+            
             // convert Project Model to the "ProjectLite" Model
             List<ProjectLite> result = new List<ProjectLite>();
 
