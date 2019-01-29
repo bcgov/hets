@@ -1067,7 +1067,6 @@ function parseProject(project) {
   project.numberOfHires = project.numberOfHires || Object.keys(project.rentalAgreements).length;
 
   // UI display fields
-  project.label = `${ project.provincialProjectNumber } - ${ project.name }`;
   project.status = project.status || Constant.PROJECT_STATUS_CODE_ACTIVE;
   project.isActive = project.status === Constant.PROJECT_STATUS_CODE_ACTIVE;
   project.districtName = project.district.name;

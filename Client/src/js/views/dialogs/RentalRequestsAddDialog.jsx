@@ -212,7 +212,7 @@ var RentalRequestsAddDialog = React.createClass({
               { project ?
                 <div>{ project.name }</div>
                 :
-                <FilterDropdown id="projectId" fieldName="label" selectedId={ this.state.projectId } onSelect={ this.onProjectSelected } updateState={ this.updateState }
+                <FilterDropdown id="projectId" selectedId={ this.state.projectId } onSelect={ this.onProjectSelected } updateState={ this.updateState }
                   items={ projects } className="full-width"
                 />
               }
