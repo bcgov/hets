@@ -79,7 +79,7 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
       return { ...state, timeEntries: action.timeEntries };
 
     case Action.UPDATE_HIRING_RESPONSES_UI:
-      return { ...state, hiringResponses: action.timeEntries };
+      return { ...state, hiringResponses: action.hiringResponses };
 
     case Action.UPDATE_ROLES_UI:
       return { ...state, roles: action.roles };
