@@ -662,6 +662,7 @@ namespace HetsApi.Controllers
                     DistrictName = owners[0].LocalArea.ServiceArea.District.Name,
                     DistrictAddress = address,
                     DistrictContact = contact,
+                    LocalAreaName = owners[0].LocalArea.Name,
                     Owners = new List<HetOwner>()
                 };
 
@@ -692,7 +693,7 @@ namespace HetsApi.Controllers
                         //"Business Name: label and value instead"
                         owner.SharedKeyHeader = "Business Name: ";
 
-                        if (!string.IsNullOrEmpty(owner.Business.BceidLegalName))
+                        if (owner.Business != null && !string.IsNullOrEmpty(owner.Business.BceidLegalName))
                         {
                             owner.SharedKeyHeader = "Business Name: " + owner.Business.BceidLegalName;
                         }
