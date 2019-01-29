@@ -116,7 +116,7 @@ var RentalAgreementHeaderEditDialog = React.createClass({
               <Col md={6}>
                 <FormGroup controlId="projectId">
                   <ControlLabel>Project <sup>*</sup></ControlLabel>
-                  <DropdownControl id="projectId" fieldName="label" updateState={ this.updateState } items={ projects } selectedId={ this.state.projectId } blankLine="(None)" placeholder="(None)" />
+                  <DropdownControl id="projectId" updateState={ this.updateState } items={ projects } selectedId={ this.state.projectId } blankLine="(None)" placeholder="(None)" />
                 </FormGroup>
               </Col>
               <Col md={6}>
