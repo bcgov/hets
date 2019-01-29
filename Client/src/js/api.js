@@ -894,8 +894,14 @@ export function changeOwnerStatus(status) {
   });
 }
 
-export function verifyOwners(owners) {
-  return new ApiRequest('owners/verificationPdf').post(owners, { responseType: Constant.RESPONSE_TYPE_BLOB }).then((response) => {
+export function getStatusLettersPdf(params) {
+  return new ApiRequest('owners/verificationPdf').post(params, { responseType: Constant.RESPONSE_TYPE_BLOB }).then((response) => {
+    return response;
+  });
+}
+
+export function getMailingLabelsPdf(params) {
+  return new ApiRequest('owners/mailingLabelsPdf').post(params, { responseType: Constant.RESPONSE_TYPE_BLOB }).then((response) => {
     return response;
   });
 }
