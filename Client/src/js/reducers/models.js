@@ -127,6 +127,12 @@ const DEFAULT_MODELS = {
     loading: false,
     loaded: false,
   },
+  
+  hiringResponses: {
+    data: {},
+    loading: false,
+    loaded: false,
+  },
 
   roles: {},
   role: {},
@@ -350,6 +356,16 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     
     case Action.CLEAR_TIME_ENTRIES:
       return { ...state, timeEntries: { data: {}, loading: false, loaded: false } };
+    
+    // Hiring Responses
+    case Action.HIRING_RESPONSES_REQUEST: 
+      return { ...state, hiringResponses: { ...state.hiringResponses, loading: true, loaded: false } };
+    
+    case Action.UPDATE_HIRING_RESPONSES:
+      return { ...state, hiringResponses: { data: action.hiringResponses, loading: false, loaded: true } };
+    
+    case Action.CLEAR_HIRING_RESPONSES:
+      return { ...state, hiringResponses: { data: {}, loading: false, loaded: false } };
     
     // Rotation List
     case Action.RENTAL_REQUEST_ROTATION_LIST_REQUEST:
