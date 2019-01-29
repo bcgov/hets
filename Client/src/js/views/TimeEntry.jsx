@@ -49,7 +49,7 @@ var TimeEntry = React.createClass({
         equipmentIds: this.props.search.equipmentIds || [],
       },
       ui : {
-        sortField: this.props.ui.sortField || 'name',
+        sortField: this.props.ui.sortField || 'localAreaLabel',
         sortDesc: this.props.ui.sortDesc === true,
       },
     };
