@@ -54,6 +54,7 @@ namespace HetsData.Helpers
         public string DistrictName { get; set; }
         public string DistrictAddress { get; set; }
         public string DistrictContact { get; set; }
+        public string LocalAreaName { get; set; }
         public List<HetOwner> Owners { get; set; }
     }
 

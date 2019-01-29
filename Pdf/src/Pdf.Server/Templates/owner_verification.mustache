@@ -282,6 +282,10 @@
                                     <td>{{sharedKeyHeader}}</td>
                                     <td>{{sharedKey}}</td>
                                 </tr>
+                                <tr>
+                                    <td>Local Area:</td>
+                                    <td>{{localAreaName}}</td>
+                                </tr>
                             </table>
                         </div>
                     </td>
@@ -459,6 +463,10 @@
                                     <td>{{sharedKeyHeader}}</td>
                                     <td>{{sharedKey}}</td>
                                 </tr>
+                                <tr>
+                                    <td>Local Area:</td>
+                                    <td>{{localAreaName}}</td>
+                                </tr>
                             </table>
                         </div>
                     </td>
@@ -467,10 +475,9 @@
 
             <table id="equipment-table">
                 <tr id="equipment-table-header">
-                    <td style="width: 60px; padding: 5px 10px 5px 2px;">Still own this unit & wish to re-register?</td>
+                    <td style="width: 60px; padding: 5px 10px 5px 2px;">Still own & wish to re-register?</td>
                     <td>Equipment Id</td>
                     <td>Equipment Type</td>
-                    <td>Local Area</td>
                     <td>Year/Make/Model/Serial Number/Size</td>
                     <td>Attachments</td>
                     <td style="width: 100px">Owner Comments (sold, retired, etc.)</td>
@@ -481,7 +488,6 @@
                     <td>&nbsp;Yes&nbsp;&nbsp;&nbsp;No&nbsp;</td>
                     <td>{{equipmentCode}}</td>
                     <td>{{#districtEquipmentType}}{{districtEquipmentName}}{{/districtEquipmentType}}</td>
-                    <td>{{localArea.name}}</td>
                     <td>{{year}}/{{make}}/{{model}}/{{serialNumber}}/{{size}}</td>
                     <td id="list-column">
                         {{#equipmentAttachments}}<div style="margin: 2px 0 4px 0;">{{typeName}}</div>{{/equipmentAttachments}}

@@ -54,7 +54,6 @@ namespace HetsData.Helpers
         public string LocalArea { get; set; }
         public string Status { get; set; }
         public string OwnerName { get; set; }
-        public string OwnerCode { get; set; }
         public int? OwnerId { get; set; }
         public bool IsHired { get; set; }
         public string SeniorityString { get; set; }
@@ -63,6 +62,7 @@ namespace HetsData.Helpers
         public string Size { get; set; }
         public string Year { get; set; }
         public string EquipmentCode { get; set; }
+        public string EquipmentPrefix { get; set; }
         public int EquipmentNumber { get; set; }
         public int AttachmentCount { get; set; }
         public DateTime? LastVerifiedDate { get; set; }
@@ -226,7 +226,6 @@ namespace HetsData.Helpers
                 if (equipment.Owner != null)
                 {
                     equipmentLite.OwnerName = equipment.Owner.OrganizationName;
-                    equipmentLite.OwnerCode = equipment.Owner.OwnerCode;
                     equipmentLite.OwnerId = equipment.OwnerId;
                 }
 
@@ -247,6 +246,7 @@ namespace HetsData.Helpers
                 equipmentLite.Size = equipment.Size;
                 equipmentLite.Year = equipment.Year;
                 equipmentLite.EquipmentCode = equipment.EquipmentCode;
+                equipmentLite.EquipmentPrefix = Regex.Match(equipment.EquipmentCode, @"^[^\d-]+").Value;
                 equipmentLite.EquipmentNumber = int.Parse(Regex.Match(equipment.EquipmentCode, @"\d+").Value);
                 equipmentLite.AttachmentCount = CalculateAttachmentCount(equipment.HetEquipmentAttachment.ToList());
                 equipmentLite.LastVerifiedDate = equipment.LastVerifiedDate;
