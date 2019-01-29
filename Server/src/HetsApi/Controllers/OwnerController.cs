@@ -144,6 +144,7 @@ namespace HetsApi.Controllers
                 .Select(x => new OwnerLiteList
                 {
                     OwnerCode = x.Equipment.Owner.OwnerCode,
+                    OrganizationName = x.Equipment.Owner.OrganizationName,
                     Id = x.Equipment.Owner.OwnerId,
                     LocalAreaId = x.Equipment.LocalAreaId,
                     ProjectId = x.ProjectId
