@@ -19,10 +19,34 @@
         }
 
         #label-table {
+            width: 8in;
+            min-width: 8in;
             margin-top: 1in;
             margin-bottom: 1in;
             text-align: left;
             vertical-align: central;
+        }
+
+        #label-col {
+            width: 4in;
+            min-width: 4in;
+            height: 2in;
+            min-height: 2in;
+            padding: 5px 5px 5px 10px;
+        }
+
+        #label-col-spacer {
+            width: 0.25in;
+            min-width: 0.25in;
+            height: 2in;
+            min-height: 2in;            
+        }
+
+        #label-rol {
+            width: 8in;
+            min-width: 8in;
+            height: 2in;
+            min-height: 2in;
         }
 
         @media print {
@@ -35,9 +59,12 @@
 <body>
     <table id="label-table">
         {{#labelRow}}
-        <tr>
-            <td style="width: 4in; height: 2in; padding: 5px;">
+        <tr id="label-row">
+            <td id="label-col">
                 <table>
+                    <tr>
+                        <td>{{ownerColumn1.organizationName}}</td>
+                    </tr>
                     <tr>
                         <td>{{ownerColumn1.address1}}</td>
                     </tr>
@@ -46,8 +73,12 @@
                     </tr>
                 </table>
             </td>
-            <td style="width: 4in; height: 2in; padding: 5px;">
+            <td id="label-col-spacer">&nbsp;</td>
+            <td id="label-col">
                 <table>
+                    <tr>
+                        <td>{{ownerColumn2.organizationName}}</td>
+                    </tr>
                     <tr>
                         <td>{{ownerColumn2.address1}}</td>
                     </tr>

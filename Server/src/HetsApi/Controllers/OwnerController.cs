@@ -33,6 +33,12 @@ namespace HetsApi.Controllers
         public string StatusComment { get; set; }
     }
 
+    public class ReportParameters
+    {
+        public int?[] LocalAreas { get; set; }
+        public int?[] Owners { get; set; }
+    }
+
     #endregion
 
     /// <summary>
@@ -587,25 +593,21 @@ namespace HetsApi.Controllers
         /// Get owner verification pdf
         /// </summary>
         /// <remarks>Returns a PDF version of the owner verification notices</remarks>
-        /// <param name="localAreas">Array of local area id numbers to generate notices for</param>
-        /// <param name="owners">Array of owner id numbers to generate notices for</param>
+        /// <param name="parameters">Array of local area and owner id numbers to generate notices for</param>
         [HttpPost]
         [Route("verificationPdf")]
         [SwaggerOperation("OwnersIdVerificationPdfPost")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult OwnersIdVerificationPdfPost([FromQuery]string localAreas, [FromQuery]string owners)
+        public virtual IActionResult OwnersIdVerificationPdfPost([FromBody]ReportParameters parameters)
         {
-            int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
-            int?[] ownerArray = ArrayHelper.ParseIntArray(owners);
-
             // get equipment status
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            _logger.LogInformation("Owner Verification Notices Pdf [Owner Count: {0}]", ownerArray.Length);
+            _logger.LogInformation("Owner Verification Notices Pdf");
 
             // get owner records
-            List<HetOwner> ownerRecords = _context.HetOwner.AsNoTracking()
+            IQueryable<HetOwner> ownerRecords = _context.HetOwner.AsNoTracking()
                 .Include(x => x.PrimaryContact)
                 .Include(x => x.Business)
                 .Include(x => x.HetEquipment)
@@ -616,21 +618,31 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.DistrictEquipmentType)
                 .Include(x => x.LocalArea)
                     .ThenInclude(s => s.ServiceArea)
-                        .ThenInclude(d => d.District)
-                .Where(x => ownerArray.Contains(x.OwnerId) &&
-                            localAreasArray.Contains(x.LocalAreaId))
-                .ToList();
+                        .ThenInclude(d => d.District);
+
+            if (parameters.Owners?.Length > 0)
+            {
+                ownerRecords = ownerRecords.Where(x => parameters.Owners.Contains(x.OwnerId));
+            }
+
+            if (parameters.LocalAreas?.Length > 0)
+            {
+                ownerRecords = ownerRecords.Where(x => parameters.LocalAreas.Contains(x.LocalAreaId));
+            }
+
+            // convert to list
+            List<HetOwner> ownerList = ownerRecords.ToList();
 
             // strip out inactive and archived equipment
-            foreach (HetOwner owner in ownerRecords)
+            foreach (HetOwner owner in ownerList)
             {
                 owner.HetEquipment = owner.HetEquipment.Where(x => x.EquipmentStatusTypeId == statusId).ToList();
             }
 
-            if (ownerRecords.Count > 0)
+            if (ownerList.Any())
             {
                 // get address and contact info
-                string address = ownerRecords[0].LocalArea.ServiceArea.Address;
+                string address = ownerList[0].LocalArea.ServiceArea.Address;
 
                 if (!string.IsNullOrEmpty(address))
                 {
@@ -643,7 +655,7 @@ namespace HetsApi.Controllers
                     address = "";
                 }
 
-                string contact = $"Phone: {ownerRecords[0].LocalArea.ServiceArea.Phone} | Fax: {ownerRecords[0].LocalArea.ServiceArea.Fax}";
+                string contact = $"Phone: {ownerList[0].LocalArea.ServiceArea.Phone} | Fax: {ownerList[0].LocalArea.ServiceArea.Fax}";
 
                 // generate pdf document name [unique portion only]
                 string fileName = "OwnerVerification";
@@ -653,12 +665,12 @@ namespace HetsApi.Controllers
                 {
                     ReportDate = DateTime.Now.ToString("yyyy-MM-dd"),
                     Title = fileName,
-                    DistrictId = ownerRecords[0].LocalArea.ServiceArea.District.DistrictId,
-                    MinistryDistrictId = ownerRecords[0].LocalArea.ServiceArea.District.MinistryDistrictId,
-                    DistrictName = ownerRecords[0].LocalArea.ServiceArea.District.Name,
+                    DistrictId = ownerList[0].LocalArea.ServiceArea.District.DistrictId,
+                    MinistryDistrictId = ownerList[0].LocalArea.ServiceArea.District.MinistryDistrictId,
+                    DistrictName = ownerList[0].LocalArea.ServiceArea.District.Name,
                     DistrictAddress = address,
                     DistrictContact = contact,
-                    LocalAreaName = ownerRecords[0].LocalArea.Name,
+                    LocalAreaName = ownerList[0].LocalArea.Name,
                     Owners = new List<HetOwner>()
                 };
 
@@ -795,30 +807,36 @@ namespace HetsApi.Controllers
         /// Get owner verification pdf
         /// </summary>
         /// <remarks>Returns a PDF version of the owner mailing labels</remarks>
-        /// <param name="localAreas">Array of local area ids to generate labels for</param>
-        /// <param name="owners">Array of owner ids to generate labels for</param>
+        /// <param name="parameters">Array of local area and owner ids to generate labels for</param>
         [HttpPost]
         [Route("mailingLabelsPdf")]
         [SwaggerOperation("OwnersIdMailingLabelsPdfPost")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult OwnersIdMailingLabelsPdfPost([FromQuery]string localAreas, [FromQuery]string owners)
+        public virtual IActionResult OwnersIdMailingLabelsPdfPost([FromBody]ReportParameters parameters)
         {
-            int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
-            int?[] ownerArray = ArrayHelper.ParseIntArray(owners);
-            
-            _logger.LogInformation("Owner Mailing Labels Pdf [Owner Count: {0}]", ownerArray.Length);
+            _logger.LogInformation("Owner Mailing Labels Pdf");
 
             // get owner records
-            List<HetOwner> ownerRecords = _context.HetOwner.AsNoTracking()
+            IQueryable<HetOwner> ownerRecords = _context.HetOwner.AsNoTracking()
                 .Include(x => x.PrimaryContact)                
                 .Include(x => x.LocalArea)
                     .ThenInclude(s => s.ServiceArea)
-                        .ThenInclude(d => d.District)
-                .Where(x => ownerArray.Contains(x.OwnerId) &&
-                            localAreasArray.Contains(x.LocalAreaId))
-                .ToList();
-            
-            if (ownerRecords.Count > 0)
+                        .ThenInclude(d => d.District);
+
+            if (parameters.Owners.Length > 0)
+            {
+                ownerRecords = ownerRecords.Where(x => parameters.Owners.Contains(x.OwnerId));
+            }
+
+            if (parameters.LocalAreas?.Length > 0)
+            {
+                ownerRecords = ownerRecords.Where(x => parameters.LocalAreas.Contains(x.LocalAreaId));
+            }
+
+            // convert to list
+            List<HetOwner> ownerList = ownerRecords.ToList();
+
+            if (ownerList.Any())
             {                
                 // generate pdf document name [unique portion only]
                 string fileName = "MailingLabels";
@@ -828,7 +846,7 @@ namespace HetsApi.Controllers
                 {
                     ReportDate = DateTime.Now.ToString("yyyy-MM-dd"),
                     Title = fileName,
-                    DistrictId = ownerRecords[0].LocalArea.ServiceArea.District.DistrictId,
+                    DistrictId = ownerList[0].LocalArea.ServiceArea.District.DistrictId,
                     LabelRow = new List<MailingLabelRowModel>()
                 };
 
