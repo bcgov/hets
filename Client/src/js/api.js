@@ -418,7 +418,7 @@ function parseEquipment(equipment) {
 }
 
 function generateSortableEquipmentCode(equipment) {
-  return equipment.ownerCode && equipment.equipmentNumber ? `${equipment.ownerCode}${_.padStart(equipment.equipmentNumber, 3, '0')}` : equipment.equipmentCode;
+  return equipment.equipmentPrefix && equipment.equipmentNumber ? `${equipment.equipmentPrefix}${_.padStart(equipment.equipmentNumber, 3, '0')}` : equipment.equipmentCode;
 }
 
 export function searchEquipmentList(params) {

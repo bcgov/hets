@@ -32,6 +32,7 @@ namespace HetsData.Helpers
         public string OwnerCode { get; set; }
         public int EquipmentId { get; set; }
         public string EquipmentCode { get; set; }
+        public string EquipmentPrefix { get; set; }
         public int EquipmentNumber { get; set; }
         public string Make { get; set; }
         public string Model { get; set; }
@@ -72,6 +73,7 @@ namespace HetsData.Helpers
 
                 timeLite.EquipmentId = timeRecord.RentalAgreement.Equipment.EquipmentId;
                 timeLite.EquipmentCode = timeRecord.RentalAgreement.Equipment.EquipmentCode;
+                timeLite.EquipmentPrefix = Regex.Match(timeRecord.RentalAgreement.Equipment.EquipmentCode, @"^[^\d-]+").Value;
                 timeLite.EquipmentNumber = int.Parse(Regex.Match(timeRecord.RentalAgreement.Equipment.EquipmentCode, @"\d+").Value);
                 timeLite.Make = timeRecord.RentalAgreement.Equipment.Make;
                 timeLite.Model = timeRecord.RentalAgreement.Equipment.Model;                
