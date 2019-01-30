@@ -25,6 +25,7 @@ namespace HetsData.Helpers
     public class OwnerWcbCgl
     {        
         public int Id { get; set; }
+        public int ServiceAreaId { get; set; }
         public string LocalAreaName { get; set; }
         public string OwnerCode { get; set; }
         public string OrganizationName { get; set; }
@@ -229,6 +230,7 @@ namespace HetsData.Helpers
 
                 if (owner.LocalArea != null)
                 {
+                    ownerLite.ServiceAreaId = owner.LocalArea.ServiceArea.ServiceAreaId;
                     ownerLite.LocalAreaName = owner.LocalArea.Name;
                 }
 

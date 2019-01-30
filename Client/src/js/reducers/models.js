@@ -133,6 +133,12 @@ const DEFAULT_MODELS = {
     loading: false,
     loaded: false,
   },
+  
+  ownersCoverage: {
+    data: {},
+    loading: false,
+    loaded: false,
+  },
 
   roles: {},
   role: {},
@@ -366,6 +372,16 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     
     case Action.CLEAR_HIRING_RESPONSES:
       return { ...state, hiringResponses: { data: {}, loading: false, loaded: false } };
+    
+    // Owners' Coverage
+    case Action.OWNERS_COVERAGE_REQUEST: 
+      return { ...state, ownersCoverage: { ...state.ownersCoverage, loading: true, loaded: false } };
+    
+    case Action.UPDATE_OWNERS_COVERAGE:
+      return { ...state, ownersCoverage: { data: action.ownersCoverage, loading: false, loaded: true } };
+    
+    case Action.CLEAR_OWNERS_COVERAGE:
+      return { ...state, ownersCoverage: { data: {}, loading: false, loaded: false } };
     
     // Rotation List
     case Action.RENTAL_REQUEST_ROTATION_LIST_REQUEST:

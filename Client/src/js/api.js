@@ -1153,6 +1153,19 @@ export function searchHiringReport(params) {
   });
 }
 
+export function searchOwnersCoverage(params) {
+  store.dispatch({ type: Action.OWNERS_COVERAGE_REQUEST });
+  return new ApiRequest('/owners/wcbCglReport').get(params).then(response => {
+    var ownersCoverage = normalize(response.data);
+
+    _.map(ownersCoverage, entry => {
+      entry.localAreaLabel = `${ entry.serviceAreaId } - ${ entry.localAreaName }`;
+    });
+
+    store.dispatch({ type: Action.UPDATE_OWNERS_COVERAGE, ownersCoverage: ownersCoverage });
+  });
+}
+
 export function getProjects() {
   return new ApiRequest('/projects').get().then(response => {
     var projects = normalize(response.data);
