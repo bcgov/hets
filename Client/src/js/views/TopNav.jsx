@@ -107,6 +107,9 @@ var TopNav = React.createClass({
                 <LinkContainer to={{ pathname: `/${ Constant.HIRING_REPORT_PATHNAME }` }} active={ currentPathStartsWith(Constant.HIRING_REPORT_PATHNAME) }>
                   <MenuItem>Owner's Equipment - Reason</MenuItem>
                 </LinkContainer>
+                <LinkContainer to={{ pathname: `/${ Constant.OWNERS_COVERAGE_PATHNAME }` }} active={ currentPathStartsWith(Constant.OWNERS_COVERAGE_PATHNAME) }>
+                  <MenuItem>WCB / CGL Coverage</MenuItem>
+                </LinkContainer>
               </NavDropdown>
               { this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) &&
                 <LinkContainer to={{ pathname: `/${ Constant.DISTRICT_ADMIN_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.DISTRICT_ADMIN_PATHNAME) }>

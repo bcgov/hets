@@ -14,6 +14,7 @@ export const DISTRICT_ADMIN_PATHNAME = 'district-admin';
 export const SENIORITY_LIST_PATHNAME = 'reports/seniority-list';
 export const STATUS_LETTERS_REPORT_PATHNAME = 'reports/status-letters';
 export const HIRING_REPORT_PATHNAME = 'reports/owners-equipment-reason';
+export const OWNERS_COVERAGE_PATHNAME = 'reports/wcb-cgl-coverage';
 export const TIME_ENTRY_PATHNAME = 'time-entry';
 export const VERSION_PATHNAME = 'version';
 export const BUSINESS_PORTAL_PATHNAME = '/business';

@@ -28,3 +28,37 @@
     float: right;
   }
 }
+
+#wcg-cgl-coverage {
+  #wcg-cgl-coverage-buttons {
+    float: right;
+  }
+
+  #wcg-cgl-coverage-filters {
+    > div, > button {
+      margin: 0 5px 5px 5px;
+      vertical-align: bottom;
+    }
+
+    .input-container {
+      display: inline-block;
+
+      .dropdown {
+        float: none;
+      }
+
+      .control-label {
+        font-weight: normal;
+        display: block;
+      }
+    }
+  
+    .date-control {
+      display: inline-block;
+
+      label {
+        float: none;
+      }
+    }
+  }
+}
