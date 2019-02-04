@@ -78,28 +78,18 @@
         #contact-info {
             width: 100%;
             table-layout: fixed;
+            font-size: 10pt;
+            letter-spacing: normal;
+            line-height: 12px;
+            color: #000000;
+            text-align: left;
+            border: solid;
+            border-width: 1px;
+            border-color: #808080;
         }
 
         #contact-info td {
             vertical-align: top;
-        }
-
-        #owner-contact-left {
-            font-size: 10pt;
-            letter-spacing: normal;
-            line-height: 12px;
-            color: #000000;
-            text-align: left;
-            min-width: 800px;
-            width: 800px;
-        }
-
-        #owner-contact-right {
-            font-size: 10pt;
-            letter-spacing: normal;
-            line-height: 12px;
-            color: #000000;
-            text-align: left;
         }
 
         #non-equipment-table {
@@ -217,66 +207,62 @@
 
             <table id="contact-info">
                 <tr>
+                    <td style="width: 800px;">
+                        <table>
+                            <tr>
+                                <td style="width: 60px;">Owner: </td>
+                                <td style="width: 650px;">{{organizationName}}</td>
+                            </tr>
+                            <tr>
+                                <td>Address: </td>
+                                <td>{{address1}}</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>{{address2}}{{#address2}}, {{/address2}}{{city}}{{#city}}, {{/city}}{{province}}  {{postalCode}}</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="width: 30px;">&nbsp;</td>
                     <td>
-                        <div id="owner-contact-left">
-                            <table>
-                                <tr>
-                                    <td>Owner: </td>
-                                    <td>{{organizationName}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Address: </td>
-                                    <td>{{address1}}</td>
-                                </tr>
-                                <tr>
-                                    <td>&nbsp;</td>
-                                    <td>{{address2}}{{#address2}}, {{/address2}}{{city}}{{#city}}, {{/city}}{{province}}  {{postalCode}}</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </td>                    
-
-                    <td>
-                        <div id="owner-contact-right">
-                            <table>
-                                <tr>
-                                    <td>Date: </td>
-                                    <td>{{reportDate}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Owner Code: </td>
-                                    <td>{{ownerCode}}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{sharedKeyHeader}}</td>
-                                    <td>{{sharedKey}}</td>
-                                </tr>                                
-                                {{#primaryContact.workPhoneNumber}}
-                                <tr>
-                                    <td>Work: </td>
-                                    <td>{{primaryContact.workPhoneNumber}}</td>
-                                </tr>
-                                {{/primaryContact.workPhoneNumber}}
-                                {{#primaryContact.mobilePhoneNumber}}
-                                <tr>
-                                    <td>Mobile: </td>
-                                    <td>{{primaryContact.mobilePhoneNumber}}</td>
-                                </tr>
-                                {{/primaryContact.mobilePhoneNumber}}
-                                {{#primaryContact.faxPhoneNumber}}
-                                <tr>
-                                    <td>Fax: </td>
-                                    <td>{{primaryContact.faxPhoneNumber}}</td>
-                                </tr>
-                                {{/primaryContact.faxPhoneNumber}}
-                                {{#primaryContact.emailAddress}}
-                                <tr>
-                                    <td>Email: </td>
-                                    <td>{{primaryContact.emailAddress}}</td>
-                                </tr>
-                                {{/primaryContact.emailAddress}}
-                            </table>
-                        </div>
+                        <table>
+                            <tr>
+                                <td style="width: 80px;">Date: </td>
+                                <td>{{reportDate}}</td>
+                            </tr>
+                            <tr>
+                                <td>Owner Code: </td>
+                                <td>{{ownerCode}}</td>
+                            </tr>
+                            <tr>
+                                <td>{{sharedKeyHeader}}</td>
+                                <td>{{sharedKey}}</td>
+                            </tr>
+                            {{#primaryContact.workPhoneNumber}}
+                            <tr>
+                                <td>Work: </td>
+                                <td>{{primaryContact.workPhoneNumber}}</td>
+                            </tr>
+                            {{/primaryContact.workPhoneNumber}}
+                            {{#primaryContact.mobilePhoneNumber}}
+                            <tr>
+                                <td>Mobile: </td>
+                                <td>{{primaryContact.mobilePhoneNumber}}</td>
+                            </tr>
+                            {{/primaryContact.mobilePhoneNumber}}
+                            {{#primaryContact.faxPhoneNumber}}
+                            <tr>
+                                <td>Fax: </td>
+                                <td>{{primaryContact.faxPhoneNumber}}</td>
+                            </tr>
+                            {{/primaryContact.faxPhoneNumber}}
+                            {{#primaryContact.emailAddress}}
+                            <tr>
+                                <td>Email: </td>
+                                <td>{{primaryContact.emailAddress}}</td>
+                            </tr>
+                            {{/primaryContact.emailAddress}}
+                        </table>
                     </td>
                 </tr>
             </table>
@@ -387,66 +373,62 @@
 
             <table id="contact-info">
                 <tr>
-                    <td>
-                        <div id="owner-contact-left">
-                            <table>
-                                <tr>
-                                    <td>Owner: </td>
-                                    <td>{{organizationName}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Address: </td>
-                                    <td>{{address1}}</td>
-                                </tr>
-                                <tr>
-                                    <td>&nbsp;</td>
-                                    <td>{{address2}}{{#address2}}, {{/address2}}{{city}}{{#city}}, {{/city}}{{province}}  {{postalCode}}</td>
-                                </tr>
-                            </table>
-                        </div>
+                    <td style="width: 800px;">
+                        <table>
+                            <tr>
+                                <td style="width: 60px;">Owner: </td>
+                                <td style="width: 650px;">{{organizationName}}</td>
+                            </tr>
+                            <tr>
+                                <td>Address: </td>
+                                <td>{{address1}}</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>{{address2}}{{#address2}}, {{/address2}}{{city}}{{#city}}, {{/city}}{{province}}  {{postalCode}}</td>
+                            </tr>
+                        </table>
                     </td>
-
+                    <td style="width: 30px;">&nbsp;</td>
                     <td>
-                        <div id="owner-contact-right">
-                            <table>
-                                <tr>
-                                    <td>Date: </td>
-                                    <td>{{reportDate}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Owner Code: </td>
-                                    <td>{{ownerCode}}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{sharedKeyHeader}}</td>
-                                    <td>{{sharedKey}}</td>
-                                </tr>
-                                {{#primaryContact.workPhoneNumber}}
-                                <tr>
-                                    <td>Work: </td>
-                                    <td>{{primaryContact.workPhoneNumber}}</td>
-                                </tr>
-                                {{/primaryContact.workPhoneNumber}}
-                                {{#primaryContact.mobilePhoneNumber}}
-                                <tr>
-                                    <td>Mobile: </td>
-                                    <td>{{primaryContact.mobilePhoneNumber}}</td>
-                                </tr>
-                                {{/primaryContact.mobilePhoneNumber}}
-                                {{#primaryContact.faxPhoneNumber}}
-                                <tr>
-                                    <td>Fax: </td>
-                                    <td>{{primaryContact.faxPhoneNumber}}</td>
-                                </tr>
-                                {{/primaryContact.faxPhoneNumber}}
-                                {{#primaryContact.emailAddress}}
-                                <tr>
-                                    <td>Email: </td>
-                                    <td>{{primaryContact.emailAddress}}</td>
-                                </tr>
-                                {{/primaryContact.emailAddress}}
-                            </table>
-                        </div>
+                        <table>
+                            <tr>
+                                <td style="width: 80px;">Date: </td>
+                                <td>{{reportDate}}</td>
+                            </tr>
+                            <tr>
+                                <td>Owner Code: </td>
+                                <td>{{ownerCode}}</td>
+                            </tr>
+                            <tr>
+                                <td>{{sharedKeyHeader}}</td>
+                                <td>{{sharedKey}}</td>
+                            </tr>
+                            {{#primaryContact.workPhoneNumber}}
+                            <tr>
+                                <td>Work: </td>
+                                <td>{{primaryContact.workPhoneNumber}}</td>
+                            </tr>
+                            {{/primaryContact.workPhoneNumber}}
+                            {{#primaryContact.mobilePhoneNumber}}
+                            <tr>
+                                <td>Mobile: </td>
+                                <td>{{primaryContact.mobilePhoneNumber}}</td>
+                            </tr>
+                            {{/primaryContact.mobilePhoneNumber}}
+                            {{#primaryContact.faxPhoneNumber}}
+                            <tr>
+                                <td>Fax: </td>
+                                <td>{{primaryContact.faxPhoneNumber}}</td>
+                            </tr>
+                            {{/primaryContact.faxPhoneNumber}}
+                            {{#primaryContact.emailAddress}}
+                            <tr>
+                                <td>Email: </td>
+                                <td>{{primaryContact.emailAddress}}</td>
+                            </tr>
+                            {{/primaryContact.emailAddress}}
+                        </table>
                     </td>
                 </tr>
             </table>
@@ -457,13 +439,13 @@
 
             <table id="equipment-table">
                 <tr id="equipment-table-header">
-                    <td style="width: 80px; padding: 5px 10px 5px 2px;">Still own & wish to re-register?</td>
+                    <td style="width: 100px; padding: 5px 10px 5px 2px;">Still own & wish to re-register?</td>
                     <td>Local Area</td>
                     <td>Equipment Id</td>
                     <td>Equipment Type</td>
                     <td>Year/Make/Model/Serial Number/Size</td>
                     <td>Attachments</td>
-                    <td style="width: 260px;">Owner Comments (sold, retired, etc.)</td>
+                    <td style="width: 240px; padding: 5px 10px 5px 2px;">Owner Comments (sold, retired, etc.)</td>
                 </tr>
 
                 {{#equipment}}
