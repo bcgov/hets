@@ -28,6 +28,7 @@ var RentalAgreementsEditDialog = React.createClass({
       estimateStartWork: this.props.rentalAgreement.estimateStartWork || '',
       estimateHours: this.props.rentalAgreement.estimateHours || 0,
       datedOn: this.props.rentalAgreement.datedOn || '',
+      agreementCity: this.props.rentalAgreement.agreementCity || '',
 
       estimateStartWorkError: '',
       estimateHoursError: '',
@@ -87,6 +88,7 @@ var RentalAgreementsEditDialog = React.createClass({
       estimateStartWork: this.state.estimateStartWork,
       estimateHours: this.state.estimateHours,
       datedOn: this.state.datedOn,
+      agreementCity: this.state.agreementCity,
     }});
   },
 
@@ -123,9 +125,15 @@ var RentalAgreementsEditDialog = React.createClass({
             <Row>
               <Col md={6}>
                 <FormGroup controlId="datedOn" validationState={ this.state.datedOnError ? 'error' : null }>
-                  <ControlLabel>Dated At</ControlLabel>
-                  <DateControl id="datedOn" disabled={ isReadOnly } date={ this.state.datedOn } updateState={ this.updateState } title="Dated At" />
+                  <ControlLabel>Dated On</ControlLabel>
+                  <DateControl id="datedOn" disabled={ isReadOnly } date={ this.state.datedOn } updateState={ this.updateState } title="Dated On" />
                   <HelpBlock>{ this.state.datedOnError }</HelpBlock>
+                </FormGroup>
+              </Col>
+              <Col md={6}>
+                <FormGroup controlId="agreementCity">
+                  <ControlLabel>Dated At</ControlLabel>
+                  <FormInputControl type="text" value={ this.state.agreementCity } updateState={ this.updateState } />
                 </FormGroup>
               </Col>
             </Row>

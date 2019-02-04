@@ -23,8 +23,6 @@ import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
 
-import { formatDateTimeUTCToLocal } from '../utils/date';
-
 var Owners = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
@@ -154,37 +152,6 @@ var Owners = React.createClass({
     window.print();
   },
 
-  verifyOwners(ownerList) {
-    var owners = _.map(ownerList, owner => {
-      return owner.id;
-    });
-    Api.verifyOwners(owners).then((response) => {
-
-      var filename = 'StatusLetters-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.pdf';
-
-      var blob;
-      if (window.navigator.msSaveBlob) {
-        blob = window.navigator.msSaveBlob(response, filename);
-      } else {
-        blob = new Blob([response], {type: 'image/pdf'}); 
-      }
-      //Create a link element, hide it, direct 
-      //it towards the blob, and then 'click' it programatically
-      let a = document.createElement('a');
-      a.style.cssText = 'display: none';
-      document.body.appendChild(a);
-      //Create a DOMString representing the blob 
-      //and point the link element towards it
-      let url = window.URL.createObjectURL(blob);
-      a.href = url;
-      a.download = filename;
-      //programatically click the link to trigger the download
-      a.click();
-      //release the reference to the file by revoking the Object URL
-      window.URL.revokeObjectURL(url);
-    });
-  },
-
   renderResults(ownerList, addOwnerButton) {
     if (Object.keys(this.props.ownerList.data).length === 0) { return <Alert bsStyle="success">No owners { addOwnerButton }</Alert>; }
 
@@ -246,9 +213,6 @@ var Owners = React.createClass({
     return <div id="owners-list">
       <PageHeader>Owners { resultCount }
         <div id="owners-buttons">
-          <TooltipButton className="mr-5" onClick={ this.verifyOwners.bind(this, ownerList) } disabled={ !this.props.ownerList.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
-            Status Letters
-          </TooltipButton>
           <ButtonGroup>
             <TooltipButton onClick={ this.print } disabled={ !this.props.ownerList.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
               <Glyphicon glyph="print" title="Print" />

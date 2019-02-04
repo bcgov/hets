@@ -577,8 +577,12 @@ namespace HetsApi.Controllers
                     // generate the rental agreement number
                     string agreementNumber = RentalAgreementHelper.GetRentalAgreementNumber(item.Equipment, _context);
 
+                    // get user info - agreement city
+                    User user = UserAccountHelper.GetUser(_context, _httpContext);
+                    string agreementCity = user.AgreementCity;
+
                     int? rateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodHourly, _context);
-                    if (rateTypeId == null) return new ObjectResult(new HetsResponse("HETS-24", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+                    if (rateTypeId == null) return new ObjectResult(new HetsResponse("HETS-24", ErrorViewModel.GetDescription("HETS-24", _configuration)));
 
                     rentalAgreement = new HetRentalAgreement
                     {
@@ -587,6 +591,7 @@ namespace HetsApi.Controllers
                         EquipmentId = tempEquipmentId,
                         Number = agreementNumber,
                         RatePeriodTypeId = (int)rateTypeId,
+                        AgreementCity = agreementCity
                     };
 
                     // add overtime rates
@@ -880,7 +885,90 @@ namespace HetsApi.Controllers
 
             return new ObjectResult(new HetsResponse(notes));
         }
-        
-        #endregion          
+
+        #endregion
+
+        #region Rental Request Hiring Report
+
+        /// <summary>
+        /// Rental Request Hiring Report
+        /// </summary>
+        /// <remarks>Used for the rental request search page.</remarks>
+        /// <param name="localAreas">Local Areas (comma separated list of id numbers)</param>
+        /// <param name="projects">Projects (comma separated list of id numbers)</param>
+        /// <param name="owners">Owners (comma separated list of id numbers)</param>
+        /// <param name="equipment">Equipment (comma separated list of id numbers)</param>
+        [HttpGet]
+        [Route("hireReport")]
+        [SwaggerOperation("RentalRequestsHiresGet")]
+        [SwaggerResponse(200, type: typeof(List<RentalRequestHires>))]
+        public virtual IActionResult RentalRequestsHiresGet([FromQuery]string localAreas, [FromQuery]string projects, 
+            [FromQuery]string owners, [FromQuery]string equipment)
+        {
+            int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
+            int?[] projectArray = ArrayHelper.ParseIntArray(projects);
+            int?[] ownerArray = ArrayHelper.ParseIntArray(owners);
+            int?[] equipmentArray = ArrayHelper.ParseIntArray(equipment);
+           
+            // get initial results - must be limited to user's district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            // get fiscal year
+            HetDistrictStatus district = _context.HetDistrictStatus.AsNoTracking()
+                .FirstOrDefault(x => x.DistrictId == districtId);
+
+            if (district?.CurrentFiscalYear == null) return new ObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
+
+            int fiscalYear = (int)district.CurrentFiscalYear; // status table uses the start of the year
+            DateTime fiscalStart = new DateTime(fiscalYear, 3, 31); // look for all records AFTER the 31st
+
+            IQueryable<HetRentalRequestRotationList> data = _context.HetRentalRequestRotationList.AsNoTracking()
+                .Include(x => x.RentalRequest)
+                    .ThenInclude(y => y.LocalArea)
+                        .ThenInclude(z => z.ServiceArea)
+                .Include(x => x.RentalRequest)
+                    .ThenInclude(y => y.Project)
+                .Include(x => x.Equipment)
+                    .ThenInclude(y => y.Owner)
+                .Where(x => x.RentalRequest.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
+                            x.AskedDateTime > fiscalStart &&
+                            (x.IsForceHire == true || x.OfferResponse.ToLower() == "no"));
+
+            if (localAreasArray != null && localAreasArray.Length > 0)
+            {
+                data = data.Where(x => localAreasArray.Contains(x.RentalRequest.LocalAreaId));
+            }
+
+            if (projectArray != null && projectArray.Length > 0)
+            {
+                data = data.Where(x => projectArray.Contains(x.RentalRequest.ProjectId));
+            }
+
+            if (ownerArray != null && ownerArray.Length > 0)
+            {
+                data = data.Where(x => ownerArray.Contains(x.Equipment.OwnerId));                
+            }
+
+            if (equipmentArray != null && equipmentArray.Length > 0)
+            {
+                data = data.Where(x => equipmentArray.Contains(x.EquipmentId));
+            }
+
+            // convert Rental Request Model to the "RentalRequestHires" Model
+            List<RentalRequestHires> result = new List<RentalRequestHires>();
+
+            foreach (HetRentalRequestRotationList item in data)
+            {
+                HetUser user = _context.HetUser.AsNoTracking()
+                    .FirstOrDefault(x => x.SmUserId == item.AppCreateUserid);
+
+                result.Add(RentalRequestHelper.ToHiresModel(item, user));
+            }
+
+            // return to the client            
+            return new ObjectResult(new HetsResponse(result));
+        }
+
+        #endregion
     }
 }

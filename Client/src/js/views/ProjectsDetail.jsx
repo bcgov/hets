@@ -71,7 +71,7 @@ var ProjectsDetail = React.createClass({
 
       contact: {},
       
-      rentalRequest: {},
+      rentalAgreement: {},
 
       // Contacts
       uiContacts : {
@@ -219,8 +219,8 @@ var ProjectsDetail = React.createClass({
     });
   },
 
-  openTimeEntryDialog(rentalRequest) {
-    this.setState({ rentalRequest: rentalRequest }, () => {
+  openTimeEntryDialog(rentalAgreement) {
+    this.setState({ rentalAgreement: rentalAgreement }, () => {
       this.setState({ showTimeEntryDialog: true });
     });
   },
@@ -339,7 +339,9 @@ var ProjectsDetail = React.createClass({
                       Request
                         </Link>
                       </td>
+                      <td>{ item.localAreaName }</td>
                       <td>{ item.equipmentTypeName }</td>
+                      <td>{ item.equipmentCount }</td>
                       <td>TBD</td>
                       <td>N/A</td>
                       <td>N/A</td>
@@ -361,7 +363,9 @@ var ProjectsDetail = React.createClass({
                           { item.equipmentCode }
                         </Link>
                       </td>
+                      <td>{ item.localAreaName }</td>
                       <td>{ item.equipmentTypeName }</td>
+                      <td>&nbsp;</td>
                       <td>{ item.equipment.equipmentDetails }</td>
                       <td>{ item.isCompleted ? 
                         'Completed' 
@@ -395,7 +399,9 @@ var ProjectsDetail = React.createClass({
 
                   var headers = [
                     { field: 'equipmentCode',     title: 'ID'               },
+                    { field: 'localAreaName',     title: 'Local Area'       },
                     { field: 'equipmentTypeName', title: 'Type'             },
+					{ field: 'equipmentCount',    title: 'Count'            },
                     { field: 'equipmentMake',     title: 'Year Make/Model/Size'  },
                     { field: 'lastTimeRecord',    title: 'Time Entry'       },
                     { field: 'release',           title: 'Release'          },
@@ -502,7 +508,8 @@ var ProjectsDetail = React.createClass({
         <TimeEntryDialog
           show={ this.state.showTimeEntryDialog }
           onClose={ this.closeTimeEntryDialog }
-          activeRentalRequest={ this.state.rentalRequest }
+          multipleEntryAllowed={ false }
+          rentalAgreementId={ this.state.rentalAgreement.id }
         />
         }
         { this.state.showNotesDialog &&

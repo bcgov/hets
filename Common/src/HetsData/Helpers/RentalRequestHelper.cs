@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using HetsData.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -22,7 +23,31 @@ namespace HetsData.Helpers
         public int? ProjectId { get; set; }
         public DateTime? ExpectedStartDate { get; set; }
         public DateTime? ExpectedEndDate { get; set; }
-    }    
+    }
+
+    public class RentalRequestHires
+    {
+        public int Id { get; set; }
+        public int OwnerId { get; set; }
+        public int EquipmentId { get; set; }
+        public string LocalAreaName { get; set; }
+        public int ServiceAreaId { get; set; }
+        public string OwnerCode { get; set; }
+        public string CompanyName { get; set; }
+        public string EquipmentCode { get; set; }
+        public string EquipmentPrefix { get; set; }
+        public int EquipmentNumber { get; set; }
+        public string EquipmentMake { get; set; }
+        public string EquipmentModel { get; set; }
+        public string EquipmentSize { get; set; }
+        public string EquipmentYear { get; set; }
+        public string ProjectNumber { get; set; }
+        public DateTime? NoteDate { get; set; }
+        public string NoteType { get; set; }
+        public string Reason { get; set; }
+        public string UserId { get; set; }
+        public string UserName { get; set; }
+    }
 
     #endregion
 
@@ -195,6 +220,77 @@ namespace HetsData.Helpers
                 requestLite.EquipmentCount = request.EquipmentCount;
                 requestLite.ExpectedEndDate = request.ExpectedEndDate;
                 requestLite.ExpectedStartDate = request.ExpectedStartDate;                
+            }
+
+            return requestLite;
+        }
+
+        #endregion
+
+        #region Convert full equipment record to a "Hires" version
+
+        /// <summary>
+        /// Convert to Rental Request Hires (Lite) Model
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public static RentalRequestHires ToHiresModel(HetRentalRequestRotationList request, HetUser user)
+        {
+            RentalRequestHires requestLite = new RentalRequestHires();
+
+            if (request != null)
+            {
+                requestLite.Id = request.RentalRequestRotationListId;
+                requestLite.OwnerId = request.Equipment.OwnerId ?? 0;
+                requestLite.EquipmentId = request.EquipmentId ?? 0;
+
+                requestLite.LocalAreaName = request.RentalRequest.LocalArea.Name;
+                requestLite.ServiceAreaId = request.RentalRequest.LocalArea.ServiceArea.ServiceAreaId;
+
+                // owner data
+                requestLite.OwnerCode = request.Equipment.Owner.OwnerCode;
+                requestLite.CompanyName = request.Equipment.Owner.OrganizationName;
+                
+                // equipment data
+                requestLite.EquipmentCode = request.Equipment.EquipmentCode;
+                requestLite.EquipmentPrefix = Regex.Match(request.Equipment.EquipmentCode, @"^[^\d-]+").Value;
+                requestLite.EquipmentNumber = int.Parse(Regex.Match(request.Equipment.EquipmentCode, @"\d+").Value);
+                requestLite.EquipmentMake = request.Equipment.Make;
+                requestLite.EquipmentModel = request.Equipment.Model;
+                requestLite.EquipmentSize = request.Equipment.Size;
+                requestLite.EquipmentYear = request.Equipment.Year;
+                
+                // project data
+                requestLite.ProjectNumber = request.RentalRequest.Project.ProvincialProjectNumber;
+
+                requestLite.NoteDate = request.OfferResponseDatetime;
+
+                // Note Type -
+                // * Not hired (for recording the response NO for hiring.
+                // * Force Hire -For force hiring an equipment
+                requestLite.NoteType = "Not Hired"; // default
+                requestLite.Reason = request.OfferRefusalReason;
+
+                if (request.IsForceHire != null && request.IsForceHire == true)
+                {
+                    requestLite.NoteType = "Force Hire";
+                    requestLite.Reason = request.OfferResponseNote;
+                }
+                
+                requestLite.UserId = request.AppCreateUserid;
+
+                if (user != null)
+                {
+                    requestLite.UserName = user.GivenName ?? "";
+
+                    if (requestLite.UserName.Length > 0)
+                    {
+                        requestLite.UserName = requestLite.UserName + " ";
+                    }
+
+                    requestLite.UserName = requestLite.UserName + user.Surname;
+                }                
             }
 
             return requestLite;

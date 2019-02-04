@@ -74,6 +74,7 @@ export function keepAlive() {
 }
 
 export function searchUsers(params) {
+  store.dispatch({ type: Action.USERS_REQUEST });
   return new ApiRequest('/users/search').get(params).then(response => {
     var users = normalize(response.data);
 
@@ -416,6 +417,10 @@ function parseEquipment(equipment) {
   equipment.canDelete = false; // TODO Needs input from Business whether this is needed.
 }
 
+function generateSortableEquipmentCode(equipment) {
+  return equipment.equipmentPrefix && equipment.equipmentNumber ? `${equipment.equipmentPrefix}${_.padStart(equipment.equipmentNumber, 3, '0')}` : equipment.equipmentCode;
+}
+
 export function searchEquipmentList(params) {
   store.dispatch({ type: Action.EQUIPMENT_LIST_REQUEST });
   return new ApiRequest('/equipment/search').get(params).then(response => {
@@ -423,6 +428,7 @@ export function searchEquipmentList(params) {
 
     _.map(equipmentList, equipment => { 
       equipment.details = [equipment.make || '-', equipment.model || '-', equipment.size || '-', equipment.year || '-'].join('/');
+      equipment.sortableEquipmentCode = generateSortableEquipmentCode(equipment);
     });
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST, equipmentList: equipmentList });
@@ -450,6 +456,38 @@ export function getEquipment(equipmentId) {
     parseEquipment(equipment);
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT, equipment: equipment });
+  });
+}
+
+export function getEquipmentLite() {
+  return new ApiRequest('/equipment/lite').get().then(response => {
+    var equipment = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
+  });
+}
+
+export function getEquipmentLiteProjects() {
+  return new ApiRequest('/equipment/liteProjects').get().then(response => {
+    var equipment = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
+  });
+}
+
+export function getEquipmentLiteTs() {
+  return new ApiRequest('/equipment/liteTs').get().then(response => {
+    var equipment = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
+  });
+}
+
+export function getEquipmentLiteHires() {
+  return new ApiRequest('/equipment/liteHires').get().then(response => {
+    var equipment = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
   });
 }
 
@@ -564,8 +602,13 @@ export function cloneEquipmentRentalAgreement(data) {
   });
 }
 
-export function equipmentSeniorityListPdf(localAreas, types) {
-  return new ApiRequest('/equipment/seniorityListPdf').get({ localareas: localAreas, types: types }, { responseType: Constant.RESPONSE_TYPE_BLOB }).then(response => {
+export function equipmentSeniorityListPdf(localAreas, types, counterCopy) {
+  var params = { localareas: localAreas, types: types };
+  if (counterCopy) {
+    params.counterCopy = counterCopy;
+  }
+
+  return new ApiRequest('/equipment/seniorityListPdf').get(params, { responseType: Constant.RESPONSE_TYPE_BLOB }).then(response => {
     return response;
   });
 }
@@ -690,14 +733,6 @@ export function getOwnersLite() {
   return new ApiRequest('/owners/lite').get().then(response => {
     var owners = normalize(response.data);
     store.dispatch({ type: Action.UPDATE_OWNERS_LITE, owners: owners });
-  });
-}
-
-export function getEquipmentLite() {
-  return new ApiRequest('/equipment/lite').get().then(response => {
-    var equipment = normalize(response.data);
-
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
   });
 }
 
@@ -859,8 +894,14 @@ export function changeOwnerStatus(status) {
   });
 }
 
-export function verifyOwners(owners) {
-  return new ApiRequest('owners/verificationPdf').post(owners, { responseType: Constant.RESPONSE_TYPE_BLOB }).then((response) => {
+export function getStatusLettersPdf(params) {
+  return new ApiRequest('owners/verificationPdf').post(params, { responseType: Constant.RESPONSE_TYPE_BLOB }).then((response) => {
+    return response;
+  });
+}
+
+export function getMailingLabelsPdf(params) {
+  return new ApiRequest('owners/mailingLabelsPdf').post(params, { responseType: Constant.RESPONSE_TYPE_BLOB }).then((response) => {
     return response;
   });
 }
@@ -1040,6 +1081,7 @@ function parseProject(project) {
   project.numberOfHires = project.numberOfHires || Object.keys(project.rentalAgreements).length;
 
   // UI display fields
+  project.label = `${ project.provincialProjectNumber } - ${ project.name }`;
   project.status = project.status || Constant.PROJECT_STATUS_CODE_ACTIVE;
   project.isActive = project.status === Constant.PROJECT_STATUS_CODE_ACTIVE;
   project.districtName = project.district.name;
@@ -1078,6 +1120,49 @@ export function searchProjects(params) {
     _.map(projects, project => { parseProject(project); });
 
     store.dispatch({ type: Action.UPDATE_PROJECTS, projects: projects });
+  });
+}
+
+export function searchTimeEntries(params) {
+  store.dispatch({ type: Action.TIME_ENTRIES_REQUEST });
+  return new ApiRequest('/timeRecords/search').get(params).then(response => {
+    var timeEntries = normalize(response.data);
+
+    _.map(timeEntries, entry => {
+      entry.localAreaLabel = `${ entry.serviceAreaId } - ${ entry.localAreaName }`;
+      entry.equipmentDetails = [entry.make || '-', entry.model || '-', entry.size || '-', entry.year || '-'].join('/');
+      entry.sortableEquipmentCode = generateSortableEquipmentCode(entry);
+    });
+
+    store.dispatch({ type: Action.UPDATE_TIME_ENTRIES, timeEntries: timeEntries });
+  });
+}
+
+export function searchHiringReport(params) {
+  store.dispatch({ type: Action.HIRING_RESPONSES_REQUEST });
+  return new ApiRequest('/rentalRequests/hireReport').get(params).then(response => {
+    var hiringResponses = normalize(response.data);
+
+    _.map(hiringResponses, entry => {
+      entry.localAreaLabel = `${ entry.serviceAreaId } - ${ entry.localAreaName }`;
+      entry.equipmentDetails = [entry.equipmentMake || '-', entry.equipmentModel || '-', entry.equipmentSize || '-', entry.equipmentYear || '-'].join('/');
+      entry.sortableEquipmentCode = generateSortableEquipmentCode(entry);
+    });
+
+    store.dispatch({ type: Action.UPDATE_HIRING_RESPONSES, hiringResponses: hiringResponses });
+  });
+}
+
+export function searchOwnersCoverage(params) {
+  store.dispatch({ type: Action.OWNERS_COVERAGE_REQUEST });
+  return new ApiRequest('/owners/wcbCglReport').get(params).then(response => {
+    var ownersCoverage = normalize(response.data);
+
+    _.map(ownersCoverage, entry => {
+      entry.localAreaLabel = `${ entry.serviceAreaId } - ${ entry.localAreaName }`;
+    });
+
+    store.dispatch({ type: Action.UPDATE_OWNERS_COVERAGE, ownersCoverage: ownersCoverage });
   });
 }
 
@@ -1270,7 +1355,7 @@ function parseRentalRequest(rentalRequest) {
   rentalRequest.isActive = rentalRequest.status === Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS;
   rentalRequest.isCompleted = rentalRequest.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
   rentalRequest.isCancelled = rentalRequest.status === Constant.RENTAL_REQUEST_STATUS_CODE_CANCELLED;
-  rentalRequest.localAreaName = rentalRequest.localArea.name;
+  rentalRequest.localAreaName = rentalRequest.localAreaName || rentalRequest.localArea.name;
   rentalRequest.equipmentTypeName = rentalRequest.equipmentTypeName || rentalRequest.districtEquipmentType.districtEquipmentName;
 
   // Primary contact for the rental request/project
@@ -1612,6 +1697,18 @@ export function getRentalAgreement(id) {
 
     // Add display fields
     parseRentalAgreement(agreement);
+
+    store.dispatch({ type: Action.UPDATE_RENTAL_AGREEMENT, rentalAgreement: agreement });
+  });
+}
+
+export function getLatestRentalAgreement(equipmentId, projectId) {
+  return new ApiRequest(`/rentalagreements/latest/${ projectId }/${ equipmentId }`).get().then(response => {
+    if (response.responseStatus === 'ERROR') {
+      return Promise.reject(new Error(response.error.description));
+    }
+    
+    var agreement = response.data;
 
     store.dispatch({ type: Action.UPDATE_RENTAL_AGREEMENT, rentalAgreement: agreement });
   });
@@ -2040,6 +2137,14 @@ export function getDistrictEquipmentTypes(districtId) {
   });
 }
 
+export function getOwnersLiteTs() {
+  return new ApiRequest('/owners/liteTs').get().then(response => {
+    var owners = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_OWNERS_LITE_LOOKUP, owners: owners });
+  });
+}
+
 export function addDistrictEquipmentType(equipment) {
   return new ApiRequest(`/districtequipmenttypes/${equipment.id}`).post(equipment).then(response => {
     return response;
@@ -2054,6 +2159,10 @@ export function updateDistrictEquipmentType(equipment) {
 
 export function deleteDistrictEquipmentType(equipment) {
   return new ApiRequest(`/districtequipmenttypes/${equipment.id}/delete`).post().then(response => {
+    if (response.responseStatus === 'ERROR') {
+      return Promise.reject(new Error(response.error.description));
+    }
+    
     return response;
   });
 }

@@ -7,6 +7,6 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 
 
--- HETS-908 (BVT: Printed Rental Agreement)
--- Add the User's City so it can be automatically inserted on new agreements
-ALTER TABLE public."HET_USER" ADD COLUMN "AGREEMENT_CITY" character varying(255);
+--HETS-979 - Delete equipment type containing only Archived equipment
+-- Add a "DELETED" column
+ALTER TABLE public."HET_DISTRICT_EQUIPMENT_TYPE" ADD COLUMN "DELETED" boolean NOT NULL DEFAULT false;

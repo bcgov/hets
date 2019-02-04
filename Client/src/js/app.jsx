@@ -27,6 +27,11 @@ import Roles from './views/Roles.jsx';
 import RolesDetail from './views/RolesDetail.jsx';
 import Rollover from './views/Rollover.jsx';
 import DistrictAdmin from './views/DistrictAdmin.jsx';
+import TimeEntry from './views/TimeEntry.jsx';
+import SeniorityList from './views/SeniorityList.jsx';
+import StatusLetters from './views/StatusLetters.jsx';
+import HiringReport from './views/HiringReport.jsx';
+import WcbCglCoverage from './views/WcbCglCoverage.jsx';
 import Version from './views/Version.jsx';
 import FourOhFour from './views/404.jsx';
 
@@ -132,6 +137,11 @@ const App = <Provider store={ store }>
       <Route path={ `${ Constant.ROLES_PATHNAME }/:roleId` } component={ RolesDetail }/>
       <Route path={ Constant.ROLLOVER_PATHNAME } component={ Rollover } />
       <Route path={ Constant.DISTRICT_ADMIN_PATHNAME } component={ DistrictAdmin } />
+      <Route path={ Constant.TIME_ENTRY_PATHNAME } component={ TimeEntry } />
+      <Route path={ Constant.SENIORITY_LIST_PATHNAME } component={ SeniorityList } />
+      <Route path={ Constant.STATUS_LETTERS_REPORT_PATHNAME } component={ StatusLetters } />
+      <Route path={ Constant.HIRING_REPORT_PATHNAME } component={ HiringReport } />
+      <Route path={ Constant.OWNERS_COVERAGE_PATHNAME } component={ WcbCglCoverage } />
       <Route path={ Constant.VERSION_PATHNAME } component={ Version }/>
       <Route path="*" component={ FourOhFour }/>
     </Route>

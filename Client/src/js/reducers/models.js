@@ -3,7 +3,11 @@ import * as Action from '../actionTypes';
 import _ from 'lodash';
 
 const DEFAULT_MODELS = {
-  users: {},
+  users: {
+    data: {},
+    loading: false,
+    loaded: false,
+  },
   user: {},
   userDistricts: {
     data: {}, 
@@ -118,6 +122,24 @@ const DEFAULT_MODELS = {
   rentalCondition: {},
   rentalConditions: {},
 
+  timeEntries: {
+    data: {},
+    loading: false,
+    loaded: false,
+  },
+  
+  hiringResponses: {
+    data: {},
+    loading: false,
+    loaded: false,
+  },
+  
+  ownersCoverage: {
+    data: {},
+    loading: false,
+    loaded: false,
+  },
+
   roles: {},
   role: {},
   rolePermissions: {},
@@ -140,8 +162,14 @@ const DEFAULT_MODELS = {
 export default function modelsReducer(state = DEFAULT_MODELS, action) {
   switch(action.type) {
     // Users
+    case Action.USERS_REQUEST:
+      return { ...state, users: { ...state.users, loading: true, loaded: false } };
+
     case Action.UPDATE_USERS:
-      return { ...state, users: action.users };
+      return { ...state, users: { data: action.users, loading: false, loaded: true } };
+    
+    case Action.CLEAR_USERS:
+      return { ...state, users: { data: {}, loading: false, loaded: false } };
     
     case Action.UPDATE_USER:
       return { ...state, user: action.user };
@@ -324,6 +352,36 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.UPDATE_RENTAL_REQUEST_NOTES: 
       return { ...state, rentalRequestNotes: action.notes };
+    
+    // Time Entries
+    case Action.TIME_ENTRIES_REQUEST: 
+      return { ...state, timeEntries: { ...state.timeEntries, loading: true, loaded: false } };
+    
+    case Action.UPDATE_TIME_ENTRIES:
+      return { ...state, timeEntries: { data: action.timeEntries, loading: false, loaded: true } };
+    
+    case Action.CLEAR_TIME_ENTRIES:
+      return { ...state, timeEntries: { data: {}, loading: false, loaded: false } };
+    
+    // Hiring Responses
+    case Action.HIRING_RESPONSES_REQUEST: 
+      return { ...state, hiringResponses: { ...state.hiringResponses, loading: true, loaded: false } };
+    
+    case Action.UPDATE_HIRING_RESPONSES:
+      return { ...state, hiringResponses: { data: action.hiringResponses, loading: false, loaded: true } };
+    
+    case Action.CLEAR_HIRING_RESPONSES:
+      return { ...state, hiringResponses: { data: {}, loading: false, loaded: false } };
+    
+    // Owners' Coverage
+    case Action.OWNERS_COVERAGE_REQUEST: 
+      return { ...state, ownersCoverage: { ...state.ownersCoverage, loading: true, loaded: false } };
+    
+    case Action.UPDATE_OWNERS_COVERAGE:
+      return { ...state, ownersCoverage: { data: action.ownersCoverage, loading: false, loaded: true } };
+    
+    case Action.CLEAR_OWNERS_COVERAGE:
+      return { ...state, ownersCoverage: { data: {}, loading: false, loaded: false } };
     
     // Rotation List
     case Action.RENTAL_REQUEST_ROTATION_LIST_REQUEST:
