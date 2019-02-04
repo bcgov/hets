@@ -218,6 +218,7 @@ namespace HetsApi.Controllers
             float? originalServiceHoursLastYear = equipment.ServiceHoursLastYear;
             float? originalServiceHoursTwoYearsAgo = equipment.ServiceHoursTwoYearsAgo;
             float? originalServiceHoursThreeYearsAgo = equipment.ServiceHoursThreeYearsAgo;
+            long? originalLocalAreaId = equipment.LocalAreaId;
 
             equipment.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             equipment.ApprovedDate = item.ApprovedDate;
@@ -242,6 +243,7 @@ namespace HetsApi.Controllers
             equipment.LicencedGvw = item.LicencedGvw;
             equipment.LegalCapacity = item.LegalCapacity;
             equipment.PupLegalCapacity = item.PupLegalCapacity;
+            equipment.LocalAreaId = item.LocalArea.LocalAreaId;
 
             // save the changes
             _context.SaveChanges();
@@ -250,6 +252,11 @@ namespace HetsApi.Controllers
             bool rebuildSeniority = (originalSeniorityEffectiveDate == null && item.SeniorityEffectiveDate != null) ||
                                     (originalSeniorityEffectiveDate != null && item.SeniorityEffectiveDate != null &&
                                      originalSeniorityEffectiveDate != item.SeniorityEffectiveDate);
+
+            if (originalLocalAreaId != item.LocalArea.LocalAreaId)
+            {
+                rebuildSeniority = true;
+            }
 
             if ((originalServiceHoursLastYear == null && item.ServiceHoursLastYear != null) ||
                 (originalServiceHoursLastYear != null && item.ServiceHoursLastYear != null &&
