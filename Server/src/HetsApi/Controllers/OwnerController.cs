@@ -219,7 +219,7 @@ namespace HetsApi.Controllers
 
                 foreach (HetEquipment equipment in equipmentList)
                 {
-                    equipment.LocalAreaId = item.LocalAreaId;
+                    equipment.LocalAreaId = item.LocalArea.LocalAreaId;
                 }
             }
 
