@@ -5,7 +5,7 @@
     <title>Owner Verification Notices</title>
     <style>
         @page {
-            margin: 1cm;
+            margin: 0cm;
             size: portrait;
         }
 
@@ -13,7 +13,7 @@
             background-color: white;
             color: black;
             font-family: Myriad-Pro, Calibri, Arial, 'sans serif';
-            font-size: 10pt;
+            font-size: 9pt;
             letter-spacing: normal;
             white-space: normal;
         }
@@ -58,7 +58,7 @@
         #form-title {
             margin-top: 6px;
             float: none;
-            font-size: 8pt;
+            font-size: 10pt;
             font-weight: bold;
             letter-spacing: normal;
             line-height: 25px;
@@ -68,9 +68,9 @@
 
         #form-subtitle {
             float: none;
-            font-size: 6pt;
+            font-size: 10pt;
             letter-spacing: normal;
-            line-height: 14px;
+            line-height: 17px;
             color: #355980;
             text-align: center;
         }
@@ -85,38 +85,26 @@
         }
 
         #owner-contact-left {
-            font-size: 7pt;
+            font-size: 10pt;
             letter-spacing: normal;
-            line-height: 8px;
-            color: #355980;
+            line-height: 12px;
+            color: #000000;
             text-align: left;
-            min-width: 280px;
-            width: 280px;
-        }
-
-        #owner-contact-middle {
-            font-size: 7pt;
-            letter-spacing: normal;
-            line-height: 8px;
-            color: #355980;
-            text-align: left;
-            min-width: 250px;
-            width: 250px;
+            min-width: 600px;
+            width: 600px;
         }
 
         #owner-contact-right {
-            font-size: 7pt;
+            font-size: 10pt;
             letter-spacing: normal;
-            line-height: 8px;
-            color: #355980;
+            line-height: 12px;
+            color: #000000;
             text-align: left;
-            min-width: 250px;
-            width: 250px;
         }
 
         #non-equipment-table {
-            margin-top: 8px;
-            font-size: 7pt;
+            margin-top: 12px;
+            font-size: 12pt;
             letter-spacing: normal;
             line-height: 20px;
             color: #000000;
@@ -137,9 +125,24 @@
             vertical-align: top;
         }
 
+        #signature-table table {
+            font-size: 10pt;
+            border-collapse: collapse;
+            width: 100%;
+            align-content: center;
+        }
+
+        #signature-table th {
+            font-weight: bold;
+        }
+
+        #signature-table td {
+            vertical-align: top;
+        }
+
         #equipment-table {
             margin-top: 6px;
-            font-size: 6pt;
+            font-size: 9pt;
             letter-spacing: normal;
             color: #000000;
             text-align: left;
@@ -147,29 +150,26 @@
             margin-bottom: 20px;
             border-collapse: collapse;
             width: 100%;
-        }       
+        }
+
+        #equipment-table tr {
+            border: solid;
+            border-width: 1px;
+            border-color: #808080;            
+        }
 
         #equipment-table-header td {
             page-break-inside: avoid;
             font-weight: bold;
             background-color: #f2f2f2;
             height: 0.7cm; 
-            padding: 5px 2px 5px 2px;
-            border-top: solid;
-            border-top-width: 1px;
-            border-top-color: gainsboro;
-            border-bottom: solid;
-            border-bottom-width: 1px;
-            border-bottom-color: gainsboro;            
+            padding: 5px 2px 5px 2px;            
         }
 
         #equipment-table-body td {
             page-break-inside: avoid;
-             vertical-align: top;
-             padding: 5px 2px 5px 2px;
-             border-bottom: solid;
-             border-bottom-width: 1px;
-             border-bottom-color: gainsboro;
+            vertical-align: top;
+            padding: 5px 2px 5px 2px;            
         }
 
         #list-column ul {
@@ -217,7 +217,7 @@
 
             <table id="contact-info">
                 <tr>
-                    <td style="width: 280px;">
+                    <td>
                         <div id="owner-contact-left">
                             <table>
                                 <tr>
@@ -234,11 +234,23 @@
                                 </tr>
                             </table>
                         </div>
-                    </td>
+                    </td>                    
 
                     <td>
-                        <div id="owner-contact-middle">
+                        <div id="owner-contact-right">
                             <table>
+                                <tr>
+                                    <td>Date: </td>
+                                    <td>{{reportDate}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Owner Code: </td>
+                                    <td>{{ownerCode}}</td>
+                                </tr>
+                                <tr>
+                                    <td>{{sharedKeyHeader}}</td>
+                                    <td>{{sharedKey}}</td>
+                                </tr>                                
                                 {{#primaryContact.workPhoneNumber}}
                                 <tr>
                                     <td>Work: </td>
@@ -263,29 +275,6 @@
                                     <td>{{primaryContact.emailAddress}}</td>
                                 </tr>
                                 {{/primaryContact.emailAddress}}
-                            </table>
-                        </div>
-                    </td>
-
-                    <td>
-                        <div id="owner-contact-right">
-                            <table>
-                                <tr>
-                                    <td>Date: </td>
-                                    <td>{{reportDate}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Owner Code: </td>
-                                    <td>{{ownerCode}}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{sharedKeyHeader}}</td>
-                                    <td>{{sharedKey}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Local Area:</td>
-                                    <td>{{localAreaName}}</td>
-                                </tr>
                             </table>
                         </div>
                     </td>
@@ -338,7 +327,9 @@
                     <tr>
                         <td></td>
                         <td>4.</td>
-                        <td>Once you have completed all the above, please mail, fax or drop off this document and other relevant documentation to your local Ministry of Transportation and Infrastructure office. Contact information is located at the top of this document.</td>
+                        <td>
+                            Once you have completed all the above, please email, mail, fax or drop off this document and other relevant documentation to your local Ministry of Transportation and Infrastructure office. Contact information is located at the top of this document.
+                        </td>
                         <td></td>
                     </tr>
                     <tr><td colspan="4" style="height: 15px;"></td></tr>
@@ -357,17 +348,15 @@
             <br />
             <br />
 
-            <div id="non-equipment-table">
+            <div id="signature-table">
                 <table border="0" cellpadding="1" cellspacing="1">
                     <tbody>
                         <tr>
-                            <td style="width: 80px"></td>
                             <td style="width: 50px;">Print Name: </td>
-                            <td style="width: 70px; border-bottom: solid; border-bottom-color: #000; border-bottom-width: 1px;">&nbsp;</td>
-                            <td style="width: 20px"></td>
-                            <td style="width: 18px;">Signature: </td>
-                            <td style="width: 70px; border-bottom: solid; border-bottom-color: #000; border-bottom-width: 1px;">&nbsp;</td>
+                            <td style="width: 120px; border-bottom: solid; border-bottom-color: #000; border-bottom-width: 1px;">&nbsp;</td>
                             <td style="width: 40px"></td>
+                            <td style="width: 18px;">Signature: </td>
+                            <td style="width: 120px; border-bottom: solid; border-bottom-color: #000; border-bottom-width: 1px;">&nbsp;</td>
                         </tr>
                     </tbody>
                 </table>
@@ -398,7 +387,7 @@
 
             <table id="contact-info">
                 <tr>
-                    <td style="width: 280px;">
+                    <td>
                         <div id="owner-contact-left">
                             <table>
                                 <tr>
@@ -418,8 +407,20 @@
                     </td>
 
                     <td>
-                        <div id="owner-contact-middle">
+                        <div id="owner-contact-right">
                             <table>
+                                <tr>
+                                    <td>Date: </td>
+                                    <td>{{reportDate}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Owner Code: </td>
+                                    <td>{{ownerCode}}</td>
+                                </tr>
+                                <tr>
+                                    <td>{{sharedKeyHeader}}</td>
+                                    <td>{{sharedKey}}</td>
+                                </tr>
                                 {{#primaryContact.workPhoneNumber}}
                                 <tr>
                                     <td>Work: </td>
@@ -447,45 +448,24 @@
                             </table>
                         </div>
                     </td>
-
-                    <td>
-                        <div id="owner-contact-right">
-                            <table>
-                                <tr>
-                                    <td>Date: </td>
-                                    <td>{{reportDate}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Owner Code: </td>
-                                    <td>{{ownerCode}}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{sharedKeyHeader}}</td>
-                                    <td>{{sharedKey}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Local Area:</td>
-                                    <td>{{localAreaName}}</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </td>
                 </tr>
             </table>
 
             <table id="equipment-table">
                 <tr id="equipment-table-header">
-                    <td style="width: 60px; padding: 5px 10px 5px 2px;">Still own & wish to re-register?</td>
+                    <td style="width: 80px; padding: 5px 10px 5px 2px;">Still own & wish to re-register?</td>
+                    <td>Local Area</td>
                     <td>Equipment Id</td>
                     <td>Equipment Type</td>
                     <td>Year/Make/Model/Serial Number/Size</td>
                     <td>Attachments</td>
-                    <td style="width: 100px">Owner Comments (sold, retired, etc.)</td>
+                    <td style="width: 260px;">Owner Comments (sold, retired, etc.)</td>
                 </tr>
 
                 {{#equipment}}
                 <tr id="equipment-table-body">
                     <td>&nbsp;Yes&nbsp;&nbsp;&nbsp;No&nbsp;</td>
+                    <td>{{localAreaName}}</td>
                     <td>{{equipmentCode}}</td>
                     <td>{{#districtEquipmentType}}{{districtEquipmentName}}{{/districtEquipmentType}}</td>
                     <td>{{year}}/{{make}}/{{model}}/{{serialNumber}}/{{size}}</td>
@@ -503,17 +483,15 @@
             <br />
             <br />
 
-            <div id="non-equipment-table">
+            <div id="signature-table">
                 <table border="0" cellpadding="1" cellspacing="1">
                     <tbody>
                         <tr>
-                            <td style="width: 80px"></td>
                             <td style="width: 50px;">Print Name: </td>
-                            <td style="width: 70px; border-bottom: solid; border-bottom-color: #000; border-bottom-width: 1px;">&nbsp;</td>
-                            <td style="width: 20px"></td>
-                            <td style="width: 18px;">Signature: </td>
-                            <td style="width: 70px; border-bottom: solid; border-bottom-color: #000; border-bottom-width: 1px;">&nbsp;</td>
+                            <td style="width: 120px; border-bottom: solid; border-bottom-color: #000; border-bottom-width: 1px;">&nbsp;</td>
                             <td style="width: 40px"></td>
+                            <td style="width: 18px;">Signature: </td>
+                            <td style="width: 120px; border-bottom: solid; border-bottom-color: #000; border-bottom-width: 1px;">&nbsp;</td>
                         </tr>
                     </tbody>
                 </table>

@@ -26,8 +26,14 @@
                 engine: 'none',
                 recipe: 'phantom-pdf',
                 phantom: {
-                    "orientation": "portrait",
-                    "format": "A4"                    
+                    "orientation": "landscape",
+                    "format": "A4",
+                    "margin": {
+                        "top": "1cm",
+                        "bottom": "1cm",
+                        "left": "0.5cm",
+                        "right": "1cm"
+                    }
                 }
             },
             data: { name: "jsreport" }
