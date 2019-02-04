@@ -395,6 +395,9 @@ var RentalAgreementsDetail = React.createClass({
                 <Col lg={6} md={6} sm={12} xs={12}>
                   <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Dated On:">{ formatDateTime(rentalAgreement.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</ColDisplay>
                 </Col>
+                <Col lg={6} md={6} sm={12} xs={12}>
+                  <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Dated At:">{ rentalAgreement.agreementCity }</ColDisplay>
+                </Col>
               </Row>
             );
           })()}

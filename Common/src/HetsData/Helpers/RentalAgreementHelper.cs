@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using HetsData.Model;
@@ -24,7 +25,7 @@ namespace HetsData.Helpers
         public string BaseRateString { get; set; }
         public List<HetRentalAgreementRate> RentalAgreementRatesWithoutTotal { get; set; }
         public List<HetRentalAgreementCondition> RentalAgreementConditions { get; set; }
-        public string Note { get; set; }
+        public List<NoteLine> Note { get; set; }
         public string EstimateStartWork { get; set; }
         public string DatedOn { get; set; }
         public string AgreementCity { get; set; }
@@ -35,14 +36,9 @@ namespace HetsData.Helpers
         public bool ConditionsPresent { get; set; }
     }
 
-    public class TimeRecordLite
+    public class NoteLine
     {
-        public string EquipmentCode { get; set; }
-        public string ProjectName { get; set; }
-        public string ProvincialProjectNumber { get; set; }
-        public float? HoursYtd { get; set; }
-        public int MaximumHours { get; set; }
-        public List<HetTimeRecord> TimeRecords { get; set; }
+        public string Line { get; set; }
     }
 
     #endregion
@@ -144,17 +140,18 @@ namespace HetsData.Helpers
             agreement.AgreementTotal = temp;
 
             // format the base rate
-            agreement.BaseRateString = string.Format("$ {0:0.00} / {1}", agreement.EquipmentRate, FormatRatePeriod(agreement.RatePeriod));
+            agreement.BaseRateString = $"$ {agreement.EquipmentRate:0.00} / {FormatRatePeriod(agreement.RatePeriod)}";
 
             // format the total
-            agreement.AgreementTotalString = string.Format("$ {0:0.00} / {1}", agreement.AgreementTotal, FormatRatePeriod(agreement.RatePeriod));
+            agreement.AgreementTotalString =
+                $"$ {agreement.AgreementTotal:0.00} / {FormatRatePeriod(agreement.RatePeriod)}";
 
             // **********************************************
             // format the rate / percent values
             // **********************************************
             foreach (HetRentalAgreementRate rentalRate in agreement.RentalAgreementRatesOvertime)
             {
-                rentalRate.RateString = FormatRateString(rentalRate, agreement);
+                rentalRate.RateString = FormatOvertimeRateString(rentalRate);
             }
 
             foreach (HetRentalAgreementRate rentalRate in agreement.RentalAgreementRatesWithoutTotal)
@@ -207,7 +204,21 @@ namespace HetsData.Helpers
             // format the rate
             if (rentalRate.Rate != null)
             {
-                temp = string.Format("$ {0:0.00} / {1}", rentalRate.Rate, FormatRatePeriod(agreement.RatePeriod));
+                temp = $"$ {rentalRate.Rate:0.00} / {FormatRatePeriod(agreement.RatePeriod)}";
+            }
+
+            return temp;
+        }
+
+        // HETS-1017 - Updates to Rental Agreement -> Overtime is always in Hours (/Hr)
+        private static string FormatOvertimeRateString(HetRentalAgreementRate rentalRate)
+        {
+            string temp = "";
+
+            // format the rate
+            if (rentalRate.Rate != null)
+            {
+                temp = $"$ {rentalRate.Rate:0.00} / Hr";
             }
 
             return temp;
@@ -229,19 +240,38 @@ namespace HetsData.Helpers
 
             if (agreement != null)
             {
-                pdfModel.DatedOn = ConvertDate(agreement.DatedOn);
-                pdfModel.AgreementCity = agreementCity;
+                pdfModel.AgreementCity = agreementCity;           
                 pdfModel.Equipment = agreement.Equipment;
                 pdfModel.EquipmentRate = agreement.EquipmentRate;
                 pdfModel.EstimateHours = agreement.EstimateHours;
                 pdfModel.EstimateStartWork = ConvertDate(agreement.EstimateStartWork);
-                pdfModel.Id = agreement.RentalAgreementId;
-                pdfModel.Note = agreement.Note;
                 pdfModel.Number = agreement.Number;
                 pdfModel.Project = agreement.Project;
                 pdfModel.RateComment = agreement.RateComment;
                 pdfModel.RatePeriod = agreement.RatePeriodType.Description;
-                pdfModel.RentalAgreementConditions = agreement.HetRentalAgreementCondition.ToList();
+                pdfModel.AgreementCity = agreement.AgreementCity;
+                pdfModel.DatedOn = DateTime.UtcNow.ToString("MM/dd/yyyy");
+                
+                // format the note
+                if (!string.IsNullOrEmpty(agreement.Note))
+                {                    
+                    string temp = Regex.Replace(agreement.Note, @"\n", "<BR>");
+                    string[] tempArray = temp.Split("<BR>");
+
+                    pdfModel.Note = new List<NoteLine>();
+
+                    foreach (string row in tempArray)
+                    {
+                        NoteLine line = new NoteLine { Line = row };
+                        pdfModel.Note.Add(line);
+                    }
+                }
+                
+                // ensure they are ordered the way they were added
+                pdfModel.RentalAgreementConditions = agreement.HetRentalAgreementCondition
+                    .OrderBy(x => x.RentalAgreementConditionId)
+                    .ToList();
+
                 pdfModel.RentalAgreementRates = agreement.HetRentalAgreementRate.Where(x => x.Active).ToList();
                 pdfModel.Status = agreement.RentalAgreementStatusType.Description;
                 pdfModel.ConditionsPresent = agreement.HetRentalAgreementCondition.Count > 0;
@@ -252,8 +282,8 @@ namespace HetsData.Helpers
                     {
                         condition.ConditionName = condition.Comment;
                     }
-                }                
-
+                }
+                
                 pdfModel = CalculateTotals(pdfModel);
             }
 
@@ -304,7 +334,7 @@ namespace HetsData.Helpers
 
                 }
 
-                result = dt.ToString("yyyy-MM-dd");
+                result = dt.ToString("yyyy-MMM-dd").ToUpper();
             }
 
             return result;
@@ -327,30 +357,43 @@ namespace HetsData.Helpers
             // validate item.
             if (equipment?.LocalArea != null)
             {
-                DateTime currentTime = DateTime.UtcNow;
-
-                int fiscalYear = currentTime.Year;
-
-                // fiscal year always ends in March.
-                if (currentTime.Month > 3)
-                {
-                    fiscalYear++;
-                }
-
-                int localAreaNumber = equipment.LocalArea.LocalAreaNumber;
                 int localAreaId = equipment.LocalArea.LocalAreaId;
 
-                DateTime fiscalYearStart = new DateTime(fiscalYear - 1, 1, 1);
+                // get the district
+                HetLocalArea localArea = context.HetLocalArea.AsNoTracking()
+                    .Include(x => x.ServiceArea)
+                        .ThenInclude(y => y.District)
+                    .First(x => x.LocalAreaId == localAreaId);
 
-                // count the number of rental agreements in the system
+                int? districtId = localArea.ServiceArea.DistrictId;
+                int ministryDistrictId = localArea.ServiceArea.District.MinistryDistrictId;
+                if (districtId == null) return result;
+
+                // get fiscal year
+                HetDistrictStatus status = context.HetDistrictStatus.AsNoTracking()
+                .First(x => x.DistrictId == districtId);
+
+                int? fiscalYear = status.CurrentFiscalYear;
+                if (fiscalYear == null) return result;
+
+                // fiscal year in the status table stores the "start" of the year
+                DateTime fiscalYearStart = new DateTime((int)fiscalYear, 4, 1);
+                fiscalYear = fiscalYear + 1;                
+
+                // count the number of rental agreements in the system in this district
                 int currentCount = context.HetRentalAgreement
-                    .Include(x => x.Equipment.LocalArea)
-                    .Count(x => x.Equipment.LocalArea.LocalAreaId == localAreaId && x.AppCreateTimestamp >= fiscalYearStart);
+                    .Count(x => x.DistrictId == districtId && 
+                                x.AppCreateTimestamp >= fiscalYearStart);
 
                 currentCount++;
 
-                // format of the Rental Agreement number is YYYY-#-####
-                result = fiscalYear + "-" + localAreaNumber + "-" + currentCount.ToString("D4");
+                // format of the Rental Agreement number is:
+                // * FY-DD-####
+                //   FY = last 2 digits of the year
+                //   DD - District(2 digits - 1 to 11)
+                result = fiscalYear.ToString().Substring(2, 2) + "-" +
+                         ministryDistrictId + "-" + 
+                         currentCount.ToString("D4");
             }
 
             return result;
@@ -413,8 +456,15 @@ namespace HetsData.Helpers
 
         #region Get Agreement Time Records
 
-        public static TimeRecordLite GetTimeRecords(int id, DbAppContext context, IConfiguration configuration)
+        public static TimeRecordLite GetTimeRecords(int id, int? districtId, DbAppContext context, IConfiguration configuration)
         {
+            // get fiscal year
+            HetDistrictStatus status = context.HetDistrictStatus.AsNoTracking()
+                .First(x => x.DistrictId == districtId);
+
+            int? fiscalYear = status.CurrentFiscalYear;
+            
+            // get agreement and time records
             HetRentalAgreement agreement = context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.Equipment)
                     .ThenInclude(y => y.DistrictEquipmentType)
@@ -452,12 +502,17 @@ namespace HetsData.Helpers
                 projectNumber = agreement.Project.ProvincialProjectNumber;
             }
 
-            TimeRecordLite timeRecord = new TimeRecordLite
-            {
-                TimeRecords = new List<HetTimeRecord>()
-            };
+            // fiscal year in the status table stores the "start" of the year
+            TimeRecordLite timeRecord = new TimeRecordLite();
 
-            timeRecord.TimeRecords.AddRange(agreement.HetTimeRecord);
+            if (fiscalYear != null)
+            {
+                DateTime fiscalYearStart = new DateTime((int)fiscalYear, 4, 1);
+
+                timeRecord.TimeRecords = new List<HetTimeRecord>();                
+                timeRecord.TimeRecords.AddRange(agreement.HetTimeRecord.Where(x => x.WorkedDate >= fiscalYearStart));
+            }
+
             timeRecord.EquipmentCode = equipmentCode;
             timeRecord.ProjectName = projectName;
             timeRecord.ProvincialProjectNumber = projectNumber;

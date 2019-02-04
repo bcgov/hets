@@ -60,7 +60,7 @@ var RentalRequests = React.createClass({
         dateRange: this.props.search.dateRange || '',
       },
       ui : {
-        sortField: this.props.ui.sortField,
+        sortField: this.props.ui.sortField || 'projectName',
         sortDesc: this.props.ui.sortDesc === true,
       },
     };

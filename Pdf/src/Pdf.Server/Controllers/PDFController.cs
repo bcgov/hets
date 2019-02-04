@@ -144,14 +144,74 @@ namespace Pdf.Server.Controllers
         }
 
         /// <summary>
+        /// Get HETS Owner Mailing Labels
+        /// </summary>
+        /// <param name="ownersJson">Serialized owner data</param>
+        /// <param name="name">Unique name for the generated Pdf</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("pdf/ownerMailingLabels/{name}")]
+        public async Task<IActionResult> GetOwnerMailingLabelsPdf([FromBody]string ownersJson, [FromRoute]string name)
+        {
+            try
+            {
+                name = CleanName(name);
+
+                string fileName = name + ".pdf";
+                _logger.LogInformation("GetOwnerMailingLabelsPdf [FileName: {0}]", fileName);
+
+                // *************************************************************
+                // Create output using json and mustache template
+                // *************************************************************
+                HtmlRequest request = new HtmlRequest()
+                {
+                    JsonString = ownersJson,
+                    RenderJsUrl = _configuration.GetSection("Constants").GetSection("RenderJsUrl").Value,
+                    Template = _configuration.GetSection("Constants").GetSection("OwnerMailingLabelTemplate").Value
+                };
+
+                _logger.LogInformation("GetOwnerMailingLabelsPdf [FileName: {0}] - Render Html", fileName);
+                string result = await TemplateHelper.RenderDocument(_nodeServices, request);
+
+                _logger.LogInformation("GetOwnerMailingLabelsPdf [FileName: {0}] - Html Length: {1}", fileName, result.Length);
+
+                // *************************************************************
+                // Convert results to Pdf
+                // *************************************************************                 
+                PdfRequest pdfRequest = new PdfRequest()
+                {
+                    Html = result,
+                    RenderJsUrl = _configuration.GetSection("Constants").GetSection("PdfJsUrl").Value,
+                    PdfFileName = fileName
+                };
+
+                _logger.LogInformation("GetOwnerMailingLabelsPdf [FileName: {0}] - Gen Pdf", fileName);
+                byte[] pdfResponseBytes = await PdfDocument.BuildPdf(_nodeServices, pdfRequest);
+
+                // convert to string and log
+                string pdfResponse = System.Text.Encoding.Default.GetString(pdfResponseBytes);
+                _logger.LogInformation("GetOwnerMailingLabelsPdf [FileName: {0}] - Pdf Length: {1}", fileName, pdfResponse.Length);
+
+                _logger.LogInformation("GetOwnerMailingLabelsPdf [FileName: {0}] - Done", fileName);
+                return File(pdfResponseBytes, "application/pdf", fileName);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Get HETS Seniority List
         /// </summary>
         /// <param name="seniorityListJson">Serialized seniority list data</param>
         /// <param name="name">Unique name for the generated Pdf (Result: name + '.pdf')</param>
+        /// <param name="counterCopy">If true, use the Counter Copy template</param>
         /// <returns></returns>
         [HttpPost]
-        [Route("pdf/seniorityList/{name}")]
-        public async Task<IActionResult> GetSeniorityListPdf([FromBody]string seniorityListJson, [FromRoute]string name)
+        [Route("pdf/seniorityList/{name}/{counterCopy}")]
+        public async Task<IActionResult> GetSeniorityListPdf([FromBody]string seniorityListJson, [FromRoute]string name, [FromRoute]bool counterCopy = false)
         {
             try
             {
@@ -174,6 +234,11 @@ namespace Pdf.Server.Controllers
                     RenderJsUrl = _configuration.GetSection("Constants").GetSection("RenderJsUrl").Value,
                     Template = _configuration.GetSection("Constants").GetSection("SeniorityListTemplate").Value
                 };
+
+                if (counterCopy)
+                {
+                    request.Template = _configuration.GetSection("Constants").GetSection("SeniorityListCcTemplate").Value;
+                }
 
                 _logger.LogInformation("GetSeniorityListPdf [FileName: {0}] - Render Html", fileName);
                 string result = await TemplateHelper.RenderDocument(_nodeServices, request);

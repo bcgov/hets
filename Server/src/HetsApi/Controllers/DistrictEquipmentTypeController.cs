@@ -8,6 +8,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
+using HetsData.Helpers;
 using HetsData.Model;
 
 namespace HetsApi.Controllers
@@ -58,7 +59,8 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.LocalArea)
                 .Include(x => x.HetEquipment)
                     .ThenInclude(x => x.EquipmentStatusType)
-                .Where(x => x.District.DistrictId == districtId)
+                .Where(x => x.District.DistrictId == districtId &&
+                            !x.Deleted)
                 .OrderBy(x => x.DistrictEquipmentName)
                 .ToList();
 
@@ -117,9 +119,37 @@ namespace HetsApi.Controllers
 
             HetDistrictEquipmentType item = _context.HetDistrictEquipmentType.First(a => a.DistrictEquipmentTypeId == id);
 
-            _context.HetDistrictEquipmentType.Remove(item);
+            // HETS-978 - Give a clear error message when deleting equipment type fails
+            int? archiveStatus = StatusHelper.GetStatusId(HetEquipment.StatusArchived, "equipmentStatus", _context);
+            if (archiveStatus == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            // save changes
+            int? pendingStatus = StatusHelper.GetStatusId(HetEquipment.StatusPending, "equipmentStatus", _context);
+            if (pendingStatus == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            HetEquipment equipment = _context.HetEquipment.AsNoTracking()
+                .FirstOrDefault(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentTypeId &&
+                                     x.EquipmentStatusTypeId != archiveStatus &&
+                                     x.EquipmentStatusTypeId != pendingStatus);
+
+            if (equipment != null)
+            {
+                return new ObjectResult(new HetsResponse("HETS-37", ErrorViewModel.GetDescription("HETS-37", _configuration)));
+            }
+
+            equipment = _context.HetEquipment.AsNoTracking()
+                .FirstOrDefault(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentTypeId);
+
+            // delete the record if no equipment is attached
+            if (equipment == null)
+            {
+                _context.HetDistrictEquipmentType.Remove(item);
+            }
+            else
+            {
+                // else "SOFT" delete record
+                item.Deleted = true;
+            }
+            
             _context.SaveChanges();
 
             return new ObjectResult(new HetsResponse(item));

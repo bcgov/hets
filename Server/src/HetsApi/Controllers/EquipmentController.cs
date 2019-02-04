@@ -94,6 +94,132 @@ namespace HetsApi.Controllers
         }
 
         /// <summary>
+        /// Get all approved equipment for this district and their associated active projects
+        /// </summary>
+        [HttpGet]
+        [Route("liteProjects")]
+        [SwaggerOperation("EquipmentGetLiteProjects")]
+        [SwaggerResponse(200, type: typeof(List<EquipmentLiteProjects>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult EquipmentGetLiteProjects()
+        {
+            // get users district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            // get active status
+            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // get fiscal year
+            HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
+                .First(x => x.DistrictId == districtId);
+
+            int? fiscalYear = status.CurrentFiscalYear;
+            if (fiscalYear == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // fiscal year in the status table stores the "start" of the year
+            DateTime fiscalYearStart = new DateTime((int)fiscalYear, 3, 31);
+
+            // get all approved equipment for this district (and any projects they're associated with)
+            IEnumerable<EquipmentLiteProjects> equipment = _context.HetRentalAgreement.AsNoTracking()
+                .Include(x => x.Project)
+                .Include(x => x.Equipment)
+                .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
+                            x.Equipment.EquipmentStatusTypeId == statusId &&
+                            x.Project.DbCreateTimestamp > fiscalYearStart)
+                .Select(x => new EquipmentLiteProjects
+                {
+                    EquipmentCode = x.Equipment.EquipmentCode,
+                    Id = x.ProjectId ?? 0,
+                    ProjectIds = _context.HetProject
+                        .Where(y => y.ProjectId == x.ProjectId)
+                        .Select(y => y.ProjectId).ToList()
+                })
+                .OrderBy(x => x.EquipmentCode);
+
+            return new ObjectResult(new HetsResponse(equipment));
+        }
+
+        /// <summary>
+        /// Get all equipment for this district that are associated with a project (lite)
+        /// </summary>
+        [HttpGet]
+        [Route("liteTs")]
+        [SwaggerOperation("EquipmentGetLiteTs")]
+        [SwaggerResponse(200, type: typeof(List<EquipmentLiteList>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult EquipmentGetLiteTs()
+        {
+            // get users district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            // get active status
+            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // get fiscal year
+            HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
+                .First(x => x.DistrictId == districtId);
+
+            int? fiscalYear = status.CurrentFiscalYear;
+            if (fiscalYear == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // fiscal year in the status table stores the "start" of the year
+            DateTime fiscalYearStart = new DateTime((int)fiscalYear, 3, 31);
+
+            // get all active owners for this district (and any projects they're associated with)
+            IEnumerable<EquipmentLiteList> equipment = _context.HetRentalAgreement.AsNoTracking()
+                .Include(x => x.Project)
+                .Include(x => x.Equipment)
+                .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
+                            x.Equipment.EquipmentStatusTypeId == statusId &&
+                            x.Project.DbCreateTimestamp > fiscalYearStart)
+                .OrderBy(x => x.Equipment.EquipmentCode)
+                .Select(x => new EquipmentLiteList
+                {
+                    EquipmentCode = x.Equipment.EquipmentCode,
+                    Id = x.Equipment.EquipmentId,
+                    OwnerId = x.Equipment.OwnerId,
+                    ProjectId = x.ProjectId
+                });
+
+            return new ObjectResult(new HetsResponse(equipment));
+        }
+
+        /// <summary>
+        /// Get all equipment for this district that are associated with a rotation list (lite)
+        /// </summary>
+        [HttpGet]
+        [Route("liteHires")]
+        [SwaggerOperation("EquipmentGetLiteHires")]
+        [SwaggerResponse(200, type: typeof(List<EquipmentLiteList>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult EquipmentGetLiteHires()
+        {
+            // get users district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            IQueryable<EquipmentLiteList> equipment = _context.HetRentalRequestRotationList.AsNoTracking()
+                .Include(x => x.RentalRequest)
+                    .ThenInclude(y => y.LocalArea)
+                        .ThenInclude(z => z.ServiceArea)
+                .Include(x => x.RentalRequest)
+                    .ThenInclude(y => y.Project)
+                .Include(x => x.Equipment)
+                .Where(x => x.RentalRequest.LocalArea.ServiceArea.DistrictId.Equals(districtId))
+                .OrderBy(x => x.Equipment.EquipmentCode)
+                .Select(x => new EquipmentLiteList
+                {
+                    EquipmentCode = x.Equipment.EquipmentCode,
+                    Id = x.Equipment.EquipmentId,
+                    OwnerId = x.Equipment.OwnerId,
+                    ProjectId = x.RentalRequest.ProjectId.Value,
+                });
+
+            return new ObjectResult(new HetsResponse(equipment));
+        }
+
+        /// <summary>
         /// Update equipment
         /// </summary>
         /// <param name="id">id of Equipment to update</param>
@@ -380,6 +506,7 @@ namespace HetsApi.Controllers
         /// <param name="equipmentId">Equipment Code</param>
         /// <param name="ownerName"></param>
         /// <param name="projectName"></param>
+        /// <param name="twentyYears"></param>
         [HttpGet]
         [Route("search")]
         [SwaggerOperation("EquipmentSearchGet")]
@@ -389,7 +516,7 @@ namespace HetsApi.Controllers
             [FromQuery]string equipmentAttachment, [FromQuery]int? owner, [FromQuery]string status, 
             [FromQuery]bool? hired, [FromQuery]DateTime? notVerifiedSinceDate, 
             [FromQuery]string equipmentId = null, [FromQuery]string ownerName = null,
-            [FromQuery]string projectName = null)
+            [FromQuery]string projectName = null, [FromQuery]bool twentyYears = false)
         {
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
             int?[] typesArray = ArrayHelper.ParseIntArray(types);
@@ -482,6 +609,15 @@ namespace HetsApi.Controllers
             if (equipmentId != null)
             {
                 data = data.Where(x => x.EquipmentCode.ToLower().Contains(equipmentId.ToLower()));
+            }
+
+            // HETS-942 - Search for Equipment > 20 yrs
+            // ** only return equipment that are 20 years and older (using the equipment Year)
+            if (twentyYears)
+            {
+                int twentyYearsInt = DateTime.Now.Year - 20;
+                data = data.Where(x => string.IsNullOrWhiteSpace(x.Year) ||
+                                       int.Parse(x.Year) <= twentyYearsInt);
             }
 
             // convert Equipment Model to the "EquipmentLite" Model
@@ -607,7 +743,8 @@ namespace HetsApi.Controllers
 
             // ******************************************************************
             // clone agreement
-            // ******************************************************************             
+            // ******************************************************************
+            agreements[newRentalAgreementIndex].AgreementCity = agreements[agreementToCloneIndex].AgreementCity;
             agreements[newRentalAgreementIndex].EquipmentRate = agreements[agreementToCloneIndex].EquipmentRate;
             agreements[newRentalAgreementIndex].Note = agreements[agreementToCloneIndex].Note;
             agreements[newRentalAgreementIndex].RateComment = agreements[agreementToCloneIndex].RateComment;
@@ -1067,7 +1204,7 @@ namespace HetsApi.Controllers
             }
 
             return new ObjectResult(new HetsResponse(notes));
-        }        
+        }
 
         #endregion
 
@@ -1079,11 +1216,12 @@ namespace HetsApi.Controllers
         /// <remarks>Returns a PDF version of the seniority list</remarks>
         /// <param name="localAreas">Local Areas (comma separated list of id numbers)</param>
         /// <param name="types">Equipment Types (comma separated list of id numbers)</param>
+        /// <param name="counterCopy">If true, use the Counter Copy template</param>
         [HttpGet]
         [Route("seniorityListPdf")]
         [SwaggerOperation("EquipmentSeniorityListPdfGet")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentSeniorityListPdfGet([FromQuery]string localAreas, [FromQuery]string types)
+        public virtual IActionResult EquipmentSeniorityListPdfGet([FromQuery]string localAreas, [FromQuery]string types, [FromQuery]bool counterCopy = false)
         {
             _logger.LogInformation("Equipment Seniority List Pdf");
 
@@ -1136,9 +1274,9 @@ namespace HetsApi.Controllers
             // determine the year header values
             // * use the district status table
             // **********************************************************************            
-            string yearMinus1 = string.Format("{0}/{1}", fiscalYear - 2, fiscalYear - 1);
-            string yearMinus2 = string.Format("{0}/{1}", fiscalYear - 3, fiscalYear - 2);
-            string yearMinus3 = string.Format("{0}/{1}", fiscalYear - 4, fiscalYear - 3);
+            string yearMinus1 = $"{fiscalYear - 2}/{fiscalYear - 1}";
+            string yearMinus2 = $"{fiscalYear - 3}/{fiscalYear - 2}";
+            string yearMinus3 = $"{fiscalYear - 4}/{fiscalYear - 3}";
 
             // **********************************************************************
             // convert Equipment Model to Pdf View Model
@@ -1221,7 +1359,7 @@ namespace HetsApi.Controllers
                 }                
             }
 
-            seniorityList.PrintedOn = string.Format("{0:dd-MM-yyyy H:mm:ss}", DateTime.Now.AddHours(-8));
+            seniorityList.PrintedOn = $"{DateTime.Now.AddHours(-8):dd-MM-yyyy H:mm:ss}";
             
             // **********************************************************************
             // create the payload and call the pdf service
@@ -1240,12 +1378,12 @@ namespace HetsApi.Controllers
             // pass the request on to the Pdf Micro Service
             string pdfHost = _configuration["PDF_SERVICE_NAME"];
             string pdfUrl = _configuration.GetSection("Constants:SeniorityListPdfUrl").Value;
-            string targetUrl = pdfHost + pdfUrl;
+            string targetUrl = $"{pdfHost}{pdfUrl}";
 
             // generate pdf document name [unique portion only]
             string fileName = "HETS_SeniorityList";
 
-            targetUrl = targetUrl + "/" + fileName;
+            targetUrl = $"{targetUrl}/{fileName}/{counterCopy}";
 
             _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Service Url: {0}", targetUrl);
 
@@ -1268,7 +1406,7 @@ namespace HetsApi.Controllers
                     // convert to string and log
                     string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
 
-                    fileName = fileName + string.Format("-{0:yyyy-MM-dd-H-mm}", DateTime.Now) + ".pdf";
+                    fileName = fileName + $"-{DateTime.Now:yyyy-MM-dd-H-mm}" + ".pdf";
 
                     _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Filename: {0}", fileName);
                     _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Size: {0}", pdfResponse.Length);

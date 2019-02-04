@@ -33,6 +33,12 @@ namespace HetsApi.Controllers
         public string StatusComment { get; set; }
     }
 
+    public class ReportParameters
+    {
+        public int?[] LocalAreas { get; set; }
+        public int?[] Owners { get; set; }
+    }
+
     #endregion
 
     /// <summary>
@@ -92,19 +98,67 @@ namespace HetsApi.Controllers
             // get active status
             int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
-
-            // get all active owners for this district
+            
+            // get all active owners for this district (and any projects they're associated with)
             IEnumerable<OwnerLiteList> owners = _context.HetOwner.AsNoTracking()
                 .Where(x => x.LocalArea.ServiceArea.DistrictId == districtId &&
-                            x.OwnerStatusTypeId == statusId)
+                            x.OwnerStatusTypeId == statusId)                
                 .OrderBy(x => x.OwnerCode)
                 .Select(x => new OwnerLiteList
                 {
                     OwnerCode = x.OwnerCode,
                     Id = x.OwnerId,
-                    LocalAreaId = x.LocalAreaId,
-                });
+                    LocalAreaId = x.LocalAreaId
+                });            
                     
+            return new ObjectResult(new HetsResponse(owners));
+        }
+
+        /// <summary>
+        /// Get all owners for this district that are associated with a project (lite)
+        /// </summary>
+        [HttpGet]
+        [Route("liteTs")]
+        [SwaggerOperation("OwnersGetLiteTs")]
+        [SwaggerResponse(200, type: typeof(List<OwnerLiteList>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult OwnersGetLiteTs()
+        {
+            // get users district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            // get active status
+            int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // get fiscal year
+            HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
+                .First(x => x.DistrictId == districtId);
+
+            int? fiscalYear = status.CurrentFiscalYear;
+            if (fiscalYear == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // fiscal year in the status table stores the "start" of the year
+            DateTime fiscalYearStart = new DateTime((int)fiscalYear, 3, 31);
+
+            // get all active owners for this district (and any projects they're associated with)
+            IEnumerable<OwnerLiteList> owners = _context.HetRentalAgreement.AsNoTracking()
+                .Include(x => x.Project)
+                .Include(x => x.Equipment)
+                    .ThenInclude(y => y.Owner)
+                .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
+                            x.Equipment.Owner.OwnerStatusTypeId == statusId &&
+                            x.Project.AppCreateTimestamp > fiscalYearStart)
+                .OrderBy(x => x.Equipment.Owner.OwnerCode)
+                .Select(x => new OwnerLiteList
+                {
+                    OwnerCode = x.Equipment.Owner.OwnerCode,
+                    OrganizationName = x.Equipment.Owner.OrganizationName,
+                    Id = x.Equipment.Owner.OwnerId,
+                    LocalAreaId = x.Equipment.LocalAreaId,
+                    ProjectId = x.ProjectId
+                });
+
             return new ObjectResult(new HetsResponse(owners));
         }
 
@@ -539,27 +593,21 @@ namespace HetsApi.Controllers
         /// Get owner verification pdf
         /// </summary>
         /// <remarks>Returns a PDF version of the owner verification notices</remarks>
-        /// <param name="items">Array of owner id numbers to generate notices for</param>
+        /// <param name="parameters">Array of local area and owner id numbers to generate notices for</param>
         [HttpPost]
         [Route("verificationPdf")]
         [SwaggerOperation("OwnersIdVerificationPdfPost")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult OwnersIdVerificationPdfPost([FromBody]List<int> items)
+        public virtual IActionResult OwnersIdVerificationPdfPost([FromBody]ReportParameters parameters)
         {
-            if (items == null || items.Count <= 0)
-            {
-                // verification array is empty [HETS-14]
-                return new ObjectResult(new HetsResponse("HETS-14", ErrorViewModel.GetDescription("HETS-14", _configuration)));
-            }
-
             // get equipment status
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            _logger.LogInformation("Owner Verification Notices Pdf [Owner Count: {0}]", items.Count);
+            _logger.LogInformation("Owner Verification Notices Pdf");
 
             // get owner records
-            List<HetOwner> owners = _context.HetOwner.AsNoTracking()
+            IQueryable<HetOwner> ownerRecords = _context.HetOwner.AsNoTracking()
                 .Include(x => x.PrimaryContact)
                 .Include(x => x.Business)
                 .Include(x => x.HetEquipment)
@@ -570,26 +618,31 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.DistrictEquipmentType)
                 .Include(x => x.LocalArea)
                     .ThenInclude(s => s.ServiceArea)
-                        .ThenInclude(d => d.District)
-                .Where(x => items.Contains(x.OwnerId))
-                .ToList();
+                        .ThenInclude(d => d.District);
+
+            if (parameters.Owners?.Length > 0)
+            {
+                ownerRecords = ownerRecords.Where(x => parameters.Owners.Contains(x.OwnerId));
+            }
+
+            if (parameters.LocalAreas?.Length > 0)
+            {
+                ownerRecords = ownerRecords.Where(x => parameters.LocalAreas.Contains(x.LocalAreaId));
+            }
+
+            // convert to list
+            List<HetOwner> ownerList = ownerRecords.ToList();
 
             // strip out inactive and archived equipment
-            foreach (HetOwner owner in owners)
+            foreach (HetOwner owner in ownerList)
             {
                 owner.HetEquipment = owner.HetEquipment.Where(x => x.EquipmentStatusTypeId == statusId).ToList();
             }
 
-            if (owners.Count > 0)
+            if (ownerList.Any())
             {
-                if (owners[0].LocalArea.ServiceArea.District == null)
-                {
-                    // missing district - data error [HETS-16]
-                    return new ObjectResult(new HetsResponse("HETS-16", ErrorViewModel.GetDescription("HETS-16", _configuration)));
-                }
-
                 // get address and contact info
-                string address = owners[0].LocalArea.ServiceArea.Address;
+                string address = ownerList[0].LocalArea.ServiceArea.Address;
 
                 if (!string.IsNullOrEmpty(address))
                 {
@@ -602,7 +655,7 @@ namespace HetsApi.Controllers
                     address = "";
                 }
 
-                string contact = $"Phone: {owners[0].LocalArea.ServiceArea.Phone} | Fax: {owners[0].LocalArea.ServiceArea.Fax}";
+                string contact = $"Phone: {ownerList[0].LocalArea.ServiceArea.Phone} | Fax: {ownerList[0].LocalArea.ServiceArea.Fax}";
 
                 // generate pdf document name [unique portion only]
                 string fileName = "OwnerVerification";
@@ -612,16 +665,17 @@ namespace HetsApi.Controllers
                 {
                     ReportDate = DateTime.Now.ToString("yyyy-MM-dd"),
                     Title = fileName,
-                    DistrictId = owners[0].LocalArea.ServiceArea.District.DistrictId,
-                    MinistryDistrictId = owners[0].LocalArea.ServiceArea.District.MinistryDistrictId,
-                    DistrictName = owners[0].LocalArea.ServiceArea.District.Name,
+                    DistrictId = ownerList[0].LocalArea.ServiceArea.District.DistrictId,
+                    MinistryDistrictId = ownerList[0].LocalArea.ServiceArea.District.MinistryDistrictId,
+                    DistrictName = ownerList[0].LocalArea.ServiceArea.District.Name,
                     DistrictAddress = address,
                     DistrictContact = contact,
+                    LocalAreaName = ownerList[0].LocalArea.Name,
                     Owners = new List<HetOwner>()
                 };
 
                 // add owner records - must verify district ids too
-                foreach (HetOwner owner in owners)
+                foreach (HetOwner owner in ownerRecords)
                 {
                     if (owner.LocalArea.ServiceArea.District == null ||
                         owner.LocalArea.ServiceArea.District.DistrictId != model.DistrictId)
@@ -637,6 +691,7 @@ namespace HetsApi.Controllers
                     owner.DistrictName = model.DistrictName;
                     owner.DistrictAddress = model.DistrictAddress;
                     owner.DistrictContact = model.DistrictContact;
+                    owner.LocalAreaName = model.LocalAreaName;
 
                     if (!string.IsNullOrEmpty(owner.SharedKey))
                     {
@@ -647,7 +702,7 @@ namespace HetsApi.Controllers
                         //"Business Name: label and value instead"
                         owner.SharedKeyHeader = "Business Name: ";
 
-                        if (!string.IsNullOrEmpty(owner.Business.BceidLegalName))
+                        if (owner.Business != null && !string.IsNullOrEmpty(owner.Business.BceidLegalName))
                         {
                             owner.SharedKeyHeader = "Business Name: " + owner.Business.BceidLegalName;
                         }
@@ -743,6 +798,160 @@ namespace HetsApi.Controllers
                 throw;
             }
         }
+
+        #endregion
+
+        #region Get Mailing Labels Pdfs
+
+        /// <summary>
+        /// Get owner mailing labels pdf
+        /// </summary>
+        /// <remarks>Returns a PDF version of the owner mailing labels</remarks>
+        /// <param name="parameters">Array of local area and owner ids to generate labels for</param>
+        [HttpPost]
+        [Route("mailingLabelsPdf")]
+        [SwaggerOperation("OwnersIdMailingLabelsPdfPost")]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult OwnersIdMailingLabelsPdfPost([FromBody]ReportParameters parameters)
+        {
+            _logger.LogInformation("Owner Mailing Labels Pdf");
+
+            // get owner records
+            IQueryable<HetOwner> ownerRecords = _context.HetOwner.AsNoTracking()
+                .Include(x => x.PrimaryContact)                
+                .Include(x => x.LocalArea)
+                    .ThenInclude(s => s.ServiceArea)
+                        .ThenInclude(d => d.District);
+
+            if (parameters.Owners.Length > 0)
+            {
+                ownerRecords = ownerRecords.Where(x => parameters.Owners.Contains(x.OwnerId));
+            }
+
+            if (parameters.LocalAreas?.Length > 0)
+            {
+                ownerRecords = ownerRecords.Where(x => parameters.LocalAreas.Contains(x.LocalAreaId));
+            }
+
+            // convert to list
+            List<HetOwner> ownerList = ownerRecords.ToList();
+
+            if (ownerList.Any())
+            {                
+                // generate pdf document name [unique portion only]
+                string fileName = "MailingLabels";
+
+                // setup model for submission to the Pdf service
+                MailingLabelPdfViewModel model = new MailingLabelPdfViewModel
+                {
+                    ReportDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                    Title = fileName,
+                    DistrictId = ownerList[0].LocalArea.ServiceArea.District.DistrictId,
+                    LabelRow = new List<MailingLabelRowModel>()
+                };
+
+                // add owner records
+                int column = 1;
+
+                foreach (HetOwner owner in ownerRecords)
+                {
+                    if (owner.LocalArea.ServiceArea.District == null ||
+                        owner.LocalArea.ServiceArea.District.DistrictId != model.DistrictId)
+                    {
+                        // missing district - data error [HETS-16]
+                        return new ObjectResult(new HetsResponse("HETS-16", ErrorViewModel.GetDescription("HETS-16", _configuration)));
+                    }
+
+                    owner.ReportDate = model.ReportDate;
+                    owner.Title = model.Title;
+                    owner.DistrictId = model.DistrictId;
+
+                    switch (column)
+                    {
+                        case 1:
+                            model.LabelRow.Add(new MailingLabelRowModel());
+                            model.LabelRow.Last().OwnerColumn1 = owner;
+                            break;                        
+                        default:
+                            model.LabelRow.Last().OwnerColumn2 = owner;
+                            column = 0;
+                            break;                                                        
+                    }
+
+                    column++;
+                }
+
+                // setup payload
+                string payload = JsonConvert.SerializeObject(model, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    Formatting = Formatting.Indented,
+                    DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                    DateTimeZoneHandling = DateTimeZoneHandling.Utc
+                });
+
+                _logger.LogInformation("Owner Mailing Labels Pdf - Payload Length: {0}", payload.Length);
+
+                // pass the request on to the Pdf Micro Service
+                string pdfHost = _configuration["PDF_SERVICE_NAME"];
+                string pdfUrl = _configuration.GetSection("Constants:OwnerMailingLabelsPdfUrl").Value;
+                string targetUrl = pdfHost + pdfUrl;
+
+                targetUrl = targetUrl + "/" + fileName;
+
+                _logger.LogInformation("Owner Mailing Labels Pdf - HETS Pdf Service Url: {0}", targetUrl);
+
+                // call the MicroService
+                try
+                {
+                    HttpClient client = new HttpClient();
+                    StringContent stringContent = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+
+                    _logger.LogInformation("Owner Mailing Labels Pdf - Calling HETS Pdf Service");
+                    HttpResponseMessage response = client.PostAsync(targetUrl, stringContent).Result;
+
+                    // success
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        _logger.LogInformation("Owner Mailing Labels Pdf - HETS Pdf Service Response: OK");
+
+                        var pdfResponseBytes = GetPdf(response);
+
+                        // convert to string and log
+                        string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
+
+                        fileName = fileName + $"-{DateTime.Now:yyyy-MM-dd-H-mm}" + ".pdf";
+
+                        _logger.LogInformation("Owner Mailing Labels Pdf - HETS Pdf Filename: {0}", fileName);
+                        _logger.LogInformation("Owner Mailing Labels Pdf - HETS Pdf Size: {0}", pdfResponse.Length);
+
+                        // return content
+                        FileContentResult result = new FileContentResult(pdfResponseBytes, "application/pdf")
+                        {
+                            FileDownloadName = fileName
+                        };
+
+                        Response.Headers.Add("Content-Disposition", "inline; filename=" + fileName);
+
+                        return result;
+                    }
+
+                    _logger.LogInformation("Owner Mailing Labels Pdf - HETS Pdf Service Response: {0}", response.StatusCode);
+                }
+                catch (Exception ex)
+                {
+                    Debug.Write("Error generating pdf: " + ex.Message);
+                    return new ObjectResult(new HetsResponse("HETS-15", ErrorViewModel.GetDescription("HETS-15", _configuration)));
+                }
+
+                // problem occured
+                return new ObjectResult(new HetsResponse("HETS-15", ErrorViewModel.GetDescription("HETS-15", _configuration)));
+            }
+
+            // record not found
+            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }        
 
         #endregion
 
@@ -1611,6 +1820,69 @@ namespace HetsApi.Controllers
 
             // return ok
             return new ObjectResult(new HetsResponse(""));
+        }
+
+        #endregion
+
+        #region Wcb / Cgl Report
+
+        /// <summary>
+        /// Owner Wcb / Cgl Report
+        /// </summary>
+        /// <remarks>Used for the rental request search page.</remarks>
+        /// <param name="localAreas">Local Areas (comma separated list of id numbers)</param>
+        /// <param name="owners">Owners (comma separated list of id numbers)</param>
+        /// <param name="wcbExpiry">Find owners whose WCB policy expires before this date</param>
+        /// <param name="cglExpiry">Find owners whose CGL policy expires before this date</param>
+        [HttpGet]
+        [Route("wcbCglReport")]
+        [SwaggerOperation("OwnerWcbCglGet")]
+        [SwaggerResponse(200, type: typeof(List<OwnerWcbCgl>))]
+        public virtual IActionResult OwnerWcbCglGet([FromQuery]string localAreas, [FromQuery]string owners, 
+            [FromQuery]DateTime wcbExpiry, [FromQuery]DateTime cglExpiry)
+        {
+            int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
+            int?[] ownerArray = ArrayHelper.ParseIntArray(owners);
+
+            // owner status
+            int? statusId = StatusHelper.GetStatusId(HetOwner.StatusArchived, "ownerStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // default the dates if they weren't entered
+            if (wcbExpiry == DateTime.MinValue) { wcbExpiry = DateTime.Now; }
+            if (cglExpiry == DateTime.MinValue) { cglExpiry = DateTime.Now; }
+
+            // get initial results - must be limited to user's district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            
+            IQueryable<HetOwner> data = _context.HetOwner.AsNoTracking()
+                .Include(y => y.LocalArea.ServiceArea)
+                .Include(x => x.PrimaryContact)
+                .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
+                            x.OwnerStatusTypeId != statusId && 
+                            (x.WorkSafeBcexpiryDate == null || x.WorkSafeBcexpiryDate < wcbExpiry) &&
+                            (x.CglendDate == null || x.CglendDate < cglExpiry));
+
+            if (localAreasArray != null && localAreasArray.Length > 0)
+            {
+                data = data.Where(x => localAreasArray.Contains(x.LocalAreaId));
+            }
+            
+            if (ownerArray != null && ownerArray.Length > 0)
+            {
+                data = data.Where(x => ownerArray.Contains(x.OwnerId));
+            }
+
+            // convert Rental Request Model to the "RentalRequestHires" Model
+            List<OwnerWcbCgl> result = new List<OwnerWcbCgl>();
+
+            foreach (HetOwner item in data)
+            {
+                result.Add(OwnerHelper.ToWcbCglModel(item));
+            }
+
+            // return to the client            
+            return new ObjectResult(new HetsResponse(result));
         }
 
         #endregion

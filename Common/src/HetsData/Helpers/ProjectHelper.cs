@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using HetsData.Model;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,13 @@ namespace HetsData.Helpers
         public int? Hires { get; set; }
         public int? Requests { get; set; }
         public string Status { get; set; }
+        public string ProvincialProjectNumber { get; set; }
+    }
+
+    public class ProjectLiteList
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }        
     }
 
     public class ProjectRentalAgreementClone
@@ -36,9 +44,10 @@ namespace HetsData.Helpers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="context"></param>
+        /// <param name="districtId"></param>
         /// <returns></returns>
-        public static HetProject GetRecord(int id, DbAppContext context)
-        {
+        public static HetProject GetRecord(int id, DbAppContext context, int? districtId = 0)
+        {            
             HetProject project = context.HetProject.AsNoTracking() 
                 .Include(x => x.ProjectStatusType)
                 .Include(x => x.District)
@@ -51,11 +60,16 @@ namespace HetsData.Helpers
                     .ThenInclude(y => y.RentalRequestStatusType)
                 .Include(x => x.HetRentalRequest)
                     .ThenInclude(y => y.HetRentalRequestRotationList)
+                .Include(x => x.HetRentalRequest)
+                    .ThenInclude(y => y.LocalArea)
                 .Include(x => x.HetRentalAgreement)
                     .ThenInclude(y => y.Equipment)
                         .ThenInclude(z => z.DistrictEquipmentType)
                 .Include(x => x.HetRentalAgreement)
                     .ThenInclude(y => y.RentalAgreementStatusType)
+                .Include(x => x.HetRentalAgreement)
+                    .ThenInclude(y => y.Equipment)
+                        .ThenInclude(z => z.LocalArea)
                 .FirstOrDefault(a => a.ProjectId == id);
 
             if (project != null)
@@ -103,8 +117,8 @@ namespace HetsData.Helpers
 
                 foreach (HetRentalAgreement rentalAgreement in project.HetRentalAgreement)
                 {
-                    rentalAgreement.Status = rentalAgreement.RentalAgreementStatusType.RentalAgreementStatusTypeCode;
-
+                    rentalAgreement.Status = rentalAgreement.RentalAgreementStatusType.RentalAgreementStatusTypeCode;                    
+                    
                     if (rentalAgreement.RentalAgreementStatusType.RentalAgreementStatusTypeCode == null ||
                         rentalAgreement.RentalAgreementStatusType.RentalAgreementStatusTypeCode
                             .Equals(HetRentalAgreement.StatusActive))
@@ -117,6 +131,21 @@ namespace HetsData.Helpers
                     {
                         rentalAgreement.RentalRequestId = -1;
                         rentalAgreement.RentalRequestRotationListId = -1;
+                    }
+
+                    if (rentalAgreement.Equipment.LocalArea != null)
+                    {
+                        rentalAgreement.LocalAreaName = rentalAgreement.Equipment.LocalArea.Name;
+                        rentalAgreement.Equipment.LocalArea = null;
+                    }
+                }
+
+                foreach (HetRentalRequest rentalRequest in project.HetRentalRequest)
+                {
+                    if (rentalRequest.LocalArea != null)
+                    {
+                        rentalRequest.LocalAreaName = rentalRequest.LocalArea.Name;
+                        rentalRequest.LocalArea = null;
                     }
                 }
 
@@ -132,6 +161,22 @@ namespace HetsData.Helpers
                 else
                 {
                     project.CanEditStatus = true;
+                }
+            }
+
+            // get fiscal year
+            if (districtId > 0)
+            {                
+                HetDistrictStatus status = context.HetDistrictStatus.AsNoTracking()
+                    .First(x => x.DistrictId == districtId);
+
+                int? fiscalYear = status.CurrentFiscalYear;
+
+                // fiscal year in the status table stores the "start" of the year
+                if (fiscalYear != null && project != null)
+                {
+                    DateTime fiscalYearStart = new DateTime((int) fiscalYear, 4, 1);
+                    project.FiscalYearStartDate = fiscalYearStart;
                 }
             }
 
@@ -159,6 +204,7 @@ namespace HetsData.Helpers
                 projectLite.District = project.District;                
                 projectLite.Requests = project.HetRentalRequest?.Count;
                 projectLite.Hires = project.HetRentalAgreement?.Count;
+                projectLite.ProvincialProjectNumber = project.ProvincialProjectNumber;
             }
 
             return projectLite;
