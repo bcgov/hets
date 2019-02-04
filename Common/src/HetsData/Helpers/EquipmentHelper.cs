@@ -247,7 +247,20 @@ namespace HetsData.Helpers
                 equipmentLite.Year = equipment.Year;
                 equipmentLite.EquipmentCode = equipment.EquipmentCode;
                 equipmentLite.EquipmentPrefix = Regex.Match(equipment.EquipmentCode, @"^[^\d-]+").Value;
-                equipmentLite.EquipmentNumber = int.Parse(Regex.Match(equipment.EquipmentCode, @"\d+").Value);
+
+                string temp = "";
+
+                if (!string.IsNullOrEmpty(equipmentLite.EquipmentPrefix))
+                {
+                    temp = equipment.EquipmentCode.Replace(equipmentLite.EquipmentPrefix, "");
+                }
+                
+                temp = temp.Replace("-", "");
+
+                equipmentLite.EquipmentNumber = !string.IsNullOrEmpty(temp) ? 
+                    int.Parse(Regex.Match(temp, @"\d+").Value) : 
+                    0;
+
                 equipmentLite.AttachmentCount = CalculateAttachmentCount(equipment.HetEquipmentAttachment.ToList());
                 equipmentLite.LastVerifiedDate = equipment.LastVerifiedDate;
                 equipmentLite.Status = equipment.EquipmentStatusType.EquipmentStatusTypeCode;
