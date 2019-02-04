@@ -620,6 +620,7 @@ namespace HetsApi.Controllers
                     .ThenInclude(s => s.ServiceArea)
                         .ThenInclude(d => d.District)
                 .Where(x => items.Contains(x.OwnerId))
+                .OrderBy(x => x.LocalArea.Name).ThenBy(x => x.OrganizationName)
                 .ToList();
 
             // strip out inactive and archived equipment
