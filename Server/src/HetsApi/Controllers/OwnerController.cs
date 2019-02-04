@@ -216,7 +216,7 @@ namespace HetsApi.Controllers
             owner.MeetsResidency = item.MeetsResidency;
 
             // we need to update the equipment records to match any change in local area
-            if (oldLocalArea != item.LocalAreaId)
+            if (oldLocalArea != item.LocalArea.LocalAreaId)
             {
                 IQueryable<HetEquipment> equipmentList = _context.HetEquipment
                     .Include(x => x.Owner)
