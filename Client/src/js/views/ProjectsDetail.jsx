@@ -401,7 +401,7 @@ var ProjectsDetail = React.createClass({
                     { field: 'equipmentCode',     title: 'ID'               },
                     { field: 'localAreaName',     title: 'Local Area'       },
                     { field: 'equipmentTypeName', title: 'Type'             },
-					{ field: 'equipmentCount',    title: 'Count'            },
+                    { field: 'equipmentCount',    title: 'Quantity'         },
                     { field: 'equipmentMake',     title: 'Year Make/Model/Size'  },
                     { field: 'lastTimeRecord',    title: 'Time Entry'       },
                     { field: 'release',           title: 'Release'          },
