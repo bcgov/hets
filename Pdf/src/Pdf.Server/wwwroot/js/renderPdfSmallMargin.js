@@ -26,11 +26,12 @@
                 engine: 'none',
                 recipe: 'phantom-pdf',
                 phantom: {
+                    //"footer": "<div style='text-align: right; font-family: Myriad-Pro, Calibri, Arial; font-size: 7pt;'>Page {#pageNum} of {#numPages}</div>",
                     "orientation": "portrait",
                     "format": "A4",
                     "margin": {
                         "top": "1cm",
-                        "bottom": "1cm",
+                        "bottom": "0cm",
                         "left": "0.5cm",
                         "right": "0.5cm"
                     }
