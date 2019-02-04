@@ -43,7 +43,6 @@ var EquipmentAddDialog = React.createClass({
       licencedGvw: '',
       legalCapacity: '',
       pupLegalCapacity: '',
-
       localAreaError: '',
       equipmentTypeError: '',
       serialNumberError: '',
