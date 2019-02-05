@@ -16,7 +16,8 @@ namespace Pdf.Server.Helpers
     /// </summary>
     public static class PdfDocument
     {
-        public static async Task<byte[]> BuildPdf(INodeServices nodeServices, PdfRequest request, bool landscape = false)
+        public static async Task<byte[]> BuildPdf(INodeServices nodeServices, PdfRequest request, 
+            bool landscape = false, bool smallMargin = false)
         {
             try
             {
@@ -32,6 +33,7 @@ namespace Pdf.Server.Helpers
                 }
 
                 string jsUrl = request.RenderJsUrl;
+                if (smallMargin) jsUrl = jsUrl.Replace(".js", "SmallMargin.js");
                 if (landscape) jsUrl = jsUrl.Replace(".js", "Landscape.js");
 
                 // call report js to generate pdf response
