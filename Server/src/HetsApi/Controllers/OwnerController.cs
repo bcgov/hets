@@ -618,6 +618,8 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.DistrictEquipmentType)
                 .Include(x => x.LocalArea)
                     .ThenInclude(s => s.ServiceArea)
+                        .ThenInclude(d => d.District)
+                .OrderBy(x => x.LocalArea.Name).ThenBy(x => x.OrganizationName);
 
             if (parameters.Owners?.Length > 0)
             {
@@ -820,7 +822,8 @@ namespace HetsApi.Controllers
                 .Include(x => x.PrimaryContact)                
                 .Include(x => x.LocalArea)
                     .ThenInclude(s => s.ServiceArea)
-                        .ThenInclude(d => d.District);
+                        .ThenInclude(d => d.District)
+                .OrderBy(x => x.LocalArea.Name).ThenBy(x => x.OrganizationName);
 
             if (parameters.Owners.Length > 0)
             {
