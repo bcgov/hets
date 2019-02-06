@@ -246,12 +246,13 @@ namespace HetsApi.Controllers
             HetEquipment equipment = _context.HetEquipment
                 .Include(x => x.Owner)
                 .First(x => x.EquipmentId == item.EquipmentId);
-            
+
             DateTime? originalSeniorityEffectiveDate = equipment.SeniorityEffectiveDate;
             float? originalServiceHoursLastYear = equipment.ServiceHoursLastYear;
             float? originalServiceHoursTwoYearsAgo = equipment.ServiceHoursTwoYearsAgo;
             float? originalServiceHoursThreeYearsAgo = equipment.ServiceHoursThreeYearsAgo;
             long? originalLocalAreaId = equipment.LocalAreaId;
+            long? originalDistrictEquipmentTypeId = equipment.DistrictEquipmentTypeId;
 
             equipment.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             equipment.ApprovedDate = item.ApprovedDate;
@@ -272,11 +273,12 @@ namespace HetsApi.Controllers
             equipment.ServiceHoursLastYear = item.ServiceHoursLastYear;
             equipment.ServiceHoursTwoYearsAgo = item.ServiceHoursTwoYearsAgo;
             equipment.ServiceHoursThreeYearsAgo = item.ServiceHoursThreeYearsAgo;
-            equipment.SeniorityEffectiveDate = item.SeniorityEffectiveDate;            
+            equipment.SeniorityEffectiveDate = item.SeniorityEffectiveDate;
             equipment.LicencedGvw = item.LicencedGvw;
             equipment.LegalCapacity = item.LegalCapacity;
             equipment.PupLegalCapacity = item.PupLegalCapacity;
             equipment.LocalAreaId = item.LocalArea.LocalAreaId;
+            equipment.DistrictEquipmentTypeId = item.DistrictEquipmentTypeId;
 
             // save the changes
             _context.SaveChanges();
@@ -287,6 +289,11 @@ namespace HetsApi.Controllers
                                      originalSeniorityEffectiveDate != item.SeniorityEffectiveDate);
 
             if (originalLocalAreaId != item.LocalArea.LocalAreaId)
+            {
+                rebuildSeniority = true;
+            }
+
+            if (originalDistrictEquipmentTypeId != item.DistrictEquipmentTypeId)
             {
                 rebuildSeniority = true;
             }
@@ -361,7 +368,7 @@ namespace HetsApi.Controllers
             // check the owner status
             int? ownStatusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
             if (ownStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
-            
+
             // update equipment status
             int? statusId = StatusHelper.GetStatusId(item.Status, "equipmentStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
@@ -422,7 +429,7 @@ namespace HetsApi.Controllers
                 EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration);
             }
 
-            // retrieve updated equipment record to return to ui            
+            // retrieve updated equipment record to return to ui
             return new ObjectResult(new HetsResponse(EquipmentHelper.GetRecord(id, _context, _configuration)));
         }
 
@@ -448,10 +455,10 @@ namespace HetsApi.Controllers
             // Calculate Years of Service for new record
             // ***********************************************************************************
             // Business Rules:
-            // 1. When the equipment is added the years registered is set to a fraction of the 
-            //    fiscal left from the registered date to the end of current fiscal 
+            // 1. When the equipment is added the years registered is set to a fraction of the
+            //    fiscal left from the registered date to the end of current fiscal
             //    (decimals: 3 places)
-            // 2. On roll over the years registered increments by one for each year the equipment 
+            // 2. On roll over the years registered increments by one for each year the equipment
             //    stays active ((might need use the TO_DATE field to track when last it was rolled over)
             //    TO_DATE = END OF CURRENT FISCAL
 
@@ -491,9 +498,9 @@ namespace HetsApi.Controllers
             // recalculation seniority (if required)
             int? localAreaId = item.LocalAreaId;
             int? districtEquipmentTypeId = item.DistrictEquipmentTypeId;
-            EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration);            
+            EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration);
 
-            // retrieve updated equipment record to return to ui   
+            // retrieve updated equipment record to return to ui
             return new ObjectResult(new HetsResponse(EquipmentHelper.GetRecord(id, _context, _configuration)));
         }
 
@@ -519,9 +526,9 @@ namespace HetsApi.Controllers
         [SwaggerOperation("EquipmentSearchGet")]
         [SwaggerResponse(200, type: typeof(List<EquipmentLite>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentSearchGet([FromQuery]string localAreas, [FromQuery]string types, 
-            [FromQuery]string equipmentAttachment, [FromQuery]int? owner, [FromQuery]string status, 
-            [FromQuery]bool? hired, [FromQuery]DateTime? notVerifiedSinceDate, 
+        public virtual IActionResult EquipmentSearchGet([FromQuery]string localAreas, [FromQuery]string types,
+            [FromQuery]string equipmentAttachment, [FromQuery]int? owner, [FromQuery]string status,
+            [FromQuery]bool? hired, [FromQuery]DateTime? notVerifiedSinceDate,
             [FromQuery]string equipmentId = null, [FromQuery]string ownerName = null,
             [FromQuery]string projectName = null, [FromQuery]bool twentyYears = false)
         {
@@ -601,7 +608,7 @@ namespace HetsApi.Controllers
 
                 data = data.Where(e => hiredEquipmentQuery.Contains(e.EquipmentId));
             }
-                        
+
             if (typesArray != null && typesArray.Length > 0)
             {
                 data = data.Where(x => typesArray.Contains(x.DistrictEquipmentType.DistrictEquipmentTypeId));
@@ -636,7 +643,7 @@ namespace HetsApi.Controllers
                 result.Add(EquipmentHelper.ToLiteModel(item, scoringRules, (int)agreementStatusId, _context));
             }
 
-            // return to the client            
+            // return to the client
             return new ObjectResult(new HetsResponse(result));
         }
 
@@ -660,7 +667,7 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             List<HetRentalAgreement> agreements = _context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.Equipment)
                     .ThenInclude(d => d.DistrictEquipmentType)
@@ -676,7 +683,7 @@ namespace HetsApi.Controllers
                 agreement.Project.HetRentalAgreement = null;
             }
 
-            return new ObjectResult(new HetsResponse(agreements));            
+            return new ObjectResult(new HetsResponse(agreements));
         }
 
         /// <summary>
@@ -698,7 +705,7 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             // get all agreements for this equipment
             List<HetRentalAgreement> agreements = _context.HetRentalAgreement
                 .Include(x => x.Equipment)
@@ -716,13 +723,13 @@ namespace HetsApi.Controllers
 
             // (RENTAL AGREEMENT) not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             // check that the rental agreement to clone exist
             exists = agreements.Any(a => a.RentalAgreementId == item.AgreementToCloneId);
 
             // (RENTAL AGREEMENT) not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-11", ErrorViewModel.GetDescription("HETS-11", _configuration)));
-            
+
             // get ids
             int agreementToCloneIndex = agreements.FindIndex(a => a.RentalAgreementId == item.AgreementToCloneId);
             int newRentalAgreementIndex = agreements.FindIndex(a => a.RentalAgreementId == item.RentalAgreementId);
@@ -781,7 +788,7 @@ namespace HetsApi.Controllers
                 agreements[newRentalAgreementIndex].HetRentalAgreementRate.Add(temp);
             }
 
-            // update overtime rates (and add if they don't exist)   
+            // update overtime rates (and add if they don't exist)
             List<HetProvincialRateType> overtime = _context.HetProvincialRateType.AsNoTracking()
                 .Where(x => x.Overtime)
                 .ToList();
@@ -835,7 +842,7 @@ namespace HetsApi.Controllers
 
             if (remove.Count > 0 &&
                 agreements[newRentalAgreementIndex] != null &&
-                agreements[newRentalAgreementIndex].HetRentalAgreementRate != null)            
+                agreements[newRentalAgreementIndex].HetRentalAgreementRate != null)
             {
                 foreach (string component in remove)
                 {
@@ -952,7 +959,7 @@ namespace HetsApi.Controllers
                                 x.EquipmentId != id &&
                                 x.EquipmentStatusTypeId == statusId)
                     .ToList();
-            }                        
+            }
 
             List<DuplicateEquipmentModel> duplicates = new List<DuplicateEquipmentModel>();
             int idCount = -1;
@@ -978,8 +985,8 @@ namespace HetsApi.Controllers
                 duplicates.Add(duplicate);
             }
 
-            // return to the client            
-            return new ObjectResult(new HetsResponse(duplicates));            
+            // return to the client
+            return new ObjectResult(new HetsResponse(duplicates));
         }
 
         #endregion
@@ -1001,13 +1008,13 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             List<HetEquipmentAttachment> attachments = _context.HetEquipmentAttachment.AsNoTracking()
                 .Include(x => x.Equipment)
                 .Where(x => x.Equipment.EquipmentId == id)
                 .ToList();
 
-            return new ObjectResult(new HetsResponse(attachments));            
+            return new ObjectResult(new HetsResponse(attachments));
         }
 
         #endregion
@@ -1030,7 +1037,7 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             HetEquipment equipment = _context.HetEquipment.AsNoTracking()
                 .Include(x => x.HetDigitalFile)
                 .First(a => a.EquipmentId == id);
@@ -1041,7 +1048,7 @@ namespace HetsApi.Controllers
             foreach (HetDigitalFile attachment in equipment.HetDigitalFile)
             {
                 if (attachment != null)
-                {                    
+                {
                     attachment.FileSize = attachment.FileContents.Length;
                     attachment.LastUpdateTimestamp = attachment.AppLastUpdateTimestamp;
                     attachment.LastUpdateUserid = attachment.AppLastUpdateUserid;
@@ -1053,11 +1060,11 @@ namespace HetsApi.Controllers
                 }
             }
 
-            return new ObjectResult(new HetsResponse(attachments));                       
+            return new ObjectResult(new HetsResponse(attachments));
         }
 
         #endregion
-        
+
         #region Equipment History Records
 
         /// <summary>
@@ -1081,7 +1088,7 @@ namespace HetsApi.Controllers
 
             return new ObjectResult(new HetsResponse(EquipmentHelper.GetHistoryRecords(id, offset, limit, _context)));
         }
-        
+
         /// <summary>
         /// Create equipment history
         /// </summary>
@@ -1147,7 +1154,7 @@ namespace HetsApi.Controllers
                 }
             }
 
-            return new ObjectResult(new HetsResponse(notes));            
+            return new ObjectResult(new HetsResponse(notes));
         }
 
         /// <summary>
@@ -1255,7 +1262,7 @@ namespace HetsApi.Controllers
             IQueryable<HetEquipment> data = _context.HetEquipment.AsNoTracking()
                 .Include(x => x.LocalArea)
                     .ThenInclude(y => y.ServiceArea)
-                        .ThenInclude(z => z.District)                
+                        .ThenInclude(z => z.District)
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(y => y.EquipmentType)
                 .Include(x => x.Owner)
@@ -1280,7 +1287,7 @@ namespace HetsApi.Controllers
             // **********************************************************************
             // determine the year header values
             // * use the district status table
-            // **********************************************************************            
+            // **********************************************************************
             string yearMinus1 = $"{fiscalYear - 2}/{fiscalYear - 1}";
             string yearMinus2 = $"{fiscalYear - 3}/{fiscalYear - 2}";
             string yearMinus3 = $"{fiscalYear - 4}/{fiscalYear - 3}";
@@ -1297,10 +1304,10 @@ namespace HetsApi.Controllers
             int currentBlock = -1;
 
             foreach (HetEquipment item in data)
-            {                                                
+            {
                 if (listRecord.LocalAreaName != item.LocalArea.Name ||
                     listRecord.DistrictEquipmentTypeName != item.DistrictEquipmentType.DistrictEquipmentName)
-                {                    
+                {
                     if (!string.IsNullOrEmpty(listRecord.LocalAreaName))
                     {
                         if (seniorityList.SeniorityListRecords == null)
@@ -1325,13 +1332,13 @@ namespace HetsApi.Controllers
                     {
                         listRecord.DistrictName = item.LocalArea.ServiceArea.District.Name;
                     }
-                    
+
                     // get the rotation info for the first block
                     currentBlock = (int)item.BlockNumber;
 
                     rotation = GetRotationList(_context, item.LocalArea.LocalAreaId,
                         item.DistrictEquipmentType.DistrictEquipmentTypeId,
-                        currentBlock, fiscalEnd);                                                           
+                        currentBlock, fiscalEnd);
                 }
                 else if (item.BlockNumber != null && currentBlock != item.BlockNumber)
                 {
@@ -1340,7 +1347,7 @@ namespace HetsApi.Controllers
 
                     rotation = GetRotationList(_context, item.LocalArea.LocalAreaId,
                         item.DistrictEquipmentType.DistrictEquipmentTypeId,
-                        currentBlock, fiscalEnd);                    
+                        currentBlock, fiscalEnd);
                 }
 
                 listRecord.SeniorityList.Add(SeniorityListHelper.ToSeniorityViewModel(item, scoringRules, rotation, _context));
@@ -1363,11 +1370,11 @@ namespace HetsApi.Controllers
                 foreach (SeniorityListRecord list in seniorityList.SeniorityListRecords)
                 {
                     list.SeniorityList = list.SeniorityList.OrderBy(x => x.SenioritySortOrder).ToList();
-                }                
+                }
             }
 
             seniorityList.PrintedOn = $"{DateTime.Now.AddHours(-8):dd-MM-yyyy H:mm:ss}";
-            
+
             // **********************************************************************
             // create the payload and call the pdf service
             // **********************************************************************
@@ -1493,6 +1500,6 @@ namespace HetsApi.Controllers
             }
         }
 
-        #endregion           
+        #endregion
     }
 }
