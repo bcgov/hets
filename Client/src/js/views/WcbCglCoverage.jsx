@@ -75,7 +75,7 @@ var WcbCglCoverage = React.createClass({
   },
 
   componentDidMount() {
-    var ownersPromise = Api.getOwnersLiteTs();
+    var ownersPromise = Api.getOwnersLite();
     var favouritesPromise = Api.getFavourites('ownersCoverage');
 
     return Promise.all([ ownersPromise, favouritesPromise]).then(() => {
@@ -262,7 +262,7 @@ var WcbCglCoverage = React.createClass({
 function mapStateToProps(state) {
   return {
     localAreas: state.lookups.localAreas,
-    owners: state.lookups.ownersLite,
+    owners: state.models.ownersLite.data,
     ownersCoverage: state.models.ownersCoverage,
     favourites: state.models.favourites,
     search: state.search.ownersCoverage,

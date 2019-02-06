@@ -467,14 +467,6 @@ export function getEquipmentLite() {
   });
 }
 
-export function getEquipmentLiteProjects() {
-  return new ApiRequest('/equipment/liteProjects').get().then(response => {
-    var equipment = normalize(response.data);
-
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
-  });
-}
-
 export function getEquipmentLiteTs() {
   return new ApiRequest('/equipment/liteTs').get().then(response => {
     var equipment = normalize(response.data);
