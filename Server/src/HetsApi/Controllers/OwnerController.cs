@@ -155,14 +155,13 @@ namespace HetsApi.Controllers
                 .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
                             x.Equipment.Owner.OwnerStatusTypeId == statusId &&
                             x.Project.AppCreateTimestamp > fiscalYearStart)
-                .OrderBy(x => x.Equipment.Owner.OwnerCode)
-                .Select(x => new OwnerLiteList
+                .GroupBy(x => x.Equipment.Owner, (o, agreements) => new OwnerLiteList
                 {
-                    OwnerCode = x.Equipment.Owner.OwnerCode,
-                    OrganizationName = x.Equipment.Owner.OrganizationName,
-                    Id = x.Equipment.Owner.OwnerId,
-                    LocalAreaId = x.Equipment.LocalAreaId,
-                    ProjectIds = new List<int?>() { x.ProjectId }
+                    OwnerCode = o.OwnerCode,
+                    OrganizationName = o.OrganizationName,
+                    Id = o.OwnerId,
+                    LocalAreaId = o.LocalAreaId,
+                    ProjectIds = agreements.Select(y => y.ProjectId).ToList()
                 });
 
             return new ObjectResult(new HetsResponse(owners));
