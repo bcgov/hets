@@ -308,7 +308,7 @@ var EquipmentDetail = React.createClass({
                     <strong>District Office:</strong> { equipment.districtName }
                   </Col>
                   <Col xs={12}>
-                    <strong>Service/Local Area:</strong> { equipment.localAreaName }
+                    <strong>Service/Local Area:</strong> { equipment.localArea.serviceAreaId } - { equipment.localAreaName }
                   </Col>
                 </Row>
               </div>

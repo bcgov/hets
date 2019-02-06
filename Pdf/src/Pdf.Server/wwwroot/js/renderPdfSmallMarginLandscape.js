@@ -30,9 +30,9 @@
                     "format": "A4",
                     "margin": {
                         "top": "1cm",
-                        "bottom": "1cm",
-                        "left": "0.5cm",
-                        "right": "0.5cm"
+                        "bottom": "0cm",
+                        "left": "0cm",
+                        "right": "0cm"
                     }
                 }
             },

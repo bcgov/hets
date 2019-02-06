@@ -100,7 +100,7 @@ var EquipmentAddDialog = React.createClass({
     var valid = true;
 
     if (this.state.localAreaId === 0) {
-      this.setState({ localAreaError: 'Local area is required.' });
+      this.setState({ localAreaError: 'Service area / local area is required.' });
       valid = false;
     }
 
@@ -208,7 +208,7 @@ var EquipmentAddDialog = React.createClass({
           <h4>{ owner.organizationName }</h4>
         </FormGroup>
         <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
-          <ControlLabel>Local Area <sup>*</sup></ControlLabel>
+          <ControlLabel>Service Area - Local Area <sup>*</sup></ControlLabel>
           <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } updateState={ this.updateState }
             items={ localAreas }
             className="full-width"
