@@ -43,7 +43,7 @@ namespace HetsData.Helpers
         public string OwnerCode { get; set; }
         public string OrganizationName { get; set; }
         public int? LocalAreaId { get; set; }
-        public int? ProjectId  { get; set; }
+        public List<int?> ProjectIds { get; set; }
     }
 
     public class OwnerVerificationPdfViewModel
