@@ -28,7 +28,7 @@ var StatusLetters = React.createClass({
   },
 
   componentDidMount() {
-    Api.getOwnersLiteTs().then(() => {
+    Api.getOwnersLite().then(() => {
       this.setState({ loaded: true });
     });
   },
@@ -130,7 +130,7 @@ var StatusLetters = React.createClass({
 function mapStateToProps(state) {
   return {
     localAreas: state.lookups.localAreas,
-    owners: state.lookups.ownersLite,
+    owners: state.models.ownersLite.data,
   };
 }
 

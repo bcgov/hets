@@ -74,7 +74,7 @@ var HiringReport = React.createClass({
 
   componentDidMount() {
     var projectsPromise = Api.getProjects();
-    var ownersPromise = Api.getOwnersLiteTs();
+    var ownersPromise = Api.getOwnersLite();
     var equipmentPromise = Api.getEquipmentLiteHires();
     var favouritesPromise = Api.getFavourites('hiringReport');
 
@@ -183,12 +183,12 @@ var HiringReport = React.createClass({
     </SortTable>;
   },
 
-  matchesProjectFilter(projectId) {
+  matchesProjectFilter(projectIds) {
     if (this.state.search.projectIds.length == 0) {
       return true;
     }
 
-    return _.includes(this.state.search.projectIds, projectId);
+    return _.intersection(this.state.search.projectIds, projectIds).length > 0;
   },
 
   matchesLocalAreaFilter(localAreaId) {
@@ -233,14 +233,14 @@ var HiringReport = React.createClass({
 
   getFilteredOwners() {
     return _.chain(this.props.owners)
-      .filter(x => this.matchesProjectFilter(x.projectId) && this.matchesLocalAreaFilter(x.localAreaId))
+      .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesLocalAreaFilter(x.localAreaId))
       .sortBy('organizationName')
       .value();
   },
 
   getFilteredEquipment() {
     return _.chain(this.props.equipment)
-      .filter(x => this.matchesProjectFilter(x.projectId) && this.matchesOwnerFilter(x.ownerId))
+      .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesOwnerFilter(x.ownerId))
       .sortBy('equipmentCode')
       .value();
   },
@@ -306,7 +306,7 @@ function mapStateToProps(state) {
   return {
     projects: state.lookups.projects,
     localAreas: state.lookups.localAreas,
-    owners: state.lookups.ownersLite,
+    owners: state.models.ownersLite.data,
     equipment: state.lookups.equipmentLite,
     hiringResponses: state.models.hiringResponses,
     favourites: state.models.favourites,

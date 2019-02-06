@@ -94,53 +94,6 @@ namespace HetsApi.Controllers
         }
 
         /// <summary>
-        /// Get all approved equipment for this district and their associated active projects
-        /// </summary>
-        [HttpGet]
-        [Route("liteProjects")]
-        [SwaggerOperation("EquipmentGetLiteProjects")]
-        [SwaggerResponse(200, type: typeof(List<EquipmentLiteProjects>))]
-        [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentGetLiteProjects()
-        {
-            // get users district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
-
-            // get active status
-            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
-
-            // get fiscal year
-            HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
-                .First(x => x.DistrictId == districtId);
-
-            int? fiscalYear = status.CurrentFiscalYear;
-            if (fiscalYear == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-
-            // fiscal year in the status table stores the "start" of the year
-            DateTime fiscalYearStart = new DateTime((int)fiscalYear, 3, 31);
-
-            // get all approved equipment for this district (and any projects they're associated with)
-            IEnumerable<EquipmentLiteProjects> equipment = _context.HetRentalAgreement.AsNoTracking()
-                .Include(x => x.Project)
-                .Include(x => x.Equipment)
-                .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
-                            x.Equipment.EquipmentStatusTypeId == statusId &&
-                            x.Project.DbCreateTimestamp > fiscalYearStart)
-                .Select(x => new EquipmentLiteProjects
-                {
-                    EquipmentCode = x.Equipment.EquipmentCode,
-                    Id = x.ProjectId ?? 0,
-                    ProjectIds = _context.HetProject
-                        .Where(y => y.ProjectId == x.ProjectId)
-                        .Select(y => y.ProjectId).ToList()
-                })
-                .OrderBy(x => x.EquipmentCode);
-
-            return new ObjectResult(new HetsResponse(equipment));
-        }
-
-        /// <summary>
         /// Get all equipment for this district that are associated with a project (lite)
         /// </summary>
         [HttpGet]
@@ -174,13 +127,12 @@ namespace HetsApi.Controllers
                 .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
                             x.Equipment.EquipmentStatusTypeId == statusId &&
                             x.Project.DbCreateTimestamp > fiscalYearStart)
-                .OrderBy(x => x.Equipment.EquipmentCode)
-                .Select(x => new EquipmentLiteList
+                .GroupBy(x => x.Equipment, (e, agreements) => new EquipmentLiteList
                 {
-                    EquipmentCode = x.Equipment.EquipmentCode,
-                    Id = x.Equipment.EquipmentId,
-                    OwnerId = x.Equipment.OwnerId,
-                    ProjectId = x.ProjectId
+                    EquipmentCode = e.EquipmentCode,
+                    Id = e.EquipmentId,
+                    OwnerId = e.OwnerId,
+                    ProjectIds = agreements.Select(y => y.ProjectId).ToList()
                 });
 
             return new ObjectResult(new HetsResponse(equipment));
@@ -207,13 +159,12 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.Project)
                 .Include(x => x.Equipment)
                 .Where(x => x.RentalRequest.LocalArea.ServiceArea.DistrictId.Equals(districtId))
-                .OrderBy(x => x.Equipment.EquipmentCode)
-                .Select(x => new EquipmentLiteList
+                .GroupBy(x => x.Equipment, (e, rotationLists) => new EquipmentLiteList
                 {
-                    EquipmentCode = x.Equipment.EquipmentCode,
-                    Id = x.Equipment.EquipmentId,
-                    OwnerId = x.Equipment.OwnerId,
-                    ProjectId = x.RentalRequest.ProjectId.Value,
+                    EquipmentCode = e.EquipmentCode,
+                    Id = e.EquipmentId,
+                    OwnerId = e.OwnerId,
+                    ProjectIds = rotationLists.Select(y => y.RentalRequest.ProjectId).ToList(),
                 });
 
             return new ObjectResult(new HetsResponse(equipment));
