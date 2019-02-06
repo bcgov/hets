@@ -339,7 +339,7 @@ var OwnersDetail = React.createClass({
     var isApproved = this.props.owner.status === Constant.OWNER_STATUS_CODE_APPROVED;
     var restrictEquipmentAddTooltip = 'Equipment can only be added to an approved owner.';
     var restrictEquipmentVerifyTooltip = 'Equipment can only be verified for an approved owner.';
-    
+
     return <div id="owners-detail">
       <div>
         {(() => {
@@ -524,14 +524,12 @@ var OwnersDetail = React.createClass({
 
                 if (!owner.equipmentList || owner.equipmentList.length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
 
-                var equipmentList = _.sortBy(owner.equipmentList, this.state.uiEquipment.sortField);
-                if (this.state.uiEquipment.sortDesc) {
-                  _.reverse(equipmentList);
-                }
+                var equipmentList = _.orderBy(owner.equipmentList, [this.state.uiEquipment.sortField], [this.state.uiEquipment.sortDesc ? 'desc' : 'asc']);
 
                 var headers = [
-                  { field: 'equipmentNumber',    title: 'ID'                 },
-                  { field: 'typeName',         title: 'Type'                 },
+                  { field: 'equipmentNumber',  title: 'ID'                   },
+                  { field: 'localArea.name',   title: 'Local Area'           },
+                  { field: 'typeName',         title: 'Equipment Type'       },
                   { field: 'details',          title: 'Make/Model/Size/Year' },
                   { field: 'lastVerifiedDate', title: 'Last Verified'        },
                   { field: 'blank' },
@@ -546,6 +544,7 @@ var OwnersDetail = React.createClass({
                       };
                       return <tr key={ equipment.id }>
                         <td><Link to={ location }>{ equipment.equipmentCode }</Link></td>
+                        <td>{ equipment.localArea.name }</td>
                         <td>{ equipment.typeName }</td>
                         <td>{ equipment.details }</td>
                         <td>{ equipment.isApproved ? formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'Not Approved' }</td>

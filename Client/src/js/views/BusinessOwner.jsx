@@ -67,7 +67,7 @@ var BusinessOwner = React.createClass({
   fetch() {
     this.setState({ loading: true });
     this.setState({ success: false });
-    
+
     store.dispatch({ type: Action.UPDATE_OWNER, owner: null });
 
     var ownerId = this.props.params.ownerId;
@@ -256,14 +256,12 @@ var BusinessOwner = React.createClass({
               {(() => {
                 if (!owner.equipmentList || owner.equipmentList.length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
 
-                var equipmentList = _.sortBy(owner.equipmentList, this.state.uiEquipment.sortField);
-                if (this.state.uiEquipment.sortDesc) {
-                  _.reverse(equipmentList);
-                }
+                var equipmentList = _.orderBy(owner.equipmentList, [this.state.uiEquipment.sortField], [this.state.uiEquipment.sortDesc ? 'desc' : 'asc']);
 
                 var headers = [
-                  { field: 'equipmentNumber',    title: 'ID'                   },
-                  { field: 'typeName',         title: 'Type'                 },
+                  { field: 'equipmentNumber',  title: 'ID'                   },
+                  { field: 'localArea.name',   title: 'Local Area'           },
+                  { field: 'typeName',         title: 'Equipment Type'       },
                   { field: 'details',          title: 'Make/Model/Size/Year' },
                   { field: 'attachments',      title: 'Attachments'          },
                   { field: 'lastVerifiedDate', title: 'Last Verified'        },
@@ -274,6 +272,7 @@ var BusinessOwner = React.createClass({
                     _.map(equipmentList, (equipment) => {
                       return <tr key={ equipment.id }>
                         <td>{ equipment.equipmentCode }</td>
+                        <td>{ equipment.localArea.name }</td>
                         <td>{ equipment.typeName }</td>
                         <td>{ equipment.details }</td>
                         <td>{ _.map(equipment.equipmentAttachments, a => a.description).join(', ') }</td>
