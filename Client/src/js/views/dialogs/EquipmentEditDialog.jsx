@@ -175,7 +175,7 @@ var EquipmentEditDialog = React.createClass({
             <Row>
               <Col md={12}>
                 <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
-                  <ControlLabel>Local Area</ControlLabel>
+                  <ControlLabel>Service Area - Local Area</ControlLabel>
                   <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } updateState={ this.updateState }
                     items={ localAreas }
                     className="full-width"

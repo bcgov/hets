@@ -1,4 +1,4 @@
-﻿module.exports = function (callback, data) {
+﻿module.exports = function (callback, data, pageCount) {
 
     console.log("renderPdf.js: starting pdf generation");
    
@@ -26,20 +26,25 @@
                 engine: 'none',
                 recipe: 'phantom-pdf',
                 phantom: {
-                    //"footer": "<div style='text-align: right; font-family: Myriad-Pro, Calibri, Arial; font-size: 7pt;'>Page {#pageNum} of {#numPages}</div>",
                     "orientation": "portrait",
                     "format": "A4",
                     "margin": {
                         "top": "1cm",
                         "bottom": "0cm",
-                        "left": "0.5cm",
-                        "right": "0.5cm"
+                        "left": "0cm",
+                        "right": "0cm"
                     }
                 }
             },
             data: { name: "jsreport" }
-        }).then(function(resp) {
-            callback(null, resp.content.toJSON().data);
+        }).then(function (resp) {
+            console.log(resp);
+            
+            if (pageCount === "true") {
+                callback(null, resp.headers);
+            } else {
+                callback(null, resp.content.toJSON().data);
+            }            
         });
     }).catch(function(err) {
         console.log("renderPdf.js: error");
