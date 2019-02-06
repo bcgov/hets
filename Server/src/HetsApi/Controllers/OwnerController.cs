@@ -101,16 +101,22 @@ namespace HetsApi.Controllers
             
             // get all active owners for this district (and any projects they're associated with)
             IEnumerable<OwnerLiteList> owners = _context.HetOwner.AsNoTracking()
+                .Include(x => x.HetEquipment)
+                    .ThenInclude(x => x.HetRentalAgreement)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId == districtId &&
                             x.OwnerStatusTypeId == statusId)                
                 .OrderBy(x => x.OwnerCode)
                 .Select(x => new OwnerLiteList
                 {
                     OwnerCode = x.OwnerCode,
+                    OrganizationName = x.OrganizationName,
                     Id = x.OwnerId,
-                    LocalAreaId = x.LocalAreaId
-                });            
-                    
+                    LocalAreaId = x.LocalAreaId,
+                    ProjectIds = x.HetEquipment.SelectMany(y => y.HetRentalAgreement.Where(z => z.ProjectId != null).Select(z => z.ProjectId))
+                        .Distinct()
+                        .ToList(),
+                });
+
             return new ObjectResult(new HetsResponse(owners));
         }
 
@@ -149,14 +155,13 @@ namespace HetsApi.Controllers
                 .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
                             x.Equipment.Owner.OwnerStatusTypeId == statusId &&
                             x.Project.AppCreateTimestamp > fiscalYearStart)
-                .OrderBy(x => x.Equipment.Owner.OwnerCode)
-                .Select(x => new OwnerLiteList
+                .GroupBy(x => x.Equipment.Owner, (o, agreements) => new OwnerLiteList
                 {
-                    OwnerCode = x.Equipment.Owner.OwnerCode,
-                    OrganizationName = x.Equipment.Owner.OrganizationName,
-                    Id = x.Equipment.Owner.OwnerId,
-                    LocalAreaId = x.Equipment.LocalAreaId,
-                    ProjectId = x.ProjectId
+                    OwnerCode = o.OwnerCode,
+                    OrganizationName = o.OrganizationName,
+                    Id = o.OwnerId,
+                    LocalAreaId = o.LocalAreaId,
+                    ProjectIds = agreements.Select(y => y.ProjectId).ToList()
                 });
 
             return new ObjectResult(new HetsResponse(owners));

@@ -42,7 +42,7 @@ namespace Pdf.Server.Helpers
                     throw new Exception("Mustache template not found");
 
                 // create json object
-                JObject json = JObject.Parse(request.JsonString);
+                JObject json = JObject.Parse(request.JsonString);                
 
                 // call mustache js to generate html response
                 string result = await nodeServices.InvokeAsync<string>(request.RenderJsUrl, templateContent, json);
