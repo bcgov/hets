@@ -11,14 +11,17 @@ import * as Api from '../../api';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
+import Spinner from '../../components/Spinner.jsx';
 
 import { isBlank, notBlank } from '../../utils/string';
 import { isValidYear } from '../../utils/date';
 
 var EquipmentEditDialog = React.createClass({
   propTypes: {
+    currentUser: React.PropTypes.object,
     equipment: React.PropTypes.object,
     localAreas: React.PropTypes.object,
+    districtEquipmentTypes: React.PropTypes.object,
 
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
@@ -27,6 +30,7 @@ var EquipmentEditDialog = React.createClass({
 
   getInitialState() {
     return {
+      loading: false,
       isNew: this.props.equipment.id === 0,
 
       localAreaId: this.props.equipment.localArea.id || 0,
@@ -52,6 +56,10 @@ var EquipmentEditDialog = React.createClass({
 
   componentDidMount() {
     this.input.focus();
+    this.setState({ loading: true });
+    Api.getDistrictEquipmentTypes(this.props.currentUser.district.id).then(() => {
+      this.setState({ loading: false });
+    });
   },
 
   componentDidUpdate(prevProps, prevState) {
@@ -66,16 +74,17 @@ var EquipmentEditDialog = React.createClass({
 
   didChange() {
     if (this.state.localAreaId !== this.props.equipment.localArea.id) { return true; }
+    if (this.state.equipmentTypeId !== 0) { return true; }
     if (this.state.serialNumber !== this.props.equipment.serialNumber) { return true; }
     if (this.state.make !== this.props.equipment.make) { return true; }
     if (this.state.size !== this.props.equipment.size) { return true; }
     if (this.state.model !== this.props.equipment.model) { return true; }
     if (this.state.year !== this.props.equipment.year) { return true; }
     if (this.state.licencePlate !== this.props.equipment.licencePlate) { return true; }
-    if (this.state.type !== this.props.equipment.type) { return true; }    
-    if (this.state.licencedGvw !== this.props.equipment.licencedGvw) { return true; }   
-    if (this.state.legalCapacity !== this.props.equipment.legalCapacity) { return true; }   
-    if (this.state.pupLegalCapacity !== this.props.equipment.pupLegalCapacity) { return true; }   
+    if (this.state.type !== this.props.equipment.type) { return true; }
+    if (this.state.licencedGvw !== this.props.equipment.licencedGvw) { return true; }
+    if (this.state.legalCapacity !== this.props.equipment.legalCapacity) { return true; }
+    if (this.state.pupLegalCapacity !== this.props.equipment.pupLegalCapacity) { return true; }
 
     return false;
   },
@@ -92,6 +101,11 @@ var EquipmentEditDialog = React.createClass({
 
     if (isBlank(this.state.serialNumber)) {
       this.setState({ serialNumberError: 'Serial number is required' });
+      valid = false;
+    }
+
+    if (this.state.equipmentTypeId === 0) {
+      this.setState({ equipmentTypeError: 'Equipment type is required.' });
       valid = false;
     }
 
@@ -129,8 +143,8 @@ var EquipmentEditDialog = React.createClass({
           .map(district => district.districtName)
           .uniq()
           .value();
-        
-        this.setState({ 
+
+        this.setState({
           serialNumberError: `Serial number is currently in use in the following district(s): ${districts.join(', ')}`,
           duplicateSerialNumber: true,
         });
@@ -145,6 +159,7 @@ var EquipmentEditDialog = React.createClass({
   onSave() {
     return this.props.onSave({ ...this.props.equipment, ...{
       localArea: { id: this.state.localAreaId },
+      districtEquipmentTypeId: this.state.equipmentTypeId,
       serialNumber: this.state.serialNumber,
       make: this.state.make,
       size: this.state.size,
@@ -159,14 +174,21 @@ var EquipmentEditDialog = React.createClass({
   },
 
   render() {
+    if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+
     var equipment = this.props.equipment;
 
     var localAreas = _.sortBy(this.props.localAreas, 'name');
 
+    var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes)
+      .filter(type => type.district.id == this.props.currentUser.district.id)
+      .sortBy('districtEquipmentName')
+      .value();
+
     return <EditDialog id="equipment-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.checkForDuplicatesAndSave } didChange={ this.didChange } isValid={ this.isValid }
       saveText={ this.state.duplicateSerialNumber ? 'Proceed Anyways' : 'Save' }
-      title= { 
+      title= {
         <strong>Equipment Id: <small>{ equipment.equipmentCode }</small></strong>
       }>
       {(() => {
@@ -181,6 +203,18 @@ var EquipmentEditDialog = React.createClass({
                     className="full-width"
                   />
                   <HelpBlock>{ this.state.localAreaError }</HelpBlock>
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col md={12}>
+                <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
+                  <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
+                  <FilterDropdown id="equipmentTypeId" fieldName="districtEquipmentName" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
+                    items={ districtEquipmentTypes }
+                    className="full-width"
+                  />
+                  <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
                 </FormGroup>
               </Col>
             </Row>
@@ -215,7 +249,7 @@ var EquipmentEditDialog = React.createClass({
               <Col md={12}>
                 <FormGroup controlId="size">
                   <ControlLabel>Size</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.size } updateState={ this.updateState }/>                  
+                  <FormInputControl type="text" defaultValue={ this.state.size } updateState={ this.updateState }/>
                 </FormGroup>
               </Col>
             </Row>
@@ -223,7 +257,7 @@ var EquipmentEditDialog = React.createClass({
               <Col md={12}>
                 <FormGroup controlId="type">
                   <ControlLabel>Type</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.type } updateState={ this.updateState }/>                  
+                  <FormInputControl type="text" defaultValue={ this.state.type } updateState={ this.updateState }/>
                 </FormGroup>
               </Col>
             </Row>
@@ -250,7 +284,7 @@ var EquipmentEditDialog = React.createClass({
                   <Col md={12}>
                     <FormGroup controlId="licencedGvw">
                       <ControlLabel>Licenced GVW</ControlLabel>
-                      <FormInputControl type="text" defaultValue={ this.state.licencedGvw } updateState={ this.updateState }/>                  
+                      <FormInputControl type="text" defaultValue={ this.state.licencedGvw } updateState={ this.updateState }/>
                     </FormGroup>
                   </Col>
                 </Row>
@@ -258,7 +292,7 @@ var EquipmentEditDialog = React.createClass({
                   <Col md={12}>
                     <FormGroup controlId="legalCapacity">
                       <ControlLabel>Truck Legal Capacity</ControlLabel>
-                      <FormInputControl type="text" defaultValue={ this.state.legalCapacity } updateState={ this.updateState }/>                  
+                      <FormInputControl type="text" defaultValue={ this.state.legalCapacity } updateState={ this.updateState }/>
                     </FormGroup>
                   </Col>
                 </Row>
@@ -266,7 +300,7 @@ var EquipmentEditDialog = React.createClass({
                   <Col md={12}>
                     <FormGroup controlId="pupLegalCapacity">
                       <ControlLabel>Pup Legal Capacity</ControlLabel>
-                      <FormInputControl type="text" defaultValue={ this.state.pupLegalCapacity } updateState={ this.updateState }/>                  
+                      <FormInputControl type="text" defaultValue={ this.state.pupLegalCapacity } updateState={ this.updateState }/>
                     </FormGroup>
                   </Col>
                 </Row>
@@ -281,8 +315,10 @@ var EquipmentEditDialog = React.createClass({
 
 function mapStateToProps(state) {
   return {
+    currentUser: state.user,
     equipment: state.models.equipment,
     localAreas: state.lookups.localAreas,
+    districtEquipmentTypes: state.lookups.districtEquipmentTypes.data,
   };
 }
 
