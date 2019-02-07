@@ -120,7 +120,6 @@ var OwnersAddDialog = React.createClass({
       residencyError: '',
       workSafeBCPolicyNumberError: '',
       primaryContactGivenNameError: '',
-      primaryContactSurnameError: '',
       primaryContactPhoneError: '',
     });
 
@@ -201,11 +200,6 @@ var OwnersAddDialog = React.createClass({
       valid = false;
     }
 
-    if (isBlank(this.state.primaryContactSurname)) {
-      this.setState({ primaryContactSurnameError: 'Last name is required' });
-      valid = false;
-    }
-    
     if (isBlank(this.state.primaryContactPhone)) {
       this.setState({ primaryContactPhoneError: 'Phone number is required' });
       valid = false;
@@ -273,26 +267,26 @@ var OwnersAddDialog = React.createClass({
         </FormGroup>
         <FormGroup controlId="address1" validationState={ this.state.address1Error ? 'error' : null }>
           <ControlLabel>Address Line 1 <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" value={ this.state.address1 } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+          <FormInputControl type="text" value={ this.state.address1 } updateState={ this.updateState }/>
           <HelpBlock>{ this.state.address1Error }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="address2">
           <ControlLabel>Address Line 2</ControlLabel>
-          <FormInputControl type="text" value={ this.state.address2 } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+          <FormInputControl type="text" value={ this.state.address2 } updateState={ this.updateState }/>
         </FormGroup>
         <FormGroup controlId="city" validationState={ this.state.cityError ? 'error' : null }>
           <ControlLabel>City <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" value={ this.state.city } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+          <FormInputControl type="text" value={ this.state.city } updateState={ this.updateState }/>
           <HelpBlock>{ this.state.cityError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="province" validationState={ this.state.provinceError ? 'error' : null }>
           <ControlLabel>Province <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" value={ this.state.province } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+          <FormInputControl type="text" value={ this.state.province } updateState={ this.updateState }/>
           <HelpBlock>{ this.state.provinceError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="postalCode" validationState={ this.state.postalCodeError ? 'error' : null }>
           <ControlLabel>Postal Code <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" value={ this.state.postalCode } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+          <FormInputControl type="text" value={ this.state.postalCode } updateState={ this.updateState }/>
           <HelpBlock>{ this.state.postalCodeError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="ownerCode" validationState={ this.state.ownerCodeError ? 'error' : null }>
@@ -307,7 +301,7 @@ var OwnersAddDialog = React.createClass({
         </FormGroup>
         <FormGroup controlId="workSafeBCPolicyNumber" validationState={ this.state.workSafeBCPolicyNumberError ? 'error' : null }>
           <ControlLabel>WCB Number <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" value={ this.state.workSafeBCPolicyNumber } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+          <FormInputControl type="text" value={ this.state.workSafeBCPolicyNumber } updateState={ this.updateState }/>
           <HelpBlock>{ this.state.workSafeBCPolicyNumberError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="primaryContactGivenName" validationState={ this.state.primaryContactGivenNameError ? 'error' : null }>
@@ -315,10 +309,9 @@ var OwnersAddDialog = React.createClass({
           <FormInputControl type="text" value={ this.state.primaryContactGivenName } updateState={ this.updateState } />
           <HelpBlock>{ this.state.primaryContactGivenNameError }</HelpBlock>
         </FormGroup>
-        <FormGroup controlId="primaryContactSurname" validationState={ this.state.primaryContactSurnameError ? 'error' : null }>
-          <ControlLabel>Primary Contact Last Name <sup>*</sup></ControlLabel>
+        <FormGroup controlId="primaryContactSurname">
+          <ControlLabel>Primary Contact Last Name</ControlLabel>
           <FormInputControl type="text" value={ this.state.primaryContactSurname } updateState={ this.updateState } />
-          <HelpBlock>{ this.state.primaryContactSurnameError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="primaryContactPhone" validationState={ this.state.primaryContactPhoneError ? 'error' : null }>
           <ControlLabel>Primary Contact Phone <sup>*</sup></ControlLabel>

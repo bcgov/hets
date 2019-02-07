@@ -119,7 +119,7 @@ var DistrictAdmin = React.createClass({
 
   deleteDistrictEquipmentType(equipment) {
     Api.deleteDistrictEquipmentType(equipment).then(() => {
-      Api.getDistrictEquipmentTypes(this.props.currentUser.district.id); 
+      Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
     }).catch(err => {
       this.setState({ showDistrictEquipmentTypeErrorDialog: true, districtEquipmentTypeError: err.message });
     });
@@ -130,10 +130,10 @@ var DistrictAdmin = React.createClass({
       .sortBy('blueBookSection')
       .value();
 
-    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) { 
+    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) {
       return (
         <div>You do not have permission to view this page.</div>
-      ); 
+      );
     }
 
     return <div id="district-admin">
@@ -150,7 +150,7 @@ var DistrictAdmin = React.createClass({
 
           return (
             <TableControl id="district-equipment-types" headers={[
-              { field: 'districtEquipmentName',           title: 'Equipment Type/Description'  },              
+              { field: 'districtEquipmentName',           title: 'Equipment Type/Description'  },
               { field: 'equipmentType.blueBookSection',   title: 'Blue Book Section Number'  },
               { field: 'equipmentType.name',              title: 'Blue Book Section Name'  },
               { field: 'addDistrictEquipmentType', title: 'Add District Equipment Type',  style: { textAlign: 'right'  },
@@ -170,7 +170,7 @@ var DistrictAdmin = React.createClass({
                         </OverlayTrigger>
                         <Button title="Edit District Equipment Type" bsSize="xsmall" onClick={ this.editDistrictEquipmentType.bind(this, equipment) }><Glyphicon glyph="edit" /></Button>
                       </ButtonGroup>
-                    </td> 
+                    </td>
                   </tr>;
                 })
               }
@@ -178,7 +178,7 @@ var DistrictAdmin = React.createClass({
           );
         })()}
       </Well>
-      
+
       <Well>
         <h3>Manage Conditions</h3>
         {(() => {
@@ -246,7 +246,7 @@ var DistrictAdmin = React.createClass({
           onSave={this.onDistrictEquipmentTypeSave}
           districtEquipmentType={this.state.districtEquipmentType}
           equipmentTypes={equipmentTypes}
-        />   
+        />
       }
       { this.state.showDistrictEquipmentTypeErrorDialog &&
         <ModalDialog
