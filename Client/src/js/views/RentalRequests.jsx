@@ -337,7 +337,9 @@ var RentalRequests = React.createClass({
 
         return <div id="add-button-container">{ addRentalRequestButton }</div>;
       })()}
-      <RentalRequestsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewRequest } onClose={ this.closeAddDialog } />
+      { this.state.showAddDialog &&
+        <RentalRequestsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewRequest } onClose={ this.closeAddDialog } />
+      }
     </div>;
   },
 });
