@@ -24,6 +24,7 @@ const DEFAULT_STATE = {
   documents: {},
   blankRentalAgreements: {},
   showSessionTimeoutDialog: false,
+  districtEquipment: {},
 };
 
 export default function uiReducer(state = DEFAULT_STATE, action) {
@@ -97,12 +98,15 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
     case Action.UPDATE_BLANK_RENTAL_AGREEMENTS_UI:
       return { ...state, blankRentalAgreements: action.blankRentalAgreements };
 
+    case Action.UPDATE_DISTRICT_EQUIPMENT_UI:
+      return { ...state, districtEquipment: action.districtEquipment };
+
     // Modals
 
-    case Action.SHOW_SESSION_TIMEOUT_DIALOG: 
+    case Action.SHOW_SESSION_TIMEOUT_DIALOG:
       return { ...state, showSessionTimeoutDialog: true };
 
-    case Action.CLOSE_SESSION_TIMEOUT_DIALOG: 
+    case Action.CLOSE_SESSION_TIMEOUT_DIALOG:
       return { ...state, showSessionTimeoutDialog: false };
   }
 
