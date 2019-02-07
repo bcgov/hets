@@ -822,12 +822,19 @@ namespace HetsApi.Controllers
         {
             _logger.LogInformation("Owner Mailing Labels Pdf");
 
+            // HETS-1041 - Mailing Labels return also Inactive Owners
+            // ** Only return Active owner records
+            // get active status
+            int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
             // get owner records
             IQueryable<HetOwner> ownerRecords = _context.HetOwner.AsNoTracking()
                 .Include(x => x.PrimaryContact)                
                 .Include(x => x.LocalArea)
                     .ThenInclude(s => s.ServiceArea)
                         .ThenInclude(d => d.District)
+                .Where(x => x.OwnerStatusTypeId == statusId)
                 .OrderBy(x => x.LocalArea.Name).ThenBy(x => x.OrganizationName);
 
             if (parameters.Owners.Length > 0)
