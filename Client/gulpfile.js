@@ -8,9 +8,6 @@ const depsOk = require('deps-ok');
 const webpack = require('webpack');
 const _ = require('lodash');
 
-// Needed for mocha tests w/ ES6
-require('babel-core/register');
-
 const argv = require('minimist')(process.argv.slice(2));
 const PORT = argv.port || 4375;
 const HOST = argv.host || 'localhost';
@@ -181,7 +178,9 @@ gulp.task('test:integration', function() {
 
 gulp.task('test:unit', function() {
   return gulp.src(JS_UNIT_TEST_GLOB, { read: false })
-    .pipe($.mocha());
+    .pipe($.mocha({
+      require: 'babel-core/register',
+    }));
 });
 
 

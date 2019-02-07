@@ -15,6 +15,12 @@ var poisons = proxy.poisons;
 proxy.forward('http://localhost:' + port);
 
 proxy.all('/api/*')
+  // .poison(toxy.poisons.inject({
+  //   code: 503,
+  //   body: '{"error": "toxy injected error"}',
+  //   headers: {'Content-Type': 'application/json'},
+  // }))
+  // .withRule(toxy.rules.probability(10))
   .poison(poisons.latency({ min: 500, max: 2000 }))
   .poison(poisons.slowRead({ bps: 100 }));
 
