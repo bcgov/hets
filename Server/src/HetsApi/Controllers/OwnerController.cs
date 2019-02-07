@@ -822,12 +822,19 @@ namespace HetsApi.Controllers
         {
             _logger.LogInformation("Owner Mailing Labels Pdf");
 
+            // HETS-1041 - Mailing Labels return also Inactive Owners
+            // ** Only return Active owner records
+            // get active status
+            int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
             // get owner records
             IQueryable<HetOwner> ownerRecords = _context.HetOwner.AsNoTracking()
                 .Include(x => x.PrimaryContact)                
                 .Include(x => x.LocalArea)
                     .ThenInclude(s => s.ServiceArea)
                         .ThenInclude(d => d.District)
+                .Where(x => x.OwnerStatusTypeId == statusId)
                 .OrderBy(x => x.LocalArea.Name).ThenBy(x => x.OrganizationName);
 
             if (parameters.Owners.Length > 0)
@@ -1846,18 +1853,14 @@ namespace HetsApi.Controllers
         [SwaggerOperation("OwnerWcbCglGet")]
         [SwaggerResponse(200, type: typeof(List<OwnerWcbCgl>))]
         public virtual IActionResult OwnerWcbCglGet([FromQuery]string localAreas, [FromQuery]string owners, 
-            [FromQuery]DateTime wcbExpiry, [FromQuery]DateTime cglExpiry)
+            [FromQuery]DateTime? wcbExpiry, [FromQuery]DateTime? cglExpiry)
         {
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
             int?[] ownerArray = ArrayHelper.ParseIntArray(owners);
 
             // owner status
-            int? statusId = StatusHelper.GetStatusId(HetOwner.StatusArchived, "ownerStatus", _context);
+            int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
-
-            // default the dates if they weren't entered
-            if (wcbExpiry == DateTime.MinValue) { wcbExpiry = DateTime.Now; }
-            if (cglExpiry == DateTime.MinValue) { cglExpiry = DateTime.Now; }
 
             // get initial results - must be limited to user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
@@ -1866,9 +1869,9 @@ namespace HetsApi.Controllers
                 .Include(y => y.LocalArea.ServiceArea)
                 .Include(x => x.PrimaryContact)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
-                            x.OwnerStatusTypeId != statusId && 
-                            (x.WorkSafeBcexpiryDate == null || x.WorkSafeBcexpiryDate < wcbExpiry) &&
-                            (x.CglendDate == null || x.CglendDate < cglExpiry));
+                            x.OwnerStatusTypeId == statusId && 
+                            (x.WorkSafeBcexpiryDate == null || wcbExpiry == null || x.WorkSafeBcexpiryDate < wcbExpiry) &&
+                            (x.CglendDate == null || cglExpiry == null || x.CglendDate < cglExpiry));
 
             if (localAreasArray != null && localAreasArray.Length > 0)
             {
