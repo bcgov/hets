@@ -101,16 +101,22 @@ namespace HetsApi.Controllers
             
             // get all active owners for this district (and any projects they're associated with)
             IEnumerable<OwnerLiteList> owners = _context.HetOwner.AsNoTracking()
+                .Include(x => x.HetEquipment)
+                    .ThenInclude(x => x.HetRentalAgreement)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId == districtId &&
                             x.OwnerStatusTypeId == statusId)                
                 .OrderBy(x => x.OwnerCode)
                 .Select(x => new OwnerLiteList
                 {
                     OwnerCode = x.OwnerCode,
+                    OrganizationName = x.OrganizationName,
                     Id = x.OwnerId,
-                    LocalAreaId = x.LocalAreaId
-                });            
-                    
+                    LocalAreaId = x.LocalAreaId,
+                    ProjectIds = x.HetEquipment.SelectMany(y => y.HetRentalAgreement.Where(z => z.ProjectId != null).Select(z => z.ProjectId))
+                        .Distinct()
+                        .ToList(),
+                });
+
             return new ObjectResult(new HetsResponse(owners));
         }
 
@@ -149,14 +155,13 @@ namespace HetsApi.Controllers
                 .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
                             x.Equipment.Owner.OwnerStatusTypeId == statusId &&
                             x.Project.AppCreateTimestamp > fiscalYearStart)
-                .OrderBy(x => x.Equipment.Owner.OwnerCode)
-                .Select(x => new OwnerLiteList
+                .GroupBy(x => x.Equipment.Owner, (o, agreements) => new OwnerLiteList
                 {
-                    OwnerCode = x.Equipment.Owner.OwnerCode,
-                    OrganizationName = x.Equipment.Owner.OrganizationName,
-                    Id = x.Equipment.Owner.OwnerId,
-                    LocalAreaId = x.Equipment.LocalAreaId,
-                    ProjectId = x.ProjectId
+                    OwnerCode = o.OwnerCode,
+                    OrganizationName = o.OrganizationName,
+                    Id = o.OwnerId,
+                    LocalAreaId = o.LocalAreaId,
+                    ProjectIds = agreements.Select(y => y.ProjectId).ToList()
                 });
 
             return new ObjectResult(new HetsResponse(owners));
@@ -817,12 +822,19 @@ namespace HetsApi.Controllers
         {
             _logger.LogInformation("Owner Mailing Labels Pdf");
 
+            // HETS-1041 - Mailing Labels return also Inactive Owners
+            // ** Only return Active owner records
+            // get active status
+            int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
             // get owner records
             IQueryable<HetOwner> ownerRecords = _context.HetOwner.AsNoTracking()
                 .Include(x => x.PrimaryContact)                
                 .Include(x => x.LocalArea)
                     .ThenInclude(s => s.ServiceArea)
                         .ThenInclude(d => d.District)
+                .Where(x => x.OwnerStatusTypeId == statusId)
                 .OrderBy(x => x.LocalArea.Name).ThenBy(x => x.OrganizationName);
 
             if (parameters.Owners.Length > 0)
@@ -1841,18 +1853,14 @@ namespace HetsApi.Controllers
         [SwaggerOperation("OwnerWcbCglGet")]
         [SwaggerResponse(200, type: typeof(List<OwnerWcbCgl>))]
         public virtual IActionResult OwnerWcbCglGet([FromQuery]string localAreas, [FromQuery]string owners, 
-            [FromQuery]DateTime wcbExpiry, [FromQuery]DateTime cglExpiry)
+            [FromQuery]DateTime? wcbExpiry, [FromQuery]DateTime? cglExpiry)
         {
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
             int?[] ownerArray = ArrayHelper.ParseIntArray(owners);
 
             // owner status
-            int? statusId = StatusHelper.GetStatusId(HetOwner.StatusArchived, "ownerStatus", _context);
+            int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
-
-            // default the dates if they weren't entered
-            if (wcbExpiry == DateTime.MinValue) { wcbExpiry = DateTime.Now; }
-            if (cglExpiry == DateTime.MinValue) { cglExpiry = DateTime.Now; }
 
             // get initial results - must be limited to user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
@@ -1861,9 +1869,9 @@ namespace HetsApi.Controllers
                 .Include(y => y.LocalArea.ServiceArea)
                 .Include(x => x.PrimaryContact)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
-                            x.OwnerStatusTypeId != statusId && 
-                            (x.WorkSafeBcexpiryDate == null || x.WorkSafeBcexpiryDate < wcbExpiry) &&
-                            (x.CglendDate == null || x.CglendDate < cglExpiry));
+                            x.OwnerStatusTypeId == statusId && 
+                            (x.WorkSafeBcexpiryDate == null || wcbExpiry == null || x.WorkSafeBcexpiryDate < wcbExpiry) &&
+                            (x.CglendDate == null || cglExpiry == null || x.CglendDate < cglExpiry));
 
             if (localAreasArray != null && localAreasArray.Length > 0)
             {

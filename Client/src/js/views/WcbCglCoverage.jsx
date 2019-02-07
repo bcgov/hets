@@ -75,7 +75,7 @@ var WcbCglCoverage = React.createClass({
   },
 
   componentDidMount() {
-    var ownersPromise = Api.getOwnersLiteTs();
+    var ownersPromise = Api.getOwnersLite();
     var favouritesPromise = Api.getFavourites('ownersCoverage');
 
     return Promise.all([ ownersPromise, favouritesPromise]).then(() => {
@@ -168,7 +168,7 @@ var WcbCglCoverage = React.createClass({
           return <tr key={ entry.id }>
             <td>{ entry.localAreaLabel }</td>
             <td>{ entry.ownerCode }</td>
-            <td><Link to={`${Constant.OWNERS_PATHNAME}/${entry.ownerId}`}>{ entry.organizationName }</Link></td>
+            <td><Link to={`${Constant.OWNERS_PATHNAME}/${entry.id}`}>{ entry.organizationName }</Link></td>
             <td>{ entry.wcbNumber }</td>
             <td>{ formatDateTime(entry.wcbExpiryDate, 'YYYY-MMM-DD') }</td>
             <td>{ entry.cglNumber }</td>
@@ -262,7 +262,7 @@ var WcbCglCoverage = React.createClass({
 function mapStateToProps(state) {
   return {
     localAreas: state.lookups.localAreas,
-    owners: state.lookups.ownersLite,
+    owners: state.models.ownersLite.data,
     ownersCoverage: state.models.ownersCoverage,
     favourites: state.models.favourites,
     search: state.search.ownersCoverage,

@@ -193,7 +193,7 @@ var OwnersAddDialog = React.createClass({
     }
 
     if (this.state.localAreaId === 0) {
-      this.setState({ localAreaError: 'Local area is required' });
+      this.setState({ localAreaError: 'Service area / local area is required' });
       valid = false;
     }
 
@@ -309,7 +309,7 @@ var OwnersAddDialog = React.createClass({
           <HelpBlock>{ this.state.ownerCodeError || HELP_TEXT.prefix }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
-          <ControlLabel>Local Area <sup>*</sup></ControlLabel>
+          <ControlLabel>Service Area - Local Area <sup>*</sup></ControlLabel>
           <FilterDropdown id="localAreaId" items={ localAreas } selectedId={ this.state.localAreaId } updateState={ this.updateState } className="full-width" />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
         </FormGroup>

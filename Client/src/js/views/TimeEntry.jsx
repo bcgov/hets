@@ -209,12 +209,12 @@ var TimeEntry = React.createClass({
     </SortTable>;
   },
 
-  matchesProjectFilter(projectId) {
+  matchesProjectFilter(projectIds) {
     if (this.state.search.projectIds.length == 0) {
       return true;
     }
 
-    return _.includes(this.state.search.projectIds, projectId);
+    return _.intersection(this.state.search.projectIds, projectIds).length > 0;
   },
 
   matchesLocalAreaFilter(localAreaId) {
@@ -259,14 +259,14 @@ var TimeEntry = React.createClass({
 
   getFilteredOwners() {
     return _.chain(this.props.owners)
-      .filter(x => this.matchesProjectFilter(x.projectId) && this.matchesLocalAreaFilter(x.localAreaId))
+      .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesLocalAreaFilter(x.localAreaId))
       .sortBy('organizationName')
       .value();
   },
 
   getFilteredEquipment() {
     return _.chain(this.props.equipment)
-      .filter(x => this.matchesProjectFilter(x.projectId) && this.matchesOwnerFilter(x.ownerId))
+      .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesOwnerFilter(x.ownerId))
       .sortBy('equipmentCode')
       .value();
   },

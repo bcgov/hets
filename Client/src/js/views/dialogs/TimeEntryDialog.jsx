@@ -75,17 +75,14 @@ var TimeEntryDialog = React.createClass({
 
   componentDidMount() {
     this.setState({ loaded: false });
-    var promise = this.state.selectingAgreement ? this.fetchEquipmentAndProjects() : this.fetchTimeRecords();
+    var promise = this.state.selectingAgreement ? this.fetchDropdownContent() : this.fetchTimeRecords();
     promise.then(() => {
       this.setState({ loaded: true });
     });
   },
 
-  fetchEquipmentAndProjects() {
-    var equipmentPromise = Api.getEquipmentLiteProjects();
-    var projectsPromise = Api.getProjects();
-
-    return Promise.all([ equipmentPromise, projectsPromise ]);
+  fetchDropdownContent() {
+    return Api.getProjects();
   },
 
   fetchTimeRecords() {
