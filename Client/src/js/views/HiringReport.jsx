@@ -162,6 +162,7 @@ var HiringReport = React.createClass({
       { field: 'equipmentDetails',        title: 'Make/Model/Size/Year'                     },
       { field: 'projectNumber',           title: 'Project #'                                },
       { field: 'noteDate',                title: 'Note Date'                                },
+      { field: 'noteType',                title: 'Note Type'                                },
       { field: 'reason',                  title: 'Reason'                                   },
       { field: 'userId',                  title: 'User ID'                                  },
     ]}>
@@ -175,6 +176,7 @@ var HiringReport = React.createClass({
             <td>{ entry.equipmentDetails }</td>
             <td><Link to={`${Constant.PROJECTS_PATHNAME}/${entry.projectId}`}>{ entry.projectNumber }</Link></td>
             <td>{ formatDateTime(entry.noteDate, 'YYYY-MMM-DD') }</td>
+            <td>{ entry.noteType }</td>
             <td>{ entry.reason }</td>
             <td>{ entry.userName } ({ entry.userId })</td>
           </tr>;
