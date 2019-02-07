@@ -17,8 +17,8 @@ var webpackPlugins = [
         failOnWarning: IS_PRODUCTION,
         failOnError: true,
       },
-    }
-  })
+    },
+  }),
 ];
 
 if(IS_PRODUCTION) {
@@ -40,6 +40,7 @@ if(IS_PRODUCTION) {
   webpackPlugins.push(new webpack.HotModuleReplacementPlugin());
   webpackPlugins.push(new webpack.DefinePlugin({
     'process.env':{
+      'NODE_ENV': JSON.stringify('development'),
       'DEV_USER': JSON.stringify(DEV_USER),
     },
   }));
@@ -84,7 +85,7 @@ module.exports = {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         loaders: ['react-hot-loader', 'babel-loader'],
-      }
+      },
     ],
   },
 };

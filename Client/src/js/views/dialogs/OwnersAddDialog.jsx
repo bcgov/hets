@@ -61,6 +61,8 @@ var OwnersAddDialog = React.createClass({
       status: Constant.OWNER_STATUS_CODE_APPROVED,
 
       nameError: '',
+      ownerGivenNameError: '',
+      ownerSurameError: '',
       address1Error: '',
       cityError: '',
       provinceError: '',
@@ -136,6 +138,16 @@ var OwnersAddDialog = React.createClass({
         this.setState({ nameError: 'This owner already exists in the system' });
         valid = false;
       }
+    }
+
+    if (isBlank(this.state.givenName)) {
+      this.setState({ ownerGivenNameError: 'Owner first name is required' });
+      valid = false;
+    }
+
+    if (isBlank(this.state.surname)) {
+      this.setState({ ownerSurameError: 'Owner last name is required' });
+      valid = false;
     }
 
     if (isBlank(this.state.address1)) {
@@ -257,13 +269,15 @@ var OwnersAddDialog = React.createClass({
           <ControlLabel>Doing Business As</ControlLabel>
           <FormInputControl type="text" value={ this.state.doingBusinessAs } updateState={ this.updateState } />
         </FormGroup>
-        <FormGroup controlId="givenName">
-          <ControlLabel>Owner First Name</ControlLabel>
+        <FormGroup controlId="givenName" validationState={ this.state.ownerGivenNameError ? 'error' : null }>
+          <ControlLabel>Owner First Name <sup>*</sup></ControlLabel>
           <FormInputControl type="text" value={ this.state.givenName } updateState={ this.updateState } />
+          <HelpBlock>{ this.state.ownerGivenNameError }</HelpBlock>
         </FormGroup>
-        <FormGroup controlId="surname">
-          <ControlLabel>Owner Last Name</ControlLabel>
+        <FormGroup controlId="surname" validationState={ this.state.ownerSurameError ? 'error' : null }>
+          <ControlLabel>Owner Last Name <sup>*</sup></ControlLabel>
           <FormInputControl type="text" value={ this.state.surname } updateState={ this.updateState } />
+          <HelpBlock>{ this.state.ownerSurameError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="address1" validationState={ this.state.address1Error ? 'error' : null }>
           <ControlLabel>Address Line 1 <sup>*</sup></ControlLabel>
