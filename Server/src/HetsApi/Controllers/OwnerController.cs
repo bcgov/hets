@@ -1859,7 +1859,7 @@ namespace HetsApi.Controllers
             int?[] ownerArray = ArrayHelper.ParseIntArray(owners);
 
             // owner status
-            int? statusId = StatusHelper.GetStatusId(HetOwner.StatusArchived, "ownerStatus", _context);
+            int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // default the dates if they weren't entered
@@ -1873,7 +1873,7 @@ namespace HetsApi.Controllers
                 .Include(y => y.LocalArea.ServiceArea)
                 .Include(x => x.PrimaryContact)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
-                            x.OwnerStatusTypeId != statusId && 
+                            x.OwnerStatusTypeId == statusId && 
                             (x.WorkSafeBcexpiryDate == null || x.WorkSafeBcexpiryDate < wcbExpiry) &&
                             (x.CglendDate == null || x.CglendDate < cglExpiry));
 
