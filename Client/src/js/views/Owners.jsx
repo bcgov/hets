@@ -22,6 +22,7 @@ import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
+import { caseInsensitiveSort, sortDir } from '../utils/array.js';
 
 var Owners = React.createClass({
   propTypes: {
@@ -94,7 +95,7 @@ var Owners = React.createClass({
   },
 
   search(e) {
-    e.preventDefault(); 
+    e.preventDefault();
     this.fetch();
   },
 
@@ -147,7 +148,7 @@ var Owners = React.createClass({
       });
     });
   },
-  
+
   print() {
     window.print();
   },
@@ -199,16 +200,7 @@ var Owners = React.createClass({
       resultCount = '(' + Object.keys(this.props.ownerList.data).length + ')';
     }
 
-    var ownerList = _.sortBy(this.props.ownerList.data, owner => {
-      if (typeof owner[this.state.ui.sortField] === 'string') {
-        return owner[this.state.ui.sortField].toLowerCase();
-      }
-      return owner[this.state.ui.sortField];
-    });
-    
-    if (this.state.ui.sortDesc) {
-      _.reverse(ownerList);
-    }
+    var ownerList = caseInsensitiveSort(this.props.ownerList.data, [this.state.ui.sortField], [sortDir(this.state.ui.sortDesc)]);
 
     return <div id="owners-list">
       <PageHeader>Owners { resultCount }
@@ -248,7 +240,7 @@ var Owners = React.createClass({
         var addOwnerButton = <Button title="Add Owner" bsSize="xsmall" onClick={ this.openAddDialog }>
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong>
         </Button>;
-        
+
         if (this.props.ownerList.loaded) {
           return this.renderResults(ownerList, addOwnerButton);
         }
