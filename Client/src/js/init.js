@@ -31,12 +31,11 @@ function renderApp() {
 
   const appElement = document.querySelector('#app');
 
-  
   ReactDOM.render(App, appElement);
 }
 
 export default function startApp() {
-  if (location.hostname === 'localhost' && process.env.DEV_USER) { //eslint-disable-line
+  if (process.env.NODE_ENV === 'development' && process.env.DEV_USER) { //eslint-disable-line
     return Api.setDevUser(process.env.DEV_USER).finally(() => { //eslint-disable-line
       initializeApp();
     });

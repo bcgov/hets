@@ -37,7 +37,6 @@ var ContactsEditDialog = React.createClass({
       isPrimary: this.props.contact.isPrimary || this.props.isFirstContact || false,
 
       givenNameError: false,
-      surnameError: false,
       emailAddressError: false,
       workPhoneNumberError: false,
       mobilePhoneNumberError: false,
@@ -82,7 +81,6 @@ var ContactsEditDialog = React.createClass({
   isValid() {
     this.setState({
       givenNameError: false,
-      surnameError: false,
       emailAddressError: false,
       workPhoneNumberError: false,
       mobilePhoneNumberError: false,
@@ -93,11 +91,6 @@ var ContactsEditDialog = React.createClass({
 
     if (isBlank(this.state.givenName)) {
       this.setState({ givenNameError: 'Given name is required' });
-      valid = false;
-    }
-
-    if (isBlank(this.state.surname)) {
-      this.setState({ surnameError: 'Surname is required' });
       valid = false;
     }
 
@@ -177,10 +170,9 @@ var ContactsEditDialog = React.createClass({
                 </FormGroup>
               </Col>
               <Col md={12}>
-                <FormGroup controlId="surname" validationState={ this.state.surnameError ? 'error' : null }>
-                  <ControlLabel>Surname <sup>*</sup></ControlLabel>
+                <FormGroup controlId="surname">
+                  <ControlLabel>Surname</ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.surname } readOnly={ isReadOnly } updateState={ this.updateState }/>
-                  <HelpBlock>{ this.state.surnameError }</HelpBlock>
                 </FormGroup>
               </Col>
               <Col md={12}>
