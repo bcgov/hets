@@ -334,8 +334,7 @@ var ProjectsDetail = React.createClass({
                       <td>
                         <Link
                           to={ `rental-requests/${item.id}` }
-                          className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}
-                        >
+                          className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}>
                       Request
                         </Link>
                       </td>
@@ -358,8 +357,7 @@ var ProjectsDetail = React.createClass({
                       <td>
                         <Link
                           to={ `equipment/${item.equipmentId}` }
-                          className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}
-                        >
+                          className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}>
                           { item.equipmentCode }
                         </Link>
                       </td>
@@ -381,11 +379,9 @@ var ProjectsDetail = React.createClass({
                             trigger="click"
                             placement="top"
                             rootClose
-                            overlay={ <Confirm onConfirm={ this.confirmEndHire.bind(this, item) }/> }
-                          >
+                            overlay={ <Confirm onConfirm={ this.confirmEndHire.bind(this, item) }/> }>
                             <Button
-                              bsSize="xsmall"
-                            >
+                              bsSize="xsmall">
                               <Glyphicon glyph="check" />
                             </Button>
                           </OverlayTrigger>
@@ -440,11 +436,13 @@ var ProjectsDetail = React.createClass({
                   }
 
                   var headers = [
-                    { field: 'name',  title: 'Name'         },
-                    { field: 'phone', title: 'Phone Number' },
-                    { field: 'emailAddress', title: 'Email'        },
-                    { field: 'role',  title: 'Role'         },
-                    { field: 'addContact',   title: 'Add Contact', style: { textAlign: 'right'  },
+                    { field: 'name',              title: 'Name'         },
+                    { field: 'phone',             title: 'Phone Number' },
+                    { field: 'mobilePhoneNumber', title: 'Cell'         },
+                    { field: 'faxPhoneNumber',    title: 'Fax'          },
+                    { field: 'emailAddress',      title: 'Email'        },
+                    { field: 'role',              title: 'Role'         },
+                    { field: 'addContact',        title: 'Add Contact', style: { textAlign: 'right'  },
                       node: addContactButton,
                     },
                   ];
@@ -455,6 +453,8 @@ var ProjectsDetail = React.createClass({
                         return <tr key={ contact.id }>
                           <td>{ contact.isPrimary && <Glyphicon glyph="star" /> } { contact.name } </td>
                           <td>{ contact.phone }</td>
+                          <td>{ contact.mobilePhoneNumber }</td>
+                          <td>{ contact.faxPhoneNumber }</td>
                           <td><a href={ `mailto:${ contact.emailAddress }` } target="_blank">{ contact.emailAddress }</a></td>
                           <td>{ contact.role }</td>
                           <td style={{ textAlign: 'right' }}>
@@ -486,31 +486,27 @@ var ProjectsDetail = React.createClass({
           show={ this.state.showContactDialog }
           contact={ this.state.contact }
           onSave={ this.saveContact }
-          onClose={ this.closeContactDialog }
-        />
+          onClose={ this.closeContactDialog }/>
         }
         { this.state.showDocumentsDialog &&
         <DocumentsListDialog
           show={ this.state.showDocumentsDialog }
           parent={ project }
-          onClose={ this.closeDocumentsDialog }
-        />
+          onClose={ this.closeDocumentsDialog }/>
         }
         { this.state.showAddRequestDialog &&
         <RentalRequestsAddDialog
           show={ this.state.showAddRequestDialog }
           onSave={ this.saveNewRequest }
           onClose={ this.closeAddRequestDialog }
-          project={ project }
-        />
+          project={ project }/>
         }
         { this.state.showTimeEntryDialog &&
         <TimeEntryDialog
           show={ this.state.showTimeEntryDialog }
           onClose={ this.closeTimeEntryDialog }
           multipleEntryAllowed={ false }
-          rentalAgreementId={ this.state.rentalAgreement.id }
-        />
+          rentalAgreementId={ this.state.rentalAgreement.id }/>
         }
         { this.state.showNotesDialog &&
         <NotesDialog
@@ -520,8 +516,7 @@ var ProjectsDetail = React.createClass({
           getNotes={ Api.getProjectNotes }
           onUpdate={ Api.updateNote }
           onClose={ this.closeNotesDialog }
-          notes={ this.props.notes }
-        />
+          notes={ this.props.notes }/>
         }
       </div>
     );

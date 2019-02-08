@@ -439,7 +439,7 @@ var TimeEntryDialog = React.createClass({
                       <ControlLabel>Week Ending</ControlLabel>
                       <DateControl
                         id={`date${key}`}
-                        name='date'
+                        name="date"
                         isValidDate={ isValidDate }
                         date={ this.state.timeEntry[key].date }
                         updateState={ this.updateTimeEntryState }
@@ -452,7 +452,7 @@ var TimeEntryDialog = React.createClass({
                       <ControlLabel>Hours</ControlLabel>
                       <FormInputControl
                         id={`hours${key}`}
-                        name='hours'
+                        name="hours"
                         type="float"
                         value={ this.state.timeEntry[key].hours }
                         updateState={ this.updateTimeEntryState }

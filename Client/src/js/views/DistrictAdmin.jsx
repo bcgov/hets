@@ -188,7 +188,7 @@ var DistrictAdmin = React.createClass({
                   return <tr key={ equipment.id }>
                     <td>{ equipment.districtEquipmentName }</td>
                     <td>{ equipment.equipmentType.blueBookSection }</td>
-					<td>{ equipment.equipmentType.name }</td>
+                    <td>{ equipment.equipmentType.name }</td>
                     <td style={{ textAlign: 'right' }}>
                       <ButtonGroup>
                         <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteDistrictEquipmentType.bind(this, equipment) }/> }>
@@ -276,12 +276,12 @@ var DistrictAdmin = React.createClass({
       }
       { this.state.showDistrictEquipmentTypeErrorDialog &&
         <ModalDialog
-          title='Error'
+          title="Error"
           show={this.state.showDistrictEquipmentTypeErrorDialog}
           onClose={this.closeDistrictEquipmentTypeErrorDialog}
           footer={
             <span>
-              <Button onClick={ this.closeDistrictEquipmentTypeErrorDialog }>{ 'Close' }</Button>
+              <Button onClick={ this.closeDistrictEquipmentTypeErrorDialog }>Close</Button>
             </span>
           }
         >

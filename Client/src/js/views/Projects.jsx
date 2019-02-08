@@ -174,7 +174,7 @@ var Projects = React.createClass({
         _.map(projects, (project) => {
           return <tr key={ project.id } className={ project.isActive ? null : 'info' }>
             <td>{ project.name }</td>
-			<td>{ project.provincialProjectNumber }</td>
+            <td>{ project.provincialProjectNumber }</td>
             <td>{ project.primaryContactName }</td>
             <td>{ project.primaryContactPhone }</td>
             <td style={{ textAlign: 'center' }}>{ project.hires }</td>
