@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -146,6 +147,46 @@ namespace HetsApi.Controllers
                 .FirstOrDefault(a => a.EquipmentAttachmentId == id);
            
             return new ObjectResult(new HetsResponse(updEquipmentAttachment));
-        }        
+        }
+
+        /// <summary>	
+        /// Create multiple equipment attachments (an array of equipment attachments)
+        /// </summary>	
+        /// <param name="items"></param>	
+        [HttpPost]
+        [Route("bulk")]
+        [SwaggerOperation("EquipmentAttachmentsBulkPost")]
+        [SwaggerResponse(200, type: typeof(List<HetEquipmentAttachment>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult EquipmentAttachmentsBulkPost([FromBody]HetEquipmentAttachment[] items)
+        {
+            // not found
+            if (items == null || items.Length < 1) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // process each attachment records
+            foreach (HetEquipmentAttachment item in items)
+            {
+                HetEquipmentAttachment equipmentAttachment = new HetEquipmentAttachment
+                {
+                    ConcurrencyControlNumber = item.ConcurrencyControlNumber,
+                    Description = item.TypeName,
+                    TypeName = item.TypeName,
+                    EquipmentId = item.Equipment.EquipmentId
+                };
+
+                // save the changes
+                _context.HetEquipmentAttachment.Add(equipmentAttachment);
+            }
+
+            _context.SaveChanges();
+
+            // return all equipment attachments
+            int id = items[0].Equipment.EquipmentId;
+
+            List<HetEquipmentAttachment> attachments = _context.HetEquipmentAttachment.AsNoTracking()
+                .Where(x => x.EquipmentId == id).ToList();
+
+            return new ObjectResult(new HetsResponse(attachments));
+        }
     }
 }
