@@ -60,6 +60,33 @@ namespace HetsApi.Controllers
         }
 
         /// <summary>
+        /// Get no project rental requests
+        /// </summary>
+        [HttpGet]
+        [Route("noProject")]
+        [SwaggerOperation("NoProjectsGet")]
+        [SwaggerResponse(200, type: typeof(List<HetRentalRequest>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult NoProjectsGet()
+        {
+            // get current district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            int? statusIdInProgress = StatusHelper.GetStatusId(HetRentalRequest.StatusInProgress, "rentalRequestStatus", _context);
+            if (statusIdInProgress == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            List<HetRentalRequest> requests = _context.HetRentalRequest.AsNoTracking()
+                .Include(x => x.LocalArea.ServiceArea.District)
+                .Include(x => x.DistrictEquipmentType)
+                .Where(x => x.LocalArea.ServiceArea.DistrictId == districtId &&
+                            x.RentalRequestStatusTypeId == statusIdInProgress &&
+                            x.ProjectId == null)
+                .ToList();        
+
+            return new ObjectResult(new HetsResponse(requests));
+        }
+
+        /// <summary>
         /// Update rental request
         /// </summary>
         /// <param name="id">id of RentalRequest to update</param>
@@ -178,12 +205,13 @@ namespace HetsApi.Controllers
         /// Create rental request
         /// </summary>
         /// <param name="item"></param>
+        /// <param name="noProject"></param>
         [HttpPost]
         [Route("")]
         [SwaggerOperation("RentalRequestsPost")]
         [SwaggerResponse(200, type: typeof(HetRentalRequest))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult RentalRequestsPost([FromBody]HetRentalRequest item)
+        public virtual IActionResult RentalRequestsPost([FromBody]HetRentalRequest item, [FromQuery]bool noProject = false)
         {
             // not found
             if (item == null) return new ObjectResult(new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
@@ -230,21 +258,23 @@ namespace HetsApi.Controllers
                 return new ObjectResult(new HetsResponse("HETS-28", message));
             }
 
-            int? statusId = StatusHelper.GetStatusId(item.Status, "rentalRequestStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
-            
             // create new rental request
             HetRentalRequest rentalRequest = new HetRentalRequest
             {
-                LocalAreaId = item.LocalArea.LocalAreaId,
-                ProjectId = item.Project.ProjectId,
+                LocalAreaId = item.LocalArea.LocalAreaId,                
                 DistrictEquipmentTypeId = item.DistrictEquipmentType.DistrictEquipmentTypeId,
-                RentalRequestStatusTypeId = (int)statusId,
+                RentalRequestStatusTypeId = (int)statusIdInProgress,
                 EquipmentCount = item.EquipmentCount,
                 ExpectedEndDate = item.ExpectedEndDate,
                 ExpectedStartDate = item.ExpectedStartDate,
                 ExpectedHours = item.ExpectedHours
             };
+
+            // is this a "project-less" request? - can't be hired from
+            if (!noProject)
+            {
+                rentalRequest.ProjectId = item.Project.ProjectId;
+            }
 
             // build new list
             try
@@ -267,10 +297,10 @@ namespace HetsApi.Controllers
             // for the same Local Area and Equipment Type
             string tempStatus = RentalRequestHelper.RentalRequestStatus(rentalRequest, _context);
 
-            statusId = StatusHelper.GetStatusId(tempStatus, "rentalRequestStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            statusIdInProgress = StatusHelper.GetStatusId(tempStatus, "rentalRequestStatus", _context);
+            if (statusIdInProgress == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            rentalRequest.RentalRequestStatusTypeId = (int)statusId;
+            rentalRequest.RentalRequestStatusTypeId = (int)statusIdInProgress;
 
             if (item.HetRentalRequestAttachment != null &&
                 item.HetRentalRequestAttachment.Count > 0)

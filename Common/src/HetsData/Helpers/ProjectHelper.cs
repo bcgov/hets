@@ -205,7 +205,7 @@ namespace HetsData.Helpers
                 projectLite.Requests = project.HetRentalRequest?.Count;
                 projectLite.Hires = project.HetRentalAgreement?.Count;
                 projectLite.ProvincialProjectNumber = project.ProvincialProjectNumber;
-            }
+            }            
 
             return projectLite;
         }
