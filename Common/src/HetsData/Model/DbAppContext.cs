@@ -2859,6 +2859,38 @@ namespace HetsData.Model
                     .HasColumnName("NAME")
                     .HasMaxLength(100);
 
+                entity.Property(e => e.FiscalYear)
+                    .HasColumnName("FISCAL_YEAR")
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.ResponsibilityCentre)
+                    .HasColumnName("RESPONSIBILITY_CENTRE")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.ServiceLine)
+                    .HasColumnName("SERVICE_LINE")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.Stob)
+                    .HasColumnName("STOB")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.Product)
+                    .HasColumnName("PRODUCT")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.BusinessFunction)
+                    .HasColumnName("BUSINESS_FUNCTION")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.WorkActivity)
+                    .HasColumnName("WORK_ACTIVITY")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.CostType)
+                    .HasColumnName("COST_TYPE")
+                    .HasMaxLength(255);                
+
                 entity.Property(e => e.PrimaryContactId).HasColumnName("PRIMARY_CONTACT_ID");
 
                 entity.Property(e => e.ProjectStatusTypeId).HasColumnName("PROJECT_STATUS_TYPE_ID");
