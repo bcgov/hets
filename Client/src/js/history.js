@@ -178,7 +178,7 @@ export function get(historyEntity, offset, limit) {
   return null;
 }
 
-// Logging 
+// Logging
 export function ownerAdded(owner) {
   return log(owner.historyEntity, OWNER_ADDED);
 }

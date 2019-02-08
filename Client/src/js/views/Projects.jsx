@@ -85,7 +85,7 @@ var Projects = React.createClass({
 
   search(e) {
     e.preventDefault();
-    this.fetch(); 
+    this.fetch();
   },
 
   clearSearch() {
@@ -142,8 +142,8 @@ var Projects = React.createClass({
   },
 
   renderResults(addProjectButton) {
-    if (Object.keys(this.props.projects.data).length === 0) { 
-      return <Alert bsStyle="success">No Projects { addProjectButton }</Alert>; 
+    if (Object.keys(this.props.projects.data).length === 0) {
+      return <Alert bsStyle="success">No Projects { addProjectButton }</Alert>;
     }
 
     var projects = _.sortBy(this.props.projects.data, project => {
@@ -153,7 +153,7 @@ var Projects = React.createClass({
       }
       return sortValue;
     });
-    
+
     if (this.state.ui.sortDesc) {
       _.reverse(projects);
     }
@@ -226,10 +226,10 @@ var Projects = React.createClass({
       </Well>
 
       {(() => {
-        if (this.props.projects.loading || this.props.favourites.loading) { 
-          return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
+        if (this.props.projects.loading || this.props.favourites.loading) {
+          return <div style={{ textAlign: 'center' }}><Spinner/></div>;
         }
-        
+
         var addProjectButton = <Button title="Add Project" bsSize="xsmall" onClick={ this.openAddDialog }>
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Project</strong>
         </Button>;

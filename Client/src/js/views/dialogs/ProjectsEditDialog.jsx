@@ -18,7 +18,7 @@ var ProjectsEditDialog = React.createClass({
   propTypes: {
     project: React.PropTypes.object,
     projects: React.PropTypes.object,
-    
+
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
@@ -89,10 +89,10 @@ var ProjectsEditDialog = React.createClass({
 
 
   onSave() {
-    this.props.onSave({ 
+    this.props.onSave({
       id: this.props.project.id,
       canEditStatus: this.props.project.canEditStatus,
-      district: this.props.project.district, 
+      district: this.props.project.district,
       primaryContact: this.props.project.primaryContact,
       name: this.state.projectName,
       status: this.state.projectStatus,
@@ -121,7 +121,7 @@ var ProjectsEditDialog = React.createClass({
         </FormGroup>
         <FormGroup controlId="projectStatus" validationState={ this.state.projectStatusCodeError ? 'error' : null }>
           <ControlLabel>Project Status</ControlLabel>
-          <DropdownControl id="projectStatus" title={ this.state.projectStatus } updateState={ this.updateState } disabled={ !this.props.project.canEditStatus } 
+          <DropdownControl id="projectStatus" title={ this.state.projectStatus } updateState={ this.updateState } disabled={ !this.props.project.canEditStatus }
             value={ this.state.projectStatus }
             items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]}
           />

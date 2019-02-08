@@ -61,20 +61,20 @@ var Home = React.createClass({
 
     // update search parameters
     store.dispatch({ type: Action.UPDATE_OWNERS_SEARCH, owners: { statusCode: unapprovedStatus } });
-    
+
     // perform search
     Api.searchOwners({ status: unapprovedStatus });
-    
+
     // navigate to search page
     this.props.router.push({ pathname: Constant.OWNERS_PATHNAME });
   },
 
   goToUnapprovedEquipment() {
     var unapprovedStatus = Constant.EQUIPMENT_STATUS_CODE_PENDING;
-    
+
     // update search parameters
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: { statusCode: Constant.EQUIPMENT_STATUS_CODE_PENDING } });
-    
+
     // perform search
     Api.searchEquipmentList({ status: unapprovedStatus });
 
@@ -85,7 +85,7 @@ var Home = React.createClass({
   goToHiredEquipment() {
     // update search parameters
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: { statusCode: Constant.EQUIPMENT_STATUS_CODE_APPROVED, hired: true  } });
-    
+
     // perform search
     Api.searchEquipmentList({ status: Constant.EQUIPMENT_STATUS_CODE_APPROVED, hired: true  });
 
@@ -96,7 +96,7 @@ var Home = React.createClass({
   goToBlockedRotationLists() {
     // update search parameters
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_SEARCH, rentalRequests: { statusCode: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS  } });
-    
+
     // perform search
     Api.searchRentalRequests({ status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS  });
 
@@ -143,7 +143,7 @@ var Home = React.createClass({
 
     var agreements = this.props.blankRentalAgreements.data;
     var agreementCount = Object.keys(agreements).length;
-    
+
     return <Well>
       <h3>Unassociated Rental Agreements</h3>
       <p>(These equipment have not yet been hired against a rental request in the application.)</p>
@@ -154,9 +154,9 @@ var Home = React.createClass({
         if (agreementCount < Constant.MAX_UNASSOCIATED_RENTAL_AGREEMENTS) {
           addRentalAgreementButton = <Button title="Add Rental Agreement" onClick={ this.createRentalAgreement } bsSize="small"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
         }
-        
+
         if (!agreements || agreementCount === 0) { return <Alert bsStyle="success">No unassociated rental agreements { addRentalAgreementButton }</Alert>; }
-      
+
         // assign sequence numbers
         var sortedAgreements = _.sortBy(agreements, 'id');
         _.map(sortedAgreements, (agreement, index) => { agreement.sequence = index + 1; });
@@ -183,12 +183,12 @@ var Home = React.createClass({
                 <td>{ agreement.number }</td>
                 {(() => {
                   if (!_.isEmpty(agreement.project)) { return <td><Link to={ `${ Constant.PROJECTS_PATHNAME }/${ agreement.projectId }` }>{ agreement.project.name }</Link></td>; }
-                  
+
                   return <td></td>;
                 })()}
                 {(() => {
                   if (!_.isEmpty(agreement.equipment)) { return <td><Link to={ `${ Constant.EQUIPMENT_PATHNAME }/${ agreement.equipmentId }` }>{ agreement.equipment.equipmentCode }</Link></td>; }
-                  
+
                   return <td></td>;
                 })()}
                 <td style={{ textAlign: 'right' }}>

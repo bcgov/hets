@@ -263,7 +263,7 @@ var RentalAgreementsDetail = React.createClass({
     var clonePromise = Api.cloneProjectRentalAgreement;
 
     if (type === Constant.BY_EQUIPMENT) {
-      data.equipmentId = this.props.rentalAgreement.equipment.id;      
+      data.equipmentId = this.props.rentalAgreement.equipment.id;
       clonePromise = Api.cloneEquipmentRentalAgreement;
     }
 
@@ -283,7 +283,7 @@ var RentalAgreementsDetail = React.createClass({
     var isAssociated = rentalAgreement.rentalRequestId > 0;
     var agreementCount = Object.keys(this.props.blankRentalAgreements.data).length;
 
-    var buttons = 
+    var buttons =
       <div className="pull-right">
         { isAssociated && <Button disabled={ !rentalAgreement.isActive } onClick={ this.openCloneDialog }>Copy Other Rental Agreement</Button> }
         <Button title="Print PDF" onClick={ this.generateRentalAgreementDocument }><Glyphicon glyph="print" /></Button>
@@ -338,7 +338,7 @@ var RentalAgreementsDetail = React.createClass({
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Rental Request:">
                       {(() => {
                         if (isAssociated) { return <Link to={{ pathname: 'rental-requests/' + rentalAgreement.rentalRequestId }}>View</Link>; }
-                        
+
                         return <div>Unassociated</div>;
                       })()}
                     </ColDisplay>
@@ -598,23 +598,23 @@ var RentalAgreementsDetail = React.createClass({
         <EquipmentRentalRatesEditDialog show={ this.state.showEquipmentRateDialog } onSave={ this.saveEquipmentRate } onClose={ this.closeEquipmentRateDialog } />
         }
         { this.state.showRentalRateDialog &&
-        <RentalRatesEditDialog 
-          show={ this.state.showRentalRateDialog } 
-          rentalRate={ this.state.rentalRate } 
-          onSave={ this.saveRentalRate } 
+        <RentalRatesEditDialog
+          show={ this.state.showRentalRateDialog }
+          rentalRate={ this.state.rentalRate }
+          onSave={ this.saveRentalRate }
           onSaveMultiple={ this.saveRentalRates }
-          onClose={ this.closeRentalRateDialog } 
+          onClose={ this.closeRentalRateDialog }
           rentalAgreement={ rentalAgreement }
         />
         }
         { this.state.showConditionDialog &&
-        <RentalConditionsEditDialog 
-          show={ this.state.showConditionDialog } 
-          rentalCondition={ this.state.rentalCondition } 
-          rentalConditions={ rentalConditions } 
-          onSave={ this.saveCondition } 
+        <RentalConditionsEditDialog
+          show={ this.state.showConditionDialog }
+          rentalCondition={ this.state.rentalCondition }
+          rentalConditions={ rentalConditions }
+          onSave={ this.saveCondition }
           onSaveMultiple={ this.saveConditions }
-          onClose={ this.closeConditionDialog } 
+          onClose={ this.closeConditionDialog }
         />
         }
         { this.state.showOvertimeNotesDialog &&
@@ -625,12 +625,12 @@ var RentalAgreementsDetail = React.createClass({
         />
         }
         { this.state.showCloneDialog &&
-        <CloneDialog 
-          show={ this.state.showCloneDialog }  
-          onSave={ this.cloneRentalAgreement } 
+        <CloneDialog
+          show={ this.state.showCloneDialog }
+          onSave={ this.cloneRentalAgreement }
           onClose={ this.closeCloneDialog }
           rentalAgreement={ rentalAgreement }
-          cloneRentalAgreementError={ this.state.cloneRentalAgreementError  } 
+          cloneRentalAgreementError={ this.state.cloneRentalAgreementError  }
         />
         }
       </div>

@@ -27,7 +27,6 @@ function decrementRequests() {
   }
 }
 
-
 export const HttpError = function(msg, method, path, status, body) {
   this.message = msg || '';
   this.method = method;
@@ -40,7 +39,6 @@ HttpError.prototype = Object.create(Error.prototype, {
   constructor: { value: HttpError },
 });
 
-
 export const ApiError = function(msg, method, path, status, html) {
   this.message = msg || '';
   this.method = method;
@@ -52,7 +50,6 @@ export const ApiError = function(msg, method, path, status, html) {
 ApiError.prototype = Object.create(Error.prototype, {
   constructor: { value: ApiError },
 });
-
 
 export const Resource404 = function(name, id) {
   this.name = name;
@@ -69,13 +66,13 @@ Resource404.prototype = Object.create(Error.prototype, {
 export function request(path, options) {
   options = options || {};
 
-  var xhr = new XMLHttpRequest();     
-  
+  var xhr = new XMLHttpRequest();
+
   // calling server service
-  console.log('Calling service. Path: ' + path);   
+  console.log('Calling service. Path: ' + path);
 
   if (!options.headers) { options.headers = {}; }
-  
+
   if (!options.files) {
     options.headers = Object.assign({
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -117,14 +114,14 @@ export function request(path, options) {
         reject(err);
       } else {
         console.log('Call complete! Path: ' + path);
-        resolve(xhr);        
+        resolve(xhr);
       }
     });
 
     xhr.addEventListener('error', function() {
       reject(new HttpError(`Request ${method} ${path} failed to send`, method, path));
     });
-	
+
     var qs = _.map(options.querystring, (value, key) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
     xhr.open(method, `${path}${qs ? '?' : ''}${qs}`, true);
 

@@ -35,7 +35,7 @@ var SeniorityList = React.createClass({
   updateState(state) {
     this.setState(state);
   },
-  
+
   onLocalAreasChanged() {
     this.setState({ selectedEquipmentTypeIds: [] });
   },
@@ -57,12 +57,12 @@ var SeniorityList = React.createClass({
         window.navigator.msSaveBlob(blob, filename);
         return;
       }
-      //Create a link element, hide it, direct 
+      //Create a link element, hide it, direct
       //it towards the blob, and then 'click' it programatically
       let a = document.createElement('a');
       a.style.cssText = 'display: none';
       document.body.appendChild(a);
-      //Create a DOMString representing the blob 
+      //Create a DOMString representing the blob
       //and point the link element towards it
       let url = window.URL.createObjectURL(blob);
       a.href = url;
@@ -78,7 +78,7 @@ var SeniorityList = React.createClass({
     var localAreas = _.chain(this.props.localAreas)
       .sortBy('name')
       .value();
-    
+
     var districtEquipmentTypes = this.getFilteredEquipmentTypes(this.state.selectedLocalAreaIds);
 
     return <div id="seniority-list">

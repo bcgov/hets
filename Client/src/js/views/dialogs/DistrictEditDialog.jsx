@@ -68,7 +68,7 @@ var DistrictEditDialog = React.createClass({
   },
 
   render() {
-    var userDistrictsFiltered = _.map(this.props.userDistricts, district => { 
+    var userDistrictsFiltered = _.map(this.props.userDistricts, district => {
       if (this.state.isNew || district.district.id !== this.props.district.district.id) {
         return district.district.id;
       }
@@ -77,8 +77,8 @@ var DistrictEditDialog = React.createClass({
 
     var districts = _.chain(this.props.districts)
       .sortBy('name')
-      .reject(district => { 
-        return _.includes(userDistrictsFiltered, district.id); 
+      .reject(district => {
+        return _.includes(userDistrictsFiltered, district.id);
       } )
       .value();
 

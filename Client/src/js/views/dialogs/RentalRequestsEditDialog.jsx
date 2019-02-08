@@ -108,7 +108,7 @@ var RentalRequestsEditDialog = React.createClass({
       expectedHours: this.state.expectedHours,
       expectedStartDate: this.state.expectedStartDate,
       expectedEndDate: this.state.expectedEndDate,
-      rentalRequestAttachments: [{ 
+      rentalRequestAttachments: [{
         id: this.state.rentalRequestAttachmentId,
         attachment: this.state.rentalRequestAttachments,
       }],

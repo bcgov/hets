@@ -98,7 +98,7 @@ var HiringReport = React.createClass({
 
   search(e) {
     e.preventDefault();
-    this.fetch(); 
+    this.fetch();
   },
 
   clearSearch() {
@@ -138,8 +138,8 @@ var HiringReport = React.createClass({
   },
 
   renderResults() {
-    if (Object.keys(this.props.hiringResponses.data).length === 0) { 
-      return <Alert bsStyle="success">No results</Alert>; 
+    if (Object.keys(this.props.hiringResponses.data).length === 0) {
+      return <Alert bsStyle="success">No results</Alert>;
     }
 
     var hiringResponses = _.sortBy(this.props.hiringResponses.data, response => {
@@ -149,7 +149,7 @@ var HiringReport = React.createClass({
       }
       return sortValue;
     });
-    
+
     if (this.state.ui.sortDesc) {
       _.reverse(hiringResponses);
     }
@@ -216,7 +216,7 @@ var HiringReport = React.createClass({
   updateLocalAreaSearchState(state) {
     this.updateSearchState(state, this.filterSelectedOwners);
   },
-  
+
   updateOwnerSearchState(state) {
     this.updateSearchState(state, this.filterSelectedEquipment);
   },
@@ -291,8 +291,8 @@ var HiringReport = React.createClass({
       </Well>
 
       {(() => {
-        if (this.props.hiringResponses.loading || !this.state.loaded) { 
-          return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
+        if (this.props.hiringResponses.loading || !this.state.loaded) {
+          return <div style={{ textAlign: 'center' }}><Spinner/></div>;
         }
 
         if (this.props.hiringResponses.loaded) {

@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 import { Form, Row, Col, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
@@ -56,22 +55,22 @@ var ChangeStatusDialog = React.createClass({
     }
 
 
-    return valid; 
+    return valid;
   },
 
   statusRequirements() {
     var parent = this.props.parent;
     var requirements = [];
-    
+
     if (!parent.primaryContact) {
       requirements.push('Primary contact');
-    } 
+    }
     if (isBlank(parent.workSafeBCPolicyNumber)) {
       requirements.push('WorkSafeBC policy number');
     }
     if (!parent.address1 || !parent.city || !parent.province || !parent.province) {
       requirements.push('Company address');
-    } 
+    }
     if (!parent.meetsResidency) {
       requirements.push('Meets residency');
     }
@@ -100,12 +99,12 @@ var ChangeStatusDialog = React.createClass({
           <Form>
             <FormGroup controlId="comment" validationState={ this.state.commentError ? 'error' : null }>
               <ControlLabel>Comment</ControlLabel>
-              <FormInputControl value={ this.state.comment } componentClass="textarea" updateState={ this.updateState } /> 
+              <FormInputControl value={ this.state.comment } componentClass="textarea" updateState={ this.updateState } />
               <HelpBlock>{ this.state.commentError }</HelpBlock>
               { this.props.owner &&
               <HelpBlock>{ this.state.statusError && statusErrorText }
                 <ul>
-                  { 
+                  {
                     _.map(this.state.statusError, (error) => {
                       return <li>{ error }</li>;
                     })
@@ -115,7 +114,7 @@ var ChangeStatusDialog = React.createClass({
               }
             </FormGroup>
           </Form>
-        </Col> 
+        </Col>
       </Row>
     </EditDialog>;
   },
