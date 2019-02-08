@@ -1788,16 +1788,6 @@ export function generateRentalAgreementDocument(rentalAgreementId) {
 // Blank Rental Agreements
 ////////////////////
 
-export function getBlankRentalAgreements() {
-  store.dispatch({ type: Action.BLANK_RENTAL_AGREEMENTS_LOOKUP_REQUEST });
-  return new ApiRequest('/rentalAgreements/blankAgreements').get().then(response => {
-    var agreements = normalize(response.data);
-    _.map(agreements, agreement => parseRentalAgreement(agreement));
-
-    store.dispatch({ type: Action.UPDATE_BLANK_RENTAL_AGREEMENTS_LOOKUP, blankRentalAgreements: agreements });
-  });
-}
-
 export function getBlankRentalAgreementsForHire(projectId, equipmentId) {
   store.dispatch({ type: Action.BLANK_RENTAL_AGREEMENTS_LOOKUP_REQUEST });
 
@@ -1810,21 +1800,6 @@ export function getBlankRentalAgreementsForHire(projectId, equipmentId) {
 
     store.dispatch({ type: Action.UPDATE_BLANK_RENTAL_AGREEMENTS_LOOKUP, blankRentalAgreements: agreements });
   });
-}
-
-export function addBlankRentalAgreement() {
-  return new ApiRequest('rentalAgreements/createBlankAgreement').post().then((response) => {
-    var agreement = response.data;
-
-    // Add display fields
-    parseRentalAgreement(agreement);
-
-    store.dispatch({ type: Action.UPDATE_RENTAL_AGREEMENT, rentalAgreement: agreement });
-  });
-}
-
-export function deleteBlankRentalAgreement(id) {
-  return new ApiRequest(`/rentalAgreements/deleteBlankAgreement/${ id }`).post();
 }
 
 
