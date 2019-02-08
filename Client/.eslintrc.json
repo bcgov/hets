@@ -60,6 +60,9 @@
                 "args": "after-used"
             }
         ],
-        "no-trailing-spaces": "warn"
+        "no-trailing-spaces": "warn",
+        "no-mixed-spaces-and-tabs": "error",
+        "no-tabs": "error",
+        "jsx-quotes": ["error", "prefer-double"]
     }
 }

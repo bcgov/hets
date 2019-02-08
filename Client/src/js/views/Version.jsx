@@ -124,10 +124,10 @@ var Version = React.createClass({
             <Row>
               <ColDisplay labelProps={{ md: 2 }} label="Framework">{ applicationVersion.targetFramework }</ColDisplay>
             </Row>
-			<Row>
+            <Row>
               <ColDisplay labelProps={{ md: 2 }} label="HETS Release">{ applicationVersion.buildVersion }</ColDisplay>
             </Row>
-			<Row>
+            <Row>
               <ColDisplay labelProps={{ md: 2 }} label="HETS Environment">{ applicationVersion.environment }</ColDisplay>
             </Row>
           </Well>
@@ -142,10 +142,10 @@ var Version = React.createClass({
             <Row>
               <ColDisplay labelProps={{ md: 2 }} label="Postgres Version">{ databaseVersion.version }</ColDisplay>
             </Row>
-			<Row>
+            <Row>
               <ColDisplay labelProps={{ md: 2 }} label="HETS Release">{ databaseVersion.buildVersion }</ColDisplay>
             </Row>
-			<Row>
+            <Row>
               <ColDisplay labelProps={{ md: 2 }} label="HETS Environment">{ databaseVersion.environment }</ColDisplay>
             </Row>
           </Well>

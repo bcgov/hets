@@ -120,7 +120,7 @@ var BusinessOwner = React.createClass({
 
           return <Row id="owners-top">
             <Col sm={9}>
-              <Label className='ml-5'>{ owner.status }</Label>
+              <Label className="ml-5">{ owner.status }</Label>
               <Label className={ owner.isMaintenanceContractor ? 'ml-5' : 'hide' }>Maintenance Contractor</Label>
             </Col>
             <Col sm={3}>
@@ -231,10 +231,12 @@ var BusinessOwner = React.createClass({
                 }
 
                 var headers = [
-                  { field: 'name',         title: 'Name'  },
-                  { field: 'phone',        title: 'Phone' },
-                  { field: 'emailAddress', title: 'Email' },
-                  { field: 'role',         title: 'Role'  },
+                  { field: 'name',              title: 'Name'  },
+                  { field: 'phone',             title: 'Phone' },
+                  { field: 'mobilePhoneNumber', title: 'Cell'  },
+                  { field: 'faxPhoneNumber',    title: 'Fax'   },
+                  { field: 'emailAddress',      title: 'Email' },
+                  { field: 'role',              title: 'Role'  },
                 ];
 
                 return <SortTable id="contact-list" sortField={ this.state.uiContacts.sortField } sortDesc={ this.state.uiContacts.sortDesc } onSort={ this.updateContactsUIState } headers={ headers }>
@@ -243,6 +245,8 @@ var BusinessOwner = React.createClass({
                       return <tr key={ contact.id }>
                         <td>{ contact.isPrimary && <Glyphicon glyph="star" /> } { contact.name }</td>
                         <td>{ contact.phone }</td>
+                        <td>{ contact.mobilePhoneNumber }</td>
+                        <td>{ contact.faxPhoneNumber }</td>
                         <td><a href={ `mailto:${ contact.emailAddress }` } target="_blank">{ contact.emailAddress }</a></td>
                         <td>{ contact.role }</td>
                       </tr>;

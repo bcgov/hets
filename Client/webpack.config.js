@@ -36,6 +36,7 @@ if(IS_PRODUCTION) {
       'NODE_ENV': JSON.stringify('production'),
     },
   }));
+  webpackPlugins.push(new webpack.NoEmitOnErrorsPlugin());
 } else {
   webpackPlugins.push(new webpack.HotModuleReplacementPlugin());
   webpackPlugins.push(new webpack.DefinePlugin({
@@ -47,6 +48,7 @@ if(IS_PRODUCTION) {
 }
 
 module.exports = {
+  bail: IS_PRODUCTION,
   devtool: IS_PRODUCTION ? 'source-map' : 'eval',
   entry: {
     app: _.compact([
@@ -80,6 +82,7 @@ module.exports = {
         test: /\.jsx?$/,
         loader: 'eslint-loader',
         exclude: /node_modules/,
+        options: { emitError: !IS_PRODUCTION, failOnError: IS_PRODUCTION },
       },
       {
         test: /\.jsx?$/,

@@ -485,11 +485,13 @@ var OwnersDetail = React.createClass({
                 }
 
                 var headers = [
-                  { field: 'name',         title: 'Name'  },
-                  { field: 'phone',        title: 'Phone' },
-                  { field: 'emailAddress', title: 'Email' },
-                  { field: 'role',         title: 'Role'  },
-                  { field: 'addContact',   title: 'Add Contact', style: { textAlign: 'right'  },
+                  { field: 'name',              title: 'Name'  },
+                  { field: 'phone',             title: 'Phone' },
+                  { field: 'mobilePhoneNumber', title: 'Cell'  },
+                  { field: 'faxPhoneNumber',    title: 'Fax'   },
+                  { field: 'emailAddress',      title: 'Email' },
+                  { field: 'role',              title: 'Role'  },
+                  { field: 'addContact',        title: 'Add Contact', style: { textAlign: 'right'  },
                     node: addContactButton,
                   },
                 ];
@@ -500,6 +502,8 @@ var OwnersDetail = React.createClass({
                       return <tr key={ contact.id }>
                         <td>{ contact.isPrimary && <Glyphicon glyph="star" /> } { contact.name }</td>
                         <td>{ contact.phone }</td>
+                        <td>{ contact.mobilePhoneNumber }</td>
+                        <td>{ contact.faxPhoneNumber }</td>
                         <td><a href={ `mailto:${ contact.emailAddress }` } target="_blank">{ contact.emailAddress }</a></td>
                         <td>{ contact.role }</td>
                         <td style={{ textAlign: 'right' }}>
