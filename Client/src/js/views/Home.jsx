@@ -210,6 +210,7 @@ var Home = React.createClass({
     return <div id="home">
       <PageHeader>{this.props.currentUser.fullName}<br/>{this.props.currentUser.districtName} District</PageHeader>
       <Well>
+        <h3>Summary</h3>
         <Row>
           <Col md={12} className="btn-container">
             <Button onClick={ this.goToUnapprovedOwners }>Unapproved owners { this.props.unapprovedOwners.loaded && `(${ Object.keys(this.props.unapprovedOwners.data).length })` }</Button>
