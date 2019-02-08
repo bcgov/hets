@@ -65,7 +65,6 @@ export const RENTAL_RATE_PERIOD_DAILY = 'Daily';
 export const RENTAL_RATE_PERIOD_WEEKLY = 'Weekly';
 export const RENTAL_RATE_PERIOD_MONTHLY = 'Monthly';
 export const RENTAL_RATE_PERIOD_NEGOTIATED = 'Negotiated';
-export const MAX_UNASSOCIATED_RENTAL_AGREEMENTS = 3;
 
 // Users
 export const USER_STATUS_ACTIVE = 'Active';
