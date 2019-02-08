@@ -59,6 +59,7 @@
                 "vars": "all",
                 "args": "after-used"
             }
-        ]
+        ],
+        "no-trailing-spaces": "warn"
     }
 }
