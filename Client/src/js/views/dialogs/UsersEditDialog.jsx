@@ -125,7 +125,9 @@ var UsersEditDialog = React.createClass({
       email: this.state.email,
       district: { id: this.state.districtId },
       agreementCity: this.state.agreementCity,
-    }});
+    }}).catch(error => {
+      this.setState({ smUserIdError: error.message });
+    });
   },
 
   render() {
