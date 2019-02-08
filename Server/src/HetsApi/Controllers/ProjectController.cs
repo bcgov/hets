@@ -92,6 +92,16 @@ namespace HetsApi.Controllers
             project.ProjectStatusTypeId = (int)statusId;
             project.Information = item.Information;
 
+            // HETS-1006 - Go - Live: Add additional fields for projects
+            project.FiscalYear = item.FiscalYear;
+            project.ResponsibilityCentre = item.ResponsibilityCentre;
+            project.ServiceLine = item.ServiceLine;
+            project.Stob = item.Stob;
+            project.Product = item.Product;
+            project.BusinessFunction = item.BusinessFunction;
+            project.WorkActivity = item.WorkActivity;
+            project.CostType = item.CostType;
+
             if (item.District != null)
             {
                 project.DistrictId = item.District.DistrictId;
@@ -126,14 +136,23 @@ namespace HetsApi.Controllers
             int? statusId = StatusHelper.GetStatusId(item.Status, "projectStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-
             HetProject project = new HetProject
             {
                 Name = item.Name,
                 ProvincialProjectNumber = item.ProvincialProjectNumber,
                 ProjectStatusTypeId = (int)statusId,
                 Information = item.Information,
-                DistrictId = item.District.DistrictId                
+                DistrictId = item.District.DistrictId,
+
+                // HETS-1006 - Go - Live: Add additional fields for projects
+                FiscalYear = item.FiscalYear,
+                ResponsibilityCentre = item.ResponsibilityCentre,
+                ServiceLine = item.ServiceLine,
+                Stob = item.Stob,
+                Product = item.Product,
+                BusinessFunction = item.BusinessFunction,
+                WorkActivity = item.WorkActivity,
+                CostType = item.CostType
             };
 
             _context.HetProject.Add(project);
@@ -158,13 +177,17 @@ namespace HetsApi.Controllers
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
         /// <param name="status">if included, filter the results to those with a status matching this string</param>
-        /// <param name="projectNumber"></param>        
+        /// <param name="projectNumber"></param>
+        /// <param name="fiscalYear"></param>        
         [HttpGet]
         [Route("search")]
         [SwaggerOperation("ProjectsSearchGet")]
         [SwaggerResponse(200, type: typeof(List<ProjectLite>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult ProjectsSearchGet([FromQuery]string districts, [FromQuery]string project, [FromQuery]bool? hasRequests, [FromQuery]bool? hasHires, [FromQuery]string status, [FromQuery]string projectNumber)
+        public virtual IActionResult ProjectsSearchGet([FromQuery]string districts, 
+            [FromQuery]string project, [FromQuery]bool? hasRequests, [FromQuery]bool? hasHires, 
+            [FromQuery]string status, [FromQuery]string projectNumber,
+            [FromQuery]string fiscalYear)
         {
             int?[] districtTokens = ArrayHelper.ParseIntArray(districts);
 
@@ -203,6 +226,11 @@ namespace HetsApi.Controllers
             {
                 // allow for case insensitive search of project name
                 data = data.Where(x => x.ProvincialProjectNumber.ToLower().Contains(projectNumber.ToLower()));
+            }
+
+            if (!string.IsNullOrEmpty(fiscalYear))
+            {
+                data = data.Where(x => x.FiscalYear.Equals(fiscalYear));
             }
 
             // convert Project Model to the "ProjectLite" Model

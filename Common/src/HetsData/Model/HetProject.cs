@@ -23,6 +23,14 @@ namespace HetsData.Model
         public string Name { get; set; }
         public int ProjectStatusTypeId { get; set; }
         public string Information { get; set; }
+        public string FiscalYear { get; set; }
+        public string ResponsibilityCentre { get; set; }
+        public string ServiceLine { get; set; }
+        public string Stob { get; set; }
+        public string Product { get; set; }
+        public string BusinessFunction { get; set; }
+        public string WorkActivity { get; set; }
+        public string CostType { get; set; }
         public int? DistrictId { get; set; }
         public int? PrimaryContactId { get; set; }
         [JsonIgnore]public string AppCreateUserDirectory { get; set; }
