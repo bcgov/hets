@@ -440,11 +440,16 @@ export function getUnapprovedEquipment() {
   return new ApiRequest('/equipment/search').get({ status: Constant.EQUIPMENT_STATUS_CODE_PENDING }).then(response => {
     var equipmentList = normalize(response.data);
 
-    _.map(equipmentList, equipment => { 
-      equipment.details = [equipment.make || '-', equipment.model || '-', equipment.size || '-', equipment.year || '-'].join('/');
-    });
-
     store.dispatch({ type: Action.UPDATE_UNAPPROVED_EQUIPMENT, equipmentList: equipmentList });
+  });
+}
+
+export function getHiredEquipment() {
+  store.dispatch({ type: Action.HIRED_EQUIPMENT_REQUEST });
+  return new ApiRequest('/equipment/search').get({ status: Constant.EQUIPMENT_STATUS_CODE_APPROVED, hired: true }).then(response => {
+    var equipmentList = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_HIRED_EQUIPMENT, equipmentList: equipmentList });
   });
 }
 
@@ -1389,6 +1394,15 @@ export function searchRentalRequests(params) {
     _.map(rentalRequests, req => { parseRentalRequest(req); });
 
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS, rentalRequests: rentalRequests });
+  });
+}
+
+export function getBlockedRotationLists() {
+  store.dispatch({ type: Action.BLOCKED_ROTATION_LISTS_REQUEST });
+  return new ApiRequest('/rentalrequests/search').get({ status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS }).then(response => {
+    var rentalRequests = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_BLOCKED_ROTATION_LISTS, rentalRequests: rentalRequests });
   });
 }
 

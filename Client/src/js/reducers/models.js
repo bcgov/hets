@@ -29,6 +29,11 @@ const DEFAULT_MODELS = {
     loading: false,
     loaded: false,
   },
+  hiredEquipmentList: {
+    data: {},
+    loading: false,
+    loaded: false,
+  },
   equipmentList: {
     data: {}, 
     loading: false,
@@ -93,6 +98,11 @@ const DEFAULT_MODELS = {
     data: {},
   },
 
+  blockedRotationLists: {
+    data: {},
+    loading: false,
+    loaded: false,
+  },
   rentalRequests: {
     data: {},
     loading: false,
@@ -232,6 +242,12 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.UPDATE_UNAPPROVED_EQUIPMENT:
       return { ...state, unapprovedEquipmentList: { data: action.equipmentList, loading: false, loaded: true } };
     
+    case Action.HIRED_EQUIPMENT_REQUEST:
+      return { ...state, hiredEquipmentList: { ...state.equipmentList, loading: true, loaded: false } };
+
+    case Action.UPDATE_HIRED_EQUIPMENT:
+      return { ...state, hiredEquipmentList: { data: action.equipmentList, loading: false, loaded: true } };
+    
     case Action.EQUIPMENT_LIST_REQUEST:
       return { ...state, equipmentList: { ...state.equipmentList, loading: true, loaded: false } };
     
@@ -329,6 +345,12 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     //   return { ...state, projectRentalAgreements: { ...state.projectRentalAgreements, error: action.error } };
     
     // Rental Requests
+    case Action.BLOCKED_ROTATION_LISTS_REQUEST:
+      return { ...state, blockedRotationLists: { ...state.rentalRequests, loading: true, loaded: false } };
+
+    case Action.UPDATE_BLOCKED_ROTATION_LISTS:
+      return { ...state, blockedRotationLists: { data: action.rentalRequests, loading: false, loaded: true } };
+    
     case Action.RENTAL_REQUESTS_REQUEST: 
       return { ...state, rentalRequests: { ...state.rentalRequests, loading: true, loaded: false } };
     
