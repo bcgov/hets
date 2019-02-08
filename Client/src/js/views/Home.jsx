@@ -22,6 +22,7 @@ var Home = React.createClass({
     owners: React.PropTypes.object,
     unapprovedOwners: React.PropTypes.object,
     unapprovedEquipment: React.PropTypes.object,
+    hiredEquipment: React.PropTypes.object,
     rentalAgreement: React.PropTypes.object,
     rentalAgreements: React.PropTypes.object,
     blankRentalAgreements: React.PropTypes.object,
@@ -45,6 +46,7 @@ var Home = React.createClass({
   fetch() {
     Api.getUnapprovedOwners();
     Api.getUnapprovedEquipment();
+    Api.getHiredEquipment();
     this.fetchBlankRentalAgreements();
   },
 
@@ -73,6 +75,17 @@ var Home = React.createClass({
     
     // perform search
     Api.searchEquipmentList({ status: unapprovedStatus });
+
+    // navigate to search page
+    this.props.router.push({ pathname: Constant.EQUIPMENT_PATHNAME });
+  },
+
+  goToHiredEquipment() {
+    // update search parameters
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: { statusCode: Constant.EQUIPMENT_STATUS_CODE_APPROVED, hired: true  } });
+    
+    // perform search
+    Api.searchEquipmentList({ status: Constant.EQUIPMENT_STATUS_CODE_APPROVED, hired: true  });
 
     // navigate to search page
     this.props.router.push({ pathname: Constant.EQUIPMENT_PATHNAME });
@@ -187,7 +200,8 @@ var Home = React.createClass({
         <Row>
           <Col md={12} className="btn-container">
             <Button onClick={ this.goToUnapprovedOwners }>Unapproved owners { this.props.unapprovedOwners.loaded && `(${ Object.keys(this.props.unapprovedOwners.data).length })` }</Button>
-            <Button onClick={ this.goToUnapprovedEquipment }>Unapproved equipment { this.props.unapprovedEquipment.loaded && `(${ Object.keys(this.props.unapprovedEquipment.data).length })` }</Button>          
+            <Button onClick={ this.goToUnapprovedEquipment }>Unapproved equipment { this.props.unapprovedEquipment.loaded && `(${ Object.keys(this.props.unapprovedEquipment.data).length })` }</Button>
+            <Button onClick={ this.goToHiredEquipment }>Currently hired equipment { this.props.hiredEquipment.loaded && `(${ Object.keys(this.props.hiredEquipment.data).length })` }</Button>
           </Col>
         </Row>
       </Well>
@@ -202,6 +216,7 @@ function mapStateToProps(state) {
     search: state.search.owners,
     unapprovedOwners: state.models.unapprovedOwners,
     unapprovedEquipment: state.models.unapprovedEquipmentList,
+    hiredEquipment: state.models.hiredEquipmentList,
     rentalAgreement: state.models.rentalAgreement,
     rentalAgreements: state.models.rentalAgreements,
     blankRentalAgreements: state.lookups.blankRentalAgreements,
