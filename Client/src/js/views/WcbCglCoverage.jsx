@@ -98,7 +98,7 @@ var WcbCglCoverage = React.createClass({
 
   search(e) {
     e.preventDefault();
-    this.fetch(); 
+    this.fetch();
   },
 
   clearSearch() {
@@ -138,8 +138,8 @@ var WcbCglCoverage = React.createClass({
   },
 
   renderResults() {
-    if (Object.keys(this.props.ownersCoverage.data).length === 0) { 
-      return <Alert bsStyle="success">No results</Alert>; 
+    if (Object.keys(this.props.ownersCoverage.data).length === 0) {
+      return <Alert bsStyle="success">No results</Alert>;
     }
 
     var ownersCoverage = _.sortBy(this.props.ownersCoverage.data, entry => {
@@ -149,7 +149,7 @@ var WcbCglCoverage = React.createClass({
       }
       return sortValue;
     });
-    
+
     if (this.state.ui.sortDesc) {
       _.reverse(ownersCoverage);
     }
@@ -248,8 +248,8 @@ var WcbCglCoverage = React.createClass({
       </Well>
 
       {(() => {
-        if (this.props.ownersCoverage.loading || !this.state.loaded) { 
-          return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
+        if (this.props.ownersCoverage.loading || !this.state.loaded) {
+          return <div style={{ textAlign: 'center' }}><Spinner/></div>;
         }
         if (this.props.ownersCoverage.loaded) {
           return this.renderResults();

@@ -31,11 +31,11 @@ var DateControl = React.createClass({
     if (_.isString(date) || !date || !date.isValid()) {
       return;
     }
-    
+
     var dateString = date.format(this.props.format || 'YYYY-MM-DD');
     this.notifyValueChanged(dateString);
   },
-  
+
   dateBlurred(date) {
     // when focus leaves input, if date is invalid, reset value to empty string
     if (_.isString(date) || !date || !date.isValid()) {

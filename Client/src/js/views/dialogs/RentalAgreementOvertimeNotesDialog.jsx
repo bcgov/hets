@@ -48,7 +48,7 @@ var RentalAgreementOvertimeNotesDialog = React.createClass({
   overtimeCheckboxChanged(e) {
     var key = e.target.id.replace('overtime-', '');
     var active = e.target.checked;
-    
+
     this.setState({ overtimeRates: { ...this.state.overtimeRates, [key]: { ...this.state.overtimeRates[key], active: active }}});
   },
 

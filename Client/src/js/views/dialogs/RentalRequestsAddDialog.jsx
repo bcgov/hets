@@ -148,7 +148,7 @@ var RentalRequestsAddDialog = React.createClass({
 
     return valid;
   },
-  
+
   onLocalAreaSelected(localArea) {
     // clear the selected equipment type if it's not included in the types for the new local area
     var districtEquipmentTypes = this.getFilteredEquipmentTypes(localArea.id);
@@ -167,11 +167,11 @@ var RentalRequestsAddDialog = React.createClass({
       localArea: { id: this.state.localAreaId },
       districtEquipmentType: { id: this.state.equipmentTypeId },
       equipmentCount: this.state.count,
-      status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS, 
+      status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
       expectedHours: this.state.expectedHours,
       expectedStartDate: this.state.expectedStartDate,
       expectedEndDate: this.state.expectedEndDate,
-      rentalRequestAttachments: [{ 
+      rentalRequestAttachments: [{
         id: 0,
         attachment: this.state.rentalRequestAttachments,
       }],

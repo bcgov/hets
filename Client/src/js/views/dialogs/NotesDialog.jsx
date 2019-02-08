@@ -38,7 +38,7 @@ var NotesDialog = React.createClass({
   },
 
   closeNotesAddDialog() {
-    this.setState({ 
+    this.setState({
       note: {},
       showNotesAddDialog: false,
     });
@@ -64,12 +64,12 @@ var NotesDialog = React.createClass({
   },
 
   editNote(note) {
-    this.setState({ 
+    this.setState({
       note: note,
-      showNotesAddDialog: true, 
+      showNotesAddDialog: true,
     });
   },
- 
+
   render() {
 
     var headers = [
@@ -103,15 +103,15 @@ var NotesDialog = React.createClass({
         })()}
         <Button title="Add Note" bsSize="small" onClick={ this.openNotesAddDialog }><Glyphicon glyph="plus" />&nbsp;<strong>Add Note</strong></Button>
         { this.state.showNotesAddDialog &&
-          <NotesAddDialog 
-            show={ this.state.showNotesAddDialog } 
-            onSave={ this.onSave } 
+          <NotesAddDialog
+            show={ this.state.showNotesAddDialog }
+            onSave={ this.onSave }
             onUpdate={ this.onUpdate }
-            onClose={ this.closeNotesAddDialog } 
+            onClose={ this.closeNotesAddDialog }
             notes={ this.props.notes }
             note={ this.state.note }
           />
-        } 
+        }
       </ModalDialog>
     );
   },

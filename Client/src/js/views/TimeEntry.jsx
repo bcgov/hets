@@ -103,7 +103,7 @@ var TimeEntry = React.createClass({
 
   search(e) {
     e.preventDefault();
-    this.fetch(); 
+    this.fetch();
   },
 
   clearSearch() {
@@ -158,8 +158,8 @@ var TimeEntry = React.createClass({
   },
 
   renderResults(addTimeEntryButton) {
-    if (Object.keys(this.props.timeEntries.data).length === 0) { 
-      return <Alert bsStyle="success">No time entries { addTimeEntryButton }</Alert>; 
+    if (Object.keys(this.props.timeEntries.data).length === 0) {
+      return <Alert bsStyle="success">No time entries { addTimeEntryButton }</Alert>;
     }
 
     var timeEntries = _.sortBy(this.props.timeEntries.data, timeEntry => {
@@ -169,7 +169,7 @@ var TimeEntry = React.createClass({
       }
       return sortValue;
     });
-    
+
     if (this.state.ui.sortDesc) {
       _.reverse(timeEntries);
     }
@@ -240,7 +240,7 @@ var TimeEntry = React.createClass({
   updateLocalAreaSearchState(state) {
     this.updateSearchState(state, this.filterSelectedOwners);
   },
-  
+
   updateOwnerSearchState(state) {
     this.updateSearchState(state, this.filterSelectedEquipment);
   },
@@ -315,10 +315,10 @@ var TimeEntry = React.createClass({
       </Well>
 
       {(() => {
-        if (this.props.timeEntries.loading || !this.state.loaded) { 
-          return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
+        if (this.props.timeEntries.loading || !this.state.loaded) {
+          return <div style={{ textAlign: 'center' }}><Spinner/></div>;
         }
-        
+
         var addTimeEntryButton = <Button title="Add Time" bsSize="xsmall" onClick={ this.openTimeEntryDialog.bind(this, null) }>
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Time</strong>
         </Button>;

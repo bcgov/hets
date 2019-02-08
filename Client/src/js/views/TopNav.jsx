@@ -53,8 +53,8 @@ var TopNav = React.createClass({
   },
 
   render() {
-    var userDistricts = this.props.currentUserDistricts.data.map(district => { 
-      return { ...district, districtName: district.district.name, id: district.district.id }; 
+    var userDistricts = this.props.currentUserDistricts.data.map(district => {
+      return { ...district, districtName: district.district.name, id: district.district.id };
     });
 
     var navigationDisabled = this.props.rolloverStatus.rolloverActive;

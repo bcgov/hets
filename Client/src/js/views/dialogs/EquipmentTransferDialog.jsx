@@ -72,13 +72,13 @@ var EquipmentTransferDialog = React.createClass({
       this.setState({ [errorState]: 'This owner code is either not valid or not approved' });
       return false;
     }
-    
+
     return true;
   },
 
   validateSelectOwner() {
     this.setState({ donorOwnerCodeError: '', recipientOwnerCodeError: '', seniorityOptionError: '' });
-    
+
     var valid = this.validateOwnerCode(this.state.donorOwnerCode, 'donorOwnerCodeError');
     valid &= this.validateOwnerCode(this.state.recipientOwnerCode, 'recipientOwnerCodeError');
 
@@ -171,7 +171,7 @@ var EquipmentTransferDialog = React.createClass({
     var equipmentList = this.props.equipment.data;
 
     var selectAllCheckbox = <Checkbox id="selectAllEquipment" checked={ this.state.selectAllEquipment } onChange={ this.handleSelectAllEquipmentCheckedChange }>Select All</Checkbox>;
-  
+
     var headers = [
       { field: '',                 node:  selectAllCheckbox      },
       { field: 'equipmentCode',    title: 'Equip. ID'            },
@@ -179,7 +179,7 @@ var EquipmentTransferDialog = React.createClass({
       { field: 'details',          title: 'Make/Model/Size/Year' },
       { field: 'attachmentCount',  title: 'Attachments'          },
     ];
-    
+
     return <TableControl id="select-equipment" headers={ headers }>
       {
         _.map(equipmentList, (equipment) => {
@@ -226,12 +226,12 @@ var EquipmentTransferDialog = React.createClass({
     var transferFunc = function() { };
 
     if (!this.props.owners || !this.props.owners.loaded) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-    
+
     switch(this.state.stage) {
       case STAGE_SELECT_OWNER:
         content = this.renderSelectOwner();
         transferEnabled = !isBlank(this.state.donorOwnerCode) && !isBlank(this.state.recipientOwnerCode);
-        transferFunc = function() { 
+        transferFunc = function() {
           if (this.validateSelectOwner()) {
             var ownerId = this.getOwner(this.state.donorOwnerCode).id;
             Api.getOwnerEquipment(ownerId);
@@ -243,7 +243,7 @@ var EquipmentTransferDialog = React.createClass({
       case STAGE_SELECT_EQUIPMENT:
         content = this.renderSelectEquipment();
         transferEnabled = this.state.selectedEquipmentIds.length > 0;
-        transferFunc = function() { 
+        transferFunc = function() {
           if (this.validateSelectEquipment()) {
             this.setState({ stage: STAGE_CONFIRM });
           }
@@ -276,8 +276,8 @@ var EquipmentTransferDialog = React.createClass({
     var displayTransferButton = this.state.stage !== STAGE_COMPLETE && this.state.waitingForResponse !== true;
 
     return (
-      <ModalDialog 
-        backdrop="static" 
+      <ModalDialog
+        backdrop="static"
         className={ 'edit-dialog' }
         id="equipment-transfer"
         title="Equipment Transfer"

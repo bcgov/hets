@@ -92,7 +92,7 @@ var HireOfferEditDialog = React.createClass({
   updateState(state, callback) {
     this.setState(state, callback);
   },
-  
+
   offerStatusChanged(value) {
     this.setState({
       offerStatus: value,
@@ -140,7 +140,7 @@ var HireOfferEditDialog = React.createClass({
       this.setState({ offerResponseNoteError: 'Note is required' });
       valid = false;
     }
-    
+
     var blankRentalAgreementCount = _.keys(this.props.blankRentalAgreements.data).length;
     if ((this.state.offerStatus == STATUS_YES || this.state.offerStatus == STATUS_FORCE_HIRE) && blankRentalAgreementCount > 0 && !this.state.rentalAgreementId) {
       this.setState({ rentalAgreementError: 'A rental agreement is required' });
@@ -256,7 +256,7 @@ var HireOfferEditDialog = React.createClass({
       }>
       {(() => {
         var blankRentalAgreements = _.sortBy(this.props.blankRentalAgreements.data, 'number');
-        
+
         var agreementChoiceRow = _.keys(blankRentalAgreements).length === 0 ? null :
           <FormGroup controlId="rentalAgreementId" validationState={ this.state.rentalAgreementError ? 'error' : null }>
             <DropdownControl id="rentalAgreementId" updateState={ this.updateState } items={ blankRentalAgreements } selectedId={ this.state.rentalAgreementId } blankLine="Select rental agreement" placeholder="Select rental agreement" />
@@ -271,8 +271,8 @@ var HireOfferEditDialog = React.createClass({
                 <Row>
                   <Col md={12}>
                     <FormGroup>
-                      <Radio 
-                        onChange={ this.offerStatusChanged.bind(this, STATUS_YES) } 
+                      <Radio
+                        onChange={ this.offerStatusChanged.bind(this, STATUS_YES) }
                         checked={ this.state.offerStatus == STATUS_YES }
                         disabled={ !this.props.hireOffer.showAllResponseFields && !this.props.hireOffer.offerResponse }
                       >
@@ -285,8 +285,8 @@ var HireOfferEditDialog = React.createClass({
                 <Row>
                   <Col md={12}>
                     <FormGroup>
-                      <Radio 
-                        onChange={ this.offerStatusChanged.bind(this, STATUS_NO) } 
+                      <Radio
+                        onChange={ this.offerStatusChanged.bind(this, STATUS_NO) }
                         checked={ this.state.offerStatus == STATUS_NO }
                         disabled={ !this.props.hireOffer.showAllResponseFields && !this.props.hireOffer.offerResponse }
                       >
@@ -311,8 +311,8 @@ var HireOfferEditDialog = React.createClass({
                 <Row>
                   <Col md={12}>
                     <FormGroup>
-                      <Radio 
-                        onChange={ this.offerStatusChanged.bind(this, STATUS_FORCE_HIRE) } 
+                      <Radio
+                        onChange={ this.offerStatusChanged.bind(this, STATUS_FORCE_HIRE) }
                         checked={ this.state.offerStatus == STATUS_FORCE_HIRE }
                       >
                         Force Hire
@@ -324,8 +324,8 @@ var HireOfferEditDialog = React.createClass({
                 <Row>
                   <Col md={12}>
                     <FormGroup>
-                      <Radio 
-                        onChange={ this.offerStatusChanged.bind(this, STATUS_ASKED) } 
+                      <Radio
+                        onChange={ this.offerStatusChanged.bind(this, STATUS_ASKED) }
                         checked={ this.state.offerStatus == STATUS_ASKED }
                         disabled={ !this.props.hireOffer.showAllResponseFields && !this.props.hireOffer.offerResponse }
                       >
@@ -357,17 +357,17 @@ var HireOfferEditDialog = React.createClass({
         </Form>;
       })()}
       { this.state.showConfirmForceHireDialog &&
-        <ConfirmForceHireDialog 
-          show={ this.state.showConfirmForceHireDialog } 
-          onSave={ this.onConfirmForceHire } 
-          onClose={ this.closeConfirmForceHireDialog } 
+        <ConfirmForceHireDialog
+          show={ this.state.showConfirmForceHireDialog }
+          onSave={ this.onConfirmForceHire }
+          onClose={ this.closeConfirmForceHireDialog }
         />
       }
       { this.state.showConfirmMaxHoursHireDialog &&
-        <ConfirmDialog 
-          show={ this.state.showConfirmMaxHoursHireDialog } 
-          onSave={ this.onConfirmMaxHoursHire } 
-          onClose={ this.onCancelMaxHoursHire } 
+        <ConfirmDialog
+          show={ this.state.showConfirmMaxHoursHireDialog }
+          onSave={ this.onConfirmMaxHoursHire }
+          onClose={ this.onCancelMaxHoursHire }
           title="Confirm Hire"
         >
           <p>Equipment/Dump Truck has already reached the maximum hours for the year. Do you still want to hire this Equipment/Dump Truck?</p>

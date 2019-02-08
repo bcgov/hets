@@ -85,7 +85,7 @@ var RentalAgreementHeaderEditDialog = React.createClass({
     if (!isBlank(equipmentCode)) {
       // does the equipment exist?
       var equipment = this.getEquipment(equipmentCode);
-      
+
       if (!equipment) {
         this.setState({ equipmentCodeError: 'This equipment ID does not exist in the system' });
         valid = false;

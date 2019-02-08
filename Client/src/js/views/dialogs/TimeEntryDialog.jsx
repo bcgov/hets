@@ -32,7 +32,7 @@ var TimeEntryDialog = React.createClass({
     equipment: React.PropTypes.object,
   },
 
-  getInitialState() {  
+  getInitialState() {
     return {
       loaded: false,
       rentalAgreementId: this.props.rentalAgreementId,
@@ -153,7 +153,7 @@ var TimeEntryDialog = React.createClass({
       let state = { ...timeEntry[key], errorHours: '', errorDate: '' };
       timeEntryResetObj[key] = state;
     });
-    
+
     this.setState({ timeEntry: timeEntryResetObj });
     let valid = true;
 
@@ -232,7 +232,7 @@ var TimeEntryDialog = React.createClass({
         projectIds = _.intersection(equipment.projectIds, projectIds);
       }
     }
-    
+
     return _.chain(this.props.projects)
       .filter(x => _.includes(projectIds, x.id))
       .sortBy('name')
@@ -242,16 +242,16 @@ var TimeEntryDialog = React.createClass({
   addTimeEntryInput() {
     if (this.state.numberOfInputs < 10) {
       let numberOfInputs = Object.keys(this.state.timeEntry).length;
-      this.setState({ 
+      this.setState({
         numberOfInputs: this.state.numberOfInputs + 1,
-        timeEntry: { 
-          ...this.state.timeEntry, 
-          [numberOfInputs + 1]: { 
-            hours: '', 
-            date: '', 
-            errorHours: '', 
+        timeEntry: {
+          ...this.state.timeEntry,
+          [numberOfInputs + 1]: {
+            hours: '',
+            date: '',
+            errorHours: '',
             errorDate: '',
-          }, 
+          },
         },
       });
     }
@@ -262,9 +262,9 @@ var TimeEntryDialog = React.createClass({
       let numberOfInputs = Object.keys(this.state.timeEntry).length;
       let timeEntry = { ...this.state.timeEntry };
       delete timeEntry[numberOfInputs];
-      this.setState({ 
+      this.setState({
         numberOfInputs: this.state.numberOfInputs - 1,
-        timeEntry: timeEntry, 
+        timeEntry: timeEntry,
       });
     }
   },
@@ -281,7 +281,7 @@ var TimeEntryDialog = React.createClass({
 
   getHoursYtdClassName() {
     var equipment = this.props.rentalAgreementTimeRecords;
-    
+
     if (equipment.hoursYtd > (0.85 * equipment.maximumHours)) {
       return true;
     }
@@ -304,10 +304,10 @@ var TimeEntryDialog = React.createClass({
     var projects = this.getFilteredProjects();
 
     return (
-      <EditDialog 
-        id="time-entry" 
+      <EditDialog
+        id="time-entry"
         show={ this.props.show }
-        onClose={ this.props.onClose } 
+        onClose={ this.props.onClose }
         onSave={ this.selectAgreement }
         saveText="Continue"
         didChange={ this.didChangeSelectAgreement }
@@ -364,10 +364,10 @@ var TimeEntryDialog = React.createClass({
     };
 
     return (
-      <EditDialog 
-        id="time-entry" 
+      <EditDialog
+        id="time-entry"
         show={ this.props.show }
-        onClose={ this.onClose } 
+        onClose={ this.onClose }
         onSave={ this.onSave }
         closeText={ this.props.multipleEntryAllowed ? 'Back' : 'Close' }
         didChange={ this.didChange }
@@ -389,7 +389,7 @@ var TimeEntryDialog = React.createClass({
                   { formatHours(rentalAgreementTimeRecords.hoursYtd) }{ this.getHoursYtdClassName() }
                 </div>
               </Col>
-              <Col xs={3}>              
+              <Col xs={3}>
                 <div className="text-label">Project</div>
                 <div>{ rentalAgreementTimeRecords.projectName }</div>
               </Col>
@@ -404,7 +404,7 @@ var TimeEntryDialog = React.createClass({
                 <Col xs={3}><div className="column-title">Hours</div></Col>
               </Row>
               { (sortedTimeRecords.length === 0) &&
-              <Row> 
+              <Row>
                 <Col xs={12}><div>No time records have been added yet.</div></Col>
               </Row>
               }
@@ -427,7 +427,7 @@ var TimeEntryDialog = React.createClass({
                 </Row>
               }
             </div>
-            { (sortedTimeRecords.length > 1) && 
+            { (sortedTimeRecords.length > 1) &&
             <Button onClick={ this.showAllTimeRecords }>{ this.state.showAllTimeRecords ? 'Hide' : 'Show All' }</Button>
             }
             <hr />
@@ -440,22 +440,22 @@ var TimeEntryDialog = React.createClass({
                       <DateControl
                         id={`date${key}`}
                         name='date'
-                        isValidDate={ isValidDate } 
+                        isValidDate={ isValidDate }
                         date={ this.state.timeEntry[key].date }
                         updateState={ this.updateTimeEntryState }
                       />
                       <HelpBlock>{ this.state.timeEntry[key].errorDate }</HelpBlock>
                     </FormGroup>
-                  </Col>  
+                  </Col>
                   <Col sm={4}>
                     <FormGroup validationState={ this.state.timeEntry[key].errorHours ? 'error' : null }>
                       <ControlLabel>Hours</ControlLabel>
-                      <FormInputControl 
-                        id={`hours${key}`} 
+                      <FormInputControl
+                        id={`hours${key}`}
                         name='hours'
                         type="float"
                         value={ this.state.timeEntry[key].hours }
-                        updateState={ this.updateTimeEntryState } 
+                        updateState={ this.updateTimeEntryState }
                       />
                       <HelpBlock>{ this.state.timeEntry[key].errorHours }</HelpBlock>
                     </FormGroup>
@@ -465,8 +465,8 @@ var TimeEntryDialog = React.createClass({
             })}
             <Row>
               <Col xs={12}>
-                { this.state.numberOfInputs < 10 && 
-              <Button 
+                { this.state.numberOfInputs < 10 &&
+              <Button
                 bsSize="xsmall"
                 onClick={ this.addTimeEntryInput }
               >
@@ -474,7 +474,7 @@ var TimeEntryDialog = React.createClass({
               </Button>
                 }
                 { this.state.numberOfInputs > 1 &&
-              <Button 
+              <Button
                 bsSize="xsmall"
                 className="remove-btn"
                 onClick={ this.removeTimeEntryInput }
@@ -483,7 +483,7 @@ var TimeEntryDialog = React.createClass({
               </Button>
                 }
               </Col>
-            </Row>  
+            </Row>
           </Grid>
         </Form>
       </EditDialog>

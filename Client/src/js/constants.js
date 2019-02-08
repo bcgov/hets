@@ -32,7 +32,7 @@ export const PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT = 'DistrictCodeTableManag
 export const PERMISSION_DISTRICT_ROLLOVER = 'DistrictRollover';
 export const PERMISSION_VERSION = 'Version';
 
-// Roles 
+// Roles
 export const ADMINISTRATOR_ROLE = '4-HETS System Administrator';
 
 // Equipments

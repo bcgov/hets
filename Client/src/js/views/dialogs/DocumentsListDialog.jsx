@@ -88,7 +88,7 @@ var DocumentsListDialog = React.createClass({
       documents: documents,
     });
   },
-  
+
   deleteDocument(document) {
     Api.deleteDocument(document).then(() => {
       this.props.parent.documentDeleted(this.props.parent, document);
