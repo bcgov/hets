@@ -23,6 +23,7 @@ var Home = React.createClass({
     unapprovedOwners: React.PropTypes.object,
     unapprovedEquipment: React.PropTypes.object,
     hiredEquipment: React.PropTypes.object,
+    blockedRotationLists: React.PropTypes.object,
     rentalAgreement: React.PropTypes.object,
     rentalAgreements: React.PropTypes.object,
     blankRentalAgreements: React.PropTypes.object,
@@ -47,6 +48,7 @@ var Home = React.createClass({
     Api.getUnapprovedOwners();
     Api.getUnapprovedEquipment();
     Api.getHiredEquipment();
+    Api.getBlockedRotationLists();
     this.fetchBlankRentalAgreements();
   },
 
@@ -89,6 +91,17 @@ var Home = React.createClass({
 
     // navigate to search page
     this.props.router.push({ pathname: Constant.EQUIPMENT_PATHNAME });
+  },
+
+  goToBlockedRotationLists() {
+    // update search parameters
+    store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_SEARCH, rentalRequests: { statusCode: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS  } });
+    
+    // perform search
+    Api.searchRentalRequests({ status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS  });
+
+    // navigate to search page
+    this.props.router.push({ pathname: Constant.RENTAL_REQUESTS_PATHNAME });
   },
 
   createRentalAgreement() {
@@ -202,6 +215,7 @@ var Home = React.createClass({
             <Button onClick={ this.goToUnapprovedOwners }>Unapproved owners { this.props.unapprovedOwners.loaded && `(${ Object.keys(this.props.unapprovedOwners.data).length })` }</Button>
             <Button onClick={ this.goToUnapprovedEquipment }>Unapproved equipment { this.props.unapprovedEquipment.loaded && `(${ Object.keys(this.props.unapprovedEquipment.data).length })` }</Button>
             <Button onClick={ this.goToHiredEquipment }>Currently hired equipment { this.props.hiredEquipment.loaded && `(${ Object.keys(this.props.hiredEquipment.data).length })` }</Button>
+            <Button onClick={ this.goToBlockedRotationLists }>Blocked rotation lists { this.props.blockedRotationLists.loaded && `(${ Object.keys(this.props.blockedRotationLists.data).length })` }</Button>
           </Col>
         </Row>
       </Well>
@@ -217,6 +231,7 @@ function mapStateToProps(state) {
     unapprovedOwners: state.models.unapprovedOwners,
     unapprovedEquipment: state.models.unapprovedEquipmentList,
     hiredEquipment: state.models.hiredEquipmentList,
+    blockedRotationLists: state.models.blockedRotationLists,
     rentalAgreement: state.models.rentalAgreement,
     rentalAgreements: state.models.rentalAgreements,
     blankRentalAgreements: state.lookups.blankRentalAgreements,

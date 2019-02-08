@@ -1397,6 +1397,15 @@ export function searchRentalRequests(params) {
   });
 }
 
+export function getBlockedRotationLists() {
+  store.dispatch({ type: Action.BLOCKED_ROTATION_LISTS_REQUEST });
+  return new ApiRequest('/rentalrequests/search').get({ status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS }).then(response => {
+    var rentalRequests = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_BLOCKED_ROTATION_LISTS, rentalRequests: rentalRequests });
+  });
+}
+
 export function getRentalRequest(id) {
   store.dispatch({ type: Action.RENTAL_REQUEST_REQUEST });
   return new ApiRequest(`/rentalrequests/${ id }`).get().then(response => {

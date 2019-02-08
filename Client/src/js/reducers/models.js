@@ -98,6 +98,11 @@ const DEFAULT_MODELS = {
     data: {},
   },
 
+  blockedRotationLists: {
+    data: {},
+    loading: false,
+    loaded: false,
+  },
   rentalRequests: {
     data: {},
     loading: false,
@@ -340,6 +345,12 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     //   return { ...state, projectRentalAgreements: { ...state.projectRentalAgreements, error: action.error } };
     
     // Rental Requests
+    case Action.BLOCKED_ROTATION_LISTS_REQUEST:
+      return { ...state, blockedRotationLists: { ...state.rentalRequests, loading: true, loaded: false } };
+
+    case Action.UPDATE_BLOCKED_ROTATION_LISTS:
+      return { ...state, blockedRotationLists: { data: action.rentalRequests, loading: false, loaded: true } };
+    
     case Action.RENTAL_REQUESTS_REQUEST: 
       return { ...state, rentalRequests: { ...state.rentalRequests, loading: true, loaded: false } };
     
