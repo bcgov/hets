@@ -215,6 +215,10 @@ namespace HetsData.Helpers
                     requestLite.ProjectName = request.Project.Name;
                     requestLite.ProjectId = request.Project.ProjectId;
                 }
+                else
+                {
+                    requestLite.ProjectName = "Request - View Only";
+                }
 
                 requestLite.Status = request.RentalRequestStatusType.Description;
                 requestLite.EquipmentCount = request.EquipmentCount;
