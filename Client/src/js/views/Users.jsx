@@ -146,7 +146,7 @@ var Users = React.createClass({
   },
 
   onSaveEdit(user) {
-    Api.addUser(user).then(() => {
+    return Api.addUser(user).then(() => {
       // Make sure we get the new user's ID
       user.id = this.props.user.id;
       // Reload the screen using new user id
@@ -154,7 +154,6 @@ var Users = React.createClass({
         pathname: `${ Constant.USERS_PATHNAME }/${ user.id }`,
       });
     });
-    this.closeEditDialog();
   },
 
   renderResults(addUserButton) {

@@ -109,6 +109,10 @@ export function getUser(userId) {
 
 export function addUser(user) {
   return new ApiRequest('/users').post(user).then(response => {
+    if (response.responseStatus === 'ERROR') {
+      return Promise.reject(new Error(response.error.description));
+    }
+
     var user = response.data;
 
     // Add display fields
