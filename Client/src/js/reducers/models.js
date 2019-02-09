@@ -40,7 +40,6 @@ const DEFAULT_MODELS = {
     loaded: false,
   },
   equipment: {},
-  equipmentPhysicalAttachments: {},
   equipmentSeniorityHistory: {},
   equipmentNotes: {},
   equipmentAttachments: {},
@@ -265,19 +264,6 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.UPDATE_EQUIPMENT_RENTAL_AGREEMENTS:
       return { ...state, equipmentRentalAgreements: { data: action.rentalAgreements } };
-
-    // Equipment Attachments
-    case Action.UPDATE_EQUIPMENT_ATTACHMENTS:
-      return { ...state, equipmentPhysicalAttachments: action.physicalAttachments };
-
-    case Action.ADD_EQUIPMENT_ATTACHMENT:
-      return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
-
-    case Action.UPDATE_EQUIPMENT_ATTACHMENT:
-      return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
-
-    case Action.DELETE_EQUIPMENT_ATTACHMENT:
-      return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
 
     case Action.EQUIPMENT_TRANSFER_ERROR:
       return { ...state, equipmentTransfer: { ...state.equipmentTransfer, error: true, errorMessage: action.errorMessage } };
