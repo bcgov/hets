@@ -1,6 +1,6 @@
 {
   "name": "hets-client",
-  "version": "1.5",
+  "version": "1.5.0",
   "description": "Hired Equipment Tracking System JavaScript Web Application",
   "main": "dist/index.html",
   "scripts": {
