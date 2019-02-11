@@ -73,6 +73,7 @@ var RentalRequestsDetail = React.createClass({
       showAttachmentss: false,
 
       rotationListHireOffer: {},
+      showAllResponseFields: false,
 
       isNew: this.props.params.rentalRequestId == 0,
     };
@@ -143,9 +144,10 @@ var RentalRequestsDetail = React.createClass({
     });
   },
 
-  openHireOfferDialog(hireOffer) {
+  openHireOfferDialog(hireOffer, showAllResponseFields) {
     this.setState({
       rotationListHireOffer: hireOffer,
+      showAllResponseFields,
       showHireOfferDialog: true,
     });
   },
@@ -368,20 +370,25 @@ var RentalRequestsDetail = React.createClass({
                     <td>
                       <ButtonGroup>
                         {(() => {
-                          listItem.showAllResponseFields = showAllResponseFields;
+                          const changeOfferWarningMessage = 'This piece of equipment is has met or ' +
+                            'exceeded its Maximum Allowed Hours for this year. Are you sure you want ' +
+                            'to edit the Offer on this equipment?';
+
+                          const confirm = (
+                            <Confirm
+                              title={changeOfferWarningMessage}
+                              onConfirm={ () => this.openHireOfferDialog(listItem, showAllResponseFields) }
+                            />
+                          );
+
                           if (listItem.maximumHours) {
                             return (
                               <OverlayTrigger
                                 trigger="click"
                                 placement="top"
-                                title="This piece of equipment is has met or exceeded its Maximum Allowed Hours for this year. Are you sure you want to edit the Offer on this equipment?"
                                 rootClose
-                                overlay={ <Confirm onConfirm={ this.openHireOfferDialog.bind(this, listItem) }/> }
-                              >
-                                <Button
-                                  bsStyle="link"
-                                  bsSize="xsmall"
-                                >
+                                overlay={ confirm }>
+                                <Button bsStyle="link" bsSize="xsmall">
                                   Max. hours reached
                                 </Button>
                               </OverlayTrigger>
@@ -392,8 +399,7 @@ var RentalRequestsDetail = React.createClass({
                               <Button
                                 bsStyle="link"
                                 title="Show Offer"
-                                onClick={ this.openHireOfferDialog.bind(this, listItem) }
-                              >
+                                onClick={ () => this.openHireOfferDialog(listItem, showAllResponseFields) }>
                                 { this.renderStatusText(listItem) }
                               </Button>
                             );
@@ -428,6 +434,7 @@ var RentalRequestsDetail = React.createClass({
         <HireOfferEditDialog
           show={ this.state.showHireOfferDialog }
           hireOffer={ this.state.rotationListHireOffer }
+          showAllResponseFields={this.state.showAllResponseFields}
           onSave={ this.saveHireOffer }
           onClose={ this.closeHireOfferDialog }
           error={ this.props.rentalRequestRotationList.error }

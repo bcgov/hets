@@ -119,6 +119,8 @@ export function addUser(user) {
     parseUser(user);
 
     store.dispatch({ type: Action.ADD_USER, user: user });
+
+    return user;
   });
 }
 
@@ -130,6 +132,8 @@ export function updateUser(user) {
     parseUser(user);
 
     store.dispatch({ type: Action.UPDATE_USER, user: user });
+
+    return user;
   });
 }
 

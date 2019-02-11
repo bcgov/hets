@@ -80,9 +80,11 @@ var DocumentsListDialog = React.createClass({
 
   formatDocuments() {
     var documents = _.map(this.props.documents, document => {
-      document.userName = this.getUserName(document.lastUpdateUserid);
-      document.formattedTimestamp = formatDateTime(document.lastUpdateTimestamp, Constant.DATE_TIME_LOG);
-      return document;
+      return {
+        ...document,
+        userName: this.getUserName(document.lastUpdateUserid),
+        formattedTimestamp: formatDateTime(document.lastUpdateTimestamp, Constant.DATE_TIME_LOG),
+      };
     });
     this.setState({
       documents: documents,

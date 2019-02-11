@@ -15,6 +15,7 @@ import SortTable from './SortTable.jsx';
 import Spinner from './Spinner.jsx';
 
 import { formatDateTimeUTCToLocal } from '../utils/date';
+import { sortDir } from '../utils/array';
 
 
 // API limit: how many to fetch first time
@@ -83,17 +84,7 @@ var HistoryComponent = React.createClass({
 
         if (Object.keys(this.props.history).length === 0) { return <Alert bsStyle="success">No history</Alert>; }
 
-        var unsortedHistory = _.map(this.props.history, history => {
-          history.formattedTimestamp = formatDateTimeUTCToLocal(history.lastUpdateTimestamp, Constant.DATE_TIME_LOG);
-          history.event = History.renderEvent(history.historyText, this.props.onClose);
-          return history;
-        });
-
-        var history = _.sortBy(unsortedHistory, this.state.ui.sortField);
-
-        if (this.state.ui.sortDesc) {
-          _.reverse(history);
-        }
+        var history = _.orderBy(this.props.history, [this.state.ui.sortField], sortDir(this.state.ui.sortDesc));
 
         var headers = [
           { field: 'timestampSort',       title: 'Timestamp' },
@@ -108,10 +99,13 @@ var HistoryComponent = React.createClass({
         return <SortTable id="history-list" sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={ headers }>
           {
             _.map(history, (history) => {
+              const event = History.renderEvent(history.historyText, this.props.onClose);
+              const formattedTimestamp = formatDateTimeUTCToLocal(history.lastUpdateTimestamp, Constant.DATE_TIME_LOG);
+
               return <tr key={ history.id }>
-                <td>{ history.formattedTimestamp }</td>
+                <td>{ formattedTimestamp }</td>
                 <td>{ history.lastUpdateUserid }</td>
-                <td className="history-event" colSpan="2">{ history.event }</td>
+                <td className="history-event" colSpan="2">{ event }</td>
               </tr>;
             })
           }

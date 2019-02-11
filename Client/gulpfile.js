@@ -80,11 +80,13 @@ gulp.task('js:modules', () => {
 });
 
 gulp.task('templates', function() {
+  var now = new Date();
   var TEMPLATE_DATA = {
     year: new Date().getFullYear(),
     buildNum: BUILD_NUMBER,
     buildSha: BUILD_GIT_SHA,
-    buildTime: new Date(),
+    buildTime: now,
+    buildTimeStamp: now.toISOString(),
   };
 
   return gulp.src(['src/html/**/*.hbs'])

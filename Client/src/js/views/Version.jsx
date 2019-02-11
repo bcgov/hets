@@ -46,7 +46,7 @@ var Version = React.createClass({
     return request('buildinfo.html', { silent: true }).then(xhr => {
       if (xhr.status === 200) {
         this.setState({
-          buildTime : $(xhr.responseText).find('#buildtime').text(),
+          buildTime : $(xhr.responseText).find('#buildtime').data('buildtime'),
           version : $(xhr.responseText).find('#version').text(),
           commit : $(xhr.responseText).find('#commit').text(),
         });
