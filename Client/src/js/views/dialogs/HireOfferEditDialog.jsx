@@ -44,6 +44,7 @@ const refusalReasons = [
 var HireOfferEditDialog = React.createClass({
   propTypes: {
     hireOffer: React.PropTypes.object.isRequired,
+    showAllResponseFields: React.PropTypes.bool.isRequired,
     rentalRequest: React.PropTypes.object.isRequired,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
@@ -274,7 +275,7 @@ var HireOfferEditDialog = React.createClass({
                       <Radio
                         onChange={ this.offerStatusChanged.bind(this, STATUS_YES) }
                         checked={ this.state.offerStatus == STATUS_YES }
-                        disabled={ !this.props.hireOffer.showAllResponseFields && !this.props.hireOffer.offerResponse }
+                        disabled={ !this.props.showAllResponseFields && !this.props.hireOffer.offerResponse }
                       >
                         Yes
                       </Radio>
@@ -288,7 +289,7 @@ var HireOfferEditDialog = React.createClass({
                       <Radio
                         onChange={ this.offerStatusChanged.bind(this, STATUS_NO) }
                         checked={ this.state.offerStatus == STATUS_NO }
-                        disabled={ !this.props.hireOffer.showAllResponseFields && !this.props.hireOffer.offerResponse }
+                        disabled={ !this.props.showAllResponseFields && !this.props.hireOffer.offerResponse }
                       >
                         No
                       </Radio>

@@ -1,10 +1,8 @@
 import React from 'react';
-
 import { Table, Glyphicon } from 'react-bootstrap';
 
-import _ from 'lodash';
 
-var SortTable = React.createClass({
+const SortTable = React.createClass({
   propTypes: {
     // Array of objects with key, title, style, children fields
     headers: React.PropTypes.array.isRequired,
@@ -25,30 +23,38 @@ var SortTable = React.createClass({
   },
 
   render() {
-    return <div id={ this.props.id } className="table-container">
-      <Table condensed striped hover>
-        <thead>
-          <tr>
-            {
-              _.map(this.props.headers, (header) => {
-                if (header.node) {
-                  return <th id={ header.field } key={ header.field } style={ header.style }>{ header.node }</th>;
-                }
+    const columnHeaders = this.props.headers.map((header) => {
+      if (header.node) {
+        return <th id={ header.field } key={ header.field } style={ header.style }>{ header.node }</th>;
+      }
 
-                var sortGlyph = '';
-                if (this.props.sortField === header.field) {
-                  sortGlyph = <span>&nbsp;<Glyphicon glyph={ this.props.sortDesc ? 'sort-by-attributes-alt' : 'sort-by-attributes' }/></span>;
-                }
-                return <th id={ header.field } key={ header.field } onClick={ header.noSort ? '' : this.sort } style={{ ...header.style, cursor: 'pointer' }}>{ header.title }{ sortGlyph }</th>;
-              })
-            }
-          </tr>
-        </thead>
-        <tbody>
-          { this.props.children }
-        </tbody>
-      </Table>
-    </div>;
+      var sortGlyph = '';
+      if (this.props.sortField === header.field) {
+        sortGlyph = <span>&nbsp;<Glyphicon glyph={ this.props.sortDesc ? 'sort-by-attributes-alt' : 'sort-by-attributes' }/></span>;
+      }
+      return (
+        <th
+          id={ header.field }
+          key={ header.field }
+          onClick={ header.noSort ? '' : this.sort }
+          style={{ ...header.style, cursor: header.noSort ? 'default' : 'pointer' }}>
+            { header.title }{ sortGlyph }
+        </th>
+      );
+    });
+
+    return (
+      <div id={ this.props.id } className="table-container">
+        <Table condensed striped hover>
+          <thead>
+            <tr>{ columnHeaders }</tr>
+          </thead>
+          <tbody>
+            { this.props.children }
+          </tbody>
+        </Table>
+      </div>
+    );
   },
 });
 

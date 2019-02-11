@@ -169,7 +169,7 @@ export function jsonRequest(path, options) {
 
   options.headers = Object.assign(options.headers || {}, jsonHeaders);
 
-  return request(path, options).then(xhr => {
+  return request(path, options).then((xhr) => {
     if (xhr.status === 204) {
       return;
     } else if (xhr.responseType === Constant.RESPONSE_TYPE_BLOB) {
@@ -179,11 +179,25 @@ export function jsonRequest(path, options) {
     } else {
       return xhr.responseText ? JSON.parse(xhr.responseText) : null;
     }
-  }).catch(err => {
+  }).catch((err) => {
     if (err instanceof HttpError) {
       var apiError = new ApiError(`API ${err.method} ${err.path} failed (${err.status})`, err.method, err.path, err.status, err.body);
 
-      store.dispatch({ type: Action.REQUESTS_ERROR, error: apiError });
+      var json = null;
+      try {
+        json = JSON.parse(err.body);
+      } catch(err) { /* not json */ }
+
+      store.dispatch({
+        type: Action.REQUESTS_ERROR,
+        error: {
+          message: String(apiError),
+          method: err.method,
+          path: err.path,
+          status: err.status,
+          json,
+        },
+      });
 
       throw apiError;
     } else {

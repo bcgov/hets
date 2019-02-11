@@ -8,6 +8,7 @@ import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Constant from '../../constants';
+import * as Api from '../../api';
 
 import DropdownControl from '../../components/DropdownControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
@@ -25,6 +26,12 @@ var UsersEditDialog = React.createClass({
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     isNew: React.PropTypes.bool,
+  },
+
+  getDefaultProps() {
+    return {
+      isNew: false,
+    };
   },
 
   getInitialState() {
@@ -117,7 +124,7 @@ var UsersEditDialog = React.createClass({
   },
 
   onSave() {
-    this.props.onSave({ ...this.props.user, ...{
+    const user = { ...this.props.user, ...{
       active: this.state.active,
       givenName: this.state.givenName,
       surname: this.state.surname,
@@ -125,7 +132,20 @@ var UsersEditDialog = React.createClass({
       email: this.state.email,
       district: { id: this.state.districtId },
       agreementCity: this.state.agreementCity,
-    }}).catch(error => {
+    }};
+
+    const isNewUser = this.state.isNew;
+    const addOrUpdateUser = isNewUser ? Api.addUser : Api.updateUser;
+
+    addOrUpdateUser(user).then((userResponse) => {
+      // Make sure we get the new user's ID
+      if (isNewUser) {
+        user.id = userResponse.id;
+      }
+
+      // Let the parent page component know that the user has been saved
+      this.props.onSave(user);
+    }, (error) => {
       this.setState({ smUserIdError: error.message });
     });
   },

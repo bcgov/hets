@@ -145,14 +145,9 @@ var Users = React.createClass({
     this.setState({ showUsersEditDialog: false });
   },
 
-  onSaveEdit(user) {
-    return Api.addUser(user).then(() => {
-      // Make sure we get the new user's ID
-      user.id = this.props.user.id;
-      // Reload the screen using new user id
-      this.props.router.push({
-        pathname: `${ Constant.USERS_PATHNAME }/${ user.id }`,
-      });
+  onUserSaved(user) {
+    this.props.router.push({
+      pathname: `${ Constant.USERS_PATHNAME }/${ user.id }`,
     });
   },
 
@@ -265,7 +260,7 @@ var Users = React.createClass({
       { this.state.showUsersEditDialog &&
         <UsersEditDialog
           show={ this.state.showUsersEditDialog }
-          onSave={ this.onSaveEdit }
+          onSave={ this.onUserSaved }
           onClose= { this.closeUsersEditDialog }
           isNew
         />

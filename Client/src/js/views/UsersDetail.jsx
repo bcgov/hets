@@ -109,18 +109,7 @@ var UsersDetail = React.createClass({
     this.setState({ showEditDialog: false });
   },
 
-  onSaveEdit(user) {
-    var savePromise = this.props.params.userId ? Api.updateUser : Api.addUser;
-    savePromise(user).then(() => {
-      if (!this.props.params.userId) {
-        // Make sure we get the new user's ID
-        user.id = this.props.user.id;
-        // Reload the screen using new user id
-        this.props.router.push({
-          pathname: `${ Constant.USERS_PATHNAME }/${ user.id }`,
-        });
-      }
-    });
+  onUserSaved(/* user */) {
     this.closeEditDialog();
   },
 
@@ -380,7 +369,7 @@ var UsersDetail = React.createClass({
       { this.state.showEditDialog &&
         <UsersEditDialog
           show={ this.state.showEditDialog }
-          onSave={ this.onSaveEdit }
+          onSave={ this.onUserSaved }
           onClose= { this.onCloseEdit }
         />
       }

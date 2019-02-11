@@ -82,7 +82,7 @@ module.exports = {
         test: /\.jsx?$/,
         loader: 'eslint-loader',
         exclude: /node_modules/,
-        options: { emitError: !IS_PRODUCTION, failOnError: IS_PRODUCTION },
+        options: { emitWarning: !IS_PRODUCTION, failOnError: IS_PRODUCTION },
       },
       {
         test: /\.jsx?$/,
