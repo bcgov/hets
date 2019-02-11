@@ -205,13 +205,31 @@ namespace HetsApi.Controllers
         /// Create rental request
         /// </summary>
         /// <param name="item"></param>
-        /// <param name="noProject"></param>
         [HttpPost]
         [Route("")]
         [SwaggerOperation("RentalRequestsPost")]
         [SwaggerResponse(200, type: typeof(HetRentalRequest))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult RentalRequestsPost([FromBody]HetRentalRequest item, [FromQuery]bool noProject = false)
+        public virtual IActionResult RentalRequestsPost([FromBody] HetRentalRequest item)
+        {
+            return CreateRentalRequest(item);
+        }
+
+        /// <summary>
+        /// Create rental request - view only (no project)
+        /// </summary>
+        /// <param name="item"></param>
+        [HttpPost]
+        [Route("viewOnly")]
+        [SwaggerOperation("RentalRequestsViewOnlyPost")]
+        [SwaggerResponse(200, type: typeof(HetRentalRequest))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult RentalRequestsViewOnlyPost([FromBody] HetRentalRequest item)
+        {
+            return CreateRentalRequest(item, true);
+        }
+        
+        private IActionResult CreateRentalRequest(HetRentalRequest item, bool noProject = false)
         {
             // not found
             if (item == null) return new ObjectResult(new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
