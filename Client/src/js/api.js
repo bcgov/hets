@@ -640,6 +640,22 @@ export function addPhysicalAttachment(attachment) {
   });
 }
 
+export function addPhysicalAttachments(equipmentId, attachmentTypeNames) {
+  const attachments = attachmentTypeNames.map((typeName) => {
+      // "concurrencyControlNumber": 0,
+    return {
+      typeName,
+      description: '',
+      equipmentId,
+      equipment: { id: equipmentId },
+    };
+  });
+
+  return new ApiRequest('/equipmentAttachments/bulk').post(attachments).then(response => {
+    store.dispatch({ type: Action.ADD_EQUIPMENT_ATTACHMENTS, physicalAttachments: response.data });
+  });
+}
+
 export function updatePhysicalAttachment(attachment) {
   return new ApiRequest(`/equipmentAttachments/${attachment.id}`).put(attachment).then(response => {
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_ATTACHMENT, physicalAttachment: response.data });

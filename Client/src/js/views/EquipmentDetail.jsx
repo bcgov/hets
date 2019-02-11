@@ -45,7 +45,6 @@ TODO:
 var EquipmentDetail = React.createClass({
   propTypes: {
     equipment: React.PropTypes.object,
-    equipmentPhysicalAttachments: React.PropTypes.object,
     notes: React.PropTypes.object,
     attachments: React.PropTypes.object,
     documents: React.PropTypes.object,
@@ -187,9 +186,11 @@ var EquipmentDetail = React.createClass({
     this.setState({ showPhysicalAttachmentDialog: false });
   },
 
-  addPhysicalAttachment(attachment) {
-    Api.addPhysicalAttachment(attachment).then(() => {
-      Log.equipmentAttachmentAdded(this.props.equipment, attachment.typeName);
+  addPhysicalAttachments(attachmentTypeNames, equipment) {
+    Api.addPhysicalAttachments(equipment.id, attachmentTypeNames).then(() => {
+      attachmentTypeNames.forEach((typeName) => {
+        Log.equipmentAttachmentAdded(equipment, typeName);
+      });
       var equipId = this.props.params.equipmentId;
       Api.getEquipment(equipId);
       this.closePhysicalAttachmentDialog();
@@ -506,7 +507,7 @@ var EquipmentDetail = React.createClass({
         { this.state.showPhysicalAttachmentDialog &&
           <AttachmentAddDialog
             show={ this.state.showPhysicalAttachmentDialog }
-            onSave={ this.addPhysicalAttachment }
+            onSave={ this.addPhysicalAttachments }
             onClose={ this.closePhysicalAttachmentDialog }
             equipment={ equipment }
           />
@@ -556,7 +557,6 @@ var EquipmentDetail = React.createClass({
 function mapStateToProps(state) {
   return {
     equipment: state.models.equipment,
-    equipmentPhysicalAttachments: state.models.equipmentPhysicalAttachments,
     notes: state.models.equipmentNotes,
     attachments: state.models.equipmentAttachments,
     documents: state.models.documents,
