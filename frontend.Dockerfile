@@ -1,4 +1,4 @@
-FROM tran-hets-tools/client
+FROM tran-schoolbus-tools/client
 # Dockerfile for the application front end
 
 # compile the client
