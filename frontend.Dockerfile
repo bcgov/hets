@@ -21,7 +21,12 @@ RUN touch ~/.bash_profile \
     && nvm install $NODE_VERSION \
     && nvm alias default $NODE_VERSION \
     && nvm use default \
-    && npm install -g autorest    
+    && npm install -g autorest
+	
+RUN pwd
+
+RUN ls -la
+
    
 # build the client app   
 RUN /bin/bash -c './node_modules/.bin/gulp --production --commit=$OPENSHIFT_BUILD_COMMIT'   
