@@ -1,3 +1,5 @@
+/* global require, module */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Promise from 'bluebird';
@@ -24,14 +26,18 @@ function incrementProgressBar(gotoPercent) {
   progressBarEl.querySelector('span').textContent = `${progress}% Complete`;
 }
 
-function renderApp() {
-  incrementProgressBar(100);
-  initializationEl.classList.add('done');
-  initializationEl.addEventListener('transitionend', function() { initializationEl.remove(); });
-
+function renderApp(AppComponent) {
   const appElement = document.querySelector('#app');
 
-  ReactDOM.render(App, appElement);
+  ReactDOM.render(AppComponent, appElement);
+}
+
+
+if(module.hot) {
+  module.hot.accept('./app.jsx', () => {
+    const UpdatedApp = require('./app.jsx').default;
+    renderApp(UpdatedApp);
+  });
 }
 
 export default function startApp() {
@@ -61,10 +67,15 @@ function initializeApp() {
     var currentUserDistrictsPromise = Api.getCurrentUserDistricts();
 
     return Promise.all([citiesPromise, districtsPromise, regionsPromise, serviceAreasPromise, localAreasPromise, permissionsPromise, currentUserDistrictsPromise]).then(() => {
-      incrementProgressBar(66);
-      // Wrapping in a setTimeout to silence an error from Bluebird's promise lib about API requests
-      // made inside of component{Will,Did}Mount.
-      setTimeout(renderApp, 0);
+      incrementProgressBar(100);
+
+      initializationEl.addEventListener('transitionend', () => {
+        renderApp(App);
+        initializationEl.classList.add('done');
+        initializationEl.addEventListener('transitionend', () => {
+          initializationEl.remove();
+        });
+      });
     });
   }).catch(err => {
     showError(err);

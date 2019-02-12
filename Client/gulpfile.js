@@ -28,7 +28,6 @@ const JS_UNIT_TEST_GLOB = 'src/js/**/*_test.js';
 const CSS_DIR_GLOB = 'src/sass/**/*.scss';
 const HANDLEBARS_DIR_GLOB = 'src/html/**/*.{hbs,html}';
 const DIST_DIR = 'dist';
-const DEPLOY_PATH = path.join(__dirname, '..', 'Client', 'src', 'HETSClient', 'wwwroot');
 const NODE_MODULES_DIR = 'node_modules/';
 const JS_SHIMS = [
   'node_modules/object-assign-shim/index.js',
@@ -36,6 +35,7 @@ const JS_SHIMS = [
 const VENDOR_CSS = [
   'bootstrap/dist/css/bootstrap.css',
   'react-bootstrap-datetimepicker/css/bootstrap-datetimepicker.css',
+  'react-datetime/css/react-datetime.css',
 ];
 
 var WEBPACK_CONFIG = require('./webpack.config.js');
@@ -139,7 +139,7 @@ gulp.task('images', function() {
 });
 
 gulp.task('fonts', function() {
-  return gulp.src(['node_modules/bootstrap/dist/fonts/**'])
+  return gulp.src(['node_modules/bootstrap/dist/fonts/**', 'src/fonts/**'])
     .pipe($.size({ title : 'fonts' }))
     .pipe(gulp.dest(DIST_DIR + '/fonts/'));
 });
@@ -242,22 +242,3 @@ gulp.task('build', gulp.series('clean', 'build:assets'));
 gulp.task('default', gulp.series(IS_PRODUCTION ? 'build:complete' : 'build:dev'));
 
 gulp.task('test', gulp.series('test:unit', 'build', 'test:integration'));
-
-
-/* Deploy Tasks */
-
-gulp.task('deploy:setprod', function() {
-  process.env.NODE_ENV = 'production';
-  IS_PRODUCTION = true;
-  return Promise.resolve();
-});
-
-gulp.task('deploy:clean', function(done) {
-  del([DEPLOY_PATH], done);
-});
-
-gulp.task('deploy:copy', function() {
-  return gulp.src(DIST_DIR).pipe(gulp.dest(DEPLOY_PATH));
-});
-
-gulp.task('deploy', gulp.series('deploy:setprod', 'build:complete', 'deploy:clean', 'deploy:copy'/*, 'deploy:commit'*/));

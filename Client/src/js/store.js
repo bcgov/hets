@@ -1,4 +1,4 @@
-/* global process, require */
+/* global process, require, module */
 
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
@@ -28,5 +28,13 @@ const store = createStore(
   allReducers,
   composeEnhancers(applyMiddleware(...middleware))
 );
+
+if(process.env.NODE_ENV !== 'production') {
+  if(module.hot) {
+    module.hot.accept('./reducers/all', () =>
+        store.replaceReducer(require('./reducers/all').default)
+    );
+  }
+}
 
 export default store;
