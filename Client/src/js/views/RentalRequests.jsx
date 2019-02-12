@@ -17,6 +17,7 @@ import * as Log from '../history';
 import store from '../store';
 
 import DateControl from '../components/DateControl.jsx';
+import DeleteButton from '../components/DeleteButton.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
 import EditButton from '../components/EditButton.jsx';
 import Favourites from '../components/Favourites.jsx';
@@ -53,6 +54,7 @@ var RentalRequests = React.createClass({
   getInitialState() {
     return {
       showAddDialog: false,
+      addViewOnly: false,
       search: {
         selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
         projectName: this.props.search.projectName || '',
@@ -186,8 +188,14 @@ var RentalRequests = React.createClass({
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
   },
 
-  openAddDialog() {
-    this.setState({ showAddDialog: true });
+  deleteRequest(request) {
+    Api.cancelRentalRequest(request.id).then(() => {
+      this.fetch();
+    });
+  },
+
+  openAddDialog(viewOnly) {
+    this.setState({ showAddDialog: true, addViewOnly: viewOnly });
   },
 
   closeAddDialog() {
@@ -195,8 +203,8 @@ var RentalRequests = React.createClass({
     store.dispatch({ type: Action.ADD_RENTAL_REQUEST_REFRESH });
   },
 
-  saveNewRequest(request) {
-    Api.addRentalRequest(request).then(() => {
+  saveNewRequest(request, viewOnly) {
+    Api.addRentalRequest(request, viewOnly).then(() => {
       Log.rentalRequestAdded(this.props.rentalRequest.data);
 
       // Open it up
@@ -212,8 +220,8 @@ var RentalRequests = React.createClass({
     window.print();
   },
 
-  renderResults(addRentalRequestButton) {
-    if (Object.keys(this.props.rentalRequests.data).length === 0) { return <Alert bsStyle="success">No Rental Requests { addRentalRequestButton }</Alert>; }
+  renderResults(addRequestButtons) {
+    if (Object.keys(this.props.rentalRequests.data).length === 0) { return <Alert bsStyle="success">No Rental Requests { addRequestButtons }</Alert>; }
 
     var rentalRequests = _.sortBy(this.props.rentalRequests.data, rentalRequest => {
       var sortValue = rentalRequest[this.state.ui.sortField];
@@ -237,20 +245,20 @@ var RentalRequests = React.createClass({
       { field: 'primaryContactName',     title: 'Primary Contact'                                 },
       { field: 'status',                 title: 'Status',          style: { textAlign: 'center' } },
       { field: 'addRentalRequest',       title: 'Add Project',     style: { textAlign: 'right'  },
-        node: addRentalRequestButton,
+        node: addRequestButtons,
       },
     ]}>
       {
         _.map(rentalRequests, (request) => {
+          var projectLink = request.projectId ? <Link to={ request.projectPath }>{ request.projectName }</Link> : request.projectName;
+
           return <tr key={ request.id } className={ request.isActive ? null : 'info' }>
             <td>{ request.localAreaName }</td>
             <td style={{ textAlign: 'center' }}>{ request.equipmentCount }</td>
             <td>{ request.districtEquipmentName }</td>
             <td style={{ textAlign: 'center' }}>{ formatDateTime(request.expectedStartDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
             <td style={{ textAlign: 'center' }}>{ formatDateTime(request.expectedEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
-            <td>
-              <Link to={ request.projectPath }>{ request.projectName }</Link>
-            </td>
+            <td>{ projectLink }</td>
             <td>
               {
                 request.primaryContactName ?
@@ -261,6 +269,7 @@ var RentalRequests = React.createClass({
             <td style={{ textAlign: 'center' }}>{ request.status }</td>
             <td style={{ textAlign: 'right' }}>
               <ButtonGroup>
+                <DeleteButton name="Rental Request" hide={ !request.canDelete } onConfirm={ this.deleteRequest.bind(this, request) } />
                 <EditButton name="Rental Request" hide={ !request.canView } view pathname={ `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ request.id }` }/>
               </ButtonGroup>
             </td>
@@ -330,18 +339,27 @@ var RentalRequests = React.createClass({
       {(() => {
         if (this.props.rentalRequests.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-        var addRentalRequestButton = <Button title="Add Rental Request" bsSize="xsmall" onClick={ this.openAddDialog }>
+        var addViewOnlyRequestButton = <Button title="Add Rental Request (View Only)" bsSize="xsmall" onClick={ () => this.openAddDialog(true) }>
+          <Glyphicon glyph="plus" />&nbsp;<strong>Request (View Only)</strong>
+        </Button>;
+
+        var addRentalRequestButton = <Button title="Add Rental Request" bsSize="xsmall" onClick={ () => this.openAddDialog(false) }>
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong>
         </Button>;
 
+        var addRequestButtons = <div id="add-request-buttons">
+          { addViewOnlyRequestButton }
+          { addRentalRequestButton }
+        </div>;
+
         if (this.props.rentalRequests.loaded) {
-          return this.renderResults(addRentalRequestButton);
+          return this.renderResults(addRequestButtons);
         }
 
-        return <div id="add-button-container">{ addRentalRequestButton }</div>;
+        return <div id="add-button-container">{ addRequestButtons }</div>;
       })()}
       { this.state.showAddDialog &&
-        <RentalRequestsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewRequest } onClose={ this.closeAddDialog } />
+        <RentalRequestsAddDialog show={ this.state.showAddDialog } viewOnly={ this.state.addViewOnly } onSave={ this.saveNewRequest } onClose={ this.closeAddDialog } />
       }
     </div>;
   },

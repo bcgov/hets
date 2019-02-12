@@ -32,6 +32,7 @@ var RentalRequestsAddDialog = React.createClass({
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
+    viewOnly: React.PropTypes.bool,
   },
 
   getInitialState() {
@@ -102,7 +103,7 @@ var RentalRequestsAddDialog = React.createClass({
       expectedEndDateError: '',
     });
 
-    if (this.state.projectId === 0) {
+    if (this.state.projectId === 0 && !this.props.viewOnly) {
       this.setState({ projectError: 'Project is required' });
       valid = false;
     }
@@ -115,6 +116,11 @@ var RentalRequestsAddDialog = React.createClass({
     if (this.state.equipmentTypeId === 0) {
       this.setState({ equipmentTypeError: 'Equipment type is required' });
       valid = false;
+    }
+
+    // all fields for view-only requests have now been validated
+    if (this.props.viewOnly) {
+      return valid;
     }
 
     if (isBlank(this.state.count)) {
@@ -162,7 +168,7 @@ var RentalRequestsAddDialog = React.createClass({
   },
 
   onSave() {
-    this.props.onSave({
+    var request = {
       project: { id: this.state.projectId },
       localArea: { id: this.state.localAreaId },
       districtEquipmentType: { id: this.state.equipmentTypeId },
@@ -175,7 +181,9 @@ var RentalRequestsAddDialog = React.createClass({
         id: 0,
         attachment: this.state.rentalRequestAttachments,
       }],
-    });
+    };
+
+    this.props.onSave(request, this.props.viewOnly);
   },
 
   getFilteredEquipmentTypes(localAreaId) {
@@ -212,6 +220,9 @@ var RentalRequestsAddDialog = React.createClass({
               { project ?
                 <div>{ project.name }</div>
                 :
+                this.props.viewOnly ?
+                <div>Request - View Only</div>
+                :
                 <FilterDropdown id="projectId" fieldName="label" selectedId={ this.state.projectId } onSelect={ this.onProjectSelected } updateState={ this.updateState }
                   items={ projects } className="full-width"
                 />
@@ -237,40 +248,50 @@ var RentalRequestsAddDialog = React.createClass({
               <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
             </FormGroup>
           </Col>
-          <Col md={12}>
-            <FormGroup controlId="count" validationState={ this.state.countError ? 'error' : null }>
-              <ControlLabel>Quantity <sup>*</sup></ControlLabel>
-              <FormInputControl type="number" min="0" value={ this.state.count } updateState={ this.updateState } />
-              <HelpBlock>{ this.state.countError }</HelpBlock>
-            </FormGroup>
-          </Col>
-          <Col md={12}>
-            <FormGroup>
-              <ControlLabel>Attachment(s)</ControlLabel>
-              <FormInputControl id="rentalRequestAttachments" type="text" defaultValue={ this.state.rentalRequestAttachments } updateState={ this.updateState } />
-            </FormGroup>
-          </Col>
-          <Col md={12}>
-            <FormGroup controlId="expectedHours" validationState={ this.state.expectedHoursError ? 'error' : null }>
-              <ControlLabel>Expected Hours <sup>*</sup></ControlLabel>
-              <FormInputControl type="number" className="full-width" min={0} value={ this.state.expectedHours } updateState={ this.updateState }/>
-              <HelpBlock>{ this.state.expectedHoursError }</HelpBlock>
-            </FormGroup>
-          </Col>
-          <Col md={12}>
-            <FormGroup controlId="expectedStartDate" validationState={ this.state.expectedStartDateError ? 'error' : null }>
-              <ControlLabel>Start Date <sup>*</sup></ControlLabel>
-              <DateControl id="expectedStartDate" date={ this.state.expectedStartDate } updateState={ this.updateState } title="Dated At" />
-              <HelpBlock>{ this.state.expectedStartDateError }</HelpBlock>
-            </FormGroup>
-          </Col>
-          <Col md={12}>
-            <FormGroup controlId="expectedEndDate" validationState={ this.state.expectedEndDateError ? 'error' : null }>
-              <ControlLabel>End Date</ControlLabel>
-              <DateControl id="expectedEndDate" date={ this.state.expectedEndDate } updateState={ this.updateState } title="Dated At" />
-              <HelpBlock>{ this.state.expectedEndDateError }</HelpBlock>
-            </FormGroup>
-          </Col>
+          { !this.props.viewOnly &&
+            <Col md={12}>
+              <FormGroup controlId="count" validationState={ this.state.countError ? 'error' : null }>
+                <ControlLabel>Quantity <sup>*</sup></ControlLabel>
+                <FormInputControl type="number" min="0" value={ this.state.count } updateState={ this.updateState } />
+                <HelpBlock>{ this.state.countError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          }
+          { !this.props.viewOnly &&
+            <Col md={12}>
+              <FormGroup>
+                <ControlLabel>Attachment(s)</ControlLabel>
+                <FormInputControl id="rentalRequestAttachments" type="text" defaultValue={ this.state.rentalRequestAttachments } updateState={ this.updateState } />
+              </FormGroup>
+            </Col>
+          }
+          { !this.props.viewOnly &&
+            <Col md={12}>
+              <FormGroup controlId="expectedHours" validationState={ this.state.expectedHoursError ? 'error' : null }>
+                <ControlLabel>Expected Hours <sup>*</sup></ControlLabel>
+                <FormInputControl type="number" className="full-width" min={0} value={ this.state.expectedHours } updateState={ this.updateState }/>
+                <HelpBlock>{ this.state.expectedHoursError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          }
+          { !this.props.viewOnly &&
+            <Col md={12}>
+              <FormGroup controlId="expectedStartDate" validationState={ this.state.expectedStartDateError ? 'error' : null }>
+                <ControlLabel>Start Date <sup>*</sup></ControlLabel>
+                <DateControl id="expectedStartDate" date={ this.state.expectedStartDate } updateState={ this.updateState } title="Dated At" />
+                <HelpBlock>{ this.state.expectedStartDateError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          }
+          { !this.props.viewOnly &&
+            <Col md={12}>
+              <FormGroup controlId="expectedEndDate" validationState={ this.state.expectedEndDateError ? 'error' : null }>
+                <ControlLabel>End Date</ControlLabel>
+                <DateControl id="expectedEndDate" date={ this.state.expectedEndDate } updateState={ this.updateState } title="Dated At" />
+                <HelpBlock>{ this.state.expectedEndDateError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          }
         </Row>
         { this.props.rentalRequest.error &&
           <Alert bsStyle="danger">{ this.props.rentalRequest.errorMessage }</Alert>

@@ -243,7 +243,7 @@ var RentalRequestsDetail = React.createClass({
 
       <Well className="request-information">
         <h3 className="clearfix">Request Information <span className="pull-right">
-          { rentalRequest.status !== Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED &&
+          { rentalRequest.projectId > 0 && rentalRequest.status !== Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED &&
             <Button title="Edit Rental Request" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
           }
         </span></h3>
@@ -394,7 +394,7 @@ var RentalRequestsDetail = React.createClass({
                               </OverlayTrigger>
                             );
                           }
-                          if (rentalRequest.status === STATUS_IN_PROGRESS && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse)) {
+                          if (rentalRequest.projectId > 0 && rentalRequest.status === STATUS_IN_PROGRESS && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse)) {
                             return (
                               <Button
                                 bsStyle="link"

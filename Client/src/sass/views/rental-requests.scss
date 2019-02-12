@@ -39,6 +39,19 @@
     float: right;
     margin-top: 10px;
   }
+
+  #add-request-buttons {
+    margin-left: auto;
+
+    .btn {
+      display: block;
+      width: 100%;
+    }
+
+    .btn:first-child {
+      margin-bottom: 10px;
+    }
+  }
 }
 
 #rental-requests-detail {
