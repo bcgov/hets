@@ -16,10 +16,6 @@ RUN . $NVM_DIR/nvm.sh && \
    nvm use v8.9.1 && \
    npm install
    
-cd ./node_modules/.bin
-ls -la
-cd ../../
-
 # build the client app   
 RUN /bin/bash -c './node_modules/.bin/gulp --production --commit=$OPENSHIFT_BUILD_COMMIT'   
    
