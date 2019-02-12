@@ -71,34 +71,42 @@ namespace HetsApi.Controllers
                             x.OwnerStatusTypeId.Equals(pendingStatusId));
 
             // Count 2: Unapproved Equipment
-            int? pendingEquipmentStatusId = StatusHelper.GetStatusId(HetEquipment.StatusPending, "equipmentStatus", _context);
-            if (pendingEquipmentStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            int? unapprovedStatusId = StatusHelper.GetStatusId(HetEquipment.StatusUnapproved, "equipmentStatus", _context);
+            if (unapprovedStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             result.UnapprovedEquipment = _context.HetEquipment
                 .AsNoTracking()
                 .Count(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
-                            x.EquipmentStatusTypeId.Equals(pendingEquipmentStatusId));
+                            x.EquipmentStatusTypeId.Equals(unapprovedStatusId));
 
             // Count 3: Hired Equipment
             int? activeEquipmentStatusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
             if (activeEquipmentStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
+            var approvedEquipmentQuery = _context.HetEquipment
+                .AsNoTracking()
+                .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
+                            x.EquipmentStatusTypeId.Equals(activeEquipmentStatusId));
+
             int? agreementStatusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
             if (agreementStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            result.HiredEquipment = _context.HetRentalAgreement
-                .AsNoTracking()
-                .Count(x => x.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
-                            x.Equipment.EquipmentStatusTypeId.Equals(activeEquipmentStatusId) &&
-                            x.RentalAgreementStatusTypeId.Equals(agreementStatusId));
+            var hiredEquipmentQuery = _context.HetRentalAgreement.AsNoTracking()
+                .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId) && 
+                            x.RentalAgreementStatusTypeId == agreementStatusId)
+                .Select(x => x.EquipmentId)
+                .Distinct();
+
+            result.HiredEquipment = approvedEquipmentQuery.Count(e => hiredEquipmentQuery.Contains(e.EquipmentId));
 
             // Count 4: In Progress Rental Requests
             int? requestStatusId = StatusHelper.GetStatusId(HetRentalRequest.StatusInProgress, "rentalRequestStatus", _context);
             if (requestStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            result.HiredEquipment = _context.HetRentalRequest
+            result.InProgressRentalRequests = _context.HetRentalRequest
                 .AsNoTracking()
-                .Count(x => x.RentalRequestStatusTypeId.Equals(requestStatusId));
+                .Count(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
+                            x.RentalRequestStatusTypeId.Equals(requestStatusId));
 
             // return to the client            
             return new ObjectResult(new HetsResponse(result));
