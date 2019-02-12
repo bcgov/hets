@@ -130,3 +130,8 @@ a.light {
   margin-left: 3px;
   font-weight: bold;
 }
+
+// Fix for extra dark overlay when multiple modals are open
+[aria-hidden="true"] .modal-backdrop.in {
+  opacity: 0;
+}
