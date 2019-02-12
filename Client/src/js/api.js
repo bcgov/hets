@@ -203,6 +203,13 @@ export function switchUserDistrict(districtId) {
   });
 }
 
+export function getSearchSummaryCounts() {
+  return new ApiRequest('/counts').get().then((response) => {
+    store.dispatch({ type: Action.UPDATE_SEARCH_SUMMARY_COUNTS, searchSummaryCounts: response.data });
+    return response;
+  });
+}
+
 ////////////////////
 // Roles,  Permissions
 ////////////////////
@@ -440,24 +447,6 @@ export function searchEquipmentList(params) {
     });
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST, equipmentList: equipmentList });
-  });
-}
-
-export function getUnapprovedEquipment() {
-  store.dispatch({ type: Action.UNAPPROVED_EQUIPMENT_REQUEST });
-  return new ApiRequest('/equipment/search').get({ status: Constant.EQUIPMENT_STATUS_CODE_PENDING }).then(response => {
-    var equipmentList = normalize(response.data);
-
-    store.dispatch({ type: Action.UPDATE_UNAPPROVED_EQUIPMENT, equipmentList: equipmentList });
-  });
-}
-
-export function getHiredEquipment() {
-  store.dispatch({ type: Action.HIRED_EQUIPMENT_REQUEST });
-  return new ApiRequest('/equipment/search').get({ status: Constant.EQUIPMENT_STATUS_CODE_APPROVED, hired: true }).then(response => {
-    var equipmentList = normalize(response.data);
-
-    store.dispatch({ type: Action.UPDATE_HIRED_EQUIPMENT, equipmentList: equipmentList });
   });
 }
 
@@ -762,14 +751,6 @@ export function searchOwners(params) {
   return new ApiRequest('/owners/search').get(params).then(response => {
     var owners = normalize(response.data);
     store.dispatch({ type: Action.UPDATE_OWNERS, owners: owners });
-  });
-}
-
-export function getUnapprovedOwners() {
-  store.dispatch({ type: Action.UNAPPROVED_OWNERS_REQUEST });
-  return new ApiRequest('/owners/search').get({ status: Constant.OWNER_STATUS_CODE_PENDING }).then(response => {
-    var owners = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_UNAPPROVED_OWNERS, owners: owners });
   });
 }
 
@@ -1419,15 +1400,6 @@ export function searchRentalRequests(params) {
     _.map(rentalRequests, req => { parseRentalRequest(req); });
 
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS, rentalRequests: rentalRequests });
-  });
-}
-
-export function getBlockedRotationLists() {
-  store.dispatch({ type: Action.BLOCKED_ROTATION_LISTS_REQUEST });
-  return new ApiRequest('/rentalrequests/search').get({ status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS }).then(response => {
-    var rentalRequests = normalize(response.data);
-
-    store.dispatch({ type: Action.UPDATE_BLOCKED_ROTATION_LISTS, rentalRequests: rentalRequests });
   });
 }
 

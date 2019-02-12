@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 
 import { Well, PageHeader, Row, Col, Button } from 'react-bootstrap';
 
+import _ from 'lodash';
+
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
@@ -12,11 +14,7 @@ import store from '../store';
 var Home = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
-    owners: React.PropTypes.object,
-    unapprovedOwners: React.PropTypes.object,
-    unapprovedEquipment: React.PropTypes.object,
-    hiredEquipment: React.PropTypes.object,
-    blockedRotationLists: React.PropTypes.object,
+    searchSummaryCounts: React.PropTypes.object,
     router: React.PropTypes.object,
   },
 
@@ -25,10 +23,7 @@ var Home = React.createClass({
   },
 
   fetch() {
-    Api.getUnapprovedOwners();
-    Api.getUnapprovedEquipment();
-    Api.getHiredEquipment();
-    Api.getBlockedRotationLists();
+    Api.getSearchSummaryCounts();
   },
 
   goToUnapprovedOwners() {
@@ -80,16 +75,18 @@ var Home = React.createClass({
   },
 
   render() {
+    var counts = this.props.searchSummaryCounts;
+
     return <div id="home">
       <PageHeader>{this.props.currentUser.fullName}<br/>{this.props.currentUser.districtName} District</PageHeader>
       <Well>
         <h3>Summary</h3>
         <Row>
           <Col md={12} className="btn-container">
-            <Button onClick={ this.goToUnapprovedOwners }>Unapproved owners { this.props.unapprovedOwners.loaded && `(${ Object.keys(this.props.unapprovedOwners.data).length })` }</Button>
-            <Button onClick={ this.goToUnapprovedEquipment }>Unapproved equipment { this.props.unapprovedEquipment.loaded && `(${ Object.keys(this.props.unapprovedEquipment.data).length })` }</Button>
-            <Button onClick={ this.goToHiredEquipment }>Currently hired equipment { this.props.hiredEquipment.loaded && `(${ Object.keys(this.props.hiredEquipment.data).length })` }</Button>
-            <Button onClick={ this.goToBlockedRotationLists }>Blocked rotation lists { this.props.blockedRotationLists.loaded && `(${ Object.keys(this.props.blockedRotationLists.data).length })` }</Button>
+            <Button onClick={ this.goToUnapprovedOwners }>Unapproved owners { !_.isEmpty(counts) && `(${ counts.unapprovedOwners })` }</Button>
+            <Button onClick={ this.goToUnapprovedEquipment }>Unapproved equipment { !_.isEmpty(counts) && `(${ counts.unapprovedEquipment })` }</Button>
+            <Button onClick={ this.goToHiredEquipment }>Currently hired equipment { !_.isEmpty(counts) && `(${ counts.hiredEquipment })` }</Button>
+            <Button onClick={ this.goToBlockedRotationLists }>Blocked rotation lists { !_.isEmpty(counts) && `(${ counts.inProgressRentalRequests })` }</Button>
           </Col>
         </Row>
       </Well>
@@ -100,11 +97,7 @@ var Home = React.createClass({
 function mapStateToProps(state) {
   return {
     currentUser: state.user,
-    search: state.search.owners,
-    unapprovedOwners: state.models.unapprovedOwners,
-    unapprovedEquipment: state.models.unapprovedEquipmentList,
-    hiredEquipment: state.models.hiredEquipmentList,
-    blockedRotationLists: state.models.blockedRotationLists,
+    searchSummaryCounts: state.lookups.searchSummaryCounts,
   };
 }
 

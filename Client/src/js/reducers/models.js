@@ -24,16 +24,6 @@ const DEFAULT_MODELS = {
     success: false,
   },
 
-  unapprovedEquipmentList: {
-    data: {},
-    loading: false,
-    loaded: false,
-  },
-  hiredEquipmentList: {
-    data: {},
-    loading: false,
-    loaded: false,
-  },
   equipmentList: {
     data: {},
     loading: false,
@@ -49,11 +39,6 @@ const DEFAULT_MODELS = {
   },
   equipmentTransfer: {},
 
-  unapprovedOwners: {
-    data: {},
-    loading: false,
-    loaded: false,
-  },
   owners: {
     data: {},
     loading: false,
@@ -97,11 +82,6 @@ const DEFAULT_MODELS = {
     data: {},
   },
 
-  blockedRotationLists: {
-    data: {},
-    loading: false,
-    loaded: false,
-  },
   rentalRequests: {
     data: {},
     loading: false,
@@ -235,18 +215,6 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, document: action.document };
 
     // Equipment
-    case Action.UNAPPROVED_EQUIPMENT_REQUEST:
-      return { ...state, unapprovedEquipmentList: { ...state.equipmentList, loading: true, loaded: false } };
-
-    case Action.UPDATE_UNAPPROVED_EQUIPMENT:
-      return { ...state, unapprovedEquipmentList: { data: action.equipmentList, loading: false, loaded: true } };
-
-    case Action.HIRED_EQUIPMENT_REQUEST:
-      return { ...state, hiredEquipmentList: { ...state.equipmentList, loading: true, loaded: false } };
-
-    case Action.UPDATE_HIRED_EQUIPMENT:
-      return { ...state, hiredEquipmentList: { data: action.equipmentList, loading: false, loaded: true } };
-
     case Action.EQUIPMENT_LIST_REQUEST:
       return { ...state, equipmentList: { ...state.equipmentList, loading: true, loaded: false } };
 
@@ -269,12 +237,6 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, equipmentTransfer: { ...state.equipmentTransfer, error: true, errorMessage: action.errorMessage } };
 
     // Owners
-    case Action.UNAPPROVED_OWNERS_REQUEST:
-      return { ...state, unapprovedOwners: { ...state.owners, loading: true, loaded: false } };
-
-    case Action.UPDATE_UNAPPROVED_OWNERS:
-      return { ...state, unapprovedOwners: { data: action.owners, loading: false, loaded: true } };
-
     case Action.OWNERS_REQUEST:
       return { ...state, owners: { ...state.owners, loading: true, loaded: false } };
 
@@ -331,12 +293,6 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     //   return { ...state, projectRentalAgreements: { ...state.projectRentalAgreements, error: action.error } };
 
     // Rental Requests
-    case Action.BLOCKED_ROTATION_LISTS_REQUEST:
-      return { ...state, blockedRotationLists: { ...state.rentalRequests, loading: true, loaded: false } };
-
-    case Action.UPDATE_BLOCKED_ROTATION_LISTS:
-      return { ...state, blockedRotationLists: { data: action.rentalRequests, loading: false, loaded: true } };
-
     case Action.RENTAL_REQUESTS_REQUEST:
       return { ...state, rentalRequests: { ...state.rentalRequests, loading: true, loaded: false } };
 
