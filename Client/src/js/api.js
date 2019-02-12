@@ -1406,7 +1406,8 @@ function parseRentalRequest(rentalRequest) {
 
   rentalRequest.canView = true;
   rentalRequest.canEdit = true;
-  rentalRequest.canDelete = false; // TODO Needs input from Business whether this is needed.
+  // HETS-894: view-only requests and requests that have yet to be acted on can be deleted
+  rentalRequest.canDelete = rentalRequest.projectId === 0 || rentalRequest.yesCount === 0;
 }
 
 export function searchRentalRequests(params) {
@@ -1441,9 +1442,15 @@ export function getRentalRequest(id) {
   });
 }
 
-export function addRentalRequest(rentalRequest) {
+export function addRentalRequest(rentalRequest, viewOnly) {
   store.dispatch({ type: Action.RENTAL_REQUEST_REQUEST });
-  return new ApiRequest('/rentalrequests').post(rentalRequest).then(response => {
+
+  var path = '/rentalrequests';
+  if (viewOnly) {
+    path = '/rentalrequests/viewOnly';
+  }
+
+  return new ApiRequest(path).post(rentalRequest).then(response => {
     if (response.responseStatus === 'ERROR') {
       store.dispatch({ type: Action.ADD_RENTAL_REQUEST_ERROR, errorMessage: response.error.description });
       return Promise.reject(new Error(response.error.description));

@@ -23,6 +23,7 @@ namespace HetsData.Helpers
         public int? ProjectId { get; set; }
         public DateTime? ExpectedStartDate { get; set; }
         public DateTime? ExpectedEndDate { get; set; }
+        public int YesCount { get; set; }
     }
 
     public class RentalRequestHires
@@ -199,7 +200,9 @@ namespace HetsData.Helpers
             RentalRequestLite requestLite = new RentalRequestLite();
 
             if (request != null)
-            {                
+            {
+                requestLite.YesCount = CalculateYesCount(request);
+
                 if (request.DistrictEquipmentType != null)
                 {
                     requestLite.EquipmentTypeName = request.DistrictEquipmentType.EquipmentType.Name;
@@ -223,7 +226,7 @@ namespace HetsData.Helpers
                 requestLite.Status = request.RentalRequestStatusType.Description;
                 requestLite.EquipmentCount = request.EquipmentCount;
                 requestLite.ExpectedEndDate = request.ExpectedEndDate;
-                requestLite.ExpectedStartDate = request.ExpectedStartDate;                
+                requestLite.ExpectedStartDate = request.ExpectedStartDate;
             }
 
             return requestLite;

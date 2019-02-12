@@ -478,6 +478,7 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.EquipmentType)
                 .Include(x => x.Project.PrimaryContact)
                 .Include(x => x.RentalRequestStatusType)
+                .Include(x => x.HetRentalRequestRotationList)
                 .OrderByDescending(x => x.AppCreateTimestamp)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));            
 
