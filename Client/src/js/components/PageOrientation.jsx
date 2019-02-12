@@ -10,7 +10,7 @@ var PageOrientation = React.createClass({
     if (this.props.type === 'landscape') {
       size = 'landscape';
     }
-    
+
     return <style type="text/css">
       { `@page { size: ${ size } }` }
     </style>;
