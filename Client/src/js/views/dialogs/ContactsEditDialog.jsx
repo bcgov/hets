@@ -3,12 +3,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Grid, Row, Col, Button, Label } from 'react-bootstrap';
-import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import * as Constant from '../../constants';
 
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank, formatPhoneNumber } from '../../utils/string';
 

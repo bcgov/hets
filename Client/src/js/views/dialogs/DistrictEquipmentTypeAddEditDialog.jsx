@@ -1,12 +1,13 @@
 import React from 'react';
 
-import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import _ from 'lodash';
 
 import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 const PROHIBITED_SECTIONS = [ 1.2, 1.8, 2.3, 2.6, 3.3, 6.3, 7.4, 8.2, 9.3, 11.2, 12.2, 13.5, 13.6, 16.3 ];
 
@@ -84,9 +85,7 @@ var DistrictEquipmentTypeAddEditDialog = React.createClass({
   render() {
     return <EditDialog id="district-equipment-add" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title= {
-        <strong>Add District Equipment Type</strong>
-      }>
+      title={<strong>Add District Equipment Type</strong>}>
       <Form>
         <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeIdError ? 'error' : null }>
           <ControlLabel>Blue Book Section <sup>*</sup></ControlLabel>

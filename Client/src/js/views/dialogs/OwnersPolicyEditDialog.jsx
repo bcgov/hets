@@ -2,13 +2,14 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Form, FormGroup, ControlLabel, HelpBlock, Row, Col } from 'react-bootstrap';
+import { FormGroup, ControlLabel, HelpBlock, Row, Col } from 'react-bootstrap';
 
 import * as Constant from '../../constants';
 
 import DateControl from '../../components/DateControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isValidDate, toZuluTime } from '../../utils/date';
 import { notBlank, isBlank } from '../../utils/string';
@@ -97,9 +98,7 @@ var OwnersPolicyEditDialog = React.createClass({
     console.log(this.props.owner);
     return <EditDialog id="owners-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title= {
-        <strong>Owner Insurance</strong>
-      }>
+      title={<strong>Owner Insurance</strong>}>
       <Form>
         <Row>
           <Col xs={6}>

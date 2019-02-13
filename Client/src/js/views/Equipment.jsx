@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, ControlLabel, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, ControlLabel, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 import _ from 'lodash';
 import Moment from 'moment';
@@ -21,6 +21,7 @@ import FormInputControl from '../components/FormInputControl.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
+import Form from '../components/Form.jsx';
 
 import EquipmentTable from './EquipmentTable.jsx';
 

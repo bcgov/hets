@@ -1,16 +1,14 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
-import { Grid, Row, Col, Form, FormGroup, HelpBlock, ControlLabel, FormControl } from 'react-bootstrap';
-
 import _ from 'lodash';
+import { FormGroup, HelpBlock, ControlLabel, FormControl, Grid, Row, Col } from 'react-bootstrap';
 
 import * as Constant from '../../constants';
 
 import DropdownControl from '../../components/DropdownControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank, notBlank } from '../../utils/string';
 
@@ -107,9 +105,7 @@ var ProjectsAddDialog = React.createClass({
   render() {
     return <EditDialog id="add-project" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title= {
-        <strong>Add Project</strong>
-      }>
+      title={<strong>Add Project</strong>}>
       <Form>
         <Grid fluid>
           <Row>

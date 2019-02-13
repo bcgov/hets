@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -13,6 +13,7 @@ import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import Spinner from '../../components/Spinner.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank, notBlank } from '../../utils/string';
 import { isValidYear } from '../../utils/date';
@@ -199,9 +200,7 @@ var EquipmentAddDialog = React.createClass({
     return <EditDialog id="equipment-add" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.checkForDuplicatesAndSave } didChange={ this.didChange } isValid={ this.isValid }
       saveText={ this.state.duplicateSerialNumber ? 'Proceed Anyways' : 'Save' }
-      title= {
-        <strong>Add Equipment</strong>
-      }>
+      title={<strong>Add Equipment</strong>}>
       <Form>
         <FormGroup controlId="organizationName">
           <ControlLabel>Owner</ControlLabel>

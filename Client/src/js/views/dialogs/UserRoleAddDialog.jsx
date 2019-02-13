@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Grid, Row, Col } from 'react-bootstrap';
-import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -14,6 +14,7 @@ import DateControl from '../../components/DateControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import DropdownControl from '../../components/DropdownControl.jsx';
 import Spinner from '../../components/Spinner.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isValidDate, toZuluTime } from '../../utils/date';
 import { isBlank, notBlank } from '../../utils/string';
@@ -107,9 +108,13 @@ var UserRoleAddDialog = React.createClass({
 
     var roles = _.sortBy(filteredRoles, 'name');
 
-    return <EditDialog id="add-role" show={ this.props.show } title={ <strong>Add Role</strong> }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-    >
+    return <EditDialog id="add-role"
+      show={ this.props.show }
+      title={ <strong>Add Role</strong> }
+      onClose={ this.props.onClose }
+      onSave={ this.onSave }
+      didChange={ this.didChange }
+      isValid={ this.isValid }>
       <Form>
         <Grid fluid>
           <Row>

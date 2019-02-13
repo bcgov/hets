@@ -1,13 +1,14 @@
 import React from 'react';
 
 import { Grid, Row, Col } from 'react-bootstrap';
-import { Form, FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
 
 import _ from 'lodash';
 
 import DropdownControl from '../../components/DropdownControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 import { NON_STANDARD_CONDITION } from '../../constants';
@@ -137,9 +138,7 @@ var RentalConditionsEditDialog = React.createClass({
 
     return <EditDialog id="rental-conditions-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={
-        <strong>Rental Agreement - Conditions</strong>
-      }>
+      title={<strong>Rental Agreement - Conditions</strong>}>
       <div className="forms-container">
         { Object.keys(this.state.forms).map(key => (
           <Form key={key}>

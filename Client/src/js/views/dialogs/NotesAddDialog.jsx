@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { Form, Row, Col, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
+import { Row, Col, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
 
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import * as Constant from '../../constants';
 
@@ -77,9 +78,7 @@ var NotesAddDialog = React.createClass({
 
     return <EditDialog id="notes" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } isValid={ this.isValid } didChange={ this.didChange }
-      title= {
-        <strong>Add Note</strong>
-      }>
+      title={<strong>Add Note</strong>}>
       <Row>
         <Col md={12}>
           <Form>

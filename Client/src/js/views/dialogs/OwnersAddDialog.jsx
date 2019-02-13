@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -13,6 +13,7 @@ import DropdownControl from '../../components/DropdownControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank, onlyLetters } from '../../utils/string';
 
@@ -256,9 +257,7 @@ var OwnersAddDialog = React.createClass({
 
     return <EditDialog id="add-owner" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title= {
-        <strong>Add Owner</strong>
-      }>
+      title={<strong>Add Owner</strong>}>
       <Form>
         <FormGroup controlId="name" validationState={ this.state.nameError ? 'error' : null }>
           <ControlLabel>Company Name <sup>*</sup></ControlLabel>

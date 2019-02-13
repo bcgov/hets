@@ -3,12 +3,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Grid, Row, Col } from 'react-bootstrap';
-import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import DateControl from '../../components/DateControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import Spinner from '../../components/Spinner.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isValidDate } from '../../utils/date';
 import { isBlank, notBlank } from '../../utils/string';
@@ -98,9 +99,7 @@ var RentalAgreementsEditDialog = React.createClass({
 
     return <EditDialog id="rental-agreements-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={
-        <strong>Rental Agreement Details</strong>
-      }>
+      title={<strong>Rental Agreement Details</strong>}>
       {(() => {
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 

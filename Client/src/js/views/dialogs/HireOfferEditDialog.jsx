@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Grid, Row, Col, Radio, Form, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
+import { Grid, Row, Col, Radio, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
 
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -16,9 +16,11 @@ import CheckboxControl from '../../components/CheckboxControl.jsx';
 import DropdownControl from '../../components/DropdownControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import { today, toZuluTime, formatDateTime } from '../../utils/date';
 import { notBlank, isBlank } from '../../utils/string';
+
 
 const STATUS_YES = 'Yes';
 const STATUS_NO = 'No';
@@ -252,9 +254,7 @@ var HireOfferEditDialog = React.createClass({
 
     return <EditDialog id="hire-offer-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={
-        <strong>Response</strong>
-      }>
+      title={<strong>Response</strong>}>
       {(() => {
         var blankRentalAgreements = _.sortBy(this.props.blankRentalAgreements.data, 'number');
 

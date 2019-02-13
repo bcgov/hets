@@ -80,9 +80,7 @@ var NotesDialog = React.createClass({
     return (
       <ModalDialog id="notes" show={ this.props.show }
         onClose={ this.props.onClose }
-        title= {
-          <strong>Notes</strong>
-        }>
+        title={<strong>Notes</strong>}>
         <TableControl id="notes-list" headers={ headers }>
           {
             _.map(this.props.notes, (note) => {

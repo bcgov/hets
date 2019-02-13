@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Well, Row, Col, Alert, Label, Button, Glyphicon, Popover, Form, FormGroup, HelpBlock, ButtonGroup } from 'react-bootstrap';
+import { Well, Row, Col, Alert, Label, Button, Glyphicon, Popover, FormGroup, HelpBlock, ButtonGroup } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
@@ -25,6 +25,7 @@ import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import Confirm from '../components/Confirm.jsx';
 import TableControl from '../components/TableControl.jsx';
+import Form from '../components/Form.jsx';
 
 import { daysFromToday, formatDateTime, today, isValidDate, toZuluTime } from '../utils/date';
 import { isBlank, notBlank } from '../utils/string';
@@ -433,7 +434,7 @@ var ExpireOverlay = React.createClass({
   render() {
     var props = _.omit(this.props, 'onSave', 'hide', 'userRole');
     return <Popover id="users-role-popover" title="Set Expiry Date" { ...props }>
-      <Form inline>
+      <Form inline onSubmit={this.saveUserRole}>
         <FormGroup controlId="expiryDate" validationState={ this.state.expiryDateError ? 'error' : null }>
           <DateControl id="expiryDate" date={ this.state.expiryDate } updateState={ this.updateState } title="Expiry Date"/>
           <HelpBlock>{ this.state.expiryDateError }</HelpBlock>
