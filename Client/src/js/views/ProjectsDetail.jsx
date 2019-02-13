@@ -303,18 +303,36 @@ var ProjectsDetail = React.createClass({
 
                   return <Row id="projects-data" className="equal-height">
                     <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Project">{ project.name }</ColDisplay>
+                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Provincial Project Number">{ project.provincialProjectNumber }</ColDisplay>
                     </Col>
                     <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ project.primaryContactRole || 'Primary Contact' }>
+                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Responsibility Centre">{ project.responsibilityCentre }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Service Line">{ project.serviceLine }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="STOB">{ project.stob }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Product">{ project.product }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Business Function">{ project.businessFunction }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Work Activity">{ project.workActivity }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Cost Type">{ project.costType }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Project Information">{ project.information }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label={ project.primaryContactRole || 'Primary Contact' }>
                         { project.primaryContactEmail ? mailto : `${project.primaryContactName}` }{ project.primaryContactPhone ? `, ${project.primaryContactPhone}` : '' }
                       </ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Provincial Project Number">{ project.provincialProjectNumber }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Information">{ project.information }</ColDisplay>
                     </Col>
                   </Row>;
                 })()}
