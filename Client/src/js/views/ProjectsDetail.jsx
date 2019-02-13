@@ -303,6 +303,9 @@ var ProjectsDetail = React.createClass({
 
                   return <Row id="projects-data" className="equal-height">
                     <Col lg={4} md={6} sm={12} xs={12}>
+                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Fiscal Year">{ project.fiscalYear }</ColDisplay>
+                    </Col>
+                    <Col lg={4} md={6} sm={12} xs={12}>
                       <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Provincial Project Number">{ project.provincialProjectNumber }</ColDisplay>
                     </Col>
                     <Col lg={4} md={6} sm={12} xs={12}>

@@ -24,6 +24,7 @@ import TooltipButton from '../components/TooltipButton.jsx';
 
 var Projects = React.createClass({
   propTypes: {
+    fiscalYears: React.PropTypes.array,
     projects: React.PropTypes.object,
     project: React.PropTypes.object,
     favourites: React.PropTypes.object,
@@ -39,6 +40,7 @@ var Projects = React.createClass({
         statusCode: this.props.search.statusCode || Constant.PROJECT_STATUS_CODE_ACTIVE,
         projectName: this.props.search.projectName || '',
         projectNumber: this.props.search.projectNumber || '',
+        fiscalYear: this.props.search.fiscalYear || '',
       },
       ui : {
         sortField: this.props.ui.sortField || 'name',
@@ -62,8 +64,11 @@ var Projects = React.createClass({
       searchParams.projectNumber = this.state.search.projectNumber;
     }
 
-    return searchParams;
+    if (this.state.search.fiscalYear) {
+      searchParams.fiscalYear = this.state.search.fiscalYear;
+    }
 
+    return searchParams;
   },
 
   componentDidMount() {
@@ -93,6 +98,7 @@ var Projects = React.createClass({
       statusCode: Constant.PROJECT_STATUS_CODE_ACTIVE,
       projectName: '',
       projectNumber: '',
+      fiscalYear:  '',
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
@@ -160,6 +166,7 @@ var Projects = React.createClass({
 
     return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
       { field: 'name',                     title: 'Project'                                        },
+      { field: 'fiscalYear',               title: 'Fiscal Year'                                    },
       { field: 'provincialProjectNumber',  title: 'Project Number'                                 },
       { field: 'primaryContactName',       title: 'Primary Contact'                                },
       { field: 'primaryContactPhone',      title: 'Contact #'                                      },
@@ -174,6 +181,7 @@ var Projects = React.createClass({
         _.map(projects, (project) => {
           return <tr key={ project.id } className={ project.isActive ? null : 'info' }>
             <td>{ project.name }</td>
+            <td>{ project.fiscalYear }</td>
             <td>{ project.provincialProjectNumber }</td>
             <td>{ project.primaryContactName }</td>
             <td>{ project.primaryContactPhone }</td>
@@ -214,6 +222,9 @@ var Projects = React.createClass({
                   items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
                 <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
                 <FormInputControl id="projectNumber" type="text" placeholder="Project number" value={ this.state.search.projectNumber } updateState={ this.updateSearchState }></FormInputControl>
+                <DropdownControl id="fiscalYear" placeholder="Fiscal year" blankLine="(All)" title={ this.state.search.fiscalYear } updateState={ this.updateSearchState }
+                  items={ this.props.fiscalYears }
+                />
                 <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
                 <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
               </ButtonToolbar>
@@ -250,6 +261,7 @@ var Projects = React.createClass({
 
 function mapStateToProps(state) {
   return {
+    fiscalYears: state.lookups.fiscalYears,
     projects: state.models.projects,
     project: state.models.project,
     favourites: state.models.favourites,

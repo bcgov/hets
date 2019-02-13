@@ -12,6 +12,7 @@ const DEFAULT_LOOKUPS = {
     data: {},
     loading: false,
   },
+  fiscalYears: {},
   permissions: {},
   rentalConditions: {
     data: [],
@@ -64,6 +65,9 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
 
     case Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_LOOKUP:
       return { ...state, districtEquipmentTypes: { data: action.districtEquipmentTypes, loading: false } };
+
+    case Action.UPDATE_FISCAL_YEARS_LOOKUP:
+      return { ...state, fiscalYears: action.fiscalYears };
 
     case Action.UPDATE_PERMISSIONS_LOOKUP:
       return { ...state, permissions: action.permissions };

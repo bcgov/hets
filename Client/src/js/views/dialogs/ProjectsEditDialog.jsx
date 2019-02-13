@@ -8,14 +8,15 @@ import _ from 'lodash';
 
 import * as Constant from '../../constants';
 
+import DropdownControl from '../../components/DropdownControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import DropdownControl from '../../components/DropdownControl.jsx';
 
 import { isBlank } from '../../utils/string';
 
 var ProjectsEditDialog = React.createClass({
   propTypes: {
+    fiscalYears: React.PropTypes.array,
     project: React.PropTypes.object,
     projects: React.PropTypes.object,
 
@@ -28,6 +29,7 @@ var ProjectsEditDialog = React.createClass({
     return {
       projectName: this.props.project.name || '',
       projectStatus: this.props.project.status || Constant.PROJECT_STATUS_CODE_ACTIVE,
+      fiscalYear: this.props.project.fiscalYear || _.first( _.takeRight(this.props.fiscalYears, 2)),
       provincialProjectNumber: this.props.project.provincialProjectNumber || '',
       responsibilityCentre: this.props.project.responsibilityCentre || '',
       serviceLine: this.props.project.serviceLine || '',
@@ -56,6 +58,7 @@ var ProjectsEditDialog = React.createClass({
     var project = this.props.project;
 
     if (this.state.projectName !== project.name) { return true; }
+    if (this.state.fiscalYear !== project.fiscalYear) { return true; }
     if (this.state.provincialProjectNumber !== project.provincialProjectNumber) { return true; }
     if (this.state.responsibilityCentre !== project.responsibilityCentre) { return true; }
     if (this.state.serviceLine !== project.serviceLine) { return true; }
@@ -73,6 +76,7 @@ var ProjectsEditDialog = React.createClass({
   isValid() {
     this.setState({
       statusError: '',
+      fiscalYearError: '',
       projectNameError: '',
     });
 
@@ -93,6 +97,11 @@ var ProjectsEditDialog = React.createClass({
       }
     }
 
+    if (isBlank(this.state.fiscalYear)) {
+      this.setState({ fiscalYearError: 'Fiscal year is required' });
+      valid = false;
+    }
+
     if (isBlank(this.state.projectStatus)) {
       this.setState({ projectStatusCodeError: 'Project status is required' });
       valid = false;
@@ -109,6 +118,7 @@ var ProjectsEditDialog = React.createClass({
       primaryContact: this.props.project.primaryContact,
       name: this.state.projectName,
       status: this.state.projectStatus,
+      fiscalYear: this.state.fiscalYear,
       provincialProjectNumber: this.state.provincialProjectNumber,
       responsibilityCentre: this.state.responsibilityCentre,
       serviceLine: this.state.serviceLine,
@@ -132,13 +142,15 @@ var ProjectsEditDialog = React.createClass({
       <Form>
         <Grid fluid>
           <Row>
-            <Col xs={6}>
+            <Col xs={12}>
               <FormGroup controlId="projectName" validationState={ this.state.projectNameError ? 'error' : null}>
                 <ControlLabel>Project Name <sup>*</sup></ControlLabel>
                 <FormInputControl type="text" value={ this.state.projectName } updateState={ this.updateState} inputRef={ ref => { this.input = ref; }}/>
                 <HelpBlock>{ this.state.projectNameError }</HelpBlock>
               </FormGroup>
             </Col>
+          </Row>
+          <Row>
             <Col xs={6}>
               <FormGroup controlId="projectStatus" validationState={ this.state.projectStatusCodeError ? 'error' : null }>
                 <ControlLabel>Project Status</ControlLabel>
@@ -147,6 +159,15 @@ var ProjectsEditDialog = React.createClass({
                   items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]}
                 />
                 <HelpBlock>{ this.state.projectStatusCodeError }</HelpBlock>
+              </FormGroup>
+            </Col>
+            <Col xs={6}>
+              <FormGroup controlId="fiscalYear" validationState={ this.state.fiscalYearError ? 'error' : null }>
+                <ControlLabel>Fiscal Year <sup>*</sup></ControlLabel>
+                <DropdownControl id="fiscalYear" title={ this.state.fiscalYear } updateState={ this.updateState }
+                  items={ _.takeRight(this.props.fiscalYears, 2) }
+                />
+                <HelpBlock>{ this.state.fiscalYearError }</HelpBlock>
               </FormGroup>
             </Col>
           </Row>
@@ -222,6 +243,7 @@ var ProjectsEditDialog = React.createClass({
 
 function mapStateToProps(state) {
   return {
+    fiscalYears: state.lookups.fiscalYears,
     project: state.models.project,
     projects: state.models.projects,
   };

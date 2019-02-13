@@ -4,8 +4,11 @@ import { connect } from 'react-redux';
 
 import { Grid, Row, Col, Form, FormGroup, HelpBlock, ControlLabel, FormControl } from 'react-bootstrap';
 
+import _ from 'lodash';
+
 import * as Constant from '../../constants';
 
+import DropdownControl from '../../components/DropdownControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
@@ -14,6 +17,7 @@ import { isBlank, notBlank } from '../../utils/string';
 var ProjectsAddDialog = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
+    fiscalYears: React.PropTypes.array,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
@@ -22,6 +26,7 @@ var ProjectsAddDialog = React.createClass({
   getInitialState() {
     return {
       name: '',
+      fiscalYear: _.first( _.takeRight(this.props.fiscalYears, 2)),
       provincialProjectNumber: '',
       responsibilityCentre: '',
       serviceLine: '',
@@ -46,6 +51,7 @@ var ProjectsAddDialog = React.createClass({
 
   didChange() {
     return notBlank(this.state.name) ||
+      notBlank(this.state.fiscalYear) ||
       notBlank(this.state.provincialProjectNumber) ||
       notBlank(this.state.responsibilityCentre) ||
       notBlank(this.state.serviceLine) ||
@@ -63,11 +69,17 @@ var ProjectsAddDialog = React.createClass({
 
     this.setState({
       nameError: '',
+      fiscalYearError: '',
       districtError: '',
     });
 
     if (isBlank(this.state.name)) {
       this.setState({ nameError: 'Name is required' });
+      valid = false;
+    }
+
+    if (isBlank(this.state.fiscalYear)) {
+      this.setState({ fiscalYearError: 'Fiscal year is required' });
       valid = false;
     }
 
@@ -77,6 +89,7 @@ var ProjectsAddDialog = React.createClass({
   onSave() {
     this.props.onSave({
       name: this.state.name,
+      fiscalYear: this.state.fiscalYear,
       provincialProjectNumber: this.state.provincialProjectNumber,
       district: { id: this.props.currentUser.district.id },
       status: Constant.PROJECT_STATUS_CODE_ACTIVE,
@@ -100,17 +113,28 @@ var ProjectsAddDialog = React.createClass({
       <Form>
         <Grid fluid>
           <Row>
-            <Col xs={6}>
+            <Col xs={12}>
               <FormGroup controlId="name" validationState={ this.state.nameError ? 'error' : null }>
                 <ControlLabel>Project Name <sup>*</sup></ControlLabel>
                 <FormInputControl type="text" value={ this.state.name } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
                 <HelpBlock>{ this.state.nameError }</HelpBlock>
               </FormGroup>
             </Col>
+          </Row>
+          <Row>
             <Col xs={6}>
               <FormGroup controlId="districtId" validationState={ this.state.districtError ? 'error' : null }>
                 <ControlLabel>District</ControlLabel>
                 <FormControl.Static>{ this.props.currentUser.district.name }</FormControl.Static>
+              </FormGroup>
+            </Col>
+            <Col xs={6}>
+              <FormGroup controlId="fiscalYear" validationState={ this.state.fiscalYearError ? 'error' : null }>
+                <ControlLabel>Fiscal Year <sup>*</sup></ControlLabel>
+                <DropdownControl id="fiscalYear" title={ this.state.fiscalYear } updateState={ this.updateState }
+                  items={ _.takeRight(this.props.fiscalYears, 2) }
+                />
+                <HelpBlock>{ this.state.fiscalYearError }</HelpBlock>
               </FormGroup>
             </Col>
           </Row>
@@ -187,6 +211,7 @@ var ProjectsAddDialog = React.createClass({
 function mapStateToProps(state) {
   return {
     currentUser: state.user,
+    fiscalYears: state.lookups.fiscalYears,
   };
 }
 
