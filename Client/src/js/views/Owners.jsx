@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form } from 'react-bootstrap';
+import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -22,6 +22,7 @@ import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
+import Form from '../components/Form.jsx';
 import { caseInsensitiveSort, sortDir } from '../utils/array.js';
 
 var Owners = React.createClass({
@@ -94,8 +95,7 @@ var Owners = React.createClass({
     Api.searchOwners(this.buildSearchParams());
   },
 
-  search(e) {
-    e.preventDefault();
+  search() {
     this.fetch();
   },
 
@@ -215,7 +215,7 @@ var Owners = React.createClass({
       <Well id="owners-bar" bsSize="small" className="clearfix">
         <Row>
           <Col xs={9} sm={10}>
-            <Form onSubmit={ this.search }>
+            <Form>
               <ButtonToolbar id="owners-filters">
                 <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                   items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />

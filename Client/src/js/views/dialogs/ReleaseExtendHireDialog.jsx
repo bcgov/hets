@@ -1,11 +1,13 @@
 import React from 'react';
 
 import { Grid, Row } from 'react-bootstrap';
-import { Form, FormGroup, ControlLabel } from 'react-bootstrap';
+import { FormGroup, ControlLabel } from 'react-bootstrap';
 import Moment from 'moment';
 
 import DateControl from '../../components/DateControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
+import Form from '../../components/Form.jsx';
+
 
 var ReleaseExtendHireDialog = React.createClass({
   propTypes: {
@@ -51,22 +53,15 @@ var ReleaseExtendHireDialog = React.createClass({
         onSave={ this.onSave }
         didChange={ this.didChange }
         isValid={ this.isValid }
-        title={
-          <strong>{ this.props.title }</strong>
-        }
-        bsSize="small"
-      >
+        title={<strong>{ this.props.title }</strong>}
+        bsSize="small">
         <Form>
           <Grid fluid>
             <Row>
-              <FormGroup>
-                Hours Entered:
-              </FormGroup>
+              <FormGroup>Hours Entered:</FormGroup>
             </Row>
             <Row>
-              <FormGroup>
-                Last Hours Date:
-              </FormGroup>
+              <FormGroup>Last Hours Date:</FormGroup>
             </Row>
             <Row>
               <FormGroup>

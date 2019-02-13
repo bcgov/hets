@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Grid, Row, Col } from 'react-bootstrap';
-import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -14,6 +14,7 @@ import DropdownControl from '../../components/DropdownControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
@@ -155,7 +156,7 @@ var UsersEditDialog = React.createClass({
 
     return <EditDialog id="users-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title= { <strong>User</strong> }>
+      title={ <strong>User</strong> }>
       {(() => {
         return <Form>
           <Grid fluid>

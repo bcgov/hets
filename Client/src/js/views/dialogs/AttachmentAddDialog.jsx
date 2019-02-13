@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { Form, FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
 
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
@@ -85,11 +86,9 @@ var AttachmentAddDialog = React.createClass({
   render() {
     const { forms } = this.state;
 
-    return <EditDialog id="equipment-add" show={ this.props.show }
+    return <EditDialog id="attachment-add" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title= {
-        <strong>Add Attachment</strong>
-      }>
+      title={<strong>Add Attachment</strong>}>
       <div className="forms-container">
         { forms.map((form, i) => (
           <Form key={i}>
@@ -110,14 +109,14 @@ var AttachmentAddDialog = React.createClass({
             <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
           </Button>
         )}
-        { forms.length < 10 &&
-        <Button
-          bsSize="xsmall"
-          className="pull-right"
-          onClick={ this.addInput }>
-          <Glyphicon glyph="plus" />&nbsp;<strong>Add</strong>
-        </Button>
-        }
+        { forms.length < 10 && (
+          <Button
+            bsSize="xsmall"
+            className="pull-right"
+            onClick={ this.addInput }>
+            <Glyphicon glyph="plus" />&nbsp;<strong>Add</strong>
+          </Button>
+        )}
       </div>
     </EditDialog>;
   },

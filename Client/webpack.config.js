@@ -49,7 +49,7 @@ if(IS_PRODUCTION) {
 
 module.exports = {
   bail: IS_PRODUCTION,
-  devtool: IS_PRODUCTION ? 'source-map' : 'eval',
+  devtool: IS_PRODUCTION ? 'source-map' : 'cheap-source-map',
   entry: {
     app: _.compact([
       IS_PRODUCTION ? null : 'webpack-hot-middleware/client',

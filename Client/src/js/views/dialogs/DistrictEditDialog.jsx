@@ -2,11 +2,12 @@ import React from 'react';
 
 import _ from 'lodash';
 
-import { Form, FormGroup, HelpBlock } from 'react-bootstrap';
+import { FormGroup, HelpBlock } from 'react-bootstrap';
 
 import EditDialog from '../../components/EditDialog.jsx';
 import CheckboxControl from '../../components/CheckboxControl.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
+import Form from '../../components/Form.jsx';
 
 var DistrictEditDialog = React.createClass({
   propTypes: {
@@ -84,9 +85,7 @@ var DistrictEditDialog = React.createClass({
 
     return <EditDialog id="equipment-add" show={ this.props.show } bsSize="small"
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title= {
-        <strong>{ this.state.isNew ? 'Add District' : 'Edit District' }</strong>
-      }>
+      title={<strong>{ this.state.isNew ? 'Add District' : 'Edit District' }</strong>}>
       <Form>
         <FormGroup controlId="districtId" validationState={ this.state.districtIdError ? 'error' : null }>
           <FilterDropdown id="districtId" placeholder="Choose District" className="full-width"

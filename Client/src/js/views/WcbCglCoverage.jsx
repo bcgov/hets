@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { Link } from 'react-router';
 
-import { PageHeader, Well, Alert, Row, Col, Button, ButtonGroup, Glyphicon, Form, ControlLabel  } from 'react-bootstrap';
+import { PageHeader, Well, Alert, Row, Col, Button, ButtonGroup, Glyphicon, ControlLabel  } from 'react-bootstrap';
 
 import _ from 'lodash';
 import Moment from 'moment';
@@ -20,6 +20,7 @@ import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
+import Form from '../components/Form.jsx';
 
 import { formatDateTime, toZuluTime } from '../utils/date';
 

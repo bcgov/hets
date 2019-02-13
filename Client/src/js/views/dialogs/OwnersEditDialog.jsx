@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -10,6 +10,7 @@ import CheckboxControl from '../../components/CheckboxControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 

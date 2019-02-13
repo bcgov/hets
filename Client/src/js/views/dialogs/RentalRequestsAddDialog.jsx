@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Form, FormGroup, HelpBlock, ControlLabel, Alert, Row, Col } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel, Alert, Row, Col } from 'react-bootstrap';
 
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -17,6 +17,7 @@ import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import Spinner from '../../components/Spinner.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isValidDate, today } from '../../utils/date';
 import { isBlank } from '../../utils/string';
@@ -209,9 +210,7 @@ var RentalRequestsAddDialog = React.createClass({
 
     return <EditDialog id="add-rental-request" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title= {
-        <strong>Add Rental Request</strong>
-      }>
+      title={<strong>Add Rental Request</strong>}>
       <Form>
         <Row>
           <Col md={12}>
