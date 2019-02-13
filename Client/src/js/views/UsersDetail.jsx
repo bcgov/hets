@@ -192,7 +192,7 @@ var UsersDetail = React.createClass({
         this.updateCurrentUserDistricts(response.data);
       }
       this.closeDistrictEditDialog();
-    }); 
+    });
   },
 
   deleteDistrict(district) {
@@ -210,10 +210,10 @@ var UsersDetail = React.createClass({
   render() {
     var user = this.props.user;
 
-    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) { 
+    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) {
       return (
         <div>You do not have permission to view this page.</div>
-      ); 
+      );
     }
 
     return <div id="users-detail">
@@ -280,7 +280,7 @@ var UsersDetail = React.createClass({
               <h3>Districts</h3>
               {(() => {
                 var addDistrictButton = <Button title="Add District" bsSize="small" onClick={ this.addUserDistrict }><Glyphicon glyph="plus" />&nbsp;<strong>Add District</strong></Button>;
-                
+
                 if (this.props.userDistricts.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
                 if (this.props.userDistricts.data.length === 0) { return <Alert bsStyle="success">No Districts { addDistrictButton }</Alert>; }
@@ -297,7 +297,7 @@ var UsersDetail = React.createClass({
                         return <tr key={ district.id }>
                           <td>{ district.isPrimary && <Glyphicon glyph="star" /> }{ district.district.name }</td>
                           <td style={{ textAlign: 'right' }}>
-                            { !district.isPrimary && 
+                            { !district.isPrimary &&
                               <ButtonGroup>
                                 <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteDistrict.bind(this, district) } /> }>
                                   <Button title="Delete District" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
@@ -378,25 +378,25 @@ var UsersDetail = React.createClass({
         </Row>
       </div>
       { this.state.showEditDialog &&
-        <UsersEditDialog 
-          show={ this.state.showEditDialog } 
-          onSave={ this.onSaveEdit } 
-          onClose= { this.onCloseEdit } 
+        <UsersEditDialog
+          show={ this.state.showEditDialog }
+          onSave={ this.onSaveEdit }
+          onClose= { this.onCloseEdit }
         />
       }
       { this.state.showUserRoleDialog &&
-        <UserRoleAddDialog 
-          show={ this.state.showUserRoleDialog } 
-          onSave={ this.addUserRole } 
-          onClose={ this.closeUserRoleDialog } 
+        <UserRoleAddDialog
+          show={ this.state.showUserRoleDialog }
+          onSave={ this.addUserRole }
+          onClose={ this.closeUserRoleDialog }
         />
       }
-      { this.state.showDistrictEditDialog && 
-        <DistrictEditDialog 
-          show={ this.state.showDistrictEditDialog } 
-          onSave={ this.saveDistrict } 
+      { this.state.showDistrictEditDialog &&
+        <DistrictEditDialog
+          show={ this.state.showDistrictEditDialog }
+          onSave={ this.saveDistrict }
           onClose={ this.closeDistrictEditDialog }
-          districts={ this.props.districts } 
+          districts={ this.props.districts }
           user={ this.props.user }
           district={ this.state.district }
           userDistricts={ this.props.userDistricts.data }
@@ -464,7 +464,7 @@ function mapStateToProps(state) {
     ui: state.ui.userRoles,
     rentalConditions: state.lookups.rentalConditions,
     userDistricts: state.models.userDistricts,
-    districts: state.lookups.districts,    
+    districts: state.lookups.districts,
   };
 }
 

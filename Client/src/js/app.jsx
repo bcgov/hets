@@ -44,18 +44,18 @@ hashHistory.listen(location =>  {
 });
 
 // redirects regular users to rollover page if rollover in progress
-function redirectIfRolloverActive(path) { 
+function redirectIfRolloverActive(path) {
   var onBusinessPage = path.indexOf(Constant.BUSINESS_PORTAL_PATHNAME) === 0;
   var onRolloverPage = path === '/' + Constant.ROLLOVER_PATHNAME;
   if (onBusinessPage || onRolloverPage) {
     return;
   }
-  
+
   var user = store.getState().user;
   if (!user.district) {
     return;
   }
-  
+
   Api.getRolloverStatus(user.district.id).then(() => {
     var rolloverActive = store.getState().lookups.rolloverStatus.rolloverActive;
     if (rolloverActive) {
@@ -74,7 +74,7 @@ function onEnterBusiness() {
   if (store.getState().user.hasPermission(Constant.PERMISSION_LOGIN)) {
     hashHistory.push('/');
   }
-  
+
   // TODO: redirect other users to 'unauthorized access' page
   //hashHistory.push('/');
 }
@@ -85,12 +85,12 @@ function onEnterApplication() {
     redirectIfRolloverActive(hashHistory.getCurrentLocation().pathname);
     return;
   }
-  
+
   // redirect business users to business page
   if (store.getState().user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
     hashHistory.push(Constant.BUSINESS_PORTAL_PATHNAME);
   }
-  
+
   // TODO: redirect other users to 'unauthorized access' page
   //hashHistory.push('/');
 }

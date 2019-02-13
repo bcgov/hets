@@ -50,7 +50,7 @@ namespace HetsApi.Controllers
 
             // not found
             if (districtId == null) return new ObjectResult(new List<HetConditionType>());
-            
+
             // get condition types for this district
             List<HetConditionType> conditionTypes = _context.HetConditionType.AsNoTracking()
                 .Include(x => x.District)
@@ -58,9 +58,9 @@ namespace HetsApi.Controllers
                             x.District.DistrictId == districtId)
                 .ToList();
 
-            return new ObjectResult(new HetsResponse(conditionTypes));        
+            return new ObjectResult(new HetsResponse(conditionTypes));
         }
-        
+
         /// <summary>
         /// Delete condition type
         /// </summary>
@@ -76,9 +76,9 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             HetConditionType item = _context.HetConditionType.First(a => a.ConditionTypeId == id);
-        
+
             _context.HetConditionType.Remove(item);
 
             // save changes
@@ -124,7 +124,7 @@ namespace HetsApi.Controllers
                 return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
-            // add or update contact            
+            // add or update contact
             if (item.ConditionTypeId > 0)
             {
                 bool exists = _context.HetConditionType.Any(a => a.ConditionTypeId == id);
@@ -142,7 +142,7 @@ namespace HetsApi.Controllers
                 condition.ConditionTypeCode = item.ConditionTypeCode;
                 condition.Description = item.Description;
                 condition.Active = item.Active;
-                condition.DistrictId = item.District.DistrictId;                
+                condition.DistrictId = item.District.DistrictId;
             }
             else
             {
@@ -154,7 +154,7 @@ namespace HetsApi.Controllers
                     Active = item.Active,
                     DistrictId = item.District.DistrictId
                 };
-                               
+
                 _context.HetConditionType.Add(condition);
             }
 

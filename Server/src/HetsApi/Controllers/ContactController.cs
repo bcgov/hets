@@ -48,7 +48,7 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             HetContact item = _context.HetContact.First(a => a.ContactId == id);
 
             // check if this is a project - and if this is a "primary contact"
@@ -69,9 +69,9 @@ namespace HetsApi.Controllers
             _context.HetContact.Remove(item);
 
             // save the changes
-            _context.SaveChanges();            
+            _context.SaveChanges();
 
             return new ObjectResult(new HetsResponse(item));
-        }        
+        }
     }
 }

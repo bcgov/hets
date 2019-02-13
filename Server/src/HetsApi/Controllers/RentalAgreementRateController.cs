@@ -54,9 +54,9 @@ namespace HetsApi.Controllers
 
             _context.HetRentalAgreementRate.Remove(rate);
 
-            // save the changes	
+            // save the changes
             _context.SaveChanges();
-            
+
             return new ObjectResult(new HetsResponse(rate));
         }
 
@@ -88,11 +88,11 @@ namespace HetsApi.Controllers
             rate.Rate = item.Rate;
             rate.Active = true;
             rate.Overtime = false;
-            
-            // save the changes	
+
+            // save the changes
             _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(item));            
+            return new ObjectResult(new HetsResponse(item));
         }
     }
 }

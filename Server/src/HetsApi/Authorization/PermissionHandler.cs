@@ -38,7 +38,7 @@ namespace HetsApi.Authorization
         {
             _httpContext = httpContextAccessor.HttpContext;
             _hostingEnv = hostingEnv;
-        }       
+        }
 
         /// <summary>
         /// Permission Handler
@@ -47,7 +47,7 @@ namespace HetsApi.Authorization
         /// <param name="requirement"></param>
         /// <returns></returns>
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
-        {            
+        {
             // **************************************************
             // check if we have a Dev Environment Cookie
             // **************************************************

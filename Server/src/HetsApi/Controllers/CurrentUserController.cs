@@ -166,7 +166,7 @@ namespace HetsApi.Controllers
 
             // not found - return an HTTP 401 error response
             if (string.IsNullOrEmpty(userId)) return StatusCode(401);
-            
+
             User user = new User();
 
             if (string.IsNullOrEmpty(businessGuid))
@@ -299,7 +299,7 @@ namespace HetsApi.Controllers
                     .FirstOrDefault(x => x.User.SmUserId == userId);
             }
 
-            // update the current district for the user            
+            // update the current district for the user
             if (userDistrict != null)
             {
                 HetUser user = _context.HetUser.First(a => a.SmUserId == userId);
@@ -344,10 +344,10 @@ namespace HetsApi.Controllers
             bool userExists = _context.HetUser.Any(a => a.SmUserId == userId);
 
             if (!userExists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             HetUser user = _context.HetUser.AsNoTracking()
                 .First(a => a.SmUserId == userId);
-            
+
             // get favourites
             bool exists = _context.HetUserFavourite.Any(a => a.UserFavouriteId == item.UserFavouriteId);
 
@@ -362,7 +362,7 @@ namespace HetsApi.Controllers
                 favourite.Value = item.Value;
                 favourite.Name = item.Name;
                 favourite.IsDefault = item.IsDefault;
-                
+
                 _context.HetUserFavourite.Update(favourite);
             }
             else

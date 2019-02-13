@@ -151,7 +151,7 @@ var OwnersEditDialog = React.createClass({
     var owner = this.props.owner;
     var localAreas = _.sortBy(this.props.localAreas, 'name');
 
-    return <EditDialog id="owners-edit" show={ this.props.show } 
+    return <EditDialog id="owners-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title= {
         <strong>Owner</strong>

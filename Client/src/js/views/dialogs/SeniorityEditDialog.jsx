@@ -75,17 +75,17 @@ var SeniorityEditDialog = React.createClass({
       this.setState({ serviceHoursLastYearError: 'Service hours are required' });
       valid = false;
     }
-    
+
     if (isBlank(this.state.serviceHoursTwoYearsAgo)) {
       this.setState({ serviceHoursTwoYearsAgoError: 'Service hours are required' });
       valid = false;
     }
-    
+
     if (isBlank(this.state.serviceHoursThreeYearsAgo)) {
       this.setState({ serviceHoursThreeYearsAgoError: 'Service hours are required' });
       valid = false;
     }
-    
+
     // Validate registered date
     if (isBlank(this.state.seniorityEffectiveDate)) {
       this.setState({ seniorityDateError: 'Registered date is required' });
@@ -97,7 +97,7 @@ var SeniorityEditDialog = React.createClass({
       this.setState({ seniorityDateError: 'Registration date must be today or earlier' });
       valid = false;
     }
-    
+
     if (this.didChange() && (isBlank(this.state.seniorityOverrideReason) || (this.state.seniorityOverrideReason === this.props.equipment.seniorityOverrideReason))) {
       this.setState({ overrideReasonError: 'A new reason must be provided each time seniority is manually overriden' });
       valid = false;

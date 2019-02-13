@@ -62,7 +62,7 @@ var Equipment = React.createClass({
 
   buildSearchParams() {
     var searchParams = {};
-    
+
     if (this.state.search.equipmentAttachment) {
       searchParams.equipmentAttachment = this.state.search.equipmentAttachment;
     }
@@ -133,7 +133,7 @@ var Equipment = React.createClass({
   },
 
   clearSearch() {
-    var defaultSearchParameters = { 
+    var defaultSearchParameters = {
       selectedLocalAreasIds:[],
       selectedEquipmentTypesIds: [],
       equipmentAttachment: '',
@@ -175,10 +175,10 @@ var Equipment = React.createClass({
   },
 
   renderResults() {
-    if (Object.keys(this.props.equipmentList.data).length === 0) { 
-      return <Alert bsStyle="success">No equipment</Alert>; 
+    if (Object.keys(this.props.equipmentList.data).length === 0) {
+      return <Alert bsStyle="success">No equipment</Alert>;
     }
-    
+
     return (
       <EquipmentTable
         ui={this.state.ui}
@@ -203,7 +203,7 @@ var Equipment = React.createClass({
     if (this.props.equipmentList.loaded) {
       resultCount = '(' + Object.keys(this.props.equipmentList.data).length + ')';
     }
-    
+
     return <div id="equipment-list">
       <PageHeader>Equipment { resultCount }
         <ButtonGroup id="equipment-buttons">
@@ -269,14 +269,14 @@ var Equipment = React.createClass({
 
       {(() => {
 
-        if (this.props.equipmentList.loading) { 
-          return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
+        if (this.props.equipmentList.loading) {
+          return <div style={{ textAlign: 'center' }}><Spinner/></div>;
         }
 
         if (this.props.equipmentList.loaded) {
           return this.renderResults();
         }
-        
+
       })()}
 
     </div>;

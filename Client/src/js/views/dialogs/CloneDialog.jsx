@@ -59,7 +59,7 @@ var CloneDialog = React.createClass({
   },
 
   isValid() {
-    return true; 
+    return true;
   },
 
   onSave() {
@@ -77,15 +77,15 @@ var CloneDialog = React.createClass({
       { field: 'datedOn',                  title: 'Dated On'                 },
     ];
 
-    var rentalAgreements = _.filter(this.state.type === BY_PROJECT ? 
-      this.props.projectRentalAgreements.data : this.props.equipmentRentalAgreements.data, item => { 
-      return item.id !== this.props.rentalAgreement.id; 
+    var rentalAgreements = _.filter(this.state.type === BY_PROJECT ?
+      this.props.projectRentalAgreements.data : this.props.equipmentRentalAgreements.data, item => {
+      return item.id !== this.props.rentalAgreement.id;
     });
 
     rentalAgreements = _.reverse(_.sortBy(rentalAgreements, function(rentalAgreement) {
       return rentalAgreement.datedOn;
     }));
-        
+
     return <EditDialog id="clone-dialog" show={ this.props.show } bsSize="large"
       onClose={ this.props.onClose } onSave={ this.onSave } isValid={ this.isValid } didChange={ this.didChange } saveText='Clone'
       title= {
@@ -103,7 +103,7 @@ var CloneDialog = React.createClass({
           {(() => {
             if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-            if (!rentalAgreements || Object.keys(rentalAgreements).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No rental agreements.</Alert>; }          
+            if (!rentalAgreements || Object.keys(rentalAgreements).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No rental agreements.</Alert>; }
 
             return (
               <TableControl id="notes-list" headers={ headers }>
@@ -126,7 +126,7 @@ var CloneDialog = React.createClass({
           { this.props.cloneRentalAgreementError &&
             <Alert bsStyle="danger">{ this.props.cloneRentalAgreementError }</Alert>
           }
-        </Col> 
+        </Col>
       </Row>
     </EditDialog>;
   },

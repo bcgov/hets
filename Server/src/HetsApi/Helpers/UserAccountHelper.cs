@@ -176,7 +176,7 @@ namespace HetsApi.Helpers
             if (!string.IsNullOrEmpty(guid) && string.IsNullOrEmpty(user.Guid))
             {
                 // self register (write the users Guid to the db)
-                int updUserId = user.UserId;                
+                int updUserId = user.UserId;
 
                 using (IDbContextTransaction transaction = context.Database.BeginTransaction())
                 {
@@ -199,13 +199,13 @@ namespace HetsApi.Helpers
                     // commit
                     transaction.Commit();
                 }
-                
+
                 // update the user object for the current session
                 user.Guid = guid;
                 user.AppLastUpdateUserDirectory = user.SmAuthorizationDirectory;
                 user.AppLastUpdateUserGuid = guid;
                 user.AppLastUpdateUserid = userId;
-                user.AppLastUpdateTimestamp = DateTime.UtcNow;                
+                user.AppLastUpdateTimestamp = DateTime.UtcNow;
             }
             else if (!string.IsNullOrEmpty(user.Guid) &&
                      !string.IsNullOrEmpty(guid) &&
@@ -267,7 +267,7 @@ namespace HetsApi.Helpers
         /// <param name="httpContext"></param>
         /// <param name="userId"></param>
         /// <param name="businessGuid"></param>
-        /// <param name="guid"></param>        
+        /// <param name="guid"></param>
         /// <returns></returns>
         public static HetBusinessUser GetBusinessUser(DbAppContext context, HttpContext httpContext, string userId, string businessGuid, string guid = null)
         {
@@ -425,7 +425,7 @@ namespace HetsApi.Helpers
             {
                 context.Entry(user).State = EntityState.Detached;
             }
-            
+
             return user;
         }
     }

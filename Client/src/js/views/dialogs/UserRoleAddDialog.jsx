@@ -100,7 +100,7 @@ var UserRoleAddDialog = React.createClass({
 
   render() {
     var isAdministrator = _.some(this.props.currentUser.userRoles, { roleName: Constant.ADMINISTRATOR_ROLE });
-    
+
     if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
     var filteredRoles = isAdministrator ? this.props.roles : _.reject(this.props.roles, { name: Constant.ADMINISTRATOR_ROLE });

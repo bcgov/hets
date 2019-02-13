@@ -9,7 +9,7 @@ namespace HetsApi.Authorization
     /// Claims Principal Extension
     /// </summary>
     public static class ClaimsPrincipalExtension
-    {        
+    {
         /// <summary>
         /// Check if the user has permission to execute the method
         /// </summary>
@@ -17,7 +17,7 @@ namespace HetsApi.Authorization
         /// <param name="permissions"></param>
         /// <returns></returns>
         public static bool HasPermissions(this ClaimsPrincipal user, params string[] permissions)
-        {            
+        {
             if (!user.HasClaim(c => c.Type == HetUser.PermissionClaim))
                 return false;
 
@@ -26,10 +26,10 @@ namespace HetsApi.Authorization
             if (!user.HasClaim(c => c.Type == HetUser.PermissionClaim))
                 return false;
 
-            if (user.HasClaim(c => c.Type == HetUser.PermissionClaim))                
+            if (user.HasClaim(c => c.Type == HetUser.PermissionClaim))
             {
                 bool hasPermissions = true;
-                
+
                 foreach (string permission in permissions)
                 {
                     if (!user.HasClaim(HetUser.PermissionClaim, permission))
@@ -38,10 +38,10 @@ namespace HetsApi.Authorization
                         break;
                     }
                 }
-                
+
                 hasRequiredPermissions = hasPermissions;
             }
-            
+
             return hasRequiredPermissions;
         }
 

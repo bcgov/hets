@@ -26,7 +26,7 @@ namespace HetsApi.Controllers
         {
             _configuration = configuration;
             _httpContext = httpContextAccessor.HttpContext;
-            _env = env;                        
+            _env = env;
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace HetsApi.Controllers
         /// Receives uploaded files
         /// </summary>
         /// <param name="files"></param>
-        /// <returns></returns>      
+        /// <returns></returns>
         [RequiresPermission(HetPermission.ImportData)]
         [Route("UploadPost")]
         public IActionResult UploadPost(IList<IFormFile> files)

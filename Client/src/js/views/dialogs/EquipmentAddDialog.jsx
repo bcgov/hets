@@ -147,7 +147,7 @@ var EquipmentAddDialog = React.createClass({
         var districts = response.data.map((district) => {
           return district.districtName;
         });
-        this.setState({ 
+        this.setState({
           serialNumberError: `Serial number is currently in use in the following district(s): ${districts.join(', ')}`,
           duplicateSerialNumber: true,
         });
@@ -191,7 +191,7 @@ var EquipmentAddDialog = React.createClass({
       .value();
 
     var equipment = _.find(districtEquipmentTypes, equipment => {
-      return equipment.id == this.state.equipmentTypeId; 
+      return equipment.id == this.state.equipmentTypeId;
     });
 
     var isDumpTruck = equipment && equipment.equipmentType.isDumpTruck;
@@ -259,15 +259,15 @@ var EquipmentAddDialog = React.createClass({
           <div>
             <FormGroup controlId="licencedGvw">
               <ControlLabel>Licenced GVW</ControlLabel>
-              <FormInputControl type="text" defaultValue={ this.state.licencedGvw } updateState={ this.updateState }/>                  
+              <FormInputControl type="text" defaultValue={ this.state.licencedGvw } updateState={ this.updateState }/>
             </FormGroup>
             <FormGroup controlId="legalCapacity">
               <ControlLabel>Truck Legal Capacity</ControlLabel>
-              <FormInputControl type="text" defaultValue={ this.state.legalCapacity } updateState={ this.updateState }/>                  
+              <FormInputControl type="text" defaultValue={ this.state.legalCapacity } updateState={ this.updateState }/>
             </FormGroup>
             <FormGroup controlId="pupLegalCapacity">
               <ControlLabel>Pup Legal Capacity</ControlLabel>
-              <FormInputControl type="text" defaultValue={ this.state.pupLegalCapacity } updateState={ this.updateState }/>                  
+              <FormInputControl type="text" defaultValue={ this.state.pupLegalCapacity } updateState={ this.updateState }/>
             </FormGroup>
           </div>
         }

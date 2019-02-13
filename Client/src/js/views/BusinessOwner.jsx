@@ -67,7 +67,7 @@ var BusinessOwner = React.createClass({
   fetch() {
     this.setState({ loading: true });
     this.setState({ success: false });
-    
+
     store.dispatch({ type: Action.UPDATE_OWNER, owner: null });
 
     var ownerId = this.props.params.ownerId;

@@ -31,7 +31,7 @@ var Main = React.createClass({
   componentDidMount() {
     this.setState({ headerHeight: ($('#header-main').height() + 10) });
   },
-  
+
   onCloseSessionTimeoutDialog() {
     Api.keepAlive();
     resetSessionTimeoutTimer();
@@ -62,8 +62,8 @@ var Main = React.createClass({
         closeText="End Session"
         saveText="Keep Session"
       >
-        Your session will time out in 
-        <Countdown 
+        Your session will time out in
+        <Countdown
           time={300}
           onEnd={ this.onEndSession }
         />. Would you like to keep the session active or end the session?

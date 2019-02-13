@@ -35,7 +35,7 @@ var EquipmentTable = React.createClass({
       }
       return sortValue;
     });
-    
+
     if (this.props.ui.sortDesc) {
       _.reverse(equipmentList);
     }

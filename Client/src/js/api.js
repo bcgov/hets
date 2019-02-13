@@ -325,12 +325,12 @@ export function logoffUser() {
 // Equipment
 ////////////////////
 function getBlockDisplayName(blockNumber, numberOfBlocks, seniority) {
-  if (blockNumber === numberOfBlocks) { 
-    return `Open - ${seniority}`; 
-  } else if (blockNumber == 1) { 
-    return `1 - ${seniority}`; 
-  } else if (blockNumber == 2) { 
-    return `2 - ${seniority}`; 
+  if (blockNumber === numberOfBlocks) {
+    return `Open - ${seniority}`;
+  } else if (blockNumber == 1) {
+    return `1 - ${seniority}`;
+  } else if (blockNumber == 2) {
+    return `2 - ${seniority}`;
   } else if (seniority != null) {
     return `Open - ${seniority}`;
   }
@@ -426,7 +426,7 @@ export function searchEquipmentList(params) {
   return new ApiRequest('/equipment/search').get(params).then(response => {
     var equipmentList = normalize(response.data);
 
-    _.map(equipmentList, equipment => { 
+    _.map(equipmentList, equipment => {
       equipment.details = [equipment.make || '-', equipment.model || '-', equipment.size || '-', equipment.year || '-'].join('/');
       equipment.sortableEquipmentCode = generateSortableEquipmentCode(equipment);
     });
@@ -440,7 +440,7 @@ export function getUnapprovedEquipment() {
   return new ApiRequest('/equipment/search').get({ status: Constant.EQUIPMENT_STATUS_CODE_PENDING }).then(response => {
     var equipmentList = normalize(response.data);
 
-    _.map(equipmentList, equipment => { 
+    _.map(equipmentList, equipment => {
       equipment.details = [equipment.make || '-', equipment.model || '-', equipment.size || '-', equipment.year || '-'].join('/');
     });
 
@@ -609,7 +609,7 @@ export function equipmentSeniorityListPdf(localAreas, types, counterCopy) {
 // Physical Attachments
 ////////////////////
 
-// Introduce later 
+// Introduce later
 // function parsePhysicalAttachment(attachment) {
 //   if (!attachment.type) { attachment.type = { id: 0, code: '', description: ''}; }
 
@@ -657,7 +657,7 @@ function parseOwner(owner) {
 
   owner.workSafeBCPolicyNumber = owner.workSafeBcpolicyNumber;
   delete owner.workSafeBcpolicyNumber;
-  
+
   owner.cglEndDate = owner.cglendDate;
   delete owner.cglendDate;
 
@@ -838,10 +838,10 @@ export function getOwnerEquipment(ownerId) {
   return new ApiRequest(`/owners/${ ownerId }/equipment`).get().then(response => {
     var equipmentList = normalize(response.data);
 
-    _.map(equipmentList, equipment => { 
+    _.map(equipmentList, equipment => {
       equipment.details = [equipment.make || '-', equipment.model || '-', equipment.size || '-', equipment.year || '-'].join('/');
     });
-    
+
     store.dispatch({ type: Action.UPDATE_OWNER_EQUIPMENT, equipment: equipmentList });
   });
 }
@@ -904,7 +904,7 @@ export function transferEquipment(donorOwnerId, recipientOwnerId, equipment, inc
       store.dispatch({ type: Action.EQUIPMENT_TRANSFER_ERROR, errorMessage: response.error.description });
       return Promise.reject(new Error(response.error.description));
     }
-    
+
     return response;
   });
 }
@@ -1006,10 +1006,10 @@ function getFileSizeString(fileSizeInBytes) {
     return adjusted.toFixed(1);
   };
 
-  return gbytes ? 
-    `${ ceiling10(gbytes) } GB` 
-    : (mbytes ? `${ ceiling10(mbytes) } MB` 
-      : (kbytes ? `${ Math.ceil(kbytes) } KB` 
+  return gbytes ?
+    `${ ceiling10(gbytes) } GB`
+    : (mbytes ? `${ ceiling10(mbytes) } MB`
+      : (kbytes ? `${ Math.ceil(kbytes) } KB`
         : `${ bytes } bytes`));
 }
 
@@ -1410,7 +1410,7 @@ export function addRentalRequest(rentalRequest) {
       store.dispatch({ type: Action.ADD_RENTAL_REQUEST_ERROR, errorMessage: response.error.description });
       return Promise.reject(new Error(response.error.description));
     }
-    
+
     var rentalRequest = response.data;
     // Add display fields
     parseRentalRequest(rentalRequest);
@@ -1493,11 +1493,11 @@ export function cancelRentalRequest(rentalRequestId) {
 ////////////////////
 
 function getSeniorityDisplayName(blockNumber, numberOfBlocks, seniority, numberInBlock) {
-  if (blockNumber === numberOfBlocks) { 
-    return `Open-${seniority && seniority.toFixed(3)} (${numberInBlock})`; 
-  } else if (blockNumber == 1) { 
+  if (blockNumber === numberOfBlocks) {
+    return `Open-${seniority && seniority.toFixed(3)} (${numberInBlock})`;
+  } else if (blockNumber == 1) {
     return `1-${seniority && seniority.toFixed(3)} (${numberInBlock})`;
-  } else if (blockNumber == 2) { 
+  } else if (blockNumber == 2) {
     return `2-${seniority && seniority.toFixed(3)} (${numberInBlock})`;
   }
   return `Open-${seniority && seniority.toFixed(3)} (${numberInBlock})`;
@@ -1549,11 +1549,11 @@ function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
 
 function parseRotationListItem(item, numberOfBlocks) {
   item.equipment = item.equipment || {};
-  item.equipment = { 
+  item.equipment = {
     ...item.equipment,
-    historyEntity: History.makeHistoryEntity(History.EQUIPMENT, { 
-      ...item.equipment, 
-      name: item.equipment.equipmentCode, 
+    historyEntity: History.makeHistoryEntity(History.EQUIPMENT, {
+      ...item.equipment,
+      name: item.equipment.equipmentCode,
       path: `${ Constant.EQUIPMENT_PATHNAME }/${ item.equipment.id }`,
       url: `#/${ Constant.EQUIPMENT_PATHNAME }/${ item.equipment.id }`,
     }),
@@ -1570,9 +1570,9 @@ function parseRotationListItem(item, numberOfBlocks) {
 export function getRentalRequestRotationList(id) {
   return new ApiRequest(`/rentalrequests/${id}/rotationList`).get().then(response => {
     var rotationList = response.data;
-    
+
     _.map(rotationList.rentalRequestRotationList, item => parseRotationListItem(item, rotationList.numberOfBlocks));
-    
+
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rotationList });
   });
 }
@@ -1580,12 +1580,12 @@ export function getRentalRequestRotationList(id) {
 export function updateRentalRequestRotationList(rentalRequestRotationList, rentalRequest) {
   store.dispatch({ type: Action.RENTAL_REQUEST_ROTATION_LIST_REQUEST });
   return new ApiRequest(`/rentalrequests/${ rentalRequest.id }/rentalRequestRotationList`).put({ ...rentalRequestRotationList, note: '' }).then(response => {
-    
+
     if (response.responseStatus === 'ERROR') {
       store.dispatch({ type: Action.RENTAL_REQUEST_ROTATION_LIST_ERROR, error: response.error });
       return Promise.reject(response.error.description);
     }
-    
+
     var rentalRequestRotationList = response.data.rentalRequestRotationList;
 
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rentalRequestRotationList });
@@ -1630,9 +1630,9 @@ function parseRentalAgreement(agreement) {
   _.map(agreement.rentalAgreementConditions, obj => parseRentalCondition(obj, agreement));
 
   agreement.equipment = { ...agreement.equipment,
-    historyEntity: History.makeHistoryEntity(History.EQUIPMENT, { 
-      ...agreement.equipment, 
-      name: agreement.equipment.equipmentCode, 
+    historyEntity: History.makeHistoryEntity(History.EQUIPMENT, {
+      ...agreement.equipment,
+      name: agreement.equipment.equipmentCode,
       path: `${ Constant.EQUIPMENT_PATHNAME }/${ agreement.equipment.id }`,
       url: `#/${ Constant.EQUIPMENT_PATHNAME }/${ agreement.equipment.id }`,
     }),
@@ -1653,7 +1653,7 @@ function parseRentalAgreement(agreement) {
   agreement.ownerName = agreement.equipment.owner.organizationName || '';
   agreement.workSafeBCPolicyNumber = agreement.equipment.owner.workSafeBCPolicyNumber || '';
   agreement.pointOfHire = agreement.equipment.localArea.name || '';
-  
+
   agreement.projectId = agreement.projectId || agreement.project.id;
   agreement.projectName = agreement.projectName || agreement.project.name;
 
@@ -1699,7 +1699,7 @@ export function getLatestRentalAgreement(equipmentId, projectId) {
     if (response.responseStatus === 'ERROR') {
       return Promise.reject(new Error(response.error.description));
     }
-    
+
     var agreement = response.data;
 
     store.dispatch({ type: Action.UPDATE_RENTAL_AGREEMENT, rentalAgreement: agreement });
@@ -1733,7 +1733,7 @@ export function updateRentalAgreement(agreement) {
   var preparedAgreement = convertRentalAgreement(agreement);
   return new ApiRequest(`/rentalagreements/${ agreement.id }`).put(preparedAgreement).then(response => {
     var agreement = response.data;
-    
+
     // Add display fields
     parseRentalAgreement(agreement);
 
@@ -2020,7 +2020,7 @@ export function validateOwner(secretKey, postalCode) {
     if (response.responseStatus === 'ERROR') {
       return Promise.reject(response.error.description);
     }
-    
+
     var business = response.data;
     parseOwner(business.linkedOwner);
     store.dispatch({ type: Action.UPDATE_BUSINESS, business: business });
@@ -2154,7 +2154,7 @@ export function deleteDistrictEquipmentType(equipment) {
     if (response.responseStatus === 'ERROR') {
       return Promise.reject(new Error(response.error.description));
     }
-    
+
     return response;
   });
 }
@@ -2177,15 +2177,15 @@ export function getPermissions() {
 
 export function getProvincialRateTypes() {
   return new ApiRequest('/provincialratetypes').get().then(response => {
-    var rateTypeOther = { 
-      id: 10000, 
-      rateType: 'OTHER', 
+    var rateTypeOther = {
+      id: 10000,
+      rateType: 'OTHER',
       description: Constant.NON_STANDARD_CONDITION,
       rate: null,
       isPercentRate: false,
       isRateEditable: true,
       isIncludedInTotal: false,
-      isInTotalEditable: true, 
+      isInTotalEditable: true,
     };
     var provincialRateTypes = [ ...response.data, rateTypeOther ];
 
@@ -2235,7 +2235,7 @@ export function updateNote(note) {
 export function getNotes() {
   return new ApiRequest('/notes').get().then(response => {
     var notes = normalize(response);
-    
+
     store.dispatch({ type: Action.UPDATE_NOTES, notes: notes });
   });
 }
@@ -2244,7 +2244,7 @@ export function getNotes() {
 ////////////////////
 
 export function setDevUser(user) {
-  return new ApiRequest(`/authentication/dev/token/${user}`).get().then(response => {    
+  return new ApiRequest(`/authentication/dev/token/${user}`).get().then(response => {
     return response;
   });
 }

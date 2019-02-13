@@ -55,15 +55,15 @@ var OvertimeRates = React.createClass({
   },
 
   render() {
-    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) { 
+    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) {
       return (
         <div>You do not have permission to view this page.</div>
-      ); 
+      );
     }
 
     return <div id="overtime-rates">
       <PageHeader>Manage Rental Agreement Overtime Rates</PageHeader>
-      
+
       <Well>
         {(() => {
           if (this.props.overtimeRateTypes.length == 0) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
@@ -100,7 +100,7 @@ var OvertimeRates = React.createClass({
           onClose={this.closeOvertimeRateEditDialog}
           onSave={this.onOvertimeRateSave}
           overtimeRateType={this.state.overtimeRateType}
-        />        
+        />
       }
     </div>;
   },

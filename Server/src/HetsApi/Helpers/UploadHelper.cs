@@ -57,7 +57,7 @@ namespace HetsApi.Helpers
                         int extStart = file.FileName.LastIndexOf('.');
                         if (extStart > 0)
                         {
-                            extension = file.FileName.Substring(extStart + 1).ToLower();                            
+                            extension = file.FileName.Substring(extStart + 1).ToLower();
                         }
 
                         if (string.IsNullOrEmpty(extension) || extension != "zip")
@@ -81,7 +81,7 @@ namespace HetsApi.Helpers
                             using (FileStream fileStream = new FileStream(Path.Combine(uploadPath, fullName), FileMode.Create))
                             {
                                 file.CopyTo(fileStream);
-                                
+
 
                                 result.Append("<li>" + file.FileName + " (file Size = " + fileSize + ")</li>");
                             }

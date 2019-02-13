@@ -69,13 +69,13 @@ Resource404.prototype = Object.create(Error.prototype, {
 export function request(path, options) {
   options = options || {};
 
-  var xhr = new XMLHttpRequest();     
-  
+  var xhr = new XMLHttpRequest();
+
   // calling server service
-  console.log('Calling service. Path: ' + path);   
+  console.log('Calling service. Path: ' + path);
 
   if (!options.headers) { options.headers = {}; }
-  
+
   if (!options.files) {
     options.headers = Object.assign({
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -117,14 +117,14 @@ export function request(path, options) {
         reject(err);
       } else {
         console.log('Call complete! Path: ' + path);
-        resolve(xhr);        
+        resolve(xhr);
       }
     });
 
     xhr.addEventListener('error', function() {
       reject(new HttpError(`Request ${method} ${path} failed to send`, method, path));
     });
-	
+
     var qs = _.map(options.querystring, (value, key) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
     xhr.open(method, `${path}${qs ? '?' : ''}${qs}`, true);
 

@@ -28,8 +28,8 @@ var RentalRatesEditDialog = React.createClass({
       isNew: isNew,
       numberOfInputs: 1,
 
-      forms: { 
-        1: { 
+      forms: {
+        1: {
           isIncludedInTotal: this.props.rentalRate.isIncludedInTotal || false,
           rateType: {},
           rate: this.props.rentalRate.rate || 0.0,
@@ -63,14 +63,14 @@ var RentalRatesEditDialog = React.createClass({
 
     let formsResetObj = forms;
     Object.keys(forms).forEach((key) => {
-      let state = { 
-        ...forms[key], 
+      let state = {
+        ...forms[key],
         rateError: '',
         commentError: '',
       };
       formsResetObj[key] = state;
     });
-    
+
     this.setState({ forms: formsResetObj });
     let valid = true;
 
@@ -102,9 +102,9 @@ var RentalRatesEditDialog = React.createClass({
   onSave() {
     let forms = this.state.forms;
     let rates = Object.keys(forms).map((key) => {
-      return { 
+      return {
         id: this.props.rentalRate.id || 0,
-        rentalAgreement: { id: this.props.rentalRate.rentalAgreement.id }, 
+        rentalAgreement: { id: this.props.rentalRate.rentalAgreement.id },
         rate: this.state.forms[key].rate,
         comment: this.state.forms[key].comment,
         isIncludedInTotal: this.props.rentalRate.isIncludedInTotal,
@@ -117,18 +117,18 @@ var RentalRatesEditDialog = React.createClass({
   addInput() {
     if (this.state.numberOfInputs < 10) {
       let numberOfInputs = Object.keys(this.state.forms).length;
-      this.setState({ 
+      this.setState({
         numberOfInputs: this.state.numberOfInputs + 1,
-        forms: { 
-          ...this.state.forms, 
-          [numberOfInputs + 1]: { 
+        forms: {
+          ...this.state.forms,
+          [numberOfInputs + 1]: {
             isIncludedInTotal: this.props.rentalRate.isIncludedInTotal || false,
             rate: this.props.rentalRate.rate || 0.0,
             comment: this.props.rentalRate.comment || '',
 
             rateError: '',
             commentError: '',
-          }, 
+          },
         },
       });
     }
@@ -139,9 +139,9 @@ var RentalRatesEditDialog = React.createClass({
       let numberOfInputs = Object.keys(this.state.forms).length;
       let forms = { ...this.state.forms };
       delete forms[numberOfInputs];
-      this.setState({ 
+      this.setState({
         numberOfInputs: this.state.numberOfInputs - 1,
-        forms: forms, 
+        forms: forms,
       });
     }
   },
@@ -187,7 +187,7 @@ var RentalRatesEditDialog = React.createClass({
         <Row className="align-right">
           <Col md={12}>
             { this.state.isNew && this.state.numberOfInputs > 1 &&
-            <Button 
+            <Button
               bsSize="xsmall"
               className="remove-btn"
               onClick={ this.removeInput }
@@ -195,8 +195,8 @@ var RentalRatesEditDialog = React.createClass({
               <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
             </Button>
             }
-            { this.state.isNew && this.state.numberOfInputs < 10 && 
-            <Button 
+            { this.state.isNew && this.state.numberOfInputs < 10 &&
+            <Button
               bsSize="xsmall"
               onClick={ this.addInput }
             >
