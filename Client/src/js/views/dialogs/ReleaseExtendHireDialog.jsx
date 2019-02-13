@@ -16,7 +16,7 @@ var ReleaseExtendHireDialog = React.createClass({
     releaseHire: React.PropTypes.bool,
   },
 
-  getInitialState() {  
+  getInitialState() {
     return {
       endHireDate: Moment(new Date()).format('YYYY-MM-DD'),
     };
@@ -44,11 +44,11 @@ var ReleaseExtendHireDialog = React.createClass({
 
   render() {
     return (
-      <EditDialog 
-        id="hire-offer-edit" 
+      <EditDialog
+        id="hire-offer-edit"
         show={ this.props.show }
-        onClose={ this.props.onClose } 
-        onSave={ this.onSave } 
+        onClose={ this.props.onClose }
+        onSave={ this.onSave }
         didChange={ this.didChange }
         isValid={ this.isValid }
         title={
@@ -65,17 +65,17 @@ var ReleaseExtendHireDialog = React.createClass({
             </Row>
             <Row>
               <FormGroup>
-                Last Hours Date: 
+                Last Hours Date:
               </FormGroup>
             </Row>
             <Row>
               <FormGroup>
                 <ControlLabel>{ this.props.releaseHire ? 'End Hire Date' : 'Extend Hire Until' }</ControlLabel>
-                <DateControl 
+                <DateControl
                   id="endHireDate"
                   date={ this.state.endHireDate }
                   updateState={ this.updateState }
-                  title={ this.props.releaseHire ? 'End Hire Date' : 'Extend Hire Until' } 
+                  title={ this.props.releaseHire ? 'End Hire Date' : 'Extend Hire Until' }
                 />
               </FormGroup>
             </Row>

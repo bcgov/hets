@@ -27,7 +27,7 @@ namespace HetsApi
 
         public Startup(IHostingEnvironment env)
         {
-            _hostingEnv = env;            
+            _hostingEnv = env;
 
             IConfigurationBuilder builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
@@ -60,27 +60,27 @@ namespace HetsApi
 
             // setup authorization
             services.AddAuthorization();
-            services.RegisterPermissionHandler();            
+            services.RegisterPermissionHandler();
 
             // allow for large files to be uploaded
             services.Configure<FormOptions>(options =>
             {
                 options.MultipartBodyLengthLimit = 1073741824; // 1 GB
-            });                  
+            });
 
-            services.AddMvc(options => options.AddDefaultAuthorizationPolicyFilter())                
+            services.AddMvc(options => options.AddDefaultAuthorizationPolicyFilter())
                 .AddJsonOptions(
                     opts => {
                         opts.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                         opts.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
                         opts.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.IsoDateFormat;
                         opts.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
-                        
+
                         // ReferenceLoopHandling is set to Ignore to prevent JSON parser issues with the user / roles model.
                         opts.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                     });
-                        
-            // enable Hangfire            
+
+            // enable Hangfire
             PostgreSqlStorageOptions postgreSqlStorageOptions = new PostgreSqlStorageOptions {
                 SchemaName = "public"
             };
@@ -93,7 +93,7 @@ namespace HetsApi
                     config.UseConsole();
                 });
             }
-            
+
             // Configure Swagger - only required in the Development Environment
             if (_hostingEnv.IsDevelopment())
             {
@@ -106,7 +106,7 @@ namespace HetsApi
                         Description = "Hired Equipment Tracking System"
                     });
 
-                    options.DescribeAllEnumsAsStrings();                    
+                    options.DescribeAllEnumsAsStrings();
                 });
             }
         }
@@ -120,14 +120,14 @@ namespace HetsApi
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();             
+            loggerFactory.AddDebug();
 
             // web site error handler  (Testing: app.UseDeveloperExceptionPage();)
             app.UseWhen(x => !x.Request.Path.Value.StartsWith("/api"), builder =>
             {
                 builder.UseExceptionHandler(Configuration.GetSection("Constants:ErrorUrl").Value);
             });
-            
+
             // authenticate users
             app.UseAuthentication();
 
@@ -138,21 +138,21 @@ namespace HetsApi
             // disable the back to site link
             DashboardOptions dashboardOptions = new DashboardOptions
             {
-                AppPath = null,                    
+                AppPath = null,
                 Authorization = new[] { new HangfireAuthorizationFilter() }
             };
 
             // enable the hangfire dashboard
-            app.UseHangfireDashboard(Configuration.GetSection("Constants:HangfireUrl").Value, dashboardOptions);            
-            
+            app.UseHangfireDashboard(Configuration.GetSection("Constants:HangfireUrl").Value, dashboardOptions);
+
             // setup mvc routes
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}");
-            });            
-            
+            });
+
             if (_hostingEnv.IsDevelopment())
             {
                 string swaggerApi = Configuration.GetSection("Constants:SwaggerApiUrl").Value;
@@ -162,9 +162,9 @@ namespace HetsApi
                     options.SwaggerEndpoint(swaggerApi, "HETS REST API v1");
                     options.DocExpansion(DocExpansion.None);
                 });
-            }                                
+            }
         }
-        
+
         /// <summary>
         /// Retrieve database connection string
         /// </summary>
@@ -189,6 +189,6 @@ namespace HetsApi
             }
 
             return connectionString;
-        }             
-    }    
+        }
+    }
 }

@@ -19,7 +19,7 @@ namespace HetsApi.Controllers
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
-        
+
         public AttachmentController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
@@ -31,8 +31,8 @@ namespace HetsApi.Controllers
             _context.DirectoryName = user.SmAuthorizationDirectory;
             _context.SmUserGuid = user.UserGuid;
             _context.SmBusinessGuid = user.BusinessGuid;
-        }        
-       
+        }
+
         /// <summary>
         /// Delete attachment
         /// </summary>
@@ -47,7 +47,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetDigitalFile.Any(a => a.DigitalFileId == id);
 
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             HetDigitalFile item = _context.HetDigitalFile.First(a => a.DigitalFileId == id);
 
             if (item != null)
@@ -56,7 +56,7 @@ namespace HetsApi.Controllers
                 _context.SaveChanges();
             }
 
-            return new ObjectResult(new HetsResponse(item));            
+            return new ObjectResult(new HetsResponse(item));
         }
 
         /// <summary>
@@ -73,15 +73,15 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             HetDigitalFile attachment = _context.HetDigitalFile.First(a => a.DigitalFileId == id);
-                       
+
             FileContentResult result = new FileContentResult(attachment.FileContents, "application/octet-stream")
             {
                 FileDownloadName = attachment.FileName
             };
 
-            return result;            
+            return result;
         }
     }
 }

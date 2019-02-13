@@ -73,7 +73,7 @@ namespace HetsApi.Controllers
                 equipmentType.EquipmentCount = hetEquipments.Count;
 
                 foreach(HetEquipment equipment in hetEquipments)
-                {                    
+                {
                     LocalAreaEquipment localAreaEquipment = equipmentType.LocalAreas
                         .FirstOrDefault(x => x.Id == equipment.LocalAreaId);
 
@@ -149,7 +149,7 @@ namespace HetsApi.Controllers
                 // else "SOFT" delete record
                 item.Deleted = true;
             }
-            
+
             _context.SaveChanges();
 
             return new ObjectResult(new HetsResponse(item));
@@ -171,7 +171,7 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.Region)
                 .Include(x => x.EquipmentType)
                 .FirstOrDefault(a => a.DistrictEquipmentTypeId == id);
-                        
+
             return new ObjectResult(new HetsResponse(equipmentType));
         }
 
@@ -193,13 +193,13 @@ namespace HetsApi.Controllers
                 return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
-            // add or update equipment type            
+            // add or update equipment type
             if (item.DistrictEquipmentTypeId > 0)
             {
                 bool exists = _context.HetDistrictEquipmentType.Any(a => a.DistrictEquipmentTypeId == id);
 
                 // not found
-                if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));                
+                if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                 // get record
                 HetDistrictEquipmentType equipment = _context.HetDistrictEquipmentType.First(x => x.DistrictEquipmentTypeId == id);
@@ -235,6 +235,6 @@ namespace HetsApi.Controllers
                 .FirstOrDefault(a => a.DistrictEquipmentTypeId == id);
 
             return new ObjectResult(new HetsResponse(equipmentType));
-        }        
+        }
     }
 }
