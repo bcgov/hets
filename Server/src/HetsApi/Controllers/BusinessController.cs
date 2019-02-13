@@ -87,7 +87,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.BusinessLogin)]
         public virtual IActionResult BceidValidateOwner([FromQuery]string sharedKey, [FromQuery]string postalCode)
         {
-            string businessGuid = UserAccountHelper.GetBusinessGuid(_httpContext, _env);            
+            string businessGuid = UserAccountHelper.GetBusinessGuid(_httpContext, _env);
 
             if (string.IsNullOrEmpty(sharedKey))
             {
@@ -115,7 +115,7 @@ namespace HetsApi.Controllers
                 .Include(a => a.Business)
                 .FirstOrDefault(a => a.SharedKey.Equals(sharedKey) &&
                                      a.PostalCode.Replace(" ", "").ToLower().Equals(postalCode.Replace(" ", "").ToLower(), StringComparison.InvariantCultureIgnoreCase));
-            
+
             // validate the key
             if (owner == null)
             {
@@ -143,7 +143,7 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.Business)
                 .Include(x => x.HetOwner)
                     .ThenInclude(y => y.LocalArea.ServiceArea.District)
-                .FirstOrDefault(a => a.BusinessId == business.BusinessId);            
+                .FirstOrDefault(a => a.BusinessId == business.BusinessId);
 
             // get updated owner record (linked owner) and return to the UI too
             if (business != null)
@@ -176,9 +176,9 @@ namespace HetsApi.Controllers
                 .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             if (business == null) return StatusCode(StatusCodes.Status401Unauthorized);
-            
+
             // check access
-            if (!CanAccessBusiness(business.BusinessId)) return StatusCode(StatusCodes.Status401Unauthorized);            
+            if (!CanAccessBusiness(business.BusinessId)) return StatusCode(StatusCodes.Status401Unauthorized);
 
             // get business
             HetBusiness businessDetail = _context.HetBusiness.AsNoTracking()
@@ -239,7 +239,7 @@ namespace HetsApi.Controllers
             if (business == null) return StatusCode(StatusCodes.Status401Unauthorized);
 
             // check access
-            if (!CanAccessOwner(business.BusinessId, id)) return StatusCode(StatusCodes.Status401Unauthorized);            
+            if (!CanAccessOwner(business.BusinessId, id)) return StatusCode(StatusCodes.Status401Unauthorized);
 
             // retrieve the data and return
             HetOwner owner = _context.HetOwner.AsNoTracking()
@@ -271,7 +271,7 @@ namespace HetsApi.Controllers
             // validate that the current user can access this record
             string userId = UserAccountHelper.GetUserId(_httpContext);
             bool isBusiness = UserAccountHelper.IsBusiness(_httpContext);
-            
+
             // not a business user
             if (string.IsNullOrEmpty(userId) || !isBusiness) return false;
 
@@ -298,7 +298,7 @@ namespace HetsApi.Controllers
 
             // not a business user
             if (string.IsNullOrEmpty(userId) || !isBusiness) return false;
-            
+
             // get business record
             HetBusiness business = _context.HetBusiness.AsNoTracking()
                 .Include(x => x.HetBusinessUser)

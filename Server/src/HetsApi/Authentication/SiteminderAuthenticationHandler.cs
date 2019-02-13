@@ -16,7 +16,7 @@ using HetsData.Model;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HetsApi.Authentication
-{    
+{
     #region SiteMinder Authentication Options
 
     /// <summary>
@@ -26,7 +26,7 @@ namespace HetsApi.Authentication
     {
         private const string ConstDevAuthenticationTokenKey = "DEV-USER";
         private const string ConstDevBusinessTokenKey = "BUS-USER";
-        private const string ConstDevDefaultUserId = "TMcTesterson";       
+        private const string ConstDevDefaultUserId = "TMcTesterson";
         private const string ConstSiteMinderUserGuidKey = "smgov_userguid";
         private const string ConstSiteMinderUniversalIdKey = "sm_universalid";
         private const string ConstSiteMinderUserNameKey = "sm_user";
@@ -65,7 +65,7 @@ namespace HetsApi.Authentication
             DevAuthenticationTokenKey = ConstDevAuthenticationTokenKey;
             DevBusinessTokenKey = ConstDevBusinessTokenKey;
             DevDefaultUserId = ConstDevDefaultUserId;
-        }        
+        }
 
         /// <summary>
         /// Default Scheme Name
@@ -148,7 +148,7 @@ namespace HetsApi.Authentication
         public string DevDefaultUserId { get; set; }
     }
 
-    #endregion    
+    #endregion
 
     /// <summary>
     /// Setup SiteMinder Authentication Handler
@@ -172,7 +172,7 @@ namespace HetsApi.Authentication
     /// </summary>
     public class SiteMinderAuthenticationHandler : AuthenticationHandler<SiteMinderAuthOptions>
     {
-        private readonly ILogger _logger;        
+        private readonly ILogger _logger;
 
         /// <summary>
         /// SiteMinder Authentication Constructor
@@ -183,7 +183,7 @@ namespace HetsApi.Authentication
         /// <param name="clock"></param>
         public SiteMinderAuthenticationHandler(IOptionsMonitor<SiteMinderAuthOptions> configureOptions, ILoggerFactory loggerFactory, UrlEncoder encoder, ISystemClock clock) : base(configureOptions, loggerFactory, encoder, clock)
         {
-            _logger = loggerFactory.CreateLogger(typeof(SiteMinderAuthenticationHandler));                    
+            _logger = loggerFactory.CreateLogger(typeof(SiteMinderAuthenticationHandler));
         }
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace HetsApi.Authentication
         {
             // get SiteMinder headers
             _logger.LogDebug("Parsing the HTTP headers for SiteMinder authentication credential");
-                  
+
             SiteMinderAuthOptions options = new SiteMinderAuthOptions();
 
             try
@@ -202,7 +202,7 @@ namespace HetsApi.Authentication
                 HttpContext context = Request.HttpContext;
                 DbAppContext dbAppContext = (DbAppContext)context.RequestServices.GetService(typeof(DbAppContext));
                 IHostingEnvironment hostingEnv = (IHostingEnvironment)context.RequestServices.GetService(typeof(IHostingEnvironment));
-                
+
                 UserSettings userSettings = new UserSettings();
                 string userId = "";
                 string siteMinderGuid = "";
@@ -213,7 +213,7 @@ namespace HetsApi.Authentication
 
                 // ********************************************************
                 // if this is an Error or Authentication API - Ignore
-                // ********************************************************               
+                // ********************************************************
                 if (url.Contains("/authentication/dev") ||
                     url.Contains("/error") ||
                     url.Contains("/hangfire") ||
@@ -255,18 +255,18 @@ namespace HetsApi.Authentication
 
                     if (!string.IsNullOrEmpty(temp) &&
                         temp.Contains(','))
-                    {                                                
+                    {
                         _logger.LogInformation("Dev (Business) Authentication token found ({0})", temp);
 
                         var credential = temp.Split(',');
                         userId = credential[0];
-                        businessGuid = credential[1];                                                
+                        businessGuid = credential[1];
                     }
                 }
 
                 // **************************************************
                 // authenticate based on SiteMinder Headers
-                // **************************************************                
+                // **************************************************
                 if (string.IsNullOrEmpty(userId))
                 {
                     _logger.LogInformation("Parsing the HTTP headers for SiteMinder authentication credential");
@@ -301,7 +301,7 @@ namespace HetsApi.Authentication
 
                     // **************************************************
                     // validate credentials
-                    // **************************************************                    
+                    // **************************************************
                     if (string.IsNullOrEmpty(userId))
                     {
                         _logger.LogError(options.MissingSiteMinderUserIdError);
@@ -316,7 +316,7 @@ namespace HetsApi.Authentication
                 }
 
                 // **************************************************
-                // validate credential against database              
+                // validate credential against database
                 // **************************************************
                 _logger.LogInformation("Validating credential against the HETS db");
                 _logger.LogInformation("User Credential: {0}", userId);
@@ -325,7 +325,7 @@ namespace HetsApi.Authentication
                 if (!string.IsNullOrEmpty(businessGuid))
                 {
                     _logger.LogInformation("SiteMinder Business Guid: {0}", businessGuid);
-                    
+
                     userSettings.HetsBusinessUser = UserAccountHelper.GetBusinessUser(dbAppContext, context, userId, businessGuid, siteMinderGuid);
 
                     if (userSettings.HetsBusinessUser == null)
@@ -339,7 +339,7 @@ namespace HetsApi.Authentication
                         userSettings.SiteMinderGuid = siteMinderGuid;
                         userSettings.UserAuthenticated = true;
                         userSettings.BusinessUser = true;
-                    }                    
+                    }
                 }
                 else
                 {
@@ -388,7 +388,7 @@ namespace HetsApi.Authentication
 
                             _logger.LogInformation("Resetting users district back to primary ({0})", userSettings.HetsUser.SmUserId);
 
-                            userSettings.HetsUser.DistrictId = districtId;                                                     
+                            userSettings.HetsUser.DistrictId = districtId;
 
                             using (IDbContextTransaction transaction = dbAppContext.Database.BeginTransaction())
                             {
@@ -420,7 +420,7 @@ namespace HetsApi.Authentication
 
                 ClaimsPrincipal userPrincipal;
 
-                if (userSettings.BusinessUser && 
+                if (userSettings.BusinessUser &&
                     userSettings.UserAuthenticated &&
                     userSettings.HetsBusinessUser != null)
                 {
@@ -432,7 +432,7 @@ namespace HetsApi.Authentication
                         return Task.FromResult(AuthenticateResult.Fail(options.InvalidPermissions));
                     }
                 }
-                else 
+                else
                 {
                     userPrincipal = userSettings.HetsUser.ToClaimsPrincipal(options.Scheme);
 
@@ -443,14 +443,14 @@ namespace HetsApi.Authentication
                         _logger.LogWarning(options.MissingDbUserIdError + " (" + userId + ")");
                         return Task.FromResult(AuthenticateResult.Fail(options.InvalidPermissions));
                     }
-                }                
+                }
 
                 // **************************************************
                 // create authenticated user
                 // **************************************************
                 _logger.LogInformation("Authentication successful: " + userId);
-                _logger.LogInformation("Setting identity and creating session for: " + userId);                
-                
+                _logger.LogInformation("Setting identity and creating session for: " + userId);
+
                 // **************************************************
                 // done!
                 // **************************************************
@@ -463,6 +463,6 @@ namespace HetsApi.Authentication
                 Console.WriteLine(exception);
                 throw;
             }
-        }        
-    }    
+        }
+    }
 }

@@ -11,7 +11,7 @@ namespace HetsApi.Authorization
 {
     /// <summary>
     /// Allows declarative claims based permissions to be applied to controller methods for authorization.
-    /// </summary>    
+    /// </summary>
     public class RequiresPermissionAttribute : TypeFilterAttribute
     {
         /// <summary>
@@ -79,7 +79,7 @@ namespace HetsApi.Authorization
                 {
                     context.Result = new UnauthorizedResult();
 
-                    HttpResponse response = context.HttpContext.Response;                          
+                    HttpResponse response = context.HttpContext.Response;
 
                     string responseText = "<HTML><HEAD><META http-equiv=\"Content - Type\" content=\"text / html; charset = windows - 1252\"></HEAD><BODY></BODY></HTML>";
                     byte[] data = Encoding.UTF8.GetBytes(responseText);
@@ -89,7 +89,7 @@ namespace HetsApi.Authorization
                     await response.Body.FlushAsync();
                 }
 
-                await next();                
+                await next();
             }
         }
     }

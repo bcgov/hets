@@ -37,7 +37,7 @@ namespace HetsApi.Controllers
             _context.SmUserGuid = user.UserGuid;
             _context.SmBusinessGuid = user.BusinessGuid;
         }
-        
+
         /// <summary>
         /// Get all districts for the logged on user
         /// </summary>
@@ -60,11 +60,11 @@ namespace HetsApi.Controllers
             return new ObjectResult(new HetsResponse(result));
         }
 
-        /// <summary>	
-        /// Delete user district	
-        /// </summary>	
-        /// <param name="id">id of User District to delete</param>	
-        /// <response code="200">OK</response>	
+        /// <summary>
+        /// Delete user district
+        /// </summary>
+        /// <param name="id">id of User District to delete</param>
+        /// <response code="200">OK</response>
         [HttpPost]
         [Route("{id}/delete")]
         [SwaggerOperation("UserDistrictsIdDeletePost")]
@@ -112,10 +112,10 @@ namespace HetsApi.Controllers
         {
             // not found
             if (id != item.UserDistrictId) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             // not found
             if (item.User == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             int userId = item.User.UserId;
 
             // get record
@@ -128,14 +128,14 @@ namespace HetsApi.Controllers
             bool districtExists;
             bool hasPrimary = false;
 
-            // add or update user district            
+            // add or update user district
             if (item.UserDistrictId > 0)
             {
                 int index = userDistricts.FindIndex(a => a.UserDistrictId == item.UserDistrictId);
 
                 // not found
                 if (index < 0) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-                
+
                 // check if this district already exists
                 districtExists = userDistricts.Exists(a => a.District.DistrictId == item.District.DistrictId);
 
@@ -172,7 +172,7 @@ namespace HetsApi.Controllers
 
                     foreach (HetUserDistrict existingUserDistrict in userDistricts)
                     {
-                        if (existingUserDistrict.IsPrimary && 
+                        if (existingUserDistrict.IsPrimary &&
                             existingUserDistrict.UserDistrictId != item.UserDistrictId)
                         {
                             existingUserDistrict.IsPrimary = false;
@@ -186,7 +186,7 @@ namespace HetsApi.Controllers
 
                     foreach (HetUserDistrict existingUserDistrict in userDistricts)
                     {
-                        if (existingUserDistrict.IsPrimary && 
+                        if (existingUserDistrict.IsPrimary &&
                             existingUserDistrict.UserDistrictId != item.UserDistrictId)
                         {
                             hasPrimary = true;
@@ -198,7 +198,7 @@ namespace HetsApi.Controllers
                     {
                         userDistricts[index].IsPrimary = true;
                     }
-                }                                
+                }
             }
             else  // add user district
             {
@@ -227,7 +227,7 @@ namespace HetsApi.Controllers
                         // district required
                         return new ObjectResult(new HetsResponse("HETS-18", ErrorViewModel.GetDescription("HETS-18", _configuration)));
                     }
-                
+
                     if (item.IsPrimary)
                     {
                         item.IsPrimary = true;
@@ -294,7 +294,7 @@ namespace HetsApi.Controllers
 
             // get record
             HetUserDistrict userDistrict = _context.HetUserDistrict.First(a => a.UserDistrictId == id);
-            
+
             string userId = UserAccountHelper.GetUserId(_httpContext);
 
             HetUser user = _context.HetUser.First(a => a.SmUserId == userId);
@@ -313,7 +313,7 @@ namespace HetsApi.Controllers
                 }
             );
 
-            return new ObjectResult(new HetsResponse(user));            
-        }        
+            return new ObjectResult(new HetsResponse(user));
+        }
     }
 }

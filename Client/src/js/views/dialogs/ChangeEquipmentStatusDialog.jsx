@@ -46,7 +46,7 @@ var ChangeEquipmentStatusDialog = React.createClass({
       valid = false;
     }
 
-    return valid; 
+    return valid;
   },
 
   onSave() {
@@ -68,11 +68,11 @@ var ChangeEquipmentStatusDialog = React.createClass({
           <Form>
             <FormGroup controlId="comment" validationState={ this.state.commentError ? 'error' : null }>
               <ControlLabel>Comment</ControlLabel>
-              <FormInputControl value={ this.state.comment } componentClass="textarea" updateState={ this.updateState } /> 
+              <FormInputControl value={ this.state.comment } componentClass="textarea" updateState={ this.updateState } />
               <HelpBlock>{ this.state.commentError }</HelpBlock>
             </FormGroup>
           </Form>
-        </Col> 
+        </Col>
       </Row>
     </EditDialog>;
   },

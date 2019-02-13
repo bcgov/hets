@@ -101,7 +101,7 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists) return new ObjectResult(new HetsResponse(new List<HetLocalArea>()));
-            
+
             List<HetLocalArea> localAreas = _context.HetLocalArea.AsNoTracking()
                 .Where(x => x.ServiceArea.District.DistrictId == id)
                 .OrderBy(x => x.Name)
@@ -153,7 +153,7 @@ namespace HetsApi.Controllers
                 .First(a => a.DistrictId == id);
 
             // ensure the process is complete
-            if (status.DisplayRolloverMessage != null && 
+            if (status.DisplayRolloverMessage != null &&
                 status.DisplayRolloverMessage == true &&
                 status.ProgressPercentage != null &&
                 status.ProgressPercentage == 100)
@@ -271,7 +271,7 @@ namespace HetsApi.Controllers
                 }
                 else
                 {
-                    // Environment variables override all other settings; same behaviour as the configuration provider when things get cleaned up. 
+                    // Environment variables override all other settings; same behaviour as the configuration provider when things get cleaned up.
                     connectionString = $"Host={host};Username={username};Password={password};Database={database};";
                 }
             }

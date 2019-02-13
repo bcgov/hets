@@ -155,13 +155,15 @@ var WcbCglCoverage = React.createClass({
     }
 
     return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-      { field: 'localAreaLabel',          title: 'Local Area'                               },
-      { field: 'ownerCode',               title: 'Owner Code'                               },
-      { field: 'organizationName',        title: 'Company Name'                             },
-      { field: 'wcbNumber',               title: 'WCB Number'                               },
-      { field: 'wcbExpiryDate',           title: 'WCB Expires'                              },
-      { field: 'cglNumber',               title: 'CGL Policy'                               },
-      { field: 'cglExpiryDate',           title: 'CGL Expires'                              },
+      { field: 'localAreaLabel',       title: 'Local Area'   },
+      { field: 'ownerCode',            title: 'Owner Code'   },
+      { field: 'organizationName',     title: 'Company Name' },
+      { field: 'primaryContactNumber', title: 'Phone'        },
+      { field: 'primaryContactCell',   title: 'Cell'         },
+      { field: 'wcbNumber',            title: 'WCB Number'   },
+      { field: 'wcbExpiryDate',        title: 'WCB Expires'  },
+      { field: 'cglNumber',            title: 'CGL Policy'   },
+      { field: 'cglExpiryDate',        title: 'CGL Expires'  },
     ]}>
       {
         _.map(ownersCoverage, (entry) => {
@@ -169,6 +171,8 @@ var WcbCglCoverage = React.createClass({
             <td>{ entry.localAreaLabel }</td>
             <td>{ entry.ownerCode }</td>
             <td><Link to={`${Constant.OWNERS_PATHNAME}/${entry.id}`}>{ entry.organizationName }</Link></td>
+            <td>{ entry.primaryContactNumber }</td>
+            <td>{ entry.primaryContactCell }</td>
             <td>{ entry.wcbNumber }</td>
             <td>{ formatDateTime(entry.wcbExpiryDate, 'YYYY-MMM-DD') }</td>
             <td>{ entry.cglNumber }</td>

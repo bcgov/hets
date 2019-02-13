@@ -34,11 +34,11 @@ namespace HetsApi.Controllers
             _context.SmUserGuid = user.UserGuid;
             _context.SmBusinessGuid = user.BusinessGuid;
         }
-        
-        /// <summary>	
-        /// Delete equipment attachment	
-        /// </summary>	
-        /// <param name="id">id of EquipmentAttachment to delete</param>		
+
+        /// <summary>
+        /// Delete equipment attachment
+        /// </summary>
+        /// <param name="id">id of EquipmentAttachment to delete</param>
         [HttpPost]
         [Route("{id}/delete")]
         [SwaggerOperation("EquipmentAttachmentsIdDeletePost")]
@@ -50,7 +50,7 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             HetEquipmentAttachment item = _context.HetEquipmentAttachment
                 .Include(x => x.Equipment)
                 .First(a => a.EquipmentAttachmentId == id);
@@ -63,11 +63,11 @@ namespace HetsApi.Controllers
             return new ObjectResult(new HetsResponse(item));
         }
 
-        /// <summary>	
-        /// Update equipment attachment	
-        /// </summary>	
-        /// <param name="id">id of EquipmentAttachment to update</param>	
-        /// <param name="item"></param>	
+        /// <summary>
+        /// Update equipment attachment
+        /// </summary>
+        /// <param name="id">id of EquipmentAttachment to update</param>
+        /// <param name="item"></param>
         [HttpPut]
         [Route("{id}")]
         [SwaggerOperation("EquipmentAttachmentsIdPut")]
@@ -96,7 +96,7 @@ namespace HetsApi.Controllers
             equipmentAttachment.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             equipmentAttachment.Description = item.TypeName;
             equipmentAttachment.TypeName = item.TypeName;
-            equipmentAttachment.EquipmentId = item.Equipment.EquipmentId;      
+            equipmentAttachment.EquipmentId = item.Equipment.EquipmentId;
 
             _context.HetEquipmentAttachment.Update(equipmentAttachment);
 
@@ -111,10 +111,10 @@ namespace HetsApi.Controllers
             return new ObjectResult(new HetsResponse(updEquipmentAttachment));
         }
 
-        /// <summary>	
-        /// Create equipment attachment	
-        /// </summary>	
-        /// <param name="item"></param>	
+        /// <summary>
+        /// Create equipment attachment
+        /// </summary>
+        /// <param name="item"></param>
         [HttpPost]
         [Route("")]
         [SwaggerOperation("EquipmentAttachmentsPost")]
@@ -124,7 +124,7 @@ namespace HetsApi.Controllers
         {
             // not found
             if (item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             // create record
             HetEquipmentAttachment equipmentAttachment = new HetEquipmentAttachment
             {
@@ -145,7 +145,7 @@ namespace HetsApi.Controllers
             HetEquipmentAttachment updEquipmentAttachment = _context.HetEquipmentAttachment.AsNoTracking()
                 .Include(x => x.Equipment)
                 .FirstOrDefault(a => a.EquipmentAttachmentId == id);
-           
+
             return new ObjectResult(new HetsResponse(updEquipmentAttachment));
         }
 
