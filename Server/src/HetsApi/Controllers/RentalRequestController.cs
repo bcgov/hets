@@ -81,7 +81,7 @@ namespace HetsApi.Controllers
                 .Where(x => x.LocalArea.ServiceArea.DistrictId == districtId &&
                             x.RentalRequestStatusTypeId == statusIdInProgress &&
                             x.ProjectId == null)
-                .ToList();        
+                .ToList();
 
             return new ObjectResult(new HetsResponse(requests));
         }
@@ -228,7 +228,7 @@ namespace HetsApi.Controllers
         {
             return CreateRentalRequest(item, true);
         }
-        
+
         private IActionResult CreateRentalRequest(HetRentalRequest item, bool noProject = false)
         {
             // not found
@@ -279,7 +279,7 @@ namespace HetsApi.Controllers
             // create new rental request
             HetRentalRequest rentalRequest = new HetRentalRequest
             {
-                LocalAreaId = item.LocalArea.LocalAreaId,                
+                LocalAreaId = item.LocalArea.LocalAreaId,
                 DistrictEquipmentTypeId = item.DistrictEquipmentType.DistrictEquipmentTypeId,
                 RentalRequestStatusTypeId = (int)statusIdInProgress,
                 EquipmentCount = item.EquipmentCount,

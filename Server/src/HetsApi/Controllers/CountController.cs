@@ -66,7 +66,7 @@ namespace HetsApi.Controllers
             if (pendingStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             result.UnapprovedOwners = _context.HetOwner
-                .AsNoTracking()                    
+                .AsNoTracking()
                 .Count(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
                             x.OwnerStatusTypeId.Equals(pendingStatusId));
 
@@ -92,7 +92,7 @@ namespace HetsApi.Controllers
             if (agreementStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             var hiredEquipmentQuery = _context.HetRentalAgreement.AsNoTracking()
-                .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId) && 
+                .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
                             x.RentalAgreementStatusTypeId == agreementStatusId)
                 .Select(x => x.EquipmentId)
                 .Distinct();
@@ -108,7 +108,7 @@ namespace HetsApi.Controllers
                 .Count(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
                             x.RentalRequestStatusTypeId.Equals(requestStatusId));
 
-            // return to the client            
+            // return to the client
             return new ObjectResult(new HetsResponse(result));
         }
 

@@ -149,10 +149,10 @@ namespace HetsApi.Controllers
             return new ObjectResult(new HetsResponse(updEquipmentAttachment));
         }
 
-        /// <summary>	
+        /// <summary>
         /// Create multiple equipment attachments (an array of equipment attachments)
-        /// </summary>	
-        /// <param name="items"></param>	
+        /// </summary>
+        /// <param name="items"></param>
         [HttpPost]
         [Route("bulk")]
         [SwaggerOperation("EquipmentAttachmentsBulkPost")]
