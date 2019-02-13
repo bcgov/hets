@@ -139,7 +139,7 @@ namespace HetsApi.Controllers
                 Active = item.Active,
                 Email = item.Email?.Trim(),
                 GivenName = item.GivenName?.Trim(),
-                Surname = item.Surname?.Trim(),                
+                Surname = item.Surname?.Trim(),
                 SmUserId = item.SmUserId,
                 DistrictId = item.District.DistrictId,
                 AgreementCity = item.AgreementCity

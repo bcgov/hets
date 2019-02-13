@@ -178,14 +178,14 @@ namespace HetsApi.Controllers
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
         /// <param name="status">if included, filter the results to those with a status matching this string</param>
         /// <param name="projectNumber"></param>
-        /// <param name="fiscalYear"></param>        
+        /// <param name="fiscalYear"></param>
         [HttpGet]
         [Route("search")]
         [SwaggerOperation("ProjectsSearchGet")]
         [SwaggerResponse(200, type: typeof(List<ProjectLite>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult ProjectsSearchGet([FromQuery]string districts, 
-            [FromQuery]string project, [FromQuery]bool? hasRequests, [FromQuery]bool? hasHires, 
+        public virtual IActionResult ProjectsSearchGet([FromQuery]string districts,
+            [FromQuery]string project, [FromQuery]bool? hasRequests, [FromQuery]bool? hasHires,
             [FromQuery]string status, [FromQuery]string projectNumber,
             [FromQuery]string fiscalYear)
         {
