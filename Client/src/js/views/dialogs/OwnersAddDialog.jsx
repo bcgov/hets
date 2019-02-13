@@ -205,7 +205,7 @@ var OwnersAddDialog = React.createClass({
       this.setState({ primaryContactSurnameError: 'Last name is required' });
       valid = false;
     }
-    
+
     if (isBlank(this.state.primaryContactPhone)) {
       this.setState({ primaryContactPhoneError: 'Phone number is required' });
       valid = false;

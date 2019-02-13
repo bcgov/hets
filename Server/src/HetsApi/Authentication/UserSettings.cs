@@ -6,7 +6,7 @@ namespace HetsApi.Authentication
     /// Object to track and manage the authenticated user session
     /// </summary>
     public class UserSettings
-    {        
+    {
         /// <summary>
         /// True if user is authenticated
         /// </summary>

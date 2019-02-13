@@ -45,14 +45,14 @@ var StatusLetters = React.createClass({
       if (window.navigator.msSaveBlob) {
         blob = window.navigator.msSaveBlob(response, filename);
       } else {
-        blob = new Blob([response], {type: 'image/pdf'}); 
+        blob = new Blob([response], {type: 'image/pdf'});
       }
-      //Create a link element, hide it, direct 
+      //Create a link element, hide it, direct
       //it towards the blob, and then 'click' it programatically
       let a = document.createElement('a');
       a.style.cssText = 'display: none';
       document.body.appendChild(a);
-      //Create a DOMString representing the blob 
+      //Create a DOMString representing the blob
       //and point the link element towards it
       let url = window.URL.createObjectURL(blob);
       a.href = url;

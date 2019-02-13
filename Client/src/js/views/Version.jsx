@@ -105,7 +105,7 @@ var Version = React.createClass({
             </Row>
             <Row>
               <ColDisplay labelProps={{ md: 2 }} label="Build Time">{ formatDateTime(this.state.buildTime, Constant.DATE_TIME_READABLE) }</ColDisplay>
-            </Row>            
+            </Row>
             <Row>
               <ColDisplay labelProps={{ md: 2 }} label="User Agent">{ navigator.userAgent }</ColDisplay>
             </Row>
@@ -120,7 +120,7 @@ var Version = React.createClass({
             </Row>
             <Row>
               <ColDisplay labelProps={{ md: 2 }} label="Version">{ applicationVersion.informationalVersion }</ColDisplay>
-            </Row>            
+            </Row>
             <Row>
               <ColDisplay labelProps={{ md: 2 }} label="Framework">{ applicationVersion.targetFramework }</ColDisplay>
             </Row>

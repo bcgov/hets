@@ -22,7 +22,7 @@ namespace HetsApi.Controllers
     public class AttachmentUploadController : Controller
     {
         private readonly DbAppContext _context;
-        
+
         public AttachmentUploadController(DbAppContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
@@ -47,11 +47,11 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult EquipmentIdAttachmentsPost([FromRoute] int id, [FromForm]IList<IFormFile> files)
         {
-            // validate the id            
+            // validate the id
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
 
             if (!exists) return new StatusCodeResult(404);
-            
+
             HetEquipment equipment = _context.HetEquipment
                 .Include(x => x.HetDigitalFile)
                 .First(a => a.EquipmentId == id);
@@ -62,7 +62,7 @@ namespace HetsApi.Controllers
                 {
                     HetDigitalFile attachment = new HetDigitalFile();
 
-                    // strip out extra info in the file name                   
+                    // strip out extra info in the file name
                     if (!string.IsNullOrEmpty(file.FileName))
                     {
                         attachment.FileName = Path.GetFileName(file.FileName);
@@ -89,8 +89,8 @@ namespace HetsApi.Controllers
             }
 
             _context.SaveChanges();
-            
-            return new ObjectResult(equipment.HetDigitalFile);            
+
+            return new ObjectResult(equipment.HetDigitalFile);
         }
 
         /// <summary>
@@ -117,11 +117,11 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult ProjectIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
-            // validate the id            
+            // validate the id
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
 
             if (!exists) return new StatusCodeResult(404);
-            
+
             HetProject project = _context.HetProject
                 .Include(x => x.HetDigitalFile)
                 .First(a => a.ProjectId == id);
@@ -132,7 +132,7 @@ namespace HetsApi.Controllers
                 {
                     HetDigitalFile attachment = new HetDigitalFile();
 
-                    // strip out extra info in the file name                   
+                    // strip out extra info in the file name
                     if (!string.IsNullOrEmpty(file.FileName))
                     {
                         attachment.FileName = Path.GetFileName(file.FileName);
@@ -158,9 +158,9 @@ namespace HetsApi.Controllers
                 }
             }
 
-            _context.SaveChanges();            
+            _context.SaveChanges();
 
-            return new ObjectResult(project.HetDigitalFile);            
+            return new ObjectResult(project.HetDigitalFile);
         }
 
         /// <summary>
@@ -188,11 +188,11 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult OwnerIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
-            // validate the id            
+            // validate the id
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
             if (!exists) return new StatusCodeResult(404);
-            
+
             HetOwner owner = _context.HetOwner
                 .Include(x => x.HetDigitalFile)
                 .First(a => a.OwnerId == id);
@@ -203,7 +203,7 @@ namespace HetsApi.Controllers
                 {
                     HetDigitalFile attachment = new HetDigitalFile();
 
-                    // strip out extra info in the file name                   
+                    // strip out extra info in the file name
                     if (!string.IsNullOrEmpty(file.FileName))
                     {
                         attachment.FileName = Path.GetFileName(file.FileName);
@@ -231,7 +231,7 @@ namespace HetsApi.Controllers
 
             _context.SaveChanges();
 
-            return new ObjectResult(owner.HetDigitalFile);            
+            return new ObjectResult(owner.HetDigitalFile);
         }
 
         /// <summary>
@@ -259,11 +259,11 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult RentalRequestIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
-            // validate the id            
+            // validate the id
             bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);
 
             if (!exists) return new StatusCodeResult(404);
-            
+
             HetRentalRequest rentalRequest = _context.HetRentalRequest
                 .Include(x => x.HetDigitalFile)
                 .First(a => a.RentalRequestId == id);
@@ -274,7 +274,7 @@ namespace HetsApi.Controllers
                 {
                     HetDigitalFile attachment = new HetDigitalFile();
 
-                    // strip out extra info in the file name                   
+                    // strip out extra info in the file name
                     if (!string.IsNullOrEmpty(file.FileName))
                     {
                         attachment.FileName = Path.GetFileName(file.FileName);
@@ -302,7 +302,7 @@ namespace HetsApi.Controllers
 
             _context.SaveChanges();
 
-            return new ObjectResult(rentalRequest.HetDigitalFile);           
+            return new ObjectResult(rentalRequest.HetDigitalFile);
         }
 
         /// <summary>

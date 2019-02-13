@@ -39,10 +39,10 @@ namespace HetsApi.Controllers
             _context.SmBusinessGuid = user.BusinessGuid;
         }
 
-        /// <summary>	
-        /// Delete a time record	
-        /// </summary>	
-        /// <param name="id">id of TimeRecord to delete</param>	
+        /// <summary>
+        /// Delete a time record
+        /// </summary>
+        /// <param name="id">id of TimeRecord to delete</param>
         [HttpPost]
         [Route("{id}/delete")]
         [SwaggerOperation("TimeRecordsIdDeletePost")]
@@ -66,7 +66,7 @@ namespace HetsApi.Controllers
                 _context.SaveChanges();
             }
 
-            return new ObjectResult(new HetsResponse(item));            
+            return new ObjectResult(new HetsResponse(item));
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.RentalAgreement)
                     .ThenInclude(x => x.Equipment)
                         .ThenInclude(z => z.Owner)
-                .Where(x => x.RentalAgreement.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&                           
+                .Where(x => x.RentalAgreement.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
                             x.WorkedDate > fiscalStart);
 
             if (localAreasArray != null && localAreasArray.Length > 0)
@@ -147,7 +147,7 @@ namespace HetsApi.Controllers
                 result.Add(TimeRecordHelper.ToLiteModel(item));
             }
 
-            // return to the client            
+            // return to the client
             return new ObjectResult(new HetsResponse(result));
         }
     }

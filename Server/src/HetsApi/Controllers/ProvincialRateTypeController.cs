@@ -115,13 +115,13 @@ namespace HetsApi.Controllers
             rate.IsRateEditable = item.IsRateEditable;
             rate.IsPercentRate = item.IsPercentRate;
             rate.PeriodType = item.PeriodType;
-            
-            // save the changes	
+
+            // save the changes
             _context.SaveChanges();
 
             // get the updated record and return
             rate = _context.HetProvincialRateType.First(a => a.RateType == item.RateType);
-            rate.Id = id;            
+            rate.Id = id;
 
             return new ObjectResult(new HetsResponse(rate));
         }

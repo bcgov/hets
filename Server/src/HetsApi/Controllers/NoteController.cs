@@ -33,10 +33,10 @@ namespace HetsApi.Controllers
             _context.SmBusinessGuid = user.BusinessGuid;
         }
 
-        /// <summary>	
-        /// Delete note	
-        /// </summary>	
-        /// <param name="id">id of Note to delete</param>	
+        /// <summary>
+        /// Delete note
+        /// </summary>
+        /// <param name="id">id of Note to delete</param>
         [HttpPost]
         [Route("{id}/delete")]
         [SwaggerOperation("NotesIdDeletePost")]
@@ -48,7 +48,7 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             HetNote note = _context.HetNote.First(a => a.NoteId == id);
 
             if (note != null)
@@ -59,14 +59,14 @@ namespace HetsApi.Controllers
                 _context.SaveChanges();
             }
 
-            return new ObjectResult(new HetsResponse(note));            
+            return new ObjectResult(new HetsResponse(note));
         }
 
-        /// <summary>	
-        /// Update note	
-        /// </summary>	
-        /// <param name="id">id of Note to update</param>	
-        /// <param name="item"></param>	
+        /// <summary>
+        /// Update note
+        /// </summary>
+        /// <param name="id">id of Note to update</param>
+        /// <param name="item"></param>
         [HttpPut]
         [Route("{id}")]
         [SwaggerOperation("NotesIdPut")]
@@ -92,7 +92,7 @@ namespace HetsApi.Controllers
             // return the updated note record
             note = _context.HetNote.First(a => a.NoteId == id);
 
-            return new ObjectResult(new HetsResponse(note));          
+            return new ObjectResult(new HetsResponse(note));
         }
     }
 }

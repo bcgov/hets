@@ -30,7 +30,7 @@ namespace HetsApi.Controllers
         /// Start the import process
         /// </summary>
         /// <param name="path">Location of the extracted files to parse (relative to the folder where files are stored)</param>
-        /// <param name="realTime">Execute in real time</param>        
+        /// <param name="realTime">Execute in real time</param>
         [HttpGet]
         [Route("import")]
         [SwaggerOperation("AdminImportGet")]
@@ -108,7 +108,7 @@ namespace HetsApi.Controllers
         /// <summary>
         /// Return the equipment map
         /// </summary>
-        /// <param name="path">location of the extracted files to parse (relative to the folder where files are stored)</param>    
+        /// <param name="path">location of the extracted files to parse (relative to the folder where files are stored)</param>
         [HttpGet]
         [Route("equipMap")]
         [SwaggerOperation("AdminEquipMap")]
@@ -121,7 +121,7 @@ namespace HetsApi.Controllers
         /// <summary>
         /// Return the owner map
         /// </summary>
-        /// <param name="path">location of the extracted files to parse (relative to the folder where files are stored)</param>   
+        /// <param name="path">location of the extracted files to parse (relative to the folder where files are stored)</param>
         [HttpGet]
         [Route("ownerMap")]
         [SwaggerOperation("AdminOwnerMap")]
@@ -134,7 +134,7 @@ namespace HetsApi.Controllers
         /// <summary>
         /// Return the project map
         /// </summary>
-        /// <param name="path">location of the extracted files to parse (relative to the folder where files are stored)</param>   
+        /// <param name="path">location of the extracted files to parse (relative to the folder where files are stored)</param>
         [HttpGet]
         [Route("projectMap")]
         [SwaggerOperation("AdminProjectMap")]
@@ -161,7 +161,7 @@ namespace HetsApi.Controllers
 
         private IActionResult GetSpreadsheet(string path, string filename)
         {
-            // create an excel spreadsheet that will show the data       
+            // create an excel spreadsheet that will show the data
             lock (_thisLock)
             {
                 if (_configuration != null)
@@ -217,7 +217,7 @@ namespace HetsApi.Controllers
                 }
                 else
                 {
-                    // Environment variables override all other settings; same behaviour as the configuration provider when things get cleaned up. 
+                    // Environment variables override all other settings; same behaviour as the configuration provider when things get cleaned up.
                     connectionString = $"Host={host};Username={username};Password={password};Database={database};";
                 }
             }

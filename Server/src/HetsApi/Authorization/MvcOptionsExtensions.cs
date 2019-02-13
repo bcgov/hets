@@ -17,13 +17,13 @@ namespace HetsApi.Authorization
         /// <param name="options"></param>
         /// <returns></returns>
         public static MvcOptions AddDefaultAuthorizationPolicyFilter(this MvcOptions options)
-        {            
+        {
             Debug.WriteLine("Applying global authorization policy");
-            
+
             // Default authorization policy enforced via a global authorization filter
             AuthorizationPolicy requireLoginPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .RequireAssertion(                    
+                .RequireAssertion(
                     context => context.User.HasOnePermission(
                         HetPermission.Login, HetPermission.BusinessLogin, HetPermission.ImportData)
                     )

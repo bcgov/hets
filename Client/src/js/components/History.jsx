@@ -107,11 +107,11 @@ var HistoryComponent = React.createClass({
         ];
         return <SortTable id="history-list" sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={ headers }>
           {
-            _.map(history, (history) => { 
+            _.map(history, (history) => {
               return <tr key={ history.id }>
                 <td>{ history.formattedTimestamp }</td>
-                <td>{ history.lastUpdateUserid }</td> 
-                <td className="history-event" colSpan="2">{ history.event }</td> 
+                <td>{ history.lastUpdateUserid }</td>
+                <td className="history-event" colSpan="2">{ history.event }</td>
               </tr>;
             })
           }

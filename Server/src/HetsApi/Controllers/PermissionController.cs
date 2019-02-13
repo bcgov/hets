@@ -32,7 +32,7 @@ namespace HetsApi.Controllers
             _context.SmUserGuid = user.UserGuid;
             _context.SmBusinessGuid = user.BusinessGuid;
         }
-        
+
         /// <summary>
         /// Get all permissions
         /// </summary>
@@ -53,7 +53,7 @@ namespace HetsApi.Controllers
                 result.Add(PermissionHelper.ToLiteModel(item));
             }
 
-            // return to the client            
+            // return to the client
             return new ObjectResult(new HetsResponse(result));
         }
     }

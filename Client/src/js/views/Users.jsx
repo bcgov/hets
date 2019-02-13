@@ -75,7 +75,7 @@ var Users = React.createClass({
 
     Promise.all([favouritesPromise]).then(() => {
       this.setState({ loading: false });
-      
+
       // If this is the first load, then look for a default favourite
       if (_.isEmpty(this.props.search)) {
         var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
@@ -202,12 +202,12 @@ var Users = React.createClass({
   render() {
     var districts = _.sortBy(this.props.districts, 'name');
 
-    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) { 
+    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) {
       return (
         <div>You do not have permission to view this page.</div>
-      ); 
+      );
     }
-    
+
     if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
     var resultCount = '';
@@ -248,27 +248,27 @@ var Users = React.createClass({
         </Well>
 
         {(() => {
-          if (this.props.users.loading) { 
-            return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
+          if (this.props.users.loading) {
+            return <div style={{ textAlign: 'center' }}><Spinner/></div>;
           }
 
           var addUserButton = <Button title="Add User" bsSize="xsmall" onClick={ this.openUsersEditDialog }>
             <Glyphicon glyph="plus" />&nbsp;<strong>Add User</strong>
           </Button>;
-          
+
           if (this.props.users.loaded) {
             return this.renderResults(addUserButton);
           }
-  
+
           return <div id="add-button-container">{ addUserButton }</div>;
         })()}
       </div>
       { this.state.showUsersEditDialog &&
-        <UsersEditDialog 
-          show={ this.state.showUsersEditDialog } 
-          onSave={ this.onSaveEdit } 
+        <UsersEditDialog
+          show={ this.state.showUsersEditDialog }
+          onSave={ this.onSaveEdit }
           onClose= { this.closeUsersEditDialog }
-          isNew 
+          isNew
         />
       }
     </div>;

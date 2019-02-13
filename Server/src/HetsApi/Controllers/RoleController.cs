@@ -35,7 +35,7 @@ namespace HetsApi.Controllers
             _context.SmUserGuid = user.UserGuid;
             _context.SmBusinessGuid = user.BusinessGuid;
         }
-        
+
         /// <summary>
         /// Get all roles
         /// </summary>
@@ -55,7 +55,7 @@ namespace HetsApi.Controllers
         /// <summary>
         /// Delete role
         /// </summary>
-        /// <param name="id">id of Role to delete</param>  
+        /// <param name="id">id of Role to delete</param>
         [HttpPost]
         [Route("{id}/delete")]
         [SwaggerOperation("RolesIdDeletePost")]
@@ -130,7 +130,7 @@ namespace HetsApi.Controllers
 
             // not found
             if (role == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             // return role permissions
             return new ObjectResult(new HetsResponse(role.HetRolePermission.ToList()));
         }
@@ -155,7 +155,7 @@ namespace HetsApi.Controllers
                 .FirstOrDefault();
 
             // not found
-            if (role == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));                
+            if (role == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             List<HetPermission> allPermissions = _context.HetPermission.ToList();
             List<string> existingPermissionCodes = role.HetRolePermission.Select(x => x.Permission.Code).ToList();
@@ -166,7 +166,7 @@ namespace HetsApi.Controllers
 
                 // invalid permission
                 if (permToAdd == null) throw new ArgumentException(string.Format("Invalid Permission Code {0}", item.Code));
-                                
+
                 // add permission
                 HetRolePermission rolePermission = new HetRolePermission
                 {
@@ -185,9 +185,9 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetRolePermission)
                     .ThenInclude(rp => rp.Permission)
                 .First();
-            
+
             // return role permissions
-            return new ObjectResult(new HetsResponse(role.HetRolePermission.ToList()));            
+            return new ObjectResult(new HetsResponse(role.HetRolePermission.ToList()));
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace HetsApi.Controllers
 
             // not found
             if (role == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             // get permissions
             List<HetPermission> allPermissions = _context.HetPermission.AsNoTracking().ToList();
 
@@ -240,7 +240,7 @@ namespace HetsApi.Controllers
 
             // permissions to remove
             List<HetRolePermission> permissionsToRemove = role.HetRolePermission
-                .Where(x => x.Permission != null && 
+                .Where(x => x.Permission != null &&
                             !permissionIds.Contains(x.Permission.PermissionId)).ToList();
 
             foreach (HetRolePermission perm in permissionsToRemove)
@@ -277,7 +277,7 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             // get record
             HetRole role = _context.HetRole.First(x => x.RoleId == id);
 
@@ -326,6 +326,6 @@ namespace HetsApi.Controllers
 
             // return role permissions
             return new ObjectResult(new HetsResponse(role));
-        }        
+        }
     }
 }

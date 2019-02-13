@@ -4,10 +4,10 @@
 }
 
 @media print {
-  #rental-requests-bar, 
-  #equipment-bar, 
+  #rental-requests-bar,
+  #equipment-bar,
   #equipment-top,
-  #owners-bar, 
+  #owners-bar,
   #projects-bar,
   #users-bar,
   #roles-bar,
@@ -15,7 +15,7 @@
   #wcg-cgl-coverage-bar,
   #hiring-report-bar,
   .history,
-  .btn-group, 
+  .btn-group,
   .btn,
   .checkbox,
   .checkbox-control {
@@ -41,7 +41,7 @@
   a {
     text-decoration: none !important;
   }
-  
+
   .template {
     margin: 0;
     width: 100%;
@@ -73,14 +73,14 @@
     #rotation-list {
       font-size: 8px;
     }
-    
+
     @supports (size: landscape) {
       #rotation-list {
         font-size: 10px;
       }
     }
   }
-  
+
   div.row {
     margin: 0 -15px;
   }
@@ -97,7 +97,7 @@
     th span {
       display: block;
     }
-    
+
     td {
       word-break: break-all;
     }
@@ -109,13 +109,13 @@
     th:nth-child(2), td:nth-child(2), th:last-child, td:last-child {
       display: table-cell !important;
     }
-    
+
     th:last-child, td:last-child {
       min-width: 150px;
     }
   }
 
-  .row:after { 
+  .row:after {
     margin-bottom: -25px;
   }
 

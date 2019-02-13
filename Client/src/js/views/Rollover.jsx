@@ -94,7 +94,7 @@ var Rollover = React.createClass({
           </div>
         </div>
       </div>
-    ); 
+    );
   },
 
   renderContentRolloverComplete() {
@@ -104,7 +104,7 @@ var Rollover = React.createClass({
         <p><strong>Note: </strong>Please save/print out the new seniority lists for all equipments corresponding to each local area.</p>
         <Button onClick={ this.dismissRolloverNotice } bsStyle="primary">Dismiss</Button>
       </div>
-    ); 
+    );
   },
 
   renderContent() {
@@ -129,7 +129,7 @@ var Rollover = React.createClass({
           <strong>Note: </strong>
           <span>The roll over is an important annual process that recalculates the seniority for each piece of equipment across the district at the start of a fiscal year. Once triggered, this process is not reversible. In case you have any questions, please contact the primary coordinator for the process before proceeding with the hired equipment roll over.</span>
         </div>
-        
+
         <div className="clearfix">
           <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.initiateRollover }><p>Please ensure all processes corresponding to the checklist are complete before rolling over.</p><p>If you are certain all tasks have been completed, click <strong>Yes</strong> to proceed with roll over. Otherwise, click <strong>No</strong>.</p></Confirm> }>
             <Button className="pull-right" disabled={ rolloverButtonDisabled } title="Roll Over">Roll Over</Button>

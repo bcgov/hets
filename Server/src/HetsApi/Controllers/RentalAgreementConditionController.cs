@@ -34,10 +34,10 @@ namespace HetsApi.Controllers
             _context.SmBusinessGuid = user.BusinessGuid;
         }
 
-        /// <summary>	
-        /// Delete rental agreement condition	
-        /// </summary>	
-        /// <param name="id">id of RentalAgreementCondition to delete</param>		
+        /// <summary>
+        /// Delete rental agreement condition
+        /// </summary>
+        /// <param name="id">id of RentalAgreementCondition to delete</param>
         [HttpPost]
         [Route("{id}/delete")]
         [SwaggerOperation("RentalAgreementConditionsIdDeletePost")]
@@ -55,17 +55,17 @@ namespace HetsApi.Controllers
 
             _context.HetRentalAgreementCondition.Remove(condition);
 
-            // save changes	
-            _context.SaveChanges();            
+            // save changes
+            _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(condition));            
+            return new ObjectResult(new HetsResponse(condition));
         }
 
-        /// <summary>	
-        /// Update rental agreement condition by id	
-        /// </summary>	
-        /// <param name="id">id of RentalAgreementCondition to fetch</param>	
-        /// <param name="item"></param>	
+        /// <summary>
+        /// Update rental agreement condition by id
+        /// </summary>
+        /// <param name="id">id of RentalAgreementCondition to fetch</param>
+        /// <param name="item"></param>
         [HttpPut]
         [Route("{id}")]
         [SwaggerOperation("RentalAgreementConditionsIdPut")]
@@ -86,7 +86,7 @@ namespace HetsApi.Controllers
             condition.Comment = item.Comment;
             condition.ConditionName = item.ConditionName;
 
-            // save changes	
+            // save changes
             _context.SaveChanges();
 
             // return the updated condition record
