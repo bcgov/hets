@@ -63,10 +63,11 @@ function initializeApp() {
     var regionsPromise = Api.getRegions();
     var serviceAreasPromise = Api.getServiceAreas();
     var localAreasPromise = Api.getLocalAreas(districtId);
+    var fiscalYearsPromise = Api.getFiscalYears(districtId);
     var permissionsPromise = Api.getPermissions();
     var currentUserDistrictsPromise = Api.getCurrentUserDistricts();
 
-    return Promise.all([citiesPromise, districtsPromise, regionsPromise, serviceAreasPromise, localAreasPromise, permissionsPromise, currentUserDistrictsPromise]).then(() => {
+    return Promise.all([citiesPromise, districtsPromise, regionsPromise, serviceAreasPromise, localAreasPromise, fiscalYearsPromise, permissionsPromise, currentUserDistrictsPromise]).then(() => {
       incrementProgressBar(100);
 
       initializationEl.addEventListener('transitionend', () => {

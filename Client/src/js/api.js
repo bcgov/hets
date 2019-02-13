@@ -2121,6 +2121,12 @@ export function getDistrictEquipmentTypes(districtId) {
   });
 }
 
+export function getFiscalYears(districtId) {
+  return new ApiRequest(`/districts/${districtId}/fiscalYears`).get().then(response => {
+    store.dispatch({ type: Action.UPDATE_FISCAL_YEARS_LOOKUP, fiscalYears: response.data });
+  });
+}
+
 export function getOwnersLiteTs() {
   return new ApiRequest('/owners/liteTs').get().then(response => {
     var owners = normalize(response.data);
