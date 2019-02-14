@@ -53,7 +53,7 @@ var TopNav = React.createClass({
   },
 
   render() {
-    var userDistricts = this.props.currentUserDistricts.data.map(district => {
+    var userDistricts = _.map(this.props.currentUserDistricts.data, district => {
       return { ...district, districtName: district.district.name, id: district.district.id };
     });
 
