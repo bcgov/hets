@@ -28,11 +28,6 @@ namespace HetsData.Model
         public const string Admin = "Admin";
 
         /// <summary>
-        /// Import Legacy Data Permission Permission
-        /// </summary>
-        public const string ImportData = "ImportData";
-
-        /// <summary>
         /// Code Table Management Permission
         /// </summary>
         public const string CodeTableManagement = "CodeTableManagement";
@@ -85,12 +80,6 @@ namespace HetsData.Model
                 Code = Admin,
                 Name = "Admin",
                 Description = "Allows the user to perform special administrative tasks"
-            },
-            new HetPermission
-            {
-                Code = ImportData,
-                Name = "Import Data",
-                Description = "Enables the user to import data from the legacy system"
             },
             new HetPermission
             {

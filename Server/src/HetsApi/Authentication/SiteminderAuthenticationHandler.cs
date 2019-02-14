@@ -3,7 +3,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using System.Transactions;
 using HetsApi.Helpers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
@@ -437,8 +436,7 @@ namespace HetsApi.Authentication
                     userPrincipal = userSettings.HetsUser.ToClaimsPrincipal(options.Scheme);
 
                     if (!userPrincipal.HasClaim(HetUser.PermissionClaim, HetPermission.Login) &&
-                        !userPrincipal.HasClaim(HetUser.PermissionClaim, HetPermission.BusinessLogin) &&
-                        !userPrincipal.HasClaim(HetUser.PermissionClaim, HetPermission.ImportData))
+                        !userPrincipal.HasClaim(HetUser.PermissionClaim, HetPermission.BusinessLogin))
                     {
                         _logger.LogWarning(options.MissingDbUserIdError + " (" + userId + ")");
                         return Task.FromResult(AuthenticateResult.Fail(options.InvalidPermissions));
