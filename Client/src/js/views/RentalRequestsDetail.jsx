@@ -212,7 +212,9 @@ var RentalRequestsDetail = React.createClass({
 
   renderStatusText(listItem) {
     let text = 'Hire';
-    if (listItem.offerResponse === STATUS_NO) {
+    if (listItem.offerResponse === STATUS_NO && listItem.offerRefusalReason == Constant.HIRING_REFUSAL_OTHER) {
+      text = listItem.offerResponseNote;
+    } else if (listItem.offerResponse == STATUS_NO) {
       text = listItem.offerRefusalReason;
     } else if (listItem.offerResponse === STATUS_ASKED) {
       text = `${listItem.offerResponse} (${Moment(listItem.askedDateTime).format('YYYY-MM-DD hh:mm A')})`;

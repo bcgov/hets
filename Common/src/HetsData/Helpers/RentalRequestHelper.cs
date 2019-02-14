@@ -45,6 +45,7 @@ namespace HetsData.Helpers
         public DateTime? NoteDate { get; set; }
         public string NoteType { get; set; }
         public string Reason { get; set; }
+        public string OfferResponseNote { get; set; }
         public string UserId { get; set; }
         public string UserName { get; set; }
     }
@@ -271,6 +272,7 @@ namespace HetsData.Helpers
                 // * Force Hire -For force hiring an equipment
                 requestLite.NoteType = "Not Hired"; // default
                 requestLite.Reason = request.OfferRefusalReason;
+                requestLite.OfferResponseNote = request.OfferResponseNote;
 
                 if (request.IsForceHire != null && request.IsForceHire == true)
                 {
