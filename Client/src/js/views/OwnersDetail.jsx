@@ -31,6 +31,8 @@ import History from '../components/History.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
+import Confirm from '../components/Confirm.jsx';
+import OverlayTrigger from '../components/OverlayTrigger.jsx';
 
 import { formatDateTime, today, toZuluTime } from '../utils/date';
 
@@ -520,7 +522,9 @@ var OwnersDetail = React.createClass({
             </Well>
             <Well>
               <h3 className="clearfix">Equipment ({ owner.numberOfEquipment }) <span className="pull-right">
-                <TooltipButton disabled={ !isApproved } disabledTooltip={ restrictEquipmentVerifyTooltip } className="mr-5" title="Verify All Equipment" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</TooltipButton>
+                <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.equipmentVerifyAll }></Confirm> }>
+                  <TooltipButton disabled={!isApproved} disabledTooltip={restrictEquipmentVerifyTooltip} className="mr-5" title="Verify All Equipment" bsSize="small">Verify All</TooltipButton>
+                </OverlayTrigger>
                 <TooltipButton disabled={ !isApproved } disabledTooltip={ restrictEquipmentAddTooltip } title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></TooltipButton>
               </span></h3>
               {(() => {
