@@ -259,7 +259,7 @@ var HiringReport = React.createClass({
     var equipment = this.getFilteredEquipment();
 
     return <div id="hiring-report">
-      <PageHeader>Owner's Equipment - Reason { resultCount }
+      <PageHeader>Hiring Report - Not Hired / Force Hire { resultCount }
         <ButtonGroup id="hiring-report-buttons">
           <TooltipButton onClick={ this.print } disabled={ !this.props.hiringResponses.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
             <Glyphicon glyph="print" title="Print" />
