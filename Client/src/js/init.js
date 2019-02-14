@@ -52,22 +52,11 @@ export default function startApp() {
 
 function initializeApp() {
   incrementProgressBar(5);
-  // Load current user next.
-  Api.getCurrentUser().then((response) => {
-    incrementProgressBar(33);
-    var districtId = response.district.id;
-    // Check permissions?
-    // Get lookups.
-    var citiesPromise = null;
-    var districtsPromise = Api.getDistricts();
-    var regionsPromise = Api.getRegions();
-    var serviceAreasPromise = Api.getServiceAreas();
-    var localAreasPromise = Api.getLocalAreas(districtId);
-    var fiscalYearsPromise = Api.getFiscalYears(districtId);
-    var permissionsPromise = Api.getPermissions();
-    var currentUserDistrictsPromise = Api.getCurrentUserDistricts();
 
-    return Promise.all([citiesPromise, districtsPromise, regionsPromise, serviceAreasPromise, localAreasPromise, fiscalYearsPromise, permissionsPromise, currentUserDistrictsPromise]).then(() => {
+  Api.getCurrentUser().then(user => {
+    incrementProgressBar(33);
+
+    return getLookups(user).then(() => {
       incrementProgressBar(100);
 
       initializationEl.addEventListener('transitionend', () => {
@@ -81,6 +70,23 @@ function initializeApp() {
   }).catch(err => {
     showError(err);
   });
+}
+
+function getLookups(user) {
+  if (user.businessUser) {
+    return Promise.resolve();
+  } else {
+    var districtId = user.district.id;
+    var districtsPromise = Api.getDistricts();
+    var regionsPromise = Api.getRegions();
+    var serviceAreasPromise = Api.getServiceAreas();
+    var localAreasPromise = Api.getLocalAreas(districtId);
+    var fiscalYearsPromise = Api.getFiscalYears(districtId);
+    var permissionsPromise = Api.getPermissions();
+    var currentUserDistrictsPromise = Api.getCurrentUserDistricts();
+
+    return Promise.all([districtsPromise, regionsPromise, serviceAreasPromise, localAreasPromise, fiscalYearsPromise, permissionsPromise, currentUserDistrictsPromise]);
+  }
 }
 
 function showError(err) {
