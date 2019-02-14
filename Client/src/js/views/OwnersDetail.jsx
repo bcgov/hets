@@ -31,6 +31,8 @@ import History from '../components/History.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
+import Confirm from '../components/Confirm.jsx';
+import OverlayTrigger from '../components/OverlayTrigger.jsx';
 
 import { formatDateTime, today, toZuluTime } from '../utils/date';
 
@@ -399,7 +401,7 @@ var OwnersDetail = React.createClass({
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Company">{ owner.organizationName }</ColDisplay>
                     </Col>
                     <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Company Address">{ owner.fullAddress }</ColDisplay>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Primary Contact">{ owner.primaryContactName }</ColDisplay>
                     </Col>
                     <Col lg={4} md={6} sm={12} xs={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Owner Name">{ owner.ownerName }</ColDisplay>
@@ -408,7 +410,7 @@ var OwnersDetail = React.createClass({
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Owner Code">{ owner.ownerCode }</ColDisplay>
                     </Col>
                     <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Primary Contact">{ owner.primaryContactName }</ColDisplay>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="District Office">{ owner.districtName }</ColDisplay>
                     </Col>
                     <Col lg={4} md={6} sm={12} xs={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Doing Business As">{ owner.doingBusinessAs }</ColDisplay>
@@ -417,7 +419,7 @@ var OwnersDetail = React.createClass({
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Registered BC Company Number">{ owner.registeredCompanyNumber }</ColDisplay>
                     </Col>
                     <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="District Office">{ owner.districtName }</ColDisplay>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Meets Residency?">{ owner.meetsResidency ? 'Yes' : 'No' }</ColDisplay>
                     </Col>
                     <Col lg={4} md={6} sm={12} xs={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Service/Local Area">{ owner.localAreaName }</ColDisplay>
@@ -426,7 +428,7 @@ var OwnersDetail = React.createClass({
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Maintenance Contractor">{ owner.isMaintenanceContractor ? 'Yes' : 'No' }</ColDisplay>
                     </Col>
                     <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Meets Residency?">{ owner.meetsResidency ? 'Yes' : 'No' }</ColDisplay>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Company Address">{ owner.address1 } { owner.address2 } <br/> { owner.city } { owner.province } { owner.postalCode }</ColDisplay>
                     </Col>
                   </Row>
                 </div>;
@@ -520,7 +522,9 @@ var OwnersDetail = React.createClass({
             </Well>
             <Well>
               <h3 className="clearfix">Equipment ({ owner.numberOfEquipment }) <span className="pull-right">
-                <TooltipButton disabled={ !isApproved } disabledTooltip={ restrictEquipmentVerifyTooltip } className="mr-5" title="Verify All Equipment" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</TooltipButton>
+                <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.equipmentVerifyAll }></Confirm> }>
+                  <TooltipButton disabled={!isApproved} disabledTooltip={restrictEquipmentVerifyTooltip} className="mr-5" title="Verify All Equipment" bsSize="small">Verify All</TooltipButton>
+                </OverlayTrigger>
                 <TooltipButton disabled={ !isApproved } disabledTooltip={ restrictEquipmentAddTooltip } title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></TooltipButton>
               </span></h3>
               {(() => {
