@@ -139,7 +139,7 @@ gulp.task('images', function() {
 });
 
 gulp.task('fonts', function() {
-  return gulp.src(['node_modules/bootstrap/dist/fonts/**', 'src/fonts/**'])
+  return gulp.src(['node_modules/bootstrap/dist/fonts/**'])
     .pipe($.size({ title : 'fonts' }))
     .pipe(gulp.dest(DIST_DIR + '/fonts/'));
 });
