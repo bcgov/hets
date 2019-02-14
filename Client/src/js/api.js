@@ -746,6 +746,13 @@ export function getOwnersLite() {
   });
 }
 
+export function getOwnersLiteHires() {
+  return new ApiRequest('/owners/liteHires').get().then(response => {
+    var owners = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_OWNERS_LITE_LOOKUP, owners: owners });
+  });
+}
+
 export function searchOwners(params) {
   store.dispatch({ type: Action.OWNERS_REQUEST });
   return new ApiRequest('/owners/search').get(params).then(response => {

@@ -88,7 +88,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("lite")]
         [SwaggerOperation("OwnersGetLite")]
-        [SwaggerResponse(200, type: typeof(List<OwnerLiteList>))]
+        [SwaggerResponse(200, type: typeof(List<OwnerLiteProjects>))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult OwnersGetLite()
         {
@@ -99,34 +99,69 @@ namespace HetsApi.Controllers
             int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            // get all active owners for this district (and any projects they're associated with)
-            IEnumerable<OwnerLiteList> owners = _context.HetOwner.AsNoTracking()
+            // get all active owners for this district
+            IEnumerable<OwnerLiteProjects> owners = _context.HetOwner.AsNoTracking()
                 .Include(x => x.HetEquipment)
                     .ThenInclude(x => x.HetRentalAgreement)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId == districtId &&
                             x.OwnerStatusTypeId == statusId)
                 .OrderBy(x => x.OwnerCode)
-                .Select(x => new OwnerLiteList
+                .Select(x => new OwnerLiteProjects
                 {
                     OwnerCode = x.OwnerCode,
                     OrganizationName = x.OrganizationName,
                     Id = x.OwnerId,
                     LocalAreaId = x.LocalAreaId,
-                    ProjectIds = x.HetEquipment.SelectMany(y => y.HetRentalAgreement.Where(z => z.ProjectId != null).Select(z => z.ProjectId))
-                        .Distinct()
-                        .ToList(),
                 });
 
             return new ObjectResult(new HetsResponse(owners));
         }
 
         /// <summary>
-        /// Get all owners for this district that are associated with a project (lite)
+        /// Get all owners for this district for hiring report (lite)
+        /// </summary>
+        [HttpGet]
+        [Route("liteHires")]
+        [SwaggerOperation("OwnersGetLiteHires")]
+        [SwaggerResponse(200, type: typeof(List<OwnerLiteProjects>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult OwnersGetLiteHires()
+        {
+            // get users district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            // get active status
+            int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
+            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // get all active owners for this district (and any projects they're associated with)
+            IEnumerable<OwnerLiteProjects> owners = _context.HetRentalRequestRotationList.AsNoTracking()
+                .Include(x => x.RentalRequest)
+                    .ThenInclude(y => y.LocalArea)
+                        .ThenInclude(z => z.ServiceArea)
+                .Include(x => x.RentalRequest)
+                .Include(x => x.Equipment)
+                    .ThenInclude(y => y.Owner)
+                .Where(x => x.RentalRequest.LocalArea.ServiceArea.DistrictId.Equals(districtId))
+                .GroupBy(x => x.Equipment.Owner, (o, rotationLists) => new OwnerLiteProjects
+                {
+                    OwnerCode = o.OwnerCode,
+                    OrganizationName = o.OrganizationName,
+                    Id = o.OwnerId,
+                    LocalAreaId = o.LocalAreaId,
+                    ProjectIds = rotationLists.Select(y => y.RentalRequest.ProjectId).Where(y => y != null).Distinct().ToList()
+                });
+
+            return new ObjectResult(new HetsResponse(owners));
+        }
+
+        /// <summary>
+        /// Get all owners for this district for time entries (lite)
         /// </summary>
         [HttpGet]
         [Route("liteTs")]
         [SwaggerOperation("OwnersGetLiteTs")]
-        [SwaggerResponse(200, type: typeof(List<OwnerLiteList>))]
+        [SwaggerResponse(200, type: typeof(List<OwnerLiteProjects>))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult OwnersGetLiteTs()
         {
@@ -148,14 +183,14 @@ namespace HetsApi.Controllers
             DateTime fiscalYearStart = new DateTime((int)fiscalYear, 3, 31);
 
             // get all active owners for this district (and any projects they're associated with)
-            IEnumerable<OwnerLiteList> owners = _context.HetRentalAgreement.AsNoTracking()
+            IEnumerable<OwnerLiteProjects> owners = _context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.Project)
                 .Include(x => x.Equipment)
                     .ThenInclude(y => y.Owner)
                 .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
                             x.Equipment.Owner.OwnerStatusTypeId == statusId &&
                             x.Project.AppCreateTimestamp > fiscalYearStart)
-                .GroupBy(x => x.Equipment.Owner, (o, agreements) => new OwnerLiteList
+                .GroupBy(x => x.Equipment.Owner, (o, agreements) => new OwnerLiteProjects
                 {
                     OwnerCode = o.OwnerCode,
                     OrganizationName = o.OrganizationName,
