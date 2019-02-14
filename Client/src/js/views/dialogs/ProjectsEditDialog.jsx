@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Grid, Row, Col, Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { Grid, Row, Col, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -11,6 +11,7 @@ import * as Constant from '../../constants';
 import DropdownControl from '../../components/DropdownControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
@@ -136,9 +137,7 @@ var ProjectsEditDialog = React.createClass({
     // TODO: Restrict Information box resize
     return <EditDialog id="projects-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title= {
-        <strong>Projects</strong>
-      }>
+      title={<strong>Projects</strong>}>
       <Form>
         <Grid fluid>
           <Row>

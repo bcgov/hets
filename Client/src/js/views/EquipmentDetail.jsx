@@ -142,7 +142,7 @@ var EquipmentDetail = React.createClass({
 
   updateStatusState(state) {
     if (state !== this.props.equipment.status) {
-      this.setState({ status: state }, this.openChangeStatusDialog());
+      this.setState({ status: state }, () => this.openChangeStatusDialog());
     }
   },
 

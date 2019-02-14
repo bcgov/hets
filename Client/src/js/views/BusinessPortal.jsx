@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { Link } from 'react-router';
 
-import { PageHeader, Well, Row, Col, Form, FormGroup, Alert, Button } from 'react-bootstrap';
+import { PageHeader, Well, Row, Col, FormGroup, Alert, Button } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Action from '../actionTypes';
@@ -17,6 +17,7 @@ import Spinner from '../components/Spinner.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
 import SortTable from '../components/SortTable.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
+import Form from '../components/Form.jsx';
 
 var BusinessPortal = React.createClass({
   propTypes: {

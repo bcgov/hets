@@ -53,7 +53,7 @@ var TopNav = React.createClass({
   },
 
   render() {
-    var userDistricts = this.props.currentUserDistricts.data.map(district => {
+    var userDistricts = _.map(this.props.currentUserDistricts.data, district => {
       return { ...district, districtName: district.district.name, id: district.district.id };
     });
 
@@ -105,7 +105,7 @@ var TopNav = React.createClass({
                   <MenuItem>Status Letters / Mailing Labels</MenuItem>
                 </LinkContainer>
                 <LinkContainer to={{ pathname: `/${ Constant.HIRING_REPORT_PATHNAME }` }} active={ currentPathStartsWith(Constant.HIRING_REPORT_PATHNAME) }>
-                  <MenuItem>Owner's Equipment - Reason</MenuItem>
+                  <MenuItem>Hiring Report - Not Hired / Force Hire</MenuItem>
                 </LinkContainer>
                 <LinkContainer to={{ pathname: `/${ Constant.OWNERS_COVERAGE_PATHNAME }` }} active={ currentPathStartsWith(Constant.OWNERS_COVERAGE_PATHNAME) }>
                   <MenuItem>WCB / CGL Coverage</MenuItem>

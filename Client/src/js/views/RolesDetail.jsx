@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Well, Grid, Row, Col } from 'react-bootstrap';
-import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 import { Table, Button, Glyphicon } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -17,6 +17,7 @@ import store from '../store';
 
 import FormInputControl from '../components/FormInputControl.jsx';
 import Spinner from '../components/Spinner.jsx';
+import Form from '../components/Form.jsx';
 
 import { isBlank } from '../utils/string';
 
@@ -211,7 +212,7 @@ var RolesDetail = React.createClass({
             {(() => {
               if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-              return <Form id="roles-edit">
+              return <Form id="roles-edit" onSubmit={this.onSave}>
                 <Grid fluid>
                   <Row>
                     <Col md={3}>

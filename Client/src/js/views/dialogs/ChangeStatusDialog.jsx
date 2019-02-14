@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { Form, Row, Col, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
+import { Row, Col, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
 
 import _ from 'lodash';
 
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 import { OWNER_STATUS_CODE_APPROVED } from '../../constants';
@@ -91,9 +92,7 @@ var ChangeStatusDialog = React.createClass({
 
     return <EditDialog id="notes" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } isValid={ this.isValid } didChange={ this.didChange }
-      title= {
-        <strong>Reason for Status Change</strong>
-      }>
+      title={<strong>Reason for Status Change</strong>}>
       <Row>
         <Col md={12}>
           <Form>

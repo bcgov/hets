@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import _ from 'lodash';
 
-import { Grid, Row, Col, Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { Grid, Row, Col, FormGroup, HelpBlock, ControlLabel, Button } from 'react-bootstrap';
 
 import * as Api from '../../api';
 
@@ -12,6 +12,7 @@ import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import Spinner from '../../components/Spinner.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank, notBlank } from '../../utils/string';
 import { isValidYear } from '../../utils/date';
@@ -188,9 +189,7 @@ var EquipmentEditDialog = React.createClass({
     return <EditDialog id="equipment-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.checkForDuplicatesAndSave } didChange={ this.didChange } isValid={ this.isValid }
       saveText={ this.state.duplicateSerialNumber ? 'Proceed Anyways' : 'Save' }
-      title= {
-        <strong>Equipment Id: <small>{ equipment.equipmentCode }</small></strong>
-      }>
+      title={<strong>Equipment Id: <small>{ equipment.equipmentCode }</small></strong>}>
       {(() => {
         return <Form>
           <Grid fluid>

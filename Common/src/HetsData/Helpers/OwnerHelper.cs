@@ -37,7 +37,7 @@ namespace HetsData.Helpers
         public DateTime? CglExpiryDate { get; set; }
     }
 
-    public class OwnerLiteList
+    public class OwnerLiteProjects
     {
         public int Id { get; set; }
         public string OwnerCode { get; set; }

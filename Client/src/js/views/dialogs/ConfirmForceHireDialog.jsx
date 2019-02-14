@@ -2,10 +2,11 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Grid, Row, Col, Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { Grid, Row, Col, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
@@ -56,11 +57,8 @@ var ConfirmForceHireDialog = React.createClass({
   render() {
     return <EditDialog id="confirm-force-hire" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={
-        <strong>Force Hire</strong>
-      }
-      backdropClassName="confirm-force-hire"
-    >
+      title={<strong>Force Hire</strong>}
+      backdropClassName="confirm-force-hire">
       <Form>
         <Grid fluid>
           <Col md={12}>

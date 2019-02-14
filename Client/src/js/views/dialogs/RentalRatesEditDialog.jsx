@@ -1,12 +1,13 @@
 import React from 'react';
 
 import { Grid, Row, Col } from 'react-bootstrap';
-import { Form, FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
 
 import _ from 'lodash';
 
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
@@ -149,12 +150,11 @@ var RentalRatesEditDialog = React.createClass({
   render() {
     // Read-only if the user cannot edit the rental agreement
     var isReadOnly = !this.props.rentalRate.canEdit && this.props.rentalRate.id !== 0;
+    var status = this.props.rentalRate.isIncludedInTotal ? 'Included' : 'As-Needed';
 
     return <EditDialog id="rental-rates-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={
-        <strong>Rental Agreement - { this.props.rentalRate.isIncludedInTotal ? 'Included' : 'As-Needed' } Rates and Attachments</strong>
-      }>
+      title={<strong>Rental Agreement - {status} Rates and Attachments</strong>}>
       <div className="forms-container">
         { Object.keys(this.state.forms).map(key => (
           <Form key={key}>

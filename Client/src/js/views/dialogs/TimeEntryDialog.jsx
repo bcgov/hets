@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Grid, Row, Col, Form, FormGroup, ControlLabel, HelpBlock, Button, Glyphicon } from 'react-bootstrap';
+import { Grid, Row, Col, FormGroup, ControlLabel, HelpBlock, Button, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
 
 import Moment from 'moment';
@@ -15,6 +15,7 @@ import DeleteButton from '../../components/DeleteButton.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import Spinner from '../../components/Spinner.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank, formatHours } from '../../utils/string';
 import { formatDateTime } from '../../utils/date';
@@ -312,10 +313,7 @@ var TimeEntryDialog = React.createClass({
         saveText="Continue"
         didChange={ this.didChangeSelectAgreement }
         isValid={ this.validateSelectAgreement }
-        title={
-          <strong>Hets Time Entry</strong>
-        }
-      >
+        title={<strong>Hets Time Entry</strong>}>
         <Form>
           <Grid fluid>
             <Row>
@@ -372,10 +370,7 @@ var TimeEntryDialog = React.createClass({
         closeText={ this.props.multipleEntryAllowed ? 'Back' : 'Close' }
         didChange={ this.didChange }
         isValid={ this.isValid }
-        title={
-          <strong>Hets Time Entry</strong>
-        }
-      >
+        title={<strong>Hets Time Entry</strong>}>
         <Form>
           <Grid fluid>
             <Row>

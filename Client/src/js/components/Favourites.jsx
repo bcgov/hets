@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert, Dropdown, ButtonToolbar, Button } from 'react-bootstrap';
-import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 import { Col, Glyphicon } from 'react-bootstrap';
 
 import _ from 'lodash';
@@ -12,6 +12,7 @@ import DeleteButton from '../components/DeleteButton.jsx';
 import EditButton from '../components/EditButton.jsx';
 import EditDialog from '../components/EditDialog.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
+import Form from '../components/Form.jsx';
 import RootCloseMenu from './RootCloseMenu.jsx';
 
 import { isBlank } from '../utils/string';
@@ -66,9 +67,7 @@ var EditFavouritesDialog = React.createClass({
   render() {
     return <EditDialog id="edit-favourite" show={ this.props.show } bsSize="small"
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title= {
-        <strong>Favourite</strong>
-      }>
+      title={<strong>Favourite</strong>}>
       <Form>
         <FormGroup controlId="name" validationState={ this.state.nameError ? 'error' : null }>
           <ControlLabel>Name <sup>*</sup></ControlLabel>
@@ -171,8 +170,7 @@ var Favourites = React.createClass({
     var className = `favourites ${ this.props.className || '' } ${ this.props.pullRight ? 'pull-right' : '' }`;
 
     return <Dropdown id={ this.props.id } className={ className } title={ title }
-      open={ this.state.open } onToggle={ this.toggle }
-    >
+      open={ this.state.open } onToggle={ this.toggle }>
       <Dropdown.Toggle>{ title }</Dropdown.Toggle>
       <RootCloseMenu bsRole="menu">
         <div className="favourites-button-bar">
