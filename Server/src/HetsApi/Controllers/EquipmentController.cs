@@ -311,6 +311,12 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetEquipmentAttachment)
                 .First(a => a.EquipmentId == id);
 
+            // HETS-1069 - Do not allow an equipment whose Equipment type has been deleted to change status
+            if (equipment.DistrictEquipmentType == null || equipment.DistrictEquipmentType.Deleted)
+            {
+                return new ObjectResult(new HetsResponse("HETS-39", ErrorViewModel.GetDescription("HETS-39", _configuration)));
+            }
+
             // used for seniority recalculation
             int localAreaId = equipment.LocalArea.LocalAreaId;
             int districtEquipmentTypeId = equipment.DistrictEquipmentType.DistrictEquipmentTypeId;
