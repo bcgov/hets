@@ -57,6 +57,14 @@ export const RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS = 'In Progress';
 export const RENTAL_REQUEST_STATUS_CODE_COMPLETED = 'Complete';
 export const RENTAL_REQUEST_STATUS_CODE_CANCELLED = 'Cancelled';
 
+// Hiring Refusal Reasons
+export const HIRING_REFUSAL_EQUIPMENT_NOT_AVAILABLE = 'Equipment Not Available';
+export const HIRING_REFUSAL_EQUIPMENT_NOT_SUITABLE = 'Equipment Not Suitable';
+export const HIRING_REFUSAL_NO_RESPONSE = 'No Response';
+export const HIRING_REFUSAL_MAXIMUM_HOURS_REACHED = 'Maximum Hours Reached';
+export const HIRING_REFUSAL_MAINTENANCE_CONTRACTOR = 'Maintenance Contractor';
+export const HIRING_REFUSAL_OTHER = 'Other (Reason to be mentioned in note)';
+
 // Rental Agreements
 export const RENTAL_AGREEMENT_STATUS_CODE_ACTIVE = 'Active';
 export const RENTAL_AGREEMENT_STATUS_CODE_COMPLETED = 'Completed';

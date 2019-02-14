@@ -8,6 +8,7 @@ import _ from 'lodash';
 import Promise from 'bluebird';
 
 import * as Api from '../../api';
+import * as Constant from '../../constants';
 
 import ConfirmForceHireDialog from '../dialogs/ConfirmForceHireDialog.jsx';
 import ConfirmDialog from '../dialogs/ConfirmDialog.jsx';
@@ -27,20 +28,13 @@ const STATUS_NO = 'No';
 const STATUS_ASKED = 'Asked';
 const STATUS_FORCE_HIRE = 'Force Hire';
 
-// TODO Use lookup lists instead of hard-coded values (HETS-236)
-const EQUIPMENT_NOT_AVAILABLE = 'Equipment Not Available';
-const EQUIPMENT_NOT_SUITABLE = 'Equipment Not Suitable';
-const NO_RESPONSE = 'No Response';
-const MAXIMUM_HOURS_REACHED = 'Maximum Hours Reached';
-const MAINTENANCE_CONTRACTOR = 'Maintenance Contractor';
-const OTHER = 'Other (Reason to be mentioned in note)';
 const refusalReasons = [
-  EQUIPMENT_NOT_AVAILABLE,
-  EQUIPMENT_NOT_SUITABLE,
-  NO_RESPONSE,
-  MAXIMUM_HOURS_REACHED,
-  MAINTENANCE_CONTRACTOR,
-  OTHER,
+  Constant.HIRING_REFUSAL_EQUIPMENT_NOT_AVAILABLE,
+  Constant.HIRING_REFUSAL_EQUIPMENT_NOT_SUITABLE,
+  Constant.HIRING_REFUSAL_NO_RESPONSE,
+  Constant.HIRING_REFUSAL_MAXIMUM_HOURS_REACHED,
+  Constant.HIRING_REFUSAL_MAINTENANCE_CONTRACTOR,
+  Constant.HIRING_REFUSAL_OTHER,
 ];
 
 var HireOfferEditDialog = React.createClass({
@@ -139,7 +133,7 @@ var HireOfferEditDialog = React.createClass({
       valid = false;
     }
 
-    if (this.state.offerStatus == STATUS_NO && this.state.offerRefusalReason === OTHER && isBlank(this.state.offerResponseNote)) {
+    if (this.state.offerStatus == STATUS_NO && this.state.offerRefusalReason === Constant.HIRING_REFUSAL_OTHER && isBlank(this.state.offerResponseNote)) {
       this.setState({ offerResponseNoteError: 'Note is required' });
       valid = false;
     }
@@ -193,7 +187,7 @@ var HireOfferEditDialog = React.createClass({
       this.setState(this.getInitialState());
     } else {
       this.offerStatusChanged(STATUS_NO);
-      this.setState({ offerRefusalReason: MAXIMUM_HOURS_REACHED });
+      this.setState({ offerRefusalReason: Constant.HIRING_REFUSAL_MAXIMUM_HOURS_REACHED });
     }
     this.closeConfirmMaxHoursHireDialog();
   },
