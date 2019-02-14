@@ -168,6 +168,8 @@ var HiringReport = React.createClass({
     ]}>
       {
         _.map(hiringResponses, (entry) => {
+          var reason = entry.reason == Constant.HIRING_REFUSAL_OTHER ? entry.offerResponseNote : entry.reason;
+
           return <tr key={ entry.id }>
             <td>{ entry.localAreaLabel }</td>
             <td>{ entry.ownerCode }</td>
@@ -177,7 +179,7 @@ var HiringReport = React.createClass({
             <td><Link to={`${Constant.PROJECTS_PATHNAME}/${entry.projectId}`}>{ entry.projectNumber }</Link></td>
             <td>{ formatDateTime(entry.noteDate, 'YYYY-MMM-DD') }</td>
             <td>{ entry.noteType }</td>
-            <td>{ entry.reason }</td>
+            <td>{ reason }</td>
             <td>{ entry.userName } ({ entry.userId })</td>
           </tr>;
         })
