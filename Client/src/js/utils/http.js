@@ -39,12 +39,12 @@ HttpError.prototype = Object.create(Error.prototype, {
   constructor: { value: HttpError },
 });
 
-export const ApiError = function(msg, method, path, status, html) {
+export const ApiError = function(msg, method, path, status, json) {
   this.message = msg || '';
   this.method = method;
   this.path = path;
   this.status = status || null;
-  this.html = html;
+  this.json = json;
 };
 
 ApiError.prototype = Object.create(Error.prototype, {
@@ -181,12 +181,12 @@ export function jsonRequest(path, options) {
     }
   }).catch((err) => {
     if (err instanceof HttpError) {
-      var apiError = new ApiError(`API ${err.method} ${err.path} failed (${err.status})`, err.method, err.path, err.status, err.body);
-
       var json = null;
       try {
         json = JSON.parse(err.body);
       } catch(err) { /* not json */ }
+
+      var apiError = new ApiError(`API ${err.method} ${err.path} failed (${err.status})`, err.method, err.path, err.status, json);
 
       store.dispatch({
         type: Action.REQUESTS_ERROR,

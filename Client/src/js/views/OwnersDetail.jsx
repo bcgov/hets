@@ -137,7 +137,7 @@ var OwnersDetail = React.createClass({
   onChangeStatus(status) {
     var currentStatus = this.props.owner.status;
     var equipmentList = { ...this.props.owner.equipmentList };
-    Api.changeOwnerStatus(status).then(() => {
+    return Api.changeOwnerStatus(status).then(() => {
       this.closeChangeStatusDialog();
       Log.ownerModifiedStatus(this.props.owner, status.status, status.statusComment);
       // If owner status goes from approved to unapproved/archived or unapproved to archived
