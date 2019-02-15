@@ -211,19 +211,11 @@ namespace HetsApi.Authentication
 
                 // ********************************************************
                 // if this is an Error or Authentication API - Ignore
-                // ********************************************************               
+                // ********************************************************                     
                 if (url.Contains("/authentication/dev") ||
                     url.Contains("/error") ||
                     url.Contains("/hangfire") ||
-                    url.Contains("/swagger") ||
-                    url.Contains(".map") ||
-                    url.Contains(".png") ||
-                    url.Contains(".css") ||
-                    url.Contains(".ico") ||
-                    url.Contains(".eot") ||
-                    url.Contains(".woff") ||
-                    url.Contains(".ttf") ||
-                    url.Contains(".js"))
+                    url.Contains("/swagger"))                    
                 {
                     _logger.LogInformation("Bypassing authentication process ({0})", url);
                     return Task.FromResult(AuthenticateResult.NoResult());
@@ -232,15 +224,21 @@ namespace HetsApi.Authentication
                 // **************************************************
                 // check if we have a Dev Environment Cookie
                 // **************************************************
-                if (hostingEnv.IsDevelopment())
-                {
-                    string temp = context.Request.Cookies[options.DevAuthenticationTokenKey];
+                string tempToken = context.Request.Cookies[options.DevAuthenticationTokenKey];                
 
-                    if (!string.IsNullOrEmpty(temp))
-                    {
-                        _logger.LogInformation("Dev Authentication token found ({0})", temp);
-                        userId = temp;
-                    }
+                if (hostingEnv.IsDevelopment() && !string.IsNullOrEmpty(tempToken))
+                {
+                    _logger.LogInformation("Dev Authentication token found ({0})", tempToken);
+                    userId = tempToken;                    
+                }
+                else if ((context.Connection.RemoteIpAddress.ToString() == "::1" ||
+                          context.Connection.RemoteIpAddress.ToString() == "127.0.0.1") &&
+                         url.StartsWith("http://localhost:8080") &&
+                         !string.IsNullOrEmpty(tempToken))
+                {
+                    _logger.LogInformation("Local server access");
+                    _logger.LogInformation("Dev Authentication token found ({0})", tempToken);
+                    userId = tempToken;
                 }
 
                 // **************************************************
