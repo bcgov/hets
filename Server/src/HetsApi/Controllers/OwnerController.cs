@@ -1623,7 +1623,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult GenerateKeysApiPost()
         {
             // security...
-            if (!_httpContext.Connection.RemoteIpAddress.ToString().StartsWith("::1") &&
+            if (!_httpContext.Connection.RemoteIpAddress.ToString().Contains("::1") &&
                 !_httpContext.Connection.RemoteIpAddress.ToString().StartsWith("127.0.0.1"))
             {
                 // return ok
