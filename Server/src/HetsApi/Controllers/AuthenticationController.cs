@@ -43,7 +43,7 @@ namespace HetsApi.Controllers
             bool accessEnabled = false;
             string url = _httpContext.Request.GetDisplayUrl().ToLower();
 
-            if ((_httpContext.Connection.RemoteIpAddress.ToString().StartsWith("::1") ||
+            if ((_httpContext.Connection.RemoteIpAddress.ToString().Contains("::1") ||
                  _httpContext.Connection.RemoteIpAddress.ToString().StartsWith("127.0.0.1")) &&
                      url.StartsWith("http://localhost:8080"))
             {
