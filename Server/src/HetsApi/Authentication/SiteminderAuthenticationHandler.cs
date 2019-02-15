@@ -207,7 +207,8 @@ namespace HetsApi.Authentication
                 string businessGuid = "";
 
                 string url = context.Request.GetDisplayUrl().ToLower();
-                _logger.LogWarning("Timestamp: {0:dd-MM-yyyy HH:mm:ss.FFFF} | Url: {1}", DateTime.Now, url);
+                _logger.LogWarning("Timestamp: {0:dd-MM-yyyy HH:mm:ss.FFFF} | Url: {1} | Remote Ip: {0}", 
+                    DateTime.Now, url, context.Connection.RemoteIpAddress.ToString());
 
                 // ********************************************************
                 // if this is an Error or Authentication API - Ignore
