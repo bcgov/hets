@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using HetsApi.Authentication;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace HetsApi.Controllers
 {
@@ -17,14 +18,17 @@ namespace HetsApi.Controllers
     {
         private readonly SiteMinderAuthOptions _options = new SiteMinderAuthOptions();
         private readonly IHostingEnvironment _env;
+        private readonly HttpContext _httpContext;
 
         /// <summary>
         /// Authentication Controller Constructor
         /// </summary>
         /// <param name="env"></param>
-        public AuthenticationController(IHostingEnvironment env)
+        /// <param name="httpContextAccessor"></param>
+        public AuthenticationController(IHostingEnvironment env, IHttpContextAccessor httpContextAccessor)
         {
             _env = env;
+            _httpContext = httpContextAccessor.HttpContext;
         }
 
         /// <summary>
@@ -36,7 +40,17 @@ namespace HetsApi.Controllers
         [AllowAnonymous]
         public virtual IActionResult GetDevAuthenticationCookie(string userId)
         {
-            if (!_env.IsDevelopment()) return BadRequest("This API is not available outside a development environment.");
+            bool accessEnabled = false;
+            string url = _httpContext.Request.GetDisplayUrl().ToLower();
+
+            if ((_httpContext.Connection.RemoteIpAddress.ToString().StartsWith("::1") ||
+                 _httpContext.Connection.RemoteIpAddress.ToString().StartsWith("::ffff:127.0.0.1")) &&
+                     url.StartsWith("http://localhost:8080"))
+            {
+                accessEnabled = true;
+            }
+
+            if (!_env.IsDevelopment() && !accessEnabled) return BadRequest("This API is not available outside a development environment.");
 
             if (string.IsNullOrEmpty(userId)) return BadRequest("Missing required userid query parameter.");
 
@@ -110,7 +124,17 @@ namespace HetsApi.Controllers
         [AllowAnonymous]
         public virtual IActionResult ClearDevAuthenticationCookie()
         {
-            if (!_env.IsDevelopment()) return BadRequest("This API is not available outside a development environment.");
+            bool accessEnabled = false;
+            string url = _httpContext.Request.GetDisplayUrl().ToLower();
+
+            if ((_httpContext.Connection.RemoteIpAddress.ToString().StartsWith("::1") ||
+                 _httpContext.Connection.RemoteIpAddress.ToString().StartsWith("127.0.0.1")) &&
+                url.StartsWith("http://localhost:8080"))
+            {
+                accessEnabled = true;
+            }
+
+            if (!_env.IsDevelopment() && !accessEnabled) return BadRequest("This API is not available outside a development environment.");
 
             // *************************
             // clear up user cookie
