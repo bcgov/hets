@@ -43,13 +43,12 @@ namespace HetsApi.Controllers
             bool accessEnabled = false;
             string url = _httpContext.Request.GetDisplayUrl().ToLower();
 
-            if ((_httpContext.Connection.RemoteIpAddress.ToString() == "::1" ||
-                 _httpContext.Connection.RemoteIpAddress.ToString() == "127.0.0.1") &&
+            if ((_httpContext.Connection.RemoteIpAddress.ToString().StartsWith("::1") ||
+                 _httpContext.Connection.RemoteIpAddress.ToString().StartsWith("127.0.0.1")) &&
                      url.StartsWith("http://localhost:8080"))
             {
                 accessEnabled = true;
             }
-
 
             if (!_env.IsDevelopment() && !accessEnabled) return BadRequest("This API is not available outside a development environment.");
 
@@ -125,7 +124,17 @@ namespace HetsApi.Controllers
         [AllowAnonymous]
         public virtual IActionResult ClearDevAuthenticationCookie()
         {
-            if (!_env.IsDevelopment()) return BadRequest("This API is not available outside a development environment.");
+            bool accessEnabled = false;
+            string url = _httpContext.Request.GetDisplayUrl().ToLower();
+
+            if ((_httpContext.Connection.RemoteIpAddress.ToString().StartsWith("::1") ||
+                 _httpContext.Connection.RemoteIpAddress.ToString().StartsWith("127.0.0.1")) &&
+                url.StartsWith("http://localhost:8080"))
+            {
+                accessEnabled = true;
+            }
+
+            if (!_env.IsDevelopment() && !accessEnabled) return BadRequest("This API is not available outside a development environment.");
 
             // *************************
             // clear up user cookie
