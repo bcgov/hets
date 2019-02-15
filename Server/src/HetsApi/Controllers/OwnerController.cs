@@ -1871,6 +1871,61 @@ namespace HetsApi.Controllers
             return new ObjectResult(new HetsResponse(""));
         }
 
+        /// <summary>
+        /// Generate shared keys for all owners
+        /// that don't have an associated business yet
+        /// </summary>
+        [HttpPost]
+        [Route("GenerateKeysApi")]
+        [SwaggerOperation("GenerateKeysApiPost")]
+        public virtual IActionResult GenerateKeysApiPost()
+        {
+            // security...
+            if (_httpContext.Connection.RemoteIpAddress.ToString() != "::1" &&
+                _httpContext.Connection.RemoteIpAddress.ToString() != "127.0.0.1")
+            {
+                // return ok
+                return new JsonResult("Secret Keys can only be updated from the server");
+            }            
+
+            // get records
+            List<HetOwner> owners = _context.HetOwner.AsNoTracking()
+                .Where(x => x.BusinessId == null)
+                .ToList();
+
+            int i = 0;
+
+            foreach (HetOwner owner in owners)
+            {
+                i++;
+                string key = SecretKeyHelper.RandomString(8, owner.OwnerId);
+
+                string temp = owner.OwnerCode;
+
+                if (string.IsNullOrEmpty(temp))
+                {
+                    temp = SecretKeyHelper.RandomString(4, owner.OwnerId);
+                }
+
+                key = temp + "-" + DateTime.UtcNow.Year + "-" + key;
+
+                // get owner and update
+                HetOwner ownerRecord = _context.HetOwner.First(x => x.OwnerId == owner.OwnerId);
+                ownerRecord.SharedKey = key;
+
+                if (i % 500 == 0)
+                {
+                    _context.SaveChangesForImport();
+                }
+            }
+
+            // save remaining updates
+            _context.SaveChangesForImport();
+
+            // return ok
+            return new JsonResult("Secret Keys Updated");
+        }
+
         #endregion
 
         #region Wcb / Cgl Report
