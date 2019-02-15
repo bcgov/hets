@@ -3,7 +3,7 @@ import * as Action from '../actionTypes';
 const DEFAULT_STATE = {
   requests: {
     waiting: false,
-    error: {}, // ApiError
+    error: null, // ApiError
   },
 
   equipmentList: {},
@@ -24,6 +24,8 @@ const DEFAULT_STATE = {
   documents: {},
   showSessionTimeoutDialog: false,
   districtEquipment: {},
+  appError: null,
+  showErrorDialog: false,
 };
 
 export default function uiReducer(state = DEFAULT_STATE, action) {
@@ -33,16 +35,13 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
     // Requests
 
     case Action.REQUESTS_BEGIN:
-      return { ...state, requests: {
-        waiting: true,
-        error: {},
-      }};
+      return { ...state, requests: { ...state.requests, waiting: true } };
 
     case Action.REQUESTS_END:
-      return { ...state, requests: { ...state.requests, ...{ waiting: false } } };
+      return { ...state, requests: { ...state.requests, waiting: false } };
 
     case Action.REQUESTS_ERROR:
-      return { ...state, requests: { ...state.requests, ...{ error: action.error } } };
+      return { ...state, requests: { ...state.requests, error: action.error }, showErrorDialog: true };
 
     // Screens
 
@@ -104,6 +103,12 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
 
     case Action.CLOSE_SESSION_TIMEOUT_DIALOG:
       return { ...state, showSessionTimeoutDialog: false };
+
+    case Action.SHOW_ERROR_DIALOG:
+      return { ...state, appError: { ...action }, showErrorDialog: true };
+
+    case Action.CLOSE_ERROR_DIALOG:
+      return { ...state, showErrorDialog: false };
   }
 
   return { ...state, ...newState };

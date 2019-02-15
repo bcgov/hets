@@ -14,13 +14,20 @@ var poisons = proxy.poisons;
 
 proxy.forward('http://localhost:' + port);
 
+proxy.all('/api/users/search')
+  .poison(toxy.poisons.inject({
+    code: 503,
+    body: '{"error": "toxy injected error"}',
+    headers: {'Content-Type': 'application/json'},
+  }));
+
+proxy.all('/api/roles')
+  .redirect('https://logontest7.gov.bc.ca/clp-cgi/int/logon.cgi');
+
+proxy.all('/api/business/owner/*')
+  .redirect('https://logontest7.gov.bc.ca/clp-cgi/int/logon.cgi');
+
 proxy.all('/api/*')
-  // .poison(toxy.poisons.inject({
-  //   code: 503,
-  //   body: '{"error": "toxy injected error"}',
-  //   headers: {'Content-Type': 'application/json'},
-  // }))
-  // .withRule(toxy.rules.probability(10))
   .poison(poisons.latency({ min: 500, max: 2000 }))
   .poison(poisons.slowRead({ bps: 100 }));
 

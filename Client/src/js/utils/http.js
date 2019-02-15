@@ -158,6 +158,8 @@ export function jsonRequest(path, options) {
     resetSessionTimeoutTimer();
   }
 
+  var canRecover = !!options.canRecover;
+
   var jsonHeaders = {
     'Accept': 'application/json',
   };
@@ -183,18 +185,32 @@ export function jsonRequest(path, options) {
     if (err instanceof HttpError) {
       var apiError = new ApiError(`API ${err.method} ${err.path} failed (${err.status})`, err.method, err.path, err.status, err.body);
 
+      var errorMessage = apiError.message || String(apiError);
+
       var json = null;
       try {
+        // Example error payload from server:
+        // {
+        //   "responseStatus": "ERROR",
+        //   "data": null,
+        //   "error": {
+        //     "error": "HETS-01",
+        //     "description": "Record not found"
+        //   }
+        // }
+
         json = JSON.parse(err.body);
+        errorMessage = json.error.description;
       } catch(err) { /* not json */ }
 
       store.dispatch({
         type: Action.REQUESTS_ERROR,
         error: {
-          message: String(apiError),
+          message: errorMessage,
           method: err.method,
           path: err.path,
           status: err.status,
+          unrecoverable: err.status === null || !canRecover,
           json,
         },
       });
