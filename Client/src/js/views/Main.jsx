@@ -11,6 +11,7 @@ import * as Api from '../api';
 import TopNav from './TopNav.jsx';
 import Footer from './Footer.jsx';
 import ConfirmDialog from './dialogs/ConfirmDialog.jsx';
+import ErrorDialog from './dialogs/ErrorDialog.jsx';
 import Countdown from '../components/Countdown.jsx';
 
 import { resetSessionTimeoutTimer } from '../app.jsx';
@@ -20,6 +21,7 @@ var Main = React.createClass({
     children: React.PropTypes.object,
     showNav: React.PropTypes.bool,
     showSessionTimeoutDialog: React.PropTypes.bool,
+    showErrorDialog: React.PropTypes.bool,
   },
 
   getInitialState() {
@@ -48,33 +50,33 @@ var Main = React.createClass({
   },
 
   render: function() {
-    return <div id ="main">
-      <TopNav showNav={this.props.showNav}/>
-      <div id="screen" className="template container" style={{paddingTop: this.state.headerHeight}}>
-        {this.props.children}
+    return (
+      <div id ="main">
+        <TopNav showNav={this.props.showNav}/>
+        <div id="screen" className="template container" style={{paddingTop: this.state.headerHeight}}>
+          {this.props.children}
+        </div>
+        <Footer/>
+        <ConfirmDialog
+          title="Session Expiry"
+          show={ this.props.showSessionTimeoutDialog }
+          onClose={ this.onEndSession }
+          onSave={ this.onCloseSessionTimeoutDialog }
+          closeText="End Session"
+          saveText="Keep Session">
+            Your session will time out in <Countdown time={300} onEnd={ this.onEndSession }/>. Would you
+            like to keep the session active or end the session?
+        </ConfirmDialog>
+        <ErrorDialog show={this.props.showErrorDialog}/>
       </div>
-      <Footer/>
-      <ConfirmDialog
-        title="Session Expiry"
-        show={ this.props.showSessionTimeoutDialog }
-        onClose={ this.onEndSession }
-        onSave={ this.onCloseSessionTimeoutDialog }
-        closeText="End Session"
-        saveText="Keep Session"
-      >
-        Your session will time out in
-        <Countdown
-          time={300}
-          onEnd={ this.onEndSession }
-        />. Would you like to keep the session active or end the session?
-      </ConfirmDialog>
-    </div>;
+    );
   },
 });
 
 function mapStateToProps(state) {
   return {
     showSessionTimeoutDialog: state.ui.showSessionTimeoutDialog,
+    showErrorDialog: state.ui.showErrorDialog,
   };
 }
 
