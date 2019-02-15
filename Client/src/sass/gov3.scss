@@ -1,16 +1,11 @@
 @import "./variables.scss";
 
-@font-face {
-	font-family: 'Myriad-Pro';
-	src: url('../fonts/MyriadWebPro.ttf');
-}
-
 html, body {
 	height: 100%;
 }
 
 body {
-	font-family: Myriad-Pro, Calibri, Arial, 'sans serif';
+	font-family: Calibri, Arial, 'sans serif';
 	background-color: #f1f1f1;
 	color: #494949;
 	font-size: 13px;
