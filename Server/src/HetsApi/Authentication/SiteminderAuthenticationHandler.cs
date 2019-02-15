@@ -232,8 +232,8 @@ namespace HetsApi.Authentication
                     _logger.LogInformation("Dev Authentication token found ({0})", tempToken);
                     userId = tempToken;                    
                 }
-                else if ((context.Connection.RemoteIpAddress.ToString().Contains("::1") ||
-                          context.Connection.RemoteIpAddress.ToString().StartsWith("127.0.0.1")) &&
+                else if ((context.Connection.RemoteIpAddress.ToString().StartsWith("::1") ||
+                          context.Connection.RemoteIpAddress.ToString().StartsWith("::ffff:127.0.0.1")) &&
                          url.StartsWith("http://localhost:8080") &&
                          !string.IsNullOrEmpty(tempToken))
                 {
