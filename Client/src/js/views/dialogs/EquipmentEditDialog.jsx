@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import _ from 'lodash';
 
-import { Grid, Row, Col, FormGroup, HelpBlock, ControlLabel, Button } from 'react-bootstrap';
+import { Grid, Row, Col, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import * as Api from '../../api';
 

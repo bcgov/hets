@@ -84,6 +84,8 @@ var ChangeStatusDialog = React.createClass({
       id: this.props.parent.id,
       status: this.props.status,
       statusComment: this.state.comment,
+    }).catch((err) => {
+      this.setState({ commentError: err.json.error.description });
     });
   },
 

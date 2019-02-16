@@ -39,12 +39,12 @@ HttpError.prototype = Object.create(Error.prototype, {
   constructor: { value: HttpError },
 });
 
-export const ApiError = function(msg, method, path, status, html) {
+export const ApiError = function(msg, method, path, status, json) {
   this.message = msg || '';
   this.method = method;
   this.path = path;
   this.status = status || null;
-  this.html = html;
+  this.json = json;
 };
 
 ApiError.prototype = Object.create(Error.prototype, {
@@ -159,6 +159,7 @@ export function jsonRequest(path, options) {
   }
 
   var canRecover = !!options.canRecover;
+  var noDispatch = !!options.noDispatch;
 
   var jsonHeaders = {
     'Accept': 'application/json',
@@ -183,10 +184,7 @@ export function jsonRequest(path, options) {
     }
   }).catch((err) => {
     if (err instanceof HttpError) {
-      var apiError = new ApiError(`API ${err.method} ${err.path} failed (${err.status})`, err.method, err.path, err.status, err.body);
-
-      var errorMessage = apiError.message || String(apiError);
-
+      var errMsg = `API ${err.method} ${err.path} failed (${err.status})`;
       var json = null;
       try {
         // Example error payload from server:
@@ -200,25 +198,37 @@ export function jsonRequest(path, options) {
         // }
 
         json = JSON.parse(err.body);
-        errorMessage = json.error.description;
       } catch(err) { /* not json */ }
 
-      store.dispatch({
-        type: Action.REQUESTS_ERROR,
-        error: {
-          message: errorMessage,
-          method: err.method,
-          path: err.path,
-          status: err.status,
-          unrecoverable: err.status === null || !canRecover,
-          json,
-        },
-      });
+      var apiError = new ApiError(errMsg, err.method, err.path, err.status, json);
+
+      if (!noDispatch) {
+        dispatchApiError(apiError, canRecover);
+      }
 
       throw apiError;
     } else {
       throw err;
     }
+  });
+}
+
+export function dispatchApiError(err, canRecover) {
+  var errorMessage = err.message || String(err);
+  if (err.json) {
+    errorMessage = err.json.error.description;
+  }
+
+  store.dispatch({
+    type: Action.REQUESTS_ERROR,
+    error: {
+      message: errorMessage,
+      method: err.method,
+      path: err.path,
+      status: err.status,
+      unrecoverable: err.status === null || !canRecover,
+      json: err.json,
+    },
   });
 }
 
@@ -238,8 +248,8 @@ ApiRequest.prototype.post = function apiPost(data, options) {
   return jsonRequest(this.path, { method: 'POST', body: data, ...options });
 };
 
-ApiRequest.prototype.put = function apiPut(data) {
-  return jsonRequest(this.path, { method: 'PUT', body: data });
+ApiRequest.prototype.put = function apiPut(data, options) {
+  return jsonRequest(this.path, { method: 'PUT', body: data, ...options });
 };
 
 ApiRequest.prototype.delete = function apiDelete(data) {
