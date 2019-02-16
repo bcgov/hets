@@ -292,12 +292,12 @@ namespace HetsApi.Controllers
         public virtual IActionResult EquipmentIdStatusPut([FromRoute]int id, [FromBody]EquipmentStatus item)
         {
             // not found
-            if (item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             bool recalculateSeniority = false;
 
@@ -314,7 +314,7 @@ namespace HetsApi.Controllers
             // HETS-1069 - Do not allow an equipment whose Equipment type has been deleted to change status
             if (equipment.DistrictEquipmentType == null || equipment.DistrictEquipmentType.Deleted)
             {
-                return new ObjectResult(new HetsResponse("HETS-39", ErrorViewModel.GetDescription("HETS-39", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-39", ErrorViewModel.GetDescription("HETS-39", _configuration)));
             }
 
             // used for seniority recalculation
@@ -324,17 +324,17 @@ namespace HetsApi.Controllers
 
             // check the owner status
             int? ownStatusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
-            if (ownStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (ownStatusId == null) return new NotFoundObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // update equipment status
             int? statusId = StatusHelper.GetStatusId(item.Status, "equipmentStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new NotFoundObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // can't make the status active if the owner is not active
             if (equipment.Owner.OwnerStatusTypeId != ownStatusId &&
                 item.Status == HetEquipment.StatusApproved)
             {
-                return new ObjectResult(new HetsResponse("HETS-28", ErrorViewModel.GetDescription("HETS-28", _configuration)));
+                return new ConflictObjectResult(new HetsResponse("HETS-28", ErrorViewModel.GetDescription("HETS-28", _configuration)));
             }
 
             equipment.EquipmentStatusTypeId = (int)statusId;
