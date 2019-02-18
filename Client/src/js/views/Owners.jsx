@@ -23,6 +23,7 @@ import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
 import Form from '../components/Form.jsx';
+
 import { caseInsensitiveSort, sortDir } from '../utils/array.js';
 
 var Owners = React.createClass({
@@ -161,7 +162,8 @@ var Owners = React.createClass({
       { field: 'localAreaName',          title: 'Local Area'                                      },
       { field: 'organizationName',       title: 'Company Name'                                    },
       { field: 'primaryContactName',     title: 'Primary Contact Name'                            },
-      { field: 'primaryContactNumber',   title: 'Primary Contact Number'                          },
+      { field: 'workPhoneNumber',        title: 'Work Number'                                     },
+      { field: 'mobilePhoneNumber',      title: 'Cell Number'                                     },
       { field: 'equipmentCount',         title: 'Equipment',       style: { textAlign: 'center' } },
       { field: 'status',                 title: 'Status',          style: { textAlign: 'center' } },
       { field: 'addOwner',               title: 'Add Owner',       style: { textAlign: 'right'  },
@@ -175,7 +177,8 @@ var Owners = React.createClass({
             <td>{ owner.localAreaName }</td>
             <td>{ owner.organizationName }</td>
             <td>{ owner.primaryContactName }</td>
-            <td>{ owner.primaryContactNumber }</td>
+            <td>{ owner.workPhoneNumber }</td>
+            <td>{ owner.mobilePhoneNumber }</td>
             <td style={{ textAlign: 'center' }}>{ owner.equipmentCount }</td>
             <td style={{ textAlign: 'center' }}>{ owner.status }</td>
             <td style={{ textAlign: 'right' }}>

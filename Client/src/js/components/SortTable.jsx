@@ -37,6 +37,7 @@ const SortTable = React.createClass({
           id={ header.field }
           key={ header.field }
           onClick={ header.noSort ? '' : this.sort }
+          className={ header.class }
           style={{ ...header.style, cursor: header.noSort ? 'default' : 'pointer' }}>
             { header.title }{ sortGlyph }
         </th>
