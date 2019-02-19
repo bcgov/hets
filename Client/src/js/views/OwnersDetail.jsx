@@ -493,6 +493,7 @@ var OwnersDetail = React.createClass({
                   { field: 'faxPhoneNumber',    title: 'Fax'   },
                   { field: 'emailAddress',      title: 'Email' },
                   { field: 'role',              title: 'Role'  },
+                  { field: 'notes',             title: 'Notes'  },
                   { field: 'addContact',        title: 'Add Contact', style: { textAlign: 'right'  },
                     node: addContactButton,
                   },
@@ -508,6 +509,7 @@ var OwnersDetail = React.createClass({
                         <td>{ contact.faxPhoneNumber }</td>
                         <td><a href={ `mailto:${ contact.emailAddress }` } target="_blank">{ contact.emailAddress }</a></td>
                         <td>{ contact.role }</td>
+                        <td>{ contact.notes ? 'Y' : '' }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
                             <DeleteButton name="Contact" hide={ !contact.canDelete || contact.isPrimary } onConfirm={ this.deleteContact.bind(this, contact) }/>
