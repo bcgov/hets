@@ -73,7 +73,7 @@ var RentalRequestsDetail = React.createClass({
       showHireOfferDialog: false,
       showNotesDialog: false,
 
-      showAttachmentss: false,
+      showAttachments: false,
 
       rotationListHireOffer: {},
       showAllResponseFields: false,

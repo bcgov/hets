@@ -71,6 +71,16 @@
 
   }
 
+  #equipment-list {
+    td:nth-child(4) {
+      width: 350px;
+    }
+
+    .attachment {
+      display: inline-block;
+    }
+  }
+
   .well {
     margin-left: 5px;
     margin-right: 5px;
