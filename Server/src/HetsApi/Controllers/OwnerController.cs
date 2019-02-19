@@ -265,16 +265,7 @@ namespace HetsApi.Controllers
 
                 foreach (HetEquipment equipment in equipmentList)
                 {
-                    equipment.LocalAreaId = item.LocalArea.LocalAreaId;
-
-                    // update new area
-                    EquipmentHelper.RecalculateSeniority(item.LocalAreaId, equipment.DistrictEquipmentTypeId, _context, _configuration);
-
-                    // update old area
-                    if (oldLocalArea != null)
-                    {
-                        EquipmentHelper.RecalculateSeniority((int)oldLocalArea, equipment.DistrictEquipmentTypeId, _context, _configuration);
-                    }
+                    equipment.LocalAreaId = item.LocalArea.LocalAreaId;                    
                 }                
             }
 
@@ -312,6 +303,12 @@ namespace HetsApi.Controllers
 
                     // update block assignments
                     SeniorityListHelper.AssignBlocks(localAreaId, districtEquipmentTypeId, blockSize, totalBlocks, _context);
+
+                    // update old area block assignments
+                    if (oldLocalArea != null)
+                    {
+                        SeniorityListHelper.AssignBlocks((int)oldLocalArea, districtEquipmentTypeId, blockSize, totalBlocks, _context);
+                    }
                 }
             }
 
