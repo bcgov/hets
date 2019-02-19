@@ -374,7 +374,7 @@ namespace HetsImport.Import
                     DistrictEquipmentTypeId = ++maxEquipTypeIndex,
                     EquipmentTypeId = tempId,
                     DistrictEquipmentName = tempDistrictDescriptionFull
-                };
+                };                
 
                 // ***********************************************
                 // set the district
@@ -392,6 +392,7 @@ namespace HetsImport.Import
 
                 int districtId = serviceArea.District.DistrictId;
                 equipType.DistrictId = districtId;
+                equipType.ServiceAreaId = serviceArea.ServiceAreaId;
 
                 // ***********************************************
                 // check that we don't have this equipment type 
