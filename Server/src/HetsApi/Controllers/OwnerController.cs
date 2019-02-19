@@ -265,8 +265,8 @@ namespace HetsApi.Controllers
 
                 foreach (HetEquipment equipment in equipmentList)
                 {
-                    equipment.LocalAreaId = item.LocalArea.LocalAreaId;
-                }
+                    equipment.LocalAreaId = item.LocalArea.LocalAreaId;                    
+                }                
             }
 
             // do we need to update the block assignment?
@@ -303,6 +303,12 @@ namespace HetsApi.Controllers
 
                     // update block assignments
                     SeniorityListHelper.AssignBlocks(localAreaId, districtEquipmentTypeId, blockSize, totalBlocks, _context);
+
+                    // update old area block assignments
+                    if (oldLocalArea != null)
+                    {
+                        SeniorityListHelper.AssignBlocks((int)oldLocalArea, districtEquipmentTypeId, blockSize, totalBlocks, _context);
+                    }
                 }
             }
 
