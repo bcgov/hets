@@ -49,58 +49,58 @@ namespace HetsImport.Import
             ImportUser.Import(context, dbContext, fileLocation, SystemId);            
 
             //*** Import Owners from Owner.xml (HETS_OWNER and HETS_Contact)
-            dbContext = new DbAppContext(connectionString);
-            ImportOwner.Import(context, dbContext, fileLocation, SystemId);
+            //dbContext = new DbAppContext(connectionString);
+            //ImportOwner.Import(context, dbContext, fileLocation, SystemId);
 
-            dbContext = new DbAppContext(connectionString);
-            ImportOwner.GenerateSecretKeys(context, dbContext);
+            //dbContext = new DbAppContext(connectionString);
+            //ImportOwner.GenerateSecretKeys(context, dbContext);
 
-            dbContext = new DbAppContext(connectionString);
-            ImportOwner.FixPrimaryContacts(context, dbContext);
+            //dbContext = new DbAppContext(connectionString);
+            //ImportOwner.FixPrimaryContacts(context, dbContext);
 
             //*** Import District Equipment Type from EquipType.xml (HET_DISTRICT_EQUIPMENT_TYPE)
             dbContext = new DbAppContext(connectionString);
             ImportDistrictEquipmentType.Import(context, dbContext, fileLocation, SystemId);
 
             //*** Import Equipment from Equip.xml (HET_EQUIPMENT)
-            dbContext = new DbAppContext(connectionString);
-            ImportEquip.Import(context, dbContext, fileLocation, SystemId);
+            //dbContext = new DbAppContext(connectionString);
+            //ImportEquip.Import(context, dbContext, fileLocation, SystemId);
 
             //*** Import Dump Truck from Dump_Truck.xml (HET_EQUIPMENT_TYPE)  
-            dbContext = new DbAppContext(connectionString);
-            ImportDumpTruck.Import(context, dbContext, fileLocation, SystemId);
+            //dbContext = new DbAppContext(connectionString);
+            //ImportDumpTruck.Import(context, dbContext, fileLocation, SystemId);
 
             //*** Import Equipment Attachments from Equip_Attach.xml (HET_EQUIPMENT_ATTACHMENT)  
-            dbContext = new DbAppContext(connectionString);
-            ImportEquipAttach.Import(context, dbContext, fileLocation, SystemId);
+            //dbContext = new DbAppContext(connectionString);
+            //ImportEquipAttach.Import(context, dbContext, fileLocation, SystemId);
 
             //*** Process Equipment Block Assignments
-            dbContext = new DbAppContext(connectionString);
-            ImportEquip.ProcessBlocks(context, seniorityScoringRules, dbContext, SystemId);
+            //dbContext = new DbAppContext(connectionString);
+            //ImportEquip.ProcessBlocks(context, seniorityScoringRules, dbContext, SystemId);
 
             //*** Import Projects from Project.xml (HET_PROJECT)
-            dbContext = new DbAppContext(connectionString);
-            ImportProject.Import(context, dbContext, fileLocation, SystemId);
+            //dbContext = new DbAppContext(connectionString);
+            //ImportProject.Import(context, dbContext, fileLocation, SystemId);
 
             // reset project sequence
-            dbContext = new DbAppContext(connectionString);
-            ImportProject.ResetSequence(context, dbContext);
+            //dbContext = new DbAppContext(connectionString);
+            //ImportProject.ResetSequence(context, dbContext);
 
             //*** Import Rotation Docs from Rotation_Doc.xml (BCBID_ROTATION_DOC)
-            dbContext = new DbAppContext(connectionString);
-            ImportRotationDoc.Import(context, dbContext, fileLocation, SystemId);
+            //dbContext = new DbAppContext(connectionString);
+            //ImportRotationDoc.Import(context, dbContext, fileLocation, SystemId);
 
             //*** Import Blocks / Local Area Rotation List from Block.xml (HET_DISTRICT_ROTATION_LIST)
-            dbContext = new DbAppContext(connectionString);            
-            ImportBlock.Import(context, dbContext, fileLocation, SystemId);
+            //dbContext = new DbAppContext(connectionString);            
+            //ImportBlock.Import(context, dbContext, fileLocation, SystemId);
 
             //*** Recreate "Last Called" records
-            dbContext = new DbAppContext(connectionString);
-            ImportBlock.ProcessLastCalled(context, dbContext, SystemId);
+            //dbContext = new DbAppContext(connectionString);
+            //ImportBlock.ProcessLastCalled(context, dbContext, SystemId);
 
             //*** Import Equipment Usage (Time) from Equip_Usage.xml (HET_RENTAL_AGREEMENT and HET_TIME_RECORD)             
-            dbContext = new DbAppContext(connectionString);
-            ImportEquipUsage.Import(context, dbContext, fileLocation, SystemId);            
+            //dbContext = new DbAppContext(connectionString);
+            //ImportEquipUsage.Import(context, dbContext, fileLocation, SystemId);            
 
             // *** Final Step - fix the database sequences
             dbContext = new DbAppContext(connectionString);
