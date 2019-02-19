@@ -25,7 +25,6 @@ import store from '../store';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
-import PageOrientation from '../components/PageOrientation.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TableControl from '../components/TableControl.jsx';
 import Confirm from '../components/Confirm.jsx';
@@ -71,10 +70,9 @@ var RentalRequestsDetail = React.createClass({
       showHireOfferDialog: false,
       showNotesDialog: false,
 
-      showAttachmentss: false,
+      showAttachments: false,
 
       rotationListHireOffer: {},
-      showAllResponseFields: false,
 
       isNew: this.props.params.rentalRequestId == 0,
     };
@@ -145,10 +143,9 @@ var RentalRequestsDetail = React.createClass({
     });
   },
 
-  openHireOfferDialog(hireOffer, showAllResponseFields) {
+  openHireOfferDialog(hireOffer) {
     this.setState({
       rotationListHireOffer: hireOffer,
-      showAllResponseFields,
       showHireOfferDialog: true,
     });
   },
@@ -215,9 +212,7 @@ var RentalRequestsDetail = React.createClass({
 
   renderStatusText(listItem) {
     let text = 'Hire';
-    if (listItem.offerResponse === STATUS_NO && listItem.offerRefusalReason == Constant.HIRING_REFUSAL_OTHER) {
-      text = listItem.offerResponseNote;
-    } else if (listItem.offerResponse == STATUS_NO) {
+    if (listItem.offerResponse === STATUS_NO) {
       text = listItem.offerRefusalReason;
     } else if (listItem.offerResponse === STATUS_ASKED) {
       text = `${listItem.offerResponse} (${Moment(listItem.askedDateTime).format('YYYY-MM-DD hh:mm A')})`;
@@ -231,7 +226,6 @@ var RentalRequestsDetail = React.createClass({
     var rentalRequest = this.props.rentalRequest.data;
 
     return <div id="rental-requests-detail">
-      <PageOrientation type="landscape"/>
       <Row id="rental-requests-top">
         <Col sm={10}>
           <Label bsStyle={ rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default' }>{ rentalRequest.status }</Label>
@@ -247,7 +241,7 @@ var RentalRequestsDetail = React.createClass({
 
       <Well className="request-information">
         <h3 className="clearfix">Request Information <span className="pull-right">
-          { rentalRequest.projectId > 0 && rentalRequest.status !== Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED &&
+          { rentalRequest.status !== Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED &&
             <Button title="Edit Rental Request" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
           }
         </span></h3>
@@ -374,36 +368,32 @@ var RentalRequestsDetail = React.createClass({
                     <td>
                       <ButtonGroup>
                         {(() => {
-                          const changeOfferWarningMessage = 'This piece of equipment is has met or ' +
-                            'exceeded its Maximum Allowed Hours for this year. Are you sure you want ' +
-                            'to edit the Offer on this equipment?';
-
-                          const confirm = (
-                            <Confirm
-                              title={changeOfferWarningMessage}
-                              onConfirm={ () => this.openHireOfferDialog(listItem, showAllResponseFields) }
-                            />
-                          );
-
+                          listItem.showAllResponseFields = showAllResponseFields;
                           if (listItem.maximumHours) {
                             return (
                               <OverlayTrigger
                                 trigger="click"
                                 placement="top"
+                                title="This piece of equipment is has met or exceeded its Maximum Allowed Hours for this year. Are you sure you want to edit the Offer on this equipment?"
                                 rootClose
-                                overlay={ confirm }>
-                                <Button bsStyle="link" bsSize="xsmall">
+                                overlay={ <Confirm onConfirm={ this.openHireOfferDialog.bind(this, listItem) }/> }
+                              >
+                                <Button
+                                  bsStyle="link"
+                                  bsSize="xsmall"
+                                >
                                   Max. hours reached
                                 </Button>
                               </OverlayTrigger>
                             );
                           }
-                          if (rentalRequest.projectId > 0 && rentalRequest.status === STATUS_IN_PROGRESS && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse)) {
+                          if (rentalRequest.status === STATUS_IN_PROGRESS && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse)) {
                             return (
                               <Button
                                 bsStyle="link"
                                 title="Show Offer"
-                                onClick={ () => this.openHireOfferDialog(listItem, showAllResponseFields) }>
+                                onClick={ this.openHireOfferDialog.bind(this, listItem) }
+                              >
                                 { this.renderStatusText(listItem) }
                               </Button>
                             );
@@ -438,7 +428,6 @@ var RentalRequestsDetail = React.createClass({
         <HireOfferEditDialog
           show={ this.state.showHireOfferDialog }
           hireOffer={ this.state.rotationListHireOffer }
-          showAllResponseFields={this.state.showAllResponseFields}
           onSave={ this.saveHireOffer }
           onClose={ this.closeHireOfferDialog }
           error={ this.props.rentalRequestRotationList.error }

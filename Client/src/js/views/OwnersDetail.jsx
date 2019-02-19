@@ -24,6 +24,7 @@ import * as Constant from '../constants';
 import * as Log from '../history';
 import store from '../store';
 
+import CheckboxControl from '../components/CheckboxControl.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
 import DeleteButton from '../components/DeleteButton.jsx';
 import EditButton from '../components/EditButton.jsx';
@@ -31,8 +32,6 @@ import History from '../components/History.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
-import Confirm from '../components/Confirm.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
 
 import { formatDateTime, today, toZuluTime } from '../utils/date';
 
@@ -68,6 +67,8 @@ var OwnersDetail = React.createClass({
       showDocumentsDialog: false,
       showNotesDialog: false,
       showChangeStatusDialog: false,
+
+      showAttachments: false,
 
       contact: {},
 
@@ -118,6 +119,10 @@ var OwnersDetail = React.createClass({
     });
   },
 
+  updateState(state, callback) {
+    this.setState(state, callback);
+  },
+
   showNotes() {
 
   },
@@ -139,7 +144,7 @@ var OwnersDetail = React.createClass({
   onChangeStatus(status) {
     var currentStatus = this.props.owner.status;
     var equipmentList = { ...this.props.owner.equipmentList };
-    return Api.changeOwnerStatus(status).then(() => {
+    Api.changeOwnerStatus(status).then(() => {
       this.closeChangeStatusDialog();
       Log.ownerModifiedStatus(this.props.owner, status.status, status.statusComment);
       // If owner status goes from approved to unapproved/archived or unapproved to archived
@@ -401,7 +406,7 @@ var OwnersDetail = React.createClass({
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Company">{ owner.organizationName }</ColDisplay>
                     </Col>
                     <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Primary Contact">{ owner.primaryContactName }</ColDisplay>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Company Address">{ owner.fullAddress }</ColDisplay>
                     </Col>
                     <Col lg={4} md={6} sm={12} xs={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Owner Name">{ owner.ownerName }</ColDisplay>
@@ -410,7 +415,7 @@ var OwnersDetail = React.createClass({
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Owner Code">{ owner.ownerCode }</ColDisplay>
                     </Col>
                     <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="District Office">{ owner.districtName }</ColDisplay>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Primary Contact">{ owner.primaryContactName }</ColDisplay>
                     </Col>
                     <Col lg={4} md={6} sm={12} xs={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Doing Business As">{ owner.doingBusinessAs }</ColDisplay>
@@ -419,7 +424,7 @@ var OwnersDetail = React.createClass({
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Registered BC Company Number">{ owner.registeredCompanyNumber }</ColDisplay>
                     </Col>
                     <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Meets Residency?">{ owner.meetsResidency ? 'Yes' : 'No' }</ColDisplay>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="District Office">{ owner.districtName }</ColDisplay>
                     </Col>
                     <Col lg={4} md={6} sm={12} xs={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Service/Local Area">{ owner.localAreaName }</ColDisplay>
@@ -428,7 +433,7 @@ var OwnersDetail = React.createClass({
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Maintenance Contractor">{ owner.isMaintenanceContractor ? 'Yes' : 'No' }</ColDisplay>
                     </Col>
                     <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Company Address">{ owner.address1 } { owner.address2 } <br/> { owner.city } { owner.province } { owner.postalCode }</ColDisplay>
+                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Meets Residency?">{ owner.meetsResidency ? 'Yes' : 'No' }</ColDisplay>
                     </Col>
                   </Row>
                 </div>;
@@ -487,14 +492,11 @@ var OwnersDetail = React.createClass({
                 }
 
                 var headers = [
-                  { field: 'name',              title: 'Name'  },
-                  { field: 'phone',             title: 'Phone' },
-                  { field: 'mobilePhoneNumber', title: 'Cell'  },
-                  { field: 'faxPhoneNumber',    title: 'Fax'   },
-                  { field: 'emailAddress',      title: 'Email' },
-                  { field: 'role',              title: 'Role'  },
-                  { field: 'notes',             title: 'Notes'  },
-                  { field: 'addContact',        title: 'Add Contact', style: { textAlign: 'right'  },
+                  { field: 'name',         title: 'Name'  },
+                  { field: 'phone',        title: 'Phone' },
+                  { field: 'emailAddress', title: 'Email' },
+                  { field: 'role',         title: 'Role'  },
+                  { field: 'addContact',   title: 'Add Contact', style: { textAlign: 'right'  },
                     node: addContactButton,
                   },
                 ];
@@ -505,11 +507,8 @@ var OwnersDetail = React.createClass({
                       return <tr key={ contact.id }>
                         <td>{ contact.isPrimary && <Glyphicon glyph="star" /> } { contact.name }</td>
                         <td>{ contact.phone }</td>
-                        <td>{ contact.mobilePhoneNumber }</td>
-                        <td>{ contact.faxPhoneNumber }</td>
                         <td><a href={ `mailto:${ contact.emailAddress }` } target="_blank">{ contact.emailAddress }</a></td>
                         <td>{ contact.role }</td>
-                        <td>{ contact.notes ? 'Y' : '' }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
                             <DeleteButton name="Contact" hide={ !contact.canDelete || contact.isPrimary } onConfirm={ this.deleteContact.bind(this, contact) }/>
@@ -524,9 +523,8 @@ var OwnersDetail = React.createClass({
             </Well>
             <Well>
               <h3 className="clearfix">Equipment ({ owner.numberOfEquipment }) <span className="pull-right">
-                <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.equipmentVerifyAll }></Confirm> }>
-                  <TooltipButton disabled={!isApproved} disabledTooltip={restrictEquipmentVerifyTooltip} className="mr-5" title="Verify All Equipment" bsSize="small">Verify All</TooltipButton>
-                </OverlayTrigger>
+                <CheckboxControl id="showAttachments" className="mr-5" inline updateState={this.updateState}><small>Show Attachments</small></CheckboxControl>
+                <TooltipButton disabled={ !isApproved } disabledTooltip={ restrictEquipmentVerifyTooltip } className="mr-5" title="Verify All Equipment" bsSize="small" onClick={ this.equipmentVerifyAll }>Verify All</TooltipButton>
                 <TooltipButton disabled={ !isApproved } disabledTooltip={ restrictEquipmentAddTooltip } title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></TooltipButton>
               </span></h3>
               {(() => {
@@ -534,12 +532,14 @@ var OwnersDetail = React.createClass({
 
                 if (!owner.equipmentList || owner.equipmentList.length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
 
-                var equipmentList = _.orderBy(owner.equipmentList, [this.state.uiEquipment.sortField], [this.state.uiEquipment.sortDesc ? 'desc' : 'asc']);
+                var equipmentList = _.sortBy(owner.equipmentList, this.state.uiEquipment.sortField);
+                if (this.state.uiEquipment.sortDesc) {
+                  _.reverse(equipmentList);
+                }
 
                 var headers = [
-                  { field: 'equipmentNumber',  title: 'ID'                   },
-                  { field: 'localArea.name',   title: 'Local Area'           },
-                  { field: 'typeName',         title: 'Equipment Type'       },
+                  { field: 'equipmentNumber',    title: 'ID'                 },
+                  { field: 'typeName',         title: 'Type'                 },
                   { field: 'details',          title: 'Make/Model/Size/Year' },
                   { field: 'lastVerifiedDate', title: 'Last Verified'        },
                   { field: 'blank' },
@@ -554,9 +554,28 @@ var OwnersDetail = React.createClass({
                       };
                       return <tr key={ equipment.id }>
                         <td><Link to={ location }>{ equipment.equipmentCode }</Link></td>
-                        <td>{ equipment.localArea.name }</td>
                         <td>{ equipment.typeName }</td>
-                        <td>{ equipment.details }</td>
+                        <td>
+                          { equipment.details }
+                          { this.state.showAttachments &&
+                            <div>
+                              Attachments:
+                              { equipment.equipmentAttachments && equipment.equipmentAttachments.map((item, i) => (
+                                <span key={item.id}>
+                                  <span> </span>
+                                  <span className="attachment">{ item.typeName }
+                                    { ((i + 1) < equipment.equipmentAttachments.length) &&
+                                    <span>,</span>
+                                    }
+                                  </span>
+                                </span>
+                              ))}
+                              { (!equipment.equipmentAttachments || equipment.equipmentAttachments.length === 0)  &&
+                                <span> none</span>
+                              }
+                            </div>
+                          }
+                        </td>
                         <td>{ equipment.isApproved ? formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'Not Approved' }</td>
                         <td style={{ textAlign: 'right' }}>
                           <TooltipButton disabled={ !isApproved } disabledTooltip={ restrictEquipmentVerifyTooltip } title="Verify Equipment" bsSize="xsmall" onClick={ this.equipmentVerify.bind(this, equipment) }><Glyphicon glyph="ok" /> OK</TooltipButton>
