@@ -24,6 +24,7 @@ import * as Constant from '../constants';
 import * as Log from '../history';
 import store from '../store';
 
+import CheckboxControl from '../components/CheckboxControl.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
 import DeleteButton from '../components/DeleteButton.jsx';
 import EditButton from '../components/EditButton.jsx';
@@ -72,6 +73,8 @@ var OwnersDetail = React.createClass({
       showNotesDialog: false,
       showChangeStatusDialog: false,
 
+      showAttachments: false,
+
       contact: {},
 
       status: '',
@@ -119,6 +122,10 @@ var OwnersDetail = React.createClass({
       store.dispatch({ type: Action.UPDATE_OWNER_EQUIPMENT_UI, ownerEquipment: this.state.uiEquipment });
       if (callback) { callback(); }
     });
+  },
+
+  updateState(state, callback) {
+    this.setState(state, callback);
   },
 
   showNotes() {
@@ -515,6 +522,7 @@ var OwnersDetail = React.createClass({
             </Well>
             <Well>
               <SubHeader title={`Equipment (${ owner.numberOfEquipment })`}>
+                <CheckboxControl id="showAttachments" className="mr-5" inline updateState={this.updateState}><small>Show Attachments</small></CheckboxControl>
                 <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.equipmentVerifyAll }></Confirm> }>
                   <TooltipButton disabled={!isApproved} disabledTooltip={restrictEquipmentVerifyTooltip} className="mr-5" title="Verify All Equipment" bsSize="small">Verify All</TooltipButton>
                 </OverlayTrigger>
@@ -547,7 +555,27 @@ var OwnersDetail = React.createClass({
                         <td><Link to={ location }>{ equipment.equipmentCode }</Link></td>
                         <td>{ equipment.localArea.name }</td>
                         <td>{ equipment.typeName }</td>
-                        <td>{ equipment.details }</td>
+                        <td>
+                          { equipment.details }
+                          { this.state.showAttachments &&
+                            <div>
+                              Attachments:
+                              { equipment.equipmentAttachments && equipment.equipmentAttachments.map((item, i) => (
+                                <span key={item.id}>
+                                  <span> </span>
+                                  <span className="attachment">{ item.typeName }
+                                    { ((i + 1) < equipment.equipmentAttachments.length) &&
+                                    <span>,</span>
+                                    }
+                                  </span>
+                                </span>
+                              ))}
+                              { (!equipment.equipmentAttachments || equipment.equipmentAttachments.length === 0)  &&
+                                <span> none</span>
+                              }
+                            </div>
+                          }
+                        </td>
                         <td>{ equipment.isApproved ? formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'Not Approved' }</td>
                         <td style={{ textAlign: 'right' }}>
                           <TooltipButton disabled={ !isApproved } disabledTooltip={ restrictEquipmentVerifyTooltip } title="Verify Equipment" bsSize="xsmall" onClick={ this.equipmentVerify.bind(this, equipment) }><Glyphicon glyph="ok" /> OK</TooltipButton>
