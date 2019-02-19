@@ -17,13 +17,14 @@ namespace HetsData.Helpers
         public string OrganizationName { get; set; }
         public string LocalAreaName { get; set; }
         public string PrimaryContactName { get; set; }
-        public string PrimaryContactNumber { get; set; }
+        public string WorkPhoneNumber { get; set; }
+        public string MobilePhoneNumber { get; set; }
         public int EquipmentCount { get; set; }
         public string Status { get; set; }
     }
 
     public class OwnerWcbCgl
-    {        
+    {
         public int Id { get; set; }
         public int ServiceAreaId { get; set; }
         public string LocalAreaName { get; set; }
@@ -64,7 +65,7 @@ namespace HetsData.Helpers
         public string ReportDate { get; set; }
         public string Title { get; set; }
         public int DistrictId { get; set; }
-        public List<MailingLabelRowModel> LabelRow { get; set; }        
+        public List<MailingLabelRowModel> LabelRow { get; set; }
     }
 
     public class MailingLabelRowModel
@@ -171,14 +172,8 @@ namespace HetsData.Helpers
                     }
 
                     ownerLite.PrimaryContactName = tempName;
-
-                    // set phone number
-                    ownerLite.PrimaryContactNumber = owner.PrimaryContact.WorkPhoneNumber;
-
-                    if (string.IsNullOrEmpty(ownerLite.PrimaryContactNumber))
-                    {
-                        ownerLite.PrimaryContactNumber = owner.PrimaryContact.MobilePhoneNumber;
-                    }
+                    ownerLite.WorkPhoneNumber = owner.PrimaryContact.WorkPhoneNumber;
+                    ownerLite.MobilePhoneNumber = owner.PrimaryContact.MobilePhoneNumber;
                 }
 
                 if (owner.HetEquipment != null)
@@ -235,7 +230,7 @@ namespace HetsData.Helpers
                 }
 
                 if (owner.PrimaryContact != null)
-                {                    
+                {
                     // set phone number
                     ownerLite.PrimaryContactNumber = owner.PrimaryContact.WorkPhoneNumber;
 
