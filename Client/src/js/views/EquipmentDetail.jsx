@@ -32,6 +32,9 @@ import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import History from '../components/History.jsx';
 
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SubHeader from '../components/ui/SubHeader.jsx';
+
 import { formatDateTime } from '../utils/date';
 import { formatHours } from '../utils/string';
 
@@ -298,20 +301,16 @@ var EquipmentDetail = React.createClass({
                   <Label bsStyle={ equipment.isHired ? 'success' : 'default' }>{ equipment.isHired ? 'Hired' : 'Not Hired' }</Label>
                   <Label bsStyle={ lastVerifiedStyle }>Last Verified: { formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</Label>
                 </Row>
-                <Row className="equipment-header">
-                  <Col xs={12}>
-                    <h1>Equipment Id: <small>{ equipment.equipmentCode } ({ equipment.typeName })</small></h1>
-                  </Col>
-                  <Col xs={12}>
-                    <h1>Company: <Link to={`${Constant.OWNERS_PATHNAME}/${equipment.ownerId}`}><small>{ equipment.organizationName }</small></Link></h1>
-                  </Col>
-                  <Col xs={12}>
+                <div className="equipment-header">
+                  <PageHeader title="Equipment Id" subTitle={`${ equipment.equipmentCode } (${ equipment.typeName })`}/>
+                  <PageHeader title="Company" subTitle={<Link to={`${Constant.OWNERS_PATHNAME}/${equipment.ownerId}`}>{ equipment.organizationName }</Link>}/>
+                  <div className="district-office">
                     <strong>District Office:</strong> { equipment.districtName }
-                  </Col>
-                  <Col xs={12}>
+                  </div>
+                  <div className="local-area">
                     <strong>Service/Local Area:</strong> { equipment.localArea.serviceAreaId } - { equipment.localAreaName }
-                  </Col>
-                </Row>
+                  </div>
+                </div>
               </div>
             );
           })()}
@@ -319,9 +318,7 @@ var EquipmentDetail = React.createClass({
           <Row>
             <Col md={12}>
               <Well>
-                <h3 className="clearfix">Equipment Information <span className="pull-right">
-                  <Button title="Edit Equipment" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
-                </span></h3>
+                <SubHeader title="Equipment Information" editButtonTitle="Edit Equipment" onEditClicked={ this.openEditDialog }/>
                 {(() => {
                   if (this.state.loading) { return <div className="spinner-container"><Spinner /></div>; }
 
@@ -374,9 +371,7 @@ var EquipmentDetail = React.createClass({
             </Col>
             <Col md={12}>
               <Well>
-                <h3>Attachments <span className="pull-right">
-                  <Button title="Add Attachment" bsSize="small" onClick={this.openPhysicalAttachmentDialog}><Glyphicon glyph="plus" /></Button>
-                </span></h3>
+                <SubHeader title="Attachments" editButtonTitle="Add Attachment" editIcon="plus" onEditClicked={ this.openPhysicalAttachmentDialog }/>
                 {(() => {
                   if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; }
                   if (equipment.equipmentAttachments && Object.keys(equipment.equipmentAttachments).length === 0) { return <Alert bsStyle="success">No Attachments</Alert>; }
@@ -433,9 +428,7 @@ var EquipmentDetail = React.createClass({
           <Row>
             <Col md={12}>
               <Well>
-                <h3>Seniority<span className="pull-right">
-                  <Button title="Edit Seniority" bsSize="small" onClick={this.openSeniorityDialog}><Glyphicon glyph="pencil" /></Button>
-                </span></h3>
+                <SubHeader title="Seniority" editButtonTitle="Edit Seniority" onEditClicked={ this.openSeniorityDialog }/>
                 {(() => {
                   if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -482,7 +475,7 @@ var EquipmentDetail = React.createClass({
             </Col>
             <Col md={12}>
               <Well>
-                <h3>History <span className="pull-right"></span></h3>
+                <SubHeader title="History"/>
                 { equipment.historyEntity &&
                   <History historyEntity={ equipment.historyEntity } refresh={ !this.state.loading } />
                 }

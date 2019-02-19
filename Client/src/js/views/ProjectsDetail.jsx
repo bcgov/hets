@@ -35,6 +35,9 @@ import TableControl from '../components/TableControl.jsx';
 import Confirm from '../components/Confirm.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SubHeader from '../components/ui/SubHeader.jsx';
+
 import { formatDateTime } from '../utils/date';
 
 /*
@@ -274,16 +277,8 @@ var ProjectsDetail = React.createClass({
                     </div>
                   </Col>
                 </Row>
-                <Row id="projects-header">
-                  <Col md={12}>
-                    <h1>Project: <small>{ project.name }</small></h1>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md={12}>
-                    <h1>District: <small>{ project.districtName }</small></h1>
-                  </Col>
-                </Row>
+                <PageHeader title="Project" subTitle={project.name}/>
+                <PageHeader title="District" subTitle={project.districtName}/>
               </div>
             );
           })()}
@@ -291,9 +286,7 @@ var ProjectsDetail = React.createClass({
           <Row>
             <Col md={12}>
               <Well>
-                <h3 className="clearfix">Project Information <span className="pull-right">
-                  <Button title="Edit Project" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
-                </span></h3>
+                <SubHeader title="Project Information" editButtonTitle="Edit Project" onEditClicked={ this.openEditDialog }/>
                 {(() => {
                   if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -341,10 +334,10 @@ var ProjectsDetail = React.createClass({
                 })()}
               </Well>
               <Well>
-                <h3>Hired Equipment / Requests<span className="pull-right">
+                <SubHeader title="Hired Equipment / Requests">
                   <CheckboxControl id="includeCompletedRequests" inline checked={ this.state.includeCompletedRequests } updateState={ this.updateState }><small>Show Completed</small></CheckboxControl>
                   <Button title="Add Request" bsSize="small" onClick={ this.openAddRequestDialog }><Glyphicon glyph="plus" /> Add</Button>
-                </span></h3>
+                </SubHeader>
                 {(() => {
                   if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -443,7 +436,7 @@ var ProjectsDetail = React.createClass({
             </Col>
             <Col md={12}>
               <Well>
-                <h3>Contacts</h3>
+                <SubHeader title="Contacts"/>
                 {(() => {
                   if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -491,7 +484,7 @@ var ProjectsDetail = React.createClass({
                 })()}
               </Well>
               <Well>
-                <h3>History</h3>
+                <SubHeader title="History"/>
                 { project.historyEntity &&
                 <History historyEntity={ project.historyEntity } refresh={ !this.state.loading } />
                 }

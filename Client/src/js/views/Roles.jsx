@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Well, Alert, Row, Col } from 'react-bootstrap';
+import { PageHeader, Well, Alert } from 'react-bootstrap';
 import { ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -90,24 +90,20 @@ var Roles = React.createClass({
 
     return <div id="roles-list">
       <PageHeader>Roles ({ numRoles })
-        <ButtonGroup id="roles-buttons">
+        <ButtonGroup id="roles-buttons" className="pull-right">
           <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
         </ButtonGroup>
       </PageHeader>
       <div>
         <Well id="roles-bar" bsSize="small" className="clearfix">
-          <Row>
-            <Col md={12}>
-              <ButtonToolbar id="roles-filters">
-                <SearchControl id="search" search={ this.state.search } updateState={ this.updateSearchState }
-                  items={[
-                    { id: 'name',        name: 'Name' },
-                    { id: 'description', name: 'Description' },
-                  ]}
-                />
-              </ButtonToolbar>
-            </Col>
-          </Row>
+          <ButtonToolbar id="roles-filters">
+            <SearchControl id="search" search={ this.state.search } updateState={ this.updateSearchState }
+              items={[
+                { id: 'name',        name: 'Name' },
+                { id: 'description', name: 'Description' },
+              ]}
+            />
+          </ButtonToolbar>
         </Well>
 
         {(() => {

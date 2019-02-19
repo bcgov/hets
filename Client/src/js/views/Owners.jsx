@@ -209,7 +209,7 @@ var Owners = React.createClass({
       <PageHeader>Owners { resultCount }
         <div id="owners-buttons">
           <ButtonGroup>
-            <TooltipButton onClick={ this.print } disabled={ !this.props.ownerList.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
+            <TooltipButton onClick={ this.print } disabled={ !this.props.ownerList.loaded } disabledTooltip="Please complete the search to enable this function.">
               <Glyphicon glyph="print" title="Print" />
             </TooltipButton>
           </ButtonGroup>
@@ -218,7 +218,7 @@ var Owners = React.createClass({
       <Well id="owners-bar" bsSize="small" className="clearfix">
         <Row>
           <Col xs={9} sm={10}>
-            <Form>
+            <Form onSubmit={ this.search }>
               <ButtonToolbar id="owners-filters">
                 <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                   items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />

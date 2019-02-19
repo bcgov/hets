@@ -33,6 +33,8 @@ import History from '../components/History.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
 
+import SubHeader from '../components/ui/SubHeader.jsx';
+
 import { formatDateTime, formatDateTimeUTCToLocal } from '../utils/date';
 import { concat } from '../utils/string';
 
@@ -230,6 +232,8 @@ var RentalRequestsDetail = React.createClass({
   render() {
     var rentalRequest = this.props.rentalRequest.data;
 
+    var canEditRequest = rentalRequest.projectId > 0 && rentalRequest.status !== Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
+
     return <div id="rental-requests-detail">
       <PageOrientation type="landscape"/>
       <Row id="rental-requests-top">
@@ -246,11 +250,7 @@ var RentalRequestsDetail = React.createClass({
       </Row>
 
       <Well className="request-information">
-        <h3 className="clearfix">Request Information <span className="pull-right">
-          { rentalRequest.projectId > 0 && rentalRequest.status !== Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED &&
-            <Button title="Edit Rental Request" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
-          }
-        </span></h3>
+        <SubHeader title="Request Information" editButtonTitle="Edit Rental Request" onEditClicked={canEditRequest ? this.openEditDialog : null}/>
         {(() => {
           if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -294,17 +294,17 @@ var RentalRequestsDetail = React.createClass({
       </Well>
 
       <Well>
-        <h3>Hire Rotation List <span className="pull-right">
-          <TooltipButton onClick={ this.print } disabled={ this.state.loading } disabledTooltip={ 'Please wait for the request information to finish loading.' }>
+        <SubHeader title="Hire Rotation List">
+          <TooltipButton onClick={ this.print } disabled={ this.state.loading } disabledTooltip="Please wait for the request information to finish loading.">
             <Glyphicon glyph="print" title="Print Hire Rotation List" className="mr-5" />
             <span>Hire Rotation List</span>
           </TooltipButton>
-          <TooltipButton onClick={ this.printSeniorityList } disabled={ this.state.loading } disabledTooltip={ 'Please wait for the request information to finish loading.' }>
+          <TooltipButton onClick={ this.printSeniorityList } disabled={ this.state.loading } disabledTooltip="Please wait for the request information to finish loading.">
             <Glyphicon glyph="print" title="Print Seniority List" className="mr-5" />
             <span>Seniority List</span>
           </TooltipButton>
           <CheckboxControl id="showAttachments" inline updateState={ this.updateState }><small>Show Attachments</small></CheckboxControl>
-        </span></h3>
+        </SubHeader>
         {(() => {
           if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -422,7 +422,7 @@ var RentalRequestsDetail = React.createClass({
       </Well>
 
       <Well className="history">
-        <h3>History <span className="pull-right"></span></h3>
+        <SubHeader title="History"/>
         { rentalRequest.historyEntity &&
           <History historyEntity={ rentalRequest.historyEntity } refresh={ !this.state.loading } />
         }

@@ -18,6 +18,9 @@ import Spinner from '../components/Spinner.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
 import SortTable from '../components/SortTable.jsx';
 
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SubHeader from '../components/ui/SubHeader.jsx';
+
 import { formatDateTime } from '../utils/date';
 
 var BusinessOwner = React.createClass({
@@ -116,179 +119,156 @@ var BusinessOwner = React.createClass({
 
     return <div id="owners-detail">
       <div>
-        {(() => {
-
-          return <Row id="owners-top">
-            <Col sm={9}>
-              <Label className="ml-5">{ owner.status }</Label>
-              <Label className={ owner.isMaintenanceContractor ? 'ml-5' : 'hide' }>Maintenance Contractor</Label>
-            </Col>
-            <Col sm={3}>
-              <div className="pull-right">
-                <Button className="mr-5" onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-                <Link to={ Constant.BUSINESS_PORTAL_PATHNAME } className="btn btn-default"><Glyphicon glyph="arrow-left" /> Return</Link>
-              </div>
-            </Col>
-          </Row>;
-        })()}
-
-        {(() => {
-          return <div id="owners-header">
-            <Row>
-              <Col md={12}>
-                <h1>Company: <small>{ owner.organizationName }</small></h1>
-              </Col>
-            </Row>
-          </div>;
-        })()}
-
-        <Row>
-          <Col md={12}>
-            <Well>
-              <h3>Owner Information</h3>
-              {(() => {
-                return <div id="owners-data">
-                  <Row className="equal-height">
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Company">{ owner.organizationName }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Company Address">{ owner.fullAddress }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Owner Name">{ owner.ownerName }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Owner Code">{ owner.ownerCode }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Primary Contact">{ owner.primaryContactName }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Doing Business As">{ owner.doingBusinessAs }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Registered BC Company Number">{ owner.registeredCompanyNumber }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="District Office">{ owner.districtName }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Service/Local Area">{ owner.localAreaName }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Maintenance Contractor">{ owner.isMaintenanceContractor ? 'Yes' : 'No' }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Meets Residency?">{ owner.meetsResidency ? 'Yes' : 'No' }</ColDisplay>
-                    </Col>
-                  </Row>
-                </div>;
-              })()}
-            </Well>
+        <Row id="owners-top">
+          <Col sm={9}>
+            <Label className="ml-5">{ owner.status }</Label>
+            <Label className={ owner.isMaintenanceContractor ? 'ml-5' : 'hide' }>Maintenance Contractor</Label>
           </Col>
-          <Col md={12}>
-            <Well>
-              <h3>Policy</h3>
-              {(() => {
-                return <Row id="owners-policy" className="equal-height">
-                  <Col lg={4} md={6} sm={12} xs={12}>
-                    <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="WCB Number">{ owner.workSafeBCPolicyNumber }</ColDisplay>
-                  </Col>
-                  <Col lg={4} md={6} sm={12} xs={12}>
-                    <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="WCB Expiry Date">
-                      { formatDateTime(owner.workSafeBCExpiryDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
-                    </ColDisplay>
-                  </Col>
-                  <Col lg={4} md={6} sm={12} xs={12}>
-                    <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="CGL Insurance Company">
-                      { owner.cglCompanyName }
-                    </ColDisplay>
-                  </Col>
-                  <Col lg={4} md={6} sm={12} xs={12}>
-                    <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="CGL Policy Number">
-                      { owner.cglPolicyNumber }
-                    </ColDisplay>
-                  </Col>
-                  <Col lg={4} md={6} sm={12} xs={12}>
-                    <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="CGL Policy End Date">
-                      { formatDateTime(owner.cglEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
-                    </ColDisplay>
-                  </Col>
-                </Row>;
-              })()}
-            </Well>
-          </Col>
-          <Col md={12}>
-            <Well>
-              <h3>Contacts</h3>
-              {(() => {
-                if (!owner.contacts || Object.keys(owner.contacts).length === 0) { return <Alert bsStyle="success">No contacts</Alert>; }
-
-                var contacts = _.sortBy(owner.contacts, this.state.uiContacts.sortField);
-                if (this.state.uiContacts.sortDesc) {
-                  _.reverse(contacts);
-                }
-
-                var headers = [
-                  { field: 'name',              title: 'Name'  },
-                  { field: 'phone',             title: 'Phone' },
-                  { field: 'mobilePhoneNumber', title: 'Cell'  },
-                  { field: 'faxPhoneNumber',    title: 'Fax'   },
-                  { field: 'emailAddress',      title: 'Email' },
-                  { field: 'role',              title: 'Role'  },
-                ];
-
-                return <SortTable id="contact-list" sortField={ this.state.uiContacts.sortField } sortDesc={ this.state.uiContacts.sortDesc } onSort={ this.updateContactsUIState } headers={ headers }>
-                  {
-                    _.map(contacts, (contact) => {
-                      return <tr key={ contact.id }>
-                        <td>{ contact.isPrimary && <Glyphicon glyph="star" /> } { contact.name }</td>
-                        <td>{ contact.phone }</td>
-                        <td>{ contact.mobilePhoneNumber }</td>
-                        <td>{ contact.faxPhoneNumber }</td>
-                        <td><a href={ `mailto:${ contact.emailAddress }` } target="_blank">{ contact.emailAddress }</a></td>
-                        <td>{ contact.role }</td>
-                      </tr>;
-                    })
-                  }
-                </SortTable>;
-              })()}
-            </Well>
-            <Well>
-              <h3 className="clearfix">Equipment ({ owner.numberOfEquipment })</h3>
-              {(() => {
-                if (!owner.equipmentList || owner.equipmentList.length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
-
-                var equipmentList = _.orderBy(owner.equipmentList, [this.state.uiEquipment.sortField], [this.state.uiEquipment.sortDesc ? 'desc' : 'asc']);
-
-                var headers = [
-                  { field: 'equipmentNumber',  title: 'ID'                   },
-                  { field: 'localArea.name',   title: 'Local Area'           },
-                  { field: 'typeName',         title: 'Equipment Type'       },
-                  { field: 'details',          title: 'Make/Model/Size/Year' },
-                  { field: 'attachments',      title: 'Attachments'          },
-                  { field: 'lastVerifiedDate', title: 'Last Verified'        },
-                ];
-
-                return <SortTable id="equipment-list" sortField={ this.state.uiEquipment.sortField } sortDesc={ this.state.uiEquipment.sortDesc } onSort={ this.updateEquipmentUIState } headers={ headers }>
-                  {
-                    _.map(equipmentList, (equipment) => {
-                      return <tr key={ equipment.id }>
-                        <td>{ equipment.equipmentCode }</td>
-                        <td>{ equipment.localArea.name }</td>
-                        <td>{ equipment.typeName }</td>
-                        <td>{ equipment.details }</td>
-                        <td>{ _.map(equipment.equipmentAttachments, a => a.description).join(', ') }</td>
-                        <td>{ equipment.isApproved ? formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'Not Approved' }</td>
-                      </tr>;
-                    })
-                  }
-                </SortTable>;
-              })()}
-            </Well>
+          <Col sm={3}>
+            <div className="pull-right">
+              <Button className="mr-5" onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+              <Link to={ Constant.BUSINESS_PORTAL_PATHNAME } className="btn btn-default"><Glyphicon glyph="arrow-left" /> Return</Link>
+            </div>
           </Col>
         </Row>
+
+        <PageHeader id="owners-header" title="Company" subTitle={owner.organizationName}/>
+
+        <Well>
+          <SubHeader title="Owner Information"/>
+          <div id="owners-data">
+            <Row className="equal-height">
+              <Col lg={4} md={6} sm={12} xs={12}>
+                <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Company">{ owner.organizationName }</ColDisplay>
+              </Col>
+              <Col lg={4} md={6} sm={12} xs={12}>
+                <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Company Address">{ owner.fullAddress }</ColDisplay>
+              </Col>
+              <Col lg={4} md={6} sm={12} xs={12}>
+                <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Owner Name">{ owner.ownerName }</ColDisplay>
+              </Col>
+              <Col lg={4} md={6} sm={12} xs={12}>
+                <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Owner Code">{ owner.ownerCode }</ColDisplay>
+              </Col>
+              <Col lg={4} md={6} sm={12} xs={12}>
+                <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Primary Contact">{ owner.primaryContactName }</ColDisplay>
+              </Col>
+              <Col lg={4} md={6} sm={12} xs={12}>
+                <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Doing Business As">{ owner.doingBusinessAs }</ColDisplay>
+              </Col>
+              <Col lg={4} md={6} sm={12} xs={12}>
+                <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Registered BC Company Number">{ owner.registeredCompanyNumber }</ColDisplay>
+              </Col>
+              <Col lg={4} md={6} sm={12} xs={12}>
+                <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="District Office">{ owner.districtName }</ColDisplay>
+              </Col>
+              <Col lg={4} md={6} sm={12} xs={12}>
+                <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Service/Local Area">{ owner.localAreaName }</ColDisplay>
+              </Col>
+              <Col lg={4} md={6} sm={12} xs={12}>
+                <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Maintenance Contractor">{ owner.isMaintenanceContractor ? 'Yes' : 'No' }</ColDisplay>
+              </Col>
+              <Col lg={4} md={6} sm={12} xs={12}>
+                <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Meets Residency?">{ owner.meetsResidency ? 'Yes' : 'No' }</ColDisplay>
+              </Col>
+            </Row>
+          </div>
+        </Well>
+        <Well>
+          <SubHeader title="Policy"/>
+          <Row id="owners-policy" className="equal-height">
+            <Col lg={4} md={6} sm={12} xs={12}>
+              <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="WCB Number">{ owner.workSafeBCPolicyNumber }</ColDisplay>
+            </Col>
+            <Col lg={4} md={6} sm={12} xs={12}>
+              <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="WCB Expiry Date">
+                { formatDateTime(owner.workSafeBCExpiryDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
+              </ColDisplay>
+            </Col>
+            <Col lg={4} md={6} sm={12} xs={12}>
+              <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="CGL Insurance Company">
+                { owner.cglCompanyName }
+              </ColDisplay>
+            </Col>
+            <Col lg={4} md={6} sm={12} xs={12}>
+              <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="CGL Policy Number">
+                { owner.cglPolicyNumber }
+              </ColDisplay>
+            </Col>
+            <Col lg={4} md={6} sm={12} xs={12}>
+              <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="CGL Policy End Date">
+                { formatDateTime(owner.cglEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
+              </ColDisplay>
+            </Col>
+          </Row>
+        </Well>
+        <Well>
+          <SubHeader title="Contacts"/>
+          {(() => {
+            if (!owner.contacts || Object.keys(owner.contacts).length === 0) { return <Alert bsStyle="success">No contacts</Alert>; }
+
+            var contacts = _.sortBy(owner.contacts, this.state.uiContacts.sortField);
+            if (this.state.uiContacts.sortDesc) {
+              _.reverse(contacts);
+            }
+
+            var headers = [
+              { field: 'name',              title: 'Name'  },
+              { field: 'phone',             title: 'Phone' },
+              { field: 'mobilePhoneNumber', title: 'Cell'  },
+              { field: 'faxPhoneNumber',    title: 'Fax'   },
+              { field: 'emailAddress',      title: 'Email' },
+              { field: 'role',              title: 'Role'  },
+            ];
+
+            return <SortTable id="contact-list" sortField={ this.state.uiContacts.sortField } sortDesc={ this.state.uiContacts.sortDesc } onSort={ this.updateContactsUIState } headers={ headers }>
+              {
+                _.map(contacts, (contact) => {
+                  return <tr key={ contact.id }>
+                    <td>{ contact.isPrimary && <Glyphicon glyph="star" /> } { contact.name }</td>
+                    <td>{ contact.phone }</td>
+                    <td>{ contact.mobilePhoneNumber }</td>
+                    <td>{ contact.faxPhoneNumber }</td>
+                    <td><a href={ `mailto:${ contact.emailAddress }` } target="_blank">{ contact.emailAddress }</a></td>
+                    <td>{ contact.role }</td>
+                  </tr>;
+                })
+              }
+            </SortTable>;
+          })()}
+        </Well>
+        <Well>
+          <SubHeader title={`Equipment (${ owner.numberOfEquipment })`}/>
+          {(() => {
+            if (!owner.equipmentList || owner.equipmentList.length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
+
+            var equipmentList = _.orderBy(owner.equipmentList, [this.state.uiEquipment.sortField], [this.state.uiEquipment.sortDesc ? 'desc' : 'asc']);
+
+            var headers = [
+              { field: 'equipmentNumber',  title: 'ID'                   },
+              { field: 'localArea.name',   title: 'Local Area'           },
+              { field: 'typeName',         title: 'Equipment Type'       },
+              { field: 'details',          title: 'Make/Model/Size/Year' },
+              { field: 'attachments',      title: 'Attachments'          },
+              { field: 'lastVerifiedDate', title: 'Last Verified'        },
+            ];
+
+            return <SortTable id="equipment-list" sortField={ this.state.uiEquipment.sortField } sortDesc={ this.state.uiEquipment.sortDesc } onSort={ this.updateEquipmentUIState } headers={ headers }>
+              {
+                _.map(equipmentList, (equipment) => {
+                  return <tr key={ equipment.id }>
+                    <td>{ equipment.equipmentCode }</td>
+                    <td>{ equipment.localArea.name }</td>
+                    <td>{ equipment.typeName }</td>
+                    <td>{ equipment.details }</td>
+                    <td>{ _.map(equipment.equipmentAttachments, a => a.description).join(', ') }</td>
+                    <td>{ equipment.isApproved ? formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'Not Approved' }</td>
+                  </tr>;
+                })
+              }
+            </SortTable>;
+          })()}
+        </Well>
       </div>
     </div>;
   },
@@ -302,7 +282,7 @@ var BusinessOwner = React.createClass({
             </Col>
             <Col sm={3}>
               <div className="pull-right">
-                <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
+                <Link to={ Constant.BUSINESS_PORTAL_PATHNAME } className="btn btn-default"><Glyphicon glyph="arrow-left" /> Return</Link>
               </div>
             </Col>
           </Row>;

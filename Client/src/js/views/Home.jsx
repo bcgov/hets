@@ -11,6 +11,8 @@ import * as Api from '../api';
 import * as Constant from '../constants';
 import store from '../store';
 
+import SubHeader from '../components/ui/SubHeader.jsx';
+
 var Home = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
@@ -80,7 +82,7 @@ var Home = React.createClass({
     return <div id="home">
       <PageHeader>{this.props.currentUser.fullName}<br/>{this.props.currentUser.districtName} District</PageHeader>
       <Well>
-        <h3>Summary</h3>
+        <SubHeader title="Summary"/>
         <Row>
           <Col md={12} className="btn-container">
             <Button onClick={ this.goToUnapprovedOwners }>Unapproved owners { !_.isEmpty(counts) && `(${ counts.unapprovedOwners })` }</Button>
