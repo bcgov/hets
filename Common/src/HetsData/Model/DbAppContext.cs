@@ -1006,6 +1006,8 @@ namespace HetsData.Model
 
                 entity.Property(e => e.DistrictId).HasColumnName("DISTRICT_ID");
 
+                entity.Property(e => e.ServiceAreaId).HasColumnName("SERVICE_AREA_ID");
+
                 entity.Property(e => e.EquipmentTypeId).HasColumnName("EQUIPMENT_TYPE_ID");
 
                 entity.Property(e => e.Deleted).HasColumnName("DELETED");
