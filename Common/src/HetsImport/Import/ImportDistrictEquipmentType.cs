@@ -392,15 +392,16 @@ namespace HetsImport.Import
 
                 int districtId = serviceArea.District.DistrictId;
                 equipType.DistrictId = districtId;
+                equipType.ServiceAreaId = serviceArea.ServiceAreaId;
 
                 // ***********************************************
                 // check that we don't have this equipment type 
-                // already (from another service area - but same district)
                 // ***********************************************                
                 HetDistrictEquipmentType existingEquipmentType = dbContext.HetDistrictEquipmentType.AsNoTracking()
                     .Include(x => x.District)
                     .FirstOrDefault(x => x.DistrictEquipmentName == tempDistrictDescriptionFull &&
-                                         x.District.DistrictId == districtId);
+                                         x.District.DistrictId == districtId &&
+                                         x.ServiceAreaId == serviceArea.ServiceAreaId);
 
                 if (existingEquipmentType != null)
                 {

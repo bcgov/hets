@@ -144,7 +144,8 @@ var DistrictAdmin = React.createClass({
 
           return (
             <TableControl id="district-equipment-types" headers={[
-              { field: 'districtEquipmentName',           title: 'Equipment Type/Description'  },              
+              { field: 'districtEquipmentName',           title: 'Equipment Type/Description'  },
+              { field: 'serviceAreaId',           title: 'Service Area'  },
               { field: 'equipmentType.blueBookSection',   title: 'Blue Book Section Number'  },
               { field: 'equipmentType.name',              title: 'Blue Book Section Name'  },
               { field: 'addDistrictEquipmentType', title: 'Add District Equipment Type',  style: { textAlign: 'right'  },
@@ -155,6 +156,7 @@ var DistrictAdmin = React.createClass({
                 _.map(this.props.districtEquipmentTypes.data, (equipment) => {
                   return <tr key={ equipment.id }>
                     <td>{ equipment.districtEquipmentName }</td>
+					<td>{ equipment.serviceAreaId }</td>
                     <td>{ equipment.equipmentType.blueBookSection }</td>
 					<td>{ equipment.equipmentType.name }</td>
                     <td style={{ textAlign: 'right' }}>
