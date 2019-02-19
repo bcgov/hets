@@ -266,7 +266,16 @@ namespace HetsApi.Controllers
                 foreach (HetEquipment equipment in equipmentList)
                 {
                     equipment.LocalAreaId = item.LocalArea.LocalAreaId;
-                }
+
+                    // update new area
+                    EquipmentHelper.RecalculateSeniority(item.LocalAreaId, equipment.DistrictEquipmentTypeId, _context, _configuration);
+
+                    // update old area
+                    if (oldLocalArea != null)
+                    {
+                        EquipmentHelper.RecalculateSeniority((int)oldLocalArea, equipment.DistrictEquipmentTypeId, _context, _configuration);
+                    }
+                }                
             }
 
             // do we need to update the block assignment?
