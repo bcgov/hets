@@ -202,8 +202,8 @@ namespace HetsApi.Controllers
             float? originalServiceHoursLastYear = equipment.ServiceHoursLastYear;
             float? originalServiceHoursTwoYearsAgo = equipment.ServiceHoursTwoYearsAgo;
             float? originalServiceHoursThreeYearsAgo = equipment.ServiceHoursThreeYearsAgo;
-            long? originalLocalAreaId = equipment.LocalAreaId;
-            long? originalDistrictEquipmentTypeId = equipment.DistrictEquipmentTypeId;
+            int? originalLocalAreaId = equipment.LocalAreaId;
+            int? originalDistrictEquipmentTypeId = equipment.DistrictEquipmentTypeId;
 
             equipment.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             equipment.ApprovedDate = item.ApprovedDate;
@@ -272,7 +272,11 @@ namespace HetsApi.Controllers
 
             if (rebuildSeniority)
             {
+                // update new area
                 EquipmentHelper.RecalculateSeniority(item.LocalAreaId, item.DistrictEquipmentTypeId, _context, _configuration);
+
+                // update old area
+                EquipmentHelper.RecalculateSeniority((int)originalLocalAreaId, (int)originalDistrictEquipmentTypeId, _context, _configuration);
             }
 
             // retrieve updated equipment record to return to ui
