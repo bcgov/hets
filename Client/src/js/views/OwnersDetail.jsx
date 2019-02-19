@@ -34,6 +34,9 @@ import TooltipButton from '../components/TooltipButton.jsx';
 import Confirm from '../components/Confirm.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SubHeader from '../components/ui/SubHeader.jsx';
+
 import { formatDateTime, today, toZuluTime } from '../utils/date';
 
 /*
@@ -376,22 +379,12 @@ var OwnersDetail = React.createClass({
           </Row>;
         })()}
 
-        {(() => {
-          return <div id="owners-header">
-            <Row>
-              <Col md={12}>
-                <h1>Company: <small>{ owner.organizationName }</small></h1>
-              </Col>
-            </Row>
-          </div>;
-        })()}
+        <PageHeader id="owners-header" title="Company" subTitle={ owner.organizationName }/>
 
         <Row>
           <Col md={12}>
             <Well>
-              <h3 className="clearfix">Owner Information <span className="pull-right">
-                <Button title="Edit Owner" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
-              </span></h3>
+              <SubHeader title="Owner Information" editButtonTitle="Edit Owner" onEditClicked={ this.openEditDialog }/>
               {(() => {
                 if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -437,9 +430,7 @@ var OwnersDetail = React.createClass({
           </Col>
           <Col md={12}>
             <Well>
-              <h3 className="clearfix">Policy <span className="pull-right">
-                <Button title="Edit Policy Information" bsSize="small" onClick={ this.openPolicyDialog }><Glyphicon glyph="pencil" /></Button>
-              </span></h3>
+              <SubHeader title="Policy" editButtonTitle="Edit Policy Information" onEditClicked={ this.openPolicyDialog }/>
               {(() => {
                 if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -473,7 +464,7 @@ var OwnersDetail = React.createClass({
           </Col>
           <Col md={12}>
             <Well>
-              <h3>Contacts</h3>
+              <SubHeader title="Contacts"/>
               {(() => {
                 if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -523,12 +514,12 @@ var OwnersDetail = React.createClass({
               })()}
             </Well>
             <Well>
-              <h3 className="clearfix">Equipment ({ owner.numberOfEquipment }) <span className="pull-right">
+              <SubHeader title={`Equipment (${ owner.numberOfEquipment })`}>
                 <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.equipmentVerifyAll }></Confirm> }>
                   <TooltipButton disabled={!isApproved} disabledTooltip={restrictEquipmentVerifyTooltip} className="mr-5" title="Verify All Equipment" bsSize="small">Verify All</TooltipButton>
                 </OverlayTrigger>
                 <TooltipButton disabled={ !isApproved } disabledTooltip={ restrictEquipmentAddTooltip } title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></TooltipButton>
-              </span></h3>
+              </SubHeader>
               {(() => {
                 if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -568,7 +559,7 @@ var OwnersDetail = React.createClass({
               })()}
             </Well>
             <Well>
-              <h3>History</h3>
+              <SubHeader title="Contacts"/>
               { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ !this.state.loading } /> }
             </Well>
           </Col>

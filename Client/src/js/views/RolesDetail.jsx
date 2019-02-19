@@ -19,6 +19,9 @@ import FormInputControl from '../components/FormInputControl.jsx';
 import Spinner from '../components/Spinner.jsx';
 import Form from '../components/Form.jsx';
 
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SubHeader from '../components/ui/SubHeader.jsx';
+
 import { isBlank } from '../utils/string';
 
 
@@ -183,94 +186,75 @@ var RolesDetail = React.createClass({
     }
 
     return <div id="roles-detail">
-      <Row id="roles-top">
-        <Col md={9}></Col>
-        <Col md={3}>
-          <div className="pull-right">
-            <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-            <LinkContainer to={{ pathname: Constant.ROLES_PATHNAME }}>
-              <Button title="Return"><Glyphicon glyph="arrow-left" /> Return</Button>
-            </LinkContainer>
-          </div>
-        </Col>
-      </Row>
+      <div id="roles-top">
+        <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+        <LinkContainer to={{ pathname: Constant.ROLES_PATHNAME }}>
+          <Button title="Return"><Glyphicon glyph="arrow-left" /> Return</Button>
+        </LinkContainer>
+      </div>
 
       {(() => {
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
         return <div id="roles-header">
-          <Row>
-            <Col md={12}>
-              <h1>Role: <small>{ role.name || 'New' }</small></h1>
-            </Col>
-          </Row>
+          <PageHeader title="Role" subTitle={ role.name || 'New' }/>
         </div>;
       })()}
-      <Row>
-        <Col md={12}>
-          <Well>
-            {(() => {
-              if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+      <Well>
+        {(() => {
+          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-              return <Form id="roles-edit" onSubmit={this.onSave}>
-                <Grid fluid>
-                  <Row>
-                    <Col md={3}>
-                      <FormGroup controlId="name" validationState={ this.state.nameError ? 'error' : null }>
-                        <ControlLabel>Name <sup>*</sup></ControlLabel>
-                        <FormInputControl type="text" defaultValue={ this.state.name } updateState={ this.updateState }/>
-                        <HelpBlock>{ this.state.nameError }</HelpBlock>
-                      </FormGroup>
-                    </Col>
-                    <Col md={9}>
-                      <FormGroup controlId="description" validationState={ this.state.descriptionError ? 'error' : null }>
-                        <ControlLabel>Description <sup>*</sup></ControlLabel>
-                        <FormInputControl type="text" defaultValue={ this.state.description } updateState={ this.updateState }/>
-                        <HelpBlock>{ this.state.descriptionError }</HelpBlock>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                </Grid>
-              </Form>;
-            })()}
-          </Well>
-        </Col>
-      </Row>
-      <Row>
-        <Col md={12}>
-          <Well id="roles-permissions">
-            <h3>Permissions</h3>
-            {(() => {
-              if (this.state.loading ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+          return <Form id="roles-edit" onSubmit={this.onSave}>
+            <Grid fluid>
+              <Row>
+                <Col md={3}>
+                  <FormGroup controlId="name" validationState={ this.state.nameError ? 'error' : null }>
+                    <ControlLabel>Name <sup>*</sup></ControlLabel>
+                    <FormInputControl type="text" defaultValue={ this.state.name } updateState={ this.updateState }/>
+                    <HelpBlock>{ this.state.nameError }</HelpBlock>
+                  </FormGroup>
+                </Col>
+                <Col md={9}>
+                  <FormGroup controlId="description" validationState={ this.state.descriptionError ? 'error' : null }>
+                    <ControlLabel>Description <sup>*</sup></ControlLabel>
+                    <FormInputControl type="text" defaultValue={ this.state.description } updateState={ this.updateState }/>
+                    <HelpBlock>{ this.state.descriptionError }</HelpBlock>
+                  </FormGroup>
+                </Col>
+              </Row>
+            </Grid>
+          </Form>;
+        })()}
+      </Well>
+      <Well id="roles-permissions">
+        <SubHeader title="Permissions"/>
+        {(() => {
+          if (this.state.loading ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-              var permissions = _.sortBy(this.props.permissions, 'name');
+          var permissions = _.sortBy(this.props.permissions, 'name');
 
-              return <Table striped condensed hover bordered>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {
-                    _.map(permissions, permission => {
-                      var selected = this.state.selectedPermissionIds.indexOf(permission.id) !== -1;
-                      return <tr key={ permission.id } className={ selected ? 'selected' : '' } onClick={ this.permissionClicked.bind(this, permission) }>
-                        <td style={{ whiteSpace: 'nowrap' }}><strong>{ permission.name }</strong></td>
-                        <td>{ permission.description }</td>
-                      </tr>;
-                    })
-                  }
-                </tbody>
-              </Table>;
-            })()}
-          </Well>
-        </Col>
-      </Row>
-      <Row>
-        <Button bsStyle="primary" onClick={ this.onSave }>Save</Button>
-      </Row>
+          return <Table striped condensed hover bordered>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                _.map(permissions, permission => {
+                  var selected = this.state.selectedPermissionIds.indexOf(permission.id) !== -1;
+                  return <tr key={ permission.id } className={ selected ? 'selected' : '' } onClick={ this.permissionClicked.bind(this, permission) }>
+                    <td style={{ whiteSpace: 'nowrap' }}><strong>{ permission.name }</strong></td>
+                    <td>{ permission.description }</td>
+                  </tr>;
+                })
+              }
+            </tbody>
+          </Table>;
+        })()}
+      </Well>
+      <Button bsStyle="primary" onClick={ this.onSave }>Save</Button>
     </div>;
   },
 });

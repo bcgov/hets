@@ -19,6 +19,8 @@ import SortTable from '../components/SortTable.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 import Form from '../components/Form.jsx';
 
+import SubHeader from '../components/ui/SubHeader.jsx';
+
 var BusinessPortal = React.createClass({
   propTypes: {
     user: React.PropTypes.object,
@@ -100,109 +102,97 @@ var BusinessPortal = React.createClass({
     const hasErrors = Object.keys(this.state.errors).length > 0;
 
     return <div>
-      <Row>
-        <Col md={12}>
-          <Well id="business-info">
-            <h3>Business Information</h3>
-            {(() => {
-              return <div>
-                <Row>
-                  <Col lg={6} md={6} sm={12} xs={12}>
-                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Legal Name">{ business.bceidLegalName }</ColDisplay>
-                  </Col>
-                  <Col lg={6} md={6} sm={12} xs={12}>
-                    <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Doing Business As">{ business.bceidDoingBusinessAs }</ColDisplay>
-                  </Col>
-                </Row>
-              </div>;
-            })()}
-          </Well>
-        </Col>
-        <Col md={12}>
-          <Well id="owners">
-            <h3>HETS District Owners Associated With Your BCeID</h3>
-            {(() => {
-              if (_.isEmpty(this.props.business.owners)) { return <Alert bsStyle="success">No district owners associated</Alert>; }
+      <Well id="business-info">
+        <SubHeader title="Business Information"/>
+        <Row>
+          <Col lg={6} md={6} sm={12} xs={12}>
+            <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Legal Name">{ business.bceidLegalName }</ColDisplay>
+          </Col>
+          <Col lg={6} md={6} sm={12} xs={12}>
+            <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Doing Business As">{ business.bceidDoingBusinessAs }</ColDisplay>
+          </Col>
+        </Row>
+      </Well>
+      <Well id="owners">
+        <SubHeader title="HETS District Owners Associated With Your BCeID"/>
+        {(() => {
+          if (_.isEmpty(this.props.business.owners)) { return <Alert bsStyle="success">No district owners associated</Alert>; }
 
-              var owners = _.sortBy(this.props.business.owners, this.state.uiOwners.sortField);
-              if (this.state.uiOwners.sortDesc) {
-                _.reverse(owners);
-              }
+          var owners = _.sortBy(this.props.business.owners, this.state.uiOwners.sortField);
+          if (this.state.uiOwners.sortDesc) {
+            _.reverse(owners);
+          }
 
-              var headers = [
-                { field: 'organizationName',   title: 'Name'  },
-                { field: 'primaryContactName', title: 'Primary Contact' },
-                { field: 'districtName',       title: 'District' },
-                { field: 'localAreaName',      title: 'Local Area'  },
-              ];
+          var headers = [
+            { field: 'organizationName',   title: 'Name'  },
+            { field: 'primaryContactName', title: 'Primary Contact' },
+            { field: 'districtName',       title: 'District' },
+            { field: 'localAreaName',      title: 'Local Area'  },
+          ];
 
-              return <SortTable id="owner-list" sortField={ this.state.uiOwners.sortField } sortDesc={ this.state.uiOwners.sortDesc } onSort={ this.updateOwnersUIState } headers={ headers }>
-                {
-                  _.map(owners, (owner) => {
-                    return <tr key={ owner.id }>
-                      <td><Link to={ `${Constant.BUSINESS_DETAILS_PATHNAME }/${owner.id}` }> {owner.organizationName}</Link></td>
-                      <td>{ owner.primaryContactNameBusiness }</td>
-                      <td>{ owner.districtNameBusiness }</td>
-                      <td>{ owner.localAreaNameBusiness }</td>
-                    </tr>;
-                  })
-                }
-              </SortTable>;
-            })()}
-          </Well>
-        </Col>
-        <Col md={12}>
-          <Well id="associate-owner">
-            <h3>Associate HETS District Owner</h3>
-            <div id="overview">
-              <Row>
-                <img id="hets-logo" title="Hired Equipment Tracking System" alt="Hired Equipment Tracking System" src="images/gov/hets.jpg"/>
-                <p>
-                  The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or other piece of equipment they want to hire out to the Ministry Transportation and Infrastructure for day labour and emergency projects.
-                </p>
-                <p>
-                  The Hired Equipment Program distributes available work to local equipment owners. The program is based on seniority and is designed to deliver work to registered users fairly and efficiently through the development of local area call-out lists.  Details about the Hired Equipment Program can be found <a href="https://www2.gov.bc.ca/gov/content/industry/construction-industry/transportation-infrastructure/hired-equipment-program">here</a>.
-                </p>
-              </Row>
-              <p>
-                If you are NEW to the Hired Equipment Program, contact your <a href="https://www2.gov.bc.ca/gov/content/industry/construction-industry/transportation-infrastructure/hired-equipment-program/need-help">local district office</a> to register your company and equipment.
-              </p>
-              <p>
-                If you are REGISTERED with the Hired Equipment Program and this is your first time to the site, enter your Secret Key and Postal Code to validate your account, then select your account.
-              </p>
-              <p>
-                For RETURNING equipment owners, select your company above to view your account.
-              </p>
-            </div>
-            <Form inline onSubmit={this.validateOwner}>
-              <FormGroup controlId="secretKey" validationState={this.state.errors.secretKey ? 'error' : null}>
-                <FormInputControl
-                  type="text"
-                  placeholder="Please enter your secret key here"
-                  className="mr-5"
-                  disabled={this.state.validating}
-                  defaultValue={ this.state.secretKey }
-                  updateState={ this.updateState }
-                  inputRef={input => this.inputSecretKey = input} />
-              </FormGroup>
-              <FormGroup controlId="postalCode" validationState={this.state.errors.postalCode ? 'error' : null}>
-                <FormInputControl
-                  type="text"
-                  placeholder="Postal code"
-                  className="mr-5"
-                  disabled={this.state.validating}
-                  defaultValue={ this.state.postalCode }
-                  updateState={ this.updateState }
-                  inputRef={input => this.inputPostalCode = input} />
-              </FormGroup>
-              <Button type="submit" disabled={this.state.validating}>
-                Validate {this.state.validating && <Spinner />}
-              </Button>
-            </Form>
-            { hasErrors && <div className="validation-error">Secret key validation failed.</div> }
-          </Well>
-        </Col>
-      </Row>
+          return <SortTable id="owner-list" sortField={ this.state.uiOwners.sortField } sortDesc={ this.state.uiOwners.sortDesc } onSort={ this.updateOwnersUIState } headers={ headers }>
+            {
+              _.map(owners, (owner) => {
+                return <tr key={ owner.id }>
+                  <td><Link to={ `${Constant.BUSINESS_DETAILS_PATHNAME }/${owner.id}` }> {owner.organizationName}</Link></td>
+                  <td>{ owner.primaryContactNameBusiness }</td>
+                  <td>{ owner.districtNameBusiness }</td>
+                  <td>{ owner.localAreaNameBusiness }</td>
+                </tr>;
+              })
+            }
+          </SortTable>;
+        })()}
+      </Well>
+    <Well id="associate-owner">
+      <SubHeader title="Associate HETS District Owner"/>
+      <div id="overview">
+        <Row>
+          <img id="hets-logo" title="Hired Equipment Tracking System" alt="Hired Equipment Tracking System" src="images/gov/hets.jpg"/>
+          <p>
+            The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or other piece of equipment they want to hire out to the Ministry Transportation and Infrastructure for day labour and emergency projects.
+          </p>
+          <p>
+            The Hired Equipment Program distributes available work to local equipment owners. The program is based on seniority and is designed to deliver work to registered users fairly and efficiently through the development of local area call-out lists.  Details about the Hired Equipment Program can be found <a href="https://www2.gov.bc.ca/gov/content/industry/construction-industry/transportation-infrastructure/hired-equipment-program">here</a>.
+          </p>
+        </Row>
+        <p>
+          If you are NEW to the Hired Equipment Program, contact your <a href="https://www2.gov.bc.ca/gov/content/industry/construction-industry/transportation-infrastructure/hired-equipment-program/need-help">local district office</a> to register your company and equipment.
+        </p>
+        <p>
+          If you are REGISTERED with the Hired Equipment Program and this is your first time to the site, enter your Secret Key and Postal Code to validate your account, then select your account.
+        </p>
+        <p>
+          For RETURNING equipment owners, select your company above to view your account.
+        </p>
+      </div>
+      <Form inline onSubmit={this.validateOwner}>
+        <FormGroup controlId="secretKey" validationState={this.state.errors.secretKey ? 'error' : null}>
+          <FormInputControl
+            type="text"
+            placeholder="Please enter your secret key here"
+            className="mr-5"
+            disabled={this.state.validating}
+            defaultValue={ this.state.secretKey }
+            updateState={ this.updateState }
+            inputRef={input => this.inputSecretKey = input} />
+        </FormGroup>
+        <FormGroup controlId="postalCode" validationState={this.state.errors.postalCode ? 'error' : null}>
+          <FormInputControl
+            type="text"
+            placeholder="Postal code"
+            className="mr-5"
+            disabled={this.state.validating}
+            defaultValue={ this.state.postalCode }
+            updateState={ this.updateState }
+            inputRef={input => this.inputPostalCode = input} />
+        </FormGroup>
+        <Button type="submit" disabled={this.state.validating}>
+          Validate {this.state.validating && <Spinner />}
+        </Button>
+      </Form>
+      { hasErrors && <div className="validation-error">Secret key validation failed.</div> }
+    </Well>
     </div>;
   },
 

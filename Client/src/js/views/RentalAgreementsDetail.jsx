@@ -27,6 +27,8 @@ import EditButton from '../components/EditButton.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
 
+import SubHeader from '../components/ui/SubHeader.jsx';
+
 import { formatDateTime } from '../utils/date';
 import { formatCurrency } from '../utils/string';
 
@@ -314,17 +316,7 @@ var RentalAgreementsDetail = React.createClass({
 
             return (
               <div>
-                <h3 className="clearfix">Rental Agreement
-                  {(() => {
-                    if (rentalAgreement.isBlank) {
-                      return (
-                          <span className="pull-right">
-                            <Button title="Edit Rental Agreement" bsSize="small" onClick={ this.openHeaderEditDialog }><Glyphicon glyph="pencil" /></Button>
-                          </span>
-                      );
-                    }
-                  })()}
-                </h3>
+                <SubHeader title="Rental Agreement" editButtonTitle="Edit Rental Agreement" onEditClicked={rentalAgreement.isBlank ? this.openHeaderEditDialog : null}/>
                 <Row className="equal-height">
                   <Col lg={6} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Agreement Number:">{ rentalAgreement.number }</ColDisplay>
@@ -371,11 +363,7 @@ var RentalAgreementsDetail = React.createClass({
         </Well>
 
         <Well>
-          <h3 className="clearfix">Details
-            <span className="pull-right">
-              <Button title="Edit Details" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
-            </span>
-          </h3>
+          <SubHeader title="Details" editButtonTitle="Edit Details" onEditClicked={this.openEditDialog}/>
           {(() => {
             if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -399,7 +387,7 @@ var RentalAgreementsDetail = React.createClass({
         </Well>
 
         <Well>
-          <h3>Equipment Rate and Included Rates and Attachments</h3>
+          <SubHeader title="Equipment Rate and Included Rates and Attachments"/>
           {(() => {
             if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -465,7 +453,7 @@ var RentalAgreementsDetail = React.createClass({
         </Well>
 
         <Well>
-          <h3>As-Needed Rates and Attachments</h3>
+          <SubHeader title="As-Needed Rates and Attachments"/>
           {(() => {
             if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -514,7 +502,7 @@ var RentalAgreementsDetail = React.createClass({
         </Well>
 
         <Well>
-          <h3>Conditions</h3>
+          <SubHeader title="Conditions"/>
           {(() => {
             if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -559,11 +547,7 @@ var RentalAgreementsDetail = React.createClass({
         </Well>
 
         <Well>
-          <h3 className="clearfix">Overtime Rates and Notes/Special Instructions
-            <span className="pull-right">
-              <EditButton name="Overtime Rates and Notes/Special Instructions" bsSize="small" onClick={ this.openOvertimeNotesDialog }><Glyphicon glyph="pencil" /></EditButton>
-            </span>
-          </h3>
+          <SubHeader title="Overtime Rates and Notes/Special Instructions" editButtonTitle="Edit Overtime Rates and Notes/Special Instructions" editButtonClicked={this.openOvertimeNotesDialog}/>
           {(() => {
             var rates = this.props.rentalAgreement.overtimeRates;
 

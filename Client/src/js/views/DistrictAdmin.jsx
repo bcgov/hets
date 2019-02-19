@@ -21,6 +21,8 @@ import ConditionAddEditDialog from './dialogs/ConditionAddEditDialog.jsx';
 import DistrictEquipmentTypeAddEditDialog from './dialogs/DistrictEquipmentTypeAddEditDialog.jsx';
 import EquipmentTransferDialog from './dialogs/EquipmentTransferDialog.jsx';
 
+import SubHeader from '../components/ui/SubHeader.jsx';
+
 import { caseInsensitiveSort, sortDir } from '../utils/array';
 
 var DistrictAdmin = React.createClass({
@@ -160,7 +162,7 @@ var DistrictAdmin = React.createClass({
       <PageHeader>District Admin</PageHeader>
 
       <Well>
-        <h3>Manage District Equipment Types</h3>
+        <SubHeader title="Manage District Equipment Types"/>
         {(() => {
           if (this.props.districtEquipmentTypes.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
@@ -206,7 +208,7 @@ var DistrictAdmin = React.createClass({
       </Well>
 
       <Well>
-        <h3>Manage Conditions</h3>
+        <SubHeader title="Manage Conditions"/>
         {(() => {
           if (this.props.rentalConditions.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
@@ -244,7 +246,7 @@ var DistrictAdmin = React.createClass({
       </Well>
 
       <Well className="clearfix">
-        <h3>Equipment Transfer (Bulk)</h3>
+        <SubHeader title="Equipment Transfer (Bulk)"/>
         <Row>
           <Col xs={9}>Bulk transfer will enable the user to transfer equipment associated with one owner code to another owner code.</Col>
           <Col xs={3}><span className="pull-right"><Button onClick={ this.showEquipmentTransferDialog }>Equipment Transfer</Button></span></Col>

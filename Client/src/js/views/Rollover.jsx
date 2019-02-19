@@ -12,6 +12,8 @@ import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import Confirm from '../components/Confirm.jsx';
 import Spinner from '../components/Spinner.jsx';
 
+import SubHeader from '../components/ui/SubHeader.jsx';
+
 import { formatDateTimeUTCToLocal } from '../utils/date';
 
 var Rollover = React.createClass({
@@ -112,7 +114,7 @@ var Rollover = React.createClass({
 
     return (
       <Well>
-        <h3>Pre-Roll Over Checklist</h3>
+        <SubHeader title="Pre-Roll Over Checklist"/>
         <div id="checklist">
           <CheckboxControl id="checkListStep1" checked={ this.state.checkListStep1 } updateState={ this.updateState }>
             Verify all equipment hours have been entered in the system
