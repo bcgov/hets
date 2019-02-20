@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { browserHistory, Link } from 'react-router';
+import { Link } from 'react-router';
 
 import { Well, Row, Col, Alert, Button, Glyphicon, Label } from 'react-bootstrap';
 import _ from 'lodash';

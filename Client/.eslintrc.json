@@ -33,15 +33,15 @@
             "unix"
         ],
         "quotes": [
-            "error",
+            "warn",
             "single"
         ],
         "semi": [
-            "error",
+            "warn",
             "always"
         ],
         "comma-dangle": [
-            "error",
+            "warn",
             "always-multiline"
         ],
         "no-console": [ "off" ],
@@ -63,6 +63,6 @@
         "no-trailing-spaces": "warn",
         "no-mixed-spaces-and-tabs": "error",
         "no-tabs": "error",
-        "jsx-quotes": ["error", "prefer-double"]
+        "jsx-quotes": ["warn", "prefer-double"]
     }
 }

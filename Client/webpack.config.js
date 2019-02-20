@@ -21,6 +21,8 @@ var webpackPlugins = [
   }),
 ];
 
+var eslintDevRule = {};
+
 if(IS_PRODUCTION) {
   webpackPlugins.push(new webpack.optimize.UglifyJsPlugin({
     compress: {
@@ -30,7 +32,6 @@ if(IS_PRODUCTION) {
       except: [ '$super', '$', 'exports', 'require' ],
     },
   }));
-  // TODO: See if this is necessary
   webpackPlugins.push(new webpack.DefinePlugin({
     'process.env':{
       'NODE_ENV': JSON.stringify('production'),
@@ -45,6 +46,14 @@ if(IS_PRODUCTION) {
       'DEV_USER': JSON.stringify(DEV_USER),
     },
   }));
+
+  eslintDevRule = {
+    enforce: 'pre',
+    test: /\.jsx?$/,
+    loader: 'eslint-loader',
+    exclude: /node_modules/,
+    options: { emitWarning: true },
+  };
 }
 
 module.exports = {
@@ -77,13 +86,7 @@ module.exports = {
   plugins: webpackPlugins,
   module: {
     rules: [
-      {
-        enforce: 'pre',
-        test: /\.jsx?$/,
-        loader: 'eslint-loader',
-        exclude: /node_modules/,
-        options: { emitWarning: !IS_PRODUCTION, failOnError: IS_PRODUCTION },
-      },
+      eslintDevRule,
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
