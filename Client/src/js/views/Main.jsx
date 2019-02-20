@@ -4,9 +4,8 @@ import {connect} from 'react-redux';
 
 import $ from 'jquery';
 
-import store from '../store';
-import * as Action from '../actionTypes';
 import * as Api from '../api';
+import { unhandledApiError, closeSessionTimeoutDialog } from '../actions';
 
 import TopNav from './TopNav.jsx';
 import Footer from './Footer.jsx';
@@ -15,6 +14,8 @@ import ErrorDialog from './dialogs/ErrorDialog.jsx';
 import Countdown from '../components/Countdown.jsx';
 
 import { resetSessionTimeoutTimer } from '../app.jsx';
+import { ApiError } from '../utils/http';
+import { bindActionCreators } from 'redux';
 
 var Main = React.createClass({
   propTypes: {
@@ -22,6 +23,9 @@ var Main = React.createClass({
     showNav: React.PropTypes.bool,
     showSessionTimeoutDialog: React.PropTypes.bool,
     showErrorDialog: React.PropTypes.bool,
+
+    unhandledApiError: React.PropTypes.func,
+    closeSessionTimeoutDialog: React.PropTypes.func,
   },
 
   getInitialState() {
@@ -32,12 +36,22 @@ var Main = React.createClass({
 
   componentDidMount() {
     this.setState({ headerHeight: ($('#header-main').height() + 10) });
+
+    window.addEventListener('unhandledrejection', this.unhandledRejection);
+  },
+
+  unhandledRejection(e) {
+    var err = e.detail.reason;
+
+    if (err instanceof ApiError) {
+      this.props.unhandledApiError(err);
+    }
   },
 
   onCloseSessionTimeoutDialog() {
     Api.keepAlive();
     resetSessionTimeoutTimer();
-    store.dispatch({ type: Action.CLOSE_SESSION_TIMEOUT_DIALOG });
+    this.props.closeSessionTimeoutDialog();
   },
 
   onEndSession() {
@@ -46,7 +60,11 @@ var Main = React.createClass({
         window.location.href = logoffUrl;
       }
     });
-    store.dispatch({ type: Action.CLOSE_SESSION_TIMEOUT_DIALOG });
+    this.props.closeSessionTimeoutDialog();
+  },
+
+  componentWillUnmount() {
+    window.removeEventListener('unhandledrejection', this.unhandledRejection);
   },
 
   render: function() {
@@ -80,4 +98,8 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(Main);
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ unhandledApiError, closeSessionTimeoutDialog }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main);

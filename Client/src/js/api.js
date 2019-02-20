@@ -564,7 +564,7 @@ export function equipmentDuplicateCheck(id, serialNumber, typeId) {
 }
 
 export function changeEquipmentStatus(status) {
-  return new ApiRequest(`/equipment/${status.id}/status`).put(status, { noDispatch: true }).then((response) => {
+  return new ApiRequest(`/equipment/${status.id}/status`).put(status).then((response) => {
     var equipment = response.data;
     // Add display fields
     parseEquipment(equipment);
