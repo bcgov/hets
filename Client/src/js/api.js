@@ -109,10 +109,6 @@ export function getUser(userId) {
 
 export function addUser(user) {
   return new ApiRequest('/users').post(user).then(response => {
-    if (response.responseStatus === 'ERROR') {
-      return Promise.reject(new Error(response.error.description));
-    }
-
     var user = response.data;
 
     // Add display fields
@@ -583,11 +579,6 @@ export function getEquipmentRentalAgreements(equipmentId) {
 
 export function cloneEquipmentRentalAgreement(data) {
   return new ApiRequest(`/equipment/${ data.equipmentId }/rentalAgreementClone`).post(data).then(response => {
-
-    if (response.responseStatus === 'ERROR') {
-      return Promise.reject(new Error('There was an error cloning the rental agreement.'));
-    }
-
     var agreement = response.data;
     // Add display fields
     parseRentalAgreement(agreement);
@@ -917,12 +908,13 @@ export function getMailingLabelsPdf(params) {
 
 export function transferEquipment(donorOwnerId, recipientOwnerId, equipment, includeSeniority) {
   return new ApiRequest(`owners/${donorOwnerId}/equipmentTransfer/${recipientOwnerId}/${includeSeniority}`).post(equipment).then((response) => {
-    if (response.responseStatus === 'ERROR') {
-      store.dispatch({ type: Action.EQUIPMENT_TRANSFER_ERROR, errorMessage: response.error.description });
-      return Promise.reject(new Error(response.error.description));
-    }
-
     return response;
+  }).catch((err) => {
+    if (err.errorCode) {
+      store.dispatch({ type: Action.EQUIPMENT_TRANSFER_ERROR, errorMessage: err.errorDescription });
+    } else {
+      throw err;
+    }
   });
 }
 
@@ -1316,11 +1308,6 @@ export function getProjectRentalAgreements(projectId) {
 
 export function cloneProjectRentalAgreement(data) {
   return new ApiRequest(`/projects/${ data.projectId }/rentalAgreementClone`).post(data).then(response => {
-
-    if (response.responseStatus === 'ERROR') {
-      return Promise.reject(new Error('There was an error cloning the rental agreement.'));
-    }
-
     var agreement = response.data;
     // Add display fields
     parseRentalAgreement(agreement);
@@ -1430,16 +1417,17 @@ export function addRentalRequest(rentalRequest, viewOnly) {
   }
 
   return new ApiRequest(path).post(rentalRequest).then(response => {
-    if (response.responseStatus === 'ERROR') {
-      store.dispatch({ type: Action.ADD_RENTAL_REQUEST_ERROR, errorMessage: response.error.description });
-      return Promise.reject(new Error(response.error.description));
-    }
-
     var rentalRequest = response.data;
     // Add display fields
     parseRentalRequest(rentalRequest);
     store.dispatch({ type: Action.ADD_RENTAL_REQUEST, rentalRequest: rentalRequest });
     return rentalRequest;
+  }).catch((err) => {
+    if (err.errorCode) {
+      store.dispatch({ type: Action.ADD_RENTAL_REQUEST_ERROR, errorMessage: err.errorDescription });
+    } else {
+      throw err;
+    }
   });
 }
 
@@ -1604,12 +1592,6 @@ export function getRentalRequestRotationList(id) {
 export function updateRentalRequestRotationList(rentalRequestRotationList, rentalRequest) {
   store.dispatch({ type: Action.RENTAL_REQUEST_ROTATION_LIST_REQUEST });
   return new ApiRequest(`/rentalrequests/${ rentalRequest.id }/rentalRequestRotationList`).put({ ...rentalRequestRotationList, note: '' }).then(response => {
-
-    if (response.responseStatus === 'ERROR') {
-      store.dispatch({ type: Action.RENTAL_REQUEST_ROTATION_LIST_ERROR, error: response.error });
-      return Promise.reject(response.error.description);
-    }
-
     var rentalRequestRotationList = response.data.rentalRequestRotationList;
 
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rentalRequestRotationList });
@@ -1720,10 +1702,6 @@ export function getRentalAgreement(id) {
 
 export function getLatestRentalAgreement(equipmentId, projectId) {
   return new ApiRequest(`/rentalagreements/latest/${ projectId }/${ equipmentId }`).get().then(response => {
-    if (response.responseStatus === 'ERROR') {
-      return Promise.reject(new Error(response.error.description));
-    }
-
     var agreement = response.data;
 
     store.dispatch({ type: Action.UPDATE_RENTAL_AGREEMENT, rentalAgreement: agreement });
@@ -2016,10 +1994,6 @@ export function getOwnerForBusiness(ownerId) {
 
 export function validateOwner(secretKey, postalCode) {
   return new ApiRequest('/business/validateOwner').get({ sharedKey: secretKey, postalCode: postalCode }).then(response => {
-    if (response.responseStatus === 'ERROR') {
-      return Promise.reject(response.error.description);
-    }
-
     var business = response.data;
     parseOwner(business.linkedOwner);
     store.dispatch({ type: Action.UPDATE_BUSINESS, business: business });
@@ -2156,10 +2130,6 @@ export function updateDistrictEquipmentType(equipment) {
 
 export function deleteDistrictEquipmentType(equipment) {
   return new ApiRequest(`/districtequipmenttypes/${equipment.id}/delete`).post().then(response => {
-    if (response.responseStatus === 'ERROR') {
-      return Promise.reject(new Error(response.error.description));
-    }
-
     return response;
   });
 }

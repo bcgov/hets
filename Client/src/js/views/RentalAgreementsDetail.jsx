@@ -271,7 +271,11 @@ var RentalAgreementsDetail = React.createClass({
       this.closeCloneDialog();
       this.fetch();
     }).catch((error) => {
-      this.setState({ cloneRentalAgreementError: error.message });
+      if (error.errorCode) {
+        this.setState({ cloneRentalAgreementError: 'There was an error cloning the rental agreement.' });
+      } else {
+        throw error;
+      }
     });
   },
 

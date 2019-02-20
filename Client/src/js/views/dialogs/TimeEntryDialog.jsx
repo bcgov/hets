@@ -126,8 +126,12 @@ var TimeEntryDialog = React.createClass({
       return Promise.all([ this.fetchProject(), this.fetchTimeRecords() ]).then(() => {
         this.setState({ selectingAgreement: false, loaded: true });
       });
-    }).catch(error => {
-      this.setState({ projectIdError: error.message });
+    }).catch((error) => {
+      if (error.errorCode) {
+        this.setState({ projectIdError: error.errorDescription });
+      } else {
+        throw error;
+      }
     });
   },
 

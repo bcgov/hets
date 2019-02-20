@@ -122,7 +122,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult UsersPost([FromBody]HetUser item)
         {
             // not found
-            if (item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // validate that user id is unique
             // HETS-1033 - Post Live: Add validation on User ID while adding a new user
@@ -131,7 +131,7 @@ namespace HetsApi.Controllers
             HetUser existingUser = _context.HetUser.AsNoTracking()
                 .FirstOrDefault(x => x.SmUserId.ToLower() == item.SmUserId);
 
-            if (existingUser != null) return new ObjectResult(new HetsResponse("HETS-38", ErrorViewModel.GetDescription("HETS-38", _configuration)));
+            if (existingUser != null) return new BadRequestObjectResult(new HetsResponse("HETS-38", ErrorViewModel.GetDescription("HETS-38", _configuration)));
 
             // add new user
             HetUser user = new HetUser
@@ -177,13 +177,13 @@ namespace HetsApi.Controllers
             if (item == null || id != item.UserId)
             {
                 // not found
-                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
             bool exists = _context.HetUser.Any(x => x.UserId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetUser user = _context.HetUser

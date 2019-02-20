@@ -212,7 +212,7 @@ var ProjectsDetail = React.createClass({
       });
 
       return null;
-    }).catch(err => console.log(err.message));
+    });
   },
 
   confirmEndHire(item) {

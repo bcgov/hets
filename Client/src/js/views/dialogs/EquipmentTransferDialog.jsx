@@ -262,7 +262,11 @@ var EquipmentTransferDialog = React.createClass({
           var includeSeniority = this.state.seniorityOption === OPTION_EQUIPMENT_AND_SENIORITY.id;
 
           Api.transferEquipment(donorOwnerId, recipientOwnerId, equipment, includeSeniority).catch((error) => {
-            this.setState({ equipmentTransferError: error.message });
+            if (error.errorCode) {
+              this.setState({ equipmentTransferError: error.errorDescription });
+            } else {
+              throw error;
+            }
           }).finally(() => {
             this.setState({ waitingForResponse: false, stage: STAGE_COMPLETE });
           });

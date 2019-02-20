@@ -349,13 +349,10 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     // Rotation List
     case Action.RENTAL_REQUEST_ROTATION_LIST_REQUEST:
-      return { ...state, rentalRequestRotationList: { ...state.rentalRequestRotationList, loading: true, success: false, error: {} } };
+      return { ...state, rentalRequestRotationList: { ...state.rentalRequestRotationList, loading: true, success: false } };
 
     case Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST:
       return { ...state, rentalRequestRotationList: { data: action.rentalRequestRotationList, loading: false, success: true } };
-
-    case Action.RENTAL_REQUEST_ROTATION_LIST_ERROR:
-      return { ...state, rentalRequestRotationList: { ...state.rentalRequestRotationList, error: action.error } };
 
     // Rental Agreements
     case Action.ADD_RENTAL_AGREEMENT:

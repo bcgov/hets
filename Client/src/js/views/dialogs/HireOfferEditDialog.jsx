@@ -45,7 +45,6 @@ var HireOfferEditDialog = React.createClass({
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
-    error: React.PropTypes.object,
     blankRentalAgreements: React.PropTypes.object,
   },
 

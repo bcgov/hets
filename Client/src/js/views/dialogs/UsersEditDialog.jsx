@@ -146,8 +146,12 @@ var UsersEditDialog = React.createClass({
 
       // Let the parent page component know that the user has been saved
       this.props.onSave(user);
-    }, (error) => {
-      this.setState({ smUserIdError: error.message });
+    }, (err) => {
+      if (err.errorCode === 'HETS-38') {
+        this.setState({ smUserIdError: err.errorDescription });
+      } else {
+        throw err;
+      }
     });
   },
 
