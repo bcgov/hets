@@ -173,32 +173,24 @@ var DistrictAdmin = React.createClass({
           var sortedEquipmentTypes = caseInsensitiveSort(equipmentTypes, [this.state.uiEquipment.sortField], [sortDir(this.state.uiEquipment.sortDesc)]);
 
           var headers = [
-            { field: 'districtEquipmentName',           title: 'Equipment Type/Description'  },
-            { field: 'serviceAreaId',           title: 'Service Area'  },			
-            { field: 'equipmentType.blueBookSection',   title: 'Blue Book Section Number'  },
-            { field: 'equipmentType.name',              title: 'Blue Book Section Name'  },
-            { field: 'addDistrictEquipmentType', title: 'Add District Equipment Type',  style: { textAlign: 'right'  },
+            { field: 'districtEquipmentName',         title: 'Equipment Type/Description'  },
+            { field: 'serviceAreaId',                 title: 'Service Area'  },
+            { field: 'equipmentType.blueBookSection', title: 'Blue Book Section Number'  },
+            { field: 'equipmentType.name',            title: 'Blue Book Section Name'  },
+            { field: 'addDistrictEquipmentType',      title: 'Add District Equipment Type',  style: { textAlign: 'right'  },
               node: addDistrictEquipmentButton,
             },
           ];
 
           return (
-            <TableControl id="district-equipment-types" headers={[
-              { field: 'districtEquipmentName',           title: 'Equipment Type/Description'  },
-              { field: 'serviceAreaId',           title: 'Service Area'  },
-              { field: 'equipmentType.blueBookSection',   title: 'Blue Book Section Number'  },
-              { field: 'equipmentType.name',              title: 'Blue Book Section Name'  },
-              { field: 'addDistrictEquipmentType', title: 'Add District Equipment Type',  style: { textAlign: 'right'  },
-                node: addDistrictEquipmentButton,
-              },
-            ]}>
+            <SortTable id="district-equipment-types"  sortField={ this.state.uiEquipment.sortField } sortDesc={ this.state.uiEquipment.sortDesc } onSort={ this.updateEquipmentUIState } headers={headers}>
               {
                 _.map(sortedEquipmentTypes, (equipment) => {
                   return <tr key={ equipment.id }>
                     <td>{ equipment.districtEquipmentName }</td>
-					<td>{ equipment.serviceAreaId }</td>
+                    <td>{ equipment.serviceAreaId }</td>
                     <td>{ equipment.equipmentType.blueBookSection }</td>
-					<td>{ equipment.equipmentType.name }</td>
+                    <td>{ equipment.equipmentType.name }</td>
                     <td style={{ textAlign: 'right' }}>
                       <ButtonGroup>
                         <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteDistrictEquipmentType.bind(this, equipment) }/> }>
