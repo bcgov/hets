@@ -29,8 +29,9 @@ var DistrictAdmin = React.createClass({
     rentalConditions: React.PropTypes.object,
     districtEquipmentTypes: React.PropTypes.object,
     equipmentTypes: React.PropTypes.object,
-    router: React.PropTypes.object,
     uiEquipment: React.PropTypes.object,
+    serviceAreas: React.PropTypes.object,
+    router: React.PropTypes.object,
     dispatch: React.PropTypes.func,
   },
 
@@ -149,6 +150,8 @@ var DistrictAdmin = React.createClass({
     var equipmentTypes = _.chain(this.props.equipmentTypes)
       .sortBy('blueBookSection')
       .value();
+
+    var districtServiceAreas = _.filter(this.props.serviceAreas, area => area.districtId === this.props.currentUser.district.id);
 
     if (!this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) {
       return (
@@ -274,6 +277,7 @@ var DistrictAdmin = React.createClass({
           onSave={this.onDistrictEquipmentTypeSave}
           districtEquipmentType={this.state.districtEquipmentType}
           equipmentTypes={equipmentTypes}
+          serviceAreas={districtServiceAreas}
         />
       }
       { this.state.showDistrictEquipmentTypeErrorDialog &&
@@ -301,6 +305,7 @@ function mapStateToProps(state) {
     rentalConditions: state.lookups.rentalConditions,
     districtEquipmentTypes: state.lookups.districtEquipmentTypes,
     equipmentTypes: state.lookups.equipmentTypes,
+    serviceAreas: state.lookups.serviceAreas,
     uiEquipment: state.ui.districtEquipment,
   };
 }
