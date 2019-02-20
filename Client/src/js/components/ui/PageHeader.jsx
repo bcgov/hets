@@ -4,8 +4,8 @@ import classNames from 'classnames';
 
 var PageHeader = React.createClass({
   propTypes: {
-    title: React.PropTypes.string,
-    subTitle: React.PropTypes.string,
+    title: React.PropTypes.node,
+    subTitle: React.PropTypes.node,
     id: React.PropTypes.string,
     className: React.PropTypes.string,
     children: React.PropTypes.node,

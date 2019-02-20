@@ -85,7 +85,11 @@ var ChangeStatusDialog = React.createClass({
       status: this.props.status,
       statusComment: this.state.comment,
     }).catch((err) => {
-      this.setState({ commentError: err.json.error.description });
+      if (err.status === 400 && err.errorCode === 'HETS-39') {
+        this.setState({ commentError: err.errorDescription });
+      } else {
+        throw err;
+      }
     });
   },
 

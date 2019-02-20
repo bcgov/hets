@@ -39,12 +39,14 @@ HttpError.prototype = Object.create(Error.prototype, {
   constructor: { value: HttpError },
 });
 
-export const ApiError = function(msg, method, path, status, json) {
+export const ApiError = function(msg, method, path, status, errorCode, errorDescription, json) {
   this.message = msg || '';
   this.method = method;
   this.path = path;
   this.status = status || null;
-  this.json = json;
+  this.errorCode = errorCode || null;
+  this.errorDescription = errorDescription || null;
+  this.json = json || null;
 };
 
 ApiError.prototype = Object.create(Error.prototype, {
@@ -158,9 +160,6 @@ export function jsonRequest(path, options) {
     resetSessionTimeoutTimer();
   }
 
-  var canRecover = !!options.canRecover;
-  var noDispatch = !!options.noDispatch;
-
   var jsonHeaders = {
     'Accept': 'application/json',
   };
@@ -186,6 +185,8 @@ export function jsonRequest(path, options) {
     if (err instanceof HttpError) {
       var errMsg = `API ${err.method} ${err.path} failed (${err.status})`;
       var json = null;
+      var errorCode = null;
+      var errorDescription = null;
       try {
         // Example error payload from server:
         // {
@@ -198,37 +199,14 @@ export function jsonRequest(path, options) {
         // }
 
         json = JSON.parse(err.body);
+        errorCode = json.error.error;
+        errorDescription = json.error.description;
       } catch(err) { /* not json */ }
 
-      var apiError = new ApiError(errMsg, err.method, err.path, err.status, json);
-
-      if (!noDispatch) {
-        dispatchApiError(apiError, canRecover);
-      }
-
-      throw apiError;
+      throw new ApiError(errMsg, err.method, err.path, err.status, errorCode, errorDescription, json);
     } else {
       throw err;
     }
-  });
-}
-
-export function dispatchApiError(err, canRecover) {
-  var errorMessage = err.message || String(err);
-  if (err.json) {
-    errorMessage = err.json.error.description;
-  }
-
-  store.dispatch({
-    type: Action.REQUESTS_ERROR,
-    error: {
-      message: errorMessage,
-      method: err.method,
-      path: err.path,
-      status: err.status,
-      unrecoverable: err.status === null || !canRecover,
-      json: err.json,
-    },
   });
 }
 

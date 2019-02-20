@@ -47,20 +47,16 @@ var ErrorDialog = React.createClass({
       // and the browser will erase any response data for security so we can't inspect any headers
       // or response data.
       const possibleSMError = apiError.status === 401 || apiError.status === 403 || apiError.status === null;
+      shouldReload = true;
 
       if (possibleSMError) {
         modalTitle = 'Session expired';
         errorMessage = 'It looks like your session has expired. You will need to log in again.';
         buttonText = 'Log in';
-        shouldReload = true;
       } else {
-        if (apiError.unrecoverable) {
-          shouldReload = true;
-          buttonText = 'Reload';
-        }
-
         modalTitle = 'Server Error';
         errorMessage = apiError.message;
+        buttonText = 'Reload';
 
         if (apiError.json) {
           if (apiError.json.error) {
