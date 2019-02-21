@@ -208,6 +208,7 @@ namespace HetsApi.Controllers
                 equipment.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                 equipment.DistrictId = item.District.DistrictId;
                 equipment.EquipmentTypeId = item.EquipmentType.EquipmentTypeId;
+                equipment.ServiceAreaId = item.ServiceAreaId;
             }
             else
             {
@@ -215,7 +216,8 @@ namespace HetsApi.Controllers
                 {
                     DistrictEquipmentName = item.DistrictEquipmentName,
                     DistrictId = item.District.DistrictId,
-                    EquipmentTypeId = item.EquipmentType.EquipmentTypeId
+                    EquipmentTypeId = item.EquipmentType.EquipmentTypeId,
+                    ServiceAreaId = item.ServiceAreaId
                 };
 
                 _context.HetDistrictEquipmentType.Add(equipment);

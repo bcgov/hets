@@ -2,24 +2,26 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Button, ButtonGroup, Glyphicon, Well, Alert, Row, Col } from 'react-bootstrap';
+import { PageHeader, Button, ButtonGroup, Glyphicon, Well, Alert, Row, Col, ControlLabel } from 'react-bootstrap';
 
 import _ from 'lodash';
+
+import ConditionAddEditDialog from './dialogs/ConditionAddEditDialog.jsx';
+import DistrictEquipmentTypeAddEditDialog from './dialogs/DistrictEquipmentTypeAddEditDialog.jsx';
+import EquipmentTransferDialog from './dialogs/EquipmentTransferDialog.jsx';
 
 import * as Api from '../api';
 import * as Constant from '../constants';
 import * as Action from '../actionTypes';
 // import store from '../store';
 
-import ModalDialog from '../components/ModalDialog.jsx';
-import SortTable from '../components/SortTable.jsx';
-import TableControl from '../components/TableControl.jsx';
-import Spinner from '../components/Spinner.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import Confirm from '../components/Confirm.jsx';
-import ConditionAddEditDialog from './dialogs/ConditionAddEditDialog.jsx';
-import DistrictEquipmentTypeAddEditDialog from './dialogs/DistrictEquipmentTypeAddEditDialog.jsx';
-import EquipmentTransferDialog from './dialogs/EquipmentTransferDialog.jsx';
+import DropdownControl from '../components/DropdownControl.jsx';
+import ModalDialog from '../components/ModalDialog.jsx';
+import OverlayTrigger from '../components/OverlayTrigger.jsx';
+import SortTable from '../components/SortTable.jsx';
+import Spinner from '../components/Spinner.jsx';
+import TableControl from '../components/TableControl.jsx';
 
 import SubHeader from '../components/ui/SubHeader.jsx';
 
@@ -31,13 +33,15 @@ var DistrictAdmin = React.createClass({
     rentalConditions: React.PropTypes.object,
     districtEquipmentTypes: React.PropTypes.object,
     equipmentTypes: React.PropTypes.object,
-    router: React.PropTypes.object,
     uiEquipment: React.PropTypes.object,
+    serviceAreas: React.PropTypes.object,
+    router: React.PropTypes.object,
     dispatch: React.PropTypes.func,
   },
 
   getInitialState() {
     return {
+      selectedServiceAreaId: 0,
       showConditionAddEditDialog: false,
       showDistrictEquipmentTypeAddEditDialog: false,
       showEquipmentTransferDialog: false,
@@ -56,6 +60,10 @@ var DistrictAdmin = React.createClass({
     Api.getRentalConditions();
     Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
     Api.getEquipmentTypes();
+  },
+
+  updateState(state, callback) {
+    this.setState(state, callback);
   },
 
   updateEquipmentUIState(state, callback) {
@@ -156,6 +164,8 @@ var DistrictAdmin = React.createClass({
       .sortBy('blueBookSection')
       .value();
 
+    var districtServiceAreas = _.filter(this.props.serviceAreas, area => area.districtId === this.props.currentUser.district.id);
+
     if (!this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) {
       return (
         <div>You do not have permission to view this page.</div>
@@ -167,12 +177,19 @@ var DistrictAdmin = React.createClass({
 
       <Well>
         <SubHeader title="Manage District Equipment Types"/>
+        <div id="service-area-filter">
+          <ControlLabel>Service Area:</ControlLabel>
+          <DropdownControl id="selectedServiceAreaId" updateState={ this.updateState } blankLine="(All)" placeholder="(All)" fieldName="id" items={ districtServiceAreas } />
+        </div>
         {(() => {
           if (this.props.districtEquipmentTypes.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
           var addDistrictEquipmentButton = <Button title="Add District Equipment" bsSize="xsmall" onClick={ this.addDistrictEquipmentType }><Glyphicon glyph="plus" />&nbsp;<strong>Add District Equipment Type</strong></Button>;
 
           var equipmentTypes = this.props.districtEquipmentTypes.data;
+          if (this.state.selectedServiceAreaId) {
+            equipmentTypes = _.filter(this.props.districtEquipmentTypes.data, type => this.state.selectedServiceAreaId === type.serviceAreaId);
+          }
 
           if (Object.keys(equipmentTypes).length === 0) { return <Alert bsStyle="success">No equipment types { addDistrictEquipmentButton }</Alert>; }
 
@@ -280,6 +297,8 @@ var DistrictAdmin = React.createClass({
           onSave={this.onDistrictEquipmentTypeSave}
           districtEquipmentType={this.state.districtEquipmentType}
           equipmentTypes={equipmentTypes}
+          serviceAreas={districtServiceAreas}
+          defaultServiceAreaId={this.state.selectedServiceAreaId}
         />
       }
       { this.state.showDistrictEquipmentTypeErrorDialog &&
@@ -307,6 +326,7 @@ function mapStateToProps(state) {
     rentalConditions: state.lookups.rentalConditions,
     districtEquipmentTypes: state.lookups.districtEquipmentTypes,
     equipmentTypes: state.lookups.equipmentTypes,
+    serviceAreas: state.lookups.serviceAreas,
     uiEquipment: state.ui.districtEquipment,
   };
 }
