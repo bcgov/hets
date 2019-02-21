@@ -217,14 +217,14 @@ var HireOfferEditDialog = React.createClass({
         offerResponseDatetime: toZuluTime(this.state.offerResponseDatetime),
         offerRefusalReason: this.state.offerRefusalReason,
         offerResponseNote: this.state.offerResponseNote,
-        note: this.state.reasonForForceHire,
+        note: this.state.note,
         rentalAgreementId: this.state.rentalAgreementId,
       }});
     });
   },
 
   onConfirmForceHire(reasonForForceHire) {
-    this.setState({ reasonForForceHire: reasonForForceHire }, this.saveHireOffer());
+    this.setState({ note: reasonForForceHire }, this.saveHireOffer());
   },
 
   openConfirmForceHireDialog() {
