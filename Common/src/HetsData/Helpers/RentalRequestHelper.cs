@@ -284,7 +284,7 @@ namespace HetsData.Helpers
                 if (request.IsForceHire != null && request.IsForceHire == true)
                 {
                     requestLite.NoteType = "Force Hire";
-                    requestLite.Reason = request.OfferResponseNote;
+                    requestLite.Reason = request.Note;
                 }
                 
                 requestLite.UserId = request.AppCreateUserid;
