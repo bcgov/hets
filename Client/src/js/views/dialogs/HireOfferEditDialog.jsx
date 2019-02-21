@@ -222,7 +222,7 @@ var HireOfferEditDialog = React.createClass({
   },
 
   onConfirmForceHire(reasonForForceHire) {
-    this.setState({ reasonForForceHire: reasonForForceHire }, this.saveHireOffer());
+    this.setState({ reasonForForceHire: reasonForForceHire }, this.saveHireOffer);
   },
 
   openConfirmForceHireDialog() {

@@ -74,11 +74,11 @@ var DistrictAdmin = React.createClass({
   },
 
   addCondition() {
-    this.setState({ condition: { id: 0 } }, this.showConditionAddEditDialog());
+    this.setState({ condition: { id: 0 } }, this.showConditionAddEditDialog);
   },
 
   editCondition(condition) {
-    this.setState({ condition: condition }, this.showConditionAddEditDialog());
+    this.setState({ condition: condition }, this.showConditionAddEditDialog);
   },
 
   deleteCondition(condition) {
@@ -128,11 +128,11 @@ var DistrictAdmin = React.createClass({
   },
 
   addDistrictEquipmentType() {
-    this.setState({ districtEquipmentType: { id: 0 } }, this.showDistrictEquipmentTypeAddEditDialog());
+    this.setState({ districtEquipmentType: { id: 0 } }, this.showDistrictEquipmentTypeAddEditDialog);
   },
 
   editDistrictEquipmentType(equipment) {
-    this.setState({ districtEquipmentType: equipment }, this.showDistrictEquipmentTypeAddEditDialog());
+    this.setState({ districtEquipmentType: equipment }, this.showDistrictEquipmentTypeAddEditDialog);
   },
 
   onDistrictEquipmentTypeSave(data) {
