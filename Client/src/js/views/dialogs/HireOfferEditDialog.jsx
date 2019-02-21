@@ -58,6 +58,7 @@ var HireOfferEditDialog = React.createClass({
       offerResponseNote: this.props.hireOffer.offerResponseNote || '',
       note: this.props.hireOffer.note || '',
 
+      offerResponseError: '',
       offerResponseNoteError: '',
       offerRefusalReasonError: '',
       rentalAgreementError: '',
@@ -115,7 +116,10 @@ var HireOfferEditDialog = React.createClass({
 
   isValid() {
     this.setState({
-      noteError: '',
+      offerResponseError: '',
+      offerRefusalReasonError: '',
+      offerResponseNoteError: '',
+      rentalAgreementError: '',
     });
 
     var valid = true;
