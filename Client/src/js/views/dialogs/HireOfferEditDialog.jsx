@@ -59,6 +59,7 @@ var HireOfferEditDialog = React.createClass({
       offerResponseNote: this.props.hireOffer.offerResponseNote || '',
       note: this.props.hireOffer.note || '',
 
+      offerResponseError: '',
       offerResponseNoteError: '',
       offerRefusalReasonError: '',
       rentalAgreementError: '',
@@ -116,7 +117,10 @@ var HireOfferEditDialog = React.createClass({
 
   isValid() {
     this.setState({
-      noteError: '',
+      offerResponseError: '',
+      offerRefusalReasonError: '',
+      offerResponseNoteError: '',
+      rentalAgreementError: '',
     });
 
     var valid = true;
@@ -214,14 +218,14 @@ var HireOfferEditDialog = React.createClass({
         offerResponseDatetime: toZuluTime(this.state.offerResponseDatetime),
         offerRefusalReason: this.state.offerRefusalReason,
         offerResponseNote: this.state.offerResponseNote,
-        note: this.state.reasonForForceHire,
+        note: this.state.note,
         rentalAgreementId: this.state.rentalAgreementId,
       }});
     });
   },
 
   onConfirmForceHire(reasonForForceHire) {
-    this.setState({ reasonForForceHire: reasonForForceHire }, this.saveHireOffer());
+    this.setState({ note: reasonForForceHire }, this.saveHireOffer());
   },
 
   openConfirmForceHireDialog() {
