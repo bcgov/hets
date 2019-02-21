@@ -441,7 +441,6 @@ var RentalRequestsDetail = React.createClass({
           showAllResponseFields={this.state.showAllResponseFields}
           onSave={ this.saveHireOffer }
           onClose={ this.closeHireOfferDialog }
-          error={ this.props.rentalRequestRotationList.error }
         />
       }
       { this.state.showDocumentsDialog &&

@@ -232,7 +232,7 @@ namespace HetsApi.Controllers
         private IActionResult CreateRentalRequest(HetRentalRequest item, bool noProject = false)
         {
             // not found
-            if (item == null) return new ObjectResult(new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
+            if (item == null) return new BadRequestObjectResult(new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
 
             // check if we have an existing rental request for the same
             // local area and equipment type - if so - throw an error
@@ -242,7 +242,7 @@ namespace HetsApi.Controllers
             //
             // Note: leaving the "New" code in place in case this changes in the future
             int? statusIdInProgress = StatusHelper.GetStatusId(HetRentalRequest.StatusInProgress, "rentalRequestStatus", _context);
-            if (statusIdInProgress == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusIdInProgress == null) return new NotFoundObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             List<HetRentalRequest> requests = _context.HetRentalRequest
                 .Where(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentType.DistrictEquipmentTypeId &&
@@ -273,7 +273,7 @@ namespace HetsApi.Controllers
 
                 // ...Currently {0} of {1} requested equipment have been hired....
                 string message = string.Format(ErrorViewModel.GetDescription("HETS-28", _configuration), hiredCount, quantity);
-                return new ObjectResult(new HetsResponse("HETS-28", message));
+                return new BadRequestObjectResult(new HetsResponse("HETS-28", message));
             }
 
             // create new rental request
@@ -304,7 +304,7 @@ namespace HetsApi.Controllers
                 // check if this a "no available equipment exception"
                 if (e.Message == "HETS-35")
                 {
-                    return new ObjectResult(new HetsResponse("HETS-35", ErrorViewModel.GetDescription("HETS-35", _configuration)));
+                    return new NotFoundObjectResult(new HetsResponse("HETS-35", ErrorViewModel.GetDescription("HETS-35", _configuration)));
                 }
 
                 Console.WriteLine(e);
@@ -316,7 +316,7 @@ namespace HetsApi.Controllers
             string tempStatus = RentalRequestHelper.RentalRequestStatus(rentalRequest, _context);
 
             statusIdInProgress = StatusHelper.GetStatusId(tempStatus, "rentalRequestStatus", _context);
-            if (statusIdInProgress == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusIdInProgress == null) return new NotFoundObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             rentalRequest.RentalRequestStatusTypeId = (int)statusIdInProgress;
 
@@ -564,15 +564,15 @@ namespace HetsApi.Controllers
         public virtual IActionResult RentalRequestIdRotationListIdPut([FromRoute]int id, [FromBody]HetRentalRequestRotationList item)
         {
             // not found
-            if (item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             int? statusId = StatusHelper.GetStatusId(HetRentalRequest.StatusInProgress, "rentalRequestStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new NotFoundObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // check if we have the rental request that is In Progress
             exists = _context.HetRentalRequest
@@ -580,7 +580,7 @@ namespace HetsApi.Controllers
                           a.RentalRequestStatusTypeId == statusId);
 
             // rental request must be "in progress"
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-06", ErrorViewModel.GetDescription("HETS-06", _configuration)));
+            if (!exists) return new BadRequestObjectResult(new HetsResponse("HETS-06", ErrorViewModel.GetDescription("HETS-06", _configuration)));
 
             // get rental request record
             HetRentalRequest request = _context.HetRentalRequest
@@ -596,7 +596,7 @@ namespace HetsApi.Controllers
                 .FirstOrDefault(a => a.RentalRequestRotationListId == item.RentalRequestRotationListId);
 
             // not found
-            if (requestRotationList == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (requestRotationList == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // update rotation list record
             int tempEquipmentId = item.Equipment.EquipmentId;
@@ -631,7 +631,7 @@ namespace HetsApi.Controllers
                     string agreementCity = user.AgreementCity;
 
                     int? rateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodHourly, _context);
-                    if (rateTypeId == null) return new ObjectResult(new HetsResponse("HETS-24", ErrorViewModel.GetDescription("HETS-24", _configuration)));
+                    if (rateTypeId == null) return new NotFoundObjectResult(new HetsResponse("HETS-24", ErrorViewModel.GetDescription("HETS-24", _configuration)));
 
                     rentalAgreement = new HetRentalAgreement
                     {
@@ -674,7 +674,7 @@ namespace HetsApi.Controllers
                 }
 
                 int? statusIdAgreement = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
-                if (statusIdAgreement == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+                if (statusIdAgreement == null) return new NotFoundObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
                 // update rental agreement
                 rentalAgreement.RentalAgreementStatusTypeId = (int)statusIdAgreement;
@@ -714,7 +714,7 @@ namespace HetsApi.Controllers
             if (countOfYeses >= equipmentRequestCount)
             {
                 int? statusIdComplete = StatusHelper.GetStatusId(HetRentalRequest.StatusComplete, "rentalRequestStatus", _context);
-                if (statusIdComplete == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+                if (statusIdComplete == null) return new NotFoundObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
                 request.RentalRequestStatusTypeId = (int)statusIdComplete;
                 request.Status = "Complete";

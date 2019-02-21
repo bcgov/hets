@@ -213,7 +213,7 @@ var RentalRequests = React.createClass({
       });
 
       return null;
-    }).catch(err => console.log(err.message));
+    });
   },
 
   print() {

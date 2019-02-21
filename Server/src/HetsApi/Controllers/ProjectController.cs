@@ -342,12 +342,12 @@ namespace HetsApi.Controllers
         public virtual IActionResult ProjectsRentalAgreementClonePost([FromRoute]int id, [FromBody]ProjectRentalAgreementClone item)
         {
             // not found
-            if (item == null || id != item.ProjectId) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (item == null || id != item.ProjectId) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get all agreements for this project
             HetProject project = _context.HetProject
@@ -368,13 +368,13 @@ namespace HetsApi.Controllers
             exists = agreements.Any(a => a.RentalAgreementId == item.RentalAgreementId);
 
             // (RENTAL AGREEMENT) not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // check that the rental agreement to clone exist
             exists = agreements.Any(a => a.RentalAgreementId == item.AgreementToCloneId);
 
             // (RENTAL AGREEMENT) not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-11", ErrorViewModel.GetDescription("HETS-11", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-11", ErrorViewModel.GetDescription("HETS-11", _configuration)));
 
             int agreementToCloneIndex = agreements.FindIndex(a => a.RentalAgreementId == item.AgreementToCloneId);
             int newRentalAgreementIndex = agreements.FindIndex(a => a.RentalAgreementId == item.RentalAgreementId);
@@ -388,14 +388,14 @@ namespace HetsApi.Controllers
                 .Equals("Active", StringComparison.InvariantCultureIgnoreCase))
             {
                 // (RENTAL AGREEMENT) is not active
-                return new ObjectResult(new HetsResponse("HETS-12", ErrorViewModel.GetDescription("HETS-12", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-12", ErrorViewModel.GetDescription("HETS-12", _configuration)));
             }
 
             if (agreements[newRentalAgreementIndex].HetTimeRecord != null &&
                 agreements[newRentalAgreementIndex].HetTimeRecord.Count > 0)
             {
                 // (RENTAL AGREEMENT) has time records
-                return new ObjectResult(new HetsResponse("HETS-13", ErrorViewModel.GetDescription("HETS-13", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-13", ErrorViewModel.GetDescription("HETS-13", _configuration)));
             }
 
             // ******************************************************************

@@ -80,7 +80,11 @@ var BusinessPortal = React.createClass({
       this.inputSecretKey.value = '';
     }).catch((err) => {
       console.error(err);
-      this.setState({ errors: { secretKey: err } });
+      if (err.errorCode) { // must be a server validation error
+        this.setState({ errors: { secretKey: err.errorDescription } });
+      } else {
+        throw err;
+      }
     }).finally(() => {
       this.setState({ validating: false });
     });

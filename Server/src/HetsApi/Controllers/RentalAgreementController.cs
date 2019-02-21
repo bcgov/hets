@@ -1315,7 +1315,7 @@ namespace HetsApi.Controllers
                                      x.ProjectId == projectId);
 
             // if nothing exists - return an error message
-            if (agreement == null) return new ObjectResult(new HetsResponse("HETS-35", ErrorViewModel.GetDescription("HETS-35", _configuration)));
+            if (agreement == null) return new NotFoundObjectResult(new HetsResponse("HETS-35", ErrorViewModel.GetDescription("HETS-35", _configuration)));
 
             // get user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
@@ -1325,14 +1325,14 @@ namespace HetsApi.Controllers
                 .First(x => x.DistrictId == districtId);
 
             int? fiscalYearStart = status.CurrentFiscalYear;
-            if (fiscalYearStart == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (fiscalYearStart == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             DateTime fiscalStart = new DateTime((int)fiscalYearStart, 4, 1);
 
             // validate that agreement is in the current fiscal year
             DateTime agreementDate = agreement.DatedOn ?? agreement.DbCreateTimestamp;
 
-            if (agreementDate < fiscalStart) return new ObjectResult(new HetsResponse("HETS-36", ErrorViewModel.GetDescription("HETS-36", _configuration)));
+            if (agreementDate < fiscalStart) return new NotFoundObjectResult(new HetsResponse("HETS-36", ErrorViewModel.GetDescription("HETS-36", _configuration)));
 
             // return to the client
             return new ObjectResult(new HetsResponse(agreement));

@@ -142,8 +142,12 @@ var DistrictAdmin = React.createClass({
   deleteDistrictEquipmentType(equipment) {
     Api.deleteDistrictEquipmentType(equipment).then(() => {
       Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
-    }).catch(err => {
-      this.setState({ showDistrictEquipmentTypeErrorDialog: true, districtEquipmentTypeError: err.message });
+    }).catch((err) => {
+      if (err.errorCode) {
+        this.setState({ showDistrictEquipmentTypeErrorDialog: true, districtEquipmentTypeError: err.errorDescription });
+      } else {
+        throw err;
+      }
     });
   },
 
