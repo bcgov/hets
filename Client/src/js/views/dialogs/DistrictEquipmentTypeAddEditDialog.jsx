@@ -19,6 +19,7 @@ var DistrictEquipmentTypeAddEditDialog = React.createClass({
     districtEquipmentType: React.PropTypes.object,
     equipmentTypes: React.PropTypes.array,
     serviceAreas: React.PropTypes.array,
+    defaultServiceAreaId: React.PropTypes.number,
   },
 
   getInitialState() {
@@ -28,7 +29,7 @@ var DistrictEquipmentTypeAddEditDialog = React.createClass({
       id: this.props.districtEquipmentType.id || 0,
       equipmentTypeId: this.props.districtEquipmentType.equipmentType ? this.props.districtEquipmentType.equipmentType.id : undefined,
       districtEquipmentName: this.props.districtEquipmentType.districtEquipmentName || '',
-      serviceAreaId: this.props.districtEquipmentType.serviceAreaId || undefined,
+      serviceAreaId: this.props.districtEquipmentType.serviceAreaId || this.props.defaultServiceAreaId || 0,
       concurrencyControlNumber: this.props.districtEquipmentType.concurrencyControlNumber || 0,
       equipmentTypeIdError: '',
       districtEquipmentNameError: '',
@@ -43,7 +44,7 @@ var DistrictEquipmentTypeAddEditDialog = React.createClass({
   didChange() {
     if (this.state.isNew && this.state.equipmentTypeId !== undefined) { return true; }
     if (this.state.isNew && this.state.districtEquipmentName !== '') { return true; }
-    if (this.state.isNew && this.state.serviceAreaId !== undefined) { return true; }
+    if (this.state.isNew && this.state.serviceAreaId !== (this.props.defaultServiceAreaId || 0)) { return true; }
     if (!this.state.isNew && this.state.equipmentTypeId !== this.props.districtEquipmentType.equipmentType.id) { return true; }
     if (!this.state.isNew && this.state.districtEquipmentName !== this.props.districtEquipmentType.districtEquipmentName) { return true; }
     if (!this.state.isNew && this.state.serviceAreaId !== this.props.districtEquipmentType.serviceAreaId) { return true; }
@@ -76,7 +77,7 @@ var DistrictEquipmentTypeAddEditDialog = React.createClass({
       valid = false;
     }
 
-    if (this.state.serviceAreaId === undefined) {
+    if (!this.state.serviceAreaId) {
       this.setState({ serviceAreaIdError: 'Service area is required' });
       valid = false;
     }
