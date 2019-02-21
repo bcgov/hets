@@ -650,6 +650,11 @@ namespace HetsApi.Controllers
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
+            // HETS-1109: Archived Owners coming in Status Letters
+            // get owner status (only show Active owners)
+            int? ownerStatusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
+            if (ownerStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
             _logger.LogInformation("Owner Verification Notices Pdf");
 
             // get owner records
@@ -665,6 +670,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.LocalArea)
                     .ThenInclude(s => s.ServiceArea)
                         .ThenInclude(d => d.District)
+                .Where(x => x.OwnerStatusTypeId == ownerStatusId)
                 .OrderBy(x => x.LocalArea.Name).ThenBy(x => x.OrganizationName);
 
             if (parameters.Owners?.Length > 0)
