@@ -79,7 +79,7 @@ var DropdownControl = React.createClass({
       } else {
         var selected = _.find(items, { id: keyEvent });
         if (selected) {
-          return selected[this.state.fieldName];
+          return selected[this.state.fieldName].toString();
         }
       }
     }
