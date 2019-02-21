@@ -59,7 +59,7 @@ var FilterDropdown = React.createClass({
     if (selectedId) {
       var selected = _.find(items, { id: selectedId });
       if (selected) {
-        return selected[this.state.fieldName];
+        return selected[this.state.fieldName].toString();
       }
     }
     return this.props.placeholder || 'Select item';
