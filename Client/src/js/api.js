@@ -1586,7 +1586,7 @@ export function getRentalRequestRotationList(id) {
 
 export function updateRentalRequestRotationList(rentalRequestRotationList, rentalRequest) {
   store.dispatch({ type: Action.RENTAL_REQUEST_ROTATION_LIST_REQUEST });
-  return new ApiRequest(`/rentalrequests/${ rentalRequest.id }/rentalRequestRotationList`).put({ ...rentalRequestRotationList, note: '' }).then(response => {
+  return new ApiRequest(`/rentalrequests/${ rentalRequest.id }/rentalRequestRotationList`).put({ ...rentalRequestRotationList }).then(response => {
 
     if (response.responseStatus === 'ERROR') {
       store.dispatch({ type: Action.RENTAL_REQUEST_ROTATION_LIST_ERROR, error: response.error });
