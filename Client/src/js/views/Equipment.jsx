@@ -6,7 +6,6 @@ import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, 
 
 import _ from 'lodash';
 import Moment from 'moment';
-import Promise from 'bluebird';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -109,19 +108,15 @@ var Equipment = React.createClass({
   },
 
   componentDidMount() {
-    var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
-    var favouritesPromise = Api.getFavourites('equipment');
+    Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
 
-    Promise.all([equipmentTypesPromise, favouritesPromise]).then(() => {
-      // If this is the first load, then look for a default favourite
-      if (_.isEmpty(this.props.search)) {
-        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
-        if (defaultFavourite) {
-          this.loadFavourite(defaultFavourite);
-          return;
-        }
+    // If this is the first load, then look for a default favourite
+    if (_.isEmpty(this.props.search)) {
+      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      if (defaultFavourite) {
+        this.loadFavourite(defaultFavourite);
       }
-    });
+    }
   },
 
   fetch() {
@@ -255,7 +250,7 @@ var Equipment = React.createClass({
             </Col>
             <Col xs={3} sm={2} id="equipment-search-buttons">
               <Row>
-                <Favourites id="equipment-faves-dropdown" type="equipment" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+                <Favourites id="equipment-faves-dropdown" type="equipment" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
               </Row>
               <Row>
                 <Button id="search-button" className="pull-right" bsStyle="primary" type="submit">Search</Button>
@@ -291,7 +286,7 @@ function mapStateToProps(state) {
     equipmentList: state.models.equipmentList,
     localAreas: state.lookups.localAreas,
     districtEquipmentTypes: state.lookups.districtEquipmentTypes,
-    favourites: state.models.favourites,
+    favourites: state.models.favourites.equipment,
     search: state.search.equipmentList,
     ui: state.ui.equipmentList,
   };

@@ -76,20 +76,20 @@ var HiringReport = React.createClass({
     var projectsPromise = Api.getProjects();
     var ownersPromise = Api.getOwnersLiteHires();
     var equipmentPromise = Api.getEquipmentLiteHires();
-    var favouritesPromise = Api.getFavourites('hiringReport');
 
-    return Promise.all([ projectsPromise, ownersPromise, equipmentPromise, favouritesPromise]).then(() => {
+    Promise.all([ projectsPromise, ownersPromise, equipmentPromise]).then(() => {
+
       this.setState({ loaded: true });
 
-      // If this is the first load, then look for a default favourite
-      if (_.isEmpty(this.props.search)) {
-        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
-        if (defaultFavourite) {
-          this.loadFavourite(defaultFavourite);
-          return;
-        }
-      }
     });
+
+    // If this is the first load, then look for a default favourite
+    if (_.isEmpty(this.props.search)) {
+      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      if (defaultFavourite) {
+        this.loadFavourite(defaultFavourite);
+      }
+    }
   },
 
   fetch() {
@@ -287,7 +287,7 @@ var HiringReport = React.createClass({
             </Col>
           </Form>
           <Col xs={3} sm={2}>
-            <Favourites id="hiring-report-faves-dropdown" type="hiringReport" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+            <Favourites id="hiring-report-faves-dropdown" type="hiringReport" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
           </Col>
         </Row>
       </Well>
@@ -313,7 +313,7 @@ function mapStateToProps(state) {
     owners: state.lookups.ownersLite,
     equipment: state.lookups.equipmentLite,
     hiringResponses: state.models.hiringResponses,
-    favourites: state.models.favourites,
+    favourites: state.models.favourites.hiringReport,
     search: state.search.hiringResponses,
     ui: state.ui.hiringResponses,
   };

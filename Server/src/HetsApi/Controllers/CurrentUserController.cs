@@ -52,7 +52,7 @@ namespace HetsApi.Controllers
         /// <remarks>Returns a users favourites of a given type.  If type is empty, returns all.</remarks>
         /// <param name="favouriteType">type of favourite to return</param>
         [HttpGet]
-        [Route("favourites/{favouriteType}")]
+        [Route("favourites/{favouriteType?}")]
         [SwaggerOperation("UsersCurrentFavouritesFavouriteTypeGet")]
         [SwaggerResponse(200, type: typeof(List<HetUserFavourite>))]
         [RequiresPermission(HetPermission.Login)]

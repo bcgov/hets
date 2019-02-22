@@ -6,7 +6,6 @@ import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, 
 import { LinkContainer } from 'react-router-bootstrap';
 
 import _ from 'lodash';
-import Promise from 'bluebird';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -38,8 +37,6 @@ var Users = React.createClass({
 
   getInitialState() {
     return {
-      loading: true,
-
       showUsersEditDialog: false,
 
       search: {
@@ -69,22 +66,13 @@ var Users = React.createClass({
   },
 
   componentDidMount() {
-    this.setState({ loading: true });
-
-    var favouritesPromise = Api.getFavourites('user');
-
-    Promise.all([favouritesPromise]).then(() => {
-      this.setState({ loading: false });
-
-      // If this is the first load, then look for a default favourite
-      if (_.isEmpty(this.props.search)) {
-        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
-        if (defaultFavourite) {
-          this.loadFavourite(defaultFavourite);
-          return;
-        }
+    // If this is the first load, then look for a default favourite
+    if (_.isEmpty(this.props.search)) {
+      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      if (defaultFavourite) {
+        this.loadFavourite(defaultFavourite);
       }
-    });
+    }
   },
 
   fetch() {
@@ -202,8 +190,6 @@ var Users = React.createClass({
       );
     }
 
-    if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
     var resultCount = '';
     if (this.props.users.loaded) {
       resultCount = '(' + Object.keys(this.props.users.data).length + ')';
@@ -235,7 +221,7 @@ var Users = React.createClass({
             </Col>
             <Col sm={2}>
               <Row id="users-faves">
-                <Favourites id="users-faves-dropdown" type="user" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+                <Favourites id="users-faves-dropdown" type="user" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
               </Row>
             </Col>
           </Row>
@@ -275,7 +261,7 @@ function mapStateToProps(state) {
     users: state.models.users,
     user: state.models.user,
     districts: state.lookups.districts,
-    favourites: state.models.favourites,
+    favourites: state.models.favourites.user,
     search: state.search.users,
     ui: state.ui.users,
   };

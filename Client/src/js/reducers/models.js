@@ -19,9 +19,14 @@ const DEFAULT_MODELS = {
   },
 
   favourites: {
-    data: {},
-    loading: false,
-    success: false,
+    equipment: {},
+    hiringReport: {},
+    owner: {},
+    ownersCoverage: {},
+    project: {},
+    rentalRequests: {},
+    timeEntry: {},
+    user: {},
   },
 
   equipmentList: {
@@ -176,17 +181,14 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, currentUserDistricts: { data: action.currentUserDistricts, loading: false } };
 
     // Favourites
-    case Action.FAVOURITES_REQUEST:
-      return { ...state, favourites: { ...state.favourites, loading: true } };
-
     case Action.UPDATE_FAVOURITES:
-      return { ...state, favourites: { data: action.favourites, loading: false, success: true } };
+      return { ...state, favourites: {...state.favourites, ...action.favourites } };
 
     case Action.ADD_FAVOURITE: case Action.UPDATE_FAVOURITE:
-      return { ...state, favourites: { data: { ...state.favourites.data, ...action.favourite } } };
+      return { ...state, favourites: { ...state.favourites, ...{ [action.favourite.type]: { ...state.favourites[action.favourite.type], [action.favourite.id]: action.favourite } } } };
 
     case Action.DELETE_FAVOURITE:
-      return { ...state, favourites: { ...state.favourites, data: _.omit(state.favourites.data, [ action.id ]) } };
+      return { ...state, favourites: { ...state.favourites, ...{ [action.favourite.type]: _.omit(state.favourites[action.favourite.type], [ action.favourite.id ]) } } };
 
     // Contacts
     case Action.UPDATE_CONTACTS:
