@@ -21,16 +21,13 @@ var StatusLetters = React.createClass({
 
   getInitialState() {
     return {
-      loaded: false,
       localAreaIds: [],
       ownerIds: [],
     };
   },
 
   componentDidMount() {
-    Api.getOwnersLite().then(() => {
-      this.setState({ loaded: true });
-    });
+    Api.getOwnersLite();
   },
 
   updateState(state, callback) {
