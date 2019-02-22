@@ -47,7 +47,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetRentalAgreementRate.Any(a => a.RentalAgreementRateId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetRentalAgreementRate rate = _context.HetRentalAgreementRate.First(a => a.RentalAgreementRateId == id);
@@ -75,7 +75,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetRentalAgreementRate.Any(a => a.RentalAgreementRateId == id);
 
             // not found
-            if (!exists || id != item.RentalAgreementRateId) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists || id != item.RentalAgreementRateId) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetRentalAgreementRate rate = _context.HetRentalAgreementRate.First(a => a.RentalAgreementRateId == id);

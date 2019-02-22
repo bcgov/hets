@@ -66,7 +66,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetRole.Any(x => x.RoleId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetRole role = _context.HetRole.First(x => x.RoleId == id);
@@ -102,7 +102,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetRole.Any(x => x.RoleId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetRole role = _context.HetRole.AsNoTracking().First(x => x.RoleId == id);
@@ -129,7 +129,7 @@ namespace HetsApi.Controllers
                 .FirstOrDefault();
 
             // not found
-            if (role == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (role == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // return role permissions
             return new ObjectResult(new HetsResponse(role.HetRolePermission.ToList()));
@@ -155,7 +155,7 @@ namespace HetsApi.Controllers
                 .FirstOrDefault();
 
             // not found
-            if (role == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (role == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             List<HetPermission> allPermissions = _context.HetPermission.ToList();
             List<string> existingPermissionCodes = role.HetRolePermission.Select(x => x.Permission.Code).ToList();
@@ -276,7 +276,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetRole.Any(x => x.RoleId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetRole role = _context.HetRole.First(x => x.RoleId == id);

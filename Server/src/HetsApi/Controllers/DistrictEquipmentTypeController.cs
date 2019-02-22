@@ -190,7 +190,7 @@ namespace HetsApi.Controllers
             if (id != item.DistrictEquipmentTypeId)
             {
                 // not found
-                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
             // add or update equipment type
@@ -199,7 +199,7 @@ namespace HetsApi.Controllers
                 bool exists = _context.HetDistrictEquipmentType.Any(a => a.DistrictEquipmentTypeId == id);
 
                 // not found
-                if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                 // get record
                 HetDistrictEquipmentType equipment = _context.HetDistrictEquipmentType.First(x => x.DistrictEquipmentTypeId == id);

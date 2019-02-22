@@ -77,7 +77,7 @@ namespace HetsApi.Controllers
 
             // get approved status
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get all approved equipment for this district
             IEnumerable<EquipmentExtraLite> equipment = _context.HetEquipment.AsNoTracking()
@@ -108,14 +108,14 @@ namespace HetsApi.Controllers
 
             // get active status
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get fiscal year
             HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
                 .First(x => x.DistrictId == districtId);
 
             int? fiscalYear = status.CurrentFiscalYear;
-            if (fiscalYear == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (fiscalYear == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // fiscal year in the status table stores the "start" of the year
             DateTime fiscalYearStart = new DateTime((int)fiscalYear, 3, 31);
@@ -406,7 +406,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult EquipmentPost([FromBody]HetEquipment item)
         {
             // not found
-            if (item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // set default values for new piece of Equipment
             // certain fields are set on new record - set defaults (including status = "Inactive")
@@ -498,7 +498,7 @@ namespace HetsApi.Controllers
 
             // get agreement status
             int? agreementStatusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
-            if (agreementStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (agreementStatusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get initial results - must be limited to user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
@@ -627,7 +627,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             List<HetRentalAgreement> agreements = _context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.Equipment)
@@ -660,12 +660,12 @@ namespace HetsApi.Controllers
         public virtual IActionResult EquipmentRentalAgreementClonePost([FromRoute]int id, [FromBody]EquipmentRentalAgreementClone item)
         {
             // not found
-            if (item == null || id != item.EquipmentId) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (item == null || id != item.EquipmentId) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get all agreements for this equipment
             List<HetRentalAgreement> agreements = _context.HetRentalAgreement
@@ -683,13 +683,13 @@ namespace HetsApi.Controllers
             exists = agreements.Any(a => a.RentalAgreementId == item.RentalAgreementId);
 
             // (RENTAL AGREEMENT) not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // check that the rental agreement to clone exist
             exists = agreements.Any(a => a.RentalAgreementId == item.AgreementToCloneId);
 
             // (RENTAL AGREEMENT) not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-11", ErrorViewModel.GetDescription("HETS-11", _configuration)));
+            if (!exists) return new BadRequestObjectResult(new HetsResponse("HETS-11", ErrorViewModel.GetDescription("HETS-11", _configuration)));
 
             // get ids
             int agreementToCloneIndex = agreements.FindIndex(a => a.RentalAgreementId == item.AgreementToCloneId);
@@ -701,19 +701,19 @@ namespace HetsApi.Controllers
             // * Can't clone into an Agreement if it has existing time records
             // ******************************************************************
             int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             if (agreements[newRentalAgreementIndex].RentalAgreementStatusTypeId != statusId)
             {
                 // (RENTAL AGREEMENT) is not active
-                return new ObjectResult(new HetsResponse("HETS-12", ErrorViewModel.GetDescription("HETS-12", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-12", ErrorViewModel.GetDescription("HETS-12", _configuration)));
             }
 
             if (agreements[newRentalAgreementIndex].HetTimeRecord != null &&
                 agreements[newRentalAgreementIndex].HetTimeRecord.Count > 0)
             {
                 // (RENTAL AGREEMENT) has time records
-                return new ObjectResult(new HetsResponse("HETS-13", ErrorViewModel.GetDescription("HETS-13", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-13", ErrorViewModel.GetDescription("HETS-13", _configuration)));
             }
 
             // ******************************************************************
@@ -877,7 +877,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetEquipment.Any(x => x.EquipmentId == id);
 
             // not found [id > 0 -> need to allow for new records too]
-            if (!exists && id > 0) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists && id > 0) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // HETS-845 - Verify Duplicate serial # functionality
             // Validate among the following:
@@ -886,7 +886,7 @@ namespace HetsApi.Controllers
 
             // get status id
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get equipment duplicates
             List<HetEquipment> equipmentDuplicates;
@@ -968,7 +968,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetEquipment.Any(x => x.EquipmentId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             List<HetEquipmentAttachment> attachments = _context.HetEquipmentAttachment.AsNoTracking()
                 .Include(x => x.Equipment)
@@ -997,7 +997,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetEquipment equipment = _context.HetEquipment.AsNoTracking()
                 .Include(x => x.HetDigitalFile)
@@ -1045,7 +1045,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             return new ObjectResult(new HetsResponse(EquipmentHelper.GetHistoryRecords(id, offset, limit, _context)));
         }
@@ -1099,7 +1099,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetEquipment equipment = _context.HetEquipment.AsNoTracking()
                 .Include(x => x.HetNote)
@@ -1134,7 +1134,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
 
             // not found
-            if (!exists || item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists || item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // add or update note
             if (item.NoteId > 0)
@@ -1143,7 +1143,7 @@ namespace HetsApi.Controllers
                 HetNote note = _context.HetNote.FirstOrDefault(a => a.NoteId == item.NoteId);
 
                 // not found
-                if (note == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                if (note == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                 note.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                 note.Text = item.Text;
@@ -1210,14 +1210,14 @@ namespace HetsApi.Controllers
             HetDistrictStatus district = _context.HetDistrictStatus.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId == districtId);
 
-            if (district?.NextFiscalYear == null) return new ObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
+            if (district?.NextFiscalYear == null) return new BadRequestObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
 
             int fiscalYear = (int)district.NextFiscalYear; // status table uses the start of the year
             DateTime fiscalEnd = new DateTime(fiscalYear, 3, 31);
 
             // get status id
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get equipment record
             IQueryable<HetEquipment> data = _context.HetEquipment.AsNoTracking()
@@ -1400,12 +1400,12 @@ namespace HetsApi.Controllers
                 _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Service Response: {0}", response.StatusCode);
 
                 // problem occured
-                return new ObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
             }
             catch (Exception ex)
             {
                 Debug.Write("Error generating pdf: " + ex.Message);
-                return new ObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
             }
         }
 
