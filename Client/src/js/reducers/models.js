@@ -182,13 +182,13 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     // Favourites
     case Action.UPDATE_FAVOURITES:
-      return { ...state, favourites: {...state.favourites, ...action.favourites } };
+      return { ...state, favourites: { ...state.favourites, ...action.favourites } };
 
     case Action.ADD_FAVOURITE: case Action.UPDATE_FAVOURITE:
-      return { ...state, favourites: { ...state.favourites, ...{ [action.favourite.type]: { ...state.favourites[action.favourite.type], [action.favourite.id]: action.favourite } } } };
+      return { ...state, favourites: { ...state.favourites, [action.favourite.type]: { ...state.favourites[action.favourite.type], [action.favourite.id]: action.favourite } } };
 
     case Action.DELETE_FAVOURITE:
-      return { ...state, favourites: { ...state.favourites, ...{ [action.favourite.type]: _.omit(state.favourites[action.favourite.type], [ action.favourite.id ]) } } };
+      return { ...state, favourites: { ...state.favourites, [action.favourite.type]: _.omit(state.favourites[action.favourite.type], [ action.favourite.id ]) } };
 
     // Contacts
     case Action.UPDATE_CONTACTS:
