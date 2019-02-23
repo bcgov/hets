@@ -73,6 +73,8 @@ var EditFavouritesDialog = React.createClass({
         promise.finally(() => {
           this.setState({ isSaving: false });
         });
+
+        this.props.onSave(favourite);
       }
 
       this.props.onClose();
@@ -92,16 +94,14 @@ var EditFavouritesDialog = React.createClass({
         isSaving={isSaving}
         onClose={onClose}
         onSubmit={this.onSubmit}>
-        <Form>
-          <FormGroup controlId="name" validationState={nameError ? 'error' : null}>
-            <ControlLabel>Name <sup>*</sup></ControlLabel>
-            <FormInputControl type="text" readonly={isSaving} defaultValue={name} updateState={this.updateState} inputRef={ref => {this.input = ref;}} />
-            <HelpBlock>{nameError}</HelpBlock>
-          </FormGroup>
-          <CheckboxControl id="isDefault" checked={isDefault} updateState={this.updateState}>
-            Default
-          </CheckboxControl>
-        </Form>
+        <FormGroup controlId="name" validationState={nameError ? 'error' : null}>
+          <ControlLabel>Name <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" readOnly={isSaving} defaultValue={name} updateState={this.updateState} inputRef={ref => {this.input = ref;}} />
+          <HelpBlock>{nameError}</HelpBlock>
+        </FormGroup>
+        <CheckboxControl id="isDefault" checked={isDefault} updateState={this.updateState}>
+          Default
+        </CheckboxControl>
       </FormDialog>
     );
   },
@@ -154,8 +154,10 @@ var Favourites = React.createClass({
     if (favourite.isDefault) {
       var oldDefault = _.find(this.state.favourites, (fave) => { return fave.isDefault; });
       if (oldDefault && (favourite.id !== oldDefault.id)) {
-        oldDefault.isDefault = false;
-        Api.updateFavourite(oldDefault);
+        Api.updateFavourite({
+          ...oldDefault,
+          isDefault: false,
+        });
       }
     }
 

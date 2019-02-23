@@ -6,7 +6,7 @@ import ModalDialog from './ModalDialog.jsx';
 import Form from './Form.jsx';
 import Spinner from './Spinner.jsx';
 
-var EditDialog = React.createClass({
+var FormDialog = React.createClass({
   propTypes: {
     show: React.PropTypes.bool.isRequired,
     title: React.PropTypes.node,
@@ -73,4 +73,4 @@ var EditDialog = React.createClass({
   },
 });
 
-export default EditDialog;
+export default FormDialog;
