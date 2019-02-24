@@ -75,7 +75,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetUserDistrict.Any(a => a.UserDistrictId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetUserDistrict item = _context.HetUserDistrict
@@ -111,10 +111,10 @@ namespace HetsApi.Controllers
         public virtual IActionResult UserDistrictsIdPost([FromRoute]int id, [FromBody]HetUserDistrict item)
         {
             // not found
-            if (id != item.UserDistrictId) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (id != item.UserDistrictId) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // not found
-            if (item.User == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (item.User == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             int userId = item.User.UserId;
 
@@ -134,7 +134,7 @@ namespace HetsApi.Controllers
                 int index = userDistricts.FindIndex(a => a.UserDistrictId == item.UserDistrictId);
 
                 // not found
-                if (index < 0) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                if (index < 0) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                 // check if this district already exists
                 districtExists = userDistricts.Exists(a => a.District.DistrictId == item.District.DistrictId);
@@ -149,7 +149,7 @@ namespace HetsApi.Controllers
                     else
                     {
                         // user required
-                        return new ObjectResult(new HetsResponse("HETS-17",
+                        return new BadRequestObjectResult(new HetsResponse("HETS-17",
                             ErrorViewModel.GetDescription("HETS-17", _configuration)));
                     }
 
@@ -160,7 +160,7 @@ namespace HetsApi.Controllers
                     else
                     {
                         // district required
-                        return new ObjectResult(new HetsResponse("HETS-18",
+                        return new BadRequestObjectResult(new HetsResponse("HETS-18",
                             ErrorViewModel.GetDescription("HETS-18", _configuration)));
                     }
                 }
@@ -215,7 +215,7 @@ namespace HetsApi.Controllers
                     else
                     {
                         // user required
-                        return new ObjectResult(new HetsResponse("HETS-17", ErrorViewModel.GetDescription("HETS-17", _configuration)));
+                        return new BadRequestObjectResult(new HetsResponse("HETS-17", ErrorViewModel.GetDescription("HETS-17", _configuration)));
                     }
 
                     if (item.District != null)
@@ -225,7 +225,7 @@ namespace HetsApi.Controllers
                     else
                     {
                         // district required
-                        return new ObjectResult(new HetsResponse("HETS-18", ErrorViewModel.GetDescription("HETS-18", _configuration)));
+                        return new BadRequestObjectResult(new HetsResponse("HETS-18", ErrorViewModel.GetDescription("HETS-18", _configuration)));
                     }
 
                     if (item.IsPrimary)
@@ -290,7 +290,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetUserDistrict.Any(a => a.UserDistrictId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetUserDistrict userDistrict = _context.HetUserDistrict.First(a => a.UserDistrictId == id);
