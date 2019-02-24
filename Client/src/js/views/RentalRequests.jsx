@@ -132,19 +132,16 @@ var RentalRequests = React.createClass({
   },
 
   componentDidMount() {
-    Api.getFavourites('rentalRequests').then(() => {
-      if (!this.props.rentalRequests.loading && !this.props.rentalRequests.loaded) {
-        // If this is the first load, then look for a default favourite
-        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
-        if (defaultFavourite) {
-          this.loadFavourite(defaultFavourite);
-          return;
-        }
-      } else if (this.props.rentalRequests.loaded) {
-        // if a search was performed previously, refresh the search results
-        this.fetch();
+    if (!this.props.rentalRequests.loading && !this.props.rentalRequests.loaded) {
+      // If this is the first load, then look for a default favourite
+      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      if (defaultFavourite) {
+        this.loadFavourite(defaultFavourite);
       }
-    });
+    } else if (this.props.rentalRequests.loaded) {
+      // if a search was performed previously, refresh the search results
+      this.fetch();
+    }
   },
 
   fetch() {
@@ -330,7 +327,7 @@ var RentalRequests = React.createClass({
               })()}
             </Col>
             <Col xs={3} sm={2}>
-              <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+              <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
             </Col>
           </Row>
         </Form>
@@ -372,7 +369,7 @@ function mapStateToProps(state) {
     rentalRequests: state.models.rentalRequests,
     rentalRequest: state.models.rentalRequest,
     localAreas: state.lookups.localAreas,
-    favourites: state.models.favourites,
+    favourites: state.models.favourites.rentalRequests,
     search: state.search.rentalRequests,
     ui: state.ui.rentalRequests,
   };

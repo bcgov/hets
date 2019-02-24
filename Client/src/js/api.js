@@ -10,7 +10,6 @@ import { daysAgo, sortableDateTime, today } from './utils/date';
 
 import _ from 'lodash';
 import Moment from 'moment';
-import Promise from 'bluebird';
 
 function normalize(response) {
   return _.fromPairs(response.map(object => [ object.id, object ]));
@@ -293,36 +292,36 @@ export function updateRolePermissions(roleId, permissionsArray) {
 // Favourites
 ////////////////////
 
-export function getFavourites(type) {
-  store.dispatch({ type: Action.FAVOURITES_REQUEST });
-  return new ApiRequest(`/users/current/favourites/${ type }`).get().then(response => {
-    var favourites = normalize(response.data);
+export function getFavourites() {
+  return new ApiRequest('/users/current/favourites').get().then(response => {
+    var favourites = _.chain(response.data)
+      .groupBy('type')
+      .mapValues(type => _.chain(type)
+        .values()
+        .map(object => [ object.id, object ])
+        .fromPairs()
+        .value())
+      .value();
+
     store.dispatch({ type: Action.UPDATE_FAVOURITES, favourites: favourites });
   });
 }
 
 export function addFavourite(favourite) {
   return new ApiRequest('/users/current/favourites').post(favourite).then(response => {
-    // Normalize the response
-    var favourite = _.fromPairs([[ response.data.id, response.data ]]);
-
-    store.dispatch({ type: Action.ADD_FAVOURITE, favourite: favourite });
+    store.dispatch({ type: Action.ADD_FAVOURITE, favourite: response.data });
   });
 }
 
 export function updateFavourite(favourite) {
   return new ApiRequest('/users/current/favourites').put(favourite).then(response => {
-    // Normalize the response
-    var favourite = _.fromPairs([[ response.data.id, response.data ]]);
-
-    store.dispatch({ type: Action.UPDATE_FAVOURITE, favourite: favourite });
+    store.dispatch({ type: Action.UPDATE_FAVOURITE, favourite: response.data });
   });
 }
 
 export function deleteFavourite(favourite) {
   return new ApiRequest(`/users/current/favourites/${ favourite.id }/delete`).post().then(response => {
-    // No needs to normalize, as we just want the id from the response.
-    store.dispatch({ type: Action.DELETE_FAVOURITE, id: response.data.id });
+    store.dispatch({ type: Action.DELETE_FAVOURITE, favourite: response.data });
   });
 }
 

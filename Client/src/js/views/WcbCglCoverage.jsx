@@ -76,21 +76,17 @@ var WcbCglCoverage = React.createClass({
   },
 
   componentDidMount() {
-    var ownersPromise = Api.getOwnersLite();
-    var favouritesPromise = Api.getFavourites('ownersCoverage');
-
-    return Promise.all([ ownersPromise, favouritesPromise]).then(() => {
+    Api.getOwnersLite().then(() => {
       this.setState({ loaded: true });
-
-      // If this is the first load, then look for a default favourite
-      if (_.isEmpty(this.props.search)) {
-        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
-        if (defaultFavourite) {
-          this.loadFavourite(defaultFavourite);
-          return;
-        }
-      }
     });
+
+    // If this is the first load, then look for a default favourite
+    if (_.isEmpty(this.props.search)) {
+      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      if (defaultFavourite) {
+        this.loadFavourite(defaultFavourite);
+      }
+    }
   },
 
   fetch() {
@@ -247,7 +243,7 @@ var WcbCglCoverage = React.createClass({
             </Col>
           </Form>
           <Col xs={3} sm={2}>
-              <Favourites id="wcg-cgl-coverage-faves-dropdown" type="ownersCoverage" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+            <Favourites id="wcg-cgl-coverage-faves-dropdown" type="ownersCoverage" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
           </Col>
         </Row>
       </Well>
@@ -269,7 +265,7 @@ function mapStateToProps(state) {
     localAreas: state.lookups.localAreas,
     owners: state.models.ownersLite.data,
     ownersCoverage: state.models.ownersCoverage,
-    favourites: state.models.favourites,
+    favourites: state.models.favourites.ownersCoverage,
     search: state.search.ownersCoverage,
     ui: state.ui.ownersCoverage,
   };

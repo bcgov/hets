@@ -84,8 +84,9 @@ function getLookups(user) {
     var fiscalYearsPromise = Api.getFiscalYears(districtId);
     var permissionsPromise = Api.getPermissions();
     var currentUserDistrictsPromise = Api.getCurrentUserDistricts();
+    var favouritesPromise = Api.getFavourites();
 
-    return Promise.all([districtsPromise, regionsPromise, serviceAreasPromise, localAreasPromise, fiscalYearsPromise, permissionsPromise, currentUserDistrictsPromise]);
+    return Promise.all([districtsPromise, regionsPromise, serviceAreasPromise, localAreasPromise, fiscalYearsPromise, permissionsPromise, currentUserDistrictsPromise, favouritesPromise]);
   }
 }
 

@@ -80,16 +80,13 @@ var Owners = React.createClass({
   },
 
   componentDidMount() {
-    Api.getFavourites('owner').then(() => {
-      // If this is the first load, then look for a default favourite
-      if (_.isEmpty(this.props.search)) {
-        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
-        if (defaultFavourite) {
-          this.loadFavourite(defaultFavourite);
-          return;
-        }
+    // If this is the first load, then look for a default favourite
+    if (_.isEmpty(this.props.search)) {
+      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      if (defaultFavourite) {
+        this.loadFavourite(defaultFavourite);
       }
-    });
+    }
   },
 
   fetch() {
@@ -232,7 +229,7 @@ var Owners = React.createClass({
             </Form>
           </Col>
           <Col xs={3} sm={2}>
-            <Favourites id="owners-faves-dropdown" type="owner" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+            <Favourites id="owners-faves-dropdown" type="owner" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
           </Col>
         </Row>
       </Well>
@@ -264,7 +261,7 @@ function mapStateToProps(state) {
     owner: state.models.owner,
     localAreas: state.lookups.localAreas,
     owners: state.lookups.owners,
-    favourites: state.models.favourites,
+    favourites: state.models.favourites.owner,
     search: state.search.owners,
     ui: state.ui.owners,
   };

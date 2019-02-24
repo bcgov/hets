@@ -81,20 +81,18 @@ var TimeEntry = React.createClass({
     var projectsPromise = Api.getProjects();
     var ownersPromise = Api.getOwnersLiteTs();
     var equipmentPromise = Api.getEquipmentLiteTs();
-    var favouritesPromise = Api.getFavourites('timeEntry');
 
-    return Promise.all([ projectsPromise, ownersPromise, equipmentPromise, favouritesPromise]).then(() => {
+    Promise.all([ projectsPromise, ownersPromise, equipmentPromise]).then(() => {
       this.setState({ loaded: true });
-
-      // If this is the first load, then look for a default favourite
-      if (_.isEmpty(this.props.search)) {
-        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
-        if (defaultFavourite) {
-          this.loadFavourite(defaultFavourite);
-          return;
-        }
-      }
     });
+
+    // If this is the first load, then look for a default favourite
+    if (_.isEmpty(this.props.search)) {
+      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      if (defaultFavourite) {
+        this.loadFavourite(defaultFavourite);
+      }
+    }
   },
 
   fetch() {
@@ -309,7 +307,7 @@ var TimeEntry = React.createClass({
             </Col>
           </Form>
           <Col xs={3} sm={2}>
-            <Favourites id="time-entry-faves-dropdown" type="timeEntry" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+            <Favourites id="time-entry-faves-dropdown" type="timeEntry" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
           </Col>
         </Row>
       </Well>
@@ -349,7 +347,7 @@ function mapStateToProps(state) {
     owners: state.lookups.ownersLite,
     equipment: state.lookups.equipmentLite,
     timeEntries: state.models.timeEntries,
-    favourites: state.models.favourites,
+    favourites: state.models.favourites.timeEntry,
     search: state.search.timeEntries,
     ui: state.ui.timeEntries,
   };

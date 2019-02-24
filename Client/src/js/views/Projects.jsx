@@ -72,16 +72,13 @@ var Projects = React.createClass({
   },
 
   componentDidMount() {
-    Api.getFavourites('project').then(() => {
-      // If this is the first load, then look for a default favourite
-      if (_.isEmpty(this.props.search)) {
-        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
-        if (defaultFavourite) {
-          this.loadFavourite(defaultFavourite);
-          return;
-        }
+    // If this is the first load, then look for a default favourite
+    if (_.isEmpty(this.props.search)) {
+      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      if (defaultFavourite) {
+        this.loadFavourite(defaultFavourite);
       }
-    });
+    }
   },
 
   fetch() {
@@ -231,13 +228,13 @@ var Projects = React.createClass({
             </Col>
           </Form>
           <Col xs={3} sm={2}>
-            <Favourites id="projects-faves-dropdown" type="project" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+            <Favourites id="projects-faves-dropdown" type="project" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
           </Col>
         </Row>
       </Well>
 
       {(() => {
-        if (this.props.projects.loading || this.props.favourites.loading) {
+        if (this.props.projects.loading) {
           return <div style={{ textAlign: 'center' }}><Spinner/></div>;
         }
 
@@ -264,7 +261,7 @@ function mapStateToProps(state) {
     fiscalYears: state.lookups.fiscalYears,
     projects: state.models.projects,
     project: state.models.project,
-    favourites: state.models.favourites,
+    favourites: state.models.favourites.project,
     search: state.search.projects,
     ui: state.ui.projects,
   };

@@ -122,17 +122,10 @@ var Favourites = React.createClass({
 
   getInitialState() {
     return {
-      favourites: this.props.favourites,
       favouriteToEdit: {},
       showEditDialog: false,
       open: false,
     };
-  },
-
-  componentWillReceiveProps(nextProps) {
-    if (!_.isEqual(nextProps.favourites, this.props.favourites)) {
-      this.setState({ favourites: nextProps.favourites });
-    }
   },
 
   addFavourite() {
@@ -152,7 +145,7 @@ var Favourites = React.createClass({
   favoriteSaved(favourite) {
     // Make sure there's only one default
     if (favourite.isDefault) {
-      var oldDefault = _.find(this.state.favourites, (fave) => { return fave.isDefault; });
+      var oldDefault = _.find(this.props.favourites, f => f.isDefault);
       if (oldDefault && (favourite.id !== oldDefault.id)) {
         Api.updateFavourite({
           ...oldDefault,
@@ -197,11 +190,11 @@ var Favourites = React.createClass({
           <Button onClick={ this.addFavourite }>Favourite Current Selection</Button>
         </div>
         {(() => {
-          if (Object.keys(this.state.favourites).length === 0) { return <Alert bsStyle="success" style={{ margin: '5px' }}>No favourites</Alert>; }
+          if (Object.keys(this.props.favourites).length === 0) { return <Alert bsStyle="success" style={{ margin: '5px' }}>No favourites</Alert>; }
 
           return <ul>
             {
-              _.map(this.state.favourites, (favourite) => {
+              _.map(this.props.favourites, (favourite) => {
                 return <li key={ favourite.id }>
                   <Col md={1}>
                     { favourite.isDefault ? <Glyphicon glyph="star" /> : '' }
