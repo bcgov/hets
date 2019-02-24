@@ -75,7 +75,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetConditionType.Any(a => a.ConditionTypeId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetConditionType item = _context.HetConditionType.First(a => a.ConditionTypeId == id);
 
@@ -121,7 +121,7 @@ namespace HetsApi.Controllers
             if (id != item.ConditionTypeId)
             {
                 // record not found
-                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
             // add or update contact
@@ -132,7 +132,7 @@ namespace HetsApi.Controllers
                 if (!exists)
                 {
                     // record not found
-                    return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                    return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                 }
 
                 // get record

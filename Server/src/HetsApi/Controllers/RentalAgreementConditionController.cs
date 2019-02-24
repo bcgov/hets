@@ -47,7 +47,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetRentalAgreementCondition.Any(a => a.RentalAgreementConditionId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetRentalAgreementCondition condition = _context.HetRentalAgreementCondition.AsNoTracking()
@@ -76,7 +76,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetRentalAgreementCondition.Any(a => a.RentalAgreementConditionId == id);
 
             // not found
-            if (!exists || id != item.RentalAgreementConditionId) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists || id != item.RentalAgreementConditionId) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetRentalAgreementCondition condition = _context.HetRentalAgreementCondition

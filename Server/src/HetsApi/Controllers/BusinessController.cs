@@ -56,7 +56,7 @@ namespace HetsApi.Controllers
         {
             string businessGuid = UserAccountHelper.GetBusinessGuid(_httpContext, _env);
 
-            if (businessGuid == null) return new ObjectResult(new HetsResponse(""));
+            if (businessGuid == null) return new NotFoundObjectResult(new HetsResponse(""));
 
             HetBusiness business = _context.HetBusiness.AsNoTracking()
                 .Include(x => x.HetOwner)
@@ -66,7 +66,7 @@ namespace HetsApi.Controllers
                         .ThenInclude(z => z.ServiceArea.District)
                 .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
-            if (business == null) return new ObjectResult(new HetsResponse(""));
+            if (business == null) return new NotFoundObjectResult(new HetsResponse(""));
 
             return new ObjectResult(new HetsResponse(business));
         }
