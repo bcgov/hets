@@ -461,8 +461,7 @@ namespace HetsData.Helpers
 
             // recalculate the seniority list
             SeniorityListHelper.CalculateSeniorityList(localArea.LocalAreaId, 
-                districtEquipmentType.DistrictEquipmentTypeId, 
-                districtEquipmentType.EquipmentType.EquipmentTypeId, 
+                districtEquipmentType.DistrictEquipmentTypeId,                 
                 context,
                 configuration);
         }
