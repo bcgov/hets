@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { FormGroup, HelpBlock, ControlLabel, FormControl, Grid, Row, Col } from 'react-bootstrap';
 
+import * as Api from '../../api';
 import * as Constant from '../../constants';
 
 import DropdownControl from '../../components/DropdownControl.jsx';
@@ -15,6 +16,7 @@ import { isBlank, notBlank } from '../../utils/string';
 var ProjectsAddDialog = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
+    projects: React.PropTypes.object,
     fiscalYears: React.PropTypes.array,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
@@ -40,6 +42,8 @@ var ProjectsAddDialog = React.createClass({
   },
 
   componentDidMount() {
+    Api.getProjects();
+
     this.input.focus();
   },
 
@@ -71,9 +75,18 @@ var ProjectsAddDialog = React.createClass({
       districtError: '',
     });
 
-    if (isBlank(this.state.name)) {
+    var projectName = this.state.name;
+
+    if (isBlank(projectName)) {
       this.setState({ nameError: 'Name is required' });
       valid = false;
+    } else {
+      var nameIgnoreCase = projectName.toLowerCase().trim();
+      var existingProjectName = _.find(this.props.projects, existingProjectName => existingProjectName.name.toLowerCase().trim() === nameIgnoreCase);
+      if (existingProjectName) {
+        this.setState({ nameError: 'This project name already exists'});
+        valid = false;
+      }
     }
 
     if (isBlank(this.state.fiscalYear)) {
@@ -207,6 +220,7 @@ var ProjectsAddDialog = React.createClass({
 function mapStateToProps(state) {
   return {
     currentUser: state.user,
+    projects: state.lookups.projects,
     fiscalYears: state.lookups.fiscalYears,
   };
 }

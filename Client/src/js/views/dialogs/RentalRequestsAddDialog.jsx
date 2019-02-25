@@ -61,7 +61,7 @@ var RentalRequestsAddDialog = React.createClass({
   componentDidMount() {
     this.setState({ loading: true });
     var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
-    var projectsPromise = Api.getProjects();
+    var projectsPromise = Api.getProjectsCurrentFiscal();
     Promise.all([equipmentTypesPromise, projectsPromise]).then(() => {
       this.setState({ loading: false });
     });
@@ -341,7 +341,7 @@ function mapStateToProps(state) {
     currentUser: state.user,
     localAreas: state.lookups.localAreas,
     districtEquipmentTypes: state.lookups.districtEquipmentTypes.data,
-    projects: state.lookups.projects,
+    projects: state.lookups.projectsCurrentFiscal,
   };
 }
 
