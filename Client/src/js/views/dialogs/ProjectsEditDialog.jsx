@@ -7,8 +7,8 @@ import { Grid, Row, Col, FormGroup, HelpBlock, ControlLabel } from 'react-bootst
 import _ from 'lodash';
 
 import * as Action from '../../actionTypes';
-import * as Constant from '../../constants';
 import * as Api from '../../api';
+import * as Constant from '../../constants';
 import * as Log from '../../history';
 import store from '../../store';
 
@@ -50,6 +50,10 @@ var ProjectsEditDialog = React.createClass({
     };
   },
 
+  componentDidMount() {
+    Api.getProjects();
+  },
+
   updateState(state, callback) {
     this.setState(state, callback);
   },
@@ -89,7 +93,7 @@ var ProjectsEditDialog = React.createClass({
       valid = false;
     } else if (projectName !== project.projectName) {
       var nameIgnoreCase = projectName.toLowerCase().trim();
-      var existingProjects = _.reject(this.props.projects.data, { id: project.id});
+      var existingProjects = _.reject(this.props.projects, { id: project.id });
       var existingProjectName = _.find(existingProjects, existingProjectName => existingProjectName.name.toLowerCase().trim() === nameIgnoreCase);
       if (existingProjectName) {
         this.setState({ projectNameError: 'This project name already exists'});
@@ -261,7 +265,7 @@ function mapStateToProps(state) {
   return {
     fiscalYears: state.lookups.fiscalYears,
     project: state.models.project,
-    projects: state.models.projects,
+    projects: state.lookups.projects,
   };
 }
 
