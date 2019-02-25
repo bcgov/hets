@@ -37,7 +37,6 @@ var WcbCglCoverage = React.createClass({
 
   getInitialState() {
     return {
-      loaded: false,
       search: {
         localAreaIds: this.props.search.localAreaIds || [],
         ownerIds: this.props.search.ownerIds || [],
@@ -76,9 +75,7 @@ var WcbCglCoverage = React.createClass({
   },
 
   componentDidMount() {
-    Api.getOwnersLite().then(() => {
-      this.setState({ loaded: true });
-    });
+    Api.getOwnersLite();
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
@@ -249,7 +246,7 @@ var WcbCglCoverage = React.createClass({
       </Well>
 
       {(() => {
-        if (this.props.ownersCoverage.loading || !this.state.loaded) {
+        if (this.props.ownersCoverage.loading) {
           return <div style={{ textAlign: 'center' }}><Spinner/></div>;
         }
         if (this.props.ownersCoverage.loaded) {

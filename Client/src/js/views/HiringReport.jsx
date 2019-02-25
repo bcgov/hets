@@ -36,7 +36,6 @@ var HiringReport = React.createClass({
 
   getInitialState() {
     return {
-      loaded: false,
       search: {
         projectIds: this.props.search.projectIds || [],
         localAreaIds: this.props.search.localAreaIds || [],
@@ -77,11 +76,7 @@ var HiringReport = React.createClass({
     var ownersPromise = Api.getOwnersLiteHires();
     var equipmentPromise = Api.getEquipmentLiteHires();
 
-    Promise.all([ projectsPromise, ownersPromise, equipmentPromise]).then(() => {
-
-      this.setState({ loaded: true });
-
-    });
+    Promise.all([ projectsPromise, ownersPromise, equipmentPromise]);
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
@@ -293,7 +288,7 @@ var HiringReport = React.createClass({
       </Well>
 
       {(() => {
-        if (this.props.hiringResponses.loading || !this.state.loaded) {
+        if (this.props.hiringResponses.loading) {
           return <div style={{ textAlign: 'center' }}><Spinner/></div>;
         }
 

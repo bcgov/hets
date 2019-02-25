@@ -38,7 +38,6 @@ var TimeEntry = React.createClass({
 
   getInitialState() {
     return {
-      loaded: false,
       showTimeEntryDialog: false,
       allowMultipleTimeEntries: false,
       rentalAgreementId: null,
@@ -82,9 +81,7 @@ var TimeEntry = React.createClass({
     var ownersPromise = Api.getOwnersLiteTs();
     var equipmentPromise = Api.getEquipmentLiteTs();
 
-    Promise.all([ projectsPromise, ownersPromise, equipmentPromise]).then(() => {
-      this.setState({ loaded: true });
-    });
+    Promise.all([ projectsPromise, ownersPromise, equipmentPromise]);
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
@@ -313,7 +310,7 @@ var TimeEntry = React.createClass({
       </Well>
 
       {(() => {
-        if (this.props.timeEntries.loading || !this.state.loaded) {
+        if (this.props.timeEntries.loading) {
           return <div style={{ textAlign: 'center' }}><Spinner/></div>;
         }
 
