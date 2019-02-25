@@ -207,7 +207,11 @@
                   {
                     "name": "PDF_SERVICE_NAME",
                     "value": "${PDF_SERVICE_NAME}"
-                  }
+                  },
+                  {
+                    "name": "ReportsPath",
+                    "value": "${REPORTS_PATH}"
+                  },
                 ],
                 "resources":
                 {
@@ -226,6 +230,10 @@
                   {
                     "name": "${NAME}-docs",
                     "mountPath": "/uploads"
+                  },
+				  {
+                    "name": "${NAME}-reports",
+                    "mountPath": "/reports"
                   }
                 ]
               }
@@ -331,6 +339,13 @@
       "description": "The name (URL) of the PDF service.",
       "required": true,
       "value": "http://pdf:8080"
+    },	
+    {
+      "name": "REPORTS_PATH",
+      "displayName": "Reports Path",
+      "description": "The path for storing batch reports.",
+      "required": true,
+      "value": "/reports/"
     },
     {
       "name": "CPU_LIMIT",
