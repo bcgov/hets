@@ -82,7 +82,7 @@ var TimeEntryDialog = React.createClass({
   },
 
   fetchDropdownContent() {
-    return Api.getProjects();
+    return Api.getProjectsCurrentFiscal();
   },
 
   fetchTimeRecords() {
@@ -496,7 +496,7 @@ function mapStateToProps(state) {
     rentalAgreement: state.models.rentalAgreement,
     rentalAgreementTimeRecords: state.models.rentalAgreementTimeRecords,
     project: state.models.project,
-    projects: state.lookups.projects,
+    projects: state.lookups.projectsCurrentFiscal,
     equipment: state.lookups.equipmentLite,
   };
 }

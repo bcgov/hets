@@ -1166,13 +1166,24 @@ export function searchOwnersCoverage(params) {
 }
 
 export function getProjects() {
-  return new ApiRequest('/projects').get().then(response => {
+  return new ApiRequest('/projects').get({ currentFiscal: false }).then(response => {
     var projects = normalize(response.data);
 
     // Add display fields
     _.map(projects, project => { parseProject(project); });
 
     store.dispatch({ type: Action.UPDATE_PROJECTS_LOOKUP, projects: projects });
+  });
+}
+
+export function getProjectsCurrentFiscal() {
+  return new ApiRequest('/projects').get({ currentFiscal: true }).then(response => {
+    var projects = normalize(response.data);
+
+    // Add display fields
+    _.map(projects, project => { parseProject(project); });
+
+    store.dispatch({ type: Action.UPDATE_PROJECTS_CURRENT_FISCAL_LOOKUP, projects: projects });
   });
 }
 
