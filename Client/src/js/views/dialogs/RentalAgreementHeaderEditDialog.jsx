@@ -137,7 +137,7 @@ var RentalAgreementHeaderEditDialog = React.createClass({
 function mapStateToProps(state) {
   return {
     rentalAgreement: state.models.rentalAgreement,
-    projects: state.lookups.projects,
+    projects: state.lookups.projectsCurrentFiscal,
     equipment: state.lookups.equipmentLite,
   };
 }

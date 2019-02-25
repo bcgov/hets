@@ -71,7 +71,7 @@ var RentalAgreementsDetail = React.createClass({
     var getRentalAgreementPromise = Api.getRentalAgreement(this.props.params.rentalAgreementId);
     var getBlankRentalAgreementsPromise = Api.getBlankRentalAgreements();
     var getRentalConditionsPromise = Api.getRentalConditions();
-    var getProjectsPromise = Api.getProjects();
+    var getProjectsPromise = Api.getProjectsCurrentFiscal();
     return Promise.all([getRentalAgreementPromise, getBlankRentalAgreementsPromise, getRentalConditionsPromise, getProjectsPromise]).finally(() => {
       this.setState({ loading: false });
     });

@@ -4,6 +4,9 @@ import { connect } from 'react-redux';
 
 import { Form, FormGroup, HelpBlock, ControlLabel, FormControl } from 'react-bootstrap';
 
+import _ from 'lodash';
+
+import * as Api from '../../api';
 import * as Constant from '../../constants';
 
 import EditDialog from '../../components/EditDialog.jsx';
@@ -14,6 +17,7 @@ import { isBlank, notBlank } from '../../utils/string';
 var ProjectsAddDialog = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
+    projects: React.PropTypes.object,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
@@ -31,6 +35,8 @@ var ProjectsAddDialog = React.createClass({
   },
 
   componentDidMount() {
+    Api.getProjects();
+
     this.input.focus();
   },
 
@@ -53,9 +59,18 @@ var ProjectsAddDialog = React.createClass({
       districtError: '',
     });
 
-    if (isBlank(this.state.name)) {
+    var projectName = this.state.name;
+
+    if (isBlank(projectName)) {
       this.setState({ nameError: 'Name is required' });
       valid = false;
+    } else {
+      var nameIgnoreCase = projectName.toLowerCase().trim();
+      var existingProjectName = _.find(this.props.projects, existingProjectName => existingProjectName.name.toLowerCase().trim() === nameIgnoreCase);
+      if (existingProjectName) {
+        this.setState({ nameError: 'This project name already exists'});
+        valid = false;
+      }
     }
 
     return valid;
@@ -103,6 +118,7 @@ var ProjectsAddDialog = React.createClass({
 function mapStateToProps(state) {
   return {
     currentUser: state.user,
+    projects: state.lookups.projects,
   };
 }
 

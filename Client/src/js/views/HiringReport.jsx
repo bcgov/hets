@@ -73,7 +73,7 @@ var HiringReport = React.createClass({
   },
 
   componentDidMount() {
-    var projectsPromise = Api.getProjects();
+    var projectsPromise = Api.getProjectsCurrentFiscal();
     var ownersPromise = Api.getOwnersLiteHires();
     var equipmentPromise = Api.getEquipmentLiteHires();
     var favouritesPromise = Api.getFavourites('hiringReport');
@@ -308,7 +308,7 @@ var HiringReport = React.createClass({
 
 function mapStateToProps(state) {
   return {
-    projects: state.lookups.projects,
+    projects: state.lookups.projectsCurrentFiscal,
     localAreas: state.lookups.localAreas,
     owners: state.lookups.ownersLite,
     equipment: state.lookups.equipmentLite,

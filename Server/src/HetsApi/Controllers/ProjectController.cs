@@ -229,7 +229,7 @@ namespace HetsApi.Controllers
         [SwaggerOperation("ProjectsGet")]
         [SwaggerResponse(200, type: typeof(List<HetProject>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult ProjectsGet()
+        public virtual IActionResult ProjectsGet([FromQuery]bool currentFiscal = true)
         {
             // get initial results - must be limited to user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
@@ -249,7 +249,7 @@ namespace HetsApi.Controllers
             //   since users can add time records to closed projects
             IQueryable<HetProject> projects = _context.HetProject.AsNoTracking()
                 .Where(x => x.DistrictId.Equals(districtId) &&
-                            x.AppCreateTimestamp > fiscalYearStart);
+                            (!currentFiscal || x.AppCreateTimestamp > fiscalYearStart));
 
             // convert Project Model to the "ProjectLite" Model
             List<ProjectLite> result = new List<ProjectLite>();

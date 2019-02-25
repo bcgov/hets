@@ -78,7 +78,7 @@ var TimeEntry = React.createClass({
   },
 
   componentDidMount() {
-    var projectsPromise = Api.getProjects();
+    var projectsPromise = Api.getProjectsCurrentFiscal();
     var ownersPromise = Api.getOwnersLiteTs();
     var equipmentPromise = Api.getEquipmentLiteTs();
     var favouritesPromise = Api.getFavourites('timeEntry');
@@ -344,7 +344,7 @@ var TimeEntry = React.createClass({
 
 function mapStateToProps(state) {
   return {
-    projects: state.lookups.projects,
+    projects: state.lookups.projectsCurrentFiscal,
     localAreas: state.lookups.localAreas,
     owners: state.lookups.ownersLite,
     equipment: state.lookups.equipmentLite,
