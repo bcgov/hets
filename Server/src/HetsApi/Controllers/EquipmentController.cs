@@ -239,14 +239,19 @@ namespace HetsApi.Controllers
                                     (originalSeniorityEffectiveDate != null && item.SeniorityEffectiveDate != null &&
                                      originalSeniorityEffectiveDate != item.SeniorityEffectiveDate);
 
+
+            bool rebuildOldSeniority = false;
+
             if (originalLocalAreaId != item.LocalArea.LocalAreaId)
             {
                 rebuildSeniority = true;
+                rebuildOldSeniority = true;
             }
 
             if (originalDistrictEquipmentTypeId != item.DistrictEquipmentTypeId)
             {
                 rebuildSeniority = true;
+                rebuildOldSeniority = true;
             }
 
             if ((originalServiceHoursLastYear == null && item.ServiceHoursLastYear != null) ||
@@ -273,10 +278,13 @@ namespace HetsApi.Controllers
             if (rebuildSeniority)
             {
                 // update new area
-                EquipmentHelper.RecalculateSeniority(item.LocalAreaId, item.DistrictEquipmentTypeId, _context, _configuration);
+                EquipmentHelper.RecalculateSeniority(item.LocalArea.LocalAreaId, item.DistrictEquipmentTypeId, _context, _configuration);
 
                 // update old area
-                EquipmentHelper.RecalculateSeniority((int)originalLocalAreaId, (int)originalDistrictEquipmentTypeId, _context, _configuration);
+                if (rebuildOldSeniority)
+                {
+                    EquipmentHelper.RecalculateSeniority((int)originalLocalAreaId, (int)originalDistrictEquipmentTypeId, _context, _configuration);
+                }                
             }
 
             // retrieve updated equipment record to return to ui
