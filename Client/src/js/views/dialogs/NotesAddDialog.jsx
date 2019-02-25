@@ -1,10 +1,9 @@
 import React from 'react';
 
-import { Row, Col, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
+import { FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
 
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 import * as Constant from '../../constants';
 
@@ -16,7 +15,6 @@ var NotesAddDialog = React.createClass({
     onUpdate: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
-    notes: React.PropTypes.object,
     note: React.PropTypes.object,
   },
 
@@ -55,43 +53,49 @@ var NotesAddDialog = React.createClass({
     return valid;
   },
 
-  onSave() {
-    // If note id === 0 then you are adding a new note, otherwise you are updating an existing note
-    if (this.state.noteId === 0) {
-      this.props.onSave({
-        id: 0,
-        text: this.state.note,
-        isNoLongerRelevant: false,
-      });
-    } else {
-      this.props.onUpdate({
-        id: this.state.noteId,
-        text: this.state.note,
-        concurrencyControlNumber: this.state.concurrencyControlNumber,
-        isNoLongerRelevant: false,
-      });
+  onFormSubmitted() {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        // If note id === 0 then you are adding a new note, otherwise you are updating an existing note
+        if (this.state.noteId === 0) {
+          this.props.onSave({
+            id: 0,
+            text: this.state.note,
+            isNoLongerRelevant: false,
+          });
+        } else {
+          this.props.onUpdate({
+            id: this.state.noteId,
+            text: this.state.note,
+            concurrencyControlNumber: this.state.concurrencyControlNumber,
+            isNoLongerRelevant: false,
+          });
+        }
+      } else {
+        this.props.onClose();
+      }
     }
   },
 
   render() {
+    const { noteId } = this.state;
     var maxLength = Constant.MAX_LENGTH_NOTE_TEXT;
 
-    return <EditDialog id="notes" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } isValid={ this.isValid } didChange={ this.didChange }
-      title={<strong>Add Note</strong>}>
-      <Row>
-        <Col md={12}>
-          <Form>
-            <FormGroup controlId="note" validationState={ this.state.noteError ? 'error' : null }>
-              <ControlLabel>Note</ControlLabel>
-              <FormInputControl value={ this.state.note } componentClass="textarea" updateState={ this.updateState } maxLength={ maxLength } />
-              <HelpBlock>{ this.state.noteError }</HelpBlock>
-              <p>Maximum { maxLength } characters.</p>
-            </FormGroup>
-          </Form>
-        </Col>
-      </Row>
-    </EditDialog>;
+    return (
+      <FormDialog
+        id="notes"
+        title={ noteId ? 'Edit Note' : 'Add Note' }
+        show={ this.props.show }
+        onClose={ this.props.onClose }
+        onSubmit={ this.onFormSubmitted }>
+        <FormGroup controlId="note" validationState={ this.state.noteError ? 'error' : null }>
+          <ControlLabel>Note</ControlLabel>
+          <FormInputControl value={ this.state.note } componentClass="textarea" updateState={ this.updateState } maxLength={ maxLength } />
+          <HelpBlock>{ this.state.noteError }</HelpBlock>
+          <p>Maximum { maxLength } characters.</p>
+        </FormGroup>
+      </FormDialog>
+    );
   },
 });
 

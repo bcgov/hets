@@ -11,13 +11,13 @@ import Moment from 'moment';
 
 import * as Api from '../../api';
 import * as Constant from '../../constants';
+import * as Log from '../../history';
 
 import DateControl from '../../components/DateControl.jsx';
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import Spinner from '../../components/Spinner.jsx';
-import Form from '../../components/Form.jsx';
 
 import { isValidDate, today } from '../../utils/date';
 import { isBlank } from '../../utils/string';
@@ -30,7 +30,7 @@ var RentalRequestsAddDialog = React.createClass({
     districtEquipmentTypes: React.PropTypes.object,
     projects: React.PropTypes.object,
     project: React.PropTypes.object,
-    onSave: React.PropTypes.func.isRequired,
+    onProjectSaved: React.PropTypes.func,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     viewOnly: React.PropTypes.bool,
@@ -168,23 +168,38 @@ var RentalRequestsAddDialog = React.createClass({
     // TODO Restrict the available local areas to a project service area
   },
 
-  onSave() {
-    var request = {
-      project: { id: this.state.projectId },
-      localArea: { id: this.state.localAreaId },
-      districtEquipmentType: { id: this.state.equipmentTypeId },
-      equipmentCount: this.state.count,
-      status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
-      expectedHours: this.state.expectedHours,
-      expectedStartDate: this.state.expectedStartDate,
-      expectedEndDate: this.state.expectedEndDate,
-      rentalRequestAttachments: [{
-        id: 0,
-        attachment: this.state.rentalRequestAttachments,
-      }],
-    };
+  formSubmitted() {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        this.setState({isSaving: true});
 
-    this.props.onSave(request, this.props.viewOnly);
+        var request = {
+          project: { id: this.state.projectId },
+          localArea: { id: this.state.localAreaId },
+          districtEquipmentType: { id: this.state.equipmentTypeId },
+          equipmentCount: this.state.count,
+          status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
+          expectedHours: this.state.expectedHours,
+          expectedStartDate: this.state.expectedStartDate,
+          expectedEndDate: this.state.expectedEndDate,
+          rentalRequestAttachments: [{
+            id: 0,
+            attachment: this.state.rentalRequestAttachments,
+          }],
+        };
+
+        Api.addRentalRequest(request).then((response) => {
+          this.setState({ isSaving: false });
+
+          Log.projectRentalRequestAdded(this.props.project, response);
+
+          this.props.onProjectSaved(response.id);
+          this.props.onClose();
+        }).catch(() => {
+          this.setState({ isSaving: false });
+        });
+      }
+    }
   },
 
   getFilteredEquipmentTypes(localAreaId) {
@@ -194,8 +209,8 @@ var RentalRequestsAddDialog = React.createClass({
       .value();
   },
 
-  render() {
-    if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+  renderForm() {
+    const { project } = this.props;
 
     // Constrain the local area drop downs to those in the District of the current logged in user
     var localAreas = _.chain(this.props.localAreas)
@@ -206,16 +221,12 @@ var RentalRequestsAddDialog = React.createClass({
 
     var projects = _.sortBy(this.props.projects, 'name');
 
-    const { project } = this.props;
-
-    return <EditDialog id="add-rental-request" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={<strong>Add Rental Request</strong>}>
-      <Form>
+    return (
+      <div>
         <Row>
           <Col md={12}>
             <FormGroup controlId="projectId" validationState={ this.state.projectError ? 'error' : null }>
-              <ControlLabel>Project <sup>*</sup></ControlLabel>
+              <ControlLabel>Project {!project && !this.props.viewOnly && (<sup>*</sup>)}</ControlLabel>
               { project ?
                 <div>{ project.name }</div>
                 :
@@ -229,6 +240,8 @@ var RentalRequestsAddDialog = React.createClass({
               <HelpBlock>{ this.state.projectError }</HelpBlock>
             </FormGroup>
           </Col>
+        </Row>
+        <Row>
           <Col md={12}>
             <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
               <ControlLabel>Local Area <sup>*</sup></ControlLabel>
@@ -238,6 +251,8 @@ var RentalRequestsAddDialog = React.createClass({
               <HelpBlock>{ this.state.localAreaError }</HelpBlock>
             </FormGroup>
           </Col>
+        </Row>
+        <Row>
           <Col md={12}>
             <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
               <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
@@ -247,7 +262,9 @@ var RentalRequestsAddDialog = React.createClass({
               <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
             </FormGroup>
           </Col>
-          { !this.props.viewOnly &&
+        </Row>
+        <Row>
+          { !this.props.viewOnly && (
             <Col md={12}>
               <FormGroup controlId="count" validationState={ this.state.countError ? 'error' : null }>
                 <ControlLabel>Quantity <sup>*</sup></ControlLabel>
@@ -255,16 +272,16 @@ var RentalRequestsAddDialog = React.createClass({
                 <HelpBlock>{ this.state.countError }</HelpBlock>
               </FormGroup>
             </Col>
-          }
-          { !this.props.viewOnly &&
+          )}
+          { !this.props.viewOnly && (
             <Col md={12}>
               <FormGroup>
                 <ControlLabel>Attachment(s)</ControlLabel>
                 <FormInputControl id="rentalRequestAttachments" type="text" defaultValue={ this.state.rentalRequestAttachments } updateState={ this.updateState } />
               </FormGroup>
             </Col>
-          }
-          { !this.props.viewOnly &&
+          )}
+          { !this.props.viewOnly && (
             <Col md={12}>
               <FormGroup controlId="expectedHours" validationState={ this.state.expectedHoursError ? 'error' : null }>
                 <ControlLabel>Expected Hours <sup>*</sup></ControlLabel>
@@ -272,8 +289,8 @@ var RentalRequestsAddDialog = React.createClass({
                 <HelpBlock>{ this.state.expectedHoursError }</HelpBlock>
               </FormGroup>
             </Col>
-          }
-          { !this.props.viewOnly &&
+          )}
+          { !this.props.viewOnly && (
             <Col md={12}>
               <FormGroup controlId="expectedStartDate" validationState={ this.state.expectedStartDateError ? 'error' : null }>
                 <ControlLabel>Start Date <sup>*</sup></ControlLabel>
@@ -281,8 +298,8 @@ var RentalRequestsAddDialog = React.createClass({
                 <HelpBlock>{ this.state.expectedStartDateError }</HelpBlock>
               </FormGroup>
             </Col>
-          }
-          { !this.props.viewOnly &&
+          )}
+          { !this.props.viewOnly && (
             <Col md={12}>
               <FormGroup controlId="expectedEndDate" validationState={ this.state.expectedEndDateError ? 'error' : null }>
                 <ControlLabel>End Date</ControlLabel>
@@ -290,13 +307,31 @@ var RentalRequestsAddDialog = React.createClass({
                 <HelpBlock>{ this.state.expectedEndDateError }</HelpBlock>
               </FormGroup>
             </Col>
-          }
+          )}
         </Row>
         { this.props.rentalRequest.error &&
           <Alert bsStyle="danger">{ this.props.rentalRequest.errorMessage }</Alert>
         }
-      </Form>
-    </EditDialog>;
+      </div>
+    );
+  },
+
+  render() {
+    const { loading, isSaving } = this.state;
+    const { show, onClose } = this.props;
+
+    return (
+      <FormDialog
+        id="add-rental-request"
+        title="Add Rental Request"
+        show={show}
+        isSaving={isSaving}
+        onClose={onClose}
+        onSubmit={this.formSubmitted}>
+        {loading && (<div style={{ textAlign: 'center' }}><Spinner/></div> )}
+        {!loading && this.renderForm()}
+      </FormDialog>
+    );
   },
 });
 

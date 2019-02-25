@@ -8,8 +8,15 @@ var FormInputControl = React.createClass({
   propTypes: {
     type: React.PropTypes.string,
     updateState: React.PropTypes.func,
+    autoFocus: React.PropTypes.bool,
     onChange: React.PropTypes.func,
     children: React.PropTypes.node,
+  },
+
+  componentDidMount() {
+    if (this.props.autoFocus) {
+      this.input.focus();
+    }
   },
 
   changed(e) {
@@ -41,7 +48,7 @@ var FormInputControl = React.createClass({
   render() {
     var props = _.omit(this.props, 'updateState');
 
-    return <FormControl { ...props } type={ props.type === 'float' ? 'number' : props.type } onChange={ this.changed }>
+    return <FormControl { ...props } type={ props.type === 'float' ? 'number' : props.type } onChange={ this.changed } inputRef={ ref => { this.input = ref; }}>
       { this.props.children }
     </FormControl>;
   },

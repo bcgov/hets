@@ -27,6 +27,17 @@ proxy.all('/api/roles')
 proxy.all('/api/business/owner/*')
   .redirect('https://logontest7.gov.bc.ca/clp-cgi/int/logon.cgi');
 
+// make initial app load fast
+proxy.get('/api/authentication/dev/token/*').disableAll();
+proxy.get('/api/users/current').disableAll();
+proxy.get('/api/districts').disableAll();
+proxy.get('/api/regions').disableAll();
+proxy.get('/api/serviceareas').disableAll();
+proxy.get('/api/districts/*/localAreas').disableAll();
+proxy.get('/api/districts/*/fiscalYears').disableAll();
+proxy.get('/api/permissions').disableAll();
+proxy.get('/api/userdistricts').disableAll();
+
 proxy.all('/api/*')
   .poison(poisons.latency({ min: 500, max: 2000 }))
   .poison(poisons.slowRead({ bps: 100 }));

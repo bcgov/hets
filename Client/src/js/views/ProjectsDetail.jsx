@@ -64,11 +64,12 @@ var ProjectsDetail = React.createClass({
       loading: true,
       loadingHistory: false,
 
+      showNotesDialog: false,
+      showDocumentsDialog: false,
       showEditDialog: false,
-      showContactDialog: false,
       showAddRequestDialog: false,
       showTimeEntryDialog: false,
-      showNotesDialog: false,
+      showContactDialog: false,
 
       includeCompletedRequests: false,
 
@@ -85,20 +86,20 @@ var ProjectsDetail = React.createClass({
   },
 
   componentDidMount() {
-    this.fetch();
+    this.setState({ loading: true });
+    this.fetch().finally(() => {
+      this.setState({ loading: false });
+    });
   },
 
   fetch() {
-    this.setState({ loading: true });
+    const { projectId } = this.props.params;
 
-    var projectId = this.props.params.projectId;
-    var getProjectPromise = Api.getProject(projectId);
-    var documentsPromise = Api.getProjectDocuments(projectId);
-    var getProjectNotesPromise = Api.getProjectNotes(projectId);
-
-    return Promise.all([getProjectPromise, documentsPromise, getProjectNotesPromise]).finally(() => {
-      this.setState({ loading: false });
-    });
+    return Promise.all([
+      Api.getProject(projectId),
+      Api.getProjectDocuments(projectId),
+      Api.getProjectNotes(projectId),
+    ]);
   },
 
   updateState(state, callback) {
@@ -140,13 +141,6 @@ var ProjectsDetail = React.createClass({
     this.setState({ showEditDialog: false });
   },
 
-  saveEdit(project) {
-    Api.updateProject(project).finally(() => {
-      Log.projectModified(this.props.project);
-      this.closeEditDialog();
-    });
-  },
-
   openContactDialog(contactId) {
     var contact;
     if (contactId === 0) {
@@ -166,7 +160,7 @@ var ProjectsDetail = React.createClass({
   },
 
   closeContactDialog() {
-    this.setState({ showContactDialog: false });
+    this.setState({ contact:null, showContactDialog: false });
   },
 
   deleteContact(contact) {
@@ -182,11 +176,11 @@ var ProjectsDetail = React.createClass({
     var log = isNew ? Log.projectContactAdded : Log.projectContactUpdated;
 
     Api.addProjectContact(this.props.project, contact).then(() => {
-      return log(this.props.project, this.props.contact);
-    }).finally(() => {
+      log(this.props.project, this.props.contact);
       this.fetch();
-      this.closeContactDialog();
     });
+
+    this.closeContactDialog();
   },
 
   print() {
@@ -202,16 +196,9 @@ var ProjectsDetail = React.createClass({
     store.dispatch({ type: Action.ADD_RENTAL_REQUEST_REFRESH });
   },
 
-  saveNewRequest(request) {
-    Api.addRentalRequest(request).then((response) => {
-      Log.projectRentalRequestAdded(this.props.project, response);
-
-      // Open it up
-      this.props.router.push({
-        pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ response.id }`,
-      });
-
-      return null;
+  gotoProject(projectId) {
+    this.props.router.push({
+      pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ projectId }`,
     });
   },
 
@@ -234,12 +221,14 @@ var ProjectsDetail = React.createClass({
 
 
   cancelRequest(request) {
+    store.dispatch({ type: Action.DELETE_PROJECT_RENTAL_REQUEST, requestId: request.id });
     Api.cancelRentalRequest(request.id).then(() => {
       this.fetch();
     });
   },
 
   render() {
+    const { loading } = this.state;
     var project = this.props.project;
 
     // As per business requirements:
@@ -259,36 +248,36 @@ var ProjectsDetail = React.createClass({
     return (
       <div id="projects-detail">
         <div>
-          {(() => {
-            if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
-
-            return (
-              <div className="top-container">
-                <Row id="projects-top">
-                  <Col sm={9}>
-                    <Label bsStyle={ project.isActive ? 'success' : 'danger'}>{ project.status }</Label>
-                    <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
-                    <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
-                  </Col>
-                  <Col sm={3}>
-                    <div className="pull-right">
-                      <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-                      <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
-                    </div>
-                  </Col>
-                </Row>
-                <PageHeader title="Project" subTitle={project.name}/>
-                <PageHeader title="District" subTitle={project.districtName}/>
-              </div>
-            );
-          })()}
+          <div className="top-container">
+            <Row id="projects-top">
+              <Col sm={1} style={{ padding: 7 }}>
+                <Label bsStyle={ project.isActive ? 'success' : 'danger'}>{ project.status }</Label>
+              </Col>
+              <Col sm={8}>
+                <Button title="Notes" disabled={loading} onClick={ this.showNotes }>
+                  Notes ({ loading ? ' ' : Object.keys(this.props.notes).length })
+                </Button>
+                <Button title="Documents" disabled={loading} onClick={ this.showDocuments }>
+                  Documents ({ loading ? ' ' :  Object.keys(this.props.documents).length })
+                </Button>
+              </Col>
+              <Col sm={3}>
+                <div className="pull-right">
+                  <Button onClick={ this.print } disabled={loading}><Glyphicon glyph="print" title="Print" /></Button>
+                  <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
+                </div>
+              </Col>
+            </Row>
+            <PageHeader title="Project" subTitle={loading ? '...' : project.name}/>
+            <PageHeader title="District" subTitle={loading ? '...' : project.districtName}/>
+          </div>
 
           <Row>
             <Col md={12}>
               <Well>
                 <SubHeader title="Project Information" editButtonTitle="Edit Project" onEditClicked={ this.openEditDialog }/>
                 {(() => {
-                  if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+                  if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
                   var mailto = <a href={ `mailto:${project.primaryContactEmail}` }>
                     { project.primaryContactName }
@@ -339,7 +328,7 @@ var ProjectsDetail = React.createClass({
                   <Button title="Add Request" bsSize="small" onClick={ this.openAddRequestDialog }><Glyphicon glyph="plus" /> Add</Button>
                 </SubHeader>
                 {(() => {
-                  if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+                  if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
                   if (Object.keys(combinedList).length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
 
@@ -349,7 +338,7 @@ var ProjectsDetail = React.createClass({
                         <Link
                           to={ `rental-requests/${item.id}` }
                           className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}>
-                      Request
+                          Request
                         </Link>
                       </td>
                       <td>{ item.localAreaName }</td>
@@ -438,7 +427,7 @@ var ProjectsDetail = React.createClass({
               <Well>
                 <SubHeader title="Contacts"/>
                 {(() => {
-                  if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; }
+                  if (loading ) { return <div className="spinner-container"><Spinner/></div>; }
 
                   var addContactButton = <Button title="Add Contact" onClick={ this.openContactDialog.bind(this, 0) } bsSize="small"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
 
@@ -485,53 +474,57 @@ var ProjectsDetail = React.createClass({
               </Well>
               <Well>
                 <SubHeader title="History"/>
-                { project.historyEntity &&
-                <History historyEntity={ project.historyEntity } refresh={ !this.state.loading } />
-                }
+                { project.historyEntity && (
+                  <History historyEntity={ project.historyEntity } refresh={ !loading } />
+                )}
               </Well>
             </Col>
           </Row>
         </div>
-        { this.state.showEditDialog &&
-        <ProjectsEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
-        }
-        { this.state.showContactDialog &&
-        <ContactsEditDialog
-          show={ this.state.showContactDialog }
-          contact={ this.state.contact }
-          onSave={ this.saveContact }
-          onClose={ this.closeContactDialog }/>
-        }
-        { this.state.showDocumentsDialog &&
-        <DocumentsListDialog
-          show={ this.state.showDocumentsDialog }
-          parent={ project }
-          onClose={ this.closeDocumentsDialog }/>
-        }
-        { this.state.showAddRequestDialog &&
-        <RentalRequestsAddDialog
-          show={ this.state.showAddRequestDialog }
-          onSave={ this.saveNewRequest }
-          onClose={ this.closeAddRequestDialog }
-          project={ project }/>
-        }
-        { this.state.showTimeEntryDialog &&
-        <TimeEntryDialog
-          show={ this.state.showTimeEntryDialog }
-          onClose={ this.closeTimeEntryDialog }
-          multipleEntryAllowed={ false }
-          rentalAgreementId={ this.state.rentalAgreement.id }/>
-        }
-        { this.state.showNotesDialog &&
-        <NotesDialog
-          show={ this.state.showNotesDialog }
-          onSave={ Api.addProjectNote }
-          id={ this.props.params.projectId }
-          getNotes={ Api.getProjectNotes }
-          onUpdate={ Api.updateNote }
-          onClose={ this.closeNotesDialog }
-          notes={ this.props.notes }/>
-        }
+        {this.state.showEditDialog && (
+          <ProjectsEditDialog
+            show={this.state.showEditDialog}
+            project={project}
+            onClose={this.closeEditDialog}
+            />
+        )}
+        {this.state.showNotesDialog && (
+          <NotesDialog
+            show={this.state.showNotesDialog}
+            id={this.props.params.projectId}
+            getNotes={Api.getProjectNotes}
+            onSave={Api.addProjectNote}
+            onUpdate={Api.updateNote}
+            onClose={this.closeNotesDialog}
+            notes={this.props.notes}/>
+        )}
+        {this.state.showDocumentsDialog && (
+          <DocumentsListDialog
+            show={this.state.showDocumentsDialog}
+            parent={project}
+            onClose={this.closeDocumentsDialog}/>
+        )}
+        {this.state.showAddRequestDialog && (
+          <RentalRequestsAddDialog
+            show={this.state.showAddRequestDialog}
+            project={project}
+            onClose={this.closeAddRequestDialog}
+            onProjectSaved={this.gotoProject}/>
+        )}
+        {this.state.showTimeEntryDialog && (
+          <TimeEntryDialog
+            show={this.state.showTimeEntryDialog}
+            onClose={this.closeTimeEntryDialog}
+            multipleEntryAllowed={false}
+            rentalAgreementId={this.state.rentalAgreement.id}/>
+        )}
+        {this.state.showContactDialog && (
+          <ContactsEditDialog
+            show={this.state.showContactDialog}
+            contact={this.state.contact}
+            onSave={this.saveContact}
+            onClose={this.closeContactDialog}/>
+        )}
       </div>
     );
   },

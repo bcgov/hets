@@ -912,6 +912,7 @@ export function transferEquipment(donorOwnerId, recipientOwnerId, equipment, inc
   }).catch((err) => {
     if (err.errorCode) {
       store.dispatch({ type: Action.EQUIPMENT_TRANSFER_ERROR, errorMessage: err.errorDescription });
+      throw new Error('Unable to add transfer equipment');
     } else {
       throw err;
     }
@@ -1295,6 +1296,7 @@ export function addProjectNote(projectId, note) {
   return new ApiRequest(`/projects/${ projectId }/note`).post(note).then(response => {
     var notes = normalize(response.data);
     store.dispatch({ type: Action.UPDATE_PROJECT_NOTES, notes: notes });
+    return _.values(notes);
   });
 }
 
@@ -1425,6 +1427,7 @@ export function addRentalRequest(rentalRequest, viewOnly) {
   }).catch((err) => {
     if (err.errorCode) {
       store.dispatch({ type: Action.ADD_RENTAL_REQUEST_ERROR, errorMessage: err.errorDescription });
+      throw new Error('Unable to add request');
     } else {
       throw err;
     }
@@ -2195,6 +2198,7 @@ export function getVersion() {
 ////////////////////
 
 export function deleteNote(id) {
+  store.dispatch({ type: Action.DELETE_NOTE, noteId: id });
   return new ApiRequest(`/notes/${id}/delete`).post().then(response => {
     return response;
   });
@@ -2206,14 +2210,6 @@ export function updateNote(note) {
   });
 }
 
-// Need to change getNotes to get notes by individual entity. Currently gets all notes in the system
-export function getNotes() {
-  return new ApiRequest('/notes').get().then(response => {
-    var notes = normalize(response);
-
-    store.dispatch({ type: Action.UPDATE_NOTES, notes: notes });
-  });
-}
 ////////////////////
 // Set User
 ////////////////////

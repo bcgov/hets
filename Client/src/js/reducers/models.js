@@ -189,9 +189,6 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, favourites: { ...state.favourites, data: _.omit(state.favourites.data, [ action.id ]) } };
 
     // Contacts
-    case Action.UPDATE_CONTACTS:
-      return { ...state, contacts: action.contacts };
-
     case Action.ADD_CONTACT:
       return { ...state, contact: action.contact };
 
@@ -289,6 +286,11 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.UPDATE_PROJECT_RENTAL_AGREEMENTS:
       return { ...state, projectRentalAgreements: { data: action.rentalAgreements } };
 
+    case Action.DELETE_PROJECT_RENTAL_REQUEST: {
+      const updatedList = state.project.rentalRequests.filter((rentalRequest) => rentalRequest.id !== action.requestId);
+      return { ...state, project: { ...state.project, rentalRequests: updatedList } };
+    }
+
     // case Action.UPDATE_PROJECT_RENTAL_AGREEMENTS_ERROR:
     //   return { ...state, projectRentalAgreements: { ...state.projectRentalAgreements, error: action.error } };
 
@@ -305,7 +307,8 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.RENTAL_REQUEST_REQUEST:
       return { ...state, rentalRequest: { ...state.rentalRequest, loading: true, success: false, error: false, errorMessage: '' } };
 
-    case Action.ADD_RENTAL_REQUEST: case Action.UPDATE_RENTAL_REQUEST:
+    case Action.ADD_RENTAL_REQUEST:
+    case Action.UPDATE_RENTAL_REQUEST:
       return { ...state, rentalRequest: { data: action.rentalRequest, loading: false, success: true } };
 
     case Action.ADD_RENTAL_REQUEST_ERROR:
@@ -410,8 +413,30 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, history: action.history };
 
     // Notes
-    case Action.UPDATE_NOTES:
-      return { ...state, notes: action.notes };
+    case Action.DELETE_NOTE: {
+      let notesCollectionName = null;
+
+      if (action.noteId in state.projectNotes) {
+        notesCollectionName = 'projectNotes';
+      } else if (action.noteId in state.equipmentNotes) {
+        notesCollectionName = 'equipmentNotes';
+      } else if (action.noteId in state.ownerNotes) {
+        notesCollectionName = 'ownerNotes';
+      } else if (action.noteId in state.rentalRequestNotes) {
+        notesCollectionName = 'rentalRequestNotes';
+      }
+
+      if (notesCollectionName) {
+        const notes = state[notesCollectionName];
+        const updatedNotes = _.fromPairs(Object.keys(notes).filter((noteId) => {
+          return noteId !== String(action.noteId);
+        }).map((id) => [ id, notes[id] ]));
+
+        return { ...state, [notesCollectionName]: updatedNotes };
+      }
+
+      return state;
+    }
 
     // Time Record
     case Action.DELETE_TIME_RECORD:
