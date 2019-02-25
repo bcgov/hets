@@ -13,6 +13,7 @@ import Form from '../../components/Form.jsx';
 
 import { isBlank, formatPhoneNumber } from '../../utils/string';
 
+
 var ContactsEditDialog = React.createClass({
   propTypes: {
     contact: React.PropTypes.object.isRequired,
@@ -43,10 +44,6 @@ var ContactsEditDialog = React.createClass({
       mobilePhoneNumberError: false,
       faxPhoneNumberError: false,
     };
-  },
-
-  componentDidMount() {
-    this.input.focus();
   },
 
   updateState(state, callback) {
@@ -150,23 +147,27 @@ var ContactsEditDialog = React.createClass({
     // Read-only if the user cannot edit the contact
     var isReadOnly = !this.props.contact.canEdit && this.props.contact.id !== 0;
 
-    return <EditDialog id="contacts-edit" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={ <span>
+    const dialogTitle = (
+      <span>
         <strong>Contact</strong>
         { this.state.isPrimary ?
           <Label bsStyle="success">Primary</Label> :
           <Button title="Make Primary Contact" onClick={ this.makePrimary }>Make Primary</Button>
         }
-      </span> }>
-      {(() => {
-        return <Form>
+      </span>
+    );
+
+    return (
+      <EditDialog id="contacts-edit" show={ this.props.show }
+        onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
+        title={dialogTitle}>
+        <Form>
           <Grid fluid>
             <Row>
               <Col md={12}>
                 <FormGroup controlId="givenName" validationState={ this.state.givenNameError ? 'error' : null }>
                   <ControlLabel>Given Name <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.givenName } readOnly={ isReadOnly } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
+                  <FormInputControl type="text" defaultValue={ this.state.givenName } readOnly={ isReadOnly } updateState={ this.updateState } autoFocus/>
                   <HelpBlock>{ this.state.givenNameError }</HelpBlock>
                 </FormGroup>
               </Col>
@@ -184,14 +185,14 @@ var ContactsEditDialog = React.createClass({
               </Col>
               <Col md={12}>
                 <FormGroup controlId="workPhoneNumber" validationState={ this.state.workPhoneNumberError ? 'error' : null }>
-                  <ControlLabel>Work Phone</ControlLabel>
+                  <ControlLabel>Work Phone {this.state.isPrimary && <sup>*</sup>}</ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.workPhoneNumber } placeholder="250-555-1212x123" readOnly={ isReadOnly } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.workPhoneNumberError }</HelpBlock>
                 </FormGroup>
               </Col>
               <Col md={12}>
                 <FormGroup controlId="mobilePhoneNumber" validationState={ this.state.mobilePhoneNumberError ? 'error' : null }>
-                  <ControlLabel>Cell Phone</ControlLabel>
+                  <ControlLabel>Cell Phone {this.state.isPrimary && <sup>*</sup>}</ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.mobilePhoneNumber } placeholder="250-555-1212" readOnly={ isReadOnly } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.mobilePhoneNumberError }</HelpBlock>
                 </FormGroup>
@@ -205,7 +206,7 @@ var ContactsEditDialog = React.createClass({
               </Col>
               <Col md={12}>
                 <FormGroup controlId="emailAddress" validationState={ this.state.emailAddressError ? 'error' : null }>
-                  <ControlLabel>Email</ControlLabel>
+                  <ControlLabel>Email {this.state.isPrimary && <sup>*</sup>}</ControlLabel>
                   <FormInputControl type="text" defaultValue={ this.state.emailAddress } readOnly={ isReadOnly } updateState={ this.updateState }/>
                   <HelpBlock>{ this.state.emailAddressError }</HelpBlock>
                 </FormGroup>
@@ -220,9 +221,9 @@ var ContactsEditDialog = React.createClass({
               </Col>
             </Row>
           </Grid>
-        </Form>;
-      })()}
-    </EditDialog>;
+        </Form>
+      </EditDialog>
+    );
   },
 });
 

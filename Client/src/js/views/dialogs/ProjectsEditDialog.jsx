@@ -6,10 +6,14 @@ import { Grid, Row, Col, FormGroup, HelpBlock, ControlLabel } from 'react-bootst
 
 import _ from 'lodash';
 
+import * as Action from '../../actionTypes';
 import * as Constant from '../../constants';
+import * as Api from '../../api';
+import * as Log from '../../history';
+import store from '../../store';
 
 import DropdownControl from '../../components/DropdownControl.jsx';
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import Form from '../../components/Form.jsx';
 
@@ -21,7 +25,6 @@ var ProjectsEditDialog = React.createClass({
     project: React.PropTypes.object,
     projects: React.PropTypes.object,
 
-    onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
   },
@@ -45,10 +48,6 @@ var ProjectsEditDialog = React.createClass({
       projectNameError: '',
       projectStatusCodeError: '',
     };
-  },
-
-  componentDidMount() {
-    this.input.focus();
   },
 
   updateState(state, callback) {
@@ -111,8 +110,9 @@ var ProjectsEditDialog = React.createClass({
     return valid;
   },
 
-  onSave() {
-    this.props.onSave({
+  onSubmit() {
+    const project = {
+      ...this.props.project,
       id: this.props.project.id,
       canEditStatus: this.props.project.canEditStatus,
       district: this.props.project.district,
@@ -130,113 +130,130 @@ var ProjectsEditDialog = React.createClass({
       costType: this.state.costType,
       information: this.state.projectInformation,
       concurrencyControlNumber: this.state.concurrencyControlNumber,
-    });
+    };
+
+    store.dispatch({ type: Action.UPDATE_PROJECT, project });
+
+    Log.projectModified(this.props.project);
+
+    Api.updateProject(project);
+
+    this.props.onClose();
   },
 
   render() {
+    const { isSaving } = this.state;
+    const { show, onClose } = this.props;
+
     // TODO: Restrict Information box resize
-    return <EditDialog id="projects-edit" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={<strong>Projects</strong>}>
-      <Form>
-        <Grid fluid>
-          <Row>
-            <Col xs={12}>
-              <FormGroup controlId="projectName" validationState={ this.state.projectNameError ? 'error' : null}>
-                <ControlLabel>Project Name <sup>*</sup></ControlLabel>
-                <FormInputControl type="text" value={ this.state.projectName } updateState={ this.updateState} inputRef={ ref => { this.input = ref; }}/>
-                <HelpBlock>{ this.state.projectNameError }</HelpBlock>
-              </FormGroup>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={6}>
-              <FormGroup controlId="projectStatus" validationState={ this.state.projectStatusCodeError ? 'error' : null }>
-                <ControlLabel>Project Status</ControlLabel>
-                <DropdownControl id="projectStatus" title={ this.state.projectStatus } updateState={ this.updateState } disabled={ !this.props.project.canEditStatus }
-                  value={ this.state.projectStatus }
-                  items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]}
-                />
-                <HelpBlock>{ this.state.projectStatusCodeError }</HelpBlock>
-              </FormGroup>
-            </Col>
-            <Col xs={6}>
-              <FormGroup controlId="fiscalYear" validationState={ this.state.fiscalYearError ? 'error' : null }>
-                <ControlLabel>Fiscal Year <sup>*</sup></ControlLabel>
-                <DropdownControl id="fiscalYear" title={ this.state.fiscalYear } updateState={ this.updateState }
-                  items={ _.takeRight(this.props.fiscalYears, 2) }
-                />
-                <HelpBlock>{ this.state.fiscalYearError }</HelpBlock>
-              </FormGroup>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={6}>
-              <FormGroup controlId="provincialProjectNumber">
-                <ControlLabel>Provincial Project Number</ControlLabel>
-                <FormInputControl type="text" value={ this.state.provincialProjectNumber } updateState={ this.updateState } />
-              </FormGroup>
-            </Col>
-            <Col xs={6}>
-              <FormGroup controlId="responsibilityCentre">
-                <ControlLabel>Responsibility Centre</ControlLabel>
-                <FormInputControl type="text" value={ this.state.responsibilityCentre } updateState={ this.updateState } />
-              </FormGroup>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={6}>
-              <FormGroup controlId="serviceLine">
-                <ControlLabel>Service Line</ControlLabel>
-                <FormInputControl type="text" value={ this.state.serviceLine } updateState={ this.updateState } />
-              </FormGroup>
-            </Col>
-            <Col xs={6}>
-              <FormGroup controlId="stob">
-                <ControlLabel>STOB</ControlLabel>
-                <FormInputControl type="text" value={ this.state.stob } updateState={ this.updateState } />
-              </FormGroup>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={6}>
-              <FormGroup controlId="product">
-                <ControlLabel>Product</ControlLabel>
-                <FormInputControl type="text" value={ this.state.product } updateState={ this.updateState } />
-              </FormGroup>
-            </Col>
-            <Col xs={6}>
-              <FormGroup controlId="businessFunction">
-                <ControlLabel>Business Function</ControlLabel>
-                <FormInputControl type="text" value={ this.state.businessFunction } updateState={ this.updateState } />
-              </FormGroup>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={6}>
-              <FormGroup controlId="workActivity">
-                <ControlLabel>Work Activity</ControlLabel>
-                <FormInputControl type="text" value={ this.state.workActivity } updateState={ this.updateState } />
-              </FormGroup>
-            </Col>
-            <Col xs={6}>
-              <FormGroup controlId="costType">
-                <ControlLabel>Cost Type</ControlLabel>
-                <FormInputControl type="text" value={ this.state.costType } updateState={ this.updateState } />
-              </FormGroup>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={12}>
-              <FormGroup controlId="projectInformation">
-                <ControlLabel>Project Information</ControlLabel>
-                <FormInputControl type="text" componentClass="textarea" rows="5" value={ this.state.projectInformation } updateState={ this.updateState } />
-              </FormGroup>
-            </Col>
-          </Row>
-        </Grid>
-      </Form>
-    </EditDialog>;
+    return (
+      <FormDialog
+        id="projects-edit"
+        show={show}
+        title="Projects"
+        isSaving={isSaving}
+        onClose={onClose}
+        onSubmit={this.onSubmit}>
+        <Form>
+          <Grid fluid>
+            <Row>
+              <Col xs={12}>
+                <FormGroup controlId="projectName" validationState={ this.state.projectNameError ? 'error' : null}>
+                  <ControlLabel>Project Name <sup>*</sup></ControlLabel>
+                  <FormInputControl type="text" value={ this.state.projectName } updateState={ this.updateState} autoFocus/>
+                  <HelpBlock>{ this.state.projectNameError }</HelpBlock>
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={6}>
+                <FormGroup controlId="projectStatus" validationState={ this.state.projectStatusCodeError ? 'error' : null }>
+                  <ControlLabel>Project Status</ControlLabel>
+                  <DropdownControl id="projectStatus" title={ this.state.projectStatus } updateState={ this.updateState } disabled={ !this.props.project.canEditStatus }
+                    value={ this.state.projectStatus }
+                    items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]}
+                  />
+                  <HelpBlock>{ this.state.projectStatusCodeError }</HelpBlock>
+                </FormGroup>
+              </Col>
+              <Col xs={6}>
+                <FormGroup controlId="fiscalYear" validationState={ this.state.fiscalYearError ? 'error' : null }>
+                  <ControlLabel>Fiscal Year <sup>*</sup></ControlLabel>
+                  <DropdownControl id="fiscalYear" title={ this.state.fiscalYear } updateState={ this.updateState }
+                    items={ _.takeRight(this.props.fiscalYears, 2) }
+                  />
+                  <HelpBlock>{ this.state.fiscalYearError }</HelpBlock>
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={6}>
+                <FormGroup controlId="provincialProjectNumber">
+                  <ControlLabel>Provincial Project Number</ControlLabel>
+                  <FormInputControl type="text" value={ this.state.provincialProjectNumber } updateState={ this.updateState } />
+                </FormGroup>
+              </Col>
+              <Col xs={6}>
+                <FormGroup controlId="responsibilityCentre">
+                  <ControlLabel>Responsibility Centre</ControlLabel>
+                  <FormInputControl type="text" value={ this.state.responsibilityCentre } updateState={ this.updateState } />
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={6}>
+                <FormGroup controlId="serviceLine">
+                  <ControlLabel>Service Line</ControlLabel>
+                  <FormInputControl type="text" value={ this.state.serviceLine } updateState={ this.updateState } />
+                </FormGroup>
+              </Col>
+              <Col xs={6}>
+                <FormGroup controlId="stob">
+                  <ControlLabel>STOB</ControlLabel>
+                  <FormInputControl type="text" value={ this.state.stob } updateState={ this.updateState } />
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={6}>
+                <FormGroup controlId="product">
+                  <ControlLabel>Product</ControlLabel>
+                  <FormInputControl type="text" value={ this.state.product } updateState={ this.updateState } />
+                </FormGroup>
+              </Col>
+              <Col xs={6}>
+                <FormGroup controlId="businessFunction">
+                  <ControlLabel>Business Function</ControlLabel>
+                  <FormInputControl type="text" value={ this.state.businessFunction } updateState={ this.updateState } />
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={6}>
+                <FormGroup controlId="workActivity">
+                  <ControlLabel>Work Activity</ControlLabel>
+                  <FormInputControl type="text" value={ this.state.workActivity } updateState={ this.updateState } />
+                </FormGroup>
+              </Col>
+              <Col xs={6}>
+                <FormGroup controlId="costType">
+                  <ControlLabel>Cost Type</ControlLabel>
+                  <FormInputControl type="text" value={ this.state.costType } updateState={ this.updateState } />
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={12}>
+                <FormGroup controlId="projectInformation">
+                  <ControlLabel>Project Information</ControlLabel>
+                  <FormInputControl type="text" componentClass="textarea" rows="5" value={ this.state.projectInformation } updateState={ this.updateState } />
+                </FormGroup>
+              </Col>
+            </Row>
+          </Grid>
+        </Form>
+      </FormDialog>
+    );
   },
 });
 
