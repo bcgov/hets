@@ -80,11 +80,10 @@ namespace HetsData.Helpers
         /// </summary>        
         /// <param name="localAreaId"></param>
         /// <param name="districtEquipmentTypeId"></param>
-        /// <param name="equipmentTypeId"></param>
         /// <param name="context"></param>
         /// <param name="configuration"></param>
-        public static void CalculateSeniorityList(int localAreaId, int districtEquipmentTypeId,
-            int equipmentTypeId, DbAppContext context, IConfiguration configuration)
+        public static void CalculateSeniorityList(int localAreaId, int districtEquipmentTypeId, 
+            DbAppContext context, IConfiguration configuration)
         {
             try
             {
@@ -97,8 +96,11 @@ namespace HetsData.Helpers
                     SeniorityScoringRules scoringRules = new SeniorityScoringRules(configuration);
 
                     // get the associated equipment type
+                    HetDistrictEquipmentType districtEquipmentTypeRecord = context.HetDistrictEquipmentType
+                        .First(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId);
+
                     HetEquipmentType equipmentTypeRecord = context.HetEquipmentType
-                        .FirstOrDefault(x => x.EquipmentTypeId == equipmentTypeId);
+                        .FirstOrDefault(x => x.EquipmentTypeId == districtEquipmentTypeRecord.EquipmentTypeId);
 
                     if (equipmentTypeRecord != null)
                     {
