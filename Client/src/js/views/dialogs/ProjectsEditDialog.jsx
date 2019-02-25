@@ -6,6 +6,7 @@ import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import _ from 'lodash';
 
+import * as Api from '../../api';
 import * as Constant from '../../constants';
 
 import EditDialog from '../../components/EditDialog.jsx';
@@ -38,6 +39,8 @@ var ProjectsEditDialog = React.createClass({
   },
 
   componentDidMount() {
+    Api.getProjects();
+
     this.input.focus();
   },
 
@@ -71,7 +74,7 @@ var ProjectsEditDialog = React.createClass({
       valid = false;
     } else if (projectName !== project.projectName) {
       var nameIgnoreCase = projectName.toLowerCase().trim();
-      var existingProjects = _.reject(this.props.projects.data, { id: project.id});
+      var existingProjects = _.reject(this.props.projects, { id: project.id });
       var existingProjectName = _.find(existingProjects, existingProjectName => existingProjectName.name.toLowerCase().trim() === nameIgnoreCase);
       if (existingProjectName) {
         this.setState({ projectNameError: 'This project name already exists'});
@@ -139,7 +142,7 @@ var ProjectsEditDialog = React.createClass({
 function mapStateToProps(state) {
   return {
     project: state.models.project,
-    projects: state.models.projects,
+    projects: state.lookups.projects,
   };
 }
 
