@@ -87,7 +87,9 @@ TABLESPACE pg_default;
 ALTER TABLE public."HET_BATCH_REPORT"
     OWNER to postgres;
 
-GRANT ALL ON TABLE public."HET_BATCH_REPORT" TO postgres;
+GRANT ALL PRIVILEGES ON SEQUENCE public."HET_BATCH_REPORT_ID_seq" TO het_application_proxy;
+	
+GRANT ALL ON TABLE public."HET_BATCH_REPORT" TO het_application_proxy;
 
 CREATE INDEX "IX_HET_BATCH_REPORT_DISTRICT_ID" ON public."HET_BATCH_REPORT" USING btree ("DISTRICT_ID");
 
