@@ -88,6 +88,7 @@ namespace HetsApi.Controllers
             rate.Rate = item.Rate;
             rate.Active = true;
             rate.Overtime = false;
+            rate.Set = item.Set;
 
             // save the changes
             _context.SaveChanges();
