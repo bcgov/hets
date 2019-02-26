@@ -151,6 +151,8 @@ const DEFAULT_MODELS = {
   },
 
   business: {},
+
+  batchReports: [],
 };
 
 export default function modelsReducer(state = DEFAULT_MODELS, action) {
@@ -447,6 +449,14 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     // Businesses
     case Action.UPDATE_BUSINESS:
       return { ...state, business: action.business };
+
+    // Batch Reports
+    case Action.UPDATE_BATCH_REPORTS:
+      return { ...state, batchReports: action.batchReports };
+
+    case Action.DELETE_BATCH_REPORT: {
+      const filteredBatchReports = state.batchReports.filter((br) => br.id !== action.batchReportId);
+      return { ...state, batchReports: filteredBatchReports };}
   }
   return state;
 }
