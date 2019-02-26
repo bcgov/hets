@@ -5,6 +5,7 @@ import { FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-boo
 
 import _ from 'lodash';
 
+import CheckboxControl from '../../components/CheckboxControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import Form from '../../components/Form.jsx';
@@ -35,6 +36,7 @@ var RentalRatesEditDialog = React.createClass({
           rateType: {},
           rate: this.props.rentalRate.rate || 0.0,
           comment: this.props.rentalRate.comment || '',
+          set: this.props.rentalRate.set || false,
 
           componentNameError: '',
           rateError: '',
@@ -108,6 +110,7 @@ var RentalRatesEditDialog = React.createClass({
         rentalAgreement: { id: this.props.rentalRate.rentalAgreement.id },
         rate: this.state.forms[key].rate,
         comment: this.state.forms[key].comment,
+        set: this.state.forms[key].set,
         isIncludedInTotal: this.props.rentalRate.isIncludedInTotal,
         concurrencyControlNumber: this.state.concurrencyControlNumber,
       };
@@ -126,6 +129,7 @@ var RentalRatesEditDialog = React.createClass({
             isIncludedInTotal: this.props.rentalRate.isIncludedInTotal || false,
             rate: this.props.rentalRate.rate || 0.0,
             comment: this.props.rentalRate.comment || '',
+            set: this.props.rentalRate.set || false,
 
             rateError: '',
             commentError: '',
@@ -167,11 +171,20 @@ var RentalRatesEditDialog = React.createClass({
                     <HelpBlock>{ this.state.forms[key].rateError }</HelpBlock>
                   </FormGroup>
                 </Col>
+                {
+                  !this.props.rentalRate.isIncludedInTotal &&
+                  <Col md={2}>
+                    <FormGroup controlId={`set${key}`}>
+                      <ControlLabel>Set</ControlLabel>
+                      <CheckboxControl id={`set${key}`} checked={ this.state.forms[key].set } updateState={ this.updateState }>Set</CheckboxControl>
+                    </FormGroup>
+                  </Col>
+                }
                 <Col md={2}>
                   <ControlLabel>Period</ControlLabel>
-                  <div>{ this.props.rentalAgreement.ratePeriod }</div>
+                  <div style={ { marginTop: '10px', marginBottom: '10px' } }>{ this.state.forms[key].set ? 'Set' : this.props.rentalAgreement.ratePeriod }</div>
                 </Col>
-                <Col md={8}>
+                <Col md={ this.props.rentalRate.isIncludedInTotal ? 8 : 6 }>
                   <FormGroup controlId={`comment${key}`} validationState={ this.state.forms[key].commentError ? 'error' : null }>
                     <ControlLabel>Comment</ControlLabel>
                     <FormInputControl defaultValue={ this.state.forms[key].comment } readOnly={ isReadOnly } updateState={ this.updateState } />
