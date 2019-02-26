@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -48,6 +49,8 @@ namespace HetsApi.Controllers
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class OwnerController : Controller
     {
+        private readonly Object _thisLock = new Object();
+
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
         private readonly HttpContext _httpContext;
@@ -646,6 +649,9 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult OwnersIdVerificationPdfPost([FromBody]ReportParameters parameters)
         {
+            // get user's district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
             // get equipment status
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
             if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
@@ -655,202 +661,34 @@ namespace HetsApi.Controllers
             int? ownerStatusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
             if (ownerStatusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            _logger.LogInformation("Owner Verification Notices Pdf");
+            string pdfService = _configuration["PDF_SERVICE_NAME"];
+            string pdfUrl = _configuration.GetSection("Constants:OwnerVerificationPdfUrl").Value;
+            string reportsRoot = _configuration["ReportsPath"];
 
-            // get owner records
-            IQueryable<HetOwner> ownerRecords = _context.HetOwner.AsNoTracking()
-                .Include(x => x.PrimaryContact)
-                .Include(x => x.Business)
-                .Include(x => x.HetEquipment)
-                    .ThenInclude(a => a.HetEquipmentAttachment)
-                .Include(x => x.HetEquipment)
-                    .ThenInclude(l => l.LocalArea)
-                .Include(x => x.HetEquipment)
-                    .ThenInclude(y => y.DistrictEquipmentType)
-                .Include(x => x.LocalArea)
-                    .ThenInclude(s => s.ServiceArea)
-                        .ThenInclude(d => d.District)
-                .Where(x => x.OwnerStatusTypeId == ownerStatusId)
-                .OrderBy(x => x.LocalArea.Name).ThenBy(x => x.OrganizationName);
-
-            if (parameters.Owners?.Length > 0)
+            // get connection string
+            string connectionString = GetConnectionString();            
+            
+            // create new job!
+            HetBatchReport report = new HetBatchReport
             {
-                ownerRecords = ownerRecords.Where(x => parameters.Owners.Contains(x.OwnerId));
-            }
+                DistrictId = Convert.ToInt32(districtId),
+                StartDate = DateTime.Now,
+                Complete = false,
+                ReportName = "Owner Verification Letters"
+            };
 
-            if (parameters.LocalAreas?.Length > 0)
-            {
-                ownerRecords = ownerRecords.Where(x => parameters.LocalAreas.Contains(x.LocalAreaId));
-            }
+            _context.HetBatchReport.Add(report);
+            _context.SaveChanges();
 
-            // convert to list
-            List<HetOwner> ownerList = ownerRecords.ToList();
+            int reportId = report.ReportId;            
 
-            // strip out inactive and archived equipment
-            foreach (HetOwner owner in ownerList)
-            {
-                owner.HetEquipment = owner.HetEquipment.Where(x => x.EquipmentStatusTypeId == statusId).ToList();
-            }
+            // queue the job
+            BackgroundJob.Enqueue(() => OwnerHelper.OwnerVerificationLetters(null, 
+                reportId, parameters.LocalAreas, parameters.Owners, statusId, ownerStatusId, 
+                pdfService, pdfUrl, reportsRoot, connectionString));
 
-            if (ownerList.Any())
-            {
-                // get address and contact info
-                string address = ownerList[0].LocalArea.ServiceArea.Address;
-
-                if (!string.IsNullOrEmpty(address))
-                {
-                    address = address.Replace("  ", " ");
-                    address = address.Replace("amp;", "and");
-                    address = address.Replace("|", " | ");
-                }
-                else
-                {
-                    address = "";
-                }
-
-                string contact = $"Phone: {ownerList[0].LocalArea.ServiceArea.Phone} | Fax: {ownerList[0].LocalArea.ServiceArea.Fax}";
-
-                // generate pdf document name [unique portion only]
-                string fileName = "OwnerVerification";
-
-                // setup model for submission to the Pdf service
-                OwnerVerificationPdfViewModel model = new OwnerVerificationPdfViewModel
-                {
-                    ReportDate = DateTime.Now.ToString("yyyy-MM-dd"),
-                    Title = fileName,
-                    DistrictId = ownerList[0].LocalArea.ServiceArea.District.DistrictId,
-                    MinistryDistrictId = ownerList[0].LocalArea.ServiceArea.District.MinistryDistrictId,
-                    DistrictName = ownerList[0].LocalArea.ServiceArea.District.Name,
-                    DistrictAddress = address,
-                    DistrictContact = contact,
-                    LocalAreaName = ownerList[0].LocalArea.Name,
-                    Owners = new List<HetOwner>()
-                };
-
-                // add owner records - must verify district ids too
-                foreach (HetOwner owner in ownerRecords)
-                {
-                    if (owner.LocalArea.ServiceArea.District == null ||
-                        owner.LocalArea.ServiceArea.District.DistrictId != model.DistrictId)
-                    {
-                        // missing district - data error [HETS-16]
-                        return new BadRequestObjectResult(new HetsResponse("HETS-16", ErrorViewModel.GetDescription("HETS-16", _configuration)));
-                    }
-
-                    owner.ReportDate = model.ReportDate;
-                    owner.Title = model.Title;
-                    owner.DistrictId = model.DistrictId;
-                    owner.MinistryDistrictId = model.MinistryDistrictId;
-                    owner.DistrictName = model.DistrictName;
-                    owner.DistrictAddress = model.DistrictAddress;
-                    owner.DistrictContact = model.DistrictContact;
-                    owner.LocalAreaName = model.LocalAreaName;
-
-                    if (!string.IsNullOrEmpty(owner.SharedKey))
-                    {
-                        owner.SharedKeyHeader = "Secret Key: ";
-                    }
-                    else
-                    {
-                        //"Business Name: label and value instead"
-                        owner.SharedKeyHeader = "Business Name: ";
-
-                        if (owner.Business != null && !string.IsNullOrEmpty(owner.Business.BceidLegalName))
-                        {
-                            owner.SharedKeyHeader = "Business Name: " + owner.Business.BceidLegalName;
-                        }
-                    }
-
-                    model.Owners.Add(owner);
-                }
-
-                // setup payload
-                string payload = JsonConvert.SerializeObject(model, new JsonSerializerSettings
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                    Formatting = Formatting.Indented,
-                    DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                    DateTimeZoneHandling = DateTimeZoneHandling.Utc
-                });
-
-                _logger.LogInformation("Owner Verification Notices Pdf - Payload Length: {0}", payload.Length);
-
-                // pass the request on to the Pdf Micro Service
-                string pdfHost = _configuration["PDF_SERVICE_NAME"];
-                string pdfUrl = _configuration.GetSection("Constants:OwnerVerificationPdfUrl").Value;
-                string targetUrl = pdfHost + pdfUrl;
-
-                targetUrl = targetUrl + "/" + fileName;
-
-                _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Service Url: {0}", targetUrl);
-
-                // call the MicroService
-                try
-                {
-                    HttpClient client = new HttpClient();
-                    StringContent stringContent = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-
-                    _logger.LogInformation("Owner Verification Notices Pdf - Calling HETS Pdf Service");
-                    HttpResponseMessage response = client.PostAsync(targetUrl, stringContent).Result;
-
-                    // success
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Service Response: OK");
-
-                        var pdfResponseBytes = GetPdf(response);
-
-                        // convert to string and log
-                        string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
-
-                        fileName = fileName + $"-{DateTime.Now:yyyy-MM-dd-H-mm}" + ".pdf";
-
-                        _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Filename: {0}", fileName);
-                        _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Size: {0}", pdfResponse.Length);
-
-                        // return content
-                        FileContentResult result = new FileContentResult(pdfResponseBytes, "application/pdf")
-                        {
-                            FileDownloadName = fileName
-                        };
-
-                        Response.Headers.Add("Content-Disposition", "inline; filename=" + fileName);
-
-                        return result;
-                    }
-
-                    _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Service Response: {0}", response.StatusCode);
-                }
-                catch (Exception ex)
-                {
-                    Debug.Write("Error generating pdf: " + ex.Message);
-                    return new BadRequestObjectResult(new HetsResponse("HETS-15", ErrorViewModel.GetDescription("HETS-15", _configuration)));
-                }
-
-                // problem occured
-                return new BadRequestObjectResult(new HetsResponse("HETS-15", ErrorViewModel.GetDescription("HETS-15", _configuration)));
-            }
-
-            // record not found
-            return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        private static byte[] GetPdf(HttpResponseMessage response)
-        {
-            try
-            {
-                var pdfResponseBytes = response.Content.ReadAsByteArrayAsync();
-                pdfResponseBytes.Wait();
-
-                return pdfResponseBytes.Result;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
+            return new ObjectResult(report);
+        }        
 
         #endregion
 
@@ -1012,6 +850,22 @@ namespace HetsApi.Controllers
 
             // record not found
             return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        private static byte[] GetPdf(HttpResponseMessage response)
+        {
+            try
+            {
+                var pdfResponseBytes = response.Content.ReadAsByteArrayAsync();
+                pdfResponseBytes.Wait();
+
+                return pdfResponseBytes.Result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         #endregion
@@ -1995,6 +1849,41 @@ namespace HetsApi.Controllers
 
             // return to the client
             return new ObjectResult(new HetsResponse(result));
+        }
+
+        #endregion
+
+        #region Get Database Connection String
+
+        /// <summary>
+        /// Retrieve database connection string
+        /// </summary>
+        /// <returns></returns>
+        private string GetConnectionString()
+        {
+            string connectionString;
+
+            lock (_thisLock)
+            {
+                string host = _configuration["DATABASE_SERVICE_NAME"];
+                string username = _configuration["POSTGRESQL_USER"];
+                string password = _configuration["POSTGRESQL_PASSWORD"];
+                string database = _configuration["POSTGRESQL_DATABASE"];
+
+                if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) ||
+                    string.IsNullOrEmpty(database))
+                {
+                    // When things get cleaned up properly, this is the only call we'll have to make.
+                    connectionString = _configuration.GetConnectionString("HETS");
+                }
+                else
+                {
+                    // Environment variables override all other settings; same behaviour as the configuration provider when things get cleaned up.
+                    connectionString = $"Host={host};Username={username};Password={password};Database={database};";
+                }
+            }
+
+            return connectionString;
         }
 
         #endregion

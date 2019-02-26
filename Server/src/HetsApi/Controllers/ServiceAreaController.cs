@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
-using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Model;
