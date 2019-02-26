@@ -689,6 +689,7 @@ namespace HetsApi.Controllers
                 rate.Active = true;
                 rate.IsIncludedInTotal = item.IsIncludedInTotal;
                 rate.Rate = item.Rate;
+                rate.Set = item.Set;
             }
             else // add rate records
             {
@@ -706,7 +707,8 @@ namespace HetsApi.Controllers
                     Overtime = false,
                     Active = true,
                     IsIncludedInTotal = item.IsIncludedInTotal,
-                    Rate = item.Rate
+                    Rate = item.Rate,
+                    Set = item.Set
                 };
 
                 _context.HetRentalAgreementRate.Add(rate);
@@ -755,6 +757,7 @@ namespace HetsApi.Controllers
                     rate.Active = true;
                     rate.IsIncludedInTotal = item.IsIncludedInTotal;
                     rate.Rate = item.Rate;
+                    rate.Set = item.Set;
                 }
                 else // add rate records
                 {
@@ -768,8 +771,9 @@ namespace HetsApi.Controllers
                         Overtime = false,
                         Active = true,
                         IsIncludedInTotal = item.IsIncludedInTotal,
-                        Rate = item.Rate
-                };
+                        Rate = item.Rate,
+                        Set = item.Set
+                    };
 
                     _context.HetRentalAgreementRate.Add(rate);
                 }

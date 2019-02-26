@@ -3733,6 +3733,8 @@ namespace HetsData.Model
 
                 entity.Property(e => e.IsIncludedInTotal).HasColumnName("IS_INCLUDED_IN_TOTAL");
 
+                entity.Property(e => e.Set).HasColumnName("SET");
+
                 entity.Property(e => e.Rate).HasColumnName("RATE");
 
                 entity.Property(e => e.RentalAgreementId).HasColumnName("RENTAL_AGREEMENT_ID");
