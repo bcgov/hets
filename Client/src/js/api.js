@@ -2025,7 +2025,7 @@ function parseRolloverStatus(status) {
 }
 
 export function getRolloverStatus(districtId) {
-  return new ApiRequest(`/districts/${districtId}/rolloverStatus`).get().then(response => {
+  return new ApiRequest(`/districts/${districtId}/rolloverStatus`).get(null, {silent: true}).then(response => {
     var status = response.data;
     parseRolloverStatus(status);
     store.dispatch({ type: Action.UPDATE_ROLLOVER_STATUS_LOOKUP, status: status });

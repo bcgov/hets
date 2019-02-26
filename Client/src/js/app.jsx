@@ -41,9 +41,6 @@ hashHistory.listen(location =>  {
   redirectIfRolloverActive(location.pathname);
 });
 
-const ROLLOVER_STATUS_CHECK_FREQUENCY = 60 * 1000; // only every sixty seconds
-var lastRolloverStatusCheckTimestamp = 0;
-
 // redirects regular users to rollover page if rollover in progress
 function redirectIfRolloverActive(path) {
   var onBusinessPage = path.indexOf(Constant.BUSINESS_PORTAL_PATHNAME) === 0;
@@ -52,10 +49,6 @@ function redirectIfRolloverActive(path) {
 
   var user = store.getState().user;
   if (!user.district) { return; }
-
-  const now = Date.now();
-  if ((lastRolloverStatusCheckTimestamp + ROLLOVER_STATUS_CHECK_FREQUENCY) > Date.now()) { return; }
-  lastRolloverStatusCheckTimestamp = now;
 
   Api.getRolloverStatus(user.district.id).then(() => {
     var rolloverActive = store.getState().lookups.rolloverStatus.rolloverActive;
