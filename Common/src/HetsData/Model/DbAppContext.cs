@@ -20,6 +20,7 @@ namespace HetsData.Model
             _connectionString = connectionString;
         }
 
+        public virtual DbSet<HetBatchReport> HetBatchReport { get; set; }
         public virtual DbSet<BcbidRotationDoc> BcbidRotationDoc { get; set; }
         public virtual DbSet<HetBusiness> HetBusiness { get; set; }
         public virtual DbSet<HetBusinessUser> HetBusinessUser { get; set; }
@@ -86,6 +87,86 @@ namespace HetsData.Model
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<HetBatchReport>(entity =>
+            {
+                entity.HasKey(e => e.ReportId);
+
+                entity.ToTable("HET_BATCH_REPORT");
+
+                entity.HasIndex(e => e.ReportId);
+
+                entity.Property(e => e.ReportId)
+                    .HasColumnName("REPORT_ID");
+
+                entity.HasIndex(e => e.DistrictId);               
+
+                entity.Property(e => e.AppCreateTimestamp)
+                    .HasColumnName("APP_CREATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.AppCreateUserDirectory)
+                    .HasColumnName("APP_CREATE_USER_DIRECTORY")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.AppCreateUserGuid)
+                    .HasColumnName("APP_CREATE_USER_GUID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.AppCreateUserid)
+                    .HasColumnName("APP_CREATE_USERID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.AppLastUpdateTimestamp)
+                    .HasColumnName("APP_LAST_UPDATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.AppLastUpdateUserDirectory)
+                    .HasColumnName("APP_LAST_UPDATE_USER_DIRECTORY")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.AppLastUpdateUserGuid)
+                    .HasColumnName("APP_LAST_UPDATE_USER_GUID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.AppLastUpdateUserid)
+                    .HasColumnName("APP_LAST_UPDATE_USERID")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.ConcurrencyControlNumber).HasColumnName("CONCURRENCY_CONTROL_NUMBER");
+
+                entity.Property(e => e.DbCreateTimestamp)
+                    .HasColumnName("DB_CREATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.DbCreateUserId)
+                    .HasColumnName("DB_CREATE_USER_ID")
+                    .HasMaxLength(63);
+
+                entity.Property(e => e.DbLastUpdateTimestamp)
+                    .HasColumnName("DB_LAST_UPDATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.DbLastUpdateUserId)
+                    .HasColumnName("DB_LAST_UPDATE_USER_ID")
+                    .HasMaxLength(63);
+
+                entity.Property(e => e.ReportName)
+                    .HasColumnName("REPORT_NAME")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.ReportLink)
+                    .HasColumnName("REPORT_LINK")
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.StartDate).HasColumnName("START_DATE");
+
+                entity.Property(e => e.EndDate).HasColumnName("END_DATE");
+
+                entity.Property(e => e.Complete).HasColumnName("COMPLETE");
+
+                entity.Property(e => e.DistrictId).HasColumnName("DISTRICT_ID");
+            });
+
             modelBuilder.Entity<BcbidRotationDoc>(entity =>
             {
                 entity.HasKey(e => e.NoteId);
@@ -2481,7 +2562,7 @@ namespace HetsData.Model
                     .HasMaxLength(50);
 
                 entity.Property(e => e.IsMaintenanceContractor).HasColumnName("IS_MAINTENANCE_CONTRACTOR");
-
+                
                 entity.Property(e => e.LocalAreaId).HasColumnName("LOCAL_AREA_ID");
 
                 entity.Property(e => e.MeetsResidency).HasColumnName("MEETS_RESIDENCY");
