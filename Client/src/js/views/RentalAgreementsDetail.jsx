@@ -487,7 +487,7 @@ var RentalAgreementsDetail = React.createClass({
                     _.map(asNeededRates, obj => {
                       return <tr key={ obj.id }>
                         <td>{ formatCurrency(obj.rate) }</td>
-                        <td>{ this.props.rentalAgreement.ratePeriod }</td>
+                        <td>{ obj.set ? 'Set' : this.props.rentalAgreement.ratePeriod }</td>
                         <td>{ obj.comment }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
