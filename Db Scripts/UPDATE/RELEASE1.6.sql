@@ -63,6 +63,7 @@ CREATE TABLE public."HET_BATCH_REPORT"
 	"START_DATE" timestamp without time zone,
 	"END_DATE" timestamp without time zone,
 	"COMPLETE" boolean,
+	"DISTRICT_ID" integer NOT NULL,
     "APP_CREATE_USER_DIRECTORY" character varying(50) COLLATE pg_catalog."default",
 	"APP_CREATE_USER_GUID" character varying(255) COLLATE pg_catalog."default",
     "APP_CREATE_USERID" character varying(255) COLLATE pg_catalog."default",    
@@ -87,4 +88,10 @@ ALTER TABLE public."HET_BATCH_REPORT"
     OWNER to postgres;
 
 GRANT ALL ON TABLE public."HET_BATCH_REPORT" TO postgres;
+
+CREATE INDEX "IX_HET_BATCH_REPORT_DISTRICT_ID" ON public."HET_BATCH_REPORT" USING btree ("DISTRICT_ID");
+
+ALTER TABLE ONLY public."HET_BATCH_REPORT"
+    ADD CONSTRAINT "FK_HET_BATCH_REPORT_DISTRICT_ID" FOREIGN KEY ("DISTRICT_ID") REFERENCES public."HET_DISTRICT"("DISTRICT_ID");
+
 
