@@ -39,6 +39,7 @@ import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
 
 import { formatDateTime, today, toZuluTime } from '../utils/date';
+import { sortDir } from '../utils/array.js';
 
 /*
 
@@ -209,7 +210,7 @@ var OwnersDetail = React.createClass({
       };
     } else if (contactId) {
       // Open the contact for viewing if possible
-      contact = this.props.owner.contacts[contactId];
+      contact = this.props.owner.contacts.find((contact) => contact.id === contactId);
     }
     this.setState({
       contact: contact,
@@ -477,7 +478,7 @@ var OwnersDetail = React.createClass({
 
                 var addContactButton = <Button title="Add Contact" onClick={ this.openContactDialog.bind(this, 0) } bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
 
-                if (!owner.contacts || Object.keys(owner.contacts).length === 0) { return <Alert bsStyle="success">No contacts { addContactButton }</Alert>; }
+                if (!owner.contacts || owner.contacts.length === 0) { return <Alert bsStyle="success">No contacts { addContactButton }</Alert>; }
 
                 var contacts = _.sortBy(owner.contacts, this.state.uiContacts.sortField);
                 if (this.state.uiContacts.sortDesc) {
@@ -499,7 +500,7 @@ var OwnersDetail = React.createClass({
 
                 return <SortTable id="contact-list" sortField={ this.state.uiContacts.sortField } sortDesc={ this.state.uiContacts.sortDesc } onSort={ this.updateContactsUIState } headers={ headers }>
                   {
-                    _.map(contacts, (contact) => {
+                    contacts.map((contact) => {
                       return <tr key={ contact.id }>
                         <td>{ contact.isPrimary && <Glyphicon glyph="star" /> } { contact.name }</td>
                         <td>{ contact.phone }</td>
@@ -533,7 +534,7 @@ var OwnersDetail = React.createClass({
 
                 if (!owner.equipmentList || owner.equipmentList.length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
 
-                var equipmentList = _.orderBy(owner.equipmentList, [this.state.uiEquipment.sortField], [this.state.uiEquipment.sortDesc ? 'desc' : 'asc']);
+                var equipmentList = _.orderBy(owner.equipmentList, [this.state.uiEquipment.sortField], sortDir(this.state.uiEquipment.sortDesc));
 
                 var headers = [
                   { field: 'equipmentNumber',  title: 'ID'                   },
@@ -608,7 +609,7 @@ var OwnersDetail = React.createClass({
           contact={ this.state.contact }
           onSave={ this.saveContact }
           onClose={ this.closeContactDialog }
-          isFirstContact={!this.props.owner.contacts || Object.keys(this.props.owner.contacts).length === 0}
+          isFirstContact={!this.props.owner.contacts || this.props.owner.contacts.length === 0}
         />
       }
       { this.state.showDocumentsDialog &&
@@ -626,7 +627,7 @@ var OwnersDetail = React.createClass({
           getNotes={ Api.getOwnerNotes }
           onUpdate={ Api.updateNote }
           onClose={ this.closeNotesDialog }
-          notes={ this.props.notes }
+          notes={ _.values(this.props.notes) }
         />
       }
       { this.state.showChangeStatusDialog &&

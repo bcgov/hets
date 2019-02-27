@@ -22,6 +22,7 @@ import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
 
 import { formatDateTime } from '../utils/date';
+import { sortDir } from '../utils/array';
 
 var BusinessOwner = React.createClass({
   propTypes: {
@@ -242,7 +243,7 @@ var BusinessOwner = React.createClass({
           {(() => {
             if (!owner.equipmentList || owner.equipmentList.length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
 
-            var equipmentList = _.orderBy(owner.equipmentList, [this.state.uiEquipment.sortField], [this.state.uiEquipment.sortDesc ? 'desc' : 'asc']);
+            var equipmentList = _.orderBy(owner.equipmentList, [this.state.uiEquipment.sortField], sortDir(this.state.uiEquipment.sortDesc));
 
             var headers = [
               { field: 'equipmentNumber',  title: 'ID'                   },

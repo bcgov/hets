@@ -264,7 +264,6 @@ var ProjectsEditDialog = React.createClass({
 function mapStateToProps(state) {
   return {
     fiscalYears: state.lookups.fiscalYears,
-    project: state.models.project,
     projects: state.lookups.projects,
   };
 }

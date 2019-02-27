@@ -200,16 +200,11 @@ var RentalRequests = React.createClass({
     store.dispatch({ type: Action.ADD_RENTAL_REQUEST_REFRESH });
   },
 
-  saveNewRequest(request, viewOnly) {
-    Api.addRentalRequest(request, viewOnly).then(() => {
-      Log.rentalRequestAdded(this.props.rentalRequest.data);
+  newRentalAdded(rentalRequest) {
+    Log.rentalRequestAdded(rentalRequest);
 
-      // Open it up
-      this.props.router.push({
-        pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ this.props.rentalRequest.data.id }`,
-      });
-
-      return null;
+    this.props.router.push({
+      pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ rentalRequest.id }`,
     });
   },
 
@@ -355,9 +350,13 @@ var RentalRequests = React.createClass({
 
         return <div id="add-button-container">{ addRequestButtons }</div>;
       })()}
-      { this.state.showAddDialog &&
-        <RentalRequestsAddDialog show={ this.state.showAddDialog } viewOnly={ this.state.addViewOnly } onSave={ this.saveNewRequest } onClose={ this.closeAddDialog } />
-      }
+      { this.state.showAddDialog && (
+        <RentalRequestsAddDialog
+          show={ this.state.showAddDialog }
+          viewOnly={ this.state.addViewOnly }
+          onRentalAdded={ this.saveNewRequest }
+          onClose={ this.closeAddDialog } />
+      )}
     </div>;
   },
 });

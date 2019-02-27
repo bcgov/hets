@@ -458,7 +458,7 @@ var RentalRequestsDetail = React.createClass({
           getNotes={ Api.getRentalRequestNotes }
           onUpdate={ Api.updateNote }
           onClose={ this.closeNotesDialog }
-          notes={ this.props.notes }
+          notes={ _.values(this.props.notes) }
         />
       }
     </div>;

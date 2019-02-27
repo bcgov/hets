@@ -80,9 +80,9 @@ const DEFAULT_MODELS = {
   //   loading: false,
   //   success: false,
   // },
-  projectNotes: {},
-  projectAttachments: {},
-  projectHistory: {},
+  // projectNotes: {},
+  // projectAttachments: {},
+  // projectHistory: {},
   projectRentalAgreements: {
     data: {},
   },
@@ -280,8 +280,12 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.CLEAR_PROJECTS:
       return { ...state, projects: { data: {}, loading: false, loaded: false } };
 
-    case Action.ADD_PROJECT: case Action.UPDATE_PROJECT:
-      return { ...state, project: action.project };
+    case Action.ADD_PROJECT: case Action.UPDATE_PROJECT: {
+      const projectId = action.project.id;
+      const project = { notes: [], ...state.project[projectId], ...action.project };
+
+      return { ...state, project: { ...state.project, [projectId]: project } };
+    }
 
     // case Action.UPDATE_PROJECT_EQUIPMENT:
     //   return { ...state, projectEquipment: { data: action.projectEquipment, loading: false, success: true } };
@@ -290,15 +294,48 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     // case Action.UPDATE_PROJECT_TIME_RECORDS:
     //   return { ...state, projectTimeRecords: { data: action.projectTimeRecords, loading: false, success: true } };
 
-    case Action.UPDATE_PROJECT_NOTES:
-      return { ...state, projectNotes: action.notes };
+    case Action.UPDATE_PROJECT_NOTES: {
+      const existingProject = { ...state.project[action.projectId] || {} };
+      existingProject.notes = action.notes;
+
+      return { ...state, project: { ...state.project, [action.projectId]: existingProject } };
+    }
+
+    case Action.ADD_PROJECT_NOTE: {
+      const existingProject = { ...state.project[action.projectId] || {} };
+      const notes = (existingProject.notes || []).slice();
+      notes.push(action.note);
+
+      return { ...state, project: { ...state.project, [action.projectId]: existingProject } };
+    }
 
     case Action.UPDATE_PROJECT_RENTAL_AGREEMENTS:
       return { ...state, projectRentalAgreements: { data: action.rentalAgreements } };
 
     case Action.DELETE_PROJECT_RENTAL_REQUEST: {
-      const updatedList = state.project.rentalRequests.filter((rentalRequest) => rentalRequest.id !== action.requestId);
-      return { ...state, project: { ...state.project, rentalRequests: updatedList } };
+      const existingProject = { ...state.project[action.projectId] || {} };
+      const updatedList = existingProject.rentalRequests.filter((rentalRequest) => rentalRequest.id !== action.requestId);
+      existingProject.rentalRequests = updatedList;
+      return { ...state, project: { ...state.project, [action.projectId]: existingProject } };
+    }
+
+    case Action.UPDATE_PROJECT_CONTACT: {
+      const existingProject = { ...state.project[action.projectId] || {} };
+      const updatedList = existingProject.contacts.map((contact) => {
+        if (contact.id === action.contact.id) {
+          return action.contact;
+        }
+        return contact;
+      });
+      existingProject.contacts = updatedList;
+      return { ...state, project: { ...state.project, [action.projectId]: existingProject } };
+    }
+
+    case Action.DELETE_PROJECT_CONTACT: {
+      const existingProject = { ...state.project[action.projectId] || {} };
+      const updatedList = existingProject.contacts.filter((contact) => contact.id !== action.contactId);
+      existingProject.contacts = updatedList;
+      return { ...state, project: { ...state.project, [action.projectId]: existingProject } };
     }
 
     // XXX: Looks like this is unused
@@ -428,9 +465,7 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.DELETE_NOTE: {
       let notesCollectionName = null;
 
-      if (action.noteId in state.projectNotes) {
-        notesCollectionName = 'projectNotes';
-      } else if (action.noteId in state.equipmentNotes) {
+      if (action.noteId in state.equipmentNotes) {
         notesCollectionName = 'equipmentNotes';
       } else if (action.noteId in state.ownerNotes) {
         notesCollectionName = 'ownerNotes';

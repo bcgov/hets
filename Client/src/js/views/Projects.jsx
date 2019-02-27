@@ -26,7 +26,6 @@ var Projects = React.createClass({
   propTypes: {
     fiscalYears: React.PropTypes.array,
     projects: React.PropTypes.object,
-    project: React.PropTypes.object,
     favourites: React.PropTypes.object,
     search: React.PropTypes.object,
     ui: React.PropTypes.object,
@@ -131,11 +130,12 @@ var Projects = React.createClass({
   },
 
   saveNewProject(project) {
-    Api.addProject(project).then(() => {
-      Log.projectAdded(this.props.project);
+    Api.addProject(project).then((newProject) => {
+      this.fetch();
+      Log.projectAdded(newProject);
       // Open it up
       this.props.router.push({
-        pathname: `${ Constant.PROJECTS_PATHNAME }/${ this.props.project.id }`,
+        pathname: `${ Constant.PROJECTS_PATHNAME }/${ newProject.id }`,
       });
     });
   },
@@ -260,7 +260,6 @@ function mapStateToProps(state) {
   return {
     fiscalYears: state.lookups.fiscalYears,
     projects: state.models.projects,
-    project: state.models.project,
     favourites: state.models.favourites.project,
     search: state.search.projects,
     ui: state.ui.projects,

@@ -23,18 +23,18 @@ var NotesDialog = React.createClass({
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
-    notes: React.PropTypes.object,
+    notes: React.PropTypes.array,
   },
 
   getInitialState() {
     return {
       note: {},
-      notes: this.props.notes ? _.values(this.props.notes) : [],
+      notes: this.props.notes || [],
     };
   },
 
   componentWillReceiveProps(nextProps) {
-    if (!_.isEqual(Object.keys(this.props.notes), Object.keys(nextProps.notes))) {
+    if (!_.isEqual(_.map(this.props.notes, 'id'), _.map(nextProps.notes, 'id'))) {
       this.setState({ notes: _.values(nextProps.notes) });
     }
   },

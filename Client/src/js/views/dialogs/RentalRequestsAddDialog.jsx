@@ -10,7 +10,6 @@ import Moment from 'moment';
 
 import * as Api from '../../api';
 import * as Constant from '../../constants';
-import * as Log from '../../history';
 
 import DateControl from '../../components/DateControl.jsx';
 import FormDialog from '../../components/FormDialog.jsx';
@@ -28,7 +27,7 @@ var RentalRequestsAddDialog = React.createClass({
     districtEquipmentTypes: React.PropTypes.object,
     projects: React.PropTypes.object,
     project: React.PropTypes.object,
-    onProjectSaved: React.PropTypes.func,
+    onRentalAdded: React.PropTypes.func,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     viewOnly: React.PropTypes.bool,
@@ -184,12 +183,10 @@ var RentalRequestsAddDialog = React.createClass({
           }],
         };
 
-        Api.addRentalRequest(request).then((response) => {
+        Api.addRentalRequest(request, this.props.viewOnly).then((response) => {
           this.setState({ isSaving: false });
 
-          Log.projectRentalRequestAdded(this.props.project, response);
-
-          this.props.onProjectSaved(response.id);
+          this.props.onRentalAdded(response);
           this.props.onClose();
         }).catch(() => {
           this.setState({ isSaving: false });

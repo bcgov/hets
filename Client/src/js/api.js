@@ -703,8 +703,7 @@ function parseOwner(owner) {
   owner.documentDeleted = Log.ownerDocumentDeleted;
 
   // Add display fields for owner contacts
-  owner.contacts = normalize(owner.contacts);
-  _.map(owner.contacts, contact => { parseContact(contact, owner); });
+  owner.contacts = owner.contacts.map((contact) => parseContact(contact, owner));
 
   _.map(owner.documents, document => { parseDocument(document); });
   _.map(owner.equipmentList, equipment => { parseEquipment(equipment); });
@@ -803,7 +802,7 @@ export function addOwnerContact(owner, contact) {
     // Add display fields
     parseContact(contact, owner);
 
-    store.dispatch({ type: Action.ADD_CONTACT, contact: contact });
+    store.dispatch({ type: Action.ADD_OWNER_CONTACT, contact: contact });
   });
 }
 
@@ -943,6 +942,8 @@ function parseContact(contact, parent) {
 
   contact.canEdit = true;
   contact.canDelete = true;
+
+  return contact;
 }
 
 // XXX: Looks like this is unused
@@ -1074,8 +1075,7 @@ function parseProject(project) {
   project.documentDeleted = Log.projectDocumentDeleted;
 
   // Add display fields for contacts
-  project.contacts = normalize(project.contacts);
-  _.map(project.contacts, contact => { parseContact(contact, project); });
+  project.contacts = project.contacts.map((contact) => parseContact(contact, project));
 
   // Add display fields for rental requests and rental agreements
   _.map(project.rentalRequests, obj => { parseRentalRequest(obj); });
@@ -1211,11 +1211,16 @@ export function addProject(project) {
     parseProject(project);
 
     store.dispatch({ type: Action.ADD_PROJECT, project: project });
+
+    return project;
   });
 }
 
 export function updateProject(project) {
-  return new ApiRequest(`/projects/${ project.id }`).put(project).then(response => {
+  const projectData = _.omit(project, 'notes', 'contacts', 'historyEntity', 'primaryContact', 'rentalAgreements', 'rentalRequests');
+  projectData.projectId = project.id;
+
+  return new ApiRequest(`/projects/${ project.id }`).put(projectData).then(response => {
     var project = response.data;
 
     // Add display fields
@@ -1255,13 +1260,23 @@ export function updateProject(project) {
 // }
 
 export function addProjectContact(project, contact) {
+  const isNew = contact.id === 0;
+
+  if (!isNew) {
+    store.dispatch({ type: Action.UPDATE_PROJECT_CONTACT, projectId: project.id, contact });
+  }
+
   return new ApiRequest(`/projects/${ project.id }/contacts/${contact.isPrimary}`).post(contact).then(response => {
     var contact = response.data;
 
     // Add display fields
     parseContact(contact, project);
 
-    store.dispatch({ type: Action.ADD_CONTACT, contact: contact });
+    if (!isNew){
+      store.dispatch({ type: Action.ADD_PROJECT_CONTACT, projectId: project.id, contact });
+    }
+
+    return contact;
   });
 }
 
@@ -1303,18 +1318,14 @@ export function getProjectDocuments(projectId) {
 // }
 
 export function getProjectNotes(projectId) {
-  return new ApiRequest(`/projects/${ projectId }/notes`).get().then(response => {
-    var notes = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_PROJECT_NOTES, notes: notes });
+  return new ApiRequest(`/projects/${ projectId }/notes`).get().then((response) => {
+    store.dispatch({ type: Action.UPDATE_PROJECT_NOTES, projectId, notes: response.data });
   });
 }
 
 export function addProjectNote(projectId, note) {
-  return new ApiRequest(`/projects/${ projectId }/note`).post(note).then(response => {
-    var notes = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_PROJECT_NOTES, notes: notes });
-    return _.values(notes);
-  });
+  store.dispatch({ type: Action.ADD_PROJECT_NOTE, projectId, note });
+  return new ApiRequest(`/projects/${ projectId }/note`).post(note);
 }
 
 export function getProjectRentalAgreements(projectId) {

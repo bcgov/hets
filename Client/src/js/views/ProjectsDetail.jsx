@@ -34,27 +34,21 @@ import Spinner from '../components/Spinner.jsx';
 import TableControl from '../components/TableControl.jsx';
 import Confirm from '../components/Confirm.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
-
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
 
+import { activeProjectSelector, activeProjectIdSelector } from '../selectors/ui-selectors.js';
+
 import { formatDateTime } from '../utils/date';
+import { sortDir } from '../utils/array.js';
+import { firstLastName } from '../utils/string.js';
 
-/*
-
-TODO:
-* Print / Notes / Docs / Contacts (TBD) / History / Hired Equipment List
-
-*/
 
 var ProjectsDetail = React.createClass({
   propTypes: {
+    projectId: React.PropTypes.number,
     project: React.PropTypes.object,
-    contact: React.PropTypes.object,
-    notes: React.PropTypes.object,
-    attachments: React.PropTypes.object,
     documents: React.PropTypes.object,
-    params: React.PropTypes.object,
     uiContacts: React.PropTypes.object,
     router: React.PropTypes.object,
   },
@@ -63,6 +57,8 @@ var ProjectsDetail = React.createClass({
     return {
       loading: true,
       loadingHistory: false,
+      loadingDocuments: true,
+      loadingContacts: false,
 
       showNotesDialog: false,
       showDocumentsDialog: false,
@@ -86,20 +82,21 @@ var ProjectsDetail = React.createClass({
   },
 
   componentDidMount() {
-    this.setState({ loading: true });
-    this.fetch().finally(() => {
+    const { projectId, project } = this.props;
+
+    Api.getProjectDocuments(projectId).then(() => this.setState({ loadingDocuments: false }));
+
+    Promise.all([
+      !project ? this.fetch() : null,
+      !project ? Api.getProjectNotes(projectId) : null,
+      /* Documents need be fetched every time as they are not project specific in the store ATM */
+    ]).then(() => {
       this.setState({ loading: false });
     });
   },
 
   fetch() {
-    const { projectId } = this.props.params;
-
-    return Promise.all([
-      Api.getProject(projectId),
-      Api.getProjectDocuments(projectId),
-      Api.getProjectNotes(projectId),
-    ]);
+    return Api.getProject(this.props.projectId);
   },
 
   updateState(state, callback) {
@@ -151,7 +148,7 @@ var ProjectsDetail = React.createClass({
       };
     } else if (contactId) {
       // Open the contact for viewing if possible
-      contact = this.props.project.contacts[contactId];
+      contact = this.props.project.contacts.find((contact) => contact.id === contactId);
     }
     this.setState({
       contact: contact,
@@ -164,8 +161,9 @@ var ProjectsDetail = React.createClass({
   },
 
   deleteContact(contact) {
+    store.dispatch({ type: Action.DELETE_PROJECT_CONTACT, projectId: this.props.projectId, contactId: contact.id });
     Api.deleteContact(contact).then(() => {
-      Log.projectContactDeleted(this.props.project, this.props.contact).then(() => {
+      Log.projectContactDeleted(this.props.project, contact).then(() => {
         this.fetch();
       });
     });
@@ -175,9 +173,13 @@ var ProjectsDetail = React.createClass({
     var isNew = !contact.id;
     var log = isNew ? Log.projectContactAdded : Log.projectContactUpdated;
 
-    Api.addProjectContact(this.props.project, contact).then(() => {
-      log(this.props.project, this.props.contact);
-      this.fetch();
+    if (isNew) { this.setState({ loadingContacts: true }); }
+
+    Api.addProjectContact(this.props.project, contact).then((newContact) => {
+      log(this.props.project, newContact);
+      this.fetch().then(() => {
+        if (isNew) { this.setState({ loadingContacts: false }); }
+      });
     });
 
     this.closeContactDialog();
@@ -196,15 +198,21 @@ var ProjectsDetail = React.createClass({
     store.dispatch({ type: Action.ADD_RENTAL_REQUEST_REFRESH });
   },
 
-  gotoProject(projectId) {
+  newRentalAdded(rentalRequest) {
+    // Using set timeout to silence Bluebird error:
+    // "A promise was created in a handler at [...] but was not returned from it"
+    setTimeout(() => this.fetch());
+
+    Log.projectRentalRequestAdded(this.props.project, rentalRequest);
+
     this.props.router.push({
-      pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ projectId }`,
+      pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ rentalRequest.id }`,
     });
   },
 
   confirmEndHire(item) {
     Api.releaseRentalAgreement(item.id).then(() => {
-      Api.getProject(this.props.params.projectId);
+      Api.getProject(this.props.projectId);
       Log.projectEquipmentReleased(this.props.project, item.equipment);
     });
   },
@@ -219,17 +227,16 @@ var ProjectsDetail = React.createClass({
     this.setState({ showTimeEntryDialog: false });
   },
 
-
   cancelRequest(request) {
-    store.dispatch({ type: Action.DELETE_PROJECT_RENTAL_REQUEST, requestId: request.id });
+    store.dispatch({ type: Action.DELETE_PROJECT_RENTAL_REQUEST, projectId: this.props.projectId, requestId: request.id });
     Api.cancelRentalRequest(request.id).then(() => {
       this.fetch();
     });
   },
 
   render() {
-    const { loading } = this.state;
-    var project = this.props.project;
+    const { loading, loadingDocuments, loadingContacts } = this.state;
+    var project = this.props.project || {};
 
     // As per business requirements:
     // "Lists the records - requests then rental agreements, within the groups, list in largest-to-smallest ID order (aka reverse chronological create)."
@@ -255,10 +262,10 @@ var ProjectsDetail = React.createClass({
               </Col>
               <Col sm={8}>
                 <Button title="Notes" disabled={loading} onClick={ this.showNotes }>
-                  Notes ({ loading ? ' ' : Object.keys(this.props.notes).length })
+                  Notes ({ loading ? ' ' : project.notes.length })
                 </Button>
                 <Button title="Documents" disabled={loading} onClick={ this.showDocuments }>
-                  Documents ({ loading ? ' ' :  Object.keys(this.props.documents).length })
+                  Documents ({ loadingDocuments ? ' ' :  Object.keys(this.props.documents).length })
                 </Button>
               </Col>
               <Col sm={3}>
@@ -275,7 +282,7 @@ var ProjectsDetail = React.createClass({
           <Row>
             <Col md={12}>
               <Well>
-                <SubHeader title="Project Information" editButtonTitle="Edit Project" onEditClicked={ this.openEditDialog }/>
+                <SubHeader title="Project Information" editButtonTitle="Edit Project" editButtonDisabled={loading} onEditClicked={ this.openEditDialog }/>
                 {(() => {
                   if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -427,16 +434,13 @@ var ProjectsDetail = React.createClass({
               <Well>
                 <SubHeader title="Contacts"/>
                 {(() => {
-                  if (loading ) { return <div className="spinner-container"><Spinner/></div>; }
+                  if (loading || loadingContacts) { return <div className="spinner-container"><Spinner/></div>; }
 
                   var addContactButton = <Button title="Add Contact" onClick={ this.openContactDialog.bind(this, 0) } bsSize="small"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
 
-                  if (!project.contacts || Object.keys(project.contacts).length === 0) { return <Alert bsStyle="success">No contacts { addContactButton }</Alert>; }
+                  if (!project.contacts || project.contacts.length === 0) { return <Alert bsStyle="success">No contacts { addContactButton }</Alert>; }
 
-                  var contacts = _.sortBy(project.contacts, this.state.uiContacts.sortField);
-                  if (this.state.uiContacts.sortDesc) {
-                    _.reverse(contacts);
-                  }
+                  var contacts = _.orderBy(project.contacts, [this.state.uiContacts.sortField], sortDir(this.state.uiContacts.sortDesc));
 
                   var headers = [
                     { field: 'name',              title: 'Name'         },
@@ -452,9 +456,12 @@ var ProjectsDetail = React.createClass({
 
                   return <SortTable id="contact-list" sortField={ this.state.uiContacts.sortField } sortDesc={ this.state.uiContacts.sortDesc } onSort={ this.updateContactsUIState } headers={ headers }>
                     {
-                      _.map(contacts, (contact) => {
+                      contacts.map((contact) => {
                         return <tr key={ contact.id }>
-                          <td>{ contact.isPrimary && <Glyphicon glyph="star" /> } { contact.name } </td>
+                          <td>
+                            { contact.isPrimary && <Glyphicon glyph="star" /> }
+                            { firstLastName(contact.givenName, contact.surname) }
+                          </td>
                           <td>{ contact.phone }</td>
                           <td>{ contact.mobilePhoneNumber }</td>
                           <td>{ contact.faxPhoneNumber }</td>
@@ -485,18 +492,17 @@ var ProjectsDetail = React.createClass({
           <ProjectsEditDialog
             show={this.state.showEditDialog}
             project={project}
-            onClose={this.closeEditDialog}
-            />
+            onClose={this.closeEditDialog}/>
         )}
         {this.state.showNotesDialog && (
           <NotesDialog
             show={this.state.showNotesDialog}
-            id={this.props.params.projectId}
+            id={String(this.props.projectId)}
             getNotes={Api.getProjectNotes}
             onSave={Api.addProjectNote}
             onUpdate={Api.updateNote}
             onClose={this.closeNotesDialog}
-            notes={this.props.notes}/>
+            notes={project.notes}/>
         )}
         {this.state.showDocumentsDialog && (
           <DocumentsListDialog
@@ -509,14 +515,15 @@ var ProjectsDetail = React.createClass({
             show={this.state.showAddRequestDialog}
             project={project}
             onClose={this.closeAddRequestDialog}
-            onProjectSaved={this.gotoProject}/>
+            onRentalAdded={this.newRentalAdded}/>
         )}
         {this.state.showTimeEntryDialog && (
           <TimeEntryDialog
             show={this.state.showTimeEntryDialog}
-            onClose={this.closeTimeEntryDialog}
+            project={project}
+            rentalAgreementId={this.state.rentalAgreement.id}
             multipleEntryAllowed={false}
-            rentalAgreementId={this.state.rentalAgreement.id}/>
+            onClose={this.closeTimeEntryDialog}/>
         )}
         {this.state.showContactDialog && (
           <ContactsEditDialog
@@ -533,10 +540,8 @@ var ProjectsDetail = React.createClass({
 
 function mapStateToProps(state) {
   return {
-    project: state.models.project,
-    contact: state.models.contact,
-    notes: state.models.projectNotes,
-    attachments: state.models.projectAttachments,
+    project: activeProjectSelector(state),
+    projectId: activeProjectIdSelector(state),
     documents: state.models.documents,
     uiContacts: state.ui.projectContacts,
   };
