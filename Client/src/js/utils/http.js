@@ -112,7 +112,12 @@ export function request(path, options) {
 
     xhr.addEventListener('load', function() {
       if (xhr.status >= 400) {
-        var err = new HttpError(`API ${method} ${path} failed (${xhr.status}) "${xhr.responseText}"`, method, path, xhr.status, xhr.responseText);
+        var responseText = '';
+        try {
+          responseText = xhr.responseText;
+        } catch(e) { /* swallow */}
+
+        var err = new HttpError(`API ${method} ${path} failed (${xhr.status}) "${responseText}"`, method, path, xhr.status, responseText);
         reject(err);
       } else {
         console.log('Call complete! Path: ' + path);
