@@ -12,7 +12,6 @@ import * as Constant from '../../constants';
 import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Spinner from '../../components/Spinner.jsx';
 import Form from '../../components/Form.jsx';
 
 import { isBlank, notBlank } from '../../utils/string';
@@ -31,7 +30,6 @@ var EquipmentAddDialog = React.createClass({
 
   getInitialState() {
     return {
-      loading: false,
       localAreaId: this.props.owner.localArea.id || 0,
       equipmentTypeId: 0,
       licencePlate: '',
@@ -55,10 +53,9 @@ var EquipmentAddDialog = React.createClass({
   },
 
   componentDidMount() {
-    this.setState({ loading: true });
-    Api.getDistrictEquipmentTypes(this.props.currentUser.district.id).then(() => {
-      this.setState({ loading: false });
-    });
+    if (!this.props.districtEquipmentTypes.loaded) {
+      Api.getDistrictEquipmentTypes();
+    }
   },
 
   componentDidUpdate(prevProps, prevState) {
@@ -180,13 +177,11 @@ var EquipmentAddDialog = React.createClass({
   },
 
   render() {
-    if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
     var owner = this.props.owner;
 
     var localAreas = _.sortBy(this.props.localAreas, 'name');
 
-    var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes)
+    var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes.data)
       .filter(type => type.district.id == this.props.currentUser.district.id)
       .sortBy('districtEquipmentName')
       .value();
@@ -280,7 +275,7 @@ function mapStateToProps(state) {
     currentUser: state.user,
     owner: state.models.owner,
     localAreas: state.lookups.localAreas,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypes.data,
+    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
   };
 }
 

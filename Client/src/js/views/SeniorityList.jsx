@@ -29,7 +29,9 @@ var SeniorityList = React.createClass({
   },
 
   fetch() {
-    Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
+    if (!this.props.districtEquipmentTypes.loaded) {
+      Api.getDistrictEquipmentTypes();
+    }
   },
 
   updateState(state) {
@@ -41,7 +43,7 @@ var SeniorityList = React.createClass({
   },
 
   getFilteredEquipmentTypes(localAreaIds) {
-    return _.chain(this.props.districtEquipmentTypes)
+    return _.chain(this.props.districtEquipmentTypes.data)
       .filter(type => type.equipmentCount > 0 && localAreaIds.length === 0 || _.filter(type.localAreas, localArea => _.includes(localAreaIds, localArea.id) && localArea.equipmentCount > 0).length > 0)
       .sortBy('districtEquipmentName')
       .value();
@@ -105,7 +107,7 @@ var SeniorityList = React.createClass({
 function mapStateToProps(state) {
   return {
     currentUser: state.user,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypes.data,
+    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
     localAreas: state.lookups.localAreas,
   };
 }

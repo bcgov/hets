@@ -108,7 +108,9 @@ var Equipment = React.createClass({
   },
 
   componentDidMount() {
-    Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
+    if (!this.props.districtEquipmentTypes.loaded) {
+      Api.getDistrictEquipmentTypes();
+    }
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
