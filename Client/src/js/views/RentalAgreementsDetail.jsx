@@ -1,14 +1,9 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Link, browserHistory } from 'react-router';
 import { Well, Row, Col, Table, Alert, Button, Glyphicon, Label, ButtonGroup } from 'react-bootstrap';
-
 import _ from 'lodash';
 import Promise from 'bluebird';
-
-import { buildApiPath } from '../utils/http.js';
 
 import EquipmentRentalRatesEditDialog from './dialogs/EquipmentRentalRatesEditDialog.jsx';
 import RentalAgreementsEditDialog from './dialogs/RentalAgreementsEditDialog.jsx';
@@ -26,15 +21,18 @@ import DeleteButton from '../components/DeleteButton.jsx';
 import EditButton from '../components/EditButton.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
-
 import SubHeader from '../components/ui/SubHeader.jsx';
 
+import { activeRentalAgreementSelector, activeRentalAgreementIdSelector } from '../selectors/ui-selectors';
+
+import { buildApiPath } from '../utils/http.js';
 import { formatDateTime } from '../utils/date';
 import { formatCurrency } from '../utils/string';
 
 var RentalAgreementsDetail = React.createClass({
   propTypes: {
     rentalAgreement: React.PropTypes.object,
+    rentalAgreementId: React.PropTypes.number,
     rentalConditions: React.PropTypes.array,
     params: React.PropTypes.object,
     ui: React.PropTypes.object,
@@ -63,15 +61,19 @@ var RentalAgreementsDetail = React.createClass({
   },
 
   componentDidMount() {
-    this.fetch();
+    const { rentalAgreement, rentalConditions} = this.props;
+
+    Promise.all([
+      !rentalAgreement ? this.fetch() : null,
+      Object.keys(rentalConditions).length === 0 ? Api.getRentalConditions() : null,
+    ]).then(() => {
+      this.setState({ loading: false });
+    });
   },
 
   fetch() {
     this.setState({ loading: true });
-    var getRentalAgreementPromise = Api.getRentalAgreement(this.props.params.rentalAgreementId);
-    var getRentalConditionsPromise = Api.getRentalConditions();
-    var getProjectsPromise = Api.getProjectsCurrentFiscal();
-    return Promise.all([getRentalAgreementPromise, getRentalConditionsPromise, getProjectsPromise]).finally(() => {
+    return Api.getRentalAgreement(this.props.rentalAgreementId).then(() => {
       this.setState({ loading: false });
     });
   },
@@ -238,10 +240,7 @@ var RentalAgreementsDetail = React.createClass({
 
   generateAnotherAgreement() {
     Api.generateAnotherRentalAgreement(this.props.rentalAgreement).then(() => {
-      // navigate to the new agreement
-      this.props.router.push({
-        pathname: `${ Constant.RENTAL_AGREEMENTS_PATHNAME }/${ this.props.rentalAgreement.id }`,
-      });
+      this.fetch();
     });
   },
 
@@ -280,10 +279,8 @@ var RentalAgreementsDetail = React.createClass({
   },
 
   render() {
-    var rentalAgreement = this.props.rentalAgreement;
-    var rentalConditions = this.props.rentalConditions;
-
-    var isAssociated = rentalAgreement.rentalRequestId > 0;
+    const { rentalAgreement, rentalConditions } = this.props;
+    const isAssociated = Boolean(rentalAgreement);
 
     var buttons =
       <div className="pull-right">
@@ -438,7 +435,7 @@ var RentalAgreementsDetail = React.createClass({
                     _.map(includedRates, obj => {
                       return <tr key={ obj.id }>
                         <td>{ formatCurrency(obj.rate) }</td>
-                        <td>{ this.props.rentalAgreement.ratePeriod }</td>
+                        <td>{ rentalAgreement.ratePeriod }</td>
                         <td>{ obj.comment }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
@@ -487,7 +484,7 @@ var RentalAgreementsDetail = React.createClass({
                     _.map(asNeededRates, obj => {
                       return <tr key={ obj.id }>
                         <td>{ formatCurrency(obj.rate) }</td>
-                        <td>{ obj.set ? 'Set' : this.props.rentalAgreement.ratePeriod }</td>
+                        <td>{ obj.set ? 'Set' : rentalAgreement.ratePeriod }</td>
                         <td>{ obj.comment }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
@@ -553,7 +550,9 @@ var RentalAgreementsDetail = React.createClass({
         <Well>
           <SubHeader title="Overtime Rates and Notes/Special Instructions" editButtonTitle="Edit Overtime Rates and Notes/Special Instructions" editButtonClicked={this.openOvertimeNotesDialog}/>
           {(() => {
-            var rates = this.props.rentalAgreement.overtimeRates;
+            if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+
+            var rates = rentalAgreement.overtimeRates;
 
             return <ColDisplay id="overtime-rates" labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Overtime Rates:">
               {
@@ -565,7 +564,7 @@ var RentalAgreementsDetail = React.createClass({
               }
             </ColDisplay>;
           })()}
-          <ColDisplay id="rental-agreements-note" labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Notes/Special Instructions:">{ this.props.rentalAgreement.note }</ColDisplay>
+          <ColDisplay id="rental-agreements-note" labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Notes/Special Instructions:">{ rentalAgreement && rentalAgreement.note }</ColDisplay>
         </Well>
 
         <Row id="rental-agreements-footer">
@@ -624,7 +623,8 @@ var RentalAgreementsDetail = React.createClass({
 
 function mapStateToProps(state) {
   return {
-    rentalAgreement: state.models.rentalAgreement,
+    rentalAgreement: activeRentalAgreementSelector(state),
+    rentalAgreementId: activeRentalAgreementIdSelector(state),
     rentalConditions: state.lookups.rentalConditions.data,
   };
 }

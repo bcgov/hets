@@ -26,6 +26,7 @@ const DEFAULT_STATE = {
   districtEquipment: {},
   appError: null,
   showErrorDialog: false,
+  activeRentalAgreementId: null,
 };
 
 export default function uiReducer(state = DEFAULT_STATE, action) {
@@ -96,6 +97,12 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
     case Action.UPDATE_DISTRICT_EQUIPMENT_UI:
       return { ...state, districtEquipment: action.districtEquipment };
 
+    case Action.SET_ACTIVE_RENTAL_AGREEMENT_UI:
+      return { ...state, activeRentalAgreementId: action.rentalAgreementId };
+
+    case Action.GENERATE_ANOTHER_RENTAL_AGREEMENT:
+      return { ...state, activeRentalAgreementId: action.rentalAgreement.id };
+
     // Modals
 
     case Action.SHOW_SESSION_TIMEOUT_DIALOG:
@@ -113,3 +120,5 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
 
   return { ...state, ...newState };
 }
+
+export const uiSelector = (state) => state.ui;

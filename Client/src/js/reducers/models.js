@@ -361,13 +361,13 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     // Rental Agreements
     case Action.ADD_RENTAL_AGREEMENT:
-      return { ...state, rentalAgreement: action.rentalAgreement };
+      return { ...state, rentalAgreement: { ...state.rentalAgreement, [action.rentalAgreement.id]: action.rentalAgreement } };
 
     case Action.GENERATE_ANOTHER_RENTAL_AGREEMENT:
-      return { ...state, rentalAgreement: action.rentalAgreement };
+      return { ...state, rentalAgreement: { ...state.rentalAgreement, [action.rentalAgreement.id]: action.rentalAgreement } };
 
     case Action.UPDATE_RENTAL_AGREEMENT:
-      return { ...state, rentalAgreement: action.rentalAgreement };
+      return { ...state, rentalAgreement: { ...state.rentalAgreement, [action.rentalAgreement.id]: action.rentalAgreement } };
 
     case Action.RENTAL_AGREEMENT_TIME_RECORDS:
       return { ...state, rentalAgreementTimeRecords: action.rentalAgreementTimeRecords };
@@ -450,3 +450,5 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
   }
   return state;
 }
+
+export const modelsSelector = (state) => state.models;

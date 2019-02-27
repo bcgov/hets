@@ -12,7 +12,6 @@ import DeleteButton from '../components/DeleteButton.jsx';
 import EditButton from '../components/EditButton.jsx';
 import FormDialog from '../components/FormDialog.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
-import Form from '../components/Form.jsx';
 import RootCloseMenu from './RootCloseMenu.jsx';
 
 import { isBlank } from '../utils/string';
