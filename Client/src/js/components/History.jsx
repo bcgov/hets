@@ -52,9 +52,7 @@ var HistoryComponent = React.createClass({
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.refresh && !this.props.refresh) {
-      // Using set timeout to silence Bluebird error:
-      // "A promise was created in a handler at [...] but was not returned from it"
-      setTimeout(() => this.fetch(true));
+      this.fetch(true);
     }
   },
 

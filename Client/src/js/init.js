@@ -9,6 +9,9 @@ import './utils/shims';
 
 Promise.config({
   cancellation: true,
+  warnings: {
+    wForgottenReturn: false,
+  },
 });
 
 import App from './app.jsx';

@@ -199,9 +199,7 @@ var ProjectsDetail = React.createClass({
   },
 
   newRentalAdded(rentalRequest) {
-    // Using set timeout to silence Bluebird error:
-    // "A promise was created in a handler at [...] but was not returned from it"
-    setTimeout(() => this.fetch());
+    this.fetch();
 
     Log.projectRentalRequestAdded(this.props.project, rentalRequest);
 
