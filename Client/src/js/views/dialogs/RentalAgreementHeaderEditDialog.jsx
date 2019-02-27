@@ -38,7 +38,8 @@ var RentalAgreementHeaderEditDialog = React.createClass({
   },
 
   componentDidMount() {
-    Api.getEquipmentLite().then(() => {
+    var equipmentPromise = this.props.equipment.loaded ? Promise.resolve() : Api.getEquipmentLite();
+    equipmentPromise.then(() => {
       this.setState({ loaded: true });
     });
   },
@@ -70,7 +71,7 @@ var RentalAgreementHeaderEditDialog = React.createClass({
 
   getEquipment(equipmentCode) {
     var code = equipmentCode.toLowerCase().trim();
-    var equipment = _.find(this.props.equipment, (e) => {
+    var equipment = _.find(this.props.equipment.data, (e) => {
       return e.equipmentCode.toLowerCase().trim() === code;
     });
     return equipment;
@@ -137,7 +138,7 @@ function mapStateToProps(state) {
   return {
     rentalAgreement: state.models.rentalAgreement,
     projects: state.lookups.projectsCurrentFiscal,
-    equipment: state.lookups.equipmentLite,
+    equipment: state.lookups.equipment.lite,
   };
 }
 

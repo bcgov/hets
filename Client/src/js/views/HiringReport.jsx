@@ -74,7 +74,7 @@ var HiringReport = React.createClass({
   componentDidMount() {
     var projectsPromise = Api.getProjectsCurrentFiscal();
     var ownersPromise = Api.getOwnersLiteHires();
-    var equipmentPromise = Api.getEquipmentLiteHires();
+    var equipmentPromise = this.props.equipment.loaded ? Promise.resolve() : Api.getEquipmentHires();
 
     Promise.all([ projectsPromise, ownersPromise, equipmentPromise]);
 
@@ -238,7 +238,7 @@ var HiringReport = React.createClass({
   },
 
   getFilteredEquipment() {
-    return _.chain(this.props.equipment)
+    return _.chain(this.props.equipment.data)
       .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesOwnerFilter(x.ownerId))
       .sortBy('equipmentCode')
       .value();
@@ -306,7 +306,7 @@ function mapStateToProps(state) {
     projects: state.lookups.projectsCurrentFiscal,
     localAreas: state.lookups.localAreas,
     owners: state.lookups.ownersLite,
-    equipment: state.lookups.equipmentLite,
+    equipment: state.lookups.equipment.hires,
     hiringResponses: state.models.hiringResponses,
     favourites: state.models.favourites.hiringReport,
     search: state.search.hiringResponses,

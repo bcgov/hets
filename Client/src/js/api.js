@@ -462,19 +462,19 @@ export function getEquipmentLite() {
   });
 }
 
-export function getEquipmentLiteTs() {
+export function getEquipmentTs() {
   return new ApiRequest('/equipment/liteTs').get().then(response => {
     var equipment = normalize(response.data);
 
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_TS_LOOKUP, equipment: equipment });
   });
 }
 
-export function getEquipmentLiteHires() {
+export function getEquipmentHires() {
   return new ApiRequest('/equipment/liteHires').get().then(response => {
     var equipment = normalize(response.data);
 
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_HIRES_LOOKUP, equipment: equipment });
   });
 }
 
