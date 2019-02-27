@@ -70,16 +70,16 @@ const DEFAULT_MODELS = {
     loaded: false,
   },
   project: {},
-  projectEquipment: {
-    data: {},
-    loading: false,
-    success: false,
-  },
-  projectTimeRecords: {
-    data: {},
-    loading: false,
-    success: false,
-  },
+  // projectEquipment: {
+  //   data: {},
+  //   loading: false,
+  //   success: false,
+  // },
+  // projectTimeRecords: {
+  //   data: {},
+  //   loading: false,
+  //   success: false,
+  // },
   projectNotes: {},
   projectAttachments: {},
   projectHistory: {},
@@ -138,8 +138,9 @@ const DEFAULT_MODELS = {
   role: {},
   rolePermissions: {},
 
-  contacts: {},
-  contact: {},
+  // XXX: Looks like this is unused
+  // contacts: {},
+  // contact: {},
 
   documents: {},
   document: {},
@@ -193,14 +194,17 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, favourites: { ...state.favourites, [action.favourite.type]: _.omit(state.favourites[action.favourite.type], [ action.favourite.id ]) } };
 
     // Contacts
-    case Action.ADD_CONTACT:
-      return { ...state, contact: action.contact };
+    // XXX: Looks like this is unused
+    // case Action.ADD_CONTACT:
+    //   return { ...state, contact: action.contact };
 
-    case Action.UPDATE_CONTACT:
-      return { ...state, contact: action.contact };
+    // XXX: Looks like this is unused
+    // case Action.UPDATE_CONTACT:
+    //   return { ...state, contact: action.contact };
 
-    case Action.DELETE_CONTACT:
-      return { ...state, contact: action.contact };
+    // XXX: Looks like this is unused
+    // case Action.DELETE_CONTACT:
+    //   return { ...state, contact: action.contact };
 
     // Documents
     case Action.UPDATE_DOCUMENTS:
@@ -259,7 +263,8 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.CLEAR_OWNERS:
       return { ...state, owners: { data: {}, loading: false, loaded: false } };
 
-    case Action.ADD_OWNER: case Action.UPDATE_OWNER: case Action.DELETE_OWNER:
+    // XXX: Looks like `Action.DELETE_OWNER` is unused
+    case Action.ADD_OWNER: case Action.UPDATE_OWNER:/*  case Action.DELETE_OWNER: */
       return { ...state, owner: action.owner };
 
     case Action.UPDATE_OWNER_NOTES:
@@ -278,11 +283,12 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.ADD_PROJECT: case Action.UPDATE_PROJECT:
       return { ...state, project: action.project };
 
-    case Action.UPDATE_PROJECT_EQUIPMENT:
-      return { ...state, projectEquipment: { data: action.projectEquipment, loading: false, success: true } };
+    // case Action.UPDATE_PROJECT_EQUIPMENT:
+    //   return { ...state, projectEquipment: { data: action.projectEquipment, loading: false, success: true } };
 
-    case Action.UPDATE_PROJECT_TIME_RECORDS:
-      return { ...state, projectTimeRecords: { data: action.projectTimeRecords, loading: false, success: true } };
+    // XXX: Looks like this is unused
+    // case Action.UPDATE_PROJECT_TIME_RECORDS:
+    //   return { ...state, projectTimeRecords: { data: action.projectTimeRecords, loading: false, success: true } };
 
     case Action.UPDATE_PROJECT_NOTES:
       return { ...state, projectNotes: action.notes };
@@ -295,6 +301,7 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, project: { ...state.project, rentalRequests: updatedList } };
     }
 
+    // XXX: Looks like this is unused
     // case Action.UPDATE_PROJECT_RENTAL_AGREEMENTS_ERROR:
     //   return { ...state, projectRentalAgreements: { ...state.projectRentalAgreements, error: action.error } };
 
@@ -362,8 +369,9 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, rentalRequestRotationList: { data: action.rentalRequestRotationList, loading: false, success: true } };
 
     // Rental Agreements
-    case Action.ADD_RENTAL_AGREEMENT:
-      return { ...state, rentalAgreement: { ...state.rentalAgreement, [action.rentalAgreement.id]: action.rentalAgreement } };
+    // XXX: Looks like this is unused
+    // case Action.ADD_RENTAL_AGREEMENT:
+    //   return { ...state, rentalAgreement: { ...state.rentalAgreement, [action.rentalAgreement.id]: action.rentalAgreement } };
 
     case Action.GENERATE_ANOTHER_RENTAL_AGREEMENT:
       return { ...state, rentalAgreement: { ...state.rentalAgreement, [action.rentalAgreement.id]: action.rentalAgreement } };
