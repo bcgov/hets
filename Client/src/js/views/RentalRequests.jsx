@@ -354,7 +354,7 @@ var RentalRequests = React.createClass({
         <RentalRequestsAddDialog
           show={ this.state.showAddDialog }
           viewOnly={ this.state.addViewOnly }
-          onRentalAdded={ this.saveNewRequest }
+          onRentalAdded={ this.newRentalAdded }
           onClose={ this.closeAddDialog } />
       )}
     </div>;
