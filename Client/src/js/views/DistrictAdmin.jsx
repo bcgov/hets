@@ -54,8 +54,10 @@ var DistrictAdmin = React.createClass({
 
   componentDidMount() {
     Api.getRentalConditions();
-    Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
     Api.getEquipmentTypes();
+    if (!this.props.districtEquipmentTypes.loaded) {
+      Api.getDistrictEquipmentTypes();
+    }
   },
 
   updateEquipmentUIState(state, callback) {
@@ -134,14 +136,14 @@ var DistrictAdmin = React.createClass({
       promise = Api.updateDistrictEquipmentType;
     }
     promise(equipment).then(() => {
-      Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
+      Api.getDistrictEquipmentTypes();
       this.closeDistrictEquipmentTypeAddEditDialog();
     });
   },
 
   deleteDistrictEquipmentType(equipment) {
     Api.deleteDistrictEquipmentType(equipment).then(() => {
-      Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
+      return Api.getDistrictEquipmentTypes();
     }).catch((err) => {
       if (err.errorCode) {
         this.setState({ showDistrictEquipmentTypeErrorDialog: true, districtEquipmentTypeError: err.errorDescription });
@@ -168,7 +170,7 @@ var DistrictAdmin = React.createClass({
       <Well>
         <SubHeader title="Manage District Equipment Types"/>
         {(() => {
-          if (this.props.districtEquipmentTypes.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+          if (!this.props.districtEquipmentTypes.loaded) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
           var addDistrictEquipmentButton = <Button title="Add District Equipment" bsSize="xsmall" onClick={ this.addDistrictEquipmentType }><Glyphicon glyph="plus" />&nbsp;<strong>Add District Equipment Type</strong></Button>;
 
@@ -299,7 +301,6 @@ var DistrictAdmin = React.createClass({
     </div>;
   },
 });
-
 
 function mapStateToProps(state) {
   return {

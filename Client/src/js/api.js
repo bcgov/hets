@@ -2097,11 +2097,9 @@ export function getEquipmentTypes() {
   });
 }
 
-export function getDistrictEquipmentTypes(districtId) {
-  store.dispatch({ type: Action.DISTRICT_EQUIPMENT_TYPES_LOOKUP_REQUEST });
+export function getDistrictEquipmentTypes() {
   return new ApiRequest('/districtequipmenttypes').get().then(response => {
-    var filteredResponse = _.filter(response.data, (x) => x.district.id == districtId );
-    var districtEquipmentTypes = normalize(filteredResponse);
+    var districtEquipmentTypes = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_LOOKUP, districtEquipmentTypes: districtEquipmentTypes });
   });

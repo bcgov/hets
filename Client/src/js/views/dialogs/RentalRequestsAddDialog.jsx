@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { FormGroup, HelpBlock, ControlLabel, Alert, Row, Col } from 'react-bootstrap';
 
 import _ from 'lodash';
-import Promise from 'bluebird';
 
 import Moment from 'moment';
 
@@ -17,7 +16,6 @@ import DateControl from '../../components/DateControl.jsx';
 import FormDialog from '../../components/FormDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Spinner from '../../components/Spinner.jsx';
 
 import { isValidDate, today } from '../../utils/date';
 import { isBlank } from '../../utils/string';
@@ -59,12 +57,10 @@ var RentalRequestsAddDialog = React.createClass({
   },
 
   componentDidMount() {
-    this.setState({ loading: true });
-    var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
-    var projectsPromise = Api.getProjectsCurrentFiscal();
-    Promise.all([equipmentTypesPromise, projectsPromise]).then(() => {
-      this.setState({ loading: false });
-    });
+    if (!this.props.districtEquipmentTypes.loaded) {
+      Api.getDistrictEquipmentTypes();
+    }
+    Api.getProjectsCurrentFiscal();
   },
 
   updateState(state, callback) {
@@ -72,7 +68,7 @@ var RentalRequestsAddDialog = React.createClass({
   },
 
   updateEquipmentTypeState(state) {
-    var selectedEquipment =_.find(this.props.districtEquipmentTypes, { id: state.equipmentTypeId });
+    var selectedEquipment =_.find(this.props.districtEquipmentTypes.data, { id: state.equipmentTypeId });
     var isDumpTruck = selectedEquipment.equipmentType.isDumpTruck;
     var expectedHours = isDumpTruck ? 600 : 300;
     this.setState({ ...state, expectedHours });
@@ -203,7 +199,7 @@ var RentalRequestsAddDialog = React.createClass({
   },
 
   getFilteredEquipmentTypes(localAreaId) {
-    return _.chain(this.props.districtEquipmentTypes)
+    return _.chain(this.props.districtEquipmentTypes.data)
       .filter(type => type.equipmentCount > 0 && !localAreaId || _.filter(type.localAreas, localArea => localArea.id === localAreaId && localArea.equipmentCount > 0).length > 0)
       .sortBy('districtEquipmentName')
       .value();
@@ -317,7 +313,7 @@ var RentalRequestsAddDialog = React.createClass({
   },
 
   render() {
-    const { loading, isSaving } = this.state;
+    const { isSaving } = this.state;
     const { show, onClose } = this.props;
 
     return (
@@ -328,8 +324,7 @@ var RentalRequestsAddDialog = React.createClass({
         isSaving={isSaving}
         onClose={onClose}
         onSubmit={this.formSubmitted}>
-        {loading && (<div style={{ textAlign: 'center' }}><Spinner/></div> )}
-        {!loading && this.renderForm()}
+        { this.renderForm()}
       </FormDialog>
     );
   },
@@ -340,7 +335,7 @@ function mapStateToProps(state) {
     rentalRequest: state.models.rentalRequest,
     currentUser: state.user,
     localAreas: state.lookups.localAreas,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypes.data,
+    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
     projects: state.lookups.projectsCurrentFiscal,
   };
 }

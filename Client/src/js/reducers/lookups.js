@@ -10,7 +10,7 @@ const DEFAULT_LOOKUPS = {
   equipmentLite: {},
   districtEquipmentTypes: {
     data: {},
-    loading: false,
+    loaded: false,
   },
   fiscalYears: {},
   permissions: {},
@@ -61,11 +61,8 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
     case Action.UPDATE_EQUIPMENT_TYPES_LOOKUP:
       return { ...state, equipmentTypes: action.equipmentTypes };
 
-    case Action.DISTRICT_EQUIPMENT_TYPES_LOOKUP_REQUEST:
-      return { ...state, districtEquipmentTypes: { ...state.districtEquipmentTypes, loading: true } };
-
     case Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_LOOKUP:
-      return { ...state, districtEquipmentTypes: { data: action.districtEquipmentTypes, loading: false } };
+      return { ...state, districtEquipmentTypes: { data: action.districtEquipmentTypes, loaded: true } };
 
     case Action.UPDATE_FISCAL_YEARS_LOOKUP:
       return { ...state, fiscalYears: action.fiscalYears };
