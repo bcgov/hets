@@ -147,7 +147,7 @@ var SeniorityEditDialog = React.createClass({
               <Col>
                 <FormGroup controlId="serviceHoursLastYear" validationState={ this.state.serviceHoursLastYearError ? 'error' : null }>
                   <ControlLabel>Hours { this.props.equipment.yearMinus1 } <sup>*</sup></ControlLabel>
-                  <FormInputControl type="float" value={ this.state.serviceHoursLastYear } onChange={ this.serviceHoursChanged } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
+                  <FormInputControl type="float" value={ this.state.serviceHoursLastYear } onChange={ this.serviceHoursChanged } updateState={ this.updateState } autoFocus/>
                   <HelpBlock>{ this.state.serviceHoursLastYearError }</HelpBlock>
                 </FormGroup>
               </Col>

@@ -50,10 +50,6 @@ var OwnersEditDialog = React.createClass({
     };
   },
 
-  componentDidMount() {
-    this.input.focus();
-  },
-
   updateState(state, callback) {
     this.setState(state, callback);
   },
@@ -164,7 +160,7 @@ var OwnersEditDialog = React.createClass({
         </FormGroup>
         <FormGroup controlId="organizationName" validationState={ this.state.organizationNameError ? 'error' : null }>
           <ControlLabel>Company Name <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" value={ this.state.organizationName } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+          <FormInputControl type="text" value={ this.state.organizationName } updateState={ this.updateState } autoFocus />
           <HelpBlock>{ this.state.organizationNameError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="givenName">
