@@ -38,6 +38,7 @@ var TimeEntry = React.createClass({
 
   getInitialState() {
     return {
+      loading: true,
       showTimeEntryDialog: false,
       allowMultipleTimeEntries: false,
       rentalAgreementId: null,
@@ -81,7 +82,9 @@ var TimeEntry = React.createClass({
     var ownersPromise = Api.getOwnersLiteTs();
     var equipmentPromise = Api.getEquipmentLiteTs();
 
-    Promise.all([ projectsPromise, ownersPromise, equipmentPromise]);
+    Promise.all([ projectsPromise, ownersPromise, equipmentPromise]).then(() => {
+      this.setState({ loading: false });
+    });
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
@@ -267,6 +270,8 @@ var TimeEntry = React.createClass({
   },
 
   render() {
+    const { loading } = this.state;
+
     var resultCount = '';
     if (this.props.timeEntries.loaded) {
       resultCount = '(' + Object.keys(this.props.timeEntries.data).length + ')';
@@ -290,13 +295,13 @@ var TimeEntry = React.createClass({
           <Form onSubmit={ this.search }>
             <Col xs={9} sm={10}>
               <ButtonToolbar id="time-entry-filters">
-                <MultiDropdown id="projectIds" placeholder="Projects" fieldName="label"
+                <MultiDropdown id="projectIds" disabled={ loading } placeholder="Projects" fieldName="label"
                   items={ projects } selectedIds={ this.state.search.projectIds } updateState={ this.updateProjectSearchState } showMaxItems={ 2 } />
                 <MultiDropdown id="localAreaIds" placeholder="Local Areas"
                   items={ localAreas } selectedIds={ this.state.search.localAreaIds } updateState={ this.updateLocalAreaSearchState } showMaxItems={ 2 } />
-                <MultiDropdown id="ownerIds" placeholder="Companies" fieldName="organizationName"
+                <MultiDropdown id="ownerIds" disabled={ loading } placeholder="Companies" fieldName="organizationName"
                   items={ owners } selectedIds={ this.state.search.ownerIds } updateState={ this.updateOwnerSearchState } showMaxItems={ 2 } />
-                <MultiDropdown id="equipmentIds" placeholder="Equipment" fieldName="equipmentCode"
+                <MultiDropdown id="equipmentIds" disabled={ loading } placeholder="Equipment" fieldName="equipmentCode"
                   items={ equipment } selectedIds={ this.state.search.equipmentIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
                 <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
                 <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
