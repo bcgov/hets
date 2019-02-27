@@ -486,6 +486,10 @@ export function addEquipment(equipment) {
     parseEquipment(equipment);
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT, equipment: equipment });
+
+    getEquipmentLite();
+    getEquipmentTs();
+    getEquipmentHires();
   });
 }
 
@@ -497,6 +501,10 @@ export function updateEquipment(equipment) {
     parseEquipment(equipment);
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT, equipment: equipment });
+
+    getEquipmentLite();
+    getEquipmentTs();
+    getEquipmentHires();
   });
 }
 
@@ -906,6 +914,10 @@ export function getMailingLabelsPdf(params) {
 
 export function transferEquipment(donorOwnerId, recipientOwnerId, equipment, includeSeniority) {
   return new ApiRequest(`owners/${donorOwnerId}/equipmentTransfer/${recipientOwnerId}/${includeSeniority}`).post(equipment).then((response) => {
+    getEquipmentLite();
+    getEquipmentTs();
+    getEquipmentHires();
+
     return response;
   }).catch((err) => {
     if (err.errorCode) {
@@ -1451,6 +1463,9 @@ export function addRentalRequest(rentalRequest, viewOnly) {
     // Add display fields
     parseRentalRequest(rentalRequest);
     store.dispatch({ type: Action.ADD_RENTAL_REQUEST, rentalRequest: rentalRequest });
+
+    getEquipmentHires();
+
     return rentalRequest;
   }).catch((err) => {
     if (err.errorCode) {
@@ -1527,7 +1542,9 @@ export function addRentalRequestNote(rentalRequestId, note) {
 }
 
 export function cancelRentalRequest(rentalRequestId) {
-  return new ApiRequest(`rentalrequests/${rentalRequestId}/cancel`).get();
+  return new ApiRequest(`rentalrequests/${rentalRequestId}/cancel`).get().then(() => {
+    getEquipmentHires();
+  });
 }
 
 ////////////////////
@@ -1625,6 +1642,9 @@ export function updateRentalRequestRotationList(rentalRequestRotationList, renta
     var rentalRequestRotationList = response.data.rentalRequestRotationList;
 
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rentalRequestRotationList });
+
+    getEquipmentTs();
+    getEquipmentHires();
   });
 }
 
