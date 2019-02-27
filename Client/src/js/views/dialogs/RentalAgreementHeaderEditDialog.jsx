@@ -121,7 +121,7 @@ var RentalAgreementHeaderEditDialog = React.createClass({
               <Col md={6}>
                 <FormGroup controlId="equipmentCode" validationState={ this.state.equipmentCodeError ? 'error' : null}>
                   <ControlLabel>Equipment ID <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" value={ this.state.equipmentCode } updateState={ this.updateState } onChange={ this.validateEquipmentCodeInput } inputRef={ ref => { this.input = ref; }}/>
+                  <FormInputControl type="text" value={ this.state.equipmentCode } updateState={ this.updateState } onChange={ this.validateEquipmentCodeInput } autoFocus/>
                   <HelpBlock>{ this.state.equipmentCodeError }</HelpBlock>
                 </FormGroup>
               </Col>

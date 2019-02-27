@@ -33,10 +33,6 @@ var EquipmentRentalRatesEditDialog = React.createClass({
     };
   },
 
-  componentDidMount() {
-    this.input && this.input.focus();
-  },
-
   updateState(state, callback) {
     this.setState(state, callback);
   },
@@ -95,7 +91,7 @@ var EquipmentRentalRatesEditDialog = React.createClass({
             <Col md={4}>
               <FormGroup controlId="equipmentRate" validationState={ this.state.equipmentRateError ? 'error' : null }>
                 <ControlLabel>Pay Rate <sup>*</sup></ControlLabel>
-                <FormInputControl type="float" min={ 0 } defaultValue={ this.state.equipmentRate.toFixed(2) } readOnly={ isReadOnly } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
+                <FormInputControl type="float" min={ 0 } defaultValue={ this.state.equipmentRate.toFixed(2) } readOnly={ isReadOnly } updateState={ this.updateState } autoFocus/>
                 <HelpBlock>{ this.state.equipmentRateError }</HelpBlock>
               </FormGroup>
             </Col>

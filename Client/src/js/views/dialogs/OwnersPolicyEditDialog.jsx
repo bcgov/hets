@@ -37,10 +37,6 @@ var OwnersPolicyEditDialog = React.createClass({
     };
   },
 
-  componentDidMount() {
-    this.input.focus();
-  },
-
   updateState(state, callback) {
     this.setState(state, callback);
   },
@@ -104,7 +100,7 @@ var OwnersPolicyEditDialog = React.createClass({
           <Col xs={6}>
             <FormGroup controlId="workSafeBCPolicyNumber" validationState={ this.state.workSafeBCPolicyNumberError ? 'error' : null }>
               <ControlLabel>WCB Number <sup>*</sup></ControlLabel>
-              <FormInputControl type="text" value={ this.state.workSafeBCPolicyNumber } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+              <FormInputControl type="text" value={ this.state.workSafeBCPolicyNumber } updateState={ this.updateState } autoFocus />
               <HelpBlock>{ this.state.workSafeBCPolicyNumberError }</HelpBlock>
             </FormGroup>
           </Col>

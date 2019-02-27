@@ -1,7 +1,7 @@
 import * as Action from '../actionTypes';
 
 const DEFAULT_LOOKUPS = {
-  cities: {},
+  // cities: {},
   districts: {},
   regions: {},
   serviceAreas: {},
@@ -18,12 +18,12 @@ const DEFAULT_LOOKUPS = {
     data: [],
     loading: false,
   },
-  provincialRateTypes: [],
+  // provincialRateTypes: [],
   overtimeRateTypes: [],
-  owners: {
-    data: {},
-    loading: false,
-  },
+  // owners: {
+  //   data: {},
+  //   loading: false,
+  // },
   ownersLite: {},
   roles: {},
   projects: {},
@@ -43,8 +43,9 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
     // Loaded once at init time, as they do not change very often, and
     // certainly not within the app.
 
-    case Action.UPDATE_CITIES_LOOKUP:
-      return { ...state, cities: action.cities };
+    // XXX: Looks like this is unused
+    // case Action.UPDATE_CITIES_LOOKUP:
+    //   return { ...state, cities: action.cities };
 
     case Action.UPDATE_DISTRICTS_LOOKUP:
       return { ...state, districts: action.districts };
@@ -75,11 +76,13 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
 
     // Not typical lookups, because they can change within the app, so
     // ensure they're loaded/updated as needed.
-    case Action.OWNERS_LOOKUP_REQUEST:
-      return { ...state, owners: { ...state.owners, loading: true } };
+    // XXX: Looks like this is unused
+    // case Action.OWNERS_LOOKUP_REQUEST:
+    //   return { ...state, owners: { ...state.owners, loading: true } };
 
-    case Action.UPDATE_OWNERS_LOOKUP:
-      return { ...state, owners: { data: action.owners, loading: false } };
+    // XXX: Looks like this is unused
+    // case Action.UPDATE_OWNERS_LOOKUP:
+    //   return { ...state, owners: { data: action.owners, loading: false } };
 
     case Action.UPDATE_OWNERS_LITE_LOOKUP:
       return { ...state, ownersLite: action.owners };
@@ -105,8 +108,9 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
     case Action.RENTAL_CONDITIONS_LOOKUP_REQUEST:
       return { ...state, rentalConditions: { ...state.rentalConditions, loading: true } };
 
-    case Action.UPDATE_PROVINCIAL_RATE_TYPES_LOOKUP:
-      return { ...state, provincialRateTypes: action.provincialRateTypes };
+    // XXX: Looks like this is unused
+    // case Action.UPDATE_PROVINCIAL_RATE_TYPES_LOOKUP:
+    //   return { ...state, provincialRateTypes: action.provincialRateTypes };
 
     case Action.UPDATE_OVERTIME_RATE_TYPES_LOOKUP:
       return { ...state, overtimeRateTypes: action.overtimeRateTypes };

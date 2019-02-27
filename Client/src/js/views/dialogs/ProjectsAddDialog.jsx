@@ -43,8 +43,6 @@ var ProjectsAddDialog = React.createClass({
 
   componentDidMount() {
     Api.getProjects();
-
-    this.input.focus();
   },
 
   updateState(state, callback) {
@@ -125,7 +123,7 @@ var ProjectsAddDialog = React.createClass({
             <Col xs={12}>
               <FormGroup controlId="name" validationState={ this.state.nameError ? 'error' : null }>
                 <ControlLabel>Project Name <sup>*</sup></ControlLabel>
-                <FormInputControl type="text" value={ this.state.name } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+                <FormInputControl type="text" value={ this.state.name } updateState={ this.updateState } autoFocus />
                 <HelpBlock>{ this.state.nameError }</HelpBlock>
               </FormGroup>
             </Col>

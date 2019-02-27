@@ -494,7 +494,6 @@ function mapStateToProps(state) {
   return {
     rentalAgreement: state.models.rentalAgreement,
     rentalAgreementTimeRecords: state.models.rentalAgreementTimeRecords,
-    project: state.models.project,
     projects: state.lookups.projectsCurrentFiscal,
     equipment: state.lookups.equipmentLite,
   };

@@ -246,7 +246,7 @@ var EquipmentAddDialog = React.createClass({
         </FormGroup>
         <FormGroup controlId="serialNumber" validationState={ this.state.serialNumberError ? 'error' : null }>
           <ControlLabel>Serial Number <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" defaultValue={ this.state.serialNumber } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
+          <FormInputControl type="text" defaultValue={ this.state.serialNumber } updateState={ this.updateState } autoFocus/>
           <HelpBlock>{ this.state.serialNumberError }</HelpBlock>
         </FormGroup>
         { isDumpTruck &&

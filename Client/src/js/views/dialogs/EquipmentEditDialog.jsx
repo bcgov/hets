@@ -57,8 +57,6 @@ var EquipmentEditDialog = React.createClass({
     if (!this.props.districtEquipmentTypes.loaded) {
       Api.getDistrictEquipmentTypes();
     }
-
-    this.input.focus();
   },
 
   componentDidUpdate(prevProps, prevState) {
@@ -217,7 +215,7 @@ var EquipmentEditDialog = React.createClass({
               <Col md={12}>
                 <FormGroup controlId="make" validationState={ this.state.makeError ? 'error' : null }>
                   <ControlLabel>Make <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.make } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
+                  <FormInputControl type="text" defaultValue={ this.state.make } updateState={ this.updateState } autoFocus/>
                   <HelpBlock>{ this.state.makeError }</HelpBlock>
                 </FormGroup>
               </Col>

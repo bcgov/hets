@@ -40,10 +40,6 @@ var RentalRequestsEditDialog = React.createClass({
     };
   },
 
-  componentDidMount() {
-    this.input && this.input.focus();
-  },
-
   updateState(state, callback) {
     this.setState(state, callback);
   },
@@ -146,7 +142,7 @@ var RentalRequestsEditDialog = React.createClass({
               <Col md={12}>
                 <FormGroup controlId="equipmentCount" validationState={ this.state.equipmentCountError ? 'error' : null }>
                   <ControlLabel>Quantity <sup>*</sup></ControlLabel>
-                  <FormInputControl type="number" min={0} defaultValue={ this.state.equipmentCount } readOnly={ isReadOnly } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
+                  <FormInputControl type="number" min={0} defaultValue={ this.state.equipmentCount } readOnly={ isReadOnly } updateState={ this.updateState } autoFocus/>
                   <HelpBlock>{ this.state.equipmentCountError }</HelpBlock>
                 </FormGroup>
               </Col>

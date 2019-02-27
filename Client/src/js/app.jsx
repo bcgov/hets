@@ -89,8 +89,12 @@ function onEnterApplication() {
   //hashHistory.push('/');
 }
 
-function setActiveRentalAgreement(nextState) {
-  store.dispatch({ type: Action.SET_ACTIVE_RENTAL_AGREEMENT_UI, rentalAgreementId: nextState.params.rentalAgreementId });
+function setActiveRentalAgreementId(nextState) {
+  store.dispatch({ type: Action.SET_ACTIVE_RENTAL_AGREEMENT_ID_UI, rentalAgreementId: nextState.params.rentalAgreementId });
+}
+
+function setActiveProjectId(nextState) {
+  store.dispatch({ type: Action.SET_ACTIVE_PROJECT_ID_UI, projectId: nextState.params.projectId });
 }
 
 function keepAlive() {
@@ -123,11 +127,11 @@ const App = <Provider store={ store }>
       <Route path={ `${ Constant.OWNERS_PATHNAME }/:ownerId` } component={ OwnersDetail }/>
       <Route path={ `${ Constant.OWNERS_PATHNAME }/:ownerId/${ Constant.CONTACTS_PATHNAME }/:contactId` } component={ OwnersDetail }/>
       <Route path={ Constant.PROJECTS_PATHNAME } component={ Projects }/>
-      <Route path={ `${ Constant.PROJECTS_PATHNAME }/:projectId` } component={ ProjectsDetail }/>
-      <Route path={ `${ Constant.PROJECTS_PATHNAME }/:projectId/${ Constant.CONTACTS_PATHNAME }/:contactId` } component={ ProjectsDetail }/>
+      <Route path={ `${ Constant.PROJECTS_PATHNAME }/:projectId` } component={ ProjectsDetail } onEnter={ setActiveProjectId }/>
+      <Route path={ `${ Constant.PROJECTS_PATHNAME }/:projectId/${ Constant.CONTACTS_PATHNAME }/:contactId` } component={ ProjectsDetail } onEnter={ setActiveProjectId }/>
       <Route path={ Constant.RENTAL_REQUESTS_PATHNAME } component={ RentalRequests }/>
       <Route path={ `${ Constant.RENTAL_REQUESTS_PATHNAME }/:rentalRequestId` } component={ RentalRequestsDetail }/>
-      <Route path={ `${ Constant.RENTAL_AGREEMENTS_PATHNAME }/:rentalAgreementId` } component={ RentalAgreementsDetail } onEnter={ setActiveRentalAgreement }/>
+      <Route path={ `${ Constant.RENTAL_AGREEMENTS_PATHNAME }/:rentalAgreementId` } component={ RentalAgreementsDetail } onEnter={ setActiveRentalAgreementId }/>
       <Route path={ Constant.OVERTIME_RATES_PATHNAME } component={ OvertimeRates } />
       <Route path={ Constant.USERS_PATHNAME } component={ Users }/>
       <Route path={ `${ Constant.USERS_PATHNAME }/:userId` } component={ UsersDetail }/>

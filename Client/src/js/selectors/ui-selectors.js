@@ -14,3 +14,15 @@ export const activeRentalAgreementSelector = createSelector(
   modelsSelector,
   (ui, models) => models.rentalAgreement[ui.activeRentalAgreementId] || null
 );
+
+
+export const activeProjectIdSelector = createSelector(
+  uiSelector,
+  (ui) => parseInt(ui.activeProjectId, 10)
+);
+
+export const activeProjectSelector = createSelector(
+  uiSelector,
+  modelsSelector,
+  (ui, models) => models.project[ui.activeProjectId] || null
+);

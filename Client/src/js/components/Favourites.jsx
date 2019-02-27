@@ -34,10 +34,6 @@ var EditFavouritesDialog = React.createClass({
     };
   },
 
-  componentDidMount() {
-    this.input.focus();
-  },
-
   updateState(state, callback) {
     this.setState(state, callback);
   },
@@ -95,7 +91,7 @@ var EditFavouritesDialog = React.createClass({
         onSubmit={this.onSubmit}>
         <FormGroup controlId="name" validationState={nameError ? 'error' : null}>
           <ControlLabel>Name <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" readOnly={isSaving} defaultValue={name} updateState={this.updateState} inputRef={ref => {this.input = ref;}} />
+          <FormInputControl type="text" readOnly={isSaving} defaultValue={name} updateState={this.updateState} autoFocus />
           <HelpBlock>{nameError}</HelpBlock>
         </FormGroup>
         <CheckboxControl id="isDefault" checked={isDefault} updateState={this.updateState}>

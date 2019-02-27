@@ -9,18 +9,19 @@ var SubHeader = React.createClass({
     id: React.PropTypes.string,
     className: React.PropTypes.string,
     editButtonTitle: React.PropTypes.string,
+    editButtonDisabled: React.PropTypes.bool,
     editIcon: React.PropTypes.string,
     onEditClicked: React.PropTypes.func,
     children: React.PropTypes.node,
   },
 
   render() {
-    const { title, id, className, editButtonTitle, editIcon, children, onEditClicked } = this.props;
+    const { title, id, className, editButtonTitle, editButtonDisabled, editIcon, children, onEditClicked } = this.props;
 
     var editButton = children;
     if (onEditClicked && !children) {
       editButton = (
-        <Button title={ editButtonTitle } bsSize="small" onClick={ onEditClicked }>
+        <Button title={ editButtonTitle } disabled={editButtonDisabled} bsSize="small" onClick={ onEditClicked }>
           <Glyphicon glyph={ editIcon } />
         </Button>
       );

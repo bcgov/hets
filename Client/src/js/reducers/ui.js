@@ -97,8 +97,11 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
     case Action.UPDATE_DISTRICT_EQUIPMENT_UI:
       return { ...state, districtEquipment: action.districtEquipment };
 
-    case Action.SET_ACTIVE_RENTAL_AGREEMENT_UI:
+    case Action.SET_ACTIVE_RENTAL_AGREEMENT_ID_UI:
       return { ...state, activeRentalAgreementId: action.rentalAgreementId };
+
+    case Action.SET_ACTIVE_PROJECT_ID_UI:
+      return { ...state, activeProjectId: action.projectId };
 
     case Action.GENERATE_ANOTHER_RENTAL_AGREEMENT:
       return { ...state, activeRentalAgreementId: action.rentalAgreement.id };

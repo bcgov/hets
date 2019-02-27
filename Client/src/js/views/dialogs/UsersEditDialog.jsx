@@ -58,10 +58,6 @@ var UsersEditDialog = React.createClass({
     };
   },
 
-  componentDidMount() {
-    this.input.focus();
-  },
-
   updateState(state, callback) {
     this.setState(state, callback);
   },
@@ -168,7 +164,7 @@ var UsersEditDialog = React.createClass({
               <Col md={12}>
                 <FormGroup controlId="givenName" validationState={ this.state.givenNameError ? 'error' : null }>
                   <ControlLabel>Given Name <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.givenName } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
+                  <FormInputControl type="text" defaultValue={ this.state.givenName } updateState={ this.updateState } autoFocus/>
                   <HelpBlock>{ this.state.givenNameError }</HelpBlock>
                 </FormGroup>
               </Col>
