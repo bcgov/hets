@@ -412,9 +412,19 @@ namespace HetsApi.Controllers
 
                         // recalculate the seniority
                         EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration);
+
+                        // HETS-1119 - Add change of status comments to Notes
+                        string equipmentStatusNote = $"(Status changed to: {equipment.Status}) {equipment.StatusComment}";
+                        HetNote equipmentNote = new HetNote { EquipmentId = equipment.EquipmentId, Text = equipmentStatusNote, IsNoLongerRelevant = false };
+                        _context.HetNote.Add(equipmentNote);
                     }
                 }
             }
+
+            // HETS-1119 - Add change of status comments to Notes
+            string statusNote = $"(Status changed to: {owner.Status}) {owner.StatusComment}";
+            HetNote note = new HetNote { OwnerId = owner.OwnerId, Text = statusNote, IsNoLongerRelevant = false };
+            _context.HetNote.Add(note);
 
             // save the changes
             _context.SaveChanges();
