@@ -11,6 +11,10 @@ namespace HetsData.Model
         public const string StatusArchived = "Archived";
         public const string StatusPending = "Unapproved";
 
+        // HETS-1115 - Do not allow changing seniority affecting entities if an active request exists
+        [NotMapped]
+        public bool ActiveRentalRequest { get; set; }
+
         [NotMapped]
         public string Status { get; set; }
 
