@@ -234,6 +234,13 @@ namespace HetsApi.Controllers
             int? oldLocalArea = owner.LocalAreaId;
             bool? oldIsMaintenanceContractor = owner.IsMaintenanceContractor;
 
+            // HETS-1115 - Do not allow changing seniority affecting entities if an active request exists
+            if (OwnerHelper.RentalRequestStatus(id, _context) &&
+                oldLocalArea != item.LocalArea.LocalAreaId)
+            {
+                return new BadRequestObjectResult(new HetsResponse("HETS-40", ErrorViewModel.GetDescription("HETS-40", _configuration)));
+            }
+
             if (item.RegisteredCompanyNumber == "") item.RegisteredCompanyNumber = null;
             if (item.WorkSafeBcpolicyNumber == "") item.WorkSafeBcpolicyNumber = null;
 
@@ -341,6 +348,12 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // HETS-1115 - Do not allow changing seniority affecting entities if an active request exists
+            if (OwnerHelper.RentalRequestStatus(id, _context))
+            {
+                return new BadRequestObjectResult(new HetsResponse("HETS-40", ErrorViewModel.GetDescription("HETS-40", _configuration)));
+            }
 
             // get record
             HetOwner owner = _context.HetOwner

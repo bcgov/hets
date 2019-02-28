@@ -205,40 +205,10 @@ namespace HetsApi.Controllers
             int? originalLocalAreaId = equipment.LocalAreaId;
             int? originalDistrictEquipmentTypeId = equipment.DistrictEquipmentTypeId;
 
-            equipment.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
-            equipment.ApprovedDate = item.ApprovedDate;
-            equipment.EquipmentCode = item.EquipmentCode;
-            equipment.Make = item.Make;
-            equipment.Model = item.Model;
-            equipment.Operator = item.Operator;
-            equipment.ReceivedDate = item.ReceivedDate;
-            equipment.LicencePlate = item.LicencePlate;
-            equipment.SerialNumber = item.SerialNumber;
-            equipment.Size = item.Size;
-            equipment.YearsOfService = item.YearsOfService;
-            equipment.Year = item.Year;
-            equipment.LastVerifiedDate = item.LastVerifiedDate;
-            equipment.IsSeniorityOverridden = item.IsSeniorityOverridden;
-            equipment.SeniorityOverrideReason = item.SeniorityOverrideReason;
-            equipment.Type = item.Type;
-            equipment.ServiceHoursLastYear = item.ServiceHoursLastYear;
-            equipment.ServiceHoursTwoYearsAgo = item.ServiceHoursTwoYearsAgo;
-            equipment.ServiceHoursThreeYearsAgo = item.ServiceHoursThreeYearsAgo;
-            equipment.SeniorityEffectiveDate = item.SeniorityEffectiveDate;
-            equipment.LicencedGvw = item.LicencedGvw;
-            equipment.LegalCapacity = item.LegalCapacity;
-            equipment.PupLegalCapacity = item.PupLegalCapacity;
-            equipment.LocalAreaId = item.LocalArea.LocalAreaId;
-            equipment.DistrictEquipmentTypeId = item.DistrictEquipmentTypeId;
-
-            // save the changes
-            _context.SaveChanges();
-
             // check if we need to rework the equipment's seniority
             bool rebuildSeniority = (originalSeniorityEffectiveDate == null && item.SeniorityEffectiveDate != null) ||
                                     (originalSeniorityEffectiveDate != null && item.SeniorityEffectiveDate != null &&
                                      originalSeniorityEffectiveDate != item.SeniorityEffectiveDate);
-
 
             bool rebuildOldSeniority = false;
 
@@ -275,6 +245,42 @@ namespace HetsApi.Controllers
                 rebuildSeniority = true;
             }
 
+            // HETS-1115 - Do not allow changing seniority affecting entities if an active request exists
+            if (EquipmentHelper.RentalRequestStatus(id, _context) && rebuildSeniority)
+            {
+                return new BadRequestObjectResult(new HetsResponse("HETS-41", ErrorViewModel.GetDescription("HETS-41", _configuration)));
+            }
+
+            // update equipment record
+            equipment.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
+            equipment.ApprovedDate = item.ApprovedDate;
+            equipment.EquipmentCode = item.EquipmentCode;
+            equipment.Make = item.Make;
+            equipment.Model = item.Model;
+            equipment.Operator = item.Operator;
+            equipment.ReceivedDate = item.ReceivedDate;
+            equipment.LicencePlate = item.LicencePlate;
+            equipment.SerialNumber = item.SerialNumber;
+            equipment.Size = item.Size;
+            equipment.YearsOfService = item.YearsOfService;
+            equipment.Year = item.Year;
+            equipment.LastVerifiedDate = item.LastVerifiedDate;
+            equipment.IsSeniorityOverridden = item.IsSeniorityOverridden;
+            equipment.SeniorityOverrideReason = item.SeniorityOverrideReason;
+            equipment.Type = item.Type;
+            equipment.ServiceHoursLastYear = item.ServiceHoursLastYear;
+            equipment.ServiceHoursTwoYearsAgo = item.ServiceHoursTwoYearsAgo;
+            equipment.ServiceHoursThreeYearsAgo = item.ServiceHoursThreeYearsAgo;
+            equipment.SeniorityEffectiveDate = item.SeniorityEffectiveDate;
+            equipment.LicencedGvw = item.LicencedGvw;
+            equipment.LegalCapacity = item.LegalCapacity;
+            equipment.PupLegalCapacity = item.PupLegalCapacity;
+            equipment.LocalAreaId = item.LocalArea.LocalAreaId;
+            equipment.DistrictEquipmentTypeId = item.DistrictEquipmentTypeId;
+
+            // save the changes
+            _context.SaveChanges();
+            
             if (rebuildSeniority)
             {
                 // update new area
@@ -310,6 +316,12 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // HETS-1115 - Do not allow changing seniority affecting entities if an active request exists
+            if (EquipmentHelper.RentalRequestStatus(id, _context))
+            {
+                return new BadRequestObjectResult(new HetsResponse("HETS-41", ErrorViewModel.GetDescription("HETS-41", _configuration)));
+            }
 
             bool recalculateSeniority = false;
 
