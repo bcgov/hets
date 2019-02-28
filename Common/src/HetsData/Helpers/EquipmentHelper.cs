@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -436,8 +437,20 @@ namespace HetsData.Helpers
         /// <summary>
         /// Recalculates seniority for a specific local area and equipment type
         /// </summary>
-        public static void RecalculateSeniority(int? localAreaId, int? districtEquipmentTypeId, 
+        public static void RecalculateSeniority(int? localAreaId, int? districtEquipmentTypeId,
             DbAppContext context, IConfiguration configuration)
+        {
+            IConfigurationSection scoringRules = configuration.GetSection("SeniorityScoringRules");
+            string seniorityScoringRules = GetConfigJson(scoringRules);
+
+            RecalculateSeniority(localAreaId, districtEquipmentTypeId, context, seniorityScoringRules);
+        }
+
+        /// <summary>
+        /// Recalculates seniority for a specific local area and equipment type
+        /// </summary>
+        public static void RecalculateSeniority(int? localAreaId, int? districtEquipmentTypeId, 
+            DbAppContext context, string seniorityScoringRules)
         {
             // check if the local area exists
             bool exists = context.HetLocalArea.Any(a => a.LocalAreaId == localAreaId);
@@ -463,7 +476,55 @@ namespace HetsData.Helpers
             SeniorityListHelper.CalculateSeniorityList(localArea.LocalAreaId, 
                 districtEquipmentType.DistrictEquipmentTypeId,                 
                 context,
-                configuration);
+                seniorityScoringRules);
+        }
+
+        #endregion
+
+        #region Get Scoring Rules
+
+        private static string GetConfigJson(IConfigurationSection scoringRules)
+        {
+            string jsonString = RecurseConfigJson(scoringRules);
+
+            if (jsonString.EndsWith("},"))
+            {
+                jsonString = jsonString.Substring(0, jsonString.Length - 1);
+            }
+
+            return jsonString;
+        }
+
+        private static string RecurseConfigJson(IConfigurationSection scoringRules)
+        {
+            StringBuilder temp = new StringBuilder();
+
+            temp.Append("{");
+
+            // check for children
+            foreach (IConfigurationSection section in scoringRules.GetChildren())
+            {
+                temp.Append(@"""" + section.Key + @"""" + ":");
+
+                if (section.Value == null)
+                {
+                    temp.Append(RecurseConfigJson(section));
+                }
+                else
+                {
+                    temp.Append(@"""" + section.Value + @"""" + ",");
+                }
+            }
+
+            string jsonString = temp.ToString();
+
+            if (jsonString.EndsWith(","))
+            {
+                jsonString = jsonString.Substring(0, jsonString.Length - 1);
+            }
+
+            jsonString = jsonString + "},";
+            return jsonString;
         }
 
         #endregion

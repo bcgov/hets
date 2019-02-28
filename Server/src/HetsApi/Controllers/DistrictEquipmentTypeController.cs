@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +23,8 @@ namespace HetsApi.Controllers
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class DistrictEquipmentTypeController : Controller
     {
+        private readonly Object _thisLock = new Object();
+
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
 
@@ -236,5 +241,113 @@ namespace HetsApi.Controllers
 
             return new ObjectResult(new HetsResponse(equipmentType));
         }
+
+        /// <summary>
+        /// Merge district equipment types with the same starting acronym (e.g. "CLM - xxx")
+        /// * must be in the same district
+        /// * and be of the same equipment type
+        /// </summary>
+        [HttpPost]
+        [Route("merge")]
+        [SwaggerOperation("MergeDistrictEquipmentTypesPost")]
+        [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
+        public virtual IActionResult MergeDistrictEquipmentTypesPost()
+        {
+            string connectionString = GetConnectionString();
+
+            IConfigurationSection scoringRules = _configuration.GetSection("SeniorityScoringRules");
+            string seniorityScoringRules = GetConfigJson(scoringRules);
+
+            // queue the job
+            BackgroundJob.Enqueue(() => DistrictEquipmentTypeHelper.MergeDistrictEquipmentTypes(null,
+                seniorityScoringRules, connectionString));
+
+            // return ok
+            return new ObjectResult(new HetsResponse("Merge job added to hangfire"));
+        }
+
+        #region Get Scoring Rules
+
+        private string GetConfigJson(IConfigurationSection scoringRules)
+        {
+            string jsonString = RecurseConfigJson(scoringRules);
+
+            if (jsonString.EndsWith("},"))
+            {
+                jsonString = jsonString.Substring(0, jsonString.Length - 1);
+            }
+
+            return jsonString;
+        }
+
+        private string RecurseConfigJson(IConfigurationSection scoringRules)
+        {
+            StringBuilder temp = new StringBuilder();
+
+            temp.Append("{");
+
+            // check for children
+            foreach (IConfigurationSection section in scoringRules.GetChildren())
+            {
+                temp.Append(@"""" + section.Key + @"""" + ":");
+
+                if (section.Value == null)
+                {
+                    temp.Append(RecurseConfigJson(section));
+                }
+                else
+                {
+                    temp.Append(@"""" + section.Value + @"""" + ",");
+                }
+            }
+
+            string jsonString = temp.ToString();
+
+            if (jsonString.EndsWith(","))
+            {
+                jsonString = jsonString.Substring(0, jsonString.Length - 1);
+            }
+
+            jsonString = jsonString + "},";
+            return jsonString;
+        }
+
+        #endregion
+
+        #region Get Database Connection String
+
+        /// <summary>
+        /// Retrieve database connection string
+        /// </summary>
+        /// <returns></returns>
+        private string GetConnectionString()
+        {
+            string connectionString;
+
+            lock (_thisLock)
+            {
+                string host = _configuration["DATABASE_SERVICE_NAME"];
+                string username = _configuration["POSTGRESQL_USER"];
+                string password = _configuration["POSTGRESQL_PASSWORD"];
+                string database = _configuration["POSTGRESQL_DATABASE"];
+
+                if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) ||
+                    string.IsNullOrEmpty(database))
+                {
+                    // When things get cleaned up properly, this is the only call we'll have to make.
+                    connectionString = _configuration.GetConnectionString("HETS");
+                }
+                else
+                {
+                    // Environment variables override all other settings; same behaviour as the configuration provider when things get cleaned up.
+                    connectionString = $"Host={host};Username={username};Password={password};Database={database};";
+                }
+            }
+
+            return connectionString;
+        }
+
+        #endregion
+
     }
 }

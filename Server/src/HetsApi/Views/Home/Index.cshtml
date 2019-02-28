@@ -63,6 +63,30 @@
                 }
             });
         }
+
+        function mergeDistrictEquipmentTypes() {
+
+            // disable functions
+            $(".homeFunction").attr("disabled", true);
+
+            $.ajax({
+                url: "/api/districtEquipmentTypes/merge",
+                type: "POST",
+                timeout: 2400000, // sets timeout to 40 min
+                success: function (response) {
+                    alert(response);
+
+                    // enable functions
+                    $(".homeFunction").removeAttr("disabled");
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.responseText);
+
+                    // enable functions
+                    $(".homeFunction").removeAttr("disabled");
+                }
+            });
+        }
     </script>
 </head>
 <body>
@@ -89,6 +113,11 @@
     <div>
         <h3>Generate Owner Shared Keys</h3>
         <button class="homeFunction" onclick="generateKeys();">Generate Keys</button>
+    </div>
+
+    <div>
+        <h3>Merge District Equipment Types</h3>
+        <button class="homeFunction" onclick="mergeDistrictEquipmentTypes();">Merge</button>
     </div>
 
     @if (Model.DevelopmentEnvironment)
