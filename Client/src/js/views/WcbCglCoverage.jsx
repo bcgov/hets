@@ -37,6 +37,7 @@ var WcbCglCoverage = React.createClass({
 
   getInitialState() {
     return {
+      loading: true,
       search: {
         localAreaIds: this.props.search.localAreaIds || [],
         ownerIds: this.props.search.ownerIds || [],
@@ -75,7 +76,9 @@ var WcbCglCoverage = React.createClass({
   },
 
   componentDidMount() {
-    Api.getOwnersLite();
+    Api.getOwnersLite().then(() => {
+      this.setState({ loading: false });
+    });
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
@@ -203,6 +206,8 @@ var WcbCglCoverage = React.createClass({
   },
 
   render() {
+    const { loading } = this.state;
+
     var resultCount = '';
     if (this.props.ownersCoverage.loaded) {
       resultCount = '(' + Object.keys(this.props.ownersCoverage.data).length + ')';
@@ -230,7 +235,7 @@ var WcbCglCoverage = React.createClass({
               </div>
               <div className="input-container">
                 <ControlLabel>Companies:</ControlLabel>
-                <MultiDropdown id="ownerIds" placeholder="Companies" fieldName="organizationName"
+                <MultiDropdown id="ownerIds" disabled={ loading } placeholder="Companies" fieldName="organizationName"
                   items={ owners } selectedIds={ this.state.search.ownerIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
               </div>
               <DateControl id="wcbExpiry" date={ this.state.search.wcbExpiry } updateState={ this.updateSearchState } label="WCB Expiry Before:" title="WCB Expiry Before"/>
