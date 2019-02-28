@@ -389,6 +389,11 @@ namespace HetsApi.Controllers
                 }
             }
 
+            // HETS-1119 - Add change of status comments to Notes
+            string statusNote = $"(Status changed to: {equipment.Status}) {equipment.StatusComment}";
+            HetNote note = new HetNote { EquipmentId = equipment.EquipmentId, Text = statusNote, IsNoLongerRelevant = false };
+            _context.HetNote.Add(note);
+
             // save the changes
             _context.SaveChanges();
 
