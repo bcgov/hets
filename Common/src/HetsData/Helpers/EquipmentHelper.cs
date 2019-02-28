@@ -97,6 +97,13 @@ namespace HetsData.Helpers
         /// <returns></returns>
         public static HetEquipment GetRecord(int id, DbAppContext context, IConfiguration configuration)
         {
+            // get rental request status type
+            int? statusIdInProgress = StatusHelper.GetStatusId(HetRentalRequest.StatusInProgress, "rentalRequestStatus", context);
+            if (statusIdInProgress == null)
+            {
+                throw new ArgumentException("Status Code not found");
+            }
+
             // retrieve updated equipment record to return to ui
             HetEquipment equipment = context.HetEquipment.AsNoTracking()
                 .Include(x => x.EquipmentStatusType)
@@ -108,7 +115,7 @@ namespace HetsData.Helpers
                     .ThenInclude(d => d.EquipmentType)
                 .Include(x => x.Owner)
                     .ThenInclude(x => x.OwnerStatusType)
-                .Include(x => x.HetEquipmentAttachment)
+                .Include(x => x.HetEquipmentAttachment)                
                 .Include(x => x.HetNote)
                 .Include(x => x.HetDigitalFile)
                 .Include(x => x.HetHistory)
@@ -144,15 +151,19 @@ namespace HetsData.Helpers
                     {
                         int fiscalYear = (int)district.NextFiscalYear; // status table uses the start of the tear
 
-                        equipment.YearMinus1 = string.Format("{0}/{1}", fiscalYear - 2, fiscalYear - 1);
-                        equipment.YearMinus2 = string.Format("{0}/{1}", fiscalYear - 3, fiscalYear - 2);
-                        equipment.YearMinus3 = string.Format("{0}/{1}", fiscalYear - 4, fiscalYear - 3);                        
+                        equipment.YearMinus1 = $"{fiscalYear - 2}/{fiscalYear - 1}";
+                        equipment.YearMinus2 = $"{fiscalYear - 3}/{fiscalYear - 2}";
+                        equipment.YearMinus3 = $"{fiscalYear - 4}/{fiscalYear - 3}";                        
                     }
                 }
-                
-                
+
+                // HETS-1115 - Do not allow changing seniority affecting entities if an active request exists                
+                equipment.ActiveRentalRequest = context.HetRentalRequestRotationList.AsNoTracking()
+                    .Include(x => x.RentalRequest)
+                    .Any(x => x.EquipmentId == equipment.EquipmentId &&
+                              x.RentalRequest.RentalRequestStatusTypeId == statusIdInProgress);
             }
-            
+
             return equipment;
         }
 

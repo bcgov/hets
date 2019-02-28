@@ -96,6 +96,27 @@ namespace HetsData.Helpers
         /// <returns></returns>
         public static HetOwner GetRecord(int id, DbAppContext context, IConfiguration configuration)
         {
+            // get equipment status types
+            int? statusIdArchived = StatusHelper.GetStatusId(HetEquipment.StatusArchived, "equipmentStatus", context);
+            if (statusIdArchived == null)
+            {
+                throw new ArgumentException("Status Code not found");
+            }
+
+            int? statusIdActive = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", context);
+            if (statusIdActive == null)
+            {
+                throw new ArgumentException("Status Code not found");
+            }
+
+            // get rental request status type
+            int? statusIdInProgress = StatusHelper.GetStatusId(HetRentalRequest.StatusInProgress, "rentalRequestStatus", context);
+            if (statusIdInProgress == null)
+            {
+                throw new ArgumentException("Status Code not found");
+            }
+
+            // get owner record
             HetOwner owner = context.HetOwner.AsNoTracking()
                 .Include(x => x.OwnerStatusType)
                 .Include(x => x.LocalArea.ServiceArea.District.Region)
@@ -117,8 +138,8 @@ namespace HetsData.Helpers
 
             if (owner != null)
             {
-                // remove any archived equipment
-                owner.HetEquipment = owner.HetEquipment.Where(e => e.EquipmentStatusType.EquipmentStatusTypeCode != HetEquipment.StatusArchived).ToList();
+                // remove any archived equipment                
+                owner.HetEquipment = owner.HetEquipment.Where(e => e.EquipmentStatusTypeId != statusIdArchived).ToList();
 
                 // populate the "Status" description
                 owner.Status = owner.OwnerStatusType.OwnerStatusTypeCode;
@@ -131,6 +152,14 @@ namespace HetsData.Helpers
                     equipment.Status = equipment.EquipmentStatusType.EquipmentStatusTypeCode;
                     equipment.EquipmentNumber = int.Parse(Regex.Match(equipment.EquipmentCode, @"\d+").Value);
                 }
+
+                // HETS-1115 - Do not allow changing seniority affecting entities if an active request exists
+                owner.ActiveRentalRequest = context.HetRentalRequestRotationList.AsNoTracking()
+                    .Include(x => x.RentalRequest)
+                    .Include(x => x.Equipment)
+                    .Any(x => x.Equipment.OwnerId == id &&
+                              x.Equipment.EquipmentStatusTypeId == statusIdActive &&
+                              x.RentalRequest.RentalRequestStatusTypeId == statusIdInProgress);
             }
 
             return owner;
