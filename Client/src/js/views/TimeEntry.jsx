@@ -79,7 +79,7 @@ var TimeEntry = React.createClass({
   componentDidMount() {
     var projectsPromise = Api.getProjectsCurrentFiscal();
     var ownersPromise = Api.getOwnersLiteTs();
-    var equipmentPromise = Api.getEquipmentLiteTs();
+    var equipmentPromise = this.props.equipment.loaded ? Promise.resolve() : Api.getEquipmentTs();
 
     Promise.all([ projectsPromise, ownersPromise, equipmentPromise]);
 
@@ -260,7 +260,7 @@ var TimeEntry = React.createClass({
   },
 
   getFilteredEquipment() {
-    return _.chain(this.props.equipment)
+    return _.chain(this.props.equipment.data)
       .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesOwnerFilter(x.ownerId))
       .sortBy('equipmentCode')
       .value();
@@ -342,7 +342,7 @@ function mapStateToProps(state) {
     projects: state.lookups.projectsCurrentFiscal,
     localAreas: state.lookups.localAreas,
     owners: state.lookups.ownersLite,
-    equipment: state.lookups.equipmentLite,
+    equipment: state.lookups.equipment.ts,
     timeEntries: state.models.timeEntries,
     favourites: state.models.favourites.timeEntry,
     search: state.search.timeEntries,
