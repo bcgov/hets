@@ -81,9 +81,9 @@ namespace HetsData.Helpers
         /// <param name="localAreaId"></param>
         /// <param name="districtEquipmentTypeId"></param>
         /// <param name="context"></param>
-        /// <param name="configuration"></param>
+        /// <param name="seniorityScoringRules"></param>
         public static void CalculateSeniorityList(int localAreaId, int districtEquipmentTypeId, 
-            DbAppContext context, IConfiguration configuration)
+            DbAppContext context, string seniorityScoringRules)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace HetsData.Helpers
                     context.HetDistrictEquipmentType.Any(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId))
                 {
                     // get processing rules
-                    SeniorityScoringRules scoringRules = new SeniorityScoringRules(configuration);
+                    SeniorityScoringRules scoringRules = new SeniorityScoringRules(seniorityScoringRules);
 
                     // get the associated equipment type
                     HetDistrictEquipmentType districtEquipmentTypeRecord = context.HetDistrictEquipmentType
@@ -357,12 +357,12 @@ namespace HetsData.Helpers
 
             // calculate and format the ytd hours
             float tempHours = EquipmentHelper.GetYtdServiceHours(model.EquipmentId, context);
-            seniorityViewModel.YtdHours = string.Format("{0:0.###}", tempHours);
+            seniorityViewModel.YtdHours = $"{tempHours:0.###}";
 
             // format the hours
-            seniorityViewModel.HoursYearMinus1 = string.Format("{0:0.###}", model.ServiceHoursLastYear);
-            seniorityViewModel.HoursYearMinus2 = string.Format("{0:0.###}", model.ServiceHoursTwoYearsAgo);
-            seniorityViewModel.HoursYearMinus3 = string.Format("{0:0.###}", model.ServiceHoursThreeYearsAgo);
+            seniorityViewModel.HoursYearMinus1 = $"{model.ServiceHoursLastYear:0.###}";
+            seniorityViewModel.HoursYearMinus2 = $"{model.ServiceHoursTwoYearsAgo:0.###}";
+            seniorityViewModel.HoursYearMinus3 = $"{model.ServiceHoursThreeYearsAgo:0.###}";
 
             // add the correct sorting order (numeric)
             seniorityViewModel.SenioritySortOrder = EquipmentHelper.CalculateSenioritySortOrder(blockNumber, numberInBlock);
