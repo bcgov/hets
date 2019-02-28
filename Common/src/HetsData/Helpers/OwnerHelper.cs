@@ -101,20 +101,7 @@ namespace HetsData.Helpers
             if (statusIdArchived == null)
             {
                 throw new ArgumentException("Status Code not found");
-            }
-
-            int? statusIdActive = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", context);
-            if (statusIdActive == null)
-            {
-                throw new ArgumentException("Status Code not found");
-            }
-
-            // get rental request status type
-            int? statusIdInProgress = StatusHelper.GetStatusId(HetRentalRequest.StatusInProgress, "rentalRequestStatus", context);
-            if (statusIdInProgress == null)
-            {
-                throw new ArgumentException("Status Code not found");
-            }
+            }        
 
             // get owner record
             HetOwner owner = context.HetOwner.AsNoTracking()
@@ -154,15 +141,45 @@ namespace HetsData.Helpers
                 }
 
                 // HETS-1115 - Do not allow changing seniority affecting entities if an active request exists
-                owner.ActiveRentalRequest = context.HetRentalRequestRotationList.AsNoTracking()
-                    .Include(x => x.RentalRequest)
-                    .Include(x => x.Equipment)
-                    .Any(x => x.Equipment.OwnerId == id &&
-                              x.Equipment.EquipmentStatusTypeId == statusIdActive &&
-                              x.RentalRequest.RentalRequestStatusTypeId == statusIdInProgress);
+                owner.ActiveRentalRequest = RentalRequestStatus(id, context);
             }
 
             return owner;
+        }
+
+        #endregion
+
+        #region Returns true if any equipment associated with this owner is on an active rotation list        
+
+        /// <summary>
+        /// Returns true if any equipment associated with this owner is on an active rotation list
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static bool RentalRequestStatus(int id, DbAppContext context)
+        {
+            // get equipment status types           
+            int? statusIdActive = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", context);
+            if (statusIdActive == null)
+            {
+                throw new ArgumentException("Status Code not found");
+            }
+
+            // get rental request status type
+            int? statusIdInProgress = StatusHelper.GetStatusId(HetRentalRequest.StatusInProgress, "rentalRequestStatus", context);
+            if (statusIdInProgress == null)
+            {
+                throw new ArgumentException("Status Code not found");
+            }
+
+            return context.HetRentalRequestRotationList.AsNoTracking()
+                .Include(x => x.RentalRequest)
+                .Include(x => x.Equipment)
+                .Any(x => x.Equipment.OwnerId == id &&
+                          x.Equipment.EquipmentStatusTypeId == statusIdActive &&
+                          x.RentalRequest.RentalRequestStatusTypeId == statusIdInProgress);
+
         }
 
         #endregion
