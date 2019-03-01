@@ -18,6 +18,7 @@ import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SearchControl from '../components/SearchControl.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 var Roles = React.createClass({
   propTypes: {
@@ -75,10 +76,6 @@ var Roles = React.createClass({
     });
   },
 
-  print() {
-    window.print();
-  },
-
   render() {
     var numRoles = this.state.loading ? '...' : Object.keys(this.props.roles).length;
 
@@ -91,7 +88,7 @@ var Roles = React.createClass({
     return <div id="roles-list">
       <PageHeader>Roles ({ numRoles })
         <ButtonGroup id="roles-buttons" className="pull-right">
-          <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+          <PrintButton/>
         </ButtonGroup>
       </PageHeader>
       <div>

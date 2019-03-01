@@ -26,7 +26,7 @@ import Mailto from '../components/Mailto.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import TooltipButton from '../components/TooltipButton.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 import { formatDateTime, startOfCurrentFiscal, endOfCurrentFiscal, startOfPreviousFiscal, endOfPreviousFiscal, toZuluTime } from '../utils/date';
 
@@ -38,6 +38,7 @@ const LAST_MONTH = 'Last Month';
 const LAST_QUARTER = 'Last Quarter';
 const LAST_FISCAL = 'Last Fiscal';
 const CUSTOM = 'Custom';
+
 
 var RentalRequests = React.createClass({
   propTypes: {
@@ -208,10 +209,6 @@ var RentalRequests = React.createClass({
     });
   },
 
-  print() {
-    window.print();
-  },
-
   renderResults(addRequestButtons) {
     if (Object.keys(this.props.rentalRequests.data).length === 0) { return <Alert bsStyle="success">No Rental Requests { addRequestButtons }</Alert>; }
 
@@ -285,9 +282,7 @@ var RentalRequests = React.createClass({
     return <div id="rental-requests-list">
       <PageHeader>Rental Requests { resultCount }
         <ButtonGroup id="rental-requests-buttons">
-          <TooltipButton onClick={ this.print } disabled={ !this.props.rentalRequests.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
-            <Glyphicon glyph="print" title="Print" />
-          </TooltipButton>
+          <PrintButton disabled={!this.props.rentalRequests.loaded}/>
         </ButtonGroup>
       </PageHeader>
       <Well id="rental-requests-bar" bsSize="small" className="clearfix">
@@ -331,13 +326,17 @@ var RentalRequests = React.createClass({
       {(() => {
         if (this.props.rentalRequests.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-        var addViewOnlyRequestButton = <Button title="Add Rental Request (View Only)" bsSize="xsmall" onClick={ () => this.openAddDialog(true) }>
-          <Glyphicon glyph="plus" />&nbsp;<strong>Request (View Only)</strong>
-        </Button>;
+        var addViewOnlyRequestButton = (
+          <Button title="Add Rental Request (View Only)" className="hidden-print" bsSize="xsmall" onClick={ () => this.openAddDialog(true) }>
+            <Glyphicon glyph="plus" />&nbsp;<strong>Request (View Only)</strong>
+          </Button>
+        );
 
-        var addRentalRequestButton = <Button title="Add Rental Request" bsSize="xsmall" onClick={ () => this.openAddDialog(false) }>
-          <Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong>
-        </Button>;
+        var addRentalRequestButton = (
+          <Button title="Add Rental Request" className="hidden-print" bsSize="xsmall" onClick={ () => this.openAddDialog(false) }>
+            <Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong>
+          </Button>
+        );
 
         var addRequestButtons = <div id="add-request-buttons">
           { addViewOnlyRequestButton }

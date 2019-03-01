@@ -1,11 +1,7 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Link } from 'react-router';
-
-import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form  } from 'react-bootstrap';
-
+import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Form  } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Action from '../actionTypes';
@@ -17,7 +13,7 @@ import Favourites from '../components/Favourites.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import TooltipButton from '../components/TooltipButton.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 import { formatDateTime } from '../utils/date';
 
@@ -129,10 +125,6 @@ var HiringReport = React.createClass({
 
   loadFavourite(favourite) {
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
-  },
-
-  print() {
-    window.print();
   },
 
   renderResults() {
@@ -263,9 +255,7 @@ var HiringReport = React.createClass({
     return <div id="hiring-report">
       <PageHeader>Hiring Report - Not Hired / Force Hire { resultCount }
         <ButtonGroup id="hiring-report-buttons">
-          <TooltipButton onClick={ this.print } disabled={ !this.props.hiringResponses.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
-            <Glyphicon glyph="print" title="Print" />
-          </TooltipButton>
+          <PrintButton disabled={!this.props.hiringResponses.loaded}/>
         </ButtonGroup>
       </PageHeader>
       <Well id="hiring-report-bar" bsSize="small" className="clearfix">

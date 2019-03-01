@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, ControlLabel, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, ControlLabel, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 import _ from 'lodash';
 import Moment from 'moment';
@@ -19,12 +19,12 @@ import Favourites from '../components/Favourites.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import Spinner from '../components/Spinner.jsx';
-import TooltipButton from '../components/TooltipButton.jsx';
 import Form from '../components/Form.jsx';
-
 import EquipmentTable from './EquipmentTable.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 import { toZuluTime } from '../utils/date';
+
 
 var Equipment = React.createClass({
   propTypes: {
@@ -168,10 +168,6 @@ var Equipment = React.createClass({
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
   },
 
-  print() {
-    window.print();
-  },
-
   renderResults() {
     if (Object.keys(this.props.equipmentList.data).length === 0) {
       return <Alert bsStyle="success">No equipment</Alert>;
@@ -205,9 +201,7 @@ var Equipment = React.createClass({
     return <div id="equipment-list">
       <PageHeader>Equipment { resultCount }
         <ButtonGroup id="equipment-buttons">
-          <TooltipButton onClick={ this.print } disabled={ !this.props.equipmentList.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
-            <Glyphicon glyph="print" title="Print" />
-          </TooltipButton>
+          <PrintButton disabled={!this.props.equipmentList.loaded}/>
         </ButtonGroup>
       </PageHeader>
       <Well id="equipment-bar" bsSize="small" className="clearfix">

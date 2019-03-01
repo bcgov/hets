@@ -1,15 +1,9 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
-import { browserHistory } from 'react-router';
-
 import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import { Link } from 'react-router';
-
 import _ from 'lodash';
 import Promise from 'bluebird';
-
 import Moment from 'moment';
 
 import HireOfferEditDialog from './dialogs/HireOfferEditDialog.jsx';
@@ -32,11 +26,12 @@ import Confirm from '../components/Confirm.jsx';
 import History from '../components/History.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
-
+import ReturnButton from '../components/ReturnButton.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
 
 import { formatDateTime, formatDateTimeUTCToLocal } from '../utils/date';
 import { concat } from '../utils/string';
+import PrintButton from '../components/PrintButton.jsx';
 
 /*
 
@@ -180,10 +175,6 @@ var RentalRequestsDetail = React.createClass({
     });
   },
 
-  print() {
-    window.print();
-  },
-
   printSeniorityList() {
     var localAreaIds = [ this.props.rentalRequest.data.localAreaId ];
     var districtEquipmentTypeIds = [ this.props.rentalRequest.data.districtEquipmentTypeId ];
@@ -244,7 +235,7 @@ var RentalRequestsDetail = React.createClass({
         </Col>
         <Col sm={2}>
           <div className="pull-right">
-            <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
+            <ReturnButton to={Constant.RENTAL_REQUESTS_PATHNAME}/>
           </div>
         </Col>
       </Row>
@@ -295,10 +286,9 @@ var RentalRequestsDetail = React.createClass({
 
       <Well>
         <SubHeader title="Hire Rotation List">
-          <TooltipButton onClick={ this.print } disabled={ this.state.loading } disabledTooltip="Please wait for the request information to finish loading.">
-            <Glyphicon glyph="print" title="Print Hire Rotation List" className="mr-5" />
-            <span>Hire Rotation List</span>
-          </TooltipButton>
+          <PrintButton title="Print Hire Rotation List" disabled={ this.state.loading } disabledTooltip="Please wait for the request information to finish loading.">
+            Hire Rotation List
+          </PrintButton>
           <TooltipButton onClick={ this.printSeniorityList } disabled={ this.state.loading } disabledTooltip="Please wait for the request information to finish loading.">
             <Glyphicon glyph="print" title="Print Seniority List" className="mr-5" />
             <span>Seniority List</span>

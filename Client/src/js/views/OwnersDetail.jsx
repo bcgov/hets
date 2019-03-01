@@ -1,12 +1,7 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
-import { browserHistory } from 'react-router';
-
 import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import { Link } from 'react-router';
-
 import _ from 'lodash';
 import Promise from 'bluebird';
 
@@ -35,9 +30,10 @@ import Spinner from '../components/Spinner.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
 import Confirm from '../components/Confirm.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
-
+import ReturnButton from '../components/ReturnButton.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 import { formatDateTime, today, toZuluTime } from '../utils/date';
 import { sortDir } from '../utils/array.js';
@@ -319,10 +315,6 @@ var OwnersDetail = React.createClass({
     this.setState({ showNotesDialog: false });
   },
 
-  print() {
-    window.print();
-  },
-
   getStatuses() {
     return _.pull([
       Constant.OWNER_STATUS_CODE_APPROVED,
@@ -359,8 +351,8 @@ var OwnersDetail = React.createClass({
                 </Col>
                 <Col sm={3}>
                   <div className="pull-right">
-                    <Button className="mr-5" onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-                    <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
+                    <PrintButton/>
+                    <ReturnButton to={Constant.OWNERS_PATHNAME}/>
                   </div>
                 </Col>
               </Row>

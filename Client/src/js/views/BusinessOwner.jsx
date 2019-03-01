@@ -1,10 +1,6 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
-import { Link } from 'react-router';
-
-import { Well, Row, Col, Alert, Button, Glyphicon, Label } from 'react-bootstrap';
+import { Well, Row, Col, Alert, Glyphicon, Label } from 'react-bootstrap';
 import _ from 'lodash';
 import Promise from 'bluebird';
 
@@ -17,12 +13,14 @@ import Main from './Main.jsx';
 import Spinner from '../components/Spinner.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
 import SortTable from '../components/SortTable.jsx';
-
+import ReturnButton from '../components/ReturnButton.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 import { formatDateTime } from '../utils/date';
 import { sortDir } from '../utils/array';
+
 
 var BusinessOwner = React.createClass({
   propTypes: {
@@ -99,10 +97,6 @@ var BusinessOwner = React.createClass({
     });
   },
 
-  print() {
-    window.print();
-  },
-
   render() {
     return (
       <Main showNav={false}>
@@ -127,8 +121,8 @@ var BusinessOwner = React.createClass({
           </Col>
           <Col sm={3}>
             <div className="pull-right">
-              <Button className="mr-5" onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-              <Link to={ Constant.BUSINESS_PORTAL_PATHNAME } className="btn btn-default"><Glyphicon glyph="arrow-left" /> Return</Link>
+              <PrintButton/>
+              <ReturnButton to={Constant.BUSINESS_PORTAL_PATHNAME}/>
             </div>
           </Col>
         </Row>
@@ -283,7 +277,7 @@ var BusinessOwner = React.createClass({
             </Col>
             <Col sm={3}>
               <div className="pull-right">
-                <Link to={ Constant.BUSINESS_PORTAL_PATHNAME } className="btn btn-default"><Glyphicon glyph="arrow-left" /> Return</Link>
+                <ReturnButton to={Constant.BUSINESS_PORTAL_PATHNAME}/>
               </div>
             </Col>
           </Row>;

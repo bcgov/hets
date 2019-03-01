@@ -1,11 +1,7 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Link } from 'react-router';
-
-import { PageHeader, Well, Alert, Row, Col, Button, ButtonGroup, Glyphicon, ControlLabel  } from 'react-bootstrap';
-
+import { PageHeader, Well, Alert, Row, Col, Button, ButtonGroup, ControlLabel  } from 'react-bootstrap';
 import _ from 'lodash';
 import Moment from 'moment';
 
@@ -19,10 +15,11 @@ import Favourites from '../components/Favourites.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import TooltipButton from '../components/TooltipButton.jsx';
 import Form from '../components/Form.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 import { formatDateTime, toZuluTime } from '../utils/date';
+
 
 var WcbCglCoverage = React.createClass({
   propTypes: {
@@ -130,10 +127,6 @@ var WcbCglCoverage = React.createClass({
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
   },
 
-  print() {
-    window.print();
-  },
-
   renderResults() {
     if (Object.keys(this.props.ownersCoverage.data).length === 0) {
       return <Alert bsStyle="success">No results</Alert>;
@@ -219,9 +212,7 @@ var WcbCglCoverage = React.createClass({
     return <div id="wcg-cgl-coverage">
       <PageHeader>WCB / CGL Coverage { resultCount }
         <ButtonGroup id="wcg-cgl-coverage-buttons">
-          <TooltipButton onClick={ this.print } disabled={ !this.props.ownersCoverage.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
-            <Glyphicon glyph="print" title="Print" />
-          </TooltipButton>
+          <PrintButton disabled={!this.props.ownersCoverage.loaded}/>
         </ButtonGroup>
       </PageHeader>
       <Well id="wcg-cgl-coverage-bar" bsSize="small" className="clearfix">
