@@ -37,6 +37,7 @@ import SubHeader from '../components/ui/SubHeader.jsx';
 
 import { formatDateTime } from '../utils/date';
 import { formatHours } from '../utils/string';
+import StatusDropdown from '../components/StatusDropdown.jsx';
 
 /*
 
@@ -44,6 +45,10 @@ TODO:
 * Print / Notes / Docs / History / Actions on Equipment / Seniority Data History / Equipment Attachments
 
 */
+
+const EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE = 'This equipment is part of an In Progress ' +
+  'Rental Request. Release the list (finish hiring / delete) before making this change'
+
 
 var EquipmentDetail = React.createClass({
   propTypes: {
@@ -234,19 +239,12 @@ var EquipmentDetail = React.createClass({
     return 'success';
   },
 
-  getStatusDropdownStyle() {
-    switch(this.props.equipment.status) {
-      case(Constant.EQUIPMENT_STATUS_CODE_APPROVED):
-        return 'success';
-      case(Constant.EQUIPMENT_STATUS_CODE_PENDING):
-        return 'danger';
-      default:
-        return 'default';
-    }
-  },
-
   getStatuses() {
-    var dropdownItems = _.pull([ Constant.EQUIPMENT_STATUS_CODE_APPROVED, Constant.EQUIPMENT_STATUS_CODE_PENDING, Constant.EQUIPMENT_STATUS_CODE_ARCHIVED ], this.props.equipment.status);
+    var dropdownItems = _.pull([
+      Constant.EQUIPMENT_STATUS_CODE_APPROVED,
+      Constant.EQUIPMENT_STATUS_CODE_PENDING,
+      Constant.EQUIPMENT_STATUS_CODE_ARCHIVED,
+    ], this.props.equipment.status);
     if (this.props.equipment.ownerStatus === Constant.OWNER_STATUS_CODE_PENDING) {
       return _.pull(dropdownItems, Constant.EQUIPMENT_STATUS_CODE_APPROVED);
     } else if (this.props.equipment.ownerStatus === Constant.OWNER_STATUS_CODE_ARCHIVED) {
@@ -258,7 +256,6 @@ var EquipmentDetail = React.createClass({
   render() {
     var equipment = this.props.equipment;
     var lastVerifiedStyle = this.getLastVerifiedStyle(equipment);
-    var dropdownItems = this.getStatuses();
 
     return (
       <div id="equipment-detail">
@@ -271,16 +268,13 @@ var EquipmentDetail = React.createClass({
                 <Row id="equipment-top">
                   <Col sm={9}>
                     <Row>
-                      <DropdownButton
-                        id="owner-status"
-                        bsStyle={ this.getStatusDropdownStyle() }
-                        title={ equipment.status || '' }
-                        onSelect={ this.updateStatusState }
-                        disabled={ equipment.ownerStatus === Constant.OWNER_STATUS_CODE_ARCHIVED }>
-                        { dropdownItems.map((item, i) => (
-                          <MenuItem key={ i } eventKey={ item }>{ item }</MenuItem>
-                        ))}
-                      </DropdownButton>
+                      <StatusDropdown
+                        id="equipment-status-dropdown"
+                        status={equipment.status}
+                        statuses={this.getStatuses()}
+                        disabled={equipment.activeRentalRequest}
+                        disabledTooltip={EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
+                        onSelect={this.updateStatusState}/>
                       <Button className="mr-5 ml-5" title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
                       <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
                     </Row>
@@ -314,7 +308,12 @@ var EquipmentDetail = React.createClass({
           <Row>
             <Col md={12}>
               <Well>
-                <SubHeader title="Equipment Information" editButtonTitle="Edit Equipment" onEditClicked={ this.openEditDialog }/>
+                <SubHeader
+                  title="Equipment Information"
+                  editButtonTitle="Edit Equipment"
+                  editButtonDisabled={equipment.activeRentalRequest}
+                  editButtonDisabledTooltip={EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
+                  onEditClicked={ this.openEditDialog }/>
                 {(() => {
                   if (this.state.loading) { return <div className="spinner-container"><Spinner /></div>; }
 
@@ -424,7 +423,12 @@ var EquipmentDetail = React.createClass({
           <Row>
             <Col md={12}>
               <Well>
-                <SubHeader title="Seniority" editButtonTitle="Edit Seniority" onEditClicked={ this.openSeniorityDialog }/>
+                <SubHeader
+                  title="Seniority"
+                  editButtonTitle="Edit Seniority"
+                  editButtonDisabled={equipment.activeRentalRequest}
+                  editButtonDisabledTooltip={EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
+                  onEditClicked={ this.openSeniorityDialog }/>
                 {(() => {
                   if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
