@@ -25,7 +25,6 @@ const HELP_TEXT = {
 var OwnersAddDialog = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
-    owners: React.PropTypes.object,
     localAreas: React.PropTypes.object,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
@@ -105,7 +104,6 @@ var OwnersAddDialog = React.createClass({
 
   isValid() {
     // Clear out any previous errors
-    var owner;
     var valid = true;
 
     this.setState({
@@ -125,16 +123,6 @@ var OwnersAddDialog = React.createClass({
     if (isBlank(this.state.name)) {
       this.setState({ nameError: 'Name is required' });
       valid = false;
-    } else {
-      // Does the name already exist?
-      var name = this.state.name.toLowerCase().trim();
-      owner = _.find(this.props.owners, (owner) => {
-        return owner.organizationName.toLowerCase().trim() === name;
-      });
-      if (owner) {
-        this.setState({ nameError: 'This owner already exists in the system' });
-        valid = false;
-      }
     }
 
     if (isBlank(this.state.givenName)) {
@@ -176,15 +164,6 @@ var OwnersAddDialog = React.createClass({
       // Must only include letters, up to 7 characters
       if (!onlyLetters(code) || code.length > 7) {
         this.setState({ ownerCodeError: 'This owner code must only include letters, up to 7 characters, and has to be unique to each owner' });
-        valid = false;
-      }
-
-      // Code must be unique across all owners
-      owner = _.find(this.props.owners, (owner) => {
-        return owner.ownerCode.toLowerCase().trim() === code;
-      });
-      if (owner) {
-        this.setState({ ownerCodeError: 'This owner code already exists in the system' });
         valid = false;
       }
     }
@@ -357,7 +336,6 @@ var OwnersAddDialog = React.createClass({
 function mapStateToProps(state) {
   return {
     currentUser: state.user,
-    owners: state.lookups.owners.data,
     localAreas: state.lookups.localAreas,
   };
 }
