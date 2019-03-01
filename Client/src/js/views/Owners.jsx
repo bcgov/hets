@@ -21,8 +21,8 @@ import FormInputControl from '../components/FormInputControl.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import TooltipButton from '../components/TooltipButton.jsx';
 import Form from '../components/Form.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 import { caseInsensitiveSort, sortDir } from '../utils/array.js';
 
@@ -146,10 +146,6 @@ var Owners = React.createClass({
     });
   },
 
-  print() {
-    window.print();
-  },
-
   renderResults(ownerList, addOwnerButton) {
     if (Object.keys(this.props.ownerList.data).length === 0) { return <Alert bsStyle="success">No owners { addOwnerButton }</Alert>; }
 
@@ -205,9 +201,7 @@ var Owners = React.createClass({
       <PageHeader>Owners { resultCount }
         <div id="owners-buttons">
           <ButtonGroup>
-            <TooltipButton onClick={ this.print } disabled={ !this.props.ownerList.loaded } disabledTooltip="Please complete the search to enable this function.">
-              <Glyphicon glyph="print" title="Print" />
-            </TooltipButton>
+            <PrintButton disabled={!this.props.ownerList.loaded}/>
           </ButtonGroup>
         </div>
       </PageHeader>

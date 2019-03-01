@@ -1,18 +1,15 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, InputGroup, Form } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-
 import _ from 'lodash';
+
+import UsersEditDialog from './dialogs/UsersEditDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
 import store from '../store';
-
-import UsersEditDialog from './dialogs/UsersEditDialog.jsx';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import Confirm from '../components/Confirm.jsx';
@@ -22,6 +19,8 @@ import MultiDropdown from '../components/MultiDropdown.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import PrintButton from '../components/PrintButton.jsx';
+
 
 var Users = React.createClass({
   propTypes: {
@@ -121,10 +120,6 @@ var Users = React.createClass({
     });
   },
 
-  print() {
-    window.print();
-  },
-
   openUsersEditDialog() {
     this.setState({ showUsersEditDialog: true });
   },
@@ -198,7 +193,7 @@ var Users = React.createClass({
     return <div id="users-list">
       <PageHeader>Users { resultCount }
         <ButtonGroup id="users-buttons">
-          <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+          <PrintButton disabled={!this.props.users.loaded}/>
         </ButtonGroup>
       </PageHeader>
       <div>

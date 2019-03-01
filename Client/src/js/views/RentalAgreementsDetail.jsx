@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link, browserHistory } from 'react-router';
+import { Link } from 'react-router';
 import { Well, Row, Col, Table, Alert, Button, Glyphicon, Label, ButtonGroup } from 'react-bootstrap';
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -22,6 +22,7 @@ import EditButton from '../components/EditButton.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
+import ReturnButton from '../components/ReturnButton.jsx';
 
 import { activeRentalAgreementSelector, activeRentalAgreementIdSelector } from '../selectors/ui-selectors';
 
@@ -286,7 +287,7 @@ var RentalAgreementsDetail = React.createClass({
       <div className="pull-right">
         { isAssociated && <Button disabled={ !rentalAgreement.isActive } onClick={ this.openCloneDialog }>Copy Other Rental Agreement</Button> }
         <Button title="Print PDF" onClick={ this.generateRentalAgreementDocument }><Glyphicon glyph="print" /></Button>
-        <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
+        <ReturnButton to={Constant.RENTAL_AGREEMENTS_PATHNAME}/>
       </div>;
 
     return (

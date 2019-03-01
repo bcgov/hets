@@ -1,10 +1,6 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Well, Row, Col, Alert, Label, Button, Glyphicon, Popover, FormGroup, HelpBlock, ButtonGroup } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
-
 import _ from 'lodash';
 import Promise from 'bluebird';
 
@@ -26,6 +22,8 @@ import Spinner from '../components/Spinner.jsx';
 import Confirm from '../components/Confirm.jsx';
 import TableControl from '../components/TableControl.jsx';
 import Form from '../components/Form.jsx';
+import PrintButton from '../components/PrintButton.jsx';
+import ReturnButton from '../components/ReturnButton.jsx';
 
 import { daysFromToday, formatDateTime, today, isValidDate, toZuluTime } from '../utils/date';
 import { isBlank, notBlank } from '../utils/string';
@@ -153,10 +151,6 @@ var UsersDetail = React.createClass({
     this.closeUserRoleDialog();
   },
 
-  print() {
-    window.print();
-  },
-
   openDistrictEditDialog() {
     this.setState({ showDistrictEditDialog: true });
   },
@@ -214,10 +208,8 @@ var UsersDetail = React.createClass({
           </Col>
           <Col sm={4}>
             <div className="pull-right">
-              <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-              <LinkContainer to={{ pathname: Constant.USERS_PATHNAME }}>
-                <Button title="Return"><Glyphicon glyph="arrow-left" /> Return</Button>
-              </LinkContainer>
+              <PrintButton/>
+              <ReturnButton to={Constant.USERS_PATHNAME}/>
             </div>
           </Col>
         </Row>

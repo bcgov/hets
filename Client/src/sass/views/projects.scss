@@ -31,7 +31,6 @@
 }
 
 #projects-detail {
-
   .top-container {
     margin: 0 5px;
   }
@@ -39,7 +38,7 @@
   #projects-top {
     margin-bottom: 10px;
 
-    .btn {
+    #project-documents-button {
       margin-left: 5px;
     }
   }
@@ -49,10 +48,6 @@
     width: 100%;
     max-height: 400px;
     margin-top: 20px;
-
-    .btn {
-      margin-left: 0;
-    }
   }
 
   .well {
@@ -65,12 +60,8 @@
     margin-right: 5px;
   }
 
-  .btn {
+  #add-request-button {
     margin-left: 20px;
-  }
-
-  .alert-success .btn {
-    margin-left: auto;
   }
 }
 

@@ -1,11 +1,7 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Link } from 'react-router';
-
 import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form  } from 'react-bootstrap';
-
 import _ from 'lodash';
 
 import TimeEntryDialog from './dialogs/TimeEntryDialog.jsx';
@@ -19,9 +15,10 @@ import Favourites from '../components/Favourites.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import TooltipButton from '../components/TooltipButton.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 import { formatDateTime } from '../utils/date';
+
 
 var TimeEntry = React.createClass({
   propTypes: {
@@ -149,10 +146,6 @@ var TimeEntry = React.createClass({
     if (this.props.timeEntries.loaded) {
       this.fetch();
     }
-  },
-
-  print() {
-    window.print();
   },
 
   renderResults(addTimeEntryButton) {
@@ -285,9 +278,7 @@ var TimeEntry = React.createClass({
     return <div id="time-entry-list">
       <PageHeader>Time Entry { resultCount }
         <ButtonGroup id="time-entry-buttons">
-          <TooltipButton onClick={ this.print } disabled={ !this.props.timeEntries.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
-            <Glyphicon glyph="print" title="Print" />
-          </TooltipButton>
+          <PrintButton disabled={!this.props.timeEntries.loaded}/>
         </ButtonGroup>
       </PageHeader>
       <Well id="time-entries-bar" bsSize="small" className="clearfix">

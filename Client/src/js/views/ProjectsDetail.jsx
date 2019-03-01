@@ -2,8 +2,6 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { browserHistory } from 'react-router';
-
 import { Well, Row, Col } from 'react-bootstrap';
 import { Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import { Link } from 'react-router';
@@ -42,6 +40,8 @@ import { activeProjectSelector, activeProjectIdSelector } from '../selectors/ui-
 import { formatDateTime } from '../utils/date';
 import { sortDir } from '../utils/array.js';
 import { firstLastName } from '../utils/string.js';
+import ReturnButton from '../components/ReturnButton.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 
 var ProjectsDetail = React.createClass({
@@ -185,10 +185,6 @@ var ProjectsDetail = React.createClass({
     this.closeContactDialog();
   },
 
-  print() {
-    window.print();
-  },
-
   openAddRequestDialog() {
     this.setState({ showAddRequestDialog: true });
   },
@@ -262,14 +258,14 @@ var ProjectsDetail = React.createClass({
                 <Button title="Notes" disabled={loading} onClick={ this.showNotes }>
                   Notes ({ loading ? ' ' : project.notes.length })
                 </Button>
-                <Button title="Documents" disabled={loading} onClick={ this.showDocuments }>
+                <Button id="project-documents-button" title="Documents" disabled={loading} onClick={ this.showDocuments }>
                   Documents ({ loadingDocuments ? ' ' :  Object.keys(this.props.documents).length })
                 </Button>
               </Col>
               <Col sm={3}>
                 <div className="pull-right">
-                  <Button onClick={ this.print } disabled={loading}><Glyphicon glyph="print" title="Print" /></Button>
-                  <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
+                  <PrintButton disabled={loading}/>
+                  <ReturnButton to={Constant.PROJECTS_PATHNAME}/>
                 </div>
               </Col>
             </Row>
@@ -330,7 +326,7 @@ var ProjectsDetail = React.createClass({
               <Well>
                 <SubHeader title="Hired Equipment / Requests">
                   <CheckboxControl id="includeCompletedRequests" inline checked={ this.state.includeCompletedRequests } updateState={ this.updateState }><small>Show Completed</small></CheckboxControl>
-                  <Button title="Add Request" bsSize="small" onClick={ this.openAddRequestDialog }><Glyphicon glyph="plus" /> Add</Button>
+                  <Button id="add-request-button" title="Add Request" bsSize="small" onClick={ this.openAddRequestDialog }><Glyphicon glyph="plus" /> Add</Button>
                 </SubHeader>
                 {(() => {
                   if (loading) { return <div className="spinner-container"><Spinner/></div>; }

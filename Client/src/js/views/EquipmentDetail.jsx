@@ -1,12 +1,8 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
-import { browserHistory, Link } from 'react-router';
-
+import { Link } from 'react-router';
 import { Well, Row, Col } from 'react-bootstrap';
-import { Alert, Button, ButtonGroup, Glyphicon, Label, DropdownButton, MenuItem } from 'react-bootstrap';
-
+import { Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import _ from 'lodash';
 import Promise from 'bluebird';
 
@@ -31,13 +27,14 @@ import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import History from '../components/History.jsx';
-
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
+import StatusDropdown from '../components/StatusDropdown.jsx';
+import ReturnButton from '../components/ReturnButton.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 import { formatDateTime } from '../utils/date';
 import { formatHours } from '../utils/string';
-import StatusDropdown from '../components/StatusDropdown.jsx';
 
 /*
 
@@ -47,7 +44,7 @@ TODO:
 */
 
 const EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE = 'This equipment is part of an In Progress ' +
-  'Rental Request. Release the list (finish hiring / delete) before making this change'
+  'Rental Request. Release the list (finish hiring / delete) before making this change';
 
 
 var EquipmentDetail = React.createClass({
@@ -118,10 +115,6 @@ var EquipmentDetail = React.createClass({
 
   closeDocumentsDialog() {
     this.setState({ showDocumentsDialog: false });
-  },
-
-  print() {
-    window.print();
   },
 
   updateUIState(state, callback) {
@@ -281,8 +274,8 @@ var EquipmentDetail = React.createClass({
                   </Col>
                   <Col sm={3}>
                     <div className="pull-right">
-                      <Button className="mr-5" onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-                      <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
+                      <PrintButton/>
+                      <ReturnButton to={Constant.EQUIPMENT_PATHNAME}/>
                     </div>
                   </Col>
                 </Row>

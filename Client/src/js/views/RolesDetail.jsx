@@ -1,12 +1,8 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Well, Grid, Row, Col } from 'react-bootstrap';
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
-import { Table, Button, Glyphicon } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
-
+import { Table, Button } from 'react-bootstrap';
 import _ from 'lodash';
 import Promise from 'bluebird';
 
@@ -18,9 +14,10 @@ import store from '../store';
 import FormInputControl from '../components/FormInputControl.jsx';
 import Spinner from '../components/Spinner.jsx';
 import Form from '../components/Form.jsx';
-
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
+import ReturnButton from '../components/ReturnButton.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 import { isBlank } from '../utils/string';
 
@@ -172,10 +169,6 @@ var RolesDetail = React.createClass({
     }
   },
 
-  print() {
-    window.print();
-  },
-
   render() {
     var role = this.props.role;
 
@@ -187,10 +180,8 @@ var RolesDetail = React.createClass({
 
     return <div id="roles-detail">
       <div id="roles-top">
-        <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-        <LinkContainer to={{ pathname: Constant.ROLES_PATHNAME }}>
-          <Button title="Return"><Glyphicon glyph="arrow-left" /> Return</Button>
-        </LinkContainer>
+        <PrintButton/>
+        <ReturnButton to={Constant.ROLES_PATHNAME}/>
       </div>
 
       {(() => {

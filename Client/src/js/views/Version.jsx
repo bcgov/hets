@@ -1,10 +1,7 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { PageHeader, Well } from 'react-bootstrap';
 import { Button, Glyphicon } from 'react-bootstrap';
-
 import $ from 'jquery';
 
 import * as Api from '../api';
@@ -13,6 +10,7 @@ import * as Constant from '../constants';
 import ColDisplay from '../components/ColDisplay.jsx';
 import Spinner from '../components/Spinner.jsx';
 import Unimplemented from '../components/Unimplemented.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 import { formatDateTime } from '../utils/date';
 import { request } from '../utils/http';
@@ -70,10 +68,6 @@ var Version = React.createClass({
 
   },
 
-  print() {
-    window.print();
-  },
-
   render: function() {
     return <div id="version">
       <PageHeader id="version-header">Version
@@ -81,7 +75,7 @@ var Version = React.createClass({
           <Unimplemented>
             <Button className="mr-5" onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
           </Unimplemented>
-          <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+          <PrintButton/>
         </div>
       </PageHeader>
 
