@@ -134,6 +134,12 @@ const DEFAULT_MODELS = {
     loaded: false,
   },
 
+  aitResponses: {
+    data: {},
+    loading: false,
+    loaded: false,
+  },
+
   roles: {},
   role: {},
   rolePermissions: {},
@@ -418,6 +424,16 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.RENTAL_AGREEMENT_TIME_RECORDS:
       return { ...state, rentalAgreementTimeRecords: action.rentalAgreementTimeRecords };
+
+    // AIT Report
+    case Action.AIT_REPORT_REQUEST:
+      return { ...state, aitResponses: { ...state.aitResponses, loading: true, loaded: false } };
+
+    case Action.UPDATE_AIT_REPORT:
+      return { ...state, aitResponses: { data: action.aitResponses, loading: false, loaded: true } };
+
+    case Action.CLEAR_AIT_REPORT:
+      return { ...state, aitResponses: { data: {}, loading: false, loaded: false } };
 
     // Rental Rates, Conditions
     case Action.ADD_RENTAL_RATE:

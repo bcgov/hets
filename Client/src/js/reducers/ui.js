@@ -19,6 +19,7 @@ const DEFAULT_STATE = {
   timeEntries: {},
   hiringResponses: {},
   ownersCoverage: {},
+  aitResponses: {},
   roles: {},
   history: {},
   documents: {},
@@ -102,6 +103,9 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
 
     case Action.SET_ACTIVE_PROJECT_ID_UI:
       return { ...state, activeProjectId: action.projectId };
+
+    case Action.UPDATE_AIT_REPORT_UI:
+      return { ...state, aitResponses: action.aitResponses };
 
     case Action.GENERATE_ANOTHER_RENTAL_AGREEMENT:
       return { ...state, activeRentalAgreementId: action.rentalAgreement.id };

@@ -1343,5 +1343,90 @@ namespace HetsApi.Controllers
         }
 
         #endregion
+
+        #region AIT Report
+
+        /// <summary>
+        /// Get rental agreements for AIT Report
+        /// </summary>
+        /// <param name="projects">Projects (comma separated list of id numbers)</param>
+        /// <param name="districtEquipmentType">District Equipment Types (comma separated list of equipment types)</param>
+        /// <param name="equipment">Equipment (comma separated list of id numbers)</param>
+        /// <param name="rentalAgreementNumber">Rental Agreement Number</param>
+        /// <param name="startDate">Start date for Dated On</param>
+        /// <param name="endDate">End date for Dated On</param>
+        /// <returns>AIT report</returns>
+        [HttpGet]
+        [Route("aitReport")]
+        [SwaggerOperation("AitReportGet")]
+        [SwaggerResponse(200, type: typeof(List<RentalRequestHires>))]
+        public virtual IActionResult AitReportGet([FromQuery]string projects,
+            [FromQuery]string districtEquipmentType, [FromQuery]string equipment, [FromQuery]string rentalAgreementNumber,
+            [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate)
+        {
+            int?[] projectArray = ArrayHelper.ParseIntArray(projects);
+            int?[] districtEquipmentTypeArray = ArrayHelper.ParseIntArray(districtEquipmentType);
+            int?[] equipmentArray = ArrayHelper.ParseIntArray(equipment);
+
+            List<AitReport> result;
+
+            // does status matter? ****
+            IQueryable<HetRentalAgreement> agreements = _context.HetRentalAgreement.AsNoTracking()
+                .Include(x => x.RentalAgreementStatusType)
+                .Include(x => x.Equipment)
+                    .ThenInclude(y => y.DistrictEquipmentType)
+                        .ThenInclude(d => d.EquipmentType)
+                .Include(x => x.Equipment)
+                    .ThenInclude(y => y.HetEquipmentAttachment)
+                .Include(x => x.Project);
+
+            // limit to user's current district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            agreements = agreements.Where(x => x.DistrictId == districtId);
+
+            if (!string.IsNullOrWhiteSpace(rentalAgreementNumber))
+            {
+                result = agreements
+                    .Where(x => x.Number.Contains(rentalAgreementNumber.Trim(), StringComparison.InvariantCultureIgnoreCase))
+                    .Select(x => AitReport.MapFromHetRentalAgreement(x))
+                    .ToList();
+
+                return new ObjectResult(new HetsResponse(result));
+            }
+
+            if (projectArray != null && projectArray.Length > 0)
+            {
+                agreements = agreements.Where(x => projectArray.Contains(x.ProjectId));
+            }
+
+            if (districtEquipmentTypeArray != null && districtEquipmentTypeArray.Length > 0)
+            {
+                agreements = agreements.Where(x => districtEquipmentTypeArray.Contains(x.Equipment.DistrictEquipmentTypeId));
+            }
+
+            if (equipmentArray != null && equipmentArray.Length > 0)
+            {
+                agreements = agreements.Where(x => equipmentArray.Contains(x.EquipmentId));
+            }
+
+            if (startDate != null)
+            {
+                agreements = agreements.Where(x => x.DatedOn >= startDate);
+            }
+
+            if (endDate != null)
+            {
+                agreements = agreements.Where(x => x.DatedOn <= endDate);
+            }
+
+            result = agreements
+                .Select(x => AitReport.MapFromHetRentalAgreement(x))
+                .ToList();
+
+            return new ObjectResult(new HetsResponse(result));
+        }
+
+        #endregion
+
     }
 }
