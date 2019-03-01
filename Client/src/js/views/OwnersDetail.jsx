@@ -16,7 +16,7 @@ import EquipmentAddDialog from './dialogs/EquipmentAddDialog.jsx';
 import OwnersEditDialog from './dialogs/OwnersEditDialog.jsx';
 import OwnersPolicyEditDialog from './dialogs/OwnersPolicyEditDialog.jsx';
 import NotesDialog from './dialogs/NotesDialog.jsx';
-import ChangeStatusDialog from './dialogs/ChangeStatusDialog.jsx';
+import OwnerChangeStatusDialog from './dialogs/OwnerChangeStatusDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -147,25 +147,9 @@ var OwnersDetail = React.createClass({
     this.setState({ showChangeStatusDialog: false });
   },
 
-  onChangeStatus(status) {
-    var currentStatus = this.props.owner.status;
-    var equipmentList = { ...this.props.owner.equipmentList };
-    return Api.changeOwnerStatus(status).then(() => {
-      this.closeChangeStatusDialog();
-      Log.ownerModifiedStatus(this.props.owner, status.status, status.statusComment);
-      // If owner status goes from approved to unapproved/archived or unapproved to archived
-      // this will change all it's equipment statuses. This should be reflected in the equipment history.
-      if (
-        (currentStatus === Constant.OWNER_STATUS_CODE_APPROVED || currentStatus === Constant.OWNER_STATUS_CODE_PENDING)
-        && (status.status === Constant.OWNER_STATUS_CODE_PENDING || status.status === Constant.OWNER_STATUS_CODE_ARCHIVED)
-      ) {
-        _.map(equipmentList, equipment => {
-          if (equipment.status !== status.status) {
-            Log.equipmentStatusModified(equipment, status.status, status.statusComment);
-          }
-        });
-      }
-    });
+  onStatusChanged(/* status */) {
+    this.closeChangeStatusDialog();
+    Api.getOwnerNotes(this.props.owner.id);
   },
 
   showDocuments() {
@@ -335,7 +319,6 @@ var OwnersDetail = React.createClass({
     window.print();
   },
 
-
   getStatusDropdownStyle() {
     switch(this.props.owner.status) {
       case(Constant.OWNER_STATUS_CODE_APPROVED):
@@ -356,9 +339,9 @@ var OwnersDetail = React.createClass({
     return <div id="owners-detail">
       <div>
         {(() => {
-          var dropdownItems = _.pull([ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ], owner.status);
-
           if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+
+          var dropdownItems = _.pull([ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ], owner.status);
 
           return <Row id="owners-top">
             <Col sm={9}>
@@ -366,8 +349,7 @@ var OwnersDetail = React.createClass({
                 id="status-dropdown"
                 bsStyle={ this.getStatusDropdownStyle() }
                 title={ owner.status }
-                onSelect={ this.updateStatusState }
-              >
+                onSelect={ this.updateStatusState }>
                 { dropdownItems.map((item, i) => (
                   <MenuItem key={ i } eventKey={ item }>{ item }</MenuItem>
                 ))}
@@ -378,8 +360,6 @@ var OwnersDetail = React.createClass({
             </Col>
             <Col sm={3}>
               <div className="pull-right">
-                {/* <DropdownControl id="status" title={ owner.status } updateState={ this.updateStatusState } staticTitle={true}
-                  items={_.pull([ Constant.OWNER_STATUS_CODE_APPROVED, Constant.OWNER_STATUS_CODE_PENDING, Constant.OWNER_STATUS_CODE_ARCHIVED ], owner.status)} /> */}
                 <Button className="mr-5" onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
                 <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
               </div>
@@ -594,52 +574,47 @@ var OwnersDetail = React.createClass({
           </Col>
         </Row>
       </div>
-      { this.state.showEquipmentDialog &&
-        <EquipmentAddDialog show={ this.state.showEquipmentDialog } onSave={ this.saveNewEquipment } onClose={ this.closeEquipmentDialog } />
-      }
-      { this.state.showEditDialog &&
+      { this.state.showChangeStatusDialog && (
+        <OwnerChangeStatusDialog
+          show={ this.state.showChangeStatusDialog}
+          status={ this.state.status }
+          owner={ owner }
+          onClose={ this.closeChangeStatusDialog }
+          onStatusChanged={ this.onStatusChanged }/>
+      )}
+      { this.state.showNotesDialog && (
+        <NotesDialog
+          show={ this.state.showNotesDialog }
+          id={ this.props.params.ownerId }
+          notes={ _.values(this.props.notes) }
+          getNotes={ Api.getOwnerNotes }
+          onSave={ Api.addOwnerNote }
+          onUpdate={ Api.updateNote }
+          onClose={ this.closeNotesDialog }/>
+      )}
+      { this.state.showDocumentsDialog && (
+        <DocumentsListDialog
+          show={ owner && this.state.showDocumentsDialog }
+          parent={ owner }
+          onClose={ this.closeDocumentsDialog }/>
+      )}
+      { this.state.showEditDialog && (
         <OwnersEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
-      }
-      { this.state.showPolicyDialog &&
+      )}
+      { this.state.showEquipmentDialog && (
+        <EquipmentAddDialog show={ this.state.showEquipmentDialog } onSave={ this.saveNewEquipment } onClose={ this.closeEquipmentDialog } />
+      )}
+      { this.state.showPolicyDialog && (
         <OwnersPolicyEditDialog show={ this.state.showPolicyDialog } onSave={ this.savePolicyEdit } onClose={ this.closePolicyDialog } />
-      }
-      { this.state.showContactDialog &&
+      )}
+      { this.state.showContactDialog && (
         <ContactsEditDialog
           show={ this.state.showContactDialog }
           contact={ this.state.contact }
           onSave={ this.saveContact }
           onClose={ this.closeContactDialog }
-          isFirstContact={!this.props.owner.contacts || this.props.owner.contacts.length === 0}
-        />
-      }
-      { this.state.showDocumentsDialog &&
-        <DocumentsListDialog
-          show={ owner && this.state.showDocumentsDialog }
-          parent={ owner }
-          onClose={ this.closeDocumentsDialog }
-        />
-      }
-      { this.state.showNotesDialog &&
-        <NotesDialog
-          show={ this.state.showNotesDialog }
-          onSave={ Api.addOwnerNote }
-          id={ this.props.params.ownerId }
-          getNotes={ Api.getOwnerNotes }
-          onUpdate={ Api.updateNote }
-          onClose={ this.closeNotesDialog }
-          notes={ _.values(this.props.notes) }
-        />
-      }
-      { this.state.showChangeStatusDialog &&
-        <ChangeStatusDialog
-          show={ this.state.showChangeStatusDialog}
-          onClose={ this.closeChangeStatusDialog }
-          onSave={ this.onChangeStatus }
-          status={ this.state.status }
-          parent={ owner }
-          owner
-        />
-      }
+          isFirstContact={!this.props.owner.contacts || this.props.owner.contacts.length === 0}/>
+      )}
     </div>;
   },
 });

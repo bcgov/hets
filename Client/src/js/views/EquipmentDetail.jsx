@@ -16,7 +16,7 @@ import AttachmentAddDialog from './dialogs/AttachmentAddDialog.jsx';
 import AttachmentEditDialog from './dialogs/AttachmentEditDialog.jsx';
 import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
 import NotesDialog from './dialogs/NotesDialog.jsx';
-import ChangeStatusDialog from './dialogs/ChangeStatusDialog.jsx';
+import EquipmentChangeStatusDialog from './dialogs/EquipmentChangeStatusDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -157,11 +157,9 @@ var EquipmentDetail = React.createClass({
     this.setState({ showChangeStatusDialog: false });
   },
 
-  onChangeStatus(status) {
-    return Api.changeEquipmentStatus(status).then(() => {
-      Log.equipmentStatusModified(this.props.equipment, status.status, status.statusComment);
-      this.closeChangeStatusDialog();
-    });
+  onStatusChanged(/* status */) {
+    this.closeChangeStatusDialog();
+    Api.getEquipmentNotes(this.props.equipment.id);
   },
 
   openSeniorityDialog() {
@@ -266,7 +264,6 @@ var EquipmentDetail = React.createClass({
       <div id="equipment-detail">
         <div>
           {(() => {
-
             if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
             return (
@@ -279,8 +276,7 @@ var EquipmentDetail = React.createClass({
                         bsStyle={ this.getStatusDropdownStyle() }
                         title={ equipment.status || '' }
                         onSelect={ this.updateStatusState }
-                        disabled={ equipment.ownerStatus === Constant.OWNER_STATUS_CODE_ARCHIVED }
-                      >
+                        disabled={ equipment.ownerStatus === Constant.OWNER_STATUS_CODE_ARCHIVED }>
                         { dropdownItems.map((item, i) => (
                           <MenuItem key={ i } eventKey={ item }>{ item }</MenuItem>
                         ))}
@@ -483,64 +479,57 @@ var EquipmentDetail = React.createClass({
             </Col>
           </Row>
         </div>
-        { this.state.showEditDialog &&
+        { this.state.showChangeStatusDialog && (
+          <EquipmentChangeStatusDialog
+            show={ this.state.showChangeStatusDialog}
+            status={ this.state.status }
+            equipment={ equipment }
+            onClose={ this.closeChangeStatusDialog }
+            onStatusChanged={ this.onStatusChanged }/>
+        )}
+        { this.state.showNotesDialog && (
+          <NotesDialog
+            show={ this.state.showNotesDialog }
+            id={ this.props.params.equipmentId }
+            notes={ _.values(this.props.notes) }
+            getNotes={ Api.getEquipmentNotes }
+            onUpdate={ Api.updateNote }
+            onClose={ this.closeNotesDialog }
+            onSave={ Api.addEquipmentNote }/>
+        )}
+        { this.state.showDocumentsDialog && (
+          <DocumentsListDialog
+            show={ this.props.equipment && this.state.showDocumentsDialog }
+            parent={ this.props.equipment }
+            onClose={ this.closeDocumentsDialog }/>
+        )}
+        { this.state.showEditDialog && (
           <EquipmentEditDialog
             show={ this.state.showEditDialog }
             onSave={ this.saveEdit }
-            onClose= { this.closeEditDialog }
-          />
-        }
-        { this.state.showSeniorityDialog &&
+            onClose= { this.closeEditDialog }/>
+        )}
+        { this.state.showSeniorityDialog && (
           <SeniorityEditDialog
             show={ this.state.showSeniorityDialog }
             onSave={ this.saveSeniorityEdit }
-            onClose={ this.closeSeniorityDialog }
-          />
-        }
-        { this.state.showPhysicalAttachmentDialog &&
+            onClose={ this.closeSeniorityDialog }/>
+        )}
+        { this.state.showPhysicalAttachmentDialog && (
           <AttachmentAddDialog
             show={ this.state.showPhysicalAttachmentDialog }
             onSave={ this.addPhysicalAttachments }
             onClose={ this.closePhysicalAttachmentDialog }
-            equipment={ equipment }
-          />
-        }
-        { this.state.showPhysicalAttachmentEditDialog &&
+            equipment={ equipment }/>
+        )}
+        { this.state.showPhysicalAttachmentEditDialog && (
           <AttachmentEditDialog
             show={ this.state.showPhysicalAttachmentEditDialog }
             onSave={ this.updatePhysicalAttachment }
             onClose={ this.closePhysicalAttachmentEditDialog }
             equipment={ equipment }
-            attachment={ this.state.equipmentPhysicalAttachment }
-          />
-        }
-        { this.state.showDocumentsDialog &&
-          <DocumentsListDialog
-            show={ this.props.equipment && this.state.showDocumentsDialog }
-            parent={ this.props.equipment }
-            onClose={ this.closeDocumentsDialog }
-          />
-        }
-        { this.state.showNotesDialog &&
-          <NotesDialog
-            show={ this.state.showNotesDialog }
-            onSave={ Api.addEquipmentNote }
-            id={ this.props.params.equipmentId }
-            getNotes={ Api.getEquipmentNotes }
-            onUpdate={ Api.updateNote }
-            onClose={ this.closeNotesDialog }
-            notes={ _.values(this.props.notes) }
-          />
-        }
-        { this.state.showChangeStatusDialog &&
-          <ChangeStatusDialog
-            show={ this.state.showChangeStatusDialog}
-            onClose={ this.closeChangeStatusDialog }
-            onSave={ this.onChangeStatus }
-            status={ this.state.status }
-            parent={ equipment }
-          />
-        }
+            attachment={ this.state.equipmentPhysicalAttachment }/>
+        )}
       </div>
     );
   },

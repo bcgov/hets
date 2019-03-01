@@ -148,7 +148,7 @@ var ProjectsDetail = React.createClass({
       };
     } else if (contactId) {
       // Open the contact for viewing if possible
-      contact = this.props.project.contacts.find((contact) => contact.id === contactId);
+      contact = _.find(this.props.project.contacts, (contact) => contact.id === contactId);
     }
     this.setState({
       contact: contact,
