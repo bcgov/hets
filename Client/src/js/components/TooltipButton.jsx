@@ -34,9 +34,9 @@ var TooltipButton = React.createClass({
     if (tooltipContent) {
       return (
         <OverlayTrigger placement="bottom" rootClose overlay={ <Tooltip id="button-tooltip">{ tooltipContent }</Tooltip> }>
-           <div style={{display: 'inline-block', cursor: 'not-allowed'}}>
+          <div style={{display: 'inline-block', cursor: 'not-allowed'}}>
             { button }
-           </div>
+          </div>
         </OverlayTrigger>
       );
     } else {
