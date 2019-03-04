@@ -23,7 +23,7 @@ import EquipmentTransferDialog from './dialogs/EquipmentTransferDialog.jsx';
 
 import SubHeader from '../components/ui/SubHeader.jsx';
 
-import { caseInsensitiveSort, sortDir } from '../utils/array';
+import { caseInsensitiveSort, sortDir, sort } from '../utils/array';
 
 var DistrictAdmin = React.createClass({
   propTypes: {
@@ -178,7 +178,7 @@ var DistrictAdmin = React.createClass({
 
           if (Object.keys(equipmentTypes).length === 0) { return <Alert bsStyle="success">No equipment types { addDistrictEquipmentButton }</Alert>; }
 
-          var sortedEquipmentTypes = caseInsensitiveSort(equipmentTypes, [this.state.uiEquipment.sortField], [sortDir(this.state.uiEquipment.sortDesc)]);
+          var sortedEquipmentTypes = sort(equipmentTypes, this.state.uiEquipment.sortField, this.state.uiEquipment.sortDesc, caseInsensitiveSort);
 
           var headers = [
             { field: 'districtEquipmentName',         title: 'Equipment Type/Description'  },

@@ -7,9 +7,8 @@ import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import * as Constant from '../../constants';
 
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 import { isBlank, formatPhoneNumber } from '../../utils/string';
 
@@ -17,16 +16,19 @@ import { isBlank, formatPhoneNumber } from '../../utils/string';
 var ContactsEditDialog = React.createClass({
   propTypes: {
     contact: React.PropTypes.object.isRequired,
-
+    parent: React.PropTypes.object.isRequired,
+    saveContact: React.PropTypes.func.isRequired,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
-    isFirstContact: React.PropTypes.bool,
+    defaultPrimary: React.PropTypes.bool,
   },
 
   getInitialState() {
     return {
       isNew: this.props.contact.id === 0,
+
+      isSaving: false,
 
       givenName: this.props.contact.givenName || '',
       surname: this.props.contact.surname || '',
@@ -36,7 +38,7 @@ var ContactsEditDialog = React.createClass({
       workPhoneNumber: this.props.contact.workPhoneNumber || '',
       mobilePhoneNumber: this.props.contact.mobilePhoneNumber || '',
       faxPhoneNumber: this.props.contact.faxPhoneNumber || '',
-      isPrimary: this.props.contact.isPrimary || this.props.isFirstContact || false,
+      isPrimary: this.props.contact.isPrimary || this.props.defaultPrimary || false,
 
       givenNameError: false,
       emailAddressError: false,
@@ -129,18 +131,36 @@ var ContactsEditDialog = React.createClass({
     return valid;
   },
 
-  onSave() {
-    this.props.onSave({ ...this.props.contact, ...{
-      givenName: this.state.givenName,
-      surname: this.state.surname,
-      role: this.state.role,
-      notes: this.state.notes,
-      emailAddress: this.state.emailAddress,
-      workPhoneNumber: formatPhoneNumber(this.state.workPhoneNumber),
-      mobilePhoneNumber: formatPhoneNumber(this.state.mobilePhoneNumber),
-      faxPhoneNumber: formatPhoneNumber(this.state.faxPhoneNumber),
-      isPrimary: this.state.isPrimary,
-    }});
+  formSubmitted() {
+    const { isNew } = this.state;
+
+    if (this.isValid()) {
+      if (this.didChange()) {
+        this.setState({ isSaving: true });
+
+        const contact = {
+          ...this.props.contact,
+          givenName: this.state.givenName,
+          surname: this.state.surname,
+          role: this.state.role,
+          notes: this.state.notes,
+          emailAddress: this.state.emailAddress,
+          workPhoneNumber: formatPhoneNumber(this.state.workPhoneNumber),
+          mobilePhoneNumber: formatPhoneNumber(this.state.mobilePhoneNumber),
+          faxPhoneNumber: formatPhoneNumber(this.state.faxPhoneNumber),
+          isPrimary: this.state.isPrimary,
+        };
+
+        this.props.saveContact(this.props.parent, contact).then((savedContact) => {
+          this.setState({ isSaving: false });
+          this.props.onSave(savedContact);
+        });
+
+        if (!isNew) { // can be closed right away
+          this.props.onClose();
+        }
+      }
+    }
   },
 
   render() {
@@ -149,7 +169,7 @@ var ContactsEditDialog = React.createClass({
 
     const dialogTitle = (
       <span>
-        <strong>Contact</strong>
+        Contact
         { this.state.isPrimary ?
           <Label bsStyle="success">Primary</Label> :
           <Button title="Make Primary Contact" onClick={ this.makePrimary }>Make Primary</Button>
@@ -158,10 +178,13 @@ var ContactsEditDialog = React.createClass({
     );
 
     return (
-      <EditDialog id="contacts-edit" show={ this.props.show }
-        onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
+      <FormDialog
+        id="contacts-edit"
+        show={this.props.show}
+        isSaving={this.state.isSaving}
+        onClose={this.props.onClose}
+        onSubmit={this.formSubmitted}
         title={dialogTitle}>
-        <Form>
           <Grid fluid>
             <Row>
               <Col md={12}>
@@ -221,8 +244,7 @@ var ContactsEditDialog = React.createClass({
               </Col>
             </Row>
           </Grid>
-        </Form>
-      </EditDialog>
+      </FormDialog>
     );
   },
 });

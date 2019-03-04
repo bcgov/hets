@@ -24,7 +24,7 @@ import Spinner from '../components/Spinner.jsx';
 import Form from '../components/Form.jsx';
 import PrintButton from '../components/PrintButton.jsx';
 
-import { caseInsensitiveSort, sortDir } from '../utils/array.js';
+import { sort, caseInsensitiveSort } from '../utils/array.js';
 
 var Owners = React.createClass({
   propTypes: {
@@ -195,7 +195,7 @@ var Owners = React.createClass({
       resultCount = '(' + Object.keys(this.props.ownerList.data).length + ')';
     }
 
-    var ownerList = caseInsensitiveSort(this.props.ownerList.data, [this.state.ui.sortField], [sortDir(this.state.ui.sortDesc)]);
+    var ownerList = sort(this.props.ownerList.data, this.state.ui.sortField, this.state.ui.sortDesc, caseInsensitiveSort);
 
     return <div id="owners-list">
       <PageHeader>Owners { resultCount }

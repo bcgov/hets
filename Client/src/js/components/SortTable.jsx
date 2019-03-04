@@ -1,5 +1,6 @@
 import React from 'react';
 import { Table, Glyphicon } from 'react-bootstrap';
+import _ from 'lodash';
 
 
 const SortTable = React.createClass({
@@ -7,7 +8,10 @@ const SortTable = React.createClass({
     // Array of objects with key, title, style, children fields
     headers: React.PropTypes.array.isRequired,
     // This should be a from a state.ui object
-    sortField: React.PropTypes.string.isRequired,
+    sortField: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.array,
+    ]).isRequired,
     // This should be a from a state.ui object
     sortDesc: React.PropTypes.bool.isRequired,
     onSort: React.PropTypes.func.isRequired,
@@ -15,28 +19,33 @@ const SortTable = React.createClass({
     children: React.PropTypes.node,
   },
 
-  sort(e) {
+  sort(field) {
     this.props.onSort({
-      sortField: e.currentTarget.id,
-      sortDesc: this.props.sortField !== e.currentTarget.id ? false : !this.props.sortDesc,
+      sortField: field,
+      sortDesc: !this.props.sortDesc,
     });
+  },
+
+  preventSelection(e) {
+    e.preventDefault();
   },
 
   render() {
     const columnHeaders = this.props.headers.map((header) => {
+      const key = Array.isArray(header.field) ? header.field.join('-') : header.field;
       if (header.node) {
-        return <th id={ header.field } key={ header.field } style={ header.style }>{ header.node }</th>;
+        return <th key={key} style={ header.style }>{ header.node }</th>;
       }
 
       var sortGlyph = '';
-      if (this.props.sortField === header.field) {
+      if (_.isEqual(this.props.sortField, header.field)) {
         sortGlyph = <span>&nbsp;<Glyphicon glyph={ this.props.sortDesc ? 'sort-by-attributes-alt' : 'sort-by-attributes' }/></span>;
       }
       return (
         <th
-          id={ header.field }
-          key={ header.field }
-          onClick={ header.noSort ? '' : this.sort }
+          key={key}
+          onMouseDown={this.preventSelection}
+          onClick={ header.noSort ? '' : () => this.sort(header.field) }
           className={ header.class }
           style={{ ...header.style, cursor: header.noSort ? 'default' : 'pointer' }}>
             { header.title }{ sortGlyph }
