@@ -27,6 +27,7 @@ const DEFAULT_MODELS = {
     rentalRequests: {},
     timeEntry: {},
     user: {},
+    aitReport: {},
   },
 
   equipmentList: {

@@ -1370,14 +1370,11 @@ namespace HetsApi.Controllers
 
             List<AitReport> result;
 
-            // does status matter? ****
             IQueryable<HetRentalAgreement> agreements = _context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.RentalAgreementStatusType)
                 .Include(x => x.Equipment)
                     .ThenInclude(y => y.DistrictEquipmentType)
                         .ThenInclude(d => d.EquipmentType)
-                .Include(x => x.Equipment)
-                    .ThenInclude(y => y.HetEquipmentAttachment)
                 .Include(x => x.Project);
 
             // limit to user's current district

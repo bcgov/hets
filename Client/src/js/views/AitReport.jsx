@@ -321,9 +321,9 @@ function mapStateToProps(state) {
     districtEquipmentTypes: state.lookups.districtEquipmentTypes,
     equipment: state.lookups.equipment.hires,
     aitResponses: state.models.aitResponses,
-    favourites: state.models.favourites.hiringReport,
+    favourites: state.models.favourites.aitReport,
     search: state.search.aitResponses,
-    ui: state.ui.hiringResponses,
+    ui: state.ui.aitResponses,
   };
 }
 
