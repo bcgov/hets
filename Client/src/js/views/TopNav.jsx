@@ -98,6 +98,9 @@ var TopNav = React.createClass({
                 <NavItem>Time Entry</NavItem>
               </LinkContainer>
               <NavDropdown id="reports-dropdown" title="Reports" disabled={ navigationDisabled }>
+                <LinkContainer to={{ pathname: `/${ Constant.AIT_REPORT_PATHNAME }` }} active={ currentPathStartsWith(Constant.AIT_REPORT_PATHNAME) }>
+                  <MenuItem>AIT report</MenuItem>
+                </LinkContainer>
                 <LinkContainer to={{ pathname: `/${ Constant.SENIORITY_LIST_PATHNAME }` }} active={ currentPathStartsWith(Constant.SENIORITY_LIST_PATHNAME) }>
                   <MenuItem>Seniority List</MenuItem>
                 </LinkContainer>

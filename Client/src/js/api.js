@@ -1822,6 +1822,13 @@ export function generateRentalAgreementDocument(rentalAgreementId) {
   return new ApiRequest(`rentalagreements/${rentalAgreementId}/pdf`).get(null, { ignoreResponse: true });
 }
 
+export function searchAitReport(params) {
+  store.dispatch({ type: Action.AIT_REPORT_REQUEST });
+  return new ApiRequest('/rentalAgreements/aitReport').get(params).then(response => {
+    var aitResponses = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_AIT_REPORT, aitResponses: aitResponses });
+  });
+}
 
 ////////////////////
 // Blank Rental Agreements
