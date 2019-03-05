@@ -565,7 +565,7 @@ var OwnersDetail = React.createClass({
                 })()}
               </Well>
               <Well>
-                <SubHeader title="Contacts"/>
+                <SubHeader title="History"/>
                 { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ !this.state.loading } /> }
               </Well>
             </Col>
