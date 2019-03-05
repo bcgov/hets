@@ -1,11 +1,8 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Well, Row, Col } from 'react-bootstrap';
 import { Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import { Link } from 'react-router';
-
 import _ from 'lodash';
 import Promise from 'bluebird';
 
@@ -38,10 +35,13 @@ import SubHeader from '../components/ui/SubHeader.jsx';
 import { activeProjectSelector, activeProjectIdSelector } from '../selectors/ui-selectors.js';
 
 import { formatDateTime } from '../utils/date';
-import { sortDir } from '../utils/array.js';
+import { sort, caseInsensitiveSort } from '../utils/array.js';
 import { firstLastName } from '../utils/string.js';
 import ReturnButton from '../components/ReturnButton.jsx';
 import PrintButton from '../components/PrintButton.jsx';
+
+
+const CONTACT_NAME_SORT_FIELDS = ['givenName', 'surname'];
 
 
 var ProjectsDetail = React.createClass({
@@ -58,7 +58,6 @@ var ProjectsDetail = React.createClass({
       loading: true,
       loadingHistory: false,
       loadingDocuments: true,
-      loadingContacts: false,
 
       showNotesDialog: false,
       showDocumentsDialog: false,
@@ -75,7 +74,7 @@ var ProjectsDetail = React.createClass({
 
       // Contacts
       uiContacts : {
-        sortField: this.props.uiContacts.sortField || 'name',
+        sortField: this.props.uiContacts.sortField || CONTACT_NAME_SORT_FIELDS,
         sortDesc: this.props.uiContacts.sortDesc === true,
       },
     };
@@ -169,17 +168,14 @@ var ProjectsDetail = React.createClass({
     });
   },
 
-  saveContact(contact) {
+  contactSaved(contact) {
     var isNew = !contact.id;
     var log = isNew ? Log.projectContactAdded : Log.projectContactUpdated;
 
-    if (isNew) { this.setState({ loadingContacts: true }); }
-
-    Api.addProjectContact(this.props.project, contact).then((newContact) => {
-      log(this.props.project, newContact);
-      this.fetch().then(() => {
-        if (isNew) { this.setState({ loadingContacts: false }); }
-      });
+    log(this.props.project, contact).then(() => {
+      // In addition to refreshing the contacts, we need to update the owner
+      // to get primary contact info and history.
+      this.fetch();
     });
 
     this.closeContactDialog();
@@ -229,7 +225,7 @@ var ProjectsDetail = React.createClass({
   },
 
   render() {
-    const { loading, loadingDocuments, loadingContacts } = this.state;
+    const { loading, loadingDocuments } = this.state;
     var project = this.props.project || {};
 
     // As per business requirements:
@@ -428,22 +424,22 @@ var ProjectsDetail = React.createClass({
               <Well>
                 <SubHeader title="Contacts"/>
                 {(() => {
-                  if (loading || loadingContacts) { return <div className="spinner-container"><Spinner/></div>; }
+                  if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
                   var addContactButton = <Button title="Add Contact" onClick={ this.openContactDialog.bind(this, 0) } bsSize="small"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
 
                   if (!project.contacts || project.contacts.length === 0) { return <Alert bsStyle="success">No contacts { addContactButton }</Alert>; }
 
-                  var contacts = _.orderBy(project.contacts, [this.state.uiContacts.sortField], sortDir(this.state.uiContacts.sortDesc));
+                  var contacts = sort(project.contacts, this.state.uiContacts.sortField, this.state.uiContacts.sortDesc, caseInsensitiveSort);
 
                   var headers = [
-                    { field: 'name',              title: 'Name'         },
-                    { field: 'phone',             title: 'Phone Number' },
-                    { field: 'mobilePhoneNumber', title: 'Cell'         },
-                    { field: 'faxPhoneNumber',    title: 'Fax'          },
-                    { field: 'emailAddress',      title: 'Email'        },
-                    { field: 'role',              title: 'Role'         },
-                    { field: 'addContact',        title: 'Add Contact', style: { textAlign: 'right'  },
+                    { field: CONTACT_NAME_SORT_FIELDS, title: 'Name'         },
+                    { field: 'phone',                  title: 'Phone Number' },
+                    { field: 'mobilePhoneNumber',      title: 'Cell'         },
+                    { field: 'faxPhoneNumber',         title: 'Fax'          },
+                    { field: 'emailAddress',           title: 'Email'        },
+                    { field: 'role',                   title: 'Role'         },
+                    { field: 'addContact',             title: 'Add Contact', style: { textAlign: 'right'  },
                       node: addContactButton,
                     },
                   ];
@@ -463,8 +459,12 @@ var ProjectsDetail = React.createClass({
                           <td>{ contact.role }</td>
                           <td style={{ textAlign: 'right' }}>
                             <ButtonGroup>
-                              <DeleteButton name="Contact" hide={ !contact.canDelete  } onConfirm={ this.deleteContact.bind(this, contact) } />
-                              <EditButton name="Contact" view={ !contact.canEdit } onClick={ this.openContactDialog.bind(this, contact.id) } />
+                              {contact.canDelete && (
+                                <DeleteButton disabled={!contact.id} name="Contact" onConfirm={ this.deleteContact.bind(this, contact) } />
+                              )}
+                              {contact.canEdit && (
+                                <EditButton disabled={!contact.id} name="Contact" onClick={ this.openContactDialog.bind(this, contact.id) } />
+                              )}
                             </ButtonGroup>
                           </td>
                         </tr>;
@@ -522,8 +522,10 @@ var ProjectsDetail = React.createClass({
         {this.state.showContactDialog && (
           <ContactsEditDialog
             show={this.state.showContactDialog}
+            saveContact={Api.saveProjectContact}
             contact={this.state.contact}
-            onSave={this.saveContact}
+            parent={project}
+            onSave={this.contactSaved}
             onClose={this.closeContactDialog}/>
         )}
       </div>

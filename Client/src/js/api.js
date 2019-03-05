@@ -804,13 +804,29 @@ export function updateOwner(owner) {
 //   });
 // }
 
-export function addOwnerContact(owner, contact) {
-  return new ApiRequest(`/owners/${ owner.id }/contacts/${contact.isPrimary}`).post(contact).then(response => {
-    var contact = response.data;
-    // Add display fields
-    parseContact(contact, owner);
+export function saveOwnerContact(owner, contact) {
+  const isNew = contact.id === 0;
 
-    store.dispatch({ type: Action.ADD_OWNER_CONTACT, contact: contact });
+  if (!isNew) { // don't update if this is a new contact - add after post() completes
+    store.dispatch({ type: Action.UPDATE_OWNER_CONTACT, ownerId: owner.id, contact });
+  }
+
+  return new ApiRequest(`/owners/${ owner.id }/contacts/${contact.isPrimary}`).post(contact).then(response => {
+    var updatedContact = response.data;
+
+    // Add display fields
+    parseContact(updatedContact, owner); // owner's primary contact could be outdated
+    updatedContact.isPrimary = contact.isPrimary;
+
+    if (isNew){
+      // add newly created contact to Redux store's contacts
+      store.dispatch({ type: Action.ADD_OWNER_CONTACT, ownerId: owner.id, contact: updatedContact });
+    } else {
+      // Update Redux store's data with the server's data
+      store.dispatch({ type: Action.UPDATE_OWNER_CONTACT, ownerId: owner.id, contact: updatedContact });
+    }
+
+    return updatedContact;
   });
 }
 
@@ -1271,24 +1287,29 @@ export function updateProject(project) {
 //   });
 // }
 
-export function addProjectContact(project, contact) {
+export function saveProjectContact(project, contact) {
   const isNew = contact.id === 0;
 
-  if (!isNew) {
+  if (!isNew) { // don't update if this is a new contact - add after post() completes
     store.dispatch({ type: Action.UPDATE_PROJECT_CONTACT, projectId: project.id, contact });
   }
 
   return new ApiRequest(`/projects/${ project.id }/contacts/${contact.isPrimary}`).post(contact).then(response => {
-    var contact = response.data;
+    var updatedContact = response.data;
 
     // Add display fields
-    parseContact(contact, project);
+    parseContact(updatedContact, project); // project's primary contact could be outdated
+    updatedContact.isPrimary = contact.isPrimary;
 
-    if (!isNew){
-      store.dispatch({ type: Action.ADD_PROJECT_CONTACT, projectId: project.id, contact });
+    if (isNew){
+      // add newly created contact to Redux store's contacts
+      store.dispatch({ type: Action.ADD_PROJECT_CONTACT, projectId: project.id, contact: updatedContact });
+    } else {
+      // Update Redux store's data with the server's data
+      store.dispatch({ type: Action.UPDATE_PROJECT_CONTACT, projectId: project.id, contact: updatedContact });
     }
 
-    return contact;
+    return updatedContact;
   });
 }
 

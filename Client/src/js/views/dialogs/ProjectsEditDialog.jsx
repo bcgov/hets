@@ -120,7 +120,6 @@ var ProjectsEditDialog = React.createClass({
       id: this.props.project.id,
       canEditStatus: this.props.project.canEditStatus,
       district: this.props.project.district,
-      primaryContact: this.props.project.primaryContact,
       name: this.state.projectName,
       status: this.state.projectStatus,
       fiscalYear: this.state.fiscalYear,

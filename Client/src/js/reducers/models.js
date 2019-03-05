@@ -1,6 +1,7 @@
-import * as Action from '../actionTypes';
-
 import _ from 'lodash';
+import produce from 'immer';
+
+import * as Action from '../actionTypes';
 
 const DEFAULT_MODELS = {
   users: {
@@ -277,6 +278,41 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.UPDATE_OWNER_NOTES:
       return { ...state, ownerNotes: action.notes };
 
+    case Action.ADD_OWNER_CONTACT:
+      return produce(state, (draftState) => {
+        const existingOwner = draftState.owner || {};
+        const updatedContacts = (existingOwner.contacts || []);
+        updatedContacts.push(action.contact);
+
+        existingOwner.contacts = updatedContacts;
+      });
+
+    case Action.UPDATE_OWNER_CONTACT:
+      return produce(state, (draftState) => {
+        const existingOwner = draftState.owner || {};
+        const updatedContacts = (existingOwner.contacts || []);
+
+        if (action.contact.isPrimary) {
+          const previousPrimaryContact = _.find(updatedContacts, { isPrimary: true });
+          if (previousPrimaryContact) {
+            previousPrimaryContact.isPrimary = false;
+          }
+        }
+
+        const pos = _.findIndex(updatedContacts, (contact) => contact.id === action.contact.id);
+        updatedContacts[pos] = action.contact;
+
+        existingOwner.contacts = updatedContacts;
+      });
+
+    case Action.DELETE_OWNER_CONTACT: {
+      const existingOwner = { ...state.owner || {} };
+      const updatedList = existingOwner.contacts.filter((contact) => contact.id !== action.contactId);
+      existingOwner.contacts = updatedList;
+      return { ...state, owner: { ...state.owner, owner: existingOwner } };
+    }
+
+
     // Projects
     case Action.PROJECTS_REQUEST:
       return { ...state, projects: { ...state.projects, loading: true, loaded: false } };
@@ -326,17 +362,32 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, project: { ...state.project, [action.projectId]: existingProject } };
     }
 
-    case Action.UPDATE_PROJECT_CONTACT: {
-      const existingProject = { ...state.project[action.projectId] || {} };
-      const updatedList = existingProject.contacts.map((contact) => {
-        if (contact.id === action.contact.id) {
-          return action.contact;
-        }
-        return contact;
+    case Action.ADD_PROJECT_CONTACT:
+      return produce(state, (draftState) => {
+        const existingProject = draftState.project[action.projectId] || {};
+        const updatedContacts = (existingProject.contacts || []);
+        updatedContacts.push(action.contact);
+
+        existingProject.contacts = updatedContacts;
       });
-      existingProject.contacts = updatedList;
-      return { ...state, project: { ...state.project, [action.projectId]: existingProject } };
-    }
+
+    case Action.UPDATE_PROJECT_CONTACT:
+      return produce(state, (draftState) => {
+        const existingProject = draftState.project[action.projectId] || {};
+        const updatedContacts = (existingProject.contacts || []);
+
+        if (action.contact.isPrimary) {
+          const previousPrimaryContact = _.find(updatedContacts, { isPrimary: true });
+          if (previousPrimaryContact) {
+            previousPrimaryContact.isPrimary = false;
+          }
+        }
+
+        const pos = _.findIndex(updatedContacts, (contact) => contact.id === action.contact.id);
+        updatedContacts[pos] = action.contact;
+
+        existingProject.contacts = updatedContacts;
+      });
 
     case Action.DELETE_PROJECT_CONTACT: {
       const existingProject = { ...state.project[action.projectId] || {} };

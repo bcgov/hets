@@ -12,7 +12,6 @@ var PrintButton = React.createClass({
     title: React.PropTypes.string,
     disabled: React.PropTypes.bool,
     disabledTooltip: React.PropTypes.node,
-    to: React.PropTypes.string.isRequired,
     children: React.PropTypes.node,
   },
 

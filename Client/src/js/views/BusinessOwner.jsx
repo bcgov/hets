@@ -202,10 +202,7 @@ var BusinessOwner = React.createClass({
           {(() => {
             if (!owner.contacts || Object.keys(owner.contacts).length === 0) { return <Alert bsStyle="success">No contacts</Alert>; }
 
-            var contacts = _.sortBy(owner.contacts, this.state.uiContacts.sortField);
-            if (this.state.uiContacts.sortDesc) {
-              _.reverse(contacts);
-            }
+            var contacts = _.orderBy(owner.contacts, [this.state.uiContacts.sortField], sortDir(this.state.uiContacts.sortDesc));
 
             var headers = [
               { field: 'name',              title: 'Name'  },
