@@ -11,6 +11,11 @@ export const USERS_PATHNAME = 'users';
 export const ROLES_PATHNAME = 'roles';
 export const ROLLOVER_PATHNAME = 'roll-over';
 export const DISTRICT_ADMIN_PATHNAME = 'district-admin';
+export const SENIORITY_LIST_PATHNAME = 'reports/seniority-list';
+export const STATUS_LETTERS_REPORT_PATHNAME = 'reports/status-letters';
+export const HIRING_REPORT_PATHNAME = 'reports/owners-equipment-reason';
+export const OWNERS_COVERAGE_PATHNAME = 'reports/wcb-cgl-coverage';
+export const TIME_ENTRY_PATHNAME = 'time-entry';
 export const VERSION_PATHNAME = 'version';
 export const BUSINESS_PORTAL_PATHNAME = '/business';
 export const BUSINESS_DETAILS_PATHNAME = '/business/details';
@@ -27,8 +32,8 @@ export const PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT = 'DistrictCodeTableManag
 export const PERMISSION_DISTRICT_ROLLOVER = 'DistrictRollover';
 export const PERMISSION_VERSION = 'Version';
 
-// Roles 
-export const ADMINISTRATOR_ROLE = 'Administrator';
+// Roles
+export const ADMINISTRATOR_ROLE = '4-HETS System Administrator';
 
 // Equipments
 export const EQUIPMENT_DAYS_SINCE_VERIFIED_WARNING = 270;
@@ -51,6 +56,14 @@ export const PROJECT_STATUS_CODE_COMPLETED = 'Completed';
 export const RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS = 'In Progress';
 export const RENTAL_REQUEST_STATUS_CODE_COMPLETED = 'Complete';
 export const RENTAL_REQUEST_STATUS_CODE_CANCELLED = 'Cancelled';
+
+// Hiring Refusal Reasons
+export const HIRING_REFUSAL_EQUIPMENT_NOT_AVAILABLE = 'Equipment Not Available';
+export const HIRING_REFUSAL_EQUIPMENT_NOT_SUITABLE = 'Equipment Not Suitable';
+export const HIRING_REFUSAL_NO_RESPONSE = 'No Response';
+export const HIRING_REFUSAL_MAXIMUM_HOURS_REACHED = 'Maximum Hours Reached';
+export const HIRING_REFUSAL_MAINTENANCE_CONTRACTOR = 'Maintenance Contractor';
+export const HIRING_REFUSAL_OTHER = 'Other (Reason to be mentioned in note)';
 
 // Rental Agreements
 export const RENTAL_AGREEMENT_STATUS_CODE_ACTIVE = 'Active';

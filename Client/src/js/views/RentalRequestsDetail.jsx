@@ -68,7 +68,7 @@ var RentalRequestsDetail = React.createClass({
 
       showEditDialog: false,
       showHireOfferDialog: false,
-      showNotesDialog: false, 
+      showNotesDialog: false,
 
       showAttachmentss: false,
 
@@ -159,7 +159,7 @@ var RentalRequestsDetail = React.createClass({
     delete hireOfferUpdated.showAllResponseFields;
     delete hireOfferUpdated.displayFields;
     delete hireOfferUpdated.rentalAgreement;
-    
+
     Api.updateRentalRequestRotationList(hireOfferUpdated, this.props.rentalRequest.data).then(() => {
       Log.rentalRequestEquipmentHired(this.props.rentalRequest.data, hireOffer.equipment, hireOffer.offerResponse);
 
@@ -189,12 +189,12 @@ var RentalRequestsDetail = React.createClass({
       if (window.navigator.msSaveBlob) {
         blob = window.navigator.msSaveBlob([response], filename);
       }
-      //Create a link element, hide it, direct 
+      //Create a link element, hide it, direct
       //it towards the blob, and then 'click' it programatically
       let a = document.createElement('a');
       a.style.cssText = 'display: none';
       document.body.appendChild(a);
-      //Create a DOMString representing the blob 
+      //Create a DOMString representing the blob
       //and point the link element towards it
       let url = window.URL.createObjectURL(blob);
       a.href = url;
@@ -212,7 +212,9 @@ var RentalRequestsDetail = React.createClass({
 
   renderStatusText(listItem) {
     let text = 'Hire';
-    if (listItem.offerResponse === STATUS_NO) {
+    if (listItem.offerResponse === STATUS_NO && listItem.offerRefusalReason == Constant.HIRING_REFUSAL_OTHER) {
+      text = listItem.offerResponseNote;
+    } else if (listItem.offerResponse == STATUS_NO) {
       text = listItem.offerRefusalReason;
     } else if (listItem.offerResponse === STATUS_ASKED) {
       text = `${listItem.offerResponse} (${Moment(listItem.askedDateTime).format('YYYY-MM-DD hh:mm A')})`;
@@ -224,7 +226,7 @@ var RentalRequestsDetail = React.createClass({
 
   render() {
     var rentalRequest = this.props.rentalRequest.data;
-    
+
     return <div id="rental-requests-detail">
       <Row id="rental-requests-top">
         <Col sm={10}>
@@ -301,14 +303,14 @@ var RentalRequestsDetail = React.createClass({
         </span></h3>
         {(() => {
           if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
-          
+
           var rotationList = this.props.rentalRequestRotationList.data.rentalRequestRotationList;
 
           if (Object.keys(rotationList || []).length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
-          
+
           // Sort in rotation list order
           rotationList = _.sortBy(rotationList, 'rotationListSortOrder');
-          
+
           // use spans for table headers so we can force them to wrap when printing
           var headers = [
             { field: 'seniorityString',         title: 'Seniority'         },
@@ -331,8 +333,8 @@ var RentalRequestsDetail = React.createClass({
               _.map(rotationList, (listItem) => {
                 const owner = listItem.equipment.owner;
                 var showAllResponseFields = false;
-                if ((numberEquipmentAvailableForNormalHire > 0) && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse) && (rentalRequest.yesCount < rentalRequest.equipmentCount)) { 
-                  showAllResponseFields = true;  
+                if ((numberEquipmentAvailableForNormalHire > 0) && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse) && (rentalRequest.yesCount < rentalRequest.equipmentCount)) {
+                  showAllResponseFields = true;
                   numberEquipmentAvailableForNormalHire -= 1;
                 }
                 return (
@@ -342,7 +344,7 @@ var RentalRequestsDetail = React.createClass({
                     <td>{ listItem.equipment.hoursYtd }</td>
                     <td><Link to={ `${Constant.EQUIPMENT_PATHNAME}/${listItem.equipment.id}` }>{ listItem.equipment.equipmentCode }</Link></td>
                     <td>{ listItem.equipment.equipmentDetails }
-                      { this.state.showAttachments && 
+                      { this.state.showAttachments &&
                       <div>
                         Attachments:
                         { listItem.equipment.equipmentAttachments && listItem.equipment.equipmentAttachments.map((item, i) => (
@@ -371,14 +373,14 @@ var RentalRequestsDetail = React.createClass({
                           listItem.showAllResponseFields = showAllResponseFields;
                           if (listItem.maximumHours) {
                             return (
-                              <OverlayTrigger 
-                                trigger="click" 
-                                placement="top" 
+                              <OverlayTrigger
+                                trigger="click"
+                                placement="top"
                                 title="This piece of equipment is has met or exceeded its Maximum Allowed Hours for this year. Are you sure you want to edit the Offer on this equipment?"
-                                rootClose 
+                                rootClose
                                 overlay={ <Confirm onConfirm={ this.openHireOfferDialog.bind(this, listItem) }/> }
                               >
-                                <Button 
+                                <Button
                                   bsStyle="link"
                                   bsSize="xsmall"
                                 >
@@ -389,9 +391,9 @@ var RentalRequestsDetail = React.createClass({
                           }
                           if (rentalRequest.status === STATUS_IN_PROGRESS && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse)) {
                             return (
-                              <Button 
-                                bsStyle="link" 
-                                title="Show Offer" 
+                              <Button
+                                bsStyle="link"
+                                title="Show Offer"
                                 onClick={ this.openHireOfferDialog.bind(this, listItem) }
                               >
                                 { this.renderStatusText(listItem) }
@@ -418,39 +420,39 @@ var RentalRequestsDetail = React.createClass({
         }
       </Well>
       { this.state.showEditDialog &&
-        <RentalRequestsEditDialog 
-          show={ this.state.showEditDialog } 
-          onSave={ this.saveEdit } 
-          onClose={ this.closeEditDialog } 
+        <RentalRequestsEditDialog
+          show={ this.state.showEditDialog }
+          onSave={ this.saveEdit }
+          onClose={ this.closeEditDialog }
         />
       }
       { this.state.showHireOfferDialog &&
-        <HireOfferEditDialog 
-          show={ this.state.showHireOfferDialog } 
-          hireOffer={ this.state.rotationListHireOffer } 
-          onSave={ this.saveHireOffer } 
-          onClose={ this.closeHireOfferDialog } 
+        <HireOfferEditDialog
+          show={ this.state.showHireOfferDialog }
+          hireOffer={ this.state.rotationListHireOffer }
+          onSave={ this.saveHireOffer }
+          onClose={ this.closeHireOfferDialog }
           error={ this.props.rentalRequestRotationList.error }
         />
       }
       { this.state.showDocumentsDialog &&
-        <DocumentsListDialog 
-          show={ this.state.showDocumentsDialog } 
-          parent={ rentalRequest } 
-          onClose={ this.closeDocumentsDialog } 
+        <DocumentsListDialog
+          show={ this.state.showDocumentsDialog }
+          parent={ rentalRequest }
+          onClose={ this.closeDocumentsDialog }
         />
       }
       { this.state.showNotesDialog &&
-        <NotesDialog 
-          show={ this.state.showNotesDialog } 
-          onSave={ Api.addRentalRequestNote } 
+        <NotesDialog
+          show={ this.state.showNotesDialog }
+          onSave={ Api.addRentalRequestNote }
           id={ this.props.params.rentalRequestId }
           getNotes={ Api.getRentalRequestNotes }
           onUpdate={ Api.updateNote }
-          onClose={ this.closeNotesDialog } 
+          onClose={ this.closeNotesDialog }
           notes={ this.props.notes }
         />
-      } 
+      }
     </div>;
   },
 });

@@ -59,7 +59,7 @@ var RentalRequestsAddDialog = React.createClass({
   componentDidMount() {
     this.setState({ loading: true });
     var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
-    var projectsPromise = Api.getProjects();
+    var projectsPromise = Api.getProjectsCurrentFiscal();
     Promise.all([equipmentTypesPromise, projectsPromise]).then(() => {
       this.setState({ loading: false });
     });
@@ -148,7 +148,7 @@ var RentalRequestsAddDialog = React.createClass({
 
     return valid;
   },
-  
+
   onLocalAreaSelected(localArea) {
     // clear the selected equipment type if it's not included in the types for the new local area
     var districtEquipmentTypes = this.getFilteredEquipmentTypes(localArea.id);
@@ -167,11 +167,11 @@ var RentalRequestsAddDialog = React.createClass({
       localArea: { id: this.state.localAreaId },
       districtEquipmentType: { id: this.state.equipmentTypeId },
       equipmentCount: this.state.count,
-      status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS, 
+      status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
       expectedHours: this.state.expectedHours,
       expectedStartDate: this.state.expectedStartDate,
       expectedEndDate: this.state.expectedEndDate,
-      rentalRequestAttachments: [{ 
+      rentalRequestAttachments: [{
         id: 0,
         attachment: this.state.rentalRequestAttachments,
       }],
@@ -212,7 +212,7 @@ var RentalRequestsAddDialog = React.createClass({
               { project ?
                 <div>{ project.name }</div>
                 :
-                <FilterDropdown id="projectId" selectedId={ this.state.projectId } onSelect={ this.onProjectSelected } updateState={ this.updateState }
+                <FilterDropdown id="projectId" fieldName="label" selectedId={ this.state.projectId } onSelect={ this.onProjectSelected } updateState={ this.updateState }
                   items={ projects } className="full-width"
                 />
               }
@@ -286,7 +286,7 @@ function mapStateToProps(state) {
     currentUser: state.user,
     localAreas: state.lookups.localAreas,
     districtEquipmentTypes: state.lookups.districtEquipmentTypes.data,
-    projects: state.lookups.projects,
+    projects: state.lookups.projectsCurrentFiscal,
   };
 }
 

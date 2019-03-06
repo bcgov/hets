@@ -85,7 +85,7 @@ var Projects = React.createClass({
 
   search(e) {
     e.preventDefault();
-    this.fetch(); 
+    this.fetch();
   },
 
   clearSearch() {
@@ -142,8 +142,8 @@ var Projects = React.createClass({
   },
 
   renderResults(addProjectButton) {
-    if (Object.keys(this.props.projects.data).length === 0) { 
-      return <Alert bsStyle="success">No Projects { addProjectButton }</Alert>; 
+    if (Object.keys(this.props.projects.data).length === 0) {
+      return <Alert bsStyle="success">No Projects { addProjectButton }</Alert>;
     }
 
     var projects = _.sortBy(this.props.projects.data, project => {
@@ -153,19 +153,20 @@ var Projects = React.createClass({
       }
       return sortValue;
     });
-    
+
     if (this.state.ui.sortDesc) {
       _.reverse(projects);
     }
 
     return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-      { field: 'name',                   title: 'Project'                                        },
-      { field: 'primaryContactName',     title: 'Primary Contact'                                },
-      { field: 'primaryContactPhone',    title: 'Contact #'                                      },
-      { field: 'hires',          title: 'Hires',          style: { textAlign: 'center' } },
-      { field: 'requests',       title: 'Requests',       style: { textAlign: 'center' } },
-      { field: 'status',                 title: 'Status',         style: { textAlign: 'center' } },
-      { field: 'addProject',             title: 'Add Project',    style: { textAlign: 'right'  },
+      { field: 'name',                     title: 'Project'                                        },
+      { field: 'provincialProjectNumber',  title: 'Project Number'                                 },
+      { field: 'primaryContactName',       title: 'Primary Contact'                                },
+      { field: 'primaryContactPhone',      title: 'Contact #'                                      },
+      { field: 'hires',                    title: 'Hires',          style: { textAlign: 'center' } },
+      { field: 'requests',                 title: 'Requests',       style: { textAlign: 'center' } },
+      { field: 'status',                   title: 'Status',         style: { textAlign: 'center' } },
+      { field: 'addProject',               title: 'Add Project',    style: { textAlign: 'right'  },
         node: addProjectButton,
       },
     ]}>
@@ -173,6 +174,7 @@ var Projects = React.createClass({
         _.map(projects, (project) => {
           return <tr key={ project.id } className={ project.isActive ? null : 'info' }>
             <td>{ project.name }</td>
+			<td>{ project.provincialProjectNumber }</td>
             <td>{ project.primaryContactName }</td>
             <td>{ project.primaryContactPhone }</td>
             <td style={{ textAlign: 'center' }}>{ project.hires }</td>
@@ -224,10 +226,10 @@ var Projects = React.createClass({
       </Well>
 
       {(() => {
-        if (this.props.projects.loading || this.props.favourites.loading) { 
-          return <div style={{ textAlign: 'center' }}><Spinner/></div>; 
+        if (this.props.projects.loading || this.props.favourites.loading) {
+          return <div style={{ textAlign: 'center' }}><Spinner/></div>;
         }
-        
+
         var addProjectButton = <Button title="Add Project" bsSize="xsmall" onClick={ this.openAddDialog }>
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Project</strong>
         </Button>;

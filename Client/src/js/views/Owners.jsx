@@ -22,8 +22,7 @@ import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
-
-import { formatDateTimeUTCToLocal } from '../utils/date';
+import { caseInsensitiveSort, sortDir } from '../utils/array.js';
 
 var Owners = React.createClass({
   propTypes: {
@@ -96,7 +95,7 @@ var Owners = React.createClass({
   },
 
   search(e) {
-    e.preventDefault(); 
+    e.preventDefault();
     this.fetch();
   },
 
@@ -149,40 +148,9 @@ var Owners = React.createClass({
       });
     });
   },
-  
+
   print() {
     window.print();
-  },
-
-  verifyOwners(ownerList) {
-    var owners = _.map(ownerList, owner => {
-      return owner.id;
-    });
-    Api.verifyOwners(owners).then((response) => {
-
-      var filename = 'StatusLetters-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.pdf';
-
-      var blob;
-      if (window.navigator.msSaveBlob) {
-        blob = window.navigator.msSaveBlob(response, filename);
-      } else {
-        blob = new Blob([response], {type: 'image/pdf'}); 
-      }
-      //Create a link element, hide it, direct 
-      //it towards the blob, and then 'click' it programatically
-      let a = document.createElement('a');
-      a.style.cssText = 'display: none';
-      document.body.appendChild(a);
-      //Create a DOMString representing the blob 
-      //and point the link element towards it
-      let url = window.URL.createObjectURL(blob);
-      a.href = url;
-      a.download = filename;
-      //programatically click the link to trigger the download
-      a.click();
-      //release the reference to the file by revoking the Object URL
-      window.URL.revokeObjectURL(url);
-    });
   },
 
   renderResults(ownerList, addOwnerButton) {
@@ -232,23 +200,11 @@ var Owners = React.createClass({
       resultCount = '(' + Object.keys(this.props.ownerList.data).length + ')';
     }
 
-    var ownerList = _.sortBy(this.props.ownerList.data, owner => {
-      if (typeof owner[this.state.ui.sortField] === 'string') {
-        return owner[this.state.ui.sortField].toLowerCase();
-      }
-      return owner[this.state.ui.sortField];
-    });
-    
-    if (this.state.ui.sortDesc) {
-      _.reverse(ownerList);
-    }
+    var ownerList = caseInsensitiveSort(this.props.ownerList.data, [this.state.ui.sortField], [sortDir(this.state.ui.sortDesc)]);
 
     return <div id="owners-list">
       <PageHeader>Owners { resultCount }
         <div id="owners-buttons">
-          <TooltipButton className="mr-5" onClick={ this.verifyOwners.bind(this, ownerList) } disabled={ !this.props.ownerList.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
-            Status Letters
-          </TooltipButton>
           <ButtonGroup>
             <TooltipButton onClick={ this.print } disabled={ !this.props.ownerList.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
               <Glyphicon glyph="print" title="Print" />
@@ -284,7 +240,7 @@ var Owners = React.createClass({
         var addOwnerButton = <Button title="Add Owner" bsSize="xsmall" onClick={ this.openAddDialog }>
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong>
         </Button>;
-        
+
         if (this.props.ownerList.loaded) {
           return this.renderResults(ownerList, addOwnerButton);
         }

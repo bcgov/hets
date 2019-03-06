@@ -45,7 +45,7 @@ var Users = React.createClass({
       search: {
         selectedDistrictsIds: this.props.search.selectedDistrictsIds || [],
         surname: this.props.search.surname || '',
-        hideInactive: this.props.search.hideInactive,
+        hideInactive: this.props.search.hideInactive || true,
       },
 
       ui : {
@@ -74,32 +74,39 @@ var Users = React.createClass({
     var favouritesPromise = Api.getFavourites('user');
 
     Promise.all([favouritesPromise]).then(() => {
+      this.setState({ loading: false });
+
       // If this is the first load, then look for a default favourite
-      if (!this.props.search.loaded) {
-        var favourite = _.find(this.props.favourites, (favourite) => { return favourite.isDefault; });
-        if (favourite) {
-          this.loadFavourite(favourite);
+      if (_.isEmpty(this.props.search)) {
+        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
+        if (defaultFavourite) {
+          this.loadFavourite(defaultFavourite);
           return;
         }
       }
-      this.fetch();
     });
-  },
-
-  componentWillUnmount() {
-    store.dispatch({ type: Action.UPDATE_USERS_SEARCH, users: {} });
   },
 
   fetch() {
-    this.setState({ loading: true });
-    Api.searchUsers(this.buildSearchParams()).finally(() => {
-      this.setState({ loading: false });
-    });
+    Api.searchUsers(this.buildSearchParams());
   },
 
   search(e) {
     e.preventDefault();
     this.fetch();
+  },
+
+  clearSearch() {
+    var defaultSearchParameters = {
+      selectedDistrictsIds: [],
+      surname: '',
+      hideInactive: true,
+    };
+
+    this.setState({ search: defaultSearchParameters }, () => {
+      store.dispatch({ type: Action.UPDATE_USERS_SEARCH, users: this.state.search });
+      store.dispatch({ type: Action.CLEAR_USERS });
+    });
   },
 
   updateSearchState(state, callback) {
@@ -150,19 +157,66 @@ var Users = React.createClass({
     this.closeEditDialog();
   },
 
+  renderResults(addUserButton) {
+    if (Object.keys(this.props.users.data).length === 0) {
+      return <Alert bsStyle="success">No users { addUserButton }</Alert>;
+    }
+
+    var users = _.sortBy(this.props.users.data, this.state.ui.sortField);
+    if (this.state.ui.sortDesc) {
+      _.reverse(users);
+    }
+
+    return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
+      { field: 'surname',      title: 'Surname'    },
+      { field: 'givenName',    title: 'First Name' },
+      { field: 'smUserId',     title: 'User ID'    },
+      { field: 'districtName', title: 'District'   },
+      { field: 'addUser',      title: 'Add User',  style: { textAlign: 'right'  },
+        node: addUserButton,
+      },
+    ]}>
+      {
+        _.map(users, (user) => {
+          return <tr key={ user.id } className={ user.active ? null : 'info' }>
+            <td>{ user.surname }</td>
+            <td>{ user.givenName }</td>
+            <td>{ user.smUserId }</td>
+            <td>{ user.districtName }</td>
+            <td style={{ textAlign: 'right' }}>
+              <ButtonGroup>
+                <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.delete.bind(this, user) }/> }>
+                  <Button className={ user.canDelete ? '' : 'hidden' } title="Delete User" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
+                </OverlayTrigger>
+                <LinkContainer to={{ pathname: `${ Constant.USERS_PATHNAME }/${ user.id }` }}>
+                  <Button className={ user.canEdit ? '' : 'hidden' } title="View User" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
+                </LinkContainer>
+              </ButtonGroup>
+            </td>
+          </tr>;
+        })
+      }
+    </SortTable>;
+  },
+
   render() {
     var districts = _.sortBy(this.props.districts, 'name');
 
-    var numUsers = this.state.loading ? '...' : Object.keys(this.props.users).length;
-
-    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) { 
+    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) {
       return (
         <div>You do not have permission to view this page.</div>
-      ); 
+      );
+    }
+
+    if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+
+    var resultCount = '';
+    if (this.props.users.loaded) {
+      resultCount = '(' + Object.keys(this.props.users.data).length + ')';
     }
 
     return <div id="users-list">
-      <PageHeader>Users ({ numUsers })
+      <PageHeader>Users { resultCount }
         <ButtonGroup id="users-buttons">
           <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
         </ButtonGroup>
@@ -179,8 +233,9 @@ var Users = React.createClass({
                     <InputGroup.Addon>Surname</InputGroup.Addon>
                     <FormInputControl id="surname" type="text" value={ this.state.search.surname } updateState={ this.updateSearchState }/>
                   </InputGroup>
-                  <CheckboxControl inline id="hideInactive" value={ this.state.search.hideInactive } updateState={ this.updateSearchState }>Hide Inactive</CheckboxControl>
+                  <CheckboxControl inline id="hideInactive" checked={ this.state.search.hideInactive } updateState={ this.updateSearchState }>Hide Inactive</CheckboxControl>
                   <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
+                  <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
                 </ButtonToolbar>
               </Form>
             </Col>
@@ -193,55 +248,27 @@ var Users = React.createClass({
         </Well>
 
         {(() => {
-          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
-          var addUserButton = <Button title="Add User" bsSize="xsmall" onClick={ this.openUsersEditDialog }><Glyphicon glyph="plus" />&nbsp;<strong>Add User</strong></Button>;
-
-          if (Object.keys(this.props.users).length === 0) { return <Alert bsStyle="success">No users { addUserButton }</Alert>; }
-
-          var users = _.sortBy(this.props.users, this.state.ui.sortField);
-          if (this.state.ui.sortDesc) {
-            _.reverse(users);
+          if (this.props.users.loading) {
+            return <div style={{ textAlign: 'center' }}><Spinner/></div>;
           }
 
-          return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-            { field: 'surname',      title: 'Surname'    },
-            { field: 'givenName',    title: 'First Name' },
-            { field: 'smUserId',     title: 'User ID'    },
-            { field: 'districtName', title: 'District'   },
-            { field: 'addUser',      title: 'Add User',  style: { textAlign: 'right'  },
-              node: addUserButton,
-            },
-          ]}>
-            {
-              _.map(users, (user) => {
-                return <tr key={ user.id } className={ user.active ? null : 'info' }>
-                  <td>{ user.surname }</td>
-                  <td>{ user.givenName }</td>
-                  <td>{ user.smUserId }</td>
-                  <td>{ user.districtName }</td>
-                  <td style={{ textAlign: 'right' }}>
-                    <ButtonGroup>
-                      <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.delete.bind(this, user) }/> }>
-                        <Button className={ user.canDelete ? '' : 'hidden' } title="Delete User" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
-                      </OverlayTrigger>
-                      <LinkContainer to={{ pathname: `${ Constant.USERS_PATHNAME }/${ user.id }` }}>
-                        <Button className={ user.canEdit ? '' : 'hidden' } title="View User" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
-                      </LinkContainer>
-                    </ButtonGroup>
-                  </td>
-                </tr>;
-              })
-            }
-          </SortTable>;
+          var addUserButton = <Button title="Add User" bsSize="xsmall" onClick={ this.openUsersEditDialog }>
+            <Glyphicon glyph="plus" />&nbsp;<strong>Add User</strong>
+          </Button>;
+
+          if (this.props.users.loaded) {
+            return this.renderResults(addUserButton);
+          }
+
+          return <div id="add-button-container">{ addUserButton }</div>;
         })()}
       </div>
       { this.state.showUsersEditDialog &&
-        <UsersEditDialog 
-          show={ this.state.showUsersEditDialog } 
-          onSave={ this.onSaveEdit } 
+        <UsersEditDialog
+          show={ this.state.showUsersEditDialog }
+          onSave={ this.onSaveEdit }
           onClose= { this.closeUsersEditDialog }
-          isNew 
+          isNew
         />
       }
     </div>;

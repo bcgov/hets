@@ -32,7 +32,7 @@ namespace HetsApi.Controllers
         }
 
         /// <summary>
-        /// Injects an authentication token cookie into the response for use with the 
+        /// Injects an authentication token cookie into the response for use with the
         /// SiteMinder authentication middleware
         /// </summary>
         [HttpGet]
@@ -60,7 +60,7 @@ namespace HetsApi.Controllers
             {
                 userId = _options.DevDefaultUserId;
             }
-                        
+
             // create new "dev" user cookie
             Response.Cookies.Append(
                 _options.DevAuthenticationTokenKey,
@@ -79,7 +79,7 @@ namespace HetsApi.Controllers
         }
 
         /// <summary>
-        /// Injects an authentication token cookie into the response for use with the 
+        /// Injects an authentication token cookie into the response for use with the
         /// SiteMinder authentication middleware - Business User
         /// </summary>
         [HttpGet]
@@ -113,7 +113,7 @@ namespace HetsApi.Controllers
             Debug.WriteLine("New Cookie Guid: " + guid);
 
             return Ok();
-        }        
+        }
 
         /// <summary>
         /// Clear out any existing dev authentication tokens
@@ -140,7 +140,7 @@ namespace HetsApi.Controllers
             // clear up user cookie
             // *************************
             string temp = HttpContext.Request.Cookies[_options.DevAuthenticationTokenKey];
-            
+
             if (temp != null)
             {
                 Debug.WriteLine("Current Cookie User: " + temp);
@@ -182,8 +182,8 @@ namespace HetsApi.Controllers
 
             Debug.WriteLine("Cookie Expired!");
 
-            return Ok();            
-        }        
+            return Ok();
+        }
     }
 }
 

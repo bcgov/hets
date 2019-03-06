@@ -60,7 +60,7 @@ var RentalRequests = React.createClass({
         dateRange: this.props.search.dateRange || '',
       },
       ui : {
-        sortField: this.props.ui.sortField,
+        sortField: this.props.ui.sortField || 'projectName',
         sortDesc: this.props.ui.sortDesc === true,
       },
     };
@@ -158,7 +158,7 @@ var RentalRequests = React.createClass({
       status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
       dateRange: '',
     };
-    
+
     this.setState({ search: defaultSearchParameters }, () => {
       store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_SEARCH, rentalRequests: this.state.search });
       store.dispatch({ type: Action.CLEAR_RENTAL_REQUESTS });
@@ -195,7 +195,7 @@ var RentalRequests = React.createClass({
   saveNewRequest(request) {
     Api.addRentalRequest(request).then(() => {
       Log.rentalRequestAdded(this.props.rentalRequest.data);
-      
+
       // Open it up
       this.props.router.push({
         pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ this.props.rentalRequest.data.id }`,
@@ -330,7 +330,7 @@ var RentalRequests = React.createClass({
         var addRentalRequestButton = <Button title="Add Rental Request" bsSize="xsmall" onClick={ this.openAddDialog }>
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong>
         </Button>;
-        
+
         if (this.props.rentalRequests.loaded) {
           return this.renderResults(addRentalRequestButton);
         }

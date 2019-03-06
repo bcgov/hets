@@ -8,6 +8,7 @@ import _ from 'lodash';
 import Promise from 'bluebird';
 
 import * as Api from '../../api';
+import * as Constant from '../../constants';
 
 import ConfirmForceHireDialog from '../dialogs/ConfirmForceHireDialog.jsx';
 import ConfirmDialog from '../dialogs/ConfirmDialog.jsx';
@@ -25,20 +26,13 @@ const STATUS_NO = 'No';
 const STATUS_ASKED = 'Asked';
 const STATUS_FORCE_HIRE = 'Force Hire';
 
-// TODO Use lookup lists instead of hard-coded values (HETS-236)
-const EQUIPMENT_NOT_AVAILABLE = 'Equipment Not Available';
-const EQUIPMENT_NOT_SUITABLE = 'Equipment Not Suitable';
-const NO_RESPONSE = 'No Response';
-const MAXIMUM_HOURS_REACHED = 'Maximum Hours Reached';
-const MAINTENANCE_CONTRACTOR = 'Maintenance Contractor';
-const OTHER = 'Other (Reason to be mentioned in note)';
 const refusalReasons = [
-  EQUIPMENT_NOT_AVAILABLE,
-  EQUIPMENT_NOT_SUITABLE,
-  NO_RESPONSE,
-  MAXIMUM_HOURS_REACHED,
-  MAINTENANCE_CONTRACTOR,
-  OTHER,
+  Constant.HIRING_REFUSAL_EQUIPMENT_NOT_AVAILABLE,
+  Constant.HIRING_REFUSAL_EQUIPMENT_NOT_SUITABLE,
+  Constant.HIRING_REFUSAL_NO_RESPONSE,
+  Constant.HIRING_REFUSAL_MAXIMUM_HOURS_REACHED,
+  Constant.HIRING_REFUSAL_MAINTENANCE_CONTRACTOR,
+  Constant.HIRING_REFUSAL_OTHER,
 ];
 
 var HireOfferEditDialog = React.createClass({
@@ -64,6 +58,7 @@ var HireOfferEditDialog = React.createClass({
       offerResponseNote: this.props.hireOffer.offerResponseNote || '',
       note: this.props.hireOffer.note || '',
 
+      offerResponseError: '',
       offerResponseNoteError: '',
       offerRefusalReasonError: '',
       rentalAgreementError: '',
@@ -92,7 +87,7 @@ var HireOfferEditDialog = React.createClass({
   updateState(state, callback) {
     this.setState(state, callback);
   },
-  
+
   offerStatusChanged(value) {
     this.setState({
       offerStatus: value,
@@ -121,7 +116,10 @@ var HireOfferEditDialog = React.createClass({
 
   isValid() {
     this.setState({
-      noteError: '',
+      offerResponseError: '',
+      offerRefusalReasonError: '',
+      offerResponseNoteError: '',
+      rentalAgreementError: '',
     });
 
     var valid = true;
@@ -136,11 +134,11 @@ var HireOfferEditDialog = React.createClass({
       valid = false;
     }
 
-    if (this.state.offerStatus == STATUS_NO && this.state.offerRefusalReason === OTHER && isBlank(this.state.offerResponseNote)) {
+    if (this.state.offerStatus == STATUS_NO && this.state.offerRefusalReason === Constant.HIRING_REFUSAL_OTHER && isBlank(this.state.offerResponseNote)) {
       this.setState({ offerResponseNoteError: 'Note is required' });
       valid = false;
     }
-    
+
     var blankRentalAgreementCount = _.keys(this.props.blankRentalAgreements.data).length;
     if ((this.state.offerStatus == STATUS_YES || this.state.offerStatus == STATUS_FORCE_HIRE) && blankRentalAgreementCount > 0 && !this.state.rentalAgreementId) {
       this.setState({ rentalAgreementError: 'A rental agreement is required' });
@@ -190,7 +188,7 @@ var HireOfferEditDialog = React.createClass({
       this.setState(this.getInitialState());
     } else {
       this.offerStatusChanged(STATUS_NO);
-      this.setState({ offerRefusalReason: MAXIMUM_HOURS_REACHED });
+      this.setState({ offerRefusalReason: Constant.HIRING_REFUSAL_MAXIMUM_HOURS_REACHED });
     }
     this.closeConfirmMaxHoursHireDialog();
   },
@@ -219,14 +217,14 @@ var HireOfferEditDialog = React.createClass({
         offerResponseDatetime: toZuluTime(this.state.offerResponseDatetime),
         offerRefusalReason: this.state.offerRefusalReason,
         offerResponseNote: this.state.offerResponseNote,
-        note: this.state.reasonForForceHire,
+        note: this.state.note,
         rentalAgreementId: this.state.rentalAgreementId,
       }});
     });
   },
 
   onConfirmForceHire(reasonForForceHire) {
-    this.setState({ reasonForForceHire: reasonForForceHire }, this.saveHireOffer());
+    this.setState({ note: reasonForForceHire }, this.saveHireOffer());
   },
 
   openConfirmForceHireDialog() {
@@ -256,7 +254,7 @@ var HireOfferEditDialog = React.createClass({
       }>
       {(() => {
         var blankRentalAgreements = _.sortBy(this.props.blankRentalAgreements.data, 'number');
-        
+
         var agreementChoiceRow = _.keys(blankRentalAgreements).length === 0 ? null :
           <FormGroup controlId="rentalAgreementId" validationState={ this.state.rentalAgreementError ? 'error' : null }>
             <DropdownControl id="rentalAgreementId" updateState={ this.updateState } items={ blankRentalAgreements } selectedId={ this.state.rentalAgreementId } blankLine="Select rental agreement" placeholder="Select rental agreement" />
@@ -271,8 +269,8 @@ var HireOfferEditDialog = React.createClass({
                 <Row>
                   <Col md={12}>
                     <FormGroup>
-                      <Radio 
-                        onChange={ this.offerStatusChanged.bind(this, STATUS_YES) } 
+                      <Radio
+                        onChange={ this.offerStatusChanged.bind(this, STATUS_YES) }
                         checked={ this.state.offerStatus == STATUS_YES }
                         disabled={ !this.props.hireOffer.showAllResponseFields && !this.props.hireOffer.offerResponse }
                       >
@@ -285,8 +283,8 @@ var HireOfferEditDialog = React.createClass({
                 <Row>
                   <Col md={12}>
                     <FormGroup>
-                      <Radio 
-                        onChange={ this.offerStatusChanged.bind(this, STATUS_NO) } 
+                      <Radio
+                        onChange={ this.offerStatusChanged.bind(this, STATUS_NO) }
                         checked={ this.state.offerStatus == STATUS_NO }
                         disabled={ !this.props.hireOffer.showAllResponseFields && !this.props.hireOffer.offerResponse }
                       >
@@ -311,8 +309,8 @@ var HireOfferEditDialog = React.createClass({
                 <Row>
                   <Col md={12}>
                     <FormGroup>
-                      <Radio 
-                        onChange={ this.offerStatusChanged.bind(this, STATUS_FORCE_HIRE) } 
+                      <Radio
+                        onChange={ this.offerStatusChanged.bind(this, STATUS_FORCE_HIRE) }
                         checked={ this.state.offerStatus == STATUS_FORCE_HIRE }
                       >
                         Force Hire
@@ -324,8 +322,8 @@ var HireOfferEditDialog = React.createClass({
                 <Row>
                   <Col md={12}>
                     <FormGroup>
-                      <Radio 
-                        onChange={ this.offerStatusChanged.bind(this, STATUS_ASKED) } 
+                      <Radio
+                        onChange={ this.offerStatusChanged.bind(this, STATUS_ASKED) }
                         checked={ this.state.offerStatus == STATUS_ASKED }
                         disabled={ !this.props.hireOffer.showAllResponseFields && !this.props.hireOffer.offerResponse }
                       >
@@ -357,17 +355,17 @@ var HireOfferEditDialog = React.createClass({
         </Form>;
       })()}
       { this.state.showConfirmForceHireDialog &&
-        <ConfirmForceHireDialog 
-          show={ this.state.showConfirmForceHireDialog } 
-          onSave={ this.onConfirmForceHire } 
-          onClose={ this.closeConfirmForceHireDialog } 
+        <ConfirmForceHireDialog
+          show={ this.state.showConfirmForceHireDialog }
+          onSave={ this.onConfirmForceHire }
+          onClose={ this.closeConfirmForceHireDialog }
         />
       }
       { this.state.showConfirmMaxHoursHireDialog &&
-        <ConfirmDialog 
-          show={ this.state.showConfirmMaxHoursHireDialog } 
-          onSave={ this.onConfirmMaxHoursHire } 
-          onClose={ this.onCancelMaxHoursHire } 
+        <ConfirmDialog
+          show={ this.state.showConfirmMaxHoursHireDialog }
+          onSave={ this.onConfirmMaxHoursHire }
+          onClose={ this.onCancelMaxHoursHire }
           title="Confirm Hire"
         >
           <p>Equipment/Dump Truck has already reached the maximum hours for the year. Do you still want to hire this Equipment/Dump Truck?</p>

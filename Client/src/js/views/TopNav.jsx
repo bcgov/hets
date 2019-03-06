@@ -53,8 +53,8 @@ var TopNav = React.createClass({
   },
 
   render() {
-    var userDistricts = this.props.currentUserDistricts.data.map(district => { 
-      return { ...district, districtName: district.district.name, id: district.district.id }; 
+    var userDistricts = this.props.currentUserDistricts.data.map(district => {
+      return { ...district, districtName: district.district.name, id: district.district.id };
     });
 
     var navigationDisabled = this.props.rolloverStatus.rolloverActive;
@@ -94,6 +94,23 @@ var TopNav = React.createClass({
               <LinkContainer to={{ pathname: `/${ Constant.RENTAL_REQUESTS_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.RENTAL_REQUESTS_PATHNAME) }>
                 <NavItem>Requests</NavItem>
               </LinkContainer>
+              <LinkContainer to={{ pathname: `/${ Constant.TIME_ENTRY_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.TIME_ENTRY_PATHNAME) }>
+                <NavItem>Time Entry</NavItem>
+              </LinkContainer>
+              <NavDropdown id="reports-dropdown" title="Reports" disabled={ navigationDisabled }>
+                <LinkContainer to={{ pathname: `/${ Constant.SENIORITY_LIST_PATHNAME }` }} active={ currentPathStartsWith(Constant.SENIORITY_LIST_PATHNAME) }>
+                  <MenuItem>Seniority List</MenuItem>
+                </LinkContainer>
+                <LinkContainer to={{ pathname: `/${ Constant.STATUS_LETTERS_REPORT_PATHNAME }` }} active={ currentPathStartsWith(Constant.STATUS_LETTERS_REPORT_PATHNAME) }>
+                  <MenuItem>Status Letters / Mailing Labels</MenuItem>
+                </LinkContainer>
+                <LinkContainer to={{ pathname: `/${ Constant.HIRING_REPORT_PATHNAME }` }} active={ currentPathStartsWith(Constant.HIRING_REPORT_PATHNAME) }>
+                  <MenuItem>Hiring Report - Not Hired / Force Hire</MenuItem>
+                </LinkContainer>
+                <LinkContainer to={{ pathname: `/${ Constant.OWNERS_COVERAGE_PATHNAME }` }} active={ currentPathStartsWith(Constant.OWNERS_COVERAGE_PATHNAME) }>
+                  <MenuItem>WCB / CGL Coverage</MenuItem>
+                </LinkContainer>
+              </NavDropdown>
               { this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) &&
                 <LinkContainer to={{ pathname: `/${ Constant.DISTRICT_ADMIN_PATHNAME }` }} disabled={ navigationDisabled } active={ currentPathStartsWith(Constant.DISTRICT_ADMIN_PATHNAME) }>
                   <NavItem>District Admin</NavItem>

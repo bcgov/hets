@@ -1,14 +1,23 @@
 #users-list {
   #users-search {
-    margin-top: -10px;
 
     > div {
-      margin-top: 10px;
+      margin: 5px;
+    }
+
+    > button {
+      margin: 5px;
+    }
+
+    > input {
+      float: left;
+      min-width: 175px;
+      margin: 5px;
+      width: auto;
     }
 
     > label {
-      margin-top: 17px;
-      margin-left: 10px;
+      margin: 12px 5px 5px 5px;
       float: left;
     }
 
@@ -18,12 +27,7 @@
 
     .input-group {
       width: 250px;
-      margin-top: 10px;
-    }
-
-    #search-button {
-      margin-top: 10px;
-      margin-left: 20px;
+      margin: 5px;
     }
   }
 
@@ -41,6 +45,11 @@
 
   .alert .btn {
     float: right;
+  }
+
+  #add-button-container {
+    float: right;
+    margin-top: 10px;
   }
 }
 

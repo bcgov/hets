@@ -85,7 +85,7 @@ var RentalAgreementHeaderEditDialog = React.createClass({
     if (!isBlank(equipmentCode)) {
       // does the equipment exist?
       var equipment = this.getEquipment(equipmentCode);
-      
+
       if (!equipment) {
         this.setState({ equipmentCodeError: 'This equipment ID does not exist in the system' });
         valid = false;
@@ -116,7 +116,7 @@ var RentalAgreementHeaderEditDialog = React.createClass({
               <Col md={6}>
                 <FormGroup controlId="projectId">
                   <ControlLabel>Project <sup>*</sup></ControlLabel>
-                  <DropdownControl id="projectId" updateState={ this.updateState } items={ projects } selectedId={ this.state.projectId } blankLine="(None)" placeholder="(None)" />
+                  <DropdownControl id="projectId" fieldName="label" updateState={ this.updateState } items={ projects } selectedId={ this.state.projectId } blankLine="(None)" placeholder="(None)" />
                 </FormGroup>
               </Col>
               <Col md={6}>
@@ -137,7 +137,7 @@ var RentalAgreementHeaderEditDialog = React.createClass({
 function mapStateToProps(state) {
   return {
     rentalAgreement: state.models.rentalAgreement,
-    projects: state.lookups.projects,
+    projects: state.lookups.projectsCurrentFiscal,
     equipment: state.lookups.equipmentLite,
   };
 }

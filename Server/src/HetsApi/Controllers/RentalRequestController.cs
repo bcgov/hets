@@ -39,7 +39,7 @@ namespace HetsApi.Controllers
             _context.SmUserGuid = user.UserGuid;
             _context.SmBusinessGuid = user.BusinessGuid;
         }
-        
+
         /// <summary>
         /// Get rental request by id
         /// </summary>
@@ -55,8 +55,8 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-                        
-            return new ObjectResult(new HetsResponse(RentalRequestHelper.GetRecord(id, _context)));            
+
+            return new ObjectResult(new HetsResponse(RentalRequestHelper.GetRecord(id, _context)));
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace HetsApi.Controllers
                 return new ObjectResult(new HetsResponse("HETS-07", ErrorViewModel.GetDescription("HETS-07", _configuration)));
             }
 
-            // if the number of hired records is now "over the count" - then close 
+            // if the number of hired records is now "over the count" - then close
             if (hiredCount >= item.EquipmentCount)
             {
                 int? statusIdComplete = StatusHelper.GetStatusId(HetRentalRequest.StatusComplete, "rentalRequestStatus", _context);
@@ -164,7 +164,7 @@ namespace HetsApi.Controllers
                 else
                 {
                     rentalRequest.HetRentalRequestAttachment.Add(attachment);
-                }                
+                }
             }
 
             // save the changes
@@ -188,12 +188,12 @@ namespace HetsApi.Controllers
             // not found
             if (item == null) return new ObjectResult(new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
 
-            // check if we have an existing rental request for the same 
+            // check if we have an existing rental request for the same
             // local area and equipment type - if so - throw an error
             // Per discussion with the business (19 Jan 2018):
             //    * Don't create a record as New if another Request exists
             //    * Simply give the user an error and not allow the new request
-            // 
+            //
             // Note: leaving the "New" code in place in case this changes in the future
             int? statusIdInProgress = StatusHelper.GetStatusId(HetRentalRequest.StatusInProgress, "rentalRequestStatus", _context);
             if (statusIdInProgress == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
@@ -232,7 +232,7 @@ namespace HetsApi.Controllers
 
             int? statusId = StatusHelper.GetStatusId(item.Status, "rentalRequestStatus", _context);
             if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
-            
+
             // create new rental request
             HetRentalRequest rentalRequest = new HetRentalRequest
             {
@@ -253,7 +253,7 @@ namespace HetsApi.Controllers
             }
             catch (Exception e)
             {
-                // check if this a "no available equipment exception"               
+                // check if this a "no available equipment exception"
                 if (e.Message == "HETS-35")
                 {
                     return new ObjectResult(new HetsResponse("HETS-35", ErrorViewModel.GetDescription("HETS-35", _configuration)));
@@ -262,7 +262,7 @@ namespace HetsApi.Controllers
                 Console.WriteLine(e);
                 throw;
             }
-            
+
             // check if we have an existing "In Progress" request
             // for the same Local Area and Equipment Type
             string tempStatus = RentalRequestHelper.RentalRequestStatus(rentalRequest, _context);
@@ -399,7 +399,7 @@ namespace HetsApi.Controllers
             // save the changes
             _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(rentalRequest));            
+            return new ObjectResult(new HetsResponse(rentalRequest));
         }
 
         #region Search Rental Requests
@@ -431,7 +431,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.Project.PrimaryContact)
                 .Include(x => x.RentalRequestStatusType)
                 .OrderByDescending(x => x.AppCreateTimestamp)
-                .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));            
+                .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));
 
             if (localAreasArray != null && localAreasArray.Length > 0)
             {
@@ -471,7 +471,7 @@ namespace HetsApi.Controllers
                 result.Add(RentalRequestHelper.ToLiteModel(item));
             }
 
-            // return to the client            
+            // return to the client
             return new ObjectResult(new HetsResponse(result));
         }
 
@@ -500,7 +500,7 @@ namespace HetsApi.Controllers
 
             return new ObjectResult(new HetsResponse(RentalRequestHelper.GetRecordWithRotationList(id, scoringRules, _context)));
         }
-        
+
         /// <summary>
         /// Update a rental request rotation list record
         /// </summary>
@@ -514,9 +514,9 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult RentalRequestIdRotationListIdPut([FromRoute]int id, [FromBody]HetRentalRequestRotationList item)
         {
-            // not found 
+            // not found
             if (item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);
 
             // not found
@@ -532,7 +532,7 @@ namespace HetsApi.Controllers
 
             // rental request must be "in progress"
             if (!exists) return new ObjectResult(new HetsResponse("HETS-06", ErrorViewModel.GetDescription("HETS-06", _configuration)));
-                       
+
             // get rental request record
             HetRentalRequest request = _context.HetRentalRequest
                 .Include(x => x.Project)
@@ -543,7 +543,7 @@ namespace HetsApi.Controllers
                 .First(a => a.RentalRequestId == id);
 
             // get rotation list record
-            HetRentalRequestRotationList requestRotationList = _context.HetRentalRequestRotationList                
+            HetRentalRequestRotationList requestRotationList = _context.HetRentalRequestRotationList
                 .FirstOrDefault(a => a.RentalRequestRotationListId == item.RentalRequestRotationListId);
 
             // not found
@@ -577,8 +577,12 @@ namespace HetsApi.Controllers
                     // generate the rental agreement number
                     string agreementNumber = RentalAgreementHelper.GetRentalAgreementNumber(item.Equipment, _context);
 
+                    // get user info - agreement city
+                    User user = UserAccountHelper.GetUser(_context, _httpContext);
+                    string agreementCity = user.AgreementCity;
+
                     int? rateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodHourly, _context);
-                    if (rateTypeId == null) return new ObjectResult(new HetsResponse("HETS-24", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+                    if (rateTypeId == null) return new ObjectResult(new HetsResponse("HETS-24", ErrorViewModel.GetDescription("HETS-24", _configuration)));
 
                     rentalAgreement = new HetRentalAgreement
                     {
@@ -587,6 +591,7 @@ namespace HetsApi.Controllers
                         EquipmentId = tempEquipmentId,
                         Number = agreementNumber,
                         RatePeriodTypeId = (int)rateTypeId,
+                        AgreementCity = agreementCity
                     };
 
                     // add overtime rates
@@ -594,7 +599,7 @@ namespace HetsApi.Controllers
                         .Where(x => x.Overtime)
                         .ToList();
 
-                    // agreement overtime records (default overtime flag)            
+                    // agreement overtime records (default overtime flag)
                     foreach (HetProvincialRateType rate in overtime)
                     {
                         // add the rate
@@ -638,7 +643,7 @@ namespace HetsApi.Controllers
                 requestRotationList.RentalAgreementId = tempRentalAgreementId;
                 requestRotationList.RentalAgreement = rentalAgreement;
             }
-          
+
             // can we "Complete" this rental request (if the Yes or Forced Hires = Request.EquipmentCount)
             int countOfYeses = 0;
             int equipmentRequestCount = request.EquipmentCount;
@@ -680,7 +685,7 @@ namespace HetsApi.Controllers
 
             return new ObjectResult(new HetsResponse(RentalRequestHelper.GetRecordWithRotationList(id, scoringRules, _context)));
         }
-        
+
         #endregion
 
         #region Rental Request Attachments
@@ -835,7 +840,7 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists || item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             // add or update note
             if (item.NoteId > 0)
             {
@@ -880,7 +885,90 @@ namespace HetsApi.Controllers
 
             return new ObjectResult(new HetsResponse(notes));
         }
-        
-        #endregion          
+
+        #endregion
+
+        #region Rental Request Hiring Report
+
+        /// <summary>
+        /// Rental Request Hiring Report
+        /// </summary>
+        /// <remarks>Used for the rental request search page.</remarks>
+        /// <param name="localAreas">Local Areas (comma separated list of id numbers)</param>
+        /// <param name="projects">Projects (comma separated list of id numbers)</param>
+        /// <param name="owners">Owners (comma separated list of id numbers)</param>
+        /// <param name="equipment">Equipment (comma separated list of id numbers)</param>
+        [HttpGet]
+        [Route("hireReport")]
+        [SwaggerOperation("RentalRequestsHiresGet")]
+        [SwaggerResponse(200, type: typeof(List<RentalRequestHires>))]
+        public virtual IActionResult RentalRequestsHiresGet([FromQuery]string localAreas, [FromQuery]string projects,
+            [FromQuery]string owners, [FromQuery]string equipment)
+        {
+            int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
+            int?[] projectArray = ArrayHelper.ParseIntArray(projects);
+            int?[] ownerArray = ArrayHelper.ParseIntArray(owners);
+            int?[] equipmentArray = ArrayHelper.ParseIntArray(equipment);
+
+            // get initial results - must be limited to user's district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            // get fiscal year
+            HetDistrictStatus district = _context.HetDistrictStatus.AsNoTracking()
+                .FirstOrDefault(x => x.DistrictId == districtId);
+
+            if (district?.CurrentFiscalYear == null) return new ObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
+
+            int fiscalYear = (int)district.CurrentFiscalYear; // status table uses the start of the year
+            DateTime fiscalStart = new DateTime(fiscalYear, 3, 31); // look for all records AFTER the 31st
+
+            IQueryable<HetRentalRequestRotationList> data = _context.HetRentalRequestRotationList.AsNoTracking()
+                .Include(x => x.RentalRequest)
+                    .ThenInclude(y => y.LocalArea)
+                        .ThenInclude(z => z.ServiceArea)
+                .Include(x => x.RentalRequest)
+                    .ThenInclude(y => y.Project)
+                .Include(x => x.Equipment)
+                    .ThenInclude(y => y.Owner)
+                .Where(x => x.RentalRequest.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
+                            x.AskedDateTime > fiscalStart &&
+                            (x.IsForceHire == true || x.OfferResponse.ToLower() == "no"));
+
+            if (localAreasArray != null && localAreasArray.Length > 0)
+            {
+                data = data.Where(x => localAreasArray.Contains(x.RentalRequest.LocalAreaId));
+            }
+
+            if (projectArray != null && projectArray.Length > 0)
+            {
+                data = data.Where(x => projectArray.Contains(x.RentalRequest.ProjectId));
+            }
+
+            if (ownerArray != null && ownerArray.Length > 0)
+            {
+                data = data.Where(x => ownerArray.Contains(x.Equipment.OwnerId));
+            }
+
+            if (equipmentArray != null && equipmentArray.Length > 0)
+            {
+                data = data.Where(x => equipmentArray.Contains(x.EquipmentId));
+            }
+
+            // convert Rental Request Model to the "RentalRequestHires" Model
+            List<RentalRequestHires> result = new List<RentalRequestHires>();
+
+            foreach (HetRentalRequestRotationList item in data)
+            {
+                HetUser user = _context.HetUser.AsNoTracking()
+                    .FirstOrDefault(x => x.SmUserId == item.AppCreateUserid);
+
+                result.Add(RentalRequestHelper.ToHiresModel(item, user));
+            }
+
+            // return to the client
+            return new ObjectResult(new HetsResponse(result));
+        }
+
+        #endregion
     }
 }

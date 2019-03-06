@@ -39,11 +39,11 @@ namespace HetsApi.Controllers
             _context.SmUserGuid = user.UserGuid;
             _context.SmBusinessGuid = user.BusinessGuid;
         }
-        
+
         /// <summary>
         /// Get project by id
         /// </summary>
-        /// <param name="id">id of Project to fetch</param>        
+        /// <param name="id">id of Project to fetch</param>
         [HttpGet]
         [Route("{id}")]
         [SwaggerOperation("ProjectsIdGet")]
@@ -51,14 +51,17 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult ProjectsIdGet([FromRoute]int id)
         {
-            return new ObjectResult(new HetsResponse(ProjectHelper.GetRecord(id, _context)));            
+            // get current district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            return new ObjectResult(new HetsResponse(ProjectHelper.GetRecord(id, _context, districtId)));
         }
 
         /// <summary>
         /// Update project
         /// </summary>
         /// <param name="id">id of Project to update</param>
-        /// <param name="item"></param>        
+        /// <param name="item"></param>
         [HttpPut]
         [Route("{id}")]
         [SwaggerOperation("ProjectsIdPut")]
@@ -98,7 +101,7 @@ namespace HetsApi.Controllers
             {
                 project.PrimaryContactId = item.PrimaryContact.ContactId;
             }
-            
+
             // save the changes
             _context.SaveChanges();
 
@@ -130,7 +133,7 @@ namespace HetsApi.Controllers
                 ProvincialProjectNumber = item.ProvincialProjectNumber,
                 ProjectStatusTypeId = (int)statusId,
                 Information = item.Information,
-                DistrictId = item.District.DistrictId                
+                DistrictId = item.District.DistrictId
             };
 
             _context.HetProject.Add(project);
@@ -155,7 +158,7 @@ namespace HetsApi.Controllers
         /// <param name="hasRequests">if true then only include Projects with active Requests</param>
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
         /// <param name="status">if included, filter the results to those with a status matching this string</param>
-        /// <param name="projectNumber"></param>        
+        /// <param name="projectNumber"></param>
         [HttpGet]
         [Route("search")]
         [SwaggerOperation("ProjectsSearchGet")]
@@ -175,7 +178,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetRentalAgreement)
                 .Include(x => x.HetRentalRequest)
                 .Where(x => x.DistrictId.Equals(districtId));
-            
+
             if (districtTokens != null && districts.Length > 0)
             {
                 data = data.Where(x => districtTokens.Contains(x.DistrictId));
@@ -199,7 +202,7 @@ namespace HetsApi.Controllers
             if (projectNumber != null)
             {
                 // allow for case insensitive search of project name
-                data = data.Where(x => x.ProvincialProjectNumber.ToLower().Equals(projectNumber.ToLower()));
+                data = data.Where(x => x.ProvincialProjectNumber.ToLower().Contains(projectNumber.ToLower()));
             }
 
             // convert Project Model to the "ProjectLite" Model
@@ -210,7 +213,7 @@ namespace HetsApi.Controllers
                 result.Add(ProjectHelper.ToLiteModel(item));
             }
 
-            // return to the client            
+            // return to the client
             return new ObjectResult(new HetsResponse(result));
         }
 
@@ -220,26 +223,33 @@ namespace HetsApi.Controllers
 
         /// <summary>
         /// Get all projects by district
-        /// </summary>     
+        /// </summary>
         [HttpGet]
         [Route("")]
         [SwaggerOperation("ProjectsGet")]
         [SwaggerResponse(200, type: typeof(List<HetProject>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult ProjectsGet()
+        public virtual IActionResult ProjectsGet([FromQuery]bool currentFiscal = true)
         {
             // get initial results - must be limited to user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
 
-            // only active projects
-            int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            // get fiscal year
+            HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
+                .First(x => x.DistrictId == districtId);
 
+            int? fiscalYear = status.CurrentFiscalYear;
+            if (fiscalYear == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            List<HetProject> projects = _context.HetProject.AsNoTracking()                
+            // fiscal year in the status table stores the "start" of the year
+            DateTime fiscalYearStart = new DateTime((int)fiscalYear, 3, 31);
+
+            // HETS-1005 - Time entry tab search issues
+            // * we need retrieve all projects that have been created this year
+            //   since users can add time records to closed projects
+            IQueryable<HetProject> projects = _context.HetProject.AsNoTracking()
                 .Where(x => x.DistrictId.Equals(districtId) &&
-                            x.ProjectStatusTypeId.Equals(statusId))
-                .ToList();
+                            (!currentFiscal || x.AppCreateTimestamp > fiscalYearStart));
 
             // convert Project Model to the "ProjectLite" Model
             List<ProjectLite> result = new List<ProjectLite>();
@@ -249,7 +259,7 @@ namespace HetsApi.Controllers
                 result.Add(ProjectHelper.ToLiteModel(item));
             }
 
-            // return to the client            
+            // return to the client
             return new ObjectResult(new HetsResponse(result));
         }
 
@@ -261,7 +271,7 @@ namespace HetsApi.Controllers
         /// Get rental agreements associated with a project by id
         /// </summary>
         /// <remarks>Gets a Projects Rental Agreements</remarks>
-        /// <param name="id">id of Project to fetch agreements for</param>        
+        /// <param name="id">id of Project to fetch agreements for</param>
         [HttpGet]
         [Route("{id}/rentalAgreements")]
         [SwaggerOperation("ProjectsIdRentalAgreementsGet")]
@@ -273,7 +283,7 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-            
+
             List<HetRentalAgreement> agreements = _context.HetProject.AsNoTracking()
                 .Include(x => x.ProjectStatusType)
                 .Include(x => x.HetRentalAgreement)
@@ -288,7 +298,7 @@ namespace HetsApi.Controllers
                 .HetRentalAgreement
                 .ToList();
 
-            return new ObjectResult(new HetsResponse(agreements));            
+            return new ObjectResult(new HetsResponse(agreements));
         }
 
         /// <summary>
@@ -330,14 +340,14 @@ namespace HetsApi.Controllers
             exists = agreements.Any(a => a.RentalAgreementId == item.RentalAgreementId);
 
             // (RENTAL AGREEMENT) not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));            
+            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // check that the rental agreement to clone exist
             exists = agreements.Any(a => a.RentalAgreementId == item.AgreementToCloneId);
 
             // (RENTAL AGREEMENT) not found
             if (!exists) return new ObjectResult(new HetsResponse("HETS-11", ErrorViewModel.GetDescription("HETS-11", _configuration)));
-            
+
             int agreementToCloneIndex = agreements.FindIndex(a => a.RentalAgreementId == item.AgreementToCloneId);
             int newRentalAgreementIndex = agreements.FindIndex(a => a.RentalAgreementId == item.RentalAgreementId);
 
@@ -362,7 +372,8 @@ namespace HetsApi.Controllers
 
             // ******************************************************************
             // clone agreement
-            // ******************************************************************           
+            // ******************************************************************
+            agreements[newRentalAgreementIndex].AgreementCity = agreements[agreementToCloneIndex].AgreementCity;
             agreements[newRentalAgreementIndex].EquipmentRate = agreements[agreementToCloneIndex].EquipmentRate;
             agreements[newRentalAgreementIndex].Note = agreements[agreementToCloneIndex].Note;
             agreements[newRentalAgreementIndex].RateComment = agreements[agreementToCloneIndex].RateComment;
@@ -392,7 +403,7 @@ namespace HetsApi.Controllers
                 agreements[newRentalAgreementIndex].HetRentalAgreementRate.Add(temp);
             }
 
-            // update overtime rates (and add if they don't exist)   
+            // update overtime rates (and add if they don't exist)
             List<HetProvincialRateType> overtime = _context.HetProvincialRateType.AsNoTracking()
                 .Where(x => x.Overtime)
                 .ToList();
@@ -508,7 +519,7 @@ namespace HetsApi.Controllers
         /// Get time records associated with a project
         /// </summary>
         /// <remarks>Gets a Projects Time Records</remarks>
-        /// <param name="id">id of Project to fetch Time Records for</param>        
+        /// <param name="id">id of Project to fetch Time Records for</param>
         [HttpGet]
         [Route("{id}/timeRecords")]
         [SwaggerOperation("ProjectIdTimeRecordsGet")]
@@ -520,6 +531,19 @@ namespace HetsApi.Controllers
 
             if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
+            // get current district and fiscal year
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            // get fiscal year
+            HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
+                .First(x => x.DistrictId == districtId);
+
+            int? fiscalYear = status.CurrentFiscalYear;
+            if (fiscalYear == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // fiscal year in the status table stores the "start" of the year
+            DateTime fiscalYearStart = new DateTime((int)fiscalYear, 4, 1);
+
             HetProject project = _context.HetProject.AsNoTracking()
                 .Include(x => x.HetRentalAgreement)
                     .ThenInclude(t => t.HetTimeRecord)
@@ -530,10 +554,11 @@ namespace HetsApi.Controllers
 
             foreach (HetRentalAgreement rentalAgreement in project.HetRentalAgreement)
             {
-                timeRecords.AddRange(rentalAgreement.HetTimeRecord);
+                // only add records from this fiscal year
+                timeRecords.AddRange(rentalAgreement.HetTimeRecord.Where(x => x.WorkedDate >= fiscalYearStart));
             }
 
-            return new ObjectResult(new HetsResponse(timeRecords));            
+            return new ObjectResult(new HetsResponse(timeRecords));
         }
 
         /// <summary>
@@ -541,7 +566,7 @@ namespace HetsApi.Controllers
         /// </summary>
         /// <remarks>Adds Project Time Records</remarks>
         /// <param name="id">id of Project to add a time record for</param>
-        /// <param name="item">Adds to Project Time Records</param>        
+        /// <param name="item">Adds to Project Time Records</param>
         [HttpPost]
         [Route("{id}/timeRecord")]
         [SwaggerOperation("ProjectsIdTimeRecordsPost")]
@@ -605,7 +630,7 @@ namespace HetsApi.Controllers
                 time.WorkedDate = item.WorkedDate;
             }
             else // add time record
-            {                 
+            {
                 HetTimeRecord time = new HetTimeRecord
                 {
                     RentalAgreementId = rentalAgreementId,
@@ -638,7 +663,7 @@ namespace HetsApi.Controllers
                 timeRecords.AddRange(rentalAgreement.HetTimeRecord);
             }
 
-            return new ObjectResult(new HetsResponse(timeRecords));          
+            return new ObjectResult(new HetsResponse(timeRecords));
         }
 
         /// <summary>
@@ -646,7 +671,7 @@ namespace HetsApi.Controllers
         /// </summary>
         /// <remarks>Adds Project Time Records</remarks>
         /// <param name="id">id of Project to add a time record for</param>
-        /// <param name="items">Array of Project Time Records</param>        
+        /// <param name="items">Array of Project Time Records</param>
         [HttpPost]
         [Route("{id}/timeRecords")]
         [SwaggerOperation("ProjectsIdTimeRecordsBulkPostAsync")]
@@ -756,7 +781,7 @@ namespace HetsApi.Controllers
         /// Get equipment associated with a project
         /// </summary>
         /// <remarks>Gets a Projects Equipment</remarks>
-        /// <param name="id">id of Project to fetch Equipment for</param>        
+        /// <param name="id">id of Project to fetch Equipment for</param>
         [HttpGet]
         [Route("{id}/equipment")]
         [SwaggerOperation("ProjectsIdEquipmentGet")]
@@ -786,7 +811,7 @@ namespace HetsApi.Controllers
         /// Get attachments associated with a project
         /// </summary>
         /// <remarks>Returns attachments for a particular Project</remarks>
-        /// <param name="id">id of Project to fetch attachments for</param>        
+        /// <param name="id">id of Project to fetch attachments for</param>
         [HttpGet]
         [Route("{id}/attachments")]
         [SwaggerOperation("ProjectsIdAttachmentsGet")]
@@ -829,7 +854,7 @@ namespace HetsApi.Controllers
         /// Get contacts associated with a project
         /// </summary>
         /// <remarks>Gets an Projects Contacts</remarks>
-        /// <param name="id">id of Project to fetch Contacts for</param>        
+        /// <param name="id">id of Project to fetch Contacts for</param>
         [HttpGet]
         [Route("{id}/contacts")]
         [SwaggerOperation("ProjectsIdContactsGet")]
@@ -855,7 +880,7 @@ namespace HetsApi.Controllers
         /// <remarks>Adds Project Contact</remarks>
         /// <param name="id">id of Project to add a contact for</param>
         /// <param name="primary">is this the primary contact</param>
-        /// <param name="item">Adds to Project Contact</param>        
+        /// <param name="item">Adds to Project Contact</param>
         [HttpPost]
         [Route("{id}/contacts/{primary}")]
         [SwaggerOperation("ProjectsIdContactsPost")]
@@ -875,7 +900,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetContact)
                 .First(a => a.ProjectId == id);
 
-            // add or update contact            
+            // add or update contact
             if (item.ContactId > 0)
             {
                 HetContact contact = project.HetContact.FirstOrDefault(a => a.ContactId == item.ContactId);
@@ -956,7 +981,7 @@ namespace HetsApi.Controllers
         /// </summary>
         /// <remarks>Replaces an Project&#39;s Contacts</remarks>
         /// <param name="id">id of Project to replace Contacts for</param>
-        /// <param name="items">Replacement Project contacts.</param>        
+        /// <param name="items">Replacement Project contacts.</param>
         [HttpPut]
         [Route("{id}/contacts")]
         [SwaggerOperation("ProjectsIdContactsPut")]
@@ -1059,7 +1084,7 @@ namespace HetsApi.Controllers
         /// <remarks>Returns History for a particular Project</remarks>
         /// <param name="id">id of Project to fetch History for</param>
         /// <param name="offset">offset for records that are returned</param>
-        /// <param name="limit">limits the number of records returned.</param>        
+        /// <param name="limit">limits the number of records returned.</param>
         [HttpGet]
         [Route("{id}/history")]
         [SwaggerOperation("ProjectsIdHistoryGet")]
@@ -1080,7 +1105,7 @@ namespace HetsApi.Controllers
         /// </summary>
         /// <remarks>Add a History record to the Project</remarks>
         /// <param name="id">id of Project to fetch History for</param>
-        /// <param name="item"></param>        
+        /// <param name="item"></param>
         [HttpPost]
         [Route("{id}/history")]
         [SwaggerOperation("ProjectsIdHistoryPost")]
@@ -1113,7 +1138,7 @@ namespace HetsApi.Controllers
         /// <summary>
         /// Get note records associated with project
         /// </summary>
-        /// <param name="id">id of Project to fetch Notes for</param>        
+        /// <param name="id">id of Project to fetch Notes for</param>
         [HttpGet]
         [Route("{id}/notes")]
         [SwaggerOperation("ProjectsIdNotesGet")]
@@ -1148,7 +1173,7 @@ namespace HetsApi.Controllers
         /// </summary>
         /// <remarks>Update a Projects Notes</remarks>
         /// <param name="id">id of Project to update Notes for</param>
-        /// <param name="item">Project Note</param>        
+        /// <param name="item">Project Note</param>
         [HttpPost]
         [Route("{id}/note")]
         [SwaggerOperation("ProjectsIdNotePost")]
@@ -1256,7 +1281,7 @@ namespace HetsApi.Controllers
                 result.Add(ProjectHelper.ToLiteModel(item));
             }
 
-            // return to the client            
+            // return to the client
             return new ObjectResult(new HetsResponse(result));
         }
 

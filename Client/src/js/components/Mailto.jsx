@@ -14,8 +14,8 @@ export const createMailtoLink = (email, headers) => {
   return link;
 };
 
-/** 
- * A react component to create and display a mailto link. 
+/**
+ * A react component to create and display a mailto link.
  */
 var Mailto = React.createClass({
   propTypes: {

@@ -57,7 +57,7 @@ var EquipmentDetail = React.createClass({
 
   getInitialState() {
     return {
-      loading: false,
+      loading: true,
       showEditDialog: false,
       showDocumentsDialog: false,
       showSeniorityDialog: false,
@@ -86,7 +86,7 @@ var EquipmentDetail = React.createClass({
 
   fetch() {
     this.setState({ loading: true });
-    
+
     var equipmentId = this.props.params.equipmentId;
     var getEquipmentPromise = Api.getEquipment(equipmentId);
     var documentsPromise = Api.getEquipmentDocuments(equipmentId);
@@ -238,7 +238,7 @@ var EquipmentDetail = React.createClass({
         return 'success';
       case(Constant.EQUIPMENT_STATUS_CODE_PENDING):
         return 'danger';
-      default: 
+      default:
         return 'default';
     }
   },
@@ -308,7 +308,7 @@ var EquipmentDetail = React.createClass({
                     <strong>District Office:</strong> { equipment.districtName }
                   </Col>
                   <Col xs={12}>
-                    <strong>Service/Local Area:</strong> { equipment.localAreaName }
+                    <strong>Service/Local Area:</strong> { equipment.localArea.serviceAreaId } - { equipment.localAreaName }
                   </Col>
                 </Row>
               </div>
@@ -362,7 +362,7 @@ var EquipmentDetail = React.createClass({
                         { equipment.hasDuplicates ? <BadgeLabel bsStyle="danger">!</BadgeLabel> : null }
                       </ColDisplay>
                     </Col>
-                    { equipment.isDumpTruck && 
+                    { equipment.isDumpTruck &&
                       <Col lg={4} md={6} sm={12} xs={12}>
                         <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Pup Legal Capacity">{ equipment.pupLegalCapacity }</ColDisplay>
                       </Col>
@@ -377,13 +377,13 @@ var EquipmentDetail = React.createClass({
                   <Button title="Add Attachment" bsSize="small" onClick={this.openPhysicalAttachmentDialog}><Glyphicon glyph="plus" /></Button>
                 </span></h3>
                 {(() => {
-                  if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; } 
+                  if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; }
                   if (equipment.equipmentAttachments && Object.keys(equipment.equipmentAttachments).length === 0) { return <Alert bsStyle="success">No Attachments</Alert>; }
 
                   var physicalAttachments = _.sortBy(equipment.equipmentAttachments, this.state.ui.sortField);
                   if (this.state.ui.sortDesc) {
                     _.reverse(physicalAttachments);
-                  } 
+                  }
 
 
                   var headers = [
@@ -391,11 +391,11 @@ var EquipmentDetail = React.createClass({
                     { field: 'blank' },
                   ];
 
-                  return <SortTable 
-                    id="physical-attachment-list" 
-                    sortField={ this.state.ui.sortField } 
-                    sortDesc={ this.state.ui.sortDesc } 
-                    onSort={ this.updateUIState } 
+                  return <SortTable
+                    id="physical-attachment-list"
+                    sortField={ this.state.ui.sortField }
+                    sortDesc={ this.state.ui.sortDesc }
+                    onSort={ this.updateUIState }
                     headers={ headers }
                   >
                     {
@@ -404,17 +404,17 @@ var EquipmentDetail = React.createClass({
                           <td>{ attachment.typeName }</td>
                           <td style={{ textAlign: 'right' }}>
                             <ButtonGroup>
-                              <Button 
-                                title="Edit Attachment" 
-                                bsSize="xsmall" 
+                              <Button
+                                title="Edit Attachment"
+                                bsSize="xsmall"
                                 onClick={ this.openPhysicalAttachmentEditDialog.bind(this, attachment) }
                               >
                                 <Glyphicon glyph="pencil" />
                               </Button>
-                              <OverlayTrigger 
-                                trigger="click" 
-                                placement="top" 
-                                rootClose 
+                              <OverlayTrigger
+                                trigger="click"
+                                placement="top"
+                                rootClose
                                 overlay={ <Confirm onConfirm={ this.deletePhysicalAttachment.bind(this, attachment.id) }/> }
                               >
                                 <Button title="Delete Attachment" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
@@ -490,54 +490,54 @@ var EquipmentDetail = React.createClass({
           </Row>
         </div>
         { this.state.showEditDialog &&
-          <EquipmentEditDialog 
-            show={ this.state.showEditDialog } 
-            onSave={ this.saveEdit } 
-            onClose= { this.closeEditDialog } 
+          <EquipmentEditDialog
+            show={ this.state.showEditDialog }
+            onSave={ this.saveEdit }
+            onClose= { this.closeEditDialog }
           />
         }
         { this.state.showSeniorityDialog &&
-          <SeniorityEditDialog 
-            show={ this.state.showSeniorityDialog } 
-            onSave={ this.saveSeniorityEdit } 
-            onClose={ this.closeSeniorityDialog } 
+          <SeniorityEditDialog
+            show={ this.state.showSeniorityDialog }
+            onSave={ this.saveSeniorityEdit }
+            onClose={ this.closeSeniorityDialog }
           />
         }
         { this.state.showPhysicalAttachmentDialog &&
-          <AttachmentAddDialog 
-            show={ this.state.showPhysicalAttachmentDialog } 
-            onSave={ this.addPhysicalAttachment } 
+          <AttachmentAddDialog
+            show={ this.state.showPhysicalAttachmentDialog }
+            onSave={ this.addPhysicalAttachment }
             onClose={ this.closePhysicalAttachmentDialog }
-            equipment={ equipment } 
+            equipment={ equipment }
           />
         }
         { this.state.showPhysicalAttachmentEditDialog &&
-          <AttachmentEditDialog 
-            show={ this.state.showPhysicalAttachmentEditDialog } 
-            onSave={ this.updatePhysicalAttachment } 
+          <AttachmentEditDialog
+            show={ this.state.showPhysicalAttachmentEditDialog }
+            onSave={ this.updatePhysicalAttachment }
             onClose={ this.closePhysicalAttachmentEditDialog }
-            equipment={ equipment } 
+            equipment={ equipment }
             attachment={ this.state.equipmentPhysicalAttachment }
           />
         }
         { this.state.showDocumentsDialog &&
-          <DocumentsListDialog 
-            show={ this.props.equipment && this.state.showDocumentsDialog }  
+          <DocumentsListDialog
+            show={ this.props.equipment && this.state.showDocumentsDialog }
             parent={ this.props.equipment }
-            onClose={ this.closeDocumentsDialog } 
+            onClose={ this.closeDocumentsDialog }
           />
         }
         { this.state.showNotesDialog &&
-          <NotesDialog 
-            show={ this.state.showNotesDialog } 
-            onSave={ Api.addEquipmentNote } 
+          <NotesDialog
+            show={ this.state.showNotesDialog }
+            onSave={ Api.addEquipmentNote }
             id={ this.props.params.equipmentId }
             getNotes={ Api.getEquipmentNotes }
             onUpdate={ Api.updateNote }
-            onClose={ this.closeNotesDialog } 
+            onClose={ this.closeNotesDialog }
             notes={ this.props.notes }
           />
-        } 
+        }
         { this.state.showChangeStatusDialog &&
           <ChangeStatusDialog
             show={ this.state.showChangeStatusDialog}

@@ -13,7 +13,7 @@
       align-items: flex-end;
     }
   }
-  
+
   #equipment-filters-first-row {
     @include flex;
     flex-wrap: wrap;
@@ -34,7 +34,7 @@
       margin: 5px;
     }
 
-    > label {
+    .checkbox-control {
       margin: 12px 5px 5px 5px;
     }
 

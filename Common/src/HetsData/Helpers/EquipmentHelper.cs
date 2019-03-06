@@ -11,6 +11,14 @@ namespace HetsData.Helpers
 {
     #region Equipment Models
 
+    public class EquipmentLiteList
+    {
+        public int Id { get; set; }
+        public string EquipmentCode { get; set; }
+        public int? OwnerId { get; set; }
+        public List<int?> ProjectIds { get; set; }
+    }
+
     public class EquipmentStatus
     {
         public string Status { get; set; }
@@ -35,45 +43,30 @@ namespace HetsData.Helpers
     public class EquipmentLite
     {
         public int Id { get; set; }
-
         public string EquipmentType { get; set; }
-
         public string LocalArea { get; set; }
         public string Status { get; set; }
-
         public string OwnerName { get; set; }
-
         public int? OwnerId { get; set; }
-
         public bool IsHired { get; set; }
-
         public string SeniorityString { get; set; }
-
         public string Make { get; set; }
-
         public string Model { get; set; }
-
         public string Size { get; set; }
-
         public string Year { get; set; }
-
         public string EquipmentCode { get; set; }
-
+        public string EquipmentPrefix { get; set; }
+        public int EquipmentNumber { get; set; }
         public int AttachmentCount { get; set; }
-
         public DateTime? LastVerifiedDate { get; set; }
-
         public int SenioritySortOrder { get; set; }
-
         public string ProjectName { get; set; }
-
         public int ProjectId { get; set; }
     }
 
     public class EquipmentExtraLite
     {
         public int Id { get; set; }
-
         public string EquipmentCode { get; set; }
     }
 
@@ -246,6 +239,21 @@ namespace HetsData.Helpers
                 equipmentLite.Size = equipment.Size;
                 equipmentLite.Year = equipment.Year;
                 equipmentLite.EquipmentCode = equipment.EquipmentCode;
+                equipmentLite.EquipmentPrefix = Regex.Match(equipment.EquipmentCode, @"^[^\d-]+").Value;
+
+                string temp = "";
+
+                if (!string.IsNullOrEmpty(equipmentLite.EquipmentPrefix))
+                {
+                    temp = equipment.EquipmentCode.Replace(equipmentLite.EquipmentPrefix, "");
+                }
+                
+                temp = temp.Replace("-", "");
+
+                equipmentLite.EquipmentNumber = !string.IsNullOrEmpty(temp) ? 
+                    int.Parse(Regex.Match(temp, @"\d+").Value) : 
+                    0;
+
                 equipmentLite.AttachmentCount = CalculateAttachmentCount(equipment.HetEquipmentAttachment.ToList());
                 equipmentLite.LastVerifiedDate = equipment.LastVerifiedDate;
                 equipmentLite.Status = equipment.EquipmentStatusType.EquipmentStatusTypeCode;
@@ -453,8 +461,7 @@ namespace HetsData.Helpers
 
             // recalculate the seniority list
             SeniorityListHelper.CalculateSeniorityList(localArea.LocalAreaId, 
-                districtEquipmentType.DistrictEquipmentTypeId, 
-                districtEquipmentType.EquipmentType.EquipmentTypeId, 
+                districtEquipmentType.DistrictEquipmentTypeId,                 
                 context,
                 configuration);
         }

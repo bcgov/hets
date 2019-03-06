@@ -87,7 +87,7 @@ var OvertimeRateEditDialog = React.createClass({
         <strong>Edit Overtime Rate</strong>
       }>
       <Form>
-        
+
         <Row>
           <Col xs={6}>
             <FormGroup controlId="description" validationState={ this.state.descriptionError ? 'error' : null }>

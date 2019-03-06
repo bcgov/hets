@@ -70,8 +70,8 @@ var ProjectsDetail = React.createClass({
       includeCompletedRequests: false,
 
       contact: {},
-      
-      rentalRequest: {},
+
+      rentalAgreement: {},
 
       // Contacts
       uiContacts : {
@@ -202,7 +202,7 @@ var ProjectsDetail = React.createClass({
   saveNewRequest(request) {
     Api.addRentalRequest(request).then((response) => {
       Log.projectRentalRequestAdded(this.props.project, response);
-      
+
       // Open it up
       this.props.router.push({
         pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ response.id }`,
@@ -219,8 +219,8 @@ var ProjectsDetail = React.createClass({
     });
   },
 
-  openTimeEntryDialog(rentalRequest) {
-    this.setState({ rentalRequest: rentalRequest }, () => {
+  openTimeEntryDialog(rentalAgreement) {
+    this.setState({ rentalAgreement: rentalAgreement }, () => {
       this.setState({ showTimeEntryDialog: true });
     });
   },
@@ -332,14 +332,16 @@ var ProjectsDetail = React.createClass({
                   const RentalRequestListItem = ({ item }) => (
                     <tr key={ item.id }>
                       <td>
-                        <Link 
-                          to={ `rental-requests/${item.id}` } 
+                        <Link
+                          to={ `rental-requests/${item.id}` }
                           className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}
                         >
                       Request
                         </Link>
                       </td>
+                      <td>{ item.localAreaName }</td>
                       <td>{ item.equipmentTypeName }</td>
+                      <td>{ item.equipmentCount }</td>
                       <td>TBD</td>
                       <td>N/A</td>
                       <td>N/A</td>
@@ -354,18 +356,20 @@ var ProjectsDetail = React.createClass({
                   const RentalAgreementListItem = ({ item }) => (
                     <tr key={ item.id }>
                       <td>
-                        <Link 
+                        <Link
                           to={ `equipment/${item.equipmentId}` }
                           className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}
                         >
                           { item.equipmentCode }
                         </Link>
                       </td>
+                      <td>{ item.localAreaName }</td>
                       <td>{ item.equipmentTypeName }</td>
+                      <td>&nbsp;</td>
                       <td>{ item.equipment.equipmentDetails }</td>
-                      <td>{ item.isCompleted ? 
-                        'Completed' 
-                        : 
+                      <td>{ item.isCompleted ?
+                        'Completed'
+                        :
                         <EditButton name="Time Entry" onClick={this.openTimeEntryDialog.bind(this, item)} />
                       }
                       </td>
@@ -373,13 +377,13 @@ var ProjectsDetail = React.createClass({
                         { item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ?
                           <div>Released</div>
                           :
-                          <OverlayTrigger 
-                            trigger="click" 
-                            placement="top" 
-                            rootClose 
+                          <OverlayTrigger
+                            trigger="click"
+                            placement="top"
+                            rootClose
                             overlay={ <Confirm onConfirm={ this.confirmEndHire.bind(this, item) }/> }
                           >
-                            <Button 
+                            <Button
                               bsSize="xsmall"
                             >
                               <Glyphicon glyph="check" />
@@ -395,7 +399,9 @@ var ProjectsDetail = React.createClass({
 
                   var headers = [
                     { field: 'equipmentCode',     title: 'ID'               },
+                    { field: 'localAreaName',     title: 'Local Area'       },
                     { field: 'equipmentTypeName', title: 'Type'             },
+                    { field: 'equipmentCount',    title: 'Quantity'         },
                     { field: 'equipmentMake',     title: 'Year Make/Model/Size'  },
                     { field: 'lastTimeRecord',    title: 'Time Entry'       },
                     { field: 'release',           title: 'Release'          },
@@ -427,7 +433,7 @@ var ProjectsDetail = React.createClass({
                   var addContactButton = <Button title="Add Contact" onClick={ this.openContactDialog.bind(this, 0) } bsSize="small"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
 
                   if (!project.contacts || Object.keys(project.contacts).length === 0) { return <Alert bsStyle="success">No contacts { addContactButton }</Alert>; }
-                
+
                   var contacts = _.sortBy(project.contacts, this.state.uiContacts.sortField);
                   if (this.state.uiContacts.sortDesc) {
                     _.reverse(contacts);
@@ -465,7 +471,7 @@ var ProjectsDetail = React.createClass({
               </Well>
               <Well>
                 <h3>History</h3>
-                { project.historyEntity && 
+                { project.historyEntity &&
                 <History historyEntity={ project.historyEntity } refresh={ !this.state.loading } />
                 }
               </Well>
@@ -473,28 +479,28 @@ var ProjectsDetail = React.createClass({
           </Row>
         </div>
         { this.state.showEditDialog &&
-        <ProjectsEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />  
+        <ProjectsEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
         }
         { this.state.showContactDialog &&
-        <ContactsEditDialog 
-          show={ this.state.showContactDialog } 
-          contact={ this.state.contact } 
-          onSave={ this.saveContact } 
-          onClose={ this.closeContactDialog } 
+        <ContactsEditDialog
+          show={ this.state.showContactDialog }
+          contact={ this.state.contact }
+          onSave={ this.saveContact }
+          onClose={ this.closeContactDialog }
         />
         }
         { this.state.showDocumentsDialog &&
-        <DocumentsListDialog 
-          show={ this.state.showDocumentsDialog } 
-          parent={ project } 
-          onClose={ this.closeDocumentsDialog } 
+        <DocumentsListDialog
+          show={ this.state.showDocumentsDialog }
+          parent={ project }
+          onClose={ this.closeDocumentsDialog }
         />
         }
         { this.state.showAddRequestDialog &&
-        <RentalRequestsAddDialog 
-          show={ this.state.showAddRequestDialog } 
-          onSave={ this.saveNewRequest } 
-          onClose={ this.closeAddRequestDialog } 
+        <RentalRequestsAddDialog
+          show={ this.state.showAddRequestDialog }
+          onSave={ this.saveNewRequest }
+          onClose={ this.closeAddRequestDialog }
           project={ project }
         />
         }
@@ -502,20 +508,21 @@ var ProjectsDetail = React.createClass({
         <TimeEntryDialog
           show={ this.state.showTimeEntryDialog }
           onClose={ this.closeTimeEntryDialog }
-          activeRentalRequest={ this.state.rentalRequest }
+          multipleEntryAllowed={ false }
+          rentalAgreementId={ this.state.rentalAgreement.id }
         />
         }
         { this.state.showNotesDialog &&
-        <NotesDialog 
-          show={ this.state.showNotesDialog } 
-          onSave={ Api.addProjectNote } 
+        <NotesDialog
+          show={ this.state.showNotesDialog }
+          onSave={ Api.addProjectNote }
           id={ this.props.params.projectId }
           getNotes={ Api.getProjectNotes }
           onUpdate={ Api.updateNote }
-          onClose={ this.closeNotesDialog } 
+          onClose={ this.closeNotesDialog }
           notes={ this.props.notes }
         />
-        } 
+        }
       </div>
     );
   },

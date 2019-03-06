@@ -339,7 +339,7 @@ var OwnersDetail = React.createClass({
     var isApproved = this.props.owner.status === Constant.OWNER_STATUS_CODE_APPROVED;
     var restrictEquipmentAddTooltip = 'Equipment can only be added to an approved owner.';
     var restrictEquipmentVerifyTooltip = 'Equipment can only be verified for an approved owner.';
-    
+
     return <div id="owners-detail">
       <div>
         {(() => {

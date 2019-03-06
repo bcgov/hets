@@ -112,7 +112,7 @@ namespace HetsApi.Controllers
 
         private ApplicationVersionInfo GetApplicationVersionInfo()
         {
-            Assembly assembly = GetType().GetTypeInfo().Assembly;            
+            Assembly assembly = GetType().GetTypeInfo().Assembly;
             return assembly.GetApplicationVersionInfo(CommitId);
         }
 

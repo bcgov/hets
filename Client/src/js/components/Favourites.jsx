@@ -169,7 +169,7 @@ var Favourites = React.createClass({
   render() {
     var title = this.props.title || 'Favourites';
     var className = `favourites ${ this.props.className || '' } ${ this.props.pullRight ? 'pull-right' : '' }`;
-    
+
     return <Dropdown id={ this.props.id } className={ className } title={ title }
       open={ this.state.open } onToggle={ this.toggle }
     >

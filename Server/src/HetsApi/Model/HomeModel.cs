@@ -59,5 +59,5 @@
         /// Action for the Upload form
         /// </summary>
         public string Action { get; set; }
-    }    
+    }
 }

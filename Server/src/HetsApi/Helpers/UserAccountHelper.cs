@@ -267,7 +267,7 @@ namespace HetsApi.Helpers
         /// <param name="httpContext"></param>
         /// <param name="userId"></param>
         /// <param name="businessGuid"></param>
-        /// <param name="guid"></param>        
+        /// <param name="guid"></param>
         /// <returns></returns>
         public static HetBusinessUser GetBusinessUser(DbAppContext context, HttpContext httpContext, string userId, string businessGuid, string guid = null)
         {

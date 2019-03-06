@@ -20,6 +20,7 @@ namespace HetsData.Model
         public int? DistrictId { get; set; }
         public int? ServiceAreaId { get; set; }
         public int? EquipmentTypeId { get; set; }
+        public bool Deleted { get; set; }
         [JsonIgnore]public string AppCreateUserDirectory { get; set; }
         [JsonIgnore]public string AppCreateUserGuid { get; set; }
         [JsonIgnore]public string AppCreateUserid { get; set; }

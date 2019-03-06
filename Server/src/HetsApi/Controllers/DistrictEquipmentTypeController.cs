@@ -8,6 +8,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
+using HetsData.Helpers;
 using HetsData.Model;
 
 namespace HetsApi.Controllers
@@ -58,7 +59,8 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.LocalArea)
                 .Include(x => x.HetEquipment)
                     .ThenInclude(x => x.EquipmentStatusType)
-                .Where(x => x.District.DistrictId == districtId)
+                .Where(x => x.District.DistrictId == districtId &&
+                            !x.Deleted)
                 .OrderBy(x => x.DistrictEquipmentName)
                 .ToList();
 
@@ -71,7 +73,7 @@ namespace HetsApi.Controllers
                 equipmentType.EquipmentCount = hetEquipments.Count;
 
                 foreach(HetEquipment equipment in hetEquipments)
-                {                    
+                {
                     LocalAreaEquipment localAreaEquipment = equipmentType.LocalAreas
                         .FirstOrDefault(x => x.Id == equipment.LocalAreaId);
 
@@ -117,9 +119,37 @@ namespace HetsApi.Controllers
 
             HetDistrictEquipmentType item = _context.HetDistrictEquipmentType.First(a => a.DistrictEquipmentTypeId == id);
 
-            _context.HetDistrictEquipmentType.Remove(item);
+            // HETS-978 - Give a clear error message when deleting equipment type fails
+            int? archiveStatus = StatusHelper.GetStatusId(HetEquipment.StatusArchived, "equipmentStatus", _context);
+            if (archiveStatus == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            // save changes
+            int? pendingStatus = StatusHelper.GetStatusId(HetEquipment.StatusPending, "equipmentStatus", _context);
+            if (pendingStatus == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            HetEquipment equipment = _context.HetEquipment.AsNoTracking()
+                .FirstOrDefault(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentTypeId &&
+                                     x.EquipmentStatusTypeId != archiveStatus &&
+                                     x.EquipmentStatusTypeId != pendingStatus);
+
+            if (equipment != null)
+            {
+                return new ObjectResult(new HetsResponse("HETS-37", ErrorViewModel.GetDescription("HETS-37", _configuration)));
+            }
+
+            equipment = _context.HetEquipment.AsNoTracking()
+                .FirstOrDefault(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentTypeId);
+
+            // delete the record if no equipment is attached
+            if (equipment == null)
+            {
+                _context.HetDistrictEquipmentType.Remove(item);
+            }
+            else
+            {
+                // else "SOFT" delete record
+                item.Deleted = true;
+            }
+
             _context.SaveChanges();
 
             return new ObjectResult(new HetsResponse(item));
@@ -141,7 +171,7 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.Region)
                 .Include(x => x.EquipmentType)
                 .FirstOrDefault(a => a.DistrictEquipmentTypeId == id);
-                        
+
             return new ObjectResult(new HetsResponse(equipmentType));
         }
 
@@ -163,13 +193,13 @@ namespace HetsApi.Controllers
                 return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
-            // add or update equipment type            
+            // add or update equipment type
             if (item.DistrictEquipmentTypeId > 0)
             {
                 bool exists = _context.HetDistrictEquipmentType.Any(a => a.DistrictEquipmentTypeId == id);
 
                 // not found
-                if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));                
+                if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                 // get record
                 HetDistrictEquipmentType equipment = _context.HetDistrictEquipmentType.First(x => x.DistrictEquipmentTypeId == id);
@@ -205,6 +235,6 @@ namespace HetsApi.Controllers
                 .FirstOrDefault(a => a.DistrictEquipmentTypeId == id);
 
             return new ObjectResult(new HetsResponse(equipmentType));
-        }        
+        }
     }
 }

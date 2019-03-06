@@ -27,7 +27,7 @@
                 recipe: 'phantom-pdf',
                 phantom: {
                     "orientation": "portrait",
-                    "format": "A4"
+                    "format": "A4"                    
                 }
             },
             data: { name: "jsreport" }

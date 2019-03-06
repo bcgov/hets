@@ -64,7 +64,7 @@ var RentalConditionsEditDialog = React.createClass({
       let state = { ...forms[key], conditionNameError: '', commentError: '' };
       formsResetObj[key] = state;
     });
-    
+
     this.setState({ forms: formsResetObj });
     let valid = true;
 
@@ -82,7 +82,7 @@ var RentalConditionsEditDialog = React.createClass({
         formsErrorsObj[key] = state;
         valid = false;
       }
-      
+
     });
 
     this.setState({ forms: formsErrorsObj });
@@ -93,7 +93,7 @@ var RentalConditionsEditDialog = React.createClass({
   onSave() {
     let forms = this.state.forms;
     let conditions = Object.keys(forms).map((key) => {
-      return { 
+      return {
         id: this.props.rentalCondition.id || 0,
         rentalAgreement: { id: this.props.rentalCondition.rentalAgreement.id },
         conditionName: this.state.forms[key].conditionName,
@@ -107,12 +107,12 @@ var RentalConditionsEditDialog = React.createClass({
   addInput() {
     if (this.state.numberOfInputs < 10) {
       let numberOfInputs = Object.keys(this.state.forms).length;
-      this.setState({ 
+      this.setState({
         numberOfInputs: this.state.numberOfInputs + 1,
-        forms: { 
-          ...this.state.forms, 
-          [numberOfInputs + 1]: { 
-          }, 
+        forms: {
+          ...this.state.forms,
+          [numberOfInputs + 1]: {
+          },
         },
       });
     }
@@ -123,9 +123,9 @@ var RentalConditionsEditDialog = React.createClass({
       let numberOfInputs = Object.keys(this.state.forms).length;
       let forms = { ...this.state.forms };
       delete forms[numberOfInputs];
-      this.setState({ 
+      this.setState({
         numberOfInputs: this.state.numberOfInputs - 1,
-        forms: forms, 
+        forms: forms,
       });
     }
   },
@@ -155,7 +155,7 @@ var RentalConditionsEditDialog = React.createClass({
                   </FormGroup>
                 </Col>
               </Row>
-              { this.state.forms[key].conditionName === NON_STANDARD_CONDITION && 
+              { this.state.forms[key].conditionName === NON_STANDARD_CONDITION &&
             <Row>
               <Col md={12}>
                 <FormGroup controlId={`comment${key}`} validationState={ this.state.forms[key].commentError ? 'error' : null }>
@@ -174,7 +174,7 @@ var RentalConditionsEditDialog = React.createClass({
         <Row className="align-right">
           <Col md={12}>
             { this.state.isNew && this.state.numberOfInputs > 1 &&
-            <Button 
+            <Button
               bsSize="xsmall"
               className="remove-btn"
               onClick={ this.removeInput }
@@ -182,8 +182,8 @@ var RentalConditionsEditDialog = React.createClass({
               <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
             </Button>
             }
-            { this.state.isNew && this.state.numberOfInputs < 10 && 
-            <Button 
+            { this.state.isNew && this.state.numberOfInputs < 10 &&
+            <Button
               bsSize="xsmall"
               onClick={ this.addInput }
             >

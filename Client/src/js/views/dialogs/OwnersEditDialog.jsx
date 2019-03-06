@@ -122,7 +122,7 @@ var OwnersEditDialog = React.createClass({
     }
 
     if (this.state.localAreaId === 0) {
-      this.setState({ localAreaError: 'Local area is required' });
+      this.setState({ localAreaError: 'Service area / local area is required' });
       valid = false;
     }
 
@@ -151,7 +151,7 @@ var OwnersEditDialog = React.createClass({
     var owner = this.props.owner;
     var localAreas = _.sortBy(this.props.localAreas, 'name');
 
-    return <EditDialog id="owners-edit" show={ this.props.show } 
+    return <EditDialog id="owners-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title= {
         <strong>Owner</strong>
@@ -199,7 +199,7 @@ var OwnersEditDialog = React.createClass({
           <HelpBlock>{ this.state.postalCodeError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
-          <ControlLabel>Local Area <sup>*</sup></ControlLabel>
+          <ControlLabel>Service Area - Local Area <sup>*</sup></ControlLabel>
           <FilterDropdown id="localAreaId" items={ localAreas } selectedId={ this.state.localAreaId } updateState={ this.updateState } className="full-width" />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
         </FormGroup>

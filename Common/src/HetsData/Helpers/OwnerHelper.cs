@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
@@ -21,11 +22,28 @@ namespace HetsData.Helpers
         public string Status { get; set; }
     }
 
-    public class OwnerLiteList
+    public class OwnerWcbCgl
+    {        
+        public int Id { get; set; }
+        public int ServiceAreaId { get; set; }
+        public string LocalAreaName { get; set; }
+        public string OwnerCode { get; set; }
+        public string OrganizationName { get; set; }
+        public string PrimaryContactNumber { get; set; }
+        public string PrimaryContactCell { get; set; }
+        public string WcbNumber { get; set; }
+        public DateTime? WcbExpiryDate { get; set; }
+        public string CglNumber { get; set; }
+        public DateTime? CglExpiryDate { get; set; }
+    }
+
+    public class OwnerLiteProjects
     {
         public int Id { get; set; }
         public string OwnerCode { get; set; }
+        public string OrganizationName { get; set; }
         public int? LocalAreaId { get; set; }
+        public List<int?> ProjectIds { get; set; }
     }
 
     public class OwnerVerificationPdfViewModel
@@ -37,7 +55,22 @@ namespace HetsData.Helpers
         public string DistrictName { get; set; }
         public string DistrictAddress { get; set; }
         public string DistrictContact { get; set; }
+        public string LocalAreaName { get; set; }
         public List<HetOwner> Owners { get; set; }
+    }
+
+    public class MailingLabelPdfViewModel
+    {
+        public string ReportDate { get; set; }
+        public string Title { get; set; }
+        public int DistrictId { get; set; }
+        public List<MailingLabelRowModel> LabelRow { get; set; }        
+    }
+
+    public class MailingLabelRowModel
+    {
+        public HetOwner OwnerColumn1 { get; set; }
+        public HetOwner OwnerColumn2 { get; set; }
     }
 
     #endregion
@@ -175,6 +208,53 @@ namespace HetsData.Helpers
             }
 
             return equipmentCount;
+        }
+
+        #endregion
+
+        #region Convert full owner record to a "Wcb/Cgl" report version
+
+        /// <summary>
+        /// Convert to Owner Wb Cgl Model
+        /// </summary>
+        /// <param name="owner"></param>
+        public static OwnerWcbCgl ToWcbCglModel(HetOwner owner)
+        {
+            OwnerWcbCgl ownerLite = new OwnerWcbCgl();
+
+            if (owner != null)
+            {
+                ownerLite.Id = owner.OwnerId;
+                ownerLite.OwnerCode = owner.OwnerCode;
+                ownerLite.OrganizationName = owner.OrganizationName;
+
+                if (owner.LocalArea != null)
+                {
+                    ownerLite.ServiceAreaId = owner.LocalArea.ServiceArea.ServiceAreaId;
+                    ownerLite.LocalAreaName = owner.LocalArea.Name;
+                }
+
+                if (owner.PrimaryContact != null)
+                {                    
+                    // set phone number
+                    ownerLite.PrimaryContactNumber = owner.PrimaryContact.WorkPhoneNumber;
+
+                    if (string.IsNullOrEmpty(ownerLite.PrimaryContactNumber))
+                    {
+                        ownerLite.PrimaryContactNumber = owner.PrimaryContact.MobilePhoneNumber;
+                    }
+
+                    // set mobile number
+                    ownerLite.PrimaryContactCell = owner.PrimaryContact.MobilePhoneNumber;
+                }
+
+                ownerLite.WcbNumber = owner.WorkSafeBcpolicyNumber;
+                ownerLite.WcbExpiryDate = owner.WorkSafeBcexpiryDate;
+                ownerLite.CglNumber = owner.CglPolicyNumber;
+                ownerLite.CglExpiryDate = owner.CglendDate;
+            }
+
+            return ownerLite;
         }
 
         #endregion

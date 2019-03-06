@@ -19,12 +19,14 @@ const DEFAULT_LOOKUPS = {
   },
   provincialRateTypes: [],
   overtimeRateTypes: [],
-  owners: { 
+  owners: {
     data: {},
     loading: false,
   },
+  ownersLite: {},
   roles: {},
   projects: {},
+  projectsCurrentFiscal: {},
   users: {},
   blankRentalAgreements: {
     data: {},
@@ -57,7 +59,7 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
     case Action.UPDATE_EQUIPMENT_TYPES_LOOKUP:
       return { ...state, equipmentTypes: action.equipmentTypes };
 
-    case Action.DISTRICT_EQUIPMENT_TYPES_LOOKUP_REQUEST: 
+    case Action.DISTRICT_EQUIPMENT_TYPES_LOOKUP_REQUEST:
       return { ...state, districtEquipmentTypes: { ...state.districtEquipmentTypes, loading: true } };
 
     case Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_LOOKUP:
@@ -77,6 +79,9 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
     case Action.UPDATE_OWNERS_LOOKUP:
       return { ...state, owners: { data: action.owners, loading: false } };
 
+    case Action.UPDATE_OWNERS_LITE_LOOKUP:
+      return { ...state, ownersLite: action.owners };
+
     case Action.UPDATE_EQUIPMENT_LITE_LOOKUP:
       return { ...state, equipmentLite: action.equipment };
 
@@ -86,22 +91,25 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
     case Action.UPDATE_PROJECTS_LOOKUP:
       return { ...state, projects: action.projects };
 
+    case Action.UPDATE_PROJECTS_CURRENT_FISCAL_LOOKUP:
+      return { ...state, projectsCurrentFiscal: action.projects };
+
     case Action.UPDATE_USERS_LOOKUP:
       return { ...state, users: action.users };
 
     case Action.UPDATE_RENTAL_CONDITIONS_LOOKUP:
       return { ...state, rentalConditions: { data: action.rentalConditions, loading: false } };
 
-    case Action.RENTAL_CONDITIONS_LOOKUP_REQUEST: 
+    case Action.RENTAL_CONDITIONS_LOOKUP_REQUEST:
       return { ...state, rentalConditions: { ...state.rentalConditions, loading: true } };
 
-    case Action.UPDATE_PROVINCIAL_RATE_TYPES_LOOKUP: 
+    case Action.UPDATE_PROVINCIAL_RATE_TYPES_LOOKUP:
       return { ...state, provincialRateTypes: action.provincialRateTypes };
 
-    case Action.UPDATE_OVERTIME_RATE_TYPES_LOOKUP: 
+    case Action.UPDATE_OVERTIME_RATE_TYPES_LOOKUP:
       return { ...state, overtimeRateTypes: action.overtimeRateTypes };
 
-    case Action.BLANK_RENTAL_AGREEMENTS_LOOKUP_REQUEST: 
+    case Action.BLANK_RENTAL_AGREEMENTS_LOOKUP_REQUEST:
       return { ...state, blankRentalAgreements: { ...state.blankRentalAgreements, loading: true } };
 
     case Action.UPDATE_BLANK_RENTAL_AGREEMENTS_LOOKUP:

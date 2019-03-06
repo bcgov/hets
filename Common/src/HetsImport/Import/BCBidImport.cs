@@ -45,8 +45,8 @@ namespace HetsImport.Import
             ImportLocalArea.Import(context, dbContext, fileLocation, SystemId);
 
             //*** Import Users from User_HETS.xml (HET_USER and HET_USER_ROLE)
-            dbContext = new DbAppContext(connectionString);
-            ImportUser.Import(context, dbContext, fileLocation, SystemId);            
+            //dbContext = new DbAppContext(connectionString);
+            //ImportUser.Import(context, dbContext, fileLocation, SystemId);            
 
             //*** Import Owners from Owner.xml (HETS_OWNER and HETS_Contact)
             //dbContext = new DbAppContext(connectionString);
@@ -103,17 +103,17 @@ namespace HetsImport.Import
             //ImportEquipUsage.Import(context, dbContext, fileLocation, SystemId);            
 
             // *** Final Step - fix the database sequences
-            dbContext = new DbAppContext(connectionString);
-            ImportServiceArea.ResetSequence(context, dbContext);
-            ImportLocalArea.ResetSequence(context, dbContext);
-            ImportUser.ResetSequence(context, dbContext);
-            ImportOwner.ResetSequence(context, dbContext);            
-            ImportDistrictEquipmentType.ResetSequence(context, dbContext);
-            ImportEquip.ResetSequence(context, dbContext);
-            ImportEquipAttach.ResetSequence(context, dbContext);
-            ImportProject.ResetSequence(context, dbContext);
-            ImportBlock.ResetSequence(context, dbContext);
-            ImportEquipUsage.ResetSequence(context, dbContext);
+            //dbContext = new DbAppContext(connectionString);
+            //ImportServiceArea.ResetSequence(context, dbContext);
+            //ImportLocalArea.ResetSequence(context, dbContext);
+            //ImportUser.ResetSequence(context, dbContext);
+            //ImportOwner.ResetSequence(context, dbContext);            
+            //ImportDistrictEquipmentType.ResetSequence(context, dbContext);
+            //ImportEquip.ResetSequence(context, dbContext);
+            //ImportEquipAttach.ResetSequence(context, dbContext);
+            //ImportProject.ResetSequence(context, dbContext);
+            //ImportBlock.ResetSequence(context, dbContext);
+            //ImportEquipUsage.ResetSequence(context, dbContext);
         }
 
         /// <summary>

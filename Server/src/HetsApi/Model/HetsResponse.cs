@@ -33,7 +33,7 @@ namespace HetsApi.Model
     /// Error View Model - used for business layer error messaging between Server and UI
     /// </summary>
     public sealed class ErrorViewModel
-    {        
+    {
         /// <summary>
         /// Error View Model Constructor
         /// </summary>

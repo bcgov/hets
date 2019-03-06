@@ -51,7 +51,7 @@ var NotesAddDialog = React.createClass({
       valid = false;
     }
 
-    return valid; 
+    return valid;
   },
 
   onSave() {
@@ -85,12 +85,12 @@ var NotesAddDialog = React.createClass({
           <Form>
             <FormGroup controlId="note" validationState={ this.state.noteError ? 'error' : null }>
               <ControlLabel>Note</ControlLabel>
-              <FormInputControl value={ this.state.note } componentClass="textarea" updateState={ this.updateState } maxLength={ maxLength } /> 
+              <FormInputControl value={ this.state.note } componentClass="textarea" updateState={ this.updateState } maxLength={ maxLength } />
               <HelpBlock>{ this.state.noteError }</HelpBlock>
               <p>Maximum { maxLength } characters.</p>
             </FormGroup>
           </Form>
-        </Col> 
+        </Col>
       </Row>
     </EditDialog>;
   },

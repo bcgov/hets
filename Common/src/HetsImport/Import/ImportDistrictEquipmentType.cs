@@ -374,7 +374,7 @@ namespace HetsImport.Import
                     DistrictEquipmentTypeId = ++maxEquipTypeIndex,
                     EquipmentTypeId = tempId,
                     DistrictEquipmentName = tempDistrictDescriptionFull
-                };
+                };                
 
                 // ***********************************************
                 // set the district

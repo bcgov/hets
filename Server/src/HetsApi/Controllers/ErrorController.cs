@@ -55,7 +55,7 @@ namespace HetsApi.Controllers
             catch
             {
                 // do nothing
-            }            
+            }
 
             // *****************************************
             // check if this is a HETS Exception message

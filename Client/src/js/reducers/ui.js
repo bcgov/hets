@@ -16,11 +16,15 @@ const DEFAULT_STATE = {
   projects: {},
   projectContacts: {},
   rentalRequests: {},
+  timeEntries: {},
+  hiringResponses: {},
+  ownersCoverage: {},
   roles: {},
   history: {},
   documents: {},
   blankRentalAgreements: {},
   showSessionTimeoutDialog: false,
+  districtEquipment: {},
 };
 
 export default function uiReducer(state = DEFAULT_STATE, action) {
@@ -73,6 +77,15 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
     case Action.UPDATE_RENTAL_REQUESTS_UI:
       return { ...state, rentalRequests: action.rentalRequests };
 
+    case Action.UPDATE_TIME_ENTRIES_UI:
+      return { ...state, timeEntries: action.timeEntries };
+
+    case Action.UPDATE_HIRING_RESPONSES_UI:
+      return { ...state, hiringResponses: action.hiringResponses };
+
+    case Action.UPDATE_OWNERS_COVERAGE_UI:
+      return { ...state, ownersCoverage: action.ownersCoverage };
+
     case Action.UPDATE_ROLES_UI:
       return { ...state, roles: action.roles };
 
@@ -85,12 +98,15 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
     case Action.UPDATE_BLANK_RENTAL_AGREEMENTS_UI:
       return { ...state, blankRentalAgreements: action.blankRentalAgreements };
 
+    case Action.UPDATE_DISTRICT_EQUIPMENT_UI:
+      return { ...state, districtEquipment: action.districtEquipment };
+
     // Modals
 
-    case Action.SHOW_SESSION_TIMEOUT_DIALOG: 
+    case Action.SHOW_SESSION_TIMEOUT_DIALOG:
       return { ...state, showSessionTimeoutDialog: true };
 
-    case Action.CLOSE_SESSION_TIMEOUT_DIALOG: 
+    case Action.CLOSE_SESSION_TIMEOUT_DIALOG:
       return { ...state, showSessionTimeoutDialog: false };
   }
 
