@@ -1,23 +1,30 @@
 import React from 'react';
-
+import { connect } from 'react-redux';
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
-
 import _ from 'lodash';
+
+import * as Api from '../../api';
 
 import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import Form from '../../components/Form.jsx';
 
+
 const PROHIBITED_SECTIONS = [ 1.2, 1.8, 2.3, 2.6, 3.3, 6.3, 7.4, 8.2, 9.3, 11.2, 12.2, 13.5, 13.6, 16.3 ];
+
 
 var DistrictEquipmentTypeAddEditDialog = React.createClass({
   propTypes: {
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     districtEquipmentType: React.PropTypes.object,
-    equipmentTypes: React.PropTypes.array,
+    equipmentTypes: React.PropTypes.object,
+    onSave: React.PropTypes.func.isRequired,
+    onClose: React.PropTypes.func.isRequired,
+  },
+
+  componentDidMount() {
+    Api.getEquipmentTypes();
   },
 
   getInitialState() {
@@ -83,15 +90,22 @@ var DistrictEquipmentTypeAddEditDialog = React.createClass({
   },
 
   render() {
+    var equipmentTypes = _.sortBy(this.props.equipmentTypes.data, 'blueBookSection');
+
     return <EditDialog id="district-equipment-add" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title={<strong>Add District Equipment Type</strong>}>
       <Form>
         <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeIdError ? 'error' : null }>
           <ControlLabel>Blue Book Section <sup>*</sup></ControlLabel>
-          <FilterDropdown id="equipmentTypeId" fieldName="blueBookSectionAndName" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
-            items={ this.props.equipmentTypes }
+          <FilterDropdown
+            id="equipmentTypeId"
             className="full-width"
+            fieldName="blueBookSectionAndName"
+            disabled={!this.props.equipmentTypes.loaded}
+            selectedId={this.state.equipmentTypeId}
+            items={equipmentTypes}
+            updateState={this.updateState}
           />
           <HelpBlock>{ this.state.equipmentTypeIdError }</HelpBlock>
         </FormGroup>
@@ -105,4 +119,10 @@ var DistrictEquipmentTypeAddEditDialog = React.createClass({
   },
 });
 
-export default DistrictEquipmentTypeAddEditDialog;
+function mapStateToProps(state) {
+  return {
+    equipmentTypes: state.lookups.equipmentTypes,
+  };
+}
+
+export default connect(mapStateToProps)(DistrictEquipmentTypeAddEditDialog);

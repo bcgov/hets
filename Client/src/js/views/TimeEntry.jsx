@@ -35,10 +35,11 @@ var TimeEntry = React.createClass({
 
   getInitialState() {
     return {
-      loading: true,
+      ownersLoading: true,
       showTimeEntryDialog: false,
       allowMultipleTimeEntries: false,
       rentalAgreementId: null,
+      timeEntryDialogProjectId: null,
       search: {
         projectIds: this.props.search.projectIds || [],
         localAreaIds: this.props.search.localAreaIds || [],
@@ -50,6 +51,23 @@ var TimeEntry = React.createClass({
         sortDesc: this.props.ui.sortDesc === true,
       },
     };
+  },
+
+  componentDidMount() {
+    Api.getProjectsCurrentFiscal();
+    Api.getEquipmentTs();
+
+    Api.getOwnersLiteTs().then(() => {
+      this.setState({ ownersLoading: false });
+    });
+
+    // If this is the first load, then look for a default favourite
+    if (_.isEmpty(this.props.search)) {
+      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      if (defaultFavourite) {
+        this.loadFavourite(defaultFavourite);
+      }
+    }
   },
 
   buildSearchParams() {
@@ -72,24 +90,6 @@ var TimeEntry = React.createClass({
     }
 
     return searchParams;
-  },
-
-  componentDidMount() {
-    var projectsPromise = Api.getProjectsCurrentFiscal();
-    var ownersPromise = Api.getOwnersLiteTs();
-    var equipmentPromise = this.props.equipment.loaded ? Promise.resolve() : Api.getEquipmentTs();
-
-    Promise.all([ projectsPromise, ownersPromise, equipmentPromise]).then(() => {
-      this.setState({ loading: false });
-    });
-
-    // If this is the first load, then look for a default favourite
-    if (_.isEmpty(this.props.search)) {
-      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
-      if (defaultFavourite) {
-        this.loadFavourite(defaultFavourite);
-      }
-    }
   },
 
   fetch() {
@@ -133,10 +133,11 @@ var TimeEntry = React.createClass({
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
   },
 
-  openTimeEntryDialog(rentalAgreementId) {
+  openTimeEntryDialog(timeEntry) {
     this.setState({
-      rentalAgreementId: rentalAgreementId,
-      allowMultipleTimeEntries: rentalAgreementId ? false : true,
+      timeEntryDialogProjectId: timeEntry ? timeEntry.projectId : null,
+      rentalAgreementId: timeEntry ? timeEntry.rentalAgreementId : null,
+      allowMultipleTimeEntries: !timeEntry,
       showTimeEntryDialog: true,
     });
   },
@@ -175,7 +176,9 @@ var TimeEntry = React.createClass({
       { field: 'hours',                   title: 'Hours'                                    },
       { field: 'workedDate',              title: 'Date Worked'                              },
       { field: 'enteredDate',             title: 'Date Entered'                             },
-      { field: 'addTime',                 title: 'Add Time Entry', node: addTimeEntryButton },
+      { field: 'addTime',                 title: 'Add Time Entry', style: { textAlign: 'right'  },
+        node: addTimeEntryButton,
+      },
     ]}>
       {
         _.map(timeEntries, (entry) => {
@@ -191,7 +194,7 @@ var TimeEntry = React.createClass({
             <td>{ formatDateTime(entry.enteredDate, 'YYYY-MMM-DD') }</td>
             <td style={{ textAlign: 'right' }}>
               <ButtonGroup>
-                <Button title="Edit Time" bsSize="xsmall" onClick={ this.openTimeEntryDialog.bind(this, entry.rentalAgreementId) }><Glyphicon glyph="edit" /></Button>
+                <Button title="Edit Time" bsSize="xsmall" onClick={ this.openTimeEntryDialog.bind(this, entry) }><Glyphicon glyph="edit" /></Button>
               </ButtonGroup>
             </td>
           </tr>;
@@ -263,14 +266,14 @@ var TimeEntry = React.createClass({
   },
 
   render() {
-    const { loading } = this.state;
+    const { ownersLoading } = this.state;
 
     var resultCount = '';
     if (this.props.timeEntries.loaded) {
       resultCount = '(' + Object.keys(this.props.timeEntries.data).length + ')';
     }
 
-    var projects = _.sortBy(this.props.projects, 'name');
+    var projects = _.sortBy(this.props.projects.data, 'name');
     var localAreas = _.sortBy(this.props.localAreas, 'name');
     var owners = this.getFilteredOwners();
     var equipment = this.getFilteredEquipment();
@@ -286,14 +289,40 @@ var TimeEntry = React.createClass({
           <Form onSubmit={ this.search }>
             <Col xs={9} sm={10}>
               <ButtonToolbar id="time-entry-filters">
-                <MultiDropdown id="projectIds" disabled={ loading } placeholder="Projects" fieldName="label"
-                  items={ projects } selectedIds={ this.state.search.projectIds } updateState={ this.updateProjectSearchState } showMaxItems={ 2 } />
-                <MultiDropdown id="localAreaIds" placeholder="Local Areas"
-                  items={ localAreas } selectedIds={ this.state.search.localAreaIds } updateState={ this.updateLocalAreaSearchState } showMaxItems={ 2 } />
-                <MultiDropdown id="ownerIds" disabled={ loading } placeholder="Companies" fieldName="organizationName"
-                  items={ owners } selectedIds={ this.state.search.ownerIds } updateState={ this.updateOwnerSearchState } showMaxItems={ 2 } />
-                <MultiDropdown id="equipmentIds" disabled={ loading } placeholder="Equipment" fieldName="equipmentCode"
-                  items={ equipment } selectedIds={ this.state.search.equipmentIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                <MultiDropdown
+                  id="projectIds"
+                  disabled={ !this.props.projects.loaded }
+                  placeholder="Projects"
+                  fieldName="label"
+                  items={ projects }
+                  selectedIds={ this.state.search.projectIds }
+                  updateState={ this.updateProjectSearchState }
+                  showMaxItems={ 2 } />
+                <MultiDropdown
+                  id="localAreaIds"
+                  placeholder="Local Areas"
+                  items={ localAreas }
+                  selectedIds={ this.state.search.localAreaIds }
+                  updateState={ this.updateLocalAreaSearchState }
+                  showMaxItems={ 2 } />
+                <MultiDropdown
+                  id="ownerIds"
+                  disabled={ ownersLoading }
+                  placeholder="Companies"
+                  fieldName="organizationName"
+                  items={ owners }
+                  selectedIds={ this.state.search.ownerIds }
+                  updateState={ this.updateOwnerSearchState }
+                  showMaxItems={ 2 } />
+                <MultiDropdown
+                  id="equipmentIds"
+                  disabled={ !this.props.equipment.loaded }
+                  placeholder="Equipment"
+                  fieldName="equipmentCode"
+                  items={ equipment }
+                  selectedIds={ this.state.search.equipmentIds }
+                  updateState={ this.updateSearchState }
+                  showMaxItems={ 2 } />
                 <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
                 <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
               </ButtonToolbar>
@@ -320,14 +349,14 @@ var TimeEntry = React.createClass({
 
         return <div id="add-button-container">{ addTimeEntryButton }</div>;
       })()}
-      { this.state.showTimeEntryDialog &&
-      <TimeEntryDialog
-        show={ this.state.showTimeEntryDialog }
-        onClose={ this.closeTimeEntryDialog }
-        multipleEntryAllowed={ this.state.allowMultipleTimeEntries }
-        rentalAgreementId={ this.state.rentalAgreementId }
-      />
-      }
+      { this.state.showTimeEntryDialog && (
+        <TimeEntryDialog
+          show={this.state.showTimeEntryDialog}
+          onClose={this.closeTimeEntryDialog}
+          projectId={this.state.timeEntryDialogProjectId}
+          multipleEntryAllowed={this.state.allowMultipleTimeEntries}
+          rentalAgreementId={this.state.rentalAgreementId}/>
+      )}
     </div>;
   },
 });

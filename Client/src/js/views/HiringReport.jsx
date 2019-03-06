@@ -32,7 +32,7 @@ var HiringReport = React.createClass({
 
   getInitialState() {
     return {
-      loading: true,
+      ownersLoading: true,
       search: {
         projectIds: this.props.search.projectIds || [],
         localAreaIds: this.props.search.localAreaIds || [],
@@ -44,6 +44,23 @@ var HiringReport = React.createClass({
         sortDesc: this.props.ui.sortDesc === true,
       },
     };
+  },
+
+  componentDidMount() {
+    Api.getProjectsCurrentFiscal();
+    Api.getEquipmentHires();
+
+    Api.getOwnersLiteHires().then(() => {
+      this.setState({ ownersLoading: false });
+    });
+
+    // If this is the first load, then look for a default favourite
+    if (_.isEmpty(this.props.search)) {
+      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      if (defaultFavourite) {
+        this.loadFavourite(defaultFavourite);
+      }
+    }
   },
 
   buildSearchParams() {
@@ -66,24 +83,6 @@ var HiringReport = React.createClass({
     }
 
     return searchParams;
-  },
-
-  componentDidMount() {
-    var projectsPromise = Api.getProjectsCurrentFiscal();
-    var ownersPromise = Api.getOwnersLiteHires();
-    var equipmentPromise = this.props.equipment.loaded ? Promise.resolve() : Api.getEquipmentHires();
-
-    Promise.all([ projectsPromise, ownersPromise, equipmentPromise]).then(() => {
-      this.setState({ loading: false });
-    });
-
-    // If this is the first load, then look for a default favourite
-    if (_.isEmpty(this.props.search)) {
-      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
-      if (defaultFavourite) {
-        this.loadFavourite(defaultFavourite);
-      }
-    }
   },
 
   fetch() {
@@ -240,14 +239,14 @@ var HiringReport = React.createClass({
   },
 
   render() {
-    const { loading } = this.state;
+    const { ownersLoading } = this.state;
 
     var resultCount = '';
     if (this.props.hiringResponses.loaded) {
       resultCount = '(' + Object.keys(this.props.hiringResponses.data).length + ')';
     }
 
-    var projects = _.sortBy(this.props.projects, 'name');
+    var projects = _.sortBy(this.props.projects.data, 'name');
     var localAreas = _.sortBy(this.props.localAreas, 'name');
     var owners = this.getFilteredOwners();
     var equipment = this.getFilteredEquipment();
@@ -263,14 +262,40 @@ var HiringReport = React.createClass({
           <Form onSubmit={ this.search }>
             <Col xs={9} sm={10}>
               <ButtonToolbar id="hiring-report-filters">
-                <MultiDropdown id="projectIds" disabled={ loading } placeholder="Projects" fieldName="label"
-                  items={ projects } selectedIds={ this.state.search.projectIds } updateState={ this.updateProjectSearchState } showMaxItems={ 2 } />
-                <MultiDropdown id="localAreaIds" placeholder="Local Areas"
-                  items={ localAreas } selectedIds={ this.state.search.localAreaIds } updateState={ this.updateLocalAreaSearchState } showMaxItems={ 2 } />
-                <MultiDropdown id="ownerIds" disabled={ loading } placeholder="Companies" fieldName="organizationName"
-                  items={ owners } selectedIds={ this.state.search.ownerIds } updateState={ this.updateOwnerSearchState } showMaxItems={ 2 } />
-                <MultiDropdown id="equipmentIds" disabled={ loading } placeholder="Equipment" fieldName="equipmentCode"
-                  items={ equipment } selectedIds={ this.state.search.equipmentIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                <MultiDropdown
+                  id="projectIds"
+                  disabled={ !this.props.projects.loaded }
+                  placeholder="Projects"
+                  fieldName="label"
+                  items={ projects }
+                  selectedIds={ this.state.search.projectIds }
+                  updateState={ this.updateProjectSearchState }
+                  showMaxItems={ 2 } />
+                <MultiDropdown
+                  id="localAreaIds"
+                  placeholder="Local Areas"
+                  items={ localAreas }
+                  selectedIds={ this.state.search.localAreaIds }
+                  updateState={ this.updateLocalAreaSearchState }
+                  showMaxItems={ 2 } />
+                <MultiDropdown
+                  id="ownerIds"
+                  disabled={ ownersLoading }
+                  placeholder="Companies"
+                  fieldName="organizationName"
+                  items={ owners }
+                  selectedIds={ this.state.search.ownerIds }
+                  updateState={ this.updateOwnerSearchState }
+                  showMaxItems={ 2 } />
+                <MultiDropdown
+                  id="equipmentIds"
+                  disabled={ !this.props.equipment.loaded }
+                  placeholder="Equipment"
+                  fieldName="equipmentCode"
+                  items={ equipment }
+                  selectedIds={ this.state.search.equipmentIds }
+                  updateState={ this.updateSearchState }
+                  showMaxItems={ 2 } />
                 <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
                 <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
               </ButtonToolbar>

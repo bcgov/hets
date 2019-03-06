@@ -455,7 +455,8 @@ export function getEquipment(equipmentId) {
 }
 
 export function getEquipmentLite() {
-  return new ApiRequest('/equipment/lite').get().then(response => {
+  const silent = store.getState().lookups.equipment.lite.loaded;
+  return new ApiRequest('/equipment/lite', { silent }).get().then(response => {
     var equipment = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
@@ -463,7 +464,8 @@ export function getEquipmentLite() {
 }
 
 export function getEquipmentTs() {
-  return new ApiRequest('/equipment/liteTs').get().then(response => {
+  const silent = store.getState().lookups.equipment.ts.loaded;
+  return new ApiRequest('/equipment/liteTs', { silent }).get().then(response => {
     var equipment = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_TS_LOOKUP, equipment: equipment });
@@ -471,7 +473,8 @@ export function getEquipmentTs() {
 }
 
 export function getEquipmentHires() {
-  return new ApiRequest('/equipment/liteHires').get().then(response => {
+  const silent = store.getState().lookups.equipment.hires.loaded;
+  return new ApiRequest('/equipment/liteHires', { silent }).get().then(response => {
     var equipment = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_HIRES_LOOKUP, equipment: equipment });
@@ -1183,7 +1186,8 @@ export function searchOwnersCoverage(params) {
 }
 
 export function getProjects() {
-  return new ApiRequest('/projects').get({ currentFiscal: false }).then(response => {
+  const silent = store.getState().lookups.projects.loaded;
+  return new ApiRequest('/projects', { silent }).get({ currentFiscal: false }).then(response => {
     var projects = normalize(response.data);
 
     // Add display fields
@@ -1194,7 +1198,8 @@ export function getProjects() {
 }
 
 export function getProjectsCurrentFiscal() {
-  return new ApiRequest('/projects').get({ currentFiscal: true }).then(response => {
+  const silent = store.getState().lookups.projectsCurrentFiscal.loaded;
+  return new ApiRequest('/projects', { silent }).get({ currentFiscal: true }).then(response => {
     var projects = normalize(response.data);
 
     // Add display fields
@@ -1212,6 +1217,8 @@ export function getProject(projectId) {
     parseProject(project);
 
     store.dispatch({ type: Action.UPDATE_PROJECT, project: project });
+
+    return project;
   });
 }
 
@@ -1755,6 +1762,8 @@ export function getLatestRentalAgreement(equipmentId, projectId) {
     var agreement = response.data;
 
     store.dispatch({ type: Action.UPDATE_RENTAL_AGREEMENT, rentalAgreement: agreement });
+
+    return agreement;
   });
 }
 
@@ -2143,18 +2152,20 @@ export function getServiceAreas() {
 }
 
 export function getEquipmentTypes() {
-  return new ApiRequest('/equipmenttypes').get().then(response => {
+  const silent = store.getState().lookups.equipmentTypes.loaded;
+  return new ApiRequest('/equipmenttypes', { silent }).get().then(response => {
     var equipmentTypes = _.mapValues(normalize(response.data), x => {
       x.blueBookSectionAndName = `${x.blueBookSection} - ${x.name}`;
       return x;
     });
 
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_TYPES_LOOKUP, equipmentTypes: equipmentTypes });
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_TYPES_LOOKUP, equipmentTypes });
   });
 }
 
 export function getDistrictEquipmentTypes() {
-  return new ApiRequest('/districtequipmenttypes').get().then(response => {
+  const silent = store.getState().lookups.districtEquipmentTypes.loaded;
+  return new ApiRequest('/districtequipmenttypes', { silent }).get().then(response => {
     var districtEquipmentTypes = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_LOOKUP, districtEquipmentTypes: districtEquipmentTypes });

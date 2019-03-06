@@ -212,8 +212,11 @@ var ProjectsDetail = React.createClass({
   },
 
   openTimeEntryDialog(rentalAgreement) {
-    this.setState({ rentalAgreement: rentalAgreement }, () => {
-      this.setState({ showTimeEntryDialog: true });
+    this.setState({ rentalAgreement }, () => {
+      this.setState({
+        showTimeEntryDialog: true,
+        fiscalYearStartDate: this.props.project.fiscalYearStartDate,
+      });
     });
   },
 

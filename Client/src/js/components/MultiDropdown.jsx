@@ -63,7 +63,7 @@ var MultiDropdown = React.createClass({
   buildTitle(items, selectedIds) {
     var num = selectedIds.length;
 
-    if (num === 0) {
+    if (items.length === 0 || num === 0) {
       return this.props.placeholder || 'Select items';
     } else if (num === items.length) {
       return 'All selected';
