@@ -235,7 +235,7 @@ var RentalRequestsDetail = React.createClass({
         </Col>
         <Col sm={2}>
           <div className="pull-right">
-            <ReturnButton to={Constant.RENTAL_REQUESTS_PATHNAME}/>
+            <ReturnButton/>
           </div>
         </Col>
       </Row>

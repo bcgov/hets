@@ -181,7 +181,7 @@ var RolesDetail = React.createClass({
     return <div id="roles-detail">
       <div id="roles-top">
         <PrintButton/>
-        <ReturnButton to={Constant.ROLES_PATHNAME}/>
+        <ReturnButton/>
       </div>
 
       {(() => {
