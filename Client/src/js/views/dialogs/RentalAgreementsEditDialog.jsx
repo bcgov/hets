@@ -1,7 +1,4 @@
 import React from 'react';
-
-import { connect } from 'react-redux';
-
 import { Grid, Row, Col } from 'react-bootstrap';
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
@@ -13,6 +10,7 @@ import Form from '../../components/Form.jsx';
 
 import { isValidDate } from '../../utils/date';
 import { isBlank, notBlank } from '../../utils/string';
+
 
 var RentalAgreementsEditDialog = React.createClass({
   propTypes: {
@@ -143,10 +141,4 @@ var RentalAgreementsEditDialog = React.createClass({
   },
 });
 
-function mapStateToProps(state) {
-  return {
-    rentalAgreement: state.models.rentalAgreement,
-  };
-}
-
-export default connect(mapStateToProps)(RentalAgreementsEditDialog);
+export default RentalAgreementsEditDialog;

@@ -110,8 +110,6 @@ const DEFAULT_MODELS = {
   },
 
   rentalAgreement: {},
-  rentalAgreementNotes: {},
-  rentalAgreementHistory: {},
   rentalAgreementTimeRecords: {},
   rentalRate: {},
   rentalCondition: {},

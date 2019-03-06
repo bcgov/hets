@@ -1998,15 +1998,6 @@ export function deleteRentalCondition(rentalCondition) {
   });
 }
 
-export function getRentalConditions() {
-  store.dispatch({ type: Action.RENTAL_CONDITIONS_LOOKUP_REQUEST });
-  return new ApiRequest('/conditiontypes').get().then(response => {
-    var rentalConditions = response.data;
-
-    store.dispatch({ type: Action.UPDATE_RENTAL_CONDITIONS_LOOKUP, rentalConditions: rentalConditions });
-  });
-}
-
 export function deleteCondition(id) {
   return new ApiRequest(`/conditiontypes/${id}/delete`).post().then(response => {
     return response;
@@ -2237,6 +2228,15 @@ export function getOvertimeRateTypes() {
 export function updateOvertimeRateType(rate) {
   return new ApiRequest(`/provincialratetypes/${rate.id}`).put(rate).then(response => {
     return response;
+  });
+}
+
+export function getRentalConditions() {
+  store.dispatch({ type: Action.RENTAL_CONDITIONS_LOOKUP_REQUEST });
+  return new ApiRequest('/conditiontypes').get().then(response => {
+    var rentalConditions = response.data;
+
+    store.dispatch({ type: Action.UPDATE_RENTAL_CONDITIONS_LOOKUP, rentalConditions: rentalConditions });
   });
 }
 

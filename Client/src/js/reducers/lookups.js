@@ -29,6 +29,7 @@ const DEFAULT_LOOKUPS = {
   permissions: {},
   rentalConditions: {
     data: [],
+    loaded: false,
     loading: false,
   },
   // provincialRateTypes: [],
@@ -122,7 +123,7 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
       return { ...state, users: action.users };
 
     case Action.UPDATE_RENTAL_CONDITIONS_LOOKUP:
-      return { ...state, rentalConditions: { data: action.rentalConditions, loading: false } };
+      return { ...state, rentalConditions: { data: action.rentalConditions, loading: false, loaded: true } };
 
     case Action.RENTAL_CONDITIONS_LOOKUP_REQUEST:
       return { ...state, rentalConditions: { ...state.rentalConditions, loading: true } };

@@ -34,7 +34,6 @@ var UsersDetail = React.createClass({
     currentUser: React.PropTypes.object,
     user: React.PropTypes.object,
     ui: React.PropTypes.object,
-    rentalConditions: React.PropTypes.object,
     userDistricts: React.PropTypes.object,
     districts: React.PropTypes.object,
     params: React.PropTypes.object,
@@ -444,7 +443,6 @@ function mapStateToProps(state) {
     currentUser: state.user,
     user: state.models.user,
     ui: state.ui.userRoles,
-    rentalConditions: state.lookups.rentalConditions,
     userDistricts: state.models.userDistricts,
     districts: state.lookups.districts,
   };
