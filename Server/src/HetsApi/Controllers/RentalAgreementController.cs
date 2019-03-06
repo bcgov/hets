@@ -1350,7 +1350,7 @@ namespace HetsApi.Controllers
         /// Get rental agreements for AIT Report
         /// </summary>
         /// <param name="projects">Projects (comma separated list of id numbers)</param>
-        /// <param name="districtEquipmentType">District Equipment Types (comma separated list of equipment types)</param>
+        /// <param name="districtEquipmentTypes">District Equipment Types (comma separated list of equipment types)</param>
         /// <param name="equipment">Equipment (comma separated list of id numbers)</param>
         /// <param name="rentalAgreementNumber">Rental Agreement Number</param>
         /// <param name="startDate">Start date for Dated On</param>
@@ -1361,11 +1361,11 @@ namespace HetsApi.Controllers
         [SwaggerOperation("AitReportGet")]
         [SwaggerResponse(200, type: typeof(List<RentalRequestHires>))]
         public virtual IActionResult AitReportGet([FromQuery]string projects,
-            [FromQuery]string districtEquipmentType, [FromQuery]string equipment, [FromQuery]string rentalAgreementNumber,
+            [FromQuery]string districtEquipmentTypes, [FromQuery]string equipment, [FromQuery]string rentalAgreementNumber,
             [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate)
         {
             int?[] projectArray = ArrayHelper.ParseIntArray(projects);
-            int?[] districtEquipmentTypeArray = ArrayHelper.ParseIntArray(districtEquipmentType);
+            int?[] districtEquipmentTypeArray = ArrayHelper.ParseIntArray(districtEquipmentTypes);
             int?[] equipmentArray = ArrayHelper.ParseIntArray(equipment);
 
             List<AitReport> result;
@@ -1380,6 +1380,9 @@ namespace HetsApi.Controllers
             // limit to user's current district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
             agreements = agreements.Where(x => x.DistrictId == districtId);
+
+            // HET-1137 do not show placeholder rental agreements created to imported from BCBid, (ones with agreement# BCBid-XX-XXXX)
+            agreements = agreements.Where(x => !x.Number.StartsWith("BCBid"));
 
             if (!string.IsNullOrWhiteSpace(rentalAgreementNumber))
             {

@@ -109,7 +109,7 @@ var AitReport = React.createClass({
   },
 
   componentDidMount() {
-    Api.getProjects();
+    Api.getProjectsCurrentFiscal();
     Api.getDistrictEquipmentTypes();
     Api.getEquipmentHires();
 
@@ -188,7 +188,7 @@ var AitReport = React.createClass({
     return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
       { field: 'rentalAgreementNumber',   title: 'Rental Agreement'                         },
       { field: 'equipmentCode',           title: 'Equip ID'                                 },
-      { field: 'DistrictEquipmentName',   title: 'Equipment Type'                           },
+      { field: 'districtEquipmentName',   title: 'Equipment Type'                           },
       { field: 'projectNumber',           title: 'Project #'                                },
       { field: 'datedOn',                 title: 'Date On'                                  },
       { field: 'startDate',               title: 'Start Date'                               },
@@ -198,7 +198,7 @@ var AitReport = React.createClass({
           return <tr key={ entry.id }>
             <td><Link to={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${entry.id}`}>{ entry.rentalAgreementNumber}</Link></td>
             <td><Link to={`${Constant.EQUIPMENT_PATHNAME}/${entry.equipmentId}`}>{ entry.equipmentCode }</Link></td>
-            <td>{ entry.DistrictEquipmentName }</td>
+            <td>{ entry.districtEquipmentName }</td>
             <td><Link to={`${Constant.PROJECTS_PATHNAME}/${entry.projectId}`}>{ entry.projectNumber }</Link></td>
             <td>{ formatDateTime(entry.datedOn, 'YYYY-MMM-DD') }</td>
             <td>{ formatDateTime(entry.startDate, 'YYYY-MMM-DD') }</td>
@@ -339,7 +339,7 @@ var AitReport = React.createClass({
 function mapStateToProps(state) {
   return {
     currentUser: state.user,
-    projects: state.lookups.projects,
+    projects: state.lookups.projectsCurrentFiscal,
     districtEquipmentTypes: state.lookups.districtEquipmentTypes,
     equipment: state.lookups.equipment.hires,
     aitResponses: state.models.aitResponses,
