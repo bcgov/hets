@@ -209,7 +209,7 @@ var UsersDetail = React.createClass({
           <Col sm={4}>
             <div className="pull-right">
               <PrintButton/>
-              <ReturnButton to={Constant.USERS_PATHNAME}/>
+              <ReturnButton/>
             </div>
           </Col>
         </Row>

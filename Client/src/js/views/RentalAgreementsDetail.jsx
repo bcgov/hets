@@ -287,7 +287,7 @@ var RentalAgreementsDetail = React.createClass({
       <div className="pull-right">
         { isAssociated && <Button disabled={ !rentalAgreement.isActive } onClick={ this.openCloneDialog }>Copy Other Rental Agreement</Button> }
         <Button title="Print PDF" onClick={ this.generateRentalAgreementDocument }><Glyphicon glyph="print" /></Button>
-        <ReturnButton to={Constant.RENTAL_AGREEMENTS_PATHNAME}/>
+        <ReturnButton/>
       </div>;
 
     return (

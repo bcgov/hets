@@ -265,7 +265,7 @@ var ProjectsDetail = React.createClass({
               <Col sm={3}>
                 <div className="pull-right">
                   <PrintButton disabled={loading}/>
-                  <ReturnButton to={Constant.PROJECTS_PATHNAME}/>
+                  <ReturnButton/>
                 </div>
               </Col>
             </Row>

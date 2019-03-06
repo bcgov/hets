@@ -275,7 +275,7 @@ var EquipmentDetail = React.createClass({
                   <Col sm={3}>
                     <div className="pull-right">
                       <PrintButton/>
-                      <ReturnButton to={Constant.EQUIPMENT_PATHNAME}/>
+                      <ReturnButton/>
                     </div>
                   </Col>
                 </Row>
