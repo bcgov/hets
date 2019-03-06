@@ -35,7 +35,6 @@ var TimeEntry = React.createClass({
 
   getInitialState() {
     return {
-      ownersLoading: true,
       showTimeEntryDialog: false,
       allowMultipleTimeEntries: false,
       rentalAgreementId: null,
@@ -56,10 +55,7 @@ var TimeEntry = React.createClass({
   componentDidMount() {
     Api.getProjectsCurrentFiscal();
     Api.getEquipmentTs();
-
-    Api.getOwnersLiteTs().then(() => {
-      this.setState({ ownersLoading: false });
-    });
+    Api.getOwnersLiteTs();
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
@@ -252,7 +248,7 @@ var TimeEntry = React.createClass({
   },
 
   getFilteredOwners() {
-    return _.chain(this.props.owners)
+    return _.chain(this.props.owners.data)
       .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesLocalAreaFilter(x.localAreaId))
       .sortBy('organizationName')
       .value();
@@ -266,8 +262,6 @@ var TimeEntry = React.createClass({
   },
 
   render() {
-    const { ownersLoading } = this.state;
-
     var resultCount = '';
     if (this.props.timeEntries.loaded) {
       resultCount = '(' + Object.keys(this.props.timeEntries.data).length + ')';
@@ -291,38 +285,38 @@ var TimeEntry = React.createClass({
               <ButtonToolbar id="time-entry-filters">
                 <MultiDropdown
                   id="projectIds"
-                  disabled={ !this.props.projects.loaded }
+                  disabled={!this.props.projects.loaded}
                   placeholder="Projects"
                   fieldName="label"
-                  items={ projects }
-                  selectedIds={ this.state.search.projectIds }
-                  updateState={ this.updateProjectSearchState }
-                  showMaxItems={ 2 } />
+                  items={projects}
+                  selectedIds={this.state.search.projectIds}
+                  updateState={this.updateProjectSearchState}
+                  showMaxItems={2} />
                 <MultiDropdown
                   id="localAreaIds"
                   placeholder="Local Areas"
-                  items={ localAreas }
-                  selectedIds={ this.state.search.localAreaIds }
-                  updateState={ this.updateLocalAreaSearchState }
-                  showMaxItems={ 2 } />
+                  items={localAreas}
+                  selectedIds={this.state.search.localAreaIds}
+                  updateState={this.updateLocalAreaSearchState}
+                  showMaxItems={2} />
                 <MultiDropdown
                   id="ownerIds"
-                  disabled={ ownersLoading }
+                  disabled={!this.props.owners.loaded}
                   placeholder="Companies"
                   fieldName="organizationName"
-                  items={ owners }
-                  selectedIds={ this.state.search.ownerIds }
-                  updateState={ this.updateOwnerSearchState }
-                  showMaxItems={ 2 } />
+                  items={owners}
+                  selectedIds={this.state.search.ownerIds}
+                  updateState={this.updateOwnerSearchState}
+                  showMaxItems={2} />
                 <MultiDropdown
                   id="equipmentIds"
-                  disabled={ !this.props.equipment.loaded }
+                  disabled={!this.props.equipment.loaded}
                   placeholder="Equipment"
                   fieldName="equipmentCode"
-                  items={ equipment }
-                  selectedIds={ this.state.search.equipmentIds }
-                  updateState={ this.updateSearchState }
-                  showMaxItems={ 2 } />
+                  items={equipment}
+                  selectedIds={this.state.search.equipmentIds}
+                  updateState={this.updateSearchState}
+                  showMaxItems={2} />
                 <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
                 <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
               </ButtonToolbar>
@@ -366,7 +360,7 @@ function mapStateToProps(state) {
   return {
     projects: state.lookups.projectsCurrentFiscal,
     localAreas: state.lookups.localAreas,
-    owners: state.lookups.ownersLite,
+    owners: state.lookups.owners.ts,
     equipment: state.lookups.equipment.ts,
     timeEntries: state.models.timeEntries,
     favourites: state.models.favourites.timeEntry,
