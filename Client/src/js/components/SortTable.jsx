@@ -1,5 +1,8 @@
 import React from 'react';
 import { Table, Glyphicon } from 'react-bootstrap';
+import _ from 'lodash';
+
+import Spinner from '../components/Spinner.jsx';
 
 
 const SortTable = React.createClass({
@@ -12,6 +15,7 @@ const SortTable = React.createClass({
     sortDesc: React.PropTypes.bool.isRequired,
     onSort: React.PropTypes.func.isRequired,
     id: React.PropTypes.string,
+    isRefreshing: React.PropTypes.bool,
     children: React.PropTypes.node,
   },
 
@@ -22,20 +26,28 @@ const SortTable = React.createClass({
     });
   },
 
-  render() {
-    const columnHeaders = this.props.headers.map((header) => {
+  preventSelection(e) {
+    e.preventDefault();
+  },
+
+  renderTableHeader() {
+    const {headers, sortField, sortDesc} = this.props;
+
+    return headers.map((header) => {
+      const key = Array.isArray(header.field) ? header.field.join('-') : header.field;
       if (header.node) {
-        return <th id={ header.field } key={ header.field } style={ header.style }>{ header.node }</th>;
+        return <th id={header.field} key={key} style={header.style}>{header.node}</th>;
       }
 
       var sortGlyph = '';
-      if (this.props.sortField === header.field) {
-        sortGlyph = <span>&nbsp;<Glyphicon glyph={ this.props.sortDesc ? 'sort-by-attributes-alt' : 'sort-by-attributes' }/></span>;
+      if (_.isEqual(sortField, header.field)) {
+        sortGlyph = <span>&nbsp;<Glyphicon glyph={ sortDesc ? 'sort-by-attributes-alt' : 'sort-by-attributes' }/></span>;
       }
+
       return (
         <th
           id={ header.field }
-          key={ header.field }
+          key={key}
           onClick={ header.noSort ? '' : this.sort }
           className={ header.class }
           style={{ ...header.style, cursor: header.noSort ? 'default' : 'pointer' }}>
@@ -43,15 +55,22 @@ const SortTable = React.createClass({
         </th>
       );
     });
+  },
+
+  render() {
+    const {id, isRefreshing, children} = this.props;
 
     return (
-      <div id={ this.props.id } className="table-container">
+      <div id={id} className="sort-table">
+        {isRefreshing && <div id="sort-table-refreshing-overlay"><Spinner/></div>}
         <Table condensed striped hover>
           <thead>
-            <tr>{ columnHeaders }</tr>
+            <tr>
+              {this.renderTableHeader()}
+            </tr>
           </thead>
           <tbody>
-            { this.props.children }
+            {children}
           </tbody>
         </Table>
       </div>

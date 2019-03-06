@@ -571,9 +571,9 @@ var RentalAgreementsDetail = React.createClass({
         <Row id="rental-agreements-footer">
           { buttons }
         </Row>
-        { this.state.showHeaderEditDialog &&
-        <RentalAgreementHeaderEditDialog show={ this.state.showHeaderEditDialog } onSave={ this.saveHeaderEdit } onClose={ this.closeHeaderEditDialog } />
-        }
+        { this.state.showHeaderEditDialog && (
+          <RentalAgreementHeaderEditDialog rentalAgreement={rentalAgreement} show={ this.state.showHeaderEditDialog } onSave={ this.saveHeaderEdit } onClose={ this.closeHeaderEditDialog } />
+        )}
         { this.state.showEditDialog &&
         <RentalAgreementsEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
         }

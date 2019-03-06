@@ -6,7 +6,10 @@ const DEFAULT_LOOKUPS = {
   regions: {},
   serviceAreas: {},
   localAreas: {},
-  equipmentTypes: {},
+  equipmentTypes: {
+    data: {},
+    loaded: false,
+  },
   equipment: {
     lite: {
       data: {},
@@ -39,8 +42,14 @@ const DEFAULT_LOOKUPS = {
   // },
   ownersLite: {},
   roles: {},
-  projects: {},
-  projectsCurrentFiscal: {},
+  projects: {
+    data: {},
+    loaded: false,
+  },
+  projectsCurrentFiscal: {
+    data: {},
+    loaded: false,
+  },
   users: {},
   blankRentalAgreements: {
     data: {},
@@ -73,7 +82,7 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
       return { ...state, localAreas: action.localAreas };
 
     case Action.UPDATE_EQUIPMENT_TYPES_LOOKUP:
-      return { ...state, equipmentTypes: action.equipmentTypes };
+      return { ...state, equipmentTypes: { data: action.equipmentTypes, loaded: true } };
 
     case Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_LOOKUP:
       return { ...state, districtEquipmentTypes: { data: action.districtEquipmentTypes, loaded: true } };
@@ -113,10 +122,10 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
       return { ...state, roles: action.roles };
 
     case Action.UPDATE_PROJECTS_LOOKUP:
-      return { ...state, projects: action.projects };
+      return { ...state, projects: { ...state.projects, data: action.projects, loaded: true } };
 
     case Action.UPDATE_PROJECTS_CURRENT_FISCAL_LOOKUP:
-      return { ...state, projectsCurrentFiscal: action.projects };
+      return { ...state, projectsCurrentFiscal: { ...state.projectsCurrentFiscal, data: action.projects, loaded: true } };
 
     case Action.UPDATE_USERS_LOOKUP:
       return { ...state, users: action.users };
