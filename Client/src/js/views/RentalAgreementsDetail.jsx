@@ -62,20 +62,17 @@ var RentalAgreementsDetail = React.createClass({
   },
 
   componentDidMount() {
-    const { rentalAgreement, rentalConditions} = this.props;
+    const { rentalAgreement } = this.props;
 
-    Promise.all([
-      !rentalAgreement ? this.fetch() : null,
-      Object.keys(rentalConditions).length === 0 ? Api.getRentalConditions() : null,
-    ]).then(() => {
-      this.setState({ loading: false });
-    });
+    // Don't show the loading spinner when a rental agreement is already in the store
+    this.setState({ loading: !rentalAgreement });
+    this.fetch(rentalAgreement);
   },
 
-  fetch() {
-    this.setState({ loading: true });
+  fetch(hideSpinner) {
+    if (!hideSpinner) { this.setState({ loading: true }); }
     return Api.getRentalAgreement(this.props.rentalAgreementId).then(() => {
-      this.setState({ loading: false });
+      if (!hideSpinner) { this.setState({ loading: false }); }
     });
   },
 
@@ -280,7 +277,7 @@ var RentalAgreementsDetail = React.createClass({
   },
 
   render() {
-    const { rentalAgreement, rentalConditions } = this.props;
+    const { rentalAgreement } = this.props;
     const isAssociated = Boolean(rentalAgreement);
 
     var buttons =
@@ -549,7 +546,7 @@ var RentalAgreementsDetail = React.createClass({
         </Well>
 
         <Well>
-          <SubHeader title="Overtime Rates and Notes/Special Instructions" editButtonTitle="Edit Overtime Rates and Notes/Special Instructions" editButtonClicked={this.openOvertimeNotesDialog}/>
+          <SubHeader title="Overtime Rates and Notes/Special Instructions" editButtonTitle="Edit Overtime Rates and Notes/Special Instructions" onEditClicked={this.openOvertimeNotesDialog}/>
           {(() => {
             if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -572,29 +569,40 @@ var RentalAgreementsDetail = React.createClass({
           { buttons }
         </Row>
         { this.state.showHeaderEditDialog && (
-          <RentalAgreementHeaderEditDialog rentalAgreement={rentalAgreement} show={ this.state.showHeaderEditDialog } onSave={ this.saveHeaderEdit } onClose={ this.closeHeaderEditDialog } />
+          <RentalAgreementHeaderEditDialog
+            show={ this.state.showHeaderEditDialog }
+            rentalAgreement={ rentalAgreement }
+            onSave={ this.saveHeaderEdit }
+            onClose={ this.closeHeaderEditDialog } />
         )}
-        { this.state.showEditDialog &&
-        <RentalAgreementsEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
-        }
-        { this.state.showEquipmentRateDialog &&
-        <EquipmentRentalRatesEditDialog show={ this.state.showEquipmentRateDialog } onSave={ this.saveEquipmentRate } onClose={ this.closeEquipmentRateDialog } />
-        }
+        { this.state.showEditDialog && (
+          <RentalAgreementsEditDialog
+            show={ this.state.showEditDialog }
+            rentalAgreement={ rentalAgreement }
+            onSave={ this.saveEdit }
+            onClose={ this.closeEditDialog } />
+        )}
+        { this.state.showEquipmentRateDialog && (
+          <EquipmentRentalRatesEditDialog
+            show={ this.state.showEquipmentRateDialog }
+            rentalAgreement={ rentalAgreement }
+            onSave={ this.saveEquipmentRate }
+            onClose={ this.closeEquipmentRateDialog } />
+        )}
         { this.state.showRentalRateDialog &&
         <RentalRatesEditDialog
           show={ this.state.showRentalRateDialog }
           rentalRate={ this.state.rentalRate }
+          rentalAgreement={ rentalAgreement }
           onSave={ this.saveRentalRate }
           onSaveMultiple={ this.saveRentalRates }
           onClose={ this.closeRentalRateDialog }
-          rentalAgreement={ rentalAgreement }
         />
         }
         { this.state.showConditionDialog &&
         <RentalConditionsEditDialog
-          show={ this.state.showConditionDialog }
           rentalCondition={ this.state.rentalCondition }
-          rentalConditions={ rentalConditions }
+          show={ this.state.showConditionDialog }
           onSave={ this.saveCondition }
           onSaveMultiple={ this.saveConditions }
           onClose={ this.closeConditionDialog }
@@ -603,6 +611,7 @@ var RentalAgreementsDetail = React.createClass({
         { this.state.showOvertimeNotesDialog &&
         <RentalAgreementOvertimeNotesDialog
           show={ this.state.showOvertimeNotesDialog }
+          rentalAgreement={ rentalAgreement }
           onSave={ this.saveOvertimeNotes }
           onClose={ this.closeOvertimeNotesDialog }
         />
@@ -626,7 +635,6 @@ function mapStateToProps(state) {
   return {
     rentalAgreement: activeRentalAgreementSelector(state),
     rentalAgreementId: activeRentalAgreementIdSelector(state),
-    rentalConditions: state.lookups.rentalConditions.data,
   };
 }
 
