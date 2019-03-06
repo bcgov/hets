@@ -1381,6 +1381,9 @@ namespace HetsApi.Controllers
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
             agreements = agreements.Where(x => x.DistrictId == districtId);
 
+            // HET-1137 do not show placeholder rental agreements created to imported from BCBid, (ones with agreement# BCBid-XX-XXXX)
+            agreements = agreements.Where(x => !x.Number.StartsWith("BCBid"));
+
             if (!string.IsNullOrWhiteSpace(rentalAgreementNumber))
             {
                 result = agreements
