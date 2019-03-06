@@ -122,7 +122,7 @@ var BusinessOwner = React.createClass({
           <Col sm={3}>
             <div className="pull-right">
               <PrintButton/>
-              <ReturnButton to={Constant.BUSINESS_PORTAL_PATHNAME}/>
+              <ReturnButton/>
             </div>
           </Col>
         </Row>
@@ -274,7 +274,7 @@ var BusinessOwner = React.createClass({
             </Col>
             <Col sm={3}>
               <div className="pull-right">
-                <ReturnButton to={Constant.BUSINESS_PORTAL_PATHNAME}/>
+                <ReturnButton/>
               </div>
             </Col>
           </Row>;

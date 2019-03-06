@@ -353,7 +353,7 @@ var OwnersDetail = React.createClass({
                 <Col sm={3}>
                   <div className="pull-right">
                     <PrintButton/>
-                    <ReturnButton to={Constant.OWNERS_PATHNAME}/>
+                    <ReturnButton/>
                   </div>
                 </Col>
               </Row>
@@ -570,7 +570,7 @@ var OwnersDetail = React.createClass({
                 })()}
               </Well>
               <Well>
-                <SubHeader title="Contacts"/>
+                <SubHeader title="History"/>
                 { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ !this.state.loading } /> }
               </Well>
             </Col>
