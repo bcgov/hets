@@ -80,7 +80,7 @@ var ProjectsAddDialog = React.createClass({
       valid = false;
     } else {
       var nameIgnoreCase = projectName.toLowerCase().trim();
-      var existingProjectName = _.find(this.props.projects, existingProjectName => existingProjectName.name.toLowerCase().trim() === nameIgnoreCase);
+      var existingProjectName = _.find(this.props.projects.data, existingProjectName => existingProjectName.name.toLowerCase().trim() === nameIgnoreCase);
       if (existingProjectName) {
         this.setState({ nameError: 'This project name already exists'});
         valid = false;

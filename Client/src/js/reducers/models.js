@@ -375,7 +375,7 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     // Time Entries
     case Action.TIME_ENTRIES_REQUEST:
-      return { ...state, timeEntries: { ...state.timeEntries, loading: true, loaded: false } };
+      return { ...state, timeEntries: { ...state.timeEntries, loading: true } };
 
     case Action.UPDATE_TIME_ENTRIES:
       return { ...state, timeEntries: { data: action.timeEntries, loading: false, loaded: true } };

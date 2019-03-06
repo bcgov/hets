@@ -93,7 +93,7 @@ var ProjectsEditDialog = React.createClass({
       valid = false;
     } else if (projectName !== project.projectName) {
       var nameIgnoreCase = projectName.toLowerCase().trim();
-      var existingProjects = _.reject(this.props.projects, { id: project.id });
+      var existingProjects = _.reject(this.props.projects.data, { id: project.id });
       var existingProjectName = _.find(existingProjects, existingProjectName => existingProjectName.name.toLowerCase().trim() === nameIgnoreCase);
       if (existingProjectName) {
         this.setState({ projectNameError: 'This project name already exists'});
@@ -115,34 +115,37 @@ var ProjectsEditDialog = React.createClass({
   },
 
   onSubmit() {
-    const project = {
-      ...this.props.project,
-      id: this.props.project.id,
-      canEditStatus: this.props.project.canEditStatus,
-      district: this.props.project.district,
-      primaryContact: this.props.project.primaryContact,
-      name: this.state.projectName,
-      status: this.state.projectStatus,
-      fiscalYear: this.state.fiscalYear,
-      provincialProjectNumber: this.state.provincialProjectNumber,
-      responsibilityCentre: this.state.responsibilityCentre,
-      serviceLine: this.state.serviceLine,
-      stob: this.state.stob,
-      product: this.state.product,
-      businessFunction: this.state.businessFunction,
-      workActivity: this.state.workActivity,
-      costType: this.state.costType,
-      information: this.state.projectInformation,
-      concurrencyControlNumber: this.state.concurrencyControlNumber,
-    };
+    if (this.isValid()) {
+      if (this.didChange()) {
+        const project = {
+          ...this.props.project,
+          id: this.props.project.id,
+          canEditStatus: this.props.project.canEditStatus,
+          district: this.props.project.district,
+          name: this.state.projectName,
+          status: this.state.projectStatus,
+          fiscalYear: this.state.fiscalYear,
+          provincialProjectNumber: this.state.provincialProjectNumber,
+          responsibilityCentre: this.state.responsibilityCentre,
+          serviceLine: this.state.serviceLine,
+          stob: this.state.stob,
+          product: this.state.product,
+          businessFunction: this.state.businessFunction,
+          workActivity: this.state.workActivity,
+          costType: this.state.costType,
+          information: this.state.projectInformation,
+          concurrencyControlNumber: this.state.concurrencyControlNumber,
+        };
 
-    store.dispatch({ type: Action.UPDATE_PROJECT, project });
+        store.dispatch({ type: Action.UPDATE_PROJECT, project });
 
-    Log.projectModified(this.props.project);
+        Log.projectModified(this.props.project);
 
-    Api.updateProject(project);
+        Api.updateProject(project);
+      }
 
-    this.props.onClose();
+      this.props.onClose();
+    }
   },
 
   render() {

@@ -29,7 +29,7 @@ var RentalAgreementHeaderEditDialog = React.createClass({
 
   getInitialState() {
     return {
-      loaded: false,
+      loaded: true,
       projectId: this.props.rentalAgreement.projectId || '',
       equipmentCode: this.props.rentalAgreement.equipment.equipmentCode || '',
 
@@ -38,10 +38,15 @@ var RentalAgreementHeaderEditDialog = React.createClass({
   },
 
   componentDidMount() {
-    var equipmentPromise = this.props.equipment.loaded ? Promise.resolve() : Api.getEquipmentLite();
-    equipmentPromise.then(() => {
-      this.setState({ loaded: true });
-    });
+    Api.getProjectsCurrentFiscal();
+
+    const equipmentPromise = Api.getEquipmentLite();
+    if (!this.props.equipment.loaded) {
+      this.setState({ loaded: false });
+      equipmentPromise.then(() => {
+        this.setState({ loaded: true });
+      });
+    }
   },
 
   updateState(state, callback) {
@@ -108,7 +113,7 @@ var RentalAgreementHeaderEditDialog = React.createClass({
       {(() => {
         if (!this.state.loaded) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-        var projects = _.sortBy(this.props.projects, 'name');
+        var projects = _.sortBy(this.props.projects.data, 'name');
 
         return <Form>
           <Grid fluid>
@@ -116,7 +121,15 @@ var RentalAgreementHeaderEditDialog = React.createClass({
               <Col md={6}>
                 <FormGroup controlId="projectId">
                   <ControlLabel>Project <sup>*</sup></ControlLabel>
-                  <DropdownControl id="projectId" fieldName="label" updateState={ this.updateState } items={ projects } selectedId={ this.state.projectId } blankLine="(None)" placeholder="(None)" />
+                  <DropdownControl
+                    id="projectId"
+                    fieldName="label"
+                    items={projects}
+                    disabled={!this.props.projects.loaded}
+                    updateState={this.updateState}
+                    selectedId={this.state.projectId}
+                    blankLine="(None)"
+                    placeholder="(None)"/>
                 </FormGroup>
               </Col>
               <Col md={6}>

@@ -1,9 +1,6 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Well, PageHeader, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
-
 import _ from 'lodash';
 
 import * as Api from '../api';
@@ -16,11 +13,12 @@ import DeleteButton from '../components/DeleteButton.jsx';
 import { formatDateTimeUTCToLocal } from '../utils/date';
 import { sortDir } from '../utils/array';
 
+
 var StatusLetters = React.createClass({
   propTypes: {
     localAreas: React.PropTypes.object,
     owners: React.PropTypes.object,
-    batchReports: React.PropTypes.object,
+    batchReports: React.PropTypes.array,
   },
 
   getInitialState() {
