@@ -1064,11 +1064,11 @@ namespace HetsApi.Controllers
         }
 
         /// <summary>
-        /// Create owner equipment
+        /// Owner Verification
         /// </summary>
         /// <remarks>Replaces an Owners Equipment</remarks>
-        /// <param name="id">id of Owner to replace Equipment for</param>
-        /// <param name="items">replacement owner equipment</param>
+        /// <param name="id">id of Owner to verify Equipment for</param>
+        /// <param name="items">equipment to verify</param>
         [HttpPut]
         [Route("{id}/equipment")]
         [SwaggerOperation("OwnersIdEquipmentPut")]
@@ -1080,19 +1080,6 @@ namespace HetsApi.Controllers
 
             // not found
             if (!exists || items == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-
-            // get record
-            HetOwner owner = _context.HetOwner
-                .Include(x => x.LocalArea.ServiceArea.District.Region)
-                .Include(x => x.HetEquipment)
-                    .ThenInclude(y => y.DistrictEquipmentType)
-                .Include(x => x.HetEquipment)
-                    .ThenInclude(y => y.Owner)
-                .Include(x => x.HetNote)
-                .Include(x => x.HetDigitalFile)
-                .Include(x => x.HetHistory)
-                .Include(x => x.HetContact)
-                .First(x => x.OwnerId == id);
 
             // adjust the incoming list
             for (int i = 0; i < items.Length; i++)
@@ -1108,13 +1095,6 @@ namespace HetsApi.Controllers
                     if (equipmentExists)
                     {
                         items[i] = _context.HetEquipment
-                            .Include(x => x.LocalArea.ServiceArea.District.Region)
-                            .Include(x => x.DistrictEquipmentType)
-                            .Include(x => x.Owner)
-                            .Include(x => x.HetEquipmentAttachment)
-                            .Include(x => x.HetNote)
-                            .Include(x => x.HetDigitalFile)
-                            .Include(x => x.HetHistory)
                             .First(x => x.EquipmentId == item.EquipmentId);
 
                         if (items[i].LastVerifiedDate != lastVerifiedDate)
@@ -1123,36 +1103,9 @@ namespace HetsApi.Controllers
                             _context.HetEquipment.Update(items[i]);
                         }
                     }
-                    else
-                    {
-                        _context.Add(item);
-                        items[i] = item;
-                    }
                 }
             }
 
-            // remove equipment that are no longer attached
-            List<HetEquipment> equipmentToRemove = new List<HetEquipment>();
-
-            foreach (HetEquipment equipment in owner.HetEquipment)
-            {
-                if (equipment != null && items.All(x => x.EquipmentId != equipment.EquipmentId))
-                {
-                    equipmentToRemove.Add(equipment);
-                }
-            }
-
-            if (equipmentToRemove.Count > 0)
-            {
-                foreach (HetEquipment equipment in equipmentToRemove)
-                {
-                    owner.HetEquipment.Remove(equipment);
-                }
-            }
-
-            // replace Equipment List
-            owner.HetEquipment = items.ToList();
-            _context.HetOwner.Update(owner);
             _context.SaveChanges();
 
             return new ObjectResult(new HetsResponse(items));
