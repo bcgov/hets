@@ -9,6 +9,7 @@ import * as Constant from '../constants';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import DeleteButton from '../components/DeleteButton.jsx';
+import Spinner from '../components/Spinner.jsx';
 
 import { formatDateTimeUTCToLocal } from '../utils/date';
 import { sortDir } from '../utils/array';
@@ -18,7 +19,7 @@ var StatusLetters = React.createClass({
   propTypes: {
     localAreas: React.PropTypes.object,
     owners: React.PropTypes.object,
-    batchReports: React.PropTypes.array,
+    batchReports: React.PropTypes.object,
   },
 
   getInitialState() {
@@ -34,10 +35,8 @@ var StatusLetters = React.createClass({
   },
 
   componentDidMount() {
-    return Promise.all([
-      this.fetch(),
-      Api.getOwnersLite(),
-    ]).then(() => this.setState({ loading: false }));
+    Api.getOwnersLite();
+    this.fetch();
   },
 
   fetch() {
@@ -126,7 +125,7 @@ var StatusLetters = React.createClass({
   },
 
   getFilteredOwners() {
-    return _.chain(this.props.owners)
+    return _.chain(this.props.owners.data)
       .filter(x => this.matchesLocalAreaFilter(x.localAreaId))
       .sortBy('organizationName')
       .value();
@@ -136,7 +135,11 @@ var StatusLetters = React.createClass({
     const { loading } = this.state;
     const { batchReports } = this.props;
 
-    var reports = _.orderBy(batchReports, [this.state.ui.sortField], sortDir(this.state.ui.sortDesc));
+    if (!batchReports.loaded) {
+      return <div style={{ textAlign: 'center' }}><Spinner/></div>;
+    }
+
+    var reports = _.orderBy(batchReports.data, [this.state.ui.sortField], sortDir(this.state.ui.sortDesc));
 
     var headers = [
       { field: 'startDate',           title: 'Time Started' },
@@ -173,7 +176,6 @@ var StatusLetters = React.createClass({
   },
 
   render() {
-    const { loading } = this.state;
     var localAreas = _.sortBy(this.props.localAreas, 'name');
     var owners = this.getFilteredOwners();
 
@@ -184,10 +186,22 @@ var StatusLetters = React.createClass({
           <Row>
             <Col md={12}>
               <ButtonToolbar className="btn-container">
-                <MultiDropdown id="localAreaIds" placeholder="Local Areas"
-                  items={ localAreas } selectedIds={ this.state.localAreaIds } updateState={ this.updateLocalAreaState } showMaxItems={ 2 } />
-                <MultiDropdown id="ownerIds" disabled={loading} placeholder="Companies" fieldName="organizationName"
-                  items={ owners } selectedIds={ this.state.ownerIds } updateState={ this.updateState } showMaxItems={ 2 } />
+                <MultiDropdown
+                  id="localAreaIds"
+                  placeholder="Local Areas"
+                  items={localAreas}
+                  selectedIds={this.state.localAreaIds}
+                  updateState={this.updateLocalAreaState}
+                  showMaxItems={2} />
+                <MultiDropdown
+                  id="ownerIds"
+                  placeholder="Companies"
+                  fieldName="organizationName"
+                  items={owners}
+                  disabled={!this.props.owners.loaded}
+                  selectedIds={this.state.ownerIds}
+                  updateState={this.updateState}
+                  showMaxItems={2} />
                 <Button onClick={ this.getStatusLetters } bsStyle="primary">Status Letters</Button>
                 <Button onClick={ this.getMailingLabels } bsStyle="primary">Mailing Labels</Button>
               </ButtonToolbar>
@@ -203,7 +217,7 @@ var StatusLetters = React.createClass({
 function mapStateToProps(state) {
   return {
     localAreas: state.lookups.localAreas,
-    owners: state.models.ownersLite.data,
+    owners: state.lookups.owners.lite,
     batchReports: state.models.batchReports,
   };
 }

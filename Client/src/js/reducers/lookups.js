@@ -41,7 +41,20 @@ const DEFAULT_LOOKUPS = {
   //   data: {},
   //   loading: false,
   // },
-  ownersLite: {},
+  owners: {
+    lite: {
+      data: {},
+      loaded: false,
+    },
+    ts: {
+      data: {},
+      loaded: false,
+    },
+    hires: {
+      data: {},
+      loaded: false,
+    },
+  },
   roles: {},
   projects: {
     data: {},
@@ -108,7 +121,13 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
     //   return { ...state, owners: { data: action.owners, loading: false } };
 
     case Action.UPDATE_OWNERS_LITE_LOOKUP:
-      return { ...state, ownersLite: action.owners };
+      return { ...state, owners: { ...state.owners, lite: { data: action.owners, loaded: true } } };
+
+    case Action.UPDATE_OWNERS_LITE_HIRES_LOOKUP:
+      return { ...state, owners: { ...state.owners, hires: { data: action.owners, loaded: true } } };
+
+    case Action.UPDATE_OWNERS_LITE_TS_LOOKUP:
+      return { ...state, owners: { ...state.owners, ts: { data: action.owners, loaded: true } } };
 
     case Action.UPDATE_EQUIPMENT_LITE_LOOKUP:
       return { ...state, equipment: { ...state.equipment, lite: { data: action.equipment, loaded: true } } };

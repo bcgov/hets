@@ -739,21 +739,6 @@ function parseOwner(owner) {
   owner.canDelete = false; // TODO Needs input from Business whether this is needed.
 }
 
-export function getOwnersLite() {
-  store.dispatch({ type: Action.OWNERS_LITE_REQUEST });
-  return new ApiRequest('/owners/lite').get().then(response => {
-    var owners = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_OWNERS_LITE, owners: owners });
-  });
-}
-
-export function getOwnersLiteHires() {
-  return new ApiRequest('/owners/liteHires').get().then(response => {
-    var owners = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_OWNERS_LITE_LOOKUP, owners: owners });
-  });
-}
-
 export function searchOwners(params) {
   store.dispatch({ type: Action.OWNERS_REQUEST });
   return new ApiRequest('/owners/search').get(params).then(response => {
@@ -2169,11 +2154,28 @@ export function getFiscalYears(districtId) {
   });
 }
 
+export function getOwnersLite() {
+  const silent = store.getState().lookups.owners.lite.loaded;
+  return new ApiRequest('/owners/lite', { silent }).get().then(response => {
+    var owners = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_OWNERS_LITE_LOOKUP, owners: owners });
+  });
+}
+
+export function getOwnersLiteHires() {
+  const silent = store.getState().lookups.owners.hires.loaded;
+  return new ApiRequest('/owners/liteHires', { silent }).get().then(response => {
+    var owners = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_OWNERS_LITE_HIRES_LOOKUP, owners: owners });
+  });
+}
+
 export function getOwnersLiteTs() {
-  return new ApiRequest('/owners/liteTs').get().then(response => {
+  const silent = store.getState().lookups.owners.ts.loaded;
+  return new ApiRequest('/owners/liteTs', { silent }).get().then(response => {
     var owners = normalize(response.data);
 
-    store.dispatch({ type: Action.UPDATE_OWNERS_LITE_LOOKUP, owners: owners });
+    store.dispatch({ type: Action.UPDATE_OWNERS_LITE_TS_LOOKUP, owners: owners });
   });
 }
 
