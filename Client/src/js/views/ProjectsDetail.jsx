@@ -86,8 +86,10 @@ var ProjectsDetail = React.createClass({
 
     Api.getProjectDocuments(projectId).then(() => this.setState({ loadingDocuments: false }));
 
+    const projectPromise = this.fetch();
+
     Promise.all([
-      !project ? this.fetch() : null,
+      !project ? projectPromise : null,
       !project ? Api.getProjectNotes(projectId) : null,
       /* Documents need be fetched every time as they are not project specific in the store ATM */
     ]).then(() => {
