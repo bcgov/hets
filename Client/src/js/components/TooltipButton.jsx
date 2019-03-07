@@ -13,6 +13,7 @@ var TooltipButton = React.createClass({
     className: React.PropTypes.string,
     style: React.PropTypes.object,
     bsSize: React.PropTypes.string,
+    bsStyle: React.PropTypes.string,
   },
 
   getDefaultProps() {
@@ -25,7 +26,7 @@ var TooltipButton = React.createClass({
     var buttonStyle = this.props.disabled ? {...this.props.style, pointerEvents : 'none' } : this.props.style;
 
     var button = (
-      <Button style={ buttonStyle } className={ this.props.className } bsSize={ this.props.bsSize } disabled={ this.props.disabled } onClick={ this.props.onClick }>
+      <Button style={ buttonStyle } className={ this.props.className } bsStyle={this.props.bsStyle} bsSize={ this.props.bsSize } disabled={ this.props.disabled } onClick={ this.props.onClick }>
         { this.props.children }
       </Button>
     );

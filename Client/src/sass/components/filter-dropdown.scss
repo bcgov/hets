@@ -63,6 +63,14 @@
       border-radius: 2px;
     }
   }
+
+  &.disabled {
+    cursor: not-allowed;
+
+    &>button {
+      pointer-events: none;
+    }
+  }
 }
 
 .form-group .filter-dropdown {

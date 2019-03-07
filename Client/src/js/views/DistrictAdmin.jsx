@@ -1,9 +1,6 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { PageHeader, Button, ButtonGroup, Glyphicon, Well, Alert, Row, Col } from 'react-bootstrap';
-
 import _ from 'lodash';
 
 import * as Api from '../api';
@@ -20,10 +17,10 @@ import Confirm from '../components/Confirm.jsx';
 import ConditionAddEditDialog from './dialogs/ConditionAddEditDialog.jsx';
 import DistrictEquipmentTypeAddEditDialog from './dialogs/DistrictEquipmentTypeAddEditDialog.jsx';
 import EquipmentTransferDialog from './dialogs/EquipmentTransferDialog.jsx';
-
 import SubHeader from '../components/ui/SubHeader.jsx';
 
-import { caseInsensitiveSort, sortDir, sort } from '../utils/array';
+import { caseInsensitiveSort, sort } from '../utils/array';
+
 
 var DistrictAdmin = React.createClass({
   propTypes: {
@@ -54,10 +51,7 @@ var DistrictAdmin = React.createClass({
 
   componentDidMount() {
     Api.getRentalConditions();
-    Api.getEquipmentTypes();
-    if (!this.props.districtEquipmentTypes.loaded) {
-      Api.getDistrictEquipmentTypes();
-    }
+    Api.getDistrictEquipmentTypes();
   },
 
   updateEquipmentUIState(state, callback) {
@@ -131,10 +125,7 @@ var DistrictAdmin = React.createClass({
 
   onDistrictEquipmentTypeSave(data) {
     let equipment = { ...data, district: { id: this.props.currentUser.district.id } };
-    let promise = Api.addDistrictEquipmentType;
-    if (equipment.id !== 0) {
-      promise = Api.updateDistrictEquipmentType;
-    }
+    const promise = equipment.id !== 0 ? Api.updateDistrictEquipmentType : Api.addDistrictEquipmentType;
     promise(equipment).then(() => {
       Api.getDistrictEquipmentTypes();
       this.closeDistrictEquipmentTypeAddEditDialog();
@@ -154,10 +145,6 @@ var DistrictAdmin = React.createClass({
   },
 
   render() {
-    var equipmentTypes = _.chain(this.props.equipmentTypes)
-      .sortBy('blueBookSection')
-      .value();
-
     if (!this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) {
       return (
         <div>You do not have permission to view this page.</div>
@@ -279,7 +266,6 @@ var DistrictAdmin = React.createClass({
           onClose={this.closeDistrictEquipmentTypeAddEditDialog}
           onSave={this.onDistrictEquipmentTypeSave}
           districtEquipmentType={this.state.districtEquipmentType}
-          equipmentTypes={equipmentTypes}
         />
       }
       { this.state.showDistrictEquipmentTypeErrorDialog &&

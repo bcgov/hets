@@ -73,9 +73,7 @@ var WcbCglCoverage = React.createClass({
   },
 
   componentDidMount() {
-    Api.getOwnersLite().then(() => {
-      this.setState({ loading: false });
-    });
+    Api.getOwnersLite();
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
@@ -192,15 +190,13 @@ var WcbCglCoverage = React.createClass({
   },
 
   getFilteredOwners() {
-    return _.chain(this.props.owners)
+    return _.chain(this.props.owners.data)
       .filter(x => this.matchesLocalAreaFilter(x.localAreaId))
       .sortBy('organizationName')
       .value();
   },
 
   render() {
-    const { loading } = this.state;
-
     var resultCount = '';
     if (this.props.ownersCoverage.loaded) {
       resultCount = '(' + Object.keys(this.props.ownersCoverage.data).length + ')';
@@ -221,13 +217,25 @@ var WcbCglCoverage = React.createClass({
             <Col xs={9} sm={10} id="wcg-cgl-coverage-filters">
               <div className="input-container">
                 <ControlLabel>Local Areas:</ControlLabel>
-                <MultiDropdown id="localAreaIds" placeholder="Local Areas"
-                  items={ localAreas } selectedIds={ this.state.search.localAreaIds } updateState={ this.updateLocalAreaSearchState } showMaxItems={ 2 } />
+                <MultiDropdown
+                  id="localAreaIds"
+                  placeholder="Local Areas"
+                  items={localAreas}
+                  selectedIds={this.state.search.localAreaIds}
+                  updateState={this.updateLocalAreaSearchState}
+                  showMaxItems={2} />
               </div>
               <div className="input-container">
                 <ControlLabel>Companies:</ControlLabel>
-                <MultiDropdown id="ownerIds" disabled={ loading } placeholder="Companies" fieldName="organizationName"
-                  items={ owners } selectedIds={ this.state.search.ownerIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                <MultiDropdown
+                  id="ownerIds"
+                  disabled={!this.props.owners.loaded}
+                  placeholder="Companies"
+                  fieldName="organizationName"
+                  items={owners}
+                  selectedIds={this.state.search.ownerIds}
+                  updateState={this.updateSearchState}
+                  showMaxItems={2} />
               </div>
               <DateControl id="wcbExpiry" date={ this.state.search.wcbExpiry } updateState={ this.updateSearchState } label="WCB Expiry Before:" title="WCB Expiry Before"/>
               <DateControl id="cglExpiry" date={ this.state.search.cglExpiry } updateState={ this.updateSearchState } label="CGL Expiry Before:" title="CGL Expiry Before"/>
@@ -256,7 +264,7 @@ var WcbCglCoverage = React.createClass({
 function mapStateToProps(state) {
   return {
     localAreas: state.lookups.localAreas,
-    owners: state.models.ownersLite.data,
+    owners: state.lookups.owners.lite,
     ownersCoverage: state.models.ownersCoverage,
     favourites: state.models.favourites.ownersCoverage,
     search: state.search.ownersCoverage,

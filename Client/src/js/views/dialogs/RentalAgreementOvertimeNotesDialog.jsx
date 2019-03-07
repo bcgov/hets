@@ -1,14 +1,12 @@
 import React from 'react';
-
-import { connect } from 'react-redux';
-
 import { Grid, Row, Col, FormGroup, ControlLabel, Checkbox } from 'react-bootstrap';
+
+import * as Constant from '../../constants';
 
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import Form from '../../components/Form.jsx';
 
-import * as Constant from '../../constants';
 
 var RentalAgreementOvertimeNotesDialog = React.createClass({
   propTypes: {
@@ -93,10 +91,4 @@ var RentalAgreementOvertimeNotesDialog = React.createClass({
   },
 });
 
-function mapStateToProps(state) {
-  return {
-    rentalAgreement: state.models.rentalAgreement,
-  };
-}
-
-export default connect(mapStateToProps)(RentalAgreementOvertimeNotesDialog);
+export default RentalAgreementOvertimeNotesDialog;

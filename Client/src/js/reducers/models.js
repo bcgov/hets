@@ -51,11 +51,6 @@ const DEFAULT_MODELS = {
     loading: false,
     loaded: false,
   },
-  ownersLite: {
-    data: {},
-    loading: false,
-    loaded: false,
-  },
   owner: {},
   ownerEquipment: {
     data: {},
@@ -111,8 +106,6 @@ const DEFAULT_MODELS = {
   },
 
   rentalAgreement: {},
-  rentalAgreementNotes: {},
-  rentalAgreementHistory: {},
   rentalAgreementTimeRecords: {},
   rentalRate: {},
   rentalCondition: {},
@@ -161,7 +154,10 @@ const DEFAULT_MODELS = {
 
   business: {},
 
-  batchReports: [],
+  batchReports: {
+    data: [],
+    loaded: false,
+  },
 };
 
 export default function modelsReducer(state = DEFAULT_MODELS, action) {
@@ -256,17 +252,11 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.UPDATE_OWNERS:
       return { ...state, owners: { data: action.owners, loading: false, loaded: true } };
 
-    case Action.OWNERS_LITE_REQUEST:
-      return { ...state, ownersLite: { ...state.ownersLite, loading: true, loaded: false } };
-
     case Action.OWNER_EQUIPMENT_REQUEST:
       return { ...state, ownerEquipment: { data: action.equipment, loading: true, loaded: false } };
 
     case Action.UPDATE_OWNER_EQUIPMENT:
       return { ...state, ownerEquipment: { data: action.equipment, loading: false, loaded: true } };
-
-    case Action.UPDATE_OWNERS_LITE:
-      return { ...state, ownersLite: { data: action.owners, loading: false, loaded: true } };
 
     case Action.CLEAR_OWNERS:
       return { ...state, owners: { data: {}, loading: false, loaded: false } };
@@ -428,7 +418,7 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     // Time Entries
     case Action.TIME_ENTRIES_REQUEST:
-      return { ...state, timeEntries: { ...state.timeEntries, loading: true, loaded: false } };
+      return { ...state, timeEntries: { ...state.timeEntries, loading: true } };
 
     case Action.UPDATE_TIME_ENTRIES:
       return { ...state, timeEntries: { data: action.timeEntries, loading: false, loaded: true } };
@@ -563,7 +553,7 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     // Batch Reports
     case Action.UPDATE_BATCH_REPORTS:
-      return { ...state, batchReports: action.batchReports };
+      return { ...state, batchReports: { data: action.batchReports, loaded: true }};
 
     case Action.DELETE_BATCH_REPORT: {
       const filteredBatchReports = state.batchReports.filter((br) => br.id !== action.batchReportId);

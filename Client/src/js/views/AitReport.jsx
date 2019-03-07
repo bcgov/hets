@@ -44,7 +44,6 @@ var AitReport = React.createClass({
 
   getInitialState() {
     return {
-      loading: true,
       search: {
         projectIds: this.props.search.projectIds || [],
         districtEquipmentTypes: this.props.search.districtEquipmentTypes || [],
@@ -110,13 +109,9 @@ var AitReport = React.createClass({
   },
 
   componentDidMount() {
-    var projectsPromise = Api.getProjects();
-    var districtEquipmentTypesPromise = this.props.districtEquipmentTypes.loaded ? Promise.resolve() : Api.getDistrictEquipmentTypes();
-    var equipmentPromise = this.props.equipment.loaded ? Promise.resolve() : Api.getEquipmentHires();
-
-    Promise.all([ projectsPromise, districtEquipmentTypesPromise, equipmentPromise]).then(() => {
-      this.setState({ loading: false });
-    });
+    Api.getProjectsCurrentFiscal();
+    Api.getDistrictEquipmentTypes();
+    Api.getEquipmentHires();
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
@@ -193,7 +188,7 @@ var AitReport = React.createClass({
     return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
       { field: 'rentalAgreementNumber',   title: 'Rental Agreement'                         },
       { field: 'equipmentCode',           title: 'Equip ID'                                 },
-      { field: 'DistrictEquipmentName',   title: 'Equipment Type'                           },
+      { field: 'districtEquipmentName',   title: 'Equipment Type'                           },
       { field: 'projectNumber',           title: 'Project #'                                },
       { field: 'datedOn',                 title: 'Date On'                                  },
       { field: 'startDate',               title: 'Start Date'                               },
@@ -239,14 +234,12 @@ var AitReport = React.createClass({
   },
 
   render() {
-    const { loading } = this.state;
-
     var resultCount = '';
     if (this.props.aitResponses.loaded) {
       resultCount = '(' + Object.keys(this.props.aitResponses.data).length + ')';
     }
 
-    var projects = _.sortBy(this.props.projects, 'name');
+    var projects = _.sortBy(this.props.projects.data, 'name');
     var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes.data)
       .filter(type => type.district.id == this.props.currentUser.district.id)
       .sortBy('districtEquipmentName')
@@ -267,18 +260,47 @@ var AitReport = React.createClass({
             <Col xs={9} sm={10}>
               <Row>
                 <ButtonToolbar id="ait-report-filters">
-                  <MultiDropdown id="projectIds" disabled={ loading } placeholder="Projects" fieldName="label"
-                    items={ projects } selectedIds={ this.state.search.projectIds } updateState={ this.updateProjectSearchState } showMaxItems={ 2 } />
-                  <MultiDropdown id="districtEquipmentTypes" fieldName="districtEquipmentName" placeholder="Equipment Types"
-                    items={ districtEquipmentTypes } selectedIds={ this.state.search.districtEquipmentTypes } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-                  <MultiDropdown id="equipmentIds" disabled={ loading } placeholder="Equipment" fieldName="equipmentCode"
-                    items={ equipment } selectedIds={ this.state.search.equipmentIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-                  <FormInputControl id="rentalAgreementNumber" type="text" placeholder="Rental Agreement" value={ this.state.search.rentalAgreementNumber } updateState={ this.updateSearchState }></FormInputControl>
-                  <DropdownControl id="dateRange" title={ this.state.search.dateRange } updateState={ this.updateSearchState } placeholder="Dated On"
-                    items={[ THIS_FISCAL, LAST_FISCAL, CUSTOM ]}
-                  />
+                  <MultiDropdown
+                    id="projectIds"
+                    placeholder="Projects"
+                    fieldName="label"
+                    disabled={!this.props.projects.loaded}
+                    items={projects}
+                    selectedIds={this.state.search.projectIds}
+                    updateState={this.updateProjectSearchState}
+                    showMaxItems={2} />
+                  <MultiDropdown
+                    id="districtEquipmentTypes"
+                    fieldName="districtEquipmentName"
+                    placeholder="Equipment Types"
+                    items={districtEquipmentTypes}
+                    disabled={!this.props.districtEquipmentTypes.loaded}
+                    selectedIds={this.state.search.districtEquipmentTypes}
+                    updateState={this.updateSearchState}
+                    showMaxItems={2} />
+                  <MultiDropdown
+                    id="equipmentIds"
+                    placeholder="Equipment"
+                    fieldName="equipmentCode"
+                    items={equipment}
+                    disabled={!this.props.equipment.loaded}
+                    selectedIds={this.state.search.equipmentIds}
+                    updateState={this.updateSearchState}
+                    showMaxItems={2} />
+                  <FormInputControl
+                    id="rentalAgreementNumber"
+                    type="text"
+                    placeholder="Rental Agreement"
+                    value={this.state.search.rentalAgreementNumber}
+                    updateState={this.updateSearchState}/>
+                  <DropdownControl
+                    id="dateRange"
+                    title={this.state.search.dateRange}
+                    updateState={this.updateSearchState}
+                    placeholder="Dated On"
+                    items={[ THIS_FISCAL, LAST_FISCAL, CUSTOM ]}/>
                   <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
-                  <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
+                  <Button id="clear-search-button" onClick={this.clearSearch}>Clear</Button>
                 </ButtonToolbar>
               </Row>
               {(() => {
@@ -317,7 +339,7 @@ var AitReport = React.createClass({
 function mapStateToProps(state) {
   return {
     currentUser: state.user,
-    projects: state.lookups.projects,
+    projects: state.lookups.projectsCurrentFiscal,
     districtEquipmentTypes: state.lookups.districtEquipmentTypes,
     equipment: state.lookups.equipment.hires,
     aitResponses: state.models.aitResponses,
