@@ -185,7 +185,7 @@ var TimeEntry = React.createClass({
             <td><Link to={`${Constant.OWNERS_PATHNAME}/${entry.ownerId}`}>{ entry.ownerName }</Link></td>
             <td><Link to={`${Constant.EQUIPMENT_PATHNAME}/${entry.equipmentId}`}>{ entry.equipmentCode }</Link></td>
             <td>{ entry.equipmentDetails }</td>
-            <td><Link to={`${Constant.PROJECTS_PATHNAME}/${entry.projectId}`}>{ entry.provincialProjectNumber }</Link></td>
+            <td><Link to={`${Constant.PROJECTS_PATHNAME}/${entry.projectId}`}>{ entry.provincialProjectNumber ? entry.provincialProjectNumber : 'N/A' }</Link></td>
             <td>{ entry.hours }</td>
             <td>{ formatDateTime(entry.workedDate, 'YYYY-MMM-DD') }</td>
             <td>{ formatDateTime(entry.enteredDate, 'YYYY-MMM-DD') }</td>
