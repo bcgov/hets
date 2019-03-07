@@ -53,9 +53,7 @@ var EquipmentAddDialog = React.createClass({
   },
 
   componentDidMount() {
-    if (!this.props.districtEquipmentTypes.loaded) {
-      Api.getDistrictEquipmentTypes();
-    }
+    Api.getDistrictEquipmentTypes();
   },
 
   componentDidUpdate(prevProps, prevState) {
@@ -211,10 +209,14 @@ var EquipmentAddDialog = React.createClass({
         </FormGroup>
         <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
           <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
-          <FilterDropdown id="equipmentTypeId" fieldName="districtEquipmentName" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
-            items={ districtEquipmentTypes }
+          <FilterDropdown
+            id="equipmentTypeId"
             className="full-width"
-          />
+            fieldName="districtEquipmentName"
+            disabled={!this.props.districtEquipmentTypes.loaded}
+            selectedId={this.state.equipmentTypeId}
+            updateState={this.updateState}
+            items={districtEquipmentTypes}/>
           <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="make" validationState={ this.state.makeError ? 'error' : null }>

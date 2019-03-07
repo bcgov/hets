@@ -6,6 +6,7 @@ import ModalDialog from './ModalDialog.jsx';
 import Form from './Form.jsx';
 import Spinner from './Spinner.jsx';
 
+
 var FormDialog = React.createClass({
   propTypes: {
     show: React.PropTypes.bool.isRequired,

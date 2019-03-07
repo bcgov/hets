@@ -49,7 +49,7 @@ var StatusDropdown = React.createClass({
           disabled={disabled}
           disabledTooltip={disabledTooltip}
           className={className}
-          bsSize={bsStyle}>
+          bsStyle={bsStyle}>
           {title}
         </TooltipButton>
       );
@@ -60,8 +60,6 @@ var StatusDropdown = React.createClass({
           className={className}
           bsStyle={bsStyle}
           title={status || ''}
-          disabled={disabled}
-          style={disabled ? {cursor: 'not-allowed'} : null}
           onSelect={this.props.onSelect}>
           {statuses.map((item) => {
             return <MenuItem key={item} eventKey={item}>{item}</MenuItem>;

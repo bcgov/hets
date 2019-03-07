@@ -49,7 +49,6 @@ var RentalRequestsDetail = React.createClass({
   propTypes: {
     rentalRequest: React.PropTypes.object,
     rentalRequestRotationList: React.PropTypes.object,
-    rentalAgreement: React.PropTypes.object,
     notes: React.PropTypes.object,
     attachments: React.PropTypes.object,
     documents: React.PropTypes.object,
@@ -460,7 +459,6 @@ function mapStateToProps(state) {
   return {
     rentalRequest: state.models.rentalRequest,
     rentalRequestRotationList: state.models.rentalRequestRotationList,
-    rentalAgreement: state.models.rentalAgreement,
     notes: state.models.rentalRequestNotes,
     attachments: state.models.rentalRequestAttachments,
     documents: state.models.documents,

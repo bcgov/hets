@@ -29,9 +29,7 @@ var SeniorityList = React.createClass({
   },
 
   fetch() {
-    if (!this.props.districtEquipmentTypes.loaded) {
-      Api.getDistrictEquipmentTypes();
-    }
+    Api.getDistrictEquipmentTypes();
   },
 
   updateState(state) {
@@ -91,8 +89,16 @@ var SeniorityList = React.createClass({
             <ButtonToolbar className="btn-container">
               <MultiDropdown id="selectedLocalAreaIds" className="fixed-width small" placeholder="Local Areas" items={ localAreas }
                 selectedIds={ this.state.selectedLocalAreaIds } updateState={ this.updateState } onChange={ this.onLocalAreasChanged } showMaxItems={ 2 } />
-              <MultiDropdown id="selectedEquipmentTypeIds" className="fixed-width" placeholder="Equipment Types" fieldName="districtEquipmentName"
-                items={ districtEquipmentTypes } selectedIds={ this.state.selectedEquipmentTypeIds } updateState={ this.updateState } showMaxItems={ 2 } />
+              <MultiDropdown
+                id="selectedEquipmentTypeIds"
+                className="fixed-width"
+                placeholder="Equipment Types"
+                fieldName="districtEquipmentName"
+                items={districtEquipmentTypes}
+                disabled={!this.props.districtEquipmentTypes.loaded}
+                selectedIds={this.state.selectedEquipmentTypeIds}
+                updateState={this.updateState}
+                showMaxItems={2}/>
               <Button onClick={ () => this.getRotationList(false) } bsStyle="primary">Seniority List</Button>
               <Button onClick={ () => this.getRotationList(true) } bsStyle="primary">Seniority List (Counter Copy)</Button>
             </ButtonToolbar>

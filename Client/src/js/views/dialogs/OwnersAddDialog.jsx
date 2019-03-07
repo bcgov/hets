@@ -1,12 +1,10 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
-
 import _ from 'lodash';
 
 import * as Constant from '../../constants';
+import * as Api from '../../api';
 
 import CheckboxControl from '../../components/CheckboxControl.jsx';
 import DropdownControl from '../../components/DropdownControl.jsx';
@@ -24,6 +22,7 @@ const HELP_TEXT = {
 
 var OwnersAddDialog = React.createClass({
   propTypes: {
+    owners: React.PropTypes.object,
     currentUser: React.PropTypes.object,
     localAreas: React.PropTypes.object,
     onSave: React.PropTypes.func.isRequired,
@@ -75,6 +74,10 @@ var OwnersAddDialog = React.createClass({
     };
   },
 
+  componentDidMount() {
+    Api.getOwnersLite();
+  },
+
   updateState(state, callback) {
     this.setState(state, callback);
   },
@@ -123,6 +126,14 @@ var OwnersAddDialog = React.createClass({
     if (isBlank(this.state.name)) {
       this.setState({ nameError: 'Name is required' });
       valid = false;
+    } else {
+      // Does the name already exist?
+      var nameIgnoreCase = this.state.name.toLowerCase().trim();
+      var other = _.find(this.props.owners.data, (other) => other.organizationName.toLowerCase().trim() === nameIgnoreCase);
+      if (other) {
+        this.setState({ nameError: 'This company name already exists in the system' });
+        valid = false;
+      }
     }
 
     if (isBlank(this.state.givenName)) {
@@ -336,6 +347,7 @@ var OwnersAddDialog = React.createClass({
 function mapStateToProps(state) {
   return {
     currentUser: state.user,
+    owners: state.lookups.owners.lite,
     localAreas: state.lookups.localAreas,
   };
 }

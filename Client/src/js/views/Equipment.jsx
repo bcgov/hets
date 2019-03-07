@@ -108,9 +108,7 @@ var Equipment = React.createClass({
   },
 
   componentDidMount() {
-    if (!this.props.districtEquipmentTypes.loaded) {
-      Api.getDistrictEquipmentTypes();
-    }
+    Api.getDistrictEquipmentTypes();
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
@@ -215,8 +213,15 @@ var Equipment = React.createClass({
                   <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
                     items={[ Constant.EQUIPMENT_STATUS_CODE_APPROVED, Constant.EQUIPMENT_STATUS_CODE_PENDING, Constant.EQUIPMENT_STATUS_CODE_ARCHIVED ]}
                   />
-                  <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="districtEquipmentName"
-                    items={ districtEquipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                  <MultiDropdown
+                    id="selectedEquipmentTypesIds"
+                    placeholder="Equipment Types"
+                    fieldName="districtEquipmentName"
+                    items={districtEquipmentTypes}
+                    disabled={!this.props.districtEquipmentTypes.loaded}
+                    selectedIds={this.state.search.selectedEquipmentTypesIds}
+                    updateState={this.updateSearchState}
+                    showMaxItems={2}/>
                   <FormInputControl id="ownerName" type="text" placeholder="Company Name" value={ this.state.search.ownerName } updateState={ this.updateSearchState } />
                   <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
                   <OverlayTrigger placement="top" rootClose overlay={ <Tooltip id="old-equipment-tooltip">Equipment 20 years or older</Tooltip> }>

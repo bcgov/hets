@@ -1,11 +1,7 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { FormGroup, HelpBlock, ControlLabel, Alert, Row, Col } from 'react-bootstrap';
-
 import _ from 'lodash';
-
 import Moment from 'moment';
 
 import * as Api from '../../api';
@@ -18,6 +14,7 @@ import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { isValidDate, today } from '../../utils/date';
 import { isBlank } from '../../utils/string';
+
 
 var RentalRequestsAddDialog = React.createClass({
   propTypes: {
@@ -56,10 +53,10 @@ var RentalRequestsAddDialog = React.createClass({
   },
 
   componentDidMount() {
-    if (!this.props.districtEquipmentTypes.loaded) {
-      Api.getDistrictEquipmentTypes();
+    Api.getDistrictEquipmentTypes();
+    if (this.canChangeProject()) {
+      Api.getProjectsCurrentFiscal();
     }
-    Api.getProjectsCurrentFiscal();
   },
 
   updateState(state, callback) {
@@ -202,6 +199,10 @@ var RentalRequestsAddDialog = React.createClass({
       .value();
   },
 
+  canChangeProject() {
+    return !this.props.project || this.props.viewOnly;
+  },
+
   renderForm() {
     const { project } = this.props;
 
@@ -212,7 +213,9 @@ var RentalRequestsAddDialog = React.createClass({
 
     var districtEquipmentTypes = this.getFilteredEquipmentTypes(this.state.localAreaId);
 
-    var projects = _.sortBy(this.props.projects, 'name');
+    var projects = _.sortBy(this.props.projects.data, 'name');
+
+    const hasPickedLocalArea = Boolean(this.state.localAreaId);
 
     return (
       <div>
@@ -220,15 +223,17 @@ var RentalRequestsAddDialog = React.createClass({
           <Col md={12}>
             <FormGroup controlId="projectId" validationState={ this.state.projectError ? 'error' : null }>
               <ControlLabel>Project {!project && !this.props.viewOnly && (<sup>*</sup>)}</ControlLabel>
-              { project ?
-                <div>{ project.name }</div>
-                :
-                this.props.viewOnly ?
-                <div>Request - View Only</div>
-                :
-                <FilterDropdown id="projectId" fieldName="label" selectedId={ this.state.projectId } onSelect={ this.onProjectSelected } updateState={ this.updateState }
-                  items={ projects } className="full-width"
-                />
+              { this.canChangeProject() ? (
+                <FilterDropdown
+                  id="projectId"
+                  className="full-width"
+                  fieldName="label"
+                  disabled={!this.props.projects.loaded}
+                  selectedId={this.state.projectId}
+                  onSelect={this.onProjectSelected}
+                  updateState={this.updateState}
+                  items={projects}/>
+              ) : <div>{project ? project.name : 'Request - View Only' }</div>
               }
               <HelpBlock>{ this.state.projectError }</HelpBlock>
             </FormGroup>
@@ -249,9 +254,15 @@ var RentalRequestsAddDialog = React.createClass({
           <Col md={12}>
             <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
               <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
-              <FilterDropdown id="equipmentTypeId" fieldName="districtEquipmentName" selectedId={ this.state.equipmentTypeId } updateState={ this.updateEquipmentTypeState }
-                items={ districtEquipmentTypes } className="full-width"
-              />
+              <FilterDropdown
+                id="equipmentTypeId"
+                className="full-width"
+                fieldName="districtEquipmentName"
+                disabled={!this.props.districtEquipmentTypes.loaded || !hasPickedLocalArea}
+                disabledTooltip="Select Local Area to see associated Equipment Type"
+                selectedId={ this.state.equipmentTypeId }
+                updateState={ this.updateEquipmentTypeState }
+                items={ districtEquipmentTypes }/>
               <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
             </FormGroup>
           </Col>
