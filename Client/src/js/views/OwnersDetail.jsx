@@ -376,7 +376,7 @@ var OwnersDetail = React.createClass({
                   return <div id="owners-data">
                     <Row className="equal-height">
                       <Col lg={4} md={6} sm={12} xs={12}>
-                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Company">{ owner.organizationName }</ColDisplay>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Doing Business As">{ owner.doingBusinessAs }</ColDisplay>
                       </Col>
                       <Col lg={4} md={6} sm={12} xs={12}>
                         <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Primary Contact">{ owner.primaryContactName }</ColDisplay>
@@ -391,13 +391,10 @@ var OwnersDetail = React.createClass({
                         <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="District Office">{ owner.districtName }</ColDisplay>
                       </Col>
                       <Col lg={4} md={6} sm={12} xs={12}>
-                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Doing Business As">{ owner.doingBusinessAs }</ColDisplay>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Meets Residency?">{ owner.meetsResidency ? 'Yes' : 'No' }</ColDisplay>
                       </Col>
                       <Col lg={4} md={6} sm={12} xs={12}>
                         <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Registered BC Company Number">{ owner.registeredCompanyNumber }</ColDisplay>
-                      </Col>
-                      <Col lg={4} md={6} sm={12} xs={12}>
-                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Meets Residency?">{ owner.meetsResidency ? 'Yes' : 'No' }</ColDisplay>
                       </Col>
                       <Col lg={4} md={6} sm={12} xs={12}>
                         <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Service/Local Area">{ owner.localAreaName }</ColDisplay>
