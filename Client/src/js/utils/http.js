@@ -219,22 +219,23 @@ export function buildApiPath(path) {
   return `${ROOT_API_PREFIX}/api/${path}`.replace('//', '/'); // remove double slashes
 }
 
-export function ApiRequest(path) {
+export function ApiRequest(path, options) {
   this.path = buildApiPath(path);
+  this.options = options;
 }
 
 ApiRequest.prototype.get = function apiGet(params, options) {
-  return jsonRequest(this.path, { method: 'GET', querystring: params, ...options });
+  return jsonRequest(this.path, { method: 'GET', querystring: params, ...this.options, ...options });
 };
 
 ApiRequest.prototype.post = function apiPost(data, options) {
-  return jsonRequest(this.path, { method: 'POST', body: data, ...options });
+  return jsonRequest(this.path, { method: 'POST', body: data, ...this.options, ...options });
 };
 
 ApiRequest.prototype.put = function apiPut(data, options) {
-  return jsonRequest(this.path, { method: 'PUT', body: data, ...options });
+  return jsonRequest(this.path, { method: 'PUT', body: data, ...this.options, ...options });
 };
 
-ApiRequest.prototype.delete = function apiDelete(data) {
-  return jsonRequest(this.path, { method: 'DELETE', body: data });
+ApiRequest.prototype.delete = function apiDelete(data, options) {
+  return jsonRequest(this.path, { method: 'DELETE', body: data, ...this.options, ...options });
 };

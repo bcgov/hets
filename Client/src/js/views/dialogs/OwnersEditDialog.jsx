@@ -1,10 +1,9 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
-
 import _ from 'lodash';
+
+import * as Api from '../../api';
 
 import CheckboxControl from '../../components/CheckboxControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
@@ -48,6 +47,10 @@ var OwnersEditDialog = React.createClass({
       organizationNameError: '',
       localAreaError: '',
     };
+  },
+
+  componentDidMount() {
+    Api.getOwnersLite();
   },
 
   updateState(state, callback) {
@@ -219,7 +222,7 @@ var OwnersEditDialog = React.createClass({
 function mapStateToProps(state) {
   return {
     owner: state.models.owner,
-    owners: state.lookups.owners,
+    owners: state.lookups.owners.lite,
     localAreas: state.lookups.localAreas,
   };
 }

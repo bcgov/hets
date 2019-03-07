@@ -280,7 +280,7 @@ namespace HetsApi.Controllers
 
             // save the changes
             _context.SaveChanges();
-            
+
             if (rebuildSeniority)
             {
                 // update new area
@@ -290,7 +290,7 @@ namespace HetsApi.Controllers
                 if (rebuildOldSeniority)
                 {
                     EquipmentHelper.RecalculateSeniority((int)originalLocalAreaId, (int)originalDistrictEquipmentTypeId, _context, _configuration);
-                }                
+                }
             }
 
             // retrieve updated equipment record to return to ui
@@ -761,6 +761,7 @@ namespace HetsApi.Controllers
                     Comment = rate.Comment,
                     ComponentName = rate.ComponentName,
                     Rate = rate.Rate,
+                    Set = rate.Set,
                     Overtime = rate.Overtime,
                     Active = rate.Active,
                     IsIncludedInTotal = rate.IsIncludedInTotal

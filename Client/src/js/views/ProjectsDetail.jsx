@@ -85,8 +85,10 @@ var ProjectsDetail = React.createClass({
 
     Api.getProjectDocuments(projectId).then(() => this.setState({ loadingDocuments: false }));
 
+    const projectPromise = this.fetch();
+
     Promise.all([
-      !project ? this.fetch() : null,
+      !project ? projectPromise : null,
       !project ? Api.getProjectNotes(projectId) : null,
       /* Documents need be fetched every time as they are not project specific in the store ATM */
     ]).then(() => {
@@ -208,8 +210,11 @@ var ProjectsDetail = React.createClass({
   },
 
   openTimeEntryDialog(rentalAgreement) {
-    this.setState({ rentalAgreement: rentalAgreement }, () => {
-      this.setState({ showTimeEntryDialog: true });
+    this.setState({ rentalAgreement }, () => {
+      this.setState({
+        showTimeEntryDialog: true,
+        fiscalYearStartDate: this.props.project.fiscalYearStartDate,
+      });
     });
   },
 

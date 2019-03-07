@@ -1,4 +1,7 @@
+import _ from 'lodash';
+
 import * as Action from '../actionTypes';
+
 
 const DEFAULT_LOOKUPS = {
   // cities: {},
@@ -6,7 +9,10 @@ const DEFAULT_LOOKUPS = {
   regions: {},
   serviceAreas: {},
   localAreas: {},
-  equipmentTypes: {},
+  equipmentTypes: {
+    data: {},
+    loaded: false,
+  },
   equipment: {
     lite: {
       data: {},
@@ -29,6 +35,7 @@ const DEFAULT_LOOKUPS = {
   permissions: {},
   rentalConditions: {
     data: [],
+    loaded: false,
     loading: false,
   },
   // provincialRateTypes: [],
@@ -37,10 +44,29 @@ const DEFAULT_LOOKUPS = {
   //   data: {},
   //   loading: false,
   // },
-  ownersLite: {},
+  owners: {
+    lite: {
+      data: {},
+      loaded: false,
+    },
+    ts: {
+      data: {},
+      loaded: false,
+    },
+    hires: {
+      data: {},
+      loaded: false,
+    },
+  },
   roles: {},
-  projects: {},
-  projectsCurrentFiscal: {},
+  projects: {
+    data: {},
+    loaded: false,
+  },
+  projectsCurrentFiscal: {
+    data: {},
+    loaded: false,
+  },
   users: {},
   blankRentalAgreements: {
     data: {},
@@ -73,7 +99,7 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
       return { ...state, localAreas: action.localAreas };
 
     case Action.UPDATE_EQUIPMENT_TYPES_LOOKUP:
-      return { ...state, equipmentTypes: action.equipmentTypes };
+      return { ...state, equipmentTypes: { data: action.equipmentTypes, loaded: true } };
 
     case Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_LOOKUP:
       return { ...state, districtEquipmentTypes: { data: action.districtEquipmentTypes, loaded: true } };
@@ -98,7 +124,13 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
     //   return { ...state, owners: { data: action.owners, loading: false } };
 
     case Action.UPDATE_OWNERS_LITE_LOOKUP:
-      return { ...state, ownersLite: action.owners };
+      return { ...state, owners: { ...state.owners, lite: { data: action.owners, loaded: true } } };
+
+    case Action.UPDATE_OWNERS_LITE_HIRES_LOOKUP:
+      return { ...state, owners: { ...state.owners, hires: { data: action.owners, loaded: true } } };
+
+    case Action.UPDATE_OWNERS_LITE_TS_LOOKUP:
+      return { ...state, owners: { ...state.owners, ts: { data: action.owners, loaded: true } } };
 
     case Action.UPDATE_EQUIPMENT_LITE_LOOKUP:
       return { ...state, equipment: { ...state.equipment, lite: { data: action.equipment, loaded: true } } };
@@ -113,16 +145,23 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
       return { ...state, roles: action.roles };
 
     case Action.UPDATE_PROJECTS_LOOKUP:
-      return { ...state, projects: action.projects };
+      return { ...state, projects: { ...state.projects, data: action.projects, loaded: true } };
 
     case Action.UPDATE_PROJECTS_CURRENT_FISCAL_LOOKUP:
-      return { ...state, projectsCurrentFiscal: action.projects };
+      return {
+        ...state,
+        projectsCurrentFiscal: {
+          ...state.projectsCurrentFiscal,
+          data: _.sortBy(action.projects, 'name'),
+          loaded: true,
+        },
+      };
 
     case Action.UPDATE_USERS_LOOKUP:
       return { ...state, users: action.users };
 
     case Action.UPDATE_RENTAL_CONDITIONS_LOOKUP:
-      return { ...state, rentalConditions: { data: action.rentalConditions, loading: false } };
+      return { ...state, rentalConditions: { data: action.rentalConditions, loading: false, loaded: true } };
 
     case Action.RENTAL_CONDITIONS_LOOKUP_REQUEST:
       return { ...state, rentalConditions: { ...state.rentalConditions, loading: true } };
