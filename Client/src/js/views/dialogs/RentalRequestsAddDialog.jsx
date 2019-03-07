@@ -200,7 +200,7 @@ var RentalRequestsAddDialog = React.createClass({
   },
 
   canChangeProject() {
-    return !this.props.project || this.props.viewOnly;
+    return !this.props.project && !this.props.viewOnly;
   },
 
   renderForm() {
@@ -222,7 +222,7 @@ var RentalRequestsAddDialog = React.createClass({
         <Row>
           <Col md={12}>
             <FormGroup controlId="projectId" validationState={ this.state.projectError ? 'error' : null }>
-              <ControlLabel>Project {!project && !this.props.viewOnly && (<sup>*</sup>)}</ControlLabel>
+              <ControlLabel>Project {this.canChangeProject() && (<sup>*</sup>)}</ControlLabel>
               { this.canChangeProject() ? (
                 <FilterDropdown
                   id="projectId"
