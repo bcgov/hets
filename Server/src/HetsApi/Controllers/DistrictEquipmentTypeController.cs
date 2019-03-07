@@ -128,8 +128,7 @@ namespace HetsApi.Controllers
 
             HetEquipment equipment = _context.HetEquipment.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentTypeId &&
-                                     x.EquipmentStatusTypeId != archiveStatus &&
-                                     x.EquipmentStatusTypeId != pendingStatus);
+                                     x.EquipmentStatusTypeId != archiveStatus);
 
             if (equipment != null)
             {
