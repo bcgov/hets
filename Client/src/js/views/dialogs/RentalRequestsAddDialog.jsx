@@ -215,6 +215,8 @@ var RentalRequestsAddDialog = React.createClass({
 
     var projects = _.sortBy(this.props.projects.data, 'name');
 
+    const hasPickedLocalArea = Boolean(this.state.localAreaId);
+
     return (
       <div>
         <Row>
@@ -256,7 +258,8 @@ var RentalRequestsAddDialog = React.createClass({
                 id="equipmentTypeId"
                 className="full-width"
                 fieldName="districtEquipmentName"
-                disabled={!this.props.districtEquipmentTypes.loaded}
+                disabled={!this.props.districtEquipmentTypes.loaded || !hasPickedLocalArea}
+                disabledTooltip="Select Local Area to see associated Equipment Type"
                 selectedId={ this.state.equipmentTypeId }
                 updateState={ this.updateEquipmentTypeState }
                 items={ districtEquipmentTypes }/>
