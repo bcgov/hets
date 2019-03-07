@@ -166,6 +166,10 @@ var OwnersEditDialog = React.createClass({
           <FormInputControl type="text" value={ this.state.organizationName } updateState={ this.updateState } autoFocus />
           <HelpBlock>{ this.state.organizationNameError }</HelpBlock>
         </FormGroup>
+        <FormGroup controlId="doingBusinessAs">
+          <ControlLabel>Doing Business As</ControlLabel>
+          <FormInputControl type="text" value={ this.state.doingBusinessAs } updateState={ this.updateState } />
+        </FormGroup>
         <FormGroup controlId="givenName">
           <ControlLabel>Owner First Name</ControlLabel>
           <FormInputControl type="text" value={ this.state.givenName } updateState={ this.updateState } />
@@ -202,10 +206,6 @@ var OwnersEditDialog = React.createClass({
           <ControlLabel>Service Area - Local Area <sup>*</sup></ControlLabel>
           <FilterDropdown id="localAreaId" items={ localAreas } selectedId={ this.state.localAreaId } updateState={ this.updateState } className="full-width" />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
-        </FormGroup>
-        <FormGroup controlId="doingBusinessAs">
-          <ControlLabel>Doing Business As</ControlLabel>
-          <FormInputControl type="text" value={ this.state.doingBusinessAs } updateState={ this.updateState } />
         </FormGroup>
         <FormGroup controlId="registeredCompanyNumber">
           <ControlLabel>Registered BC Company Number</ControlLabel>
