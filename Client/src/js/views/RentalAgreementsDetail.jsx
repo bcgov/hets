@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { Well, Row, Col, Table, Alert, Button, Glyphicon, Label, ButtonGroup } from 'react-bootstrap';
 import _ from 'lodash';
-import Promise from 'bluebird';
 
 import EquipmentRentalRatesEditDialog from './dialogs/EquipmentRentalRatesEditDialog.jsx';
 import RentalAgreementsEditDialog from './dialogs/RentalAgreementsEditDialog.jsx';
