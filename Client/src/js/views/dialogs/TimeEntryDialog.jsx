@@ -1,10 +1,7 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Grid, Row, Col, FormGroup, ControlLabel, HelpBlock, Button, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
-
 import Moment from 'moment';
 
 import * as Api from '../../api';
@@ -238,18 +235,16 @@ var TimeEntryDialog = React.createClass({
   },
 
   getFilteredProjects() {
-    var projectIds = _.map(this.props.projects.data, 'id');
+    const projects = this.props.projects.data;
+
     if (this.state.equipmentId) {
-      var equipment = _.find(this.props.equipment, { id: this.state.equipmentId });
+      var equipment = this.props.equipment.data[this.state.equipmentId] || null;
       if (equipment) {
-        projectIds = _.intersection(equipment.projectIds, projectIds);
+        return _.intersectionWith(projects, equipment.projectIds, (p, pid) => p.id === pid);
       }
     }
 
-    return _.chain(this.props.projects.data)
-      .filter(x => _.includes(projectIds, x.id))
-      .sortBy('name')
-      .value();
+    return projects;
   },
 
   addTimeEntryInput() {
@@ -516,7 +511,7 @@ function mapStateToProps(state) {
     rentalAgreement: state.models.rentalAgreement,
     rentalAgreementTimeRecords: state.models.rentalAgreementTimeRecords,
     projects: state.lookups.projectsCurrentFiscal,
-    equipment: state.lookups.equipment.lite,
+    equipment: state.lookups.equipment.ts,
   };
 }
 

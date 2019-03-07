@@ -1,4 +1,7 @@
+import _ from 'lodash';
+
 import * as Action from '../actionTypes';
+
 
 const DEFAULT_LOOKUPS = {
   // cities: {},
@@ -145,7 +148,14 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
       return { ...state, projects: { ...state.projects, data: action.projects, loaded: true } };
 
     case Action.UPDATE_PROJECTS_CURRENT_FISCAL_LOOKUP:
-      return { ...state, projectsCurrentFiscal: { ...state.projectsCurrentFiscal, data: action.projects, loaded: true } };
+      return {
+        ...state,
+        projectsCurrentFiscal: {
+          ...state.projectsCurrentFiscal,
+          data: _.sortBy(action.projects, 'name'),
+          loaded: true,
+        },
+      };
 
     case Action.UPDATE_USERS_LOOKUP:
       return { ...state, users: action.users };
