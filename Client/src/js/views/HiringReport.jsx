@@ -161,7 +161,7 @@ var HiringReport = React.createClass({
             <td><Link to={`${Constant.OWNERS_PATHNAME}/${entry.ownerId}`}>{ entry.companyName }</Link></td>
             <td><Link to={`${Constant.EQUIPMENT_PATHNAME}/${entry.equipmentId}`}>{ entry.equipmentCode }</Link></td>
             <td>{ entry.equipmentDetails }</td>
-            <td><Link to={`${Constant.PROJECTS_PATHNAME}/${entry.projectId}`}>{ entry.projectNumber }</Link></td>
+            <td><Link to={`${Constant.PROJECTS_PATHNAME}/${entry.projectId}`}>{ entry.projectNumber ? entry.projectNumber : 'N/A' }</Link></td>
             <td>{ formatDateTime(entry.noteDate, 'YYYY-MMM-DD') }</td>
             <td>{ entry.noteType }</td>
             <td>{ reason }</td>
