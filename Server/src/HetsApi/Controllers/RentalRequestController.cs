@@ -302,9 +302,9 @@ namespace HetsApi.Controllers
             catch (Exception e)
             {
                 // check if this a "no available equipment exception"
-                if (e.Message == "HETS-35")
+                if (e.Message == "HETS-42")
                 {
-                    return new NotFoundObjectResult(new HetsResponse("HETS-35", ErrorViewModel.GetDescription("HETS-35", _configuration)));
+                    return new NotFoundObjectResult(new HetsResponse("HETS-42", ErrorViewModel.GetDescription("HETS-42", _configuration)));
                 }
 
                 Console.WriteLine(e);
