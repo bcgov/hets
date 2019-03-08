@@ -1,26 +1,25 @@
 import React from 'react';
-
 import { Grid, Row, Col } from 'react-bootstrap';
 import { FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
-
 import _ from 'lodash';
 
+import * as Api from '../../api';
+
 import CheckboxControl from '../../components/CheckboxControl.jsx';
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
+
 var RentalRatesEditDialog = React.createClass({
   propTypes: {
-    rentalRate: React.PropTypes.object.isRequired,
-    onSave: React.PropTypes.func.isRequired,
-    onSaveMultiple: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
-    provincialRateTypes: React.PropTypes.array,
+    rentalRate: React.PropTypes.object.isRequired,
     rentalAgreement: React.PropTypes.object,
+    provincialRateTypes: React.PropTypes.array,
+    onSave: React.PropTypes.func,
+    onClose: React.PropTypes.func.isRequired,
   },
 
   getInitialState() {
@@ -28,21 +27,18 @@ var RentalRatesEditDialog = React.createClass({
 
     return {
       isNew: isNew,
-      numberOfInputs: 1,
 
-      forms: {
-        1: {
-          isIncludedInTotal: this.props.rentalRate.isIncludedInTotal || false,
-          rateType: {},
-          rate: this.props.rentalRate.rate || 0.0,
-          comment: this.props.rentalRate.comment || '',
-          set: this.props.rentalRate.set || false,
+      forms: [{
+        isIncludedInTotal: this.props.rentalRate.isIncludedInTotal || false,
+        rateType: {},
+        rate: this.props.rentalRate.rate || 0.0,
+        comment: this.props.rentalRate.comment || '',
+        set: this.props.rentalRate.set || false,
 
-          componentNameError: '',
-          rateError: '',
-          commentError: '',
-        },
-      },
+        componentNameError: '',
+        rateError: '',
+        commentError: '',
+      }],
       concurrencyControlNumber: this.props.rentalRate.concurrencyControlNumber || 0,
     };
   },
@@ -53,8 +49,9 @@ var RentalRatesEditDialog = React.createClass({
     let number = property.match(/\d+/g)[0];
     let stateName = property.match(/[a-zA-Z]+/g)[0];
     let state = { [stateName]:  stateValue };
-    let updatedState = { ...this.state.forms, [number]: { ...this.state.forms[number], ...state } };
-    this.setState({ forms: updatedState });
+    const updatedForms = this.state.forms.slice();
+    updatedForms.splice(number, 1, { ...updatedForms[number], ...state});
+    this.setState({ forms: updatedForms });
   },
 
   didChange() {
@@ -62,92 +59,88 @@ var RentalRatesEditDialog = React.createClass({
   },
 
   isValid() {
-    let forms = { ...this.state.forms };
+    const forms = this.state.forms.slice();
 
-    let formsResetObj = forms;
-    Object.keys(forms).forEach((key) => {
+    forms.forEach((form, i) => {
       let state = {
-        ...forms[key],
+        ...form,
         rateError: '',
         commentError: '',
       };
-      formsResetObj[key] = state;
+      forms[i] = state;
     });
 
-    this.setState({ forms: formsResetObj });
     let valid = true;
 
-    let formsErrorsObj = forms;
-    Object.keys(forms).forEach((key) => {
-
-      if (isBlank(forms[key].comment)) {
-        let state = { ...forms[key], commentError: 'Comment is required.' };
-        formsErrorsObj[key] = state;
+    forms.forEach((form, i) => {
+      if (isBlank(form.comment)) {
+        forms[i] = { ...form, commentError: 'Comment is required.' };
         valid = false;
       }
 
-      if (isBlank(forms[key].rate) ) {
-        let state = { ...forms[key], rateError: 'Pay rate is required' };
-        formsErrorsObj[key] = state;
+      if (isBlank(form.rate) ) {
+        forms[i] = { ...form, rateError: 'Pay rate is required' };
         valid = false;
-      } else if (forms[key].rate < 1) {
-        let state = { ...forms[key], rateError: 'Pay rate not valid' };
-        formsErrorsObj[key] = state;
+      } else if (form.rate < 1) {
+        forms[i] = { ...form, rateError: 'Pay rate not valid' };
         valid = false;
       }
     });
 
-    this.setState({ forms: formsErrorsObj });
+    this.setState({ forms });
 
     return valid;
   },
 
-  onSave() {
-    let forms = this.state.forms;
-    let rates = Object.keys(forms).map((key) => {
-      return {
-        id: this.props.rentalRate.id || 0,
-        rentalAgreement: { id: this.props.rentalRate.rentalAgreement.id },
-        rate: this.state.forms[key].rate,
-        comment: this.state.forms[key].comment,
-        set: this.state.forms[key].set,
-        isIncludedInTotal: this.props.rentalRate.isIncludedInTotal,
-        concurrencyControlNumber: this.state.concurrencyControlNumber,
-      };
-    });
-    this.state.isNew ? this.props.onSaveMultiple(rates) : this.props.onSave(rates[0]);
+  formSubmitted() {
+    const { rentalAgreement, onSave, onClose } = this.props;
+
+    if (this.isValid()) {
+      if (this.didChange()) {
+        const forms = this.state.forms;
+        const rates = forms.map((form) => {
+          return {
+            id: this.props.rentalRate.id || 0,
+            rentalAgreement: { id: this.props.rentalRate.rentalAgreement.id },
+            rate: form.rate,
+            comment: form.comment,
+            set: form.set,
+            isIncludedInTotal: this.props.rentalRate.isIncludedInTotal,
+            concurrencyControlNumber: this.state.concurrencyControlNumber,
+          };
+        });
+
+        (this.state.isNew ? Api.addRentalRates(rentalAgreement.id, rates) : Api.updateRentalRate(_.first(rates))).then(() => {
+          if (onSave) { onSave(); }
+        });
+      }
+
+      onClose();
+    }
   },
 
   addInput() {
-    if (this.state.numberOfInputs < 10) {
-      let numberOfInputs = Object.keys(this.state.forms).length;
-      this.setState({
-        numberOfInputs: this.state.numberOfInputs + 1,
-        forms: {
-          ...this.state.forms,
-          [numberOfInputs + 1]: {
-            isIncludedInTotal: this.props.rentalRate.isIncludedInTotal || false,
-            rate: this.props.rentalRate.rate || 0.0,
-            comment: this.props.rentalRate.comment || '',
-            set: this.props.rentalRate.set || false,
+    if (this.state.forms.length < 10) {
+      const forms = this.state.forms.slice();
+      forms.push({
+        isIncludedInTotal: this.props.rentalRate.isIncludedInTotal || false,
+        rate: this.props.rentalRate.rate || 0.0,
+        comment: this.props.rentalRate.comment || '',
+        set: this.props.rentalRate.set || false,
 
-            rateError: '',
-            commentError: '',
-          },
-        },
+        rateError: '',
+        commentError: '',
       });
+
+      this.setState({ forms });
     }
   },
 
   removeInput() {
-    if (this.state.numberOfInputs > 1) {
-      let numberOfInputs = Object.keys(this.state.forms).length;
-      let forms = { ...this.state.forms };
-      delete forms[numberOfInputs];
-      this.setState({
-        numberOfInputs: this.state.numberOfInputs - 1,
-        forms: forms,
-      });
+    if (this.state.forms.length > 1) {
+      const forms = this.state.forms.slice();
+      forms.pop();
+      this.setState({ forms });
     }
   },
 
@@ -156,70 +149,67 @@ var RentalRatesEditDialog = React.createClass({
     var isReadOnly = !this.props.rentalRate.canEdit && this.props.rentalRate.id !== 0;
     var status = this.props.rentalRate.isIncludedInTotal ? 'Included' : 'As-Needed';
 
-    return <EditDialog id="rental-rates-edit" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={<strong>Rental Agreement - {status} Rates and Attachments</strong>}>
-      <div className="forms-container">
-        { Object.keys(this.state.forms).map(key => (
-          <Form key={key}>
-            <Grid fluid>
+    return (
+      <FormDialog
+        id="rental-rates-edit"
+        show={this.props.show}
+        title={`Rental Agreement &ndash; ${status} Rates and Attachments`}
+        onSubmit={this.formSubmitted}
+        onClose={this.props.onClose}>
+        <div className="forms-container">
+          { this.state.forms.map((form, i) => (
+            <Grid fluid key={i}>
               <Row>
                 <Col md={2}>
-                  <FormGroup controlId={`rate${key}`} validationState={ this.state.forms[key].rateError ? 'error' : null }>
+                  <FormGroup controlId={`rate${i}`} validationState={ form.rateError ? 'error' : null }>
                     <ControlLabel>Rate <sup>*</sup></ControlLabel>
-                    <FormInputControl type="float" min={ 0 } defaultValue={ this.state.forms[key].rate.toFixed(2) } readOnly={ isReadOnly } updateState={ this.updateState } />
-                    <HelpBlock>{ this.state.forms[key].rateError }</HelpBlock>
+                    <FormInputControl type="float" min={ 0 } defaultValue={ form.rate.toFixed(2) } readOnly={ isReadOnly } updateState={ this.updateState } autoFocus />
+                    <HelpBlock>{ form.rateError }</HelpBlock>
                   </FormGroup>
                 </Col>
                 {
                   !this.props.rentalRate.isIncludedInTotal &&
                   <Col md={2}>
-                    <FormGroup controlId={`set${key}`}>
+                    <FormGroup controlId={`set${i}`}>
                       <ControlLabel>Set</ControlLabel>
-                      <CheckboxControl id={`set${key}`} checked={ this.state.forms[key].set } updateState={ this.updateState }>Set</CheckboxControl>
+                      <CheckboxControl id={`set${i}`} checked={ form.set } updateState={ this.updateState }>Set</CheckboxControl>
                     </FormGroup>
                   </Col>
                 }
                 <Col md={2}>
                   <ControlLabel>Period</ControlLabel>
-                  <div style={ { marginTop: '10px', marginBottom: '10px' } }>{ this.state.forms[key].set ? 'Set' : this.props.rentalAgreement.ratePeriod }</div>
+                  <div style={ { marginTop: '10px', marginBottom: '10px' } }>{ form.set ? 'Set' : this.props.rentalAgreement.ratePeriod }</div>
                 </Col>
                 <Col md={ this.props.rentalRate.isIncludedInTotal ? 8 : 6 }>
-                  <FormGroup controlId={`comment${key}`} validationState={ this.state.forms[key].commentError ? 'error' : null }>
+                  <FormGroup controlId={`comment${i}`} validationState={ form.commentError ? 'error' : null }>
                     <ControlLabel>Comment</ControlLabel>
-                    <FormInputControl defaultValue={ this.state.forms[key].comment } readOnly={ isReadOnly } updateState={ this.updateState } />
-                    <HelpBlock>{ this.state.forms[key].commentError }</HelpBlock>
+                    <FormInputControl defaultValue={ form.comment } readOnly={ isReadOnly } updateState={ this.updateState } />
+                    <HelpBlock>{ form.commentError }</HelpBlock>
                   </FormGroup>
                 </Col>
               </Row>
             </Grid>
-          </Form>
-        ))}
-      </div>
-      <Grid fluid>
-        <Row className="align-right">
-          <Col md={12}>
-            { this.state.isNew && this.state.numberOfInputs > 1 &&
+          ))}
+        </div>
+        <div className="align-right">
+          { this.state.isNew && this.state.forms.length > 1 && (
             <Button
               bsSize="xsmall"
               className="remove-btn"
-              onClick={ this.removeInput }
-            >
+              onClick={ this.removeInput }>
               <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
             </Button>
-            }
-            { this.state.isNew && this.state.numberOfInputs < 10 &&
+          )}
+          { this.state.isNew && this.state.forms.length < 10 && (
             <Button
               bsSize="xsmall"
-              onClick={ this.addInput }
-            >
+              onClick={ this.addInput }>
               <Glyphicon glyph="plus" />&nbsp;<strong>Add</strong>
             </Button>
-            }
-          </Col>
-        </Row>
-      </Grid>
-    </EditDialog>;
+          )}
+        </div>
+      </FormDialog>
+    );
   },
 });
 

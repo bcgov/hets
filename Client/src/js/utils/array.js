@@ -24,3 +24,12 @@ export function caseInsensitiveSort(val/* , item, key */) {
 export function sortDir(isDescending) {
   return isDescending ? 'desc' : 'asc';
 }
+
+export function findAndUpdate(arr, obj, key = 'id') {
+  const val = obj[key];
+  const pos = _.findIndex(arr, (item) => item[key] === val);
+  if (pos !== -1) {
+    arr[pos] = { ...arr[pos], ...obj };
+  }
+  return arr;
+}

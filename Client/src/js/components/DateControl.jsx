@@ -74,7 +74,7 @@ var DateControl = React.createClass({
           inputProps={{ placeholder: placeholder, disabled: disabled, ref: input => { this.input = input; } }} isValidDate={ this.props.isValidDate }
         />
         <InputGroup.Button>
-          <Button onClick={ this.clicked }><Glyphicon glyph="calendar" title={ this.props.title }/></Button>
+          <Button disabled={disabled} onClick={ this.clicked }><Glyphicon glyph="calendar" title={ this.props.title }/></Button>
         </InputGroup.Button>
       </InputGroup>
     </div>;

@@ -1693,10 +1693,8 @@ function parseRentalAgreement(agreement) {
   agreement.estimateStartWork = agreement.estimateStartWork || '';
   agreement.estimateHours = agreement.estimateHours || 0;
 
-  agreement.rentalAgreementRates = normalize(agreement.rentalAgreementRates);
-  agreement.rentalAgreementConditions = normalize(agreement.rentalAgreementConditions);
-  _.map(agreement.rentalAgreementRates, obj => parseRentalRate(obj, agreement));
-  _.map(agreement.rentalAgreementConditions, obj => parseRentalCondition(obj, agreement));
+  agreement.rentalAgreementRates.forEach(obj => parseRentalRate(obj, agreement));
+  agreement.rentalAgreementConditions.forEach(obj => parseRentalCondition(obj, agreement));
 
   agreement.equipment = { ...agreement.equipment,
     historyEntity: History.makeHistoryEntity(History.EQUIPMENT, {
@@ -1785,20 +1783,24 @@ export function getLatestRentalAgreement(equipmentId, projectId) {
 //   });
 // }
 
-export function generateAnotherRentalAgreement(agreement) {
-  var preparedAgreement = convertRentalAgreement(agreement);
-  return new ApiRequest(`/rentalagreements/updateCloneBlankAgreement/${ agreement.id }`).post(preparedAgreement).then(response => {
-    var agreement = response.data;
+// XXX: Looks like this is unused
+// export function generateAnotherRentalAgreement(agreement) {
+//   var preparedAgreement = convertRentalAgreement(agreement);
+//   return new ApiRequest(`/rentalagreements/updateCloneBlankAgreement/${ agreement.id }`).post(preparedAgreement).then(response => {
+//     var agreement = response.data;
 
-    // Add display fields
-    parseRentalAgreement(agreement);
+//     // Add display fields
+//     parseRentalAgreement(agreement);
 
-    store.dispatch({ type: Action.GENERATE_ANOTHER_RENTAL_AGREEMENT, rentalAgreement: agreement });
-  });
-}
+//     store.dispatch({ type: Action.GENERATE_ANOTHER_RENTAL_AGREEMENT, rentalAgreement: agreement });
+//   });
+// }
 
 export function updateRentalAgreement(agreement) {
   var preparedAgreement = convertRentalAgreement(agreement);
+
+  store.dispatch({ type: Action.UPDATE_RENTAL_AGREEMENT, rentalAgreement: preparedAgreement });
+
   return new ApiRequest(`/rentalagreements/${ agreement.id }`).put(preparedAgreement).then(response => {
     var agreement = response.data;
 
@@ -1901,42 +1903,62 @@ function parseRentalRate(rentalRate, parent = {}) {
 //   });
 // }
 
-export function addRentalRate(rentalRate) {
-  return new ApiRequest('/rentalagreementrates').post({ ...rentalRate, rentalAgreement: { id: rentalRate.rentalAgreement.id } }).then(response => {
-    var rentalRate = response.data;
+// export function addRentalRate(rentalRate) {
+//   return new ApiRequest('/rentalagreementrates').post({ ...rentalRate, rentalAgreement: { id: rentalRate.rentalAgreement.id } }).then(response => {
+//     var rentalRate = response.data;
+
+//     // Add display fields
+//     parseRentalRate(rentalRate);
+
+//     store.dispatch({ type: Action.ADD_RENTAL_RATE, rentalRate });
+//   });
+// }
+
+export function addRentalRates(rentalAgreementId, rentalRates) {
+  store.dispatch({ type: Action.ADD_RENTAL_RATES, rentalRates, rentalAgreementId });
+
+  return new ApiRequest(`rentalagreements/${rentalAgreementId}/rateRecords`).post(rentalRates).then((response) => {
+    const data = _.find(response.data, { rentalAgreementId });
+    var rentalRates = data.rentalAgreement.rentalAgreementRates;
 
     // Add display fields
-    parseRentalRate(rentalRate);
+    rentalRates.forEach((rentalRate) => parseRentalRate(rentalRate, data.rentalAgreement));
 
-    store.dispatch({ type: Action.ADD_RENTAL_RATE, rentalRate: rentalRate });
+    store.dispatch({ type: Action.UPDATE_RENTAL_RATES, rentalRates, rentalAgreementId });
+
+    return rentalRates;
   });
 }
 
 export function updateRentalRate(rentalRate) {
-  return new ApiRequest(`/rentalagreementrates/${ rentalRate.id }`).put(rentalRate).then(response => {
+  const rentalAgreementId = rentalRate.rentalAgreement.id;
+  store.dispatch({ type: Action.UPDATE_RENTAL_RATES, rentalRates: [rentalRate], rentalAgreementId });
+
+  return new ApiRequest(`/rentalagreementrates/${ rentalRate.id }`).put(rentalRate).then((response) => {
     var rentalRate = response.data;
 
     // Add display fields
     parseRentalRate(rentalRate);
 
-    store.dispatch({ type: Action.UPDATE_RENTAL_RATE, rentalRate: rentalRate });
+    store.dispatch({ type: Action.UPDATE_RENTAL_RATES, rentalRates: [rentalRate], rentalAgreementId });
+
+    return rentalRate;
   });
 }
 
 export function deleteRentalRate(rentalRate) {
-  return new ApiRequest(`/rentalagreementrates/${ rentalRate.id }/delete`).post().then(response => {
-    var rentalRate = response.data;
+  const rentalAgreementId = rentalRate.rentalAgreement.id;
+  store.dispatch({ type: Action.DELETE_RENTAL_RATE, rentalRate, rentalAgreementId });
+
+  return new ApiRequest(`/rentalagreementrates/${ rentalRate.id }/delete`).post().then((response) => {
+    const rentalRate = response.data;
 
     // Add display fields
     parseRentalRate(rentalRate);
 
-    store.dispatch({ type: Action.DELETE_RENTAL_RATE, rentalRate: rentalRate });
-  });
-}
+    store.dispatch({ type: Action.DELETE_RENTAL_RATE, rentalRate, rentalAgreementId });
 
-export function addRentalRates(rentalAgreementId, attachmentRates) {
-  return new ApiRequest(`rentalagreements/${rentalAgreementId}/rateRecords`).post(attachmentRates).then(response => {
-    return response;
+    return rentalRate;
   });
 }
 
@@ -1974,42 +1996,63 @@ function parseRentalCondition(rentalCondition, parent = {}) {
 //   });
 // }
 
-export function addRentalCondition(rentalCondition) {
-  return new ApiRequest('/rentalagreementconditions').post({ ...rentalCondition, rentalAgreement: { id: rentalCondition.rentalAgreement.id } }).then(response => {
-    var rentalCondition = response.data;
+// XXX: Looks like this is unused
+// export function addRentalCondition(rentalCondition) {
+//   return new ApiRequest('/rentalagreementconditions').post({ ...rentalCondition, rentalAgreement: { id: rentalCondition.rentalAgreement.id } }).then(response => {
+//     var rentalCondition = response.data;
 
-    // Add display fields
-    parseRentalCondition(rentalCondition);
+//     // Add display fields
+//     parseRentalCondition(rentalCondition);
 
-    store.dispatch({ type: Action.ADD_RENTAL_CONDITION, rentalCondition: rentalCondition });
-  });
-}
+//     store.dispatch({ type: Action.ADD_RENTAL_CONDITION, rentalCondition: rentalCondition });
+//   });
+// }
 
 export function addRentalConditions(rentalAgreementId, rentalConditions) {
+  store.dispatch({ type: Action.ADD_RENTAL_CONDITIONS, rentalConditions, rentalAgreementId });
+
   return new ApiRequest(`rentalagreements/${rentalAgreementId}/conditionRecords`).post(rentalConditions).then(response => {
-    return response;
+    const data = _.find(response.data, { rentalAgreementId });
+    var rentalConditions = data.rentalAgreement.rentalAgreementConditions;
+
+    // Add display fields
+    rentalConditions.forEach((rentalCondition) => parseRentalCondition(rentalCondition, data.rentalAgreement));
+
+    store.dispatch({ type: Action.UPDATE_RENTAL_CONDITIONS, rentalConditions, rentalAgreementId });
+
+    return rentalConditions;
   });
 }
 
 export function updateRentalCondition(rentalCondition) {
+  const rentalAgreementId = rentalCondition.rentalAgreement.id;
+  store.dispatch({ type: Action.UPDATE_RENTAL_CONDITIONS, rentalConditions: [rentalCondition], rentalAgreementId });
+
   return new ApiRequest(`/rentalagreementconditions/${ rentalCondition.id }`).put(rentalCondition).then(response => {
     var rentalCondition = response.data;
 
     // Add display fields
     parseRentalCondition(rentalCondition);
 
-    store.dispatch({ type: Action.UPDATE_RENTAL_CONDITION, rentalCondition: rentalCondition });
+    store.dispatch({ type: Action.UPDATE_RENTAL_CONDITIONS, rentalConditions: [rentalCondition], rentalAgreementId });
+
+    return rentalCondition;
   });
 }
 
 export function deleteRentalCondition(rentalCondition) {
+  const rentalAgreementId = rentalCondition.rentalAgreement.id;
+  store.dispatch({ type: Action.DELETE_RENTAL_CONDITION, rentalCondition, rentalAgreementId });
+
   return new ApiRequest(`/rentalagreementconditions/${ rentalCondition.id }/delete`).post().then(response => {
     var rentalCondition = response.data;
 
     // Add display fields
     parseRentalCondition(rentalCondition);
 
-    store.dispatch({ type: Action.DELETE_RENTAL_CONDITION, rentalCondition: rentalCondition });
+    store.dispatch({ type: Action.DELETE_RENTAL_CONDITION, rentalCondition, rentalAgreementId });
+
+    return rentalCondition;
   });
 }
 
