@@ -140,11 +140,28 @@ namespace HetsApi.Controllers
                 return new BadRequestObjectResult(new HetsResponse("HETS-37", ErrorViewModel.GetDescription("HETS-37", _configuration)));
             }
 
+            bool softDelete = false;
+
+            // check for foreign key relationships - equipment
             equipment = _context.HetEquipment.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentTypeId);
 
-            // delete the record if no equipment is attached
-            if (equipment == null)
+            if (equipment != null) softDelete = true;
+
+            // check for foreign key relationships - local area rotation lists
+            HetLocalAreaRotationList rotationList = _context.HetLocalAreaRotationList.AsNoTracking()
+                .FirstOrDefault(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentTypeId);
+
+            if (rotationList != null) softDelete = true;
+
+            // check for foreign key relationships - rental requests
+            HetRentalRequest request = _context.HetRentalRequest.AsNoTracking()
+                .FirstOrDefault(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentTypeId);
+
+            if (request != null) softDelete = true;
+
+            // delete the record 
+            if (!softDelete)
             {
                 _context.HetDistrictEquipmentType.Remove(item);
             }
