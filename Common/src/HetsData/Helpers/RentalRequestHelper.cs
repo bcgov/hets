@@ -763,7 +763,7 @@ namespace HetsData.Helpers
             // check we have equipment still after removing everything
             if (rentalRequest.HetRentalRequestRotationList.Count <= 0)
             {
-                throw new ArgumentException("HETS-35"); // no more records available
+                throw new ArgumentException("HETS-42"); // no more records available
             }
 
             // *****************************************************************
