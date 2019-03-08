@@ -2321,5 +2321,5 @@ export function deleteBatchReport(reportId) {
 }
 
 export function getStatusLettersPdf(reportId) {
-  return new ApiRequest(`/api/reports/${reportId}/download`).post(null, { responseType: Constant.RESPONSE_TYPE_BLOB });
+  return new ApiRequest(`/reports/${reportId}/download`).post(null, { responseType: Constant.RESPONSE_TYPE_BLOB });
 }
