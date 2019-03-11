@@ -498,8 +498,7 @@ var ProjectsDetail = React.createClass({
             show={this.state.showNotesDialog}
             id={String(this.props.projectId)}
             getNotes={Api.getProjectNotes}
-            onSave={Api.addProjectNote}
-            onUpdate={Api.updateNote}
+            saveNote={Api.addProjectNote}
             onClose={this.closeNotesDialog}
             notes={project.notes}/>
         )}

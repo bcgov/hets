@@ -23,7 +23,7 @@ namespace HetsData.Model
         [JsonIgnore]public string AppLastUpdateUserid { get; set; }
         [JsonIgnore]public DateTime AppLastUpdateTimestamp { get; set; }
         [JsonIgnore]public string DbCreateUserId { get; set; }
-        [JsonIgnore]public DateTime DbCreateTimestamp { get; set; }
+        [JsonProperty("CreateDate")]public DateTime DbCreateTimestamp { get; set; }
         [JsonIgnore]public DateTime DbLastUpdateTimestamp { get; set; }
         [JsonIgnore]public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
