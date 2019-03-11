@@ -96,8 +96,8 @@ var NotesDialog = React.createClass({
   render() {
     const notes = _.orderBy(this.state.notes, ['createDate'], ['desc']);
     var headers = [
-      { field: 'note',            title: 'Note'  },
       { field: 'date',            title: 'Date'  },
+      { field: 'note',            title: 'Note'  },
       { field: 'blank'                           },
     ];
 
