@@ -223,28 +223,47 @@ var Equipment = React.createClass({
                     updateState={this.updateSearchState}
                     showMaxItems={2}/>
                   <FormInputControl id="ownerName" type="text" placeholder="Company Name" value={ this.state.search.ownerName } updateState={ this.updateSearchState } />
-                  <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
-                  <OverlayTrigger placement="top" rootClose overlay={ <Tooltip id="old-equipment-tooltip">Equipment 20 years or older</Tooltip> }>
-                    <span>
-                      <CheckboxControl inline id="twentyYears" checked={ this.state.search.twentyYears } updateState={ this.updateSearchState }>20+ Years</CheckboxControl>
-                    </span>
-                  </OverlayTrigger>
+                  <span>
+                    <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
+                    <OverlayTrigger placement="top" rootClose overlay={ <Tooltip id="old-equipment-tooltip">Equipment 20 years or older</Tooltip> }>
+                      <span>
+                        <CheckboxControl inline id="twentyYears" checked={ this.state.search.twentyYears } updateState={ this.updateSearchState }>20+ Years</CheckboxControl>
+                      </span>
+                    </OverlayTrigger>
+                  </span>
                 </ButtonToolbar>
               </Row>
               <Row>
                 <ButtonToolbar id="equipment-filters-second-row">
-                  <DateControl id="lastVerifiedDate" date={ this.state.search.lastVerifiedDate } updateState={ this.updateSearchState } label="Not Verified Since:" title="Last Verified Date"/>
+                  <DateControl
+                    id="lastVerifiedDate"
+                    date={this.state.search.lastVerifiedDate}
+                    label="Not Verified Since:"
+                    title="Last Verified Date"
+                    updateState={this.updateSearchState}/>
                   <div className="input-container">
-                    <ControlLabel>Attachment:</ControlLabel>
-                    <FormInputControl id="equipmentAttachment" type="text" value={ this.state.search.equipmentAttachment } updateState={ this.updateSearchState } />
+                    <FormInputControl
+                      id="equipmentAttachment"
+                      placeholder="Attachment"
+                      type="text"
+                      value={this.state.search.equipmentAttachment}
+                      updateState={this.updateSearchState} />
                   </div>
                   <div className="input-container">
-                    <ControlLabel>Equipment Id:</ControlLabel>
-                    <FormInputControl id="equipmentId" type="text" value={ this.state.search.equipmentId } updateState={ this.updateSearchState } />
+                    <FormInputControl
+                      id="equipmentId"
+                      placeholder="Equipment Id"
+                      type="text"
+                      value={this.state.search.equipmentId}
+                      updateState={this.updateSearchState} />
                   </div>
                   <div className="input-container">
-                    <ControlLabel>Project Name:</ControlLabel>
-                    <FormInputControl id="projectName" type="text" value={ this.state.search.projectName } updateState={ this.updateSearchState } />
+                    <FormInputControl
+                      id="projectName"
+                      placeholder="Project Name"
+                      type="text"
+                      value={this.state.search.projectName}
+                      updateState={this.updateSearchState} />
                   </div>
                 </ButtonToolbar>
               </Row>

@@ -1,5 +1,4 @@
-#seniority-list
-{
+#seniority-list {
   .btn-container {
     > div {
       margin: 5px;
@@ -11,7 +10,6 @@
   }
 
   .fixed-width {
-
     &.small .dropdown-toggle {
       width: 125px;
     }
@@ -22,22 +20,23 @@
   }
 }
 
-#hiring-report
-{
+#hiring-report {
   #hiring-report-buttons {
     float: right;
   }
+
+  #hiring-report-filters {
+    padding: 5px 0;
+  }
 }
 
-#ait-report
-{
+#ait-report {
   #ait-report-buttons {
     float: right;
   }
 }
 
-#ait-report-filters
-{
+#ait-report-filters {
   > div {
     margin: 5px;
   }
@@ -66,13 +65,19 @@
 }
 
 #wcg-cgl-coverage {
+  #wcg-cgl-coverage-faves-dropdown {
+    float: right;
+  }
+
   #wcg-cgl-coverage-buttons {
     float: right;
   }
 
   #wcg-cgl-coverage-filters {
+    padding-bottom: 5px;
+
     > div, > button {
-      margin: 0 5px 5px 5px;
+      margin: 5px 5px 0 5px;
       vertical-align: bottom;
     }
 
@@ -91,10 +96,6 @@
 
     .date-control {
       display: inline-block;
-
-      label {
-        float: none;
-      }
     }
   }
 }
