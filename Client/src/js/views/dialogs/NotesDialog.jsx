@@ -1,9 +1,8 @@
 import React from 'react';
-
 import { ButtonGroup, Button, Glyphicon, Alert } from 'react-bootstrap';
-
 import _ from 'lodash';
 
+import * as Constant from '../../constants';
 import * as Api from '../../api';
 
 import NotesAddDialog from './NotesAddDialog.jsx';
@@ -11,19 +10,19 @@ import ModalDialog from '../../components/ModalDialog.jsx';
 import TableControl from '../../components/TableControl.jsx';
 import DeleteButton from '../../components/DeleteButton.jsx';
 import EditButton from '../../components/EditButton.jsx';
+import { formatDateTimeUTCToLocal } from '../../utils/date';
+
 
 var NotesDialog = React.createClass({
   propTypes: {
-    // Api function to call on save
     id: React.PropTypes.string.isRequired,
-    // Api function to call when updating a note
-    // Api call to get notes for particular entity
-    onUpdate: React.PropTypes.func.isRequired,
-    getNotes: React.PropTypes.func.isRequired,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     notes: React.PropTypes.array,
+    // Api call to get notes for particular entity
+    getNotes: React.PropTypes.func.isRequired,
+    // Api function to call on save
+    saveNote: React.PropTypes.func.isRequired,
+    onClose: React.PropTypes.func.isRequired,
   },
 
   getInitialState() {
@@ -34,8 +33,8 @@ var NotesDialog = React.createClass({
   },
 
   componentWillReceiveProps(nextProps) {
-    if (!_.isEqual(_.map(this.props.notes, 'id'), _.map(nextProps.notes, 'id'))) {
-      this.setState({ notes: _.values(nextProps.notes) });
+    if (!_.isEqual(this.props.notes, nextProps.notes)) {
+      this.setState({ notes: nextProps.notes });
     }
   },
 
@@ -51,8 +50,10 @@ var NotesDialog = React.createClass({
   },
 
   onNoteAdded(note) {
-    this.setState({ notes: this.state.notes.concat([note])});
-    this.props.onSave(this.props.id, note);
+    this.setState({ notes: this.state.notes.concat([note]) });
+    this.props.saveNote(this.props.id, note).then(() => {
+      this.props.getNotes(this.props.id);
+    });
     this.closeNotesAddDialog();
   },
 
@@ -63,7 +64,9 @@ var NotesDialog = React.createClass({
     });
 
     this.setState({ notes: updatedNotes });
-    this.props.onUpdate(note);
+    Api.updateNote(note).then(() => {
+      this.props.getNotes(this.props.id);
+    });
     this.closeNotesAddDialog();
   },
 
@@ -75,7 +78,7 @@ var NotesDialog = React.createClass({
 
     this.setState({ notes: updatedNotes });
     Api.deleteNote(note.id).then(() => {
-
+      this.props.getNotes(this.props.id);
     });
   },
 
@@ -87,15 +90,14 @@ var NotesDialog = React.createClass({
   },
 
   onClose() {
-    this.props.getNotes(this.props.id);
     this.props.onClose();
   },
 
   render() {
-    const { notes } = this.state;
-
+    const notes = _.orderBy(this.state.notes, ['createDate'], ['desc']);
     var headers = [
       { field: 'note',            title: 'Note'  },
+      { field: 'date',            title: 'Date'  },
       { field: 'blank'                           },
     ];
 
@@ -112,7 +114,8 @@ var NotesDialog = React.createClass({
             notes.map((note) => {
               return (
                 <tr key={ note.id }>
-                  <td>{ note.text }</td>
+                  <td className="nowrap">{ formatDateTimeUTCToLocal(note.createDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
+                  <td width="100%">{ note.text }</td>
                   <td style={{ textAlign: 'right', minWidth: '60px' }}>
                     <ButtonGroup>
                       <EditButton name="editNote" disabled={!note.id} onClick={ this.editNote.bind(this, note) }/>
@@ -132,11 +135,11 @@ var NotesDialog = React.createClass({
         </Button>
         { this.state.showNotesAddDialog && (
             <NotesAddDialog
-              show={ this.state.showNotesAddDialog }
-              note={ this.state.note }
-              onSave={ this.onNoteAdded }
-              onUpdate={ this.onNoteUpdated }
-              onClose={ this.closeNotesAddDialog }/>
+              show={this.state.showNotesAddDialog}
+              note={this.state.note}
+              onSave={this.onNoteAdded}
+              onUpdate={this.onNoteUpdated}
+              onClose={this.closeNotesAddDialog}/>
         )}
       </ModalDialog>
     );

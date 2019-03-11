@@ -49,7 +49,7 @@ var RentalRequestsDetail = React.createClass({
   propTypes: {
     rentalRequest: React.PropTypes.object,
     rentalRequestRotationList: React.PropTypes.object,
-    notes: React.PropTypes.object,
+    notes: React.PropTypes.array,
     attachments: React.PropTypes.object,
     documents: React.PropTypes.object,
     history: React.PropTypes.object,
@@ -229,7 +229,7 @@ var RentalRequestsDetail = React.createClass({
       <Row id="rental-requests-top">
         <Col sm={10}>
           <Label bsStyle={ rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default' }>{ rentalRequest.status }</Label>
-          <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
+          <Button title="Notes" onClick={ this.showNotes }>Notes ({this.props.notes.length})</Button>
           <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
         </Col>
         <Col sm={2}>
@@ -439,17 +439,15 @@ var RentalRequestsDetail = React.createClass({
           onClose={ this.closeDocumentsDialog }
         />
       }
-      { this.state.showNotesDialog &&
+      { this.state.showNotesDialog && (
         <NotesDialog
-          show={ this.state.showNotesDialog }
-          onSave={ Api.addRentalRequestNote }
-          id={ this.props.params.rentalRequestId }
-          getNotes={ Api.getRentalRequestNotes }
-          onUpdate={ Api.updateNote }
-          onClose={ this.closeNotesDialog }
-          notes={ _.values(this.props.notes) }
-        />
-      }
+          id={this.props.params.rentalRequestId}
+          show={this.state.showNotesDialog}
+          notes={this.props.notes}
+          getNotes={Api.getRentalRequestNotes}
+          saveNote={Api.addRentalRequestNote}
+          onClose={this.closeNotesDialog}/>
+      )}
     </div>;
   },
 });
