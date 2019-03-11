@@ -165,7 +165,9 @@ var StatusLetters = React.createClass({
               <td style={{textAlign: 'center'}}>{reportStatus}</td>
               <td style={{ textAlign: 'right' }}>
                 <ButtonGroup>
-                  <DeleteButton name="Report" hide={ report.complete } onConfirm={ () => this.deleteBatchReport(report.id) }/>
+                  {report.complete && (
+                    <DeleteButton name="Report" onConfirm={ () => this.deleteBatchReport(report.id) }/>
+                  )}
                 </ButtonGroup>
               </td>
             </tr>;
