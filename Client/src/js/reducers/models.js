@@ -2,6 +2,7 @@ import _ from 'lodash';
 import produce from 'immer';
 
 import * as Action from '../actionTypes';
+import { findAndUpdate } from '../utils/array';
 
 const DEFAULT_MODELS = {
   users: {
@@ -107,7 +108,7 @@ const DEFAULT_MODELS = {
 
   rentalAgreement: {},
   rentalAgreementTimeRecords: {},
-  rentalRate: {},
+  // rentalRate: {},
   rentalCondition: {},
   rentalConditions: {},
 
@@ -458,14 +459,58 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     // case Action.ADD_RENTAL_AGREEMENT:
     //   return { ...state, rentalAgreement: { ...state.rentalAgreement, [action.rentalAgreement.id]: action.rentalAgreement } };
 
-    case Action.GENERATE_ANOTHER_RENTAL_AGREEMENT:
-      return { ...state, rentalAgreement: { ...state.rentalAgreement, [action.rentalAgreement.id]: action.rentalAgreement } };
+    // case Action.GENERATE_ANOTHER_RENTAL_AGREEMENT:
+    //   return { ...state, rentalAgreement: { ...state.rentalAgreement, [action.rentalAgreement.id]: action.rentalAgreement } };
 
     case Action.UPDATE_RENTAL_AGREEMENT:
-      return { ...state, rentalAgreement: { ...state.rentalAgreement, [action.rentalAgreement.id]: action.rentalAgreement } };
+      return produce(state, (draftState) => {
+        draftState.rentalAgreement[action.rentalAgreement.id] = action.rentalAgreement;
+      });
 
     case Action.RENTAL_AGREEMENT_TIME_RECORDS:
       return { ...state, rentalAgreementTimeRecords: action.rentalAgreementTimeRecords };
+
+    // Rental Rates, Conditions
+    case Action.ADD_RENTAL_RATES:
+      return produce(state, (draftState) => {
+        const rentalAgreementRates = draftState.rentalAgreement[action.rentalAgreementId].rentalAgreementRates;
+        rentalAgreementRates.unshift(...action.rentalRates);
+      });
+
+    case Action.UPDATE_RENTAL_RATES:
+      return produce(state, (draftState) => {
+        const rentalAgreementRates = draftState.rentalAgreement[action.rentalAgreementId].rentalAgreementRates;
+        action.rentalRates.forEach((rentalRate) => {
+          findAndUpdate(rentalAgreementRates, rentalRate, 'id');
+        });
+      });
+
+    case Action.DELETE_RENTAL_RATE:
+      return produce(state, (draftState) => {
+        const rentalAgreementRates = draftState.rentalAgreement[action.rentalAgreementId].rentalAgreementRates;
+        _.remove(rentalAgreementRates, { id: action.rentalRate.id });
+      });
+
+    case Action.ADD_RENTAL_CONDITIONS:
+      return produce(state, (draftState) => {
+        const rentalAgreementConditions = draftState.rentalAgreement[action.rentalAgreementId].rentalAgreementConditions;
+        rentalAgreementConditions.unshift(...action.rentalConditions);
+      });
+
+    case Action.UPDATE_RENTAL_CONDITIONS:
+      return produce(state, (draftState) => {
+        const rentalAgreementConditions = draftState.rentalAgreement[action.rentalAgreementId].rentalAgreementConditions;
+        action.rentalConditions.forEach((rentalCondition) => {
+          findAndUpdate(rentalAgreementConditions, rentalCondition, 'id');
+        });
+      });
+
+    case Action.DELETE_RENTAL_CONDITION:
+      return produce(state, (draftState) => {
+        const rentalAgreementConditions = draftState.rentalAgreement[action.rentalAgreementId].rentalAgreementConditions;
+        _.remove(rentalAgreementConditions, { id: action.rentalCondition.id });
+      });
+
 
     // AIT Report
     case Action.AIT_REPORT_REQUEST:
@@ -476,28 +521,6 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.CLEAR_AIT_REPORT:
       return { ...state, aitResponses: { data: {}, loading: false, loaded: false } };
-
-    // Rental Rates, Conditions
-    case Action.ADD_RENTAL_RATE:
-      return { ...state, rentalRate: action.rentalRate };
-
-    case Action.UPDATE_RENTAL_RATE:
-      return { ...state, rentalRate: action.rentalRate };
-
-    case Action.DELETE_RENTAL_RATE:
-      return { ...state, rentalRate: action.rentalRate };
-
-    case Action.ADD_RENTAL_CONDITION:
-      return { ...state, rentalCondition: action.rentalCondition };
-
-    case Action.UPDATE_RENTAL_CONDITION:
-      return { ...state, rentalCondition: action.rentalCondition };
-
-    case Action.DELETE_RENTAL_CONDITION:
-      return { ...state, rentalCondition: action.rentalCondition };
-
-    case Action.UPDATE_RENTAL_CONDITIONS:
-      return { ...state, rentalConditions: action.rentalConditions };
 
     // Roles, Permissions
     case Action.UPDATE_ROLES:

@@ -29,12 +29,12 @@ import { buildApiPath } from '../utils/http.js';
 import { formatDateTime } from '../utils/date';
 import { formatCurrency } from '../utils/string';
 
+
 var RentalAgreementsDetail = React.createClass({
   propTypes: {
     rentalAgreement: React.PropTypes.object,
     rentalAgreementId: React.PropTypes.number,
     rentalConditions: React.PropTypes.array,
-    params: React.PropTypes.object,
     ui: React.PropTypes.object,
     location: React.PropTypes.object,
     router: React.PropTypes.object,
@@ -54,7 +54,6 @@ var RentalAgreementsDetail = React.createClass({
 
       cloneRentalAgreementError: '',
 
-      returnUrl: (this.props.location.state || {}).returnUrl || Constant.RENTAL_REQUESTS_PATHNAME,
       rentalRate: {},
       rentalCondition: {},
     };
@@ -64,15 +63,15 @@ var RentalAgreementsDetail = React.createClass({
     const { rentalAgreement } = this.props;
 
     // Don't show the loading spinner when a rental agreement is already in the store
-    this.setState({ loading: !rentalAgreement });
-    this.fetch(rentalAgreement);
+    const showLoadingSpinner = !rentalAgreement;
+    this.setState({ loading: showLoadingSpinner });
+    this.fetch(rentalAgreement).then(() => {
+      this.setState({ loading: false });
+    });
   },
 
-  fetch(hideSpinner) {
-    if (!hideSpinner) { this.setState({ loading: true }); }
-    return Api.getRentalAgreement(this.props.rentalAgreementId).then(() => {
-      if (!hideSpinner) { this.setState({ loading: false }); }
-    });
+  fetch() {
+    return Api.getRentalAgreement(this.props.rentalAgreementId);
   },
 
   updateState(state, callback) {
@@ -102,13 +101,6 @@ var RentalAgreementsDetail = React.createClass({
     });
   },
 
-  saveEdit(rentalAgreement) {
-    return Api.updateRentalAgreement(rentalAgreement).finally(() => {
-      this.fetch();
-      this.closeEditDialog();
-    });
-  },
-
   openEquipmentRateDialog() {
     this.setState({ showEquipmentRateDialog: true });
   },
@@ -117,22 +109,11 @@ var RentalAgreementsDetail = React.createClass({
     this.setState({ showEquipmentRateDialog: false });
   },
 
-  saveEquipmentRate(rentalAgreement) {
-    return Api.updateRentalAgreement(rentalAgreement).finally(() => {
-      this.fetch();
-      this.closeEquipmentRateDialog();
-    });
-  },
-
   openRentalRateDialog(rentalRate) {
     this.setState({
-      rentalRate: rentalRate,
+      rentalRate,
       showRentalRateDialog: true,
     });
-  },
-
-  closeRentalRateDialog() {
-    this.setState({ showRentalRateDialog: false });
   },
 
   addRentalRate(isIncluded) {
@@ -144,35 +125,21 @@ var RentalAgreementsDetail = React.createClass({
     });
   },
 
+  closeRentalRateDialog() {
+    this.setState({ showRentalRateDialog: false });
+  },
+
   deleteRentalRate(rentalRate) {
     Api.deleteRentalRate(rentalRate).then(() => {
-      // In addition to refreshing the rental rates, we need to update the rental agreement
-      // to get possibly new info.
+      // In addition to refreshing the rental rates, we need to update the rental agreement to get
+      // possibly new info.
       this.fetch();
-    });
-  },
-
-  saveRentalRate(rentalRate) {
-    // Update or add accordingly
-    var isNew = !rentalRate.id;
-    var savePromise = isNew ? Api.addRentalRate : Api.updateRentalRate;
-
-    savePromise(rentalRate).finally(() => {
-      this.fetch();
-      this.closeRentalRateDialog();
-    });
-  },
-
-  saveRentalRates(rentalRates) {
-    Api.addRentalRates(this.props.params.rentalAgreementId, rentalRates).finally(() => {
-      this.fetch();
-      this.closeRentalRateDialog();
     });
   },
 
   openConditionDialog(rentalCondition) {
     this.setState({
-      rentalCondition: rentalCondition,
+      rentalCondition,
       showConditionDialog: true,
     });
   },
@@ -190,27 +157,9 @@ var RentalAgreementsDetail = React.createClass({
 
   deleteCondition(rentalCondition) {
     Api.deleteRentalCondition(rentalCondition).then(() => {
-      // In addition to refreshing the rental rates, we need to update the rental agreement
-      // to get possibly new info.
+      // In addition to refreshing the rental condition, we need to update the rental agreement to
+      // get possibly new info.
       this.fetch();
-    });
-  },
-
-  saveCondition(rentalCondition) {
-    // Update or add accordingly
-    var isNew = !rentalCondition.id;
-    var savePromise = isNew ? Api.addRentalCondition : Api.updateRentalCondition;
-
-    savePromise(rentalCondition).finally(() => {
-      this.fetch();
-      this.closeConditionDialog();
-    });
-  },
-
-  saveConditions(rentalConditions) {
-    Api.addRentalConditions(this.props.params.rentalAgreementId, rentalConditions).finally(() => {
-      this.fetch();
-      this.closeConditionDialog();
     });
   },
 
@@ -222,24 +171,17 @@ var RentalAgreementsDetail = React.createClass({
     this.setState({ showOvertimeNotesDialog: false });
   },
 
-  saveOvertimeNotes(rentalAgreement) {
-    return Api.updateRentalAgreement(rentalAgreement).finally(() => {
-      this.fetch();
-      this.closeOvertimeNotesDialog();
-    });
-  },
-
   generateRentalAgreementDocument() {
-    Api.generateRentalAgreementDocument(this.props.params.rentalAgreementId).finally(() => {
-      window.open(buildApiPath(`/rentalagreements/${ this.props.params.rentalAgreementId }/pdf`));
+    Api.generateRentalAgreementDocument(this.props.rentalAgreementId).then(() => {
+      window.open(buildApiPath(`/rentalagreements/${ this.props.rentalAgreementId }/pdf`));
     });
   },
 
-  generateAnotherAgreement() {
-    Api.generateAnotherRentalAgreement(this.props.rentalAgreement).then(() => {
-      this.fetch();
-    });
-  },
+  // generateAnotherAgreement() {
+  //   Api.generateAnotherRentalAgreement(this.props.rentalAgreement).then(() => {
+  //     this.fetch();
+  //   });
+  // },
 
   openCloneDialog() {
     this.setState({ showCloneDialog: true });
@@ -276,8 +218,9 @@ var RentalAgreementsDetail = React.createClass({
   },
 
   render() {
+    const { loading } = this.state;
     const { rentalAgreement } = this.props;
-    const isAssociated = Boolean(rentalAgreement);
+    const isAssociated = Boolean(rentalAgreement && rentalAgreement.rentalRequestId > 0);
 
     var buttons =
       <div className="pull-right">
@@ -288,27 +231,20 @@ var RentalAgreementsDetail = React.createClass({
 
     return (
       <div id="rental-agreements-detail">
-
-        {(() => {
-          if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
-
-          return (
-            <Row id="rental-agreements-top">
-              <Col xs={2}>
-                <div style={ { margin: '6px 0' }}>
-                  <Label bsStyle={ rentalAgreement.isActive ? 'success' : 'danger' }>{ rentalAgreement.status }</Label>
-                </div>
-              </Col>
-              <Col xs={10}>
-                { buttons }
-              </Col>
-            </Row>
-          );
-        })()}
+        <Row id="rental-agreements-top">
+          <Col xs={2}>
+            <div style={{ marginTop: 6 }}>
+              {!loading && <Label bsStyle={ rentalAgreement.isActive ? 'success' : 'danger' }>{ rentalAgreement.status }</Label>}
+            </div>
+          </Col>
+          <Col xs={10}>
+            { buttons }
+          </Col>
+        </Row>
 
         <Well id="rental-agreement-header">
           {(() => {
-            if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+            if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
             var equipmentDetails = rentalAgreement.equipment && rentalAgreement.equipment.id != 0 ? `${rentalAgreement.equipment.year} ${rentalAgreement.equipment.make}/${rentalAgreement.equipment.model}/${rentalAgreement.equipment.size}` : '';
 
@@ -360,10 +296,10 @@ var RentalAgreementsDetail = React.createClass({
           })()}
         </Well>
 
-        <Well>
-          <SubHeader title="Details" editButtonTitle="Edit Details" onEditClicked={this.openEditDialog}/>
+        <Well style={{ minHeight: 120 }}>
+          <SubHeader title="Details" editButtonDisabled={loading} editButtonTitle="Edit Details" onEditClicked={this.openEditDialog}/>
           {(() => {
-            if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+            if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
             return (
               <Row className="equal-height">
@@ -387,7 +323,7 @@ var RentalAgreementsDetail = React.createClass({
         <Well>
           <SubHeader title="Equipment Rate and Included Rates and Attachments"/>
           {(() => {
-            if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+            if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
             return <Row className="rental-rates">
               <Col sm={3} xs={12}>
@@ -404,18 +340,20 @@ var RentalAgreementsDetail = React.createClass({
           })()}
 
           {(() => {
-            if (this.state.loading) { return; }
+            if (loading) { return; }
 
             // filter to included rates only
             // as-needed rates are shown in the next section
             var includedRates = _.filter(rentalAgreement.rentalAgreementRates, { isIncludedInTotal: true });
 
-            var button = <TooltipButton title="Add Included Rates and Attachments" bsSize="small" className="no-margin" onClick={ this.addRentalRate.bind(this, true) }  enabledTooltip={ 'These rates will be added to the total, along with the equipment pay rate.' }>
+            var button = <TooltipButton title="Add Included Rates and Attachments" bsSize="small" className="no-margin" onClick={ this.addRentalRate.bind(this, true) } enabledTooltip="These rates will be added to the total, along with the equipment pay rate.">
               <Glyphicon glyph="plus" className="mr-5" />
               <span>Add Included Rates and Attachments</span>
             </TooltipButton>;
 
             if (Object.keys(includedRates || []).length === 0) { return <div><Alert bsStyle="success">No included rates or attachments</Alert>{ button }</div>; }
+
+            includedRates = _.orderBy(includedRates, ['rate'], ['desc']);
 
             return <div id="included-rates">
               <Table striped condensed hover bordered>
@@ -429,15 +367,15 @@ var RentalAgreementsDetail = React.createClass({
                 </thead>
                 <tbody>
                   {
-                    _.map(includedRates, obj => {
-                      return <tr key={ obj.id }>
+                    _.map(includedRates, (obj, i) => {
+                      return <tr key={ obj.id || i }>
                         <td>{ formatCurrency(obj.rate) }</td>
                         <td>{ rentalAgreement.ratePeriod }</td>
                         <td>{ obj.comment }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
-                            <DeleteButton name="Rate or Attachment" hide={ !obj.canDelete } onConfirm={ this.deleteRentalRate.bind(this, obj) }/>
-                            <EditButton name="Rate or Attachment" view={ !obj.canEdit } onClick={ this.openRentalRateDialog.bind(this, obj) }/>
+                            <DeleteButton name="Rate or Attachment" disabled={!obj.id} onConfirm={ this.deleteRentalRate.bind(this, obj) }/>
+                            <EditButton name="Rate or Attachment" disabled={!obj.id} onClick={ this.openRentalRateDialog.bind(this, obj) }/>
                           </ButtonGroup>
                         </td>
                       </tr>;
@@ -453,18 +391,20 @@ var RentalAgreementsDetail = React.createClass({
         <Well>
           <SubHeader title="As-Needed Rates and Attachments"/>
           {(() => {
-            if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+            if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
             // filter to as-needed rates only
             // included rates are shown in the previous section
             var asNeededRates = _.filter(rentalAgreement.rentalAgreementRates, { isIncludedInTotal: false });
 
-            var button = <TooltipButton title="Add Other Rates and Attachments" bsSize="small" className="no-margin" onClick={ this.addRentalRate.bind(this, false) }  enabledTooltip={ 'These rates will NOT be added to the total.' }>
+            var button = <TooltipButton title="Add Other Rates and Attachments" bsSize="small" className="no-margin" onClick={ this.addRentalRate.bind(this, false) } enabledTooltip="These rates will NOT be added to the total.">
               <Glyphicon glyph="plus" className="mr-5" />
               <span>Add Other Rates and Attachments</span>
             </TooltipButton>;
 
             if (Object.keys(asNeededRates || []).length === 0) { return <div><Alert bsStyle="success">No as-needed rates or attachments</Alert>{ button }</div>; }
+
+            asNeededRates = _.orderBy(asNeededRates, ['rate'], ['desc']);
 
             return <div id="as-needed-rates">
               <Table striped condensed hover bordered>
@@ -478,15 +418,15 @@ var RentalAgreementsDetail = React.createClass({
                 </thead>
                 <tbody>
                   {
-                    _.map(asNeededRates, obj => {
-                      return <tr key={ obj.id }>
+                    _.map(asNeededRates, (obj, i) => {
+                      return <tr key={ obj.id || i }>
                         <td>{ formatCurrency(obj.rate) }</td>
                         <td>{ obj.set ? 'Set' : rentalAgreement.ratePeriod }</td>
                         <td>{ obj.comment }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
-                            <DeleteButton name="Rate or Attachment" hide={ !obj.canDelete } onConfirm={ this.deleteRentalRate.bind(this, obj) }/>
-                            <EditButton name="Rate or Attachment" view={ !obj.canEdit } onClick={ this.openRentalRateDialog.bind(this, obj) }/>
+                            <DeleteButton name="Rate or Attachment" disabled={!obj.id} onConfirm={ this.deleteRentalRate.bind(this, obj) }/>
+                            <EditButton name="Rate or Attachment" disabled={!obj.id} onClick={ this.openRentalRateDialog.bind(this, obj) }/>
                           </ButtonGroup>
                         </td>
                       </tr>;
@@ -502,7 +442,7 @@ var RentalAgreementsDetail = React.createClass({
         <Well>
           <SubHeader title="Conditions"/>
           {(() => {
-            if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+            if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
             var rentalConditions = rentalAgreement.rentalAgreementConditions;
 
@@ -512,6 +452,8 @@ var RentalAgreementsDetail = React.createClass({
             </Button>;
 
             if (Object.keys(rentalConditions || []).length === 0) { return <div><Alert bsStyle="success">No rental conditions</Alert>{ button }</div>; }
+
+            rentalConditions = _.orderBy(rentalConditions, ['conditionName', 'comment'], ['asc', 'asc']);
 
             return <div id="rental-conditions">
               <Table striped condensed hover bordered>
@@ -524,14 +466,14 @@ var RentalAgreementsDetail = React.createClass({
                 </thead>
                 <tbody>
                   {
-                    _.map(rentalConditions, obj => {
-                      return <tr key={ obj.id }>
+                    _.map(rentalConditions, (obj, i) => {
+                      return <tr key={ obj.id || i }>
                         <td>{ obj.conditionName }</td>
                         <td>{ obj.comment }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
-                            <DeleteButton name="Rental Condition" hide={ !obj.canDelete } onConfirm={ this.deleteCondition.bind(this, obj) }/>
-                            <EditButton name="Rental Condition" view={ !obj.canEdit } onClick={ this.openConditionDialog.bind(this, obj) }/>
+                            <DeleteButton name="Rental Condition" disabled={!obj.id} onConfirm={ this.deleteCondition.bind(this, obj) }/>
+                            <EditButton name="Rental Condition" disabled={!obj.id} onClick={ this.openConditionDialog.bind(this, obj) }/>
                           </ButtonGroup>
                         </td>
                       </tr>;
@@ -545,15 +487,15 @@ var RentalAgreementsDetail = React.createClass({
         </Well>
 
         <Well>
-          <SubHeader title="Overtime Rates and Notes/Special Instructions" editButtonTitle="Edit Overtime Rates and Notes/Special Instructions" onEditClicked={this.openOvertimeNotesDialog}/>
+          <SubHeader title="Overtime Rates and Notes/Special Instructions" editButtonDisabled={loading} editButtonTitle="Edit Overtime Rates and Notes/Special Instructions" onEditClicked={this.openOvertimeNotesDialog}/>
           {(() => {
-            if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+            if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
-            var rates = rentalAgreement.overtimeRates;
+            var rates = _.orderBy(rentalAgreement.overtimeRates, ['comment'], ['desc']);
 
             return <ColDisplay id="overtime-rates" labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Overtime Rates:">
               {
-                _.map(rates, rate => {
+                rates.map((rate) => {
                   if (rate.active) {
                     return <span key={ rate.id } className="overtime-rate">{ rate.comment }</span>;
                   }
@@ -565,65 +507,59 @@ var RentalAgreementsDetail = React.createClass({
         </Well>
 
         <Row id="rental-agreements-footer">
-          { buttons }
+          {buttons}
         </Row>
-        { this.state.showHeaderEditDialog && (
+        {this.state.showHeaderEditDialog && (
           <RentalAgreementHeaderEditDialog
-            show={ this.state.showHeaderEditDialog }
-            rentalAgreement={ rentalAgreement }
-            onSave={ this.saveHeaderEdit }
-            onClose={ this.closeHeaderEditDialog } />
+            show={this.state.showHeaderEditDialog}
+            rentalAgreement={rentalAgreement}
+            onSave={this.saveHeaderEdit}
+            onClose={this.closeHeaderEditDialog}/>
         )}
-        { this.state.showEditDialog && (
+        {this.state.showEditDialog && (
           <RentalAgreementsEditDialog
-            show={ this.state.showEditDialog }
-            rentalAgreement={ rentalAgreement }
-            onSave={ this.saveEdit }
-            onClose={ this.closeEditDialog } />
+            show={this.state.showEditDialog}
+            rentalAgreement={rentalAgreement}
+            onClose={this.closeEditDialog}/>
         )}
-        { this.state.showEquipmentRateDialog && (
+        {this.state.showEquipmentRateDialog && (
           <EquipmentRentalRatesEditDialog
-            show={ this.state.showEquipmentRateDialog }
-            rentalAgreement={ rentalAgreement }
-            onSave={ this.saveEquipmentRate }
-            onClose={ this.closeEquipmentRateDialog } />
+            show={this.state.showEquipmentRateDialog}
+            rentalAgreement={rentalAgreement}
+            onSave={this.fetch}
+            onClose={this.closeEquipmentRateDialog}/>
         )}
-        { this.state.showRentalRateDialog &&
-        <RentalRatesEditDialog
-          show={ this.state.showRentalRateDialog }
-          rentalRate={ this.state.rentalRate }
-          rentalAgreement={ rentalAgreement }
-          onSave={ this.saveRentalRate }
-          onSaveMultiple={ this.saveRentalRates }
-          onClose={ this.closeRentalRateDialog }
-        />
-        }
-        { this.state.showConditionDialog &&
-        <RentalConditionsEditDialog
-          rentalCondition={ this.state.rentalCondition }
-          show={ this.state.showConditionDialog }
-          onSave={ this.saveCondition }
-          onSaveMultiple={ this.saveConditions }
-          onClose={ this.closeConditionDialog }
-        />
-        }
-        { this.state.showOvertimeNotesDialog &&
-        <RentalAgreementOvertimeNotesDialog
-          show={ this.state.showOvertimeNotesDialog }
-          rentalAgreement={ rentalAgreement }
-          onSave={ this.saveOvertimeNotes }
-          onClose={ this.closeOvertimeNotesDialog }
-        />
-        }
-        { this.state.showCloneDialog &&
-        <CloneDialog
-          show={ this.state.showCloneDialog }
-          onSave={ this.cloneRentalAgreement }
-          onClose={ this.closeCloneDialog }
-          rentalAgreement={ rentalAgreement }
-          cloneRentalAgreementError={ this.state.cloneRentalAgreementError  }
-        />
-        }
+        {this.state.showRentalRateDialog && (
+          <RentalRatesEditDialog
+            show={this.state.showRentalRateDialog}
+            rentalRate={this.state.rentalRate}
+            rentalAgreement={rentalAgreement}
+            onSave={this.fetch}
+            onClose={this.closeRentalRateDialog}/>
+        )}
+        {this.state.showConditionDialog && (
+          <RentalConditionsEditDialog
+            show={this.state.showConditionDialog}
+            rentalAgreementId={rentalAgreement.id}
+            rentalCondition={this.state.rentalCondition}
+            onSave={this.fetch}
+            onClose={this.closeConditionDialog}/>
+        )}
+        {this.state.showOvertimeNotesDialog && (
+          <RentalAgreementOvertimeNotesDialog
+            show={this.state.showOvertimeNotesDialog}
+            rentalAgreement={rentalAgreement}
+            onSave={this.fetch}
+            onClose={this.closeOvertimeNotesDialog}/>
+        )}
+        {this.state.showCloneDialog && (
+          <CloneDialog
+            show={this.state.showCloneDialog}
+            rentalAgreement={rentalAgreement}
+            cloneRentalAgreementError={this.state.cloneRentalAgreementError}
+            onSave={this.cloneRentalAgreement}
+            onClose={this.closeCloneDialog}/>
+        )}
       </div>
     );
   },

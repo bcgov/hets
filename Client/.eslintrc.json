@@ -64,5 +64,6 @@
         "no-mixed-spaces-and-tabs": "error",
         "no-tabs": "error",
         "jsx-quotes": ["warn", "prefer-double"]
+        // "object-shorthand": ["warn", "always"]
     }
 }

@@ -3,21 +3,21 @@ import { Grid, Row, Col } from 'react-bootstrap';
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import * as Constant from '../../constants';
+import * as Api from '../../api';
 
 import DropdownControl from '../../components/DropdownControl.jsx';
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
 
 var EquipmentRentalRatesEditDialog = React.createClass({
   propTypes: {
-    rentalAgreement: React.PropTypes.object.isRequired,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
+    rentalAgreement: React.PropTypes.object.isRequired,
+    onSave: React.PropTypes.func,
+    onClose: React.PropTypes.func.isRequired,
   },
 
   getInitialState() {
@@ -67,12 +67,23 @@ var EquipmentRentalRatesEditDialog = React.createClass({
     return valid;
   },
 
-  onSave() {
-    this.props.onSave({ ...this.props.rentalAgreement, ...{
-      equipmentRate: this.state.equipmentRate,
-      ratePeriod: this.state.ratePeriod,
-      rateComment: this.state.rateComment,
-    }});
+  formSubmitted() {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        const rentalAgreement = {
+          ...this.props.rentalAgreement,
+          equipmentRate: this.state.equipmentRate,
+          ratePeriod: this.state.ratePeriod,
+          rateComment: this.state.rateComment,
+        };
+
+        Api.updateRentalAgreement(rentalAgreement).then(() => {
+          if (this.props.onSave) { this.props.onSave(); }
+        });
+      }
+
+      this.props.onClose();
+    }
   },
 
   render() {
@@ -80,10 +91,13 @@ var EquipmentRentalRatesEditDialog = React.createClass({
     var isReadOnly = !this.props.rentalAgreement.canEdit && this.props.rentalAgreement.id !== 0;
     var ratePeriods = [ Constant.RENTAL_RATE_PERIOD_HOURLY, Constant.RENTAL_RATE_PERIOD_DAILY, Constant.RENTAL_RATE_PERIOD_WEEKLY, Constant.RENTAL_RATE_PERIOD_MONTHLY, Constant.RENTAL_RATE_PERIOD_NEGOTIATED ];
 
-    return <EditDialog id="rental-agreements-edit" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={<strong>Rental Agreement</strong>}>
-      <Form>
+    return (
+      <FormDialog
+        id="rental-agreements-edit"
+        show={this.props.show}
+        title="Rental Agreement"
+        onSubmit={this.formSubmitted}
+        onClose={this.props.onClose}>
         <Grid fluid>
           <Row>
             <Col md={4}>
@@ -109,8 +123,8 @@ var EquipmentRentalRatesEditDialog = React.createClass({
             </Col>
           </Row>
         </Grid>
-      </Form>
-    </EditDialog>;
+      </FormDialog>
+    );
   },
 });
 
