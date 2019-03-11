@@ -64,8 +64,12 @@
     }
 
     #lastVerifiedDate {
+      display: flex;
+      flex-shrink: 0;
+
       label {
         float: none;
+        margin-right: 7px;
       }
 
       .input-group {

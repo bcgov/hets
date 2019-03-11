@@ -252,8 +252,8 @@ var HiringReport = React.createClass({
         </ButtonGroup>
       </PageHeader>
       <Well id="hiring-report-bar" bsSize="small" className="clearfix">
-        <Row>
-          <Form onSubmit={ this.search }>
+        <Form onSubmit={ this.search }>
+          <Row>
             <Col xs={9} sm={10}>
               <ButtonToolbar id="hiring-report-filters">
                 <MultiDropdown
@@ -294,11 +294,11 @@ var HiringReport = React.createClass({
                 <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
               </ButtonToolbar>
             </Col>
-          </Form>
-          <Col xs={3} sm={2}>
-            <Favourites id="hiring-report-faves-dropdown" type="hiringReport" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
-          </Col>
-        </Row>
+            <Col xs={3} sm={2}>
+              <Favourites id="hiring-report-faves-dropdown" type="hiringReport" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+            </Col>
+          </Row>
+        </Form>
       </Well>
 
       {(() => {
