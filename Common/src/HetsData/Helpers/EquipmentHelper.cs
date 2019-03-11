@@ -17,6 +17,7 @@ namespace HetsData.Helpers
         public int Id { get; set; }
         public string EquipmentCode { get; set; }
         public int? OwnerId { get; set; }
+        public int? LocalAreaId { get; set; }
         public List<int?> ProjectIds { get; set; }
     }
 
@@ -25,13 +26,13 @@ namespace HetsData.Helpers
         public string Status { get; set; }
         public string StatusComment { get; set; }
     }
-    
+
     public class EquipmentRentalAgreementClone
     {
         public int EquipmentId { get; set; }
         public int AgreementToCloneId { get; set; }
         public int RentalAgreementId { get; set; }
-    }    
+    }
 
     public class DuplicateEquipmentModel
     {
@@ -96,19 +97,19 @@ namespace HetsData.Helpers
         /// <param name="configuration"></param>
         /// <returns></returns>
         public static HetEquipment GetRecord(int id, DbAppContext context, IConfiguration configuration)
-        {            
+        {
             // retrieve updated equipment record to return to ui
             HetEquipment equipment = context.HetEquipment.AsNoTracking()
                 .Include(x => x.EquipmentStatusType)
                 .Include(x => x.LocalArea)
                     .ThenInclude(y => y.ServiceArea)
                         .ThenInclude(z => z.District)
-                            .ThenInclude(a => a.Region)                
+                            .ThenInclude(a => a.Region)
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(d => d.EquipmentType)
                 .Include(x => x.Owner)
                     .ThenInclude(x => x.OwnerStatusType)
-                .Include(x => x.HetEquipmentAttachment)                
+                .Include(x => x.HetEquipmentAttachment)
                 .Include(x => x.HetNote)
                 .Include(x => x.HetDigitalFile)
                 .Include(x => x.HetHistory)
@@ -146,11 +147,11 @@ namespace HetsData.Helpers
 
                         equipment.YearMinus1 = $"{fiscalYear - 2}/{fiscalYear - 1}";
                         equipment.YearMinus2 = $"{fiscalYear - 3}/{fiscalYear - 2}";
-                        equipment.YearMinus3 = $"{fiscalYear - 4}/{fiscalYear - 3}";                        
+                        equipment.YearMinus3 = $"{fiscalYear - 4}/{fiscalYear - 3}";
                     }
                 }
 
-                // HETS-1115 - Do not allow changing seniority affecting entities if an active request exists                
+                // HETS-1115 - Do not allow changing seniority affecting entities if an active request exists
                 equipment.ActiveRentalRequest = RentalRequestStatus(id, context);
             }
 
@@ -159,16 +160,16 @@ namespace HetsData.Helpers
 
         #endregion
 
-        #region Returns true if the equipment is on an active rotation list        
+        #region Returns true if the equipment is on an active rotation list
 
         /// <summary>
-        /// Returns true if the equipment is on an active rotation list        
+        /// Returns true if the equipment is on an active rotation list
         /// </summary>
         /// <param name="id"></param>
         /// <param name="context"></param>
         /// <returns></returns>
         public static bool RentalRequestStatus(int id, DbAppContext context)
-        {            
+        {
             // get rental request status type
             int? statusIdInProgress = StatusHelper.GetStatusId(HetRentalRequest.StatusInProgress, "rentalRequestStatus", context);
             if (statusIdInProgress == null)
@@ -194,14 +195,14 @@ namespace HetsData.Helpers
         /// <param name="agreementStatusId"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static EquipmentLite ToLiteModel(HetEquipment equipment, SeniorityScoringRules scoringRules, 
+        public static EquipmentLite ToLiteModel(HetEquipment equipment, SeniorityScoringRules scoringRules,
             int agreementStatusId, DbAppContext context)
         {
             EquipmentLite equipmentLite = new EquipmentLite();
 
             if (equipment != null)
             {
-                // HETS - 709 [BVT - Adjust the search for Equipment search screen]  
+                // HETS - 709 [BVT - Adjust the search for Equipment search screen]
                 /*
                 int numberOfBlocks = 0;
 
@@ -249,15 +250,15 @@ namespace HetsData.Helpers
                     equipmentLite.OwnerId = equipment.OwnerId;
                 }
 
-                // HETS - 709 [BVT - Adjust the search for Equipment search screen]  
+                // HETS - 709 [BVT - Adjust the search for Equipment search screen]
                 //equipmentLite.SeniorityString = FormatSeniorityString(seniority, blockNumber, numberOfBlocks);
                 equipmentLite.SeniorityString = "0";
 
-                // HETS - 709 [BVT - Adjust the search for Equipment search screen]  
+                // HETS - 709 [BVT - Adjust the search for Equipment search screen]
                 //equipmentLite.IsHired = CheckIsHired(equipment.HetRentalAgreement.ToList());
                 equipmentLite.IsHired = false;
 
-                // HETS - 709 [BVT - Adjust the search for Equipment search screen]  
+                // HETS - 709 [BVT - Adjust the search for Equipment search screen]
                 //equipmentLite.SenioritySortOrder = CalculateSenioritySortOrder(blockNumber, numberInBlock);
                 equipmentLite.SenioritySortOrder = 0;
 
@@ -274,11 +275,11 @@ namespace HetsData.Helpers
                 {
                     temp = equipment.EquipmentCode.Replace(equipmentLite.EquipmentPrefix, "");
                 }
-                
+
                 temp = temp.Replace("-", "");
 
-                equipmentLite.EquipmentNumber = !string.IsNullOrEmpty(temp) ? 
-                    int.Parse(Regex.Match(temp, @"\d+").Value) : 
+                equipmentLite.EquipmentNumber = !string.IsNullOrEmpty(temp) ?
+                    int.Parse(Regex.Match(temp, @"\d+").Value) :
                     0;
 
                 equipmentLite.AttachmentCount = CalculateAttachmentCount(equipment.HetEquipmentAttachment.ToList());
@@ -286,7 +287,7 @@ namespace HetsData.Helpers
                 equipmentLite.Status = equipment.EquipmentStatusType.EquipmentStatusTypeCode;
                 equipmentLite.LocalArea = equipment.LocalArea.Name;
 
-                // get project                
+                // get project
                 HetRentalAgreement agreement = context.HetRentalAgreement
                     .AsNoTracking()
                     .Include(x => x.Project)
@@ -317,7 +318,7 @@ namespace HetsData.Helpers
             // HETS-968 - Rotation list -Wrong Block number for Open block
             if (blockNumber == numberOfBlocks) blockNumber = 3;
 
-            return $"{blockNumber} - {seniority:0.###}";                        
+            return $"{blockNumber} - {seniority:0.###}";
         }
 
         /// <summary>
@@ -336,7 +337,7 @@ namespace HetsData.Helpers
         {
             if (rentalAgreements.Count == 0) return false;
 
-            int? count = rentalAgreements.Count(x => x.RentalAgreementStatusType.RentalAgreementStatusTypeCode 
+            int? count = rentalAgreements.Count(x => x.RentalAgreementStatusType.RentalAgreementStatusTypeCode
                 .Equals(HetRentalAgreement.StatusActive));
 
             return count > 0;
@@ -475,7 +476,7 @@ namespace HetsData.Helpers
         /// <summary>
         /// Recalculates seniority for a specific local area and equipment type
         /// </summary>
-        public static void RecalculateSeniority(int? localAreaId, int? districtEquipmentTypeId, 
+        public static void RecalculateSeniority(int? localAreaId, int? districtEquipmentTypeId,
             DbAppContext context, string seniorityScoringRules)
         {
             // check if the local area exists
@@ -488,7 +489,7 @@ namespace HetsData.Helpers
                 .Any(a => a.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
             if (!exists) throw new ArgumentException("District Equipment Type is invalid");
-            
+
             // get the local area
             HetLocalArea localArea = context.HetLocalArea.AsNoTracking()
                 .First(a => a.LocalAreaId == localAreaId);
@@ -499,8 +500,8 @@ namespace HetsData.Helpers
                 .First(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
             // recalculate the seniority list
-            SeniorityListHelper.CalculateSeniorityList(localArea.LocalAreaId, 
-                districtEquipmentType.DistrictEquipmentTypeId,                 
+            SeniorityListHelper.CalculateSeniorityList(localArea.LocalAreaId,
+                districtEquipmentType.DistrictEquipmentTypeId,
                 context,
                 seniorityScoringRules);
         }
@@ -596,7 +597,7 @@ namespace HetsData.Helpers
             int tmpAreaId = item.LocalArea.LocalAreaId;
             item.LocalAreaId = tmpAreaId;
             item.LocalArea = null;
-            
+
             int tmpEquipId = item.DistrictEquipmentType.DistrictEquipmentTypeId;
             item.DistrictEquipmentTypeId = tmpEquipId;
             item.DistrictEquipmentType = null;
@@ -618,13 +619,13 @@ namespace HetsData.Helpers
             if (item.Owner != null)
             {
                 // set the equipment code
-                item.EquipmentCode = GetEquipmentCode(item.Owner.OwnerId, context);                    
-                
+                item.EquipmentCode = GetEquipmentCode(item.Owner.OwnerId, context);
+
                 // cleanup owner reference
                 int tmpOwnerId = item.Owner.OwnerId;
                 item.OwnerId = tmpOwnerId;
                 item.Owner = null;
-            }            
+            }
 
             return item;
         }
@@ -649,7 +650,7 @@ namespace HetsData.Helpers
                 List<EquipmentCodeModel> equipmentList = (
                     from equip in context.HetEquipment
                     where equip.OwnerId == owner.OwnerId &&
-                          equip.EquipmentCode.StartsWith(owner.OwnerCode)                          
+                          equip.EquipmentCode.StartsWith(owner.OwnerCode)
                     select new EquipmentCodeModel
                     {
                         EquipmentId = equip.EquipmentId,
@@ -769,6 +770,6 @@ namespace HetsData.Helpers
             return result;
         }
 
-        #endregion        
+        #endregion
     }
 }
