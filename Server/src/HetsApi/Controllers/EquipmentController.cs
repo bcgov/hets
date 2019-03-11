@@ -132,6 +132,7 @@ namespace HetsApi.Controllers
                     EquipmentCode = e.EquipmentCode,
                     Id = e.EquipmentId,
                     OwnerId = e.OwnerId,
+                    LocalAreaId = e.LocalAreaId,
                     ProjectIds = agreements.Select(y => y.ProjectId).ToList()
                 });
 
