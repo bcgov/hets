@@ -29,7 +29,15 @@ psql -h localhost -U postgres -d hets -a -q -f .\CREATE\CREATE_6_HETS_DB-trigger
 psql -h localhost -U postgres -d hets -a -q -f .\CREATE\CREATE_7_HETS_DB-before-triggers.sql >> restore_log.txt
 psql -h localhost -U postgres -d hets -a -q -f .\CREATE\CREATE_8_HETS_DB-after-triggers.sql >> restore_log.txt
 
+ECHO Apply updates
+psql -h localhost -U postgres -d hets -a -q -f .\UPDATE\RELEASE1.2.sql >> restore_log.txt
+psql -h localhost -U postgres -d hets -a -q -f .\UPDATE\RELEASE1.2.1.sql >> restore_log.txt
+psql -h localhost -U postgres -d hets -a -q -f .\UPDATE\RELEASE1.3.sql >> restore_log.txt
+psql -h localhost -U postgres -d hets -a -q -f .\UPDATE\RELEASE1.4.sql >> restore_log.txt
+psql -h localhost -U postgres -d hets -a -q -f .\UPDATE\RELEASE1.5.sql >> restore_log.txt
+psql -h localhost -U postgres -d hets -a -q -f .\UPDATE\RELEASE1.6.sql >> restore_log.txt
+
 ECHO Restore database from backup
-pg_restore --clean --host="localhost" --port="5432" --username="postgres" --dbname="hets" --format="c" ".\BACKUP\hets2019-02-14-04-04.bak" >> restore_log.txt
+pg_restore --clean --host="localhost" --port="5432" --username="postgres" --dbname="hets" --format="c" ".\BACKUP\hets2019-03-10-20-14.bak" >> restore_log.txt
 
 pause

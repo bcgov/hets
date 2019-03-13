@@ -132,7 +132,11 @@ namespace HetsApi
             app.UseAuthentication();
 
             // enable Hangfire
-            BackgroundJobServerOptions jsOptions = new BackgroundJobServerOptions { WorkerCount = 1 };
+            BackgroundJobServerOptions jsOptions = new BackgroundJobServerOptions
+            {
+                WorkerCount = 1                
+            };
+
             app.UseHangfireServer(jsOptions);
 
             // disable the back to site link
