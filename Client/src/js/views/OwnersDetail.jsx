@@ -60,7 +60,7 @@ var OwnersDetail = React.createClass({
     uiContacts: React.PropTypes.object,
     uiEquipment: React.PropTypes.object,
     router: React.PropTypes.object,
-    notes: React.PropTypes.object,
+    notes: React.PropTypes.array,
   },
 
   getInitialState() {
@@ -131,10 +131,6 @@ var OwnersDetail = React.createClass({
     this.setState(state, callback);
   },
 
-  showNotes() {
-
-  },
-
   updateStatusState(state) {
     if (state !== this.props.owner.status) {
       this.setState({ status: state }, this.openChangeStatusDialog);
@@ -160,14 +156,6 @@ var OwnersDetail = React.createClass({
 
   closeDocumentsDialog() {
     this.setState({ showDocumentsDialog: false });
-  },
-
-  addNote() {
-
-  },
-
-  addDocument() {
-
   },
 
   openEditDialog() {
@@ -346,7 +334,7 @@ var OwnersDetail = React.createClass({
                     disabled={owner.activeRentalRequest}
                     disabledTooltip={OWNER_WITH_EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
                     onSelect={this.updateStatusState}/>
-                  <Button className="ml-5 mr-5" title="Notes" onClick={ this.openNotesDialog }>Notes ({ Object.keys(this.props.notes).length })</Button>
+                  <Button className="ml-5 mr-5" title="Notes" onClick={ this.openNotesDialog }>Notes ({ this.props.notes.length })</Button>
                   <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
                   <Label className={ owner.isMaintenanceContractor ? 'ml-5' : 'hide' }>Maintenance Contractor</Label>
                 </Col>
@@ -583,13 +571,12 @@ var OwnersDetail = React.createClass({
         )}
         { this.state.showNotesDialog && (
           <NotesDialog
-            show={ this.state.showNotesDialog }
-            id={ this.props.params.ownerId }
-            notes={ _.values(this.props.notes) }
-            getNotes={ Api.getOwnerNotes }
-            onSave={ Api.addOwnerNote }
-            onUpdate={ Api.updateNote }
-            onClose={ this.closeNotesDialog }/>
+            show={this.state.showNotesDialog}
+            id={this.props.params.ownerId}
+            notes={this.props.notes}
+            getNotes={Api.getOwnerNotes}
+            saveNote={Api.addOwnerNote}
+            onClose={this.closeNotesDialog}/>
         )}
         { this.state.showDocumentsDialog && (
           <DocumentsListDialog

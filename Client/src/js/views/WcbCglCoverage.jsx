@@ -212,41 +212,45 @@ var WcbCglCoverage = React.createClass({
         </ButtonGroup>
       </PageHeader>
       <Well id="wcg-cgl-coverage-bar" bsSize="small" className="clearfix">
-        <Row>
-          <Form onSubmit={ this.search }>
-            <Col xs={9} sm={10} id="wcg-cgl-coverage-filters">
-              <div className="input-container">
-                <ControlLabel>Local Areas:</ControlLabel>
-                <MultiDropdown
-                  id="localAreaIds"
-                  placeholder="Local Areas"
-                  items={localAreas}
-                  selectedIds={this.state.search.localAreaIds}
-                  updateState={this.updateLocalAreaSearchState}
-                  showMaxItems={2} />
-              </div>
-              <div className="input-container">
-                <ControlLabel>Companies:</ControlLabel>
-                <MultiDropdown
-                  id="ownerIds"
-                  disabled={!this.props.owners.loaded}
-                  placeholder="Companies"
-                  fieldName="organizationName"
-                  items={owners}
-                  selectedIds={this.state.search.ownerIds}
-                  updateState={this.updateSearchState}
-                  showMaxItems={2} />
-              </div>
-              <DateControl id="wcbExpiry" date={ this.state.search.wcbExpiry } updateState={ this.updateSearchState } label="WCB Expiry Before:" title="WCB Expiry Before"/>
-              <DateControl id="cglExpiry" date={ this.state.search.cglExpiry } updateState={ this.updateSearchState } label="CGL Expiry Before:" title="CGL Expiry Before"/>
-              <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
-              <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
-            </Col>
-          </Form>
-          <Col xs={3} sm={2}>
-            <Favourites id="wcg-cgl-coverage-faves-dropdown" type="ownersCoverage" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
-          </Col>
-        </Row>
+        <Form onSubmit={ this.search }>
+          <Favourites id="wcg-cgl-coverage-faves-dropdown" type="ownersCoverage" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+          <div id="wcg-cgl-coverage-filters">
+            <div className="input-container">
+              <MultiDropdown
+                id="localAreaIds"
+                placeholder="Local Areas"
+                items={localAreas}
+                selectedIds={this.state.search.localAreaIds}
+                updateState={this.updateLocalAreaSearchState}
+                showMaxItems={2} />
+            </div>
+            <div className="input-container">
+              <MultiDropdown
+                id="ownerIds"
+                disabled={!this.props.owners.loaded}
+                placeholder="Companies"
+                fieldName="organizationName"
+                items={owners}
+                selectedIds={this.state.search.ownerIds}
+                updateState={this.updateSearchState}
+                showMaxItems={2} />
+            </div>
+            <DateControl
+              id="wcbExpiry"
+              date={this.state.search.wcbExpiry}
+              updateState={this.updateSearchState}
+              label="WCB Exp Before:"
+              title="WCB Expiry Before"/>
+            <DateControl
+              id="cglExpiry"
+              date={this.state.search.cglExpiry}
+              updateState={this.updateSearchState}
+              label="CGL Exp Before:"
+              title="CGL Expiry Before"/>
+            <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
+            <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
+          </div>
+        </Form>
       </Well>
 
       {(() => {

@@ -62,6 +62,7 @@ var NotesAddDialog = React.createClass({
             id: 0,
             text: this.state.note,
             isNoLongerRelevant: false,
+            createDate: new Date().toISOString(),
           });
         } else {
           this.props.onUpdate({
@@ -69,6 +70,7 @@ var NotesAddDialog = React.createClass({
             text: this.state.note,
             concurrencyControlNumber: this.state.concurrencyControlNumber,
             isNoLongerRelevant: false,
+            createDate: new Date().toISOString(),
           });
         }
       } else {
