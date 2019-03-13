@@ -156,7 +156,7 @@ var MultiDropdown = React.createClass({
       <Dropdown.Toggle title={this.state.title} />
       <RootCloseMenu bsRole="menu">
         <Well bsSize="small">
-          <FormControl type="text" placeholder="Search" onChange={ this.filter } inputRef={ ref => { this.input = ref; }} onKeyDown={this.keyDown}/>
+          <FormControl type="text" placeholder="Search" onChange={ this.filter } inputRef={ ref => { this.input = ref; }} autoComplete="off" onKeyDown={this.keyDown}/>
           <Checkbox className="select-all" checked={ this.state.allSelected } onChange={ this.selectAll }>Select All</Checkbox>
         </Well>
         { items.length > 0 &&
