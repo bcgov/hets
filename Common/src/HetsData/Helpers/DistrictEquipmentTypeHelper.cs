@@ -18,6 +18,8 @@ namespace HetsData.Helpers
         public string EquipmentPrefix { get; set; }
         public int? DistrictId { get; set; }
         public int? EquipmentTypeId { get; set; }
+        public bool Master { get; set; }
+        public int? MasterDistrictEquipmentTypeId { get; set; }
     }
 
     #endregion
@@ -26,12 +28,7 @@ namespace HetsData.Helpers
     {
         public static void MergeDistrictEquipmentTypes(PerformContext context, string seniorityScoringRules, 
             string connectionString)
-        {
-            context.WriteLine("Merge District Equipment Types Starting");
-
-            IProgressBar progress = context.WriteProgressBar();
-            progress.SetValue(0);
-
+        {                        
             // open a connection to the database
             DbAppContext dbContext = new DbAppContext(connectionString);
 
@@ -42,11 +39,17 @@ namespace HetsData.Helpers
                 throw new ArgumentException("Status Code not found");
             }
 
+            // **************************************************
+            // Phase 1: Identify Master District Equipment Types
+            // **************************************************
+            context.WriteLine("Phase 1: Identify Master District Equipment Types");
+            IProgressBar progress = context.WriteProgressBar();
+            progress.SetValue(0);        
+
             // get records
             List<MergeRecord> masterList = dbContext.HetDistrictEquipmentType.AsNoTracking()
                 .Where(x => x.ServiceAreaId != null &&
-                            x.Deleted == false)
-                .OrderBy(x => x.DistrictEquipmentTypeId)
+                            x.Deleted == false)                
                 .Select(x => new MergeRecord
                 {
                     DistrictEquipmentTypeId = x.DistrictEquipmentTypeId,
@@ -55,10 +58,18 @@ namespace HetsData.Helpers
                     DistrictId = x.DistrictId,
                     EquipmentTypeId = x.EquipmentTypeId
                 })
+                .Distinct()
                 .ToList();
+
+            // sort the list accordingly
+            masterList = masterList
+                .OrderBy(x => x.DistrictId)
+                .ThenBy(x => x.EquipmentTypeId)
+                .ThenBy(x => x.EquipmentPrefix).ToList();
 
             int increment = 0;
             int? currentDistrict = -1;
+            int? masterDistrictEquipmentTypeId = -1;
             int? currentEquipmentType = -1;
             string currentPrefix = "";
             bool newMerge = true;
@@ -70,9 +81,18 @@ namespace HetsData.Helpers
                     detRecord.EquipmentPrefix != currentPrefix)
                 {
                     newMerge = true;
-                    currentDistrict = detRecord.DistrictId;
+                    currentDistrict = detRecord.DistrictId;                    
                     currentEquipmentType = detRecord.EquipmentTypeId;
                     currentPrefix = detRecord.EquipmentPrefix;
+
+                    masterDistrictEquipmentTypeId = detRecord.DistrictEquipmentTypeId;
+                    detRecord.Master = true;
+                    detRecord.MasterDistrictEquipmentTypeId = masterDistrictEquipmentTypeId;
+                }
+                else
+                {
+                    detRecord.Master = false;
+                    detRecord.MasterDistrictEquipmentTypeId = masterDistrictEquipmentTypeId;
                 }
 
                 // kickoff the merge for this district, equipment type and prefix
@@ -83,15 +103,13 @@ namespace HetsData.Helpers
                     string prefix = currentPrefix;
                     string masterName = "";
 
-                    IEnumerable<HetDistrictEquipmentType> types = dbContext.HetDistrictEquipmentType
+                    List<MergeRecord> types = masterList
                         .Where(x => x.DistrictId == district &&
                                     x.EquipmentTypeId == type &&
-                                    x.Deleted == false &&
-                                    GetPrefix(x.DistrictEquipmentName) == prefix)
-                        .OrderBy(x => x.DistrictEquipmentTypeId);
+                                    x.EquipmentPrefix == prefix).ToList();
 
                     // create master name and update master record
-                    foreach (HetDistrictEquipmentType equipmentType in types)
+                    foreach (MergeRecord equipmentType in types)
                     {
                         string temp = equipmentType.DistrictEquipmentName.Replace(currentPrefix, "").Trim();
                         int start = temp.IndexOf("-", StringComparison.Ordinal);
@@ -105,72 +123,142 @@ namespace HetsData.Helpers
                     }
 
                     masterName = $"{currentPrefix} - {masterName}";
-
-                    types.ElementAt(0).DistrictEquipmentName = masterName;
-                    types.ElementAt(0).ServiceAreaId = null;
-
-                    // switch equipment records over to the master record
-                    foreach (HetDistrictEquipmentType equipmentType in types)
-                    {
-                        if (equipmentType.DistrictEquipmentTypeId != types.ElementAt(0).DistrictEquipmentTypeId)
-                        {
-                            IEnumerable<HetEquipment> equipments = dbContext.HetEquipment
-                                .Where(x => x.DistrictEquipmentTypeId == equipmentType.DistrictEquipmentTypeId);
-
-                            foreach (HetEquipment equipment in equipments)
-                            {
-                                equipment.DistrictEquipmentTypeId = types.ElementAt(0).DistrictEquipmentTypeId;
-                            }
-
-                            // delete record
-                            HetRentalRequest request = dbContext.HetRentalRequest.AsNoTracking()
-                                .FirstOrDefault(x => x.DistrictEquipmentTypeId == equipmentType.DistrictEquipmentTypeId);
-
-                            HetLocalAreaRotationList rotationList = dbContext.HetLocalAreaRotationList.AsNoTracking()
-                                .FirstOrDefault(x => x.DistrictEquipmentTypeId == equipmentType.DistrictEquipmentTypeId);
-
-                            if (request != null || rotationList != null)
-                            {
-                                equipmentType.Deleted = true;
-                            }
-                            else
-                            {
-                                dbContext.HetDistrictEquipmentType.Remove(equipmentType);
-                            }
-                        }
-                    }
-
-                    // save changes to district equipment types and associated equipment records
-                    dbContext.SaveChanges();
-
-                    // finally - update the seniority and block assignments for the master record
-                    List<HetLocalArea> localAreas = dbContext.HetEquipment.AsNoTracking()
-                        .Include(x => x.LocalArea)
-                        .Where(x => x.EquipmentStatusTypeId == equipmentStatusId)
-                        .Select(x => x.LocalArea)
-                        .Distinct()
-                        .ToList();
-
-                    foreach (HetLocalArea localArea in localAreas)
-                    {
-                        EquipmentHelper.RecalculateSeniority(localArea.LocalAreaId, 
-                            types.ElementAt(0).DistrictEquipmentTypeId, dbContext, seniorityScoringRules);
-                    }
-
-                    // save changes to equipment records
-                    dbContext.SaveChanges();
+                    types.ElementAt(0).DistrictEquipmentName = masterName;        
                 }
 
                 newMerge = false;
 
                 // update status bar
                 increment++;
-                progress.SetValue(increment);
+                progress.SetValue(Convert.ToInt32((decimal)(masterList.Count - (masterList.Count - increment)) / masterList.Count * 100));
             }
 
             // done!
             progress.SetValue(100);
-            context.WriteLine("Merge District Equipment Types Complete");
+
+            // **************************************************
+            // Phase 2: Update Master District Equipment Types
+            // **************************************************
+            context.WriteLine("Phase 2: Update Master District Equipment Types");
+            progress = context.WriteProgressBar();
+            progress.SetValue(0);
+
+            List<MergeRecord> masterRecords = masterList.Where(x => x.Master).ToList();
+
+            increment = 0;
+
+            foreach (MergeRecord detRecord in masterRecords)
+            {
+                // get det record & update name
+                HetDistrictEquipmentType det = dbContext.HetDistrictEquipmentType
+                    .First(x => x.DistrictEquipmentTypeId == detRecord.DistrictEquipmentTypeId);
+
+                det.DistrictEquipmentName = detRecord.DistrictEquipmentName;
+
+                // save changes to district equipment types and associated equipment records
+                dbContext.SaveChangesForImport();
+                
+                newMerge = false;
+
+                // update status bar
+                increment++;
+                progress.SetValue(Convert.ToInt32((decimal)(masterRecords.Count - (masterRecords.Count - increment)) / masterRecords.Count * 100));
+            }
+
+            // done!
+            progress.SetValue(100);
+
+            // **************************************************
+            // Phase 3: Update Non-Master District Equipment Types
+            // **************************************************
+            context.WriteLine("Phase 3: Update Non-Master District Equipment Types");
+            progress = context.WriteProgressBar();
+            progress.SetValue(0);
+
+            List<MergeRecord> mergeRecords = masterList.Where(x => !x.Master).ToList();
+
+            increment = 0;
+
+            foreach (MergeRecord detRecord in mergeRecords)
+            {                
+                // get equipment & update
+                IEnumerable<HetEquipment> equipmentRecords = dbContext.HetEquipment
+                    .Where(x => x.DistrictEquipmentTypeId == detRecord.DistrictEquipmentTypeId);
+
+                foreach(HetEquipment equipment in equipmentRecords)
+                {
+                    equipment.DistrictEquipmentTypeId = detRecord.MasterDistrictEquipmentTypeId;
+                }
+
+                // get det record & delete
+                HetDistrictEquipmentType det = dbContext.HetDistrictEquipmentType
+                    .First(x => x.DistrictEquipmentTypeId == detRecord.DistrictEquipmentTypeId);
+
+                // delete record
+                HetRentalRequest request = dbContext.HetRentalRequest.AsNoTracking()
+                    .FirstOrDefault(x => x.DistrictEquipmentTypeId == detRecord.DistrictEquipmentTypeId);
+
+                HetLocalAreaRotationList rotationList = dbContext.HetLocalAreaRotationList.AsNoTracking()
+                    .FirstOrDefault(x => x.DistrictEquipmentTypeId == detRecord.DistrictEquipmentTypeId);
+
+                if (request != null || rotationList != null)
+                {
+                    det.Deleted = true;
+                }
+                else
+                {
+                    dbContext.HetDistrictEquipmentType.Remove(det);
+                }
+
+                // save changes to district equipment types and associated equipment records
+                dbContext.SaveChangesForImport();
+
+                newMerge = false;
+
+                // update status bar
+                increment++;
+                progress.SetValue(Convert.ToInt32((decimal)(mergeRecords.Count - (mergeRecords.Count - increment)) / mergeRecords.Count * 100));
+            }
+
+            // done!
+            progress.SetValue(100);
+
+            // **************************************************
+            // Phase 4: Update seniority and block assignments
+            // **************************************************
+            context.WriteLine("Phase 4: Update seniority and block assignments");
+            progress = context.WriteProgressBar();
+            progress.SetValue(0);
+
+            increment = 0;
+
+            foreach (MergeRecord detRecord in masterRecords)
+            {                
+                // update the seniority and block assignments for the master record
+                List<HetLocalArea> localAreas = dbContext.HetEquipment.AsNoTracking()
+                    .Include(x => x.LocalArea)
+                    .Where(x => x.EquipmentStatusTypeId == equipmentStatusId &&
+                                x.DistrictEquipmentTypeId == detRecord.DistrictEquipmentTypeId)
+                    .Select(x => x.LocalArea)
+                    .Distinct()
+                    .ToList();
+
+                foreach (HetLocalArea localArea in localAreas)
+                {
+                    EquipmentHelper.RecalculateSeniority(localArea.LocalAreaId,
+                        detRecord.DistrictEquipmentTypeId, dbContext, seniorityScoringRules);
+                }
+
+                // save changes to equipment records
+                dbContext.SaveChangesForImport(); 
+
+                // update status bar
+                increment++;
+                progress.SetValue(Convert.ToInt32((decimal)(masterRecords.Count - (masterRecords.Count - increment)) / masterRecords.Count * 100));
+            }
+
+            // done!
+            progress.SetValue(100);            
         }
 
         private static string GetPrefix(string name)
