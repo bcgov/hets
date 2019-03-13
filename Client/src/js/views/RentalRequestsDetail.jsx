@@ -439,14 +439,12 @@ var RentalRequestsDetail = React.createClass({
       )}
       { this.state.showNotesDialog &&
         <NotesDialog
-          show={ this.state.showNotesDialog }
-          onSave={ Api.addRentalRequestNote }
-          id={ String(this.props.rentalRequestId) }
-          getNotes={ Api.getRentalRequestNotes }
-          onUpdate={ Api.updateNote }
-          onClose={ this.closeNotesDialog }
-          notes={ this.props.rentalRequest.notes }
-        />
+          id={String(this.props.rentalRequestId)}
+          show={this.state.showNotesDialog}
+          notes={this.props.rentalRequest.notes}
+          getNotes={Api.getRentalRequestNotes}
+          saveNote={Api.addRentalRequestNote}
+          onClose={this.closeNotesDialog}/>
       }
     </div>;
   },

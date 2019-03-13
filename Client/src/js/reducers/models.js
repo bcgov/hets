@@ -39,7 +39,7 @@ const DEFAULT_MODELS = {
   },
   equipment: {},
   equipmentSeniorityHistory: {},
-  equipmentNotes: {},
+  equipmentNotes: [],
   equipmentAttachments: {},
   equipmentHistory: {},
   equipmentRentalAgreements: {
@@ -58,7 +58,7 @@ const DEFAULT_MODELS = {
     loading: false,
     loaded: false,
   },
-  ownerNotes: {},
+  ownerNotes: [],
   ownerAttachments: {},
   ownerHistory: {},
 
@@ -558,12 +558,10 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       }
 
       if (notesCollectionName) {
-        const notes = state[notesCollectionName];
-        const updatedNotes = _.fromPairs(Object.keys(notes).filter((noteId) => {
-          return noteId !== String(action.noteId);
-        }).map((id) => [ id, notes[id] ]));
+        const notes = state[notesCollectionName].slice();
+        _.remove(notes, { id : action.noteId });
 
-        return { ...state, [notesCollectionName]: updatedNotes };
+        return { ...state, [notesCollectionName]: notes };
       }
 
       return state;

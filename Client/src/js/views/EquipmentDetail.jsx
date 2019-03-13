@@ -50,7 +50,7 @@ const EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE = 'This equipment is pa
 var EquipmentDetail = React.createClass({
   propTypes: {
     equipment: React.PropTypes.object,
-    notes: React.PropTypes.object,
+    notes: React.PropTypes.array,
     attachments: React.PropTypes.object,
     documents: React.PropTypes.object,
     history: React.PropTypes.object,
@@ -268,7 +268,7 @@ var EquipmentDetail = React.createClass({
                         disabled={equipment.activeRentalRequest}
                         disabledTooltip={EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
                         onSelect={this.updateStatusState}/>
-                      <Button className="mr-5 ml-5" title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
+                      <Button className="mr-5 ml-5" title="Notes" onClick={ this.showNotes }>Notes ({this.props.notes.length})</Button>
                       <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
                     </Row>
                   </Col>
@@ -486,13 +486,12 @@ var EquipmentDetail = React.createClass({
         )}
         { this.state.showNotesDialog && (
           <NotesDialog
-            show={ this.state.showNotesDialog }
-            id={ this.props.params.equipmentId }
-            notes={ _.values(this.props.notes) }
-            getNotes={ Api.getEquipmentNotes }
-            onUpdate={ Api.updateNote }
-            onClose={ this.closeNotesDialog }
-            onSave={ Api.addEquipmentNote }/>
+            show={this.state.showNotesDialog}
+            id={this.props.params.equipmentId}
+            notes={this.props.notes}
+            getNotes={Api.getEquipmentNotes}
+            saveNote={Api.addEquipmentNote}
+            onClose={this.closeNotesDialog}/>
         )}
         { this.state.showDocumentsDialog && (
           <DocumentsListDialog
