@@ -18,7 +18,6 @@ import { isBlank } from '../../utils/string';
 
 var RentalRequestsAddDialog = React.createClass({
   propTypes: {
-    rentalRequest: React.PropTypes.object,
     currentUser: React.PropTypes.object,
     localAreas: React.PropTypes.object,
     districtEquipmentTypes: React.PropTypes.object,
@@ -34,6 +33,7 @@ var RentalRequestsAddDialog = React.createClass({
     const { project } = this.props;
     return {
       loading: false,
+      savingError: '',
       projectId: project ? project.id : 0,
       localAreaId: 0,
       equipmentTypeId: 0,
@@ -41,6 +41,7 @@ var RentalRequestsAddDialog = React.createClass({
       expectedHours: '',
       expectedStartDate: today(),
       expectedEndDate: '',
+      rentalRequestAttachments: [],
 
       projectError: '',
       localAreaError: '',
@@ -75,10 +76,10 @@ var RentalRequestsAddDialog = React.createClass({
     if (this.state.localAreaId !== 0) { return true; }
     if (this.state.equipmentTypeId !== 0) { return true; }
     if (this.state.count !== 1) { return true; }
-    if (this.state.expectedHours !== this.props.rentalRequest.expectedHours) { return true; }
-    if (this.state.expectedStartDate !== this.props.rentalRequest.expectedStartDate) { return true; }
-    if (this.state.expectedEndDate !== this.props.rentalRequest.expectedEndDate) { return true; }
-    if (this.state.rentalRequestAttachments !== this.props.rentalRequest.rentalRequestAttachments) { return true; }
+    if (this.state.expectedHours !== '') { return true; }
+    if (this.state.expectedStartDate !== today()) { return true; }
+    if (this.state.expectedEndDate !== '') { return true; }
+    if (this.state.rentalRequestAttachments !== '') { return true; }
 
     return false;
   },
@@ -165,6 +166,8 @@ var RentalRequestsAddDialog = React.createClass({
       if (this.didChange()) {
         this.setState({isSaving: true});
 
+        const { rentalRequestAttachments } = this.state;
+
         var request = {
           project: { id: this.state.projectId },
           localArea: { id: this.state.localAreaId },
@@ -176,7 +179,7 @@ var RentalRequestsAddDialog = React.createClass({
           expectedEndDate: this.state.expectedEndDate,
           rentalRequestAttachments: [{
             id: 0,
-            attachment: this.state.rentalRequestAttachments,
+            attachment: rentalRequestAttachments.length === 0 ? undefined : rentalRequestAttachments,
           }],
         };
 
@@ -185,8 +188,13 @@ var RentalRequestsAddDialog = React.createClass({
 
           this.props.onRentalAdded(response);
           this.props.onClose();
-        }).catch(() => {
+        }).catch((err) => {
           this.setState({ isSaving: false });
+          if (err.errorCode) {
+            this.setState({ savingError: err.errorDescription });
+          } else {
+            throw err;
+          }
         });
       }
     }
@@ -313,8 +321,8 @@ var RentalRequestsAddDialog = React.createClass({
             </Col>
           )}
         </Row>
-        { this.props.rentalRequest.error &&
-          <Alert bsStyle="danger">{ this.props.rentalRequest.errorMessage }</Alert>
+        { this.state.savingError &&
+          <Alert bsStyle="danger">{ this.state.savingError }</Alert>
         }
       </div>
     );
@@ -340,7 +348,6 @@ var RentalRequestsAddDialog = React.createClass({
 
 function mapStateToProps(state) {
   return {
-    rentalRequest: state.models.rentalRequest,
     currentUser: state.user,
     localAreas: state.lookups.localAreas,
     districtEquipmentTypes: state.lookups.districtEquipmentTypes,

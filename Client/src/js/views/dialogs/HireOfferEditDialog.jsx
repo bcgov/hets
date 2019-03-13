@@ -1,11 +1,7 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Grid, Row, Col, Radio, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
-
 import _ from 'lodash';
-import Promise from 'bluebird';
 
 import * as Api from '../../api';
 import * as Constant from '../../constants';
@@ -13,11 +9,11 @@ import * as Constant from '../../constants';
 import ConfirmForceHireDialog from '../dialogs/ConfirmForceHireDialog.jsx';
 import ConfirmDialog from '../dialogs/ConfirmDialog.jsx';
 
+import Spinner from '../../components/Spinner.jsx';
 import CheckboxControl from '../../components/CheckboxControl.jsx';
 import DropdownControl from '../../components/DropdownControl.jsx';
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 import { today, toZuluTime, formatDateTime } from '../../utils/date';
 import { notBlank, isBlank } from '../../utils/string';
@@ -37,6 +33,7 @@ const refusalReasons = [
   Constant.HIRING_REFUSAL_OTHER,
 ];
 
+
 var HireOfferEditDialog = React.createClass({
   propTypes: {
     hireOffer: React.PropTypes.object.isRequired,
@@ -50,6 +47,8 @@ var HireOfferEditDialog = React.createClass({
 
   getInitialState() {
     return {
+      isSaving: false,
+
       isForceHire: this.props.hireOffer.isForceHire || false,
       wasAsked: this.props.hireOffer.wasAsked || false,
       askedDateTime: this.props.hireOffer.askedDateTime || '',
@@ -69,8 +68,6 @@ var HireOfferEditDialog = React.createClass({
       showConfirmMaxHoursHireDialog: false,
 
       equipmentVerifiedActive: false,
-      equipmentInformationUpdateNeeded: false,
-      equipmentInformationUpdateNeededReason: '',
 
       rentalAgreementId: null,
     };
@@ -150,39 +147,27 @@ var HireOfferEditDialog = React.createClass({
     return valid;
   },
 
-  buildEquipmentProps() {
-    var props = {};
+  formSubmitted() {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        this.setState({ isSaving: true });
 
-    if (this.state.equipmentVerifiedActive) {
-      props.lastVerifiedDate = toZuluTime(today());
+        var isDumpTruck = this.props.hireOffer.equipment.districtEquipmentType.equipmentType.isDumpTruck;
+        var hoursYtd = this.props.hireOffer.equipment.hoursYtd;
+
+        if (this.state.offerStatus !== STATUS_NO && !isDumpTruck && hoursYtd >= 300) {
+          this.openConfirmMaxHoursHireDialog();
+        } else if (this.state.offerStatus !== STATUS_NO && isDumpTruck && hoursYtd >= 600) {
+          this.openConfirmMaxHoursHireDialog();
+        } else if (this.state.offerStatus == STATUS_FORCE_HIRE) {
+          this.openConfirmForceHireDialog();
+        } else {
+          this.saveHireOffer();
+        }
+      } else {
+        this.props.onClose();
+      }
     }
-
-    if (this.state.equipmentInformationUpdateNeeded || notBlank(this.state.equipmentInformationUpdateNeededReason)) {
-      props.isInformationUpdateNeeded = true;
-    }
-
-    if (notBlank(this.state.equipmentInformationUpdateNeededReason)) {
-      props.informationUpdateNeededReason = this.state.equipmentInformationUpdateNeededReason;
-    }
-
-    return props;
-  },
-
-  onSave() {
-    var isDumpTruck = this.props.hireOffer.equipment.districtEquipmentType.equipmentType.isDumpTruck;
-    var hoursYtd = this.props.hireOffer.equipment.hoursYtd;
-    if (this.state.offerStatus !== STATUS_NO && !isDumpTruck && hoursYtd >= 300) {
-      return this.openConfirmMaxHoursHireDialog();
-    }
-    if (this.state.offerStatus !== STATUS_NO && isDumpTruck && hoursYtd >= 600) {
-      return this.openConfirmMaxHoursHireDialog();
-    }
-
-    if (this.state.offerStatus == STATUS_FORCE_HIRE) {
-      return this.openConfirmForceHireDialog();
-    }
-
-    this.saveHireOffer();
   },
 
   onCancelMaxHoursHire() {
@@ -204,14 +189,21 @@ var HireOfferEditDialog = React.createClass({
   },
 
   saveHireOffer() {
-    var props = this.buildEquipmentProps();
+    var promise = Promise.resolve();
 
-    // Update Equipment props only if they changed
-    var didChange = !_.isMatch(this.props.hireOffer.equipment, props);
-    var promise = didChange ? Api.updateEquipment : Promise.resolve;
+    if (this.state.equipmentVerifiedActive) {
+      // Update Equipment's last verified date
+      const equipment = {
+        ...this.props.hireOffer.equipment,
+        lastVerifiedDate: toZuluTime(today()),
+      };
 
-    promise({ ...this.props.hireOffer.equipment, ...props }).then(() => {
-      this.props.onSave({ ...this.props.hireOffer, ...{
+      promise = Api.updateEquipment(equipment);
+    }
+
+    promise.then(() => {
+      const hireOffer = {
+        ..._.omit(this.props.hireOffer, 'displayFields', 'rentalAgreement'),
         isForceHire: this.state.isForceHire,
         wasAsked: this.state.wasAsked ? true : false,
         askedDateTime: this.state.offerResponse === STATUS_ASKED ? formatDateTime(new Date()) : toZuluTime(this.state.askedDateTime),
@@ -221,12 +213,17 @@ var HireOfferEditDialog = React.createClass({
         offerResponseNote: this.state.offerResponseNote,
         note: this.state.note,
         rentalAgreementId: this.state.rentalAgreementId,
-      }});
+      };
+
+      Api.updateRentalRequestRotationList(hireOffer, this.props.rentalRequest).then(() => {
+        this.setState({isSaving: false});
+        if (this.props.onSave) { this.props.onSave(hireOffer); }
+      });
     });
   },
 
   onConfirmForceHire(reasonForForceHire) {
-    this.setState({ note: reasonForForceHire }, this.saveHireOffer);
+    this.setState({ note: reasonForForceHire, showConfirmForceHireDialog: false }, this.saveHireOffer);
   },
 
   openConfirmForceHireDialog() {
@@ -234,7 +231,7 @@ var HireOfferEditDialog = React.createClass({
   },
 
   closeConfirmForceHireDialog() {
-    this.setState({ showConfirmForceHireDialog: false });
+    this.setState({ showConfirmForceHireDialog: false, isSaving: false });
   },
 
   openConfirmMaxHoursHireDialog() {
@@ -242,142 +239,148 @@ var HireOfferEditDialog = React.createClass({
   },
 
   closeConfirmMaxHoursHireDialog() {
-    this.setState({ showConfirmMaxHoursHireDialog: false });
+    this.setState({ showConfirmMaxHoursHireDialog: false, isSaving: false });
   },
 
   render() {
     // Read-only if the user cannot edit the rental agreement
     var isReadOnly = !this.props.rentalRequest.canEdit && this.props.rentalRequest.id !== 0;
 
-    return <EditDialog id="hire-offer-edit" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={<strong>Response</strong>}>
-      {(() => {
-        var blankRentalAgreements = _.sortBy(this.props.blankRentalAgreements.data, 'number');
+    var blankRentalAgreements = _.sortBy(this.props.blankRentalAgreements.data, 'number');
 
-        var agreementChoiceRow = _.keys(blankRentalAgreements).length === 0 ? null :
-          <FormGroup controlId="rentalAgreementId" validationState={ this.state.rentalAgreementError ? 'error' : null }>
-            <DropdownControl id="rentalAgreementId" updateState={ this.updateState } items={ blankRentalAgreements } selectedId={ this.state.rentalAgreementId } blankLine="Select rental agreement" placeholder="Select rental agreement" />
-            <HelpBlock>{ this.state.rentalAgreementError }</HelpBlock>
-          </FormGroup>;
+    var agreementChoiceRow;
+    if (_.keys(blankRentalAgreements).length !== 0) {
+      agreementChoiceRow = (
+        <FormGroup controlId="rentalAgreementId" validationState={ this.state.rentalAgreementError ? 'error' : null }>
+          <DropdownControl id="rentalAgreementId" updateState={ this.updateState } items={ blankRentalAgreements } selectedId={ this.state.rentalAgreementId } blankLine="Select rental agreement" placeholder="Select rental agreement" />
+          <HelpBlock>{ this.state.rentalAgreementError }</HelpBlock>
+        </FormGroup>
+      );
+    }
 
-        return <Form>
-          <Grid fluid>
+    const loading = this.props.blankRentalAgreements.loading;
+
+    return (
+      <FormDialog
+        id="hire-offer-edit"
+        show={this.props.show}
+        onClose={this.props.onClose}
+        onSubmit={this.formSubmitted}
+        isSaving={this.state.isSaving}
+        title="Response">
+        <Grid fluid>
+          <Col md={12}>
+            <div className="spinner-container">{loading && <Spinner/>}</div>
+            <FormGroup validationState={ this.state.offerResponseError ? 'error' : null }>
+              <ControlLabel>Response</ControlLabel>
+              <Row>
+                <Col md={12}>
+                  <FormGroup>
+                    <Radio
+                      onChange={ () => this.offerStatusChanged(STATUS_YES) }
+                      checked={ this.state.offerStatus == STATUS_YES }
+                      disabled={ loading || (!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse) }>
+                      Yes
+                    </Radio>
+                  </FormGroup>
+                </Col>
+              </Row>
+              { this.state.offerStatus == STATUS_YES && agreementChoiceRow }
+              <Row>
+                <Col md={12}>
+                  <FormGroup>
+                    <Radio
+                      onChange={ () => this.offerStatusChanged(STATUS_NO) }
+                      checked={ this.state.offerStatus == STATUS_NO }
+                      disabled={ loading || (!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse) }>
+                      No
+                    </Radio>
+                  </FormGroup>
+                </Col>
+              </Row>
+              { this.state.offerStatus == STATUS_NO &&
+                <Row>
+                  <Col md={12}>
+                    <FormGroup validationState={ this.state.offerRefusalReasonError ? 'error' : null }>
+                      {/*TODO - use lookup list*/}
+                      <ControlLabel>Refusal Reason</ControlLabel>
+                      <DropdownControl id="offerRefusalReason" className="full-width" disabled={ isReadOnly } title={ this.state.offerRefusalReason } updateState={ this.updateState }
+                        items={ refusalReasons } />
+                      <HelpBlock>{ this.state.offerRefusalReasonError }</HelpBlock>
+                    </FormGroup>
+                  </Col>
+                </Row>
+              }
+              <Row>
+                <Col md={12}>
+                  <FormGroup>
+                    <Radio
+                      onChange={ () => this.offerStatusChanged(STATUS_FORCE_HIRE) }
+                      checked={ this.state.offerStatus == STATUS_FORCE_HIRE }
+                      disabled={ loading }>
+                      Force Hire
+                    </Radio>
+                  </FormGroup>
+                </Col>
+              </Row>
+              { this.state.offerStatus == STATUS_FORCE_HIRE && agreementChoiceRow }
+              <Row>
+                <Col md={12}>
+                  <FormGroup>
+                    <Radio
+                      onChange={ () => this.offerStatusChanged(STATUS_ASKED) }
+                      checked={ this.state.offerStatus == STATUS_ASKED }
+                      disabled={ loading || (!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse) }>
+                      Asked
+                    </Radio>
+                  </FormGroup>
+                </Col>
+              </Row>
+              <HelpBlock>{ this.state.offerResponseError }</HelpBlock>
+            </FormGroup>
+          </Col>
+          <Row>
             <Col md={12}>
-              <FormGroup validationState={ this.state.offerResponseError ? 'error' : null }>
-                <ControlLabel>Response</ControlLabel>
-                <Row>
-                  <Col md={12}>
-                    <FormGroup>
-                      <Radio
-                        onChange={ this.offerStatusChanged.bind(this, STATUS_YES) }
-                        checked={ this.state.offerStatus == STATUS_YES }
-                        disabled={ !this.props.showAllResponseFields && !this.props.hireOffer.offerResponse }
-                      >
-                        Yes
-                      </Radio>
-                    </FormGroup>
-                  </Col>
-                </Row>
-                { this.state.offerStatus == STATUS_YES && agreementChoiceRow }
-                <Row>
-                  <Col md={12}>
-                    <FormGroup>
-                      <Radio
-                        onChange={ this.offerStatusChanged.bind(this, STATUS_NO) }
-                        checked={ this.state.offerStatus == STATUS_NO }
-                        disabled={ !this.props.showAllResponseFields && !this.props.hireOffer.offerResponse }
-                      >
-                        No
-                      </Radio>
-                    </FormGroup>
-                  </Col>
-                </Row>
-                { this.state.offerStatus == STATUS_NO &&
-                  <Row>
-                    <Col md={12}>
-                      <FormGroup validationState={ this.state.offerRefusalReasonError ? 'error' : null }>
-                        {/*TODO - use lookup list*/}
-                        <ControlLabel>Refusal Reason</ControlLabel>
-                        <DropdownControl id="offerRefusalReason" className="full-width" disabled={ isReadOnly } title={ this.state.offerRefusalReason } updateState={ this.updateState }
-                          items={ refusalReasons } />
-                        <HelpBlock>{ this.state.offerRefusalReasonError }</HelpBlock>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                }
-                <Row>
-                  <Col md={12}>
-                    <FormGroup>
-                      <Radio
-                        onChange={ this.offerStatusChanged.bind(this, STATUS_FORCE_HIRE) }
-                        checked={ this.state.offerStatus == STATUS_FORCE_HIRE }
-                      >
-                        Force Hire
-                      </Radio>
-                    </FormGroup>
-                  </Col>
-                </Row>
-                { this.state.offerStatus == STATUS_FORCE_HIRE && agreementChoiceRow }
-                <Row>
-                  <Col md={12}>
-                    <FormGroup>
-                      <Radio
-                        onChange={ this.offerStatusChanged.bind(this, STATUS_ASKED) }
-                        checked={ this.state.offerStatus == STATUS_ASKED }
-                        disabled={ !this.props.hireOffer.showAllResponseFields && !this.props.hireOffer.offerResponse }
-                      >
-                        Asked
-                      </Radio>
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <HelpBlock>{ this.state.offerResponseError }</HelpBlock>
+              <FormGroup controlId="offerResponseNote" validationState={ this.state.offerResponseNoteError ? 'error' : null }>
+                <ControlLabel>Note</ControlLabel>
+                <FormInputControl componentClass="textarea" disabled={loading} defaultValue={ this.state.offerResponseNote } readOnly={ isReadOnly } updateState={ this.updateState } />
+                <HelpBlock>{ this.state.offerResponseNoteError }</HelpBlock>
               </FormGroup>
             </Col>
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId="offerResponseNote" validationState={ this.state.offerResponseNoteError ? 'error' : null }>
-                  <ControlLabel>Note</ControlLabel>
-                  <FormInputControl componentClass="textarea" defaultValue={ this.state.offerResponseNote } readOnly={ isReadOnly } updateState={ this.updateState } />
-                  <HelpBlock>{ this.state.offerResponseNoteError }</HelpBlock>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId="equipmentVerifiedActive">
-                  <CheckboxControl id="equipmentVerifiedActive" checked={ this.state.equipmentVerifiedActive } updateState={ this.updateState }>Verified Active</CheckboxControl>
-                </FormGroup>
-              </Col>
-            </Row>
-          </Grid>
-        </Form>;
-      })()}
-      { this.state.showConfirmForceHireDialog &&
-        <ConfirmForceHireDialog
-          show={ this.state.showConfirmForceHireDialog }
-          onSave={ this.onConfirmForceHire }
-          onClose={ this.closeConfirmForceHireDialog }
-        />
-      }
-      { this.state.showConfirmMaxHoursHireDialog &&
-        <ConfirmDialog
-          show={ this.state.showConfirmMaxHoursHireDialog }
-          onSave={ this.onConfirmMaxHoursHire }
-          onClose={ this.onCancelMaxHoursHire }
-          title="Confirm Hire"
-        >
-          <p>Equipment/Dump Truck has already reached the maximum hours for the year. Do you still want to hire this Equipment/Dump Truck?</p>
-        </ConfirmDialog>
-      }
-    </EditDialog>;
+          </Row>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="equipmentVerifiedActive">
+                <CheckboxControl id="equipmentVerifiedActive" disabled={loading} checked={ this.state.equipmentVerifiedActive } updateState={ this.updateState }>Verified Active</CheckboxControl>
+              </FormGroup>
+            </Col>
+          </Row>
+        </Grid>
+        { this.state.showConfirmForceHireDialog && (
+          <ConfirmForceHireDialog
+            show={ this.state.showConfirmForceHireDialog }
+            onSave={ this.onConfirmForceHire }
+            onClose={ this.closeConfirmForceHireDialog }/>
+        )}
+        { this.state.showConfirmMaxHoursHireDialog && (
+          <ConfirmDialog
+            title="Confirm Hire"
+            show={ this.state.showConfirmMaxHoursHireDialog }
+            onSave={ this.onConfirmMaxHoursHire }
+            onClose={ this.onCancelMaxHoursHire }>
+            <p>
+              Equipment/Dump Truck has already reached the maximum hours for the year. Do you still
+              want to hire this Equipment/Dump Truck?
+            </p>
+          </ConfirmDialog>
+        )}
+      </FormDialog>
+    );
   },
 });
 
 function mapStateToProps(state) {
   return {
-    rentalRequest: state.models.rentalRequest.data,
     blankRentalAgreements: state.lookups.blankRentalAgreements,
   };
 }

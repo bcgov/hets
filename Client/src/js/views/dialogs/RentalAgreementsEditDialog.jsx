@@ -108,39 +108,37 @@ var RentalAgreementsEditDialog = React.createClass({
         title="Rental Agreement Details"
         onSubmit={this.formSubmitted}
         onClose={this.props.onClose}>
-        <Grid fluid>
-          <Row>
-            <Col md={6}>
-              <FormGroup controlId="estimateStartWork" validationState={ this.state.estimateStartWorkError ? 'error' : null }>
-                <ControlLabel>Estimated Commencement</ControlLabel>
-                <DateControl id="estimateStartWork" disabled={ isReadOnly } date={ this.state.estimateStartWork } updateState={ this.updateState } title="Estimated Commencement" />
-                <HelpBlock>{ this.state.estimateStartWorkError }</HelpBlock>
-              </FormGroup>
-            </Col>
-            <Col md={6}>
-              <FormGroup controlId="estimateHours" validationState={ this.state.estimateHoursError ? 'error' : null }>
-                <ControlLabel>Estimated Period Hours <sup>*</sup></ControlLabel>
-                <FormInputControl type="number" min={0} defaultValue={ this.state.estimateHours } readOnly={ isReadOnly } updateState={ this.updateState }/>
-                <HelpBlock>{ this.state.estimateHoursError }</HelpBlock>
-              </FormGroup>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={6}>
-              <FormGroup controlId="datedOn" validationState={ this.state.datedOnError ? 'error' : null }>
-                <ControlLabel>Dated On</ControlLabel>
-                <DateControl id="datedOn" disabled={ isReadOnly } date={ this.state.datedOn } updateState={ this.updateState } title="Dated On" />
-                <HelpBlock>{ this.state.datedOnError }</HelpBlock>
-              </FormGroup>
-            </Col>
-            <Col md={6}>
-              <FormGroup controlId="agreementCity">
-                <ControlLabel>Dated At</ControlLabel>
-                <FormInputControl type="text" value={ this.state.agreementCity } updateState={ this.updateState } />
-              </FormGroup>
-            </Col>
-          </Row>
-        </Grid>
+        <Row>
+          <Col md={6}>
+            <FormGroup controlId="estimateStartWork" validationState={ this.state.estimateStartWorkError ? 'error' : null }>
+              <ControlLabel>Estimated Commencement</ControlLabel>
+              <DateControl id="estimateStartWork" disabled={ isReadOnly } date={ this.state.estimateStartWork } updateState={ this.updateState } title="Estimated Commencement" />
+              <HelpBlock>{ this.state.estimateStartWorkError }</HelpBlock>
+            </FormGroup>
+          </Col>
+          <Col md={6}>
+            <FormGroup controlId="estimateHours" validationState={ this.state.estimateHoursError ? 'error' : null }>
+              <ControlLabel>Estimated Period Hours <sup>*</sup></ControlLabel>
+              <FormInputControl type="number" min={0} defaultValue={ this.state.estimateHours } readOnly={ isReadOnly } updateState={ this.updateState }/>
+              <HelpBlock>{ this.state.estimateHoursError }</HelpBlock>
+            </FormGroup>
+          </Col>
+        </Row>
+        <Row>
+          <Col md={6}>
+            <FormGroup controlId="datedOn" validationState={ this.state.datedOnError ? 'error' : null }>
+              <ControlLabel>Dated On</ControlLabel>
+              <DateControl id="datedOn" disabled={ isReadOnly } date={ this.state.datedOn } updateState={ this.updateState } title="Dated On" />
+              <HelpBlock>{ this.state.datedOnError }</HelpBlock>
+            </FormGroup>
+          </Col>
+          <Col md={6}>
+            <FormGroup controlId="agreementCity">
+              <ControlLabel>Dated At</ControlLabel>
+              <FormInputControl type="text" value={ this.state.agreementCity } updateState={ this.updateState } />
+            </FormGroup>
+          </Col>
+        </Row>
       </FormDialog>
     );
   },

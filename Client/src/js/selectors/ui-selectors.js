@@ -26,3 +26,15 @@ export const activeProjectSelector = createSelector(
   modelsSelector,
   (ui, models) => models.project[ui.activeProjectId] || null
 );
+
+
+export const activeRentalRequestIdSelector = createSelector(
+  uiSelector,
+  (ui) => parseInt(ui.activeRentalRequestId, 10)
+);
+
+export const activeRentalRequestSelector = createSelector(
+  uiSelector,
+  modelsSelector,
+  (ui, models) => models.rentalRequest[ui.activeRentalRequestId] || null
+);

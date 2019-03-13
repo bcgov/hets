@@ -1,8 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Modal as BootstrapModal, Button } from 'react-bootstrap';
+import { Modal, Button } from 'react-bootstrap';
 
-import ModalDialog from './ModalDialog.jsx';
 import Form from './Form.jsx';
 import Spinner from './Spinner.jsx';
 
@@ -40,10 +39,10 @@ var FormDialog = React.createClass({
 
     return (
       <Form onSubmit={this.formSubmitted}>
-        <BootstrapModal.Body>
+        <Modal.Body>
           {children}
-        </BootstrapModal.Body>
-        <BootstrapModal.Footer>
+        </Modal.Body>
+        <Modal.Footer>
           <Button onClick={this.closeDialog}>{closeButtonLabel || 'Close'}</Button>
           {!isReadOnly && (
             <Button bsStyle="primary" type="submit" disabled={isSaving}>
@@ -51,7 +50,7 @@ var FormDialog = React.createClass({
               {isSaving && <Spinner/>}
             </Button>
           )}
-        </BootstrapModal.Footer>
+        </Modal.Footer>
       </Form>
     );
   },
@@ -60,16 +59,20 @@ var FormDialog = React.createClass({
     const { id, className, title, show, bsSize } = this.props;
 
     return (
-      <ModalDialog
+      <Modal
         backdrop="static"
         id={id}
         bsSize={bsSize}
         className={classNames('form-dialog', className)}
         show={show}
-        title={title}
-        onClose={this.closeDialog}>
+        onHide={this.closeDialog}>
+        <Modal.Header closeButton>
+          {title && (
+            <Modal.Title>{title}</Modal.Title>
+          )}
+        </Modal.Header>
         {show && this.renderBody()}
-      </ModalDialog>
+      </Modal>
     );
   },
 });

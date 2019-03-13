@@ -76,12 +76,12 @@ var RentalConditionsEditDialog = React.createClass({
 
     forms.forEach((form, i) => {
       if (form.conditionName === NON_STANDARD_CONDITION && isBlank(form.comment)) {
-        form[i] = { ...form, commentError: 'Comment is required for non-standard conditions.' };
+        forms[i] = { ...form, commentError: 'Comment is required for non-standard conditions.' };
         valid = false;
       }
 
       if (isBlank(form.conditionName)) {
-        form[i] = { ...form, conditionNameError: 'Rental condition is required' };
+        forms[i] = { ...form, conditionNameError: 'Rental condition is required' };
         valid = false;
       }
     });
@@ -148,61 +148,53 @@ var RentalConditionsEditDialog = React.createClass({
         show={this.props.show}
         onClose={this.props.onClose}
         onSubmit={this.formSubmitted}
-        title="Rental Agreement &ndash; Conditions">
+        title="Rental Agreement – Conditions">
         <div className="forms-container">
           { this.state.forms.map((form, i) => (
-            <Grid fluid key={i}>
-              <Row>
-                <Col md={12}>
-                  <FormGroup controlId={`conditionName${i}`} validationState={ form.conditionNameError ? 'error' : null }>
-                    <ControlLabel>Conditions <sup>*</sup></ControlLabel>
-                    {/*TODO - use lookup list*/}
-                    <DropdownControl
-                      id={`conditionName${i}`}
-                      disabled={isReadOnly || !this.props.rentalConditions.loaded}
-                      updateState={this.updateState}
-                      items={conditions}
-                      title={form.conditionName}
-                      className="full-width" />
-                    <HelpBlock>{ form.conditionNameError }</HelpBlock>
-                  </FormGroup>
-                </Col>
-              </Row>
-              { form.conditionName === NON_STANDARD_CONDITION &&
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId={`comment${i}`} validationState={ form.commentError ? 'error' : null }>
-                  <ControlLabel>Comment</ControlLabel>
-                  <FormInputControl componentClass="textarea" defaultValue={ form.comment } readOnly={ isReadOnly } updateState={ this.updateState } />
-                  <HelpBlock>{ form.commentError }</HelpBlock>
+            <div className="form-item" key={i}>
+              <div>
+                <FormGroup controlId={`conditionName${i}`} validationState={ form.conditionNameError ? 'error' : null }>
+                  <ControlLabel>Conditions <sup>*</sup></ControlLabel>
+                  {/*TODO - use lookup list*/}
+                  <DropdownControl
+                    id={`conditionName${i}`}
+                    disabled={isReadOnly || !this.props.rentalConditions.loaded}
+                    updateState={this.updateState}
+                    items={conditions}
+                    title={form.conditionName}
+                    className="full-width" />
+                  <HelpBlock>{ form.conditionNameError }</HelpBlock>
                 </FormGroup>
-              </Col>
-            </Row>
-              }
-            </Grid>
+              </div>
+              { form.conditionName === NON_STANDARD_CONDITION && (
+                <div>
+                  <FormGroup controlId={`comment${i}`} validationState={ form.commentError ? 'error' : null }>
+                    <ControlLabel>Comment <sup>*</sup></ControlLabel>
+                    <FormInputControl componentClass="textarea" defaultValue={ form.comment } readOnly={ isReadOnly } updateState={ this.updateState } />
+                    <HelpBlock>{ form.commentError }</HelpBlock>
+                  </FormGroup>
+                </div>
+              )}
+            </div>
           ))}
         </div>
-        <Grid fluid>
-          <Row className="align-right">
-            <Col md={12}>
-              {this.state.isNew && this.state.numberOfInputs > 1 && (
-                <Button
-                  bsSize="xsmall"
-                  className="remove-btn"
-                  onClick={ this.removeInput }>
-                  <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
-                </Button>
-              )}
-              {this.state.isNew && this.state.numberOfInputs < 10 && (
-                <Button
-                  bsSize="xsmall"
-                  onClick={this.addInput}>
-                  <Glyphicon glyph="plus" />&nbsp;<strong>Add</strong>
-                </Button>
-              )}
-            </Col>
-          </Row>
-        </Grid>
+        <div className="align-right">
+          { this.state.isNew && this.state.forms.length > 1 && (
+            <Button
+              bsSize="xsmall"
+              className="remove-btn"
+              onClick={ this.removeInput }>
+              <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
+            </Button>
+          )}
+          { this.state.isNew && this.state.forms.length < 10 && (
+            <Button
+              bsSize="xsmall"
+              onClick={ this.addInput }>
+              <Glyphicon glyph="plus" />&nbsp;<strong>Add</strong>
+            </Button>
+          )}
+        </div>
       </FormDialog>
     );
   },

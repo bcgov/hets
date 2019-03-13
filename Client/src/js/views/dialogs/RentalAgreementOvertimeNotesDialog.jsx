@@ -74,8 +74,6 @@ var RentalAgreementOvertimeNotesDialog = React.createClass({
       <FormDialog
         id="rental-agreements-overtime-notes-edit"
         show={this.props.show}
-        didChange={this.didChange}
-        isValid={this.isValid}
         onSubmit={this.formSubmitted}
         onClose={this.props.onClose}
         title="Overtime Rates and Notes/Special Instructions">
