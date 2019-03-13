@@ -16,7 +16,7 @@ import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { today, toZuluTime, formatDateTime } from '../../utils/date';
-import { notBlank, isBlank } from '../../utils/string';
+import { isBlank } from '../../utils/string';
 
 
 const STATUS_YES = 'Yes';
