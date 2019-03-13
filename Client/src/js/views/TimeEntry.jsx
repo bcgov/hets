@@ -256,7 +256,7 @@ var TimeEntry = React.createClass({
 
   getFilteredEquipment() {
     return _.chain(this.props.equipment.data)
-      .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesOwnerFilter(x.ownerId))
+      .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesOwnerFilter(x.ownerId) && this.matchesLocalAreaFilter(x.localAreaId))
       .sortBy('equipmentCode')
       .value();
   },

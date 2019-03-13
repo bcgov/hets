@@ -549,23 +549,21 @@ export function getEquipmentDocuments(equipmentId) {
 // }
 
 export function getEquipmentNotes(equipmentId) {
-  return new ApiRequest(`/equipment/${ equipmentId }/notes`).get().then(response => {
-    var notes = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_NOTES, notes: notes });
+  return new ApiRequest(`/equipment/${ equipmentId }/notes`).get().then((response) => {
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_NOTES, notes: response.data });
+    return response.data;
   });
 }
 
 export function addEquipmentNote(equipmentId, note) {
-  return new ApiRequest(`/equipment/${ equipmentId }/note`).post(note).then(response => {
-    var notes = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_NOTES, notes: notes });
+  return new ApiRequest(`/equipment/${ equipmentId }/note`).post(note).then((response) => {
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_NOTES, notes: response.data });
+    return response.data;
   });
 }
 
 export function equipmentDuplicateCheck(id, serialNumber, typeId) {
-  return new ApiRequest(`/equipment/${id}/duplicates/${serialNumber}/${typeId}`).get().then((response => {
-    return response;
-  }));
+  return new ApiRequest(`/equipment/${id}/duplicates/${serialNumber}/${typeId}`).get();
 }
 
 export function changeEquipmentStatus(status) {
@@ -875,16 +873,16 @@ export function updateOwnerEquipment(owner, equipmentArray) {
 }
 
 export function getOwnerNotes(ownerId) {
-  return new ApiRequest(`/owners/${ ownerId }/notes`).get().then(response => {
-    var notes = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_OWNER_NOTES, notes: notes });
+  return new ApiRequest(`/owners/${ ownerId }/notes`).get().then((response) => {
+    store.dispatch({ type: Action.UPDATE_OWNER_NOTES, notes: response.data });
+    return response.data;
   });
 }
 
 export function addOwnerNote(ownerId, note) {
-  return new ApiRequest(`/owners/${ ownerId }/note`).post(note).then(response => {
-    var notes = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_OWNER_NOTES, notes: notes });
+  return new ApiRequest(`/owners/${ ownerId }/note`).post(note).then((response) => {
+    store.dispatch({ type: Action.UPDATE_OWNER_NOTES, notes: response.data });
+    return response.data;
   });
 }
 
@@ -1345,6 +1343,7 @@ export function getProjectDocuments(projectId) {
 export function getProjectNotes(projectId) {
   return new ApiRequest(`/projects/${ projectId }/notes`).get().then((response) => {
     store.dispatch({ type: Action.UPDATE_PROJECT_NOTES, projectId, notes: response.data });
+    return response.data;
   });
 }
 
@@ -1542,15 +1541,15 @@ export function getRentalRequestDocuments(rentalRequestId) {
 
 export function getRentalRequestNotes(rentalRequestId) {
   return new ApiRequest(`/rentalrequests/${ rentalRequestId }/notes`).get().then(response => {
-    var notes = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_NOTES, notes: notes });
+    store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_NOTES, notes: response.data });
+    return response.data;
   });
 }
 
 export function addRentalRequestNote(rentalRequestId, note) {
   return new ApiRequest(`/rentalRequests/${ rentalRequestId }/note`).post(note).then(response => {
-    var notes = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_NOTES, notes: notes });
+    store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_NOTES, notes: response.data });
+    return response.data;
   });
 }
 
@@ -2333,14 +2332,14 @@ export function getVersion() {
 
 export function deleteNote(id) {
   store.dispatch({ type: Action.DELETE_NOTE, noteId: id });
-  return new ApiRequest(`/notes/${id}/delete`).post().then(response => {
-    return response;
+  return new ApiRequest(`/notes/${id}/delete`).post().then((response) => {
+    return response.data;
   });
 }
 
 export function updateNote(note) {
-  return new ApiRequest(`/notes/${note.id}`).put(note).then(response => {
-    return response;
+  return new ApiRequest(`/notes/${note.id}`).put(note).then((response) => {
+    return response.data;
   });
 }
 

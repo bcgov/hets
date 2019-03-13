@@ -438,13 +438,14 @@ var ProjectsDetail = React.createClass({
                   var contacts = sort(project.contacts, this.state.uiContacts.sortField, this.state.uiContacts.sortDesc, caseInsensitiveSort);
 
                   var headers = [
-                    { field: CONTACT_NAME_SORT_FIELDS, title: 'Name'         },
-                    { field: 'phone',                  title: 'Phone Number' },
-                    { field: 'mobilePhoneNumber',      title: 'Cell'         },
-                    { field: 'faxPhoneNumber',         title: 'Fax'          },
-                    { field: 'emailAddress',           title: 'Email'        },
-                    { field: 'role',                   title: 'Role'         },
-                    { field: 'addContact',             title: 'Add Contact', style: { textAlign: 'right'  },
+                    { field: 'name',              title: 'Name'         },
+                    { field: 'phone',             title: 'Phone Number' },
+                    { field: 'mobilePhoneNumber', title: 'Cell'         },
+                    { field: 'faxPhoneNumber',    title: 'Fax'          },
+                    { field: 'emailAddress',      title: 'Email'        },
+                    { field: 'role',              title: 'Role'         },
+                    { field: 'notes',             title: 'Notes'        },
+                    { field: 'addContact',        title: 'Add Contact', style: { textAlign: 'right'  },
                       node: addContactButton,
                     },
                   ];
@@ -462,6 +463,7 @@ var ProjectsDetail = React.createClass({
                           <td>{ contact.faxPhoneNumber }</td>
                           <td><a href={ `mailto:${ contact.emailAddress }` } target="_blank">{ contact.emailAddress }</a></td>
                           <td>{ contact.role }</td>
+                          <td>{ contact.notes ? 'Y' : '' }</td>
                           <td style={{ textAlign: 'right' }}>
                             <ButtonGroup>
                               {contact.canDelete && (
@@ -498,8 +500,7 @@ var ProjectsDetail = React.createClass({
             show={this.state.showNotesDialog}
             id={String(this.props.projectId)}
             getNotes={Api.getProjectNotes}
-            onSave={Api.addProjectNote}
-            onUpdate={Api.updateNote}
+            saveNote={Api.addProjectNote}
             onClose={this.closeNotesDialog}
             notes={project.notes}/>
         )}
