@@ -90,21 +90,15 @@ const DEFAULT_MODELS = {
     loading: false,
     loaded: false,
   },
-  rentalRequest: {
-    data: {},
-    loading: false,
-    success: false,
-    error: false,
-    errorMessage: '',
-  },
-  rentalRequestNotes: [],
-  rentalRequestAttachments: {},
-  rentalRequestHistory: {},
-  rentalRequestRotationList: {
-    data: {},
-    loading: false,
-    success: false,
-  },
+  rentalRequest: {},
+  // rentalRequestNotes: {},
+  // rentalRequestAttachments: {},
+  // rentalRequestHistory: {},
+  // rentalRequestRotationList: {
+  //   data: {},
+  //   loading: false,
+  //   success: false,
+  // },
 
   rentalAgreement: {},
   rentalAgreementTimeRecords: {},
@@ -401,21 +395,39 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.CLEAR_RENTAL_REQUESTS:
       return { ...state, rentalRequests: { data: {}, loading: false, loaded: false } };
 
-    case Action.RENTAL_REQUEST_REQUEST:
-      return { ...state, rentalRequest: { ...state.rentalRequest, loading: true, success: false, error: false, errorMessage: '' } };
-
+    // Rental Request
     case Action.ADD_RENTAL_REQUEST:
     case Action.UPDATE_RENTAL_REQUEST:
-      return { ...state, rentalRequest: { data: action.rentalRequest, loading: false, success: true } };
-
-    case Action.ADD_RENTAL_REQUEST_ERROR:
-      return { ...state, rentalRequest: { ...state.rentalRequest, error: true, errorMessage: action.errorMessage } };
-
-    case Action.ADD_RENTAL_REQUEST_REFRESH:
-      return { ...state, rentalRequest: { ...DEFAULT_MODELS.rentalRequest } };
+      return produce(state, (draftState) => {
+        const rentalRequests = draftState.rentalRequest;
+        const rentalRequestId = action.rentalRequestId;
+        rentalRequests[rentalRequestId] = {
+          notes: [],
+          rotationList: [],
+          ...rentalRequests[rentalRequestId],
+          ...action.rentalRequest,
+        };
+      });
 
     case Action.UPDATE_RENTAL_REQUEST_NOTES:
-      return { ...state, rentalRequestNotes: action.notes };
+      return produce(state, (draftState) => {
+        const rentalRequests = draftState.rentalRequest;
+        const rentalRequestId = action.rentalRequestId;
+        rentalRequests[rentalRequestId] = {
+          ...rentalRequests[rentalRequestId],
+          notes: action.notes,
+        };
+      });
+
+    case Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST:
+      return produce(state, (draftState) => {
+        const rentalRequests = draftState.rentalRequest;
+        const rentalRequestId = action.rentalRequestId;
+        rentalRequests[rentalRequestId] = {
+          ...rentalRequests[rentalRequestId],
+          rotationList: action.rotationList,
+        };
+      });
 
     // Time Entries
     case Action.TIME_ENTRIES_REQUEST:
@@ -446,13 +458,6 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.CLEAR_OWNERS_COVERAGE:
       return { ...state, ownersCoverage: { data: {}, loading: false, loaded: false } };
-
-    // Rotation List
-    case Action.RENTAL_REQUEST_ROTATION_LIST_REQUEST:
-      return { ...state, rentalRequestRotationList: { ...state.rentalRequestRotationList, loading: true, success: false } };
-
-    case Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST:
-      return { ...state, rentalRequestRotationList: { data: action.rentalRequestRotationList, loading: false, success: true } };
 
     // Rental Agreements
     // XXX: Looks like this is unused
@@ -550,8 +555,6 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
         notesCollectionName = 'equipmentNotes';
       } else if (action.noteId in state.ownerNotes) {
         notesCollectionName = 'ownerNotes';
-      } else if (action.noteId in state.rentalRequestNotes) {
-        notesCollectionName = 'rentalRequestNotes';
       }
 
       if (notesCollectionName) {

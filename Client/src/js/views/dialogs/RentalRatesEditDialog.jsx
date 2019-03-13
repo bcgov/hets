@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Row, Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import { FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
 
@@ -74,15 +74,15 @@ var RentalRatesEditDialog = React.createClass({
 
     forms.forEach((form, i) => {
       if (isBlank(form.comment)) {
-        forms[i] = { ...form, commentError: 'Comment is required.' };
+        forms[i] = { ...forms[i], commentError: 'Comment is required.' };
         valid = false;
       }
 
       if (isBlank(form.rate) ) {
-        forms[i] = { ...form, rateError: 'Pay rate is required' };
+        forms[i] = { ...forms[i], rateError: 'Pay rate is required' };
         valid = false;
       } else if (form.rate < 1) {
-        forms[i] = { ...form, rateError: 'Pay rate not valid' };
+        forms[i] = { ...forms[i], rateError: 'Pay rate not valid' };
         valid = false;
       }
     });
@@ -153,12 +153,12 @@ var RentalRatesEditDialog = React.createClass({
       <FormDialog
         id="rental-rates-edit"
         show={this.props.show}
-        title={`Rental Agreement &ndash; ${status} Rates and Attachments`}
+        title={`Rental Agreement – ${status} Rates and Attachments`}
         onSubmit={this.formSubmitted}
         onClose={this.props.onClose}>
         <div className="forms-container">
           { this.state.forms.map((form, i) => (
-            <Grid fluid key={i}>
+            <div className="form-item" key={i}>
               <Row>
                 <Col md={2}>
                   <FormGroup controlId={`rate${i}`} validationState={ form.rateError ? 'error' : null }>
@@ -182,13 +182,13 @@ var RentalRatesEditDialog = React.createClass({
                 </Col>
                 <Col md={ this.props.rentalRate.isIncludedInTotal ? 8 : 6 }>
                   <FormGroup controlId={`comment${i}`} validationState={ form.commentError ? 'error' : null }>
-                    <ControlLabel>Comment</ControlLabel>
+                    <ControlLabel>Comment <sup>*</sup></ControlLabel>
                     <FormInputControl defaultValue={ form.comment } readOnly={ isReadOnly } updateState={ this.updateState } />
                     <HelpBlock>{ form.commentError }</HelpBlock>
                   </FormGroup>
                 </Col>
               </Row>
-            </Grid>
+            </div>
           ))}
         </div>
         <div className="align-right">

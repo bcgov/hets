@@ -56,7 +56,6 @@ var ProjectsDetail = React.createClass({
   getInitialState() {
     return {
       loading: true,
-      loadingHistory: false,
       loadingDocuments: true,
 
       showNotesDialog: false,
@@ -189,7 +188,6 @@ var ProjectsDetail = React.createClass({
 
   closeAddRequestDialog() {
     this.setState({ showAddRequestDialog: false });
-    store.dispatch({ type: Action.ADD_RENTAL_REQUEST_REFRESH });
   },
 
   newRentalAdded(rentalRequest) {

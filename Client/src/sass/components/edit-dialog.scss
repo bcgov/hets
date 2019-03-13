@@ -2,6 +2,14 @@
   [class*='col-'] {
     padding-left: 7px;
     padding-right: 7px;
+
+    &:first-child {
+      padding-left: 0;
+    }
+
+    &:last-child {
+      padding-right: 0;
+    }
   }
 
   h4 {

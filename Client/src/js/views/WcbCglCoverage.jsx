@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import { PageHeader, Well, Alert, Row, Col, Button, ButtonGroup, ControlLabel  } from 'react-bootstrap';
+import { PageHeader, Well, Alert, Button, ButtonGroup } from 'react-bootstrap';
 import _ from 'lodash';
 import Moment from 'moment';
 
