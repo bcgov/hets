@@ -325,7 +325,7 @@ var HireOfferEditDialog = React.createClass({
                       <Radio
                         onChange={ this.offerStatusChanged.bind(this, STATUS_ASKED) }
                         checked={ this.state.offerStatus == STATUS_ASKED }
-                        disabled={ !this.props.hireOffer.showAllResponseFields && !this.props.hireOffer.offerResponse }
+                        disabled={ !this.props.showAllResponseFields && !this.props.hireOffer.offerResponse }
                       >
                         Asked
                       </Radio>
