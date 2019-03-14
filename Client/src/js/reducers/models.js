@@ -503,8 +503,9 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, batchReports: { data: action.batchReports, loaded: true }};
 
     case Action.DELETE_BATCH_REPORT: {
-      const filteredBatchReports = state.batchReports.filter((br) => br.id !== action.batchReportId);
-      return { ...state, batchReports: filteredBatchReports };}
+      const filteredBatchReports = state.batchReports.data.filter((br) => br.id !== action.batchReportId);
+      return { ...state, batchReports: { ...state.batchReports, data: filteredBatchReports }};
+    }
   }
   return state;
 }
