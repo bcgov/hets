@@ -1,11 +1,7 @@
 /* global require, module */
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Promise from 'bluebird';
-
-import './utils/shims';
-
 
 Promise.config({
   cancellation: true,
@@ -66,7 +62,7 @@ function initializeApp() {
         renderApp(App);
         initializationEl.classList.add('done');
         initializationEl.addEventListener('transitionend', () => {
-          initializationEl.remove();
+          initializationEl.parentNode.removeChild(initializationEl);
         });
       });
     });
