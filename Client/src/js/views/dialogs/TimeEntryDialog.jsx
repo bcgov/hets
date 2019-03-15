@@ -356,28 +356,28 @@ var TimeEntryDialog = React.createClass({
     );
   },
 
+  renderTimeRecordItem(timeRecord) {
+    return (
+      <Row>
+        <Col xs={3}>
+          <div>{ formatDateTime(timeRecord.workedDate, 'YYYY-MMM-DD') }</div>
+        </Col>
+        <Col xs={3}>
+          <div>{ formatHours(timeRecord.hours) }</div>
+        </Col>
+        <Col xs={6}>
+          <DeleteButton name="Document" onConfirm={ () => this.deleteTimeRecord(timeRecord) }/>
+        </Col>
+      </Row>
+    );
+  },
+
   renderEditDialog() {
     const rentalAgreementTimeRecords = this.props.rentalAgreementTimeRecords;
     const isValidDate = function( current ){
       return current.day() === 6 && current.isBefore(new Date());
     };
     var sortedTimeRecords = _.sortBy(rentalAgreementTimeRecords.timeRecords, 'workedDate').reverse();
-
-    const TimeRecordItem = ({ timeRecord }) => {
-      return (
-        <Row>
-          <Col xs={3}>
-            <div>{ formatDateTime(timeRecord.workedDate, 'YYYY-MMM-DD') }</div>
-          </Col>
-          <Col xs={3}>
-            <div>{ formatHours(timeRecord.hours) }</div>
-          </Col>
-          <Col xs={6}>
-            <DeleteButton name="Document" onConfirm={ this.deleteTimeRecord.bind(this, timeRecord) }/>
-          </Col>
-        </Row>
-      );
-    };
 
     return (
       <EditDialog
@@ -429,7 +429,7 @@ var TimeEntryDialog = React.createClass({
 
                     { (sortedTimeRecords.length > 0) && !this.state.showAllTimeRecords ?
                       <Row>
-                        <TimeRecordItem timeRecord={sortedTimeRecords[0]} />
+                        {this.renderTimeRecordItem(sortedTimeRecords[0])}
                       </Row>
                       :
                       <Row>
@@ -437,7 +437,7 @@ var TimeEntryDialog = React.createClass({
                           <ul className="time-records-list">
                             { _.map(sortedTimeRecords, timeRecord => (
                               <li key={timeRecord.id} className="list-item">
-                                <TimeRecordItem timeRecord={timeRecord} />
+                                {this.renderTimeRecordItem(timeRecord)}
                               </li>
                             ))}
                           </ul>
@@ -445,9 +445,9 @@ var TimeEntryDialog = React.createClass({
                       </Row>
                     }
                   </div>
-                { (sortedTimeRecords.length > 1) &&
-                <Button onClick={ this.showAllTimeRecords }>{ this.state.showAllTimeRecords ? 'Hide' : 'Show All' }</Button>
-                }
+                  { (sortedTimeRecords.length > 1) &&
+                    <Button onClick={ this.showAllTimeRecords }>{ this.state.showAllTimeRecords ? 'Hide' : 'Show All' }</Button>
+                  }
                 </div>
               );
             })()}

@@ -211,7 +211,7 @@ var StatusLetters = React.createClass({
           </Row>
         </Well>
         {this.renderBatchReports()}
-    </div>
+      </div>
     );
   },
 });

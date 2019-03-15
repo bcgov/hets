@@ -67,7 +67,7 @@ var Main = React.createClass({
     window.removeEventListener('unhandledrejection', this.unhandledRejection);
   },
 
-  render: function() {
+  render() {
     return (
       <div id ="main">
         <TopNav showNav={this.props.showNav}/>

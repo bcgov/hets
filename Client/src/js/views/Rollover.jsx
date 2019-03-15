@@ -149,10 +149,17 @@ var Rollover = React.createClass({
       <PageHeader>{ user.districtName } Roll Over</PageHeader>
 
       <div className="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3">
-        { this.state.loading ? (<div style={{ textAlign: 'center' }}><Spinner/></div>)
-        : status.rolloverActive ? this.renderContentRolloverActive()
-        : status.rolloverComplete ? this.renderContentRolloverComplete()
-        : this.renderContent() }
+        {(() => {
+          if (this.state.loading) {
+            return<div style={{ textAlign: 'center' }}><Spinner/></div>;
+          } else if (status.rolloverActive) {
+            return this.renderContentRolloverActive();
+          } else if (status.rolloverComplete) {
+            return this.renderContentRolloverComplete();
+          } else {
+            return this.renderContent();
+          }
+        })()}
       </div>
     </div>;
   },

@@ -227,6 +227,70 @@ var ProjectsDetail = React.createClass({
     });
   },
 
+  renderRentalRequestListItem(item) {
+    return <tr key={ item.id }>
+      <td>
+        <Link
+          to={ `rental-requests/${item.id}` }
+          className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}>
+          Request
+        </Link>
+      </td>
+      <td>{ item.localAreaName }</td>
+      <td>{ item.equipmentTypeName }</td>
+      <td>{ item.equipmentCount }</td>
+      <td>TBD</td>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>
+        <DeleteButton name="Cancel Rental Request" hide={ item.yesCount > 0 } onConfirm={ this.cancelRequest.bind(this, item) }/>
+      </td>
+    </tr>;
+  },
+
+  renderRentalAgreementListItem(item) {
+    return <tr key={ item.id }>
+      <td>
+        <Link
+          to={ `equipment/${item.equipmentId}` }
+          className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}>
+          { item.equipmentCode }
+        </Link>
+      </td>
+      <td>{ item.localAreaName }</td>
+      <td>{ item.equipmentTypeName }</td>
+      <td>&nbsp;</td>
+      <td>{ item.equipment.equipmentDetails }</td>
+      <td>{ item.isCompleted ?
+        'Completed'
+        :
+        <EditButton name="Time Entry" onClick={this.openTimeEntryDialog.bind(this, item)} />
+      }
+      </td>
+      <td>
+        { item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ?
+          <div>Released</div>
+          :
+          <OverlayTrigger
+            trigger="click"
+            placement="top"
+            rootClose
+            overlay={ <Confirm onConfirm={ this.confirmEndHire.bind(this, item) }/> }>
+            <Button
+              bsSize="xsmall">
+              <Glyphicon glyph="check" />
+            </Button>
+          </OverlayTrigger>
+        }
+      </td>
+      <td><Link to={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${item.id}`}>Agreement</Link></td>
+      <td>{ formatDateTime(item.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
+      <td></td>
+    </tr>;
+  },
+
   render() {
     const { loading, loadingDocuments } = this.state;
     var project = this.props.project || {};
@@ -332,70 +396,6 @@ var ProjectsDetail = React.createClass({
 
                   if (Object.keys(combinedList).length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
 
-                  const RentalRequestListItem = ({ item }) => (
-                    <tr key={ item.id }>
-                      <td>
-                        <Link
-                          to={ `rental-requests/${item.id}` }
-                          className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}>
-                          Request
-                        </Link>
-                      </td>
-                      <td>{ item.localAreaName }</td>
-                      <td>{ item.equipmentTypeName }</td>
-                      <td>{ item.equipmentCount }</td>
-                      <td>TBD</td>
-                      <td>N/A</td>
-                      <td>N/A</td>
-                      <td>N/A</td>
-                      <td>N/A</td>
-                      <td>
-                        <DeleteButton name="Cancel Rental Request" hide={ item.yesCount > 0 } onConfirm={ this.cancelRequest.bind(this, item) }/>
-                      </td>
-                    </tr>
-                  );
-
-                  const RentalAgreementListItem = ({ item }) => (
-                    <tr key={ item.id }>
-                      <td>
-                        <Link
-                          to={ `equipment/${item.equipmentId}` }
-                          className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}>
-                          { item.equipmentCode }
-                        </Link>
-                      </td>
-                      <td>{ item.localAreaName }</td>
-                      <td>{ item.equipmentTypeName }</td>
-                      <td>&nbsp;</td>
-                      <td>{ item.equipment.equipmentDetails }</td>
-                      <td>{ item.isCompleted ?
-                        'Completed'
-                        :
-                        <EditButton name="Time Entry" onClick={this.openTimeEntryDialog.bind(this, item)} />
-                      }
-                      </td>
-                      <td>
-                        { item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ?
-                          <div>Released</div>
-                          :
-                          <OverlayTrigger
-                            trigger="click"
-                            placement="top"
-                            rootClose
-                            overlay={ <Confirm onConfirm={ this.confirmEndHire.bind(this, item) }/> }>
-                            <Button
-                              bsSize="xsmall">
-                              <Glyphicon glyph="check" />
-                            </Button>
-                          </OverlayTrigger>
-                        }
-                      </td>
-                      <td><Link to={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${item.id}`}>Agreement</Link></td>
-                      <td>{ formatDateTime(item.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
-                      <td></td>
-                    </tr>
-                  );
-
                   var headers = [
                     { field: 'equipmentCode',     title: 'ID'               },
                     { field: 'localAreaName',     title: 'Local Area'       },
@@ -411,11 +411,11 @@ var ProjectsDetail = React.createClass({
 
                   return <TableControl id="equipment-list" headers={ headers }>
                     {
-                      _.map(combinedList, (listItem, index) => {
+                      _.map(combinedList, (listItem) => {
                         if (listItem.isRentalRequest) {
-                          return <RentalRequestListItem key={index} item={ listItem } project={ project } />;
+                          return this.renderRentalRequestListItem(listItem);
                         } else {
-                          return <RentalAgreementListItem key={index} item={ listItem } />;
+                          return this.renderRentalAgreementListItem(listItem);
                         }
                       })
                     }
@@ -459,7 +459,7 @@ var ProjectsDetail = React.createClass({
                           <td>{ contact.phone }</td>
                           <td>{ contact.mobilePhoneNumber }</td>
                           <td>{ contact.faxPhoneNumber }</td>
-                          <td><a href={ `mailto:${ contact.emailAddress }` } target="_blank">{ contact.emailAddress }</a></td>
+                          <td><a href={ `mailto:${ contact.emailAddress }` } rel="noopener noreferrer" target="_blank">{ contact.emailAddress }</a></td>
                           <td>{ contact.role }</td>
                           <td>{ contact.notes ? 'Y' : '' }</td>
                           <td style={{ textAlign: 'right' }}>

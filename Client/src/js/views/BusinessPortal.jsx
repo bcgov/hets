@@ -148,55 +148,55 @@ var BusinessPortal = React.createClass({
           </SortTable>;
         })()}
       </Well>
-    <Well id="associate-owner">
-      <SubHeader title="Associate HETS District Owner"/>
-      <div id="overview">
-        <Row>
-          <img id="hets-logo" title="Hired Equipment Tracking System" alt="Hired Equipment Tracking System" src="images/gov/hets.jpg"/>
+      <Well id="associate-owner">
+        <SubHeader title="Associate HETS District Owner"/>
+        <div id="overview">
+          <Row>
+            <img id="hets-logo" title="Hired Equipment Tracking System" alt="Hired Equipment Tracking System" src="images/gov/hets.jpg"/>
+            <p>
+              The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or other piece of equipment they want to hire out to the Ministry Transportation and Infrastructure for day labour and emergency projects.
+            </p>
+            <p>
+              The Hired Equipment Program distributes available work to local equipment owners. The program is based on seniority and is designed to deliver work to registered users fairly and efficiently through the development of local area call-out lists.  Details about the Hired Equipment Program can be found <a href="https://www2.gov.bc.ca/gov/content/industry/construction-industry/transportation-infrastructure/hired-equipment-program">here</a>.
+            </p>
+          </Row>
           <p>
-            The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or other piece of equipment they want to hire out to the Ministry Transportation and Infrastructure for day labour and emergency projects.
+            If you are NEW to the Hired Equipment Program, contact your <a href="https://www2.gov.bc.ca/gov/content/industry/construction-industry/transportation-infrastructure/hired-equipment-program/need-help">local district office</a> to register your company and equipment.
           </p>
           <p>
-            The Hired Equipment Program distributes available work to local equipment owners. The program is based on seniority and is designed to deliver work to registered users fairly and efficiently through the development of local area call-out lists.  Details about the Hired Equipment Program can be found <a href="https://www2.gov.bc.ca/gov/content/industry/construction-industry/transportation-infrastructure/hired-equipment-program">here</a>.
+            If you are REGISTERED with the Hired Equipment Program and this is your first time to the site, enter your Secret Key and Postal Code to validate your account, then select your account.
           </p>
-        </Row>
-        <p>
-          If you are NEW to the Hired Equipment Program, contact your <a href="https://www2.gov.bc.ca/gov/content/industry/construction-industry/transportation-infrastructure/hired-equipment-program/need-help">local district office</a> to register your company and equipment.
-        </p>
-        <p>
-          If you are REGISTERED with the Hired Equipment Program and this is your first time to the site, enter your Secret Key and Postal Code to validate your account, then select your account.
-        </p>
-        <p>
-          For RETURNING equipment owners, select your company above to view your account.
-        </p>
-      </div>
-      <Form inline onSubmit={this.validateOwner}>
-        <FormGroup controlId="secretKey" validationState={this.state.errors.secretKey ? 'error' : null}>
-          <FormInputControl
-            type="text"
-            placeholder="Please enter your secret key here"
-            className="mr-5"
-            disabled={this.state.validating}
-            defaultValue={ this.state.secretKey }
-            updateState={ this.updateState }
-            inputRef={input => this.inputSecretKey = input} />
-        </FormGroup>
-        <FormGroup controlId="postalCode" validationState={this.state.errors.postalCode ? 'error' : null}>
-          <FormInputControl
-            type="text"
-            placeholder="Postal code"
-            className="mr-5"
-            disabled={this.state.validating}
-            defaultValue={ this.state.postalCode }
-            updateState={ this.updateState }
-            inputRef={input => this.inputPostalCode = input} />
-        </FormGroup>
-        <Button type="submit" disabled={this.state.validating}>
-          Validate {this.state.validating && <Spinner />}
-        </Button>
-      </Form>
-      { hasErrors && <div className="validation-error">Secret key validation failed.</div> }
-    </Well>
+          <p>
+            For RETURNING equipment owners, select your company above to view your account.
+          </p>
+        </div>
+        <Form inline onSubmit={this.validateOwner}>
+          <FormGroup controlId="secretKey" validationState={this.state.errors.secretKey ? 'error' : null}>
+            <FormInputControl
+              type="text"
+              placeholder="Please enter your secret key here"
+              className="mr-5"
+              disabled={this.state.validating}
+              defaultValue={ this.state.secretKey }
+              updateState={ this.updateState }
+              inputRef={input => this.inputSecretKey = input} />
+          </FormGroup>
+          <FormGroup controlId="postalCode" validationState={this.state.errors.postalCode ? 'error' : null}>
+            <FormInputControl
+              type="text"
+              placeholder="Postal code"
+              className="mr-5"
+              disabled={this.state.validating}
+              defaultValue={ this.state.postalCode }
+              updateState={ this.updateState }
+              inputRef={input => this.inputPostalCode = input} />
+          </FormGroup>
+          <Button type="submit" disabled={this.state.validating}>
+            Validate {this.state.validating && <Spinner />}
+          </Button>
+        </Form>
+        { hasErrors && <div className="validation-error">Secret key validation failed.</div> }
+      </Well>
     </div>;
   },
 

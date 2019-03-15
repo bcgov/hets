@@ -91,7 +91,7 @@ var OwnersPolicyEditDialog = React.createClass({
   },
 
   render() {
-    console.log(this.props.owner);
+    // console.log(this.props.owner);
     return <EditDialog id="owners-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title={<strong>Owner Insurance</strong>}>

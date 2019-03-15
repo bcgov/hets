@@ -192,18 +192,18 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.DELETE_FAVOURITE:
       return { ...state, favourites: { ...state.favourites, [action.favourite.type]: _.omit(state.favourites[action.favourite.type], [ action.favourite.id ]) } };
 
-    // Contacts
-    // XXX: Looks like this is unused
-    // case Action.ADD_CONTACT:
-    //   return { ...state, contact: action.contact };
+      // Contacts
+      // XXX: Looks like this is unused
+      // case Action.ADD_CONTACT:
+      //   return { ...state, contact: action.contact };
 
-    // XXX: Looks like this is unused
-    // case Action.UPDATE_CONTACT:
-    //   return { ...state, contact: action.contact };
+      // XXX: Looks like this is unused
+      // case Action.UPDATE_CONTACT:
+      //   return { ...state, contact: action.contact };
 
-    // XXX: Looks like this is unused
-    // case Action.DELETE_CONTACT:
-    //   return { ...state, contact: action.contact };
+      // XXX: Looks like this is unused
+      // case Action.DELETE_CONTACT:
+      //   return { ...state, contact: action.contact };
 
     // Documents
     case Action.UPDATE_DOCUMENTS:
@@ -459,13 +459,13 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.CLEAR_OWNERS_COVERAGE:
       return { ...state, ownersCoverage: { data: {}, loading: false, loaded: false } };
 
-    // Rental Agreements
-    // XXX: Looks like this is unused
-    // case Action.ADD_RENTAL_AGREEMENT:
-    //   return { ...state, rentalAgreement: { ...state.rentalAgreement, [action.rentalAgreement.id]: action.rentalAgreement } };
+      // Rental Agreements
+      // XXX: Looks like this is unused
+      // case Action.ADD_RENTAL_AGREEMENT:
+      //   return { ...state, rentalAgreement: { ...state.rentalAgreement, [action.rentalAgreement.id]: action.rentalAgreement } };
 
-    // case Action.GENERATE_ANOTHER_RENTAL_AGREEMENT:
-    //   return { ...state, rentalAgreement: { ...state.rentalAgreement, [action.rentalAgreement.id]: action.rentalAgreement } };
+      // case Action.GENERATE_ANOTHER_RENTAL_AGREEMENT:
+      //   return { ...state, rentalAgreement: { ...state.rentalAgreement, [action.rentalAgreement.id]: action.rentalAgreement } };
 
     case Action.UPDATE_RENTAL_AGREEMENT:
       return produce(state, (draftState) => {

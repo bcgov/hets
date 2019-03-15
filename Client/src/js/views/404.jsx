@@ -11,7 +11,7 @@ var Main = React.createClass({
     };
   },
 
-  render: function () {
+  render() {
     return <div id="not-found-screen">
       <h1>Not found <span>:(</span></h1>
 

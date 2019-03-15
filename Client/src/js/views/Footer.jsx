@@ -10,7 +10,7 @@ var Footer = React.createClass({
     currentUser: React.PropTypes.object,
   },
 
-  render: function () {
+  render() {
     return <footer id="footer">
       <div id="footerWrapper">
         <div id="footerAdminSection">

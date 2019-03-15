@@ -202,9 +202,9 @@ var EquipmentTransferDialog = React.createClass({
       <p>This action will transfer all selected equipment from the first owner/company to the second owner/company.</p>
       <ul>
         <li>The piece(s) of equipment from the first company will be archived.</li>
-        { this.state.seniorityOption === OPTION_EQUIPMENT_ONLY.id && <li>The piece(s) of equipment will be added to the "Transfer To" owner/company as new equipment.</li> }
+        { this.state.seniorityOption === OPTION_EQUIPMENT_ONLY.id && <li>The piece(s) of equipment will be added to the “Transfer To” owner/company as new equipment.</li> }
         { this.state.seniorityOption === OPTION_EQUIPMENT_ONLY.id && <li>All previous seniority data will be lost.</li> }
-        { this.state.seniorityOption === OPTION_EQUIPMENT_AND_SENIORITY.id && <li>The piece(s) of equipment will be added to the "Transfer To" owner/company while retaining their seniority.</li> }
+        { this.state.seniorityOption === OPTION_EQUIPMENT_AND_SENIORITY.id && <li>The piece(s) of equipment will be added to the “Transfer To” owner/company while retaining their seniority.</li> }
       </ul>
       { !this.state.waitingForResponse && <p>Do you want to continue?</p> }
       { this.state.waitingForResponse && <p>Please wait while the equipment is transferred. This may take some time.</p> }
@@ -288,14 +288,14 @@ var EquipmentTransferDialog = React.createClass({
         bsSize="large"
         onClose={ this.props.onClose }
         show={ this.props.show }
-        children={ content }
         footer={
           <span>
             <Button onClick={ this.props.onClose }>Close</Button>
             { displayTransferButton && <Button bsStyle="primary" onClick={ transferFunc.bind(this) } disabled={ !transferEnabled }>{ transferText }</Button> }
           </span>
-        }
-      />
+        }>
+        {content}
+      </ModalDialog>
     );
   },
 });

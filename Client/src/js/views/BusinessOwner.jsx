@@ -221,7 +221,7 @@ var BusinessOwner = React.createClass({
                     <td>{ contact.phone }</td>
                     <td>{ contact.mobilePhoneNumber }</td>
                     <td>{ contact.faxPhoneNumber }</td>
-                    <td><a href={ `mailto:${ contact.emailAddress }` } target="_blank">{ contact.emailAddress }</a></td>
+                    <td><a href={ `mailto:${ contact.emailAddress }` } rel="noopener noreferrer" target="_blank">{ contact.emailAddress }</a></td>
                     <td>{ contact.role }</td>
                   </tr>;
                 })

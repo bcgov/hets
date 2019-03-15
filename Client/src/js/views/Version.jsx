@@ -68,7 +68,7 @@ var Version = React.createClass({
 
   },
 
-  render: function() {
+  render() {
     return <div id="version">
       <PageHeader id="version-header">Version
         <div id="version-buttons" style={ { float: 'right' } }>

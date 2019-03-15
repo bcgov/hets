@@ -134,12 +134,12 @@ var NotesDialog = React.createClass({
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Note</strong>
         </Button>
         { this.state.showNotesAddDialog && (
-            <NotesAddDialog
-              show={this.state.showNotesAddDialog}
-              note={this.state.note}
-              onSave={this.onNoteAdded}
-              onUpdate={this.onNoteUpdated}
-              onClose={this.closeNotesAddDialog}/>
+          <NotesAddDialog
+            show={this.state.showNotesAddDialog}
+            note={this.state.note}
+            onSave={this.onNoteAdded}
+            onUpdate={this.onNoteUpdated}
+            onClose={this.closeNotesAddDialog}/>
         )}
       </ModalDialog>
     );
