@@ -6,34 +6,36 @@ import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import Form from '../../components/Form.jsx';
 
-var AttachmentEditDialog = React.createClass({
-  propTypes: {
+class AttachmentEditDialog extends React.Component {
+  static propTypes = {
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     equipment: React.PropTypes.object.isRequired,
     attachment: React.PropTypes.object.isRequired,
-  },
+  };
 
-  getInitialState() {
-    return {
-      typeName: this.props.attachment.typeName,
-      concurrencyControlNumber: this.props.attachment.concurrencyControlNumber || 0,
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      typeName: props.attachment.typeName,
+      concurrencyControlNumber: props.attachment.concurrencyControlNumber || 0,
       attachmentError: '',
     };
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.typeName !== '') { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       attachmentError: '',
     });
@@ -46,16 +48,16 @@ var AttachmentEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     this.props.onSave({
       id: this.props.attachment.id,
       typeName: this.state.typeName,
       concurrencyControlNumber: this.state.concurrencyControlNumber,
       equipment: { id: this.props.equipment.id },
     });
-  },
+  };
 
   render() {
     return <EditDialog id="attachment-edit" show={ this.props.show }
@@ -69,7 +71,7 @@ var AttachmentEditDialog = React.createClass({
         </FormGroup>
       </Form>
     </EditDialog>;
-  },
-});
+  }
+}
 
 export default AttachmentEditDialog;

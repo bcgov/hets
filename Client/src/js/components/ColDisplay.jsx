@@ -1,15 +1,15 @@
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
-
 import _ from 'lodash';
 
-var ColDisplay = React.createClass({
-  propTypes: {
+
+class ColDisplay extends React.Component {
+  static propTypes = {
     label: React.PropTypes.node,
     children: React.PropTypes.node,
     labelProps: React.PropTypes.object,
     fieldProps: React.PropTypes.object,
-  },
+  };
 
   render() {
     var props = _.omit(this.props, 'label', 'labelProps', 'fieldProps');
@@ -22,8 +22,8 @@ var ColDisplay = React.createClass({
         { this.props.children }
       </Col>
     </Row>;
-  },
-});
+  }
+}
 
 
 export default ColDisplay;

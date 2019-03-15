@@ -1,10 +1,10 @@
 import React from 'react';
-
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
+
 // simplifies adding tooltips for enabled and disabled buttons
-var TooltipButton = React.createClass({
-  propTypes: {
+class TooltipButton extends React.Component {
+  static propTypes = {
     disabled: React.PropTypes.bool,
     children: React.PropTypes.node,
     enabledTooltip: React.PropTypes.node,
@@ -14,13 +14,11 @@ var TooltipButton = React.createClass({
     style: React.PropTypes.object,
     bsSize: React.PropTypes.string,
     bsStyle: React.PropTypes.string,
-  },
+  };
 
-  getDefaultProps() {
-    return {
-      style: {},
-    };
-  },
+  static defaultProps = {
+    style: {},
+  };
 
   render() {
     var buttonStyle = this.props.disabled ? {...this.props.style, pointerEvents : 'none' } : this.props.style;
@@ -43,8 +41,8 @@ var TooltipButton = React.createClass({
     } else {
       return button;
     }
-  },
-});
+  }
+}
 
 
 export default TooltipButton;

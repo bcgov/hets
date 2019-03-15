@@ -9,40 +9,38 @@ import EditDialog from '../../components/EditDialog.jsx';
 import Form from '../../components/Form.jsx';
 
 
-var ReleaseExtendHireDialog = React.createClass({
-  propTypes: {
+class ReleaseExtendHireDialog extends React.Component {
+  static propTypes = {
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool.isRequired,
     title: React.PropTypes.string,
     releaseHire: React.PropTypes.bool,
-  },
+  };
 
-  getInitialState() {
-    return {
-      endHireDate: Moment(new Date()).format('YYYY-MM-DD'),
-    };
-  },
+  state = {
+    endHireDate: Moment(new Date()).format('YYYY-MM-DD'),
+  };
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     // todo
     return true;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     // todo
     return true;
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     this.props.onSave({
       endHireDate: this.state.endHireDate,
     });
-  },
+  };
 
   render() {
     return (
@@ -78,7 +76,7 @@ var ReleaseExtendHireDialog = React.createClass({
         </Form>
       </EditDialog>
     );
-  },
-});
+  }
+}
 
 export default ReleaseExtendHireDialog;

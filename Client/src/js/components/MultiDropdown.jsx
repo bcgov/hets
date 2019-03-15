@@ -1,15 +1,14 @@
 import React from 'react';
-
 import { Well, Dropdown, FormControl, Checkbox } from 'react-bootstrap';
-
 import RootCloseMenu from './RootCloseMenu.jsx';
-
 import _ from 'lodash';
+
 
 const MAX_ITEMS_FOR_TITLE = 3;
 
-var MultiDropdown = React.createClass({
-  propTypes: {
+
+class MultiDropdown extends React.Component {
+  static propTypes = {
     items: React.PropTypes.array.isRequired,
     placeholder: React.PropTypes.string,
     id: React.PropTypes.string.isRequired,
@@ -20,29 +19,30 @@ var MultiDropdown = React.createClass({
     updateState: React.PropTypes.func,
     showMaxItems: React.PropTypes.number,
     disabled: React.PropTypes.bool,
-  },
+  };
 
-  getInitialState() {
-    var selectedIds = this.props.selectedIds || [];
-    var items = this.props.items || [];
-    var fieldName = this.props.fieldName || 'name';
+  constructor(props) {
+    super(props);
+    var selectedIds = props.selectedIds || [];
+    var items = props.items || [];
+    var fieldName = props.fieldName || 'name';
 
-    return {
+    this.state = {
       selectedIds: selectedIds,
       title: '',
       filterTerm: '',
-      maxItemsForTitle: this.props.showMaxItems || MAX_ITEMS_FOR_TITLE,
+      maxItemsForTitle: props.showMaxItems || MAX_ITEMS_FOR_TITLE,
       allSelected: selectedIds.length === items.length && selectedIds.length > 0,
       fieldName: fieldName,
       open: false,
     };
-  },
+  }
 
   componentDidMount() {
     // Have to wait until state is ready before initializing title.
     var title = this.buildTitle(this.props.items, this.state.selectedIds);
     this.setState({ title: title });
-  },
+  }
 
   componentWillReceiveProps(nextProps) {
     if (!_.isEqual(nextProps.items, this.props.items)) {
@@ -58,9 +58,9 @@ var MultiDropdown = React.createClass({
         title: this.buildTitle(this.props.items, nextProps.selectedIds),
       });
     }
-  },
+  }
 
-  buildTitle(items, selectedIds) {
+  buildTitle = (items, selectedIds) => {
     var num = selectedIds.length;
 
     if (items.length === 0 || num === 0) {
@@ -72,9 +72,9 @@ var MultiDropdown = React.createClass({
     } else {
       return _.map(_.pickBy(items, item => selectedIds.includes(item.id)), this.state.fieldName).join(', ');
     }
-  },
+  };
 
-  itemSelected(e) {
+  itemSelected = (e) => {
     var id = parseInt(e.target.value, 10);
     var selectedIds = this.state.selectedIds.slice();
 
@@ -91,9 +91,9 @@ var MultiDropdown = React.createClass({
     });
 
     this.sendSelected(selectedIds);
-  },
+  };
 
-  selectAll(e) {
+  selectAll = (e) => {
     var selectedIds = e.target.checked ? _.map(this.props.items, 'id') : [];
 
     this.setState({
@@ -103,9 +103,9 @@ var MultiDropdown = React.createClass({
     });
 
     this.sendSelected(selectedIds);
-  },
+  };
 
-  sendSelected(selectedIds) {
+  sendSelected = (selectedIds) => {
     var selected = this.props.items.filter(item => selectedIds.includes(item.id));
 
     // Send selected items to change listener
@@ -119,27 +119,27 @@ var MultiDropdown = React.createClass({
         [this.props.id]: selectedIds,
       });
     }
-  },
+  };
 
-  toggle(open) {
+  toggle = (open) => {
     this.setState({ open: open }, () => {
       if (open) {
         this.input.focus();
       }
     });
-  },
+  };
 
-  filter(e) {
+  filter = (e) => {
     this.setState({
       filterTerm: e.target.value.toLowerCase().trim(),
     });
-  },
+  };
 
-  keyDown(e) {
+  keyDown = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
     }
-  },
+  };
 
   render() {
     var items = this.props.items;
@@ -174,7 +174,7 @@ var MultiDropdown = React.createClass({
         }
       </RootCloseMenu>
     </Dropdown>;
-  },
-});
+  }
+}
 
 export default MultiDropdown;

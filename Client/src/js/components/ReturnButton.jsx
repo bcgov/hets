@@ -4,12 +4,12 @@ import { browserHistory } from 'react-router';
 import { Button, Glyphicon } from 'react-bootstrap';
 
 
-var ReturnButton = React.createClass({
-  propTypes: {
+class ReturnButton extends React.Component {
+  static propTypes = {
     id: React.PropTypes.string,
     className: React.PropTypes.string,
     title: React.PropTypes.string,
-  },
+  };
 
   render() {
     const { id, className, title } = this.props;
@@ -23,8 +23,8 @@ var ReturnButton = React.createClass({
         <Glyphicon glyph="arrow-left" /> Return
       </Button>
     );
-  },
-});
+  }
+}
 
 
 export default ReturnButton;

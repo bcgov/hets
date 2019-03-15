@@ -12,32 +12,30 @@ import FormInputControl from '../../components/FormInputControl.jsx';
 import { isBlank } from '../../utils/string';
 import { OWNER_STATUS_CODE_APPROVED } from '../../constants';
 
-var ChangeStatusDialog = React.createClass({
-  propTypes: {
+class ChangeStatusDialog extends React.Component {
+  static propTypes = {
     show: React.PropTypes.bool,
     status: React.PropTypes.string.isRequired,
     owner: React.PropTypes.object.isRequired,
     onClose: React.PropTypes.func.isRequired,
     onStatusChanged: React.PropTypes.func.isRequired,
-  },
+  };
 
-  getInitialState() {
-    return {
-      comment: '',
-      commentError: '',
-      statusError: '',
-    };
-  },
+  state = {
+    comment: '',
+    commentError: '',
+    statusError: '',
+  };
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     return true;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       commentError: '',
       statusError: '',
@@ -56,9 +54,9 @@ var ChangeStatusDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  statusRequirements() {
+  statusRequirements = () => {
     const { owner } = this.props;
     var requirements = [];
 
@@ -76,9 +74,9 @@ var ChangeStatusDialog = React.createClass({
     }
 
     return requirements;
-  },
+  };
 
-  formSubmitted() {
+  formSubmitted = () => {
     if (this.isValid()) {
       this.setState({isSaving: true});
       const status = {
@@ -113,7 +111,7 @@ var ChangeStatusDialog = React.createClass({
         }
       });
     }
-  },
+  };
 
   render() {
     var statusErrorText = this.state.statusError && this.state.statusError.length <= 1 ? 'The following is also required:' : 'The following are also required:';
@@ -142,7 +140,7 @@ var ChangeStatusDialog = React.createClass({
         </FormGroup>
       </FormDialog>
     );
-  },
-});
+  }
+}
 
 export default ChangeStatusDialog;

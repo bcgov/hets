@@ -12,38 +12,39 @@ import FormInputControl from '../../components/FormInputControl.jsx';
 import { isBlank } from '../../utils/string';
 
 
-var RentalRatesEditDialog = React.createClass({
-  propTypes: {
+class RentalRatesEditDialog extends React.Component {
+  static propTypes = {
     show: React.PropTypes.bool,
     rentalRate: React.PropTypes.object.isRequired,
     rentalAgreement: React.PropTypes.object,
     provincialRateTypes: React.PropTypes.array,
     onSave: React.PropTypes.func,
     onClose: React.PropTypes.func.isRequired,
-  },
+  };
 
-  getInitialState() {
-    var isNew = this.props.rentalRate.id === 0;
+  constructor(props) {
+    super(props);
+    var isNew = props.rentalRate.id === 0;
 
-    return {
+    this.state = {
       isNew: isNew,
 
       forms: [{
-        isIncludedInTotal: this.props.rentalRate.isIncludedInTotal || false,
+        isIncludedInTotal: props.rentalRate.isIncludedInTotal || false,
         rateType: {},
-        rate: this.props.rentalRate.rate || 0.0,
-        comment: this.props.rentalRate.comment || '',
-        set: this.props.rentalRate.set || false,
+        rate: props.rentalRate.rate || 0.0,
+        comment: props.rentalRate.comment || '',
+        set: props.rentalRate.set || false,
 
         componentNameError: '',
         rateError: '',
         commentError: '',
       }],
-      concurrencyControlNumber: this.props.rentalRate.concurrencyControlNumber || 0,
+      concurrencyControlNumber: props.rentalRate.concurrencyControlNumber || 0,
     };
-  },
+  }
 
-  updateState(value) {
+  updateState = (value) => {
     let property = Object.keys(value)[0];
     let stateValue = _.values(value)[0];
     let number = property.match(/\d+/g)[0];
@@ -52,13 +53,13 @@ var RentalRatesEditDialog = React.createClass({
     const updatedForms = this.state.forms.slice();
     updatedForms.splice(number, 1, { ...updatedForms[number], ...state});
     this.setState({ forms: updatedForms });
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     return true;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     const forms = this.state.forms.slice();
 
     forms.forEach((form, i) => {
@@ -90,9 +91,9 @@ var RentalRatesEditDialog = React.createClass({
     this.setState({ forms });
 
     return valid;
-  },
+  };
 
-  formSubmitted() {
+  formSubmitted = () => {
     const { rentalAgreement, onSave, onClose } = this.props;
 
     if (this.isValid()) {
@@ -117,9 +118,9 @@ var RentalRatesEditDialog = React.createClass({
 
       onClose();
     }
-  },
+  };
 
-  addInput() {
+  addInput = () => {
     if (this.state.forms.length < 10) {
       const forms = this.state.forms.slice();
       forms.push({
@@ -134,15 +135,15 @@ var RentalRatesEditDialog = React.createClass({
 
       this.setState({ forms });
     }
-  },
+  };
 
-  removeInput() {
+  removeInput = () => {
     if (this.state.forms.length > 1) {
       const forms = this.state.forms.slice();
       forms.pop();
       this.setState({ forms });
     }
-  },
+  };
 
   render() {
     // Read-only if the user cannot edit the rental agreement
@@ -210,7 +211,7 @@ var RentalRatesEditDialog = React.createClass({
         </div>
       </FormDialog>
     );
-  },
-});
+  }
+}
 
 export default RentalRatesEditDialog;

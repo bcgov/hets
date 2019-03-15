@@ -19,46 +19,48 @@ import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
-var ProjectsEditDialog = React.createClass({
-  propTypes: {
+class ProjectsEditDialog extends React.Component {
+  static propTypes = {
     fiscalYears: React.PropTypes.array,
     project: React.PropTypes.object,
     projects: React.PropTypes.object,
 
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
-  },
+  };
 
-  getInitialState() {
-    return {
-      projectName: this.props.project.name || '',
-      projectStatus: this.props.project.status || Constant.PROJECT_STATUS_CODE_ACTIVE,
-      fiscalYear: this.props.project.fiscalYear || _.first( _.takeRight(this.props.fiscalYears, 2)),
-      provincialProjectNumber: this.props.project.provincialProjectNumber || '',
-      responsibilityCentre: this.props.project.responsibilityCentre || '',
-      serviceLine: this.props.project.serviceLine || '',
-      stob: this.props.project.stob || '',
-      product: this.props.project.product || '',
-      businessFunction: this.props.project.businessFunction || '',
-      workActivity: this.props.project.workActivity || '',
-      costType: this.props.project.costType || '',
-      projectInformation: this.props.project.information || '',
-      concurrencyControlNumber: this.props.project.concurrencyControlNumber || 0,
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      projectName: props.project.name || '',
+      projectStatus: props.project.status || Constant.PROJECT_STATUS_CODE_ACTIVE,
+      fiscalYear: props.project.fiscalYear || _.first( _.takeRight(props.fiscalYears, 2)),
+      provincialProjectNumber: props.project.provincialProjectNumber || '',
+      responsibilityCentre: props.project.responsibilityCentre || '',
+      serviceLine: props.project.serviceLine || '',
+      stob: props.project.stob || '',
+      product: props.project.product || '',
+      businessFunction: props.project.businessFunction || '',
+      workActivity: props.project.workActivity || '',
+      costType: props.project.costType || '',
+      projectInformation: props.project.information || '',
+      concurrencyControlNumber: props.project.concurrencyControlNumber || 0,
       statusError: '',
       projectNameError: '',
       projectStatusCodeError: '',
     };
-  },
+  }
 
   componentDidMount() {
     Api.getProjects();
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     var project = this.props.project;
 
     if (this.state.projectName !== project.name) { return true; }
@@ -75,9 +77,9 @@ var ProjectsEditDialog = React.createClass({
     if (this.state.projectStatus !== project.status) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       statusError: '',
       fiscalYearError: '',
@@ -112,9 +114,9 @@ var ProjectsEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onSubmit() {
+  onSubmit = () => {
     if (this.isValid()) {
       if (this.didChange()) {
         const project = {
@@ -146,7 +148,7 @@ var ProjectsEditDialog = React.createClass({
 
       this.props.onClose();
     }
-  },
+  };
 
   render() {
     const { isSaving } = this.state;
@@ -261,8 +263,8 @@ var ProjectsEditDialog = React.createClass({
         </Form>
       </FormDialog>
     );
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

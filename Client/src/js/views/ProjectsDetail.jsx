@@ -44,17 +44,19 @@ import PrintButton from '../components/PrintButton.jsx';
 const CONTACT_NAME_SORT_FIELDS = ['givenName', 'surname'];
 
 
-var ProjectsDetail = React.createClass({
-  propTypes: {
+class ProjectsDetail extends React.Component {
+  static propTypes = {
     projectId: React.PropTypes.number,
     project: React.PropTypes.object,
     documents: React.PropTypes.object,
     uiContacts: React.PropTypes.object,
     router: React.PropTypes.object,
-  },
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       loading: true,
       loadingDocuments: true,
 
@@ -73,11 +75,11 @@ var ProjectsDetail = React.createClass({
 
       // Contacts
       uiContacts : {
-        sortField: this.props.uiContacts.sortField || CONTACT_NAME_SORT_FIELDS,
-        sortDesc: this.props.uiContacts.sortDesc === true,
+        sortField: props.uiContacts.sortField || CONTACT_NAME_SORT_FIELDS,
+        sortDesc: props.uiContacts.sortDesc === true,
       },
     };
-  },
+  }
 
   componentDidMount() {
     const { projectId, project } = this.props;
@@ -93,52 +95,52 @@ var ProjectsDetail = React.createClass({
     ]).then(() => {
       this.setState({ loading: false });
     });
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     return Api.getProject(this.props.projectId);
-  },
+  };
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  updateContactsUIState(state, callback) {
+  updateContactsUIState = (state, callback) => {
     this.setState({ uiContacts: { ...this.state.uiContacts, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_PROJECT_CONTACTS_UI, projectContacts: this.state.uiContacts });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  showNotes() {
+  showNotes = () => {
     this.setState({ showNotesDialog: true });
-  },
+  };
 
-  closeNotesDialog() {
+  closeNotesDialog = () => {
     this.setState({ showNotesDialog: false });
-  },
+  };
 
-  showDocuments() {
+  showDocuments = () => {
     this.setState({ showDocumentsDialog: true });
-  },
+  };
 
-  closeDocumentsDialog() {
+  closeDocumentsDialog = () => {
     this.setState({ showDocumentsDialog: false });
-  },
+  };
 
-  addDocument() {
+  addDocument = () => {
 
-  },
+  };
 
-  openEditDialog() {
+  openEditDialog = () => {
     this.setState({ showEditDialog: true });
-  },
+  };
 
-  closeEditDialog() {
+  closeEditDialog = () => {
     this.setState({ showEditDialog: false });
-  },
+  };
 
-  openContactDialog(contactId) {
+  openContactDialog = (contactId) => {
     var contact;
     if (contactId === 0) {
       // New
@@ -154,22 +156,22 @@ var ProjectsDetail = React.createClass({
       contact: contact,
       showContactDialog: true,
     });
-  },
+  };
 
-  closeContactDialog() {
+  closeContactDialog = () => {
     this.setState({ contact:null, showContactDialog: false });
-  },
+  };
 
-  deleteContact(contact) {
+  deleteContact = (contact) => {
     store.dispatch({ type: Action.DELETE_PROJECT_CONTACT, projectId: this.props.projectId, contactId: contact.id });
     Api.deleteContact(contact).then(() => {
       Log.projectContactDeleted(this.props.project, contact).then(() => {
         this.fetch();
       });
     });
-  },
+  };
 
-  contactSaved(contact) {
+  contactSaved = (contact) => {
     var isNew = !contact.id;
     var log = isNew ? Log.projectContactAdded : Log.projectContactUpdated;
 
@@ -180,17 +182,17 @@ var ProjectsDetail = React.createClass({
     });
 
     this.closeContactDialog();
-  },
+  };
 
-  openAddRequestDialog() {
+  openAddRequestDialog = () => {
     this.setState({ showAddRequestDialog: true });
-  },
+  };
 
-  closeAddRequestDialog() {
+  closeAddRequestDialog = () => {
     this.setState({ showAddRequestDialog: false });
-  },
+  };
 
-  newRentalAdded(rentalRequest) {
+  newRentalAdded = (rentalRequest) => {
     this.fetch();
 
     Log.projectRentalRequestAdded(this.props.project, rentalRequest);
@@ -198,36 +200,36 @@ var ProjectsDetail = React.createClass({
     this.props.router.push({
       pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ rentalRequest.id }`,
     });
-  },
+  };
 
-  confirmEndHire(item) {
+  confirmEndHire = (item) => {
     Api.releaseRentalAgreement(item.id).then(() => {
       Api.getProject(this.props.projectId);
       Log.projectEquipmentReleased(this.props.project, item.equipment);
     });
-  },
+  };
 
-  openTimeEntryDialog(rentalAgreement) {
+  openTimeEntryDialog = (rentalAgreement) => {
     this.setState({ rentalAgreement }, () => {
       this.setState({
         showTimeEntryDialog: true,
         fiscalYearStartDate: this.props.project.fiscalYearStartDate,
       });
     });
-  },
+  };
 
-  closeTimeEntryDialog() {
+  closeTimeEntryDialog = () => {
     this.setState({ showTimeEntryDialog: false });
-  },
+  };
 
-  cancelRequest(request) {
+  cancelRequest = (request) => {
     store.dispatch({ type: Action.DELETE_PROJECT_RENTAL_REQUEST, projectId: this.props.projectId, requestId: request.id });
     Api.cancelRentalRequest(request.id).then(() => {
       this.fetch();
     });
-  },
+  };
 
-  renderRentalRequestListItem(item) {
+  renderRentalRequestListItem = (item) => {
     return <tr key={ item.id }>
       <td>
         <Link
@@ -248,9 +250,9 @@ var ProjectsDetail = React.createClass({
         <DeleteButton name="Cancel Rental Request" hide={ item.yesCount > 0 } onConfirm={ this.cancelRequest.bind(this, item) }/>
       </td>
     </tr>;
-  },
+  };
 
-  renderRentalAgreementListItem(item) {
+  renderRentalAgreementListItem = (item) => {
     return <tr key={ item.id }>
       <td>
         <Link
@@ -289,7 +291,7 @@ var ProjectsDetail = React.createClass({
       <td>{ formatDateTime(item.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
       <td></td>
     </tr>;
-  },
+  };
 
   render() {
     const { loading, loadingDocuments } = this.state;
@@ -534,8 +536,8 @@ var ProjectsDetail = React.createClass({
         )}
       </div>
     );
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {

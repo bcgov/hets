@@ -1,10 +1,7 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Well, Alert, Row, Col, PageHeader, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form } from 'react-bootstrap';
 import { Link } from 'react-router';
-
 import _ from 'lodash';
 import Moment from 'moment';
 
@@ -40,8 +37,8 @@ const LAST_FISCAL = 'Last Fiscal';
 const CUSTOM = 'Custom';
 
 
-var RentalRequests = React.createClass({
-  propTypes: {
+class RentalRequests extends React.Component {
+  static propTypes = {
     currentUser: React.PropTypes.object,
     rentalRequests: React.PropTypes.object,
     rentalRequest: React.PropTypes.object,
@@ -50,26 +47,28 @@ var RentalRequests = React.createClass({
     search: React.PropTypes.object,
     ui: React.PropTypes.object,
     router: React.PropTypes.object,
-  },
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       showAddDialog: false,
       addViewOnly: false,
       search: {
-        selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
-        projectName: this.props.search.projectName || '',
-        status: this.props.search.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
-        dateRange: this.props.search.dateRange || '',
+        selectedLocalAreasIds: props.search.selectedLocalAreasIds || [],
+        projectName: props.search.projectName || '',
+        status: props.search.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
+        dateRange: props.search.dateRange || '',
       },
       ui : {
-        sortField: this.props.ui.sortField || 'projectName',
-        sortDesc: this.props.ui.sortDesc === true,
+        sortField: props.ui.sortField || 'projectName',
+        sortDesc: props.ui.sortDesc === true,
       },
     };
-  },
+  }
 
-  buildSearchParams() {
+  buildSearchParams = () => {
     var searchParams = {
       status: this.state.search.status || '',
       project: this.state.search.projectName || '',
@@ -130,7 +129,7 @@ var RentalRequests = React.createClass({
     }
 
     return searchParams;
-  },
+  };
 
   componentDidMount() {
     var defaultFavourite = null;
@@ -145,18 +144,18 @@ var RentalRequests = React.createClass({
       // if a search was performed previously, refresh the search results
       this.fetch();
     }
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     Api.searchRentalRequests(this.buildSearchParams());
-  },
+  };
 
-  search(e) {
+  search = (e) => {
     e.preventDefault();
     this.fetch();
-  },
+  };
 
-  clearSearch() {
+  clearSearch = () => {
     var defaultSearchParameters = {
       selectedLocalAreasIds: [],
       projectName: '',
@@ -168,49 +167,49 @@ var RentalRequests = React.createClass({
       store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_SEARCH, rentalRequests: this.state.search });
       store.dispatch({ type: Action.CLEAR_RENTAL_REQUESTS });
     });
-  },
+  };
 
-  updateSearchState(state, callback) {
+  updateSearchState = (state, callback) => {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () =>{
       store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_SEARCH, rentalRequests: this.state.search });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  updateUIState(state, callback) {
+  updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
       store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_UI, rentalRequests: this.state.ui });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  loadFavourite(favourite) {
+  loadFavourite = (favourite) => {
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
-  },
+  };
 
-  deleteRequest(request) {
+  deleteRequest = (request) => {
     Api.cancelRentalRequest(request.id).then(() => {
       this.fetch();
     });
-  },
+  };
 
-  openAddDialog(viewOnly) {
+  openAddDialog = (viewOnly) => {
     this.setState({ showAddDialog: true, addViewOnly: viewOnly });
-  },
+  };
 
-  closeAddDialog() {
+  closeAddDialog = () => {
     this.setState({ showAddDialog: false });
-  },
+  };
 
-  newRentalAdded(rentalRequest) {
+  newRentalAdded = (rentalRequest) => {
     Log.rentalRequestAdded(rentalRequest);
 
     this.props.router.push({
       pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ rentalRequest.id }`,
     });
-  },
+  };
 
-  renderResults(addRequestButtons) {
+  renderResults = (addRequestButtons) => {
     if (Object.keys(this.props.rentalRequests.data).length === 0) { return <Alert bsStyle="success">No Rental Requests { addRequestButtons }</Alert>; }
 
     var rentalRequests = _.sortBy(this.props.rentalRequests.data, rentalRequest => {
@@ -267,7 +266,7 @@ var RentalRequests = React.createClass({
         })
       }
     </SortTable>;
-  },
+  };
 
   render() {
     // Constrain the local area drop downs to those in the District of the current logged in user
@@ -358,8 +357,8 @@ var RentalRequests = React.createClass({
           onClose={ this.closeAddDialog } />
       )}
     </div>;
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {

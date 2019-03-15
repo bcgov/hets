@@ -18,8 +18,8 @@ import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
-var UsersEditDialog = React.createClass({
-  propTypes: {
+class UsersEditDialog extends React.Component {
+  static propTypes = {
     user: React.PropTypes.object,
     districts: React.PropTypes.object,
 
@@ -27,28 +27,28 @@ var UsersEditDialog = React.createClass({
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     isNew: React.PropTypes.bool,
-  },
+  };
 
-  getDefaultProps() {
-    return {
-      isNew: false,
-    };
-  },
+  static defaultProps = {
+    isNew: false,
+  };
 
-  getInitialState() {
-    var isNew = this.props.isNew;
-    return {
+  constructor(props) {
+    super(props);
+    var isNew = props.isNew;
+
+    this.state = {
       isNew: isNew,
 
-      active: !isNew ? this.props.user.active === true : false,
-      givenName: !isNew ? this.props.user.givenName : '',
-      surname: !isNew ? this.props.user.surname : '',
-      smUserId: !isNew ? this.props.user.smUserId : '',
-      email: !isNew ? this.props.user.email : '',
-      districtId: !isNew ? this.props.user.district.id : 0,
-      agreementCity: !isNew ? this.props.user.agreementCity : '',
+      active: !isNew ? props.user.active === true : false,
+      givenName: !isNew ? props.user.givenName : '',
+      surname: !isNew ? props.user.surname : '',
+      smUserId: !isNew ? props.user.smUserId : '',
+      email: !isNew ? props.user.email : '',
+      districtId: !isNew ? props.user.district.id : 0,
+      agreementCity: !isNew ? props.user.agreementCity : '',
 
-      status: !isNew && this.props.user.active ? Constant.USER_STATUS_ACTIVE : Constant.USER_STATUS_ARCHIVED,
+      status: !isNew && props.user.active ? Constant.USER_STATUS_ACTIVE : Constant.USER_STATUS_ARCHIVED,
 
       givenNameError: false,
       surnameError: false,
@@ -56,20 +56,20 @@ var UsersEditDialog = React.createClass({
       emailError: false,
       districtIdError: false,
     };
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  updateStatus(state, callback) {
+  updateStatus = (state, callback) => {
     this.setState({
       status: state.status,
       active: state.status === Constant.USER_STATUS_ACTIVE,
     }, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.active !== this.props.user.active) { return true; }
     if (this.state.givenName !== this.props.user.givenName) { return true; }
     if (this.state.surname !== this.props.user.surname) { return true; }
@@ -79,9 +79,9 @@ var UsersEditDialog = React.createClass({
     if (this.state.agreementCity !== this.props.user.agreementCity) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       givenNameError: false,
       surnameError: false,
@@ -118,9 +118,9 @@ var UsersEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     const user = { ...this.props.user, ...{
       active: this.state.active,
       givenName: this.state.givenName,
@@ -149,7 +149,7 @@ var UsersEditDialog = React.createClass({
         throw err;
       }
     });
-  },
+  };
 
   render() {
     var districts = _.sortBy(this.props.districts, 'name');
@@ -216,8 +216,8 @@ var UsersEditDialog = React.createClass({
         </Form>;
       })()}
     </EditDialog>;
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

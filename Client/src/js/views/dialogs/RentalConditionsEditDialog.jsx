@@ -13,38 +13,39 @@ import { isBlank } from '../../utils/string';
 import { NON_STANDARD_CONDITION } from '../../constants';
 
 
-var RentalConditionsEditDialog = React.createClass({
-  propTypes: {
+class RentalConditionsEditDialog extends React.Component {
+  static propTypes = {
     show: React.PropTypes.bool.isRequired,
     rentalAgreementId: React.PropTypes.number.isRequired,
     rentalCondition: React.PropTypes.object.isRequired,
     rentalConditions: React.PropTypes.object.isRequired,
     onSave: React.PropTypes.func,
     onClose: React.PropTypes.func.isRequired,
-  },
+  };
 
-  getInitialState() {
-    var isNew = this.props.rentalCondition.id === 0;
+  constructor(props) {
+    super(props);
+    var isNew = props.rentalCondition.id === 0;
 
-    return {
+    this.state = {
       isNew: isNew,
 
       forms: [{
-        conditionName: this.props.rentalCondition.conditionName || '',
-        comment: this.props.rentalCondition.comment || '',
+        conditionName: props.rentalCondition.conditionName || '',
+        comment: props.rentalCondition.comment || '',
 
         conditionNameError: '',
         commentError: '',
       }],
-      concurrencyControlNumber: this.props.rentalCondition.concurrencyControlNumber || 0,
+      concurrencyControlNumber: props.rentalCondition.concurrencyControlNumber || 0,
     };
-  },
+  }
 
   componentDidMount() {
     Api.getRentalConditions();
-  },
+  }
 
-  updateState(value) {
+  updateState = (value) => {
     let property = Object.keys(value)[0];
     let stateValue = _.values(value)[0];
     let number = property.match(/\d+/g)[0];
@@ -53,13 +54,13 @@ var RentalConditionsEditDialog = React.createClass({
     const updatedForms = this.state.forms.slice();
     updatedForms.splice(number, 1, { ...updatedForms[number], ...state});
     this.setState({ forms: updatedForms });
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     return true;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     const forms = this.state.forms.slice();
 
     forms.forEach((form, i) => {
@@ -88,9 +89,9 @@ var RentalConditionsEditDialog = React.createClass({
     this.setState({ forms });
 
     return valid;
-  },
+  };
 
-  formSubmitted() {
+  formSubmitted = () => {
     const { rentalAgreementId, onSave, onClose } = this.props;
 
     if (this.isValid()) {
@@ -112,9 +113,9 @@ var RentalConditionsEditDialog = React.createClass({
       }
       onClose();
     }
-  },
+  };
 
-  addInput() {
+  addInput = () => {
     if (this.state.forms.length < 10) {
       const forms = this.state.forms.slice();
       forms.push({
@@ -126,15 +127,15 @@ var RentalConditionsEditDialog = React.createClass({
 
       this.setState({ forms });
     }
-  },
+  };
 
-  removeInput() {
+  removeInput = () => {
     if (this.state.forms.length > 1) {
       const forms = this.state.forms.slice();
       forms.pop();
       this.setState({ forms });
     }
-  },
+  };
 
   render() {
     // Read-only if the user cannot edit the rental agreement
@@ -196,8 +197,8 @@ var RentalConditionsEditDialog = React.createClass({
         </div>
       </FormDialog>
     );
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {

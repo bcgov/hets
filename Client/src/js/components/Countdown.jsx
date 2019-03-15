@@ -1,29 +1,32 @@
 import React from 'react';
 
-var Countdown = React.createClass({
-  propTypes: {
+
+class Countdown extends React.Component {
+  static propTypes = {
     time: React.PropTypes.number,
     onEnd: React.PropTypes.func,
-  },
+  };
 
-  getInitialState() {
-    return {
-      timeLeft: this.props.time,
-      minutes: parseInt(this.props.time / 60, 10),
-      seconds: parseInt(this.props.time % 60, 10) < 10 ? '0' + parseInt(this.props.time % 60, 10) : parseInt(this.props.time % 60, 10),
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      timeLeft: props.time,
+      minutes: parseInt(props.time / 60, 10),
+      seconds: parseInt(props.time % 60, 10) < 10 ? '0' + parseInt(props.time % 60, 10) : parseInt(props.time % 60, 10),
       fired: false,
     };
-  },
+  }
 
   componentDidMount() {
     this.startTimer();
-  },
+  }
 
   componentWillUnmount() {
     clearInterval(this.state.interval);
-  },
+  }
 
-  startTimer() {
+  startTimer = () => {
     var timeLeft = this.state.timeLeft;
     var interval = setInterval(function () {
       var minutes = parseInt(timeLeft / 60, 10);
@@ -39,7 +42,7 @@ var Countdown = React.createClass({
       }
     }.bind(this), 1000);
     this.setState({ interval });
-  },
+  };
 
   render() {
     return (
@@ -47,8 +50,8 @@ var Countdown = React.createClass({
         { this.state.minutes > 0 && `${this.state.minutes}m`} {this.state.seconds}s
       </span>
     );
-  },
-});
+  }
+}
 
 
 export default Countdown;

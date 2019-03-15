@@ -46,17 +46,19 @@ const STATUS_FORCE_HIRE = 'Force Hire';
 const STATUS_ASKED = 'Asked';
 const STATUS_IN_PROGRESS = 'In Progress';
 
-var RentalRequestsDetail = React.createClass({
-  propTypes: {
+class RentalRequestsDetail extends React.Component {
+  static propTypes = {
     rentalRequestId: React.PropTypes.number,
     rentalRequest: React.PropTypes.object,
     documents: React.PropTypes.object,
     ui: React.PropTypes.object,
     router: React.PropTypes.object,
-  },
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       loading: true,
       loadingDocuments: false,
 
@@ -68,9 +70,9 @@ var RentalRequestsDetail = React.createClass({
       rotationListHireOffer: {},
       showAllResponseFields: false,
 
-      isNew: this.props.rentalRequestId == 0,
+      isNew: props.rentalRequestId == 0,
     };
-  },
+  }
 
   componentDidMount() {
     const { rentalRequestId, rentalRequest } = this.props;
@@ -87,71 +89,71 @@ var RentalRequestsDetail = React.createClass({
     ]).then(() => {
       this.setState({ loading: false });
     });
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     return Api.getRentalRequest(this.props.rentalRequestId);
-  },
+  };
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  updateContactsUIState(state, callback) {
+  updateContactsUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_PROJECT_CONTACTS_UI, projectContacts: this.state.ui });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  showNotes() {
+  showNotes = () => {
     this.setState({ showNotesDialog: true });
-  },
+  };
 
-  closeNotesDialog() {
+  closeNotesDialog = () => {
     this.setState({ showNotesDialog: false });
-  },
+  };
 
-  showDocuments() {
+  showDocuments = () => {
     this.setState({ showDocumentsDialog: true });
-  },
+  };
 
-  closeDocumentsDialog() {
+  closeDocumentsDialog = () => {
     this.setState({ showDocumentsDialog: false });
-  },
+  };
 
-  addDocument() {
+  addDocument = () => {
 
-  },
+  };
 
-  openEditDialog() {
+  openEditDialog = () => {
     this.setState({ showEditDialog: true });
-  },
+  };
 
-  closeEditDialog() {
+  closeEditDialog = () => {
     this.setState({ showEditDialog: false });
-  },
+  };
 
-  rentalRequestSaved() {
+  rentalRequestSaved = () => {
     Promise.all([
       this.fetch(),
       Api.getRentalRequestRotationList(this.props.rentalRequestId),
     ]);
-  },
+  };
 
-  openHireOfferDialog(hireOffer, showAllResponseFields) {
+  openHireOfferDialog = (hireOffer, showAllResponseFields) => {
     this.setState({
       rotationListHireOffer: hireOffer,
       showAllResponseFields,
       showHireOfferDialog: true,
     });
-  },
+  };
 
-  closeHireOfferDialog() {
+  closeHireOfferDialog = () => {
     this.setState({ showHireOfferDialog: false });
-  },
+  };
 
-  hireOfferSaved(hireOffer) {
+  hireOfferSaved = (hireOffer) => {
     Log.rentalRequestEquipmentHired(this.props.rentalRequest, hireOffer.equipment, hireOffer.offerResponse);
 
     this.closeHireOfferDialog();
@@ -164,9 +166,9 @@ var RentalRequestsDetail = React.createClass({
       // close popup dialog and refresh page data
       this.fetch();
     }
-  },
+  };
 
-  printSeniorityList() {
+  printSeniorityList = () => {
     var localAreaIds = [ this.props.rentalRequest.localAreaId ];
     var districtEquipmentTypeIds = [ this.props.rentalRequest.districtEquipmentTypeId ];
     Api.equipmentSeniorityListPdf(localAreaIds, districtEquipmentTypeIds).then(response => {
@@ -191,13 +193,13 @@ var RentalRequestsDetail = React.createClass({
       //release the reference to the file by revoking the Object URL
       window.URL.revokeObjectURL(url);
     });
-  },
+  };
 
-  addRequest() {
+  addRequest = () => {
 
-  },
+  };
 
-  renderStatusText(listItem) {
+  renderStatusText = (listItem) => {
     let text = 'Hire';
     if (listItem.offerResponse === STATUS_NO && listItem.offerRefusalReason == Constant.HIRING_REFUSAL_OTHER) {
       text = listItem.offerResponseNote;
@@ -209,7 +211,7 @@ var RentalRequestsDetail = React.createClass({
       text = listItem.offerResponse;
     }
     return text;
-  },
+  };
 
   render() {
     const { loading, loadingDocuments } = this.state;
@@ -447,8 +449,8 @@ var RentalRequestsDetail = React.createClass({
           onClose={this.closeNotesDialog}/>
       }
     </div>;
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {

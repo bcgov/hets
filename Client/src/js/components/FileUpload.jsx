@@ -7,8 +7,11 @@ import { plural } from '../utils/string';
 
 const FILE_UPLOAD_PATH = '/test-file-upload';
 
-var FileUpload = React.createClass({
-  propTypes: {
+
+class FileUpload extends React.Component {
+  static displayName = 'FileUpload';
+
+  static propTypes = {
     id: React.PropTypes.string,
     className: React.PropTypes.string,
     label: React.PropTypes.string,
@@ -16,17 +19,19 @@ var FileUpload = React.createClass({
     path: React.PropTypes.string,
     onUploadProgress: React.PropTypes.func,
     onUploadFinished: React.PropTypes.func,
-  },
+  };
 
-  getInitialState() {
+  state = this.buildInitialState();
+
+  buildInitialState = () => {
     return {
       uploadInProgress: false,
       percentUploaded: null,
       fileUploadError: null,
     };
-  },
+  };
 
-  uploadFiles() {
+  uploadFiles = () => {
     this.setState({ uploadInProgress: true, percentUploaded: 0 });
 
     var options = {
@@ -48,11 +53,11 @@ var FileUpload = React.createClass({
       this.setState({ uploadInProgress: false, fileUploadError: err });
       if (this.props.onUploadFinished) { this.props.onUploadFinished(err); }
     });
-  },
+  };
 
-  reset() {
-    this.setState(this.getInitialState());
-  },
+  reset = () => {
+    this.setState(this.buildInitialState());
+  };
 
   render() {
     var classNames = [ 'file-upload', 'clearfix' ];
@@ -93,7 +98,7 @@ var FileUpload = React.createClass({
       { uploadProgressBar }
       { error }
     </div>;
-  },
-});
+  }
+}
 
 export default FileUpload;

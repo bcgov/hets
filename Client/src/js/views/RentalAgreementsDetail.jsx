@@ -30,34 +30,32 @@ import { formatDateTime } from '../utils/date';
 import { formatCurrency } from '../utils/string';
 
 
-var RentalAgreementsDetail = React.createClass({
-  propTypes: {
+class RentalAgreementsDetail extends React.Component {
+  static propTypes = {
     rentalAgreement: React.PropTypes.object,
     rentalAgreementId: React.PropTypes.number,
     rentalConditions: React.PropTypes.array,
     ui: React.PropTypes.object,
     location: React.PropTypes.object,
     router: React.PropTypes.object,
-  },
+  };
 
-  getInitialState() {
-    return {
-      loading: true,
-      rentalAgreementDocumentLoading: false,
+  state = {
+    loading: true,
+    rentalAgreementDocumentLoading: false,
 
-      showHeaderEditDialog: false,
-      showEditDialog: false,
-      showEquipmentRateDialog: false,
-      showRentalRateDialog: false,
-      showConditionDialog: false,
-      showCloneDialog: false,
+    showHeaderEditDialog: false,
+    showEditDialog: false,
+    showEquipmentRateDialog: false,
+    showRentalRateDialog: false,
+    showConditionDialog: false,
+    showCloneDialog: false,
 
-      cloneRentalAgreementError: '',
+    cloneRentalAgreementError: '',
 
-      rentalRate: {},
-      rentalCondition: {},
-    };
-  },
+    rentalRate: {},
+    rentalCondition: {},
+  };
 
   componentDidMount() {
     const { rentalAgreement } = this.props;
@@ -68,114 +66,114 @@ var RentalAgreementsDetail = React.createClass({
     this.fetch(rentalAgreement).then(() => {
       this.setState({ loading: false });
     });
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     return Api.getRentalAgreement(this.props.rentalAgreementId);
-  },
+  };
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  openHeaderEditDialog() {
+  openHeaderEditDialog = () => {
     this.setState({ showHeaderEditDialog: true });
-  },
+  };
 
-  closeHeaderEditDialog() {
+  closeHeaderEditDialog = () => {
     this.setState({ showHeaderEditDialog: false });
-  },
+  };
 
-  openEditDialog() {
+  openEditDialog = () => {
     this.setState({ showEditDialog: true });
-  },
+  };
 
-  closeEditDialog() {
+  closeEditDialog = () => {
     this.setState({ showEditDialog: false });
-  },
+  };
 
-  saveHeaderEdit(rentalAgreement) {
+  saveHeaderEdit = (rentalAgreement) => {
     return Api.updateRentalAgreement(rentalAgreement).finally(() => {
       this.fetch();
       this.closeHeaderEditDialog();
     });
-  },
+  };
 
-  openEquipmentRateDialog() {
+  openEquipmentRateDialog = () => {
     this.setState({ showEquipmentRateDialog: true });
-  },
+  };
 
-  closeEquipmentRateDialog() {
+  closeEquipmentRateDialog = () => {
     this.setState({ showEquipmentRateDialog: false });
-  },
+  };
 
-  openRentalRateDialog(rentalRate) {
+  openRentalRateDialog = (rentalRate) => {
     this.setState({
       rentalRate,
       showRentalRateDialog: true,
     });
-  },
+  };
 
-  addRentalRate(isIncluded) {
+  addRentalRate = (isIncluded) => {
     // New
     this.openRentalRateDialog({
       id: 0,
       isIncludedInTotal: isIncluded,
       rentalAgreement: this.props.rentalAgreement,
     });
-  },
+  };
 
-  closeRentalRateDialog() {
+  closeRentalRateDialog = () => {
     this.setState({ showRentalRateDialog: false });
-  },
+  };
 
-  deleteRentalRate(rentalRate) {
+  deleteRentalRate = (rentalRate) => {
     Api.deleteRentalRate(rentalRate).then(() => {
       // In addition to refreshing the rental rates, we need to update the rental agreement to get
       // possibly new info.
       this.fetch();
     });
-  },
+  };
 
-  openConditionDialog(rentalCondition) {
+  openConditionDialog = (rentalCondition) => {
     this.setState({
       rentalCondition,
       showConditionDialog: true,
     });
-  },
+  };
 
-  closeConditionDialog() {
+  closeConditionDialog = () => {
     this.setState({ showConditionDialog: false });
-  },
+  };
 
-  addCondition() {
+  addCondition = () => {
     this.openConditionDialog({
       id: 0,
       rentalAgreement: this.props.rentalAgreement,
     });
-  },
+  };
 
-  deleteCondition(rentalCondition) {
+  deleteCondition = (rentalCondition) => {
     Api.deleteRentalCondition(rentalCondition).then(() => {
       // In addition to refreshing the rental condition, we need to update the rental agreement to
       // get possibly new info.
       this.fetch();
     });
-  },
+  };
 
-  openOvertimeNotesDialog() {
+  openOvertimeNotesDialog = () => {
     this.setState({ showOvertimeNotesDialog: true });
-  },
+  };
 
-  closeOvertimeNotesDialog() {
+  closeOvertimeNotesDialog = () => {
     this.setState({ showOvertimeNotesDialog: false });
-  },
+  };
 
-  generateRentalAgreementDocument() {
+  generateRentalAgreementDocument = () => {
     Api.generateRentalAgreementDocument(this.props.rentalAgreementId).then(() => {
       window.open(buildApiPath(`/rentalagreements/${ this.props.rentalAgreementId }/pdf`));
     });
-  },
+  };
 
   // generateAnotherAgreement() {
   //   Api.generateAnotherRentalAgreement(this.props.rentalAgreement).then(() => {
@@ -183,15 +181,15 @@ var RentalAgreementsDetail = React.createClass({
   //   });
   // },
 
-  openCloneDialog() {
+  openCloneDialog = () => {
     this.setState({ showCloneDialog: true });
-  },
+  };
 
-  closeCloneDialog() {
+  closeCloneDialog = () => {
     this.setState({ showCloneDialog: false, cloneRentalAgreementError: '' });
-  },
+  };
 
-  cloneRentalAgreement(rentalAgreementCloneId, type) {
+  cloneRentalAgreement = (rentalAgreementCloneId, type) => {
     var data = {
       projectId: this.props.rentalAgreement.project.id,
       agreementToCloneId: rentalAgreementCloneId,
@@ -215,7 +213,7 @@ var RentalAgreementsDetail = React.createClass({
         throw error;
       }
     });
-  },
+  };
 
   render() {
     const { loading } = this.state;
@@ -562,8 +560,8 @@ var RentalAgreementsDetail = React.createClass({
         )}
       </div>
     );
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {

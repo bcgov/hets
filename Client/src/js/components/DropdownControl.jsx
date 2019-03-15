@@ -1,11 +1,10 @@
 import React from 'react';
-
 import { Dropdown, MenuItem, Popover, OverlayTrigger } from 'react-bootstrap';
-
 import _ from 'lodash';
 
-var DropdownControl = React.createClass({
-  propTypes: {
+
+class DropdownControl extends React.Component {
+  static propTypes = {
     // This is used to update state
     id: React.PropTypes.string.isRequired,
 
@@ -33,10 +32,11 @@ var DropdownControl = React.createClass({
     onSelect: React.PropTypes.func,
     updateState: React.PropTypes.func,
     staticTitle: React.PropTypes.bool,
-  },
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+    this.state = {
       simple: _.has(this.props, 'title'),
 
       selectedId: this.props.selectedId || '',
@@ -44,7 +44,7 @@ var DropdownControl = React.createClass({
       fieldName: this.props.fieldName || 'name',
       open: false,
     };
-  },
+  }
 
   componentDidMount() {
     if (!this.state.simple) {
@@ -53,7 +53,7 @@ var DropdownControl = React.createClass({
         title: this.buildTitle(this.state.selectedId, this.props.items),
       });
     }
-  },
+  }
 
   componentWillReceiveProps(nextProps) {
     if (!_.isEqual(nextProps.items, this.props.items)) {
@@ -70,9 +70,9 @@ var DropdownControl = React.createClass({
     } else if (!_.isEqual(nextProps.title, this.props.title)) {
       this.setState({ title: this.buildTitle(nextProps.title) });
     }
-  },
+  }
 
-  buildTitle(keyEvent, items) {
+  buildTitle = (keyEvent, items) => {
     if (keyEvent) {
       if (!items || this.state.simple) {
         return keyEvent;
@@ -84,9 +84,9 @@ var DropdownControl = React.createClass({
       }
     }
     return this.props.placeholder || 'Select item';
-  },
+  };
 
-  itemSelected(keyEvent) {
+  itemSelected = (keyEvent) => {
     this.toggle(false);
 
     if (!this.props.staticTitle) {
@@ -109,11 +109,11 @@ var DropdownControl = React.createClass({
         [this.props.id]: keyEvent,
       });
     }
-  },
+  };
 
-  toggle(open) {
+  toggle = (open) => {
     this.setState({ open: open });
-  },
+  };
 
   render() {
     var props = _.omit(this.props, 'updateState', 'onSelect', 'items', 'selectedId', 'blankLine', 'fieldName', 'placeholder', 'staticTitle');
@@ -150,7 +150,7 @@ var DropdownControl = React.createClass({
         }
       </Dropdown.Menu>
     </Dropdown>;
-  },
-});
+  }
+}
 
 export default DropdownControl;

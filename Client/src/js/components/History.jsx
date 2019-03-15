@@ -1,9 +1,6 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Alert, Button, Glyphicon } from 'react-bootstrap';
-
 import _ from 'lodash';
 
 import * as Action from '../actionTypes';
@@ -21,8 +18,8 @@ import { sortDir } from '../utils/array';
 // API limit: how many to fetch first time
 const API_LIMIT = 10;
 
-var HistoryComponent = React.createClass({
-  propTypes: {
+class HistoryComponent extends React.Component {
+  static propTypes = {
     historyEntity: React.PropTypes.object.isRequired,
     refresh: React.PropTypes.bool.isRequired,
 
@@ -32,10 +29,12 @@ var HistoryComponent = React.createClass({
     history: React.PropTypes.object,
     users: React.PropTypes.object,
     ui: React.PropTypes.object,
-  },
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       hasFetched: false,
       loading: false,
       fetchingMore: false,
@@ -44,26 +43,26 @@ var HistoryComponent = React.createClass({
       canShowMore: false,
 
       ui : {
-        sortField: this.props.ui.sortField || 'timestampSort',
-        sortDesc: this.props.ui.sortDesc !== false,
+        sortField: props.ui.sortField || 'timestampSort',
+        sortDesc: props.ui.sortDesc !== false,
       },
     };
-  },
+  }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.refresh && !this.props.refresh) {
       this.fetch(true);
     }
-  },
+  }
 
-  updateUIState(state, callback) {
+  updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
       store.dispatch({ type: Action.UPDATE_HISTORY_UI, history: this.state.ui });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  fetch(first) {
+  fetch = (first) => {
     // Easy mode: show 10 the first time and let the user load all of them with the
     // "Show More" button. Can adapt for paginated / offset&limit calls if necessary.
     this.setState({ hasFetched: true, loading: true });
@@ -73,14 +72,14 @@ var HistoryComponent = React.createClass({
         canShowMore: first && Object.keys(this.props.history).length >= API_LIMIT,
       });
     });
-  },
+  };
 
-  showMore() {
+  showMore = () => {
     this.setState({ fetchingMore: true });
     this.fetch().finally(() => {
       this.setState({ fetchingMore: false });
     });
-  },
+  };
 
   render() {
     const { hasFetched, loading, fetchingMore } = this.state;
@@ -129,8 +128,8 @@ var HistoryComponent = React.createClass({
         })()}
       </div>
     );
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

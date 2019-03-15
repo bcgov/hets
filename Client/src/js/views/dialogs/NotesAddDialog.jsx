@@ -9,36 +9,38 @@ import * as Constant from '../../constants';
 
 import { isBlank } from '../../utils/string';
 
-var NotesAddDialog = React.createClass({
-  propTypes: {
+class NotesAddDialog extends React.Component {
+  static propTypes = {
     onSave: React.PropTypes.func.isRequired,
     onUpdate: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     note: React.PropTypes.object,
-  },
+  };
 
-  getInitialState() {
-    return {
-      noteId: this.props.note.id || 0,
-      note: this.props.note.text || '',
-      concurrencyControlNumber: this.props.note.concurrencyControlNumber || 0,
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      noteId: props.note.id || 0,
+      note: props.note.text || '',
+      concurrencyControlNumber: props.note.concurrencyControlNumber || 0,
       noteError: '',
       isNoLongerRelevant: false,
     };
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.props.note.text !== this.state.note) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       noteError: '',
     });
@@ -51,9 +53,9 @@ var NotesAddDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onFormSubmitted() {
+  onFormSubmitted = () => {
     if (this.isValid()) {
       if (this.didChange()) {
         // If note id === 0 then you are adding a new note, otherwise you are updating an existing note
@@ -77,7 +79,7 @@ var NotesAddDialog = React.createClass({
         this.props.onClose();
       }
     }
-  },
+  };
 
   render() {
     const { noteId } = this.state;
@@ -98,7 +100,7 @@ var NotesAddDialog = React.createClass({
         </FormGroup>
       </FormDialog>
     );
-  },
-});
+  }
+}
 
 export default NotesAddDialog;

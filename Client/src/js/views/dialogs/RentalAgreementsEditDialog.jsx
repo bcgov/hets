@@ -12,42 +12,44 @@ import { isValidDate } from '../../utils/date';
 import { isBlank, notBlank } from '../../utils/string';
 
 
-var RentalAgreementsEditDialog = React.createClass({
-  propTypes: {
+class RentalAgreementsEditDialog extends React.Component {
+  static propTypes = {
     rentalAgreement: React.PropTypes.object.isRequired,
     show: React.PropTypes.bool,
     owner: React.PropTypes.object,
     onSave: React.PropTypes.func,
     onClose: React.PropTypes.func.isRequired,
-  },
+  };
 
-  getInitialState() {
-    return {
-      estimateStartWork: this.props.rentalAgreement.estimateStartWork || '',
-      estimateHours: this.props.rentalAgreement.estimateHours || 0,
-      datedOn: this.props.rentalAgreement.datedOn || '',
-      agreementCity: this.props.rentalAgreement.agreementCity || '',
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      estimateStartWork: props.rentalAgreement.estimateStartWork || '',
+      estimateHours: props.rentalAgreement.estimateHours || 0,
+      datedOn: props.rentalAgreement.datedOn || '',
+      agreementCity: props.rentalAgreement.agreementCity || '',
 
       estimateStartWorkError: '',
       estimateHoursError: '',
       datedOnError: '',
     };
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.estimateStartWork !== this.props.rentalAgreement.estimateStartWork) { return true; }
     if (this.state.estimateHours !== this.props.rentalAgreement.estimateHours) { return true; }
     if (this.state.datedOn !== this.props.rentalAgreement.datedOn) { return true; }
     if (this.state.note !== this.props.rentalAgreement.note) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       estimateStartWorkError: '',
       estimateHoursError: '',
@@ -75,9 +77,9 @@ var RentalAgreementsEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  formSubmitted() {
+  formSubmitted = () => {
     if (this.isValid()) {
       if (this.didChange()) {
         const rentalAgreement = {
@@ -95,7 +97,7 @@ var RentalAgreementsEditDialog = React.createClass({
 
       this.props.onClose();
     }
-  },
+  };
 
   render() {
     // Read-only if the user cannot edit the rental agreement
@@ -141,7 +143,7 @@ var RentalAgreementsEditDialog = React.createClass({
         </Row>
       </FormDialog>
     );
-  },
-});
+  }
+}
 
 export default RentalAgreementsEditDialog;

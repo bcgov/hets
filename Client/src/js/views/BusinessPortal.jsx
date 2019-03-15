@@ -1,9 +1,6 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Link } from 'react-router';
-
 import { PageHeader, Well, Row, Col, FormGroup, Alert, Button } from 'react-bootstrap';
 import _ from 'lodash';
 
@@ -18,36 +15,34 @@ import ColDisplay from '../components/ColDisplay.jsx';
 import SortTable from '../components/SortTable.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 import Form from '../components/Form.jsx';
-
 import SubHeader from '../components/ui/SubHeader.jsx';
 
-var BusinessPortal = React.createClass({
-  propTypes: {
+
+class BusinessPortal extends React.Component {
+  static propTypes = {
     user: React.PropTypes.object,
     business: React.PropTypes.object,
     uiOwners: React.PropTypes.object,
-  },
+  };
 
-  getInitialState() {
-    return {
-      loading: false,
-      validating: false,
-      success: false,
-      errors: {},
+  state = {
+    loading: false,
+    validating: false,
+    success: false,
+    errors: {},
 
-      // owners
-      uiOwners : {
-        sortField: this.props.uiOwners.sortField || 'organizationName',
-        sortDesc: this.props.uiOwners.sortDesc  === true,
-      },
-    };
-  },
+    // owners
+    uiOwners : {
+      sortField: this.props.uiOwners.sortField || 'organizationName',
+      sortDesc: this.props.uiOwners.sortDesc  === true,
+    },
+  };
 
   componentDidMount() {
     this.fetch();
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     this.setState({ loading: true, success: false });
 
     return Api.getBusiness().finally(() => {
@@ -56,20 +51,20 @@ var BusinessPortal = React.createClass({
       }
       this.setState({ loading: false });
     });
-  },
+  };
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  updateOwnersUIState(state, callback) {
+  updateOwnersUIState = (state, callback) => {
     this.setState({ uiOwners: { ...this.state.uiOwners, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_OWNERS_UI, owners: this.state.uiOwners });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  validateOwner(e) {
+  validateOwner = (e) => {
     e.preventDefault();
 
     this.setState({ validating: true, errors: {} });
@@ -88,7 +83,7 @@ var BusinessPortal = React.createClass({
     }).finally(() => {
       this.setState({ validating: false });
     });
-  },
+  };
 
   render() {
     return <Main showNav={false}>
@@ -99,9 +94,9 @@ var BusinessPortal = React.createClass({
         { !this.state.loading && !this.state.success && this.renderError() }
       </div>
     </Main>;
-  },
+  }
 
-  renderPage() {
+  renderPage = () => {
     var business = this.props.business;
     const hasErrors = Object.keys(this.state.errors).length > 0;
 
@@ -198,12 +193,12 @@ var BusinessPortal = React.createClass({
         { hasErrors && <div className="validation-error">Secret key validation failed.</div> }
       </Well>
     </div>;
-  },
+  };
 
-  renderError() {
+  renderError = () => {
     return <h1><small>An error was encountered. You may not have permission to access this page.</small></h1>;
-  },
-});
+  };
+}
 
 function mapStateToProps(state) {
   return {

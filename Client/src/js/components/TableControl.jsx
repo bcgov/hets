@@ -1,16 +1,15 @@
 import React from 'react';
-
 import { Table } from 'react-bootstrap';
-
 import _ from 'lodash';
 
-var TableControl = React.createClass({
-  propTypes: {
+
+class TableControl extends React.Component {
+  static propTypes = {
     // Array of objects with key, title, style, children fields
     headers: React.PropTypes.array.isRequired,
     id: React.PropTypes.string,
     children: React.PropTypes.node,
-  },
+  };
 
   render() {
     return <div id={ this.props.id }>
@@ -29,7 +28,7 @@ var TableControl = React.createClass({
         </tbody>
       </Table>
     </div>;
-  },
-});
+  }
+}
 
 export default TableControl;

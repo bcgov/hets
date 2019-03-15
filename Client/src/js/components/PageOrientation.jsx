@@ -1,9 +1,10 @@
 import React from 'react';
 
-var PageOrientation = React.createClass({
-  propTypes: {
+
+class PageOrientation extends React.Component {
+  static propTypes = {
     type: React.PropTypes.string.isRequired,
-  },
+  };
 
   render() {
     var size = 'portrait';
@@ -14,7 +15,7 @@ var PageOrientation = React.createClass({
     return <style type="text/css">
       { `@page { size: ${ size } }` }
     </style>;
-  },
-});
+  }
+}
 
 export default PageOrientation;

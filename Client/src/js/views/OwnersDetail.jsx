@@ -51,8 +51,9 @@ const CONTACT_NAME_SORT_FIELDS = ['givenName', 'surname'];
 const OWNER_WITH_EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE = 'This owner has equipment that ' +
   'is part of an In Progress Rental Request. Release the list (finish hiring / delete) before making this change';
 
-var OwnersDetail = React.createClass({
-  propTypes: {
+
+class OwnersDetail extends React.Component {
+  static propTypes = {
     owner: React.PropTypes.object,
     equipment: React.PropTypes.object,
     documents: React.PropTypes.object,
@@ -61,10 +62,12 @@ var OwnersDetail = React.createClass({
     uiEquipment: React.PropTypes.object,
     router: React.PropTypes.object,
     notes: React.PropTypes.array,
-  },
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       loading: true,
 
       showEditDialog: false,
@@ -84,23 +87,23 @@ var OwnersDetail = React.createClass({
 
       // Contacts
       uiContacts : {
-        sortField: this.props.uiContacts.sortField || CONTACT_NAME_SORT_FIELDS,
-        sortDesc: this.props.uiContacts.sortDesc  === true,
+        sortField: props.uiContacts.sortField || CONTACT_NAME_SORT_FIELDS,
+        sortDesc: props.uiContacts.sortDesc  === true,
       },
 
       // Equipment
       uiEquipment : {
-        sortField: this.props.uiEquipment.sortField || 'equipmentNumber',
-        sortDesc: this.props.uiEquipment.sortDesc  === true,
+        sortField: props.uiEquipment.sortField || 'equipmentNumber',
+        sortDesc: props.uiEquipment.sortDesc  === true,
       },
     };
-  },
+  }
 
   componentDidMount() {
     this.fetch();
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     this.setState({ loading: true });
 
     var ownerId = this.props.params.ownerId;
@@ -111,70 +114,70 @@ var OwnersDetail = React.createClass({
     return Promise.all([ownerPromise, documentsPromise, ownerNotesPromise]).finally(() => {
       this.setState({ loading: false });
     });
-  },
+  };
 
-  updateContactsUIState(state, callback) {
+  updateContactsUIState = (state, callback) => {
     this.setState({ uiContacts: { ...this.state.uiContacts, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_OWNER_CONTACTS_UI, ownerContacts: this.state.uiContacts });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  updateEquipmentUIState(state, callback) {
+  updateEquipmentUIState = (state, callback) => {
     this.setState({ uiEquipment: { ...this.state.uiEquipment, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_OWNER_EQUIPMENT_UI, ownerEquipment: this.state.uiEquipment });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  updateStatusState(state) {
+  updateStatusState = (state) => {
     if (state !== this.props.owner.status) {
       this.setState({ status: state }, this.openChangeStatusDialog);
     }
-  },
+  };
 
-  openChangeStatusDialog() {
+  openChangeStatusDialog = () => {
     this.setState({ showChangeStatusDialog: true });
-  },
+  };
 
-  closeChangeStatusDialog() {
+  closeChangeStatusDialog = () => {
     this.setState({ showChangeStatusDialog: false });
-  },
+  };
 
-  onStatusChanged(/* status */) {
+  onStatusChanged = () => {
     this.closeChangeStatusDialog();
     Api.getOwnerNotes(this.props.owner.id);
-  },
+  };
 
-  showDocuments() {
+  showDocuments = () => {
     this.setState({ showDocumentsDialog: true });
-  },
+  };
 
-  closeDocumentsDialog() {
+  closeDocumentsDialog = () => {
     this.setState({ showDocumentsDialog: false });
-  },
+  };
 
-  openEditDialog() {
+  openEditDialog = () => {
     this.setState({ showEditDialog: true });
-  },
+  };
 
-  closeEditDialog() {
+  closeEditDialog = () => {
     this.setState({ showEditDialog: false });
-  },
+  };
 
-  saveEdit(owner) {
+  saveEdit = (owner) => {
     // This just ensures that the normalized data doesn't mess up the PUT call
     Api.updateOwner({ ...owner, contacts: null }).finally(() => {
       Log.ownerModified(this.props.owner);
       this.closeEditDialog();
     });
-  },
+  };
 
-  openContactDialog(contactId) {
+  openContactDialog = (contactId) => {
     var contact;
     if (contactId === 0) {
       // New
@@ -190,13 +193,13 @@ var OwnersDetail = React.createClass({
       contact: contact,
       showContactDialog: true,
     });
-  },
+  };
 
-  closeContactDialog() {
+  closeContactDialog = () => {
     this.setState({ showContactDialog: false });
-  },
+  };
 
-  deleteContact(contact) {
+  deleteContact = (contact) => {
     store.dispatch({ type: Action.DELETE_OWNER_CONTACT, projectId: this.props.params.ownerId, contactId: contact.id });
     Api.deleteContact(contact).then(() => {
       Log.ownerContactDeleted(this.props.owner, contact).then(() => {
@@ -205,9 +208,9 @@ var OwnersDetail = React.createClass({
         this.fetch();
       });
     });
-  },
+  };
 
-  contactSaved(contact) {
+  contactSaved = (contact) => {
     var isNew = !contact.id;
     var log = isNew ? Log.ownerContactAdded : Log.ownerContactUpdated;
 
@@ -218,17 +221,17 @@ var OwnersDetail = React.createClass({
     });
 
     this.closeContactDialog();
-  },
+  };
 
-  openEquipmentDialog() {
+  openEquipmentDialog = () => {
     this.setState({ showEquipmentDialog: true });
-  },
+  };
 
-  closeEquipmentDialog() {
+  closeEquipmentDialog = () => {
     this.setState({ showEquipmentDialog: false });
-  },
+  };
 
-  saveNewEquipment(equipment) {
+  saveNewEquipment = (equipment) => {
     return Api.addEquipment(equipment).then(() => {
       // Open it up
       Log.ownerEquipmentAdded(this.props.owner, this.props.equipment);
@@ -240,9 +243,9 @@ var OwnersDetail = React.createClass({
 
       return null;
     });
-  },
+  };
 
-  equipmentVerifyAll() {
+  equipmentVerifyAll = () => {
     var now = today();
     var owner = this.props.owner;
 
@@ -255,9 +258,9 @@ var OwnersDetail = React.createClass({
     });
 
     Api.updateOwnerEquipment(owner, equipmentList);
-  },
+  };
 
-  equipmentVerify(equipment) {
+  equipmentVerify = (equipment) => {
     Api.updateEquipment({...equipment, ...{
       lastVerifiedDate: toZuluTime(today()),
       owner: { id: this.props.owner.id },
@@ -265,52 +268,52 @@ var OwnersDetail = React.createClass({
       Log.ownerEquipmentVerified(this.props.owner, equipment);
       this.fetch();
     });
-  },
+  };
 
-  openPolicyDialog() {
+  openPolicyDialog = () => {
     this.setState({ showPolicyDialog: true });
-  },
+  };
 
-  closePolicyDialog() {
+  closePolicyDialog = () => {
     this.setState({ showPolicyDialog: false });
-  },
+  };
 
-  savePolicyEdit(owner) {
+  savePolicyEdit = (owner) => {
     // This just ensures that the normalized data doesn't mess up the PUT call
     Api.updateOwner({ ...owner, contacts: null }).finally(() => {
       Log.ownerModifiedPolicy(this.props.owner);
       this.closePolicyDialog();
     });
-  },
+  };
 
-  openPolicyDocumentsDialog() {
+  openPolicyDocumentsDialog = () => {
     // TODO Show popup with links to policy documents
     this.setState({ showPolicyDocumentsDialog: true });
-  },
+  };
 
-  closePolicyDocumentsDialog() {
+  closePolicyDocumentsDialog = () => {
     this.setState({ showPolicyDocumentsDialog: false });
-  },
+  };
 
-  addPolicyDocument() {
+  addPolicyDocument = () => {
     // TODO Upload policy document (proof of policy coverage)
-  },
+  };
 
-  openNotesDialog() {
+  openNotesDialog = () => {
     this.setState({ showNotesDialog: true });
-  },
+  };
 
-  closeNotesDialog() {
+  closeNotesDialog = () => {
     this.setState({ showNotesDialog: false });
-  },
+  };
 
-  getStatuses() {
+  getStatuses = () => {
     return _.pull([
       Constant.OWNER_STATUS_CODE_APPROVED,
       Constant.OWNER_STATUS_CODE_PENDING,
       Constant.OWNER_STATUS_CODE_ARCHIVED,
     ], this.props.owner.status);
-  },
+  };
 
   render() {
     var owner = this.props.owner;
@@ -605,8 +608,8 @@ var OwnersDetail = React.createClass({
         )}
       </div>
     );
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {

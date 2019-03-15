@@ -1,17 +1,16 @@
 import React from 'react';
-
 import { Modal } from 'react-bootstrap';
-
 import _ from 'lodash';
 
-var ModalDialog = React.createClass({
-  propTypes: {
+
+class ModalDialog extends React.Component {
+  static propTypes = {
     title: React.PropTypes.node,
     footer: React.PropTypes.node,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool.isRequired,
     children: React.PropTypes.node,
-  },
+  };
 
   render() {
     var props = _.omit(this.props, 'title', 'footer', 'onClose');
@@ -33,7 +32,7 @@ var ModalDialog = React.createClass({
         </Modal.Footer>
       }
     </Modal>;
-  },
-});
+  }
+}
 
 export default ModalDialog;

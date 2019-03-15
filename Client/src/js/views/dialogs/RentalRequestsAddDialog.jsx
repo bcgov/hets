@@ -16,8 +16,8 @@ import { isValidDate, today } from '../../utils/date';
 import { isBlank } from '../../utils/string';
 
 
-var RentalRequestsAddDialog = React.createClass({
-  propTypes: {
+class RentalRequestsAddDialog extends React.Component {
+  static propTypes = {
     currentUser: React.PropTypes.object,
     localAreas: React.PropTypes.object,
     districtEquipmentTypes: React.PropTypes.object,
@@ -27,11 +27,13 @@ var RentalRequestsAddDialog = React.createClass({
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     viewOnly: React.PropTypes.bool,
-  },
+  };
 
-  getInitialState() {
-    const { project } = this.props;
-    return {
+  constructor(props) {
+    super(props);
+    const { project } = props;
+
+    this.state = {
       loading: false,
       savingError: '',
       projectId: project ? project.id : 0,
@@ -51,27 +53,27 @@ var RentalRequestsAddDialog = React.createClass({
       expectedStartDateError: '',
       expectedEndDateError: '',
     };
-  },
+  }
 
   componentDidMount() {
     Api.getDistrictEquipmentTypes();
     if (this.canChangeProject()) {
       Api.getProjectsCurrentFiscal();
     }
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  updateEquipmentTypeState(state) {
+  updateEquipmentTypeState = (state) => {
     var selectedEquipment =_.find(this.props.districtEquipmentTypes.data, { id: state.equipmentTypeId });
     var isDumpTruck = selectedEquipment.equipmentType.isDumpTruck;
     var expectedHours = isDumpTruck ? 600 : 300;
     this.setState({ ...state, expectedHours });
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.projectId !== 0) { return true; }
     if (this.state.localAreaId !== 0) { return true; }
     if (this.state.equipmentTypeId !== 0) { return true; }
@@ -82,9 +84,9 @@ var RentalRequestsAddDialog = React.createClass({
     if (this.state.rentalRequestAttachments !== '') { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     // Clear out any previous errors
     var valid = true;
     this.setState({
@@ -147,21 +149,21 @@ var RentalRequestsAddDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onLocalAreaSelected(localArea) {
+  onLocalAreaSelected = (localArea) => {
     // clear the selected equipment type if it's not included in the types for the new local area
     var districtEquipmentTypes = this.getFilteredEquipmentTypes(localArea.id);
     if (_.filter(districtEquipmentTypes, type => type.id === this.state.equipmentTypeId).length === 0) {
       this.setState({ equipmentTypeId: 0 });
     }
-  },
+  };
 
-  onProjectSelected(/* project */) {
+  onProjectSelected = () => {
     // TODO Restrict the available local areas to a project service area
-  },
+  };
 
-  formSubmitted() {
+  formSubmitted = () => {
     if (this.isValid()) {
       if (this.didChange()) {
         this.setState({isSaving: true});
@@ -198,20 +200,20 @@ var RentalRequestsAddDialog = React.createClass({
         });
       }
     }
-  },
+  };
 
-  getFilteredEquipmentTypes(localAreaId) {
+  getFilteredEquipmentTypes = (localAreaId) => {
     return _.chain(this.props.districtEquipmentTypes.data)
       .filter(type => type.equipmentCount > 0 && !localAreaId || _.filter(type.localAreas, localArea => localArea.id === localAreaId && localArea.equipmentCount > 0).length > 0)
       .sortBy('districtEquipmentName')
       .value();
-  },
+  };
 
-  canChangeProject() {
+  canChangeProject = () => {
     return !this.props.project || this.props.viewOnly;
-  },
+  };
 
-  renderForm() {
+  renderForm = () => {
     const { project } = this.props;
 
     // Constrain the local area drop downs to those in the District of the current logged in user
@@ -326,7 +328,7 @@ var RentalRequestsAddDialog = React.createClass({
         }
       </div>
     );
-  },
+  };
 
   render() {
     const { isSaving } = this.state;
@@ -343,8 +345,8 @@ var RentalRequestsAddDialog = React.createClass({
         { this.renderForm()}
       </FormDialog>
     );
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

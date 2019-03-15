@@ -9,8 +9,8 @@ import CheckboxControl from '../../components/CheckboxControl.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import Form from '../../components/Form.jsx';
 
-var DistrictEditDialog = React.createClass({
-  propTypes: {
+class DistrictEditDialog extends React.Component {
+  static propTypes = {
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
@@ -18,33 +18,35 @@ var DistrictEditDialog = React.createClass({
     user: React.PropTypes.object,
     district: React.PropTypes.object,
     userDistricts: React.PropTypes.object,
-  },
+  };
 
-  getInitialState() {
-    var isNew = this.props.district.id === 0;
-    return {
+  constructor(props) {
+    super(props);
+    var isNew = props.district.id === 0;
+
+    this.state = {
       isNew: isNew,
-      districtId: isNew ? 0 : this.props.district.district.id,
-      isPrimary: this.props.district.isPrimary || false,
+      districtId: isNew ? 0 : props.district.district.id,
+      isPrimary: props.district.isPrimary || false,
 
       districtIdError: '',
     };
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.isNew && this.state.districtId !== '') { return true; }
     if (this.state.isNew && this.state.isPrimary !== '') { return true; }
     if (!this.state.isNew && this.state.districtId !== this.props.district.district.id) { return true; }
     if (!this.state.isNew && this.state.isPrimary !== this.props.district.isPrimary) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       districtIdError: '',
     });
@@ -57,16 +59,16 @@ var DistrictEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     this.props.onSave({
       id: this.props.district.id,
       user: { id: this.props.user.id },
       district: { id: this.state.districtId },
       isPrimary: this.state.isPrimary,
     });
-  },
+  };
 
   render() {
     var userDistrictsFiltered = _.map(this.props.userDistricts, district => {
@@ -95,7 +97,7 @@ var DistrictEditDialog = React.createClass({
         <CheckboxControl id="isPrimary" checked={ this.state.isPrimary } updateState={ this.updateState }>Primary District</CheckboxControl>
       </Form>
     </EditDialog>;
-  },
-});
+  }
+}
 
 export default DistrictEditDialog;

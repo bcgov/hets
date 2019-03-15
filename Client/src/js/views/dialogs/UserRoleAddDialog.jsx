@@ -20,49 +20,47 @@ import { isValidDate, toZuluTime } from '../../utils/date';
 import { isBlank, notBlank } from '../../utils/string';
 
 
-var UserRoleAddDialog = React.createClass({
-  propTypes: {
+class UserRoleAddDialog extends React.Component {
+  static propTypes = {
     roles: React.PropTypes.object,
     currentUser: React.PropTypes.object,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
-  },
+  };
 
-  getInitialState() {
-    return {
-      loading: false,
+  state = {
+    loading: false,
 
-      roleId: 0,
-      effectiveDate: '',
-      expiryDate: '',
+    roleId: 0,
+    effectiveDate: '',
+    expiryDate: '',
 
-      roleIdError: '',
-      effectiveDateError: '',
-      expiryDateError: '',
-    };
-  },
+    roleIdError: '',
+    effectiveDateError: '',
+    expiryDateError: '',
+  };
 
   componentDidMount() {
     this.setState({ loading: true });
     Api.getRoles().finally(() => {
       this.setState({ loading: false });
     });
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.roleId !== 0) { return true; }
     if (notBlank(this.state.effectiveDate)) { return true; }
     if (notBlank(this.state.expiryDate)) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       roleIdError: false,
       effectiveDateError: false,
@@ -89,15 +87,15 @@ var UserRoleAddDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     this.props.onSave({
       roleId: this.state.roleId,
       effectiveDate: toZuluTime(this.state.effectiveDate),
       expiryDate: toZuluTime(this.state.expiryDate),
     });
-  },
+  };
 
   render() {
     var isAdministrator = _.some(this.props.currentUser.userRoles, { roleName: Constant.ADMINISTRATOR_ROLE });
@@ -145,8 +143,8 @@ var UserRoleAddDialog = React.createClass({
         </Grid>
       </Form>
     </EditDialog>;
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

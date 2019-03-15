@@ -1,9 +1,6 @@
 import React from 'react';
-
 import { Link } from 'react-router';
-
 import _ from 'lodash';
-
 import { Button, Glyphicon } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -13,19 +10,20 @@ import SortTable from '../components/SortTable.jsx';
 
 import { formatDateTime } from '../utils/date';
 
-var EquipmentTable = React.createClass({
-  propTypes: {
+
+class EquipmentTable extends React.Component {
+  static propTypes = {
     ui: React.PropTypes.object,
     updateUIState: React.PropTypes.func,
     equipmentList: React.PropTypes.object,
-  },
+  };
 
   shouldComponentUpdate(nextProps) {
     if (this.props.ui !== nextProps.ui || this.props.equipmentList !== nextProps.equipmentList) {
       return true;
     }
     return false;
-  },
+  }
 
   render() {
     var equipmentList = _.sortBy(this.props.equipmentList, equipment => {
@@ -77,7 +75,7 @@ var EquipmentTable = React.createClass({
         }
       </SortTable>
     );
-  },
-});
+  }
+}
 
 export default EquipmentTable;

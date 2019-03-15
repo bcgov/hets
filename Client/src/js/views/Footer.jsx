@@ -1,14 +1,12 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Row } from 'react-bootstrap';
 
 
-var Footer = React.createClass({
-  propTypes: {
+class Footer extends React.Component {
+  static propTypes = {
     currentUser: React.PropTypes.object,
-  },
+  };
 
   render() {
     return <footer id="footer">
@@ -31,8 +29,8 @@ var Footer = React.createClass({
         </div>
       </div>
     </footer>;
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {

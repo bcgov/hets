@@ -1,53 +1,49 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Well, PageHeader, Row, Col, ButtonToolbar, Button } from 'react-bootstrap';
-
 import _ from 'lodash';
 
 import * as Api from '../api';
 
 import MultiDropdown from '../components/MultiDropdown.jsx';
 
-var SeniorityList = React.createClass({
-  propTypes: {
+
+class SeniorityList extends React.Component {
+  static propTypes = {
     currentUser: React.PropTypes.object,
     districtEquipmentTypes: React.PropTypes.object,
     localAreas: React.PropTypes.object,
-  },
+  };
 
-  getInitialState() {
-    return {
-      selectedEquipmentTypeIds: [],
-      selectedLocalAreaIds: [],
-    };
-  },
+  state = {
+    selectedEquipmentTypeIds: [],
+    selectedLocalAreaIds: [],
+  };
 
   componentDidMount() {
     this.fetch();
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     Api.getDistrictEquipmentTypes();
-  },
+  };
 
-  updateState(state) {
+  updateState = (state) => {
     this.setState(state);
-  },
+  };
 
-  onLocalAreasChanged() {
+  onLocalAreasChanged = () => {
     this.setState({ selectedEquipmentTypeIds: [] });
-  },
+  };
 
-  getFilteredEquipmentTypes(localAreaIds) {
+  getFilteredEquipmentTypes = (localAreaIds) => {
     return _.chain(this.props.districtEquipmentTypes.data)
       .filter(type => type.equipmentCount > 0 && localAreaIds.length === 0 || _.filter(type.localAreas, localArea => _.includes(localAreaIds, localArea.id) && localArea.equipmentCount > 0).length > 0)
       .sortBy('districtEquipmentName')
       .value();
-  },
+  };
 
-  getRotationList(counterCopy) {
+  getRotationList = (counterCopy) => {
     Api.equipmentSeniorityListPdf(this.state.selectedLocalAreaIds, this.state.selectedEquipmentTypeIds, counterCopy).then(response => {
       var filename = counterCopy ? 'counter_copy.pdf' : 'seniority_list.pdf';
 
@@ -72,7 +68,7 @@ var SeniorityList = React.createClass({
       //release the reference to the file by revoking the Object URL
       window.URL.revokeObjectURL(url);
     });
-  },
+  };
 
   render() {
     var localAreas = _.chain(this.props.localAreas)
@@ -106,8 +102,8 @@ var SeniorityList = React.createClass({
         </Row>
       </Well>
     </div>;
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {

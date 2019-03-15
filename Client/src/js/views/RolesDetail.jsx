@@ -22,18 +22,20 @@ import PrintButton from '../components/PrintButton.jsx';
 import { isBlank } from '../utils/string';
 
 
-var RolesDetail = React.createClass({
-  propTypes: {
+class RolesDetail extends React.Component {
+  static propTypes = {
     currentUser: React.PropTypes.object,
     role: React.PropTypes.object,
     rolePermissions: React.PropTypes.object,
     permissions: React.PropTypes.object,
     params: React.PropTypes.object,
     router: React.PropTypes.object,
-  },
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       loading: false,
 
       name: '',
@@ -44,9 +46,9 @@ var RolesDetail = React.createClass({
 
       selectedPermissionIds: [],
 
-      isNew: this.props.params.roleId === '0',
+      isNew: props.params.roleId === '0',
     };
-  },
+  }
 
   componentDidMount() {
     if (this.state.isNew) {
@@ -56,9 +58,9 @@ var RolesDetail = React.createClass({
     } else {
       this.fetch();
     }
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     var rolePromise = Api.getRole(this.props.params.roleId);
     var permissionsPromise = Api.getRolePermissions(this.props.params.roleId);
 
@@ -74,13 +76,13 @@ var RolesDetail = React.createClass({
         selectedPermissionIds: selectedPermissionIds,
       });
     });
-  },
+  };
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  permissionClicked(permission) {
+  permissionClicked = (permission) => {
     var selectedPermissionIds = _.clone(this.state.selectedPermissionIds);
     if (selectedPermissionIds.indexOf(permission.id) === -1) {
       selectedPermissionIds.push(permission.id);
@@ -88,9 +90,9 @@ var RolesDetail = React.createClass({
       _.pull(selectedPermissionIds, permission.id);
     }
     this.setState({ selectedPermissionIds: selectedPermissionIds });
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       nameError: false,
       descriptionError: false,
@@ -109,25 +111,25 @@ var RolesDetail = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  didChangeRole() {
+  didChangeRole = () => {
     if (this.state.name !== this.props.role.name) { return true; }
     if (this.state.description !== this.props.role.description) { return true; }
 
     return false;
-  },
+  };
 
-  didChangePermissions() {
+  didChangePermissions = () => {
     var originalPermissionIds = _.map(this.props.rolePermissions, rolePermission => {
       return rolePermission.permission.id;
     });
     if (_.xor(originalPermissionIds, this.state.selectedPermissionIds).length > 0) { return true; }
 
     return false;
-  },
+  };
 
-  savePermissions() {
+  savePermissions = () => {
     if (this.didChangePermissions()) {
       Api.updateRolePermissions(this.props.role.id, _.map(this.state.selectedPermissionIds, id => {
         return { id: id };
@@ -137,15 +139,15 @@ var RolesDetail = React.createClass({
     } else {
       this.returnToList();
     }
-  },
+  };
 
-  returnToList() {
+  returnToList = () => {
     this.props.router.push({
       pathname: Constant.ROLES_PATHNAME,
     });
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     if (this.isValid()) {
       if (this.didChangeRole()) {
         if (this.state.isNew) {
@@ -167,7 +169,7 @@ var RolesDetail = React.createClass({
         this.savePermissions();
       }
     }
-  },
+  };
 
   render() {
     var role = this.props.role;
@@ -247,8 +249,8 @@ var RolesDetail = React.createClass({
       </Well>
       <Button bsStyle="primary" onClick={ this.onSave }>Save</Button>
     </div>;
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {

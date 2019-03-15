@@ -1,14 +1,13 @@
 import React from 'react';
 import Promise from 'bluebird';
-
 import { Button } from 'react-bootstrap';
-
 import _ from 'lodash';
 
 import ModalDialog from './ModalDialog.jsx';
 
-var EditDialog = React.createClass({
-  propTypes: {
+
+class EditDialog extends React.Component {
+  static propTypes = {
     title: React.PropTypes.node,
     didChange: React.PropTypes.func.isRequired,
     isValid: React.PropTypes.func.isRequired,
@@ -20,20 +19,18 @@ var EditDialog = React.createClass({
     saveText: React.PropTypes.string,
     closeText: React.PropTypes.string,
     children: React.PropTypes.node,
-  },
+  };
 
-  getInitialState() {
-    return {
-      saving: false,
-      savePromise: Promise.resolve(),
-    };
-  },
+  state = {
+    saving: false,
+    savePromise: Promise.resolve(),
+  };
 
   componentWillUnmount() {
     this.state.savePromise.cancel();
-  },
+  }
 
-  save() {
+  save = () => {
     if (this.props.isValid()) {
       if (this.props.didChange()) {
         var onSaveCompleted = () => this.setState({ saving: false });
@@ -45,7 +42,7 @@ var EditDialog = React.createClass({
         this.props.onClose();
       }
     }
-  },
+  };
 
   render() {
     var props = _.omit(this.props, 'className', 'onSave', 'didChange', 'isValid', 'updateState', 'saveText', 'closeText');
@@ -65,7 +62,7 @@ var EditDialog = React.createClass({
         }
       />
     );
-  },
-});
+  }
+}
 
 export default EditDialog;

@@ -1,11 +1,7 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Link } from 'react-router';
-
 import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form  } from 'react-bootstrap';
-
 import _ from 'lodash';
 import Moment from 'moment';
 
@@ -29,8 +25,9 @@ const THIS_FISCAL = 'This Fiscal';
 const LAST_FISCAL = 'Last Fiscal';
 const CUSTOM = 'Custom';
 
-var AitReport = React.createClass({
-  propTypes: {
+
+class AitReport extends React.Component {
+  static propTypes = {
     currentUser: React.PropTypes.object,
     projects: React.PropTypes.object,
     districtEquipmentTypes: React.PropTypes.object,
@@ -40,25 +37,27 @@ var AitReport = React.createClass({
     search: React.PropTypes.object,
     ui: React.PropTypes.object,
     router: React.PropTypes.object,
-  },
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       search: {
-        projectIds: this.props.search.projectIds || [],
-        districtEquipmentTypes: this.props.search.districtEquipmentTypes || [],
-        equipmentIds: this.props.search.equipmentIds || [],
-        rentalAgreementNumber: this.props.search.rentalAgreementNumber || '',
-        dateRange: this.props.search.dateRange || THIS_FISCAL,
+        projectIds: props.search.projectIds || [],
+        districtEquipmentTypes: props.search.districtEquipmentTypes || [],
+        equipmentIds: props.search.equipmentIds || [],
+        rentalAgreementNumber: props.search.rentalAgreementNumber || '',
+        dateRange: props.search.dateRange || THIS_FISCAL,
       },
       ui : {
-        sortField: this.props.ui.sortField || 'rentalAgreementNumber',
-        sortDesc: this.props.ui.sortDesc === true,
+        sortField: props.ui.sortField || 'rentalAgreementNumber',
+        sortDesc: props.ui.sortDesc === true,
       },
     };
-  },
+  }
 
-  buildSearchParams() {
+  buildSearchParams = () => {
     var searchParams = {
       rentalAgreementNumber: this.state.search.rentalAgreementNumber || '',
     };
@@ -106,7 +105,7 @@ var AitReport = React.createClass({
       searchParams.endDate = toZuluTime(endDate.startOf('day'));
     }
     return searchParams;
-  },
+  };
 
   componentDidMount() {
     Api.getProjectsCurrentFiscal();
@@ -120,18 +119,18 @@ var AitReport = React.createClass({
         this.loadFavourite(defaultFavourite);
       }
     }
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     Api.searchAitReport(this.buildSearchParams());
-  },
+  };
 
-  search(e) {
+  search = (e) => {
     e.preventDefault();
     this.fetch();
-  },
+  };
 
-  clearSearch() {
+  clearSearch = () => {
     var defaultSearchParameters = {
       projectIds: [],
       districtEquipmentTypes: [],
@@ -144,31 +143,31 @@ var AitReport = React.createClass({
       store.dispatch({ type: Action.UPDATE_AIT_SEARCH, aitResponses: this.state.search });
       store.dispatch({ type: Action.CLEAR_AIT_REPORT });
     });
-  },
+  };
 
-  updateSearchState(state, callback) {
+  updateSearchState = (state, callback) => {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () =>{
       store.dispatch({ type: Action.UPDATE_AIT_SEARCH, aitResponses: this.state.search });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  updateUIState(state, callback) {
+  updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
       store.dispatch({ type: Action.UPDATE_AIT_REPORT_UI, aitResponses: this.state.ui });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  loadFavourite(favourite) {
+  loadFavourite = (favourite) => {
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
-  },
+  };
 
-  print() {
+  print = () => {
     window.print();
-  },
+  };
 
-  renderResults() {
+  renderResults = () => {
     if (Object.keys(this.props.aitResponses.data).length === 0) {
       return <Alert bsStyle="success">No results</Alert>;
     }
@@ -206,32 +205,32 @@ var AitReport = React.createClass({
         })
       }
     </SortTable>;
-  },
+  };
 
-  matchesProjectFilter(projectIds) {
+  matchesProjectFilter = (projectIds) => {
     if (this.state.search.projectIds.length == 0) {
       return true;
     }
 
     return _.intersection(this.state.search.projectIds, projectIds).length > 0;
-  },
+  };
 
-  updateProjectSearchState(state) {
+  updateProjectSearchState = (state) => {
     this.updateSearchState(state, this.filterSelectedEquipment);
-  },
+  };
 
-  filterSelectedEquipment() {
+  filterSelectedEquipment = () => {
     var acceptableEquipmentIds = _.map(this.getFilteredEquipment(), 'id');
     var equipmentIds = _.intersection(this.state.search.equipmentIds, acceptableEquipmentIds);
     this.updateSearchState({ equipmentIds: equipmentIds });
-  },
+  };
 
-  getFilteredEquipment() {
+  getFilteredEquipment = () => {
     return _.chain(this.props.equipment.data)
       .filter(x => this.matchesProjectFilter(x.projectIds))
       .sortBy('equipmentCode')
       .value();
-  },
+  };
 
   render() {
     var resultCount = '';
@@ -333,8 +332,8 @@ var AitReport = React.createClass({
         }
       })()}
     </div>;
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

@@ -2,14 +2,14 @@ import React from 'react';
 import classNames from 'classnames';
 
 
-var PageHeader = React.createClass({
-  propTypes: {
+class PageHeader extends React.Component {
+  static propTypes = {
     title: React.PropTypes.node,
     subTitle: React.PropTypes.node,
     id: React.PropTypes.string,
     className: React.PropTypes.string,
     children: React.PropTypes.node,
-  },
+  };
 
   render() {
     const { title, subTitle,id, className, children } = this.props;
@@ -21,8 +21,8 @@ var PageHeader = React.createClass({
         {children}
       </h1>
     );
-  },
-});
+  }
+}
 
 
 export default PageHeader;
