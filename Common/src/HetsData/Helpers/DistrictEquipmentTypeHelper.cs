@@ -72,10 +72,11 @@ namespace HetsData.Helpers
             int? masterDistrictEquipmentTypeId = -1;
             int? currentEquipmentType = -1;
             string currentPrefix = "";
-            bool newMerge = true;
 
             foreach (MergeRecord detRecord in masterList)
             {
+                bool newMerge;
+
                 if (detRecord.DistrictId != currentDistrict ||
                     detRecord.EquipmentTypeId != currentEquipmentType ||
                     detRecord.EquipmentPrefix != currentPrefix)
@@ -126,8 +127,6 @@ namespace HetsData.Helpers
                     masterName = $"{currentPrefix} - {masterName}";
                     types.ElementAt(0).DistrictEquipmentName = masterName;
                 }
-
-                newMerge = false;
 
                 // update status bar
                 increment++;
@@ -180,25 +179,31 @@ namespace HetsData.Helpers
 
             foreach (MergeRecord detRecord in mergeRecords)
             {
-                // get det record first before we modify equipment
-                HetDistrictEquipmentType det = dbContext.HetDistrictEquipmentType
-                    .First(x => x.DistrictEquipmentTypeId == detRecord.DistrictEquipmentTypeId);
+                int originalDistrictEquipmentTypeId = detRecord.DistrictEquipmentTypeId;
+                int? newDistrictEquipmentTypeId = detRecord.MasterDistrictEquipmentTypeId;
 
                 // get equipment & update
                 IEnumerable<HetEquipment> equipmentRecords = dbContext.HetEquipment
-                    .Where(x => x.DistrictEquipmentTypeId == detRecord.DistrictEquipmentTypeId);
+                    .Where(x => x.DistrictEquipmentTypeId == originalDistrictEquipmentTypeId);
 
                 foreach (HetEquipment equipment in equipmentRecords)
                 {
-                    equipment.DistrictEquipmentTypeId = detRecord.MasterDistrictEquipmentTypeId;
+                    equipment.DistrictEquipmentTypeId = newDistrictEquipmentTypeId;
                 }
+
+                // save changes to associated equipment records
+                dbContext.SaveChangesForImport();
+
+                // get det record
+                HetDistrictEquipmentType det = dbContext.HetDistrictEquipmentType
+                    .First(x => x.DistrictEquipmentTypeId == originalDistrictEquipmentTypeId);
 
                 // delete old det record
                 HetRentalRequest request = dbContext.HetRentalRequest.AsNoTracking()
-                    .FirstOrDefault(x => x.DistrictEquipmentTypeId == detRecord.DistrictEquipmentTypeId);
+                    .FirstOrDefault(x => x.DistrictEquipmentTypeId == originalDistrictEquipmentTypeId);
 
                 HetLocalAreaRotationList rotationList = dbContext.HetLocalAreaRotationList.AsNoTracking()
-                    .FirstOrDefault(x => x.DistrictEquipmentTypeId == detRecord.DistrictEquipmentTypeId);
+                    .FirstOrDefault(x => x.DistrictEquipmentTypeId == originalDistrictEquipmentTypeId);
 
                 if (request != null || rotationList != null)
                 {
