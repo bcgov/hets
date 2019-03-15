@@ -191,6 +191,9 @@ namespace HetsData.Helpers
                     equipment.DistrictEquipmentTypeId = newDistrictEquipmentTypeId;
                 }
 
+                // save changes to associated equipment records
+                dbContext.SaveChangesForImport();
+
                 // get det record
                 HetDistrictEquipmentType det = dbContext.HetDistrictEquipmentType
                     .First(x => x.DistrictEquipmentTypeId == originalDistrictEquipmentTypeId);
