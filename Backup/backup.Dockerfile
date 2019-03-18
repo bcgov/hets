@@ -7,7 +7,7 @@ WORKDIR /
 # Load the backup script into the container
 COPY backup.sh /
 
-# Copy the restore script into the container
+# Copy the restore script into the container [sh /restore.sh]
 COPY restore.sh /
 
 # execute a backup

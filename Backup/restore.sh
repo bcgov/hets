@@ -46,6 +46,8 @@ else
 fi
 
 # restore database
+export PGPASSWORD=$POSTGRESQL_PASSWORD
+
 if ! pg_restore --clean --if-exists --host="$DATABASE_SERVICE_NAME" --port="5432" --username="$POSTGRESQL_USER" --dbname="$POSTGRESQL_DATABASE" --format="c" "$FULL_RESTORE_FILE"; then
 	echo "[!!ERROR!!] Failed to restore database $PGDB" 
 else
