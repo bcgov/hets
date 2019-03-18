@@ -52,13 +52,13 @@ These steps perform a restore of a backup.
    3. It is recommended that you also scale down to 0 **frontend** so that users know the application is unavailable while the database restore is underway.       
 3. Restart the **postgres** pod as a quick way of closing any other database connections from users using port forward or that have rsh'd to directly connect to the database.
 4. Open a Terminal window on the Backup pod
-   1. locate the backup to restore (change to the directory)"
+   1. locate the backup to restore (change to the directory)
    
        cd /backups/2019-03-18
 	   
     2. execute the script identifying the file to resore (example below):
 	
-       sh /restore.sh 2019-03-18/hets2019-03-18-02-55.bak
+       sh /restore.sh 2019-03-18/hets2019-03-18-20-55.bak
    
 5. From the Openshift Console restart the app:
     1. Scale up the Server app and wait for it to finish starting up.  View the logs for the Server app to verify there were no startup issues.
