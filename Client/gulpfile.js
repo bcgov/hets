@@ -1,11 +1,11 @@
 /* eslint-env node */
 
-const path = require('path');
 const del = require('del');
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
 const depsOk = require('deps-ok');
 const webpack = require('webpack');
+const webpackStream = require('webpack-stream');
 const _ = require('lodash');
 
 const argv = require('minimist')(process.argv.slice(2));
@@ -29,9 +29,6 @@ const CSS_DIR_GLOB = 'src/sass/**/*.scss';
 const HANDLEBARS_DIR_GLOB = 'src/html/**/*.{hbs,html}';
 const DIST_DIR = 'dist';
 const NODE_MODULES_DIR = 'node_modules/';
-const JS_SHIMS = [
-  'node_modules/object-assign-shim/index.js',
-];
 const VENDOR_CSS = [
   'bootstrap/dist/css/bootstrap.css',
   'react-bootstrap-datetimepicker/css/bootstrap-datetimepicker.css',
@@ -53,28 +50,16 @@ gulp.task('deps-ok', done => {
 
 gulp.task('clean', done => del([DIST_DIR], done));
 
-gulp.task('js:shims', function() {
-  if(JS_SHIMS.length === 0) { return Promise.resolve(); }
-
-  const uglifyOptions = {
-    compress: {
-      global_defs: { TESTING: false },
-    },
-  };
-
-  return gulp.src(JS_SHIMS)
-    .pipe(devOnlyPlumber())
-    .pipe($.sourcemaps.init({ loadMaps: true }))
-    .pipe(IS_PRODUCTION ? $.uglify(uglifyOptions) : $.util.noop())
-    .pipe($.concat('shims.js'))
-    .pipe($.sourcemaps.write('./maps'))
-    .pipe(gulp.dest(`${DIST_DIR}/js/`));
-});
 
 gulp.task('js:modules', () => {
   return gulp.src(_.last(WEBPACK_CONFIG.entry.app))
     .pipe(devOnlyPlumber())
-    .pipe($.webpack(WEBPACK_CONFIG, webpack))
+    .pipe(
+      webpackStream(WEBPACK_CONFIG, webpack)
+      .on('error', (err) => {
+        $.util.log('WEBPACK ERROR', err);
+      })
+    )
     .pipe(gulp.dest(`${DIST_DIR}/js/`))
     .pipe($.size({ title: 'js modules' }));
 });
@@ -181,7 +166,7 @@ gulp.task('test:integration', function() {
 gulp.task('test:unit', function() {
   return gulp.src(JS_UNIT_TEST_GLOB, { read: false })
     .pipe($.mocha({
-      require: 'babel-core/register',
+      require: '@babel/register',
     }));
 });
 
@@ -214,7 +199,7 @@ gulp.task('server:dev', function(done) {
 
 /* Build Tasks */
 
-gulp.task('assets:static', gulp.parallel('robots.txt', 'images', 'fonts', 'css:vendor', 'js:shims'));
+gulp.task('assets:static', gulp.parallel('robots.txt', 'images', 'fonts', 'css:vendor'));
 gulp.task('styles', gulp.parallel('sass', 'css:vendor'));
 
 gulp.task('build:assets:simple', gulp.parallel('styles', 'assets:static', 'templates'));
