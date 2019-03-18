@@ -14,17 +14,19 @@ import Form from '../../components/Form.jsx';
 import { isValidDate, toZuluTime } from '../../utils/date';
 import { notBlank, isBlank } from '../../utils/string';
 
-var OwnersPolicyEditDialog = React.createClass({
-  propTypes: {
+class OwnersPolicyEditDialog extends React.Component {
+  static propTypes = {
     owner: React.PropTypes.object,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
-  },
+  };
 
-  getInitialState() {
-    var owner = this.props.owner;
-    return {
+  constructor(props) {
+    super(props);
+    var owner = props.owner;
+
+    this.state = {
       workSafeBCPolicyNumber: owner.workSafeBCPolicyNumber || '',
       workSafeBCExpiryDate: owner.workSafeBCExpiryDate || '',
       cglCompanyName: owner.cglCompanyName || '',
@@ -35,13 +37,13 @@ var OwnersPolicyEditDialog = React.createClass({
       workSafeBCExpiryDateError: '',
       cglEndDateError: '',
     };
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     var owner = this.props.owner;
 
     if (this.state.workSafeBCPolicyNumber !== owner.workSafeBCPolicyNumber) { return true; }
@@ -51,9 +53,9 @@ var OwnersPolicyEditDialog = React.createClass({
     if (this.state.cglEndDate !== owner.cglEndDate) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       workSafeBCPolicyNumberError: '',
       workSafeBCExpiryDateError: '',
@@ -78,9 +80,9 @@ var OwnersPolicyEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     this.props.onSave({ ...this.props.owner, ...{
       workSafeBCPolicyNumber: this.state.workSafeBCPolicyNumber,
       workSafeBCExpiryDate: toZuluTime(this.state.workSafeBCExpiryDate),
@@ -88,10 +90,10 @@ var OwnersPolicyEditDialog = React.createClass({
       cglPolicyNumber: this.state.cglPolicyNumber,
       cglEndDate: toZuluTime(this.state.cglEndDate),
     }});
-  },
+  };
 
   render() {
-    console.log(this.props.owner);
+    // console.log(this.props.owner);
     return <EditDialog id="owners-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
       title={<strong>Owner Insurance</strong>}>
@@ -137,8 +139,8 @@ var OwnersPolicyEditDialog = React.createClass({
         </Row>
       </Form>
     </EditDialog>;
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

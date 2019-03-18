@@ -13,8 +13,8 @@ import FormInputControl from '../../components/FormInputControl.jsx';
 import { isBlank, formatPhoneNumber } from '../../utils/string';
 
 
-var ContactsEditDialog = React.createClass({
-  propTypes: {
+class ContactsEditDialog extends React.Component {
+  static propTypes = {
     contact: React.PropTypes.object.isRequired,
     parent: React.PropTypes.object.isRequired,
     saveContact: React.PropTypes.func.isRequired,
@@ -22,23 +22,25 @@ var ContactsEditDialog = React.createClass({
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     defaultPrimary: React.PropTypes.bool,
-  },
+  };
 
-  getInitialState() {
-    return {
-      isNew: this.props.contact.id === 0,
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isNew: props.contact.id === 0,
 
       isSaving: false,
 
-      givenName: this.props.contact.givenName || '',
-      surname: this.props.contact.surname || '',
-      role: this.props.contact.role || '',
-      notes: this.props.contact.notes || '',
-      emailAddress: this.props.contact.emailAddress || '',
-      workPhoneNumber: this.props.contact.workPhoneNumber || '',
-      mobilePhoneNumber: this.props.contact.mobilePhoneNumber || '',
-      faxPhoneNumber: this.props.contact.faxPhoneNumber || '',
-      isPrimary: this.props.contact.isPrimary || this.props.defaultPrimary || false,
+      givenName: props.contact.givenName || '',
+      surname: props.contact.surname || '',
+      role: props.contact.role || '',
+      notes: props.contact.notes || '',
+      emailAddress: props.contact.emailAddress || '',
+      workPhoneNumber: props.contact.workPhoneNumber || '',
+      mobilePhoneNumber: props.contact.mobilePhoneNumber || '',
+      faxPhoneNumber: props.contact.faxPhoneNumber || '',
+      isPrimary: props.contact.isPrimary || props.defaultPrimary || false,
 
       givenNameError: false,
       emailAddressError: false,
@@ -46,17 +48,17 @@ var ContactsEditDialog = React.createClass({
       mobilePhoneNumberError: false,
       faxPhoneNumberError: false,
     };
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  makePrimary() {
+  makePrimary = () => {
     this.setState({ isPrimary: true });
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.givenName !== this.props.contact.givenName) { return true; }
     if (this.state.surname !== this.props.contact.surname) { return true; }
     if (this.state.organizationName !== this.props.contact.organizationName) { return true; }
@@ -69,16 +71,16 @@ var ContactsEditDialog = React.createClass({
     if (this.state.isPrimary !== this.props.contact.isPrimary) { return true; }
 
     return false;
-  },
+  };
 
-  isValidPhoneNumber(number) {
+  isValidPhoneNumber = (number) => {
     if (isBlank(number)) {
       return true;
     }
     return Constant.NANP_REGEX.test(number) && formatPhoneNumber(number).length <= Constant.MAX_LENGTH_PHONE_NUMBER;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       givenNameError: false,
       emailAddressError: false,
@@ -129,9 +131,9 @@ var ContactsEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  formSubmitted() {
+  formSubmitted = () => {
     const { isNew } = this.state;
 
     if (this.isValid()) {
@@ -161,7 +163,7 @@ var ContactsEditDialog = React.createClass({
         }
       }
     }
-  },
+  };
 
   render() {
     // Read-only if the user cannot edit the contact
@@ -185,69 +187,81 @@ var ContactsEditDialog = React.createClass({
         onClose={this.props.onClose}
         onSubmit={this.formSubmitted}
         title={dialogTitle}>
-          <Grid fluid>
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId="givenName" validationState={ this.state.givenNameError ? 'error' : null }>
-                  <ControlLabel>Given Name <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.givenName } readOnly={ isReadOnly } updateState={ this.updateState } autoFocus/>
-                  <HelpBlock>{ this.state.givenNameError }</HelpBlock>
-                </FormGroup>
-              </Col>
-              <Col md={12}>
-                <FormGroup controlId="surname">
-                  <ControlLabel>Surname</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.surname } readOnly={ isReadOnly } updateState={ this.updateState }/>
-                </FormGroup>
-              </Col>
-              <Col md={12}>
-                <FormGroup controlId="role">
-                  <ControlLabel>Role</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.role } readOnly={ isReadOnly } updateState={ this.updateState }/>
-                </FormGroup>
-              </Col>
-              <Col md={12}>
-                <FormGroup controlId="workPhoneNumber" validationState={ this.state.workPhoneNumberError ? 'error' : null }>
-                  <ControlLabel>Work Phone {this.state.isPrimary && <sup>*</sup>}</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.workPhoneNumber } placeholder="250-555-1212x123" readOnly={ isReadOnly } updateState={ this.updateState }/>
-                  <HelpBlock>{ this.state.workPhoneNumberError }</HelpBlock>
-                </FormGroup>
-              </Col>
-              <Col md={12}>
-                <FormGroup controlId="mobilePhoneNumber" validationState={ this.state.mobilePhoneNumberError ? 'error' : null }>
-                  <ControlLabel>Cell Phone {this.state.isPrimary && <sup>*</sup>}</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.mobilePhoneNumber } placeholder="250-555-1212" readOnly={ isReadOnly } updateState={ this.updateState }/>
-                  <HelpBlock>{ this.state.mobilePhoneNumberError }</HelpBlock>
-                </FormGroup>
-              </Col>
-              <Col md={12}>
-                <FormGroup controlId="faxPhoneNumber" validationState={ this.state.faxPhoneNumberError ? 'error' : null }>
-                  <ControlLabel>Fax</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.faxPhoneNumber } placeholder="250-555-1212" readOnly={ isReadOnly } updateState={ this.updateState }/>
-                  <HelpBlock>{ this.state.faxPhoneNumberError }</HelpBlock>
-                </FormGroup>
-              </Col>
-              <Col md={12}>
-                <FormGroup controlId="emailAddress" validationState={ this.state.emailAddressError ? 'error' : null }>
-                  <ControlLabel>Email {this.state.isPrimary && <sup>*</sup>}</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.emailAddress } readOnly={ isReadOnly } updateState={ this.updateState }/>
-                  <HelpBlock>{ this.state.emailAddressError }</HelpBlock>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId="notes">
-                  <ControlLabel>Notes</ControlLabel>
-                  <FormInputControl componentClass="textarea" defaultValue={ this.state.notes } updateState={ this.updateState } />
-                </FormGroup>
-              </Col>
-            </Row>
-          </Grid>
+        <Grid fluid>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="givenName" validationState={ this.state.givenNameError ? 'error' : null }>
+                <ControlLabel>Given Name <sup>*</sup></ControlLabel>
+                <FormInputControl type="text" defaultValue={ this.state.givenName } readOnly={ isReadOnly } updateState={ this.updateState } autoFocus/>
+                <HelpBlock>{ this.state.givenNameError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="surname">
+                <ControlLabel>Surname</ControlLabel>
+                <FormInputControl type="text" defaultValue={ this.state.surname } readOnly={ isReadOnly } updateState={ this.updateState }/>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="role">
+                <ControlLabel>Role</ControlLabel>
+                <FormInputControl type="text" defaultValue={ this.state.role } readOnly={ isReadOnly } updateState={ this.updateState }/>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="workPhoneNumber" validationState={ this.state.workPhoneNumberError ? 'error' : null }>
+                <ControlLabel>Work Phone {this.state.isPrimary && <sup>*</sup>}</ControlLabel>
+                <FormInputControl type="text" defaultValue={ this.state.workPhoneNumber } placeholder="250-555-1212x123" readOnly={ isReadOnly } updateState={ this.updateState }/>
+                <HelpBlock>{ this.state.workPhoneNumberError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="mobilePhoneNumber" validationState={ this.state.mobilePhoneNumberError ? 'error' : null }>
+                <ControlLabel>Cell Phone {this.state.isPrimary && <sup>*</sup>}</ControlLabel>
+                <FormInputControl type="text" defaultValue={ this.state.mobilePhoneNumber } placeholder="250-555-1212" readOnly={ isReadOnly } updateState={ this.updateState }/>
+                <HelpBlock>{ this.state.mobilePhoneNumberError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="faxPhoneNumber" validationState={ this.state.faxPhoneNumberError ? 'error' : null }>
+                <ControlLabel>Fax</ControlLabel>
+                <FormInputControl type="text" defaultValue={ this.state.faxPhoneNumber } placeholder="250-555-1212" readOnly={ isReadOnly } updateState={ this.updateState }/>
+                <HelpBlock>{ this.state.faxPhoneNumberError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="emailAddress" validationState={ this.state.emailAddressError ? 'error' : null }>
+                <ControlLabel>Email {this.state.isPrimary && <sup>*</sup>}</ControlLabel>
+                <FormInputControl type="text" defaultValue={ this.state.emailAddress } readOnly={ isReadOnly } updateState={ this.updateState }/>
+                <HelpBlock>{ this.state.emailAddressError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="notes">
+                <ControlLabel>Notes</ControlLabel>
+                <FormInputControl componentClass="textarea" defaultValue={ this.state.notes } updateState={ this.updateState } />
+              </FormGroup>
+            </Col>
+          </Row>
+        </Grid>
       </FormDialog>
     );
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

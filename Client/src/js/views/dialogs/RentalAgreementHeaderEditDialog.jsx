@@ -17,25 +17,27 @@ import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
-var RentalAgreementHeaderEditDialog = React.createClass({
-  propTypes: {
+class RentalAgreementHeaderEditDialog extends React.Component {
+  static propTypes = {
     rentalAgreement: React.PropTypes.object.isRequired,
     projects: React.PropTypes.object,
     equipment: React.PropTypes.object,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
-  },
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       loaded: true,
-      projectId: this.props.rentalAgreement.projectId || '',
-      equipmentCode: this.props.rentalAgreement.equipment.equipmentCode || '',
+      projectId: props.rentalAgreement.projectId || '',
+      equipmentCode: props.rentalAgreement.equipment.equipmentCode || '',
 
       equipmentCodeError: '',
     };
-  },
+  }
 
   componentDidMount() {
     Api.getProjectsCurrentFiscal();
@@ -47,24 +49,24 @@ var RentalAgreementHeaderEditDialog = React.createClass({
         this.setState({ loaded: true });
       });
     }
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.projectId !== this.props.rentalAgreement.projectId) { return true; }
     if (this.state.equipmentCode.toLowerCase().trim() !== this.props.rentalAgreement.equipment.equipmentCode.toLowerCase().trim()) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     return this.validateEquipmentCode(this.state.equipmentCode);
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     var equipment = this.getEquipment(this.state.equipmentCode);
     var equipmentId = equipment ? equipment.id : null;
 
@@ -72,17 +74,17 @@ var RentalAgreementHeaderEditDialog = React.createClass({
       projectId: this.state.projectId || null,
       equipmentId: equipmentId,
     }});
-  },
+  };
 
-  getEquipment(equipmentCode) {
+  getEquipment = (equipmentCode) => {
     var code = equipmentCode.toLowerCase().trim();
     var equipment = _.find(this.props.equipment.data, (e) => {
       return e.equipmentCode.toLowerCase().trim() === code;
     });
     return equipment;
-  },
+  };
 
-  validateEquipmentCode(equipmentCode) {
+  validateEquipmentCode = (equipmentCode) => {
     var valid = true;
 
     this.setState({
@@ -100,11 +102,11 @@ var RentalAgreementHeaderEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  validateEquipmentCodeInput(e) {
+  validateEquipmentCodeInput = (e) => {
     this.validateEquipmentCode(e.target.value);
-  },
+  };
 
   render() {
     return <EditDialog id="rental-agreements-edit" show={ this.props.show }
@@ -144,8 +146,8 @@ var RentalAgreementHeaderEditDialog = React.createClass({
         </Form>;
       })()}
     </EditDialog>;
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

@@ -1,9 +1,6 @@
 import React from 'react';
-
 import {connect} from 'react-redux';
-
 import $ from 'jquery';
-
 import * as Api from '../api';
 import { unhandledApiError, closeSessionTimeoutDialog } from '../actions';
 
@@ -17,8 +14,9 @@ import { resetSessionTimeoutTimer } from '../app.jsx';
 import { ApiError } from '../utils/http';
 import { bindActionCreators } from 'redux';
 
-var Main = React.createClass({
-  propTypes: {
+
+class Main extends React.Component {
+  static propTypes = {
     children: React.PropTypes.object,
     showNav: React.PropTypes.bool,
     showSessionTimeoutDialog: React.PropTypes.bool,
@@ -26,48 +24,46 @@ var Main = React.createClass({
 
     unhandledApiError: React.PropTypes.func,
     closeSessionTimeoutDialog: React.PropTypes.func,
-  },
+  };
 
-  getInitialState() {
-    return {
-      headerHeight: 0,
-    };
-  },
+  state = {
+    headerHeight: 0,
+  };
 
   componentDidMount() {
     this.setState({ headerHeight: ($('#header-main').height() + 10) });
 
     window.addEventListener('unhandledrejection', this.unhandledRejection);
-  },
+  }
 
-  unhandledRejection(e) {
+  unhandledRejection = (e) => {
     var err = e.detail.reason;
 
     if (err instanceof ApiError) {
       this.props.unhandledApiError(err);
     }
-  },
+  };
 
-  onCloseSessionTimeoutDialog() {
+  onCloseSessionTimeoutDialog = () => {
     Api.keepAlive();
     resetSessionTimeoutTimer();
     this.props.closeSessionTimeoutDialog();
-  },
+  };
 
-  onEndSession() {
+  onEndSession = () => {
     Api.logoffUser().then(logoffUrl => {
       if (logoffUrl) {
         window.location.href = logoffUrl;
       }
     });
     this.props.closeSessionTimeoutDialog();
-  },
+  };
 
   componentWillUnmount() {
     window.removeEventListener('unhandledrejection', this.unhandledRejection);
-  },
+  }
 
-  render: function() {
+  render() {
     return (
       <div id ="main">
         <TopNav showNav={this.props.showNav}/>
@@ -88,8 +84,8 @@ var Main = React.createClass({
         <ErrorDialog show={this.props.showErrorDialog}/>
       </div>
     );
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

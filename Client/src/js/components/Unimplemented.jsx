@@ -1,11 +1,11 @@
 import React from 'react';
-
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
-var Unimplemented = React.createClass({
-  propTypes: {
+
+class Unimplemented extends React.Component {
+  static propTypes = {
     children: React.PropTypes.node,
-  },
+  };
 
   render() {
     return <OverlayTrigger trigger={['hover', 'click']} placement="bottom" rootClose overlay={
@@ -13,8 +13,8 @@ var Unimplemented = React.createClass({
     }>
       { this.props.children }
     </OverlayTrigger>;
-  },
-});
+  }
+}
 
 
 export default Unimplemented;

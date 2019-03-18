@@ -1,7 +1,5 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { PageHeader, Button, Well } from 'react-bootstrap';
 
 import * as Api from '../api';
@@ -11,27 +9,25 @@ import CheckboxControl from '../components/CheckboxControl.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import Confirm from '../components/Confirm.jsx';
 import Spinner from '../components/Spinner.jsx';
-
 import SubHeader from '../components/ui/SubHeader.jsx';
 
 import { formatDateTimeUTCToLocal } from '../utils/date';
 
-var Rollover = React.createClass({
-  propTypes: {
+
+class Rollover extends React.Component {
+  static propTypes = {
     currentUser: React.PropTypes.object,
     rolloverStatus: React.PropTypes.object,
     router: React.PropTypes.object,
-  },
+  };
 
-  getInitialState() {
-    return {
-      loading: true,
-      checkListStep1: false,
-      checkListStep2: false,
-      checkListStep3: false,
-      refreshStatusTimerId: null,
-    };
-  },
+  state = {
+    loading: true,
+    checkListStep1: false,
+    checkListStep2: false,
+    checkListStep3: false,
+    refreshStatusTimerId: null,
+  };
 
   componentDidMount() {
     var user = this.props.currentUser;
@@ -49,20 +45,20 @@ var Rollover = React.createClass({
         this.startRefreshStatusTimer();
       }
     });
-  },
+  }
 
   componentDidUpdate() {
     if (this.props.rolloverStatus.rolloverActive && this.state.refreshStatusTimerId === null) {
       this.startRefreshStatusTimer();
     }
-  },
+  }
 
-  startRefreshStatusTimer() {
+  startRefreshStatusTimer = () => {
     var refreshStatusTimerId = setInterval(this.refreshStatus, 2000); // 2 seconds
     this.setState({ refreshStatusTimerId: refreshStatusTimerId });
-  },
+  };
 
-  refreshStatus() {
+  refreshStatus = () => {
     Api.getRolloverStatus(this.props.currentUser.district.id).then(() => {
       var rolloverActive = this.props.rolloverStatus.rolloverActive;
       if (!rolloverActive && this.state.refreshStatusTimerId !== null) {
@@ -70,21 +66,21 @@ var Rollover = React.createClass({
         this.setState({ refreshStatusTimerId: null });
       }
     });
-  },
+  };
 
-  initiateRollover() {
+  initiateRollover = () => {
     Api.initiateRollover(this.props.currentUser.district.id);
-  },
+  };
 
-  dismissRolloverNotice() {
+  dismissRolloverNotice = () => {
     Api.dismissRolloverMessage(this.props.currentUser.district.id);
-  },
+  };
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  renderContentRolloverActive() {
+  renderContentRolloverActive = () => {
     var status = this.props.rolloverStatus;
 
     return (
@@ -97,9 +93,9 @@ var Rollover = React.createClass({
         </div>
       </div>
     );
-  },
+  };
 
-  renderContentRolloverComplete() {
+  renderContentRolloverComplete = () => {
     return (
       <div className="text-center">
         <p>The hired equipment roll over has been completed on { formatDateTimeUTCToLocal(this.props.rolloverStatus.rolloverEndDate, Constant.DATE_TIME_READABLE) }.</p>
@@ -107,9 +103,9 @@ var Rollover = React.createClass({
         <Button onClick={ this.dismissRolloverNotice } bsStyle="primary">Dismiss</Button>
       </div>
     );
-  },
+  };
 
-  renderContent() {
+  renderContent = () => {
     var rolloverButtonDisabled = !this.state.checkListStep1 || !this.state.checkListStep2 || !this.state.checkListStep3;
 
     return (
@@ -139,7 +135,7 @@ var Rollover = React.createClass({
         </div>
       </Well>
     );
-  },
+  };
 
   render() {
     var status = this.props.rolloverStatus;
@@ -149,14 +145,21 @@ var Rollover = React.createClass({
       <PageHeader>{ user.districtName } Roll Over</PageHeader>
 
       <div className="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3">
-        { this.state.loading ? (<div style={{ textAlign: 'center' }}><Spinner/></div>)
-        : status.rolloverActive ? this.renderContentRolloverActive()
-        : status.rolloverComplete ? this.renderContentRolloverComplete()
-        : this.renderContent() }
+        {(() => {
+          if (this.state.loading) {
+            return<div style={{ textAlign: 'center' }}><Spinner/></div>;
+          } else if (status.rolloverActive) {
+            return this.renderContentRolloverActive();
+          } else if (status.rolloverComplete) {
+            return this.renderContentRolloverComplete();
+          } else {
+            return this.renderContent();
+          }
+        })()}
       </div>
     </div>;
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

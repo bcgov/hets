@@ -68,7 +68,7 @@ export function getCurrentUser() {
 }
 
 export function keepAlive() {
-   // endpoint to keep session active
+  // endpoint to keep session active
   return new ApiRequest('/users/current').get(null, { keepAlive: true });
 }
 
@@ -635,7 +635,7 @@ export function equipmentSeniorityListPdf(localAreas, types, counterCopy) {
 
 export function addPhysicalAttachments(equipmentId, attachmentTypeNames) {
   const attachments = attachmentTypeNames.map((typeName) => {
-      // "concurrencyControlNumber": 0,
+    // "concurrencyControlNumber": 0,
     return {
       typeName,
       description: '',

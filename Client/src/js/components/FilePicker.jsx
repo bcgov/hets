@@ -1,18 +1,19 @@
 import React from 'react';
 import { Glyphicon } from 'react-bootstrap';
 
-var FilePicker = React.createClass({
-  propTypes: {
+
+class FilePicker extends React.Component {
+  static propTypes = {
     id: React.PropTypes.string,
     className: React.PropTypes.string,
     label: React.PropTypes.string,
     mimeTypes: React.PropTypes.array,
     onFilesSelected: React.PropTypes.func,
-  },
+  };
 
-  filesPicked(e) {
+  filesPicked = (e) => {
     this.props.onFilesSelected(e.target.files);
-  },
+  };
 
   render() {
     var classNames = [ 'file-picker' ];
@@ -29,7 +30,7 @@ var FilePicker = React.createClass({
         <input type="file" multiple onChange={ this.filesPicked }/>
       </label>
     </span>;
-  },
-});
+  }
+}
 
 export default FilePicker;

@@ -6,8 +6,8 @@ import _ from 'lodash';
 import RootCloseMenu from './RootCloseMenu.jsx';
 
 
-var FilterDropdown = React.createClass({
-  propTypes: {
+class FilterDropdown extends React.Component {
+  static propTypes = {
     id: React.PropTypes.string.isRequired,
     items: React.PropTypes.array.isRequired,
     selectedId: React.PropTypes.number,
@@ -22,23 +22,25 @@ var FilterDropdown = React.createClass({
     disabledTooltip: React.PropTypes.node,
     onSelect: React.PropTypes.func,
     updateState: React.PropTypes.func,
-  },
+  };
 
-  getInitialState() {
-    return {
-      selectedId: this.props.selectedId || 0,
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      selectedId: props.selectedId || 0,
       title: '',
       filterTerm: '',
-      fieldName: this.props.fieldName || 'name',
+      fieldName: props.fieldName || 'name',
       open: false,
     };
-  },
+  }
 
   componentDidMount() {
     // Have to wait until state is ready before initializing title.
     var title = this.buildTitle(this.props.items, this.state.selectedId);
     this.setState({ title: title });
-  },
+  }
 
   componentDidUpdate(prevProps, prevState) {
     if (!_.isEqual(this.props.items, prevProps.items)) {
@@ -54,9 +56,9 @@ var FilterDropdown = React.createClass({
         title: this.buildTitle(prevProps.items, this.props.selectedId),
       });
     }
-  },
+  }
 
-  buildTitle(items, selectedId) {
+  buildTitle = (items, selectedId) => {
     if (selectedId) {
       var selected = _.find(items, { id: selectedId });
       if (selected) {
@@ -64,9 +66,9 @@ var FilterDropdown = React.createClass({
       }
     }
     return this.props.placeholder || 'Select item';
-  },
+  };
 
-  itemSelected(selectedId) {
+  itemSelected = (selectedId) => {
     this.toggle(false);
 
     this.setState({
@@ -75,9 +77,9 @@ var FilterDropdown = React.createClass({
     });
 
     this.sendSelected(selectedId);
-  },
+  };
 
-  sendSelected(selectedId) {
+  sendSelected = (selectedId) => {
     var selected = _.find(this.props.items, { id: selectedId });
 
     // Send selected item to change listener
@@ -91,9 +93,9 @@ var FilterDropdown = React.createClass({
         [this.props.id]: selectedId,
       });
     }
-  },
+  };
 
-  toggle(open) {
+  toggle = (open) => {
     this.setState({
       open: open,
       filterTerm: '',
@@ -103,21 +105,21 @@ var FilterDropdown = React.createClass({
         this.input.value = '';
       }
     });
-  },
+  };
 
-  filter(e) {
+  filter = (e) => {
     this.setState({
       filterTerm: e.target.value.toLowerCase().trim(),
     });
-  },
+  };
 
-  keyDown(e) {
+  keyDown = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
     }
-  },
+  };
 
-  filterItems() {
+  filterItems = () => {
     const { items } = this.props;
 
     if (this.state.filterTerm.length > 0) {
@@ -127,7 +129,7 @@ var FilterDropdown = React.createClass({
     }
 
     return items;
-  },
+  };
 
   render() {
     const { id, className, disabled, blankLine, disabledTooltip } = this.props;
@@ -178,7 +180,7 @@ var FilterDropdown = React.createClass({
     }
 
     return dropdown;
-  },
-});
+  }
+}
 
 export default FilterDropdown;

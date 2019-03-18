@@ -13,8 +13,8 @@ import EditButton from '../../components/EditButton.jsx';
 import { formatDateTimeUTCToLocal } from '../../utils/date';
 
 
-var NotesDialog = React.createClass({
-  propTypes: {
+class NotesDialog extends React.Component {
+  static propTypes = {
     id: React.PropTypes.string.isRequired,
     show: React.PropTypes.bool,
     notes: React.PropTypes.array,
@@ -23,41 +23,43 @@ var NotesDialog = React.createClass({
     // Api function to call on save
     saveNote: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
-  },
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       note: {},
-      notes: this.props.notes || [],
+      notes: props.notes || [],
     };
-  },
+  }
 
   componentWillReceiveProps(nextProps) {
     if (!_.isEqual(this.props.notes, nextProps.notes)) {
       this.setState({ notes: nextProps.notes });
     }
-  },
+  }
 
-  openNotesAddDialog() {
+  openNotesAddDialog = () => {
     this.setState({ showNotesAddDialog : true });
-  },
+  };
 
-  closeNotesAddDialog() {
+  closeNotesAddDialog = () => {
     this.setState({
       note: {},
       showNotesAddDialog: false,
     });
-  },
+  };
 
-  onNoteAdded(note) {
+  onNoteAdded = (note) => {
     this.setState({ notes: this.state.notes.concat([note]) });
     this.props.saveNote(this.props.id, note).then(() => {
       this.props.getNotes(this.props.id);
     });
     this.closeNotesAddDialog();
-  },
+  };
 
-  onNoteUpdated(note) {
+  onNoteUpdated = (note) => {
     const noteId = note.id;
     const updatedNotes = this.state.notes.map((_note) => {
       return _note.id === noteId ? note : _note;
@@ -68,9 +70,9 @@ var NotesDialog = React.createClass({
       this.props.getNotes(this.props.id);
     });
     this.closeNotesAddDialog();
-  },
+  };
 
-  deleteNote(note) {
+  deleteNote = (note) => {
     const noteId = note.id;
     const updatedNotes = this.state.notes.filter((note) => {
       return note.id !== noteId;
@@ -80,18 +82,18 @@ var NotesDialog = React.createClass({
     Api.deleteNote(note.id).then(() => {
       this.props.getNotes(this.props.id);
     });
-  },
+  };
 
-  editNote(note) {
+  editNote = (note) => {
     this.setState({
       note: note,
       showNotesAddDialog: true,
     });
-  },
+  };
 
-  onClose() {
+  onClose = () => {
     this.props.onClose();
-  },
+  };
 
   render() {
     const notes = _.orderBy(this.state.notes, ['createDate'], ['desc']);
@@ -134,16 +136,16 @@ var NotesDialog = React.createClass({
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Note</strong>
         </Button>
         { this.state.showNotesAddDialog && (
-            <NotesAddDialog
-              show={this.state.showNotesAddDialog}
-              note={this.state.note}
-              onSave={this.onNoteAdded}
-              onUpdate={this.onNoteUpdated}
-              onClose={this.closeNotesAddDialog}/>
+          <NotesAddDialog
+            show={this.state.showNotesAddDialog}
+            note={this.state.note}
+            onSave={this.onNoteAdded}
+            onUpdate={this.onNoteUpdated}
+            onClose={this.closeNotesAddDialog}/>
         )}
       </ModalDialog>
     );
-  },
-});
+  }
+}
 
 export default NotesDialog;

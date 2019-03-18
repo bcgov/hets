@@ -14,17 +14,19 @@ import { isValidDate } from '../../utils/date';
 import { isBlank } from '../../utils/string';
 
 
-var RentalRequestsEditDialog = React.createClass({
-  propTypes: {
+class RentalRequestsEditDialog extends React.Component {
+  static propTypes = {
     rentalRequest: React.PropTypes.object.isRequired,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
-  },
+  };
 
-  getInitialState() {
-    const rentalRequest = this.props.rentalRequest;
-    return {
+  constructor(props) {
+    super(props);
+    const rentalRequest = props.rentalRequest;
+
+    this.state = {
       equipmentCount: rentalRequest.equipmentCount || 0,
       expectedHours: rentalRequest.expectedHours || 0,
       expectedStartDate: rentalRequest.expectedStartDate || '',
@@ -37,13 +39,13 @@ var RentalRequestsEditDialog = React.createClass({
       expectedStartDateError: '',
       expectedEndDateError: '',
     };
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.equipmentCount !== this.props.rentalRequest.equipmentCount) { return true; }
     if (this.state.expectedHours !== this.props.rentalRequest.expectedHours) { return true; }
     if (this.state.expectedStartDate !== this.props.rentalRequest.expectedStartDate) { return true; }
@@ -51,9 +53,9 @@ var RentalRequestsEditDialog = React.createClass({
     if (this.state.rentalRequestAttachments !== this.props.rentalRequest.rentalRequestAttachments) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       equipmentCountError: '',
       expectedHoursError: '',
@@ -96,9 +98,9 @@ var RentalRequestsEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  formSubmitted() {
+  formSubmitted = () => {
     if (this.isValid()) {
       if (this.didChange()) {
         const rentalRequest = {
@@ -121,7 +123,7 @@ var RentalRequestsEditDialog = React.createClass({
 
       this.props.onClose();
     }
-  },
+  };
 
   render() {
     // Read-only if the user cannot edit the rental agreement
@@ -186,7 +188,7 @@ var RentalRequestsEditDialog = React.createClass({
         </Grid>
       </FormDialog>
     );
-  },
-});
+  }
+}
 
 export default RentalRequestsEditDialog;

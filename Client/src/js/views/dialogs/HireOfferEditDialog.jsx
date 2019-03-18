@@ -34,8 +34,10 @@ const refusalReasons = [
 ];
 
 
-var HireOfferEditDialog = React.createClass({
-  propTypes: {
+class HireOfferEditDialog extends React.Component {
+  static displayName = 'HireOfferEditDialog';
+
+  static propTypes = {
     hireOffer: React.PropTypes.object.isRequired,
     showAllResponseFields: React.PropTypes.bool.isRequired,
     rentalRequest: React.PropTypes.object.isRequired,
@@ -43,9 +45,14 @@ var HireOfferEditDialog = React.createClass({
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     blankRentalAgreements: React.PropTypes.object,
-  },
+  };
 
-  getInitialState() {
+  constructor(props) {
+    super(props);
+    this.state = this.buildInitialState();
+  }
+
+  buildInitialState() {
     return {
       isSaving: false,
 
@@ -71,23 +78,23 @@ var HireOfferEditDialog = React.createClass({
 
       rentalAgreementId: null,
     };
-  },
+  }
 
   componentDidMount() {
     this.fetch();
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     var projectId = this.props.rentalRequest.projectId;
     var equipmentId = this.props.hireOffer.equipmentId;
     Api.getBlankRentalAgreementsForHire(projectId, equipmentId);
-  },
+  };
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  offerStatusChanged(value) {
+  offerStatusChanged = (value) => {
     this.setState({
       offerStatus: value,
       offerResponse: value,
@@ -98,9 +105,9 @@ var HireOfferEditDialog = React.createClass({
       equipmentVerifiedActive: (value === STATUS_YES || value === STATUS_FORCE_HIRE) ? true : false,
       rentalAgreementId: null,
     });
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.isForceHire !== this.props.hireOffer.isForceHire) { return true; }
     if (this.state.wasAsked !== this.props.hireOffer.wasAsked) { return true; }
     if (this.state.askedDateTime !== this.props.hireOffer.askedDateTime) { return true; }
@@ -111,9 +118,9 @@ var HireOfferEditDialog = React.createClass({
     if (this.state.note !== this.props.hireOffer.note) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       offerResponseError: '',
       offerRefusalReasonError: '',
@@ -145,9 +152,9 @@ var HireOfferEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  formSubmitted() {
+  formSubmitted = () => {
     if (this.isValid()) {
       if (this.didChange()) {
         this.setState({ isSaving: true });
@@ -168,27 +175,27 @@ var HireOfferEditDialog = React.createClass({
         this.props.onClose();
       }
     }
-  },
+  };
 
-  onCancelMaxHoursHire() {
+  onCancelMaxHoursHire = () => {
     if (this.state.offerResponse === STATUS_FORCE_HIRE) {
-      this.setState(this.getInitialState());
+      this.setState(this.buildInitialState());
     } else {
       this.offerStatusChanged(STATUS_NO);
       this.setState({ offerRefusalReason: Constant.HIRING_REFUSAL_MAXIMUM_HOURS_REACHED });
     }
     this.closeConfirmMaxHoursHireDialog();
-  },
+  };
 
-  onConfirmMaxHoursHire() {
+  onConfirmMaxHoursHire = () => {
     if (this.state.offerStatus == STATUS_FORCE_HIRE) {
       return this.openConfirmForceHireDialog();
     }
 
     this.saveHireOffer();
-  },
+  };
 
-  saveHireOffer() {
+  saveHireOffer = () => {
     var promise = Promise.resolve();
 
     if (this.state.equipmentVerifiedActive) {
@@ -220,27 +227,27 @@ var HireOfferEditDialog = React.createClass({
         if (this.props.onSave) { this.props.onSave(hireOffer); }
       });
     });
-  },
+  };
 
-  onConfirmForceHire(reasonForForceHire) {
+  onConfirmForceHire = (reasonForForceHire) => {
     this.setState({ note: reasonForForceHire, showConfirmForceHireDialog: false }, this.saveHireOffer);
-  },
+  };
 
-  openConfirmForceHireDialog() {
+  openConfirmForceHireDialog = () => {
     this.setState({ showConfirmForceHireDialog: true });
-  },
+  };
 
-  closeConfirmForceHireDialog() {
+  closeConfirmForceHireDialog = () => {
     this.setState({ showConfirmForceHireDialog: false, isSaving: false });
-  },
+  };
 
-  openConfirmMaxHoursHireDialog() {
+  openConfirmMaxHoursHireDialog = () => {
     this.setState({ showConfirmMaxHoursHireDialog: true });
-  },
+  };
 
-  closeConfirmMaxHoursHireDialog() {
+  closeConfirmMaxHoursHireDialog = () => {
     this.setState({ showConfirmMaxHoursHireDialog: false, isSaving: false });
-  },
+  };
 
   render() {
     // Read-only if the user cannot edit the rental agreement
@@ -376,8 +383,8 @@ var HireOfferEditDialog = React.createClass({
         )}
       </FormDialog>
     );
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

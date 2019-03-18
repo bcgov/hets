@@ -17,8 +17,8 @@ import Form from '../../components/Form.jsx';
 import { isBlank, formatHours } from '../../utils/string';
 import { formatDateTime } from '../../utils/date';
 
-var TimeEntryDialog = React.createClass({
-  propTypes: {
+class TimeEntryDialog extends React.Component {
+  static propTypes = {
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool.isRequired,
     multipleEntryAllowed: React.PropTypes.bool.isRequired,
@@ -29,18 +29,20 @@ var TimeEntryDialog = React.createClass({
     projectId: React.PropTypes.number,
     projects: React.PropTypes.object.isRequired,
     equipment: React.PropTypes.object.isRequired,
-  },
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       loaded: false,
-      rentalAgreementId: this.props.rentalAgreementId,
+      rentalAgreementId: props.rentalAgreementId,
       equipmentId: null,
-      projectId: this.props.projectId || null,
-      projectFiscalYearStartDate: this.props.project ? this.props.project.fiscalYearStartDate : null,
+      projectId: props.projectId || null,
+      projectFiscalYearStartDate: props.project ? props.project.fiscalYearStartDate : null,
       equipmentIdError: '',
       projectIdError: '',
-      selectingAgreement: this.props.rentalAgreementId ? false : true,
+      selectingAgreement: props.rentalAgreementId ? false : true,
       showAllTimeRecords: false,
       numberOfInputs: 1,
       timeEntry: {
@@ -52,9 +54,9 @@ var TimeEntryDialog = React.createClass({
         },
       },
     };
-  },
+  }
 
-  resetStateToSelectAgreement(clearSelections) {
+  resetStateToSelectAgreement = (clearSelections) => {
     this.setState({
       rentalAgreementId: null,
       equipmentId: clearSelections ? null : this.state.equipmentId,
@@ -72,7 +74,7 @@ var TimeEntryDialog = React.createClass({
         },
       },
     });
-  },
+  };
 
   componentDidMount() {
     if (this.state.selectingAgreement) {
@@ -87,27 +89,27 @@ var TimeEntryDialog = React.createClass({
         this.setState({ loaded: true });
       });
     }
-  },
+  }
 
-  fetchTimeRecords() {
+  fetchTimeRecords = () => {
     return Api.getRentalAgreementTimeRecords(this.state.rentalAgreementId);
-  },
+  };
 
-  fetchProject(projectId) {
+  fetchProject = (projectId) => {
     return Api.getProject(projectId).then((project) => {
       this.setState({projectFiscalYearStartDate: project.fiscalYearStartDate});
     });
-  },
+  };
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChangeSelectAgreement() {
+  didChangeSelectAgreement = () => {
     return true;
-  },
+  };
 
-  validateSelectAgreement() {
+  validateSelectAgreement = () => {
     var valid = true;
 
     this.setState({ equipmentIdError: '', projectIdError: '' });
@@ -123,9 +125,9 @@ var TimeEntryDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  selectAgreement() {
+  selectAgreement = () => {
     Api.getLatestRentalAgreement(this.state.equipmentId, this.state.projectId).then((agreement) => {
       this.setState({ loaded: false, rentalAgreementId: agreement.id });
       return Promise.all([ this.fetchProject(this.state.projectId), this.fetchTimeRecords() ]).then(() => {
@@ -138,9 +140,9 @@ var TimeEntryDialog = React.createClass({
         throw error;
       }
     });
-  },
+  };
 
-  updateTimeEntryState(value) {
+  updateTimeEntryState = (value) => {
     let property = Object.keys(value)[0];
     let stateValue = _.values(value)[0];
     let number = property.match(/\d+/g)[0];
@@ -148,14 +150,14 @@ var TimeEntryDialog = React.createClass({
     let state = { [stateName]:  stateValue };
     let updatedState = { ...this.state.timeEntry, [number]: { ...this.state.timeEntry[number], ...state } };
     this.setState({ timeEntry: updatedState });
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     // todo
     return true;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     let timeEntry = { ...this.state.timeEntry };
 
     let timeEntryResetObj = timeEntry;
@@ -205,9 +207,9 @@ var TimeEntryDialog = React.createClass({
     this.setState({ timeEntry: timeEntryErrorsObj });
 
     return valid;
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     var timeEntry = { ...this.state.timeEntry };
     Object.keys(timeEntry).forEach((key) => {
       timeEntry[key].hours = (timeEntry[key].hours || 0).toFixed(2);
@@ -220,21 +222,21 @@ var TimeEntryDialog = React.createClass({
         this.props.onClose();
       }
     });
-  },
+  };
 
-  onClose() {
+  onClose = () => {
     if (this.props.multipleEntryAllowed) {
       this.resetStateToSelectAgreement(false);
     } else {
       this.props.onClose();
     }
-  },
+  };
 
-  onEquipmentSelected() {
+  onEquipmentSelected = () => {
     this.setState({ projectId: null });
-  },
+  };
 
-  getFilteredProjects() {
+  getFilteredProjects = () => {
     const projects = this.props.projects.data;
 
     if (this.state.equipmentId) {
@@ -245,9 +247,9 @@ var TimeEntryDialog = React.createClass({
     }
 
     return projects;
-  },
+  };
 
-  addTimeEntryInput() {
+  addTimeEntryInput = () => {
     if (this.state.numberOfInputs < 10) {
       let numberOfInputs = Object.keys(this.state.timeEntry).length;
       this.setState({
@@ -263,9 +265,9 @@ var TimeEntryDialog = React.createClass({
         },
       });
     }
-  },
+  };
 
-  removeTimeEntryInput() {
+  removeTimeEntryInput = () => {
     if (this.state.numberOfInputs > 1) {
       let numberOfInputs = Object.keys(this.state.timeEntry).length;
       let timeEntry = { ...this.state.timeEntry };
@@ -275,19 +277,19 @@ var TimeEntryDialog = React.createClass({
         timeEntry: timeEntry,
       });
     }
-  },
+  };
 
-  deleteTimeRecord(timeRecord) {
+  deleteTimeRecord = (timeRecord) => {
     Api.deleteTimeRecord(timeRecord.id).then(() => {
       Api.getRentalAgreementTimeRecords(this.state.rentalAgreementId);
     });
-  },
+  };
 
-  showAllTimeRecords() {
+  showAllTimeRecords = () => {
     this.setState({ showAllTimeRecords: !this.state.showAllTimeRecords });
-  },
+  };
 
-  getHoursYtdClassName() {
+  getHoursYtdClassName = () => {
     var equipment = this.props.rentalAgreementTimeRecords;
 
     if (equipment.hoursYtd > (0.85 * equipment.maximumHours)) {
@@ -295,7 +297,7 @@ var TimeEntryDialog = React.createClass({
     }
 
     return false;
-  },
+  };
 
   render() {
     if (this.state.selectingAgreement) {
@@ -303,9 +305,9 @@ var TimeEntryDialog = React.createClass({
     } else {
       return this.renderEditDialog();
     }
-  },
+  }
 
-  renderSelectAgreement() {
+  renderSelectAgreement = () => {
     var equipment = _.sortBy(this.props.equipment.data, 'equipmentCode');
     var projects = this.getFilteredProjects();
 
@@ -354,30 +356,30 @@ var TimeEntryDialog = React.createClass({
         </Form>
       </EditDialog>
     );
-  },
+  };
 
-  renderEditDialog() {
+  renderTimeRecordItem = (timeRecord) => {
+    return (
+      <Row>
+        <Col xs={3}>
+          <div>{ formatDateTime(timeRecord.workedDate, 'YYYY-MMM-DD') }</div>
+        </Col>
+        <Col xs={3}>
+          <div>{ formatHours(timeRecord.hours) }</div>
+        </Col>
+        <Col xs={6}>
+          <DeleteButton name="Document" onConfirm={ () => this.deleteTimeRecord(timeRecord) }/>
+        </Col>
+      </Row>
+    );
+  };
+
+  renderEditDialog = () => {
     const rentalAgreementTimeRecords = this.props.rentalAgreementTimeRecords;
     const isValidDate = function( current ){
       return current.day() === 6 && current.isBefore(new Date());
     };
     var sortedTimeRecords = _.sortBy(rentalAgreementTimeRecords.timeRecords, 'workedDate').reverse();
-
-    const TimeRecordItem = ({ timeRecord }) => {
-      return (
-        <Row>
-          <Col xs={3}>
-            <div>{ formatDateTime(timeRecord.workedDate, 'YYYY-MMM-DD') }</div>
-          </Col>
-          <Col xs={3}>
-            <div>{ formatHours(timeRecord.hours) }</div>
-          </Col>
-          <Col xs={6}>
-            <DeleteButton name="Document" onConfirm={ this.deleteTimeRecord.bind(this, timeRecord) }/>
-          </Col>
-        </Row>
-      );
-    };
 
     return (
       <EditDialog
@@ -429,7 +431,7 @@ var TimeEntryDialog = React.createClass({
 
                     { (sortedTimeRecords.length > 0) && !this.state.showAllTimeRecords ?
                       <Row>
-                        <TimeRecordItem timeRecord={sortedTimeRecords[0]} />
+                        {this.renderTimeRecordItem(sortedTimeRecords[0])}
                       </Row>
                       :
                       <Row>
@@ -437,7 +439,7 @@ var TimeEntryDialog = React.createClass({
                           <ul className="time-records-list">
                             { _.map(sortedTimeRecords, timeRecord => (
                               <li key={timeRecord.id} className="list-item">
-                                <TimeRecordItem timeRecord={timeRecord} />
+                                {this.renderTimeRecordItem(timeRecord)}
                               </li>
                             ))}
                           </ul>
@@ -445,9 +447,9 @@ var TimeEntryDialog = React.createClass({
                       </Row>
                     }
                   </div>
-                { (sortedTimeRecords.length > 1) &&
-                <Button onClick={ this.showAllTimeRecords }>{ this.state.showAllTimeRecords ? 'Hide' : 'Show All' }</Button>
-                }
+                  { (sortedTimeRecords.length > 1) &&
+                    <Button onClick={ this.showAllTimeRecords }>{ this.state.showAllTimeRecords ? 'Hide' : 'Show All' }</Button>
+                  }
                 </div>
               );
             })()}
@@ -503,8 +505,8 @@ var TimeEntryDialog = React.createClass({
         </Form>
       </EditDialog>
     );
-  },
-});
+  };
+}
 
 function mapStateToProps(state) {
   return {

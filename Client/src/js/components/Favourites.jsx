@@ -2,7 +2,6 @@ import React from 'react';
 import { Alert, Dropdown, ButtonToolbar, Button } from 'react-bootstrap';
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 import { Col, Glyphicon } from 'react-bootstrap';
-
 import _ from 'lodash';
 
 import * as Api from '../api';
@@ -17,43 +16,45 @@ import RootCloseMenu from './RootCloseMenu.jsx';
 import { isBlank } from '../utils/string';
 
 
-var EditFavouritesDialog = React.createClass({
-  propTypes: {
+class EditFavouritesDialog extends React.Component {
+  static propTypes = {
     favourite: React.PropTypes.object.isRequired,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
-  },
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       isSaving: false,
-      name: this.props.favourite.name || '',
-      isDefault: this.props.favourite.isDefault || false,
+      name: props.favourite.name || '',
+      isDefault: props.favourite.isDefault || false,
       nameError: '',
     };
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.name !== this.props.favourite.name) { return true; }
     if (this.state.isDefault !== this.props.favourite.isDefault) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     if (isBlank(this.state.name)) {
       this.setState({ nameError: 'Name is required' });
       return false;
     }
     return true;
-  },
+  };
 
-  onSubmit() {
+  onSubmit = () => {
     if (this.isValid()) {
       if (this.didChange()) {
         this.setState({isSaving: true});
@@ -74,7 +75,7 @@ var EditFavouritesDialog = React.createClass({
 
       this.props.onClose();
     }
-  },
+  };
 
   render() {
     const { isSaving, name, nameError, isDefault } = this.state;
@@ -99,12 +100,11 @@ var EditFavouritesDialog = React.createClass({
         </CheckboxControl>
       </FormDialog>
     );
-  },
-});
+  }
+}
 
-
-var Favourites = React.createClass({
-  propTypes: {
+class Favourites extends React.Component {
+  static propTypes = {
     id: React.PropTypes.string,
     className: React.PropTypes.string,
     title: React.PropTypes.string,
@@ -113,31 +113,29 @@ var Favourites = React.createClass({
     data: React.PropTypes.object.isRequired,
     onSelect: React.PropTypes.func.isRequired,
     pullRight: React.PropTypes.bool,
-  },
+  };
 
-  getInitialState() {
-    return {
-      favouriteToEdit: {},
-      showEditDialog: false,
-      open: false,
-    };
-  },
+  state = {
+    favouriteToEdit: {},
+    showEditDialog: false,
+    open: false,
+  };
 
-  addFavourite() {
+  addFavourite = () => {
     this.editFavourite({
       type: this.props.type,
       name: '',
       isDefault: false,
       value: JSON.stringify(this.props.data),
     });
-  },
+  };
 
-  editFavourite(favourite) {
+  editFavourite = (favourite) => {
     this.setState({ favouriteToEdit: favourite });
     this.openDialog();
-  },
+  };
 
-  favoriteSaved(favourite) {
+  favoriteSaved = (favourite) => {
     // Make sure there's only one default
     if (favourite.isDefault) {
       var oldDefault = _.find(this.props.favourites, f => f.isDefault);
@@ -150,28 +148,28 @@ var Favourites = React.createClass({
     }
 
     this.closeDialog();
-  },
+  };
 
-  deleteFavourite(favourite) {
+  deleteFavourite = (favourite) => {
     Api.deleteFavourite(favourite);
-  },
+  };
 
-  selectFavourite(favourite) {
+  selectFavourite = (favourite) => {
     this.toggle(false);
     this.props.onSelect(favourite);
-  },
+  };
 
-  openDialog() {
+  openDialog = () => {
     this.setState({ showEditDialog: true });
-  },
+  };
 
-  closeDialog() {
+  closeDialog = () => {
     this.setState({ showEditDialog: false });
-  },
+  };
 
-  toggle(open) {
+  toggle = (open) => {
     this.setState({ open: open });
-  },
+  };
 
   render() {
     var title = this.props.title || 'Favourites';
@@ -213,8 +211,8 @@ var Favourites = React.createClass({
         <EditFavouritesDialog show={ this.state.showEditDialog } favourite={ this.state.favouriteToEdit } onSave={ this.favoriteSaved } onClose={ this.closeDialog } /> : null
       }
     </Dropdown>;
-  },
-});
+  }
+}
 
 
 export default Favourites;

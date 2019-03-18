@@ -14,46 +14,48 @@ import Form from '../../components/Form.jsx';
 const PROHIBITED_SECTIONS = [ 1.2, 1.8, 2.3, 2.6, 3.3, 6.3, 7.4, 8.2, 9.3, 11.2, 12.2, 13.5, 13.6, 16.3 ];
 
 
-var DistrictEquipmentTypeAddEditDialog = React.createClass({
-  propTypes: {
+class DistrictEquipmentTypeAddEditDialog extends React.Component {
+  static propTypes = {
     show: React.PropTypes.bool,
     districtEquipmentType: React.PropTypes.object,
     equipmentTypes: React.PropTypes.object,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
-  },
+  };
 
-  componentDidMount() {
-    Api.getEquipmentTypes();
-  },
+  constructor(props) {
+    super(props);
 
-  getInitialState() {
-    return {
-      isNew: this.props.districtEquipmentType.id === 0,
+    this.state = {
+      isNew: props.districtEquipmentType.id === 0,
 
-      id: this.props.districtEquipmentType.id || 0,
-      equipmentTypeId: this.props.districtEquipmentType.equipmentType ? this.props.districtEquipmentType.equipmentType.id : undefined,
-      districtEquipmentName: this.props.districtEquipmentType.districtEquipmentName || '',
-      concurrencyControlNumber: this.props.districtEquipmentType.concurrencyControlNumber || 0,
+      id: props.districtEquipmentType.id || 0,
+      equipmentTypeId: props.districtEquipmentType.equipmentType ? props.districtEquipmentType.equipmentType.id : undefined,
+      districtEquipmentName: props.districtEquipmentType.districtEquipmentName || '',
+      concurrencyControlNumber: props.districtEquipmentType.concurrencyControlNumber || 0,
       equipmentTypeIdError: '',
       districtEquipmentNameError: '',
     };
-  },
+  }
 
-  updateState(state, callback) {
+  componentDidMount() {
+    Api.getEquipmentTypes();
+  }
+
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.isNew && this.state.equipmentTypeId !== undefined) { return true; }
     if (this.state.isNew && this.state.districtEquipmentName !== '') { return true; }
     if (!this.state.isNew && this.state.equipmentTypeId !== this.props.districtEquipmentType.equipmentType.id) { return true; }
     if (!this.state.isNew && this.state.districtEquipmentName !== this.props.districtEquipmentType.districtEquipmentName) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       equipmentTypeIdError: '',
       districtEquipmentNameError: '',
@@ -78,16 +80,16 @@ var DistrictEquipmentTypeAddEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     this.props.onSave({
       id: this.state.id,
       equipmentType: { id: this.state.equipmentTypeId },
       districtEquipmentName: this.state.districtEquipmentName,
       concurrencyControlNumber: this.state.concurrencyControlNumber,
     });
-  },
+  };
 
   render() {
     var equipmentTypes = _.sortBy(this.props.equipmentTypes.data, 'blueBookSection');
@@ -116,8 +118,8 @@ var DistrictEquipmentTypeAddEditDialog = React.createClass({
         </FormGroup>
       </Form>
     </EditDialog>;
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

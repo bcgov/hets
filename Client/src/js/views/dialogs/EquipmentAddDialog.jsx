@@ -17,8 +17,8 @@ import Form from '../../components/Form.jsx';
 import { isBlank, notBlank } from '../../utils/string';
 import { isValidYear } from '../../utils/date';
 
-var EquipmentAddDialog = React.createClass({
-  propTypes: {
+class EquipmentAddDialog extends React.Component {
+  static propTypes = {
     currentUser: React.PropTypes.object,
     owner: React.PropTypes.object.isRequired,
     localAreas: React.PropTypes.object,
@@ -26,11 +26,13 @@ var EquipmentAddDialog = React.createClass({
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
-  },
+  };
 
-  getInitialState() {
-    return {
-      localAreaId: this.props.owner.localArea.id || 0,
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      localAreaId: props.owner.localArea.id || 0,
       equipmentTypeId: 0,
       licencePlate: '',
       serialNumber: '',
@@ -50,23 +52,23 @@ var EquipmentAddDialog = React.createClass({
       modelError: '',
       yearError: '',
     };
-  },
+  }
 
   componentDidMount() {
     Api.getDistrictEquipmentTypes();
-  },
+  }
 
   componentDidUpdate(prevProps, prevState) {
     if (!_.isEqual(this.state.serialNumber, prevState.serialNumber)) {
       this.setState({ duplicateSerialNumber: false, serialNumberError: '' });
     }
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.localAreaId !== 0) { return true; }
     if (this.state.equipmentTypeId !== 0) { return true; }
     if (this.state.serialNumber !== '') { return true; }
@@ -81,9 +83,9 @@ var EquipmentAddDialog = React.createClass({
     if (this.state.pupLegalCapacity !== '') { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       localAreaError: '',
       equipmentTypeError: '',
@@ -129,9 +131,9 @@ var EquipmentAddDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  checkForDuplicatesAndSave() {
+  checkForDuplicatesAndSave = () => {
     if (this.state.duplicateSerialNumber) {
       // proceed regardless of duplicates
       this.setState({ duplicateSerialNumber: false });
@@ -153,9 +155,9 @@ var EquipmentAddDialog = React.createClass({
         return this.onSave();
       }
     });
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     return this.props.onSave({
       owner: { id: this.props.owner.id },
       localArea: { id: this.state.localAreaId },
@@ -172,7 +174,7 @@ var EquipmentAddDialog = React.createClass({
       pupLegalCapacity: this.state.pupLegalCapacity,
       status: Constant.EQUIPMENT_STATUS_CODE_PENDING,
     });
-  },
+  };
 
   render() {
     var owner = this.props.owner;
@@ -269,8 +271,8 @@ var EquipmentAddDialog = React.createClass({
         }
       </Form>
     </EditDialog>;
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

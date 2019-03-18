@@ -12,38 +12,40 @@ import FormInputControl from '../../components/FormInputControl.jsx';
 import { isBlank } from '../../utils/string';
 
 
-var EquipmentRentalRatesEditDialog = React.createClass({
-  propTypes: {
+class EquipmentRentalRatesEditDialog extends React.Component {
+  static propTypes = {
     show: React.PropTypes.bool,
     rentalAgreement: React.PropTypes.object.isRequired,
     onSave: React.PropTypes.func,
     onClose: React.PropTypes.func.isRequired,
-  },
+  };
 
-  getInitialState() {
-    return {
-      equipmentRate: this.props.rentalAgreement.equipmentRate || 0,
-      ratePeriod: this.props.rentalAgreement.ratePeriod || Constant.RENTAL_RATE_PERIOD_HOURLY,
-      rateComment: this.props.rentalAgreement.rateComment || '',
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      equipmentRate: props.rentalAgreement.equipmentRate || 0,
+      ratePeriod: props.rentalAgreement.ratePeriod || Constant.RENTAL_RATE_PERIOD_HOURLY,
+      rateComment: props.rentalAgreement.rateComment || '',
 
       equipmentRateError: '',
       ratePeriodError: '',
     };
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.equipmentRate !== this.props.rentalAgreement.equipmentRate) { return true; }
     if (this.state.ratePeriod !== this.props.rentalAgreement.ratePeriod) { return true; }
     if (this.state.rateComment !== this.props.rentalAgreement.rateComment) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       equipmentRateError: '',
       ratePeriodError: '',
@@ -65,9 +67,9 @@ var EquipmentRentalRatesEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  formSubmitted() {
+  formSubmitted = () => {
     if (this.isValid()) {
       if (this.didChange()) {
         const rentalAgreement = {
@@ -84,7 +86,7 @@ var EquipmentRentalRatesEditDialog = React.createClass({
 
       this.props.onClose();
     }
-  },
+  };
 
   render() {
     // Read-only if the user cannot edit the rental agreement
@@ -125,7 +127,7 @@ var EquipmentRentalRatesEditDialog = React.createClass({
         </Grid>
       </FormDialog>
     );
-  },
-});
+  }
+}
 
 export default EquipmentRentalRatesEditDialog;

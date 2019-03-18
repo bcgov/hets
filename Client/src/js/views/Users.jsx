@@ -22,8 +22,8 @@ import Spinner from '../components/Spinner.jsx';
 import PrintButton from '../components/PrintButton.jsx';
 
 
-var Users = React.createClass({
-  propTypes: {
+class Users extends React.Component {
+  static propTypes = {
     currentUser: React.PropTypes.object,
     users: React.PropTypes.object,
     user: React.PropTypes.object,
@@ -32,26 +32,28 @@ var Users = React.createClass({
     search: React.PropTypes.object,
     ui: React.PropTypes.object,
     router: React.PropTypes.object,
-  },
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       showUsersEditDialog: false,
 
       search: {
-        selectedDistrictsIds: this.props.search.selectedDistrictsIds || [],
-        surname: this.props.search.surname || '',
-        hideInactive: this.props.search.hideInactive || true,
+        selectedDistrictsIds: props.search.selectedDistrictsIds || [],
+        surname: props.search.surname || '',
+        hideInactive: props.search.hideInactive || true,
       },
 
       ui : {
-        sortField: this.props.ui.sortField || 'surname',
-        sortDesc: this.props.ui.sortDesc === true,
+        sortField: props.ui.sortField || 'surname',
+        sortDesc: props.ui.sortDesc === true,
       },
     };
-  },
+  }
 
-  buildSearchParams() {
+  buildSearchParams = () => {
     var searchParams = {
       includeInactive: !this.state.search.hideInactive,
       surname: this.state.search.surname,
@@ -62,7 +64,7 @@ var Users = React.createClass({
     }
 
     return searchParams;
-  },
+  };
 
   componentDidMount() {
     // If this is the first load, then look for a default favourite
@@ -72,18 +74,18 @@ var Users = React.createClass({
         this.loadFavourite(defaultFavourite);
       }
     }
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     Api.searchUsers(this.buildSearchParams());
-  },
+  };
 
-  search(e) {
+  search = (e) => {
     e.preventDefault();
     this.fetch();
-  },
+  };
 
-  clearSearch() {
+  clearSearch = () => {
     var defaultSearchParameters = {
       selectedDistrictsIds: [],
       surname: '',
@@ -94,47 +96,47 @@ var Users = React.createClass({
       store.dispatch({ type: Action.UPDATE_USERS_SEARCH, users: this.state.search });
       store.dispatch({ type: Action.CLEAR_USERS });
     });
-  },
+  };
 
-  updateSearchState(state, callback) {
+  updateSearchState = (state, callback) => {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () =>{
       store.dispatch({ type: Action.UPDATE_USERS_SEARCH, users: this.state.search });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  updateUIState(state, callback) {
+  updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
       store.dispatch({ type: Action.UPDATE_USERS_UI, users: this.state.ui });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  loadFavourite(favourite) {
+  loadFavourite = (favourite) => {
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
-  },
+  };
 
-  delete(user) {
+  delete = (user) => {
     Api.deleteUser(user).then(() => {
       this.fetch();
     });
-  },
+  };
 
-  openUsersEditDialog() {
+  openUsersEditDialog = () => {
     this.setState({ showUsersEditDialog: true });
-  },
+  };
 
-  closeUsersEditDialog() {
+  closeUsersEditDialog = () => {
     this.setState({ showUsersEditDialog: false });
-  },
+  };
 
-  onUserSaved(user) {
+  onUserSaved = (user) => {
     this.props.router.push({
       pathname: `${ Constant.USERS_PATHNAME }/${ user.id }`,
     });
-  },
+  };
 
-  renderResults(addUserButton) {
+  renderResults = (addUserButton) => {
     if (Object.keys(this.props.users.data).length === 0) {
       return <Alert bsStyle="success">No users { addUserButton }</Alert>;
     }
@@ -174,7 +176,7 @@ var Users = React.createClass({
         })
       }
     </SortTable>;
-  },
+  };
 
   render() {
     var districts = _.sortBy(this.props.districts, 'name');
@@ -247,8 +249,8 @@ var Users = React.createClass({
         />
       }
     </div>;
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

@@ -71,7 +71,7 @@ export function request(path, options) {
   var xhr = new XMLHttpRequest();
 
   // calling server service
-  console.log('Calling service. Path: ' + path);
+  // console.log('Calling service. Path: ' + path);
 
   if (!options.headers) { options.headers = {}; }
 
@@ -120,7 +120,7 @@ export function request(path, options) {
         var err = new HttpError(`API ${method} ${path} failed (${xhr.status}) "${responseText}"`, method, path, xhr.status, responseText);
         reject(err);
       } else {
-        console.log('Call complete! Path: ' + path);
+        // console.log('Call complete! Path: ' + path);
         resolve(xhr);
       }
     });

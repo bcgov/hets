@@ -44,17 +44,19 @@ import PrintButton from '../components/PrintButton.jsx';
 const CONTACT_NAME_SORT_FIELDS = ['givenName', 'surname'];
 
 
-var ProjectsDetail = React.createClass({
-  propTypes: {
+class ProjectsDetail extends React.Component {
+  static propTypes = {
     projectId: React.PropTypes.number,
     project: React.PropTypes.object,
     documents: React.PropTypes.object,
     uiContacts: React.PropTypes.object,
     router: React.PropTypes.object,
-  },
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       loading: true,
       loadingDocuments: true,
 
@@ -73,11 +75,11 @@ var ProjectsDetail = React.createClass({
 
       // Contacts
       uiContacts : {
-        sortField: this.props.uiContacts.sortField || CONTACT_NAME_SORT_FIELDS,
-        sortDesc: this.props.uiContacts.sortDesc === true,
+        sortField: props.uiContacts.sortField || CONTACT_NAME_SORT_FIELDS,
+        sortDesc: props.uiContacts.sortDesc === true,
       },
     };
-  },
+  }
 
   componentDidMount() {
     const { projectId, project } = this.props;
@@ -93,52 +95,52 @@ var ProjectsDetail = React.createClass({
     ]).then(() => {
       this.setState({ loading: false });
     });
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     return Api.getProject(this.props.projectId);
-  },
+  };
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  updateContactsUIState(state, callback) {
+  updateContactsUIState = (state, callback) => {
     this.setState({ uiContacts: { ...this.state.uiContacts, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_PROJECT_CONTACTS_UI, projectContacts: this.state.uiContacts });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  showNotes() {
+  showNotes = () => {
     this.setState({ showNotesDialog: true });
-  },
+  };
 
-  closeNotesDialog() {
+  closeNotesDialog = () => {
     this.setState({ showNotesDialog: false });
-  },
+  };
 
-  showDocuments() {
+  showDocuments = () => {
     this.setState({ showDocumentsDialog: true });
-  },
+  };
 
-  closeDocumentsDialog() {
+  closeDocumentsDialog = () => {
     this.setState({ showDocumentsDialog: false });
-  },
+  };
 
-  addDocument() {
+  addDocument = () => {
 
-  },
+  };
 
-  openEditDialog() {
+  openEditDialog = () => {
     this.setState({ showEditDialog: true });
-  },
+  };
 
-  closeEditDialog() {
+  closeEditDialog = () => {
     this.setState({ showEditDialog: false });
-  },
+  };
 
-  openContactDialog(contactId) {
+  openContactDialog = (contactId) => {
     var contact;
     if (contactId === 0) {
       // New
@@ -154,22 +156,22 @@ var ProjectsDetail = React.createClass({
       contact: contact,
       showContactDialog: true,
     });
-  },
+  };
 
-  closeContactDialog() {
+  closeContactDialog = () => {
     this.setState({ contact:null, showContactDialog: false });
-  },
+  };
 
-  deleteContact(contact) {
+  deleteContact = (contact) => {
     store.dispatch({ type: Action.DELETE_PROJECT_CONTACT, projectId: this.props.projectId, contactId: contact.id });
     Api.deleteContact(contact).then(() => {
       Log.projectContactDeleted(this.props.project, contact).then(() => {
         this.fetch();
       });
     });
-  },
+  };
 
-  contactSaved(contact) {
+  contactSaved = (contact) => {
     var isNew = !contact.id;
     var log = isNew ? Log.projectContactAdded : Log.projectContactUpdated;
 
@@ -180,17 +182,17 @@ var ProjectsDetail = React.createClass({
     });
 
     this.closeContactDialog();
-  },
+  };
 
-  openAddRequestDialog() {
+  openAddRequestDialog = () => {
     this.setState({ showAddRequestDialog: true });
-  },
+  };
 
-  closeAddRequestDialog() {
+  closeAddRequestDialog = () => {
     this.setState({ showAddRequestDialog: false });
-  },
+  };
 
-  newRentalAdded(rentalRequest) {
+  newRentalAdded = (rentalRequest) => {
     this.fetch();
 
     Log.projectRentalRequestAdded(this.props.project, rentalRequest);
@@ -198,34 +200,98 @@ var ProjectsDetail = React.createClass({
     this.props.router.push({
       pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ rentalRequest.id }`,
     });
-  },
+  };
 
-  confirmEndHire(item) {
+  confirmEndHire = (item) => {
     Api.releaseRentalAgreement(item.id).then(() => {
       Api.getProject(this.props.projectId);
       Log.projectEquipmentReleased(this.props.project, item.equipment);
     });
-  },
+  };
 
-  openTimeEntryDialog(rentalAgreement) {
+  openTimeEntryDialog = (rentalAgreement) => {
     this.setState({ rentalAgreement }, () => {
       this.setState({
         showTimeEntryDialog: true,
         fiscalYearStartDate: this.props.project.fiscalYearStartDate,
       });
     });
-  },
+  };
 
-  closeTimeEntryDialog() {
+  closeTimeEntryDialog = () => {
     this.setState({ showTimeEntryDialog: false });
-  },
+  };
 
-  cancelRequest(request) {
+  cancelRequest = (request) => {
     store.dispatch({ type: Action.DELETE_PROJECT_RENTAL_REQUEST, projectId: this.props.projectId, requestId: request.id });
     Api.cancelRentalRequest(request.id).then(() => {
       this.fetch();
     });
-  },
+  };
+
+  renderRentalRequestListItem = (item) => {
+    return <tr key={ item.id }>
+      <td>
+        <Link
+          to={ `rental-requests/${item.id}` }
+          className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}>
+          Request
+        </Link>
+      </td>
+      <td>{ item.localAreaName }</td>
+      <td>{ item.equipmentTypeName }</td>
+      <td>{ item.equipmentCount }</td>
+      <td>TBD</td>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>
+        <DeleteButton name="Cancel Rental Request" hide={ item.yesCount > 0 } onConfirm={ this.cancelRequest.bind(this, item) }/>
+      </td>
+    </tr>;
+  };
+
+  renderRentalAgreementListItem = (item) => {
+    return <tr key={ item.id }>
+      <td>
+        <Link
+          to={ `equipment/${item.equipmentId}` }
+          className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}>
+          { item.equipmentCode }
+        </Link>
+      </td>
+      <td>{ item.localAreaName }</td>
+      <td>{ item.equipmentTypeName }</td>
+      <td>&nbsp;</td>
+      <td>{ item.equipment.equipmentDetails }</td>
+      <td>{ item.isCompleted ?
+        'Completed'
+        :
+        <EditButton name="Time Entry" onClick={this.openTimeEntryDialog.bind(this, item)} />
+      }
+      </td>
+      <td>
+        { item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ?
+          <div>Released</div>
+          :
+          <OverlayTrigger
+            trigger="click"
+            placement="top"
+            rootClose
+            overlay={ <Confirm onConfirm={ this.confirmEndHire.bind(this, item) }/> }>
+            <Button
+              bsSize="xsmall">
+              <Glyphicon glyph="check" />
+            </Button>
+          </OverlayTrigger>
+        }
+      </td>
+      <td><Link to={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${item.id}`}>Agreement</Link></td>
+      <td>{ formatDateTime(item.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
+      <td></td>
+    </tr>;
+  };
 
   render() {
     const { loading, loadingDocuments } = this.state;
@@ -332,70 +398,6 @@ var ProjectsDetail = React.createClass({
 
                   if (Object.keys(combinedList).length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
 
-                  const RentalRequestListItem = ({ item }) => (
-                    <tr key={ item.id }>
-                      <td>
-                        <Link
-                          to={ `rental-requests/${item.id}` }
-                          className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}>
-                          Request
-                        </Link>
-                      </td>
-                      <td>{ item.localAreaName }</td>
-                      <td>{ item.equipmentTypeName }</td>
-                      <td>{ item.equipmentCount }</td>
-                      <td>TBD</td>
-                      <td>N/A</td>
-                      <td>N/A</td>
-                      <td>N/A</td>
-                      <td>N/A</td>
-                      <td>
-                        <DeleteButton name="Cancel Rental Request" hide={ item.yesCount > 0 } onConfirm={ this.cancelRequest.bind(this, item) }/>
-                      </td>
-                    </tr>
-                  );
-
-                  const RentalAgreementListItem = ({ item }) => (
-                    <tr key={ item.id }>
-                      <td>
-                        <Link
-                          to={ `equipment/${item.equipmentId}` }
-                          className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}>
-                          { item.equipmentCode }
-                        </Link>
-                      </td>
-                      <td>{ item.localAreaName }</td>
-                      <td>{ item.equipmentTypeName }</td>
-                      <td>&nbsp;</td>
-                      <td>{ item.equipment.equipmentDetails }</td>
-                      <td>{ item.isCompleted ?
-                        'Completed'
-                        :
-                        <EditButton name="Time Entry" onClick={this.openTimeEntryDialog.bind(this, item)} />
-                      }
-                      </td>
-                      <td>
-                        { item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ?
-                          <div>Released</div>
-                          :
-                          <OverlayTrigger
-                            trigger="click"
-                            placement="top"
-                            rootClose
-                            overlay={ <Confirm onConfirm={ this.confirmEndHire.bind(this, item) }/> }>
-                            <Button
-                              bsSize="xsmall">
-                              <Glyphicon glyph="check" />
-                            </Button>
-                          </OverlayTrigger>
-                        }
-                      </td>
-                      <td><Link to={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${item.id}`}>Agreement</Link></td>
-                      <td>{ formatDateTime(item.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
-                      <td></td>
-                    </tr>
-                  );
-
                   var headers = [
                     { field: 'equipmentCode',     title: 'ID'               },
                     { field: 'localAreaName',     title: 'Local Area'       },
@@ -411,11 +413,11 @@ var ProjectsDetail = React.createClass({
 
                   return <TableControl id="equipment-list" headers={ headers }>
                     {
-                      _.map(combinedList, (listItem, index) => {
+                      _.map(combinedList, (listItem) => {
                         if (listItem.isRentalRequest) {
-                          return <RentalRequestListItem key={index} item={ listItem } project={ project } />;
+                          return this.renderRentalRequestListItem(listItem);
                         } else {
-                          return <RentalAgreementListItem key={index} item={ listItem } />;
+                          return this.renderRentalAgreementListItem(listItem);
                         }
                       })
                     }
@@ -459,7 +461,7 @@ var ProjectsDetail = React.createClass({
                           <td>{ contact.phone }</td>
                           <td>{ contact.mobilePhoneNumber }</td>
                           <td>{ contact.faxPhoneNumber }</td>
-                          <td><a href={ `mailto:${ contact.emailAddress }` } target="_blank">{ contact.emailAddress }</a></td>
+                          <td><a href={ `mailto:${ contact.emailAddress }` } rel="noopener noreferrer" target="_blank">{ contact.emailAddress }</a></td>
                           <td>{ contact.role }</td>
                           <td>{ contact.notes ? 'Y' : '' }</td>
                           <td style={{ textAlign: 'right' }}>
@@ -534,8 +536,8 @@ var ProjectsDetail = React.createClass({
         )}
       </div>
     );
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {

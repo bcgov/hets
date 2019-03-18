@@ -8,32 +8,30 @@ import FormInputControl from '../../components/FormInputControl.jsx';
 import { isBlank } from '../../utils/string';
 
 
-var ConfirmForceHireDialog = React.createClass({
-  propTypes: {
+class ConfirmForceHireDialog extends React.Component {
+  static propTypes = {
     show: React.PropTypes.bool,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
-  },
+  };
 
-  getInitialState() {
-    return {
-      reasonForForceHire: '',
-    };
-  },
+  state = {
+    reasonForForceHire: '',
+  };
 
   componentDidMount() {
     this.input && this.input.focus();
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     return true;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       noteError: '',
     });
@@ -46,11 +44,11 @@ var ConfirmForceHireDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  formSubmitted() {
+  formSubmitted = () => {
     this.props.onSave(this.state.reasonForForceHire);
-  },
+  };
 
   render() {
     return (
@@ -77,7 +75,7 @@ var ConfirmForceHireDialog = React.createClass({
         </Grid>
       </FormDialog>
     );
-  },
-});
+  }
+}
 
 export default connect()(ConfirmForceHireDialog);

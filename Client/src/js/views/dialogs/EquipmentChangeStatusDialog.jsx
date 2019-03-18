@@ -10,28 +10,26 @@ import FormInputControl from '../../components/FormInputControl.jsx';
 import { isBlank } from '../../utils/string';
 
 
-var EquipmentChangeStatusDialog = React.createClass({
-  propTypes: {
+class EquipmentChangeStatusDialog extends React.Component {
+  static propTypes = {
     show: React.PropTypes.bool,
     status: React.PropTypes.string.isRequired,
     equipment: React.PropTypes.object.isRequired,
     onClose: React.PropTypes.func.isRequired,
     onStatusChanged: React.PropTypes.func.isRequired,
-  },
+  };
 
-  getInitialState() {
-    return {
-      saving: false,
-      comment: '',
-      commentError: '',
-    };
-  },
+  state = {
+    saving: false,
+    comment: '',
+    commentError: '',
+  };
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       commentError: '',
       statusError: '',
@@ -45,9 +43,9 @@ var EquipmentChangeStatusDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  formSubmitted() {
+  formSubmitted = () => {
     if (this.isValid()) {
       this.setState({isSaving: true});
       const status = {
@@ -68,7 +66,7 @@ var EquipmentChangeStatusDialog = React.createClass({
         }
       });
     }
-  },
+  };
 
   render() {
     return (
@@ -86,7 +84,7 @@ var EquipmentChangeStatusDialog = React.createClass({
         </FormGroup>
       </FormDialog>
     );
-  },
-});
+  }
+}
 
 export default EquipmentChangeStatusDialog;

@@ -3,23 +3,23 @@ import { FormControl } from 'react-bootstrap';
 import _ from 'lodash';
 
 
-var FormInputControl = React.createClass({
-  propTypes: {
+class FormInputControl extends React.Component {
+  static propTypes = {
     type: React.PropTypes.string,
     updateState: React.PropTypes.func,
     autoFocus: React.PropTypes.bool,
     autoComplete: React.PropTypes.string,
     onChange: React.PropTypes.func,
     children: React.PropTypes.node,
-  },
+  };
 
   componentDidMount() {
     if (this.props.autoFocus) {
       this.input.focus();
     }
-  },
+  }
 
-  changed(e) {
+  changed = (e) => {
     const { type, updateState, onChange } = this.props;
 
     // On change listener
@@ -44,7 +44,7 @@ var FormInputControl = React.createClass({
       // Update state
       updateState({ [e.target.id]: value });
     }
-  },
+  };
 
   render() {
     const { type, autoComplete, children } = this.props;
@@ -62,7 +62,7 @@ var FormInputControl = React.createClass({
         {children}
       </FormControl>
     );
-  },
-});
+  }
+}
 
 export default FormInputControl;

@@ -10,35 +10,37 @@ import FormInputControl from '../../components/FormInputControl.jsx';
 import { findAndUpdate } from '../../utils/array';
 
 
-var RentalAgreementOvertimeNotesDialog = React.createClass({
-  propTypes: {
+class RentalAgreementOvertimeNotesDialog extends React.Component {
+  static propTypes = {
     show: React.PropTypes.bool.isRequired,
     rentalAgreement: React.PropTypes.object.isRequired,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
-  },
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       loading: false,
-      overtimeRates: this.props.rentalAgreement.overtimeRates || [],
-      note: this.props.rentalAgreement.note || '',
+      overtimeRates: props.rentalAgreement.overtimeRates || [],
+      note: props.rentalAgreement.note || '',
     };
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     return true;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     return true;
-  },
+  };
 
-  formSubmitted() {
+  formSubmitted = () => {
     const { onSave, onClose } = this.props;
     if (this.isValid()) {
       if (this.didChange()) {
@@ -55,16 +57,16 @@ var RentalAgreementOvertimeNotesDialog = React.createClass({
 
       onClose();
     }
-  },
+  };
 
-  overtimeCheckboxChanged(rate, e) {
+  overtimeCheckboxChanged = (rate, e) => {
     var active = e.target.checked;
 
     const overtimeRates = this.state.overtimeRates.slice();
     findAndUpdate(overtimeRates, { ...rate, active });
 
     this.setState({ overtimeRates });
-  },
+  };
 
   render() {
     const maxNoteLength = Constant.MAX_LENGTH_RENTAL_AGREEMENT_NOTE;
@@ -102,7 +104,7 @@ var RentalAgreementOvertimeNotesDialog = React.createClass({
         </Grid>
       </FormDialog>
     );
-  },
-});
+  }
+}
 
 export default RentalAgreementOvertimeNotesDialog;

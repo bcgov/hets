@@ -6,8 +6,8 @@ import Form from './Form.jsx';
 import Spinner from './Spinner.jsx';
 
 
-var FormDialog = React.createClass({
-  propTypes: {
+class FormDialog extends React.Component {
+  static propTypes = {
     show: React.PropTypes.bool.isRequired,
     title: React.PropTypes.node,
     id: React.PropTypes.string,
@@ -20,21 +20,21 @@ var FormDialog = React.createClass({
     saveButtonLabel: React.PropTypes.string,
     closeButtonLabel: React.PropTypes.string,
     children: React.PropTypes.node,
-  },
+  };
 
-  closeDialog() {
+  closeDialog = () => {
     this.props.onClose();
-  },
+  };
 
-  formSubmitted() {
+  formSubmitted = () => {
     const { isSaving, onSubmit } = this.props;
 
     if (!isSaving) {
       onSubmit();
     }
-  },
+  };
 
-  renderBody() {
+  renderBody = () => {
     const { children, saveButtonLabel, closeButtonLabel, isReadOnly, isSaving } = this.props;
 
     return (
@@ -53,7 +53,7 @@ var FormDialog = React.createClass({
         </Modal.Footer>
       </Form>
     );
-  },
+  };
 
   render() {
     const { id, className, title, show, bsSize } = this.props;
@@ -74,7 +74,7 @@ var FormDialog = React.createClass({
         {show && this.renderBody()}
       </Modal>
     );
-  },
-});
+  }
+}
 
 export default FormDialog;

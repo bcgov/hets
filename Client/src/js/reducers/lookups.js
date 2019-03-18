@@ -113,15 +113,15 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
     case Action.UPDATE_ROLLOVER_STATUS_LOOKUP:
       return { ...state, rolloverStatus: action.status };
 
-    // Not typical lookups, because they can change within the app, so
-    // ensure they're loaded/updated as needed.
-    // XXX: Looks like this is unused
-    // case Action.OWNERS_LOOKUP_REQUEST:
-    //   return { ...state, owners: { ...state.owners, loading: true } };
+      // Not typical lookups, because they can change within the app, so
+      // ensure they're loaded/updated as needed.
+      // XXX: Looks like this is unused
+      // case Action.OWNERS_LOOKUP_REQUEST:
+      //   return { ...state, owners: { ...state.owners, loading: true } };
 
-    // XXX: Looks like this is unused
-    // case Action.UPDATE_OWNERS_LOOKUP:
-    //   return { ...state, owners: { data: action.owners, loading: false } };
+      // XXX: Looks like this is unused
+      // case Action.UPDATE_OWNERS_LOOKUP:
+      //   return { ...state, owners: { data: action.owners, loading: false } };
 
     case Action.UPDATE_OWNERS_LITE_LOOKUP:
       return { ...state, owners: { ...state.owners, lite: { data: action.owners, loaded: true } } };
@@ -166,9 +166,9 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
     case Action.RENTAL_CONDITIONS_LOOKUP_REQUEST:
       return { ...state, rentalConditions: { ...state.rentalConditions, loading: true } };
 
-    // XXX: Looks like this is unused
-    // case Action.UPDATE_PROVINCIAL_RATE_TYPES_LOOKUP:
-    //   return { ...state, provincialRateTypes: action.provincialRateTypes };
+      // XXX: Looks like this is unused
+      // case Action.UPDATE_PROVINCIAL_RATE_TYPES_LOOKUP:
+      //   return { ...state, provincialRateTypes: action.provincialRateTypes };
 
     case Action.UPDATE_OVERTIME_RATE_TYPES_LOOKUP:
       return { ...state, overtimeRateTypes: action.overtimeRateTypes };

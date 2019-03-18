@@ -13,27 +13,29 @@ import Form from '../../components/Form.jsx';
 import { daysFromToday, isValidDate, toZuluTime, today } from '../../utils/date';
 import { isBlank, formatHours } from '../../utils/string';
 
-var SeniorityEditDialog = React.createClass({
-  propTypes: {
+class SeniorityEditDialog extends React.Component {
+  static propTypes = {
     equipment: React.PropTypes.object,
 
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
-  },
+  };
 
-  getInitialState() {
-    return {
-      isNew: this.props.equipment.id === 0,
+  constructor(props) {
+    super(props);
 
-      hoursYtd: this.props.equipment.hoursYtd,
-      serviceHoursLastYear: this.props.equipment.serviceHoursLastYear,
-      serviceHoursTwoYearsAgo: this.props.equipment.serviceHoursTwoYearsAgo,
-      serviceHoursThreeYearsAgo: this.props.equipment.serviceHoursThreeYearsAgo,
-      seniorityEffectiveDate: this.props.equipment.seniorityEffectiveDate || today(),
-      yearsRegistered: this.props.equipment.yearsOfService,
-      isSeniorityOverridden: this.props.equipment.isSeniorityOverridden,
-      seniorityOverrideReason: this.props.equipment.seniorityOverrideReason,
+    this.state = {
+      isNew: props.equipment.id === 0,
+
+      hoursYtd: props.equipment.hoursYtd,
+      serviceHoursLastYear: props.equipment.serviceHoursLastYear,
+      serviceHoursTwoYearsAgo: props.equipment.serviceHoursTwoYearsAgo,
+      serviceHoursThreeYearsAgo: props.equipment.serviceHoursThreeYearsAgo,
+      seniorityEffectiveDate: props.equipment.seniorityEffectiveDate || today(),
+      yearsRegistered: props.equipment.yearsOfService,
+      isSeniorityOverridden: props.equipment.isSeniorityOverridden,
+      seniorityOverrideReason: props.equipment.seniorityOverrideReason,
 
       seniorityDateError: null,
       serviceHoursLastYearError: null,
@@ -42,13 +44,13 @@ var SeniorityEditDialog = React.createClass({
       yearsRegisteredError: null,
       overrideReasonError: null,
     };
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.serviceHoursLastYear !== this.props.equipment.serviceHoursLastYear) { return true; }
     if (this.state.serviceHoursTwoYearsAgo !== this.props.equipment.serviceHoursTwoYearsAgo) { return true; }
     if (this.state.serviceHoursThreeYearsAgo !== this.props.equipment.serviceHoursThreeYearsAgo) { return true; }
@@ -58,9 +60,9 @@ var SeniorityEditDialog = React.createClass({
     if (this.state.seniorityOverrideReason !== this.props.equipment.seniorityOverrideReason) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       seniorityDateError: null,
       serviceHoursLastYearError: null,
@@ -110,13 +112,13 @@ var SeniorityEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  serviceHoursChanged() {
+  serviceHoursChanged = () => {
     this.setState({ isSeniorityOverridden: true });
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     this.props.onSave({ ...this.props.equipment, ...{
       serviceHoursLastYear: (this.state.serviceHoursLastYear || 0).toFixed(2),
       serviceHoursTwoYearsAgo: (this.state.serviceHoursTwoYearsAgo || 0).toFixed(2),
@@ -126,7 +128,7 @@ var SeniorityEditDialog = React.createClass({
       isSeniorityOverridden: this.state.isSeniorityOverridden,
       seniorityOverrideReason: this.state.seniorityOverrideReason,
     }});
-  },
+  };
 
   render() {
     return <EditDialog id="seniority-edit" show={ this.props.show }
@@ -201,8 +203,8 @@ var SeniorityEditDialog = React.createClass({
         </Form>;
       })()}
     </EditDialog>;
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

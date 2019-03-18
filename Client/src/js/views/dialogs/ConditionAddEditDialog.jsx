@@ -7,41 +7,43 @@ import FormInputControl from '../../components/FormInputControl.jsx';
 import Form from '../../components/Form.jsx';
 
 
-var ConditionAddEditDialog = React.createClass({
-  propTypes: {
+class ConditionAddEditDialog extends React.Component {
+  static propTypes = {
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
     condition: React.PropTypes.object,
-  },
+  };
 
-  getInitialState() {
-    return {
-      isNew: this.props.condition.id === 0,
+  constructor(props) {
+    super(props);
 
-      conditionId: this.props.condition.id,
-      typeCode: this.props.condition.conditionTypeCode || '',
-      description: this.props.condition.description || '',
-      concurrencyControlNumber: this.props.condition.concurrencyControlNumber || 0,
+    this.state = {
+      isNew: props.condition.id === 0,
+
+      conditionId: props.condition.id,
+      typeCode: props.condition.conditionTypeCode || '',
+      description: props.condition.description || '',
+      concurrencyControlNumber: props.condition.concurrencyControlNumber || 0,
       typeCodeError: '',
       descriptionError: '',
     };
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.isNew && this.state.typeCode !== '') { return true; }
     if (this.state.isNew && this.state.description !== '') { return true; }
     if (!this.state.isNew && this.state.typeCode !== this.props.condition.conditionTypeCode) { return true; }
     if (!this.state.isNew && this.state.description !== this.props.condition.description) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       typeCodeError: '',
       descriptionError: '',
@@ -60,9 +62,9 @@ var ConditionAddEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     this.props.onSave({
       id: this.state.conditionId,
       conditionTypeCode: this.state.typeCode,
@@ -70,7 +72,7 @@ var ConditionAddEditDialog = React.createClass({
       concurrencyControlNumber: this.state.concurrencyControlNumber,
       active: true,
     });
-  },
+  };
 
   render() {
     return <EditDialog id="equipment-add" show={ this.props.show }
@@ -89,7 +91,7 @@ var ConditionAddEditDialog = React.createClass({
         </FormGroup>
       </Form>
     </EditDialog>;
-  },
-});
+  }
+}
 
 export default ConditionAddEditDialog;

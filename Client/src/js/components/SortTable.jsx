@@ -5,8 +5,8 @@ import _ from 'lodash';
 import Spinner from '../components/Spinner.jsx';
 
 
-const SortTable = React.createClass({
-  propTypes: {
+class SortTable extends React.Component {
+  static propTypes = {
     // Array of objects with key, title, style, children fields
     headers: React.PropTypes.array.isRequired,
     // This should be a from a state.ui object
@@ -20,20 +20,20 @@ const SortTable = React.createClass({
     id: React.PropTypes.string,
     isRefreshing: React.PropTypes.bool,
     children: React.PropTypes.node,
-  },
+  };
 
-  sort(field) {
+  sort = (field) => {
     this.props.onSort({
       sortField: field,
       sortDesc: !this.props.sortDesc,
     });
-  },
+  };
 
-  preventSelection(e) {
+  preventSelection = (e) => {
     e.preventDefault();
-  },
+  };
 
-  renderTableHeader() {
+  renderTableHeader = () => {
     const {headers, sortField, sortDesc} = this.props;
 
     return headers.map((header) => {
@@ -54,11 +54,11 @@ const SortTable = React.createClass({
           onClick={ header.noSort ? '' : () => this.sort(header.field) }
           className={ header.class }
           style={{ ...header.style, cursor: header.noSort ? 'default' : 'pointer' }}>
-            { header.title }{ sortGlyph }
+          { header.title }{ sortGlyph }
         </th>
       );
     });
-  },
+  };
 
   render() {
     const {id, isRefreshing, children} = this.props;
@@ -78,7 +78,7 @@ const SortTable = React.createClass({
         </Table>
       </div>
     );
-  },
-});
+  }
+}
 
 export default SortTable;

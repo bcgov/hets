@@ -6,8 +6,8 @@ import * as Constant from '../constants';
 import TooltipButton from './TooltipButton.jsx';
 
 
-var StatusDropdown = React.createClass({
-  propTypes: {
+class StatusDropdown extends React.Component {
+  static propTypes = {
     id: React.PropTypes.string,
     className: React.PropTypes.string,
     status: React.PropTypes.string.isRequired,
@@ -15,9 +15,9 @@ var StatusDropdown = React.createClass({
     disabled: React.PropTypes.bool,
     disabledTooltip: React.PropTypes.node,
     onSelect: React.PropTypes.func.isRequired,
-  },
+  };
 
-  computeBsStyle() {
+  computeBsStyle = () => {
     switch(this.props.status) {
       case Constant.EQUIPMENT_STATUS_CODE_APPROVED:
       case Constant.OWNER_STATUS_CODE_APPROVED:
@@ -28,7 +28,7 @@ var StatusDropdown = React.createClass({
       default:
         return 'default';
     }
-  },
+  };
 
   render() {
     const {
@@ -67,8 +67,8 @@ var StatusDropdown = React.createClass({
         </DropdownButton>
       );
     }
-  },
-});
+  }
+}
 
 
 export default StatusDropdown;

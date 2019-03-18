@@ -13,19 +13,21 @@ import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
-var OwnersEditDialog = React.createClass({
-  propTypes: {
+class OwnersEditDialog extends React.Component {
+  static propTypes = {
     owner: React.PropTypes.object,
     owners: React.PropTypes.object,
     localAreas: React.PropTypes.object,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
-  },
+  };
 
-  getInitialState() {
-    var owner = this.props.owner;
-    return {
+  constructor(props) {
+    super(props);
+    var owner = props.owner;
+
+    this.state = {
       organizationName: owner.organizationName || '',
       givenName: owner.givenName || '',
       surname: owner.surname || '',
@@ -47,17 +49,17 @@ var OwnersEditDialog = React.createClass({
       organizationNameError: '',
       localAreaError: '',
     };
-  },
+  }
 
   componentDidMount() {
     Api.getOwnersLite();
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     var owner = this.props.owner;
 
     if (this.state.organizationName !== owner.organizationName) { return true; }
@@ -74,9 +76,9 @@ var OwnersEditDialog = React.createClass({
     if (this.state.isMaintenanceContractor !== owner.isMaintenanceContractor) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       companyAddressError: '',
       organizationNameError: '',
@@ -127,9 +129,9 @@ var OwnersEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     this.props.onSave({ ...this.props.owner, ...{
       organizationName: this.state.organizationName,
       givenName: this.state.givenName,
@@ -145,7 +147,7 @@ var OwnersEditDialog = React.createClass({
       registeredCompanyNumber: this.state.registeredCompanyNumber,
       status: this.state.status,
     }});
-  },
+  };
 
   render() {
     var owner = this.props.owner;
@@ -216,8 +218,8 @@ var OwnersEditDialog = React.createClass({
         </FormGroup>
       </Form>
     </EditDialog>;
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

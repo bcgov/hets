@@ -29,8 +29,8 @@ import { daysFromToday, formatDateTime, today, isValidDate, toZuluTime } from '.
 import { isBlank, notBlank } from '../utils/string';
 
 
-var UsersDetail = React.createClass({
-  propTypes: {
+class UsersDetail extends React.Component {
+  static propTypes = {
     currentUser: React.PropTypes.object,
     user: React.PropTypes.object,
     ui: React.PropTypes.object,
@@ -38,26 +38,24 @@ var UsersDetail = React.createClass({
     districts: React.PropTypes.object,
     params: React.PropTypes.object,
     router: React.PropTypes.object,
-  },
+  };
 
-  getInitialState() {
-    return {
-      loading: true,
+  state = {
+    loading: true,
 
-      district: {},
+    district: {},
 
-      showEditDialog: false,
-      showUserRoleDialog: false,
-      showDistrictEditDialog: false,
+    showEditDialog: false,
+    showUserRoleDialog: false,
+    showDistrictEditDialog: false,
 
-      ui: {
-        // User roles
-        sortField: this.props.ui.sortField || 'roleName',
-        sortDesc: this.props.ui.sortDesc === true,
-        showExpiredOnly: false,
-      },
-    };
-  },
+    ui: {
+      // User roles
+      sortField: this.props.ui.sortField || 'roleName',
+      sortDesc: this.props.ui.sortDesc === true,
+      showExpiredOnly: false,
+    },
+  };
 
   componentDidMount() {
     // if new user
@@ -75,43 +73,43 @@ var UsersDetail = React.createClass({
     } else {
       this.fetch();
     }
-  },
+  }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.params.userId !== nextProps.params.userId) {
       this.fetch();
     }
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     this.setState({ loading: true });
     var getUserPromise = Api.getUser(this.props.params.userId);
     var getUserDistrictsPromise = Api.getUserDistricts(this.props.params.userId);
     Promise.all([getUserPromise, getUserDistrictsPromise]).finally(() => {
       this.setState({ loading: false });
     });
-  },
+  };
 
-  updateUIState(state, callback) {
+  updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
       store.dispatch({ type: Action.UPDATE_USER_ROLES_UI, userRoles: this.state.ui });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  openEditDialog() {
+  openEditDialog = () => {
     this.setState({ showEditDialog: true });
-  },
+  };
 
-  closeEditDialog() {
+  closeEditDialog = () => {
     this.setState({ showEditDialog: false });
-  },
+  };
 
-  onUserSaved(/* user */) {
+  onUserSaved = () => {
     this.closeEditDialog();
-  },
+  };
 
-  onCloseEdit() {
+  onCloseEdit = () => {
     this.closeEditDialog();
     if (this.props.params.userId === '0') {
       // Go back to user list if cancelling new user
@@ -119,22 +117,22 @@ var UsersDetail = React.createClass({
         pathname: Constant.USERS_PATHNAME,
       });
     }
-  },
+  };
 
-  openUserRoleDialog() {
+  openUserRoleDialog = () => {
     this.setState({ showUserRoleDialog: true });
-  },
+  };
 
-  closeUserRoleDialog() {
+  closeUserRoleDialog = () => {
     this.setState({ showUserRoleDialog: false });
-  },
+  };
 
-  addUserRole(userRole) {
+  addUserRole = (userRole) => {
     Api.addUserRole(this.props.user.id, userRole);
     this.closeUserRoleDialog();
-  },
+  };
 
-  updateUserRole(userRole) {
+  updateUserRole = (userRole) => {
     // The API call updates all of the user's user roles so we have to
     // include them all in this call, modifying the one that has just
     // been expired.
@@ -148,25 +146,25 @@ var UsersDetail = React.createClass({
 
     Api.updateUserRoles(this.props.user.id, userRoles);
     this.closeUserRoleDialog();
-  },
+  };
 
-  openDistrictEditDialog() {
+  openDistrictEditDialog = () => {
     this.setState({ showDistrictEditDialog: true });
-  },
+  };
 
-  closeDistrictEditDialog() {
+  closeDistrictEditDialog = () => {
     this.setState({ showDistrictEditDialog: false });
-  },
+  };
 
-  addUserDistrict() {
+  addUserDistrict = () => {
     this.setState({ district: { id: 0 }, showDistrictEditDialog: true });
-  },
+  };
 
-  editUserDistrict(district) {
+  editUserDistrict = (district) => {
     this.setState({ district, showDistrictEditDialog: true });
-  },
+  };
 
-  saveDistrict(district) {
+  saveDistrict = (district) => {
     var isNew = district.id === 0;
     var promise;
     isNew ? promise =  Api.addUserDistrict(district) : promise = Api.editUserDistrict(district);
@@ -176,19 +174,19 @@ var UsersDetail = React.createClass({
       }
       this.closeDistrictEditDialog();
     });
-  },
+  };
 
-  deleteDistrict(district) {
+  deleteDistrict = (district) => {
     Api.deleteUserDistrict(district).then((response) => {
       if (district.user.id === this.props.currentUser.id) {
         this.updateCurrentUserDistricts(response.data);
       }
     });
-  },
+  };
 
-  updateCurrentUserDistricts(districts) {
+  updateCurrentUserDistricts = (districts) => {
     store.dispatch({ type: Action.CURRENT_USER_DISTRICTS, currentUserDistricts: districts });
-  },
+  };
 
   render() {
     var user = this.props.user;
@@ -384,29 +382,26 @@ var UsersDetail = React.createClass({
         />
       }
     </div>;
-  },
-});
+  }
+}
 
-
-var ExpireOverlay = React.createClass({
-  propTypes: {
+class ExpireOverlay extends React.Component {
+  static propTypes = {
     userRole: React.PropTypes.object.isRequired,
     onSave: React.PropTypes.func.isRequired,
     hide: React.PropTypes.func,
-  },
+  };
 
-  getInitialState() {
-    return {
-      expiryDate: today(),
-      expiryDateError: '',
-    };
-  },
+  state = {
+    expiryDate: today(),
+    expiryDateError: '',
+  };
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  saveUserRole() {
+  saveUserRole = () => {
     this.setState({ expiryDateError: false });
 
     if (isBlank(this.state.expiryDate)) {
@@ -420,7 +415,7 @@ var ExpireOverlay = React.createClass({
       }});
       this.props.hide();
     }
-  },
+  };
 
   render() {
     var props = _.omit(this.props, 'onSave', 'hide', 'userRole');
@@ -433,8 +428,8 @@ var ExpireOverlay = React.createClass({
         <Button bsStyle="primary" onClick={ this.saveUserRole } className="pull-right">Save</Button>
       </Form>
     </Popover>;
-  },
-});
+  }
+}
 
 
 

@@ -15,49 +15,47 @@ import { formatDateTimeUTCToLocal } from '../utils/date';
 import { sortDir } from '../utils/array';
 
 
-var StatusLetters = React.createClass({
-  propTypes: {
+class StatusLetters extends React.Component {
+  static propTypes = {
     localAreas: React.PropTypes.object,
     owners: React.PropTypes.object,
     batchReports: React.PropTypes.object,
-  },
+  };
 
-  getInitialState() {
-    return {
-      loading: true,
-      localAreaIds: [],
-      ownerIds: [],
-      ui : {
-        sortField: 'startDate',
-        sortDesc: false,
-      },
-    };
-  },
+  state = {
+    loading: true,
+    localAreaIds: [],
+    ownerIds: [],
+    ui : {
+      sortField: 'startDate',
+      sortDesc: false,
+    },
+  };
 
   componentDidMount() {
     Api.getOwnersLite();
     this.fetch();
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     this.setState({ loading: true });
     return Api.getBatchReports().then(() => this.setState({ loading: false }));
-  },
+  };
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, () => {
       if (callback) { callback(); }
     });
-  },
+  };
 
-  updateUIState(state, callback) {
+  updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
       // store.dispatch({ type: Action.UPDATE_HISTORY_UI, history: this.state.ui });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  downloadPdf(promise, filename) {
+  downloadPdf = (promise, filename) => {
     promise.then((response) => {
       var blob;
       if (window.navigator.msSaveBlob) {
@@ -80,58 +78,58 @@ var StatusLetters = React.createClass({
       //release the reference to the file by revoking the Object URL
       window.URL.revokeObjectURL(url);
     });
-  },
+  };
 
-  getStatusLetters() {
+  getStatusLetters = () => {
     this.setState({ loading: true });
     Api.scheduleStatusLettersPdf({ localAreas: this.state.localAreaIds, owners: this.state.ownerIds }).then(() => {
       return this.fetch();
     });
-  },
+  };
 
-  getMailingLabels() {
+  getMailingLabels = () => {
     var promise = Api.getMailingLabelsPdf({ localAreas: this.state.localAreaIds, owners: this.state.ownerIds });
     var filename = 'MailingLabels-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.pdf';
 
     this.downloadPdf(promise, filename);
-  },
+  };
 
-  downloadStatusLetterPdf(reportId) {
+  downloadStatusLetterPdf = (reportId) => {
     var promise = Api.getStatusLettersPdf(reportId);
     var filename = 'StatusLetters-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.pdf';
     this.downloadPdf(promise, filename);
-  },
+  };
 
-  deleteBatchReport(reportId) {
+  deleteBatchReport = (reportId) => {
     Api.deleteBatchReport(reportId);
-  },
+  };
 
-  matchesLocalAreaFilter(localAreaId) {
+  matchesLocalAreaFilter = (localAreaId) => {
     if (this.state.localAreaIds.length == 0) {
       return true;
     }
 
     return _.includes(this.state.localAreaIds, localAreaId);
-  },
+  };
 
-  updateLocalAreaState(state) {
+  updateLocalAreaState = (state) => {
     this.updateState(state, this.filterSelectedOwners);
-  },
+  };
 
-  filterSelectedOwners() {
+  filterSelectedOwners = () => {
     var acceptableOwnerIds = _.map(this.getFilteredOwners(), 'id');
     var ownerIds = _.intersection(this.state.ownerIds, acceptableOwnerIds);
     this.updateState({ ownerIds: ownerIds });
-  },
+  };
 
-  getFilteredOwners() {
+  getFilteredOwners = () => {
     return _.chain(this.props.owners.data)
       .filter(x => this.matchesLocalAreaFilter(x.localAreaId))
       .sortBy('organizationName')
       .value();
-  },
+  };
 
-  renderBatchReports() {
+  renderBatchReports = () => {
     const { loading } = this.state;
     const { batchReports } = this.props;
 
@@ -175,7 +173,7 @@ var StatusLetters = React.createClass({
         }
       </SortTable>
     );
-  },
+  };
 
   render() {
     var localAreas = _.sortBy(this.props.localAreas, 'name');
@@ -211,10 +209,10 @@ var StatusLetters = React.createClass({
           </Row>
         </Well>
         {this.renderBatchReports()}
-    </div>
+      </div>
     );
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

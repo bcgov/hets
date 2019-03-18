@@ -6,22 +6,22 @@ import { bindActionCreators } from 'redux';
 import ModalDialog from '../../components/ModalDialog.jsx';
 import {closeErrorDialog} from '../../actions';
 
-var ErrorDialog = React.createClass({
-  propTypes: {
+class ErrorDialog extends React.Component {
+  static propTypes = {
     show: React.PropTypes.bool,
     title: React.PropTypes.string,
     apiError: React.PropTypes.object,
     appError: React.PropTypes.object,
     closeErrorDialog: React.PropTypes.func.isRequired,
-  },
+  };
 
-  closeDialog(/* e */) {
+  closeDialog = () => {
     this.props.closeErrorDialog();
-  },
+  };
 
-  reloadButtonClicked(/* e */) {
+  reloadButtonClicked = () => {
     window.location.reload();
-  },
+  };
 
   render() {
     const {apiError, appError, show} = this.props;
@@ -102,8 +102,8 @@ var ErrorDialog = React.createClass({
         {details}
       </ModalDialog>
     );
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

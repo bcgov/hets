@@ -16,8 +16,8 @@ import Form from '../../components/Form.jsx';
 import { isBlank, notBlank } from '../../utils/string';
 import { isValidYear } from '../../utils/date';
 
-var EquipmentEditDialog = React.createClass({
-  propTypes: {
+class EquipmentEditDialog extends React.Component {
+  static propTypes = {
     currentUser: React.PropTypes.object,
     equipment: React.PropTypes.object,
     localAreas: React.PropTypes.object,
@@ -26,24 +26,26 @@ var EquipmentEditDialog = React.createClass({
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
-  },
+  };
 
-  getInitialState() {
-    return {
-      isNew: this.props.equipment.id === 0,
+  constructor(props) {
+    super(props);
 
-      localAreaId: this.props.equipment.localArea.id || 0,
-      equipmentTypeId: this.props.equipment.districtEquipmentTypeId || null,
-      serialNumber: this.props.equipment.serialNumber || '',
-      make: this.props.equipment.make || '',
-      size: this.props.equipment.size || '',
-      model: this.props.equipment.model || '',
-      year: this.props.equipment.year || '',
-      licencePlate: this.props.equipment.licencePlate || '',
-      type: this.props.equipment.type || '',
-      licencedGvw: this.props.equipment.licencedGvw || '',
-      legalCapacity: this.props.equipment.legalCapacity || '',
-      pupLegalCapacity: this.props.equipment.pupLegalCapacity || '',
+    this.state = {
+      isNew: props.equipment.id === 0,
+
+      localAreaId: props.equipment.localArea.id || 0,
+      equipmentTypeId: props.equipment.districtEquipmentTypeId || null,
+      serialNumber: props.equipment.serialNumber || '',
+      make: props.equipment.make || '',
+      size: props.equipment.size || '',
+      model: props.equipment.model || '',
+      year: props.equipment.year || '',
+      licencePlate: props.equipment.licencePlate || '',
+      type: props.equipment.type || '',
+      licencedGvw: props.equipment.licencedGvw || '',
+      legalCapacity: props.equipment.legalCapacity || '',
+      pupLegalCapacity: props.equipment.pupLegalCapacity || '',
 
       serialNumberError: null,
       duplicateSerialNumber: false,
@@ -51,23 +53,23 @@ var EquipmentEditDialog = React.createClass({
       modelError: '',
       yearError: null,
     };
-  },
+  }
 
   componentDidMount() {
     Api.getDistrictEquipmentTypes();
-  },
+  }
 
   componentDidUpdate(prevProps, prevState) {
     if (!_.isEqual(this.state.serialNumber, prevState.serialNumber)) {
       this.setState({ duplicateSerialNumber: false, serialNumberError: '' });
     }
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.localAreaId !== this.props.equipment.localArea.id) { return true; }
     if (this.state.equipmentTypeId !== 0) { return true; }
     if (this.state.serialNumber !== this.props.equipment.serialNumber) { return true; }
@@ -82,9 +84,9 @@ var EquipmentEditDialog = React.createClass({
     if (this.state.pupLegalCapacity !== this.props.equipment.pupLegalCapacity) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       serialNumberError: null,
       makeError: '',
@@ -123,9 +125,9 @@ var EquipmentEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  checkForDuplicatesAndSave() {
+  checkForDuplicatesAndSave = () => {
     if (this.state.duplicateSerialNumber) {
       // proceed regardless of duplicates
       this.setState({ duplicateSerialNumber: false });
@@ -149,9 +151,9 @@ var EquipmentEditDialog = React.createClass({
         return this.onSave();
       }
     });
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     return this.props.onSave({ ...this.props.equipment, ...{
       localArea: { id: this.state.localAreaId },
       districtEquipmentTypeId: this.state.equipmentTypeId,
@@ -166,7 +168,7 @@ var EquipmentEditDialog = React.createClass({
       legalCapacity: this.state.legalCapacity,
       pupLegalCapacity: this.state.pupLegalCapacity,
     }});
-  },
+  };
 
   render() {
     var equipment = this.props.equipment;
@@ -305,8 +307,8 @@ var EquipmentEditDialog = React.createClass({
         </Form>;
       })()}
     </EditDialog>;
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

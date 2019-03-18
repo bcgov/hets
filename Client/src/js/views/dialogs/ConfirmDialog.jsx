@@ -2,8 +2,8 @@ import React from 'react';
 
 import EditDialog from '../../components/EditDialog.jsx';
 
-var ConfirmDialog = React.createClass({
-  propTypes: {
+class ConfirmDialog extends React.Component {
+  static propTypes = {
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
@@ -11,19 +11,19 @@ var ConfirmDialog = React.createClass({
     saveText: React.PropTypes.string,
     closeText: React.PropTypes.string,
     children: React.PropTypes.node,
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     return true;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     return true;
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     this.props.onSave();
-  },
+  };
 
   render() {
     return <EditDialog id="confirm-dialog" show={ this.props.show }
@@ -33,7 +33,7 @@ var ConfirmDialog = React.createClass({
     >
       { this.props.children }
     </EditDialog>;
-  },
-});
+  }
+}
 
 export default ConfirmDialog;

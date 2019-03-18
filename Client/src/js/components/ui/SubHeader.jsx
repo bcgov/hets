@@ -5,8 +5,8 @@ import { Glyphicon } from 'react-bootstrap';
 import TooltipButton from '../TooltipButton.jsx';
 
 
-var SubHeader = React.createClass({
-  propTypes: {
+class SubHeader extends React.Component {
+  static propTypes = {
     title: React.PropTypes.string,
     id: React.PropTypes.string,
     className: React.PropTypes.string,
@@ -16,7 +16,7 @@ var SubHeader = React.createClass({
     editIcon: React.PropTypes.string,
     onEditClicked: React.PropTypes.func,
     children: React.PropTypes.node,
-  },
+  };
 
   render() {
     const {
@@ -53,8 +53,8 @@ var SubHeader = React.createClass({
         </span>
       </h3>
     );
-  },
-});
+  }
+}
 
 
 SubHeader.defaultProps = {
