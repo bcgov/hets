@@ -40,6 +40,7 @@ Immediate Backup:
 -----------------
 To execute a backup right now, check the logs of the Backup pod to make sure a backup isn't run right now (pretty unlikely...), and then deploy the "backup" using OpenShift "deploy" capabilities.
 
+
 Restore
 -------
 These steps perform a restore of a backup.
@@ -48,51 +49,20 @@ These steps perform a restore of a backup.
 2. Scale to 0 all Apps that use the database connection.
    1. This is necessary as the Apps will need to restart to pull data from the restored backup.
    2. In HETS this is just **server**
-   3. It is recommended that you also scale down to 0 **frontend**  so that users know the application is unavailable while the database restore is underway.
-       1. A nice addition to this would be a user-friendly "This application is offline" message - not yet implemented.
+   3. It is recommended that you also scale down to 0 **frontend** so that users know the application is unavailable while the database restore is underway.       
 3. Restart the **postgres** pod as a quick way of closing any other database connections from users using port forward or that have rsh'd to directly connect to the database.
-4. Open an rsh into the Postgres pod.
-
-
-
-   1. Open a command prompt connection to OpenShift using `oc login` with parameters appropriate for your OpenShift host.
-   2. Change to the OpenShift project containing the Backup App `oc project <Project Name>`
-   3. List pods using `oc get pods`
-   4. Open a remote shell connection to the **postgresql** pod. `oc rsh <Postgresql Pod Name>`   
+4. Open a Terminal window on the Backup pod
+   1. locate the backup to restore (change to the directory)"
    
-5. In the rsh run `psql` 
-6. Get the name of the database and the Application user - you need to know these for later steps.
-   1. Run the shell command: `echo Database Name: $POSTGRESQL_DATABASE`
-   2. Run the shell command: `echo App User: $POSTGRESQL_USER`
-7. Execute `drop <database name>;` to drop the database (database name from above).
-8. Execute `create <database name>;` to create a new instance of the database with the same name as the old one.
-9. Execute `grant all on database hets to "<name of $POSTGRESQL_USER>";`
-    1. If there are other users needing access to the database, such as the DBA group:
-        2. Get a list of the users by running the command `\du`
-        2. For each user that is not "postgres" and $POSTGRESQL_USER, execute the command `GRANT SELECT ON ALL TABLES IN SCHEMA public TO "<name of user>";`
-    2. If users have been set up with other grants, set them up as well.
-10. Close psql with `\q`
-11. Exit rsh with `exit` back to your local command line
-12. Execute `oc rsh <Backup Pod Name>` to remote shell into the backup app pod
-13. Change to the bash shell by entering `bash`
-14. Change to the directory containing the backup you wish to restore and find the name of the file.
-15. Execute the following bash commands:
-    1. `PGPASSWORD=$POSTGRESQL_PASSWORD`
-    2. `export PGPASSWORD`
-    3. `gunzip -c <filename> | psql -h "$DATABASE_SERVICE_NAME" -U "$POSTGRESQL_USER" "$POSTGRESQL_DATABASE" "$POSTGRESQL_DATABASE"`
-       1. Ignore the "no privileges revoked" warnings at the end of the process.
-16. Verify that the database restore worked
-    1. `psql -h "$DATABASE_SERVICE_NAME" -U "$POSTGRESQL_USER" "$POSTGRESQL_DATABASE"`
-    2. `\d`
-    3. Verify that application tables are listed. Query a table - e.g the USER table:
-    4. `SELECT * FROM "SBI_USER";` - you can look at other tables if you want.
-    5. Verify data is shown.
-    6. `\q`
-17. Exit remote shells back to your local commmand line
-18. From the Openshift Console restart the app:
-    1. Scale up (or redeploy) the Server app and wait for it to finish starting up.  View the logs for the Server app to verify there were no startup issues.
-    2. Scale up the CCW app, and view the logs for the CCW app to verify there were no startup issues.
-    3. Scale up the FrontEnd app.
-19.  Verify full application functionality.
+       cd /backups/2019-03-18
+	   
+    2. execute the script identifying the file to resore (example below):
+	
+       sh /restore.sh 2019-03-18/hets2019-03-18-02-55.bak
+   
+5. From the Openshift Console restart the app:
+    1. Scale up the Server app and wait for it to finish starting up.  View the logs for the Server app to verify there were no startup issues.
+    2. Scale up the FrontEnd app and wait for it to finish starting up.  View the logs for the Server app to verify there were no startup issues.
+6.  Verify full application functionality.
 
 Done!

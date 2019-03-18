@@ -48,7 +48,16 @@ fi
 # restore database
 export PGPASSWORD=$POSTGRESQL_PASSWORD
 
-if ! pg_restore --clean --if-exists --host="$DATABASE_SERVICE_NAME" --port="5432" --username="$POSTGRESQL_USER" --dbname="$POSTGRESQL_DATABASE" --format="c" "$FULL_RESTORE_FILE"; then
+echo "*** drop current hets database"
+psql -q --host="$DATABASE_SERVICE_NAME" --port="5432" --username="$POSTGRESQL_USER" --dbname="$POSTGRESQL_DATABASE" -a -q -c "do $$ begin PERFORM pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'hets'; end $$"
+psql -q --host="$DATABASE_SERVICE_NAME" --port="5432" --username="$POSTGRESQL_USER" --dbname="$POSTGRESQL_DATABASE" -a -q -c "DROP DATABASE IF EXISTS hets;"
+
+echo "*** create empty hets database"
+psql -q --host="$DATABASE_SERVICE_NAME" --port="5432" --username="$POSTGRESQL_USER" --dbname="$POSTGRESQL_DATABASE" -a -q -c "CREATE DATABASE hets WITH ENCODING = 'UTF8';"
+psql -q --host="$DATABASE_SERVICE_NAME" --port="5432" --username="$POSTGRESQL_USER" --dbname="$POSTGRESQL_DATABASE" -a -q -c "SET client_encoding = 'UTF8';"
+
+echo "*** restore hets database"
+if ! pg_restore --host="$DATABASE_SERVICE_NAME" --port="5432" --username="$POSTGRESQL_USER" --dbname="$POSTGRESQL_DATABASE" --format="c" "$FULL_RESTORE_FILE"; then
 	echo "[!!ERROR!!] Failed to restore database $PGDB" 
 else
 	echo "*** database restore complete"	
