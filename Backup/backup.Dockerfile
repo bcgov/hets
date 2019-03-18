@@ -4,13 +4,11 @@ FROM registry.access.redhat.com/rhscl/postgresql-95-rhel7
 # Set the workdir to be root
 WORKDIR /
 
-# Load the backup script into the container and make it executable
+# Load the backup script into the container
 COPY backup.sh /
-# RUN chmod -R a+rwx /backup.sh
 
-# Copy the restore script into the container and make it executable
+# Copy the restore script into the container
 COPY restore.sh /
-chmod a+rwx /restore.sh
 
 # execute a backup
 CMD sh /backup.sh
