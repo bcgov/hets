@@ -8,6 +8,10 @@ WORKDIR /
 COPY backup.sh /
 # RUN chmod -R a+rwx /backup.sh
 
-# Set the default CMD to print the usage of the language image.
+# Copy the restore script into the container and make it executable
+COPY restore.sh /
+# RUN chmod -R a+rwx /restore.sh
+
+# execute a backup
 CMD sh /backup.sh
 
