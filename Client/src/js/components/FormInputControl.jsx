@@ -48,9 +48,13 @@ var FormInputControl = React.createClass({
 
   render() {
     const { type, autoComplete, children } = this.props;
+    // XXX: eslint doesn't like `const { type, autoComplete, children, ...rest } = this.props;`
+    // using lodash omit for now
+    const rest = _.omit(this.props, 'type', 'autoComplete', 'children', 'updateState');
 
     return (
       <FormControl
+        {...rest}
         type={type === 'float' ? 'number' : type}
         onChange={this.changed}
         inputRef={ref => {this.input = ref;}}
