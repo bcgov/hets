@@ -10,7 +10,7 @@ COPY backup.sh /
 
 # Copy the restore script into the container and make it executable
 COPY restore.sh /
-RUN chmod -R a+rwx /restore.sh
+chmod a+rwx /restore.sh
 
 # execute a backup
 CMD sh /backup.sh
