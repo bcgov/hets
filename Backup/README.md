@@ -1,4 +1,4 @@
-Postgres Backups in OpenShift
+Postgres Backup/Restore in OpenShift
 ----------------
 An OpenShift Deployment called "backup" in the HETS projects (Dev, Test, Prod) runs the backups of the Postgres database. The following are the instructions for running the backups and a restore.
 
@@ -17,8 +17,9 @@ The following environment variables are used by the Backup app.
 | POSTGRESQL_PASSWORD | database password for the backup |
 | POSTGRESQL_DATABASE | database to backup | 
 | BACKUP_DIR | directory to store the backups |
+| RESTORE_DIR | directory to store the backup to be restored |
 
-The BACKUP_DIR must be set to a location that has persistent storage.
+The BACKUP_DIR & RESTORE_DIR must be set to a location that has persistent storage.
 
 Backup
 ------
@@ -43,8 +44,7 @@ Restore
 -------
 These steps perform a restore of a backup.
 
-1. Log into the OpenShift Console and log into OpenShift on the command shell window.
-   1. The instructions here use a mix of the console and command line, but all could be done from a command shell using "oc" commands. We have not written a script for this as if a backup is needed, something has gone seriously wrong, and compensating steps may be needed for which the script would not account.
+1. Log into the OpenShift Console and log into OpenShift on the command shell window
 2. Scale to 0 all Apps that use the database connection.
    1. This is necessary as the Apps will need to restart to pull data from the restored backup.
    2. In HETS this is just **server**
@@ -52,10 +52,14 @@ These steps perform a restore of a backup.
        1. A nice addition to this would be a user-friendly "This application is offline" message - not yet implemented.
 3. Restart the **postgres** pod as a quick way of closing any other database connections from users using port forward or that have rsh'd to directly connect to the database.
 4. Open an rsh into the Postgres pod.
+
+
+
    1. Open a command prompt connection to OpenShift using `oc login` with parameters appropriate for your OpenShift host.
    2. Change to the OpenShift project containing the Backup App `oc project <Project Name>`
    3. List pods using `oc get pods`
-   4. Open a remote shell connection to the **postgresql** pod. `oc rsh <Postgresql Pod Name>`
+   4. Open a remote shell connection to the **postgresql** pod. `oc rsh <Postgresql Pod Name>`   
+   
 5. In the rsh run `psql` 
 6. Get the name of the database and the Application user - you need to know these for later steps.
    1. Run the shell command: `echo Database Name: $POSTGRESQL_DATABASE`
