@@ -14,3 +14,4 @@ POSTGRESQL_DATABASE_NAME=hets
 # POSTGRESQL_USER=[a-zA-Z_][a-zA-Z0-9_]{10}
 # POSTGRESQL_PASSWORD=[a-zA-Z0-9_~!@#$%^&*()-=<>,.?;:|]{16}
 BACKUP_DIR=/backups/
+RESTORE_DIR=/backups/restore/
