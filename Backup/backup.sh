@@ -29,7 +29,7 @@ while true; do
 		find /backups | grep 20 | grep -v bak | grep -v trash | sort -r | sed "1,${NUM_BACKUPS}d" | xargs rm -rf
 	fi;
 	echo "Current Backups:"
-	ls -alh ${BACKUP_DIR}/*/*.bak*
+	ls -alh ${BACKUP_DIR}*/*.bak*
 	echo "===================="
 
 	# 24 hrs
