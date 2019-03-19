@@ -5,6 +5,26 @@
 export NUM_BACKUPS="${NUM_BACKUPS:-31}"
 export BACKUP_PERIOD="${BACKUP_PERIOD:-1d}"
 
+# move the restore scripts to the correct folder (can't be done at deployment time)
+export RESTORE_DIR="${RESTORE_DIR}"
+export RESTORE_SCRIPT_FILE="/restore.sh"
+export RESTORE_SQL_FILE="/connections.sql"
+export FULL_SCRIPT_FILE="${RESTORE_DIR}restore.sh"
+export FULL_SQL_FILE="${RESTORE_DIR}connections.sql"
+
+if [ -d "$RESTORE_DIR" ]
+then
+	echo "*** clearing restore directory"
+	rm -rf "$RESTORE_DIR/*.*" 
+else
+	echo "*** creating restore directory"
+	mkdir "$RESTORE_DIR"
+fi
+
+cp -f $RESTORE_SCRIPT_FILE $FULL_SCRIPT_FILE
+cp -f $RESTORE_SQL_FILE $FULL_SQL_FILE
+
+# execute the backup - then wait for 24 hours
 while true; do
 	FINAL_BACKUP_DIR=$BACKUP_DIR"`date +\%Y-\%m-\%d`/"
 	DBFILE=$FINAL_BACKUP_DIR"$POSTGRESQL_DATABASE`date +\%Y-\%m-\%d-%H-%M`"
