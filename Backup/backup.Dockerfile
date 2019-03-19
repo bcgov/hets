@@ -8,7 +8,8 @@ WORKDIR /
 COPY backup.sh /
 
 # Copy the restore script into the container [sh /restore.sh]
-COPY restore.sh /
+COPY restore.sh /backup/restore
+COPY connections.sql /backup/restore
 
 # execute a backup
 CMD sh /backup.sh
