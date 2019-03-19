@@ -14,3 +14,4 @@
 POSTGRESQL_USER=
 POSTGRESQL_PASSWORD=
 # BACKUP_DIR=/backups/
+# RESTORE_DIR=/backups/restore/

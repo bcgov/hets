@@ -21,6 +21,7 @@ else
 	mkdir "$RESTORE_DIR"
 fi
 
+echo "*** copy restore scripts"
 cp -f $RESTORE_SCRIPT_FILE $FULL_SCRIPT_FILE
 cp -f $RESTORE_SQL_FILE $FULL_SQL_FILE
 
@@ -28,10 +29,10 @@ cp -f $RESTORE_SQL_FILE $FULL_SQL_FILE
 while true; do
 	FINAL_BACKUP_DIR=$BACKUP_DIR"`date +\%Y-\%m-\%d`/"
 	DBFILE=$FINAL_BACKUP_DIR"$POSTGRESQL_DATABASE`date +\%Y-\%m-\%d-%H-%M`"
-	echo "Making backup directory in $FINAL_BACKUP_DIR"
+	echo "*** making backup directory in $FINAL_BACKUP_DIR"
 	
 	if ! mkdir -p $FINAL_BACKUP_DIR; then
-		echo "Cannot create backup directory in $FINAL_BACKUP_DIR." 1>&2
+		echo "*** cannot create backup directory in $FINAL_BACKUP_DIR." 1>&2
 		exit 1;
 	fi;	
 	
@@ -40,7 +41,7 @@ while true; do
 	if ! pg_dump --host="$DATABASE_SERVICE_NAME" --port="5432" --username="$POSTGRESQL_USER" --dbname="$POSTGRESQL_DATABASE" --blobs --format="c" --compress="9" --file="$DBFILE.bak"; then
 		echo "[!!ERROR!!] Failed to backup database $POSTGRESQL_DATABASE" 
 	else
-		echo "Database backup written to $DBFILE.bak"
+		echo "*** database backup written to $DBFILE.bak"
 		
 		# cull backups to a limit of NUM_BACKUPS
 		find ${BACKUP_DIR}* | grep bak | sort -r | sed "1,${NUM_BACKUPS}d" | xargs rm -rf
