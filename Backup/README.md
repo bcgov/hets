@@ -43,7 +43,7 @@ To execute a backup right now, check the logs of the Backup pod to make sure a b
 
 Restore
 -------
-These steps perform a restore of a backup.
+These steps perform a restore of a backup. This process must be executed from the postgres pod.
 
 1. Log into the OpenShift Console and log into OpenShift on the command shell window
 2. Scale to 0 all Apps that use the database connection.
