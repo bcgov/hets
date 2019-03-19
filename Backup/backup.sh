@@ -15,7 +15,7 @@ export FULL_SQL_FILE="${RESTORE_DIR}connections.sql"
 if [ -d "$RESTORE_DIR" ]
 then
 	echo "*** clearing restore directory"
-	rm -rf "$RESTORE_DIR/*.*" 
+	rm -rf $RESTORE_DIR* 
 else
 	echo "*** creating restore directory"
 	mkdir "$RESTORE_DIR"
