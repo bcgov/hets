@@ -4,10 +4,13 @@ FROM registry.access.redhat.com/rhscl/postgresql-95-rhel7
 # Set the workdir to be root
 WORKDIR /
 
-# Load the backup script into the container and make it executable
+# Load the backup script into the container
 COPY backup.sh /
-# RUN chmod -R a+rwx /backup.sh
 
-# Set the default CMD to print the usage of the language image.
+# Copy the restore script into the container [sh /restore.sh]
+COPY restore.sh /backups/restore/
+COPY connections.sql /backups/restore/
+
+# execute a backup
 CMD sh /backup.sh
 
