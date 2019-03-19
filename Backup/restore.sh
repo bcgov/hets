@@ -17,7 +17,7 @@ fi
 if [ -d "$RESTORE_DIR" ]
 then
 	echo "*** clearing restore directory"
-	rm -rf "$RESTORE_DIR/*.*" 
+	rm -rf "$RESTORE_DIR/*.bak" 
 else
 	echo "*** creating restore directory"
 	mkdir "$RESTORE_DIR"
@@ -45,16 +45,15 @@ else
 	exit
 fi
 
-# restore database
-export PGPASSWORD=$POSTGRESQL_PASSWORD
-
+# drop and restore database
 echo "*** drop current hets database"
-psql -q --host="$DATABASE_SERVICE_NAME" --port="5432" --username="$POSTGRESQL_USER" --dbname="$POSTGRESQL_DATABASE" -a -q -c "do $$; begin PERFORM pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'hets'; end$$;"
-psql -q --host="$DATABASE_SERVICE_NAME" --port="5432" --username="$POSTGRESQL_USER" --dbname="$POSTGRESQL_DATABASE" -a -q -c "DROP DATABASE IF EXISTS hets;"
+export CONNECTION_FILE="${RESTORE_DIR}/connections.sql"
+psql -q --host="$DATABASE_SERVICE_NAME" --port="5432" --username="postgres" --dbname="postgres" -a -q -f $CONNECTION_FILE
+psql -q --host="$DATABASE_SERVICE_NAME" --port="5432" --username="postgres" --dbname="postgres" -a -q -c "DROP DATABASE IF EXISTS hets;"
 
 echo "*** create empty hets database"
-psql -q --host="$DATABASE_SERVICE_NAME" --port="5432" --username="$POSTGRESQL_USER" --dbname="$POSTGRESQL_DATABASE" -a -q -c "CREATE DATABASE hets WITH ENCODING = 'UTF8';"
-psql -q --host="$DATABASE_SERVICE_NAME" --port="5432" --username="$POSTGRESQL_USER" --dbname="$POSTGRESQL_DATABASE" -a -q -c "SET client_encoding = 'UTF8';"
+psql -q --host="$DATABASE_SERVICE_NAME" --port="5432" --username="postgres" --dbname="postgres" -a -q -c "CREATE DATABASE hets WITH ENCODING = 'UTF8';"
+psql -q --host="$DATABASE_SERVICE_NAME" --port="5432" --username="postgres" --dbname="$POSTGRESQL_DATABASE" -a -q -c "SET client_encoding = 'UTF8';"
 
 echo "*** restore hets database"
 #if ! pg_restore --host="$DATABASE_SERVICE_NAME" --port="5432" --username="$POSTGRESQL_USER" --dbname="$POSTGRESQL_DATABASE" --format="c" "$FULL_RESTORE_FILE"; then
