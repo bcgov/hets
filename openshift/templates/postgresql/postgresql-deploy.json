@@ -138,6 +138,10 @@
                   {
                     "name": "${NAME}-data",
                     "mountPath": "/var/lib/pgsql/data"
+                  },
+                  {
+                    "name": "${NAME}",
+                    "mountPath": "${BACKUP_DIR}"
                   }
                 ],
                 "livenessProbe":
@@ -343,6 +347,13 @@
 	{ 
 	  "name": "POSTGRESQL_MIGRATION_IGNORE_ERRORS",
 	  "value": "yes"
-	}
+	},
+    {
+      "name": "BACKUP_DIR",
+      "displayName": "The root backup directory",
+      "description": "The name of the root backup directory",
+      "required": true,
+      "value": "/backups/"
+    }
   ]
 }
