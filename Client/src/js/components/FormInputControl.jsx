@@ -56,6 +56,7 @@ class FormInputControl extends React.Component {
       <FormControl
         {...rest}
         type={type === 'float' ? 'number' : type}
+        step={type === 'float' ? '0.01' : null}
         onChange={this.changed}
         inputRef={ref => {this.input = ref;}}
         autoComplete={autoComplete || 'off'}>
