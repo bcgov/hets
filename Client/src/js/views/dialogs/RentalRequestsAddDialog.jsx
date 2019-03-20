@@ -210,7 +210,7 @@ class RentalRequestsAddDialog extends React.Component {
   };
 
   canChangeProject = () => {
-    return !this.props.project || this.props.viewOnly;
+    return !this.props.project && !this.props.viewOnly;
   };
 
   renderForm = () => {
