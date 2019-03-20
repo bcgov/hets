@@ -8,6 +8,8 @@ SET client_min_messages = warning;
 
 create role het_application_proxy;
 
+alter role het_application_proxy with createdb;
+
 --
 -- Name: SCHEMA public; Type: ACL; Schema: -; Owner: -
 --
