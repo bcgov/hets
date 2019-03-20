@@ -56,10 +56,10 @@ psql -q --host="$DATABASE_SERVICE_NAME" --port="5432" --username="postgres" --db
 psql -q --host="$DATABASE_SERVICE_NAME" --port="5432" --username="postgres" --dbname="$POSTGRESQL_DATABASE" -a -q -c "SET client_encoding = 'UTF8';"
 
 echo "*** restore hets database"
-#if ! pg_restore --host="$DATABASE_SERVICE_NAME" --port="5432" --username="$POSTGRESQL_USER" --dbname="$POSTGRESQL_DATABASE" --format="c" "$FULL_RESTORE_FILE"; then
-#	echo "[!!ERROR!!] Failed to restore database $PGDB" 
-#else
-#	echo "*** database restore complete"	
-#fi;
+if ! pg_restore --host="$DATABASE_SERVICE_NAME" --port="5432" --username="postgres" --dbname="$POSTGRESQL_DATABASE" --format="c" "$FULL_RESTORE_FILE"; then
+	echo "[!!ERROR!!] Failed to restore database $PGDB" 
+else
+	echo "*** database restore complete"	
+fi;
 	
 exit
