@@ -84,14 +84,18 @@ class ProjectsDetail extends React.Component {
   componentDidMount() {
     const { projectId, project } = this.props;
 
+    /* Documents need be fetched every time as they are not project specific in the store ATM */
     Api.getProjectDocuments(projectId).then(() => this.setState({ loadingDocuments: false }));
 
-    const projectPromise = this.fetch();
+    // Only show loading spinner if there is no existing project in the store
+    if (project) {
+      this.setState({ loading: false });
+    }
 
+    // Re-fetch project and notes every time
     Promise.all([
-      !project ? projectPromise : null,
-      !project ? Api.getProjectNotes(projectId) : null,
-      /* Documents need be fetched every time as they are not project specific in the store ATM */
+      this.fetch(),
+      Api.getProjectNotes(projectId),
     ]).then(() => {
       this.setState({ loading: false });
     });
