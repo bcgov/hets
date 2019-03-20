@@ -160,7 +160,7 @@ namespace HetsApi.Controllers
 
             if (request != null) softDelete = true;
 
-            // delete the record 
+            // delete the record
             if (!softDelete)
             {
                 _context.HetDistrictEquipmentType.Remove(item);
@@ -222,13 +222,53 @@ namespace HetsApi.Controllers
                 // not found
                 if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-                // get record
-                HetDistrictEquipmentType equipment = _context.HetDistrictEquipmentType.First(x => x.DistrictEquipmentTypeId == id);
+                // get equipment status
+                int? equipmentStatusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
 
+                if (equipmentStatusId == null) return new NotFoundObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+                // get record
+                HetDistrictEquipmentType equipment = _context.HetDistrictEquipmentType
+                    .Include(x => x.EquipmentType)
+                    .First(x => x.DistrictEquipmentTypeId == id);
+
+                // HETS-1163 - Recalculate seniority and Blk assignment
+                // for change in Blue book section number to and from
+                bool currentIsDumpTruck = equipment.EquipmentType.IsDumpTruck;
+
+                HetEquipmentType newEquipmentType = _context.HetEquipmentType.AsNoTracking()
+                    .FirstOrDefault(x => x.EquipmentTypeId == item.EquipmentType.EquipmentTypeId);
+
+                if (newEquipmentType == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+                bool updateSeniority = currentIsDumpTruck != newEquipmentType.IsDumpTruck;
+
+                // modify record
                 equipment.DistrictEquipmentName = item.DistrictEquipmentName;
                 equipment.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                 equipment.DistrictId = item.District.DistrictId;
                 equipment.EquipmentTypeId = item.EquipmentType.EquipmentTypeId;
+
+                // update seniority and assignments for this District Equipment Type (HETS-1163)
+                if (updateSeniority)
+                {
+                    IConfigurationSection scoringRules = _configuration.GetSection("SeniorityScoringRules");
+                    string seniorityScoringRules = GetConfigJson(scoringRules);
+
+                    // update the seniority and block assignments for the master record
+                    List<HetLocalArea> localAreas = _context.HetEquipment.AsNoTracking()
+                        .Include(x => x.LocalArea)
+                        .Where(x => x.EquipmentStatusTypeId == equipmentStatusId &&
+                                    x.DistrictEquipmentTypeId == equipment.DistrictEquipmentTypeId)
+                        .Select(x => x.LocalArea)
+                        .Distinct()
+                        .ToList();
+
+                    foreach (HetLocalArea localArea in localAreas)
+                    {
+                        EquipmentHelper.RecalculateSeniority(localArea.LocalAreaId,                             equipment.DistrictEquipmentTypeId, _context, seniorityScoringRules);
+                    }
+                }
             }
             else
             {
@@ -364,6 +404,5 @@ namespace HetsApi.Controllers
         }
 
         #endregion
-
     }
 }
