@@ -154,6 +154,7 @@ namespace HetsData.Helpers
                     .First(x => x.DistrictEquipmentTypeId == detRecord.DistrictEquipmentTypeId);
 
                 det.DistrictEquipmentName = detRecord.DistrictEquipmentName;
+                det.ServiceAreaId = null;
 
                 // save changes to district equipment types and associated equipment records
                 dbContext.SaveChangesForImport();
@@ -257,6 +258,61 @@ namespace HetsData.Helpers
                 // update status bar
                 increment++;
                 progress.SetValue(Convert.ToInt32((decimal)(masterRecords.Count - (masterRecords.Count - increment)) / masterRecords.Count * 100));
+            }
+
+            // done!
+            progress.SetValue(100);
+
+            // **************************************************
+            // Phase 5: Cleanup "empty" District Equipment Types
+            // **************************************************
+            context.WriteLine("Phase 5: Cleanup empty District Equipment Types");
+            progress = context.WriteProgressBar();
+            progress.SetValue(0);
+
+            // get records
+            List<HetDistrictEquipmentType> districtEquipmentTypes = dbContext.HetDistrictEquipmentType.AsNoTracking()
+                .Include(x => x.HetEquipment)
+                .Where(x => x.Deleted == false)
+                .Distinct()
+                .ToList();
+
+            increment = 0;
+
+            foreach (HetDistrictEquipmentType districtEquipmentType in districtEquipmentTypes)
+            {
+                int districtEquipmentTypeId = districtEquipmentType.DistrictEquipmentTypeId;
+
+                // does this det have any equipment records?
+                if (districtEquipmentType.HetEquipment.Count < 1)
+                {
+                    // get det record
+                    HetDistrictEquipmentType det = dbContext.HetDistrictEquipmentType
+                        .First(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId);
+
+                    // delete old det record
+                    HetRentalRequest request = dbContext.HetRentalRequest.AsNoTracking()
+                        .FirstOrDefault(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId);
+
+                    HetLocalAreaRotationList rotationList = dbContext.HetLocalAreaRotationList.AsNoTracking()
+                        .FirstOrDefault(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId);
+
+                    if (request != null || rotationList != null)
+                    {
+                        det.Deleted = true;
+                    }
+                    else
+                    {
+                        dbContext.HetDistrictEquipmentType.Remove(det);
+                    }
+
+                    // save changes to district equipment types and associated equipment records
+                    dbContext.SaveChangesForImport();
+                }
+
+                // update status bar
+                increment++;
+                progress.SetValue(Convert.ToInt32((decimal)(districtEquipmentTypes.Count - (districtEquipmentTypes.Count - increment)) / districtEquipmentTypes.Count * 100));
             }
 
             // done!
