@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
@@ -15,12 +16,12 @@ import { isBlank } from '../../utils/string';
 
 class OwnersEditDialog extends React.Component {
   static propTypes = {
-    owner: React.PropTypes.object,
-    owners: React.PropTypes.object,
-    localAreas: React.PropTypes.object,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
+    owner: PropTypes.object,
+    owners: PropTypes.object,
+    localAreas: PropTypes.object,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
   };
 
   constructor(props) {

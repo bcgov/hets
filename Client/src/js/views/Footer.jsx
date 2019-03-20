@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Row } from 'react-bootstrap';
@@ -5,7 +6,7 @@ import { Row } from 'react-bootstrap';
 
 class Footer extends React.Component {
   static propTypes = {
-    currentUser: React.PropTypes.object,
+    currentUser: PropTypes.object,
   };
 
   render() {

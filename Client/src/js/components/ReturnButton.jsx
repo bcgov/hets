@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import { browserHistory } from 'react-router';
@@ -6,9 +7,9 @@ import { Button, Glyphicon } from 'react-bootstrap';
 
 class ReturnButton extends React.Component {
   static propTypes = {
-    id: React.PropTypes.string,
-    className: React.PropTypes.string,
-    title: React.PropTypes.string,
+    id: PropTypes.string,
+    className: PropTypes.string,
+    title: PropTypes.string,
   };
 
   render() {

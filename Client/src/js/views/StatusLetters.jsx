@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Well, PageHeader, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
@@ -17,9 +18,9 @@ import { sortDir } from '../utils/array';
 
 class StatusLetters extends React.Component {
   static propTypes = {
-    localAreas: React.PropTypes.object,
-    owners: React.PropTypes.object,
-    batchReports: React.PropTypes.object,
+    localAreas: PropTypes.object,
+    owners: PropTypes.object,
+    batchReports: PropTypes.object,
   };
 
   state = {

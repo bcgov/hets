@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { FormGroup, HelpBlock, ControlLabel, Row, Col } from 'react-bootstrap';
@@ -12,10 +13,10 @@ import { isBlank } from '../../utils/string';
 
 class OvertimeRateEditDialog extends React.Component {
   static propTypes = {
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-    overtimeRateType: React.PropTypes.object.isRequired,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    overtimeRateType: PropTypes.object.isRequired,
   };
 
   state = {

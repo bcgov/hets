@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
@@ -15,12 +16,12 @@ import { NON_STANDARD_CONDITION } from '../../constants';
 
 class RentalConditionsEditDialog extends React.Component {
   static propTypes = {
-    show: React.PropTypes.bool.isRequired,
-    rentalAgreementId: React.PropTypes.number.isRequired,
-    rentalCondition: React.PropTypes.object.isRequired,
-    rentalConditions: React.PropTypes.object.isRequired,
-    onSave: React.PropTypes.func,
-    onClose: React.PropTypes.func.isRequired,
+    show: PropTypes.bool.isRequired,
+    rentalAgreementId: PropTypes.number.isRequired,
+    rentalCondition: PropTypes.object.isRequired,
+    rentalConditions: PropTypes.object.isRequired,
+    onSave: PropTypes.func,
+    onClose: PropTypes.func.isRequired,
   };
 
   constructor(props) {

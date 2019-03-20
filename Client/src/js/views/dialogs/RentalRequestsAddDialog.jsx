@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { FormGroup, HelpBlock, ControlLabel, Alert, Row, Col } from 'react-bootstrap';
@@ -18,15 +19,15 @@ import { isBlank } from '../../utils/string';
 
 class RentalRequestsAddDialog extends React.Component {
   static propTypes = {
-    currentUser: React.PropTypes.object,
-    localAreas: React.PropTypes.object,
-    districtEquipmentTypes: React.PropTypes.object,
-    projects: React.PropTypes.object,
-    project: React.PropTypes.object,
-    onRentalAdded: React.PropTypes.func,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-    viewOnly: React.PropTypes.bool,
+    currentUser: PropTypes.object,
+    localAreas: PropTypes.object,
+    districtEquipmentTypes: PropTypes.object,
+    projects: PropTypes.object,
+    project: PropTypes.object,
+    onRentalAdded: PropTypes.func,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    viewOnly: PropTypes.bool,
   };
 
   constructor(props) {

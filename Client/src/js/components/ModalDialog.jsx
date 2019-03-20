@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Modal } from 'react-bootstrap';
 import _ from 'lodash';
@@ -5,11 +6,11 @@ import _ from 'lodash';
 
 class ModalDialog extends React.Component {
   static propTypes = {
-    title: React.PropTypes.node,
-    footer: React.PropTypes.node,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool.isRequired,
-    children: React.PropTypes.node,
+    title: PropTypes.node,
+    footer: PropTypes.node,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool.isRequired,
+    children: PropTypes.node,
   };
 
   render() {

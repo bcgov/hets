@@ -31,7 +31,6 @@ const DIST_DIR = 'dist';
 const NODE_MODULES_DIR = 'node_modules/';
 const VENDOR_CSS = [
   'bootstrap/dist/css/bootstrap.css',
-  'react-bootstrap-datetimepicker/css/bootstrap-datetimepicker.css',
   'react-datetime/css/react-datetime.css',
 ];
 
@@ -56,9 +55,9 @@ gulp.task('js:modules', () => {
     .pipe(devOnlyPlumber())
     .pipe(
       webpackStream(WEBPACK_CONFIG, webpack)
-      .on('error', (err) => {
-        $.util.log('WEBPACK ERROR', err);
-      })
+        .on('error', (err) => {
+          $.util.log('WEBPACK ERROR', err);
+        })
     )
     .pipe(gulp.dest(`${DIST_DIR}/js/`))
     .pipe($.size({ title: 'js modules' }));

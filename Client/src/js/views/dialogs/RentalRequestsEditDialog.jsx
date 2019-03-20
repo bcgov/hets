@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Grid, Row, Col } from 'react-bootstrap';
 import { FormGroup, HelpBlock, ControlLabel, FormControl } from 'react-bootstrap';
@@ -16,10 +17,10 @@ import { isBlank } from '../../utils/string';
 
 class RentalRequestsEditDialog extends React.Component {
   static propTypes = {
-    rentalRequest: React.PropTypes.object.isRequired,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
+    rentalRequest: PropTypes.object.isRequired,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
   };
 
   constructor(props) {

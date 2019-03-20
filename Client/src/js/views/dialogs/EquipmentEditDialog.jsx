@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { connect } from 'react-redux';
@@ -18,14 +19,14 @@ import { isValidYear } from '../../utils/date';
 
 class EquipmentEditDialog extends React.Component {
   static propTypes = {
-    currentUser: React.PropTypes.object,
-    equipment: React.PropTypes.object,
-    localAreas: React.PropTypes.object,
-    districtEquipmentTypes: React.PropTypes.object,
+    currentUser: PropTypes.object,
+    equipment: PropTypes.object,
+    localAreas: PropTypes.object,
+    districtEquipmentTypes: PropTypes.object,
 
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
   };
 
   constructor(props) {

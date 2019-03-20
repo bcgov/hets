@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Well, Grid, Row, Col } from 'react-bootstrap';
@@ -24,12 +25,12 @@ import { isBlank } from '../utils/string';
 
 class RolesDetail extends React.Component {
   static propTypes = {
-    currentUser: React.PropTypes.object,
-    role: React.PropTypes.object,
-    rolePermissions: React.PropTypes.object,
-    permissions: React.PropTypes.object,
-    params: React.PropTypes.object,
-    router: React.PropTypes.object,
+    currentUser: PropTypes.object,
+    role: PropTypes.object,
+    rolePermissions: PropTypes.object,
+    permissions: PropTypes.object,
+    params: PropTypes.object,
+    router: PropTypes.object,
   };
 
   constructor(props) {

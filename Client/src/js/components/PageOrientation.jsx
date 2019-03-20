@@ -1,9 +1,10 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 
 class PageOrientation extends React.Component {
   static propTypes = {
-    type: React.PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
   };
 
   render() {

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
@@ -10,10 +11,10 @@ import { isBlank } from '../../utils/string';
 
 class AttachmentAddDialog extends React.Component {
   static propTypes = {
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-    equipment: React.PropTypes.object.isRequired,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    equipment: PropTypes.object.isRequired,
   };
 
   state = {

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Well, Alert, Row, Col, PageHeader, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form } from 'react-bootstrap';
@@ -39,14 +40,14 @@ const CUSTOM = 'Custom';
 
 class RentalRequests extends React.Component {
   static propTypes = {
-    currentUser: React.PropTypes.object,
-    rentalRequests: React.PropTypes.object,
-    rentalRequest: React.PropTypes.object,
-    localAreas: React.PropTypes.object,
-    favourites: React.PropTypes.object,
-    search: React.PropTypes.object,
-    ui: React.PropTypes.object,
-    router: React.PropTypes.object,
+    currentUser: PropTypes.object,
+    rentalRequests: PropTypes.object,
+    rentalRequest: PropTypes.object,
+    localAreas: PropTypes.object,
+    favourites: PropTypes.object,
+    search: PropTypes.object,
+    ui: PropTypes.object,
+    router: PropTypes.object,
   };
 
   constructor(props) {

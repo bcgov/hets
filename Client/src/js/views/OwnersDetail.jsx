@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
@@ -54,14 +55,14 @@ const OWNER_WITH_EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE = 'This owne
 
 class OwnersDetail extends React.Component {
   static propTypes = {
-    owner: React.PropTypes.object,
-    equipment: React.PropTypes.object,
-    documents: React.PropTypes.object,
-    params: React.PropTypes.object,
-    uiContacts: React.PropTypes.object,
-    uiEquipment: React.PropTypes.object,
-    router: React.PropTypes.object,
-    notes: React.PropTypes.array,
+    owner: PropTypes.object,
+    equipment: PropTypes.object,
+    documents: PropTypes.object,
+    params: PropTypes.object,
+    uiContacts: PropTypes.object,
+    uiEquipment: PropTypes.object,
+    router: PropTypes.object,
+    notes: PropTypes.array,
   };
 
   constructor(props) {

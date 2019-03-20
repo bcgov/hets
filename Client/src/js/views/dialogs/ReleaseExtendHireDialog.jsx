@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { Grid, Row } from 'react-bootstrap';
@@ -11,11 +12,11 @@ import Form from '../../components/Form.jsx';
 
 class ReleaseExtendHireDialog extends React.Component {
   static propTypes = {
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool.isRequired,
-    title: React.PropTypes.string,
-    releaseHire: React.PropTypes.bool,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool.isRequired,
+    title: PropTypes.string,
+    releaseHire: PropTypes.bool,
   };
 
   state = {

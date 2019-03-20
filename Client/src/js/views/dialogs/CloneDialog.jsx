@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -18,13 +19,13 @@ import { formatDateTime } from '../../utils/date';
 
 class CloneDialog extends React.Component {
   static propTypes = {
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-    rentalAgreement: React.PropTypes.object,
-    projectRentalAgreements: React.PropTypes.object,
-    equipmentRentalAgreements: React.PropTypes.object,
-    cloneRentalAgreementError: React.PropTypes.string,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    rentalAgreement: PropTypes.object,
+    projectRentalAgreements: PropTypes.object,
+    equipmentRentalAgreements: PropTypes.object,
+    cloneRentalAgreementError: PropTypes.string,
   };
 
   state = {

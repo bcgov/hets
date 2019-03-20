@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
 
@@ -12,11 +13,11 @@ import { isBlank } from '../../utils/string';
 
 class EquipmentChangeStatusDialog extends React.Component {
   static propTypes = {
-    show: React.PropTypes.bool,
-    status: React.PropTypes.string.isRequired,
-    equipment: React.PropTypes.object.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    onStatusChanged: React.PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    status: PropTypes.string.isRequired,
+    equipment: PropTypes.object.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onStatusChanged: PropTypes.func.isRequired,
   };
 
   state = {

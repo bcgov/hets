@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, InputGroup, Form } from 'react-bootstrap';
@@ -24,14 +25,14 @@ import PrintButton from '../components/PrintButton.jsx';
 
 class Users extends React.Component {
   static propTypes = {
-    currentUser: React.PropTypes.object,
-    users: React.PropTypes.object,
-    user: React.PropTypes.object,
-    districts: React.PropTypes.object,
-    favourites: React.PropTypes.object,
-    search: React.PropTypes.object,
-    ui: React.PropTypes.object,
-    router: React.PropTypes.object,
+    currentUser: PropTypes.object,
+    users: PropTypes.object,
+    user: PropTypes.object,
+    districts: PropTypes.object,
+    favourites: PropTypes.object,
+    search: PropTypes.object,
+    ui: PropTypes.object,
+    router: PropTypes.object,
   };
 
   constructor(props) {

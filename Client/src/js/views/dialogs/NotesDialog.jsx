@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { ButtonGroup, Button, Glyphicon, Alert } from 'react-bootstrap';
 import _ from 'lodash';
@@ -15,14 +16,14 @@ import { formatDateTimeUTCToLocal } from '../../utils/date';
 
 class NotesDialog extends React.Component {
   static propTypes = {
-    id: React.PropTypes.string.isRequired,
-    show: React.PropTypes.bool,
-    notes: React.PropTypes.array,
+    id: PropTypes.string.isRequired,
+    show: PropTypes.bool,
+    notes: PropTypes.array,
     // Api call to get notes for particular entity
-    getNotes: React.PropTypes.func.isRequired,
+    getNotes: PropTypes.func.isRequired,
     // Api function to call on save
-    saveNote: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
+    saveNote: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
   };
 
   constructor(props) {

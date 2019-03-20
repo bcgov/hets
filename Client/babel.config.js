@@ -11,6 +11,7 @@ module.exports = function(api) {
   const plugins = [
     ['@babel/plugin-proposal-class-properties', { 'loose': true, 'useBuiltIns': true }],
     ['@babel/plugin-proposal-object-rest-spread', { 'loose': true, 'useBuiltIns': true }],
+    'react-hot-loader/babel',
   ];
 
   return {
@@ -22,6 +23,9 @@ module.exports = function(api) {
           ['@babel/preset-env', {modules: false}],
         ],
       },
+      production: {
+        plugins: ['transform-react-remove-prop-types'],
+      },
     },
-  }
-}
+  };
+};

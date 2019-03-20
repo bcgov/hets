@@ -1,14 +1,15 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Glyphicon } from 'react-bootstrap';
 
 
 class FilePicker extends React.Component {
   static propTypes = {
-    id: React.PropTypes.string,
-    className: React.PropTypes.string,
-    label: React.PropTypes.string,
-    mimeTypes: React.PropTypes.array,
-    onFilesSelected: React.PropTypes.func,
+    id: PropTypes.string,
+    className: PropTypes.string,
+    label: PropTypes.string,
+    mimeTypes: PropTypes.array,
+    onFilesSelected: PropTypes.func,
   };
 
   filesPicked = (e) => {

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Popover, ButtonGroup, Button, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
@@ -5,11 +6,11 @@ import _ from 'lodash';
 
 class Confirm extends React.Component {
   static propTypes = {
-    onConfirm: React.PropTypes.func.isRequired,
-    onCancel: React.PropTypes.func,
-    hide: React.PropTypes.func,
-    children: React.PropTypes.node,
-    title: React.PropTypes.string,
+    onConfirm: PropTypes.func.isRequired,
+    onCancel: PropTypes.func,
+    hide: PropTypes.func,
+    children: PropTypes.node,
+    title: PropTypes.string,
   };
 
   confirmed = () => {

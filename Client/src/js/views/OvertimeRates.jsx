@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { PageHeader, Button, ButtonGroup, Glyphicon, Well } from 'react-bootstrap';
@@ -13,9 +14,9 @@ import OvertimeRateEditDialog from './dialogs/OvertimeRateEditDialog.jsx';
 
 class OvertimeRates extends React.Component {
   static propTypes = {
-    currentUser: React.PropTypes.object,
-    overtimeRateTypes: React.PropTypes.array,
-    router: React.PropTypes.object,
+    currentUser: PropTypes.object,
+    overtimeRateTypes: PropTypes.array,
+    router: PropTypes.object,
   };
 
   state = {

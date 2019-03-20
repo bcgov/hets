@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { FormControl, InputGroup, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
@@ -6,14 +7,14 @@ import _ from 'lodash';
 class LinkControl extends React.Component {
   static propTypes = {
     // url(value) returns a URL, default is value.
-    url: React.PropTypes.func,
-    value: React.PropTypes.string,
-    id: React.PropTypes.string,
-    label: React.PropTypes.string,
-    title: React.PropTypes.string,
-    className: React.PropTypes.string,
-    updateState: React.PropTypes.func,
-    onChange: React.PropTypes.func,
+    url: PropTypes.func,
+    value: PropTypes.string,
+    id: PropTypes.string,
+    label: PropTypes.string,
+    title: PropTypes.string,
+    className: PropTypes.string,
+    updateState: PropTypes.func,
+    onChange: PropTypes.func,
   };
 
   constructor(props) {

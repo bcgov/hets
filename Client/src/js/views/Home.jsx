@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Well, PageHeader, Row, Col, Button } from 'react-bootstrap';
@@ -13,9 +14,9 @@ import SubHeader from '../components/ui/SubHeader.jsx';
 
 class Home extends React.Component {
   static propTypes = {
-    currentUser: React.PropTypes.object,
-    searchSummaryCounts: React.PropTypes.object,
-    router: React.PropTypes.object,
+    currentUser: PropTypes.object,
+    searchSummaryCounts: PropTypes.object,
+    router: PropTypes.object,
   };
 
   componentDidMount() {

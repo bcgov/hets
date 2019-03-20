@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Grid, Row, Col, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
@@ -10,9 +11,9 @@ import { isBlank } from '../../utils/string';
 
 class ConfirmForceHireDialog extends React.Component {
   static propTypes = {
-    show: React.PropTypes.bool,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
   };
 
   state = {

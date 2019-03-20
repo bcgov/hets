@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Alert, Dropdown, ButtonToolbar, Button } from 'react-bootstrap';
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
@@ -18,10 +19,10 @@ import { isBlank } from '../utils/string';
 
 class EditFavouritesDialog extends React.Component {
   static propTypes = {
-    favourite: React.PropTypes.object.isRequired,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
+    favourite: PropTypes.object.isRequired,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
   };
 
   constructor(props) {
@@ -105,14 +106,14 @@ class EditFavouritesDialog extends React.Component {
 
 class Favourites extends React.Component {
   static propTypes = {
-    id: React.PropTypes.string,
-    className: React.PropTypes.string,
-    title: React.PropTypes.string,
-    type: React.PropTypes.string.isRequired,
-    favourites: React.PropTypes.object.isRequired,
-    data: React.PropTypes.object.isRequired,
-    onSelect: React.PropTypes.func.isRequired,
-    pullRight: React.PropTypes.bool,
+    id: PropTypes.string,
+    className: PropTypes.string,
+    title: PropTypes.string,
+    type: PropTypes.string.isRequired,
+    favourites: PropTypes.object.isRequired,
+    data: PropTypes.object.isRequired,
+    onSelect: PropTypes.func.isRequired,
+    pullRight: PropTypes.bool,
   };
 
   state = {

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
@@ -11,11 +12,11 @@ import { isBlank } from '../../utils/string';
 
 class NotesAddDialog extends React.Component {
   static propTypes = {
-    onSave: React.PropTypes.func.isRequired,
-    onUpdate: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-    note: React.PropTypes.object,
+    onSave: PropTypes.func.isRequired,
+    onUpdate: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    note: PropTypes.object,
   };
 
   constructor(props) {

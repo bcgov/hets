@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Well, Row, Col, Alert, Label, Button, Glyphicon, Popover, FormGroup, HelpBlock, ButtonGroup } from 'react-bootstrap';
@@ -31,13 +32,13 @@ import { isBlank, notBlank } from '../utils/string';
 
 class UsersDetail extends React.Component {
   static propTypes = {
-    currentUser: React.PropTypes.object,
-    user: React.PropTypes.object,
-    ui: React.PropTypes.object,
-    userDistricts: React.PropTypes.object,
-    districts: React.PropTypes.object,
-    params: React.PropTypes.object,
-    router: React.PropTypes.object,
+    currentUser: PropTypes.object,
+    user: PropTypes.object,
+    ui: PropTypes.object,
+    userDistricts: PropTypes.object,
+    districts: PropTypes.object,
+    params: PropTypes.object,
+    router: PropTypes.object,
   };
 
   state = {
@@ -387,9 +388,9 @@ class UsersDetail extends React.Component {
 
 class ExpireOverlay extends React.Component {
   static propTypes = {
-    userRole: React.PropTypes.object.isRequired,
-    onSave: React.PropTypes.func.isRequired,
-    hide: React.PropTypes.func,
+    userRole: PropTypes.object.isRequired,
+    onSave: PropTypes.func.isRequired,
+    hide: PropTypes.func,
   };
 
   state = {

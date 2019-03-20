@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { PageHeader, Well, Alert } from 'react-bootstrap';
@@ -20,10 +21,10 @@ import PrintButton from '../components/PrintButton.jsx';
 
 class Roles extends React.Component {
   static propTypes = {
-    roles: React.PropTypes.object,
-    currentUser: React.PropTypes.object,
-    search: React.PropTypes.object,
-    ui: React.PropTypes.object,
+    roles: PropTypes.object,
+    currentUser: PropTypes.object,
+    search: PropTypes.object,
+    ui: PropTypes.object,
   };
 
   constructor(props) {

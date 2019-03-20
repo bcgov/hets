@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 import _ from 'lodash';
@@ -5,10 +6,10 @@ import _ from 'lodash';
 
 class ColDisplay extends React.Component {
   static propTypes = {
-    label: React.PropTypes.node,
-    children: React.PropTypes.node,
-    labelProps: React.PropTypes.object,
-    fieldProps: React.PropTypes.object,
+    label: PropTypes.node,
+    children: PropTypes.node,
+    labelProps: PropTypes.object,
+    fieldProps: PropTypes.object,
   };
 
   render() {

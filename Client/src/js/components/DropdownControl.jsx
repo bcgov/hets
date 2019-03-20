@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Dropdown, MenuItem, Popover, OverlayTrigger } from 'react-bootstrap';
 import _ from 'lodash';
@@ -6,32 +7,32 @@ import _ from 'lodash';
 class DropdownControl extends React.Component {
   static propTypes = {
     // This is used to update state
-    id: React.PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
 
     // This can be an array of strings or objects. If the latter, will use id/name by default.
-    items: React.PropTypes.array.isRequired,
+    items: PropTypes.array.isRequired,
 
     // If present, then items is an array of objects with ids
-    selectedId: React.PropTypes.any,
+    selectedId: PropTypes.any,
 
     // If present. then items is an array of strings
-    title: React.PropTypes.string,
+    title: PropTypes.string,
 
     // Assumes item field is 'name' unless specified here.
-    fieldName: React.PropTypes.string,
+    fieldName: PropTypes.string,
 
     // Displayed when there's no selection
-    placeholder: React.PropTypes.string,
+    placeholder: PropTypes.string,
 
     // If blankLine is supplied, include an "empty" line at the top;
     // If it has a string value, use that in place of blank.
-    blankLine: React.PropTypes.any,
+    blankLine: PropTypes.any,
 
-    className: React.PropTypes.string,
-    disabled: React.PropTypes.bool,
-    onSelect: React.PropTypes.func,
-    updateState: React.PropTypes.func,
-    staticTitle: React.PropTypes.bool,
+    className: PropTypes.string,
+    disabled: PropTypes.bool,
+    onSelect: PropTypes.func,
+    updateState: PropTypes.func,
+    staticTitle: PropTypes.bool,
   };
 
   constructor(props) {

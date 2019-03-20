@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import { Modal, Button } from 'react-bootstrap';
@@ -8,18 +9,18 @@ import Spinner from './Spinner.jsx';
 
 class FormDialog extends React.Component {
   static propTypes = {
-    show: React.PropTypes.bool.isRequired,
-    title: React.PropTypes.node,
-    id: React.PropTypes.string,
-    className: React.PropTypes.string,
-    bsSize: React.PropTypes.string,
-    isReadOnly: React.PropTypes.bool,
-    isSaving: React.PropTypes.bool,
-    onClose: React.PropTypes.func.isRequired,
-    onSubmit: React.PropTypes.func,
-    saveButtonLabel: React.PropTypes.string,
-    closeButtonLabel: React.PropTypes.string,
-    children: React.PropTypes.node,
+    show: PropTypes.bool.isRequired,
+    title: PropTypes.node,
+    id: PropTypes.string,
+    className: PropTypes.string,
+    bsSize: PropTypes.string,
+    isReadOnly: PropTypes.bool,
+    isSaving: PropTypes.bool,
+    onClose: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func,
+    saveButtonLabel: PropTypes.string,
+    closeButtonLabel: PropTypes.string,
+    children: PropTypes.node,
   };
 
   closeDialog = () => {

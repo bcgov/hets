@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { connect } from 'react-redux';
@@ -19,12 +20,12 @@ import { isBlank } from '../../utils/string';
 
 class RentalAgreementHeaderEditDialog extends React.Component {
   static propTypes = {
-    rentalAgreement: React.PropTypes.object.isRequired,
-    projects: React.PropTypes.object,
-    equipment: React.PropTypes.object,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
+    rentalAgreement: PropTypes.object.isRequired,
+    projects: PropTypes.object,
+    equipment: PropTypes.object,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
   };
 
   constructor(props) {

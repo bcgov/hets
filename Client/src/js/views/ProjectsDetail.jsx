@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Well, Row, Col } from 'react-bootstrap';
@@ -46,11 +47,11 @@ const CONTACT_NAME_SORT_FIELDS = ['givenName', 'surname'];
 
 class ProjectsDetail extends React.Component {
   static propTypes = {
-    projectId: React.PropTypes.number,
-    project: React.PropTypes.object,
-    documents: React.PropTypes.object,
-    uiContacts: React.PropTypes.object,
-    router: React.PropTypes.object,
+    projectId: PropTypes.number,
+    project: PropTypes.object,
+    documents: PropTypes.object,
+    uiContacts: PropTypes.object,
+    router: PropTypes.object,
   };
 
   constructor(props) {

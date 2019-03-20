@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { connect } from 'react-redux';
@@ -24,13 +25,13 @@ import { formatDateTime } from '../../utils/date';
 
 class DocumentsListDialog extends React.Component {
   static propTypes = {
-    parent: React.PropTypes.object.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
+    parent: PropTypes.object.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
 
-    documents: React.PropTypes.object,
-    users: React.PropTypes.object,
-    ui: React.PropTypes.object,
+    documents: PropTypes.object,
+    users: PropTypes.object,
+    ui: PropTypes.object,
   };
 
   constructor(props) {

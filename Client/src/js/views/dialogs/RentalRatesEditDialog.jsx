@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
@@ -14,12 +15,12 @@ import { isBlank } from '../../utils/string';
 
 class RentalRatesEditDialog extends React.Component {
   static propTypes = {
-    show: React.PropTypes.bool,
-    rentalRate: React.PropTypes.object.isRequired,
-    rentalAgreement: React.PropTypes.object,
-    provincialRateTypes: React.PropTypes.array,
-    onSave: React.PropTypes.func,
-    onClose: React.PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    rentalRate: PropTypes.object.isRequired,
+    rentalAgreement: PropTypes.object,
+    provincialRateTypes: PropTypes.array,
+    onSave: PropTypes.func,
+    onClose: PropTypes.func.isRequired,
   };
 
   constructor(props) {
