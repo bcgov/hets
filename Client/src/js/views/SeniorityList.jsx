@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Well, PageHeader, Row, Col, ButtonToolbar, Button } from 'react-bootstrap';
@@ -10,9 +11,9 @@ import MultiDropdown from '../components/MultiDropdown.jsx';
 
 class SeniorityList extends React.Component {
   static propTypes = {
-    currentUser: React.PropTypes.object,
-    districtEquipmentTypes: React.PropTypes.object,
-    localAreas: React.PropTypes.object,
+    currentUser: PropTypes.object,
+    districtEquipmentTypes: PropTypes.object,
+    localAreas: PropTypes.object,
   };
 
   state = {

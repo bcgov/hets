@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { connect } from 'react-redux';
@@ -20,13 +21,13 @@ import { isBlank } from '../../utils/string';
 
 class UsersEditDialog extends React.Component {
   static propTypes = {
-    user: React.PropTypes.object,
-    districts: React.PropTypes.object,
+    user: PropTypes.object,
+    districts: PropTypes.object,
 
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-    isNew: React.PropTypes.bool,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    isNew: PropTypes.bool,
   };
 
   static defaultProps = {

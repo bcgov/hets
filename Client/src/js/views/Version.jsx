@@ -1,8 +1,8 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { PageHeader, Well } from 'react-bootstrap';
 import { Button, Glyphicon } from 'react-bootstrap';
-import $ from 'jquery';
 
 import * as Api from '../api';
 import * as Constant from '../constants';
@@ -18,7 +18,7 @@ import { request } from '../utils/http';
 
 class Version extends React.Component {
   static propTypes = {
-    version: React.PropTypes.object,
+    version: PropTypes.object,
   };
 
   state = {
@@ -41,10 +41,13 @@ class Version extends React.Component {
   fetchLocal = () => {
     return request('buildinfo.html', { silent: true }).then(xhr => {
       if (xhr.status === 200) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(xhr.responseText, 'text/html');
+
         this.setState({
-          buildTime : $(xhr.responseText).find('#buildtime').data('buildtime'),
-          version : $(xhr.responseText).find('#version').text(),
-          commit : $(xhr.responseText).find('#commit').text(),
+          buildTime : doc.getElementById('buildtime').dataset.buildtime,
+          version : doc.getElementById('version').textContent,
+          commit : doc.getElementById('commit').textContent,
         });
       }
     }).catch(err => {

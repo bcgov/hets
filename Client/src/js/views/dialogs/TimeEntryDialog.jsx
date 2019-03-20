@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Grid, Row, Col, FormGroup, ControlLabel, HelpBlock, Button, Glyphicon } from 'react-bootstrap';
@@ -19,16 +20,16 @@ import { formatDateTime } from '../../utils/date';
 
 class TimeEntryDialog extends React.Component {
   static propTypes = {
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool.isRequired,
-    multipleEntryAllowed: React.PropTypes.bool.isRequired,
-    rentalAgreementId: React.PropTypes.number,
-    rentalAgreement: React.PropTypes.object,
-    rentalAgreementTimeRecords: React.PropTypes.object,
-    project: React.PropTypes.object,
-    projectId: React.PropTypes.number,
-    projects: React.PropTypes.object.isRequired,
-    equipment: React.PropTypes.object.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool.isRequired,
+    multipleEntryAllowed: PropTypes.bool.isRequired,
+    rentalAgreementId: PropTypes.number,
+    rentalAgreement: PropTypes.object,
+    rentalAgreementTimeRecords: PropTypes.object,
+    project: PropTypes.object,
+    projectId: PropTypes.number,
+    projects: PropTypes.object.isRequired,
+    equipment: PropTypes.object.isRequired,
   };
 
   constructor(props) {

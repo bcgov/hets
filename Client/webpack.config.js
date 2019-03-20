@@ -9,7 +9,9 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 // Include your SmUserId on the command line.
 const DEV_USER = process.env.HETS_DEV_USER || '';
 
-var webpackPlugins = [];
+var webpackPlugins = [
+  new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en/),
+];
 var eslintDevRule = {};
 
 const entrypoints = {
@@ -27,7 +29,12 @@ if(!IS_PRODUCTION) {
   }));
 
   webpackPlugins.push(new webpack.HotModuleReplacementPlugin());
-  entrypoints.app.unshift('webpack-hot-middleware/client');
+  entrypoints.app = [
+    entrypoints.app[0],
+    'react-hot-loader/patch', // has to be after @babel/polyfill
+    'webpack-hot-middleware/client',
+    entrypoints.app[1],
+  ];
 
   eslintDevRule = {
     enforce: 'pre',
@@ -44,11 +51,16 @@ module.exports = {
   devtool: IS_PRODUCTION ? 'source-map' : 'cheap-source-map',
   entry: entrypoints,
   output: {
-    path: path.join(__dirname, '/dist/'),
+    path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
     chunkFilename: '[name].js',
     sourceMapFilename: 'maps/[file].map',
     publicPath: '/',
+  },
+  resolve: {
+    alias: {
+      'react-dom': IS_PRODUCTION ? 'react-dom' : '@hot-loader/react-dom',
+    },
   },
   plugins: webpackPlugins,
   module: {
@@ -57,7 +69,7 @@ module.exports = {
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        loaders: ['react-hot-loader', 'babel-loader'],
+        loader: 'babel-loader',
       },
     ],
   },

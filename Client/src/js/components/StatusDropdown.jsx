@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {DropdownButton, MenuItem } from 'react-bootstrap';
 
@@ -8,13 +9,13 @@ import TooltipButton from './TooltipButton.jsx';
 
 class StatusDropdown extends React.Component {
   static propTypes = {
-    id: React.PropTypes.string,
-    className: React.PropTypes.string,
-    status: React.PropTypes.string.isRequired,
-    statuses: React.PropTypes.array.isRequired,
-    disabled: React.PropTypes.bool,
-    disabledTooltip: React.PropTypes.node,
-    onSelect: React.PropTypes.func.isRequired,
+    id: PropTypes.string,
+    className: PropTypes.string,
+    status: PropTypes.string.isRequired,
+    statuses: PropTypes.array.isRequired,
+    disabled: PropTypes.bool,
+    disabledTooltip: PropTypes.node,
+    onSelect: PropTypes.func.isRequired,
   };
 
   computeBsStyle = () => {

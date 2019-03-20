@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 
@@ -24,11 +25,11 @@ const Spinner = (params) => {
   }
 };
 
-Spinner.PropTypes = {
-  width: React.PropTypes.number,
-  height: React.PropTypes.number,
-  show: React.PropTypes.bool,
-  centre: React.PropTypes.bool,
+Spinner.propTypes = {
+  width: PropTypes.number,
+  height: PropTypes.number,
+  show: PropTypes.bool,
+  centre: PropTypes.bool,
 };
 
 export default Spinner;

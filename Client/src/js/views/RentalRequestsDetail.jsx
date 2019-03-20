@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
@@ -48,11 +49,11 @@ const STATUS_IN_PROGRESS = 'In Progress';
 
 class RentalRequestsDetail extends React.Component {
   static propTypes = {
-    rentalRequestId: React.PropTypes.number,
-    rentalRequest: React.PropTypes.object,
-    documents: React.PropTypes.object,
-    ui: React.PropTypes.object,
-    router: React.PropTypes.object,
+    rentalRequestId: PropTypes.number,
+    rentalRequest: PropTypes.object,
+    documents: PropTypes.object,
+    ui: PropTypes.object,
+    router: PropTypes.object,
   };
 
   constructor(props) {

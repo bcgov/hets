@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import { Well, Dropdown, FormControl, MenuItem, OverlayTrigger, Tooltip } from 'react-bootstrap';
@@ -8,20 +9,20 @@ import RootCloseMenu from './RootCloseMenu.jsx';
 
 class FilterDropdown extends React.Component {
   static propTypes = {
-    id: React.PropTypes.string.isRequired,
-    items: React.PropTypes.array.isRequired,
-    selectedId: React.PropTypes.number,
-    className: React.PropTypes.string,
+    id: PropTypes.string.isRequired,
+    items: PropTypes.array.isRequired,
+    selectedId: PropTypes.number,
+    className: PropTypes.string,
     // Assumes the 'name' field unless specified here.
-    fieldName: React.PropTypes.string,
-    placeholder: React.PropTypes.string,
+    fieldName: PropTypes.string,
+    placeholder: PropTypes.string,
     // If blankLine is supplied, include an "empty" line at the top;
     // If it has a string value, use that in place of blank.
-    blankLine: React.PropTypes.any,
-    disabled: React.PropTypes.bool,
-    disabledTooltip: React.PropTypes.node,
-    onSelect: React.PropTypes.func,
-    updateState: React.PropTypes.func,
+    blankLine: PropTypes.any,
+    disabled: PropTypes.bool,
+    disabledTooltip: PropTypes.node,
+    onSelect: PropTypes.func,
+    updateState: PropTypes.func,
   };
 
   constructor(props) {

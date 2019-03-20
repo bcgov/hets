@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router';
 import _ from 'lodash';
@@ -13,9 +14,9 @@ import { formatDateTime } from '../utils/date';
 
 class EquipmentTable extends React.Component {
   static propTypes = {
-    ui: React.PropTypes.object,
-    updateUIState: React.PropTypes.func,
-    equipmentList: React.PropTypes.object,
+    ui: PropTypes.object,
+    updateUIState: PropTypes.func,
+    equipmentList: PropTypes.object,
   };
 
   shouldComponentUpdate(nextProps) {

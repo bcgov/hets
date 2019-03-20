@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Button, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
@@ -8,9 +9,9 @@ import OverlayTrigger from '../components/OverlayTrigger.jsx';
 
 class DeleteButton extends React.Component {
   static propTypes = {
-    onConfirm: React.PropTypes.func.isRequired,
-    name: React.PropTypes.string,
-    hide: React.PropTypes.bool,
+    onConfirm: PropTypes.func.isRequired,
+    name: PropTypes.string,
+    hide: PropTypes.bool,
   };
 
   render() {

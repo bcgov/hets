@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import _ from 'lodash';
@@ -11,13 +12,13 @@ import Form from '../../components/Form.jsx';
 
 class DistrictEditDialog extends React.Component {
   static propTypes = {
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-    districts: React.PropTypes.object,
-    user: React.PropTypes.object,
-    district: React.PropTypes.object,
-    userDistricts: React.PropTypes.object,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    districts: PropTypes.object,
+    user: PropTypes.object,
+    district: PropTypes.object,
+    userDistricts: PropTypes.object,
   };
 
   constructor(props) {

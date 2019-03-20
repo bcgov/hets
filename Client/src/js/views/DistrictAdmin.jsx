@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { PageHeader, Button, ButtonGroup, Glyphicon, Well, Alert, Row, Col } from 'react-bootstrap';
@@ -25,13 +26,13 @@ import { caseInsensitiveSort, sort } from '../utils/array';
 
 class DistrictAdmin extends React.Component {
   static propTypes = {
-    currentUser: React.PropTypes.object,
-    rentalConditions: React.PropTypes.object,
-    districtEquipmentTypes: React.PropTypes.object,
-    equipmentTypes: React.PropTypes.object,
-    router: React.PropTypes.object,
-    uiEquipment: React.PropTypes.object,
-    dispatch: React.PropTypes.func,
+    currentUser: PropTypes.object,
+    rentalConditions: PropTypes.object,
+    districtEquipmentTypes: PropTypes.object,
+    equipmentTypes: PropTypes.object,
+    router: PropTypes.object,
+    uiEquipment: PropTypes.object,
+    dispatch: PropTypes.func,
   };
 
   constructor(props) {

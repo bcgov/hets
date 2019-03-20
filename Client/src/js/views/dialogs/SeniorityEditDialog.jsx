@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { connect } from 'react-redux';
@@ -15,11 +16,11 @@ import { isBlank, formatHours } from '../../utils/string';
 
 class SeniorityEditDialog extends React.Component {
   static propTypes = {
-    equipment: React.PropTypes.object,
+    equipment: PropTypes.object,
 
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
   };
 
   constructor(props) {

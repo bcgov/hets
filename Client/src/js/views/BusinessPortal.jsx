@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
@@ -20,9 +21,9 @@ import SubHeader from '../components/ui/SubHeader.jsx';
 
 class BusinessPortal extends React.Component {
   static propTypes = {
-    user: React.PropTypes.object,
-    business: React.PropTypes.object,
-    uiOwners: React.PropTypes.object,
+    user: PropTypes.object,
+    business: PropTypes.object,
+    uiOwners: PropTypes.object,
   };
 
   state = {

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
@@ -23,13 +24,13 @@ import { formatDateTime, toZuluTime } from '../utils/date';
 
 class WcbCglCoverage extends React.Component {
   static propTypes = {
-    localAreas: React.PropTypes.object,
-    owners: React.PropTypes.object,
-    ownersCoverage: React.PropTypes.object,
-    favourites: React.PropTypes.object,
-    search: React.PropTypes.object,
-    ui: React.PropTypes.object,
-    router: React.PropTypes.object,
+    localAreas: PropTypes.object,
+    owners: PropTypes.object,
+    ownersCoverage: PropTypes.object,
+    favourites: PropTypes.object,
+    search: PropTypes.object,
+    ui: PropTypes.object,
+    router: PropTypes.object,
   };
 
   constructor(props) {

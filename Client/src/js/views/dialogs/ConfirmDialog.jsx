@@ -1,16 +1,17 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import EditDialog from '../../components/EditDialog.jsx';
 
 class ConfirmDialog extends React.Component {
   static propTypes = {
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-    title: React.PropTypes.string,
-    saveText: React.PropTypes.string,
-    closeText: React.PropTypes.string,
-    children: React.PropTypes.node,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    title: PropTypes.string,
+    saveText: PropTypes.string,
+    closeText: PropTypes.string,
+    children: PropTypes.node,
   };
 
   didChange = () => {

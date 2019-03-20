@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Alert, Button, Glyphicon } from 'react-bootstrap';
@@ -20,15 +21,15 @@ const API_LIMIT = 10;
 
 class HistoryComponent extends React.Component {
   static propTypes = {
-    historyEntity: React.PropTypes.object.isRequired,
-    refresh: React.PropTypes.bool.isRequired,
+    historyEntity: PropTypes.object.isRequired,
+    refresh: PropTypes.bool.isRequired,
 
     // Used when displayed in a dialog
-    onClose: React.PropTypes.func,
+    onClose: PropTypes.func,
 
-    history: React.PropTypes.object,
-    users: React.PropTypes.object,
-    ui: React.PropTypes.object,
+    history: PropTypes.object,
+    users: PropTypes.object,
+    ui: PropTypes.object,
   };
 
   constructor(props) {

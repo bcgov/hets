@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import { Glyphicon } from 'react-bootstrap';
@@ -7,12 +8,12 @@ import TooltipButton from './TooltipButton.jsx';
 
 class PrintButton extends React.Component {
   static propTypes = {
-    id: React.PropTypes.string,
-    className: React.PropTypes.string,
-    title: React.PropTypes.string,
-    disabled: React.PropTypes.bool,
-    disabledTooltip: React.PropTypes.node,
-    children: React.PropTypes.node,
+    id: PropTypes.string,
+    className: PropTypes.string,
+    title: PropTypes.string,
+    disabled: PropTypes.bool,
+    disabledTooltip: PropTypes.node,
+    children: PropTypes.node,
   };
 
   print = () => {

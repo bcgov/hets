@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { InputGroup } from 'react-bootstrap';
 import _ from 'lodash';
@@ -11,10 +12,10 @@ import { notBlank } from '../utils/string';
 class SearchControl extends React.Component {
   static propTypes = {
     // This is an array of objects { id, name }
-    items: React.PropTypes.array.isRequired,
+    items: PropTypes.array.isRequired,
 
-    search: React.PropTypes.object.isRequired,
-    updateState: React.PropTypes.func.isRequired,
+    search: PropTypes.object.isRequired,
+    updateState: PropTypes.func.isRequired,
   };
 
   constructor(props) {

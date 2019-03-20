@@ -1,14 +1,15 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 
 
 class PageHeader extends React.Component {
   static propTypes = {
-    title: React.PropTypes.node,
-    subTitle: React.PropTypes.node,
-    id: React.PropTypes.string,
-    className: React.PropTypes.string,
-    children: React.PropTypes.node,
+    title: PropTypes.node,
+    subTitle: PropTypes.node,
+    id: PropTypes.string,
+    className: PropTypes.string,
+    children: PropTypes.node,
   };
 
   render() {

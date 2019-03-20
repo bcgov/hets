@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { FormControl } from 'react-bootstrap';
 import _ from 'lodash';
@@ -5,12 +6,12 @@ import _ from 'lodash';
 
 class FormInputControl extends React.Component {
   static propTypes = {
-    type: React.PropTypes.string,
-    updateState: React.PropTypes.func,
-    autoFocus: React.PropTypes.bool,
-    autoComplete: React.PropTypes.string,
-    onChange: React.PropTypes.func,
-    children: React.PropTypes.node,
+    type: PropTypes.string,
+    updateState: PropTypes.func,
+    autoFocus: PropTypes.bool,
+    autoComplete: PropTypes.string,
+    onChange: PropTypes.func,
+    children: PropTypes.node,
   };
 
   componentDidMount() {

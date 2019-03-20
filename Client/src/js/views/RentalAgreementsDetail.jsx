@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
@@ -32,12 +33,12 @@ import { formatCurrency } from '../utils/string';
 
 class RentalAgreementsDetail extends React.Component {
   static propTypes = {
-    rentalAgreement: React.PropTypes.object,
-    rentalAgreementId: React.PropTypes.number,
-    rentalConditions: React.PropTypes.array,
-    ui: React.PropTypes.object,
-    location: React.PropTypes.object,
-    router: React.PropTypes.object,
+    rentalAgreement: PropTypes.object,
+    rentalAgreementId: PropTypes.number,
+    rentalConditions: PropTypes.array,
+    ui: PropTypes.object,
+    location: PropTypes.object,
+    router: PropTypes.object,
   };
 
   state = {

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { connect } from 'react-redux';
@@ -26,11 +27,11 @@ const OPTION_EQUIPMENT_AND_SENIORITY = { id: 2, name: 'Transfer Equipment and Se
 
 class EquipmentTransferDialog extends React.Component {
   static propTypes = {
-    equipment: React.PropTypes.object.isRequired,
-    owners: React.PropTypes.object.isRequired,
-    equipmentTransfer: React.PropTypes.object.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool.isRequired,
+    equipment: PropTypes.object.isRequired,
+    owners: PropTypes.object.isRequired,
+    equipmentTransfer: PropTypes.object.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool.isRequired,
   };
 
   state = {

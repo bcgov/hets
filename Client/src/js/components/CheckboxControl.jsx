@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Checkbox } from 'react-bootstrap';
 import _ from 'lodash';
@@ -5,10 +6,10 @@ import _ from 'lodash';
 
 class CheckboxControl extends React.Component {
   static propTypes = {
-    type: React.PropTypes.string,
-    updateState: React.PropTypes.func,
-    onChange: React.PropTypes.func,
-    children: React.PropTypes.node,
+    type: PropTypes.string,
+    updateState: PropTypes.func,
+    onChange: PropTypes.func,
+    children: PropTypes.node,
   };
 
   changed = (e) => {

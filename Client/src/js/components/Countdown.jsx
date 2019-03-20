@@ -1,10 +1,11 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 
 class Countdown extends React.Component {
   static propTypes = {
-    time: React.PropTypes.number,
-    onEnd: React.PropTypes.func,
+    time: PropTypes.number,
+    onEnd: PropTypes.func,
   };
 
   constructor(props) {

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Well, Row, Col, Alert, Glyphicon, Label } from 'react-bootstrap';
@@ -24,12 +25,12 @@ import { sortDir } from '../utils/array';
 
 class BusinessOwner extends React.Component {
   static propTypes = {
-    owner: React.PropTypes.object,
-    equipment: React.PropTypes.object,
-    contact: React.PropTypes.object,
-    uiEquipment: React.PropTypes.object,
-    uiContacts: React.PropTypes.object,
-    params: React.PropTypes.object,
+    owner: PropTypes.object,
+    equipment: PropTypes.object,
+    contact: PropTypes.object,
+    uiEquipment: PropTypes.object,
+    uiContacts: PropTypes.object,
+    params: PropTypes.object,
   };
 
   constructor(props) {

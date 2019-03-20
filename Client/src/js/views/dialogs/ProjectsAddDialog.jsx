@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -15,12 +16,12 @@ import { isBlank, notBlank } from '../../utils/string';
 
 class ProjectsAddDialog extends React.Component {
   static propTypes = {
-    currentUser: React.PropTypes.object,
-    projects: React.PropTypes.object,
-    fiscalYears: React.PropTypes.array,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
+    currentUser: PropTypes.object,
+    projects: PropTypes.object,
+    fiscalYears: PropTypes.array,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
   };
 
   constructor(props) {

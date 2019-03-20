@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { PageHeader, Button, Well } from 'react-bootstrap';
@@ -16,9 +17,9 @@ import { formatDateTimeUTCToLocal } from '../utils/date';
 
 class Rollover extends React.Component {
   static propTypes = {
-    currentUser: React.PropTypes.object,
-    rolloverStatus: React.PropTypes.object,
-    router: React.PropTypes.object,
+    currentUser: PropTypes.object,
+    rolloverStatus: PropTypes.object,
+    router: PropTypes.object,
   };
 
   state = {

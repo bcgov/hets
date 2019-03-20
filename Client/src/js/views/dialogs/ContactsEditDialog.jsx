@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { connect } from 'react-redux';
@@ -15,13 +16,13 @@ import { isBlank, formatPhoneNumber } from '../../utils/string';
 
 class ContactsEditDialog extends React.Component {
   static propTypes = {
-    contact: React.PropTypes.object.isRequired,
-    parent: React.PropTypes.object.isRequired,
-    saveContact: React.PropTypes.func.isRequired,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-    defaultPrimary: React.PropTypes.bool,
+    contact: PropTypes.object.isRequired,
+    parent: PropTypes.object.isRequired,
+    saveContact: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    defaultPrimary: PropTypes.bool,
   };
 
   constructor(props) {

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
@@ -5,15 +6,15 @@ import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 // simplifies adding tooltips for enabled and disabled buttons
 class TooltipButton extends React.Component {
   static propTypes = {
-    disabled: React.PropTypes.bool,
-    children: React.PropTypes.node,
-    enabledTooltip: React.PropTypes.node,
-    disabledTooltip: React.PropTypes.node,
-    onClick: React.PropTypes.func,
-    className: React.PropTypes.string,
-    style: React.PropTypes.object,
-    bsSize: React.PropTypes.string,
-    bsStyle: React.PropTypes.string,
+    disabled: PropTypes.bool,
+    children: PropTypes.node,
+    enabledTooltip: PropTypes.node,
+    disabledTooltip: PropTypes.node,
+    onClick: PropTypes.func,
+    className: PropTypes.string,
+    style: PropTypes.object,
+    bsSize: PropTypes.string,
+    bsStyle: PropTypes.string,
   };
 
   static defaultProps = {

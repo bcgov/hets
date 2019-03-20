@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
 import _ from 'lodash';
@@ -14,11 +15,11 @@ import { OWNER_STATUS_CODE_APPROVED } from '../../constants';
 
 class ChangeStatusDialog extends React.Component {
   static propTypes = {
-    show: React.PropTypes.bool,
-    status: React.PropTypes.string.isRequired,
-    owner: React.PropTypes.object.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    onStatusChanged: React.PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    status: PropTypes.string.isRequired,
+    owner: PropTypes.object.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onStatusChanged: PropTypes.func.isRequired,
   };
 
   state = {

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Button, Glyphicon, OverlayTrigger, Tooltip, ProgressBar } from 'react-bootstrap';
 
@@ -12,13 +13,13 @@ class FileUpload extends React.Component {
   static displayName = 'FileUpload';
 
   static propTypes = {
-    id: React.PropTypes.string,
-    className: React.PropTypes.string,
-    label: React.PropTypes.string,
-    files: React.PropTypes.array,
-    path: React.PropTypes.string,
-    onUploadProgress: React.PropTypes.func,
-    onUploadFinished: React.PropTypes.func,
+    id: PropTypes.string,
+    className: PropTypes.string,
+    label: PropTypes.string,
+    files: PropTypes.array,
+    path: PropTypes.string,
+    onUploadProgress: PropTypes.func,
+    onUploadFinished: PropTypes.func,
   };
 
   state = this.buildInitialState();

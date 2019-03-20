@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Button, Glyphicon } from 'react-bootstrap';
 
@@ -8,13 +9,13 @@ import FileUpload from './FileUpload.jsx';
 
 class FileAttachDialog extends React.Component {
   static propTypes = {
-    id: React.PropTypes.string,
-    className: React.PropTypes.string,
-    parentName: React.PropTypes.string,
-    uploadPath: React.PropTypes.string,
-    show: React.PropTypes.bool.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    onUpload: React.PropTypes.func,
+    id: PropTypes.string,
+    className: PropTypes.string,
+    parentName: PropTypes.string,
+    uploadPath: PropTypes.string,
+    show: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onUpload: PropTypes.func,
   };
 
   state = {

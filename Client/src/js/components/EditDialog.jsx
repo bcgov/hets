@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import Promise from 'bluebird';
 import { Button } from 'react-bootstrap';
@@ -8,17 +9,17 @@ import ModalDialog from './ModalDialog.jsx';
 
 class EditDialog extends React.Component {
   static propTypes = {
-    title: React.PropTypes.node,
-    didChange: React.PropTypes.func.isRequired,
-    isValid: React.PropTypes.func.isRequired,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool.isRequired,
-    className: React.PropTypes.string,
-    readOnly: React.PropTypes.bool,
-    saveText: React.PropTypes.string,
-    closeText: React.PropTypes.string,
-    children: React.PropTypes.node,
+    title: PropTypes.node,
+    didChange: PropTypes.func.isRequired,
+    isValid: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool.isRequired,
+    className: PropTypes.string,
+    readOnly: PropTypes.bool,
+    saveText: PropTypes.string,
+    closeText: PropTypes.string,
+    children: PropTypes.node,
   };
 
   state = {

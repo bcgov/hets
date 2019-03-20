@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { ControlLabel, InputGroup, Button, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
@@ -7,17 +8,17 @@ import DateTime from 'react-datetime';
 
 class DateControl extends React.Component {
   static propTypes = {
-    id: React.PropTypes.string.isRequired,
-    date: React.PropTypes.string,
-    format: React.PropTypes.string,
-    className: React.PropTypes.string,
-    label: React.PropTypes.string,
-    onChange: React.PropTypes.func,
-    updateState: React.PropTypes.func,
-    placeholder: React.PropTypes.string,
-    title: React.PropTypes.string,
-    disabled: React.PropTypes.bool,
-    isValidDate: React.PropTypes.func,
+    id: PropTypes.string.isRequired,
+    date: PropTypes.string,
+    format: PropTypes.string,
+    className: PropTypes.string,
+    label: PropTypes.string,
+    onChange: PropTypes.func,
+    updateState: PropTypes.func,
+    placeholder: PropTypes.string,
+    title: PropTypes.string,
+    disabled: PropTypes.bool,
+    isValidDate: PropTypes.func,
   };
 
   clicked = () => {

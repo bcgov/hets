@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
@@ -8,11 +9,11 @@ import Form from '../../components/Form.jsx';
 
 class AttachmentEditDialog extends React.Component {
   static propTypes = {
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-    equipment: React.PropTypes.object.isRequired,
-    attachment: React.PropTypes.object.isRequired,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    equipment: PropTypes.object.isRequired,
+    attachment: PropTypes.object.isRequired,
   };
 
   constructor(props) {

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import {  FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
@@ -9,10 +10,10 @@ import Form from '../../components/Form.jsx';
 
 class ConditionAddEditDialog extends React.Component {
   static propTypes = {
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-    condition: React.PropTypes.object,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    condition: PropTypes.object,
   };
 
   constructor(props) {

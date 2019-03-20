@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -16,11 +17,11 @@ import { currentPathStartsWith } from '../utils/routes';
 
 class TopNav extends React.Component {
   static propTypes = {
-    currentUser: React.PropTypes.object,
-    showWorkingIndicator: React.PropTypes.bool,
-    showNav: React.PropTypes.bool,
-    currentUserDistricts: React.PropTypes.object,
-    rolloverStatus: React.PropTypes.object,
+    currentUser: PropTypes.object,
+    showWorkingIndicator: PropTypes.bool,
+    showNav: PropTypes.bool,
+    currentUserDistricts: PropTypes.object,
+    rolloverStatus: PropTypes.object,
   };
 
   static defaultProps = {
@@ -190,7 +191,7 @@ class TopNav extends React.Component {
 }
 
 TopNav.contextTypes = {
-  router: React.PropTypes.object.isRequired,
+  router: PropTypes.object.isRequired,
 };
 
 

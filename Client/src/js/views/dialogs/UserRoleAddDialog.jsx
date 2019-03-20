@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { connect } from 'react-redux';
@@ -22,11 +23,11 @@ import { isBlank, notBlank } from '../../utils/string';
 
 class UserRoleAddDialog extends React.Component {
   static propTypes = {
-    roles: React.PropTypes.object,
-    currentUser: React.PropTypes.object,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
+    roles: PropTypes.object,
+    currentUser: PropTypes.object,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
   };
 
   state = {

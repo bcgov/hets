@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
@@ -8,11 +9,11 @@ import {closeErrorDialog} from '../../actions';
 
 class ErrorDialog extends React.Component {
   static propTypes = {
-    show: React.PropTypes.bool,
-    title: React.PropTypes.string,
-    apiError: React.PropTypes.object,
-    appError: React.PropTypes.object,
-    closeErrorDialog: React.PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    title: PropTypes.string,
+    apiError: PropTypes.object,
+    appError: PropTypes.object,
+    closeErrorDialog: PropTypes.func.isRequired,
   };
 
   closeDialog = () => {

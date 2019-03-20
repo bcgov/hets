@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Grid, Row, Col, Radio, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
@@ -38,13 +39,13 @@ class HireOfferEditDialog extends React.Component {
   static displayName = 'HireOfferEditDialog';
 
   static propTypes = {
-    hireOffer: React.PropTypes.object.isRequired,
-    showAllResponseFields: React.PropTypes.bool.isRequired,
-    rentalRequest: React.PropTypes.object.isRequired,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-    blankRentalAgreements: React.PropTypes.object,
+    hireOffer: PropTypes.object.isRequired,
+    showAllResponseFields: PropTypes.bool.isRequired,
+    rentalRequest: PropTypes.object.isRequired,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    blankRentalAgreements: PropTypes.object,
   };
 
   constructor(props) {

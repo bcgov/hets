@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
@@ -49,14 +50,14 @@ const EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE = 'This equipment is pa
 
 class EquipmentDetail extends React.Component {
   static propTypes = {
-    equipment: React.PropTypes.object,
-    notes: React.PropTypes.array,
-    attachments: React.PropTypes.object,
-    documents: React.PropTypes.object,
-    history: React.PropTypes.object,
-    params: React.PropTypes.object,
-    ui: React.PropTypes.object,
-    location: React.PropTypes.object,
+    equipment: PropTypes.object,
+    notes: PropTypes.array,
+    attachments: PropTypes.object,
+    documents: PropTypes.object,
+    history: PropTypes.object,
+    params: PropTypes.object,
+    ui: PropTypes.object,
+    location: PropTypes.object,
   };
 
   constructor(props) {

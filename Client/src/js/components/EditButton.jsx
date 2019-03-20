@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Button, Glyphicon } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -6,11 +7,11 @@ import _ from 'lodash';
 
 class EditButton extends React.Component {
   static propTypes = {
-    pathname: React.PropTypes.string,
-    onClick: React.PropTypes.func,
-    view: React.PropTypes.bool,
-    name: React.PropTypes.string,
-    hide: React.PropTypes.bool,
+    pathname: PropTypes.string,
+    onClick: PropTypes.func,
+    view: PropTypes.bool,
+    name: PropTypes.string,
+    hide: PropTypes.bool,
   };
 
   render() {

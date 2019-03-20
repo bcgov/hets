@@ -1,6 +1,6 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
-import $ from 'jquery';
 import * as Api from '../api';
 import { unhandledApiError, closeSessionTimeoutDialog } from '../actions';
 
@@ -10,20 +10,20 @@ import ConfirmDialog from './dialogs/ConfirmDialog.jsx';
 import ErrorDialog from './dialogs/ErrorDialog.jsx';
 import Countdown from '../components/Countdown.jsx';
 
-import { resetSessionTimeoutTimer } from '../app.jsx';
+import { resetSessionTimeoutTimer } from '../App.jsx';
 import { ApiError } from '../utils/http';
 import { bindActionCreators } from 'redux';
 
 
 class Main extends React.Component {
   static propTypes = {
-    children: React.PropTypes.object,
-    showNav: React.PropTypes.bool,
-    showSessionTimeoutDialog: React.PropTypes.bool,
-    showErrorDialog: React.PropTypes.bool,
+    children: PropTypes.object,
+    showNav: PropTypes.bool,
+    showSessionTimeoutDialog: PropTypes.bool,
+    showErrorDialog: PropTypes.bool,
 
-    unhandledApiError: React.PropTypes.func,
-    closeSessionTimeoutDialog: React.PropTypes.func,
+    unhandledApiError: PropTypes.func,
+    closeSessionTimeoutDialog: PropTypes.func,
   };
 
   state = {
@@ -31,7 +31,8 @@ class Main extends React.Component {
   };
 
   componentDidMount() {
-    this.setState({ headerHeight: ($('#header-main').height() + 10) });
+    const height = document.getElementById('header-main').clientHeight;
+    this.setState({ headerHeight: height + 10 });
 
     window.addEventListener('unhandledrejection', this.unhandledRejection);
   }

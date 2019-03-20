@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
@@ -22,15 +23,15 @@ import { formatDateTime } from '../utils/date';
 
 class TimeEntry extends React.Component {
   static propTypes = {
-    projects: React.PropTypes.object,
-    localAreas: React.PropTypes.object,
-    owners: React.PropTypes.object,
-    equipment: React.PropTypes.object,
-    timeEntries: React.PropTypes.object,
-    favourites: React.PropTypes.object,
-    search: React.PropTypes.object,
-    ui: React.PropTypes.object,
-    router: React.PropTypes.object,
+    projects: PropTypes.object,
+    localAreas: PropTypes.object,
+    owners: PropTypes.object,
+    equipment: PropTypes.object,
+    timeEntries: PropTypes.object,
+    favourites: PropTypes.object,
+    search: PropTypes.object,
+    ui: PropTypes.object,
+    router: PropTypes.object,
   };
 
   constructor(props) {

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Well, Dropdown, FormControl, Checkbox } from 'react-bootstrap';
 import RootCloseMenu from './RootCloseMenu.jsx';
@@ -9,16 +10,16 @@ const MAX_ITEMS_FOR_TITLE = 3;
 
 class MultiDropdown extends React.Component {
   static propTypes = {
-    items: React.PropTypes.array.isRequired,
-    placeholder: React.PropTypes.string,
-    id: React.PropTypes.string.isRequired,
-    className: React.PropTypes.string,
-    fieldName: React.PropTypes.string,
-    selectedIds: React.PropTypes.array,
-    onChange: React.PropTypes.func,
-    updateState: React.PropTypes.func,
-    showMaxItems: React.PropTypes.number,
-    disabled: React.PropTypes.bool,
+    items: PropTypes.array.isRequired,
+    placeholder: PropTypes.string,
+    id: PropTypes.string.isRequired,
+    className: PropTypes.string,
+    fieldName: PropTypes.string,
+    selectedIds: PropTypes.array,
+    onChange: PropTypes.func,
+    updateState: PropTypes.func,
+    showMaxItems: PropTypes.number,
+    disabled: PropTypes.bool,
   };
 
   constructor(props) {

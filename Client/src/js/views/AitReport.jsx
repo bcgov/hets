@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
@@ -28,15 +29,15 @@ const CUSTOM = 'Custom';
 
 class AitReport extends React.Component {
   static propTypes = {
-    currentUser: React.PropTypes.object,
-    projects: React.PropTypes.object,
-    districtEquipmentTypes: React.PropTypes.object,
-    equipment: React.PropTypes.object,
-    aitResponses: React.PropTypes.object,
-    favourites: React.PropTypes.object,
-    search: React.PropTypes.object,
-    ui: React.PropTypes.object,
-    router: React.PropTypes.object,
+    currentUser: PropTypes.object,
+    projects: PropTypes.object,
+    districtEquipmentTypes: PropTypes.object,
+    equipment: PropTypes.object,
+    aitResponses: PropTypes.object,
+    favourites: PropTypes.object,
+    search: PropTypes.object,
+    ui: PropTypes.object,
+    router: PropTypes.object,
   };
 
   constructor(props) {

@@ -1,8 +1,9 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 class Main extends React.Component {
   static propTypes = {
-    location: React.PropTypes.object,
+    location: PropTypes.object,
   };
 
   constructor(props) {

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
@@ -16,11 +17,11 @@ const PROHIBITED_SECTIONS = [ 1.2, 1.8, 2.3, 2.6, 3.3, 6.3, 7.4, 8.2, 9.3, 11.2,
 
 class DistrictEquipmentTypeAddEditDialog extends React.Component {
   static propTypes = {
-    show: React.PropTypes.bool,
-    districtEquipmentType: React.PropTypes.object,
-    equipmentTypes: React.PropTypes.object,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    districtEquipmentType: PropTypes.object,
+    equipmentTypes: PropTypes.object,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
   };
 
   constructor(props) {

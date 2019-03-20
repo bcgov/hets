@@ -6,7 +6,7 @@ import store from '../store';
 
 import * as Constant from '../constants';
 
-import { resetSessionTimeoutTimer } from '../app.jsx';
+import { resetSessionTimeoutTimer } from '../App.jsx';
 
 const ROOT_API_PREFIX = location.pathname === '/' ? '' : location.pathname.split('/').slice(0, -1).join('/');
 

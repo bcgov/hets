@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Table, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
@@ -8,18 +9,18 @@ import Spinner from '../components/Spinner.jsx';
 class SortTable extends React.Component {
   static propTypes = {
     // Array of objects with key, title, style, children fields
-    headers: React.PropTypes.array.isRequired,
+    headers: PropTypes.array.isRequired,
     // This should be a from a state.ui object
-    sortField: React.PropTypes.oneOfType([
-      React.PropTypes.string,
-      React.PropTypes.array,
+    sortField: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.array,
     ]).isRequired,
     // This should be a from a state.ui object
-    sortDesc: React.PropTypes.bool.isRequired,
-    onSort: React.PropTypes.func.isRequired,
-    id: React.PropTypes.string,
-    isRefreshing: React.PropTypes.bool,
-    children: React.PropTypes.node,
+    sortDesc: PropTypes.bool.isRequired,
+    onSort: PropTypes.func.isRequired,
+    id: PropTypes.string,
+    isRefreshing: PropTypes.bool,
+    children: PropTypes.node,
   };
 
   sort = (field) => {
@@ -51,7 +52,7 @@ class SortTable extends React.Component {
         <th
           key={key}
           onMouseDown={this.preventSelection}
-          onClick={ header.noSort ? '' : () => this.sort(header.field) }
+          onClick={ header.noSort ? null : () => this.sort(header.field) }
           className={ header.class }
           style={{ ...header.style, cursor: header.noSort ? 'default' : 'pointer' }}>
           { header.title }{ sortGlyph }

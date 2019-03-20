@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
@@ -22,12 +23,12 @@ const HELP_TEXT = {
 
 class OwnersAddDialog extends React.Component {
   static propTypes = {
-    owners: React.PropTypes.object,
-    currentUser: React.PropTypes.object,
-    localAreas: React.PropTypes.object,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
+    owners: PropTypes.object,
+    currentUser: PropTypes.object,
+    localAreas: PropTypes.object,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
   };
 
   state = {
