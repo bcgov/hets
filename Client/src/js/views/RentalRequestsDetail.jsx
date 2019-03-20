@@ -78,15 +78,19 @@ class RentalRequestsDetail extends React.Component {
   componentDidMount() {
     const { rentalRequestId, rentalRequest } = this.props;
 
+    /* Documents need be fetched every time as they are not rentalRequest specific in the store ATM */
     Api.getRentalRequestDocuments(rentalRequestId).then(() => this.setState({ loadingDocuments: false }));
 
-    const rentalRequestPromise = this.fetch();
+    // Only show loading spinner if there is no existing rental request in the store
+    if (rentalRequest) {
+      this.setState({ loading: false });
+    }
 
+    // Re-fetch rental request, rotationlist, and notes every time
     Promise.all([
-      !rentalRequest ? rentalRequestPromise : null,
-      !rentalRequest ? Api.getRentalRequestNotes(rentalRequestId) : null,
-      !rentalRequest ? Api.getRentalRequestRotationList(rentalRequestId) : null,
-      /* Documents need be fetched every time as they are not rentalRequest specific in the store ATM */
+      this.fetch(),
+      Api.getRentalRequestNotes(rentalRequestId),
+      Api.getRentalRequestRotationList(rentalRequestId),
     ]).then(() => {
       this.setState({ loading: false });
     });
