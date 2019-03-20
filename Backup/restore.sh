@@ -17,10 +17,10 @@ fi
 if [ -d "$RESTORE_DIR" ]
 then
 	echo "*** clearing restore directory"
-	rm -rf "$RESTORE_DIR/*.bak" 
+	rm -rf $RESTORE_DIR*.bak
 else
 	echo "*** creating restore directory"
-	mkdir "$RESTORE_DIR"
+	mkdir $RESTORE_DIR
 fi
 
 # check if the file exists
@@ -35,7 +35,7 @@ else
 fi
 
 # copy file to the restore directory
-cp "$FULL_BACKUP_FILE" "$FULL_RESTORE_FILE"
+cp -f "$FULL_BACKUP_FILE" "$FULL_RESTORE_FILE"
 
 if [ -f "$FULL_BACKUP_FILE" ]
 then
@@ -56,10 +56,10 @@ psql -q --host="$DATABASE_SERVICE_NAME" --port="5432" --username="postgres" --db
 psql -q --host="$DATABASE_SERVICE_NAME" --port="5432" --username="postgres" --dbname="$POSTGRESQL_DATABASE" -a -q -c "SET client_encoding = 'UTF8';"
 
 echo "*** restore hets database"
-#if ! pg_restore --host="$DATABASE_SERVICE_NAME" --port="5432" --username="$POSTGRESQL_USER" --dbname="$POSTGRESQL_DATABASE" --format="c" "$FULL_RESTORE_FILE"; then
-#	echo "[!!ERROR!!] Failed to restore database $PGDB" 
-#else
-#	echo "*** database restore complete"	
-#fi;
+if ! pg_restore --host="$DATABASE_SERVICE_NAME" --port="5432" --username="postgres" --dbname="$POSTGRESQL_DATABASE" --format="c" "$FULL_RESTORE_FILE"; then
+	echo "[!!ERROR!!] Failed to restore database $PGDB" 
+else
+	echo "*** database restore complete"	
+fi;
 	
 exit

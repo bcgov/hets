@@ -54,11 +54,11 @@ These steps perform a restore of a backup. This process must be executed from th
 4. Open a Terminal window on the **postgres** pod
    1. locate the backup to restore (change to the directory)
    
-       cd /backups/2019-03-18
+       cd /backups/2019-03-19
 	   
     2. execute the script identifying the file to resore (example below):
 	
-       sh /backups/restore/restore.sh 2019-03-18/hets2019-03-18-23-15.bak
+       sh /backups/restore/restore.sh 2019-03-19/hets2019-03-19-18-00.bak
    
 5. From the Openshift Console restart the app:
     1. Scale up the Server app and wait for it to finish starting up.  View the logs for the Server app to verify there were no startup issues.
