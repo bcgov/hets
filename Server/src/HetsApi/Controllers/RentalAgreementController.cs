@@ -1386,12 +1386,7 @@ namespace HetsApi.Controllers
 
             if (!string.IsNullOrWhiteSpace(rentalAgreementNumber))
             {
-                result = agreements
-                    .Where(x => x.Number.Contains(rentalAgreementNumber.Trim(), StringComparison.InvariantCultureIgnoreCase))
-                    .Select(x => AitReport.MapFromHetRentalAgreement(x))
-                    .ToList();
-
-                return new ObjectResult(new HetsResponse(result));
+                agreements = agreements.Where(x => x.Number.Contains(rentalAgreementNumber.Trim(), StringComparison.InvariantCultureIgnoreCase));
             }
 
             if (projectArray != null && projectArray.Length > 0)
