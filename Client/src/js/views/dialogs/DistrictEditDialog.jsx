@@ -1,24 +1,24 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-
 import _ from 'lodash';
-
 import { FormGroup, HelpBlock } from 'react-bootstrap';
 
-import EditDialog from '../../components/EditDialog.jsx';
+import * as Api from '../../api';
+
+import FormDialog from '../../components/FormDialog.jsx';
 import CheckboxControl from '../../components/CheckboxControl.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
-import Form from '../../components/Form.jsx';
+
 
 class DistrictEditDialog extends React.Component {
   static propTypes = {
-    onSave: PropTypes.func.isRequired,
-    onClose: PropTypes.func.isRequired,
     show: PropTypes.bool,
     districts: PropTypes.object,
     user: PropTypes.object,
     district: PropTypes.object,
-    userDistricts: PropTypes.object,
+    userDistricts: PropTypes.array,
+    onSave: PropTypes.func,
+    onClose: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -27,6 +27,8 @@ class DistrictEditDialog extends React.Component {
 
     this.state = {
       isNew: isNew,
+      isSaving: false,
+
       districtId: isNew ? 0 : props.district.district.id,
       isPrimary: props.district.isPrimary || false,
 
@@ -62,13 +64,29 @@ class DistrictEditDialog extends React.Component {
     return valid;
   };
 
-  onSave = () => {
-    this.props.onSave({
-      id: this.props.district.id,
-      user: { id: this.props.user.id },
-      district: { id: this.state.districtId },
-      isPrimary: this.state.isPrimary,
-    });
+  formSubmitted = () => {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        this.setState({ isSaving: true });
+
+        const district = {
+          id: this.props.district.id,
+          user: { id: this.props.user.id },
+          district: { id: this.state.districtId },
+          isPrimary: this.state.isPrimary,
+        };
+
+        const promise = this.state.isNew ? Api.addUserDistrict(district) : Api.editUserDistrict(district);
+
+        promise.then((response) => {
+          this.setState({ isSaving: false });
+          if (this.props.onSave) { this.props.onSave(response.data); }
+          this.props.onClose();
+        });
+      } else {
+        this.props.onClose();
+      }
+    }
   };
 
   render() {
@@ -86,18 +104,23 @@ class DistrictEditDialog extends React.Component {
       } )
       .value();
 
-    return <EditDialog id="equipment-add" show={ this.props.show } bsSize="small"
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={<strong>{ this.state.isNew ? 'Add District' : 'Edit District' }</strong>}>
-      <Form>
+    return (
+      <FormDialog
+        id="equipment-add"
+        show={this.props.show}
+        title={this.state.isNew ? 'Add District' : 'Edit District' }
+        bsSize="small"
+        isSaving={this.state.isSaving}
+        onClose={this.props.onClose}
+        onSubmit={this.formSubmitted}>
         <FormGroup controlId="districtId" validationState={ this.state.districtIdError ? 'error' : null }>
           <FilterDropdown id="districtId" placeholder="Choose District" className="full-width"
             items={ districts } selectedId={ this.state.districtId } updateState={ this.updateState } />
           <HelpBlock>{ this.state.districtIdError }</HelpBlock>
         </FormGroup>
         <CheckboxControl id="isPrimary" checked={ this.state.isPrimary } updateState={ this.updateState }>Primary District</CheckboxControl>
-      </Form>
-    </EditDialog>;
+      </FormDialog>
+    );
   }
 }
 

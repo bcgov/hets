@@ -132,6 +132,7 @@ class Users extends React.Component {
   };
 
   onUserSaved = (user) => {
+    this.closeUsersEditDialog();
     this.props.router.push({
       pathname: `${ Constant.USERS_PATHNAME }/${ user.id }`,
     });
@@ -243,10 +244,10 @@ class Users extends React.Component {
       </div>
       { this.state.showUsersEditDialog &&
         <UsersEditDialog
+          isNew
           show={ this.state.showUsersEditDialog }
           onSave={ this.onUserSaved }
           onClose= { this.closeUsersEditDialog }
-          isNew
         />
       }
     </div>;
