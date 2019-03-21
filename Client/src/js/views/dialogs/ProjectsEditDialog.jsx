@@ -170,7 +170,7 @@ class ProjectsEditDialog extends React.Component {
               <Col xs={12}>
                 <FormGroup controlId="projectName" validationState={ this.state.projectNameError ? 'error' : null}>
                   <ControlLabel>Project Name <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" value={ this.state.projectName } updateState={ this.updateState} autoFocus/>
+                  <FormInputControl type="text" value={ this.state.projectName } updateState={ this.updateState} autoFocus maxLength="60"/>
                   <HelpBlock>{ this.state.projectNameError }</HelpBlock>
                 </FormGroup>
               </Col>

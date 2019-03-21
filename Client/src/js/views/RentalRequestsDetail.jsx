@@ -329,14 +329,18 @@ class RentalRequestsDetail extends React.Component {
 
           return <TableControl id="rotation-list" headers={ headers }>
             {
-              _.map(rotationList, (listItem) => {
+              _.map(rotationList, (listItem, i) => {
                 const owner = listItem.equipment.owner;
                 var showAllResponseFields = false;
                 if ((numberEquipmentAvailableForNormalHire > 0) && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse) && (rentalRequest.yesCount < rentalRequest.equipmentCount)) {
                   showAllResponseFields = true;
                   numberEquipmentAvailableForNormalHire -= 1;
                 }
-                return (
+
+                const showBlankLine = i > 0 && rotationList[i - 1].equipment.blockNumber !== listItem.equipment.blockNumber;
+
+                return [
+                  showBlankLine && <tr key={listItem.equipment.blockNumber} className="blank-row"><td colSpan="14">&nbsp;</td></tr>,
                   <tr key={ listItem.id }>
                     <td>{ listItem.equipment.seniorityString }</td>
                     <td>{ listItem.equipment.blockNumber }</td>
@@ -408,8 +412,8 @@ class RentalRequestsDetail extends React.Component {
                       </ButtonGroup>
                     </td>
                     <td></td>
-                  </tr>
-                );
+                  </tr>,
+                ];
               })
             }
           </TableControl>;
