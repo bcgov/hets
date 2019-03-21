@@ -126,7 +126,7 @@ class ProjectsAddDialog extends React.Component {
             <Col xs={12}>
               <FormGroup controlId="name" validationState={ this.state.nameError ? 'error' : null }>
                 <ControlLabel>Project Name <sup>*</sup></ControlLabel>
-                <FormInputControl type="text" value={ this.state.name } updateState={ this.updateState } autoFocus />
+                <FormInputControl type="text" value={ this.state.name } updateState={ this.updateState } autoFocus maxLength="60" />
                 <HelpBlock>{ this.state.nameError }</HelpBlock>
               </FormGroup>
             </Col>
