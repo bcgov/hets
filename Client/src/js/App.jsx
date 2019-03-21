@@ -91,16 +91,25 @@ function onEnterApplication() {
   //hashHistory.push('/');
 }
 
-function setActiveRentalAgreementId(nextState) {
+function setActiveRentalAgreementId(nextState, replace, callback) {
   store.dispatch({ type: Action.SET_ACTIVE_RENTAL_AGREEMENT_ID_UI, rentalAgreementId: nextState.params.rentalAgreementId });
+  // TODO: When react was updated (HETS-1100) it broke how this worked. We now need to delay
+  // mounting the <Route> in order that `mapStateToProps` is called with the current store's state.
+  Promise.resolve().then(callback);
 }
 
-function setActiveRentalRequestId(nextState) {
+function setActiveRentalRequestId(nextState, replace, callback) {
   store.dispatch({ type: Action.SET_ACTIVE_RENTAL_REQUEST_ID_UI, rentalRequestId: nextState.params.rentalRequestId });
+  // TODO: When react was updated (HETS-1100) it broke how this worked. We now need to delay
+  // mounting the <Route> in order that `mapStateToProps` is called with the current store's state.
+  Promise.resolve().then(callback);
 }
 
-function setActiveProjectId(nextState) {
+function setActiveProjectId(nextState, replace, callback) {
   store.dispatch({ type: Action.SET_ACTIVE_PROJECT_ID_UI, projectId: nextState.params.projectId });
+  // TODO: When react was updated (HETS-1100) it broke how this worked. We now need to delay
+  // mounting the <Route> in order that `mapStateToProps` is called with the current store's state.
+  Promise.resolve().then(callback);
 }
 
 function keepAlive() {

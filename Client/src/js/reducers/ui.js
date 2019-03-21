@@ -32,8 +32,6 @@ const DEFAULT_STATE = {
 };
 
 export default function uiReducer(state = DEFAULT_STATE, action) {
-  var newState = {};
-
   switch(action.type) {
     // Requests
 
@@ -129,7 +127,7 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
       return { ...state, showErrorDialog: false };
   }
 
-  return { ...state, ...newState };
+  return state;
 }
 
 export const uiSelector = (state) => state.ui;
