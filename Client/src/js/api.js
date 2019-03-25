@@ -493,6 +493,8 @@ export function addEquipment(equipment) {
     getEquipmentLite();
     getEquipmentTs();
     getEquipmentHires();
+
+    return equipment;
   });
 }
 
@@ -746,13 +748,15 @@ export function searchOwners(params) {
 }
 
 export function getOwner(ownerId) {
-  return new ApiRequest(`/owners/${ ownerId }`).get().then(response => {
+  return new ApiRequest(`/owners/${ ownerId }`).get().then((response) => {
     var owner = response.data;
 
     // Add display fields
     parseOwner(owner);
 
-    store.dispatch({ type: Action.UPDATE_OWNER, owner: owner });
+    store.dispatch({ type: Action.UPDATE_OWNER, owner });
+
+    return owner;
   });
 }
 
@@ -763,18 +767,21 @@ export function addOwner(owner) {
     // Add display fields
     parseOwner(owner);
 
-    store.dispatch({ type: Action.ADD_OWNER, owner: owner });
+    store.dispatch({ type: Action.ADD_OWNER, owner });
   });
 }
 
 export function updateOwner(owner) {
-  return new ApiRequest(`/owners/${ owner.id }`).put(owner).then(response => {
+  store.dispatch({ type: Action.UPDATE_OWNER, owner });
+
+  // Omit `contacts` to ensure that the existing contacts don't mess up the PUT call
+  return new ApiRequest(`/owners/${ owner.id }`).put(_.omit(owner, 'contacts')).then(response => {
     var owner = response.data;
 
     // Add display fields
     parseOwner(owner);
 
-    store.dispatch({ type: Action.UPDATE_OWNER, owner: owner });
+    store.dispatch({ type: Action.UPDATE_OWNER, owner });
   });
 }
 
@@ -786,7 +793,7 @@ export function updateOwner(owner) {
 //     // Add display fields
 //     parseOwner(owner);
 
-//     store.dispatch({ type: Action.DELETE_OWNER, owner: owner });
+//     store.dispatch({ type: Action.DELETE_OWNER, owner });
 //   });
 // }
 
@@ -867,21 +874,19 @@ export function getOwnerEquipment(ownerId) {
 
 export function updateOwnerEquipment(owner, equipmentArray) {
   return new ApiRequest(`/owners/${ owner.id }/equipment`).put(equipmentArray).then(() => {
-    // After updating the owner's equipment, refresh the owner state.
-    return getOwner(owner.id);
   });
 }
 
 export function getOwnerNotes(ownerId) {
   return new ApiRequest(`/owners/${ ownerId }/notes`).get().then((response) => {
-    store.dispatch({ type: Action.UPDATE_OWNER_NOTES, notes: response.data });
+    store.dispatch({ type: Action.UPDATE_OWNER_NOTES, ownerId, notes: response.data });
     return response.data;
   });
 }
 
 export function addOwnerNote(ownerId, note) {
+  store.dispatch({ type: Action.ADD_OWNER_NOTE, ownerId, note });
   return new ApiRequest(`/owners/${ ownerId }/note`).post(note).then((response) => {
-    store.dispatch({ type: Action.UPDATE_OWNER_NOTES, notes: response.data });
     return response.data;
   });
 }
@@ -1008,13 +1013,14 @@ function parseContact(contact, parent) {
 // }
 
 export function deleteContact(contact) {
+  store.dispatch({ type: Action.DELETE_CONTACT, contact });
   return new ApiRequest(`/contacts/${ contact.id }/delete`).post().then(response => {
     var contact = response.data;
 
     // Add display fields
     parseContact(contact);
 
-    store.dispatch({ type: Action.DELETE_CONTACT, contact: contact });
+    store.dispatch({ type: Action.DELETE_CONTACT, contact });
   });
 }
 

@@ -38,3 +38,15 @@ export const activeRentalRequestSelector = createSelector(
   modelsSelector,
   (activeRentalRequestId, models) => models.rentalRequest[activeRentalRequestId] || null
 );
+
+
+export const activeOwnerIdSelector = createSelector(
+  uiSelector,
+  (ui) => parseInt(ui.activeOwnerId, 10)
+);
+
+export const activeOwnerSelector = createSelector(
+  activeOwnerIdSelector,
+  modelsSelector,
+  (activeOwnerId, models) => models.owner[activeOwnerId] || null
+);

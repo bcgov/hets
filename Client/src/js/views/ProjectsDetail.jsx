@@ -168,7 +168,6 @@ class ProjectsDetail extends React.Component {
   };
 
   deleteContact = (contact) => {
-    store.dispatch({ type: Action.DELETE_PROJECT_CONTACT, projectId: this.props.projectId, contactId: contact.id });
     Api.deleteContact(contact).then(() => {
       Log.projectContactDeleted(this.props.project, contact).then(() => {
         this.fetch();
@@ -321,10 +320,8 @@ class ProjectsDetail extends React.Component {
         <div>
           <div className="top-container">
             <Row id="projects-top">
-              <Col sm={1} style={{ padding: 7 }}>
+              <Col sm={9}>
                 <Label bsStyle={ project.isActive ? 'success' : 'danger'}>{ project.status }</Label>
-              </Col>
-              <Col sm={8}>
                 <Button title="Notes" disabled={loading} onClick={ this.showNotes }>
                   Notes ({ loading ? ' ' : project.notes.length })
                 </Button>
@@ -472,10 +469,10 @@ class ProjectsDetail extends React.Component {
                           <td style={{ textAlign: 'right' }}>
                             <ButtonGroup>
                               {contact.canDelete && (
-                                <DeleteButton disabled={!contact.id} name="Contact" onConfirm={ this.deleteContact.bind(this, contact) } />
+                                <DeleteButton name="Contact" onConfirm={ this.deleteContact.bind(this, contact) } />
                               )}
                               {contact.canEdit && (
-                                <EditButton disabled={!contact.id} name="Contact" onClick={ this.openContactDialog.bind(this, contact.id) } />
+                                <EditButton name="Contact" onClick={ this.openContactDialog.bind(this, contact.id) } />
                               )}
                             </ButtonGroup>
                           </td>

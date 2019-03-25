@@ -1,29 +1,26 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
-
 import _ from 'lodash';
 
 import * as Api from '../../api';
 import * as Constant from '../../constants';
 
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 import { isBlank, notBlank } from '../../utils/string';
 import { isValidYear } from '../../utils/date';
 
+
 class EquipmentAddDialog extends React.Component {
   static propTypes = {
-    currentUser: PropTypes.object,
+    currentUser: PropTypes.object.isRequired,
     owner: PropTypes.object.isRequired,
-    localAreas: PropTypes.object,
-    districtEquipmentTypes: PropTypes.object,
+    localAreas: PropTypes.object.isRequired,
+    districtEquipmentTypes: PropTypes.object.isRequired,
     onSave: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
     show: PropTypes.bool,
@@ -33,6 +30,7 @@ class EquipmentAddDialog extends React.Component {
     super(props);
 
     this.state = {
+      isSaving: false,
       localAreaId: props.owner.localArea.id || 0,
       equipmentTypeId: 0,
       licencePlate: '',
@@ -48,7 +46,7 @@ class EquipmentAddDialog extends React.Component {
       localAreaError: '',
       equipmentTypeError: '',
       serialNumberError: '',
-      duplicateSerialNumber: false,
+      duplicateSerialNumberWarning: false,
       makeError: '',
       modelError: '',
       yearError: '',
@@ -61,7 +59,7 @@ class EquipmentAddDialog extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (!_.isEqual(this.state.serialNumber, prevState.serialNumber)) {
-      this.setState({ duplicateSerialNumber: false, serialNumberError: '' });
+      this.setState({ duplicateSerialNumberWarning: false, serialNumberError: '' });
     }
   }
 
@@ -134,47 +132,63 @@ class EquipmentAddDialog extends React.Component {
     return valid;
   };
 
-  checkForDuplicatesAndSave = () => {
-    if (this.state.duplicateSerialNumber) {
-      // proceed regardless of duplicates
-      this.setState({ duplicateSerialNumber: false });
-      return this.onSave();
-    }
-
-    return Api.equipmentDuplicateCheck(0, this.state.serialNumber, this.state.equipmentTypeId).then((response) => {
-      if (response.data.length > 0) {
-        var districts = response.data.map((district) => {
-          return district.districtName;
-        });
-        this.setState({
-          serialNumberError: `Serial number is currently in use in the following district(s): ${districts.join(', ')}`,
-          duplicateSerialNumber: true,
-        });
-        return null;
-      } else {
-        this.setState({ duplicateSerialNumber: false });
-        return this.onSave();
+  formSubmitted = () => {
+    if (this.isValid()) {
+      if (this.state.duplicateSerialNumberWarning) {
+        // proceed regardless of duplicates
+        this.setState({ duplicateSerialNumberWarning: false });
+        return this.saveEquipment();
       }
-    });
+
+      this.setState({ isSaving: true });
+
+      return Api.equipmentDuplicateCheck(0, this.state.serialNumber, this.state.equipmentTypeId).then((response) => {
+        this.setState({ isSaving: false });
+
+        if (response.data.length > 0) {
+          var districts = response.data.map((district) => {
+            return district.districtName;
+          });
+          const districtsPlural = districts.length === 1 ? 'district' : 'districts';
+          this.setState({
+            serialNumberError: `Serial number is currently in use in the following ${districtsPlural}: ${districts.join(', ')}`,
+            duplicateSerialNumberWarning: true,
+          });
+          return null;
+        } else {
+          this.setState({ duplicateSerialNumberWarning: false });
+          return this.saveEquipment();
+        }
+      });
+    }
   };
 
-  onSave = () => {
-    return this.props.onSave({
-      owner: { id: this.props.owner.id },
-      localArea: { id: this.state.localAreaId },
-      districtEquipmentType: { id: this.state.equipmentTypeId },
-      licencePlate: this.state.licencePlate,
-      serialNumber: this.state.serialNumber,
-      make: this.state.make,
-      model: this.state.model,
-      year: this.state.year,
-      size: this.state.size,
-      type: this.state.type,
-      licencedGvw: this.state.licencedGvw,
-      legalCapacity: this.state.legalCapacity,
-      pupLegalCapacity: this.state.pupLegalCapacity,
-      status: Constant.EQUIPMENT_STATUS_CODE_PENDING,
-    });
+  saveEquipment = () => {
+    if (this.didChange()) {
+      this.setState({ isSaving: true });
+
+      const equipment = {
+        owner: { id: this.props.owner.id },
+        localArea: { id: this.state.localAreaId },
+        districtEquipmentType: { id: this.state.equipmentTypeId },
+        licencePlate: this.state.licencePlate,
+        serialNumber: this.state.serialNumber,
+        make: this.state.make,
+        model: this.state.model,
+        year: this.state.year,
+        size: this.state.size,
+        type: this.state.type,
+        licencedGvw: this.state.licencedGvw,
+        legalCapacity: this.state.legalCapacity,
+        pupLegalCapacity: this.state.pupLegalCapacity,
+        status: Constant.EQUIPMENT_STATUS_CODE_PENDING,
+      };
+
+      return Api.addEquipment(equipment).then((savedEquipment) => {
+        this.setState({ isSaving: false });
+        this.props.onSave(savedEquipment);
+      });
+    }
   };
 
   render() {
@@ -193,11 +207,15 @@ class EquipmentAddDialog extends React.Component {
 
     var isDumpTruck = equipment && equipment.equipmentType.isDumpTruck;
 
-    return <EditDialog id="equipment-add" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.checkForDuplicatesAndSave } didChange={ this.didChange } isValid={ this.isValid }
-      saveText={ this.state.duplicateSerialNumber ? 'Proceed Anyways' : 'Save' }
-      title={<strong>Add Equipment</strong>}>
-      <Form>
+    return (
+      <FormDialog
+        id="equipment-add"
+        show={this.props.show}
+        title="Add Equipment"
+        saveButtonLabel={this.state.duplicateSerialNumberWarning ? 'Proceed Anyways' : 'Save'}
+        isSaving={this.state.isSaving}
+        onSubmit={this.formSubmitted}
+        onClose={this.props.onClose}>
         <FormGroup controlId="organizationName">
           <ControlLabel>Owner</ControlLabel>
           <h4>{ owner.organizationName }</h4>
@@ -224,7 +242,7 @@ class EquipmentAddDialog extends React.Component {
         </FormGroup>
         <FormGroup controlId="make" validationState={ this.state.makeError ? 'error' : null }>
           <ControlLabel>Make <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" defaultValue={ this.state.make } updateState={ this.updateState }/>
+          <FormInputControl type="text" defaultValue={ this.state.make } updateState={ this.updateState } autoFocus/>
           <HelpBlock>{ this.state.makeError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="model" validationState={ this.state.modelError ? 'error' : null }>
@@ -251,7 +269,7 @@ class EquipmentAddDialog extends React.Component {
         </FormGroup>
         <FormGroup controlId="serialNumber" validationState={ this.state.serialNumberError ? 'error' : null }>
           <ControlLabel>Serial Number <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" defaultValue={ this.state.serialNumber } updateState={ this.updateState } autoFocus/>
+          <FormInputControl type="text" defaultValue={ this.state.serialNumber } updateState={ this.updateState }/>
           <HelpBlock>{ this.state.serialNumberError }</HelpBlock>
         </FormGroup>
         { isDumpTruck &&
@@ -270,15 +288,14 @@ class EquipmentAddDialog extends React.Component {
             </FormGroup>
           </div>
         }
-      </Form>
-    </EditDialog>;
+      </FormDialog>
+    );
   }
 }
 
 function mapStateToProps(state) {
   return {
     currentUser: state.user,
-    owner: state.models.owner,
     localAreas: state.lookups.localAreas,
     districtEquipmentTypes: state.lookups.districtEquipmentTypes,
   };
