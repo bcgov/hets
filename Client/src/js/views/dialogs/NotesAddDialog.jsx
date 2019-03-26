@@ -73,7 +73,6 @@ class NotesAddDialog extends React.Component {
             text: this.state.note,
             concurrencyControlNumber: this.state.concurrencyControlNumber,
             isNoLongerRelevant: false,
-            createDate: new Date().toISOString(),
           });
         }
       } else {

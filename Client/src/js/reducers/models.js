@@ -58,7 +58,6 @@ const DEFAULT_MODELS = {
     loading: false,
     loaded: false,
   },
-  ownerNotes: [],
   ownerAttachments: {},
   ownerHistory: {},
 
@@ -193,6 +192,7 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, favourites: { ...state.favourites, [action.favourite.type]: _.omit(state.favourites[action.favourite.type], [ action.favourite.id ]) } };
 
       // Contacts
+
       // XXX: Looks like this is unused
       // case Action.ADD_CONTACT:
       //   return { ...state, contact: action.contact };
@@ -201,9 +201,23 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       // case Action.UPDATE_CONTACT:
       //   return { ...state, contact: action.contact };
 
-      // XXX: Looks like this is unused
-      // case Action.DELETE_CONTACT:
-      //   return { ...state, contact: action.contact };
+    case Action.DELETE_CONTACT:
+      return produce(state, (draftState) => {
+        const contact = action.contact;
+        const contactId = contact.id;
+
+        const existingOwner = draftState.owner[contact.ownerId];
+        if (existingOwner) {
+          const updatedList = existingOwner.contacts.filter((contact) => contact.id !== contactId);
+          existingOwner.contacts = updatedList;
+        }
+
+        const existingProject = draftState.project[contact.projectId];
+        if (existingProject) {
+          const updatedList = existingProject.contacts.filter((contact) => contact.id !== contactId);
+          existingProject.contacts = updatedList;
+        }
+      });
 
     // Documents
     case Action.UPDATE_DOCUMENTS:
@@ -257,15 +271,30 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, owners: { data: {}, loading: false, loaded: false } };
 
     // XXX: Looks like `Action.DELETE_OWNER` is unused
-    case Action.ADD_OWNER: case Action.UPDATE_OWNER:/*  case Action.DELETE_OWNER: */
-      return { ...state, owner: action.owner };
+    case Action.ADD_OWNER: case Action.UPDATE_OWNER:/*  case Action.DELETE_OWNER: */ {
+      const ownerId = action.owner.id;
+      const owner = { notes: [], ...state.owner[ownerId], ...action.owner };
+      return { ...state, owner: { ...state.owner, [ownerId]: owner } };
+    }
 
     case Action.UPDATE_OWNER_NOTES:
-      return { ...state, ownerNotes: action.notes };
+      return produce(state, (draftState) => {
+        const existingOwner = draftState.owner[action.ownerId] || {};
+        existingOwner.notes = action.notes;
+        draftState.owner[action.ownerId] = existingOwner;
+      });
+
+    case Action.ADD_OWNER_NOTE:
+      return produce(state, (draftState) => {
+        const existingOwner = draftState.owner[action.ownerId];
+        const existingNotes = existingOwner.notes || [];
+        existingNotes.push(action.note);
+        existingOwner.notes = existingNotes;
+      });
 
     case Action.ADD_OWNER_CONTACT:
       return produce(state, (draftState) => {
-        const existingOwner = draftState.owner || {};
+        const existingOwner = draftState.owner[action.ownerId] || {};
         const updatedContacts = (existingOwner.contacts || []);
         updatedContacts.push(action.contact);
 
@@ -274,7 +303,7 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.UPDATE_OWNER_CONTACT:
       return produce(state, (draftState) => {
-        const existingOwner = draftState.owner || {};
+        const existingOwner = draftState.owner[action.ownerId] || {};
         const updatedContacts = (existingOwner.contacts || []);
 
         if (action.contact.isPrimary) {
@@ -289,13 +318,6 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
         existingOwner.contacts = updatedContacts;
       });
-
-    case Action.DELETE_OWNER_CONTACT: {
-      const existingOwner = { ...state.owner || {} };
-      const updatedList = existingOwner.contacts.filter((contact) => contact.id !== action.contactId);
-      existingOwner.contacts = updatedList;
-      return { ...state, owner: { ...state.owner, owner: existingOwner } };
-    }
 
 
     // Projects
@@ -322,17 +344,17 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     // case Action.UPDATE_PROJECT_TIME_RECORDS:
     //   return { ...state, projectTimeRecords: { data: action.projectTimeRecords, loading: false, success: true } };
 
-    case Action.UPDATE_PROJECT_NOTES: {
-      const existingProject = { ...state.project[action.projectId] || {} };
-      existingProject.notes = action.notes;
-
-      return { ...state, project: { ...state.project, [action.projectId]: existingProject } };
-    }
-
     case Action.ADD_PROJECT_NOTE: {
       const existingProject = { ...state.project[action.projectId] || {} };
       const notes = (existingProject.notes || []).slice();
       notes.push(action.note);
+
+      return { ...state, project: { ...state.project, [action.projectId]: existingProject } };
+    }
+
+    case Action.UPDATE_PROJECT_NOTES: {
+      const existingProject = { ...state.project[action.projectId] || {} };
+      existingProject.notes = action.notes;
 
       return { ...state, project: { ...state.project, [action.projectId]: existingProject } };
     }
@@ -373,17 +395,6 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
         existingProject.contacts = updatedContacts;
       });
-
-    case Action.DELETE_PROJECT_CONTACT: {
-      const existingProject = { ...state.project[action.projectId] || {} };
-      const updatedList = existingProject.contacts.filter((contact) => contact.id !== action.contactId);
-      existingProject.contacts = updatedList;
-      return { ...state, project: { ...state.project, [action.projectId]: existingProject } };
-    }
-
-    // XXX: Looks like this is unused
-    // case Action.UPDATE_PROJECT_RENTAL_AGREEMENTS_ERROR:
-    //   return { ...state, projectRentalAgreements: { ...state.projectRentalAgreements, error: action.error } };
 
     // Rental Requests
     case Action.RENTAL_REQUESTS_REQUEST:
@@ -553,8 +564,6 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
       if (action.noteId in state.equipmentNotes) {
         notesCollectionName = 'equipmentNotes';
-      } else if (action.noteId in state.ownerNotes) {
-        notesCollectionName = 'ownerNotes';
       }
 
       if (notesCollectionName) {

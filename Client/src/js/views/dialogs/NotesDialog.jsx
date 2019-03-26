@@ -63,7 +63,7 @@ class NotesDialog extends React.Component {
   onNoteUpdated = (note) => {
     const noteId = note.id;
     const updatedNotes = this.state.notes.map((_note) => {
-      return _note.id === noteId ? note : _note;
+      return _note.id === noteId ? {..._note, ...note} : _note;
     });
 
     this.setState({ notes: updatedNotes });

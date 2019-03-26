@@ -36,6 +36,8 @@ import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
 import PrintButton from '../components/PrintButton.jsx';
 
+import { activeOwnerSelector, activeOwnerIdSelector } from '../selectors/ui-selectors.js';
+
 import { formatDateTime, today, toZuluTime } from '../utils/date';
 import { sortDir, sort } from '../utils/array.js';
 import { firstLastName } from '../utils/string.js';
@@ -55,14 +57,12 @@ const OWNER_WITH_EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE = 'This owne
 
 class OwnersDetail extends React.Component {
   static propTypes = {
+    ownerId: PropTypes.number.isRequired,
     owner: PropTypes.object,
-    equipment: PropTypes.object,
     documents: PropTypes.object,
-    params: PropTypes.object,
     uiContacts: PropTypes.object,
     uiEquipment: PropTypes.object,
-    router: PropTypes.object,
-    notes: PropTypes.array,
+    router: PropTypes.object.isRequired,
   };
 
   constructor(props) {
@@ -101,20 +101,27 @@ class OwnersDetail extends React.Component {
   }
 
   componentDidMount() {
-    this.fetch();
+    const { ownerId, owner } = this.props;
+
+    /* Documents need be fetched every time as they are not project specific in the store ATM */
+    Api.getOwnerDocuments(ownerId).then(() => this.setState({ loadingDocuments: false }));
+
+    // Only show loading spinner if there is no existing project in the store
+    if (owner) {
+      this.setState({ loading: false });
+    }
+
+    // Re-fetch project and notes every time
+    Promise.all([
+      this.fetch(),
+      Api.getOwnerNotes(ownerId),
+    ]).then(() => {
+      this.setState({ loading: false });
+    });
   }
 
   fetch = () => {
-    this.setState({ loading: true });
-
-    var ownerId = this.props.params.ownerId;
-    var ownerPromise = Api.getOwner(ownerId);
-    var documentsPromise = Api.getOwnerDocuments(ownerId);
-    var ownerNotesPromise = Api.getOwnerNotes(ownerId);
-
-    return Promise.all([ownerPromise, documentsPromise, ownerNotesPromise]).finally(() => {
-      this.setState({ loading: false });
-    });
+    return Api.getOwner(this.props.ownerId);
   };
 
   updateContactsUIState = (state, callback) => {
@@ -170,12 +177,8 @@ class OwnersDetail extends React.Component {
     this.setState({ showEditDialog: false });
   };
 
-  saveEdit = (owner) => {
-    // This just ensures that the normalized data doesn't mess up the PUT call
-    Api.updateOwner({ ...owner, contacts: null }).finally(() => {
-      Log.ownerModified(this.props.owner);
-      this.closeEditDialog();
-    });
+  ownerSaved = () => {
+    Log.ownerModified(this.props.owner);
   };
 
   openContactDialog = (contactId) => {
@@ -201,7 +204,6 @@ class OwnersDetail extends React.Component {
   };
 
   deleteContact = (contact) => {
-    store.dispatch({ type: Action.DELETE_OWNER_CONTACT, projectId: this.props.params.ownerId, contactId: contact.id });
     Api.deleteContact(contact).then(() => {
       Log.ownerContactDeleted(this.props.owner, contact).then(() => {
         // In addition to refreshing the contacts, we need to update the owner
@@ -232,17 +234,14 @@ class OwnersDetail extends React.Component {
     this.setState({ showEquipmentDialog: false });
   };
 
-  saveNewEquipment = (equipment) => {
-    return Api.addEquipment(equipment).then(() => {
-      // Open it up
-      Log.ownerEquipmentAdded(this.props.owner, this.props.equipment);
-      Log.equipmentAdded(this.props.equipment);
-      this.props.router.push({
-        pathname: `${Constant.EQUIPMENT_PATHNAME}/${this.props.equipment.id}`,
-        state: { returnUrl: `${Constant.OWNERS_PATHNAME}/${this.props.owner.id}` },
-      });
-
-      return null;
+  equipmentSaved = (equipment) => {
+    this.closeEquipmentDialog();
+    Log.ownerEquipmentAdded(this.props.owner, equipment);
+    Log.equipmentAdded(equipment);
+    // Open it up
+    this.props.router.push({
+      pathname: `${Constant.EQUIPMENT_PATHNAME}/${equipment.id}`,
+      state: { returnUrl: `${Constant.OWNERS_PATHNAME}/${this.props.owner.id}` },
     });
   };
 
@@ -251,22 +250,29 @@ class OwnersDetail extends React.Component {
     var owner = this.props.owner;
 
     // Update the last verified date on all pieces of equipment
-    var equipmentList =_.map(owner.equipmentList, equipment => {
-      return {...equipment, ...{
+    var equipmentList =_.map(owner.equipmentList, (equipment) => {
+      return {
+        ...equipment,
         lastVerifiedDate: toZuluTime(now),
         owner: { id: owner.id },
-      }};
+      };
     });
 
-    Api.updateOwnerEquipment(owner, equipmentList);
+    Api.updateOwnerEquipment(owner, equipmentList).then(() => {
+      this.fetch();
+    });
   };
 
   equipmentVerify = (equipment) => {
-    Api.updateEquipment({...equipment, ...{
+    const updatedEquipment = {
+      ...equipment,
       lastVerifiedDate: toZuluTime(today()),
       owner: { id: this.props.owner.id },
-    }}).then(() => {
-      Log.ownerEquipmentVerified(this.props.owner, equipment);
+    };
+
+    Log.ownerEquipmentVerified(this.props.owner, updatedEquipment);
+
+    Api.updateEquipment(updatedEquipment).then(() => {
       this.fetch();
     });
   };
@@ -279,12 +285,8 @@ class OwnersDetail extends React.Component {
     this.setState({ showPolicyDialog: false });
   };
 
-  savePolicyEdit = (owner) => {
-    // This just ensures that the normalized data doesn't mess up the PUT call
-    Api.updateOwner({ ...owner, contacts: null }).finally(() => {
-      Log.ownerModifiedPolicy(this.props.owner);
-      this.closePolicyDialog();
-    });
+  policySaved = () => {
+    Log.ownerModifiedPolicy(this.props.owner);
   };
 
   openPolicyDocumentsDialog = () => {
@@ -308,51 +310,49 @@ class OwnersDetail extends React.Component {
     this.setState({ showNotesDialog: false });
   };
 
-  getStatuses = () => {
-    return _.pull([
+  render() {
+    const { loading, loadingDocuments } = this.state;
+    var owner = this.props.owner || {};
+
+    var isApproved = owner.status === Constant.OWNER_STATUS_CODE_APPROVED;
+    var restrictEquipmentAddTooltip = 'Equipment can only be added to an approved owner.';
+    var restrictEquipmentVerifyTooltip = 'Equipment can only be verified for an approved owner.';
+
+    const statuses = _.pull([
       Constant.OWNER_STATUS_CODE_APPROVED,
       Constant.OWNER_STATUS_CODE_PENDING,
       Constant.OWNER_STATUS_CODE_ARCHIVED,
-    ], this.props.owner.status);
-  };
-
-  render() {
-    var owner = this.props.owner;
-    var isApproved = this.props.owner.status === Constant.OWNER_STATUS_CODE_APPROVED;
-    var restrictEquipmentAddTooltip = 'Equipment can only be added to an approved owner.';
-    var restrictEquipmentVerifyTooltip = 'Equipment can only be verified for an approved owner.';
+    ], owner.status);
 
     return (
       <div id="owners-detail">
         <div>
-          {(() => {
-            if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+          <Row id="owners-top" className="top-container">
+            <Col sm={9}>
+              <StatusDropdown
+                id="owner-status-dropdown"
+                status={loading ? 'Loading ...' : owner.status}
+                statuses={statuses}
+                disabled={owner.activeRentalRequest || loading}
+                disabledTooltip={OWNER_WITH_EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
+                onSelect={this.updateStatusState}/>
+              <Button id="owner-notes-button" title="Notes" disabled={loading} onClick={ this.openNotesDialog }>
+                Notes ({ loading ? ' ' : owner.notes.length })
+              </Button>
+              <Button id="owner-documents-button" title="Documents" disabled={loading} onClick={ this.showDocuments }>
+                Documents ({ loadingDocuments ? ' ' :  Object.keys(this.props.documents).length })
+              </Button>
+              <Label className={ owner.isMaintenanceContractor ? 'ml-5' : 'hide' }>Maintenance Contractor</Label>
+            </Col>
+            <Col sm={3}>
+              <div className="pull-right">
+                <PrintButton disabled={loading}/>
+                <ReturnButton/>
+              </div>
+            </Col>
+          </Row>
 
-            return (
-              <Row id="owners-top" className="top-container">
-                <Col sm={9}>
-                  <StatusDropdown
-                    id="owner-status-dropdown"
-                    status={owner.status}
-                    statuses={this.getStatuses()}
-                    disabled={owner.activeRentalRequest}
-                    disabledTooltip={OWNER_WITH_EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
-                    onSelect={this.updateStatusState}/>
-                  <Button className="ml-5 mr-5" title="Notes" onClick={ this.openNotesDialog }>Notes ({ this.props.notes.length })</Button>
-                  <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
-                  <Label className={ owner.isMaintenanceContractor ? 'ml-5' : 'hide' }>Maintenance Contractor</Label>
-                </Col>
-                <Col sm={3}>
-                  <div className="pull-right">
-                    <PrintButton/>
-                    <ReturnButton/>
-                  </div>
-                </Col>
-              </Row>
-            );
-          })()}
-
-          <PageHeader id="owners-header" title="Company" subTitle={ owner.organizationName }/>
+          <PageHeader id="owners-header" title="Company" subTitle={loading ? '...' : owner.organizationName }/>
 
           <Row>
             <Col md={12}>
@@ -360,11 +360,11 @@ class OwnersDetail extends React.Component {
                 <SubHeader
                   title="Owner Information"
                   editButtonTitle="Edit Owner"
-                  editButtonDisabled={owner.activeRentalRequest}
-                  editButtonDisabledTooltip={OWNER_WITH_EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
+                  editButtonDisabled={loading || owner.activeRentalRequest}
+                  editButtonDisabledTooltip={!loading && OWNER_WITH_EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
                   onEditClicked={ this.openEditDialog }/>
                 {(() => {
-                  if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+                  if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
                   return <div id="owners-data">
                     <Row className="equal-height">
@@ -405,9 +405,9 @@ class OwnersDetail extends React.Component {
             </Col>
             <Col md={12}>
               <Well>
-                <SubHeader title="Policy" editButtonTitle="Edit Policy Information" onEditClicked={ this.openPolicyDialog }/>
+                <SubHeader title="Policy" editButtonTitle="Edit Policy Information" editButtonDisabled={loading} onEditClicked={ this.openPolicyDialog }/>
                 {(() => {
-                  if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+                  if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
                   return <Row id="owners-policy" className="equal-height">
                     <Col lg={4} md={6} sm={12} xs={12}>
@@ -441,7 +441,7 @@ class OwnersDetail extends React.Component {
               <Well>
                 <SubHeader title="Contacts"/>
                 {(() => {
-                  if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; }
+                  if (loading ) { return <div className="spinner-container"><Spinner/></div>; }
 
                   var addContactButton = <Button title="Add Contact" onClick={ this.openContactDialog.bind(this, 0) } bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
 
@@ -479,10 +479,10 @@ class OwnersDetail extends React.Component {
                           <td style={{ textAlign: 'right' }}>
                             <ButtonGroup>
                               {contact.canDelete && !contact.isPrimary && (
-                                <DeleteButton name="Contact" disabled={!contact.id} onConfirm={ this.deleteContact.bind(this, contact) }/>
+                                <DeleteButton name="Contact" onConfirm={ this.deleteContact.bind(this, contact) }/>
                               )}
                               {contact.canEdit && (
-                                <EditButton name="Contact" disabled={!contact.id} onClick={ this.openContactDialog.bind(this, contact.id) } />
+                                <EditButton name="Contact" onClick={ this.openContactDialog.bind(this, contact.id) } />
                               )}
                             </ButtonGroup>
                           </td>
@@ -493,7 +493,7 @@ class OwnersDetail extends React.Component {
                 })()}
               </Well>
               <Well>
-                <SubHeader title={`Equipment (${ owner.numberOfEquipment })`}>
+                <SubHeader title={`Equipment (${ loading ? ' ' : owner.numberOfEquipment })`}>
                   <CheckboxControl id="showAttachments" className="mr-5" inline updateState={this.updateState}><small>Show Attachments</small></CheckboxControl>
                   <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.equipmentVerifyAll }></Confirm> }>
                     <TooltipButton disabled={!isApproved} disabledTooltip={restrictEquipmentVerifyTooltip} className="mr-5" title="Verify All Equipment" bsSize="small">Verify All</TooltipButton>
@@ -501,7 +501,7 @@ class OwnersDetail extends React.Component {
                   <TooltipButton disabled={ !isApproved } disabledTooltip={ restrictEquipmentAddTooltip } title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></TooltipButton>
                 </SubHeader>
                 {(() => {
-                  if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+                  if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
                   if (!owner.equipmentList || owner.equipmentList.length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
 
@@ -560,52 +560,64 @@ class OwnersDetail extends React.Component {
               </Well>
               <Well>
                 <SubHeader title="History"/>
-                { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ !this.state.loading } /> }
+                { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ !loading } /> }
               </Well>
             </Col>
           </Row>
         </div>
         { this.state.showChangeStatusDialog && (
           <OwnerChangeStatusDialog
-            show={ this.state.showChangeStatusDialog}
-            status={ this.state.status }
-            owner={ owner }
-            onClose={ this.closeChangeStatusDialog }
-            onStatusChanged={ this.onStatusChanged }/>
+            show={this.state.showChangeStatusDialog}
+            owner={owner}
+            status={this.state.status}
+            onClose={this.closeChangeStatusDialog}
+            onStatusChanged={this.onStatusChanged}/>
         )}
         { this.state.showNotesDialog && (
           <NotesDialog
             show={this.state.showNotesDialog}
-            id={this.props.params.ownerId}
-            notes={this.props.notes}
+            id={this.props.ownerId}
+            notes={owner.notes}
             getNotes={Api.getOwnerNotes}
             saveNote={Api.addOwnerNote}
             onClose={this.closeNotesDialog}/>
         )}
         { this.state.showDocumentsDialog && (
           <DocumentsListDialog
-            show={ owner && this.state.showDocumentsDialog }
-            parent={ owner }
-            onClose={ this.closeDocumentsDialog }/>
+            show={this.state.showDocumentsDialog}
+            parent={owner}
+            onClose={this.closeDocumentsDialog}/>
         )}
         { this.state.showEditDialog && (
-          <OwnersEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
+          <OwnersEditDialog
+            show={this.state.showEditDialog}
+            owner={owner}
+            onSave={this.ownerSaved}
+            onClose={this.closeEditDialog}/>
         )}
         { this.state.showEquipmentDialog && (
-          <EquipmentAddDialog show={ this.state.showEquipmentDialog } onSave={ this.saveNewEquipment } onClose={ this.closeEquipmentDialog } />
+          <EquipmentAddDialog
+            show={this.state.showEquipmentDialog}
+            owner={owner}
+            onSave={this.equipmentSaved}
+            onClose={this.closeEquipmentDialog}/>
         )}
         { this.state.showPolicyDialog && (
-          <OwnersPolicyEditDialog show={ this.state.showPolicyDialog } onSave={ this.savePolicyEdit } onClose={ this.closePolicyDialog } />
+          <OwnersPolicyEditDialog
+            show={this.state.showPolicyDialog}
+            owner={owner}
+            onSave={this.policySaved}
+            onClose={this.closePolicyDialog}/>
         )}
         { this.state.showContactDialog && (
           <ContactsEditDialog
-            show={ this.state.showContactDialog }
+            show={this.state.showContactDialog}
+            contact={this.state.contact}
+            parent={owner}
             saveContact={Api.saveOwnerContact}
-            contact={ this.state.contact }
-            parent={ owner }
-            onSave={ this.contactSaved }
-            onClose={ this.closeContactDialog }
-            defaultPrimary={this.props.owner.contacts.length === 0}/>
+            defaultPrimary={owner.contacts.length === 0}
+            onSave={this.contactSaved}
+            onClose={this.closeContactDialog}/>
         )}
       </div>
     );
@@ -615,10 +627,8 @@ class OwnersDetail extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    owner: state.models.owner,
-    notes: state.models.ownerNotes,
-    equipment: state.models.equipment,
-    equipmentAttachments: state.models.equipmentAttachments,
+    owner: activeOwnerSelector(state),
+    ownerId: activeOwnerIdSelector(state),
     documents: state.models.documents,
     uiContacts: state.ui.ownerContacts,
     uiEquipment: state.ui.ownerEquipment,

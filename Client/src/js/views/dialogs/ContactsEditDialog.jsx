@@ -159,7 +159,7 @@ class ContactsEditDialog extends React.Component {
           this.props.onSave(savedContact);
         });
 
-        if (!isNew) { // can be closed right away
+        if (!isNew) { // can be closed right away if it isn't new
           this.props.onClose();
         }
       }
