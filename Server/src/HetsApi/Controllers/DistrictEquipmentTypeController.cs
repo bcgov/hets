@@ -107,6 +107,35 @@ namespace HetsApi.Controllers
         }
 
         /// <summary>
+        /// Get all district equipment types for this district that are associated with a rotation list 
+        /// </summary>
+        [HttpGet]
+        [Route("hires")]
+        [SwaggerOperation("DistrictEquipmentTypeGetHires")]
+        [SwaggerResponse(200, type: typeof(List<DistrictEquipmentTypeHire>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult DistrictEquipmentTypeGetHires()
+        {
+            // get users district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, HttpContext);
+
+            IQueryable<DistrictEquipmentTypeHire> equipmentTypes = _context.HetRentalRequestRotationList.AsNoTracking()
+                .Include(x => x.RentalRequest)
+                    .ThenInclude(y => y.Project)
+                .Include(x => x.Equipment)
+                    .ThenInclude(y => y.DistrictEquipmentType)
+                .Where(x => x.RentalRequest.LocalArea.ServiceArea.DistrictId.Equals(districtId))
+                .GroupBy(x => x.Equipment.DistrictEquipmentType, (e, rotationLists) => new DistrictEquipmentTypeHire
+                {
+                    DistrictEquipmentTypeId = e.DistrictEquipmentTypeId,
+                    DistrictEquipmentName = e.DistrictEquipmentName,
+                    ProjectIds = rotationLists.Select(y => y.RentalRequest.ProjectId).Distinct().ToList(),
+                });
+
+            return new ObjectResult(new HetsResponse(equipmentTypes));
+        }
+
+        /// <summary>
         /// Delete district equipment type
         /// </summary>
         /// <param name="id">id of DistrictEquipmentType to delete</param>

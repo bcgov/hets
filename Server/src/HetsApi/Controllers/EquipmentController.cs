@@ -133,7 +133,8 @@ namespace HetsApi.Controllers
                     Id = e.EquipmentId,
                     OwnerId = e.OwnerId,
                     LocalAreaId = e.LocalAreaId,
-                    ProjectIds = agreements.Select(y => y.ProjectId).ToList()
+                    ProjectIds = agreements.Select(y => y.ProjectId).Distinct().ToList(),
+                    DistrictEquipmentTypeId = e.DistrictEquipmentTypeId ?? 0,
                 });
 
             return new ObjectResult(new HetsResponse(equipment));
@@ -165,7 +166,8 @@ namespace HetsApi.Controllers
                     EquipmentCode = e.EquipmentCode,
                     Id = e.EquipmentId,
                     OwnerId = e.OwnerId,
-                    ProjectIds = rotationLists.Select(y => y.RentalRequest.ProjectId).ToList(),
+                    ProjectIds = rotationLists.Select(y => y.RentalRequest.ProjectId).Distinct().ToList(),
+                    DistrictEquipmentTypeId = e.DistrictEquipmentTypeId ?? 0,
                 });
 
             return new ObjectResult(new HetsResponse(equipment));

@@ -330,4 +330,11 @@ namespace HetsData.Helpers
             return name.Substring(0, start).Trim();
         }
     }
+
+    public class DistrictEquipmentTypeHire
+    {
+        public int DistrictEquipmentTypeId { get; set; }
+        public string DistrictEquipmentName { get; set; }
+        public List<int?> ProjectIds { get; set; }
+    }
 }
