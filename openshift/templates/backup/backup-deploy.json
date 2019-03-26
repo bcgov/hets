@@ -32,6 +32,32 @@
         }
       }
     },
+	{
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata":
+      {
+        "name": "${PERSISTENT_VOLUME_NAME}",
+        "labels":
+        {
+          "app": "${NAME}-persistent",
+          "template": "${NAME}-persistent-template"
+        }
+      },
+      "spec":
+      {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources":
+        {
+          "requests":
+          {
+            "storage": "${PERSISTENT_VOLUME_SIZE}"
+          }
+        }
+      }
+    },
     {
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
@@ -109,6 +135,10 @@
                   {
                     "name": "BACKUP_DIR",
                     "value": "${BACKUP_DIR}"
+                  },
+				  {
+                    "name": "RESTORE_DIR",
+                    "value": "${RESTORE_DIR}"
                   },
                   {
                     "name": "NUM_BACKUPS",
@@ -231,6 +261,13 @@
       "description": "The name of the root backup directory",
       "required": true,
       "value": "/backups/"
+    },
+    {
+      "name": "RESTORE_DIR",
+      "displayName": "The directory used for restoring the HETS database",
+      "description": "The name of the restore directory",
+      "required": true,
+      "value": "/restore/"
     },
     {
       "name": "NUM_BACKUPS",
