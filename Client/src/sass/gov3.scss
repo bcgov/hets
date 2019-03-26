@@ -1,14 +1,11 @@
-@font-face {
-	font-family: 'Myriad-Pro';
-	src: '../fonts/MyriadWebPro.ttf';
-}
+@import "./variables.scss";
 
 html, body {
 	height: 100%;
 }
 
 body {
-	font-family: Myriad-Pro, Calibri, Arial, 'sans serif';
+	font-family: Calibri, Arial, 'sans serif';
 	background-color: #f1f1f1;
 	color: #494949;
 	font-size: 13px;
@@ -64,6 +61,14 @@ th {
 
 .table-responsive {
 	border: none;
+}
+
+.modal-title {
+	font-weight: bold;
+}
+
+.nowrap {
+	white-space: nowrap;
 }
 
 #header {
@@ -451,6 +456,7 @@ ul.inline li a:link, nav ul.inline li a:visited {
 	background-color: transparent;
 	border-top: 2px solid #fcba19;
 	position: relative;
+	height: $footer-height;
 }
 
 #footer.expanded {
@@ -544,7 +550,7 @@ ul.inline li a:link, nav ul.inline li a:visited {
 }
 
 .template {
-	min-height: 100%;
+	min-height: calc(100% - #{$footer-height});
 	padding-bottom: 80px;
 	background-color: #fff;
 	font-size: 14px;

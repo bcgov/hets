@@ -3,13 +3,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Grid, Row, Col } from 'react-bootstrap';
-import { Form, FormGroup, HelpBlock, ControlLabel, FormControl } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel, FormControl } from 'react-bootstrap';
 
 import Moment from 'moment';
 
 import DateControl from '../../components/DateControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isValidDate } from '../../utils/date';
 import { isBlank } from '../../utils/string';
@@ -37,10 +38,6 @@ var RentalRequestsEditDialog = React.createClass({
       expectedStartDateError: '',
       expectedEndDateError: '',
     };
-  },
-
-  componentDidMount() {
-    this.input && this.input.focus();
   },
 
   updateState(state, callback) {
@@ -123,9 +120,7 @@ var RentalRequestsEditDialog = React.createClass({
 
     return <EditDialog id="rental-requests-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={
-        <strong>Rental Request</strong>
-      }>
+      title={<strong>Rental Request</strong>}>
       {(() => {
         return <Form>
           <Grid fluid>
@@ -147,7 +142,7 @@ var RentalRequestsEditDialog = React.createClass({
               <Col md={12}>
                 <FormGroup controlId="equipmentCount" validationState={ this.state.equipmentCountError ? 'error' : null }>
                   <ControlLabel>Quantity <sup>*</sup></ControlLabel>
-                  <FormInputControl type="number" min={0} defaultValue={ this.state.equipmentCount } readOnly={ isReadOnly } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
+                  <FormInputControl type="number" min={0} defaultValue={ this.state.equipmentCount } readOnly={ isReadOnly } updateState={ this.updateState } autoFocus/>
                   <HelpBlock>{ this.state.equipmentCountError }</HelpBlock>
                 </FormGroup>
               </Col>

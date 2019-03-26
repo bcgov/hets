@@ -18,6 +18,7 @@ namespace HetsData.Helpers
         public int? Requests { get; set; }
         public string Status { get; set; }
         public string ProvincialProjectNumber { get; set; }
+        public string FiscalYear { get; set; }
     }
 
     public class ProjectLiteList
@@ -205,7 +206,8 @@ namespace HetsData.Helpers
                 projectLite.Requests = project.HetRentalRequest?.Count;
                 projectLite.Hires = project.HetRentalAgreement?.Count;
                 projectLite.ProvincialProjectNumber = project.ProvincialProjectNumber;
-            }
+                projectLite.FiscalYear = project.FiscalYear;
+            }            
 
             return projectLite;
         }

@@ -1,13 +1,12 @@
 import React from 'react';
+import { Grid, Row, Col, FormGroup, ControlLabel, Checkbox } from 'react-bootstrap';
 
-import { connect } from 'react-redux';
-
-import { Grid, Row, Col, Form, FormGroup, ControlLabel, Checkbox } from 'react-bootstrap';
+import * as Constant from '../../constants';
 
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
-import * as Constant from '../../constants';
 
 var RentalAgreementOvertimeNotesDialog = React.createClass({
   propTypes: {
@@ -55,9 +54,7 @@ var RentalAgreementOvertimeNotesDialog = React.createClass({
   render() {
     return <EditDialog id="rental-agreements-overtime-notes-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={
-        <strong>Overtime Rates and Notes/Special Instructions</strong>
-      }>
+      title={<strong>Overtime Rates and Notes/Special Instructions</strong>}>
       {(() => {
         var rates = this.state.overtimeRates;
         var overtimeCheckboxes = <div>
@@ -94,10 +91,4 @@ var RentalAgreementOvertimeNotesDialog = React.createClass({
   },
 });
 
-function mapStateToProps(state) {
-  return {
-    rentalAgreement: state.models.rentalAgreement,
-  };
-}
-
-export default connect(mapStateToProps)(RentalAgreementOvertimeNotesDialog);
+export default RentalAgreementOvertimeNotesDialog;

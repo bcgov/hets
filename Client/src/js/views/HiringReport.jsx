@@ -1,11 +1,7 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Link } from 'react-router';
-
-import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form  } from 'react-bootstrap';
-
+import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Form  } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Action from '../actionTypes';
@@ -17,7 +13,7 @@ import Favourites from '../components/Favourites.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import TooltipButton from '../components/TooltipButton.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 import { formatDateTime } from '../utils/date';
 
@@ -36,7 +32,6 @@ var HiringReport = React.createClass({
 
   getInitialState() {
     return {
-      loaded: false,
       search: {
         projectIds: this.props.search.projectIds || [],
         localAreaIds: this.props.search.localAreaIds || [],
@@ -48,6 +43,20 @@ var HiringReport = React.createClass({
         sortDesc: this.props.ui.sortDesc === true,
       },
     };
+  },
+
+  componentDidMount() {
+    Api.getProjectsCurrentFiscal();
+    Api.getEquipmentHires();
+    Api.getOwnersLiteHires();
+
+    // If this is the first load, then look for a default favourite
+    if (_.isEmpty(this.props.search)) {
+      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      if (defaultFavourite) {
+        this.loadFavourite(defaultFavourite);
+      }
+    }
   },
 
   buildSearchParams() {
@@ -70,26 +79,6 @@ var HiringReport = React.createClass({
     }
 
     return searchParams;
-  },
-
-  componentDidMount() {
-    var projectsPromise = Api.getProjectsCurrentFiscal();
-    var ownersPromise = Api.getOwnersLiteHires();
-    var equipmentPromise = Api.getEquipmentLiteHires();
-    var favouritesPromise = Api.getFavourites('hiringReport');
-
-    return Promise.all([ projectsPromise, ownersPromise, equipmentPromise, favouritesPromise]).then(() => {
-      this.setState({ loaded: true });
-
-      // If this is the first load, then look for a default favourite
-      if (_.isEmpty(this.props.search)) {
-        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
-        if (defaultFavourite) {
-          this.loadFavourite(defaultFavourite);
-          return;
-        }
-      }
-    });
   },
 
   fetch() {
@@ -131,10 +120,6 @@ var HiringReport = React.createClass({
 
   loadFavourite(favourite) {
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
-  },
-
-  print() {
-    window.print();
   },
 
   renderResults() {
@@ -236,14 +221,14 @@ var HiringReport = React.createClass({
   },
 
   getFilteredOwners() {
-    return _.chain(this.props.owners)
+    return _.chain(this.props.owners.data)
       .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesLocalAreaFilter(x.localAreaId))
       .sortBy('organizationName')
       .value();
   },
 
   getFilteredEquipment() {
-    return _.chain(this.props.equipment)
+    return _.chain(this.props.equipment.data)
       .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesOwnerFilter(x.ownerId))
       .sortBy('equipmentCode')
       .value();
@@ -255,7 +240,7 @@ var HiringReport = React.createClass({
       resultCount = '(' + Object.keys(this.props.hiringResponses.data).length + ')';
     }
 
-    var projects = _.sortBy(this.props.projects, 'name');
+    var projects = _.sortBy(this.props.projects.data, 'name');
     var localAreas = _.sortBy(this.props.localAreas, 'name');
     var owners = this.getFilteredOwners();
     var equipment = this.getFilteredEquipment();
@@ -263,37 +248,61 @@ var HiringReport = React.createClass({
     return <div id="hiring-report">
       <PageHeader>Hiring Report - Not Hired / Force Hire { resultCount }
         <ButtonGroup id="hiring-report-buttons">
-          <TooltipButton onClick={ this.print } disabled={ !this.props.hiringResponses.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
-            <Glyphicon glyph="print" title="Print" />
-          </TooltipButton>
+          <PrintButton disabled={!this.props.hiringResponses.loaded}/>
         </ButtonGroup>
       </PageHeader>
       <Well id="hiring-report-bar" bsSize="small" className="clearfix">
-        <Row>
-          <Form onSubmit={ this.search }>
+        <Form onSubmit={ this.search }>
+          <Row>
             <Col xs={9} sm={10}>
               <ButtonToolbar id="hiring-report-filters">
-                <MultiDropdown id="projectIds" placeholder="Projects" fieldName="label"
-                  items={ projects } selectedIds={ this.state.search.projectIds } updateState={ this.updateProjectSearchState } showMaxItems={ 2 } />
-                <MultiDropdown id="localAreaIds" placeholder="Local Areas"
-                  items={ localAreas } selectedIds={ this.state.search.localAreaIds } updateState={ this.updateLocalAreaSearchState } showMaxItems={ 2 } />
-                <MultiDropdown id="ownerIds" placeholder="Companies" fieldName="organizationName"
-                  items={ owners } selectedIds={ this.state.search.ownerIds } updateState={ this.updateOwnerSearchState } showMaxItems={ 2 } />
-                <MultiDropdown id="equipmentIds" placeholder="Equipment" fieldName="equipmentCode"
-                  items={ equipment } selectedIds={ this.state.search.equipmentIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                <MultiDropdown
+                  id="projectIds"
+                  disabled={!this.props.projects.loaded}
+                  placeholder="Projects"
+                  fieldName="label"
+                  items={projects}
+                  selectedIds={this.state.search.projectIds}
+                  updateState={this.updateProjectSearchState}
+                  showMaxItems={2}/>
+                <MultiDropdown
+                  id="localAreaIds"
+                  placeholder="Local Areas"
+                  items={localAreas}
+                  selectedIds={this.state.search.localAreaIds}
+                  updateState={this.updateLocalAreaSearchState}
+                  showMaxItems={2}/>
+                <MultiDropdown
+                  id="ownerIds"
+                  disabled={!this.props.owners.loaded}
+                  placeholder="Companies"
+                  fieldName="organizationName"
+                  items={owners}
+                  selectedIds={this.state.search.ownerIds}
+                  updateState={this.updateOwnerSearchState}
+                  showMaxItems={2}/>
+                <MultiDropdown
+                  id="equipmentIds"
+                  disabled={!this.props.equipment.loaded}
+                  placeholder="Equipment"
+                  fieldName="equipmentCode"
+                  items={equipment}
+                  selectedIds={this.state.search.equipmentIds}
+                  updateState={this.updateSearchState}
+                  showMaxItems={2}/>
                 <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
                 <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
               </ButtonToolbar>
             </Col>
-          </Form>
-          <Col xs={3} sm={2}>
-            <Favourites id="hiring-report-faves-dropdown" type="hiringReport" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
-          </Col>
-        </Row>
+            <Col xs={3} sm={2}>
+              <Favourites id="hiring-report-faves-dropdown" type="hiringReport" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+            </Col>
+          </Row>
+        </Form>
       </Well>
 
       {(() => {
-        if (this.props.hiringResponses.loading || !this.state.loaded) {
+        if (this.props.hiringResponses.loading) {
           return <div style={{ textAlign: 'center' }}><Spinner/></div>;
         }
 
@@ -310,10 +319,10 @@ function mapStateToProps(state) {
   return {
     projects: state.lookups.projectsCurrentFiscal,
     localAreas: state.lookups.localAreas,
-    owners: state.lookups.ownersLite,
-    equipment: state.lookups.equipmentLite,
+    owners: state.lookups.owners.hires,
+    equipment: state.lookups.equipment.hires,
     hiringResponses: state.models.hiringResponses,
-    favourites: state.models.favourites,
+    favourites: state.models.favourites.hiringReport,
     search: state.search.hiringResponses,
     ui: state.ui.hiringResponses,
   };

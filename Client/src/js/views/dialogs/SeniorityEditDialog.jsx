@@ -3,11 +3,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Grid, Row, Col } from 'react-bootstrap';
-import { FormControl, Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormControl, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import DateControl from '../../components/DateControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import { daysFromToday, isValidDate, toZuluTime, today } from '../../utils/date';
 import { isBlank, formatHours } from '../../utils/string';
@@ -130,9 +131,7 @@ var SeniorityEditDialog = React.createClass({
   render() {
     return <EditDialog id="seniority-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title= {
-        <strong>Equipment Id: <small>{ this.props.equipment.equipmentCode }</small></strong>
-      }>
+      title={<strong>Equipment Id: <small>{ this.props.equipment.equipmentCode }</small></strong>}>
       {(() => {
         return <Form>
           <Grid fluid cols={6}>
@@ -148,7 +147,7 @@ var SeniorityEditDialog = React.createClass({
               <Col>
                 <FormGroup controlId="serviceHoursLastYear" validationState={ this.state.serviceHoursLastYearError ? 'error' : null }>
                   <ControlLabel>Hours { this.props.equipment.yearMinus1 } <sup>*</sup></ControlLabel>
-                  <FormInputControl type="float" value={ this.state.serviceHoursLastYear } onChange={ this.serviceHoursChanged } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
+                  <FormInputControl type="float" value={ this.state.serviceHoursLastYear } onChange={ this.serviceHoursChanged } updateState={ this.updateState } autoFocus/>
                   <HelpBlock>{ this.state.serviceHoursLastYearError }</HelpBlock>
                 </FormGroup>
               </Col>

@@ -20,7 +20,6 @@ var TopNav = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
     showWorkingIndicator: React.PropTypes.bool,
-    requestError: React.PropTypes.object,
     showNav: React.PropTypes.bool,
     currentUserDistricts: React.PropTypes.object,
     rolloverStatus: React.PropTypes.object,
@@ -53,7 +52,7 @@ var TopNav = React.createClass({
   },
 
   render() {
-    var userDistricts = this.props.currentUserDistricts.data.map(district => {
+    var userDistricts = _.map(this.props.currentUserDistricts.data, district => {
       return { ...district, districtName: district.district.name, id: district.district.id };
     });
 
@@ -75,6 +74,7 @@ var TopNav = React.createClass({
             </a>
           </div>
           <h1 id="banner">MOTI Hired Equipment Tracking System</h1>
+          <div id="working-indicator" hidden={ !this.props.showWorkingIndicator }>Working <Spinner/></div>
         </div>
         <Navbar id="top-nav" className={ environmentClass }>
           { this.props.showNav &&
@@ -98,6 +98,9 @@ var TopNav = React.createClass({
                 <NavItem>Time Entry</NavItem>
               </LinkContainer>
               <NavDropdown id="reports-dropdown" title="Reports" disabled={ navigationDisabled }>
+                <LinkContainer to={{ pathname: `/${ Constant.AIT_REPORT_PATHNAME }` }} active={ currentPathStartsWith(Constant.AIT_REPORT_PATHNAME) }>
+                  <MenuItem>AIT report</MenuItem>
+                </LinkContainer>
                 <LinkContainer to={{ pathname: `/${ Constant.SENIORITY_LIST_PATHNAME }` }} active={ currentPathStartsWith(Constant.SENIORITY_LIST_PATHNAME) }>
                   <MenuItem>Seniority List</MenuItem>
                 </LinkContainer>
@@ -184,17 +187,6 @@ var TopNav = React.createClass({
               </Dropdown>
             </div>
           }
-          <OverlayTrigger trigger="click" placement="bottom" rootClose overlay={
-            <Popover id="error-message" title={ this.props.requestError.status + ' – API Error' }>
-              <p><small>{ this.props.requestError.message }</small></p>
-            </Popover>
-          }>
-            <Button id="error-indicator" className={ this.props.requestError.message ? '' : 'hide' } bsStyle="danger" bsSize="xsmall">
-              Error
-              <Glyphicon glyph="exclamation-sign" />
-            </Button>
-          </OverlayTrigger>
-          <div id="working-indicator" hidden={ !this.props.showWorkingIndicator }>Working <Spinner/></div>
         </Navbar>
       </nav>
     </div>;
@@ -210,7 +202,6 @@ function mapStateToProps(state) {
   return {
     currentUser: state.user,
     showWorkingIndicator: state.ui.requests.waiting,
-    requestError: state.ui.requests.error,
     currentUserDistricts: state.models.currentUserDistricts,
     rolloverStatus: state.lookups.rolloverStatus,
   };

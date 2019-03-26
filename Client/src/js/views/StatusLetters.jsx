@@ -1,40 +1,58 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
-import { Well, PageHeader, Row, Col, ButtonToolbar, Button } from 'react-bootstrap';
-
+import { Well, PageHeader, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../api';
 import * as Constant from '../constants';
 
 import MultiDropdown from '../components/MultiDropdown.jsx';
+import SortTable from '../components/SortTable.jsx';
+import DeleteButton from '../components/DeleteButton.jsx';
+import Spinner from '../components/Spinner.jsx';
 
 import { formatDateTimeUTCToLocal } from '../utils/date';
+import { sortDir } from '../utils/array';
+
 
 var StatusLetters = React.createClass({
   propTypes: {
     localAreas: React.PropTypes.object,
     owners: React.PropTypes.object,
+    batchReports: React.PropTypes.object,
   },
 
   getInitialState() {
     return {
-      loaded: false,
+      loading: true,
       localAreaIds: [],
       ownerIds: [],
+      ui : {
+        sortField: 'startDate',
+        sortDesc: false,
+      },
     };
   },
 
   componentDidMount() {
-    Api.getOwnersLite().then(() => {
-      this.setState({ loaded: true });
-    });
+    Api.getOwnersLite();
+    this.fetch();
+  },
+
+  fetch() {
+    this.setState({ loading: true });
+    return Api.getBatchReports().then(() => this.setState({ loading: false }));
   },
 
   updateState(state, callback) {
     this.setState(state, () => {
+      if (callback) { callback(); }
+    });
+  },
+
+  updateUIState(state, callback) {
+    this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
+      // store.dispatch({ type: Action.UPDATE_HISTORY_UI, history: this.state.ui });
       if (callback) { callback(); }
     });
   },
@@ -65,10 +83,10 @@ var StatusLetters = React.createClass({
   },
 
   getStatusLetters() {
-    var promise = Api.getStatusLettersPdf({ localAreas: this.state.localAreaIds, owners: this.state.ownerIds });
-    var filename = 'StatusLetters-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.pdf';
-
-    this.downloadPdf(promise, filename);
+    this.setState({ loading: true });
+    Api.scheduleStatusLettersPdf({ localAreas: this.state.localAreaIds, owners: this.state.ownerIds }).then(() => {
+      return this.fetch();
+    });
   },
 
   getMailingLabels() {
@@ -76,6 +94,16 @@ var StatusLetters = React.createClass({
     var filename = 'MailingLabels-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.pdf';
 
     this.downloadPdf(promise, filename);
+  },
+
+  downloadStatusLetterPdf(reportId) {
+    var promise = Api.getStatusLettersPdf(reportId);
+    var filename = 'StatusLetters-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.pdf';
+    this.downloadPdf(promise, filename);
+  },
+
+  deleteBatchReport(reportId) {
+    Api.deleteBatchReport(reportId);
   },
 
   matchesLocalAreaFilter(localAreaId) {
@@ -97,40 +125,102 @@ var StatusLetters = React.createClass({
   },
 
   getFilteredOwners() {
-    return _.chain(this.props.owners)
+    return _.chain(this.props.owners.data)
       .filter(x => this.matchesLocalAreaFilter(x.localAreaId))
       .sortBy('organizationName')
       .value();
+  },
+
+  renderBatchReports() {
+    const { loading } = this.state;
+    const { batchReports } = this.props;
+
+    if (!batchReports.loaded) {
+      return <div style={{ textAlign: 'center' }}><Spinner/></div>;
+    }
+
+    var reports = _.orderBy(batchReports.data, [this.state.ui.sortField], sortDir(this.state.ui.sortDesc));
+
+    var headers = [
+      { field: 'startDate',           title: 'Time Started' },
+      { field: 'complete',            title: 'Completed', style: { textAlign: 'center' }},
+      { field: 'showMore',            title: '', style: { textAlign: 'right' },
+        node: (
+          <Button bsSize="xsmall" disabled={loading} onClick={ this.fetch }>
+            <Glyphicon glyph="refresh" title="Refresh reports" />
+          </Button>
+        ),
+      },
+    ];
+
+    return (
+      <SortTable id="batch-reports" sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={ headers }>
+        {
+          reports.map((report) => {
+            const reportStatus = report.complete ?
+              <Button title="Download Report" onClick={() => this.downloadStatusLetterPdf(report.id) } bsSize="xsmall"><Glyphicon glyph="download-alt" /></Button> :
+              <Glyphicon glyph="hourglass"/>;
+            return <tr key={ report.id }>
+              <td>{ formatDateTimeUTCToLocal(report.startDate, Constant.DATE_TIME_LOG) }</td>
+              <td style={{textAlign: 'center'}}>{reportStatus}</td>
+              <td style={{ textAlign: 'right' }}>
+                <ButtonGroup>
+                  {report.complete && (
+                    <DeleteButton name="Report" onConfirm={ () => this.deleteBatchReport(report.id) }/>
+                  )}
+                </ButtonGroup>
+              </td>
+            </tr>;
+          })
+        }
+      </SortTable>
+    );
   },
 
   render() {
     var localAreas = _.sortBy(this.props.localAreas, 'name');
     var owners = this.getFilteredOwners();
 
-    return <div id="status-letters">
-      <PageHeader>Status Letters / Mailing Labels</PageHeader>
-      <Well bsSize="small" className="clearfix">
-        <Row>
-          <Col md={12}>
-            <ButtonToolbar className="btn-container">
-              <MultiDropdown id="localAreaIds" placeholder="Local Areas"
-                items={ localAreas } selectedIds={ this.state.localAreaIds } updateState={ this.updateLocalAreaState } showMaxItems={ 2 } />
-              <MultiDropdown id="ownerIds" placeholder="Companies" fieldName="organizationName"
-                items={ owners } selectedIds={ this.state.ownerIds } updateState={ this.updateState } showMaxItems={ 2 } />
-              <Button onClick={ this.getStatusLetters } bsStyle="primary">Status Letters</Button>
-              <Button onClick={ this.getMailingLabels } bsStyle="primary">Mailing Labels</Button>
-            </ButtonToolbar>
-          </Col>
-        </Row>
-      </Well>
-    </div>;
+    return (
+      <div id="status-letters">
+        <PageHeader>Status Letters / Mailing Labels</PageHeader>
+        <Well bsSize="small" className="clearfix">
+          <Row>
+            <Col md={12}>
+              <ButtonToolbar className="btn-container">
+                <MultiDropdown
+                  id="localAreaIds"
+                  placeholder="Local Areas"
+                  items={localAreas}
+                  selectedIds={this.state.localAreaIds}
+                  updateState={this.updateLocalAreaState}
+                  showMaxItems={2} />
+                <MultiDropdown
+                  id="ownerIds"
+                  placeholder="Companies"
+                  fieldName="organizationName"
+                  items={owners}
+                  disabled={!this.props.owners.loaded}
+                  selectedIds={this.state.ownerIds}
+                  updateState={this.updateState}
+                  showMaxItems={2} />
+                <Button onClick={ this.getStatusLetters } bsStyle="primary">Status Letters</Button>
+                <Button onClick={ this.getMailingLabels } bsStyle="primary">Mailing Labels</Button>
+              </ButtonToolbar>
+            </Col>
+          </Row>
+        </Well>
+        {this.renderBatchReports()}
+    </div>
+    );
   },
 });
 
 function mapStateToProps(state) {
   return {
     localAreas: state.lookups.localAreas,
-    owners: state.models.ownersLite.data,
+    owners: state.lookups.owners.lite,
+    batchReports: state.models.batchReports,
   };
 }
 

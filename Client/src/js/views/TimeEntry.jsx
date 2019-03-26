@@ -1,11 +1,7 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Link } from 'react-router';
-
 import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form  } from 'react-bootstrap';
-
 import _ from 'lodash';
 
 import TimeEntryDialog from './dialogs/TimeEntryDialog.jsx';
@@ -19,9 +15,10 @@ import Favourites from '../components/Favourites.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import TooltipButton from '../components/TooltipButton.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 import { formatDateTime } from '../utils/date';
+
 
 var TimeEntry = React.createClass({
   propTypes: {
@@ -38,10 +35,10 @@ var TimeEntry = React.createClass({
 
   getInitialState() {
     return {
-      loaded: false,
       showTimeEntryDialog: false,
       allowMultipleTimeEntries: false,
       rentalAgreementId: null,
+      timeEntryDialogProjectId: null,
       search: {
         projectIds: this.props.search.projectIds || [],
         localAreaIds: this.props.search.localAreaIds || [],
@@ -53,6 +50,20 @@ var TimeEntry = React.createClass({
         sortDesc: this.props.ui.sortDesc === true,
       },
     };
+  },
+
+  componentDidMount() {
+    Api.getProjectsCurrentFiscal();
+    Api.getEquipmentTs();
+    Api.getOwnersLiteTs();
+
+    // If this is the first load, then look for a default favourite
+    if (_.isEmpty(this.props.search)) {
+      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      if (defaultFavourite) {
+        this.loadFavourite(defaultFavourite);
+      }
+    }
   },
 
   buildSearchParams() {
@@ -75,26 +86,6 @@ var TimeEntry = React.createClass({
     }
 
     return searchParams;
-  },
-
-  componentDidMount() {
-    var projectsPromise = Api.getProjectsCurrentFiscal();
-    var ownersPromise = Api.getOwnersLiteTs();
-    var equipmentPromise = Api.getEquipmentLiteTs();
-    var favouritesPromise = Api.getFavourites('timeEntry');
-
-    return Promise.all([ projectsPromise, ownersPromise, equipmentPromise, favouritesPromise]).then(() => {
-      this.setState({ loaded: true });
-
-      // If this is the first load, then look for a default favourite
-      if (_.isEmpty(this.props.search)) {
-        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
-        if (defaultFavourite) {
-          this.loadFavourite(defaultFavourite);
-          return;
-        }
-      }
-    });
   },
 
   fetch() {
@@ -138,10 +129,11 @@ var TimeEntry = React.createClass({
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
   },
 
-  openTimeEntryDialog(rentalAgreementId) {
+  openTimeEntryDialog(timeEntry) {
     this.setState({
-      rentalAgreementId: rentalAgreementId,
-      allowMultipleTimeEntries: rentalAgreementId ? false : true,
+      timeEntryDialogProjectId: timeEntry ? timeEntry.projectId : null,
+      rentalAgreementId: timeEntry ? timeEntry.rentalAgreementId : null,
+      allowMultipleTimeEntries: !timeEntry,
       showTimeEntryDialog: true,
     });
   },
@@ -151,10 +143,6 @@ var TimeEntry = React.createClass({
     if (this.props.timeEntries.loaded) {
       this.fetch();
     }
-  },
-
-  print() {
-    window.print();
   },
 
   renderResults(addTimeEntryButton) {
@@ -184,7 +172,9 @@ var TimeEntry = React.createClass({
       { field: 'hours',                   title: 'Hours'                                    },
       { field: 'workedDate',              title: 'Date Worked'                              },
       { field: 'enteredDate',             title: 'Date Entered'                             },
-      { field: 'addTime',                 title: 'Add Time Entry', node: addTimeEntryButton },
+      { field: 'addTime',                 title: 'Add Time Entry', style: { textAlign: 'right'  },
+        node: addTimeEntryButton,
+      },
     ]}>
       {
         _.map(timeEntries, (entry) => {
@@ -200,7 +190,7 @@ var TimeEntry = React.createClass({
             <td>{ formatDateTime(entry.enteredDate, 'YYYY-MMM-DD') }</td>
             <td style={{ textAlign: 'right' }}>
               <ButtonGroup>
-                <Button title="Edit Time" bsSize="xsmall" onClick={ this.openTimeEntryDialog.bind(this, entry.rentalAgreementId) }><Glyphicon glyph="edit" /></Button>
+                <Button title="Edit Time" bsSize="xsmall" onClick={ this.openTimeEntryDialog.bind(this, entry) }><Glyphicon glyph="edit" /></Button>
               </ButtonGroup>
             </td>
           </tr>;
@@ -258,15 +248,15 @@ var TimeEntry = React.createClass({
   },
 
   getFilteredOwners() {
-    return _.chain(this.props.owners)
+    return _.chain(this.props.owners.data)
       .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesLocalAreaFilter(x.localAreaId))
       .sortBy('organizationName')
       .value();
   },
 
   getFilteredEquipment() {
-    return _.chain(this.props.equipment)
-      .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesOwnerFilter(x.ownerId))
+    return _.chain(this.props.equipment.data)
+      .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesOwnerFilter(x.ownerId) && this.matchesLocalAreaFilter(x.localAreaId))
       .sortBy('equipmentCode')
       .value();
   },
@@ -277,7 +267,7 @@ var TimeEntry = React.createClass({
       resultCount = '(' + Object.keys(this.props.timeEntries.data).length + ')';
     }
 
-    var projects = _.sortBy(this.props.projects, 'name');
+    var projects = _.sortBy(this.props.projects.data, 'name');
     var localAreas = _.sortBy(this.props.localAreas, 'name');
     var owners = this.getFilteredOwners();
     var equipment = this.getFilteredEquipment();
@@ -285,9 +275,7 @@ var TimeEntry = React.createClass({
     return <div id="time-entry-list">
       <PageHeader>Time Entry { resultCount }
         <ButtonGroup id="time-entry-buttons">
-          <TooltipButton onClick={ this.print } disabled={ !this.props.timeEntries.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
-            <Glyphicon glyph="print" title="Print" />
-          </TooltipButton>
+          <PrintButton disabled={!this.props.timeEntries.loaded}/>
         </ButtonGroup>
       </PageHeader>
       <Well id="time-entries-bar" bsSize="small" className="clearfix">
@@ -295,27 +283,53 @@ var TimeEntry = React.createClass({
           <Form onSubmit={ this.search }>
             <Col xs={9} sm={10}>
               <ButtonToolbar id="time-entry-filters">
-                <MultiDropdown id="projectIds" placeholder="Projects" fieldName="label"
-                  items={ projects } selectedIds={ this.state.search.projectIds } updateState={ this.updateProjectSearchState } showMaxItems={ 2 } />
-                <MultiDropdown id="localAreaIds" placeholder="Local Areas"
-                  items={ localAreas } selectedIds={ this.state.search.localAreaIds } updateState={ this.updateLocalAreaSearchState } showMaxItems={ 2 } />
-                <MultiDropdown id="ownerIds" placeholder="Companies" fieldName="organizationName"
-                  items={ owners } selectedIds={ this.state.search.ownerIds } updateState={ this.updateOwnerSearchState } showMaxItems={ 2 } />
-                <MultiDropdown id="equipmentIds" placeholder="Equipment" fieldName="equipmentCode"
-                  items={ equipment } selectedIds={ this.state.search.equipmentIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                <MultiDropdown
+                  id="projectIds"
+                  disabled={!this.props.projects.loaded}
+                  placeholder="Projects"
+                  fieldName="label"
+                  items={projects}
+                  selectedIds={this.state.search.projectIds}
+                  updateState={this.updateProjectSearchState}
+                  showMaxItems={2} />
+                <MultiDropdown
+                  id="localAreaIds"
+                  placeholder="Local Areas"
+                  items={localAreas}
+                  selectedIds={this.state.search.localAreaIds}
+                  updateState={this.updateLocalAreaSearchState}
+                  showMaxItems={2} />
+                <MultiDropdown
+                  id="ownerIds"
+                  disabled={!this.props.owners.loaded}
+                  placeholder="Companies"
+                  fieldName="organizationName"
+                  items={owners}
+                  selectedIds={this.state.search.ownerIds}
+                  updateState={this.updateOwnerSearchState}
+                  showMaxItems={2} />
+                <MultiDropdown
+                  id="equipmentIds"
+                  disabled={!this.props.equipment.loaded}
+                  placeholder="Equipment"
+                  fieldName="equipmentCode"
+                  items={equipment}
+                  selectedIds={this.state.search.equipmentIds}
+                  updateState={this.updateSearchState}
+                  showMaxItems={2} />
                 <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
                 <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
               </ButtonToolbar>
             </Col>
           </Form>
           <Col xs={3} sm={2}>
-            <Favourites id="time-entry-faves-dropdown" type="timeEntry" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+            <Favourites id="time-entry-faves-dropdown" type="timeEntry" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
           </Col>
         </Row>
       </Well>
 
       {(() => {
-        if (this.props.timeEntries.loading || !this.state.loaded) {
+        if (this.props.timeEntries.loading) {
           return <div style={{ textAlign: 'center' }}><Spinner/></div>;
         }
 
@@ -329,14 +343,14 @@ var TimeEntry = React.createClass({
 
         return <div id="add-button-container">{ addTimeEntryButton }</div>;
       })()}
-      { this.state.showTimeEntryDialog &&
-      <TimeEntryDialog
-        show={ this.state.showTimeEntryDialog }
-        onClose={ this.closeTimeEntryDialog }
-        multipleEntryAllowed={ this.state.allowMultipleTimeEntries }
-        rentalAgreementId={ this.state.rentalAgreementId }
-      />
-      }
+      { this.state.showTimeEntryDialog && (
+        <TimeEntryDialog
+          show={this.state.showTimeEntryDialog}
+          onClose={this.closeTimeEntryDialog}
+          projectId={this.state.timeEntryDialogProjectId}
+          multipleEntryAllowed={this.state.allowMultipleTimeEntries}
+          rentalAgreementId={this.state.rentalAgreementId}/>
+      )}
     </div>;
   },
 });
@@ -346,10 +360,10 @@ function mapStateToProps(state) {
   return {
     projects: state.lookups.projectsCurrentFiscal,
     localAreas: state.lookups.localAreas,
-    owners: state.lookups.ownersLite,
-    equipment: state.lookups.equipmentLite,
+    owners: state.lookups.owners.ts,
+    equipment: state.lookups.equipment.ts,
     timeEntries: state.models.timeEntries,
-    favourites: state.models.favourites,
+    favourites: state.models.favourites.timeEntry,
     search: state.search.timeEntries,
     ui: state.ui.timeEntries,
   };

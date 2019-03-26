@@ -1,21 +1,24 @@
 import React from 'react';
-
+import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-bootstrap';
-import { Form, FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
-
+import { FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
+
+import * as Api from '../../api';
 
 import DropdownControl from '../../components/DropdownControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 import { NON_STANDARD_CONDITION } from '../../constants';
 
+
 var RentalConditionsEditDialog = React.createClass({
   propTypes: {
     rentalCondition: React.PropTypes.object.isRequired,
-    rentalConditions: React.PropTypes.array.isRequired,
+    rentalConditions: React.PropTypes.object.isRequired,
     onSave: React.PropTypes.func.isRequired,
     onSaveMultiple: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
@@ -40,6 +43,10 @@ var RentalConditionsEditDialog = React.createClass({
       },
       concurrencyControlNumber: this.props.rentalCondition.concurrencyControlNumber || 0,
     };
+  },
+
+  componentDidMount() {
+    Api.getRentalConditions();
   },
 
   updateState(value) {
@@ -133,13 +140,11 @@ var RentalConditionsEditDialog = React.createClass({
   render() {
     // Read-only if the user cannot edit the rental agreement
     var isReadOnly = !this.props.rentalCondition.canEdit && this.props.rentalCondition.id !== 0;
-    var conditions = _.map([ ...this.props.rentalConditions, { description: NON_STANDARD_CONDITION } ], 'description');
+    var conditions = _.map([ ...this.props.rentalConditions.data, { description: NON_STANDARD_CONDITION } ], 'description');
 
     return <EditDialog id="rental-conditions-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={
-        <strong>Rental Agreement - Conditions</strong>
-      }>
+      title={<strong>Rental Agreement - Conditions</strong>}>
       <div className="forms-container">
         { Object.keys(this.state.forms).map(key => (
           <Form key={key}>
@@ -149,8 +154,13 @@ var RentalConditionsEditDialog = React.createClass({
                   <FormGroup controlId={`conditionName${key}`} validationState={ this.state.forms[key].conditionNameError ? 'error' : null }>
                     <ControlLabel>Conditions <sup>*</sup></ControlLabel>
                     {/*TODO - use lookup list*/}
-                    <DropdownControl id={`conditionName${key}`}  disabled={ isReadOnly } updateState={ this.updateState }
-                      items={ conditions } title={ this.state.forms[key].conditionName } className="full-width" />
+                    <DropdownControl
+                      id={`conditionName${key}`}
+                      disabled={isReadOnly || !this.props.rentalConditions.loaded}
+                      updateState={this.updateState}
+                      items={conditions}
+                      title={this.state.forms[key].conditionName}
+                      className="full-width" />
                     <HelpBlock>{ this.state.forms[key].conditionNameError }</HelpBlock>
                   </FormGroup>
                 </Col>
@@ -197,4 +207,11 @@ var RentalConditionsEditDialog = React.createClass({
   },
 });
 
-export default RentalConditionsEditDialog;
+
+function mapStateToProps(state) {
+  return {
+    rentalConditions: state.lookups.rentalConditions,
+  };
+}
+
+export default connect(mapStateToProps)(RentalConditionsEditDialog);

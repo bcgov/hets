@@ -15,6 +15,7 @@ import SortTable from './SortTable.jsx';
 import Spinner from './Spinner.jsx';
 
 import { formatDateTimeUTCToLocal } from '../utils/date';
+import { sortDir } from '../utils/array';
 
 
 // API limit: how many to fetch first time
@@ -35,7 +36,9 @@ var HistoryComponent = React.createClass({
 
   getInitialState() {
     return {
+      hasFetched: false,
       loading: false,
+      fetchingMore: false,
 
       history: [],
       canShowMore: false,
@@ -63,7 +66,7 @@ var HistoryComponent = React.createClass({
   fetch(first) {
     // Easy mode: show 10 the first time and let the user load all of them with the
     // "Show More" button. Can adapt for paginated / offset&limit calls if necessary.
-    this.setState({ loading: true });
+    this.setState({ hasFetched: true, loading: true });
     return History.get(this.props.historyEntity, 0, first ? API_LIMIT : null).finally(() => {
       this.setState({
         loading: false,
@@ -73,51 +76,59 @@ var HistoryComponent = React.createClass({
   },
 
   showMore() {
-    this.fetch();
+    this.setState({ fetchingMore: true });
+    this.fetch().finally(() => {
+      this.setState({ fetchingMore: false });
+    });
   },
 
   render() {
-    return <div>
-      {(() => {
-        if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+    const { hasFetched, loading, fetchingMore } = this.state;
 
-        if (Object.keys(this.props.history).length === 0) { return <Alert bsStyle="success">No history</Alert>; }
+    const showLoadingSpinner = !hasFetched || (loading && !fetchingMore);
 
-        var unsortedHistory = _.map(this.props.history, history => {
-          history.formattedTimestamp = formatDateTimeUTCToLocal(history.lastUpdateTimestamp, Constant.DATE_TIME_LOG);
-          history.event = History.renderEvent(history.historyText, this.props.onClose);
-          return history;
-        });
+    return (
+      <div>
+        {(() => {
+          if (showLoadingSpinner) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-        var history = _.sortBy(unsortedHistory, this.state.ui.sortField);
+          if (Object.keys(this.props.history).length === 0) { return <Alert bsStyle="success">No history</Alert>; }
 
-        if (this.state.ui.sortDesc) {
-          _.reverse(history);
-        }
+          var history = _.orderBy(this.props.history, [this.state.ui.sortField], sortDir(this.state.ui.sortDesc));
 
-        var headers = [
-          { field: 'timestampSort',       title: 'Timestamp' },
-          { field: 'userName',            title: 'User'      },
-          { field: 'event', noSort: true, title: 'Event'     },
-          { field: 'showMore',            title: 'Show More', style: { textAlign: 'right'  },
-            node: <Button bsSize="xsmall" onClick={ this.showMore } className={ this.state.canShowMore ? '' : 'hidden' }>
-              <Glyphicon glyph="refresh" title="Show More" />
-            </Button>,
-          },
-        ];
-        return <SortTable id="history-list" sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={ headers }>
-          {
-            _.map(history, (history) => {
-              return <tr key={ history.id }>
-                <td>{ history.formattedTimestamp }</td>
-                <td>{ history.lastUpdateUserid }</td>
-                <td className="history-event" colSpan="2">{ history.event }</td>
-              </tr>;
-            })
-          }
-        </SortTable>;
-      })()}
-    </div>;
+          var headers = [
+            { field: 'timestampSort',       title: 'Timestamp' },
+            { field: 'userName',            title: 'User'      },
+            { field: 'event', noSort: true, title: 'Event'     },
+            { field: 'showMore',            title: 'Show More', style: { textAlign: 'right'  },
+              node: fetchingMore? <Spinner/> : (
+                <Button bsSize="xsmall" onClick={ this.showMore } className={ this.state.canShowMore ? '' : 'hidden' }>
+                  <Glyphicon glyph="refresh" title="Show More" />
+                </Button>
+              ),
+            },
+          ];
+          return <SortTable id="history-list" sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={ headers }>
+            {
+              history.map((history) => {
+                const event = History.renderEvent(history.historyText, this.props.onClose);
+                const formattedTimestamp = formatDateTimeUTCToLocal(history.lastUpdateTimestamp, Constant.DATE_TIME_LOG);
+
+                return <tr key={ history.id }>
+                  <td>{ formattedTimestamp }</td>
+                  <td>{ history.lastUpdateUserid }</td>
+                  <td className="history-event" colSpan="2">{ event }</td>
+                </tr>;
+              }).concat(fetchingMore ? [
+                <tr key="loading-more">
+                  <td colSpan="4" style={{ textAlign: 'center' }}><Spinner/></td>
+                </tr>,
+              ] : [])
+            }
+          </SortTable>;
+        })()}
+      </div>
+    );
   },
 });
 

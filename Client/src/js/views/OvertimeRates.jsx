@@ -36,7 +36,7 @@ var OvertimeRates = React.createClass({
   },
 
   editRate(overtimeRateType) {
-    this.setState({ overtimeRateType: overtimeRateType }, this.showOvertimeRateEditDialog());
+    this.setState({ overtimeRateType: overtimeRateType }, this.showOvertimeRateEditDialog);
   },
 
   showOvertimeRateEditDialog() {

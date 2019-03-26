@@ -64,7 +64,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetUser.Any(x => x.UserId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get user record and return to UI
             return new ObjectResult(new HetsResponse(UserHelper.GetRecord(id, _context)));
@@ -83,7 +83,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetUser.Any(x => x.UserId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetUser user = _context.HetUser.AsNoTracking()
@@ -122,14 +122,24 @@ namespace HetsApi.Controllers
         public virtual IActionResult UsersPost([FromBody]HetUser item)
         {
             // not found
-            if (item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
+            // validate that user id is unique
+            // HETS-1033 - Post Live: Add validation on User ID while adding a new user
+            item.SmUserId = item.SmUserId?.Trim().ToLower();
+
+            HetUser existingUser = _context.HetUser.AsNoTracking()
+                .FirstOrDefault(x => x.SmUserId.ToLower() == item.SmUserId);
+
+            if (existingUser != null) return new BadRequestObjectResult(new HetsResponse("HETS-38", ErrorViewModel.GetDescription("HETS-38", _configuration)));
+
+            // add new user
             HetUser user = new HetUser
             {
                 Active = item.Active,
-                Email = item.Email,
-                GivenName = item.GivenName,
-                Surname = item.Surname,
+                Email = item.Email?.Trim(),
+                GivenName = item.GivenName?.Trim(),
+                Surname = item.Surname?.Trim(),
                 SmUserId = item.SmUserId,
                 DistrictId = item.District.DistrictId,
                 AgreementCity = item.AgreementCity
@@ -167,13 +177,13 @@ namespace HetsApi.Controllers
             if (item == null || id != item.UserId)
             {
                 // not found
-                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
             bool exists = _context.HetUser.Any(x => x.UserId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetUser user = _context.HetUser
@@ -299,7 +309,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetUser.Any(x => x.UserId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get favourites records
             List<HetUserFavourite> favourites = _context.HetUserFavourite.AsNoTracking()
@@ -328,7 +338,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetUser.Any(x => x.UserId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetUser user = UserHelper.GetRecord(id, _context);
@@ -368,7 +378,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetUser.Any(x => x.UserId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetUser user = UserHelper.GetRecord(id, _context);
@@ -393,17 +403,17 @@ namespace HetsApi.Controllers
             bool exists = _context.HetUser.Any(x => x.UserId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // check the role id
             bool roleExists = _context.HetRole.Any(x => x.RoleId == item.RoleId);
 
             // record not found
-            if (!roleExists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!roleExists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // check the user exists
             HetUser user = UserHelper.GetRecord(id, _context);
-            if (user == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (user == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // check if the user has this role - then add
             if (user.HetUserRole.All(x => x.RoleId != item.RoleId))
@@ -445,11 +455,11 @@ namespace HetsApi.Controllers
             bool exists = _context.HetUser.Any(x => x.UserId == id);
 
             // not found
-            if (!exists || items == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists || items == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetUser user = UserHelper.GetRecord(id, _context);
-            if (user.HetUserRole == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (user.HetUserRole == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // iterate the roles and update effective date
             foreach (HetUserRole item in items)

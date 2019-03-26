@@ -1,10 +1,11 @@
 import React from 'react';
-
 import { Table, Glyphicon } from 'react-bootstrap';
-
 import _ from 'lodash';
 
-var SortTable = React.createClass({
+import Spinner from '../components/Spinner.jsx';
+
+
+const SortTable = React.createClass({
   propTypes: {
     // Array of objects with key, title, style, children fields
     headers: React.PropTypes.array.isRequired,
@@ -14,6 +15,7 @@ var SortTable = React.createClass({
     sortDesc: React.PropTypes.bool.isRequired,
     onSort: React.PropTypes.func.isRequired,
     id: React.PropTypes.string,
+    isRefreshing: React.PropTypes.bool,
     children: React.PropTypes.node,
   },
 
@@ -24,31 +26,55 @@ var SortTable = React.createClass({
     });
   },
 
-  render() {
-    return <div id={ this.props.id } className="table-container">
-      <Table condensed striped hover>
-        <thead>
-          <tr>
-            {
-              _.map(this.props.headers, (header) => {
-                if (header.node) {
-                  return <th id={ header.field } key={ header.field } style={ header.style }>{ header.node }</th>;
-                }
+  preventSelection(e) {
+    e.preventDefault();
+  },
 
-                var sortGlyph = '';
-                if (this.props.sortField === header.field) {
-                  sortGlyph = <span>&nbsp;<Glyphicon glyph={ this.props.sortDesc ? 'sort-by-attributes-alt' : 'sort-by-attributes' }/></span>;
-                }
-                return <th id={ header.field } key={ header.field } onClick={ header.noSort ? '' : this.sort } style={{ ...header.style, cursor: 'pointer' }}>{ header.title }{ sortGlyph }</th>;
-              })
-            }
-          </tr>
-        </thead>
-        <tbody>
-          { this.props.children }
-        </tbody>
-      </Table>
-    </div>;
+  renderTableHeader() {
+    const {headers, sortField, sortDesc} = this.props;
+
+    return headers.map((header) => {
+      const key = Array.isArray(header.field) ? header.field.join('-') : header.field;
+      if (header.node) {
+        return <th id={header.field} key={key} style={header.style}>{header.node}</th>;
+      }
+
+      var sortGlyph = '';
+      if (_.isEqual(sortField, header.field)) {
+        sortGlyph = <span>&nbsp;<Glyphicon glyph={ sortDesc ? 'sort-by-attributes-alt' : 'sort-by-attributes' }/></span>;
+      }
+
+      return (
+        <th
+          id={ header.field }
+          key={key}
+          onClick={ header.noSort ? '' : this.sort }
+          className={ header.class }
+          style={{ ...header.style, cursor: header.noSort ? 'default' : 'pointer' }}>
+            { header.title }{ sortGlyph }
+        </th>
+      );
+    });
+  },
+
+  render() {
+    const {id, isRefreshing, children} = this.props;
+
+    return (
+      <div id={id} className="sort-table">
+        {isRefreshing && <div id="sort-table-refreshing-overlay"><Spinner/></div>}
+        <Table condensed striped hover>
+          <thead>
+            <tr>
+              {this.renderTableHeader()}
+            </tr>
+          </thead>
+          <tbody>
+            {children}
+          </tbody>
+        </Table>
+      </div>
+    );
   },
 });
 

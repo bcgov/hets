@@ -101,7 +101,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetProvincialRateType.Any(a => a.RateType == item.RateType);
 
             // not found
-            if (!exists || id != item.Id) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists || id != item.Id) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetProvincialRateType rate = _context.HetProvincialRateType.First(a => a.RateType == item.RateType);

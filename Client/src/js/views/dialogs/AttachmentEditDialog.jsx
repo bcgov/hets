@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 var AttachmentEditDialog = React.createClass({
   propTypes: {
@@ -57,11 +58,9 @@ var AttachmentEditDialog = React.createClass({
   },
 
   render() {
-    return <EditDialog id="equipment-add" show={ this.props.show }
+    return <EditDialog id="attachment-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title= {
-        <strong>Edit Attachment</strong>
-      }>
+      title={<strong>Edit Attachment</strong>}>
       <Form>
         <FormGroup controlId="typeName" validationState={ this.state.attachmentError ? 'error' : null }>
           <ControlLabel>Attachment</ControlLabel>

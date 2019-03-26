@@ -27,7 +27,6 @@ function decrementRequests() {
   }
 }
 
-
 export const HttpError = function(msg, method, path, status, body) {
   this.message = msg || '';
   this.method = method;
@@ -40,19 +39,19 @@ HttpError.prototype = Object.create(Error.prototype, {
   constructor: { value: HttpError },
 });
 
-
-export const ApiError = function(msg, method, path, status, html) {
+export const ApiError = function(msg, method, path, status, errorCode, errorDescription, json) {
   this.message = msg || '';
   this.method = method;
   this.path = path;
   this.status = status || null;
-  this.html = html;
+  this.errorCode = errorCode || null;
+  this.errorDescription = errorDescription || null;
+  this.json = json || null;
 };
 
 ApiError.prototype = Object.create(Error.prototype, {
   constructor: { value: ApiError },
 });
-
 
 export const Resource404 = function(name, id) {
   this.name = name;
@@ -113,7 +112,12 @@ export function request(path, options) {
 
     xhr.addEventListener('load', function() {
       if (xhr.status >= 400) {
-        var err = new HttpError(`API ${method} ${path} failed (${xhr.status}) "${xhr.responseText}"`, method, path, xhr.status, xhr.responseText);
+        var responseText = '';
+        try {
+          responseText = xhr.responseText;
+        } catch(e) { /* swallow */}
+
+        var err = new HttpError(`API ${method} ${path} failed (${xhr.status}) "${responseText}"`, method, path, xhr.status, responseText);
         reject(err);
       } else {
         console.log('Call complete! Path: ' + path);
@@ -172,7 +176,7 @@ export function jsonRequest(path, options) {
 
   options.headers = Object.assign(options.headers || {}, jsonHeaders);
 
-  return request(path, options).then(xhr => {
+  return request(path, options).then((xhr) => {
     if (xhr.status === 204) {
       return;
     } else if (xhr.responseType === Constant.RESPONSE_TYPE_BLOB) {
@@ -182,13 +186,29 @@ export function jsonRequest(path, options) {
     } else {
       return xhr.responseText ? JSON.parse(xhr.responseText) : null;
     }
-  }).catch(err => {
+  }).catch((err) => {
     if (err instanceof HttpError) {
-      var apiError = new ApiError(`API ${err.method} ${err.path} failed (${err.status})`, err.method, err.path, err.status, err.body);
+      var errMsg = `API ${err.method} ${err.path} failed (${err.status})`;
+      var json = null;
+      var errorCode = null;
+      var errorDescription = null;
+      try {
+        // Example error payload from server:
+        // {
+        //   "responseStatus": "ERROR",
+        //   "data": null,
+        //   "error": {
+        //     "error": "HETS-01",
+        //     "description": "Record not found"
+        //   }
+        // }
 
-      store.dispatch({ type: Action.REQUESTS_ERROR, error: apiError });
+        json = JSON.parse(err.body);
+        errorCode = json.error.error;
+        errorDescription = json.error.description;
+      } catch(err) { /* not json */ }
 
-      throw apiError;
+      throw new ApiError(errMsg, err.method, err.path, err.status, errorCode, errorDescription, json);
     } else {
       throw err;
     }
@@ -199,22 +219,23 @@ export function buildApiPath(path) {
   return `${ROOT_API_PREFIX}/api/${path}`.replace('//', '/'); // remove double slashes
 }
 
-export function ApiRequest(path) {
+export function ApiRequest(path, options) {
   this.path = buildApiPath(path);
+  this.options = options;
 }
 
 ApiRequest.prototype.get = function apiGet(params, options) {
-  return jsonRequest(this.path, { method: 'GET', querystring: params, ...options });
+  return jsonRequest(this.path, { method: 'GET', querystring: params, ...this.options, ...options });
 };
 
 ApiRequest.prototype.post = function apiPost(data, options) {
-  return jsonRequest(this.path, { method: 'POST', body: data, ...options });
+  return jsonRequest(this.path, { method: 'POST', body: data, ...this.options, ...options });
 };
 
-ApiRequest.prototype.put = function apiPut(data) {
-  return jsonRequest(this.path, { method: 'PUT', body: data });
+ApiRequest.prototype.put = function apiPut(data, options) {
+  return jsonRequest(this.path, { method: 'PUT', body: data, ...this.options, ...options });
 };
 
-ApiRequest.prototype.delete = function apiDelete(data) {
-  return jsonRequest(this.path, { method: 'DELETE', body: data });
+ApiRequest.prototype.delete = function apiDelete(data, options) {
+  return jsonRequest(this.path, { method: 'DELETE', body: data, ...this.options, ...options });
 };

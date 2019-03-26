@@ -1,10 +1,7 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
-import { Grid, Row, Col, Form, FormGroup, ControlLabel, HelpBlock, Button, Glyphicon } from 'react-bootstrap';
+import { Grid, Row, Col, FormGroup, ControlLabel, HelpBlock, Button, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
-
 import Moment from 'moment';
 
 import * as Api from '../../api';
@@ -15,6 +12,7 @@ import DeleteButton from '../../components/DeleteButton.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import Spinner from '../../components/Spinner.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank, formatHours } from '../../utils/string';
 import { formatDateTime } from '../../utils/date';
@@ -28,8 +26,9 @@ var TimeEntryDialog = React.createClass({
     rentalAgreement: React.PropTypes.object,
     rentalAgreementTimeRecords: React.PropTypes.object,
     project: React.PropTypes.object,
-    projects: React.PropTypes.object,
-    equipment: React.PropTypes.object,
+    projectId: React.PropTypes.number,
+    projects: React.PropTypes.object.isRequired,
+    equipment: React.PropTypes.object.isRequired,
   },
 
   getInitialState() {
@@ -37,7 +36,8 @@ var TimeEntryDialog = React.createClass({
       loaded: false,
       rentalAgreementId: this.props.rentalAgreementId,
       equipmentId: null,
-      projectId: null,
+      projectId: this.props.projectId || null,
+      projectFiscalYearStartDate: this.props.project ? this.props.project.fiscalYearStartDate : null,
       equipmentIdError: '',
       projectIdError: '',
       selectingAgreement: this.props.rentalAgreementId ? false : true,
@@ -59,6 +59,7 @@ var TimeEntryDialog = React.createClass({
       rentalAgreementId: null,
       equipmentId: clearSelections ? null : this.state.equipmentId,
       projectId: clearSelections ? null : this.state.projectId,
+      projectFiscalYearStartDate: clearSelections ? null : this.state.projectFiscalYearStartDate,
       selectingAgreement: true,
       showAllTimeRecords: false,
       numberOfInputs: 1,
@@ -74,23 +75,28 @@ var TimeEntryDialog = React.createClass({
   },
 
   componentDidMount() {
-    this.setState({ loaded: false });
-    var promise = this.state.selectingAgreement ? this.fetchDropdownContent() : this.fetchTimeRecords();
-    promise.then(() => {
-      this.setState({ loaded: true });
-    });
-  },
-
-  fetchDropdownContent() {
-    return Api.getProjectsCurrentFiscal();
+    if (this.state.selectingAgreement) {
+      Api.getProjectsCurrentFiscal();
+      Api.getEquipmentLite();
+    } else {
+      this.setState({ loaded: false });
+      Promise.all([
+        !this.props.project ? this.fetchProject(this.props.projectId) : null,
+        this.fetchTimeRecords(),
+      ]).then(() => {
+        this.setState({ loaded: true });
+      });
+    }
   },
 
   fetchTimeRecords() {
     return Api.getRentalAgreementTimeRecords(this.state.rentalAgreementId);
   },
 
-  fetchProject() {
-    return Api.getProject(this.state.projectId);
+  fetchProject(projectId) {
+    return Api.getProject(projectId).then((project) => {
+      this.setState({projectFiscalYearStartDate: project.fiscalYearStartDate});
+    });
   },
 
   updateState(state, callback) {
@@ -120,13 +126,17 @@ var TimeEntryDialog = React.createClass({
   },
 
   selectAgreement() {
-    Api.getLatestRentalAgreement(this.state.equipmentId, this.state.projectId).then(() => {
-      this.setState({ loaded: false, rentalAgreementId: this.props.rentalAgreement.id });
-      return Promise.all([ this.fetchProject(), this.fetchTimeRecords() ]).then(() => {
+    Api.getLatestRentalAgreement(this.state.equipmentId, this.state.projectId).then((agreement) => {
+      this.setState({ loaded: false, rentalAgreementId: agreement.id });
+      return Promise.all([ this.fetchProject(this.state.projectId), this.fetchTimeRecords() ]).then(() => {
         this.setState({ selectingAgreement: false, loaded: true });
       });
-    }).catch(error => {
-      this.setState({ projectIdError: error.message });
+    }).catch((error) => {
+      if (error.errorCode) {
+        this.setState({ projectIdError: error.errorDescription });
+      } else {
+        throw error;
+      }
     });
   },
 
@@ -170,7 +180,7 @@ var TimeEntryDialog = React.createClass({
         valid = false;
       } else {
         var date = Moment.utc(timeEntry[key].date);
-        if (date.isBefore(Moment(this.props.project.fiscalYearStartDate))) {
+        if (date.isBefore(Moment(this.state.projectFiscalYearStartDate))) {
           let state = { ...timeEntry[key], errorDate: 'Date must be in the current fiscal year' };
           timeEntryErrorsObj[key] = state;
           valid = false;
@@ -225,18 +235,16 @@ var TimeEntryDialog = React.createClass({
   },
 
   getFilteredProjects() {
-    var projectIds = _.map(this.props.projects, 'id');
+    const projects = this.props.projects.data;
+
     if (this.state.equipmentId) {
-      var equipment = _.find(this.props.equipment, { id: this.state.equipmentId });
+      var equipment = this.props.equipment.data[this.state.equipmentId] || null;
       if (equipment) {
-        projectIds = _.intersection(equipment.projectIds, projectIds);
+        return _.intersectionWith(projects, equipment.projectIds, (p, pid) => p.id === pid);
       }
     }
 
-    return _.chain(this.props.projects)
-      .filter(x => _.includes(projectIds, x.id))
-      .sortBy('name')
-      .value();
+    return projects;
   },
 
   addTimeEntryInput() {
@@ -290,8 +298,6 @@ var TimeEntryDialog = React.createClass({
   },
 
   render() {
-    if (!this.state.loaded) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
     if (this.state.selectingAgreement) {
       return this.renderSelectAgreement();
     } else {
@@ -300,7 +306,7 @@ var TimeEntryDialog = React.createClass({
   },
 
   renderSelectAgreement() {
-    var equipment = _.sortBy(this.props.equipment, 'equipmentCode');
+    var equipment = _.sortBy(this.props.equipment.data, 'equipmentCode');
     var projects = this.getFilteredProjects();
 
     return (
@@ -312,24 +318,34 @@ var TimeEntryDialog = React.createClass({
         saveText="Continue"
         didChange={ this.didChangeSelectAgreement }
         isValid={ this.validateSelectAgreement }
-        title={
-          <strong>Hets Time Entry</strong>
-        }
-      >
+        title={<strong>Hets Time Entry</strong>}>
         <Form>
           <Grid fluid>
             <Row>
               <Col xs={6}>
                 <FormGroup controlId="equipmentId" validationState={ this.state.equipmentIdError ? 'error' : null }>
                   <ControlLabel>Equipment ID <sup>*</sup></ControlLabel>
-                  <FilterDropdown id="equipmentId" fieldName="equipmentCode" selectedId={ this.state.equipmentId } onSelect={ this.onEquipmentSelected } updateState={ this.updateState } items={ equipment } />
+                  <FilterDropdown
+                    id="equipmentId"
+                    fieldName="equipmentCode"
+                    disabled={!this.props.equipment.loaded}
+                    selectedId={ this.state.equipmentId }
+                    onSelect={ this.onEquipmentSelected }
+                    updateState={ this.updateState }
+                    items={ equipment } />
                   <HelpBlock>{ this.state.equipmentIdError }</HelpBlock>
                 </FormGroup>
               </Col>
               <Col xs={6}>
                 <FormGroup controlId="projectId" validationState={ this.state.projectIdError ? 'error' : null }>
                   <ControlLabel>Project <sup>*</sup></ControlLabel>
-                  <FilterDropdown id="projectId" fieldName="label" selectedId={ this.state.projectId } updateState={ this.updateState } items={ projects } />
+                  <FilterDropdown
+                    id="projectId"
+                    fieldName="label"
+                    disabled={!this.props.projects.loaded}
+                    selectedId={ this.state.projectId }
+                    updateState={ this.updateState }
+                    items={ projects }/>
                   <HelpBlock>{ this.state.projectIdError }</HelpBlock>
                 </FormGroup>
               </Col>
@@ -372,64 +388,69 @@ var TimeEntryDialog = React.createClass({
         closeText={ this.props.multipleEntryAllowed ? 'Back' : 'Close' }
         didChange={ this.didChange }
         isValid={ this.isValid }
-        title={
-          <strong>Hets Time Entry</strong>
-        }
-      >
+        title={<strong>Hets Time Entry</strong>}>
         <Form>
           <Grid fluid>
-            <Row>
-              <Col xs={3}>
-                <div className="text-label">Equipment ID</div>
-                <div>{ rentalAgreementTimeRecords.equipmentCode }</div>
-              </Col>
-              <Col xs={3}>
-                <div className="text-label">YTD Hours</div>
-                <div className={ this.getHoursYtdClassName() ? 'highlight' : '' }>
-                  { formatHours(rentalAgreementTimeRecords.hoursYtd) }{ this.getHoursYtdClassName() }
-                </div>
-              </Col>
-              <Col xs={3}>
-                <div className="text-label">Project</div>
-                <div>{ rentalAgreementTimeRecords.projectName }</div>
-              </Col>
-              <Col xs={3}>
-                <div className="text-label">Project Number</div>
-                <div>{ rentalAgreementTimeRecords.provincialProjectNumber }</div>
-              </Col>
-            </Row>
-            <div className="time-entries-container">
-              <Row>
-                <Col xs={3}><div className="column-title">Week Ending</div></Col>
-                <Col xs={3}><div className="column-title">Hours</div></Col>
-              </Row>
-              { (sortedTimeRecords.length === 0) &&
-              <Row>
-                <Col xs={12}><div>No time records have been added yet.</div></Col>
-              </Row>
-              }
+            {(() => {
+              if (!this.state.loaded) { return <div style={{ textAlign: 'center', minHeight: 160 }}><Spinner/></div>; }
 
-              { (sortedTimeRecords.length > 0) && !this.state.showAllTimeRecords ?
-                <Row>
-                  <TimeRecordItem timeRecord={sortedTimeRecords[0]} />
-                </Row>
-                :
-                <Row>
-                  <Col xs={12}>
-                    <ul className="time-records-list">
-                      { _.map(sortedTimeRecords, timeRecord => (
-                        <li key={timeRecord.id} className="list-item">
-                          <TimeRecordItem timeRecord={timeRecord} />
-                        </li>
-                      ))}
-                    </ul>
-                  </Col>
-                </Row>
-              }
-            </div>
-            { (sortedTimeRecords.length > 1) &&
-            <Button onClick={ this.showAllTimeRecords }>{ this.state.showAllTimeRecords ? 'Hide' : 'Show All' }</Button>
-            }
+              return (
+                <div>
+                  <Row>
+                    <Col xs={3}>
+                      <div className="text-label">Equipment ID</div>
+                      <div>{ rentalAgreementTimeRecords.equipmentCode }</div>
+                    </Col>
+                    <Col xs={3}>
+                      <div className="text-label">YTD Hours</div>
+                      <div className={ this.getHoursYtdClassName() ? 'highlight' : '' }>
+                        { formatHours(rentalAgreementTimeRecords.hoursYtd) }{ this.getHoursYtdClassName() }
+                      </div>
+                    </Col>
+                    <Col xs={3}>
+                      <div className="text-label">Project</div>
+                      <div>{ rentalAgreementTimeRecords.projectName }</div>
+                    </Col>
+                    <Col xs={3}>
+                      <div className="text-label">Project Number</div>
+                      <div>{ rentalAgreementTimeRecords.provincialProjectNumber }</div>
+                    </Col>
+                  </Row>
+                  <div className="time-entries-container">
+                    <Row>
+                      <Col xs={3}><div className="column-title">Week Ending</div></Col>
+                      <Col xs={3}><div className="column-title">Hours</div></Col>
+                    </Row>
+                    { (sortedTimeRecords.length === 0) &&
+                    <Row>
+                      <Col xs={12}><div>No time records have been added yet.</div></Col>
+                    </Row>
+                    }
+
+                    { (sortedTimeRecords.length > 0) && !this.state.showAllTimeRecords ?
+                      <Row>
+                        <TimeRecordItem timeRecord={sortedTimeRecords[0]} />
+                      </Row>
+                      :
+                      <Row>
+                        <Col xs={12}>
+                          <ul className="time-records-list">
+                            { _.map(sortedTimeRecords, timeRecord => (
+                              <li key={timeRecord.id} className="list-item">
+                                <TimeRecordItem timeRecord={timeRecord} />
+                              </li>
+                            ))}
+                          </ul>
+                        </Col>
+                      </Row>
+                    }
+                  </div>
+                { (sortedTimeRecords.length > 1) &&
+                <Button onClick={ this.showAllTimeRecords }>{ this.state.showAllTimeRecords ? 'Hide' : 'Show All' }</Button>
+                }
+                </div>
+              );
+            })()}
             <hr />
             { Object.keys(this.state.timeEntry).map(key => {
               return (
@@ -438,8 +459,9 @@ var TimeEntryDialog = React.createClass({
                     <FormGroup validationState={ this.state.timeEntry[key].errorDate ? 'error' : null }>
                       <ControlLabel>Week Ending</ControlLabel>
                       <DateControl
+                        disabled={!this.state.projectFiscalYearStartDate}
                         id={`date${key}`}
-                        name='date'
+                        name="date"
                         isValidDate={ isValidDate }
                         date={ this.state.timeEntry[key].date }
                         updateState={ this.updateTimeEntryState }
@@ -452,7 +474,7 @@ var TimeEntryDialog = React.createClass({
                       <ControlLabel>Hours</ControlLabel>
                       <FormInputControl
                         id={`hours${key}`}
-                        name='hours'
+                        name="hours"
                         type="float"
                         value={ this.state.timeEntry[key].hours }
                         updateState={ this.updateTimeEntryState }
@@ -465,23 +487,16 @@ var TimeEntryDialog = React.createClass({
             })}
             <Row>
               <Col xs={12}>
-                { this.state.numberOfInputs < 10 &&
-              <Button
-                bsSize="xsmall"
-                onClick={ this.addTimeEntryInput }
-              >
-                <Glyphicon glyph="plus" />&nbsp;<strong>Add</strong>
-              </Button>
-                }
-                { this.state.numberOfInputs > 1 &&
-              <Button
-                bsSize="xsmall"
-                className="remove-btn"
-                onClick={ this.removeTimeEntryInput }
-              >
-                <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
-              </Button>
-                }
+                { this.state.numberOfInputs < 10 && (
+                  <Button bsSize="xsmall" onClick={ this.addTimeEntryInput }>
+                    <Glyphicon glyph="plus" />&nbsp;<strong>Add</strong>
+                  </Button>
+                )}
+                { this.state.numberOfInputs > 1 && (
+                  <Button bsSize="xsmall" className="remove-btn" onClick={ this.removeTimeEntryInput }>
+                    <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
+                  </Button>
+                )}
               </Col>
             </Row>
           </Grid>
@@ -495,9 +510,8 @@ function mapStateToProps(state) {
   return {
     rentalAgreement: state.models.rentalAgreement,
     rentalAgreementTimeRecords: state.models.rentalAgreementTimeRecords,
-    project: state.models.project,
     projects: state.lookups.projectsCurrentFiscal,
-    equipment: state.lookups.equipmentLite,
+    equipment: state.lookups.equipment.ts,
   };
 }
 

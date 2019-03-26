@@ -1,19 +1,15 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, InputGroup, Form } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-
 import _ from 'lodash';
-import Promise from 'bluebird';
+
+import UsersEditDialog from './dialogs/UsersEditDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
 import store from '../store';
-
-import UsersEditDialog from './dialogs/UsersEditDialog.jsx';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import Confirm from '../components/Confirm.jsx';
@@ -23,6 +19,8 @@ import MultiDropdown from '../components/MultiDropdown.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import PrintButton from '../components/PrintButton.jsx';
+
 
 var Users = React.createClass({
   propTypes: {
@@ -38,8 +36,6 @@ var Users = React.createClass({
 
   getInitialState() {
     return {
-      loading: true,
-
       showUsersEditDialog: false,
 
       search: {
@@ -69,22 +65,13 @@ var Users = React.createClass({
   },
 
   componentDidMount() {
-    this.setState({ loading: true });
-
-    var favouritesPromise = Api.getFavourites('user');
-
-    Promise.all([favouritesPromise]).then(() => {
-      this.setState({ loading: false });
-
-      // If this is the first load, then look for a default favourite
-      if (_.isEmpty(this.props.search)) {
-        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
-        if (defaultFavourite) {
-          this.loadFavourite(defaultFavourite);
-          return;
-        }
+    // If this is the first load, then look for a default favourite
+    if (_.isEmpty(this.props.search)) {
+      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      if (defaultFavourite) {
+        this.loadFavourite(defaultFavourite);
       }
-    });
+    }
   },
 
   fetch() {
@@ -133,10 +120,6 @@ var Users = React.createClass({
     });
   },
 
-  print() {
-    window.print();
-  },
-
   openUsersEditDialog() {
     this.setState({ showUsersEditDialog: true });
   },
@@ -145,16 +128,10 @@ var Users = React.createClass({
     this.setState({ showUsersEditDialog: false });
   },
 
-  onSaveEdit(user) {
-    Api.addUser(user).then(() => {
-      // Make sure we get the new user's ID
-      user.id = this.props.user.id;
-      // Reload the screen using new user id
-      this.props.router.push({
-        pathname: `${ Constant.USERS_PATHNAME }/${ user.id }`,
-      });
+  onUserSaved(user) {
+    this.props.router.push({
+      pathname: `${ Constant.USERS_PATHNAME }/${ user.id }`,
     });
-    this.closeEditDialog();
   },
 
   renderResults(addUserButton) {
@@ -208,8 +185,6 @@ var Users = React.createClass({
       );
     }
 
-    if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
     var resultCount = '';
     if (this.props.users.loaded) {
       resultCount = '(' + Object.keys(this.props.users.data).length + ')';
@@ -218,7 +193,7 @@ var Users = React.createClass({
     return <div id="users-list">
       <PageHeader>Users { resultCount }
         <ButtonGroup id="users-buttons">
-          <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+          <PrintButton disabled={!this.props.users.loaded}/>
         </ButtonGroup>
       </PageHeader>
       <div>
@@ -241,7 +216,7 @@ var Users = React.createClass({
             </Col>
             <Col sm={2}>
               <Row id="users-faves">
-                <Favourites id="users-faves-dropdown" type="user" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+                <Favourites id="users-faves-dropdown" type="user" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
               </Row>
             </Col>
           </Row>
@@ -266,7 +241,7 @@ var Users = React.createClass({
       { this.state.showUsersEditDialog &&
         <UsersEditDialog
           show={ this.state.showUsersEditDialog }
-          onSave={ this.onSaveEdit }
+          onSave={ this.onUserSaved }
           onClose= { this.closeUsersEditDialog }
           isNew
         />
@@ -281,7 +256,7 @@ function mapStateToProps(state) {
     users: state.models.users,
     user: state.models.user,
     districts: state.lookups.districts,
-    favourites: state.models.favourites,
+    favourites: state.models.favourites.user,
     search: state.search.users,
     ui: state.ui.users,
   };

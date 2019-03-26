@@ -29,7 +29,7 @@ var SeniorityList = React.createClass({
   },
 
   fetch() {
-    Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
+    Api.getDistrictEquipmentTypes();
   },
 
   updateState(state) {
@@ -41,7 +41,7 @@ var SeniorityList = React.createClass({
   },
 
   getFilteredEquipmentTypes(localAreaIds) {
-    return _.chain(this.props.districtEquipmentTypes)
+    return _.chain(this.props.districtEquipmentTypes.data)
       .filter(type => type.equipmentCount > 0 && localAreaIds.length === 0 || _.filter(type.localAreas, localArea => _.includes(localAreaIds, localArea.id) && localArea.equipmentCount > 0).length > 0)
       .sortBy('districtEquipmentName')
       .value();
@@ -89,8 +89,16 @@ var SeniorityList = React.createClass({
             <ButtonToolbar className="btn-container">
               <MultiDropdown id="selectedLocalAreaIds" className="fixed-width small" placeholder="Local Areas" items={ localAreas }
                 selectedIds={ this.state.selectedLocalAreaIds } updateState={ this.updateState } onChange={ this.onLocalAreasChanged } showMaxItems={ 2 } />
-              <MultiDropdown id="selectedEquipmentTypeIds" className="fixed-width" placeholder="Equipment Types" fieldName="districtEquipmentName"
-                items={ districtEquipmentTypes } selectedIds={ this.state.selectedEquipmentTypeIds } updateState={ this.updateState } showMaxItems={ 2 } />
+              <MultiDropdown
+                id="selectedEquipmentTypeIds"
+                className="fixed-width"
+                placeholder="Equipment Types"
+                fieldName="districtEquipmentName"
+                items={districtEquipmentTypes}
+                disabled={!this.props.districtEquipmentTypes.loaded}
+                selectedIds={this.state.selectedEquipmentTypeIds}
+                updateState={this.updateState}
+                showMaxItems={2}/>
               <Button onClick={ () => this.getRotationList(false) } bsStyle="primary">Seniority List</Button>
               <Button onClick={ () => this.getRotationList(true) } bsStyle="primary">Seniority List (Counter Copy)</Button>
             </ButtonToolbar>
@@ -105,7 +113,7 @@ var SeniorityList = React.createClass({
 function mapStateToProps(state) {
   return {
     currentUser: state.user,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypes.data,
+    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
     localAreas: state.lookups.localAreas,
   };
 }

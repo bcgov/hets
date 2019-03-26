@@ -202,7 +202,11 @@ namespace HetsData.Helpers
             string temp = "";
 
             // format the rate
-            if (rentalRate.Rate != null)
+            if (rentalRate.Rate != null && rentalRate.Set)
+            {
+                temp = $"$ {rentalRate.Rate:0.00} / Set";
+            }
+            else if (rentalRate.Rate != null)
             {
                 temp = $"$ {rentalRate.Rate:0.00} / {FormatRatePeriod(agreement.RatePeriod)}";
             }

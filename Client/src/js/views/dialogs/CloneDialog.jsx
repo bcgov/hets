@@ -87,10 +87,8 @@ var CloneDialog = React.createClass({
     }));
 
     return <EditDialog id="clone-dialog" show={ this.props.show } bsSize="large"
-      onClose={ this.props.onClose } onSave={ this.onSave } isValid={ this.isValid } didChange={ this.didChange } saveText='Clone'
-      title= {
-        <strong>Clone Rental Agreement</strong>
-      }>
+      onClose={ this.props.onClose } onSave={ this.onSave } isValid={ this.isValid } didChange={ this.didChange } saveText="Clone"
+      title={<strong>Clone Rental Agreement</strong>}>
       <Row>
         <Col md={12}>
           <FormGroup controlId="type">

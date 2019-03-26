@@ -1,3 +1,5 @@
+/* global require, module */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Promise from 'bluebird';
@@ -7,6 +9,9 @@ import './utils/shims';
 
 Promise.config({
   cancellation: true,
+  warnings: {
+    wForgottenReturn: false,
+  },
 });
 
 import App from './app.jsx';
@@ -24,19 +29,22 @@ function incrementProgressBar(gotoPercent) {
   progressBarEl.querySelector('span').textContent = `${progress}% Complete`;
 }
 
-function renderApp() {
-  incrementProgressBar(100);
-  initializationEl.classList.add('done');
-  initializationEl.addEventListener('transitionend', function() { initializationEl.remove(); });
-
+function renderApp(AppComponent) {
   const appElement = document.querySelector('#app');
 
+  ReactDOM.render(AppComponent, appElement);
+}
 
-  ReactDOM.render(App, appElement);
+
+if(module.hot) {
+  module.hot.accept('./app.jsx', () => {
+    const UpdatedApp = require('./app.jsx').default;
+    renderApp(UpdatedApp);
+  });
 }
 
 export default function startApp() {
-  if (location.hostname === 'localhost' && process.env.DEV_USER) { //eslint-disable-line
+  if (process.env.NODE_ENV === 'development' && process.env.DEV_USER) { //eslint-disable-line
     return Api.setDevUser(process.env.DEV_USER).finally(() => { //eslint-disable-line
       initializeApp();
     });
@@ -47,29 +55,42 @@ export default function startApp() {
 
 function initializeApp() {
   incrementProgressBar(5);
-  // Load current user next.
-  Api.getCurrentUser().then((response) => {
-    incrementProgressBar(33);
-    var districtId = response.district.id;
-    // Check permissions?
-    // Get lookups.
-    var citiesPromise = null;
-    var districtsPromise = Api.getDistricts();
-    var regionsPromise = Api.getRegions();
-    var serviceAreasPromise = Api.getServiceAreas();
-    var localAreasPromise = Api.getLocalAreas(districtId);
-    var permissionsPromise = Api.getPermissions();
-    var currentUserDistrictsPromise = Api.getCurrentUserDistricts();
 
-    return Promise.all([citiesPromise, districtsPromise, regionsPromise, serviceAreasPromise, localAreasPromise, permissionsPromise, currentUserDistrictsPromise]).then(() => {
-      incrementProgressBar(66);
-      // Wrapping in a setTimeout to silence an error from Bluebird's promise lib about API requests
-      // made inside of component{Will,Did}Mount.
-      setTimeout(renderApp, 0);
+  Api.getCurrentUser().then(user => {
+    incrementProgressBar(33);
+
+    return getLookups(user).then(() => {
+      incrementProgressBar(100);
+
+      initializationEl.addEventListener('transitionend', () => {
+        renderApp(App);
+        initializationEl.classList.add('done');
+        initializationEl.addEventListener('transitionend', () => {
+          initializationEl.remove();
+        });
+      });
     });
   }).catch(err => {
     showError(err);
   });
+}
+
+function getLookups(user) {
+  if (user.businessUser) {
+    return Promise.resolve();
+  } else {
+    var districtId = user.district.id;
+    var districtsPromise = Api.getDistricts();
+    var regionsPromise = Api.getRegions();
+    var serviceAreasPromise = Api.getServiceAreas();
+    var localAreasPromise = Api.getLocalAreas(districtId);
+    var fiscalYearsPromise = Api.getFiscalYears(districtId);
+    var permissionsPromise = Api.getPermissions();
+    var currentUserDistrictsPromise = Api.getCurrentUserDistricts();
+    var favouritesPromise = Api.getFavourites();
+
+    return Promise.all([districtsPromise, regionsPromise, serviceAreasPromise, localAreasPromise, fiscalYearsPromise, permissionsPromise, currentUserDistrictsPromise, favouritesPromise]);
+  }
 }
 
 function showError(err) {

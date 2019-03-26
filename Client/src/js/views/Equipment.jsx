@@ -2,11 +2,10 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, ControlLabel, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, ControlLabel, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 import _ from 'lodash';
 import Moment from 'moment';
-import Promise from 'bluebird';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -20,11 +19,12 @@ import Favourites from '../components/Favourites.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import Spinner from '../components/Spinner.jsx';
-import TooltipButton from '../components/TooltipButton.jsx';
-
+import Form from '../components/Form.jsx';
 import EquipmentTable from './EquipmentTable.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 import { toZuluTime } from '../utils/date';
+
 
 var Equipment = React.createClass({
   propTypes: {
@@ -108,19 +108,15 @@ var Equipment = React.createClass({
   },
 
   componentDidMount() {
-    var equipmentTypesPromise = Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
-    var favouritesPromise = Api.getFavourites('equipment');
+    Api.getDistrictEquipmentTypes();
 
-    Promise.all([equipmentTypesPromise, favouritesPromise]).then(() => {
-      // If this is the first load, then look for a default favourite
-      if (_.isEmpty(this.props.search)) {
-        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
-        if (defaultFavourite) {
-          this.loadFavourite(defaultFavourite);
-          return;
-        }
+    // If this is the first load, then look for a default favourite
+    if (_.isEmpty(this.props.search)) {
+      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      if (defaultFavourite) {
+        this.loadFavourite(defaultFavourite);
       }
-    });
+    }
   },
 
   fetch() {
@@ -170,10 +166,6 @@ var Equipment = React.createClass({
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
   },
 
-  print() {
-    window.print();
-  },
-
   renderResults() {
     if (Object.keys(this.props.equipmentList.data).length === 0) {
       return <Alert bsStyle="success">No equipment</Alert>;
@@ -207,9 +199,7 @@ var Equipment = React.createClass({
     return <div id="equipment-list">
       <PageHeader>Equipment { resultCount }
         <ButtonGroup id="equipment-buttons">
-          <TooltipButton onClick={ this.print } disabled={ !this.props.equipmentList.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
-            <Glyphicon glyph="print" title="Print" />
-          </TooltipButton>
+          <PrintButton disabled={!this.props.equipmentList.loaded}/>
         </ButtonGroup>
       </PageHeader>
       <Well id="equipment-bar" bsSize="small" className="clearfix">
@@ -223,38 +213,64 @@ var Equipment = React.createClass({
                   <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
                     items={[ Constant.EQUIPMENT_STATUS_CODE_APPROVED, Constant.EQUIPMENT_STATUS_CODE_PENDING, Constant.EQUIPMENT_STATUS_CODE_ARCHIVED ]}
                   />
-                  <MultiDropdown id="selectedEquipmentTypesIds" placeholder="Equipment Types" fieldName="districtEquipmentName"
-                    items={ districtEquipmentTypes } selectedIds={ this.state.search.selectedEquipmentTypesIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                  <MultiDropdown
+                    id="selectedEquipmentTypesIds"
+                    placeholder="Equipment Types"
+                    fieldName="districtEquipmentName"
+                    items={districtEquipmentTypes}
+                    disabled={!this.props.districtEquipmentTypes.loaded}
+                    selectedIds={this.state.search.selectedEquipmentTypesIds}
+                    updateState={this.updateSearchState}
+                    showMaxItems={2}/>
                   <FormInputControl id="ownerName" type="text" placeholder="Company Name" value={ this.state.search.ownerName } updateState={ this.updateSearchState } />
-                  <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
-                  <OverlayTrigger placement="top" rootClose overlay={ <Tooltip id="old-equipment-tooltip">Equipment 20 years or older</Tooltip> }>
-                    <span>
-                      <CheckboxControl inline id="twentyYears" checked={ this.state.search.twentyYears } updateState={ this.updateSearchState }>20+ Years</CheckboxControl>
-                    </span>
-                  </OverlayTrigger>
+                  <span>
+                    <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
+                    <OverlayTrigger placement="top" rootClose overlay={ <Tooltip id="old-equipment-tooltip">Equipment 20 years or older</Tooltip> }>
+                      <span>
+                        <CheckboxControl inline id="twentyYears" checked={ this.state.search.twentyYears } updateState={ this.updateSearchState }>20+ Years</CheckboxControl>
+                      </span>
+                    </OverlayTrigger>
+                  </span>
                 </ButtonToolbar>
               </Row>
               <Row>
                 <ButtonToolbar id="equipment-filters-second-row">
-                  <DateControl id="lastVerifiedDate" date={ this.state.search.lastVerifiedDate } updateState={ this.updateSearchState } label="Not Verified Since:" title="Last Verified Date"/>
+                  <DateControl
+                    id="lastVerifiedDate"
+                    date={this.state.search.lastVerifiedDate}
+                    label="Not Verified Since:"
+                    title="Last Verified Date"
+                    updateState={this.updateSearchState}/>
                   <div className="input-container">
-                    <ControlLabel>Attachment:</ControlLabel>
-                    <FormInputControl id="equipmentAttachment" type="text" value={ this.state.search.equipmentAttachment } updateState={ this.updateSearchState } />
+                    <FormInputControl
+                      id="equipmentAttachment"
+                      placeholder="Attachment"
+                      type="text"
+                      value={this.state.search.equipmentAttachment}
+                      updateState={this.updateSearchState} />
                   </div>
                   <div className="input-container">
-                    <ControlLabel>Equipment Id:</ControlLabel>
-                    <FormInputControl id="equipmentId" type="text" value={ this.state.search.equipmentId } updateState={ this.updateSearchState } />
+                    <FormInputControl
+                      id="equipmentId"
+                      placeholder="Equipment Id"
+                      type="text"
+                      value={this.state.search.equipmentId}
+                      updateState={this.updateSearchState} />
                   </div>
                   <div className="input-container">
-                    <ControlLabel>Project Name:</ControlLabel>
-                    <FormInputControl id="projectName" type="text" value={ this.state.search.projectName } updateState={ this.updateSearchState } />
+                    <FormInputControl
+                      id="projectName"
+                      placeholder="Project Name"
+                      type="text"
+                      value={this.state.search.projectName}
+                      updateState={this.updateSearchState} />
                   </div>
                 </ButtonToolbar>
               </Row>
             </Col>
             <Col xs={3} sm={2} id="equipment-search-buttons">
               <Row>
-                <Favourites id="equipment-faves-dropdown" type="equipment" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+                <Favourites id="equipment-faves-dropdown" type="equipment" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
               </Row>
               <Row>
                 <Button id="search-button" className="pull-right" bsStyle="primary" type="submit">Search</Button>
@@ -290,7 +306,7 @@ function mapStateToProps(state) {
     equipmentList: state.models.equipmentList,
     localAreas: state.lookups.localAreas,
     districtEquipmentTypes: state.lookups.districtEquipmentTypes,
-    favourites: state.models.favourites,
+    favourites: state.models.favourites.equipment,
     search: state.search.equipmentList,
     ui: state.ui.equipmentList,
   };

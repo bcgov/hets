@@ -3,7 +3,7 @@ import * as Action from '../actionTypes';
 const DEFAULT_STATE = {
   requests: {
     waiting: false,
-    error: {}, // ApiError
+    error: null, // ApiError
   },
 
   equipmentList: {},
@@ -19,12 +19,15 @@ const DEFAULT_STATE = {
   timeEntries: {},
   hiringResponses: {},
   ownersCoverage: {},
+  aitResponses: {},
   roles: {},
   history: {},
   documents: {},
-  blankRentalAgreements: {},
   showSessionTimeoutDialog: false,
   districtEquipment: {},
+  appError: null,
+  showErrorDialog: false,
+  activeRentalAgreementId: null,
 };
 
 export default function uiReducer(state = DEFAULT_STATE, action) {
@@ -34,16 +37,13 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
     // Requests
 
     case Action.REQUESTS_BEGIN:
-      return { ...state, requests: {
-        waiting: true,
-        error: {},
-      }};
+      return { ...state, requests: { ...state.requests, waiting: true } };
 
     case Action.REQUESTS_END:
-      return { ...state, requests: { ...state.requests, ...{ waiting: false } } };
+      return { ...state, requests: { ...state.requests, waiting: false } };
 
     case Action.REQUESTS_ERROR:
-      return { ...state, requests: { ...state.requests, ...{ error: action.error } } };
+      return { ...state, requests: { ...state.requests, error: action.error }, showErrorDialog: true };
 
     // Screens
 
@@ -95,11 +95,20 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
     case Action.UPDATE_DOCUMENTS_UI:
       return { ...state, documents: action.documents };
 
-    case Action.UPDATE_BLANK_RENTAL_AGREEMENTS_UI:
-      return { ...state, blankRentalAgreements: action.blankRentalAgreements };
-
     case Action.UPDATE_DISTRICT_EQUIPMENT_UI:
       return { ...state, districtEquipment: action.districtEquipment };
+
+    case Action.SET_ACTIVE_RENTAL_AGREEMENT_ID_UI:
+      return { ...state, activeRentalAgreementId: action.rentalAgreementId };
+
+    case Action.SET_ACTIVE_PROJECT_ID_UI:
+      return { ...state, activeProjectId: action.projectId };
+
+    case Action.UPDATE_AIT_REPORT_UI:
+      return { ...state, aitResponses: action.aitResponses };
+
+    case Action.GENERATE_ANOTHER_RENTAL_AGREEMENT:
+      return { ...state, activeRentalAgreementId: action.rentalAgreement.id };
 
     // Modals
 
@@ -108,7 +117,15 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
 
     case Action.CLOSE_SESSION_TIMEOUT_DIALOG:
       return { ...state, showSessionTimeoutDialog: false };
+
+    case Action.SHOW_ERROR_DIALOG:
+      return { ...state, appError: { ...action }, showErrorDialog: true };
+
+    case Action.CLOSE_ERROR_DIALOG:
+      return { ...state, showErrorDialog: false };
   }
 
   return { ...state, ...newState };
 }
+
+export const uiSelector = (state) => state.ui;

@@ -1,9 +1,11 @@
 import React from 'react';
 
-import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import {  FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
+
 
 var ConditionAddEditDialog = React.createClass({
   propTypes: {
@@ -73,9 +75,7 @@ var ConditionAddEditDialog = React.createClass({
   render() {
     return <EditDialog id="equipment-add" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title= {
-        <strong>Add Condition</strong>
-      }>
+      title={<strong>Add Condition</strong>}>
       <Form>
         <FormGroup controlId="typeCode" validationState={ this.state.typeCodeError ? 'error' : null }>
           <ControlLabel>Type Code <sup>*</sup></ControlLabel>

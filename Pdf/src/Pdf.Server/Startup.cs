@@ -47,7 +47,7 @@ namespace Pdf.Server
             // enable Node Services
             services.AddNodeServices(options =>
             {
-                options.InvocationTimeoutMilliseconds = 90000;
+                options.InvocationTimeoutMilliseconds = 180000;
             });
 
             services.AddMvc().

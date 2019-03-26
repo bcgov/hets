@@ -1,10 +1,6 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
-import { Well, Row, Col, Alert, Label, Button, Glyphicon, Popover, Form, FormGroup, HelpBlock, ButtonGroup } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
-
+import { Well, Row, Col, Alert, Label, Button, Glyphicon, Popover, FormGroup, HelpBlock, ButtonGroup } from 'react-bootstrap';
 import _ from 'lodash';
 import Promise from 'bluebird';
 
@@ -25,6 +21,9 @@ import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import Confirm from '../components/Confirm.jsx';
 import TableControl from '../components/TableControl.jsx';
+import Form from '../components/Form.jsx';
+import PrintButton from '../components/PrintButton.jsx';
+import ReturnButton from '../components/ReturnButton.jsx';
 
 import { daysFromToday, formatDateTime, today, isValidDate, toZuluTime } from '../utils/date';
 import { isBlank, notBlank } from '../utils/string';
@@ -35,7 +34,6 @@ var UsersDetail = React.createClass({
     currentUser: React.PropTypes.object,
     user: React.PropTypes.object,
     ui: React.PropTypes.object,
-    rentalConditions: React.PropTypes.object,
     userDistricts: React.PropTypes.object,
     districts: React.PropTypes.object,
     params: React.PropTypes.object,
@@ -109,18 +107,7 @@ var UsersDetail = React.createClass({
     this.setState({ showEditDialog: false });
   },
 
-  onSaveEdit(user) {
-    var savePromise = this.props.params.userId ? Api.updateUser : Api.addUser;
-    savePromise(user).then(() => {
-      if (!this.props.params.userId) {
-        // Make sure we get the new user's ID
-        user.id = this.props.user.id;
-        // Reload the screen using new user id
-        this.props.router.push({
-          pathname: `${ Constant.USERS_PATHNAME }/${ user.id }`,
-        });
-      }
-    });
+  onUserSaved(/* user */) {
     this.closeEditDialog();
   },
 
@@ -161,10 +148,6 @@ var UsersDetail = React.createClass({
 
     Api.updateUserRoles(this.props.user.id, userRoles);
     this.closeUserRoleDialog();
-  },
-
-  print() {
-    window.print();
   },
 
   openDistrictEditDialog() {
@@ -224,10 +207,8 @@ var UsersDetail = React.createClass({
           </Col>
           <Col sm={4}>
             <div className="pull-right">
-              <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-              <LinkContainer to={{ pathname: Constant.USERS_PATHNAME }}>
-                <Button title="Return"><Glyphicon glyph="arrow-left" /> Return</Button>
-              </LinkContainer>
+              <PrintButton/>
+              <ReturnButton/>
             </div>
           </Col>
         </Row>
@@ -380,7 +361,7 @@ var UsersDetail = React.createClass({
       { this.state.showEditDialog &&
         <UsersEditDialog
           show={ this.state.showEditDialog }
-          onSave={ this.onSaveEdit }
+          onSave={ this.onUserSaved }
           onClose= { this.onCloseEdit }
         />
       }
@@ -444,7 +425,7 @@ var ExpireOverlay = React.createClass({
   render() {
     var props = _.omit(this.props, 'onSave', 'hide', 'userRole');
     return <Popover id="users-role-popover" title="Set Expiry Date" { ...props }>
-      <Form inline>
+      <Form inline onSubmit={this.saveUserRole}>
         <FormGroup controlId="expiryDate" validationState={ this.state.expiryDateError ? 'error' : null }>
           <DateControl id="expiryDate" date={ this.state.expiryDate } updateState={ this.updateState } title="Expiry Date"/>
           <HelpBlock>{ this.state.expiryDateError }</HelpBlock>
@@ -462,7 +443,6 @@ function mapStateToProps(state) {
     currentUser: state.user,
     user: state.models.user,
     ui: state.ui.userRoles,
-    rentalConditions: state.lookups.rentalConditions,
     userDistricts: state.models.userDistricts,
     districts: state.lookups.districts,
   };

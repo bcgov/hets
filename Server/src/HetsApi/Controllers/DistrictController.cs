@@ -73,7 +73,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetDistrict.Any(a => a.DistrictId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             List<HetOwner> owners = _context.HetOwner.AsNoTracking()
                 .Where(x => x.LocalArea.ServiceArea.District.DistrictId == id)
@@ -127,7 +127,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetDistrict.Any(a => a.DistrictId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get status of current district
             return new ObjectResult(new HetsResponse(AnnualRolloverHelper.GetRecord(id, _context)));
@@ -180,7 +180,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetDistrict.Any(a => a.DistrictId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // determine the current fiscal year
             DateTime fiscalStart;
@@ -199,7 +199,7 @@ namespace HetsApi.Controllers
 
             if (status == null)
             {
-                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
             if (status.CurrentFiscalYear == fiscalStart.Year)
@@ -325,6 +325,42 @@ namespace HetsApi.Controllers
 
             jsonString = jsonString + "},";
             return jsonString;
+        }
+
+        #endregion
+
+        #region Fiscal Years by District
+
+        /// <summary>
+        /// Get all fiscal years by district
+        /// </summary>
+        [HttpGet]
+        [Route("{id}/fiscalYears")]
+        [SwaggerOperation("DistrictFiscalYearsGet")]
+        [SwaggerResponse(200, type: typeof(List<HetOwner>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult DistrictFiscalYearsGet([FromRoute]int id)
+        {
+            bool exists = _context.HetDistrict.Any(a => a.DistrictId == id);
+
+            // not found
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+             HetDistrictStatus status = _context.HetDistrictStatus
+                .AsNoTracking()
+                .FirstOrDefault(x => x.DistrictId == id);
+
+            if (status == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            List<string> fiscalYears = new List<string>();
+
+            string current = $"{status.CurrentFiscalYear.ToString()}/{(status.CurrentFiscalYear + 1).ToString()}";
+            string next = $"{status.NextFiscalYear.ToString()}/{(status.NextFiscalYear + 1).ToString()}";
+
+            fiscalYears.Add(current);
+            fiscalYears.Add(next);
+
+            return new ObjectResult(new HetsResponse(fiscalYears));
         }
 
         #endregion

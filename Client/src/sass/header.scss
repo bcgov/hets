@@ -8,29 +8,7 @@ $nav-active-background-color: #5475a7;
 $nav-active-background-color-test: #60a654;
 $nav-active-background-color-dev: #a65460;
 
-#banner {
-  float: left;
-  margin-top: 20px;
-  margin-left: 35px;
-  color: #fff;
-  font-weight: 600;
-}
-
-#top-nav {
-  margin-bottom: 0;
-  background-color: $nav-background-color;
-  border-radius: 0;
-  border: 0;
-  border-top: 2px solid #fcba19;
-  -webkit-box-shadow: 0 3px 3px 1px rgba(51, 51, 51, .5);
-  -moz-box-shadow: 0 3px 3px 1px rgba(51, 51, 51, .5);
-  box-shadow: 0 3px 3px 1px rgba(51, 51, 51, .5);
-
-  > .container {
-    @include flex;
-    align-items: center;
-  }
-
+#header {
   #working-indicator {
     position: absolute;
     top: 15px;
@@ -49,19 +27,28 @@ $nav-active-background-color-dev: #a65460;
     }
   }
 
-  #error-indicator {
-    position: absolute;
-    top: 21px;
-    right: 22px;
-    background-color: #b72b2b;
-    font-size: 13px;
-    color: white;
-    margin-top: -8px;
-    z-index: 100;
+  #banner {
+    float: left;
+    margin-top: 20px;
+    margin-left: 35px;
+    color: #fff;
+    font-weight: 600;
+  }
+}
 
-    span {
-      margin-left: 5px;
-    }
+#top-nav {
+  margin-bottom: 0;
+  background-color: $nav-background-color;
+  border-radius: 0;
+  border: 0;
+  border-top: 2px solid #fcba19;
+  -webkit-box-shadow: 0 3px 3px 1px rgba(51, 51, 51, .5);
+  -moz-box-shadow: 0 3px 3px 1px rgba(51, 51, 51, .5);
+  box-shadow: 0 3px 3px 1px rgba(51, 51, 51, .5);
+
+  > .container {
+    @include flex;
+    align-items: center;
   }
 
   #rollover-notice-button {

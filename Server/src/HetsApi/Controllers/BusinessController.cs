@@ -56,7 +56,7 @@ namespace HetsApi.Controllers
         {
             string businessGuid = UserAccountHelper.GetBusinessGuid(_httpContext, _env);
 
-            if (businessGuid == null) return new ObjectResult(new HetsResponse(""));
+            if (businessGuid == null) return new NotFoundObjectResult(new HetsResponse(""));
 
             HetBusiness business = _context.HetBusiness.AsNoTracking()
                 .Include(x => x.HetOwner)
@@ -66,7 +66,7 @@ namespace HetsApi.Controllers
                         .ThenInclude(z => z.ServiceArea.District)
                 .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
-            if (business == null) return new ObjectResult(new HetsResponse(""));
+            if (business == null) return new NotFoundObjectResult(new HetsResponse(""));
 
             return new ObjectResult(new HetsResponse(business));
         }
@@ -92,19 +92,19 @@ namespace HetsApi.Controllers
             if (string.IsNullOrEmpty(sharedKey))
             {
                 // shared key not provided
-                return new ObjectResult(new HetsResponse("HETS-19", ErrorViewModel.GetDescription("HETS-19", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-19", ErrorViewModel.GetDescription("HETS-19", _configuration)));
             }
 
             if (string.IsNullOrEmpty(postalCode))
             {
                 // postal code not provided
-                return new ObjectResult(new HetsResponse("HETS-22", ErrorViewModel.GetDescription("HETS-22", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-22", ErrorViewModel.GetDescription("HETS-22", _configuration)));
             }
 
             bool exists = _context.HetBusiness.Any(a => a.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get business
             HetBusiness business = _context.HetBusiness.AsNoTracking()
@@ -120,13 +120,13 @@ namespace HetsApi.Controllers
             if (owner == null)
             {
                 // shared key not found
-                return new ObjectResult(new HetsResponse("HETS-20", ErrorViewModel.GetDescription("HETS-20", _configuration)));
+                return new NotFoundObjectResult(new HetsResponse("HETS-20", ErrorViewModel.GetDescription("HETS-20", _configuration)));
             }
 
             if (owner.BusinessId != null)
             {
                 // shared key already used
-                return new ObjectResult(new HetsResponse("HETS-21", ErrorViewModel.GetDescription("HETS-21", _configuration)));
+                return new NotFoundObjectResult(new HetsResponse("HETS-21", ErrorViewModel.GetDescription("HETS-21", _configuration)));
             }
 
             // update owner

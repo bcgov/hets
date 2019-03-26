@@ -1,5 +1,4 @@
 @page {
-  size: landscape;
   margin: 5mm;
 }
 
@@ -121,10 +120,6 @@
 
   [class*='col-']:last-child .row:after {
     margin-bottom: 0;
-  }
-
-  .table-container {
-    overflow-y: visible !important;
   }
 
   div#history-list {

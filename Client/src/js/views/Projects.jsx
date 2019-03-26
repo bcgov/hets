@@ -1,9 +1,6 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form  } from 'react-bootstrap';
-
 import _ from 'lodash';
 
 import ProjectsAddDialog from './dialogs/ProjectsAddDialog.jsx';
@@ -20,12 +17,13 @@ import Favourites from '../components/Favourites.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import TooltipButton from '../components/TooltipButton.jsx';
+import PrintButton from '../components/PrintButton.jsx';
+
 
 var Projects = React.createClass({
   propTypes: {
+    fiscalYears: React.PropTypes.array,
     projects: React.PropTypes.object,
-    project: React.PropTypes.object,
     favourites: React.PropTypes.object,
     search: React.PropTypes.object,
     ui: React.PropTypes.object,
@@ -39,6 +37,7 @@ var Projects = React.createClass({
         statusCode: this.props.search.statusCode || Constant.PROJECT_STATUS_CODE_ACTIVE,
         projectName: this.props.search.projectName || '',
         projectNumber: this.props.search.projectNumber || '',
+        fiscalYear: this.props.search.fiscalYear || '',
       },
       ui : {
         sortField: this.props.ui.sortField || 'name',
@@ -62,21 +61,21 @@ var Projects = React.createClass({
       searchParams.projectNumber = this.state.search.projectNumber;
     }
 
-    return searchParams;
+    if (this.state.search.fiscalYear) {
+      searchParams.fiscalYear = this.state.search.fiscalYear;
+    }
 
+    return searchParams;
   },
 
   componentDidMount() {
-    Api.getFavourites('project').then(() => {
-      // If this is the first load, then look for a default favourite
-      if (_.isEmpty(this.props.search)) {
-        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
-        if (defaultFavourite) {
-          this.loadFavourite(defaultFavourite);
-          return;
-        }
+    // If this is the first load, then look for a default favourite
+    if (_.isEmpty(this.props.search)) {
+      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      if (defaultFavourite) {
+        this.loadFavourite(defaultFavourite);
       }
-    });
+    }
   },
 
   fetch() {
@@ -93,6 +92,7 @@ var Projects = React.createClass({
       statusCode: Constant.PROJECT_STATUS_CODE_ACTIVE,
       projectName: '',
       projectNumber: '',
+      fiscalYear:  '',
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
@@ -128,17 +128,14 @@ var Projects = React.createClass({
   },
 
   saveNewProject(project) {
-    Api.addProject(project).then(() => {
-      Log.projectAdded(this.props.project);
+    Api.addProject(project).then((newProject) => {
+      this.fetch();
+      Log.projectAdded(newProject);
       // Open it up
       this.props.router.push({
-        pathname: `${ Constant.PROJECTS_PATHNAME }/${ this.props.project.id }`,
+        pathname: `${ Constant.PROJECTS_PATHNAME }/${ newProject.id }`,
       });
     });
-  },
-
-  print() {
-    window.print();
   },
 
   renderResults(addProjectButton) {
@@ -160,6 +157,7 @@ var Projects = React.createClass({
 
     return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
       { field: 'name',                     title: 'Project'                                        },
+      { field: 'fiscalYear',               title: 'Fiscal Year'                                    },
       { field: 'provincialProjectNumber',  title: 'Project Number'                                 },
       { field: 'primaryContactName',       title: 'Primary Contact'                                },
       { field: 'primaryContactPhone',      title: 'Contact #'                                      },
@@ -174,7 +172,8 @@ var Projects = React.createClass({
         _.map(projects, (project) => {
           return <tr key={ project.id } className={ project.isActive ? null : 'info' }>
             <td>{ project.name }</td>
-			<td>{ project.provincialProjectNumber }</td>
+            <td>{ project.fiscalYear }</td>
+            <td>{ project.provincialProjectNumber }</td>
             <td>{ project.primaryContactName }</td>
             <td>{ project.primaryContactPhone }</td>
             <td style={{ textAlign: 'center' }}>{ project.hires }</td>
@@ -200,9 +199,7 @@ var Projects = React.createClass({
     return <div id="projects-list">
       <PageHeader>Projects { resultCount }
         <ButtonGroup id="projects-buttons">
-          <TooltipButton onClick={ this.print } disabled={ !this.props.projects.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
-            <Glyphicon glyph="print" title="Print" />
-          </TooltipButton>
+          <PrintButton disabled={!this.props.projects.loaded}/>
         </ButtonGroup>
       </PageHeader>
       <Well id="projects-bar" bsSize="small" className="clearfix">
@@ -214,25 +211,30 @@ var Projects = React.createClass({
                   items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
                 <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
                 <FormInputControl id="projectNumber" type="text" placeholder="Project number" value={ this.state.search.projectNumber } updateState={ this.updateSearchState }></FormInputControl>
+                <DropdownControl id="fiscalYear" placeholder="Fiscal year" blankLine="(All)" title={ this.state.search.fiscalYear } updateState={ this.updateSearchState }
+                  items={ this.props.fiscalYears }
+                />
                 <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
                 <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
               </ButtonToolbar>
             </Col>
           </Form>
           <Col xs={3} sm={2}>
-            <Favourites id="projects-faves-dropdown" type="project" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+            <Favourites id="projects-faves-dropdown" type="project" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
           </Col>
         </Row>
       </Well>
 
       {(() => {
-        if (this.props.projects.loading || this.props.favourites.loading) {
+        if (this.props.projects.loading) {
           return <div style={{ textAlign: 'center' }}><Spinner/></div>;
         }
 
-        var addProjectButton = <Button title="Add Project" bsSize="xsmall" onClick={ this.openAddDialog }>
-          <Glyphicon glyph="plus" />&nbsp;<strong>Add Project</strong>
-        </Button>;
+        var addProjectButton = (
+          <Button title="Add Project" bsSize="xsmall" onClick={ this.openAddDialog }>
+            <Glyphicon glyph="plus" />&nbsp;<strong>Add Project</strong>
+          </Button>
+        );
 
         if (this.props.projects.loaded) {
           return this.renderResults(addProjectButton);
@@ -240,9 +242,9 @@ var Projects = React.createClass({
 
         return <div id="add-button-container">{ addProjectButton }</div>;
       })()}
-      { this.state.showAddDialog &&
+      { this.state.showAddDialog && (
         <ProjectsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewProject } onClose={ this.closeAddDialog } />
-      }
+      )}
     </div>;
   },
 });
@@ -250,9 +252,9 @@ var Projects = React.createClass({
 
 function mapStateToProps(state) {
   return {
+    fiscalYears: state.lookups.fiscalYears,
     projects: state.models.projects,
-    project: state.models.project,
-    favourites: state.models.favourites,
+    favourites: state.models.favourites.project,
     search: state.search.projects,
     ui: state.ui.projects,
   };

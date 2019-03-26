@@ -17,6 +17,7 @@ import * as Log from '../history';
 import store from '../store';
 
 import DateControl from '../components/DateControl.jsx';
+import DeleteButton from '../components/DeleteButton.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
 import EditButton from '../components/EditButton.jsx';
 import Favourites from '../components/Favourites.jsx';
@@ -25,7 +26,7 @@ import Mailto from '../components/Mailto.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import TooltipButton from '../components/TooltipButton.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 import { formatDateTime, startOfCurrentFiscal, endOfCurrentFiscal, startOfPreviousFiscal, endOfPreviousFiscal, toZuluTime } from '../utils/date';
 
@@ -37,6 +38,7 @@ const LAST_MONTH = 'Last Month';
 const LAST_QUARTER = 'Last Quarter';
 const LAST_FISCAL = 'Last Fiscal';
 const CUSTOM = 'Custom';
+
 
 var RentalRequests = React.createClass({
   propTypes: {
@@ -53,6 +55,7 @@ var RentalRequests = React.createClass({
   getInitialState() {
     return {
       showAddDialog: false,
+      addViewOnly: false,
       search: {
         selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
         projectName: this.props.search.projectName || '',
@@ -130,16 +133,16 @@ var RentalRequests = React.createClass({
   },
 
   componentDidMount() {
-    Api.getFavourites('rentalRequests').then(() => {
+    if (!this.props.rentalRequests.loading && !this.props.rentalRequests.loaded) {
       // If this is the first load, then look for a default favourite
-      if (_.isEmpty(this.props.search)) {
-        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
-        if (defaultFavourite) {
-          this.loadFavourite(defaultFavourite);
-          return;
-        }
+      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      if (defaultFavourite) {
+        this.loadFavourite(defaultFavourite);
       }
-    });
+    } else if (this.props.rentalRequests.loaded) {
+      // if a search was performed previously, refresh the search results
+      this.fetch();
+    }
   },
 
   fetch() {
@@ -183,8 +186,14 @@ var RentalRequests = React.createClass({
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
   },
 
-  openAddDialog() {
-    this.setState({ showAddDialog: true });
+  deleteRequest(request) {
+    Api.cancelRentalRequest(request.id).then(() => {
+      this.fetch();
+    });
+  },
+
+  openAddDialog(viewOnly) {
+    this.setState({ showAddDialog: true, addViewOnly: viewOnly });
   },
 
   closeAddDialog() {
@@ -192,25 +201,16 @@ var RentalRequests = React.createClass({
     store.dispatch({ type: Action.ADD_RENTAL_REQUEST_REFRESH });
   },
 
-  saveNewRequest(request) {
-    Api.addRentalRequest(request).then(() => {
-      Log.rentalRequestAdded(this.props.rentalRequest.data);
+  newRentalAdded(rentalRequest) {
+    Log.rentalRequestAdded(rentalRequest);
 
-      // Open it up
-      this.props.router.push({
-        pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ this.props.rentalRequest.data.id }`,
-      });
-
-      return null;
-    }).catch(err => console.log(err.message));
+    this.props.router.push({
+      pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ rentalRequest.id }`,
+    });
   },
 
-  print() {
-    window.print();
-  },
-
-  renderResults(addRentalRequestButton) {
-    if (Object.keys(this.props.rentalRequests.data).length === 0) { return <Alert bsStyle="success">No Rental Requests { addRentalRequestButton }</Alert>; }
+  renderResults(addRequestButtons) {
+    if (Object.keys(this.props.rentalRequests.data).length === 0) { return <Alert bsStyle="success">No Rental Requests { addRequestButtons }</Alert>; }
 
     var rentalRequests = _.sortBy(this.props.rentalRequests.data, rentalRequest => {
       var sortValue = rentalRequest[this.state.ui.sortField];
@@ -234,20 +234,20 @@ var RentalRequests = React.createClass({
       { field: 'primaryContactName',     title: 'Primary Contact'                                 },
       { field: 'status',                 title: 'Status',          style: { textAlign: 'center' } },
       { field: 'addRentalRequest',       title: 'Add Project',     style: { textAlign: 'right'  },
-        node: addRentalRequestButton,
+        node: addRequestButtons,
       },
     ]}>
       {
         _.map(rentalRequests, (request) => {
+          var projectLink = request.projectId ? <Link to={ request.projectPath }>{ request.projectName }</Link> : request.projectName;
+
           return <tr key={ request.id } className={ request.isActive ? null : 'info' }>
             <td>{ request.localAreaName }</td>
             <td style={{ textAlign: 'center' }}>{ request.equipmentCount }</td>
             <td>{ request.districtEquipmentName }</td>
             <td style={{ textAlign: 'center' }}>{ formatDateTime(request.expectedStartDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
             <td style={{ textAlign: 'center' }}>{ formatDateTime(request.expectedEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
-            <td>
-              <Link to={ request.projectPath }>{ request.projectName }</Link>
-            </td>
+            <td>{ projectLink }</td>
             <td>
               {
                 request.primaryContactName ?
@@ -258,6 +258,7 @@ var RentalRequests = React.createClass({
             <td style={{ textAlign: 'center' }}>{ request.status }</td>
             <td style={{ textAlign: 'right' }}>
               <ButtonGroup>
+                <DeleteButton name="Rental Request" hide={ !request.canDelete } onConfirm={ this.deleteRequest.bind(this, request) } />
                 <EditButton name="Rental Request" hide={ !request.canView } view pathname={ `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ request.id }` }/>
               </ButtonGroup>
             </td>
@@ -281,9 +282,7 @@ var RentalRequests = React.createClass({
     return <div id="rental-requests-list">
       <PageHeader>Rental Requests { resultCount }
         <ButtonGroup id="rental-requests-buttons">
-          <TooltipButton onClick={ this.print } disabled={ !this.props.rentalRequests.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
-            <Glyphicon glyph="print" title="Print" />
-          </TooltipButton>
+          <PrintButton disabled={!this.props.rentalRequests.loaded}/>
         </ButtonGroup>
       </PageHeader>
       <Well id="rental-requests-bar" bsSize="small" className="clearfix">
@@ -318,7 +317,7 @@ var RentalRequests = React.createClass({
               })()}
             </Col>
             <Col xs={3} sm={2}>
-              <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+              <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
             </Col>
           </Row>
         </Form>
@@ -327,17 +326,36 @@ var RentalRequests = React.createClass({
       {(() => {
         if (this.props.rentalRequests.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-        var addRentalRequestButton = <Button title="Add Rental Request" bsSize="xsmall" onClick={ this.openAddDialog }>
-          <Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong>
-        </Button>;
+        var addViewOnlyRequestButton = (
+          <Button title="Add Rental Request (View Only)" className="hidden-print" bsSize="xsmall" onClick={ () => this.openAddDialog(true) }>
+            <Glyphicon glyph="plus" />&nbsp;<strong>Request (View Only)</strong>
+          </Button>
+        );
+
+        var addRentalRequestButton = (
+          <Button title="Add Rental Request" className="hidden-print" bsSize="xsmall" onClick={ () => this.openAddDialog(false) }>
+            <Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong>
+          </Button>
+        );
+
+        var addRequestButtons = <div id="add-request-buttons">
+          { addViewOnlyRequestButton }
+          { addRentalRequestButton }
+        </div>;
 
         if (this.props.rentalRequests.loaded) {
-          return this.renderResults(addRentalRequestButton);
+          return this.renderResults(addRequestButtons);
         }
 
-        return <div id="add-button-container">{ addRentalRequestButton }</div>;
+        return <div id="add-button-container">{ addRequestButtons }</div>;
       })()}
-      <RentalRequestsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewRequest } onClose={ this.closeAddDialog } />
+      { this.state.showAddDialog && (
+        <RentalRequestsAddDialog
+          show={ this.state.showAddDialog }
+          viewOnly={ this.state.addViewOnly }
+          onRentalAdded={ this.newRentalAdded }
+          onClose={ this.closeAddDialog } />
+      )}
     </div>;
   },
 });
@@ -349,7 +367,7 @@ function mapStateToProps(state) {
     rentalRequests: state.models.rentalRequests,
     rentalRequest: state.models.rentalRequest,
     localAreas: state.lookups.localAreas,
-    favourites: state.models.favourites,
+    favourites: state.models.favourites.rentalRequests,
     search: state.search.rentalRequests,
     ui: state.ui.rentalRequests,
   };

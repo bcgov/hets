@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -48,6 +49,8 @@ namespace HetsApi.Controllers
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class OwnerController : Controller
     {
+        private readonly Object _thisLock = new Object();
+
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
         private readonly HttpContext _httpContext;
@@ -97,7 +100,7 @@ namespace HetsApi.Controllers
 
             // get active status
             int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get all active owners for this district
             IEnumerable<OwnerLiteProjects> owners = _context.HetOwner.AsNoTracking()
@@ -132,7 +135,7 @@ namespace HetsApi.Controllers
 
             // get active status
             int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get all active owners for this district (and any projects they're associated with)
             IEnumerable<OwnerLiteProjects> owners = _context.HetRentalRequestRotationList.AsNoTracking()
@@ -170,14 +173,14 @@ namespace HetsApi.Controllers
 
             // get active status
             int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get fiscal year
             HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
                 .First(x => x.DistrictId == districtId);
 
             int? fiscalYear = status.CurrentFiscalYear;
-            if (fiscalYear == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (fiscalYear == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // fiscal year in the status table stores the "start" of the year
             DateTime fiscalYearStart = new DateTime((int)fiscalYear, 3, 31);
@@ -217,19 +220,26 @@ namespace HetsApi.Controllers
             if (item == null || id != item.OwnerId)
             {
                 // not found
-                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetOwner owner = _context.HetOwner.First(x => x.OwnerId == item.OwnerId);
 
             int? oldLocalArea = owner.LocalAreaId;
             bool? oldIsMaintenanceContractor = owner.IsMaintenanceContractor;
+
+            // HETS-1115 - Do not allow changing seniority affecting entities if an active request exists
+            if (OwnerHelper.RentalRequestStatus(id, _context) &&
+                oldLocalArea != item.LocalArea.LocalAreaId)
+            {
+                return new BadRequestObjectResult(new HetsResponse("HETS-40", ErrorViewModel.GetDescription("HETS-40", _configuration)));
+            }
 
             if (item.RegisteredCompanyNumber == "") item.RegisteredCompanyNumber = null;
             if (item.WorkSafeBcpolicyNumber == "") item.WorkSafeBcpolicyNumber = null;
@@ -265,8 +275,8 @@ namespace HetsApi.Controllers
 
                 foreach (HetEquipment equipment in equipmentList)
                 {
-                    equipment.LocalAreaId = item.LocalArea.LocalAreaId;                    
-                }                
+                    equipment.LocalAreaId = item.LocalArea.LocalAreaId;
+                }
             }
 
             // do we need to update the block assignment?
@@ -274,7 +284,7 @@ namespace HetsApi.Controllers
             {
                 // get equipment active status
                 int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
-                if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+                if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
                 // get processing rules
                 SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
@@ -332,12 +342,18 @@ namespace HetsApi.Controllers
         public virtual IActionResult OwnersIdStatusPut([FromRoute]int id, [FromBody]OwnerStatus item)
         {
             // not found
-            if (item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // HETS-1115 - Do not allow changing seniority affecting entities if an active request exists
+            if (OwnerHelper.RentalRequestStatus(id, _context))
+            {
+                return new BadRequestObjectResult(new HetsResponse("HETS-40", ErrorViewModel.GetDescription("HETS-40", _configuration)));
+            }
 
             // get record
             HetOwner owner = _context.HetOwner
@@ -349,7 +365,7 @@ namespace HetsApi.Controllers
 
             // get status id
             int? statusId = StatusHelper.GetStatusId(item.Status, "ownerStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             owner.OwnerStatusTypeId = (int)statusId;
             owner.Status = item.Status;
@@ -381,14 +397,14 @@ namespace HetsApi.Controllers
 
                     // get status id
                     int? eqStatusId = StatusHelper.GetStatusId(HetEquipment.StatusArchived, "equipmentStatus", _context);
-                    if (eqStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+                    if (eqStatusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
                     // if the equipment is already archived - leave it archived
                     // if the equipment is already in the same state as the owner's new state - then ignore
                     if (!equipment.EquipmentStatusTypeId.Equals(eqStatusId) && !equipment.EquipmentStatusTypeId.Equals(statusId))
                     {
                         eqStatusId = StatusHelper.GetStatusId(item.Status, "equipmentStatus", _context);
-                        if (eqStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+                        if (eqStatusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
                         equipment.EquipmentStatusTypeId = (int)eqStatusId;
                         equipment.Status = item.Status;
@@ -409,9 +425,19 @@ namespace HetsApi.Controllers
 
                         // recalculate the seniority
                         EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration);
+
+                        // HETS-1119 - Add change of status comments to Notes
+                        string equipmentStatusNote = $"(Status changed to: {equipment.Status}) {equipment.StatusComment}";
+                        HetNote equipmentNote = new HetNote { EquipmentId = equipment.EquipmentId, Text = equipmentStatusNote, IsNoLongerRelevant = false };
+                        _context.HetNote.Add(equipmentNote);
                     }
                 }
             }
+
+            // HETS-1119 - Add change of status comments to Notes
+            string statusNote = $"(Status changed to: {owner.Status}) {owner.StatusComment}";
+            HetNote note = new HetNote { OwnerId = owner.OwnerId, Text = statusNote, IsNoLongerRelevant = false };
+            _context.HetNote.Add(note);
 
             // save the changes
             _context.SaveChanges();
@@ -432,11 +458,11 @@ namespace HetsApi.Controllers
         public virtual IActionResult OwnersPost([FromBody]HetOwner item)
         {
             // not found
-            if (item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get status id
             int? statusId = StatusHelper.GetStatusId(item.Status, "ownerStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // create record
             HetOwner owner = new HetOwner
@@ -646,211 +672,46 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult OwnersIdVerificationPdfPost([FromBody]ReportParameters parameters)
         {
+            // get user's district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
             // get equipment status
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // HETS-1109: Archived Owners coming in Status Letters
             // get owner status (only show Active owners)
             int? ownerStatusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
-            if (ownerStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (ownerStatusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            _logger.LogInformation("Owner Verification Notices Pdf");
+            string pdfService = _configuration["PDF_SERVICE_NAME"];
+            string pdfUrl = _configuration.GetSection("Constants:OwnerVerificationPdfUrl").Value;
+            string reportsRoot = _configuration["ReportsPath"];
 
-            // get owner records
-            IQueryable<HetOwner> ownerRecords = _context.HetOwner.AsNoTracking()
-                .Include(x => x.PrimaryContact)
-                .Include(x => x.Business)
-                .Include(x => x.HetEquipment)
-                    .ThenInclude(a => a.HetEquipmentAttachment)
-                .Include(x => x.HetEquipment)
-                    .ThenInclude(l => l.LocalArea)
-                .Include(x => x.HetEquipment)
-                    .ThenInclude(y => y.DistrictEquipmentType)
-                .Include(x => x.LocalArea)
-                    .ThenInclude(s => s.ServiceArea)
-                        .ThenInclude(d => d.District)
-                .Where(x => x.OwnerStatusTypeId == ownerStatusId)
-                .OrderBy(x => x.LocalArea.Name).ThenBy(x => x.OrganizationName);
-
-            if (parameters.Owners?.Length > 0)
+            // get connection string
+            string connectionString = GetConnectionString();            
+            
+            // create new job!
+            HetBatchReport report = new HetBatchReport
             {
-                ownerRecords = ownerRecords.Where(x => parameters.Owners.Contains(x.OwnerId));
-            }
+                DistrictId = Convert.ToInt32(districtId),
+                StartDate = DateTime.Now,
+                Complete = false,
+                ReportName = "Owner Verification Letters"
+            };
 
-            if (parameters.LocalAreas?.Length > 0)
-            {
-                ownerRecords = ownerRecords.Where(x => parameters.LocalAreas.Contains(x.LocalAreaId));
-            }
+            _context.HetBatchReport.Add(report);
+            _context.SaveChanges();
 
-            // convert to list
-            List<HetOwner> ownerList = ownerRecords.ToList();
+            int reportId = report.ReportId;            
 
-            // strip out inactive and archived equipment
-            foreach (HetOwner owner in ownerList)
-            {
-                owner.HetEquipment = owner.HetEquipment.Where(x => x.EquipmentStatusTypeId == statusId).ToList();
-            }
+            // queue the job
+            BackgroundJob.Enqueue(() => OwnerHelper.OwnerVerificationLetters(null, 
+                reportId, parameters.LocalAreas, parameters.Owners, statusId, ownerStatusId, 
+                pdfService, pdfUrl, reportsRoot, connectionString));
 
-            if (ownerList.Any())
-            {
-                // get address and contact info
-                string address = ownerList[0].LocalArea.ServiceArea.Address;
-
-                if (!string.IsNullOrEmpty(address))
-                {
-                    address = address.Replace("  ", " ");
-                    address = address.Replace("amp;", "and");
-                    address = address.Replace("|", " | ");
-                }
-                else
-                {
-                    address = "";
-                }
-
-                string contact = $"Phone: {ownerList[0].LocalArea.ServiceArea.Phone} | Fax: {ownerList[0].LocalArea.ServiceArea.Fax}";
-
-                // generate pdf document name [unique portion only]
-                string fileName = "OwnerVerification";
-
-                // setup model for submission to the Pdf service
-                OwnerVerificationPdfViewModel model = new OwnerVerificationPdfViewModel
-                {
-                    ReportDate = DateTime.Now.ToString("yyyy-MM-dd"),
-                    Title = fileName,
-                    DistrictId = ownerList[0].LocalArea.ServiceArea.District.DistrictId,
-                    MinistryDistrictId = ownerList[0].LocalArea.ServiceArea.District.MinistryDistrictId,
-                    DistrictName = ownerList[0].LocalArea.ServiceArea.District.Name,
-                    DistrictAddress = address,
-                    DistrictContact = contact,
-                    LocalAreaName = ownerList[0].LocalArea.Name,
-                    Owners = new List<HetOwner>()
-                };
-
-                // add owner records - must verify district ids too
-                foreach (HetOwner owner in ownerRecords)
-                {
-                    if (owner.LocalArea.ServiceArea.District == null ||
-                        owner.LocalArea.ServiceArea.District.DistrictId != model.DistrictId)
-                    {
-                        // missing district - data error [HETS-16]
-                        return new ObjectResult(new HetsResponse("HETS-16", ErrorViewModel.GetDescription("HETS-16", _configuration)));
-                    }
-
-                    owner.ReportDate = model.ReportDate;
-                    owner.Title = model.Title;
-                    owner.DistrictId = model.DistrictId;
-                    owner.MinistryDistrictId = model.MinistryDistrictId;
-                    owner.DistrictName = model.DistrictName;
-                    owner.DistrictAddress = model.DistrictAddress;
-                    owner.DistrictContact = model.DistrictContact;
-                    owner.LocalAreaName = model.LocalAreaName;
-
-                    if (!string.IsNullOrEmpty(owner.SharedKey))
-                    {
-                        owner.SharedKeyHeader = "Secret Key: ";
-                    }
-                    else
-                    {
-                        //"Business Name: label and value instead"
-                        owner.SharedKeyHeader = "Business Name: ";
-
-                        if (owner.Business != null && !string.IsNullOrEmpty(owner.Business.BceidLegalName))
-                        {
-                            owner.SharedKeyHeader = "Business Name: " + owner.Business.BceidLegalName;
-                        }
-                    }
-
-                    model.Owners.Add(owner);
-                }
-
-                // setup payload
-                string payload = JsonConvert.SerializeObject(model, new JsonSerializerSettings
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                    Formatting = Formatting.Indented,
-                    DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                    DateTimeZoneHandling = DateTimeZoneHandling.Utc
-                });
-
-                _logger.LogInformation("Owner Verification Notices Pdf - Payload Length: {0}", payload.Length);
-
-                // pass the request on to the Pdf Micro Service
-                string pdfHost = _configuration["PDF_SERVICE_NAME"];
-                string pdfUrl = _configuration.GetSection("Constants:OwnerVerificationPdfUrl").Value;
-                string targetUrl = pdfHost + pdfUrl;
-
-                targetUrl = targetUrl + "/" + fileName;
-
-                _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Service Url: {0}", targetUrl);
-
-                // call the MicroService
-                try
-                {
-                    HttpClient client = new HttpClient();
-                    StringContent stringContent = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-
-                    _logger.LogInformation("Owner Verification Notices Pdf - Calling HETS Pdf Service");
-                    HttpResponseMessage response = client.PostAsync(targetUrl, stringContent).Result;
-
-                    // success
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Service Response: OK");
-
-                        var pdfResponseBytes = GetPdf(response);
-
-                        // convert to string and log
-                        string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
-
-                        fileName = fileName + $"-{DateTime.Now:yyyy-MM-dd-H-mm}" + ".pdf";
-
-                        _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Filename: {0}", fileName);
-                        _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Size: {0}", pdfResponse.Length);
-
-                        // return content
-                        FileContentResult result = new FileContentResult(pdfResponseBytes, "application/pdf")
-                        {
-                            FileDownloadName = fileName
-                        };
-
-                        Response.Headers.Add("Content-Disposition", "inline; filename=" + fileName);
-
-                        return result;
-                    }
-
-                    _logger.LogInformation("Owner Verification Notices Pdf - HETS Pdf Service Response: {0}", response.StatusCode);
-                }
-                catch (Exception ex)
-                {
-                    Debug.Write("Error generating pdf: " + ex.Message);
-                    return new ObjectResult(new HetsResponse("HETS-15", ErrorViewModel.GetDescription("HETS-15", _configuration)));
-                }
-
-                // problem occured
-                return new ObjectResult(new HetsResponse("HETS-15", ErrorViewModel.GetDescription("HETS-15", _configuration)));
-            }
-
-            // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        private static byte[] GetPdf(HttpResponseMessage response)
-        {
-            try
-            {
-                var pdfResponseBytes = response.Content.ReadAsByteArrayAsync();
-                pdfResponseBytes.Wait();
-
-                return pdfResponseBytes.Result;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
+            return new ObjectResult(report);
+        }        
 
         #endregion
 
@@ -873,7 +734,7 @@ namespace HetsApi.Controllers
             // ** Only return Active owner records
             // get active status
             int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get owner records
             IQueryable<HetOwner> ownerRecords = _context.HetOwner.AsNoTracking()
@@ -920,7 +781,7 @@ namespace HetsApi.Controllers
                         owner.LocalArea.ServiceArea.District.DistrictId != model.DistrictId)
                     {
                         // missing district - data error [HETS-16]
-                        return new ObjectResult(new HetsResponse("HETS-16", ErrorViewModel.GetDescription("HETS-16", _configuration)));
+                        return new BadRequestObjectResult(new HetsResponse("HETS-16", ErrorViewModel.GetDescription("HETS-16", _configuration)));
                     }
 
                     owner.ReportDate = model.ReportDate;
@@ -1003,15 +864,31 @@ namespace HetsApi.Controllers
                 catch (Exception ex)
                 {
                     Debug.Write("Error generating pdf: " + ex.Message);
-                    return new ObjectResult(new HetsResponse("HETS-15", ErrorViewModel.GetDescription("HETS-15", _configuration)));
+                    return new BadRequestObjectResult(new HetsResponse("HETS-15", ErrorViewModel.GetDescription("HETS-15", _configuration)));
                 }
 
                 // problem occured
-                return new ObjectResult(new HetsResponse("HETS-15", ErrorViewModel.GetDescription("HETS-15", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-15", ErrorViewModel.GetDescription("HETS-15", _configuration)));
             }
 
             // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+        }
+
+        private static byte[] GetPdf(HttpResponseMessage response)
+        {
+            try
+            {
+                var pdfResponseBytes = response.Content.ReadAsByteArrayAsync();
+                pdfResponseBytes.Wait();
+
+                return pdfResponseBytes.Result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         #endregion
@@ -1033,11 +910,11 @@ namespace HetsApi.Controllers
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get archive status
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusArchived, "equipmentStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             HetOwner owner = _context.HetOwner.AsNoTracking()
                 .Include(x => x.HetEquipment)
@@ -1079,7 +956,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
             // not found
-            if (!exists || items == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists || items == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // adjust the incoming list
             for (int i = 0; i < items.Length; i++)
@@ -1135,21 +1012,21 @@ namespace HetsApi.Controllers
             bool targetOwnerExists = _context.HetOwner.Any(a => a.OwnerId == targetOwnerId);
 
             // not found
-            if (!ownerExists || !targetOwnerExists || items == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!ownerExists || !targetOwnerExists || items == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            if (id == targetOwnerId) return new ObjectResult(new HetsResponse("HETS-34", ErrorViewModel.GetDescription("HETS-34", _configuration)));
+            if (id == targetOwnerId) return new BadRequestObjectResult(new HetsResponse("HETS-34", ErrorViewModel.GetDescription("HETS-34", _configuration)));
 
             // get active owner status type
             int? ownerStatusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
-            if (ownerStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (ownerStatusId == null) return new NotFoundObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get active equipment status type
             int? equipmentStatusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
-            if (equipmentStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (equipmentStatusId == null) return new NotFoundObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get archive equipment status type
             int? equipmentArchiveStatusId = StatusHelper.GetStatusId(HetEquipment.StatusArchived, "equipmentStatus", _context);
-            if (equipmentArchiveStatusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (equipmentArchiveStatusId == null) return new NotFoundObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             //***************************************************************
             // HETS-706: BVT Bulk Transfer
@@ -1188,14 +1065,14 @@ namespace HetsApi.Controllers
             if (currentOwner.LocalArea.ServiceArea.District.DistrictId !=
                 targetOwner.LocalArea.ServiceArea.District.DistrictId)
             {
-                return new ObjectResult(new HetsResponse("HETS-31", ErrorViewModel.GetDescription("HETS-31", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-31", ErrorViewModel.GetDescription("HETS-31", _configuration)));
             }
 
             // check they are both active
             if (currentOwner.OwnerStatusTypeId != ownerStatusId &&
                 targetOwner.OwnerStatusTypeId != ownerStatusId)
             {
-                return new ObjectResult(new HetsResponse("HETS-32", ErrorViewModel.GetDescription("HETS-32", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-32", ErrorViewModel.GetDescription("HETS-32", _configuration)));
             }
 
             // check all pieces of equipment in the provided list belong to this owner
@@ -1203,7 +1080,7 @@ namespace HetsApi.Controllers
             {
                 if (equipmentToTransfer.OwnerId != currentOwner.OwnerId)
                 {
-                    return new ObjectResult(new HetsResponse("HETS-33", ErrorViewModel.GetDescription("HETS-33", _configuration)));
+                    return new BadRequestObjectResult(new HetsResponse("HETS-33", ErrorViewModel.GetDescription("HETS-33", _configuration)));
                 }
             }
 
@@ -1213,7 +1090,7 @@ namespace HetsApi.Controllers
             HetDistrictStatus district = _context.HetDistrictStatus.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId == currentOwner.LocalArea.ServiceArea.District.DistrictId);
 
-            if (district?.CurrentFiscalYear == null) return new ObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
+            if (district?.CurrentFiscalYear == null) return new NotFoundObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
 
             int fiscalYear = (int)district.CurrentFiscalYear; // status table uses the start of the year
             DateTime fiscalStart = new DateTime(fiscalYear, 4, 1);
@@ -1377,7 +1254,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetOwner owner = _context.HetOwner.AsNoTracking()
                 .Include(x => x.HetDigitalFile)
@@ -1420,7 +1297,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetOwner owner = _context.HetOwner.AsNoTracking()
                 .Include(x => x.HetContact)
@@ -1446,7 +1323,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
             // not found
-            if (!exists || item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists || item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             int contactId;
 
@@ -1461,7 +1338,7 @@ namespace HetsApi.Controllers
                 HetContact contact = owner.HetContact.FirstOrDefault(a => a.ContactId == item.ContactId);
 
                 // not found
-                if (contact == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                if (contact == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                 contactId = item.ContactId;
 
@@ -1545,7 +1422,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
             // not found
-            if (!exists || items == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists || items == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get owner record
             HetOwner owner = _context.HetOwner.AsNoTracking()
@@ -1648,7 +1525,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             return new ObjectResult(new HetsResponse(OwnerHelper.GetHistoryRecords(id, offset, limit, _context)));
         }
@@ -1702,7 +1579,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetOwner owner = _context.HetOwner.AsNoTracking()
                 .Include(x => x.HetNote)
@@ -1737,7 +1614,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
             // not found
-            if (!exists || item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists || item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // add or update note
             if (item.NoteId > 0)
@@ -1746,7 +1623,7 @@ namespace HetsApi.Controllers
                 HetNote note = _context.HetNote.FirstOrDefault(a => a.NoteId == item.NoteId);
 
                 // not found
-                if (note == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                if (note == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                 note.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                 note.Text = item.Text;
@@ -1851,7 +1728,7 @@ namespace HetsApi.Controllers
             {
                 // return ok
                 return new JsonResult("Secret Keys can only be updated from the server");
-            }            
+            }
 
             // get records
             List<HetOwner> owners = _context.HetOwner.AsNoTracking()
@@ -1915,7 +1792,7 @@ namespace HetsApi.Controllers
 
             // owner status
             int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get initial results - must be limited to user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
@@ -1948,6 +1825,41 @@ namespace HetsApi.Controllers
 
             // return to the client
             return new ObjectResult(new HetsResponse(result));
+        }
+
+        #endregion
+
+        #region Get Database Connection String
+
+        /// <summary>
+        /// Retrieve database connection string
+        /// </summary>
+        /// <returns></returns>
+        private string GetConnectionString()
+        {
+            string connectionString;
+
+            lock (_thisLock)
+            {
+                string host = _configuration["DATABASE_SERVICE_NAME"];
+                string username = _configuration["POSTGRESQL_USER"];
+                string password = _configuration["POSTGRESQL_PASSWORD"];
+                string database = _configuration["POSTGRESQL_DATABASE"];
+
+                if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) ||
+                    string.IsNullOrEmpty(database))
+                {
+                    // When things get cleaned up properly, this is the only call we'll have to make.
+                    connectionString = _configuration.GetConnectionString("HETS");
+                }
+                else
+                {
+                    // Environment variables override all other settings; same behaviour as the configuration provider when things get cleaned up.
+                    connectionString = $"Host={host};Username={username};Password={password};Database={database};";
+                }
+            }
+
+            return connectionString;
         }
 
         #endregion
