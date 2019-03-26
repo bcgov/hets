@@ -64,8 +64,12 @@
     }
 
     #lastVerifiedDate {
+      display: flex;
+      flex-shrink: 0;
+
       label {
         float: none;
+        margin-right: 7px;
       }
 
       .input-group {
@@ -127,22 +131,8 @@
     height: 16px;
   }
 
-  .mr-5 {
-    margin-right: 5px;
-  }
-
   .btn-group > .btn + .btn {
     margin-left: -1px;
-  }
-
-  h1 {
-    small {
-      font-size: 85%;
-    }
-  }
-
-  h3 {
-    font-weight: 600;
   }
 }
 

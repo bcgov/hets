@@ -225,7 +225,7 @@ var EquipmentTransferDialog = React.createClass({
     var transferEnabled = false;
     var transferFunc = function() { };
 
-    if (!this.props.owners || !this.props.owners.loaded) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+    if (!this.props.owners.loaded) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
     switch(this.state.stage) {
       case STAGE_SELECT_OWNER:
@@ -262,7 +262,11 @@ var EquipmentTransferDialog = React.createClass({
           var includeSeniority = this.state.seniorityOption === OPTION_EQUIPMENT_AND_SENIORITY.id;
 
           Api.transferEquipment(donorOwnerId, recipientOwnerId, equipment, includeSeniority).catch((error) => {
-            this.setState({ equipmentTransferError: error.message });
+            if (error.errorCode) {
+              this.setState({ equipmentTransferError: error.errorDescription });
+            } else {
+              throw error;
+            }
           }).finally(() => {
             this.setState({ waitingForResponse: false, stage: STAGE_COMPLETE });
           });
@@ -299,7 +303,7 @@ var EquipmentTransferDialog = React.createClass({
 function mapStateToProps(state) {
   return {
     equipment: state.models.ownerEquipment,
-    owners: state.models.ownersLite,
+    owners: state.lookups.owners.lite,
     equipmentTransfer: state.models.equipmentTransfer,
   };
 }

@@ -53,7 +53,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetTimeRecord.Any(a => a.TimeRecordId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetTimeRecord item = _context.HetTimeRecord.First(a => a.TimeRecordId == id);
@@ -97,7 +97,7 @@ namespace HetsApi.Controllers
             HetDistrictStatus district = _context.HetDistrictStatus.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId == districtId);
 
-            if (district?.CurrentFiscalYear == null) return new ObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
+            if (district?.CurrentFiscalYear == null) return new BadRequestObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
 
             int fiscalYear = (int)district.CurrentFiscalYear; // status table uses the start of the year
             DateTime fiscalStart = new DateTime(fiscalYear, 3, 31); // look for all records AFTER the 31st

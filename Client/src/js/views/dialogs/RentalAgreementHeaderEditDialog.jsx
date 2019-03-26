@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Grid, Row, Col } from 'react-bootstrap';
-import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -13,6 +13,7 @@ import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import DropdownControl from '../../components/DropdownControl.jsx';
 import Spinner from '../../components/Spinner.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
@@ -28,7 +29,7 @@ var RentalAgreementHeaderEditDialog = React.createClass({
 
   getInitialState() {
     return {
-      loaded: false,
+      loaded: true,
       projectId: this.props.rentalAgreement.projectId || '',
       equipmentCode: this.props.rentalAgreement.equipment.equipmentCode || '',
 
@@ -37,9 +38,15 @@ var RentalAgreementHeaderEditDialog = React.createClass({
   },
 
   componentDidMount() {
-    Api.getEquipmentLite().then(() => {
-      this.setState({ loaded: true });
-    });
+    Api.getProjectsCurrentFiscal();
+
+    const equipmentPromise = Api.getEquipmentLite();
+    if (!this.props.equipment.loaded) {
+      this.setState({ loaded: false });
+      equipmentPromise.then(() => {
+        this.setState({ loaded: true });
+      });
+    }
   },
 
   updateState(state, callback) {
@@ -69,7 +76,7 @@ var RentalAgreementHeaderEditDialog = React.createClass({
 
   getEquipment(equipmentCode) {
     var code = equipmentCode.toLowerCase().trim();
-    var equipment = _.find(this.props.equipment, (e) => {
+    var equipment = _.find(this.props.equipment.data, (e) => {
       return e.equipmentCode.toLowerCase().trim() === code;
     });
     return equipment;
@@ -102,13 +109,11 @@ var RentalAgreementHeaderEditDialog = React.createClass({
   render() {
     return <EditDialog id="rental-agreements-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={
-        <strong>Rental Agreement</strong>
-      }>
+      title={<strong>Rental Agreement</strong>}>
       {(() => {
         if (!this.state.loaded) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-        var projects = _.sortBy(this.props.projects, 'name');
+        var projects = _.sortBy(this.props.projects.data, 'name');
 
         return <Form>
           <Grid fluid>
@@ -116,13 +121,21 @@ var RentalAgreementHeaderEditDialog = React.createClass({
               <Col md={6}>
                 <FormGroup controlId="projectId">
                   <ControlLabel>Project <sup>*</sup></ControlLabel>
-                  <DropdownControl id="projectId" fieldName="label" updateState={ this.updateState } items={ projects } selectedId={ this.state.projectId } blankLine="(None)" placeholder="(None)" />
+                  <DropdownControl
+                    id="projectId"
+                    fieldName="label"
+                    items={projects}
+                    disabled={!this.props.projects.loaded}
+                    updateState={this.updateState}
+                    selectedId={this.state.projectId}
+                    blankLine="(None)"
+                    placeholder="(None)"/>
                 </FormGroup>
               </Col>
               <Col md={6}>
                 <FormGroup controlId="equipmentCode" validationState={ this.state.equipmentCodeError ? 'error' : null}>
                   <ControlLabel>Equipment ID <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" value={ this.state.equipmentCode } updateState={ this.updateState } onChange={ this.validateEquipmentCodeInput } inputRef={ ref => { this.input = ref; }}/>
+                  <FormInputControl type="text" value={ this.state.equipmentCode } updateState={ this.updateState } onChange={ this.validateEquipmentCodeInput } autoFocus/>
                   <HelpBlock>{ this.state.equipmentCodeError }</HelpBlock>
                 </FormGroup>
               </Col>
@@ -136,9 +149,8 @@ var RentalAgreementHeaderEditDialog = React.createClass({
 
 function mapStateToProps(state) {
   return {
-    rentalAgreement: state.models.rentalAgreement,
     projects: state.lookups.projectsCurrentFiscal,
-    equipment: state.lookups.equipmentLite,
+    equipment: state.lookups.equipment.lite,
   };
 }
 

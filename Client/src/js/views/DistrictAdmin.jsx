@@ -1,9 +1,6 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { PageHeader, Button, ButtonGroup, Glyphicon, Well, Alert, Row, Col } from 'react-bootstrap';
-
 import _ from 'lodash';
 
 import * as Api from '../api';
@@ -20,8 +17,10 @@ import Confirm from '../components/Confirm.jsx';
 import ConditionAddEditDialog from './dialogs/ConditionAddEditDialog.jsx';
 import DistrictEquipmentTypeAddEditDialog from './dialogs/DistrictEquipmentTypeAddEditDialog.jsx';
 import EquipmentTransferDialog from './dialogs/EquipmentTransferDialog.jsx';
+import SubHeader from '../components/ui/SubHeader.jsx';
 
 import { caseInsensitiveSort, sortDir } from '../utils/array';
+
 
 var DistrictAdmin = React.createClass({
   propTypes: {
@@ -52,8 +51,7 @@ var DistrictAdmin = React.createClass({
 
   componentDidMount() {
     Api.getRentalConditions();
-    Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
-    Api.getEquipmentTypes();
+    Api.getDistrictEquipmentTypes();
   },
 
   updateEquipmentUIState(state, callback) {
@@ -64,11 +62,11 @@ var DistrictAdmin = React.createClass({
   },
 
   addCondition() {
-    this.setState({ condition: { id: 0 } }, this.showConditionAddEditDialog());
+    this.setState({ condition: { id: 0 } }, this.showConditionAddEditDialog);
   },
 
   editCondition(condition) {
-    this.setState({ condition: condition }, this.showConditionAddEditDialog());
+    this.setState({ condition: condition }, this.showConditionAddEditDialog);
   },
 
   deleteCondition(condition) {
@@ -118,38 +116,35 @@ var DistrictAdmin = React.createClass({
   },
 
   addDistrictEquipmentType() {
-    this.setState({ districtEquipmentType: { id: 0 } }, this.showDistrictEquipmentTypeAddEditDialog());
+    this.setState({ districtEquipmentType: { id: 0 } }, this.showDistrictEquipmentTypeAddEditDialog);
   },
 
   editDistrictEquipmentType(equipment) {
-    this.setState({ districtEquipmentType: equipment }, this.showDistrictEquipmentTypeAddEditDialog());
+    this.setState({ districtEquipmentType: equipment }, this.showDistrictEquipmentTypeAddEditDialog);
   },
 
   onDistrictEquipmentTypeSave(data) {
     let equipment = { ...data, district: { id: this.props.currentUser.district.id } };
-    let promise = Api.addDistrictEquipmentType;
-    if (equipment.id !== 0) {
-      promise = Api.updateDistrictEquipmentType;
-    }
+    const promise = equipment.id !== 0 ? Api.updateDistrictEquipmentType : Api.addDistrictEquipmentType;
     promise(equipment).then(() => {
-      Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
+      Api.getDistrictEquipmentTypes();
       this.closeDistrictEquipmentTypeAddEditDialog();
     });
   },
 
   deleteDistrictEquipmentType(equipment) {
     Api.deleteDistrictEquipmentType(equipment).then(() => {
-      Api.getDistrictEquipmentTypes(this.props.currentUser.district.id);
-    }).catch(err => {
-      this.setState({ showDistrictEquipmentTypeErrorDialog: true, districtEquipmentTypeError: err.message });
+      return Api.getDistrictEquipmentTypes();
+    }).catch((err) => {
+      if (err.errorCode) {
+        this.setState({ showDistrictEquipmentTypeErrorDialog: true, districtEquipmentTypeError: err.errorDescription });
+      } else {
+        throw err;
+      }
     });
   },
 
   render() {
-    var equipmentTypes = _.chain(this.props.equipmentTypes)
-      .sortBy('blueBookSection')
-      .value();
-
     if (!this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) {
       return (
         <div>You do not have permission to view this page.</div>
@@ -160,9 +155,9 @@ var DistrictAdmin = React.createClass({
       <PageHeader>District Admin</PageHeader>
 
       <Well>
-        <h3>Manage District Equipment Types</h3>
+        <SubHeader title="Manage District Equipment Types"/>
         {(() => {
-          if (this.props.districtEquipmentTypes.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+          if (!this.props.districtEquipmentTypes.loaded) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
           var addDistrictEquipmentButton = <Button title="Add District Equipment" bsSize="xsmall" onClick={ this.addDistrictEquipmentType }><Glyphicon glyph="plus" />&nbsp;<strong>Add District Equipment Type</strong></Button>;
 
@@ -206,7 +201,7 @@ var DistrictAdmin = React.createClass({
       </Well>
 
       <Well>
-        <h3>Manage Conditions</h3>
+        <SubHeader title="Manage Conditions"/>
         {(() => {
           if (this.props.rentalConditions.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
@@ -244,7 +239,7 @@ var DistrictAdmin = React.createClass({
       </Well>
 
       <Well className="clearfix">
-        <h3>Equipment Transfer (Bulk)</h3>
+        <SubHeader title="Equipment Transfer (Bulk)"/>
         <Row>
           <Col xs={9}>Bulk transfer will enable the user to transfer equipment associated with one owner code to another owner code.</Col>
           <Col xs={3}><span className="pull-right"><Button onClick={ this.showEquipmentTransferDialog }>Equipment Transfer</Button></span></Col>
@@ -271,17 +266,16 @@ var DistrictAdmin = React.createClass({
           onClose={this.closeDistrictEquipmentTypeAddEditDialog}
           onSave={this.onDistrictEquipmentTypeSave}
           districtEquipmentType={this.state.districtEquipmentType}
-          equipmentTypes={equipmentTypes}
         />
       }
       { this.state.showDistrictEquipmentTypeErrorDialog &&
         <ModalDialog
-          title='Error'
+          title="Error"
           show={this.state.showDistrictEquipmentTypeErrorDialog}
           onClose={this.closeDistrictEquipmentTypeErrorDialog}
           footer={
             <span>
-              <Button onClick={ this.closeDistrictEquipmentTypeErrorDialog }>{ 'Close' }</Button>
+              <Button onClick={ this.closeDistrictEquipmentTypeErrorDialog }>Close</Button>
             </span>
           }
         >
@@ -291,7 +285,6 @@ var DistrictAdmin = React.createClass({
     </div>;
   },
 });
-
 
 function mapStateToProps(state) {
   return {

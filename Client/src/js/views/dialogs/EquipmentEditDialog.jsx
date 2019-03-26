@@ -4,14 +4,14 @@ import { connect } from 'react-redux';
 
 import _ from 'lodash';
 
-import { Grid, Row, Col, Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { Grid, Row, Col, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import * as Api from '../../api';
 
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
-import Spinner from '../../components/Spinner.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank, notBlank } from '../../utils/string';
 import { isValidYear } from '../../utils/date';
@@ -30,7 +30,6 @@ var EquipmentEditDialog = React.createClass({
 
   getInitialState() {
     return {
-      loading: false,
       isNew: this.props.equipment.id === 0,
 
       localAreaId: this.props.equipment.localArea.id || 0,
@@ -55,11 +54,7 @@ var EquipmentEditDialog = React.createClass({
   },
 
   componentDidMount() {
-    this.input.focus();
-    this.setState({ loading: true });
-    Api.getDistrictEquipmentTypes(this.props.currentUser.district.id).then(() => {
-      this.setState({ loading: false });
-    });
+    Api.getDistrictEquipmentTypes();
   },
 
   componentDidUpdate(prevProps, prevState) {
@@ -174,13 +169,11 @@ var EquipmentEditDialog = React.createClass({
   },
 
   render() {
-    if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
     var equipment = this.props.equipment;
 
     var localAreas = _.sortBy(this.props.localAreas, 'name');
 
-    var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes)
+    var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes.data)
       .filter(type => type.district.id == this.props.currentUser.district.id)
       .sortBy('districtEquipmentName')
       .value();
@@ -188,9 +181,7 @@ var EquipmentEditDialog = React.createClass({
     return <EditDialog id="equipment-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.checkForDuplicatesAndSave } didChange={ this.didChange } isValid={ this.isValid }
       saveText={ this.state.duplicateSerialNumber ? 'Proceed Anyways' : 'Save' }
-      title= {
-        <strong>Equipment Id: <small>{ equipment.equipmentCode }</small></strong>
-      }>
+      title={<strong>Equipment Id: <small>{ equipment.equipmentCode }</small></strong>}>
       {(() => {
         return <Form>
           <Grid fluid>
@@ -210,10 +201,14 @@ var EquipmentEditDialog = React.createClass({
               <Col md={12}>
                 <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
                   <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
-                  <FilterDropdown id="equipmentTypeId" fieldName="districtEquipmentName" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
-                    items={ districtEquipmentTypes }
+                  <FilterDropdown
+                    id="equipmentTypeId"
                     className="full-width"
-                  />
+                    fieldName="districtEquipmentName"
+                    disabled={!this.props.districtEquipmentTypes.loaded}
+                    items={districtEquipmentTypes}
+                    selectedId={this.state.equipmentTypeId}
+                    updateState={this.updateState}/>
                   <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
                 </FormGroup>
               </Col>
@@ -222,7 +217,7 @@ var EquipmentEditDialog = React.createClass({
               <Col md={12}>
                 <FormGroup controlId="make" validationState={ this.state.makeError ? 'error' : null }>
                   <ControlLabel>Make <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.make } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
+                  <FormInputControl type="text" defaultValue={ this.state.make } updateState={ this.updateState } autoFocus/>
                   <HelpBlock>{ this.state.makeError }</HelpBlock>
                 </FormGroup>
               </Col>
@@ -318,7 +313,7 @@ function mapStateToProps(state) {
     currentUser: state.user,
     equipment: state.models.equipment,
     localAreas: state.lookups.localAreas,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypes.data,
+    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
   };
 }
 

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Well, Alert, Row, Col } from 'react-bootstrap';
+import { PageHeader, Well, Alert } from 'react-bootstrap';
 import { ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -18,6 +18,7 @@ import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SearchControl from '../components/SearchControl.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 var Roles = React.createClass({
   propTypes: {
@@ -75,10 +76,6 @@ var Roles = React.createClass({
     });
   },
 
-  print() {
-    window.print();
-  },
-
   render() {
     var numRoles = this.state.loading ? '...' : Object.keys(this.props.roles).length;
 
@@ -90,24 +87,20 @@ var Roles = React.createClass({
 
     return <div id="roles-list">
       <PageHeader>Roles ({ numRoles })
-        <ButtonGroup id="roles-buttons">
-          <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+        <ButtonGroup id="roles-buttons" className="pull-right">
+          <PrintButton/>
         </ButtonGroup>
       </PageHeader>
       <div>
         <Well id="roles-bar" bsSize="small" className="clearfix">
-          <Row>
-            <Col md={12}>
-              <ButtonToolbar id="roles-filters">
-                <SearchControl id="search" search={ this.state.search } updateState={ this.updateSearchState }
-                  items={[
-                    { id: 'name',        name: 'Name' },
-                    { id: 'description', name: 'Description' },
-                  ]}
-                />
-              </ButtonToolbar>
-            </Col>
-          </Row>
+          <ButtonToolbar id="roles-filters">
+            <SearchControl id="search" search={ this.state.search } updateState={ this.updateSearchState }
+              items={[
+                { id: 'name',        name: 'Name' },
+                { id: 'description', name: 'Description' },
+              ]}
+            />
+          </ButtonToolbar>
         </Well>
 
         {(() => {

@@ -121,12 +121,12 @@ a.light {
   margin: 5px 0;
 }
 
-.table-container {
-  width: 100%;
-  overflow-y: auto;
-}
-
 #confirm-dialog .timer {
   margin-left: 3px;
   font-weight: bold;
+}
+
+// Fix for extra dark overlay when multiple modals are open
+[aria-hidden="true"] .modal-backdrop.in {
+  opacity: 0;
 }

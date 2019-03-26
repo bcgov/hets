@@ -25,7 +25,7 @@ namespace HetsApi.Authorization
                 .RequireAuthenticatedUser()
                 .RequireAssertion(
                     context => context.User.HasOnePermission(
-                        HetPermission.Login, HetPermission.BusinessLogin, HetPermission.ImportData)
+                        HetPermission.Login, HetPermission.BusinessLogin)
                     )
                 .Build();
 

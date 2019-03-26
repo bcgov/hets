@@ -72,25 +72,35 @@ namespace HetsApi.Controllers
             if (item == null || id != item.ProjectId)
             {
                 // not found
-                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetProject project = _context.HetProject.First(a => a.ProjectId == id);
 
             int? statusId = StatusHelper.GetStatusId(item.Status, "projectStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             project.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             project.Name = item.Name;
             project.ProvincialProjectNumber = item.ProvincialProjectNumber;
             project.ProjectStatusTypeId = (int)statusId;
             project.Information = item.Information;
+
+            // HETS-1006 - Go - Live: Add additional fields for projects
+            project.FiscalYear = item.FiscalYear;
+            project.ResponsibilityCentre = item.ResponsibilityCentre;
+            project.ServiceLine = item.ServiceLine;
+            project.Stob = item.Stob;
+            project.Product = item.Product;
+            project.BusinessFunction = item.BusinessFunction;
+            project.WorkActivity = item.WorkActivity;
+            project.CostType = item.CostType;
 
             if (item.District != null)
             {
@@ -121,11 +131,10 @@ namespace HetsApi.Controllers
         public virtual IActionResult ProjectsPost([FromBody]HetProject item)
         {
             // not found
-            if (item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             int? statusId = StatusHelper.GetStatusId(item.Status, "projectStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
-
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             HetProject project = new HetProject
             {
@@ -133,7 +142,17 @@ namespace HetsApi.Controllers
                 ProvincialProjectNumber = item.ProvincialProjectNumber,
                 ProjectStatusTypeId = (int)statusId,
                 Information = item.Information,
-                DistrictId = item.District.DistrictId
+                DistrictId = item.District.DistrictId,
+
+                // HETS-1006 - Go - Live: Add additional fields for projects
+                FiscalYear = item.FiscalYear,
+                ResponsibilityCentre = item.ResponsibilityCentre,
+                ServiceLine = item.ServiceLine,
+                Stob = item.Stob,
+                Product = item.Product,
+                BusinessFunction = item.BusinessFunction,
+                WorkActivity = item.WorkActivity,
+                CostType = item.CostType
             };
 
             _context.HetProject.Add(project);
@@ -159,12 +178,16 @@ namespace HetsApi.Controllers
         /// <param name="hasHires">if true then only include Projects with active Rental Agreements</param>
         /// <param name="status">if included, filter the results to those with a status matching this string</param>
         /// <param name="projectNumber"></param>
+        /// <param name="fiscalYear"></param>
         [HttpGet]
         [Route("search")]
         [SwaggerOperation("ProjectsSearchGet")]
         [SwaggerResponse(200, type: typeof(List<ProjectLite>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult ProjectsSearchGet([FromQuery]string districts, [FromQuery]string project, [FromQuery]bool? hasRequests, [FromQuery]bool? hasHires, [FromQuery]string status, [FromQuery]string projectNumber)
+        public virtual IActionResult ProjectsSearchGet([FromQuery]string districts,
+            [FromQuery]string project, [FromQuery]bool? hasRequests, [FromQuery]bool? hasHires,
+            [FromQuery]string status, [FromQuery]string projectNumber,
+            [FromQuery]string fiscalYear)
         {
             int?[] districtTokens = ArrayHelper.ParseIntArray(districts);
 
@@ -205,6 +228,11 @@ namespace HetsApi.Controllers
                 data = data.Where(x => x.ProvincialProjectNumber.ToLower().Contains(projectNumber.ToLower()));
             }
 
+            if (!string.IsNullOrEmpty(fiscalYear))
+            {
+                data = data.Where(x => x.FiscalYear.Equals(fiscalYear));
+            }
+
             // convert Project Model to the "ProjectLite" Model
             List<ProjectLite> result = new List<ProjectLite>();
 
@@ -239,7 +267,7 @@ namespace HetsApi.Controllers
                 .First(x => x.DistrictId == districtId);
 
             int? fiscalYear = status.CurrentFiscalYear;
-            if (fiscalYear == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (fiscalYear == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // fiscal year in the status table stores the "start" of the year
             DateTime fiscalYearStart = new DateTime((int)fiscalYear, 3, 31);
@@ -282,7 +310,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             List<HetRentalAgreement> agreements = _context.HetProject.AsNoTracking()
                 .Include(x => x.ProjectStatusType)
@@ -314,12 +342,12 @@ namespace HetsApi.Controllers
         public virtual IActionResult ProjectsRentalAgreementClonePost([FromRoute]int id, [FromBody]ProjectRentalAgreementClone item)
         {
             // not found
-            if (item == null || id != item.ProjectId) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (item == null || id != item.ProjectId) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get all agreements for this project
             HetProject project = _context.HetProject
@@ -340,13 +368,13 @@ namespace HetsApi.Controllers
             exists = agreements.Any(a => a.RentalAgreementId == item.RentalAgreementId);
 
             // (RENTAL AGREEMENT) not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // check that the rental agreement to clone exist
             exists = agreements.Any(a => a.RentalAgreementId == item.AgreementToCloneId);
 
             // (RENTAL AGREEMENT) not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-11", ErrorViewModel.GetDescription("HETS-11", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-11", ErrorViewModel.GetDescription("HETS-11", _configuration)));
 
             int agreementToCloneIndex = agreements.FindIndex(a => a.RentalAgreementId == item.AgreementToCloneId);
             int newRentalAgreementIndex = agreements.FindIndex(a => a.RentalAgreementId == item.RentalAgreementId);
@@ -360,14 +388,14 @@ namespace HetsApi.Controllers
                 .Equals("Active", StringComparison.InvariantCultureIgnoreCase))
             {
                 // (RENTAL AGREEMENT) is not active
-                return new ObjectResult(new HetsResponse("HETS-12", ErrorViewModel.GetDescription("HETS-12", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-12", ErrorViewModel.GetDescription("HETS-12", _configuration)));
             }
 
             if (agreements[newRentalAgreementIndex].HetTimeRecord != null &&
                 agreements[newRentalAgreementIndex].HetTimeRecord.Count > 0)
             {
                 // (RENTAL AGREEMENT) has time records
-                return new ObjectResult(new HetsResponse("HETS-13", ErrorViewModel.GetDescription("HETS-13", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-13", ErrorViewModel.GetDescription("HETS-13", _configuration)));
             }
 
             // ******************************************************************
@@ -390,6 +418,7 @@ namespace HetsApi.Controllers
                     Comment = rate.Comment,
                     ComponentName = rate.ComponentName,
                     Rate = rate.Rate,
+                    Set = rate.Set,
                     Overtime = rate.Overtime,
                     Active = rate.Active,
                     IsIncludedInTotal = rate.IsIncludedInTotal
@@ -529,7 +558,7 @@ namespace HetsApi.Controllers
         {
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
 
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get current district and fiscal year
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
@@ -539,7 +568,7 @@ namespace HetsApi.Controllers
                 .First(x => x.DistrictId == districtId);
 
             int? fiscalYear = status.CurrentFiscalYear;
-            if (fiscalYear == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (fiscalYear == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // fiscal year in the status table stores the "start" of the year
             DateTime fiscalYearStart = new DateTime((int)fiscalYear, 4, 1);
@@ -577,7 +606,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get project record
             HetProject project = _context.HetProject.AsNoTracking()
@@ -593,7 +622,7 @@ namespace HetsApi.Controllers
             if (item.RentalAgreement.RentalAgreementId == 0)
             {
                 // (RENTAL AGREEMENT) record not found
-                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
             exists = agreements.Any(a => a.RentalAgreementId == item.RentalAgreement.RentalAgreementId);
@@ -601,7 +630,7 @@ namespace HetsApi.Controllers
             if (!exists)
             {
                 // (RENTAL AGREEMENT) record not found
-                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
             // ******************************************************************
@@ -619,7 +648,7 @@ namespace HetsApi.Controllers
                 HetTimeRecord time = _context.HetTimeRecord.FirstOrDefault(x => x.TimeRecordId == item.TimeRecordId);
 
                 // not found
-                if (time == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                if (time == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                 time.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                 time.RentalAgreementId = rentalAgreementId;
@@ -682,7 +711,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get project record
             HetProject project = _context.HetProject.AsNoTracking()
@@ -701,7 +730,7 @@ namespace HetsApi.Controllers
                 if (item.RentalAgreement.RentalAgreementId == 0)
                 {
                     // (RENTAL AGREEMENT) record not found
-                    return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                    return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                 }
 
                 exists = agreements.Any(a => a.RentalAgreementId == item.RentalAgreement.RentalAgreementId);
@@ -709,7 +738,7 @@ namespace HetsApi.Controllers
                 if (!exists)
                 {
                     // (RENTAL AGREEMENT) record not found
-                    return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                    return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
                 }
 
                 // add or update time record
@@ -725,7 +754,7 @@ namespace HetsApi.Controllers
                     HetTimeRecord time = _context.HetTimeRecord.FirstOrDefault(x => x.TimeRecordId == item.TimeRecordId);
 
                     // not found
-                    if (time == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                    if (time == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                     time.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                     time.RentalAgreementId = rentalAgreementId;
@@ -791,7 +820,7 @@ namespace HetsApi.Controllers
         {
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
 
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetProject project = _context.HetProject.AsNoTracking()
                 .Include(x => x.HetRentalAgreement)
@@ -822,7 +851,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetProject project = _context.HetProject.AsNoTracking()
                 .Include(x => x.HetDigitalFile)
@@ -865,7 +894,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetProject project = _context.HetProject.AsNoTracking()
                 .Include(x => x.HetContact)
@@ -891,7 +920,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
 
             // not found
-            if (!exists || item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists || item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             int contactId;
 
@@ -906,7 +935,7 @@ namespace HetsApi.Controllers
                 HetContact contact = project.HetContact.FirstOrDefault(a => a.ContactId == item.ContactId);
 
                 // not found
-                if (contact == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                if (contact == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                 contactId = item.ContactId;
 
@@ -992,7 +1021,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
 
             // not found
-            if (!exists || items == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists || items == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get project record
             HetProject project = _context.HetProject.AsNoTracking()
@@ -1095,7 +1124,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             return new ObjectResult(new HetsResponse(ProjectHelper.GetHistoryRecords(id, offset, limit, _context)));
         }
@@ -1149,7 +1178,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetProject project = _context.HetProject.AsNoTracking()
                 .Include(x => x.HetNote)
@@ -1184,7 +1213,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // add or update note
             if (item.NoteId > 0)
@@ -1193,7 +1222,7 @@ namespace HetsApi.Controllers
                 HetNote note = _context.HetNote.FirstOrDefault(a => a.NoteId == item.NoteId);
 
                 // not found
-                if (note == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                if (note == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                 note.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                 note.ProjectId = id;
@@ -1253,10 +1282,10 @@ namespace HetsApi.Controllers
             HetDistrict district = _context.HetDistrict.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId.Equals(districtId));
 
-            if (district == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (district == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // find agreements
             IQueryable<HetProject> data = _context.HetProject.AsNoTracking()

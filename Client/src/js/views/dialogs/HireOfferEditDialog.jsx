@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Grid, Row, Col, Radio, Form, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
+import { Grid, Row, Col, Radio, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
 
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -17,9 +17,11 @@ import CheckboxControl from '../../components/CheckboxControl.jsx';
 import DropdownControl from '../../components/DropdownControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import { today, toZuluTime, formatDateTime } from '../../utils/date';
 import { notBlank, isBlank } from '../../utils/string';
+
 
 const STATUS_YES = 'Yes';
 const STATUS_NO = 'No';
@@ -38,11 +40,11 @@ const refusalReasons = [
 var HireOfferEditDialog = React.createClass({
   propTypes: {
     hireOffer: React.PropTypes.object.isRequired,
+    showAllResponseFields: React.PropTypes.bool.isRequired,
     rentalRequest: React.PropTypes.object.isRequired,
     onSave: React.PropTypes.func.isRequired,
     onClose: React.PropTypes.func.isRequired,
     show: React.PropTypes.bool,
-    error: React.PropTypes.object,
     blankRentalAgreements: React.PropTypes.object,
   },
 
@@ -224,7 +226,7 @@ var HireOfferEditDialog = React.createClass({
   },
 
   onConfirmForceHire(reasonForForceHire) {
-    this.setState({ note: reasonForForceHire }, this.saveHireOffer());
+    this.setState({ note: reasonForForceHire }, this.saveHireOffer);
   },
 
   openConfirmForceHireDialog() {
@@ -249,9 +251,7 @@ var HireOfferEditDialog = React.createClass({
 
     return <EditDialog id="hire-offer-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={
-        <strong>Response</strong>
-      }>
+      title={<strong>Response</strong>}>
       {(() => {
         var blankRentalAgreements = _.sortBy(this.props.blankRentalAgreements.data, 'number');
 
@@ -272,7 +272,7 @@ var HireOfferEditDialog = React.createClass({
                       <Radio
                         onChange={ this.offerStatusChanged.bind(this, STATUS_YES) }
                         checked={ this.state.offerStatus == STATUS_YES }
-                        disabled={ !this.props.hireOffer.showAllResponseFields && !this.props.hireOffer.offerResponse }
+                        disabled={ !this.props.showAllResponseFields && !this.props.hireOffer.offerResponse }
                       >
                         Yes
                       </Radio>
@@ -286,7 +286,7 @@ var HireOfferEditDialog = React.createClass({
                       <Radio
                         onChange={ this.offerStatusChanged.bind(this, STATUS_NO) }
                         checked={ this.state.offerStatus == STATUS_NO }
-                        disabled={ !this.props.hireOffer.showAllResponseFields && !this.props.hireOffer.offerResponse }
+                        disabled={ !this.props.showAllResponseFields && !this.props.hireOffer.offerResponse }
                       >
                         No
                       </Radio>
@@ -325,7 +325,7 @@ var HireOfferEditDialog = React.createClass({
                       <Radio
                         onChange={ this.offerStatusChanged.bind(this, STATUS_ASKED) }
                         checked={ this.state.offerStatus == STATUS_ASKED }
-                        disabled={ !this.props.hireOffer.showAllResponseFields && !this.props.hireOffer.offerResponse }
+                        disabled={ !this.props.showAllResponseFields && !this.props.hireOffer.offerResponse }
                       >
                         Asked
                       </Radio>

@@ -52,7 +52,7 @@ namespace HetsApi.Controllers
         /// <remarks>Returns a users favourites of a given type.  If type is empty, returns all.</remarks>
         /// <param name="favouriteType">type of favourite to return</param>
         [HttpGet]
-        [Route("favourites/{favouriteType}")]
+        [Route("favourites/{favouriteType?}")]
         [SwaggerOperation("UsersCurrentFavouritesFavouriteTypeGet")]
         [SwaggerResponse(200, type: typeof(List<HetUserFavourite>))]
         [RequiresPermission(HetPermission.Login)]
@@ -94,14 +94,14 @@ namespace HetsApi.Controllers
             string userId = _context.SmUserId;
 
             // not found
-            if (userId == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (userId == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             bool exists = _context.HetUserFavourite
                 .Where(x => x.User.SmUserId == userId)
                 .Any(a => a.UserFavouriteId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // delete favourite
             HetUserFavourite item = _context.HetUserFavourite.First(a => a.UserFavouriteId == id);
@@ -281,7 +281,7 @@ namespace HetsApi.Controllers
             string userId = _context.SmUserId;
 
             // not found
-            if (userId == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (userId == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get user district
             HetUserDistrict userDistrict = _context.HetUserDistrict.AsNoTracking()
@@ -335,7 +335,7 @@ namespace HetsApi.Controllers
             string userId = _context.SmUserId;
 
             // not found
-            if (userId == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (userId == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get initial results - must be limited to user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
@@ -343,7 +343,7 @@ namespace HetsApi.Controllers
             // get user record
             bool userExists = _context.HetUser.Any(a => a.SmUserId == userId);
 
-            if (!userExists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!userExists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetUser user = _context.HetUser.AsNoTracking()
                 .First(a => a.SmUserId == userId);

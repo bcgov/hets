@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -12,7 +12,7 @@ import * as Constant from '../../constants';
 import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Spinner from '../../components/Spinner.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank, notBlank } from '../../utils/string';
 import { isValidYear } from '../../utils/date';
@@ -30,7 +30,6 @@ var EquipmentAddDialog = React.createClass({
 
   getInitialState() {
     return {
-      loading: false,
       localAreaId: this.props.owner.localArea.id || 0,
       equipmentTypeId: 0,
       licencePlate: '',
@@ -54,10 +53,7 @@ var EquipmentAddDialog = React.createClass({
   },
 
   componentDidMount() {
-    this.setState({ loading: true });
-    Api.getDistrictEquipmentTypes(this.props.currentUser.district.id).then(() => {
-      this.setState({ loading: false });
-    });
+    Api.getDistrictEquipmentTypes();
   },
 
   componentDidUpdate(prevProps, prevState) {
@@ -179,13 +175,11 @@ var EquipmentAddDialog = React.createClass({
   },
 
   render() {
-    if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
     var owner = this.props.owner;
 
     var localAreas = _.sortBy(this.props.localAreas, 'name');
 
-    var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes)
+    var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes.data)
       .filter(type => type.district.id == this.props.currentUser.district.id)
       .sortBy('districtEquipmentName')
       .value();
@@ -199,9 +193,7 @@ var EquipmentAddDialog = React.createClass({
     return <EditDialog id="equipment-add" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.checkForDuplicatesAndSave } didChange={ this.didChange } isValid={ this.isValid }
       saveText={ this.state.duplicateSerialNumber ? 'Proceed Anyways' : 'Save' }
-      title= {
-        <strong>Add Equipment</strong>
-      }>
+      title={<strong>Add Equipment</strong>}>
       <Form>
         <FormGroup controlId="organizationName">
           <ControlLabel>Owner</ControlLabel>
@@ -217,10 +209,14 @@ var EquipmentAddDialog = React.createClass({
         </FormGroup>
         <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
           <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
-          <FilterDropdown id="equipmentTypeId" fieldName="districtEquipmentName" selectedId={ this.state.equipmentTypeId } updateState={ this.updateState }
-            items={ districtEquipmentTypes }
+          <FilterDropdown
+            id="equipmentTypeId"
             className="full-width"
-          />
+            fieldName="districtEquipmentName"
+            disabled={!this.props.districtEquipmentTypes.loaded}
+            selectedId={this.state.equipmentTypeId}
+            updateState={this.updateState}
+            items={districtEquipmentTypes}/>
           <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="make" validationState={ this.state.makeError ? 'error' : null }>
@@ -252,7 +248,7 @@ var EquipmentAddDialog = React.createClass({
         </FormGroup>
         <FormGroup controlId="serialNumber" validationState={ this.state.serialNumberError ? 'error' : null }>
           <ControlLabel>Serial Number <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" defaultValue={ this.state.serialNumber } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }}/>
+          <FormInputControl type="text" defaultValue={ this.state.serialNumber } updateState={ this.updateState } autoFocus/>
           <HelpBlock>{ this.state.serialNumberError }</HelpBlock>
         </FormGroup>
         { isDumpTruck &&
@@ -281,7 +277,7 @@ function mapStateToProps(state) {
     currentUser: state.user,
     owner: state.models.owner,
     localAreas: state.lookups.localAreas,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypes.data,
+    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
   };
 }
 

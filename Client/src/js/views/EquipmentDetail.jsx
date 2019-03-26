@@ -1,12 +1,8 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
-import { browserHistory, Link } from 'react-router';
-
+import { Link } from 'react-router';
 import { Well, Row, Col } from 'react-bootstrap';
-import { Alert, Button, ButtonGroup, Glyphicon, Label, DropdownButton, MenuItem } from 'react-bootstrap';
-
+import { Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import _ from 'lodash';
 import Promise from 'bluebird';
 
@@ -16,7 +12,7 @@ import AttachmentAddDialog from './dialogs/AttachmentAddDialog.jsx';
 import AttachmentEditDialog from './dialogs/AttachmentEditDialog.jsx';
 import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
 import NotesDialog from './dialogs/NotesDialog.jsx';
-import ChangeStatusDialog from './dialogs/ChangeStatusDialog.jsx';
+import EquipmentChangeStatusDialog from './dialogs/EquipmentChangeStatusDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -31,6 +27,11 @@ import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import History from '../components/History.jsx';
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SubHeader from '../components/ui/SubHeader.jsx';
+import StatusDropdown from '../components/StatusDropdown.jsx';
+import ReturnButton from '../components/ReturnButton.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 import { formatDateTime } from '../utils/date';
 import { formatHours } from '../utils/string';
@@ -42,11 +43,14 @@ TODO:
 
 */
 
+const EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE = 'This equipment is part of an In Progress ' +
+  'Rental Request. Release the list (finish hiring / delete) before making this change';
+
+
 var EquipmentDetail = React.createClass({
   propTypes: {
     equipment: React.PropTypes.object,
-    equipmentPhysicalAttachments: React.PropTypes.object,
-    notes: React.PropTypes.object,
+    notes: React.PropTypes.array,
     attachments: React.PropTypes.object,
     documents: React.PropTypes.object,
     history: React.PropTypes.object,
@@ -113,10 +117,6 @@ var EquipmentDetail = React.createClass({
     this.setState({ showDocumentsDialog: false });
   },
 
-  print() {
-    window.print();
-  },
-
   updateUIState(state, callback) {
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
       store.dispatch({ type: Action.UPDATE_PHYSICAL_ATTACHMENTS_UI, equipmentPhysicalAttachments: this.state.ui });
@@ -143,7 +143,7 @@ var EquipmentDetail = React.createClass({
 
   updateStatusState(state) {
     if (state !== this.props.equipment.status) {
-      this.setState({ status: state }, this.openChangeStatusDialog());
+      this.setState({ status: state }, () => this.openChangeStatusDialog());
     }
   },
 
@@ -155,11 +155,9 @@ var EquipmentDetail = React.createClass({
     this.setState({ showChangeStatusDialog: false });
   },
 
-  onChangeStatus(status) {
-    Api.changeEquipmentStatus(status).then(() => {
-      Log.equipmentStatusModified(this.props.equipment, status.status, status.statusComment);
-      this.closeChangeStatusDialog();
-    });
+  onStatusChanged(/* status */) {
+    this.closeChangeStatusDialog();
+    Api.getEquipmentNotes(this.props.equipment.id);
   },
 
   openSeniorityDialog() {
@@ -187,9 +185,11 @@ var EquipmentDetail = React.createClass({
     this.setState({ showPhysicalAttachmentDialog: false });
   },
 
-  addPhysicalAttachment(attachment) {
-    Api.addPhysicalAttachment(attachment).then(() => {
-      Log.equipmentAttachmentAdded(this.props.equipment, attachment.typeName);
+  addPhysicalAttachments(attachmentTypeNames, equipment) {
+    Api.addPhysicalAttachments(equipment.id, attachmentTypeNames).then(() => {
+      attachmentTypeNames.forEach((typeName) => {
+        Log.equipmentAttachmentAdded(equipment, typeName);
+      });
       var equipId = this.props.params.equipmentId;
       Api.getEquipment(equipId);
       this.closePhysicalAttachmentDialog();
@@ -232,19 +232,12 @@ var EquipmentDetail = React.createClass({
     return 'success';
   },
 
-  getStatusDropdownStyle() {
-    switch(this.props.equipment.status) {
-      case(Constant.EQUIPMENT_STATUS_CODE_APPROVED):
-        return 'success';
-      case(Constant.EQUIPMENT_STATUS_CODE_PENDING):
-        return 'danger';
-      default:
-        return 'default';
-    }
-  },
-
   getStatuses() {
-    var dropdownItems = _.pull([ Constant.EQUIPMENT_STATUS_CODE_APPROVED, Constant.EQUIPMENT_STATUS_CODE_PENDING, Constant.EQUIPMENT_STATUS_CODE_ARCHIVED ], this.props.equipment.status);
+    var dropdownItems = _.pull([
+      Constant.EQUIPMENT_STATUS_CODE_APPROVED,
+      Constant.EQUIPMENT_STATUS_CODE_PENDING,
+      Constant.EQUIPMENT_STATUS_CODE_ARCHIVED,
+    ], this.props.equipment.status);
     if (this.props.equipment.ownerStatus === Constant.OWNER_STATUS_CODE_PENDING) {
       return _.pull(dropdownItems, Constant.EQUIPMENT_STATUS_CODE_APPROVED);
     } else if (this.props.equipment.ownerStatus === Constant.OWNER_STATUS_CODE_ARCHIVED) {
@@ -256,13 +249,11 @@ var EquipmentDetail = React.createClass({
   render() {
     var equipment = this.props.equipment;
     var lastVerifiedStyle = this.getLastVerifiedStyle(equipment);
-    var dropdownItems = this.getStatuses();
 
     return (
       <div id="equipment-detail">
         <div>
           {(() => {
-
             if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
             return (
@@ -270,25 +261,21 @@ var EquipmentDetail = React.createClass({
                 <Row id="equipment-top">
                   <Col sm={9}>
                     <Row>
-                      <DropdownButton
-                        id="owner-status"
-                        bsStyle={ this.getStatusDropdownStyle() }
-                        title={ equipment.status || '' }
-                        onSelect={ this.updateStatusState }
-                        disabled={ equipment.ownerStatus === Constant.OWNER_STATUS_CODE_ARCHIVED }
-                      >
-                        { dropdownItems.map((item, i) => (
-                          <MenuItem key={ i } eventKey={ item }>{ item }</MenuItem>
-                        ))}
-                      </DropdownButton>
-                      <Button className="mr-5 ml-5" title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
+                      <StatusDropdown
+                        id="equipment-status-dropdown"
+                        status={equipment.status}
+                        statuses={this.getStatuses()}
+                        disabled={equipment.activeRentalRequest}
+                        disabledTooltip={EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
+                        onSelect={this.updateStatusState}/>
+                      <Button className="mr-5 ml-5" title="Notes" onClick={ this.showNotes }>Notes ({this.props.notes.length})</Button>
                       <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
                     </Row>
                   </Col>
                   <Col sm={3}>
                     <div className="pull-right">
-                      <Button className="mr-5" onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
-                      <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
+                      <PrintButton/>
+                      <ReturnButton/>
                     </div>
                   </Col>
                 </Row>
@@ -297,20 +284,16 @@ var EquipmentDetail = React.createClass({
                   <Label bsStyle={ equipment.isHired ? 'success' : 'default' }>{ equipment.isHired ? 'Hired' : 'Not Hired' }</Label>
                   <Label bsStyle={ lastVerifiedStyle }>Last Verified: { formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</Label>
                 </Row>
-                <Row className="equipment-header">
-                  <Col xs={12}>
-                    <h1>Equipment Id: <small>{ equipment.equipmentCode } ({ equipment.typeName })</small></h1>
-                  </Col>
-                  <Col xs={12}>
-                    <h1>Company: <Link to={`${Constant.OWNERS_PATHNAME}/${equipment.ownerId}`}><small>{ equipment.organizationName }</small></Link></h1>
-                  </Col>
-                  <Col xs={12}>
+                <div className="equipment-header">
+                  <PageHeader title="Equipment Id" subTitle={`${ equipment.equipmentCode } (${ equipment.typeName })`}/>
+                  <PageHeader title="Company" subTitle={<Link to={`${Constant.OWNERS_PATHNAME}/${equipment.ownerId}`}>{ equipment.organizationName }</Link>}/>
+                  <div className="district-office">
                     <strong>District Office:</strong> { equipment.districtName }
-                  </Col>
-                  <Col xs={12}>
+                  </div>
+                  <div className="local-area">
                     <strong>Service/Local Area:</strong> { equipment.localArea.serviceAreaId } - { equipment.localAreaName }
-                  </Col>
-                </Row>
+                  </div>
+                </div>
               </div>
             );
           })()}
@@ -318,9 +301,12 @@ var EquipmentDetail = React.createClass({
           <Row>
             <Col md={12}>
               <Well>
-                <h3 className="clearfix">Equipment Information <span className="pull-right">
-                  <Button title="Edit Equipment" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
-                </span></h3>
+                <SubHeader
+                  title="Equipment Information"
+                  editButtonTitle="Edit Equipment"
+                  editButtonDisabled={equipment.activeRentalRequest}
+                  editButtonDisabledTooltip={EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
+                  onEditClicked={ this.openEditDialog }/>
                 {(() => {
                   if (this.state.loading) { return <div className="spinner-container"><Spinner /></div>; }
 
@@ -373,9 +359,7 @@ var EquipmentDetail = React.createClass({
             </Col>
             <Col md={12}>
               <Well>
-                <h3>Attachments <span className="pull-right">
-                  <Button title="Add Attachment" bsSize="small" onClick={this.openPhysicalAttachmentDialog}><Glyphicon glyph="plus" /></Button>
-                </span></h3>
+                <SubHeader title="Attachments" editButtonTitle="Add Attachment" editIcon="plus" onEditClicked={ this.openPhysicalAttachmentDialog }/>
                 {(() => {
                   if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; }
                   if (equipment.equipmentAttachments && Object.keys(equipment.equipmentAttachments).length === 0) { return <Alert bsStyle="success">No Attachments</Alert>; }
@@ -432,9 +416,12 @@ var EquipmentDetail = React.createClass({
           <Row>
             <Col md={12}>
               <Well>
-                <h3>Seniority<span className="pull-right">
-                  <Button title="Edit Seniority" bsSize="small" onClick={this.openSeniorityDialog}><Glyphicon glyph="pencil" /></Button>
-                </span></h3>
+                <SubHeader
+                  title="Seniority"
+                  editButtonTitle="Edit Seniority"
+                  editButtonDisabled={equipment.activeRentalRequest}
+                  editButtonDisabledTooltip={EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
+                  onEditClicked={ this.openSeniorityDialog }/>
                 {(() => {
                   if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -481,7 +468,7 @@ var EquipmentDetail = React.createClass({
             </Col>
             <Col md={12}>
               <Well>
-                <h3>History <span className="pull-right"></span></h3>
+                <SubHeader title="History"/>
                 { equipment.historyEntity &&
                   <History historyEntity={ equipment.historyEntity } refresh={ !this.state.loading } />
                 }
@@ -489,64 +476,56 @@ var EquipmentDetail = React.createClass({
             </Col>
           </Row>
         </div>
-        { this.state.showEditDialog &&
+        { this.state.showChangeStatusDialog && (
+          <EquipmentChangeStatusDialog
+            show={ this.state.showChangeStatusDialog}
+            status={ this.state.status }
+            equipment={ equipment }
+            onClose={ this.closeChangeStatusDialog }
+            onStatusChanged={ this.onStatusChanged }/>
+        )}
+        { this.state.showNotesDialog && (
+          <NotesDialog
+            show={this.state.showNotesDialog}
+            id={this.props.params.equipmentId}
+            notes={this.props.notes}
+            getNotes={Api.getEquipmentNotes}
+            saveNote={Api.addEquipmentNote}
+            onClose={this.closeNotesDialog}/>
+        )}
+        { this.state.showDocumentsDialog && (
+          <DocumentsListDialog
+            show={ this.props.equipment && this.state.showDocumentsDialog }
+            parent={ this.props.equipment }
+            onClose={ this.closeDocumentsDialog }/>
+        )}
+        { this.state.showEditDialog && (
           <EquipmentEditDialog
             show={ this.state.showEditDialog }
             onSave={ this.saveEdit }
-            onClose= { this.closeEditDialog }
-          />
-        }
-        { this.state.showSeniorityDialog &&
+            onClose= { this.closeEditDialog }/>
+        )}
+        { this.state.showSeniorityDialog && (
           <SeniorityEditDialog
             show={ this.state.showSeniorityDialog }
             onSave={ this.saveSeniorityEdit }
-            onClose={ this.closeSeniorityDialog }
-          />
-        }
-        { this.state.showPhysicalAttachmentDialog &&
+            onClose={ this.closeSeniorityDialog }/>
+        )}
+        { this.state.showPhysicalAttachmentDialog && (
           <AttachmentAddDialog
             show={ this.state.showPhysicalAttachmentDialog }
-            onSave={ this.addPhysicalAttachment }
+            onSave={ this.addPhysicalAttachments }
             onClose={ this.closePhysicalAttachmentDialog }
-            equipment={ equipment }
-          />
-        }
-        { this.state.showPhysicalAttachmentEditDialog &&
+            equipment={ equipment }/>
+        )}
+        { this.state.showPhysicalAttachmentEditDialog && (
           <AttachmentEditDialog
             show={ this.state.showPhysicalAttachmentEditDialog }
             onSave={ this.updatePhysicalAttachment }
             onClose={ this.closePhysicalAttachmentEditDialog }
             equipment={ equipment }
-            attachment={ this.state.equipmentPhysicalAttachment }
-          />
-        }
-        { this.state.showDocumentsDialog &&
-          <DocumentsListDialog
-            show={ this.props.equipment && this.state.showDocumentsDialog }
-            parent={ this.props.equipment }
-            onClose={ this.closeDocumentsDialog }
-          />
-        }
-        { this.state.showNotesDialog &&
-          <NotesDialog
-            show={ this.state.showNotesDialog }
-            onSave={ Api.addEquipmentNote }
-            id={ this.props.params.equipmentId }
-            getNotes={ Api.getEquipmentNotes }
-            onUpdate={ Api.updateNote }
-            onClose={ this.closeNotesDialog }
-            notes={ this.props.notes }
-          />
-        }
-        { this.state.showChangeStatusDialog &&
-          <ChangeStatusDialog
-            show={ this.state.showChangeStatusDialog}
-            onClose={ this.closeChangeStatusDialog }
-            onSave={ this.onChangeStatus }
-            status={ this.state.status }
-            parent={ equipment }
-          />
-        }
+            attachment={ this.state.equipmentPhysicalAttachment }/>
+        )}
       </div>
     );
   },
@@ -556,7 +535,6 @@ var EquipmentDetail = React.createClass({
 function mapStateToProps(state) {
   return {
     equipment: state.models.equipment,
-    equipmentPhysicalAttachments: state.models.equipmentPhysicalAttachments,
     notes: state.models.equipmentNotes,
     attachments: state.models.equipmentAttachments,
     documents: state.models.documents,

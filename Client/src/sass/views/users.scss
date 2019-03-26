@@ -1,22 +1,21 @@
 #users-list {
   #users-search {
-
-    > div {
+    & > div {
       margin: 5px;
     }
 
-    > button {
+    & > button {
       margin: 5px;
     }
 
-    > input {
+    & > input {
       float: left;
       min-width: 175px;
       margin: 5px;
       width: auto;
     }
 
-    > label {
+    & > label {
       margin: 12px 5px 5px 5px;
       float: left;
     }
@@ -56,10 +55,6 @@
 #users-detail {
   #users-top {
     margin-bottom: 10px;
-
-    .btn {
-      margin-left: 5px;
-    }
   }
 
   #users-access {
@@ -94,20 +89,9 @@
   }
 
   .alert {
-
     .btn {
       float: right;
     }
-  }
-
-  h1 {
-    small {
-      font-size: 85%;
-    }
-  }
-
-  h3 {
-    font-weight: 600;
   }
 }
 

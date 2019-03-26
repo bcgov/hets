@@ -21,7 +21,7 @@
         }
 
         .homeFunction {
-            
+
         }
     </style>
 
@@ -50,7 +50,31 @@
                 type: "POST",
                 timeout: 600000, // sets timeout to 10 min
                 success: function (response) {
-                    alert(response);                    
+                    alert(response);
+
+                    // enable functions
+                    $(".homeFunction").removeAttr("disabled");
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.responseText);
+
+                    // enable functions
+                    $(".homeFunction").removeAttr("disabled");
+                }
+            });
+        }
+
+        function mergeDistrictEquipmentTypes() {
+
+            // disable functions
+            $(".homeFunction").attr("disabled", true);
+
+            $.ajax({
+                url: "/api/districtEquipmentTypes/merge",
+                type: "POST",
+                timeout: 2400000, // sets timeout to 40 min
+                success: function (response) {
+                    alert(response.data);
 
                     // enable functions
                     $(".homeFunction").removeAttr("disabled");
@@ -68,7 +92,7 @@
 <body>
     <h2>@ViewData["Title"]</h2>
     <hr />
-    
+
     <div>
         <h3>Current User Id</h3>
         <label>UserId:</label> &nbsp; @Model.UserId
@@ -89,6 +113,11 @@
     <div>
         <h3>Generate Owner Shared Keys</h3>
         <button class="homeFunction" onclick="generateKeys();">Generate Keys</button>
+    </div>
+
+    <div>
+        <h3>Merge District Equipment Types</h3>
+        <button class="homeFunction" onclick="mergeDistrictEquipmentTypes();">Merge</button>
     </div>
 
     @if (Model.DevelopmentEnvironment)

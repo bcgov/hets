@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form } from 'react-bootstrap';
+import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -21,7 +21,9 @@ import FormInputControl from '../components/FormInputControl.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import TooltipButton from '../components/TooltipButton.jsx';
+import Form from '../components/Form.jsx';
+import PrintButton from '../components/PrintButton.jsx';
+
 import { caseInsensitiveSort, sortDir } from '../utils/array.js';
 
 var Owners = React.createClass({
@@ -30,7 +32,6 @@ var Owners = React.createClass({
     ownerList: React.PropTypes.object,
     owner: React.PropTypes.object,
     localAreas: React.PropTypes.object,
-    owners: React.PropTypes.object,
     favourites: React.PropTypes.object,
     search: React.PropTypes.object,
     ui: React.PropTypes.object,
@@ -78,24 +79,20 @@ var Owners = React.createClass({
   },
 
   componentDidMount() {
-    Api.getFavourites('owner').then(() => {
-      // If this is the first load, then look for a default favourite
-      if (_.isEmpty(this.props.search)) {
-        var defaultFavourite = _.find(this.props.favourites.data, f => f.isDefault);
-        if (defaultFavourite) {
-          this.loadFavourite(defaultFavourite);
-          return;
-        }
+    // If this is the first load, then look for a default favourite
+    if (_.isEmpty(this.props.search)) {
+      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      if (defaultFavourite) {
+        this.loadFavourite(defaultFavourite);
       }
-    });
+    }
   },
 
   fetch() {
     Api.searchOwners(this.buildSearchParams());
   },
 
-  search(e) {
-    e.preventDefault();
+  search() {
     this.fetch();
   },
 
@@ -149,10 +146,6 @@ var Owners = React.createClass({
     });
   },
 
-  print() {
-    window.print();
-  },
-
   renderResults(ownerList, addOwnerButton) {
     if (Object.keys(this.props.ownerList.data).length === 0) { return <Alert bsStyle="success">No owners { addOwnerButton }</Alert>; }
 
@@ -161,7 +154,8 @@ var Owners = React.createClass({
       { field: 'localAreaName',          title: 'Local Area'                                      },
       { field: 'organizationName',       title: 'Company Name'                                    },
       { field: 'primaryContactName',     title: 'Primary Contact Name'                            },
-      { field: 'primaryContactNumber',   title: 'Primary Contact Number'                          },
+      { field: 'workPhoneNumber',        title: 'Work Number'                                     },
+      { field: 'mobilePhoneNumber',      title: 'Cell Number'                                     },
       { field: 'equipmentCount',         title: 'Equipment',       style: { textAlign: 'center' } },
       { field: 'status',                 title: 'Status',          style: { textAlign: 'center' } },
       { field: 'addOwner',               title: 'Add Owner',       style: { textAlign: 'right'  },
@@ -175,7 +169,8 @@ var Owners = React.createClass({
             <td>{ owner.localAreaName }</td>
             <td>{ owner.organizationName }</td>
             <td>{ owner.primaryContactName }</td>
-            <td>{ owner.primaryContactNumber }</td>
+            <td>{ owner.workPhoneNumber }</td>
+            <td>{ owner.mobilePhoneNumber }</td>
             <td style={{ textAlign: 'center' }}>{ owner.equipmentCount }</td>
             <td style={{ textAlign: 'center' }}>{ owner.status }</td>
             <td style={{ textAlign: 'right' }}>
@@ -206,9 +201,7 @@ var Owners = React.createClass({
       <PageHeader>Owners { resultCount }
         <div id="owners-buttons">
           <ButtonGroup>
-            <TooltipButton onClick={ this.print } disabled={ !this.props.ownerList.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
-              <Glyphicon glyph="print" title="Print" />
-            </TooltipButton>
+            <PrintButton disabled={!this.props.ownerList.loaded}/>
           </ButtonGroup>
         </div>
       </PageHeader>
@@ -229,7 +222,7 @@ var Owners = React.createClass({
             </Form>
           </Col>
           <Col xs={3} sm={2}>
-            <Favourites id="owners-faves-dropdown" type="owner" favourites={ this.props.favourites.data } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+            <Favourites id="owners-faves-dropdown" type="owner" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
           </Col>
         </Row>
       </Well>
@@ -260,8 +253,7 @@ function mapStateToProps(state) {
     ownerList: state.models.owners,
     owner: state.models.owner,
     localAreas: state.lookups.localAreas,
-    owners: state.lookups.owners,
-    favourites: state.models.favourites,
+    favourites: state.models.favourites.owner,
     search: state.search.owners,
     ui: state.ui.owners,
   };

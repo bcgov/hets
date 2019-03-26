@@ -28,9 +28,7 @@ var ConfirmDialog = React.createClass({
   render() {
     return <EditDialog id="confirm-dialog" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={
-        <strong>{ this.props.title }</strong>
-      }
+      title={<strong>{ this.props.title }</strong>}
       closeText={ this.props.closeText || 'Cancel' } saveText={ this.props.saveText || 'Confirm' } backdropClassName="confirm"
     >
       { this.props.children }

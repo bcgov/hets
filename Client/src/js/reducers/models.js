@@ -19,25 +19,25 @@ const DEFAULT_MODELS = {
   },
 
   favourites: {
-    data: {},
-    loading: false,
-    success: false,
+    equipment: {},
+    hiringReport: {},
+    owner: {},
+    ownersCoverage: {},
+    project: {},
+    rentalRequests: {},
+    timeEntry: {},
+    user: {},
+    aitReport: {},
   },
 
-  unapprovedEquipmentList: {
-    data: {},
-    loading: false,
-    loaded: false,
-  },
   equipmentList: {
     data: {},
     loading: false,
     loaded: false,
   },
   equipment: {},
-  equipmentPhysicalAttachments: {},
   equipmentSeniorityHistory: {},
-  equipmentNotes: {},
+  equipmentNotes: [],
   equipmentAttachments: {},
   equipmentHistory: {},
   equipmentRentalAgreements: {
@@ -45,17 +45,7 @@ const DEFAULT_MODELS = {
   },
   equipmentTransfer: {},
 
-  unapprovedOwners: {
-    data: {},
-    loading: false,
-    loaded: false,
-  },
   owners: {
-    data: {},
-    loading: false,
-    loaded: false,
-  },
-  ownersLite: {
     data: {},
     loading: false,
     loaded: false,
@@ -66,7 +56,7 @@ const DEFAULT_MODELS = {
     loading: false,
     loaded: false,
   },
-  ownerNotes: {},
+  ownerNotes: [],
   ownerAttachments: {},
   ownerHistory: {},
 
@@ -76,19 +66,19 @@ const DEFAULT_MODELS = {
     loaded: false,
   },
   project: {},
-  projectEquipment: {
-    data: {},
-    loading: false,
-    success: false,
-  },
-  projectTimeRecords: {
-    data: {},
-    loading: false,
-    success: false,
-  },
-  projectNotes: {},
-  projectAttachments: {},
-  projectHistory: {},
+  // projectEquipment: {
+  //   data: {},
+  //   loading: false,
+  //   success: false,
+  // },
+  // projectTimeRecords: {
+  //   data: {},
+  //   loading: false,
+  //   success: false,
+  // },
+  // projectNotes: {},
+  // projectAttachments: {},
+  // projectHistory: {},
   projectRentalAgreements: {
     data: {},
   },
@@ -105,7 +95,7 @@ const DEFAULT_MODELS = {
     error: false,
     errorMessage: '',
   },
-  rentalRequestNotes: {},
+  rentalRequestNotes: [],
   rentalRequestAttachments: {},
   rentalRequestHistory: {},
   rentalRequestRotationList: {
@@ -115,8 +105,6 @@ const DEFAULT_MODELS = {
   },
 
   rentalAgreement: {},
-  rentalAgreementNotes: {},
-  rentalAgreementHistory: {},
   rentalAgreementTimeRecords: {},
   rentalRate: {},
   rentalCondition: {},
@@ -140,12 +128,19 @@ const DEFAULT_MODELS = {
     loaded: false,
   },
 
+  aitResponses: {
+    data: {},
+    loading: false,
+    loaded: false,
+  },
+
   roles: {},
   role: {},
   rolePermissions: {},
 
-  contacts: {},
-  contact: {},
+  // XXX: Looks like this is unused
+  // contacts: {},
+  // contact: {},
 
   documents: {},
   document: {},
@@ -157,6 +152,11 @@ const DEFAULT_MODELS = {
   },
 
   business: {},
+
+  batchReports: {
+    data: [],
+    loaded: false,
+  },
 };
 
 export default function modelsReducer(state = DEFAULT_MODELS, action) {
@@ -187,30 +187,27 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, currentUserDistricts: { data: action.currentUserDistricts, loading: false } };
 
     // Favourites
-    case Action.FAVOURITES_REQUEST:
-      return { ...state, favourites: { ...state.favourites, loading: true } };
-
     case Action.UPDATE_FAVOURITES:
-      return { ...state, favourites: { data: action.favourites, loading: false, success: true } };
+      return { ...state, favourites: { ...state.favourites, ...action.favourites } };
 
     case Action.ADD_FAVOURITE: case Action.UPDATE_FAVOURITE:
-      return { ...state, favourites: { data: { ...state.favourites.data, ...action.favourite } } };
+      return { ...state, favourites: { ...state.favourites, [action.favourite.type]: { ...state.favourites[action.favourite.type], [action.favourite.id]: action.favourite } } };
 
     case Action.DELETE_FAVOURITE:
-      return { ...state, favourites: { ...state.favourites, data: _.omit(state.favourites.data, [ action.id ]) } };
+      return { ...state, favourites: { ...state.favourites, [action.favourite.type]: _.omit(state.favourites[action.favourite.type], [ action.favourite.id ]) } };
 
     // Contacts
-    case Action.UPDATE_CONTACTS:
-      return { ...state, contacts: action.contacts };
+    // XXX: Looks like this is unused
+    // case Action.ADD_CONTACT:
+    //   return { ...state, contact: action.contact };
 
-    case Action.ADD_CONTACT:
-      return { ...state, contact: action.contact };
+    // XXX: Looks like this is unused
+    // case Action.UPDATE_CONTACT:
+    //   return { ...state, contact: action.contact };
 
-    case Action.UPDATE_CONTACT:
-      return { ...state, contact: action.contact };
-
-    case Action.DELETE_CONTACT:
-      return { ...state, contact: action.contact };
+    // XXX: Looks like this is unused
+    // case Action.DELETE_CONTACT:
+    //   return { ...state, contact: action.contact };
 
     // Documents
     case Action.UPDATE_DOCUMENTS:
@@ -226,12 +223,6 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, document: action.document };
 
     // Equipment
-    case Action.UNAPPROVED_EQUIPMENT_REQUEST:
-      return { ...state, unapprovedEquipmentList: { ...state.equipmentList, loading: true, loaded: false } };
-
-    case Action.UPDATE_UNAPPROVED_EQUIPMENT:
-      return { ...state, unapprovedEquipmentList: { data: action.equipmentList, loading: false, loaded: true } };
-
     case Action.EQUIPMENT_LIST_REQUEST:
       return { ...state, equipmentList: { ...state.equipmentList, loading: true, loaded: false } };
 
@@ -250,37 +241,15 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.UPDATE_EQUIPMENT_RENTAL_AGREEMENTS:
       return { ...state, equipmentRentalAgreements: { data: action.rentalAgreements } };
 
-    // Equipment Attachments
-    case Action.UPDATE_EQUIPMENT_ATTACHMENTS:
-      return { ...state, equipmentPhysicalAttachments: action.physicalAttachments };
-
-    case Action.ADD_EQUIPMENT_ATTACHMENT:
-      return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
-
-    case Action.UPDATE_EQUIPMENT_ATTACHMENT:
-      return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
-
-    case Action.DELETE_EQUIPMENT_ATTACHMENT:
-      return { ...state, equipmentPhysicalAttachment: action.physicalAttachment };
-
     case Action.EQUIPMENT_TRANSFER_ERROR:
       return { ...state, equipmentTransfer: { ...state.equipmentTransfer, error: true, errorMessage: action.errorMessage } };
 
     // Owners
-    case Action.UNAPPROVED_OWNERS_REQUEST:
-      return { ...state, unapprovedOwners: { ...state.owners, loading: true, loaded: false } };
-
-    case Action.UPDATE_UNAPPROVED_OWNERS:
-      return { ...state, unapprovedOwners: { data: action.owners, loading: false, loaded: true } };
-
     case Action.OWNERS_REQUEST:
       return { ...state, owners: { ...state.owners, loading: true, loaded: false } };
 
     case Action.UPDATE_OWNERS:
       return { ...state, owners: { data: action.owners, loading: false, loaded: true } };
-
-    case Action.OWNERS_LITE_REQUEST:
-      return { ...state, ownersLite: { ...state.ownersLite, loading: true, loaded: false } };
 
     case Action.OWNER_EQUIPMENT_REQUEST:
       return { ...state, ownerEquipment: { data: action.equipment, loading: true, loaded: false } };
@@ -288,13 +257,11 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.UPDATE_OWNER_EQUIPMENT:
       return { ...state, ownerEquipment: { data: action.equipment, loading: false, loaded: true } };
 
-    case Action.UPDATE_OWNERS_LITE:
-      return { ...state, ownersLite: { data: action.owners, loading: false, loaded: true } };
-
     case Action.CLEAR_OWNERS:
       return { ...state, owners: { data: {}, loading: false, loaded: false } };
 
-    case Action.ADD_OWNER: case Action.UPDATE_OWNER: case Action.DELETE_OWNER:
+    // XXX: Looks like `Action.DELETE_OWNER` is unused
+    case Action.ADD_OWNER: case Action.UPDATE_OWNER:/*  case Action.DELETE_OWNER: */
       return { ...state, owner: action.owner };
 
     case Action.UPDATE_OWNER_NOTES:
@@ -310,21 +277,65 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.CLEAR_PROJECTS:
       return { ...state, projects: { data: {}, loading: false, loaded: false } };
 
-    case Action.ADD_PROJECT: case Action.UPDATE_PROJECT:
-      return { ...state, project: action.project };
+    case Action.ADD_PROJECT: case Action.UPDATE_PROJECT: {
+      const projectId = action.project.id;
+      const project = { notes: [], ...state.project[projectId], ...action.project };
 
-    case Action.UPDATE_PROJECT_EQUIPMENT:
-      return { ...state, projectEquipment: { data: action.projectEquipment, loading: false, success: true } };
+      return { ...state, project: { ...state.project, [projectId]: project } };
+    }
 
-    case Action.UPDATE_PROJECT_TIME_RECORDS:
-      return { ...state, projectTimeRecords: { data: action.projectTimeRecords, loading: false, success: true } };
+    // case Action.UPDATE_PROJECT_EQUIPMENT:
+    //   return { ...state, projectEquipment: { data: action.projectEquipment, loading: false, success: true } };
 
-    case Action.UPDATE_PROJECT_NOTES:
-      return { ...state, projectNotes: action.notes };
+    // XXX: Looks like this is unused
+    // case Action.UPDATE_PROJECT_TIME_RECORDS:
+    //   return { ...state, projectTimeRecords: { data: action.projectTimeRecords, loading: false, success: true } };
+
+    case Action.UPDATE_PROJECT_NOTES: {
+      const existingProject = { ...state.project[action.projectId] || {} };
+      existingProject.notes = action.notes;
+
+      return { ...state, project: { ...state.project, [action.projectId]: existingProject } };
+    }
+
+    case Action.ADD_PROJECT_NOTE: {
+      const existingProject = { ...state.project[action.projectId] || {} };
+      const notes = (existingProject.notes || []).slice();
+      notes.push(action.note);
+
+      return { ...state, project: { ...state.project, [action.projectId]: existingProject } };
+    }
 
     case Action.UPDATE_PROJECT_RENTAL_AGREEMENTS:
       return { ...state, projectRentalAgreements: { data: action.rentalAgreements } };
 
+    case Action.DELETE_PROJECT_RENTAL_REQUEST: {
+      const existingProject = { ...state.project[action.projectId] || {} };
+      const updatedList = existingProject.rentalRequests.filter((rentalRequest) => rentalRequest.id !== action.requestId);
+      existingProject.rentalRequests = updatedList;
+      return { ...state, project: { ...state.project, [action.projectId]: existingProject } };
+    }
+
+    case Action.UPDATE_PROJECT_CONTACT: {
+      const existingProject = { ...state.project[action.projectId] || {} };
+      const updatedList = existingProject.contacts.map((contact) => {
+        if (contact.id === action.contact.id) {
+          return action.contact;
+        }
+        return contact;
+      });
+      existingProject.contacts = updatedList;
+      return { ...state, project: { ...state.project, [action.projectId]: existingProject } };
+    }
+
+    case Action.DELETE_PROJECT_CONTACT: {
+      const existingProject = { ...state.project[action.projectId] || {} };
+      const updatedList = existingProject.contacts.filter((contact) => contact.id !== action.contactId);
+      existingProject.contacts = updatedList;
+      return { ...state, project: { ...state.project, [action.projectId]: existingProject } };
+    }
+
+    // XXX: Looks like this is unused
     // case Action.UPDATE_PROJECT_RENTAL_AGREEMENTS_ERROR:
     //   return { ...state, projectRentalAgreements: { ...state.projectRentalAgreements, error: action.error } };
 
@@ -341,7 +352,8 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.RENTAL_REQUEST_REQUEST:
       return { ...state, rentalRequest: { ...state.rentalRequest, loading: true, success: false, error: false, errorMessage: '' } };
 
-    case Action.ADD_RENTAL_REQUEST: case Action.UPDATE_RENTAL_REQUEST:
+    case Action.ADD_RENTAL_REQUEST:
+    case Action.UPDATE_RENTAL_REQUEST:
       return { ...state, rentalRequest: { data: action.rentalRequest, loading: false, success: true } };
 
     case Action.ADD_RENTAL_REQUEST_ERROR:
@@ -355,7 +367,7 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     // Time Entries
     case Action.TIME_ENTRIES_REQUEST:
-      return { ...state, timeEntries: { ...state.timeEntries, loading: true, loaded: false } };
+      return { ...state, timeEntries: { ...state.timeEntries, loading: true } };
 
     case Action.UPDATE_TIME_ENTRIES:
       return { ...state, timeEntries: { data: action.timeEntries, loading: false, loaded: true } };
@@ -385,26 +397,34 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     // Rotation List
     case Action.RENTAL_REQUEST_ROTATION_LIST_REQUEST:
-      return { ...state, rentalRequestRotationList: { ...state.rentalRequestRotationList, loading: true, success: false, error: {} } };
+      return { ...state, rentalRequestRotationList: { ...state.rentalRequestRotationList, loading: true, success: false } };
 
     case Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST:
       return { ...state, rentalRequestRotationList: { data: action.rentalRequestRotationList, loading: false, success: true } };
 
-    case Action.RENTAL_REQUEST_ROTATION_LIST_ERROR:
-      return { ...state, rentalRequestRotationList: { ...state.rentalRequestRotationList, error: action.error } };
-
     // Rental Agreements
-    case Action.ADD_RENTAL_AGREEMENT:
-      return { ...state, rentalAgreement: action.rentalAgreement };
+    // XXX: Looks like this is unused
+    // case Action.ADD_RENTAL_AGREEMENT:
+    //   return { ...state, rentalAgreement: { ...state.rentalAgreement, [action.rentalAgreement.id]: action.rentalAgreement } };
 
     case Action.GENERATE_ANOTHER_RENTAL_AGREEMENT:
-      return { ...state, rentalAgreement: action.rentalAgreement };
+      return { ...state, rentalAgreement: { ...state.rentalAgreement, [action.rentalAgreement.id]: action.rentalAgreement } };
 
     case Action.UPDATE_RENTAL_AGREEMENT:
-      return { ...state, rentalAgreement: action.rentalAgreement };
+      return { ...state, rentalAgreement: { ...state.rentalAgreement, [action.rentalAgreement.id]: action.rentalAgreement } };
 
     case Action.RENTAL_AGREEMENT_TIME_RECORDS:
       return { ...state, rentalAgreementTimeRecords: action.rentalAgreementTimeRecords };
+
+    // AIT Report
+    case Action.AIT_REPORT_REQUEST:
+      return { ...state, aitResponses: { ...state.aitResponses, loading: true, loaded: false } };
+
+    case Action.UPDATE_AIT_REPORT:
+      return { ...state, aitResponses: { data: action.aitResponses, loading: false, loaded: true } };
+
+    case Action.CLEAR_AIT_REPORT:
+      return { ...state, aitResponses: { data: {}, loading: false, loaded: false } };
 
     // Rental Rates, Conditions
     case Action.ADD_RENTAL_RATE:
@@ -449,8 +469,26 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, history: action.history };
 
     // Notes
-    case Action.UPDATE_NOTES:
-      return { ...state, notes: action.notes };
+    case Action.DELETE_NOTE: {
+      let notesCollectionName = null;
+
+      if (action.noteId in state.equipmentNotes) {
+        notesCollectionName = 'equipmentNotes';
+      } else if (action.noteId in state.ownerNotes) {
+        notesCollectionName = 'ownerNotes';
+      } else if (action.noteId in state.rentalRequestNotes) {
+        notesCollectionName = 'rentalRequestNotes';
+      }
+
+      if (notesCollectionName) {
+        const notes = state[notesCollectionName].slice();
+        _.remove(notes, { id : action.noteId });
+
+        return { ...state, [notesCollectionName]: notes };
+      }
+
+      return state;
+    }
 
     // Time Record
     case Action.DELETE_TIME_RECORD:
@@ -459,6 +497,17 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     // Businesses
     case Action.UPDATE_BUSINESS:
       return { ...state, business: action.business };
+
+    // Batch Reports
+    case Action.UPDATE_BATCH_REPORTS:
+      return { ...state, batchReports: { data: action.batchReports, loaded: true }};
+
+    case Action.DELETE_BATCH_REPORT: {
+      const filteredBatchReports = state.batchReports.data.filter((br) => br.id !== action.batchReportId);
+      return { ...state, batchReports: { ...state.batchReports, data: filteredBatchReports }};
+    }
   }
   return state;
 }
+
+export const modelsSelector = (state) => state.models;

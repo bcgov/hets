@@ -20,6 +20,7 @@ namespace HetsData.Model
         public bool Overtime { get; set; }
         public bool Active { get; set; }
         public bool IsIncludedInTotal { get; set; }
+        public bool Set { get; set; }
         public int? RentalAgreementId { get; set; }
         [JsonIgnore]public string AppCreateUserDirectory { get; set; }
         [JsonIgnore]public string AppCreateUserGuid { get; set; }

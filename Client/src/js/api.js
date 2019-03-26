@@ -10,7 +10,6 @@ import { daysAgo, sortableDateTime, today } from './utils/date';
 
 import _ from 'lodash';
 import Moment from 'moment';
-import Promise from 'bluebird';
 
 function normalize(response) {
   return _.fromPairs(response.map(object => [ object.id, object ]));
@@ -115,6 +114,8 @@ export function addUser(user) {
     parseUser(user);
 
     store.dispatch({ type: Action.ADD_USER, user: user });
+
+    return user;
   });
 }
 
@@ -126,6 +127,8 @@ export function updateUser(user) {
     parseUser(user);
 
     store.dispatch({ type: Action.UPDATE_USER, user: user });
+
+    return user;
   });
 }
 
@@ -190,7 +193,12 @@ export function deleteUserDistrict(district) {
 }
 
 export function switchUserDistrict(districtId) {
-  return new ApiRequest(`/userdistricts/${districtId}/switch`).post().then((response) => {
+  return new ApiRequest(`/userdistricts/${districtId}/switch`).post();
+}
+
+export function getSearchSummaryCounts() {
+  return new ApiRequest('/counts').get().then((response) => {
+    store.dispatch({ type: Action.UPDATE_SEARCH_SUMMARY_COUNTS, searchSummaryCounts: response.data });
     return response;
   });
 }
@@ -282,36 +290,36 @@ export function updateRolePermissions(roleId, permissionsArray) {
 // Favourites
 ////////////////////
 
-export function getFavourites(type) {
-  store.dispatch({ type: Action.FAVOURITES_REQUEST });
-  return new ApiRequest(`/users/current/favourites/${ type }`).get().then(response => {
-    var favourites = normalize(response.data);
+export function getFavourites() {
+  return new ApiRequest('/users/current/favourites').get().then(response => {
+    var favourites = _.chain(response.data)
+      .groupBy('type')
+      .mapValues(type => _.chain(type)
+        .values()
+        .map(object => [ object.id, object ])
+        .fromPairs()
+        .value())
+      .value();
+
     store.dispatch({ type: Action.UPDATE_FAVOURITES, favourites: favourites });
   });
 }
 
 export function addFavourite(favourite) {
   return new ApiRequest('/users/current/favourites').post(favourite).then(response => {
-    // Normalize the response
-    var favourite = _.fromPairs([[ response.data.id, response.data ]]);
-
-    store.dispatch({ type: Action.ADD_FAVOURITE, favourite: favourite });
+    store.dispatch({ type: Action.ADD_FAVOURITE, favourite: response.data });
   });
 }
 
 export function updateFavourite(favourite) {
   return new ApiRequest('/users/current/favourites').put(favourite).then(response => {
-    // Normalize the response
-    var favourite = _.fromPairs([[ response.data.id, response.data ]]);
-
-    store.dispatch({ type: Action.UPDATE_FAVOURITE, favourite: favourite });
+    store.dispatch({ type: Action.UPDATE_FAVOURITE, favourite: response.data });
   });
 }
 
 export function deleteFavourite(favourite) {
   return new ApiRequest(`/users/current/favourites/${ favourite.id }/delete`).post().then(response => {
-    // No needs to normalize, as we just want the id from the response.
-    store.dispatch({ type: Action.DELETE_FAVOURITE, id: response.data.id });
+    store.dispatch({ type: Action.DELETE_FAVOURITE, favourite: response.data });
   });
 }
 
@@ -435,19 +443,6 @@ export function searchEquipmentList(params) {
   });
 }
 
-export function getUnapprovedEquipment() {
-  store.dispatch({ type: Action.UNAPPROVED_EQUIPMENT_REQUEST });
-  return new ApiRequest('/equipment/search').get({ status: Constant.EQUIPMENT_STATUS_CODE_PENDING }).then(response => {
-    var equipmentList = normalize(response.data);
-
-    _.map(equipmentList, equipment => {
-      equipment.details = [equipment.make || '-', equipment.model || '-', equipment.size || '-', equipment.year || '-'].join('/');
-    });
-
-    store.dispatch({ type: Action.UPDATE_UNAPPROVED_EQUIPMENT, equipmentList: equipmentList });
-  });
-}
-
 export function getEquipment(equipmentId) {
   return new ApiRequest(`/equipment/${ equipmentId }`).get().then(response => {
     var equipment = response.data;
@@ -460,26 +455,29 @@ export function getEquipment(equipmentId) {
 }
 
 export function getEquipmentLite() {
-  return new ApiRequest('/equipment/lite').get().then(response => {
+  const silent = store.getState().lookups.equipment.lite.loaded;
+  return new ApiRequest('/equipment/lite', { silent }).get().then(response => {
     var equipment = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
   });
 }
 
-export function getEquipmentLiteTs() {
-  return new ApiRequest('/equipment/liteTs').get().then(response => {
+export function getEquipmentTs() {
+  const silent = store.getState().lookups.equipment.ts.loaded;
+  return new ApiRequest('/equipment/liteTs', { silent }).get().then(response => {
     var equipment = normalize(response.data);
 
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_TS_LOOKUP, equipment: equipment });
   });
 }
 
-export function getEquipmentLiteHires() {
-  return new ApiRequest('/equipment/liteHires').get().then(response => {
+export function getEquipmentHires() {
+  const silent = store.getState().lookups.equipment.hires.loaded;
+  return new ApiRequest('/equipment/liteHires', { silent }).get().then(response => {
     var equipment = normalize(response.data);
 
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_HIRES_LOOKUP, equipment: equipment });
   });
 }
 
@@ -491,6 +489,10 @@ export function addEquipment(equipment) {
     parseEquipment(equipment);
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT, equipment: equipment });
+
+    getEquipmentLite();
+    getEquipmentTs();
+    getEquipmentHires();
   });
 }
 
@@ -502,6 +504,10 @@ export function updateEquipment(equipment) {
     parseEquipment(equipment);
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT, equipment: equipment });
+
+    getEquipmentLite();
+    getEquipmentTs();
+    getEquipmentHires();
   });
 }
 
@@ -537,28 +543,27 @@ export function getEquipmentDocuments(equipmentId) {
   });
 }
 
-export function addEquipmentDocument(equipmentId, files) {
-  return new ApiRequest(`/equipment/${ equipmentId }/attachments`).post(files);
-}
+// XXX: Looks like this is unused
+// export function addEquipmentDocument(equipmentId, files) {
+//   return new ApiRequest(`/equipment/${ equipmentId }/attachments`).post(files);
+// }
 
 export function getEquipmentNotes(equipmentId) {
-  return new ApiRequest(`/equipment/${ equipmentId }/notes`).get().then(response => {
-    var notes = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_NOTES, notes: notes });
+  return new ApiRequest(`/equipment/${ equipmentId }/notes`).get().then((response) => {
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_NOTES, notes: response.data });
+    return response.data;
   });
 }
 
 export function addEquipmentNote(equipmentId, note) {
-  return new ApiRequest(`/equipment/${ equipmentId }/note`).post(note).then(response => {
-    var notes = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_NOTES, notes: notes });
+  return new ApiRequest(`/equipment/${ equipmentId }/note`).post(note).then((response) => {
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_NOTES, notes: response.data });
+    return response.data;
   });
 }
 
 export function equipmentDuplicateCheck(id, serialNumber, typeId) {
-  return new ApiRequest(`/equipment/${id}/duplicates/${serialNumber}/${typeId}`).get().then((response => {
-    return response;
-  }));
+  return new ApiRequest(`/equipment/${id}/duplicates/${serialNumber}/${typeId}`).get();
 }
 
 export function changeEquipmentStatus(status) {
@@ -581,11 +586,6 @@ export function getEquipmentRentalAgreements(equipmentId) {
 
 export function cloneEquipmentRentalAgreement(data) {
   return new ApiRequest(`/equipment/${ data.equipmentId }/rentalAgreementClone`).post(data).then(response => {
-
-    if (response.responseStatus === 'ERROR') {
-      return Promise.reject(new Error('There was an error cloning the rental agreement.'));
-    }
-
     var agreement = response.data;
     // Add display fields
     parseRentalAgreement(agreement);
@@ -619,15 +619,33 @@ export function equipmentSeniorityListPdf(localAreas, types, counterCopy) {
 //   attachment.canDelete = true;
 // }
 
-export function getPhysicalAttachment(id) {
-  return new ApiRequest(`/equipment/${id}/equipmentAttachments`).get().then(response => {
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_ATTACHMENTS, physicalAttachments: response.data });
-  });
-}
+// XXX: Looks like this is unused
+// export function getPhysicalAttachment(id) {
+//   return new ApiRequest(`/equipment/${id}/equipmentAttachments`).get().then(response => {
+//     store.dispatch({ type: Action.UPDATE_EQUIPMENT_ATTACHMENTS, physicalAttachments: response.data });
+//   });
+// }
 
-export function addPhysicalAttachment(attachment) {
-  return new ApiRequest('/equipmentAttachments').post(attachment).then(response => {
-    store.dispatch({ type: Action.ADD_EQUIPMENT_ATTACHMENT, physicalAttachment: response.data });
+// XXX: Looks like this is unused
+// export function addPhysicalAttachment(attachment) {
+//   return new ApiRequest('/equipmentAttachments').post(attachment).then(response => {
+//     store.dispatch({ type: Action.ADD_EQUIPMENT_ATTACHMENT, physicalAttachment: response.data });
+//   });
+// }
+
+export function addPhysicalAttachments(equipmentId, attachmentTypeNames) {
+  const attachments = attachmentTypeNames.map((typeName) => {
+      // "concurrencyControlNumber": 0,
+    return {
+      typeName,
+      description: '',
+      equipmentId,
+      equipment: { id: equipmentId },
+    };
+  });
+
+  return new ApiRequest('/equipmentAttachments/bulk').post(attachments).then(response => {
+    store.dispatch({ type: Action.ADD_EQUIPMENT_ATTACHMENTS, physicalAttachments: response.data });
   });
 }
 
@@ -694,8 +712,7 @@ function parseOwner(owner) {
   owner.documentDeleted = Log.ownerDocumentDeleted;
 
   // Add display fields for owner contacts
-  owner.contacts = normalize(owner.contacts);
-  _.map(owner.contacts, contact => { parseContact(contact, owner); });
+  owner.contacts = owner.contacts.map((contact) => parseContact(contact, owner));
 
   _.map(owner.documents, document => { parseDocument(document); });
   _.map(owner.equipmentList, equipment => { parseEquipment(equipment); });
@@ -720,34 +737,11 @@ function parseOwner(owner) {
   owner.canDelete = false; // TODO Needs input from Business whether this is needed.
 }
 
-export function getOwnersLite() {
-  store.dispatch({ type: Action.OWNERS_LITE_REQUEST });
-  return new ApiRequest('/owners/lite').get().then(response => {
-    var owners = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_OWNERS_LITE, owners: owners });
-  });
-}
-
-export function getOwnersLiteHires() {
-  return new ApiRequest('/owners/liteHires').get().then(response => {
-    var owners = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_OWNERS_LITE_LOOKUP, owners: owners });
-  });
-}
-
 export function searchOwners(params) {
   store.dispatch({ type: Action.OWNERS_REQUEST });
   return new ApiRequest('/owners/search').get(params).then(response => {
     var owners = normalize(response.data);
     store.dispatch({ type: Action.UPDATE_OWNERS, owners: owners });
-  });
-}
-
-export function getUnapprovedOwners() {
-  store.dispatch({ type: Action.UNAPPROVED_OWNERS_REQUEST });
-  return new ApiRequest('/owners/search').get({ status: Constant.OWNER_STATUS_CODE_PENDING }).then(response => {
-    var owners = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_UNAPPROVED_OWNERS, owners: owners });
   });
 }
 
@@ -784,16 +778,17 @@ export function updateOwner(owner) {
   });
 }
 
-export function deleteOwner(owner) {
-  return new ApiRequest(`/owners/${ owner.id }/delete`).post().then(response => {
-    var owner = response.data;
+// XXX: Looks like this is unused
+// export function deleteOwner(owner) {
+//   return new ApiRequest(`/owners/${ owner.id }/delete`).post().then(response => {
+//     var owner = response.data;
 
-    // Add display fields
-    parseOwner(owner);
+//     // Add display fields
+//     parseOwner(owner);
 
-    store.dispatch({ type: Action.DELETE_OWNER, owner: owner });
-  });
-}
+//     store.dispatch({ type: Action.DELETE_OWNER, owner: owner });
+//   });
+// }
 
 export function addOwnerContact(owner, contact) {
   return new ApiRequest(`/owners/${ owner.id }/contacts/${contact.isPrimary}`).post(contact).then(response => {
@@ -801,7 +796,7 @@ export function addOwnerContact(owner, contact) {
     // Add display fields
     parseContact(contact, owner);
 
-    store.dispatch({ type: Action.ADD_CONTACT, contact: contact });
+    store.dispatch({ type: Action.ADD_OWNER_CONTACT, contact: contact });
   });
 }
 
@@ -837,9 +832,10 @@ export function getOwnerDocuments(ownerId) {
   });
 }
 
-export function addOwnerDocument(ownerId, files) {
-  return new ApiRequest(`/owners/${ ownerId }/attachments`).post(files);
-}
+// XXX: Looks like this is unused
+// export function addOwnerDocument(ownerId, files) {
+//   return new ApiRequest(`/owners/${ ownerId }/attachments`).post(files);
+// }
 
 export function getOwnerEquipment(ownerId) {
   return new ApiRequest(`/owners/${ ownerId }/equipment`).get().then(response => {
@@ -861,27 +857,28 @@ export function updateOwnerEquipment(owner, equipmentArray) {
 }
 
 export function getOwnerNotes(ownerId) {
-  return new ApiRequest(`/owners/${ ownerId }/notes`).get().then(response => {
-    var notes = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_OWNER_NOTES, notes: notes });
+  return new ApiRequest(`/owners/${ ownerId }/notes`).get().then((response) => {
+    store.dispatch({ type: Action.UPDATE_OWNER_NOTES, notes: response.data });
+    return response.data;
   });
 }
 
 export function addOwnerNote(ownerId, note) {
-  return new ApiRequest(`/owners/${ ownerId }/note`).post(note).then(response => {
-    var notes = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_OWNER_NOTES, notes: notes });
+  return new ApiRequest(`/owners/${ ownerId }/note`).post(note).then((response) => {
+    store.dispatch({ type: Action.UPDATE_OWNER_NOTES, notes: response.data });
+    return response.data;
   });
 }
 
-export function getOwnersByDistrict(districtId) {
-  return new ApiRequest(`/districts/${districtId}/owners`).get().then((response) => {
-    var owners = normalize(response.data);
-    // Add display fields
-    _.map(owners, owner => { parseOwner(owner); });
-    store.dispatch({ type: Action.UPDATE_OWNERS_LOOKUP, owners: owners });
-  });
-}
+// XXX: Looks like this is unused
+// export function getOwnersByDistrict(districtId) {
+//   return new ApiRequest(`/districts/${districtId}/owners`).get().then((response) => {
+//     var owners = normalize(response.data);
+//     // Add display fields
+//     _.map(owners, owner => { parseOwner(owner); });
+//     store.dispatch({ type: Action.UPDATE_OWNERS_LOOKUP, owners: owners });
+//   });
+// }
 
 export function changeOwnerStatus(status) {
   return new ApiRequest(`/owners/${status.id}/status`).put(status).then((response) => {
@@ -893,26 +890,28 @@ export function changeOwnerStatus(status) {
   });
 }
 
-export function getStatusLettersPdf(params) {
-  return new ApiRequest('owners/verificationPdf').post(params, { responseType: Constant.RESPONSE_TYPE_BLOB }).then((response) => {
-    return response;
-  });
+export function scheduleStatusLettersPdf(params) {
+  return new ApiRequest('owners/verificationPdf').post(params, { responseType: Constant.RESPONSE_TYPE_BLOB });
 }
 
 export function getMailingLabelsPdf(params) {
-  return new ApiRequest('owners/mailingLabelsPdf').post(params, { responseType: Constant.RESPONSE_TYPE_BLOB }).then((response) => {
-    return response;
-  });
+  return new ApiRequest('owners/mailingLabelsPdf').post(params, { responseType: Constant.RESPONSE_TYPE_BLOB });
 }
 
 export function transferEquipment(donorOwnerId, recipientOwnerId, equipment, includeSeniority) {
   return new ApiRequest(`owners/${donorOwnerId}/equipmentTransfer/${recipientOwnerId}/${includeSeniority}`).post(equipment).then((response) => {
-    if (response.responseStatus === 'ERROR') {
-      store.dispatch({ type: Action.EQUIPMENT_TRANSFER_ERROR, errorMessage: response.error.description });
-      return Promise.reject(new Error(response.error.description));
-    }
+    getEquipmentLite();
+    getEquipmentTs();
+    getEquipmentHires();
 
     return response;
+  }).catch((err) => {
+    if (err.errorCode) {
+      store.dispatch({ type: Action.EQUIPMENT_TRANSFER_ERROR, errorMessage: err.errorDescription });
+      throw new Error('Unable to add transfer equipment');
+    } else {
+      throw err;
+    }
   });
 }
 
@@ -941,51 +940,56 @@ function parseContact(contact, parent) {
 
   contact.canEdit = true;
   contact.canDelete = true;
+
+  return contact;
 }
 
-export function getContacts() {
-  return new ApiRequest('/contacts').get().then(response => {
-    var contacts = normalize(response.data);
+// XXX: Looks like this is unused
+// export function getContacts() {
+//   return new ApiRequest('/contacts').get().then(response => {
+//     var contacts = normalize(response.data);
 
-    // Add display fields
-    _.map(contacts, contact => { parseContact(contact); });
+//     // Add display fields
+//     _.map(contacts, contact => { parseContact(contact); });
 
-    store.dispatch({ type: Action.UPDATE_CONTACTS, contacts: contacts });
-  });
-}
+//     store.dispatch({ type: Action.UPDATE_CONTACTS, contacts: contacts });
+//   });
+// }
 
-export function getContact(contactId) {
-  return new ApiRequest(`/contacts/${ contactId }`).get().then(response => {
-    var contact = response.data;
+// XXX: Looks like this is unused
+// export function getContact(contactId) {
+//   return new ApiRequest(`/contacts/${ contactId }`).get().then(response => {
+//     var contact = response.data;
 
-    // Add display fields
-    parseContact(contact);
+//     // Add display fields
+//     parseContact(contact);
 
-    store.dispatch({ type: Action.UPDATE_CONTACT, contact: contact });
-  });
-}
+//     store.dispatch({ type: Action.UPDATE_CONTACT, contact: contact });
+//   });
+// }
 
-export function addContact(parent, contact) {
-  return new ApiRequest('/contacts').post(contact).then(response => {
-    var contact = response.data;
+// XXX: Looks like this is unused
+// export function addContact(parent, contact) {
+//   return new ApiRequest('/contacts').post(contact).then(response => {
+//     var contact = response.data;
 
-    // Add display fields
-    parseContact(contact, parent);
+//     // Add display fields
+//     parseContact(contact, parent);
 
-    store.dispatch({ type: Action.ADD_CONTACT, contact: contact });
-  });
-}
+//     store.dispatch({ type: Action.ADD_CONTACT, contact: contact });
+//   });
+// }
 
-export function updateContact(parent, contact) {
-  return new ApiRequest(`/contacts/${ contact.id }`).put(contact).then(response => {
-    var contact = response.data;
+// export function updateContact(parent, contact) {
+//   return new ApiRequest(`/contacts/${ contact.id }`).put(contact).then(response => {
+//     var contact = response.data;
 
-    // Add display fields
-    parseContact(contact, parent);
+//     // Add display fields
+//     parseContact(contact, parent);
 
-    store.dispatch({ type: Action.UPDATE_CONTACT, contact: contact });
-  });
-}
+//     store.dispatch({ type: Action.UPDATE_CONTACT, contact: contact });
+//   });
+// }
 
 export function deleteContact(contact) {
   return new ApiRequest(`/contacts/${ contact.id }/delete`).post().then(response => {
@@ -1069,8 +1073,7 @@ function parseProject(project) {
   project.documentDeleted = Log.projectDocumentDeleted;
 
   // Add display fields for contacts
-  project.contacts = normalize(project.contacts);
-  _.map(project.contacts, contact => { parseContact(contact, project); });
+  project.contacts = project.contacts.map((contact) => parseContact(contact, project));
 
   // Add display fields for rental requests and rental agreements
   _.map(project.rentalRequests, obj => { parseRentalRequest(obj); });
@@ -1166,7 +1169,8 @@ export function searchOwnersCoverage(params) {
 }
 
 export function getProjects() {
-  return new ApiRequest('/projects').get({ currentFiscal: false }).then(response => {
+  const silent = store.getState().lookups.projects.loaded;
+  return new ApiRequest('/projects', { silent }).get({ currentFiscal: false }).then(response => {
     var projects = normalize(response.data);
 
     // Add display fields
@@ -1177,7 +1181,8 @@ export function getProjects() {
 }
 
 export function getProjectsCurrentFiscal() {
-  return new ApiRequest('/projects').get({ currentFiscal: true }).then(response => {
+  const silent = store.getState().lookups.projectsCurrentFiscal.loaded;
+  return new ApiRequest('/projects', { silent }).get({ currentFiscal: true }).then(response => {
     var projects = normalize(response.data);
 
     // Add display fields
@@ -1195,6 +1200,8 @@ export function getProject(projectId) {
     parseProject(project);
 
     store.dispatch({ type: Action.UPDATE_PROJECT, project: project });
+
+    return project;
   });
 }
 
@@ -1206,11 +1213,16 @@ export function addProject(project) {
     parseProject(project);
 
     store.dispatch({ type: Action.ADD_PROJECT, project: project });
+
+    return project;
   });
 }
 
 export function updateProject(project) {
-  return new ApiRequest(`/projects/${ project.id }`).put(project).then(response => {
+  const projectData = _.omit(project, 'notes', 'contacts', 'historyEntity', 'primaryContact', 'rentalAgreements', 'rentalRequests');
+  projectData.projectId = project.id;
+
+  return new ApiRequest(`/projects/${ project.id }`).put(projectData).then(response => {
     var project = response.data;
 
     // Add display fields
@@ -1220,40 +1232,53 @@ export function updateProject(project) {
   });
 }
 
-export function getProjectEquipment(projectId) {
-  return new ApiRequest(`/projects/${projectId}/equipment`).get().then(response => {
-    var projectEquipment = normalize(response.data);
+// XXX: Looks like this is unused
+// export function getProjectEquipment(projectId) {
+//   return new ApiRequest(`/projects/${projectId}/equipment`).get().then(response => {
+//     var projectEquipment = normalize(response.data);
 
-    store.dispatch({ type: Action.UPDATE_PROJECT_EQUIPMENT, projectEquipment: projectEquipment });
-  });
-}
+//     store.dispatch({ type: Action.UPDATE_PROJECT_EQUIPMENT, projectEquipment: projectEquipment });
+//   });
+// }
 
-export function getProjectTimeRecords(projectId) {
-  return new ApiRequest(`projects/${projectId}/timeRecords`).get().then(response => {
-    var projectTimeRecords = normalize(response.data);
+// XXX: Looks like this is unused
+// export function getProjectTimeRecords(projectId) {
+//   return new ApiRequest(`projects/${projectId}/timeRecords`).get().then(response => {
+//     var projectTimeRecords = normalize(response.data);
 
-    store.dispatch({ type: Action.UPDATE_PROJECT_TIME_RECORDS, projectTimeRecords: projectTimeRecords });
-  });
-}
+//     store.dispatch({ type: Action.UPDATE_PROJECT_TIME_RECORDS, projectTimeRecords: projectTimeRecords });
+//   });
+// }
 
-export function addProjectTimeRecords(projectId, rentalRequestId, timeRecords) {
-  let formattedTimeRecords = formatTimeRecords(timeRecords, rentalRequestId);
-  return new ApiRequest(`projects/${projectId}/timeRecords`).post(formattedTimeRecords).then(response => {
-    var projectTimeRecords = normalize(response.data);
+// XXX: Looks like this is unused
+// export function addProjectTimeRecords(projectId, rentalRequestId, timeRecords) {
+//   let formattedTimeRecords = formatTimeRecords(timeRecords, rentalRequestId);
+//   return new ApiRequest(`projects/${projectId}/timeRecords`).post(formattedTimeRecords).then(response => {
+//     var projectTimeRecords = normalize(response.data);
 
-    store.dispatch({ type: Action.UPDATE_PROJECT_TIME_RECORDS, projectTimeRecords: projectTimeRecords });
-    return projectTimeRecords;
-  });
-}
+//     store.dispatch({ type: Action.UPDATE_PROJECT_TIME_RECORDS, projectTimeRecords: projectTimeRecords });
+//     return projectTimeRecords;
+//   });
+// }
 
 export function addProjectContact(project, contact) {
+  const isNew = contact.id === 0;
+
+  if (!isNew) {
+    store.dispatch({ type: Action.UPDATE_PROJECT_CONTACT, projectId: project.id, contact });
+  }
+
   return new ApiRequest(`/projects/${ project.id }/contacts/${contact.isPrimary}`).post(contact).then(response => {
     var contact = response.data;
 
     // Add display fields
     parseContact(contact, project);
 
-    store.dispatch({ type: Action.ADD_CONTACT, contact: contact });
+    if (!isNew){
+      store.dispatch({ type: Action.ADD_PROJECT_CONTACT, projectId: project.id, contact });
+    }
+
+    return contact;
   });
 }
 
@@ -1289,22 +1314,21 @@ export function getProjectDocuments(projectId) {
   });
 }
 
-export function addProjectDocument(projectId, files) {
-  return new ApiRequest(`/projects/${ projectId }/attachments`).post(files);
-}
+// XXX: Looks like this is unused
+// export function addProjectDocument(projectId, files) {
+//   return new ApiRequest(`/projects/${ projectId }/attachments`).post(files);
+// }
 
 export function getProjectNotes(projectId) {
-  return new ApiRequest(`/projects/${ projectId }/notes`).get().then(response => {
-    var notes = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_PROJECT_NOTES, notes: notes });
+  return new ApiRequest(`/projects/${ projectId }/notes`).get().then((response) => {
+    store.dispatch({ type: Action.UPDATE_PROJECT_NOTES, projectId, notes: response.data });
+    return response.data;
   });
 }
 
 export function addProjectNote(projectId, note) {
-  return new ApiRequest(`/projects/${ projectId }/note`).post(note).then(response => {
-    var notes = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_PROJECT_NOTES, notes: notes });
-  });
+  store.dispatch({ type: Action.ADD_PROJECT_NOTE, projectId, note });
+  return new ApiRequest(`/projects/${ projectId }/note`).post(note);
 }
 
 export function getProjectRentalAgreements(projectId) {
@@ -1317,11 +1341,6 @@ export function getProjectRentalAgreements(projectId) {
 
 export function cloneProjectRentalAgreement(data) {
   return new ApiRequest(`/projects/${ data.projectId }/rentalAgreementClone`).post(data).then(response => {
-
-    if (response.responseStatus === 'ERROR') {
-      return Promise.reject(new Error('There was an error cloning the rental agreement.'));
-    }
-
     var agreement = response.data;
     // Add display fields
     parseRentalAgreement(agreement);
@@ -1395,7 +1414,8 @@ function parseRentalRequest(rentalRequest) {
 
   rentalRequest.canView = true;
   rentalRequest.canEdit = true;
-  rentalRequest.canDelete = false; // TODO Needs input from Business whether this is needed.
+  // HETS-894: view-only requests and requests that have yet to be acted on can be deleted
+  rentalRequest.canDelete = rentalRequest.projectId === 0 || rentalRequest.yesCount === 0;
 }
 
 export function searchRentalRequests(params) {
@@ -1421,19 +1441,30 @@ export function getRentalRequest(id) {
   });
 }
 
-export function addRentalRequest(rentalRequest) {
+export function addRentalRequest(rentalRequest, viewOnly) {
   store.dispatch({ type: Action.RENTAL_REQUEST_REQUEST });
-  return new ApiRequest('/rentalrequests').post(rentalRequest).then(response => {
-    if (response.responseStatus === 'ERROR') {
-      store.dispatch({ type: Action.ADD_RENTAL_REQUEST_ERROR, errorMessage: response.error.description });
-      return Promise.reject(new Error(response.error.description));
-    }
 
+  var path = '/rentalrequests';
+  if (viewOnly) {
+    path = '/rentalrequests/viewOnly';
+  }
+
+  return new ApiRequest(path).post(rentalRequest).then(response => {
     var rentalRequest = response.data;
     // Add display fields
     parseRentalRequest(rentalRequest);
     store.dispatch({ type: Action.ADD_RENTAL_REQUEST, rentalRequest: rentalRequest });
+
+    getEquipmentHires();
+
     return rentalRequest;
+  }).catch((err) => {
+    if (err.errorCode) {
+      store.dispatch({ type: Action.ADD_RENTAL_REQUEST_ERROR, errorMessage: err.errorDescription });
+      throw new Error('Unable to add request');
+    } else {
+      throw err;
+    }
   });
 }
 
@@ -1482,27 +1513,28 @@ export function getRentalRequestDocuments(rentalRequestId) {
   });
 }
 
-export function addRentalRequestDocument(rentalRequestId, files) {
-  return new ApiRequest(`/rentalrequests/${ rentalRequestId }/attachments`).post(files);
-}
+// XXX: Looks like this is unused
+// export function addRentalRequestDocument(rentalRequestId, files) {
+//   return new ApiRequest(`/rentalrequests/${ rentalRequestId }/attachments`).post(files);
+// }
 
 export function getRentalRequestNotes(rentalRequestId) {
   return new ApiRequest(`/rentalrequests/${ rentalRequestId }/notes`).get().then(response => {
-    var notes = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_NOTES, notes: notes });
+    store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_NOTES, notes: response.data });
+    return response.data;
   });
 }
 
 export function addRentalRequestNote(rentalRequestId, note) {
   return new ApiRequest(`/rentalRequests/${ rentalRequestId }/note`).post(note).then(response => {
-    var notes = normalize(response.data);
-    store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_NOTES, notes: notes });
+    store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_NOTES, notes: response.data });
+    return response.data;
   });
 }
 
 export function cancelRentalRequest(rentalRequestId) {
-  return new ApiRequest(`rentalrequests/${rentalRequestId}/cancel`).get().then((response) => {
-    return response;
+  return new ApiRequest(`rentalrequests/${rentalRequestId}/cancel`).get().then(() => {
+    getEquipmentHires();
   });
 }
 
@@ -1598,15 +1630,12 @@ export function getRentalRequestRotationList(id) {
 export function updateRentalRequestRotationList(rentalRequestRotationList, rentalRequest) {
   store.dispatch({ type: Action.RENTAL_REQUEST_ROTATION_LIST_REQUEST });
   return new ApiRequest(`/rentalrequests/${ rentalRequest.id }/rentalRequestRotationList`).put({ ...rentalRequestRotationList }).then(response => {
-
-    if (response.responseStatus === 'ERROR') {
-      store.dispatch({ type: Action.RENTAL_REQUEST_ROTATION_LIST_ERROR, error: response.error });
-      return Promise.reject(response.error.description);
-    }
-
     var rentalRequestRotationList = response.data.rentalRequestRotationList;
 
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST, rentalRequestRotationList: rentalRequestRotationList });
+
+    getEquipmentTs();
+    getEquipmentHires();
   });
 }
 
@@ -1714,26 +1743,25 @@ export function getRentalAgreement(id) {
 
 export function getLatestRentalAgreement(equipmentId, projectId) {
   return new ApiRequest(`/rentalagreements/latest/${ projectId }/${ equipmentId }`).get().then(response => {
-    if (response.responseStatus === 'ERROR') {
-      return Promise.reject(new Error(response.error.description));
-    }
-
     var agreement = response.data;
 
     store.dispatch({ type: Action.UPDATE_RENTAL_AGREEMENT, rentalAgreement: agreement });
+
+    return agreement;
   });
 }
 
-export function addRentalAgreement(agreement) {
-  return new ApiRequest('/rentalagreements').post(agreement).then(response => {
-    var agreement = response.data;
+// XXX: Looks like this is unused
+// export function addRentalAgreement(agreement) {
+//   return new ApiRequest('/rentalagreements').post(agreement).then(response => {
+//     var agreement = response.data;
 
-    // Add display fields
-    parseRentalAgreement(agreement);
+//     // Add display fields
+//     parseRentalAgreement(agreement);
 
-    store.dispatch({ type: Action.ADD_RENTAL_AGREEMENT, rentalAgreement: agreement });
-  });
-}
+//     store.dispatch({ type: Action.ADD_RENTAL_AGREEMENT, rentalAgreement: agreement });
+//   });
+// }
 
 export function generateAnotherRentalAgreement(agreement) {
   var preparedAgreement = convertRentalAgreement(agreement);
@@ -1787,20 +1815,17 @@ export function generateRentalAgreementDocument(rentalAgreementId) {
   return new ApiRequest(`rentalagreements/${rentalAgreementId}/pdf`).get(null, { ignoreResponse: true });
 }
 
+export function searchAitReport(params) {
+  store.dispatch({ type: Action.AIT_REPORT_REQUEST });
+  return new ApiRequest('/rentalAgreements/aitReport').get(params).then(response => {
+    var aitResponses = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_AIT_REPORT, aitResponses: aitResponses });
+  });
+}
 
 ////////////////////
 // Blank Rental Agreements
 ////////////////////
-
-export function getBlankRentalAgreements() {
-  store.dispatch({ type: Action.BLANK_RENTAL_AGREEMENTS_LOOKUP_REQUEST });
-  return new ApiRequest('/rentalAgreements/blankAgreements').get().then(response => {
-    var agreements = normalize(response.data);
-    _.map(agreements, agreement => parseRentalAgreement(agreement));
-
-    store.dispatch({ type: Action.UPDATE_BLANK_RENTAL_AGREEMENTS_LOOKUP, blankRentalAgreements: agreements });
-  });
-}
 
 export function getBlankRentalAgreementsForHire(projectId, equipmentId) {
   store.dispatch({ type: Action.BLANK_RENTAL_AGREEMENTS_LOOKUP_REQUEST });
@@ -1814,21 +1839,6 @@ export function getBlankRentalAgreementsForHire(projectId, equipmentId) {
 
     store.dispatch({ type: Action.UPDATE_BLANK_RENTAL_AGREEMENTS_LOOKUP, blankRentalAgreements: agreements });
   });
-}
-
-export function addBlankRentalAgreement() {
-  return new ApiRequest('rentalAgreements/createBlankAgreement').post().then((response) => {
-    var agreement = response.data;
-
-    // Add display fields
-    parseRentalAgreement(agreement);
-
-    store.dispatch({ type: Action.UPDATE_RENTAL_AGREEMENT, rentalAgreement: agreement });
-  });
-}
-
-export function deleteBlankRentalAgreement(id) {
-  return new ApiRequest(`/rentalAgreements/deleteBlankAgreement/${ id }`).post();
 }
 
 
@@ -1857,16 +1867,17 @@ function parseRentalRate(rentalRate, parent = {}) {
   rentalRate.canDelete = true;
 }
 
-export function getRentalRate(id) {
-  return new ApiRequest(`/rentalagreementrates/${ id }`).get().then(response => {
-    var rentalRate = response.data;
+// XXX: Looks like this is unused
+// export function getRentalRate(id) {
+//   return new ApiRequest(`/rentalagreementrates/${ id }`).get().then(response => {
+//     var rentalRate = response.data;
 
-    // Add display fields
-    parseRentalRate(rentalRate);
+//     // Add display fields
+//     parseRentalRate(rentalRate);
 
-    store.dispatch({ type: Action.UPDATE_RENTAL_RATE, rentalRate: rentalRate });
-  });
-}
+//     store.dispatch({ type: Action.UPDATE_RENTAL_RATE, rentalRate: rentalRate });
+//   });
+// }
 
 export function addRentalRate(rentalRate) {
   return new ApiRequest('/rentalagreementrates').post({ ...rentalRate, rentalAgreement: { id: rentalRate.rentalAgreement.id } }).then(response => {
@@ -1929,16 +1940,17 @@ function parseRentalCondition(rentalCondition, parent = {}) {
   rentalCondition.canDelete = true;
 }
 
-export function getRentalCondition(id) {
-  return new ApiRequest(`/rentalagreementconditions/${ id }`).get().then(response => {
-    var rentalCondition = response.data;
+// XXX: Looks like this is unused
+// export function getRentalCondition(id) {
+//   return new ApiRequest(`/rentalagreementconditions/${ id }`).get().then(response => {
+//     var rentalCondition = response.data;
 
-    // Add display fields
-    parseRentalCondition(rentalCondition);
+//     // Add display fields
+//     parseRentalCondition(rentalCondition);
 
-    store.dispatch({ type: Action.UPDATE_RENTAL_CONDITION, rentalCondition: rentalCondition });
-  });
-}
+//     store.dispatch({ type: Action.UPDATE_RENTAL_CONDITION, rentalCondition: rentalCondition });
+//   });
+// }
 
 export function addRentalCondition(rentalCondition) {
   return new ApiRequest('/rentalagreementconditions').post({ ...rentalCondition, rentalAgreement: { id: rentalCondition.rentalAgreement.id } }).then(response => {
@@ -1976,15 +1988,6 @@ export function deleteRentalCondition(rentalCondition) {
     parseRentalCondition(rentalCondition);
 
     store.dispatch({ type: Action.DELETE_RENTAL_CONDITION, rentalCondition: rentalCondition });
-  });
-}
-
-export function getRentalConditions() {
-  store.dispatch({ type: Action.RENTAL_CONDITIONS_LOOKUP_REQUEST });
-  return new ApiRequest('/conditiontypes').get().then(response => {
-    var rentalConditions = response.data;
-
-    store.dispatch({ type: Action.UPDATE_RENTAL_CONDITIONS_LOOKUP, rentalConditions: rentalConditions });
   });
 }
 
@@ -2035,10 +2038,6 @@ export function getOwnerForBusiness(ownerId) {
 
 export function validateOwner(secretKey, postalCode) {
   return new ApiRequest('/business/validateOwner').get({ sharedKey: secretKey, postalCode: postalCode }).then(response => {
-    if (response.responseStatus === 'ERROR') {
-      return Promise.reject(response.error.description);
-    }
-
     var business = response.data;
     parseOwner(business.linkedOwner);
     store.dispatch({ type: Action.UPDATE_BUSINESS, business: business });
@@ -2057,7 +2056,7 @@ function parseRolloverStatus(status) {
 }
 
 export function getRolloverStatus(districtId) {
-  return new ApiRequest(`/districts/${districtId}/rolloverStatus`).get().then(response => {
+  return new ApiRequest(`/districts/${districtId}/rolloverStatus`).get(null, {silent: true}).then(response => {
     var status = response.data;
     parseRolloverStatus(status);
     store.dispatch({ type: Action.UPDATE_ROLLOVER_STATUS_LOOKUP, status: status });
@@ -2085,13 +2084,14 @@ export function dismissRolloverMessage(districtId) {
 // Look-ups
 ////////////////////
 
-export function getCities() {
-  return new ApiRequest('/cities').get().then(response => {
-    var cities = normalize(response.data);
+// XXX: Looks like this is unused
+// export function getCities() {
+//   return new ApiRequest('/cities').get().then(response => {
+//     var cities = normalize(response.data);
 
-    store.dispatch({ type: Action.UPDATE_CITIES_LOOKUP, cities: cities });
-  });
-}
+//     store.dispatch({ type: Action.UPDATE_CITIES_LOOKUP, cities: cities });
+//   });
+// }
 
 export function getDistricts() {
   return new ApiRequest('/districts').get().then(response => {
@@ -2127,31 +2127,54 @@ export function getServiceAreas() {
 }
 
 export function getEquipmentTypes() {
-  return new ApiRequest('/equipmenttypes').get().then(response => {
+  const silent = store.getState().lookups.equipmentTypes.loaded;
+  return new ApiRequest('/equipmenttypes', { silent }).get().then(response => {
     var equipmentTypes = _.mapValues(normalize(response.data), x => {
       x.blueBookSectionAndName = `${x.blueBookSection} - ${x.name}`;
       return x;
     });
 
-    store.dispatch({ type: Action.UPDATE_EQUIPMENT_TYPES_LOOKUP, equipmentTypes: equipmentTypes });
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_TYPES_LOOKUP, equipmentTypes });
   });
 }
 
-export function getDistrictEquipmentTypes(districtId) {
-  store.dispatch({ type: Action.DISTRICT_EQUIPMENT_TYPES_LOOKUP_REQUEST });
-  return new ApiRequest('/districtequipmenttypes').get().then(response => {
-    var filteredResponse = _.filter(response.data, (x) => x.district.id == districtId );
-    var districtEquipmentTypes = normalize(filteredResponse);
+export function getDistrictEquipmentTypes() {
+  const silent = store.getState().lookups.districtEquipmentTypes.loaded;
+  return new ApiRequest('/districtequipmenttypes', { silent }).get().then(response => {
+    var districtEquipmentTypes = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_LOOKUP, districtEquipmentTypes: districtEquipmentTypes });
   });
 }
 
+export function getFiscalYears(districtId) {
+  return new ApiRequest(`/districts/${districtId}/fiscalYears`).get().then(response => {
+    store.dispatch({ type: Action.UPDATE_FISCAL_YEARS_LOOKUP, fiscalYears: response.data });
+  });
+}
+
+export function getOwnersLite() {
+  const silent = store.getState().lookups.owners.lite.loaded;
+  return new ApiRequest('/owners/lite', { silent }).get().then(response => {
+    var owners = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_OWNERS_LITE_LOOKUP, owners: owners });
+  });
+}
+
+export function getOwnersLiteHires() {
+  const silent = store.getState().lookups.owners.hires.loaded;
+  return new ApiRequest('/owners/liteHires', { silent }).get().then(response => {
+    var owners = normalize(response.data);
+    store.dispatch({ type: Action.UPDATE_OWNERS_LITE_HIRES_LOOKUP, owners: owners });
+  });
+}
+
 export function getOwnersLiteTs() {
-  return new ApiRequest('/owners/liteTs').get().then(response => {
+  const silent = store.getState().lookups.owners.ts.loaded;
+  return new ApiRequest('/owners/liteTs', { silent }).get().then(response => {
     var owners = normalize(response.data);
 
-    store.dispatch({ type: Action.UPDATE_OWNERS_LITE_LOOKUP, owners: owners });
+    store.dispatch({ type: Action.UPDATE_OWNERS_LITE_TS_LOOKUP, owners: owners });
   });
 }
 
@@ -2169,10 +2192,6 @@ export function updateDistrictEquipmentType(equipment) {
 
 export function deleteDistrictEquipmentType(equipment) {
   return new ApiRequest(`/districtequipmenttypes/${equipment.id}/delete`).post().then(response => {
-    if (response.responseStatus === 'ERROR') {
-      return Promise.reject(new Error(response.error.description));
-    }
-
     return response;
   });
 }
@@ -2193,23 +2212,24 @@ export function getPermissions() {
   });
 }
 
-export function getProvincialRateTypes() {
-  return new ApiRequest('/provincialratetypes').get().then(response => {
-    var rateTypeOther = {
-      id: 10000,
-      rateType: 'OTHER',
-      description: Constant.NON_STANDARD_CONDITION,
-      rate: null,
-      isPercentRate: false,
-      isRateEditable: true,
-      isIncludedInTotal: false,
-      isInTotalEditable: true,
-    };
-    var provincialRateTypes = [ ...response.data, rateTypeOther ];
+// XXX: Looks like this is unused
+// export function getProvincialRateTypes() {
+//   return new ApiRequest('/provincialratetypes').get().then(response => {
+//     var rateTypeOther = {
+//       id: 10000,
+//       rateType: 'OTHER',
+//       description: Constant.NON_STANDARD_CONDITION,
+//       rate: null,
+//       isPercentRate: false,
+//       isRateEditable: true,
+//       isIncludedInTotal: false,
+//       isInTotalEditable: true,
+//     };
+//     var provincialRateTypes = [ ...response.data, rateTypeOther ];
 
-    store.dispatch({ type: Action.UPDATE_PROVINCIAL_RATE_TYPES_LOOKUP, provincialRateTypes: provincialRateTypes });
-  });
-}
+//     store.dispatch({ type: Action.UPDATE_PROVINCIAL_RATE_TYPES_LOOKUP, provincialRateTypes: provincialRateTypes });
+//   });
+// }
 
 export function getOvertimeRateTypes() {
   return new ApiRequest('/provincialratetypes/overtime').get().then(response => {
@@ -2220,6 +2240,15 @@ export function getOvertimeRateTypes() {
 export function updateOvertimeRateType(rate) {
   return new ApiRequest(`/provincialratetypes/${rate.id}`).put(rate).then(response => {
     return response;
+  });
+}
+
+export function getRentalConditions() {
+  store.dispatch({ type: Action.RENTAL_CONDITIONS_LOOKUP_REQUEST });
+  return new ApiRequest('/conditiontypes').get().then(response => {
+    var rentalConditions = response.data;
+
+    store.dispatch({ type: Action.UPDATE_RENTAL_CONDITIONS_LOOKUP, rentalConditions: rentalConditions });
   });
 }
 
@@ -2238,25 +2267,18 @@ export function getVersion() {
 ////////////////////
 
 export function deleteNote(id) {
-  return new ApiRequest(`/notes/${id}/delete`).post().then(response => {
-    return response;
+  store.dispatch({ type: Action.DELETE_NOTE, noteId: id });
+  return new ApiRequest(`/notes/${id}/delete`).post().then((response) => {
+    return response.data;
   });
 }
 
 export function updateNote(note) {
-  return new ApiRequest(`/notes/${note.id}`).put(note).then(response => {
-    return response;
+  return new ApiRequest(`/notes/${note.id}`).put(note).then((response) => {
+    return response.data;
   });
 }
 
-// Need to change getNotes to get notes by individual entity. Currently gets all notes in the system
-export function getNotes() {
-  return new ApiRequest('/notes').get().then(response => {
-    var notes = normalize(response);
-
-    store.dispatch({ type: Action.UPDATE_NOTES, notes: notes });
-  });
-}
 ////////////////////
 // Set User
 ////////////////////
@@ -2275,4 +2297,28 @@ export function deleteTimeRecord(timeRecordId) {
   return new ApiRequest(`/timerecords/${timeRecordId}/delete`).post().then((response) => {
     store.dispatch({ type: Action.DELETE_TIME_RECORD, timeRecord: response.data });
   });
+}
+
+////////////////////
+// Batch Reports
+////////////////////
+
+export function getBatchReports() {
+  return new ApiRequest('/reports').get().then((response) => {
+    const batchReports = response.data.map((report) => {
+      report.startDate = new Date(report.startDate);
+      return report;
+    });
+    store.dispatch({ type: Action.UPDATE_BATCH_REPORTS, batchReports });
+  });
+}
+
+export function deleteBatchReport(reportId) {
+  store.dispatch({ type: Action.DELETE_BATCH_REPORT, batchReportId: reportId });
+
+  return new ApiRequest(`/reports/${reportId}/delete`).post();
+}
+
+export function getStatusLettersPdf(reportId) {
+  return new ApiRequest(`/reports/${reportId}/download`).get(null, { responseType: Constant.RESPONSE_TYPE_BLOB });
 }

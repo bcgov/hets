@@ -1,41 +1,23 @@
 import React from 'react';
 
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
 
-import { Well, PageHeader, Row, Col, Button, Alert, ButtonGroup, Glyphicon, HelpBlock } from 'react-bootstrap';
+import { Well, PageHeader, Row, Col, Button } from 'react-bootstrap';
 
 import _ from 'lodash';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
-import DeleteButton from '../components/DeleteButton.jsx';
-import EditButton from '../components/EditButton.jsx';
-import SortTable from '../components/SortTable.jsx';
-import Spinner from '../components/Spinner.jsx';
 import store from '../store';
+
+import SubHeader from '../components/ui/SubHeader.jsx';
 
 var Home = React.createClass({
   propTypes: {
     currentUser: React.PropTypes.object,
-    owners: React.PropTypes.object,
-    unapprovedOwners: React.PropTypes.object,
-    unapprovedEquipment: React.PropTypes.object,
-    rentalAgreement: React.PropTypes.object,
-    rentalAgreements: React.PropTypes.object,
-    blankRentalAgreements: React.PropTypes.object,
-    uiBlankRentalAgreements: React.PropTypes.object,
+    searchSummaryCounts: React.PropTypes.object,
     router: React.PropTypes.object,
-  },
-
-  getInitialState() {
-    return {
-      uiBlankRentalAgreements : {
-        sortField: this.props.uiBlankRentalAgreements.sortField || 'agreementNumber',
-        sortDesc: this.props.uiBlankRentalAgreements.sortDesc === false,
-      },
-    };
   },
 
   componentDidMount() {
@@ -43,13 +25,7 @@ var Home = React.createClass({
   },
 
   fetch() {
-    Api.getUnapprovedOwners();
-    Api.getUnapprovedEquipment();
-    this.fetchBlankRentalAgreements();
-  },
-
-  fetchBlankRentalAgreements() {
-    Api.getBlankRentalAgreements();
+    Api.getSearchSummaryCounts();
   },
 
   goToUnapprovedOwners() {
@@ -78,120 +54,44 @@ var Home = React.createClass({
     this.props.router.push({ pathname: Constant.EQUIPMENT_PATHNAME });
   },
 
-  createRentalAgreement() {
-    Api.addBlankRentalAgreement().then(() => {
-      // navigate to newly created agreement
-      this.props.router.push({
-        pathname: `${ Constant.RENTAL_AGREEMENTS_PATHNAME }/${ this.props.rentalAgreement.id }`,
-      });
-    });
+  goToHiredEquipment() {
+    // update search parameters
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: { statusCode: Constant.EQUIPMENT_STATUS_CODE_APPROVED, hired: true  } });
+
+    // perform search
+    Api.searchEquipmentList({ status: Constant.EQUIPMENT_STATUS_CODE_APPROVED, hired: true  });
+
+    // navigate to search page
+    this.props.router.push({ pathname: Constant.EQUIPMENT_PATHNAME });
   },
 
-  editRentalAgreement(id) {
-    this.props.router.push({
-      pathname: `${ Constant.RENTAL_AGREEMENTS_PATHNAME }/${ id }`,
-    });
-  },
+  goToBlockedRotationLists() {
+    // update search parameters
+    store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_SEARCH, rentalRequests: { statusCode: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS  } });
 
-  deleteRentalAgreement(id) {
-    Api.deleteBlankRentalAgreement(id).then(() => {
-      this.fetchBlankRentalAgreements();
-    });
-  },
+    // perform search
+    Api.searchRentalRequests({ status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS  });
 
-  updateRentalAgreementsUIState(state, callback) {
-    this.setState({ uiBlankRentalAgreements: { ...this.state.uiBlankRentalAgreements, ...state }}, () => {
-      store.dispatch({ type: Action.UPDATE_BLANK_RENTAL_AGREEMENTS_UI, blankRentalAgreements: this.state.uiBlankRentalAgreements });
-      if (callback) { callback(); }
-    });
-  },
-
-  updateState(state) {
-    this.setState(state);
-  },
-
-  renderAgreements() {
-    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) {
-      return null;
-    }
-
-    var agreements = this.props.blankRentalAgreements.data;
-    var agreementCount = Object.keys(agreements).length;
-
-    return <Well>
-      <h3>Unassociated Rental Agreements</h3>
-      <p>(These equipment have not yet been hired against a rental request in the application.)</p>
-      {(() => {
-        if (this.props.blankRentalAgreements.loading ) { return <div className="spinner-container"><Spinner/></div>; }
-
-        var addRentalAgreementButton = null;
-        if (agreementCount < Constant.MAX_UNASSOCIATED_RENTAL_AGREEMENTS) {
-          addRentalAgreementButton = <Button title="Add Rental Agreement" onClick={ this.createRentalAgreement } bsSize="small"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
-        }
-
-        if (!agreements || agreementCount === 0) { return <Alert bsStyle="success">No unassociated rental agreements { addRentalAgreementButton }</Alert>; }
-
-        // assign sequence numbers
-        var sortedAgreements = _.sortBy(agreements, 'id');
-        _.map(sortedAgreements, (agreement, index) => { agreement.sequence = index + 1; });
-
-        // sort by selected column
-        sortedAgreements = _.sortBy(agreements, this.state.uiBlankRentalAgreements.sortField);
-        if (this.state.uiBlankRentalAgreements.sortDesc) {
-          _.reverse(sortedAgreements);
-        }
-
-        var headers = [
-          { field: 'sequence',        title: '#'                },
-          { field: 'agreementNumber', title: 'Rental Agreement' },
-          { field: 'projectName',     title: 'Project'          },
-          { field: 'equipmentCode',   title: 'Equipment ID'     },
-          { field: 'add', style: { textAlign: 'right' }, node: addRentalAgreementButton },
-        ];
-
-        return <SortTable id="rental-agreement-list" sortField={ this.state.uiBlankRentalAgreements.sortField } sortDesc={ this.state.uiBlankRentalAgreements.sortDesc } onSort={ this.updateRentalAgreementsUIState } headers={ headers }>
-          {
-            _.map(sortedAgreements, (agreement) => {
-              return <tr key={ agreement.id }>
-                <td>{ agreement.sequence } </td>
-                <td>{ agreement.number }</td>
-                {(() => {
-                  if (!_.isEmpty(agreement.project)) { return <td><Link to={ `${ Constant.PROJECTS_PATHNAME }/${ agreement.projectId }` }>{ agreement.project.name }</Link></td>; }
-
-                  return <td></td>;
-                })()}
-                {(() => {
-                  if (!_.isEmpty(agreement.equipment)) { return <td><Link to={ `${ Constant.EQUIPMENT_PATHNAME }/${ agreement.equipmentId }` }>{ agreement.equipment.equipmentCode }</Link></td>; }
-
-                  return <td></td>;
-                })()}
-                <td style={{ textAlign: 'right' }}>
-                  <ButtonGroup>
-                    <DeleteButton name="Rental Agreement" hide={ !agreement.canDelete } onConfirm={ this.deleteRentalAgreement.bind(this, agreement.id) } />
-                    <EditButton name="Rental Agreement" view={ !agreement.canEdit } onClick={ this.editRentalAgreement.bind(this, agreement.id) } />
-                  </ButtonGroup>
-                </td>
-              </tr>;
-            })
-          }
-        </SortTable>;
-      })()}
-      { agreementCount >= Constant.MAX_UNASSOCIATED_RENTAL_AGREEMENTS && <HelpBlock>The maximum number of unassociated rental agreements has been reached.</HelpBlock> }
-    </Well>;
+    // navigate to search page
+    this.props.router.push({ pathname: Constant.RENTAL_REQUESTS_PATHNAME });
   },
 
   render() {
+    var counts = this.props.searchSummaryCounts;
+
     return <div id="home">
       <PageHeader>{this.props.currentUser.fullName}<br/>{this.props.currentUser.districtName} District</PageHeader>
       <Well>
+        <SubHeader title="Summary"/>
         <Row>
           <Col md={12} className="btn-container">
-            <Button onClick={ this.goToUnapprovedOwners }>Unapproved owners { this.props.unapprovedOwners.loaded && `(${ Object.keys(this.props.unapprovedOwners.data).length })` }</Button>
-            <Button onClick={ this.goToUnapprovedEquipment }>Unapproved equipment { this.props.unapprovedEquipment.loaded && `(${ Object.keys(this.props.unapprovedEquipment.data).length })` }</Button>
+            <Button onClick={ this.goToUnapprovedOwners }>Unapproved owners { !_.isEmpty(counts) && `(${ counts.unapprovedOwners })` }</Button>
+            <Button onClick={ this.goToUnapprovedEquipment }>Unapproved equipment { !_.isEmpty(counts) && `(${ counts.unapprovedEquipment })` }</Button>
+            <Button onClick={ this.goToHiredEquipment }>Currently hired equipment { !_.isEmpty(counts) && `(${ counts.hiredEquipment })` }</Button>
+            <Button onClick={ this.goToBlockedRotationLists }>Blocked rotation lists { !_.isEmpty(counts) && `(${ counts.inProgressRentalRequests })` }</Button>
           </Col>
         </Row>
       </Well>
-      { this.renderAgreements() }
     </div>;
   },
 });
@@ -199,13 +99,7 @@ var Home = React.createClass({
 function mapStateToProps(state) {
   return {
     currentUser: state.user,
-    search: state.search.owners,
-    unapprovedOwners: state.models.unapprovedOwners,
-    unapprovedEquipment: state.models.unapprovedEquipmentList,
-    rentalAgreement: state.models.rentalAgreement,
-    rentalAgreements: state.models.rentalAgreements,
-    blankRentalAgreements: state.lookups.blankRentalAgreements,
-    uiBlankRentalAgreements: state.ui.blankRentalAgreements,
+    searchSummaryCounts: state.lookups.searchSummaryCounts,
   };
 }
 

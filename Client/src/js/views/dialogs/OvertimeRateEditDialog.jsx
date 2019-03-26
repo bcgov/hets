@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { Form, FormGroup, HelpBlock, ControlLabel, Row, Col } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel, Row, Col } from 'react-bootstrap';
 
 import * as Constant from '../../constants';
 
 import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
@@ -83,11 +84,8 @@ var OvertimeRateEditDialog = React.createClass({
   render() {
     return <EditDialog id="overtime-rate-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title= {
-        <strong>Edit Overtime Rate</strong>
-      }>
+      title={<strong>Edit Overtime Rate</strong>}>
       <Form>
-
         <Row>
           <Col xs={6}>
             <FormGroup controlId="description" validationState={ this.state.descriptionError ? 'error' : null }>

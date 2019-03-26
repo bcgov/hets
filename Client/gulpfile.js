@@ -8,9 +8,6 @@ const depsOk = require('deps-ok');
 const webpack = require('webpack');
 const _ = require('lodash');
 
-// Needed for mocha tests w/ ES6
-require('babel-core/register');
-
 const argv = require('minimist')(process.argv.slice(2));
 const PORT = argv.port || 4375;
 const HOST = argv.host || 'localhost';
@@ -31,7 +28,6 @@ const JS_UNIT_TEST_GLOB = 'src/js/**/*_test.js';
 const CSS_DIR_GLOB = 'src/sass/**/*.scss';
 const HANDLEBARS_DIR_GLOB = 'src/html/**/*.{hbs,html}';
 const DIST_DIR = 'dist';
-const DEPLOY_PATH = path.join(__dirname, '..', 'Client', 'src', 'HETSClient', 'wwwroot');
 const NODE_MODULES_DIR = 'node_modules/';
 const JS_SHIMS = [
   'node_modules/object-assign-shim/index.js',
@@ -39,6 +35,7 @@ const JS_SHIMS = [
 const VENDOR_CSS = [
   'bootstrap/dist/css/bootstrap.css',
   'react-bootstrap-datetimepicker/css/bootstrap-datetimepicker.css',
+  'react-datetime/css/react-datetime.css',
 ];
 
 var WEBPACK_CONFIG = require('./webpack.config.js');
@@ -83,11 +80,13 @@ gulp.task('js:modules', () => {
 });
 
 gulp.task('templates', function() {
+  var now = new Date();
   var TEMPLATE_DATA = {
     year: new Date().getFullYear(),
     buildNum: BUILD_NUMBER,
     buildSha: BUILD_GIT_SHA,
-    buildTime: new Date(),
+    buildTime: now,
+    buildTimeStamp: now.toISOString(),
   };
 
   return gulp.src(['src/html/**/*.hbs'])
@@ -181,7 +180,9 @@ gulp.task('test:integration', function() {
 
 gulp.task('test:unit', function() {
   return gulp.src(JS_UNIT_TEST_GLOB, { read: false })
-    .pipe($.mocha());
+    .pipe($.mocha({
+      require: 'babel-core/register',
+    }));
 });
 
 
@@ -241,22 +242,3 @@ gulp.task('build', gulp.series('clean', 'build:assets'));
 gulp.task('default', gulp.series(IS_PRODUCTION ? 'build:complete' : 'build:dev'));
 
 gulp.task('test', gulp.series('test:unit', 'build', 'test:integration'));
-
-
-/* Deploy Tasks */
-
-gulp.task('deploy:setprod', function() {
-  process.env.NODE_ENV = 'production';
-  IS_PRODUCTION = true;
-  return Promise.resolve();
-});
-
-gulp.task('deploy:clean', function(done) {
-  del([DEPLOY_PATH], done);
-});
-
-gulp.task('deploy:copy', function() {
-  return gulp.src(DIST_DIR).pipe(gulp.dest(DEPLOY_PATH));
-});
-
-gulp.task('deploy', gulp.series('deploy:setprod', 'build:complete', 'deploy:clean', 'deploy:copy'/*, 'deploy:commit'*/));

@@ -32,13 +32,12 @@ import SeniorityList from './views/SeniorityList.jsx';
 import StatusLetters from './views/StatusLetters.jsx';
 import HiringReport from './views/HiringReport.jsx';
 import WcbCglCoverage from './views/WcbCglCoverage.jsx';
+import AitReport from './views/AitReport.jsx';
 import Version from './views/Version.jsx';
 import FourOhFour from './views/404.jsx';
 
 hashHistory.listen(location =>  {
-  if (location.action !== 'POP') {
-    return;
-  }
+  if (location.action !== 'POP') { return; }
 
   redirectIfRolloverActive(location.pathname);
 });
@@ -47,14 +46,10 @@ hashHistory.listen(location =>  {
 function redirectIfRolloverActive(path) {
   var onBusinessPage = path.indexOf(Constant.BUSINESS_PORTAL_PATHNAME) === 0;
   var onRolloverPage = path === '/' + Constant.ROLLOVER_PATHNAME;
-  if (onBusinessPage || onRolloverPage) {
-    return;
-  }
+  if (onBusinessPage || onRolloverPage) { return; }
 
   var user = store.getState().user;
-  if (!user.district) {
-    return;
-  }
+  if (!user.district) { return; }
 
   Api.getRolloverStatus(user.district.id).then(() => {
     var rolloverActive = store.getState().lookups.rolloverStatus.rolloverActive;
@@ -95,6 +90,14 @@ function onEnterApplication() {
   //hashHistory.push('/');
 }
 
+function setActiveRentalAgreementId(nextState) {
+  store.dispatch({ type: Action.SET_ACTIVE_RENTAL_AGREEMENT_ID_UI, rentalAgreementId: nextState.params.rentalAgreementId });
+}
+
+function setActiveProjectId(nextState) {
+  store.dispatch({ type: Action.SET_ACTIVE_PROJECT_ID_UI, projectId: nextState.params.projectId });
+}
+
 function keepAlive() {
   Api.keepAlive();
 }
@@ -125,11 +128,11 @@ const App = <Provider store={ store }>
       <Route path={ `${ Constant.OWNERS_PATHNAME }/:ownerId` } component={ OwnersDetail }/>
       <Route path={ `${ Constant.OWNERS_PATHNAME }/:ownerId/${ Constant.CONTACTS_PATHNAME }/:contactId` } component={ OwnersDetail }/>
       <Route path={ Constant.PROJECTS_PATHNAME } component={ Projects }/>
-      <Route path={ `${ Constant.PROJECTS_PATHNAME }/:projectId` } component={ ProjectsDetail }/>
-      <Route path={ `${ Constant.PROJECTS_PATHNAME }/:projectId/${ Constant.CONTACTS_PATHNAME }/:contactId` } component={ ProjectsDetail }/>
+      <Route path={ `${ Constant.PROJECTS_PATHNAME }/:projectId` } component={ ProjectsDetail } onEnter={ setActiveProjectId }/>
+      <Route path={ `${ Constant.PROJECTS_PATHNAME }/:projectId/${ Constant.CONTACTS_PATHNAME }/:contactId` } component={ ProjectsDetail } onEnter={ setActiveProjectId }/>
       <Route path={ Constant.RENTAL_REQUESTS_PATHNAME } component={ RentalRequests }/>
       <Route path={ `${ Constant.RENTAL_REQUESTS_PATHNAME }/:rentalRequestId` } component={ RentalRequestsDetail }/>
-      <Route path={ `${ Constant.RENTAL_AGREEMENTS_PATHNAME }/:rentalAgreementId` } component={ RentalAgreementsDetail }/>
+      <Route path={ `${ Constant.RENTAL_AGREEMENTS_PATHNAME }/:rentalAgreementId` } component={ RentalAgreementsDetail } onEnter={ setActiveRentalAgreementId }/>
       <Route path={ Constant.OVERTIME_RATES_PATHNAME } component={ OvertimeRates } />
       <Route path={ Constant.USERS_PATHNAME } component={ Users }/>
       <Route path={ `${ Constant.USERS_PATHNAME }/:userId` } component={ UsersDetail }/>
@@ -142,6 +145,7 @@ const App = <Provider store={ store }>
       <Route path={ Constant.STATUS_LETTERS_REPORT_PATHNAME } component={ StatusLetters } />
       <Route path={ Constant.HIRING_REPORT_PATHNAME } component={ HiringReport } />
       <Route path={ Constant.OWNERS_COVERAGE_PATHNAME } component={ WcbCglCoverage } />
+      <Route path={ Constant.AIT_REPORT_PATHNAME } component={ AitReport } />
       <Route path={ Constant.VERSION_PATHNAME } component={ Version }/>
       <Route path="*" component={ FourOhFour }/>
     </Route>

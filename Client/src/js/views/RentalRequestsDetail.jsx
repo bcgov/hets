@@ -1,15 +1,9 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
-import { browserHistory } from 'react-router';
-
 import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import { Link } from 'react-router';
-
 import _ from 'lodash';
 import Promise from 'bluebird';
-
 import Moment from 'moment';
 
 import HireOfferEditDialog from './dialogs/HireOfferEditDialog.jsx';
@@ -25,15 +19,19 @@ import store from '../store';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
+import PageOrientation from '../components/PageOrientation.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TableControl from '../components/TableControl.jsx';
 import Confirm from '../components/Confirm.jsx';
 import History from '../components/History.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
+import ReturnButton from '../components/ReturnButton.jsx';
+import SubHeader from '../components/ui/SubHeader.jsx';
 
 import { formatDateTime, formatDateTimeUTCToLocal } from '../utils/date';
 import { concat } from '../utils/string';
+import PrintButton from '../components/PrintButton.jsx';
 
 /*
 
@@ -51,8 +49,7 @@ var RentalRequestsDetail = React.createClass({
   propTypes: {
     rentalRequest: React.PropTypes.object,
     rentalRequestRotationList: React.PropTypes.object,
-    rentalAgreement: React.PropTypes.object,
-    notes: React.PropTypes.object,
+    notes: React.PropTypes.array,
     attachments: React.PropTypes.object,
     documents: React.PropTypes.object,
     history: React.PropTypes.object,
@@ -70,9 +67,10 @@ var RentalRequestsDetail = React.createClass({
       showHireOfferDialog: false,
       showNotesDialog: false,
 
-      showAttachmentss: false,
+      showAttachments: false,
 
       rotationListHireOffer: {},
+      showAllResponseFields: false,
 
       isNew: this.props.params.rentalRequestId == 0,
     };
@@ -143,9 +141,10 @@ var RentalRequestsDetail = React.createClass({
     });
   },
 
-  openHireOfferDialog(hireOffer) {
+  openHireOfferDialog(hireOffer, showAllResponseFields) {
     this.setState({
       rotationListHireOffer: hireOffer,
+      showAllResponseFields,
       showHireOfferDialog: true,
     });
   },
@@ -173,10 +172,6 @@ var RentalRequestsDetail = React.createClass({
         this.fetch();
       }
     });
-  },
-
-  print() {
-    window.print();
   },
 
   printSeniorityList() {
@@ -227,26 +222,25 @@ var RentalRequestsDetail = React.createClass({
   render() {
     var rentalRequest = this.props.rentalRequest.data;
 
+    var canEditRequest = rentalRequest.projectId > 0 && rentalRequest.status !== Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
+
     return <div id="rental-requests-detail">
+      <PageOrientation type="landscape"/>
       <Row id="rental-requests-top">
         <Col sm={10}>
           <Label bsStyle={ rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default' }>{ rentalRequest.status }</Label>
-          <Button title="Notes" onClick={ this.showNotes }>Notes ({ Object.keys(this.props.notes).length })</Button>
+          <Button title="Notes" onClick={ this.showNotes }>Notes ({this.props.notes.length})</Button>
           <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
         </Col>
         <Col sm={2}>
           <div className="pull-right">
-            <Button title="Return" onClick={ browserHistory.goBack }><Glyphicon glyph="arrow-left" /> Return</Button>
+            <ReturnButton/>
           </div>
         </Col>
       </Row>
 
       <Well className="request-information">
-        <h3 className="clearfix">Request Information <span className="pull-right">
-          { rentalRequest.status !== Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED &&
-            <Button title="Edit Rental Request" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button>
-          }
-        </span></h3>
+        <SubHeader title="Request Information" editButtonTitle="Edit Rental Request" onEditClicked={canEditRequest ? this.openEditDialog : null}/>
         {(() => {
           if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -290,17 +284,16 @@ var RentalRequestsDetail = React.createClass({
       </Well>
 
       <Well>
-        <h3>Hire Rotation List <span className="pull-right">
-          <TooltipButton onClick={ this.print } disabled={ this.state.loading } disabledTooltip={ 'Please wait for the request information to finish loading.' }>
-            <Glyphicon glyph="print" title="Print Hire Rotation List" className="mr-5" />
-            <span>Hire Rotation List</span>
-          </TooltipButton>
-          <TooltipButton onClick={ this.printSeniorityList } disabled={ this.state.loading } disabledTooltip={ 'Please wait for the request information to finish loading.' }>
+        <SubHeader title="Hire Rotation List">
+          <PrintButton title="Print Hire Rotation List" disabled={ this.state.loading } disabledTooltip="Please wait for the request information to finish loading.">
+            Hire Rotation List
+          </PrintButton>
+          <TooltipButton onClick={ this.printSeniorityList } disabled={ this.state.loading } disabledTooltip="Please wait for the request information to finish loading.">
             <Glyphicon glyph="print" title="Print Seniority List" className="mr-5" />
             <span>Seniority List</span>
           </TooltipButton>
           <CheckboxControl id="showAttachments" inline updateState={ this.updateState }><small>Show Attachments</small></CheckboxControl>
-        </span></h3>
+        </SubHeader>
         {(() => {
           if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -370,32 +363,36 @@ var RentalRequestsDetail = React.createClass({
                     <td>
                       <ButtonGroup>
                         {(() => {
-                          listItem.showAllResponseFields = showAllResponseFields;
+                          const changeOfferWarningMessage = 'This piece of equipment is has met or ' +
+                            'exceeded its Maximum Allowed Hours for this year. Are you sure you want ' +
+                            'to edit the Offer on this equipment?';
+
+                          const confirm = (
+                            <Confirm
+                              title={changeOfferWarningMessage}
+                              onConfirm={ () => this.openHireOfferDialog(listItem, showAllResponseFields) }
+                            />
+                          );
+
                           if (listItem.maximumHours) {
                             return (
                               <OverlayTrigger
                                 trigger="click"
                                 placement="top"
-                                title="This piece of equipment is has met or exceeded its Maximum Allowed Hours for this year. Are you sure you want to edit the Offer on this equipment?"
                                 rootClose
-                                overlay={ <Confirm onConfirm={ this.openHireOfferDialog.bind(this, listItem) }/> }
-                              >
-                                <Button
-                                  bsStyle="link"
-                                  bsSize="xsmall"
-                                >
+                                overlay={ confirm }>
+                                <Button bsStyle="link" bsSize="xsmall">
                                   Max. hours reached
                                 </Button>
                               </OverlayTrigger>
                             );
                           }
-                          if (rentalRequest.status === STATUS_IN_PROGRESS && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse)) {
+                          if (rentalRequest.projectId > 0 && rentalRequest.status === STATUS_IN_PROGRESS && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse)) {
                             return (
                               <Button
                                 bsStyle="link"
                                 title="Show Offer"
-                                onClick={ this.openHireOfferDialog.bind(this, listItem) }
-                              >
+                                onClick={ () => this.openHireOfferDialog(listItem, showAllResponseFields) }>
                                 { this.renderStatusText(listItem) }
                               </Button>
                             );
@@ -414,7 +411,7 @@ var RentalRequestsDetail = React.createClass({
       </Well>
 
       <Well className="history">
-        <h3>History <span className="pull-right"></span></h3>
+        <SubHeader title="History"/>
         { rentalRequest.historyEntity &&
           <History historyEntity={ rentalRequest.historyEntity } refresh={ !this.state.loading } />
         }
@@ -430,9 +427,9 @@ var RentalRequestsDetail = React.createClass({
         <HireOfferEditDialog
           show={ this.state.showHireOfferDialog }
           hireOffer={ this.state.rotationListHireOffer }
+          showAllResponseFields={this.state.showAllResponseFields}
           onSave={ this.saveHireOffer }
           onClose={ this.closeHireOfferDialog }
-          error={ this.props.rentalRequestRotationList.error }
         />
       }
       { this.state.showDocumentsDialog &&
@@ -442,17 +439,15 @@ var RentalRequestsDetail = React.createClass({
           onClose={ this.closeDocumentsDialog }
         />
       }
-      { this.state.showNotesDialog &&
+      { this.state.showNotesDialog && (
         <NotesDialog
-          show={ this.state.showNotesDialog }
-          onSave={ Api.addRentalRequestNote }
-          id={ this.props.params.rentalRequestId }
-          getNotes={ Api.getRentalRequestNotes }
-          onUpdate={ Api.updateNote }
-          onClose={ this.closeNotesDialog }
-          notes={ this.props.notes }
-        />
-      }
+          id={this.props.params.rentalRequestId}
+          show={this.state.showNotesDialog}
+          notes={this.props.notes}
+          getNotes={Api.getRentalRequestNotes}
+          saveNote={Api.addRentalRequestNote}
+          onClose={this.closeNotesDialog}/>
+      )}
     </div>;
   },
 });
@@ -462,7 +457,6 @@ function mapStateToProps(state) {
   return {
     rentalRequest: state.models.rentalRequest,
     rentalRequestRotationList: state.models.rentalRequestRotationList,
-    rentalAgreement: state.models.rentalAgreement,
     notes: state.models.rentalRequestNotes,
     attachments: state.models.rentalRequestAttachments,
     documents: state.models.documents,

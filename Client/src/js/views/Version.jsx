@@ -1,10 +1,7 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
-import { PageHeader, Well, Row } from 'react-bootstrap';
+import { PageHeader, Well } from 'react-bootstrap';
 import { Button, Glyphicon } from 'react-bootstrap';
-
 import $ from 'jquery';
 
 import * as Api from '../api';
@@ -13,6 +10,7 @@ import * as Constant from '../constants';
 import ColDisplay from '../components/ColDisplay.jsx';
 import Spinner from '../components/Spinner.jsx';
 import Unimplemented from '../components/Unimplemented.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
 import { formatDateTime } from '../utils/date';
 import { request } from '../utils/http';
@@ -46,7 +44,7 @@ var Version = React.createClass({
     return request('buildinfo.html', { silent: true }).then(xhr => {
       if (xhr.status === 200) {
         this.setState({
-          buildTime : $(xhr.responseText).find('#buildtime').text(),
+          buildTime : $(xhr.responseText).find('#buildtime').data('buildtime'),
           version : $(xhr.responseText).find('#version').text(),
           commit : $(xhr.responseText).find('#commit').text(),
         });
@@ -70,10 +68,6 @@ var Version = React.createClass({
 
   },
 
-  print() {
-    window.print();
-  },
-
   render: function() {
     return <div id="version">
       <PageHeader id="version-header">Version
@@ -81,7 +75,7 @@ var Version = React.createClass({
           <Unimplemented>
             <Button className="mr-5" onClick={ this.email }><Glyphicon glyph="envelope" title="E-mail" /></Button>
           </Unimplemented>
-          <Button onClick={ this.print }><Glyphicon glyph="print" title="Print" /></Button>
+          <PrintButton/>
         </div>
       </PageHeader>
 
@@ -100,54 +94,32 @@ var Version = React.createClass({
         return <div id="version-details">
           <Well>
             <h3>Client</h3>
-            <Row>
-              <ColDisplay labelProps={{ md: 2 }} label="Name">MOTI Hired Equipment Tracking System</ColDisplay>
-            </Row>
-            <Row>
-              <ColDisplay labelProps={{ md: 2 }} label="Build Time">{ formatDateTime(this.state.buildTime, Constant.DATE_TIME_READABLE) }</ColDisplay>
-            </Row>
-            <Row>
-              <ColDisplay labelProps={{ md: 2 }} label="User Agent">{ navigator.userAgent }</ColDisplay>
-            </Row>
+            <div className="clearfix">
+              <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="Name">MOTI Hired Equipment Tracking System</ColDisplay>
+              <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="Build Time">{ formatDateTime(this.state.buildTime, Constant.DATE_TIME_READABLE) }</ColDisplay>
+              <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="User Agent">{ navigator.userAgent }</ColDisplay>
+            </div>
           </Well>
           <Well>
             <h3>Application</h3>
-            <Row>
-              <ColDisplay labelProps={{ md: 2 }} label="Name">{ applicationVersion.title }</ColDisplay>
-            </Row>
-            <Row>
-              <ColDisplay labelProps={{ md: 2 }} label="Build Time">{ formatDateTime(applicationVersion.fileCreationTime, Constant.DATE_TIME_READABLE) }</ColDisplay>
-            </Row>
-            <Row>
-              <ColDisplay labelProps={{ md: 2 }} label="Version">{ applicationVersion.informationalVersion }</ColDisplay>
-            </Row>
-            <Row>
-              <ColDisplay labelProps={{ md: 2 }} label="Framework">{ applicationVersion.targetFramework }</ColDisplay>
-            </Row>
-			<Row>
-              <ColDisplay labelProps={{ md: 2 }} label="HETS Release">{ applicationVersion.buildVersion }</ColDisplay>
-            </Row>
-			<Row>
-              <ColDisplay labelProps={{ md: 2 }} label="HETS Environment">{ applicationVersion.environment }</ColDisplay>
-            </Row>
+            <div className="clearfix">
+              <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="Name">{ applicationVersion.title }</ColDisplay>
+              <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="Build Time">{ formatDateTime(applicationVersion.fileCreationTime, Constant.DATE_TIME_READABLE) }</ColDisplay>
+              <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="Version">{ applicationVersion.informationalVersion }</ColDisplay>
+              <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="Framework">{ applicationVersion.targetFramework }</ColDisplay>
+              <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="HETS Release">{ applicationVersion.buildVersion }</ColDisplay>
+              <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="HETS Environment">{ applicationVersion.environment }</ColDisplay>
+            </div>
           </Well>
           <Well>
             <h3>Database</h3>
-            <Row>
-              <ColDisplay labelProps={{ md: 2 }} label="Name">{ databaseVersion.database }</ColDisplay>
-            </Row>
-            <Row>
-              <ColDisplay labelProps={{ md: 2 }} label="Server">{ databaseVersion.server }</ColDisplay>
-            </Row>
-            <Row>
-              <ColDisplay labelProps={{ md: 2 }} label="Postgres Version">{ databaseVersion.version }</ColDisplay>
-            </Row>
-			<Row>
-              <ColDisplay labelProps={{ md: 2 }} label="HETS Release">{ databaseVersion.buildVersion }</ColDisplay>
-            </Row>
-			<Row>
-              <ColDisplay labelProps={{ md: 2 }} label="HETS Environment">{ databaseVersion.environment }</ColDisplay>
-            </Row>
+            <div className="clearfix">
+              <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="Name">{ databaseVersion.database }</ColDisplay>
+              <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="Server">{ databaseVersion.server }</ColDisplay>
+              <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="Postgres Version">{ databaseVersion.version }</ColDisplay>
+              <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="HETS Release">{ databaseVersion.buildVersion }</ColDisplay>
+              <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="HETS Environment">{ databaseVersion.environment }</ColDisplay>
+            </div>
           </Well>
           <Button onClick={ this.showRaw }>Show Raw Versions</Button>
           <Well style={{ marginTop: '20px', wordWrap: 'break-word' }} className={ this.state.showRawSection ? '' : 'hide' }>
@@ -167,4 +139,3 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps)(Version);
-

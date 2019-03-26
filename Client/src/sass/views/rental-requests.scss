@@ -39,6 +39,19 @@
     float: right;
     margin-top: 10px;
   }
+
+  #add-request-buttons {
+    margin-left: auto;
+
+    .btn {
+      display: block;
+      width: 100%;
+    }
+
+    .btn:first-child {
+      margin-bottom: 10px;
+    }
+  }
 }
 
 #rental-requests-detail {
@@ -66,16 +79,6 @@
 
   .btn, .checkbox-control {
     margin-left: 20px;
-  }
-
-  h1 {
-    small {
-      font-size: 85%;
-    }
-  }
-
-  h3 {
-    font-weight: 600;
   }
 
   #rotation-list {

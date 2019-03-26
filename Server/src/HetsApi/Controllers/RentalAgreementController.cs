@@ -79,13 +79,13 @@ namespace HetsApi.Controllers
             if (item == null || id != item.RentalAgreementId)
             {
                 // not found
-                return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetRentalAgreement agreement = _context.HetRentalAgreement
@@ -96,7 +96,7 @@ namespace HetsApi.Controllers
             agreement.HetRentalAgreementOvertimeRate = agreement.HetRentalAgreementRate.Where(x => x.Overtime).ToList();
 
             int? statusId = StatusHelper.GetStatusId(item.Status, "rentalAgreementStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get overtime records
             List<HetProvincialRateType> overtime = _context.HetProvincialRateType.AsNoTracking()
@@ -207,7 +207,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult RentalAgreementsPost([FromBody]HetRentalAgreement item)
         {
             // not found
-            if (item == null) return new ObjectResult(new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
+            if (item == null) return new BadRequestObjectResult(new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
 
             // set the rate period type id
             int? rateTypeId = StatusHelper.GetRatePeriodId(item.RatePeriod, _context);
@@ -224,7 +224,7 @@ namespace HetsApi.Controllers
 
             // get status for new agreement
             int? statusId = StatusHelper.GetStatusId(item.Status, "rentalAgreementStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get user info - agreement city
             User user = UserAccountHelper.GetUser(_context, _httpContext);
@@ -303,14 +303,14 @@ namespace HetsApi.Controllers
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetRentalAgreement agreement = _context.HetRentalAgreement.First(a => a.RentalAgreementId == id);
 
             // release (terminate) rental agreement
             int? statusIdComplete = StatusHelper.GetStatusId(HetRentalAgreement.StatusComplete, "rentalAgreementStatus", _context);
-            if (statusIdComplete == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusIdComplete == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             agreement.RentalAgreementStatusTypeId = (int)statusIdComplete;
             agreement.Status = "Complete";
@@ -429,15 +429,15 @@ namespace HetsApi.Controllers
                 catch (Exception ex)
                 {
                     Debug.Write("Error generating pdf: " + ex.Message);
-                    return new ObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
+                    return new BadRequestObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
                 }
 
                 // problem occured
-                return new ObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
             }
 
             // record not found
-            return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
         private static byte[] GetPdf(HttpResponseMessage response)
@@ -493,7 +493,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get current district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
@@ -518,7 +518,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
 
             // not found
-            if (!exists || item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists || item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // set the time period type id
             int? timePeriodTypeId = StatusHelper.GetTimePeriodId(item.TimePeriod, _context);
@@ -534,7 +534,7 @@ namespace HetsApi.Controllers
                 HetTimeRecord time = _context.HetTimeRecord.First(a => a.TimeRecordId == item.TimeRecordId);
 
                 // not found
-                if (time == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                if (time == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                 time.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                 time.EnteredDate = DateTime.UtcNow;
@@ -580,7 +580,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
 
             // not found
-            if (!exists || items == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists || items == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get current district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
@@ -599,7 +599,7 @@ namespace HetsApi.Controllers
                     HetTimeRecord time = _context.HetTimeRecord.First(a => a.TimeRecordId == item.TimeRecordId);
 
                     // not found
-                    if (time == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                    if (time == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                     time.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                     time.EnteredDate = DateTime.UtcNow;
@@ -649,7 +649,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // return rental agreement records
             return new ObjectResult(new HetsResponse(RentalAgreementHelper.GetRentalRates(id, _context, _configuration)));
@@ -671,7 +671,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
 
             // not found
-            if (!exists || item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists || item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // add or update rate records
             if (item.RentalAgreementRateId > 0)
@@ -680,7 +680,7 @@ namespace HetsApi.Controllers
                 HetRentalAgreementRate rate = _context.HetRentalAgreementRate.FirstOrDefault(a => a.RentalAgreementRateId == item.RentalAgreementRateId);
 
                 // not found
-                if (rate == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                if (rate == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                 rate.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                 rate.Comment = item.Comment;
@@ -689,6 +689,7 @@ namespace HetsApi.Controllers
                 rate.Active = true;
                 rate.IsIncludedInTotal = item.IsIncludedInTotal;
                 rate.Rate = item.Rate;
+                rate.Set = item.Set;
             }
             else // add rate records
             {
@@ -706,7 +707,8 @@ namespace HetsApi.Controllers
                     Overtime = false,
                     Active = true,
                     IsIncludedInTotal = item.IsIncludedInTotal,
-                    Rate = item.Rate
+                    Rate = item.Rate,
+                    Set = item.Set
                 };
 
                 _context.HetRentalAgreementRate.Add(rate);
@@ -734,7 +736,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
 
             // not found
-            if (!exists || items == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists || items == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // process each rate records
             foreach (HetRentalAgreementRate item in items)
@@ -746,7 +748,7 @@ namespace HetsApi.Controllers
                     HetRentalAgreementRate rate = _context.HetRentalAgreementRate.FirstOrDefault(a => a.RentalAgreementRateId == item.RentalAgreementRateId);
 
                     // not found
-                    if (rate == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                    if (rate == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                     rate.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                     rate.Comment = item.Comment;
@@ -755,6 +757,7 @@ namespace HetsApi.Controllers
                     rate.Active = true;
                     rate.IsIncludedInTotal = item.IsIncludedInTotal;
                     rate.Rate = item.Rate;
+                    rate.Set = item.Set;
                 }
                 else // add rate records
                 {
@@ -768,8 +771,9 @@ namespace HetsApi.Controllers
                         Overtime = false,
                         Active = true,
                         IsIncludedInTotal = item.IsIncludedInTotal,
-                        Rate = item.Rate
-                };
+                        Rate = item.Rate,
+                        Set = item.Set
+                    };
 
                     _context.HetRentalAgreementRate.Add(rate);
                 }
@@ -800,7 +804,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
 
             // not found
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // return rental agreement records
             return new ObjectResult(new HetsResponse(RentalAgreementHelper.GetConditions(id, _context, _configuration)));
@@ -822,7 +826,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
 
             // not found
-            if (!exists || item == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists || item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // add or update condition records
             if (item.RentalAgreementConditionId > 0)
@@ -832,7 +836,7 @@ namespace HetsApi.Controllers
                     .FirstOrDefault(a => a.RentalAgreementConditionId == item.RentalAgreementConditionId);
 
                 // not found
-                if (condition == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                if (condition == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                 condition.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                 condition.Comment = item.Comment;
@@ -874,7 +878,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
 
             // not found
-            if (!exists || items == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists || items == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // process each rate records
             foreach (HetRentalAgreementCondition item in items)
@@ -887,7 +891,7 @@ namespace HetsApi.Controllers
                         .FirstOrDefault(a => a.RentalAgreementConditionId == item.RentalAgreementConditionId);
 
                     // not found
-                    if (condition == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                    if (condition == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                     condition.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                     condition.Comment = item.Comment;
@@ -934,11 +938,11 @@ namespace HetsApi.Controllers
             HetDistrict district = _context.HetDistrict.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId.Equals(districtId));
 
-            if (district == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (district == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get active status id
             int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // HETS-825 - MAX number of Blank Rental Agreements and limit the functionality to ADMINS only
             // * Limit Blank rental agreements to a maximum of 3
@@ -959,12 +963,12 @@ namespace HetsApi.Controllers
 
             if (agreements.Count >= max)
             {
-                return new ObjectResult(new HetsResponse("HETS-29", ErrorViewModel.GetDescription("HETS-29", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-29", ErrorViewModel.GetDescription("HETS-29", _configuration)));
             }
 
             // set the rate period type id
             int? rateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodHourly, _context);
-            if (rateTypeId == null) return new ObjectResult(new HetsResponse("HETS-24", ErrorViewModel.GetDescription("HETS-24", _configuration)));
+            if (rateTypeId == null) return new BadRequestObjectResult(new HetsResponse("HETS-24", ErrorViewModel.GetDescription("HETS-24", _configuration)));
 
             // create new agreement
             HetRentalAgreement agreement = new HetRentalAgreement
@@ -1027,7 +1031,7 @@ namespace HetsApi.Controllers
 
             // get active status id
             int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get all active "blank" agreements
             List<HetRentalAgreement> agreements = _context.HetRentalAgreement.AsNoTracking()
@@ -1060,7 +1064,7 @@ namespace HetsApi.Controllers
 
             // get agreement status
             int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get "blank" agreements
             List<HetRentalAgreement> agreements = _context.HetRentalAgreement.AsNoTracking()
@@ -1100,15 +1104,15 @@ namespace HetsApi.Controllers
             HetDistrict district = _context.HetDistrict.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId.Equals(districtId));
 
-            if (district == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (district == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
-            if (statusId == null) return new ObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // validate agreement id
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
 
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get agreement and validate
             HetRentalAgreement agreement = _context.HetRentalAgreement
@@ -1118,17 +1122,17 @@ namespace HetsApi.Controllers
 
             if (agreement.RentalAgreementStatusTypeId != statusId)
             {
-                return new ObjectResult(new HetsResponse("HETS-25", ErrorViewModel.GetDescription("HETS-25", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-25", ErrorViewModel.GetDescription("HETS-25", _configuration)));
             }
 
             if (agreement.DistrictId != districtId)
             {
-                return new ObjectResult(new HetsResponse("HETS-26", ErrorViewModel.GetDescription("HETS-26", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-26", ErrorViewModel.GetDescription("HETS-26", _configuration)));
             }
 
             if (agreement.RentalRequestId != null)
             {
-                return new ObjectResult(new HetsResponse("HETS-27", ErrorViewModel.GetDescription("HETS-27", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-27", ErrorViewModel.GetDescription("HETS-27", _configuration)));
             }
 
             // delete rate
@@ -1164,7 +1168,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult CloneBlankRentalAgreementPost([FromRoute]int id, [FromBody]HetRentalAgreement agreement)
         {
             // check the ids
-            if (id != agreement.RentalAgreementId) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (id != agreement.RentalAgreementId) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get current users district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
@@ -1172,12 +1176,12 @@ namespace HetsApi.Controllers
             HetDistrict district = _context.HetDistrict.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId.Equals(districtId));
 
-            if (district == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (district == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // validate agreement id
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
 
-            if (!exists) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // add overtime rates
             List<HetProvincialRateType> overtime = _context.HetProvincialRateType.AsNoTracking()
@@ -1315,7 +1319,7 @@ namespace HetsApi.Controllers
                                      x.ProjectId == projectId);
 
             // if nothing exists - return an error message
-            if (agreement == null) return new ObjectResult(new HetsResponse("HETS-35", ErrorViewModel.GetDescription("HETS-35", _configuration)));
+            if (agreement == null) return new NotFoundObjectResult(new HetsResponse("HETS-35", ErrorViewModel.GetDescription("HETS-35", _configuration)));
 
             // get user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
@@ -1325,19 +1329,99 @@ namespace HetsApi.Controllers
                 .First(x => x.DistrictId == districtId);
 
             int? fiscalYearStart = status.CurrentFiscalYear;
-            if (fiscalYearStart == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (fiscalYearStart == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             DateTime fiscalStart = new DateTime((int)fiscalYearStart, 4, 1);
 
             // validate that agreement is in the current fiscal year
             DateTime agreementDate = agreement.DatedOn ?? agreement.DbCreateTimestamp;
 
-            if (agreementDate < fiscalStart) return new ObjectResult(new HetsResponse("HETS-36", ErrorViewModel.GetDescription("HETS-36", _configuration)));
+            if (agreementDate < fiscalStart) return new NotFoundObjectResult(new HetsResponse("HETS-36", ErrorViewModel.GetDescription("HETS-36", _configuration)));
 
             // return to the client
             return new ObjectResult(new HetsResponse(agreement));
         }
 
         #endregion
+
+        #region AIT Report
+
+        /// <summary>
+        /// Get rental agreements for AIT Report
+        /// </summary>
+        /// <param name="projects">Projects (comma separated list of id numbers)</param>
+        /// <param name="districtEquipmentTypes">District Equipment Types (comma separated list of equipment types)</param>
+        /// <param name="equipment">Equipment (comma separated list of id numbers)</param>
+        /// <param name="rentalAgreementNumber">Rental Agreement Number</param>
+        /// <param name="startDate">Start date for Dated On</param>
+        /// <param name="endDate">End date for Dated On</param>
+        /// <returns>AIT report</returns>
+        [HttpGet]
+        [Route("aitReport")]
+        [SwaggerOperation("AitReportGet")]
+        [SwaggerResponse(200, type: typeof(List<RentalRequestHires>))]
+        public virtual IActionResult AitReportGet([FromQuery]string projects,
+            [FromQuery]string districtEquipmentTypes, [FromQuery]string equipment, [FromQuery]string rentalAgreementNumber,
+            [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate)
+        {
+            int?[] projectArray = ArrayHelper.ParseIntArray(projects);
+            int?[] districtEquipmentTypeArray = ArrayHelper.ParseIntArray(districtEquipmentTypes);
+            int?[] equipmentArray = ArrayHelper.ParseIntArray(equipment);
+
+            List<AitReport> result;
+
+            IQueryable<HetRentalAgreement> agreements = _context.HetRentalAgreement.AsNoTracking()
+                .Include(x => x.RentalAgreementStatusType)
+                .Include(x => x.Equipment)
+                    .ThenInclude(y => y.DistrictEquipmentType)
+                        .ThenInclude(d => d.EquipmentType)
+                .Include(x => x.Project);
+
+            // limit to user's current district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            agreements = agreements.Where(x => x.DistrictId == districtId);
+
+            // HET-1137 do not show placeholder rental agreements created to imported from BCBid, (ones with agreement# BCBid-XX-XXXX)
+            agreements = agreements.Where(x => !x.Number.StartsWith("BCBid"));
+
+            if (!string.IsNullOrWhiteSpace(rentalAgreementNumber))
+            {
+                agreements = agreements.Where(x => x.Number.Contains(rentalAgreementNumber.Trim(), StringComparison.InvariantCultureIgnoreCase));
+            }
+
+            if (projectArray != null && projectArray.Length > 0)
+            {
+                agreements = agreements.Where(x => projectArray.Contains(x.ProjectId));
+            }
+
+            if (districtEquipmentTypeArray != null && districtEquipmentTypeArray.Length > 0)
+            {
+                agreements = agreements.Where(x => districtEquipmentTypeArray.Contains(x.Equipment.DistrictEquipmentTypeId));
+            }
+
+            if (equipmentArray != null && equipmentArray.Length > 0)
+            {
+                agreements = agreements.Where(x => equipmentArray.Contains(x.EquipmentId));
+            }
+
+            if (startDate != null)
+            {
+                agreements = agreements.Where(x => x.DatedOn >= startDate);
+            }
+
+            if (endDate != null)
+            {
+                agreements = agreements.Where(x => x.DatedOn <= endDate);
+            }
+
+            result = agreements
+                .Select(x => AitReport.MapFromHetRentalAgreement(x))
+                .ToList();
+
+            return new ObjectResult(new HetsResponse(result));
+        }
+
+        #endregion
+
     }
 }

@@ -1,15 +1,15 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
-
-import { Form, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
-
+import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 import _ from 'lodash';
+
+import * as Api from '../../api';
 
 import CheckboxControl from '../../components/CheckboxControl.jsx';
 import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
@@ -50,7 +50,7 @@ var OwnersEditDialog = React.createClass({
   },
 
   componentDidMount() {
-    this.input.focus();
+    Api.getOwnersLite();
   },
 
   updateState(state, callback) {
@@ -163,8 +163,12 @@ var OwnersEditDialog = React.createClass({
         </FormGroup>
         <FormGroup controlId="organizationName" validationState={ this.state.organizationNameError ? 'error' : null }>
           <ControlLabel>Company Name <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" value={ this.state.organizationName } updateState={ this.updateState } inputRef={ ref => { this.input = ref; }} />
+          <FormInputControl type="text" value={ this.state.organizationName } updateState={ this.updateState } autoFocus />
           <HelpBlock>{ this.state.organizationNameError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="doingBusinessAs">
+          <ControlLabel>Doing Business As</ControlLabel>
+          <FormInputControl type="text" value={ this.state.doingBusinessAs } updateState={ this.updateState } />
         </FormGroup>
         <FormGroup controlId="givenName">
           <ControlLabel>Owner First Name</ControlLabel>
@@ -203,10 +207,6 @@ var OwnersEditDialog = React.createClass({
           <FilterDropdown id="localAreaId" items={ localAreas } selectedId={ this.state.localAreaId } updateState={ this.updateState } className="full-width" />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
         </FormGroup>
-        <FormGroup controlId="doingBusinessAs">
-          <ControlLabel>Doing Business As</ControlLabel>
-          <FormInputControl type="text" value={ this.state.doingBusinessAs } updateState={ this.updateState } />
-        </FormGroup>
         <FormGroup controlId="registeredCompanyNumber">
           <ControlLabel>Registered BC Company Number</ControlLabel>
           <FormInputControl type="text" value={ this.state.registeredCompanyNumber } updateState={ this.updateState } />
@@ -222,7 +222,7 @@ var OwnersEditDialog = React.createClass({
 function mapStateToProps(state) {
   return {
     owner: state.models.owner,
-    owners: state.lookups.owners,
+    owners: state.lookups.owners.lite,
     localAreas: state.lookups.localAreas,
   };
 }
