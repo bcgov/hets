@@ -5,7 +5,7 @@
   {
     "annotations":
     {
-      "description": "Deployment template for a postgresql server with persistent storage.",
+      "description": "Patroni Postgresql database cluster, with persistent storage.",
       "tags": "postgresql"
     },
     "name": "${NAME}-persistent-template"
@@ -138,10 +138,6 @@
                   {
                     "name": "${NAME}-data",
                     "mountPath": "/var/lib/pgsql/data"
-                  },
-                  {
-                    "name": "${NAME}",
-                    "mountPath": "${BACKUP_DIR}"
                   }
                 ],
                 "livenessProbe":
@@ -354,6 +350,13 @@
       "description": "The name of the root backup directory",
       "required": true,
       "value": "/backups/"
+    },
+    {
+      "name": "RESTORE_DIR",
+      "displayName": "The directory used for restoring the HETS database",
+      "description": "The name of the restore directory",
+      "required": true,
+      "value": "/restore/"
     }
   ]
 }
