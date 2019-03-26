@@ -507,7 +507,7 @@ class RentalAgreementsDetail extends React.Component {
               }
             </ColDisplay>;
           })()}
-          <ColDisplay id="rental-agreements-note" labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Notes/Special Instructions:">{ rentalAgreement && rentalAgreement.note }</ColDisplay>
+          <ColDisplay id="rental-agreements-note" style={{ whiteSpace: 'pre-line' }} labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Notes/Special Instructions:">{ rentalAgreement && rentalAgreement.note }</ColDisplay>
         </Well>
 
         <Row id="rental-agreements-footer">
