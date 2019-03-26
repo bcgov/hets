@@ -22,9 +22,11 @@ class StatusDropdown extends React.Component {
     switch(this.props.status) {
       case Constant.EQUIPMENT_STATUS_CODE_APPROVED:
       case Constant.OWNER_STATUS_CODE_APPROVED:
+      case Constant.PROJECT_STATUS_CODE_ACTIVE:
         return 'success';
       case Constant.EQUIPMENT_STATUS_CODE_PENDING:
       case Constant.OWNER_STATUS_CODE_PENDING:
+      case Constant.PROJECT_STATUS_CODE_COMPLETED:
         return 'danger';
       default:
         return 'default';
