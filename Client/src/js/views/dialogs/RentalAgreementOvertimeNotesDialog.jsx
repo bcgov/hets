@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Grid, Row, Col, FormGroup, ControlLabel, Checkbox } from 'react-bootstrap';
+import { Grid, Row, Col, FormGroup, ControlLabel } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Constant from '../../constants';
 import * as Api from '../../api';
 
+import CheckboxControl from '../../components/CheckboxControl.jsx';
 import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import { findAndUpdate } from '../../utils/array';
 
 
 class RentalAgreementOvertimeNotesDialog extends React.Component {
@@ -24,6 +24,7 @@ class RentalAgreementOvertimeNotesDialog extends React.Component {
 
     this.state = {
       loading: false,
+      overtime: _.some(props.rentalAgreement.overtimeRates, 'active'),
       overtimeRates: props.rentalAgreement.overtimeRates || [],
       note: props.rentalAgreement.note || '',
     };
@@ -60,13 +61,12 @@ class RentalAgreementOvertimeNotesDialog extends React.Component {
     }
   };
 
-  overtimeCheckboxChanged = (rate, e) => {
+  overtimeCheckboxChanged = (e) => {
     var active = e.target.checked;
 
-    const overtimeRates = this.state.overtimeRates.slice();
-    findAndUpdate(overtimeRates, { ...rate, active });
+    var overtimeRates = _.map(this.state.overtimeRates, rate => ({ ...rate, active: active }));
 
-    this.setState({ overtimeRates });
+    this.setState({ overtimeRates: overtimeRates });
   };
 
   render() {
@@ -85,13 +85,11 @@ class RentalAgreementOvertimeNotesDialog extends React.Component {
             <Col xs={12} id="overtime-rate-edit">
               <ControlLabel>Overtime Rates</ControlLabel>
               <div>
-                {
-                  rates.map((rate) => (
-                    <Checkbox key={rate.id} className="checkbox-control" id={ `overtime-${rate.id}` } checked={ rate.active } onChange={ (e) => this.overtimeCheckboxChanged(rate, e) }>
-                      { rate.comment }
-                    </Checkbox>
-                  ))
-                }
+                <CheckboxControl id="overtime" checked={ this.state.overtime } updateState={ this.updateState } onChange={ this.overtimeCheckboxChanged }>
+                  {
+                    _.map(rates, rate => rate.comment).join(', ')
+                  }
+                </CheckboxControl>
               </div>
             </Col>
             <Col xs={12} id="note-edit">
