@@ -19,6 +19,7 @@ namespace HetsData.Helpers
         public int? OwnerId { get; set; }
         public int? LocalAreaId { get; set; }
         public List<int?> ProjectIds { get; set; }
+        public int DistrictEquipmentTypeId { get; set; }
     }
 
     public class EquipmentStatus

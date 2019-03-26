@@ -183,8 +183,16 @@ class TimeEntryDialog extends React.Component {
         valid = false;
       } else {
         var date = Moment.utc(timeEntry[key].date);
-        if (date.isBefore(Moment(this.state.projectFiscalYearStartDate))) {
+        if (this.isBeforeFiscalStartDate(date)) {
           let state = { ...timeEntry[key], errorDate: 'Date must be in the current fiscal year' };
+          timeEntryErrorsObj[key] = state;
+          valid = false;
+        } else if (this.isInFuture(date)) {
+          let state = { ...timeEntry[key], errorDate: 'Date must not be in the future' };
+          timeEntryErrorsObj[key] = state;
+          valid = false;
+        } else if (!this.isSaturdayOrMarch31st(date)) {
+          let state = { ...timeEntry[key], errorDate: 'Date must be a Saturday or March 31st' };
           timeEntryErrorsObj[key] = state;
           valid = false;
         }
@@ -300,6 +308,31 @@ class TimeEntryDialog extends React.Component {
     return false;
   };
 
+  isBeforeFiscalStartDate = (date) => {
+    return date.isBefore(Moment(this.state.projectFiscalYearStartDate));
+  }
+
+  isInFuture = (date) => {
+    // The next Saturday is allowed but not after
+    return date.isAfter(Moment().day(6));
+  }
+
+  isSaturdayOrMarch31st = (date) => {
+    return date.day() === 6 || date.month() === 2 && date.date() === 31;
+  }
+
+  isValidDate = (current) => {
+    if (this.isBeforeFiscalStartDate(current)) {
+      return false;
+    }
+
+    if (this.isInFuture(current)) {
+      return false;
+    }
+
+    return this.isSaturdayOrMarch31st(current);
+  };
+
   render() {
     if (this.state.selectingAgreement) {
       return this.renderSelectAgreement();
@@ -377,9 +410,6 @@ class TimeEntryDialog extends React.Component {
 
   renderEditDialog = () => {
     const rentalAgreementTimeRecords = this.props.rentalAgreementTimeRecords;
-    const isValidDate = function( current ){
-      return current.day() === 6 && current.isBefore(new Date());
-    };
     var sortedTimeRecords = _.sortBy(rentalAgreementTimeRecords.timeRecords, 'workedDate').reverse();
 
     return (
@@ -465,7 +495,7 @@ class TimeEntryDialog extends React.Component {
                         disabled={!this.state.projectFiscalYearStartDate}
                         id={`date${key}`}
                         name="date"
-                        isValidDate={ isValidDate }
+                        isValidDate={ this.isValidDate }
                         date={ this.state.timeEntry[key].date }
                         updateState={ this.updateTimeEntryState }
                       />

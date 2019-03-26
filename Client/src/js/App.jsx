@@ -112,6 +112,13 @@ function setActiveProjectId(nextState, replace, callback) {
   Promise.resolve().then(callback);
 }
 
+function setActiveOwnerId(nextState, replace, callback) {
+  store.dispatch({ type: Action.SET_ACTIVE_OWNER_ID_UI, ownerId: nextState.params.ownerId });
+  // TODO: When react was updated (HETS-1100) it broke how this worked. We now need to delay
+  // mounting the <Route> in order that `mapStateToProps` is called with the current store's state.
+  Promise.resolve().then(callback);
+}
+
 function keepAlive() {
   Api.keepAlive();
 }
@@ -140,8 +147,8 @@ const App = () => (
         <Route path={ Constant.EQUIPMENT_PATHNAME } component={ Equipment }/>
         <Route path={ `${ Constant.EQUIPMENT_PATHNAME }/:equipmentId` } component={ EquipmentDetail }/>
         <Route path={ Constant.OWNERS_PATHNAME } component={ Owners }/>
-        <Route path={ `${ Constant.OWNERS_PATHNAME }/:ownerId` } component={ OwnersDetail }/>
-        <Route path={ `${ Constant.OWNERS_PATHNAME }/:ownerId/${ Constant.CONTACTS_PATHNAME }/:contactId` } component={ OwnersDetail }/>
+        <Route path={ `${ Constant.OWNERS_PATHNAME }/:ownerId` } component={ OwnersDetail } onEnter={setActiveOwnerId}/>
+        <Route path={ `${ Constant.OWNERS_PATHNAME }/:ownerId/${ Constant.CONTACTS_PATHNAME }/:contactId` } component={ OwnersDetail } onEnter={setActiveOwnerId}/>
         <Route path={ Constant.PROJECTS_PATHNAME } component={ Projects }/>
         <Route path={ `${ Constant.PROJECTS_PATHNAME }/:projectId` } component={ ProjectsDetail } onEnter={ setActiveProjectId }/>
         <Route path={ `${ Constant.PROJECTS_PATHNAME }/:projectId/${ Constant.CONTACTS_PATHNAME }/:contactId` } component={ ProjectsDetail } onEnter={ setActiveProjectId }/>

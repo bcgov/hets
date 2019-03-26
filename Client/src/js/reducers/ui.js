@@ -106,6 +106,9 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
     case Action.SET_ACTIVE_RENTAL_REQUEST_ID_UI:
       return { ...state, activeRentalRequestId: action.rentalRequestId };
 
+    case Action.SET_ACTIVE_OWNER_ID_UI:
+      return { ...state, activeOwnerId: action.ownerId };
+
     case Action.UPDATE_AIT_REPORT_UI:
       return { ...state, aitResponses: action.aitResponses };
 
