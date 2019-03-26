@@ -84,6 +84,27 @@
       }
     },
     {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata":
+      {
+        "name": "${PERSISTENT_VOLUME_NAME_REPORTS}"
+      },
+      "spec":
+      {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources":
+        {
+          "requests":
+          {
+            "storage": "${PERSISTENT_VOLUME_SIZE}"
+          }
+        }
+      }
+    },
+    {
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
       "metadata":
@@ -149,6 +170,13 @@
                 {
                   "claimName": "${PERSISTENT_VOLUME_NAME}"
                 }
+              },
+			  {
+                "name": "${NAME}-reports",
+                "persistentVolumeClaim":
+                {
+                  "claimName": "${PERSISTENT_VOLUME_NAME_REPORTS}"
+                }
               }
             ],
             "containers": [
@@ -207,6 +235,10 @@
                   {
                     "name": "PDF_SERVICE_NAME",
                     "value": "${PDF_SERVICE_NAME}"
+                  },
+                  {
+                    "name": "ReportsPath",
+                    "value": "${REPORTS_PATH}"
                   }
                 ],
                 "resources":
@@ -226,6 +258,10 @@
                   {
                     "name": "${NAME}-docs",
                     "mountPath": "/uploads"
+                  },
+				  {
+                    "name": "${NAME}-reports",
+                    "mountPath": "/reports"
                   }
                 ]
               }
@@ -277,6 +313,13 @@
       "required": true,
       "value": "server-docs-pvc"
     },
+    {	
+      "name": "PERSISTENT_VOLUME_NAME_REPORTS",
+      "displayName": "Persistent Volume Name for Reports",
+      "description": "The name of the persistent volume associated with the deployment (reports).",
+      "required": true,
+      "value": "server-reports-pvc"
+    },
     {
       "name": "PERSISTENT_VOLUME_SIZE",
       "displayName": "Persistent Volume Size",
@@ -300,7 +343,7 @@
     {
       "name": "DATABASE_DEPLOYMENT_NAME",
       "displayName": "Database Deployment Name",
-      "description": "The name associated to the database deployment resources.  In particular, this is used to wrie up the credentials associated to the database.",
+      "description": "The name associated to the database deployment resources.  In particular, this is used to wire up the credentials associated to the database.",
       "required": true,
       "value": "postgresql"
     },    
@@ -331,6 +374,13 @@
       "description": "The name (URL) of the PDF service.",
       "required": true,
       "value": "http://pdf:8080"
+    },	
+    {
+      "name": "REPORTS_PATH",
+      "displayName": "Reports Path",
+      "description": "The path for storing batch reports.",
+      "required": true,
+      "value": "/reports/"
     },
     {
       "name": "CPU_LIMIT",
