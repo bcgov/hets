@@ -30,7 +30,7 @@ export const OWNER_CONTACT_DELETED = 'Owner %e removed contact %e.';
 
 export const PROJECT_ADDED = 'Project %e was added.';
 export const PROJECT_MODIFIED = 'Project %e was modified.';
-export const PROJECT_MODIFIED_STATUS = 'Project %e status is %e.';
+export const PROJECT_MODIFIED_STATUS = 'Project %e status changed to %e.';
 export const PROJECT_MODIFIED_NAME = 'Project %e is now %e';
 export const PROJECT_EQUIPMENT_ADDED = 'Project %e added equipment %e.';
 export const PROJECT_CONTACT_ADDED = 'Project %e added contact %e.';
@@ -233,6 +233,10 @@ export function projectAdded(project) {
 
 export function projectModified(project) {
   return log(project.historyEntity, PROJECT_MODIFIED);
+}
+
+export function projectModifiedStatus(project) {
+  return log(project.historyEntity, PROJECT_MODIFIED_STATUS, { description: project.status });
 }
 
 export function projectContactAdded(project, contact) {

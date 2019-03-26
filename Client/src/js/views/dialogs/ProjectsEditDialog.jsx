@@ -9,7 +9,6 @@ import _ from 'lodash';
 
 import * as Action from '../../actionTypes';
 import * as Api from '../../api';
-import * as Constant from '../../constants';
 import * as Log from '../../history';
 import store from '../../store';
 
@@ -35,7 +34,6 @@ class ProjectsEditDialog extends React.Component {
 
     this.state = {
       projectName: props.project.name || '',
-      projectStatus: props.project.status || Constant.PROJECT_STATUS_CODE_ACTIVE,
       fiscalYear: props.project.fiscalYear || _.first( _.takeRight(props.fiscalYears, 2)),
       provincialProjectNumber: props.project.provincialProjectNumber || '',
       responsibilityCentre: props.project.responsibilityCentre || '',
@@ -47,9 +45,7 @@ class ProjectsEditDialog extends React.Component {
       costType: props.project.costType || '',
       projectInformation: props.project.information || '',
       concurrencyControlNumber: props.project.concurrencyControlNumber || 0,
-      statusError: '',
       projectNameError: '',
-      projectStatusCodeError: '',
     };
   }
 
@@ -75,14 +71,12 @@ class ProjectsEditDialog extends React.Component {
     if (this.state.workActivity !== project.workActivity) { return true; }
     if (this.state.costType !== project.costType) { return true; }
     if (this.state.projectInformation !== project.information) { return true; }
-    if (this.state.projectStatus !== project.status) { return true; }
 
     return false;
   };
 
   isValid = () => {
     this.setState({
-      statusError: '',
       fiscalYearError: '',
       projectNameError: '',
     });
@@ -109,11 +103,6 @@ class ProjectsEditDialog extends React.Component {
       valid = false;
     }
 
-    if (isBlank(this.state.projectStatus)) {
-      this.setState({ projectStatusCodeError: 'Project status is required' });
-      valid = false;
-    }
-
     return valid;
   };
 
@@ -123,10 +112,8 @@ class ProjectsEditDialog extends React.Component {
         const project = {
           ...this.props.project,
           id: this.props.project.id,
-          canEditStatus: this.props.project.canEditStatus,
           district: this.props.project.district,
           name: this.state.projectName,
-          status: this.state.projectStatus,
           fiscalYear: this.state.fiscalYear,
           provincialProjectNumber: this.state.provincialProjectNumber,
           responsibilityCentre: this.state.responsibilityCentre,
@@ -177,16 +164,6 @@ class ProjectsEditDialog extends React.Component {
             </Row>
             <Row>
               <Col xs={6}>
-                <FormGroup controlId="projectStatus" validationState={ this.state.projectStatusCodeError ? 'error' : null }>
-                  <ControlLabel>Project Status</ControlLabel>
-                  <DropdownControl id="projectStatus" title={ this.state.projectStatus } updateState={ this.updateState } disabled={ !this.props.project.canEditStatus }
-                    value={ this.state.projectStatus }
-                    items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]}
-                  />
-                  <HelpBlock>{ this.state.projectStatusCodeError }</HelpBlock>
-                </FormGroup>
-              </Col>
-              <Col xs={6}>
                 <FormGroup controlId="fiscalYear" validationState={ this.state.fiscalYearError ? 'error' : null }>
                   <ControlLabel>Fiscal Year <sup>*</sup></ControlLabel>
                   <DropdownControl id="fiscalYear" title={ this.state.fiscalYear } updateState={ this.updateState }
@@ -195,15 +172,15 @@ class ProjectsEditDialog extends React.Component {
                   <HelpBlock>{ this.state.fiscalYearError }</HelpBlock>
                 </FormGroup>
               </Col>
-            </Row>
-            <Row>
               <Col xs={6}>
                 <FormGroup controlId="provincialProjectNumber">
                   <ControlLabel>Provincial Project Number</ControlLabel>
                   <FormInputControl type="text" value={ this.state.provincialProjectNumber } updateState={ this.updateState } />
                 </FormGroup>
               </Col>
-              <Col xs={6}>
+            </Row>
+            <Row>
+              <Col xs={12}>
                 <FormGroup controlId="responsibilityCentre">
                   <ControlLabel>Responsibility Centre</ControlLabel>
                   <FormInputControl type="text" value={ this.state.responsibilityCentre } updateState={ this.updateState } />

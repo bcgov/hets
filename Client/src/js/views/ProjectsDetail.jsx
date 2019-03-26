@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Well, Row, Col } from 'react-bootstrap';
-import { Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
+import { Alert, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
 import { Link } from 'react-router';
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -22,14 +22,15 @@ import store from '../store';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
+import Confirm from '../components/Confirm.jsx';
 import DeleteButton from '../components/DeleteButton.jsx';
 import EditButton from '../components/EditButton.jsx';
 import History from '../components/History.jsx';
+import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
+import StatusDropdown from '../components/StatusDropdown.jsx';
 import TableControl from '../components/TableControl.jsx';
-import Confirm from '../components/Confirm.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
 
@@ -44,6 +45,7 @@ import PrintButton from '../components/PrintButton.jsx';
 
 const CONTACT_NAME_SORT_FIELDS = ['givenName', 'surname'];
 
+const STATUS_NOT_EDITABLE_MESSAGE = 'The project can only be marked as completed when it has no active requests or actively hired equipment.';
 
 class ProjectsDetail extends React.Component {
   static propTypes = {
@@ -297,6 +299,28 @@ class ProjectsDetail extends React.Component {
     </tr>;
   };
 
+  getStatuses = () => {
+    var project = this.props.project || {};
+
+    return _.pull([
+      Constant.PROJECT_STATUS_CODE_ACTIVE,
+      Constant.PROJECT_STATUS_CODE_COMPLETED,
+    ], project.status);
+  };
+
+  updateStatusState = (state) => {
+    if (state !== this.props.project.status) {
+      const project = {
+        ...this.props.project,
+        status: state,
+      };
+
+      store.dispatch({ type: Action.UPDATE_PROJECT, project });
+      Log.projectModifiedStatus(project);
+      Api.updateProject(project);
+    }
+  };
+
   render() {
     const { loading, loadingDocuments } = this.state;
     var project = this.props.project || {};
@@ -321,11 +345,17 @@ class ProjectsDetail extends React.Component {
           <div className="top-container">
             <Row id="projects-top">
               <Col sm={9}>
-                <Label bsStyle={ project.isActive ? 'success' : 'danger'}>{ project.status }</Label>
-                <Button title="Notes" disabled={loading} onClick={ this.showNotes }>
+                <StatusDropdown
+                  id="project-status-dropdown"
+                  status={ project.status || Constant.PROJECT_STATUS_CODE_ACTIVE }
+                  statuses={ this.getStatuses() }
+                  disabled={ !project.canEditStatus }
+                  disabledTooltip={ STATUS_NOT_EDITABLE_MESSAGE }
+                  onSelect={ this.updateStatusState } />
+                <Button title="Notes" className="ml-5 mr-5" disabled={ loading } onClick={ this.showNotes }>
                   Notes ({ loading ? ' ' : project.notes.length })
                 </Button>
-                <Button id="project-documents-button" title="Documents" disabled={loading} onClick={ this.showDocuments }>
+                <Button id="project-documents-button" title="Documents" disabled={ loading } onClick={ this.showDocuments }>
                   Documents ({ loadingDocuments ? ' ' :  Object.keys(this.props.documents).length })
                 </Button>
               </Col>
