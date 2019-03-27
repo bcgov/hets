@@ -8,6 +8,7 @@ class FormInputControl extends React.Component {
   static propTypes = {
     type: PropTypes.string,
     updateState: PropTypes.func,
+    inputRef: PropTypes.func,
     autoFocus: PropTypes.bool,
     autoComplete: PropTypes.string,
     onChange: PropTypes.func,
@@ -53,13 +54,20 @@ class FormInputControl extends React.Component {
     // using lodash omit for now
     const rest = _.omit(this.props, 'type', 'autoComplete', 'children', 'updateState');
 
+    const inputRef = ref => {
+      this.input = ref;
+      if (this.props.inputRef) {
+        this.props.inputRef(ref);
+      }
+    };
+
     return (
       <FormControl
         {...rest}
         type={type === 'float' ? 'number' : type}
         step={type === 'float' ? '0.01' : null}
         onChange={this.changed}
-        inputRef={ref => {this.input = ref;}}
+        inputRef={inputRef}
         autoComplete={autoComplete || 'off'}>
         {children}
       </FormControl>
