@@ -45,7 +45,6 @@ const DEFAULT_MODELS = {
   equipmentRentalAgreements: {
     data: {},
   },
-  equipmentTransfer: {},
 
   owners: {
     data: {},
@@ -250,9 +249,6 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.UPDATE_EQUIPMENT_RENTAL_AGREEMENTS:
       return { ...state, equipmentRentalAgreements: { data: action.rentalAgreements } };
-
-    case Action.EQUIPMENT_TRANSFER_ERROR:
-      return { ...state, equipmentTransfer: { ...state.equipmentTransfer, error: true, errorMessage: action.errorMessage } };
 
     // Owners
     case Action.OWNERS_REQUEST:

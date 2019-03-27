@@ -1069,7 +1069,7 @@ namespace HetsApi.Controllers
             }
 
             // check they are both active
-            if (currentOwner.OwnerStatusTypeId != ownerStatusId &&
+            if (currentOwner.OwnerStatusTypeId != ownerStatusId ||
                 targetOwner.OwnerStatusTypeId != ownerStatusId)
             {
                 return new BadRequestObjectResult(new HetsResponse("HETS-32", ErrorViewModel.GetDescription("HETS-32", _configuration)));

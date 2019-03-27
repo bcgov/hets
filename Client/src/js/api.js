@@ -926,13 +926,6 @@ export function transferEquipment(donorOwnerId, recipientOwnerId, equipment, inc
     getEquipmentHires();
 
     return response;
-  }).catch((err) => {
-    if (err.errorCode) {
-      store.dispatch({ type: Action.EQUIPMENT_TRANSFER_ERROR, errorMessage: err.errorDescription });
-      throw new Error('Unable to add transfer equipment');
-    } else {
-      throw err;
-    }
   });
 }
 
