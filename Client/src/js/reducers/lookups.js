@@ -31,6 +31,10 @@ const DEFAULT_LOOKUPS = {
     data: {},
     loaded: false,
   },
+  districtEquipmentTypeHires: {
+    data: {},
+    loaded: false,
+  },
   fiscalYears: {},
   permissions: {},
   rentalConditions: {
@@ -103,6 +107,9 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
 
     case Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_LOOKUP:
       return { ...state, districtEquipmentTypes: { data: action.districtEquipmentTypes, loaded: true } };
+
+    case Action.UPDATE_DISTRICT_EQUIPMENT_TYPE_HIRES_LOOKUP:
+      return { ...state, districtEquipmentTypeHires: { data: action.districtEquipmentTypeHires, loaded: true } };
 
     case Action.UPDATE_FISCAL_YEARS_LOOKUP:
       return { ...state, fiscalYears: action.fiscalYears };

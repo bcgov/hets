@@ -2204,6 +2204,15 @@ export function getDistrictEquipmentTypes() {
   });
 }
 
+export function getDistrictEquipmentTypeHires() {
+  const silent = store.getState().lookups.districtEquipmentTypeHires.loaded;
+  return new ApiRequest('/districtequipmenttypes/hires', { silent }).get().then(response => {
+    var districtEquipmentTypeHires = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_DISTRICT_EQUIPMENT_TYPE_HIRES_LOOKUP, districtEquipmentTypeHires: districtEquipmentTypeHires });
+  });
+}
+
 export function getFiscalYears(districtId) {
   return new ApiRequest(`/districts/${districtId}/fiscalYears`).get().then(response => {
     store.dispatch({ type: Action.UPDATE_FISCAL_YEARS_LOOKUP, fiscalYears: response.data });
