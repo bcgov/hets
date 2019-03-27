@@ -7,7 +7,6 @@ import _ from 'lodash';
 
 import EquipmentRentalRatesEditDialog from './dialogs/EquipmentRentalRatesEditDialog.jsx';
 import RentalAgreementsEditDialog from './dialogs/RentalAgreementsEditDialog.jsx';
-import RentalAgreementHeaderEditDialog from './dialogs/RentalAgreementHeaderEditDialog.jsx';
 import RentalConditionsEditDialog from './dialogs/RentalConditionsEditDialog.jsx';
 import RentalAgreementOvertimeNotesDialog from './dialogs/RentalAgreementOvertimeNotesDialog.jsx';
 import RentalRatesEditDialog from './dialogs/RentalRatesEditDialog.jsx';
@@ -45,7 +44,6 @@ class RentalAgreementsDetail extends React.Component {
     loading: true,
     rentalAgreementDocumentLoading: false,
 
-    showHeaderEditDialog: false,
     showEditDialog: false,
     showEquipmentRateDialog: false,
     showRentalRateDialog: false,
@@ -82,27 +80,12 @@ class RentalAgreementsDetail extends React.Component {
     this.setState(state, callback);
   };
 
-  openHeaderEditDialog = () => {
-    this.setState({ showHeaderEditDialog: true });
-  };
-
-  closeHeaderEditDialog = () => {
-    this.setState({ showHeaderEditDialog: false });
-  };
-
   openEditDialog = () => {
     this.setState({ showEditDialog: true });
   };
 
   closeEditDialog = () => {
     this.setState({ showEditDialog: false });
-  };
-
-  saveHeaderEdit = (rentalAgreement) => {
-    return Api.updateRentalAgreement(rentalAgreement).finally(() => {
-      this.fetch();
-      this.closeHeaderEditDialog();
-    });
   };
 
   openEquipmentRateDialog = () => {
@@ -181,12 +164,6 @@ class RentalAgreementsDetail extends React.Component {
     });
   };
 
-  // generateAnotherAgreement() {
-  //   Api.generateAnotherRentalAgreement(this.props.rentalAgreement).then(() => {
-  //     this.fetch();
-  //   });
-  // },
-
   openCloneDialog = () => {
     this.setState({ showCloneDialog: true });
   };
@@ -223,12 +200,11 @@ class RentalAgreementsDetail extends React.Component {
 
   render() {
     const { loading } = this.state;
-    const { rentalAgreement } = this.props;
-    const isAssociated = Boolean(rentalAgreement && rentalAgreement.rentalRequestId > 0);
+    const rentalAgreement = this.props.rentalAgreement || { };
 
     var buttons =
       <div className="pull-right">
-        { isAssociated && <Button disabled={ !rentalAgreement.isActive } onClick={ this.openCloneDialog }>Copy Other Rental Agreement</Button> }
+        <Button disabled={ !rentalAgreement.isActive } onClick={ this.openCloneDialog }>Copy Other Rental Agreement</Button>
         <Button title="Print PDF" onClick={ this.generateRentalAgreementDocument }><Glyphicon glyph="print" /></Button>
         <ReturnButton/>
       </div>;
@@ -254,18 +230,14 @@ class RentalAgreementsDetail extends React.Component {
 
             return (
               <div>
-                <SubHeader title="Rental Agreement" editButtonTitle="Edit Rental Agreement" onEditClicked={rentalAgreement.isBlank ? this.openHeaderEditDialog : null}/>
+                <SubHeader title="Rental Agreement" />
                 <Row className="equal-height">
                   <Col lg={6} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Agreement Number:">{ rentalAgreement.number }</ColDisplay>
                   </Col>
                   <Col lg={6} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Rental Request:">
-                      {(() => {
-                        if (isAssociated) { return <Link to={{ pathname: 'rental-requests/' + rentalAgreement.rentalRequestId }}>View</Link>; }
-
-                        return <div>Unassociated</div>;
-                      })()}
+                      <Link to={{ pathname: 'rental-requests/' + rentalAgreement.rentalRequestId }}>View</Link>
                     </ColDisplay>
                   </Col>
                   <Col lg={6} md={6} sm={12} xs={12}>
@@ -513,13 +485,6 @@ class RentalAgreementsDetail extends React.Component {
         <Row id="rental-agreements-footer">
           {buttons}
         </Row>
-        {this.state.showHeaderEditDialog && (
-          <RentalAgreementHeaderEditDialog
-            show={this.state.showHeaderEditDialog}
-            rentalAgreement={rentalAgreement}
-            onSave={this.saveHeaderEdit}
-            onClose={this.closeHeaderEditDialog}/>
-        )}
         {this.state.showEditDialog && (
           <RentalAgreementsEditDialog
             show={this.state.showEditDialog}
