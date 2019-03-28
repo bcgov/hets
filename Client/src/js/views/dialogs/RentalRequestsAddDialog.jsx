@@ -230,100 +230,76 @@ class RentalRequestsAddDialog extends React.Component {
 
     return (
       <div>
-        <Row>
-          <Col md={12}>
-            <FormGroup controlId="projectId" validationState={ this.state.projectError ? 'error' : null }>
-              <ControlLabel>Project {!project && !this.props.viewOnly && (<sup>*</sup>)}</ControlLabel>
-              { this.canChangeProject() ? (
-                <FilterDropdown
-                  id="projectId"
-                  className="full-width"
-                  fieldName="label"
-                  disabled={!this.props.projects.loaded}
-                  selectedId={this.state.projectId}
-                  onSelect={this.onProjectSelected}
-                  updateState={this.updateState}
-                  items={projects}/>
-              ) : <div>{project ? project.name : 'Request - View Only' }</div>
-              }
-              <HelpBlock>{ this.state.projectError }</HelpBlock>
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col md={12}>
-            <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
-              <ControlLabel>Local Area <sup>*</sup></ControlLabel>
-              <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } onSelect={ this.onLocalAreaSelected } updateState={ this.updateState }
-                items={ localAreas } className="full-width"
-              />
-              <HelpBlock>{ this.state.localAreaError }</HelpBlock>
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col md={12}>
-            <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
-              <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
-              <FilterDropdown
-                id="equipmentTypeId"
-                className="full-width"
-                fieldName="districtEquipmentName"
-                disabled={!this.props.districtEquipmentTypes.loaded || !hasPickedLocalArea}
-                disabledTooltip="Select Local Area to see associated Equipment Type"
-                selectedId={ this.state.equipmentTypeId }
-                updateState={ this.updateEquipmentTypeState }
-                items={ districtEquipmentTypes }/>
-              <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          { !this.props.viewOnly && (
-            <Col md={12}>
-              <FormGroup controlId="count" validationState={ this.state.countError ? 'error' : null }>
-                <ControlLabel>Quantity <sup>*</sup></ControlLabel>
-                <FormInputControl type="number" min="0" value={ this.state.count } updateState={ this.updateState } />
-                <HelpBlock>{ this.state.countError }</HelpBlock>
-              </FormGroup>
-            </Col>
-          )}
-          { !this.props.viewOnly && (
-            <Col md={12}>
-              <FormGroup>
-                <ControlLabel>Attachment(s)</ControlLabel>
-                <FormInputControl id="rentalRequestAttachments" type="text" defaultValue={ this.state.rentalRequestAttachments } updateState={ this.updateState } />
-              </FormGroup>
-            </Col>
-          )}
-          { !this.props.viewOnly && (
-            <Col md={12}>
-              <FormGroup controlId="expectedHours" validationState={ this.state.expectedHoursError ? 'error' : null }>
-                <ControlLabel>Expected Hours <sup>*</sup></ControlLabel>
-                <FormInputControl type="number" className="full-width" min={0} value={ this.state.expectedHours } updateState={ this.updateState }/>
-                <HelpBlock>{ this.state.expectedHoursError }</HelpBlock>
-              </FormGroup>
-            </Col>
-          )}
-          { !this.props.viewOnly && (
-            <Col md={12}>
-              <FormGroup controlId="expectedStartDate" validationState={ this.state.expectedStartDateError ? 'error' : null }>
-                <ControlLabel>Start Date <sup>*</sup></ControlLabel>
-                <DateControl id="expectedStartDate" date={ this.state.expectedStartDate } updateState={ this.updateState } title="Dated At" />
-                <HelpBlock>{ this.state.expectedStartDateError }</HelpBlock>
-              </FormGroup>
-            </Col>
-          )}
-          { !this.props.viewOnly && (
-            <Col md={12}>
-              <FormGroup controlId="expectedEndDate" validationState={ this.state.expectedEndDateError ? 'error' : null }>
-                <ControlLabel>End Date</ControlLabel>
-                <DateControl id="expectedEndDate" date={ this.state.expectedEndDate } updateState={ this.updateState } title="Dated At" />
-                <HelpBlock>{ this.state.expectedEndDateError }</HelpBlock>
-              </FormGroup>
-            </Col>
-          )}
-        </Row>
+        <FormGroup controlId="projectId" validationState={ this.state.projectError ? 'error' : null }>
+          <ControlLabel>Project {!project && !this.props.viewOnly && (<sup>*</sup>)}</ControlLabel>
+          { this.canChangeProject() ? (
+            <FilterDropdown
+              id="projectId"
+              className="full-width"
+              fieldName="label"
+              disabled={!this.props.projects.loaded}
+              selectedId={this.state.projectId}
+              onSelect={this.onProjectSelected}
+              updateState={this.updateState}
+              items={projects}/>
+          ) : <div>{project ? project.name : 'Request - View Only' }</div>
+          }
+          <HelpBlock>{ this.state.projectError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
+          <ControlLabel>Local Area <sup>*</sup></ControlLabel>
+          <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } onSelect={ this.onLocalAreaSelected } updateState={ this.updateState }
+            items={ localAreas } className="full-width"
+          />
+          <HelpBlock>{ this.state.localAreaError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
+          <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
+          <FilterDropdown
+            id="equipmentTypeId"
+            className="full-width"
+            fieldName="districtEquipmentName"
+            disabled={!this.props.districtEquipmentTypes.loaded || !hasPickedLocalArea}
+            disabledTooltip="Select Local Area to see associated Equipment Type"
+            selectedId={ this.state.equipmentTypeId }
+            updateState={ this.updateEquipmentTypeState }
+            items={ districtEquipmentTypes }/>
+          <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
+        </FormGroup>
+        { !this.props.viewOnly && (
+          <FormGroup controlId="count" validationState={ this.state.countError ? 'error' : null }>
+            <ControlLabel>Quantity <sup>*</sup></ControlLabel>
+            <FormInputControl type="number" min="0" value={ this.state.count } updateState={ this.updateState } />
+            <HelpBlock>{ this.state.countError }</HelpBlock>
+          </FormGroup>
+        )}
+        { !this.props.viewOnly && (
+          <FormGroup>
+            <ControlLabel>Attachment(s)</ControlLabel>
+            <FormInputControl id="rentalRequestAttachments" type="text" defaultValue={ this.state.rentalRequestAttachments } updateState={ this.updateState } />
+          </FormGroup>
+        )}
+        { !this.props.viewOnly && (
+          <FormGroup controlId="expectedHours" validationState={ this.state.expectedHoursError ? 'error' : null }>
+            <ControlLabel>Expected Hours <sup>*</sup></ControlLabel>
+            <FormInputControl type="number" className="full-width" min={0} value={ this.state.expectedHours } updateState={ this.updateState }/>
+            <HelpBlock>{ this.state.expectedHoursError }</HelpBlock>
+          </FormGroup>
+        )}
+        { !this.props.viewOnly && (
+          <FormGroup controlId="expectedStartDate" validationState={ this.state.expectedStartDateError ? 'error' : null }>
+            <ControlLabel>Start Date <sup>*</sup></ControlLabel>
+            <DateControl id="expectedStartDate" date={ this.state.expectedStartDate } updateState={ this.updateState } title="Dated At" />
+            <HelpBlock>{ this.state.expectedStartDateError }</HelpBlock>
+          </FormGroup>
+        )}
+        { !this.props.viewOnly && (
+          <FormGroup controlId="expectedEndDate" validationState={ this.state.expectedEndDateError ? 'error' : null }>
+            <ControlLabel>End Date</ControlLabel>
+            <DateControl id="expectedEndDate" date={ this.state.expectedEndDate } updateState={ this.updateState } title="Dated At" />
+            <HelpBlock>{ this.state.expectedEndDateError }</HelpBlock>
+          </FormGroup>
+        )}
         { this.state.savingError &&
           <Alert bsStyle="danger">{ this.state.savingError }</Alert>
         }

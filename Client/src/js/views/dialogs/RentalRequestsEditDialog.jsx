@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Grid, Row, Col } from 'react-bootstrap';
 import { FormGroup, HelpBlock, ControlLabel, FormControl } from 'react-bootstrap';
 import Moment from 'moment';
 
@@ -139,54 +138,34 @@ class RentalRequestsEditDialog extends React.Component {
         onClose={this.props.onClose}
         onSubmit={this.formSubmitted}
         title="Rental Request">
-        <Grid fluid>
-          <Row>
-            <Col md={12}>
-              <FormGroup>
-                <ControlLabel>Equipment Type</ControlLabel>
-                <FormControl.Static>{ this.props.rentalRequest.equipmentTypeName }</FormControl.Static>
-              </FormGroup>
-            </Col>
-            <Col md={12}>
-              <FormGroup>
-                <ControlLabel>Attachment(s)</ControlLabel>
-                <FormInputControl id="rentalRequestAttachments" type="text" defaultValue={ this.state.rentalRequestAttachments } readOnly={ isReadOnly } updateState={ this.updateState } />
-              </FormGroup>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={12}>
-              <FormGroup controlId="equipmentCount" validationState={ this.state.equipmentCountError ? 'error' : null }>
-                <ControlLabel>Quantity <sup>*</sup></ControlLabel>
-                <FormInputControl type="number" min={0} defaultValue={ this.state.equipmentCount } readOnly={ isReadOnly } updateState={ this.updateState } autoFocus/>
-                <HelpBlock>{ this.state.equipmentCountError }</HelpBlock>
-              </FormGroup>
-            </Col>
-            <Col md={12}>
-              <FormGroup controlId="expectedHours" validationState={ this.state.expectedHoursError ? 'error' : null }>
-                <ControlLabel>Expected Hours <sup>*</sup></ControlLabel>
-                <FormInputControl type="number" min={0} defaultValue={ this.state.expectedHours } readOnly={ isReadOnly } updateState={ this.updateState }/>
-                <HelpBlock>{ this.state.expectedHoursError }</HelpBlock>
-              </FormGroup>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={12}>
-              <FormGroup controlId="expectedStartDate" validationState={ this.state.expectedStartDateError ? 'error' : null }>
-                <ControlLabel>Start Date <sup>*</sup></ControlLabel>
-                <DateControl id="expectedStartDate" disabled={ isReadOnly } date={ this.state.expectedStartDate } updateState={ this.updateState } title="Dated At" />
-                <HelpBlock>{ this.state.expectedStartDateError }</HelpBlock>
-              </FormGroup>
-            </Col>
-            <Col md={12}>
-              <FormGroup controlId="expectedEndDate" validationState={ this.state.expectedEndDateError ? 'error' : null }>
-                <ControlLabel>End Date <sup>*</sup></ControlLabel>
-                <DateControl id="expectedEndDate" disabled={ isReadOnly } date={ this.state.expectedEndDate } updateState={ this.updateState } title="Dated At" />
-                <HelpBlock>{ this.state.expectedEndDateError }</HelpBlock>
-              </FormGroup>
-            </Col>
-          </Row>
-        </Grid>
+        <FormGroup>
+          <ControlLabel>Equipment Type</ControlLabel>
+          <FormControl.Static>{ this.props.rentalRequest.equipmentTypeName }</FormControl.Static>
+        </FormGroup>
+        <FormGroup>
+          <ControlLabel>Attachment(s)</ControlLabel>
+          <FormInputControl id="rentalRequestAttachments" type="text" defaultValue={ this.state.rentalRequestAttachments } readOnly={ isReadOnly } updateState={ this.updateState } />
+        </FormGroup>
+        <FormGroup controlId="equipmentCount" validationState={ this.state.equipmentCountError ? 'error' : null }>
+          <ControlLabel>Quantity <sup>*</sup></ControlLabel>
+          <FormInputControl type="number" min={0} defaultValue={ this.state.equipmentCount } readOnly={ isReadOnly } updateState={ this.updateState } autoFocus/>
+          <HelpBlock>{ this.state.equipmentCountError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="expectedHours" validationState={ this.state.expectedHoursError ? 'error' : null }>
+          <ControlLabel>Expected Hours <sup>*</sup></ControlLabel>
+          <FormInputControl type="number" min={0} defaultValue={ this.state.expectedHours } readOnly={ isReadOnly } updateState={ this.updateState }/>
+          <HelpBlock>{ this.state.expectedHoursError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="expectedStartDate" validationState={ this.state.expectedStartDateError ? 'error' : null }>
+          <ControlLabel>Start Date <sup>*</sup></ControlLabel>
+          <DateControl id="expectedStartDate" disabled={ isReadOnly } date={ this.state.expectedStartDate } updateState={ this.updateState } title="Dated At" />
+          <HelpBlock>{ this.state.expectedStartDateError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="expectedEndDate" validationState={ this.state.expectedEndDateError ? 'error' : null }>
+          <ControlLabel>End Date <sup>*</sup></ControlLabel>
+          <DateControl id="expectedEndDate" disabled={ isReadOnly } date={ this.state.expectedEndDate } updateState={ this.updateState } title="Dated At" />
+          <HelpBlock>{ this.state.expectedEndDateError }</HelpBlock>
+        </FormGroup>
       </FormDialog>
     );
   }
