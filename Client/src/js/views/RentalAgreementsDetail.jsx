@@ -429,8 +429,6 @@ class RentalAgreementsDetail extends React.Component {
 
             if (Object.keys(rentalConditions || []).length === 0) { return <div><Alert bsStyle="success">No rental conditions</Alert>{ button }</div>; }
 
-            rentalConditions = _.orderBy(rentalConditions, ['conditionName', 'comment'], ['asc', 'asc']);
-
             return <div id="rental-conditions">
               <Table striped condensed hover bordered>
                 <thead>
