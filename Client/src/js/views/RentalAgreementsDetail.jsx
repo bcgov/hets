@@ -190,7 +190,7 @@ class RentalAgreementsDetail extends React.Component {
       this.closeCloneDialog();
       this.fetch();
     }).catch((error) => {
-      if (error.errorCode) {
+      if (error.status === 400 && (error.errorCode === 'HETS-11' || error.errorCode === 'HETS-12' || error.errorCode === 'HETS-13')) {
         this.setState({ cloneRentalAgreementError: 'There was an error cloning the rental agreement.' });
       } else {
         throw error;
