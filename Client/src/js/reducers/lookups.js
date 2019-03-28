@@ -68,10 +68,6 @@ const DEFAULT_LOOKUPS = {
     loaded: false,
   },
   users: {},
-  blankRentalAgreements: {
-    data: {},
-    loading: false,
-  },
   rolloverStatus: {},
   searchSummaryCounts: {},
 };
@@ -172,12 +168,6 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
 
     case Action.UPDATE_OVERTIME_RATE_TYPES_LOOKUP:
       return { ...state, overtimeRateTypes: action.overtimeRateTypes };
-
-    case Action.BLANK_RENTAL_AGREEMENTS_LOOKUP_REQUEST:
-      return { ...state, blankRentalAgreements: { ...state.blankRentalAgreements, loading: true } };
-
-    case Action.UPDATE_BLANK_RENTAL_AGREEMENTS_LOOKUP:
-      return { ...state, blankRentalAgreements: { data: action.blankRentalAgreements, loading: false } };
 
     case Action.UPDATE_SEARCH_SUMMARY_COUNTS:
       return { ...state, searchSummaryCounts: action.searchSummaryCounts };

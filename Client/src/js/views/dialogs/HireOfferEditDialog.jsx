@@ -10,7 +10,6 @@ import * as Constant from '../../constants';
 import ConfirmForceHireDialog from '../dialogs/ConfirmForceHireDialog.jsx';
 import ConfirmDialog from '../dialogs/ConfirmDialog.jsx';
 
-import Spinner from '../../components/Spinner.jsx';
 import CheckboxControl from '../../components/CheckboxControl.jsx';
 import DropdownControl from '../../components/DropdownControl.jsx';
 import FormDialog from '../../components/FormDialog.jsx';
@@ -45,7 +44,6 @@ class HireOfferEditDialog extends React.Component {
     onSave: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
     show: PropTypes.bool,
-    blankRentalAgreements: PropTypes.object,
   };
 
   constructor(props) {
@@ -70,26 +68,13 @@ class HireOfferEditDialog extends React.Component {
       offerResponseError: '',
       offerResponseNoteError: '',
       offerRefusalReasonError: '',
-      rentalAgreementError: '',
 
       showConfirmForceHireDialog: false,
       showConfirmMaxHoursHireDialog: false,
 
       equipmentVerifiedActive: false,
-
-      rentalAgreementId: null,
     };
   }
-
-  componentDidMount() {
-    this.fetch();
-  }
-
-  fetch = () => {
-    var projectId = this.props.rentalRequest.projectId;
-    var equipmentId = this.props.hireOffer.equipmentId;
-    Api.getBlankRentalAgreementsForHire(projectId, equipmentId);
-  };
 
   updateState = (state, callback) => {
     this.setState(state, callback);
@@ -104,7 +89,6 @@ class HireOfferEditDialog extends React.Component {
       wasAsked: STATUS_ASKED,
       askedDateTime: value === STATUS_ASKED ? today() : null,
       equipmentVerifiedActive: (value === STATUS_YES || value === STATUS_FORCE_HIRE) ? true : false,
-      rentalAgreementId: null,
     });
   };
 
@@ -143,12 +127,6 @@ class HireOfferEditDialog extends React.Component {
 
     if (this.state.offerStatus == STATUS_NO && this.state.offerRefusalReason === Constant.HIRING_REFUSAL_OTHER && isBlank(this.state.offerResponseNote)) {
       this.setState({ offerResponseNoteError: 'Note is required' });
-      valid = false;
-    }
-
-    var blankRentalAgreementCount = _.keys(this.props.blankRentalAgreements.data).length;
-    if ((this.state.offerStatus == STATUS_YES || this.state.offerStatus == STATUS_FORCE_HIRE) && blankRentalAgreementCount > 0 && !this.state.rentalAgreementId) {
-      this.setState({ rentalAgreementError: 'A rental agreement is required' });
       valid = false;
     }
 
@@ -220,7 +198,6 @@ class HireOfferEditDialog extends React.Component {
         offerRefusalReason: this.state.offerRefusalReason,
         offerResponseNote: this.state.offerResponseNote,
         note: this.state.note,
-        rentalAgreementId: this.state.rentalAgreementId,
       };
 
       Api.updateRentalRequestRotationList(hireOffer, this.props.rentalRequest).then(() => {
@@ -254,20 +231,6 @@ class HireOfferEditDialog extends React.Component {
     // Read-only if the user cannot edit the rental agreement
     var isReadOnly = !this.props.rentalRequest.canEdit && this.props.rentalRequest.id !== 0;
 
-    var blankRentalAgreements = _.sortBy(this.props.blankRentalAgreements.data, 'number');
-
-    var agreementChoiceRow;
-    if (_.keys(blankRentalAgreements).length !== 0) {
-      agreementChoiceRow = (
-        <FormGroup controlId="rentalAgreementId" validationState={ this.state.rentalAgreementError ? 'error' : null }>
-          <DropdownControl id="rentalAgreementId" updateState={ this.updateState } items={ blankRentalAgreements } selectedId={ this.state.rentalAgreementId } blankLine="Select rental agreement" placeholder="Select rental agreement" />
-          <HelpBlock>{ this.state.rentalAgreementError }</HelpBlock>
-        </FormGroup>
-      );
-    }
-
-    const loading = this.props.blankRentalAgreements.loading;
-
     return (
       <FormDialog
         id="hire-offer-edit"
@@ -278,7 +241,6 @@ class HireOfferEditDialog extends React.Component {
         title="Response">
         <Grid fluid>
           <Col md={12}>
-            <div className="spinner-container">{loading && <Spinner/>}</div>
             <FormGroup validationState={ this.state.offerResponseError ? 'error' : null }>
               <ControlLabel>Response</ControlLabel>
               <Row>
@@ -287,20 +249,19 @@ class HireOfferEditDialog extends React.Component {
                     <Radio
                       onChange={ () => this.offerStatusChanged(STATUS_YES) }
                       checked={ this.state.offerStatus == STATUS_YES }
-                      disabled={ loading || (!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse) }>
+                      disabled={ !this.props.showAllResponseFields && !this.props.hireOffer.offerResponse }>
                       Yes
                     </Radio>
                   </FormGroup>
                 </Col>
               </Row>
-              { this.state.offerStatus == STATUS_YES && agreementChoiceRow }
               <Row>
                 <Col md={12}>
                   <FormGroup>
                     <Radio
                       onChange={ () => this.offerStatusChanged(STATUS_NO) }
                       checked={ this.state.offerStatus == STATUS_NO }
-                      disabled={ loading || (!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse) }>
+                      disabled={ !this.props.showAllResponseFields && !this.props.hireOffer.offerResponse }>
                       No
                     </Radio>
                   </FormGroup>
@@ -324,21 +285,19 @@ class HireOfferEditDialog extends React.Component {
                   <FormGroup>
                     <Radio
                       onChange={ () => this.offerStatusChanged(STATUS_FORCE_HIRE) }
-                      checked={ this.state.offerStatus == STATUS_FORCE_HIRE }
-                      disabled={ loading }>
+                      checked={ this.state.offerStatus == STATUS_FORCE_HIRE }>
                       Force Hire
                     </Radio>
                   </FormGroup>
                 </Col>
               </Row>
-              { this.state.offerStatus == STATUS_FORCE_HIRE && agreementChoiceRow }
               <Row>
                 <Col md={12}>
                   <FormGroup>
                     <Radio
                       onChange={ () => this.offerStatusChanged(STATUS_ASKED) }
                       checked={ this.state.offerStatus == STATUS_ASKED }
-                      disabled={ loading || (!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse) }>
+                      disabled={ !this.props.showAllResponseFields && !this.props.hireOffer.offerResponse }>
                       Asked
                     </Radio>
                   </FormGroup>
@@ -351,7 +310,7 @@ class HireOfferEditDialog extends React.Component {
             <Col md={12}>
               <FormGroup controlId="offerResponseNote" validationState={ this.state.offerResponseNoteError ? 'error' : null }>
                 <ControlLabel>Note</ControlLabel>
-                <FormInputControl componentClass="textarea" disabled={loading} defaultValue={ this.state.offerResponseNote } readOnly={ isReadOnly } updateState={ this.updateState } />
+                <FormInputControl componentClass="textarea" defaultValue={ this.state.offerResponseNote } readOnly={ isReadOnly } updateState={ this.updateState } />
                 <HelpBlock>{ this.state.offerResponseNoteError }</HelpBlock>
               </FormGroup>
             </Col>
@@ -359,7 +318,7 @@ class HireOfferEditDialog extends React.Component {
           <Row>
             <Col md={12}>
               <FormGroup controlId="equipmentVerifiedActive">
-                <CheckboxControl id="equipmentVerifiedActive" disabled={loading} checked={ this.state.equipmentVerifiedActive } updateState={ this.updateState }>Verified Active</CheckboxControl>
+                <CheckboxControl id="equipmentVerifiedActive" checked={ this.state.equipmentVerifiedActive } updateState={ this.updateState }>Verified Active</CheckboxControl>
               </FormGroup>
             </Col>
           </Row>
@@ -387,10 +346,8 @@ class HireOfferEditDialog extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    blankRentalAgreements: state.lookups.blankRentalAgreements,
-  };
+function mapStateToProps() {
+  return { };
 }
 
 export default connect(mapStateToProps)(HireOfferEditDialog);

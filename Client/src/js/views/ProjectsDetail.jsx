@@ -330,9 +330,6 @@ class ProjectsDetail extends React.Component {
     var rentalRequests = _.orderBy(project.rentalRequests, ['id'], ['desc']);
     var rentalAgreements = _.orderBy(project.rentalAgreements, ['id'], ['desc']);
 
-    // Exclude unassociated rental agremeents
-    _.remove(rentalAgreements, x => !x.rentalRequestId);
-
     var combinedList =_.concat(rentalRequests, rentalAgreements);
     // Exclude completed items
     if (!this.state.includeCompletedRequests) {
