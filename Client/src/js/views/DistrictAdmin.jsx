@@ -139,11 +139,11 @@ class DistrictAdmin extends React.Component {
   deleteDistrictEquipmentType = (equipment) => {
     Api.deleteDistrictEquipmentType(equipment).then(() => {
       return Api.getDistrictEquipmentTypes();
-    }).catch((err) => {
-      if (err.errorCode) {
-        this.setState({ showDistrictEquipmentTypeErrorDialog: true, districtEquipmentTypeError: err.errorDescription });
+    }).catch((error) => {
+      if (error.status === 400 && error.errorCode === 'HETS-37') {
+        this.setState({ showDistrictEquipmentTypeErrorDialog: true, districtEquipmentTypeError: error.errorDescription });
       } else {
-        throw err;
+        throw error;
       }
     });
   };
