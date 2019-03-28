@@ -689,8 +689,8 @@ namespace HetsApi.Controllers
             string reportsRoot = _configuration["ReportsPath"];
 
             // get connection string
-            string connectionString = GetConnectionString();            
-            
+            string connectionString = GetConnectionString();
+
             // create new job!
             HetBatchReport report = new HetBatchReport
             {
@@ -703,15 +703,15 @@ namespace HetsApi.Controllers
             _context.HetBatchReport.Add(report);
             _context.SaveChanges();
 
-            int reportId = report.ReportId;            
+            int reportId = report.ReportId;
 
             // queue the job
-            BackgroundJob.Enqueue(() => OwnerHelper.OwnerVerificationLetters(null, 
-                reportId, parameters.LocalAreas, parameters.Owners, statusId, ownerStatusId, 
+            BackgroundJob.Enqueue(() => OwnerHelper.OwnerVerificationLetters(null,
+                reportId, parameters.LocalAreas, parameters.Owners, statusId, ownerStatusId,
                 pdfService, pdfUrl, reportsRoot, connectionString));
 
             return new ObjectResult(report);
-        }        
+        }
 
         #endregion
 
