@@ -191,12 +191,12 @@ class RentalRequestsAddDialog extends React.Component {
 
           this.props.onRentalAdded(response);
           this.props.onClose();
-        }).catch((err) => {
+        }).catch((error) => {
           this.setState({ isSaving: false });
-          if (err.errorCode) {
-            this.setState({ savingError: err.errorDescription });
+          if (error.status === 400 && error.errorCode === 'HETS-28') {
+            this.setState({ savingError: error.errorDescription });
           } else {
-            throw err;
+            throw error;
           }
         });
       }
