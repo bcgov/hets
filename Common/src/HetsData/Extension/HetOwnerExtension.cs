@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HetsData.Model
 {
@@ -20,7 +21,7 @@ namespace HetsData.Model
 
         [NotMapped]
         public string ReportDate { get; set; }
-        
+
         [NotMapped]
         public string Title { get; set; }
 
