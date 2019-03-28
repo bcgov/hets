@@ -259,8 +259,12 @@ class RentalRequests extends React.Component {
             <td style={{ textAlign: 'center' }}>{ request.status }</td>
             <td style={{ textAlign: 'right' }}>
               <ButtonGroup>
-                <DeleteButton name="Rental Request" hide={ !request.canDelete } onConfirm={ this.deleteRequest.bind(this, request) } />
-                <EditButton name="Rental Request" hide={ !request.canView } view pathname={ `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ request.id }` }/>
+                {request.canDelete && (
+                  <DeleteButton name="Rental Request" onConfirm={ this.deleteRequest.bind(this, request) } />
+                )}
+                {request.canView && (
+                  <EditButton name="Rental Request" view pathname={ `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ request.id }` }/>
+                )}
               </ButtonGroup>
             </td>
           </tr>;
