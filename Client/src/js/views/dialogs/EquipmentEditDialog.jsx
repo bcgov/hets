@@ -137,14 +137,17 @@ class EquipmentEditDialog extends React.Component {
 
     return Api.equipmentDuplicateCheck(this.props.equipment.id, this.state.serialNumber, this.state.equipmentTypeId).then((response) => {
       if (response.data.length > 0) {
+        const equipmentCodes = response.data.map((district) => {
+          return district.duplicateEquipment.equipmentCode;
+        });
         var districts = _.chain(response.data)
           .map(district => district.districtName)
           .uniq()
           .value();
-
+        const districtsPlural = districts.length === 1 ? 'district' : 'districts';
         this.setState({
-          serialNumberError: `Serial number is currently in use in the following district(s): ${districts.join(', ')}`,
-          duplicateSerialNumber: true,
+          serialNumberError: `Serial number is currently in use for the equipment ${equipmentCodes.join(', ')}, in the following ${districtsPlural}: ${districts.join(', ')}`,
+          duplicateSerialNumberWarning: true,
         });
         return null;
       } else {
