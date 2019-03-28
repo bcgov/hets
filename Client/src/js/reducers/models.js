@@ -145,7 +145,7 @@ const DEFAULT_MODELS = {
     data: {},
   },
 
-  business: {},
+  business: null,
 
   batchReports: {
     data: [],
@@ -506,7 +506,7 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.ADD_RENTAL_CONDITIONS:
       return produce(state, (draftState) => {
         const rentalAgreementConditions = draftState.rentalAgreement[action.rentalAgreementId].rentalAgreementConditions;
-        rentalAgreementConditions.unshift(...action.rentalConditions);
+        rentalAgreementConditions.push(...action.rentalConditions);
       });
 
     case Action.UPDATE_RENTAL_CONDITIONS:

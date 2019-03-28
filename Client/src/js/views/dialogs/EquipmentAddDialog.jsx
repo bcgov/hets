@@ -146,12 +146,16 @@ class EquipmentAddDialog extends React.Component {
         this.setState({ isSaving: false });
 
         if (response.data.length > 0) {
-          var districts = response.data.map((district) => {
-            return district.districtName;
+          const equipmentCodes = response.data.map((district) => {
+            return district.duplicateEquipment.equipmentCode;
           });
+          var districts = _.chain(response.data)
+            .map(district => district.districtName)
+            .uniq()
+            .value();
           const districtsPlural = districts.length === 1 ? 'district' : 'districts';
           this.setState({
-            serialNumberError: `Serial number is currently in use in the following ${districtsPlural}: ${districts.join(', ')}`,
+            serialNumberError: `Serial number is currently in use for the equipment ${equipmentCodes.join(', ')}, in the following ${districtsPlural}: ${districts.join(', ')}`,
             duplicateSerialNumberWarning: true,
           });
           return null;

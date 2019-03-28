@@ -42,17 +42,17 @@ class BusinessPortal extends React.Component {
   };
 
   componentDidMount() {
-    this.fetch();
+    const businessLoaded = Boolean(this.props.business);
+    this.setState({ loading: !businessLoaded, success: businessLoaded });
+
+    this.fetch().then(() => {
+      this.setState({ loading: false });
+    });
   }
 
   fetch = () => {
-    this.setState({ loading: true, success: false });
-
-    return Api.getBusiness().finally(() => {
-      if (!_.isEmpty(this.props.business)) {
-        this.setState({ success: true });
-      }
-      this.setState({ loading: false });
+    return Api.getBusiness().then(() => {
+      this.setState({ success: !_.isEmpty(this.props.business) });
     });
   };
 
