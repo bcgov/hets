@@ -3,7 +3,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Well, Row, Col, Alert, Glyphicon, Label } from 'react-bootstrap';
 import _ from 'lodash';
-import Promise from 'bluebird';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -21,13 +20,12 @@ import PrintButton from '../components/PrintButton.jsx';
 
 import { formatDateTime } from '../utils/date';
 import { sortDir } from '../utils/array';
+import { activeOwnerSelector } from '../selectors/ui-selectors';
 
 
 class BusinessOwner extends React.Component {
   static propTypes = {
     owner: PropTypes.object,
-    equipment: PropTypes.object,
-    contact: PropTypes.object,
     uiEquipment: PropTypes.object,
     uiContacts: PropTypes.object,
     params: PropTypes.object,
@@ -37,7 +35,7 @@ class BusinessOwner extends React.Component {
     super(props);
 
     this.state = {
-      loading: true,
+      loading: false,
 
       success: false,
 
@@ -60,7 +58,12 @@ class BusinessOwner extends React.Component {
   }
 
   componentDidMount() {
-    this.fetch();
+    const ownerLoaded = Boolean(this.props.owner);
+    this.setState({ loading: !ownerLoaded, success: ownerLoaded });
+
+    this.fetch().then(() => {
+      this.setState({ loading: false });
+    });
   }
 
   componentDidUpdate(prevProps) {
@@ -70,19 +73,12 @@ class BusinessOwner extends React.Component {
   }
 
   fetch = () => {
-    this.setState({ loading: true });
-    this.setState({ success: false });
+    var {ownerId} = this.props.params;
 
-    store.dispatch({ type: Action.UPDATE_OWNER, owner: null });
-
-    var ownerId = this.props.params.ownerId;
-    var ownerPromise = Api.getOwnerForBusiness(ownerId);
-
-    return Promise.all([ownerPromise]).finally(() => {
-      if (!_.isEmpty(this.props.owner)) {
-        this.setState({ success: true });
-      }
-      this.setState({ loading: false });
+    return Api.getOwnerForBusiness(ownerId).then(() => {
+      this.setState({ success: true });
+    }).catch(() => {
+      this.setState({ success: false });
     });
   };
 
@@ -299,9 +295,7 @@ class BusinessOwner extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    owner: state.models.owner,
-    equipment: state.models.equipment,
-    contact: state.models.contact,
+    owner: activeOwnerSelector(state),
     uiEquipment: state.ui.ownerEquipment,
     uiContacts: state.ui.ownerContacts,
   };

@@ -146,7 +146,7 @@ const DEFAULT_MODELS = {
     data: {},
   },
 
-  business: {},
+  business: null,
 
   batchReports: {
     data: [],
