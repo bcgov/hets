@@ -30,6 +30,8 @@ class BusinessPortal extends React.Component {
     loading: false,
     validating: false,
     success: false,
+    secretKey: '',
+    postalCode: '',
     errors: {},
 
     // owners
@@ -74,12 +76,13 @@ class BusinessPortal extends React.Component {
       // clear input fields
       this.inputPostalCode.value = '';
       this.inputSecretKey.value = '';
-    }).catch((err) => {
-      console.error(err);
-      if (err.errorCode) { // must be a server validation error
-        this.setState({ errors: { secretKey: err.errorDescription } });
+    }).catch((error) => {
+      if (error.status === 400 && (error.errorCode === 'HETS-19' || error.errorCode === 'HETS-20' || error.errorCode === 'HETS-21')) {
+        this.setState({ errors: { secretKey: error.errorDescription } });
+      } else if (error.status === 400 && error.errorCode === 'HETS-22') {
+        this.setState({ errors: { postalCode: error.errorDescription } });
       } else {
-        throw err;
+        throw error;
       }
     }).finally(() => {
       this.setState({ validating: false });

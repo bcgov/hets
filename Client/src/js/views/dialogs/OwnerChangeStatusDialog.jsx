@@ -104,11 +104,11 @@ class ChangeStatusDialog extends React.Component {
             }
           });
         }
-      }).catch((err) => {
-        if (err.status === 400 && err.errorCode === 'HETS-39') {
-          this.setState({ commentError: err.errorDescription });
+      }).catch((error) => {
+        if (error.status === 400 && error.errorCode === 'HETS-40') {
+          this.setState({ commentError: error.errorDescription });
         } else {
-          throw err;
+          throw error;
         }
       });
     }

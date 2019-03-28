@@ -33,7 +33,6 @@ class EquipmentChangeStatusDialog extends React.Component {
   isValid = () => {
     this.setState({
       commentError: '',
-      statusError: '',
     });
 
     var valid = true;
@@ -59,11 +58,11 @@ class EquipmentChangeStatusDialog extends React.Component {
         this.setState({isSaving: false});
         this.props.onStatusChanged();
         Log.equipmentStatusModified(this.props.equipment, status.status, status.statusComment);
-      }).catch((err) => {
-        if (err.status === 400 && err.errorCode === 'HETS-39') {
-          this.setState({ commentError: err.errorDescription });
+      }).catch((error) => {
+        if (error.status === 400 && (error.errorCode === 'HETS-39' || error.errorCode === 'HETS-41')) {
+          this.setState({ commentError: error.errorDescription });
         } else {
-          throw err;
+          throw error;
         }
       });
     }

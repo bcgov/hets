@@ -135,7 +135,7 @@ class TimeEntryDialog extends React.Component {
         this.setState({ selectingAgreement: false, loaded: true });
       });
     }).catch((error) => {
-      if (error.errorCode) {
+      if (error.status === 400 && error.errorCode === 'HETS-35') {
         this.setState({ projectIdError: error.errorDescription });
       } else {
         throw error;
