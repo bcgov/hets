@@ -48,18 +48,16 @@ class FormInputControl extends React.Component {
     }
   };
 
+  refChanged = (ref) => {
+    this.input = ref;
+    if (this.props.inputRef) { this.props.inputRef(ref); }
+  }
+
   render() {
     const { type, autoComplete, children } = this.props;
     // XXX: eslint doesn't like `const { type, autoComplete, children, ...rest } = this.props;`
     // using lodash omit for now
     const rest = _.omit(this.props, 'type', 'autoComplete', 'children', 'updateState');
-
-    const inputRef = ref => {
-      this.input = ref;
-      if (this.props.inputRef) {
-        this.props.inputRef(ref);
-      }
-    };
 
     return (
       <FormControl
@@ -67,7 +65,7 @@ class FormInputControl extends React.Component {
         type={type === 'float' ? 'number' : type}
         step={type === 'float' ? '0.01' : null}
         onChange={this.changed}
-        inputRef={inputRef}
+        inputRef={this.refChanged}
         autoComplete={autoComplete || 'off'}>
         {children}
       </FormControl>
