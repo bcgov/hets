@@ -110,7 +110,7 @@ class AitReport extends React.Component {
 
   componentDidMount() {
     Api.getProjectsCurrentFiscal();
-    Api.getDistrictEquipmentTypes();
+    Api.getDistrictEquipmentTypeHires();
     Api.getEquipmentHires();
 
     // If this is the first load, then look for a default favourite
@@ -216,8 +216,29 @@ class AitReport extends React.Component {
     return _.intersection(this.state.search.projectIds, projectIds).length > 0;
   };
 
+  matchesDistrictEquipmentTypeFilter = (districtEquipmentTypeId) => {
+    if (this.state.search.districtEquipmentTypes.length == 0){
+      return true;
+    }
+
+    return _.includes(this.state.search.districtEquipmentTypes, districtEquipmentTypeId);
+  }
+
   updateProjectSearchState = (state) => {
-    this.updateSearchState(state, this.filterSelectedEquipment);
+    this.updateSearchState(state, this.filterSelectedEquipmentType);
+  };
+
+  filterSelectedEquipmentType = () => {
+    var acceptableDistrictEquipmentTypes = _.map(this.getFilteredDistrictEquipmentType(), 'id');
+    var districtEquipmentTypes = _.intersection(this.state.search.districtEquipmentTypes, acceptableDistrictEquipmentTypes);
+    this.updateSearchState({ districtEquipmentTypes: districtEquipmentTypes }, this.filterSelectedEquipment);
+  };
+
+  getFilteredDistrictEquipmentType = () => {
+    return _.chain(this.props.districtEquipmentTypes.data)
+      .filter(x => this.matchesProjectFilter(x.projectIds))
+      .sortBy('districtEquipmentName')
+      .value();
   };
 
   filterSelectedEquipment = () => {
@@ -228,7 +249,7 @@ class AitReport extends React.Component {
 
   getFilteredEquipment = () => {
     return _.chain(this.props.equipment.data)
-      .filter(x => this.matchesProjectFilter(x.projectIds))
+      .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesDistrictEquipmentTypeFilter(x.districtEquipmentTypeId))
       .sortBy('equipmentCode')
       .value();
   };
@@ -240,10 +261,7 @@ class AitReport extends React.Component {
     }
 
     var projects = _.sortBy(this.props.projects.data, 'name');
-    var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes.data)
-      .filter(type => type.district.id == this.props.currentUser.district.id)
-      .sortBy('districtEquipmentName')
-      .value();
+    var districtEquipmentTypes = this.getFilteredDistrictEquipmentType();
     var equipment = this.getFilteredEquipment();
 
     return <div id="ait-report">
@@ -340,7 +358,7 @@ function mapStateToProps(state) {
   return {
     currentUser: state.user,
     projects: state.lookups.projectsCurrentFiscal,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
+    districtEquipmentTypes: state.lookups.districtEquipmentTypeHires,
     equipment: state.lookups.equipment.hires,
     aitResponses: state.models.aitResponses,
     favourites: state.models.favourites.aitReport,
