@@ -6,6 +6,7 @@ using Hangfire.Console.Progress;
 using Hangfire.Server;
 using Microsoft.EntityFrameworkCore;
 using HetsData.Model;
+using Newtonsoft.Json;
 
 namespace HetsData.Helpers
 {
@@ -333,6 +334,7 @@ namespace HetsData.Helpers
 
     public class DistrictEquipmentTypeHire
     {
+        [JsonProperty("Id")]
         public int DistrictEquipmentTypeId { get; set; }
         public string DistrictEquipmentName { get; set; }
         public List<int?> ProjectIds { get; set; }

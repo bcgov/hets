@@ -1707,7 +1707,6 @@ function parseRentalAgreement(agreement) {
   agreement.status = agreement.status || Constant.RENTAL_AGREEMENT_STATUS_CODE_ACTIVE;  // TODO
   agreement.isActive = agreement.status === Constant.RENTAL_AGREEMENT_STATUS_CODE_ACTIVE;
   agreement.isCompleted = agreement.status === Constant.RENTAL_AGREEMENT_STATUS_CODE_COMPLETED;
-  agreement.isBlank = agreement.rentalRequestRotationListId ? false : true;
   agreement.equipmentId = agreement.equipment.id;
   agreement.equipmentCode = agreement.equipment.equipmentCode;
   agreement.equipmentMake = agreement.equipment.make;
@@ -1726,7 +1725,6 @@ function parseRentalAgreement(agreement) {
   agreement.projectUrl = agreement.projectPath ? `#/${ agreement.projectPath }` : '';
 
   agreement.canEdit = true;
-  agreement.canDelete = agreement.isBlank;  // TODO Check with business if associated agreements can be deleted
 
   // Flag element as a rental agreement
   // Rental requests and rentals are merged and shown in a single list on Project Details screen
@@ -1781,19 +1779,6 @@ export function getLatestRentalAgreement(equipmentId, projectId) {
 //   });
 // }
 
-// XXX: Looks like this is unused
-// export function generateAnotherRentalAgreement(agreement) {
-//   var preparedAgreement = convertRentalAgreement(agreement);
-//   return new ApiRequest(`/rentalagreements/updateCloneBlankAgreement/${ agreement.id }`).post(preparedAgreement).then(response => {
-//     var agreement = response.data;
-
-//     // Add display fields
-//     parseRentalAgreement(agreement);
-
-//     store.dispatch({ type: Action.GENERATE_ANOTHER_RENTAL_AGREEMENT, rentalAgreement: agreement });
-//   });
-// }
-
 export function updateRentalAgreement(agreement) {
   var preparedAgreement = convertRentalAgreement(agreement);
 
@@ -1842,24 +1827,6 @@ export function searchAitReport(params) {
   return new ApiRequest('/rentalAgreements/aitReport').get(params).then(response => {
     var aitResponses = normalize(response.data);
     store.dispatch({ type: Action.UPDATE_AIT_REPORT, aitResponses: aitResponses });
-  });
-}
-
-////////////////////
-// Blank Rental Agreements
-////////////////////
-
-export function getBlankRentalAgreementsForHire(projectId, equipmentId) {
-  store.dispatch({ type: Action.BLANK_RENTAL_AGREEMENTS_LOOKUP_REQUEST });
-
-  return new ApiRequest(`/rentalAgreements/blankAgreements/${ projectId }/${ equipmentId }`).get().then(response => {
-    var agreements = normalize(response.data);
-    _.map(agreements, agreement => {
-      parseRentalAgreement(agreement);
-      agreement.name = agreement.number;
-    });
-
-    store.dispatch({ type: Action.UPDATE_BLANK_RENTAL_AGREEMENTS_LOOKUP, blankRentalAgreements: agreements });
   });
 }
 
@@ -2207,6 +2174,15 @@ export function getDistrictEquipmentTypes() {
     var districtEquipmentTypes = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_LOOKUP, districtEquipmentTypes: districtEquipmentTypes });
+  });
+}
+
+export function getDistrictEquipmentTypeHires() {
+  const silent = store.getState().lookups.districtEquipmentTypeHires.loaded;
+  return new ApiRequest('/districtequipmenttypes/hires', { silent }).get().then(response => {
+    var districtEquipmentTypeHires = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_DISTRICT_EQUIPMENT_TYPE_HIRES_LOOKUP, districtEquipmentTypeHires: districtEquipmentTypeHires });
   });
 }
 

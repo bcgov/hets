@@ -101,7 +101,7 @@ namespace HetsData.Helpers
             if (statusIdArchived == null)
             {
                 throw new ArgumentException("Status Code not found");
-            }        
+            }
 
             // get owner record
             HetOwner owner = context.HetOwner.AsNoTracking()
@@ -125,7 +125,7 @@ namespace HetsData.Helpers
 
             if (owner != null)
             {
-                // remove any archived equipment                
+                // remove any archived equipment
                 owner.HetEquipment = owner.HetEquipment.Where(e => e.EquipmentStatusTypeId != statusIdArchived).ToList();
 
                 // populate the "Status" description
@@ -149,7 +149,7 @@ namespace HetsData.Helpers
 
         #endregion
 
-        #region Returns true if any equipment associated with this owner is on an active rotation list        
+        #region Returns true if any equipment associated with this owner is on an active rotation list
 
         /// <summary>
         /// Returns true if any equipment associated with this owner is on an active rotation list
@@ -159,7 +159,7 @@ namespace HetsData.Helpers
         /// <returns></returns>
         public static bool RentalRequestStatus(int id, DbAppContext context)
         {
-            // get equipment status types           
+            // get equipment status types
             int? statusIdActive = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", context);
             if (statusIdActive == null)
             {
@@ -355,8 +355,8 @@ namespace HetsData.Helpers
         #region Owner Verification Job
 
         public static void OwnerVerificationLetters(PerformContext context,
-            int reportId, int?[] localAreas, int?[] owners, int? equipmentStatusId, 
-            int? ownerStatusId, string pdfService, string pdfUrl, string reportsRoot, 
+            int reportId, int?[] localAreas, int?[] owners, int? equipmentStatusId,
+            int? ownerStatusId, string pdfService, string pdfUrl, string reportsRoot,
             string connectionString)
         {
             try
@@ -403,12 +403,6 @@ namespace HetsData.Helpers
 
                 // convert to list
                 List<HetOwner> ownerList = ownerRecords.ToList();
-
-                // strip out inactive and archived equipment
-                foreach (HetOwner owner in ownerList)
-                {
-                    owner.HetEquipment = owner.HetEquipment.Where(x => x.EquipmentStatusTypeId == equipmentStatusId).ToList();
-                }
 
                 if (ownerList.Any())
                 {
@@ -479,6 +473,9 @@ namespace HetsData.Helpers
                             }
                         }
 
+                        // strip out inactive and archived equipment
+                        owner.HetEquipment = owner.HetEquipment.Where(x => x.EquipmentStatusTypeId == equipmentStatusId).ToList();
+
                         model.Owners.Add(owner);
                     }
 
@@ -511,17 +508,11 @@ namespace HetsData.Helpers
                         // success
                         if (response.StatusCode == HttpStatusCode.OK)
                         {
-                            string folder;
                             fileName = $"{fileName}.{reportId}.pdf";
 
-                            if (reportsRoot.Contains("\\"))
-                            {
-                                folder = $"{reportsRoot}\\{model.DistrictId}\\{DateTime.UtcNow.Year}\\";                                
-                            }
-                            else
-                            {
-                                folder = $"{reportsRoot}/{model.DistrictId}/{DateTime.UtcNow.Year}/";
-                            }
+                            string folder = reportsRoot.Contains("\\")
+                                ? $"{reportsRoot}\\{model.DistrictId}\\{DateTime.UtcNow.Year}\\"
+                                : $"{reportsRoot}/{model.DistrictId}/{DateTime.UtcNow.Year}/";
 
                             byte[] pdfResponseBytes = GetPdf(response);
 
