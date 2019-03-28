@@ -768,6 +768,8 @@ export function addOwner(owner) {
     parseOwner(owner);
 
     store.dispatch({ type: Action.ADD_OWNER, owner });
+
+    return owner;
   });
 }
 

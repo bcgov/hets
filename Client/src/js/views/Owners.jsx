@@ -137,11 +137,11 @@ class Owners extends React.Component {
   };
 
   saveNewOwner = (owner) => {
-    Api.addOwner(owner).then(() => {
-      Log.ownerAdded(this.props.owner);
+    Api.addOwner(owner).then((newOwner) => {
+      Log.ownerAdded(newOwner);
       // Open it up
       this.props.router.push({
-        pathname: `${ Constant.OWNERS_PATHNAME }/${ this.props.owner.id }`,
+        pathname: `${ Constant.OWNERS_PATHNAME }/${ newOwner.id }`,
       });
     });
   };

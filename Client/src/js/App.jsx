@@ -63,16 +63,25 @@ function redirectIfRolloverActive(path) {
 function onEnterBusiness() {
   // allow access to business users
   if (store.getState().user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
-    return;
+    return true;
   }
 
   // redirect HETS users to home page
   if (store.getState().user.hasPermission(Constant.PERMISSION_LOGIN)) {
     hashHistory.push('/');
+    return false;
   }
+
+  return false;
 
   // TODO: redirect other users to 'unauthorized access' page
   //hashHistory.push('/');
+}
+
+function onEnterBusinessDetails(nextState, replace, callback) {
+  if (onEnterBusiness()) {
+    setActiveOwnerId(nextState, replace, callback);
+  }
 }
 
 function onEnterApplication() {
@@ -141,7 +150,7 @@ const App = () => (
     <Router history={ hashHistory }>
       <Redirect from="/" to="/home"/>
       <Route path={ Constant.BUSINESS_PORTAL_PATHNAME } component={ BusinessPortal } onEnter={ onEnterBusiness } />
-      <Route path={ `${Constant.BUSINESS_DETAILS_PATHNAME }/:ownerId` } component={ BusinessOwner } onEnter={ onEnterBusiness } />
+      <Route path={ `${Constant.BUSINESS_DETAILS_PATHNAME }/:ownerId` } component={ BusinessOwner } onEnter={ onEnterBusinessDetails } />
       <Route path="/" component={ Main } onEnter={ onEnterApplication }>
         <Route path={ Constant.HOME_PATHNAME } component={ Home }/>
         <Route path={ Constant.EQUIPMENT_PATHNAME } component={ Equipment }/>
