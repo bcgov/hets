@@ -19,9 +19,13 @@ class ReleaseExtendHireDialog extends React.Component {
     releaseHire: PropTypes.bool,
   };
 
-  state = {
-    endHireDate: Moment(new Date()).format('YYYY-MM-DD'),
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      endHireDate: Moment(new Date()).format('YYYY-MM-DD'),
+    };
+  }
 
   updateState = (state, callback) => {
     this.setState(state, callback);

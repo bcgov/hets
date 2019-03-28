@@ -22,10 +22,14 @@ class EditDialog extends React.Component {
     children: PropTypes.node,
   };
 
-  state = {
-    saving: false,
-    savePromise: Promise.resolve(),
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      saving: false,
+      savePromise: Promise.resolve(),
+    };
+  }
 
   componentWillUnmount() {
     this.state.savePromise.cancel();

@@ -33,19 +33,23 @@ class EquipmentTransferDialog extends React.Component {
     show: PropTypes.bool.isRequired,
   };
 
-  state = {
-    stage: STAGE_SELECT_OWNER,
-    donorOwnerCode: '',
-    recipientOwnerCode: '',
-    seniorityOption: 1,
-    donorOwnerCodeError: '',
-    recipientOwnerCodeError: '',
-    seniorityOptionError: '',
-    selectedEquipmentIds: [],
-    selectAllEquipment: false,
-    waitingForResponse: false,
-    equipmentTransferError: '',
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      stage: STAGE_SELECT_OWNER,
+      donorOwnerCode: '',
+      recipientOwnerCode: '',
+      seniorityOption: 1,
+      donorOwnerCodeError: '',
+      recipientOwnerCodeError: '',
+      seniorityOptionError: '',
+      selectedEquipmentIds: [],
+      selectAllEquipment: false,
+      waitingForResponse: false,
+      equipmentTransferError: '',
+    };
+  }
 
   componentDidMount() {
     Api.getOwnersLite();

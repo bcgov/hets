@@ -24,6 +24,7 @@ class MultiDropdown extends React.Component {
 
   constructor(props) {
     super(props);
+
     var selectedIds = props.selectedIds || [];
     var items = props.items || [];
     var fieldName = props.fieldName || 'name';

@@ -22,15 +22,15 @@ class FileUpload extends React.Component {
     onUploadFinished: PropTypes.func,
   };
 
-  state = this.buildInitialState();
+  constructor(props) {
+    super(props);
 
-  buildInitialState = () => {
-    return {
+    this.state = {
       uploadInProgress: false,
       percentUploaded: null,
       fileUploadError: null,
     };
-  };
+  }
 
   uploadFiles = () => {
     this.setState({ uploadInProgress: true, percentUploaded: 0 });
@@ -57,7 +57,7 @@ class FileUpload extends React.Component {
   };
 
   reset = () => {
-    this.setState(this.buildInitialState());
+    this.setState({ uploadInProgress: false, percentUploaded: null, fileUploadError: null });
   };
 
   render() {

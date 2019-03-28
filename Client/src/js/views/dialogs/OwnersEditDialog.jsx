@@ -26,6 +26,7 @@ class OwnersEditDialog extends React.Component {
 
   constructor(props) {
     super(props);
+
     var owner = props.owner;
 
     this.state = {

@@ -26,10 +26,9 @@ class RentalConditionsEditDialog extends React.Component {
 
   constructor(props) {
     super(props);
-    var isNew = props.rentalCondition.id === 0;
 
     this.state = {
-      isNew: isNew,
+      isNew: props.rentalCondition.id === 0,
 
       forms: [{
         conditionName: props.rentalCondition.conditionName || '',

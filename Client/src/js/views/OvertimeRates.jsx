@@ -19,10 +19,14 @@ class OvertimeRates extends React.Component {
     router: PropTypes.object,
   };
 
-  state = {
-    showOvertimeRateEditDialog: false,
-    overtimeRateType: {},
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      showOvertimeRateEditDialog: false,
+      overtimeRateType: {},
+    };
+  }
 
   componentDidMount() {
     this.fetch();

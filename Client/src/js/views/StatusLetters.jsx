@@ -23,15 +23,19 @@ class StatusLetters extends React.Component {
     batchReports: PropTypes.object,
   };
 
-  state = {
-    loading: true,
-    localAreaIds: [],
-    ownerIds: [],
-    ui : {
-      sortField: 'startDate',
-      sortDesc: false,
-    },
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: true,
+      localAreaIds: [],
+      ownerIds: [],
+      ui : {
+        sortField: 'startDate',
+        sortDesc: false,
+      },
+    };
+  }
 
   componentDidMount() {
     Api.getOwnersLite();

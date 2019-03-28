@@ -24,6 +24,7 @@ class RentalRequestsEditDialog extends React.Component {
 
   constructor(props) {
     super(props);
+
     const rentalRequest = props.rentalRequest;
 
     this.state = {

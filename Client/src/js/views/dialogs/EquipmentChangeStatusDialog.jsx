@@ -20,11 +20,15 @@ class EquipmentChangeStatusDialog extends React.Component {
     onStatusChanged: PropTypes.func.isRequired,
   };
 
-  state = {
-    saving: false,
-    comment: '',
-    commentError: '',
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      saving: false,
+      comment: '',
+      commentError: '',
+    };
+  }
 
   updateState = (state, callback) => {
     this.setState(state, callback);
