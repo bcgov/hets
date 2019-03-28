@@ -25,9 +25,11 @@ import TableControl from '../components/TableControl.jsx';
 import Form from '../components/Form.jsx';
 import PrintButton from '../components/PrintButton.jsx';
 import ReturnButton from '../components/ReturnButton.jsx';
+import SubHeader from '../components/ui/SubHeader.jsx';
 
 import { daysFromToday, formatDateTime, today, isValidDate, toZuluTime } from '../utils/date';
 import { isBlank, notBlank } from '../utils/string';
+import { sort, caseInsensitiveSort, sortDir } from '../utils/array.js';
 
 
 class UsersDetail extends React.Component {
@@ -84,9 +86,10 @@ class UsersDetail extends React.Component {
 
   fetch = () => {
     this.setState({ loading: true });
-    var getUserPromise = Api.getUser(this.props.params.userId);
-    var getUserDistrictsPromise = Api.getUserDistricts(this.props.params.userId);
-    Promise.all([getUserPromise, getUserDistrictsPromise]).finally(() => {
+    Promise.all([
+      Api.getUser(this.props.params.userId),
+      Api.getUserDistricts(this.props.params.userId),
+    ]).then(() => {
       this.setState({ loading: false });
     });
   };
@@ -128,11 +131,6 @@ class UsersDetail extends React.Component {
     this.setState({ showUserRoleDialog: false });
   };
 
-  addUserRole = (userRole) => {
-    Api.addUserRole(this.props.user.id, userRole);
-    this.closeUserRoleDialog();
-  };
-
   updateUserRole = (userRole) => {
     // The API call updates all of the user's user roles so we have to
     // include them all in this call, modifying the one that has just
@@ -165,32 +163,26 @@ class UsersDetail extends React.Component {
     this.setState({ district, showDistrictEditDialog: true });
   };
 
-  saveDistrict = (district) => {
-    var isNew = district.id === 0;
-    var promise;
-    isNew ? promise =  Api.addUserDistrict(district) : promise = Api.editUserDistrict(district);
-    promise.then((response) => {
-      if (district.user.id === this.props.currentUser.id) {
-        this.updateCurrentUserDistricts(response.data);
-      }
-      this.closeDistrictEditDialog();
-    });
+  districtSaved = (district, districts) => {
+    this.updateCurrentUserDistricts(districts);
+    this.closeDistrictEditDialog();
   };
 
   deleteDistrict = (district) => {
     Api.deleteUserDistrict(district).then((response) => {
-      if (district.user.id === this.props.currentUser.id) {
-        this.updateCurrentUserDistricts(response.data);
-      }
+      this.updateCurrentUserDistricts(response.data);
     });
   };
 
   updateCurrentUserDistricts = (districts) => {
-    store.dispatch({ type: Action.CURRENT_USER_DISTRICTS, currentUserDistricts: districts });
+    if (this.props.user.id === this.props.currentUser.id) {
+      store.dispatch({ type: Action.CURRENT_USER_DISTRICTS, currentUserDistricts: districts });
+    }
   };
 
   render() {
-    var user = this.props.user;
+    const { loading } = this.state;
+    const { user } = this.props;
 
     if (!this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) {
       return (
@@ -202,7 +194,9 @@ class UsersDetail extends React.Component {
       <div>
         <Row id="users-top">
           <Col sm={8}>
-            <Label bsStyle={ user.active ? 'success' : 'danger'}>{ user.active ? 'Verified Active' : 'Inactive' }</Label>
+            {!loading && (
+              <Label bsStyle={ user.active ? 'success' : 'danger'}>{ user.active ? 'Verified Active' : 'Inactive' }</Label>
+            )}
           </Col>
           <Col sm={4}>
             <div className="pull-right">
@@ -212,23 +206,16 @@ class UsersDetail extends React.Component {
           </Col>
         </Row>
 
-        {(() => {
-          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+        <div id="users-header">
+          <h1>User: <small>{ loading ? '...' : user.fullName }</small></h1>
+        </div>
 
-          return <div id="users-header">
-            <Row>
-              <Col md={12}>
-                <h1>User: <small>{ user.fullName }</small></h1>
-              </Col>
-            </Row>
-          </div>;
-        })()}
         <Row>
           <Col md={12}>
             <Well>
-              <h3 className="clearfix">General <span className="pull-right"><Button title="Edit User" bsSize="small" onClick={ this.openEditDialog }><Glyphicon glyph="pencil" /></Button></span></h3>
+              <SubHeader title="General" editButtonTitle="Edit User" editButtonDisabled={loading} onEditClicked={ this.openEditDialog }/>
               {(() => {
-                if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+                if (loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
                 return <Row id="user-data" className="equal-height">
                   <Col lg={4} md={6} sm={12} xs={12}>
@@ -257,23 +244,25 @@ class UsersDetail extends React.Component {
         <Row>
           <Col md={12}>
             <Well>
-              <h3>Districts</h3>
+              <SubHeader title="Districts"/>
               {(() => {
                 var addDistrictButton = <Button title="Add District" bsSize="small" onClick={ this.addUserDistrict }><Glyphicon glyph="plus" />&nbsp;<strong>Add District</strong></Button>;
 
-                if (this.props.userDistricts.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+                if (loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
                 if (this.props.userDistricts.data.length === 0) { return <Alert bsStyle="success">No Districts { addDistrictButton }</Alert>; }
 
+                const userDistricts = sort(this.props.userDistricts.data, ['isPrimary', 'district.name'], ['asc', 'asc'], caseInsensitiveSort);
+
                 return (
                   <TableControl headers={[
-                    { field: 'name',         title: 'District Name'  },
+                    { field: 'district.name',         title: 'District Name'  },
                     { field: 'addCondition', title: 'Add Condition',  style: { textAlign: 'right'  },
                       node: addDistrictButton,
                     },
                   ]}>
                     {
-                      _.map(this.props.userDistricts.data, (district) => {
+                      _.map(userDistricts, (district) => {
                         return <tr key={ district.id }>
                           <td>{ district.isPrimary && <Glyphicon glyph="star" /> }{ district.district.name }</td>
                           <td style={{ textAlign: 'right' }}>
@@ -302,7 +291,7 @@ class UsersDetail extends React.Component {
                 <CheckboxControl inline id="showExpiredOnly" checked={ this.state.ui.showExpiredOnly } updateState={ this.updateUIState }>Show Expired Only</CheckboxControl>
               </h3>
               {(() => {
-                if (this.state.loading ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+                if (loading ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
                 var addUserRoleButton = <Button title="Add User Role" onClick={ this.openUserRoleDialog } bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add Role</strong></Button>;
 
@@ -357,31 +346,32 @@ class UsersDetail extends React.Component {
           </Col>
         </Row>
       </div>
-      { this.state.showEditDialog &&
+      { this.state.showEditDialog && (
         <UsersEditDialog
-          show={ this.state.showEditDialog }
-          onSave={ this.onUserSaved }
-          onClose= { this.onCloseEdit }
+          show={this.state.showEditDialog}
+          user={user}
+          onSave={this.onUserSaved}
+          onClose= {this.onCloseEdit}
         />
-      }
-      { this.state.showUserRoleDialog &&
+      )}
+      { this.state.showUserRoleDialog && (
         <UserRoleAddDialog
-          show={ this.state.showUserRoleDialog }
-          onSave={ this.addUserRole }
-          onClose={ this.closeUserRoleDialog }
+          show={this.state.showUserRoleDialog}
+          user={user}
+          onClose={this.closeUserRoleDialog}
         />
-      }
-      { this.state.showDistrictEditDialog &&
+      )}
+      { this.state.showDistrictEditDialog && (
         <DistrictEditDialog
-          show={ this.state.showDistrictEditDialog }
-          onSave={ this.saveDistrict }
-          onClose={ this.closeDistrictEditDialog }
-          districts={ this.props.districts }
-          user={ this.props.user }
-          district={ this.state.district }
-          userDistricts={ this.props.userDistricts.data }
+          show={this.state.showDistrictEditDialog}
+          user={user}
+          districts={this.props.districts}
+          district={this.state.district}
+          userDistricts={this.props.userDistricts.data}
+          onSave={this.districtSaved}
+          onClose={this.closeDistrictEditDialog}
         />
-      }
+      )}
     </div>;
   }
 }
