@@ -344,8 +344,8 @@ class RentalRequests extends React.Component {
         );
 
         var addRequestButtons = <div id="add-request-buttons">
-          { addViewOnlyRequestButton }
           { addRentalRequestButton }
+          { addViewOnlyRequestButton }
         </div>;
 
         if (this.props.rentalRequests.loaded) {
