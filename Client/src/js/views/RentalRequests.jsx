@@ -14,6 +14,7 @@ import * as Constant from '../constants';
 import * as Log from '../history';
 import store from '../store';
 
+import AddButtonContainer from '../components/ui/AddButtonContainer.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SearchBar from '../components/ui/SearchBar.jsx';
 import DateControl from '../components/DateControl.jsx';
@@ -354,7 +355,7 @@ class RentalRequests extends React.Component {
           return this.renderResults(addRequestButtons);
         }
 
-        return <div id="add-button-container">{ addRequestButtons }</div>;
+        return <AddButtonContainer>{ addRequestButtons }</AddButtonContainer>;
       })()}
       { this.state.showAddDialog && (
         <RentalRequestsAddDialog

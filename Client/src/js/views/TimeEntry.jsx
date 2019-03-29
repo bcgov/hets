@@ -12,6 +12,7 @@ import * as Api from '../api';
 import * as Constant from '../constants';
 import store from '../store';
 
+import AddButtonContainer from '../components/ui/AddButtonContainer.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SearchBar from '../components/ui/SearchBar.jsx';
 import Favourites from '../components/Favourites.jsx';
@@ -348,7 +349,7 @@ class TimeEntry extends React.Component {
           return this.renderResults(addTimeEntryButton);
         }
 
-        return <div id="add-button-container">{ addTimeEntryButton }</div>;
+        return <AddButtonContainer>{ addTimeEntryButton }</AddButtonContainer>;
       })()}
       { this.state.showTimeEntryDialog && (
         <TimeEntryDialog

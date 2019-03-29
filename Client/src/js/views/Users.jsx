@@ -12,6 +12,7 @@ import * as Api from '../api';
 import * as Constant from '../constants';
 import store from '../store';
 
+import AddButtonContainer from '../components/ui/AddButtonContainer.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SearchBar from '../components/ui/SearchBar.jsx';
 import CheckboxControl from '../components/CheckboxControl.jsx';
@@ -240,7 +241,7 @@ class Users extends React.Component {
           return this.renderResults(addUserButton);
         }
 
-        return <div id="add-button-container">{ addUserButton }</div>;
+        return <AddButtonContainer>{ addUserButton }</AddButtonContainer>;
       })()}
 
       { this.state.showUsersEditDialog &&

@@ -11,6 +11,7 @@ import * as Constant from '../constants';
 import * as Log from '../history';
 import store from '../store';
 
+import AddButtonContainer from '../components/ui/AddButtonContainer.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SearchBar from '../components/ui/SearchBar.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
@@ -240,7 +241,7 @@ class Owners extends React.Component {
           return this.renderResults(ownerList, addOwnerButton);
         }
 
-        return <div id="add-button-container">{ addOwnerButton }</div>;
+        return <AddButtonContainer>{ addOwnerButton }</AddButtonContainer>;
       })()}
       { this.state.showAddDialog &&
         <OwnersAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewOwner } onClose={ this.closeAddDialog } />

@@ -12,6 +12,7 @@ import * as Constant from '../constants';
 import * as Log from '../history';
 import store from '../store';
 
+import AddButtonContainer from '../components/ui/AddButtonContainer.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SearchBar from '../components/ui/SearchBar.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
@@ -247,7 +248,7 @@ class Projects extends React.Component {
           return this.renderResults(addProjectButton);
         }
 
-        return <div id="add-button-container">{ addProjectButton }</div>;
+        return <AddButtonContainer>{ addProjectButton }</AddButtonContainer>;
       })()}
       { this.state.showAddDialog && (
         <ProjectsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewProject } onClose={ this.closeAddDialog } />
