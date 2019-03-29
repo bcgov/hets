@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { PageHeader, Button, ButtonGroup, Glyphicon, Well, Alert, Row, Col } from 'react-bootstrap';
+import { Button, ButtonGroup, Glyphicon, Well, Alert, Row, Col } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../api';
@@ -9,6 +9,8 @@ import * as Constant from '../constants';
 import * as Action from '../actionTypes';
 // import store from '../store';
 
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SubHeader from '../components/ui/SubHeader.jsx';
 import ModalDialog from '../components/ModalDialog.jsx';
 import SortTable from '../components/SortTable.jsx';
 import TableControl from '../components/TableControl.jsx';
@@ -18,7 +20,6 @@ import Confirm from '../components/Confirm.jsx';
 import ConditionAddEditDialog from './dialogs/ConditionAddEditDialog.jsx';
 import DistrictEquipmentTypeAddEditDialog from './dialogs/DistrictEquipmentTypeAddEditDialog.jsx';
 import EquipmentTransferDialog from './dialogs/EquipmentTransferDialog.jsx';
-import SubHeader from '../components/ui/SubHeader.jsx';
 
 import { caseInsensitiveSort, sort } from '../utils/array';
 

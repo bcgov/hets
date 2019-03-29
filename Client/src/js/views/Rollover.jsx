@@ -1,16 +1,17 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { PageHeader, Button, Well } from 'react-bootstrap';
+import { Button, Well } from 'react-bootstrap';
 
 import * as Api from '../api';
 import * as Constant from '../constants';
 
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SubHeader from '../components/ui/SubHeader.jsx';
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import Confirm from '../components/Confirm.jsx';
 import Spinner from '../components/Spinner.jsx';
-import SubHeader from '../components/ui/SubHeader.jsx';
 
 import { formatDateTimeUTCToLocal } from '../utils/date';
 

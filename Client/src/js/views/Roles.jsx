@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { PageHeader, Well, Alert } from 'react-bootstrap';
-import { ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import _ from 'lodash';
 
@@ -11,6 +10,8 @@ import * as Api from '../api';
 import * as Constant from '../constants';
 import store from '../store';
 
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SearchBar from '../components/ui/SearchBar.jsx';
 import Confirm from '../components/Confirm.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SearchControl from '../components/SearchControl.jsx';
@@ -92,65 +93,67 @@ class Roles extends React.Component {
           <PrintButton/>
         </ButtonGroup>
       </PageHeader>
-      <div>
-        <Well id="roles-bar" bsSize="small" className="clearfix">
-          <ButtonToolbar id="roles-filters">
-            <SearchControl id="search" search={ this.state.search } updateState={ this.updateSearchState }
-              items={[
-                { id: 'name',        name: 'Name' },
-                { id: 'description', name: 'Description' },
-              ]}
-            />
-          </ButtonToolbar>
-        </Well>
+      <SearchBar>
+        <Row>
+          <Col xs={9} sm={10} id="filters">
+            <ButtonToolbar>
+              <SearchControl id="search" search={ this.state.search } updateState={ this.updateSearchState }
+                items={[
+                  { id: 'name',        name: 'Name' },
+                  { id: 'description', name: 'Description' },
+                ]}
+              />
+            </ButtonToolbar>
+          </Col>
+        </Row>
+      </SearchBar>
 
-        {(() => {
-          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+      {(() => {
+        if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-          var addRoleButton = <LinkContainer to={{ pathname: `${ Constant.ROLES_PATHNAME }/0` }}>
-            <Button title="Add Role" bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add Role</strong></Button>
-          </LinkContainer>;
-          if (Object.keys(this.props.roles).length === 0) { return <Alert bsStyle="success">No roles { addRoleButton }</Alert>; }
+        var addRoleButton = <LinkContainer to={{ pathname: `${ Constant.ROLES_PATHNAME }/0` }}>
+          <Button title="Add Role" bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add Role</strong></Button>
+        </LinkContainer>;
+        if (Object.keys(this.props.roles).length === 0) { return <Alert bsStyle="success">No roles { addRoleButton }</Alert>; }
 
-          var roles = _.sortBy(_.filter(this.props.roles, role => {
-            if (!this.state.search.params) {
-              return true;
-            }
-            return role[this.state.search.key] && role[this.state.search.key].toLowerCase().indexOf(this.state.search.text.toLowerCase()) !== -1;
-          }), this.state.ui.sortField);
-
-          if (this.state.ui.sortDesc) {
-            _.reverse(roles);
+        var roles = _.sortBy(_.filter(this.props.roles, role => {
+          if (!this.state.search.params) {
+            return true;
           }
+          return role[this.state.search.key] && role[this.state.search.key].toLowerCase().indexOf(this.state.search.text.toLowerCase()) !== -1;
+        }), this.state.ui.sortField);
 
-          return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-            { field: 'name',        title: 'Name'    },
-            { field: 'description', title: 'Description' },
-            { field: 'addRole',     title: 'Add Role',  style: { textAlign: 'right'  },
-              node: addRoleButton,
-            },
-          ]}>
-            {
-              _.map(roles, (role) => {
-                return <tr key={ role.id }>
-                  <td>{ role.name }</td>
-                  <td>{ role.description }</td>
-                  <td style={{ textAlign: 'right' }}>
-                    <ButtonGroup>
-                      <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.delete.bind(this, role) }/> }>
-                        <Button className={ role.canDelete ? '' : 'hidden' } title="Delete Role" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
-                      </OverlayTrigger>
-                      <LinkContainer to={{ pathname: `${ Constant.ROLES_PATHNAME }/${ role.id }` }}>
-                        <Button className={ role.canEdit ? '' : 'hidden' } title="Edit Role" bsSize="xsmall"><Glyphicon glyph="pencil" /></Button>
-                      </LinkContainer>
-                    </ButtonGroup>
-                  </td>
-                </tr>;
-              })
-            }
-          </SortTable>;
-        })()}
-      </div>
+        if (this.state.ui.sortDesc) {
+          _.reverse(roles);
+        }
+
+        return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
+          { field: 'name',        title: 'Name'    },
+          { field: 'description', title: 'Description' },
+          { field: 'addRole',     title: 'Add Role',  style: { textAlign: 'right'  },
+            node: addRoleButton,
+          },
+        ]}>
+          {
+            _.map(roles, (role) => {
+              return <tr key={ role.id }>
+                <td>{ role.name }</td>
+                <td>{ role.description }</td>
+                <td style={{ textAlign: 'right' }}>
+                  <ButtonGroup>
+                    <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.delete.bind(this, role) }/> }>
+                      <Button className={ role.canDelete ? '' : 'hidden' } title="Delete Role" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
+                    </OverlayTrigger>
+                    <LinkContainer to={{ pathname: `${ Constant.ROLES_PATHNAME }/${ role.id }` }}>
+                      <Button className={ role.canEdit ? '' : 'hidden' } title="Edit Role" bsSize="xsmall"><Glyphicon glyph="pencil" /></Button>
+                    </LinkContainer>
+                  </ButtonGroup>
+                </td>
+              </tr>;
+            })
+          }
+        </SortTable>;
+      })()}
     </div>;
   }
 }

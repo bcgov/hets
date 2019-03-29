@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form  } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form  } from 'react-bootstrap';
 import _ from 'lodash';
 
 import TimeEntryDialog from './dialogs/TimeEntryDialog.jsx';
@@ -12,6 +12,8 @@ import * as Api from '../api';
 import * as Constant from '../constants';
 import store from '../store';
 
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SearchBar from '../components/ui/SearchBar.jsx';
 import Favourites from '../components/Favourites.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
@@ -277,15 +279,15 @@ class TimeEntry extends React.Component {
 
     return <div id="time-entry-list">
       <PageHeader>Time Entry { resultCount }
-        <ButtonGroup id="time-entry-buttons">
+        <ButtonGroup>
           <PrintButton disabled={!this.props.timeEntries.loaded}/>
         </ButtonGroup>
       </PageHeader>
-      <Well id="time-entries-bar" bsSize="small" className="clearfix">
-        <Row>
-          <Form onSubmit={ this.search }>
-            <Col xs={9} sm={10}>
-              <ButtonToolbar id="time-entry-filters">
+      <SearchBar>
+        <Form onSubmit={ this.search }>
+          <Row>
+            <Col xs={9} sm={10} id="filters">
+              <ButtonToolbar>
                 <MultiDropdown
                   id="projectIds"
                   disabled={!this.props.projects.loaded}
@@ -324,12 +326,14 @@ class TimeEntry extends React.Component {
                 <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
               </ButtonToolbar>
             </Col>
-          </Form>
-          <Col xs={3} sm={2}>
-            <Favourites id="time-entry-faves-dropdown" type="timeEntry" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
-          </Col>
-        </Row>
-      </Well>
+            <Col xs={3} sm={2} id="search-buttons">
+              <Row>
+                <Favourites id="time-entry-faves-dropdown" type="timeEntry" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+              </Row>
+            </Col>
+          </Row>
+        </Form>
+      </SearchBar>
 
       {(() => {
         if (this.props.timeEntries.loading) {

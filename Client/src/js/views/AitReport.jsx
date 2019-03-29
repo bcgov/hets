@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form  } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Form  } from 'react-bootstrap';
 import _ from 'lodash';
 import Moment from 'moment';
 
@@ -11,14 +11,16 @@ import * as Api from '../api';
 import * as Constant from '../constants';
 import store from '../store';
 
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SearchBar from '../components/ui/SearchBar.jsx';
 import DateControl from '../components/DateControl.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
 import Favourites from '../components/Favourites.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
-import TooltipButton from '../components/TooltipButton.jsx';
 
 import { formatDateTime, startOfCurrentFiscal, endOfCurrentFiscal, startOfPreviousFiscal, endOfPreviousFiscal, toZuluTime } from '../utils/date';
 
@@ -266,18 +268,16 @@ class AitReport extends React.Component {
 
     return <div id="ait-report">
       <PageHeader>AIT Report { resultCount }
-        <ButtonGroup id="ait-report-buttons">
-          <TooltipButton onClick={ this.print } disabled={ !this.props.aitResponses.loaded } disabledTooltip={ 'Please complete the search to enable this function.' }>
-            <Glyphicon glyph="print" title="Print" />
-          </TooltipButton>
+        <ButtonGroup>
+          <PrintButton disabled={ !this.props.aitResponses.loaded }/>
         </ButtonGroup>
       </PageHeader>
-      <Well id="ait-report-bar" bsSize="small" className="clearfix">
-        <Row>
-          <Form onSubmit={ this.search }>
-            <Col xs={9} sm={10}>
+      <SearchBar>
+        <Form onSubmit={ this.search }>
+          <Row>
+            <Col xs={9} sm={10} id="filters">
               <Row>
-                <ButtonToolbar id="ait-report-filters">
+                <ButtonToolbar>
                   <MultiDropdown
                     id="projectIds"
                     placeholder="Projects"
@@ -325,21 +325,21 @@ class AitReport extends React.Component {
                 if (this.state.search.dateRange === CUSTOM) {
                   return <Row>
                     <ButtonToolbar id="ait-report-custom-date-filters">
-                      <span>
-                        <DateControl id="startDate" date={ this.state.search.startDate } updateState={ this.updateSearchState } label="From:" title="start date"/>
-                        <DateControl id="endDate" date={ this.state.search.endDate } updateState={ this.updateSearchState } label="To:" title="end date"/>
-                      </span>
+                      <DateControl id="startDate" date={ this.state.search.startDate } updateState={ this.updateSearchState } label="From:" title="start date"/>
+                      <DateControl id="endDate" date={ this.state.search.endDate } updateState={ this.updateSearchState } label="To:" title="end date"/>
                     </ButtonToolbar>
                   </Row>;
                 }
               })()}
             </Col>
-          </Form>
-          <Col xs={3} sm={2}>
-            <Favourites id="ait-report-faves-dropdown" type="aitReport" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
-          </Col>
-        </Row>
-      </Well>
+            <Col xs={3} sm={2} id="search-buttons">
+              <Row>
+                <Favourites id="faves-dropdown" type="aitReport" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+              </Row>
+            </Col>
+          </Row>
+        </Form>
+      </SearchBar>
 
       {(() => {
         if (this.props.aitResponses.loading) {

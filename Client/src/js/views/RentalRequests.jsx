@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Alert, Row, Col, PageHeader, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form } from 'react-bootstrap';
 import { Link } from 'react-router';
 import _ from 'lodash';
 import Moment from 'moment';
@@ -14,6 +14,8 @@ import * as Constant from '../constants';
 import * as Log from '../history';
 import store from '../store';
 
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SearchBar from '../components/ui/SearchBar.jsx';
 import DateControl from '../components/DateControl.jsx';
 import DeleteButton from '../components/DeleteButton.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
@@ -286,16 +288,16 @@ class RentalRequests extends React.Component {
 
     return <div id="rental-requests-list">
       <PageHeader>Rental Requests { resultCount }
-        <ButtonGroup id="rental-requests-buttons">
+        <ButtonGroup>
           <PrintButton disabled={!this.props.rentalRequests.loaded}/>
         </ButtonGroup>
       </PageHeader>
-      <Well id="rental-requests-bar" bsSize="small" className="clearfix">
+      <SearchBar id="rental-requests-bar">
         <Form onSubmit={ this.search }>
           <Row>
-            <Col xs={9} sm={10}>
+            <Col xs={9} sm={10} id="filters">
               <Row>
-                <ButtonToolbar id="rental-requests-filters">
+                <ButtonToolbar>
                   <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                     items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
                   <DropdownControl id="status" title={ this.state.search.status } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
@@ -312,21 +314,21 @@ class RentalRequests extends React.Component {
                 if (this.state.search.dateRange === CUSTOM) {
                   return <Row>
                     <ButtonToolbar id="rental-requests-custom-date-filters">
-                      <span>
-                        <DateControl id="startDate" date={ this.state.search.startDate } updateState={ this.updateSearchState } label="From:" title="start date"/>
-                        <DateControl id="endDate" date={ this.state.search.endDate } updateState={ this.updateSearchState } label="To:" title="end date"/>
-                      </span>
+                      <DateControl id="startDate" date={ this.state.search.startDate } updateState={ this.updateSearchState } label="From:" title="start date"/>
+                      <DateControl id="endDate" date={ this.state.search.endDate } updateState={ this.updateSearchState } label="To:" title="end date"/>
                     </ButtonToolbar>
                   </Row>;
                 }
               })()}
             </Col>
-            <Col xs={3} sm={2}>
-              <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+            <Col xs={3} sm={2} id="search-buttons">
+              <Row>
+                <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+              </Row>
             </Col>
           </Row>
         </Form>
-      </Well>
+      </SearchBar>
 
       {(() => {
         if (this.props.rentalRequests.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
