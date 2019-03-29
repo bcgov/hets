@@ -116,11 +116,15 @@ class Favourites extends React.Component {
     pullRight: PropTypes.bool,
   };
 
-  state = {
-    favouriteToEdit: {},
-    showEditDialog: false,
-    open: false,
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      favouriteToEdit: {},
+      showEditDialog: false,
+      open: false,
+    };
+  }
 
   addFavourite = () => {
     this.editFavourite({

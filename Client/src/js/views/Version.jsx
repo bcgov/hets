@@ -21,13 +21,17 @@ class Version extends React.Component {
     version: PropTypes.object,
   };
 
-  state = {
-    loading: false,
-    showRawSection: false,
-    buildtime : '',
-    version : '',
-    commit : '',
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: false,
+      showRawSection: false,
+      buildtime : '',
+      version : '',
+      commit : '',
+    };
+  }
 
   componentDidMount() {
     this.setState({ loading: true });

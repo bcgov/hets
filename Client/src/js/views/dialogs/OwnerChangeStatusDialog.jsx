@@ -22,11 +22,15 @@ class ChangeStatusDialog extends React.Component {
     onStatusChanged: PropTypes.func.isRequired,
   };
 
-  state = {
-    comment: '',
-    commentError: '',
-    statusError: '',
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      comment: '',
+      commentError: '',
+      statusError: '',
+    };
+  }
 
   updateState = (state, callback) => {
     this.setState(state, callback);

@@ -37,12 +37,13 @@ class DropdownControl extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      simple: _.has(this.props, 'title'),
 
-      selectedId: this.props.selectedId || '',
-      title: this.buildTitle(this.props.title),
-      fieldName: this.props.fieldName || 'name',
+    this.state = {
+      simple: _.has(props, 'title'),
+
+      selectedId: props.selectedId || '',
+      title: this.buildTitle(props.title),
+      fieldName: props.fieldName || 'name',
       open: false,
     };
   }

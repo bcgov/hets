@@ -32,12 +32,11 @@ class RentalRequestsAddDialog extends React.Component {
 
   constructor(props) {
     super(props);
-    const { project } = props;
 
     this.state = {
       loading: false,
       savingError: '',
-      projectId: project ? project.id : 0,
+      projectId: props.project ? props.project.id : 0,
       localAreaId: 0,
       equipmentTypeId: 0,
       count: 1,

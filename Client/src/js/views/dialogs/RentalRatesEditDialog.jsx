@@ -25,10 +25,9 @@ class RentalRatesEditDialog extends React.Component {
 
   constructor(props) {
     super(props);
-    var isNew = props.rentalRate.id === 0;
 
     this.state = {
-      isNew: isNew,
+      isNew: props.rentalRate.id === 0,
 
       forms: [{
         isIncludedInTotal: props.rentalRate.isIncludedInTotal || false,

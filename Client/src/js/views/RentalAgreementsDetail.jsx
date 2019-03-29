@@ -40,21 +40,25 @@ class RentalAgreementsDetail extends React.Component {
     router: PropTypes.object,
   };
 
-  state = {
-    loading: true,
-    rentalAgreementDocumentLoading: false,
+  constructor(props) {
+    super(props);
 
-    showEditDialog: false,
-    showEquipmentRateDialog: false,
-    showRentalRateDialog: false,
-    showConditionDialog: false,
-    showCloneDialog: false,
+    this.state = {
+      loading: true,
+      rentalAgreementDocumentLoading: false,
 
-    cloneRentalAgreementError: '',
+      showEditDialog: false,
+      showEquipmentRateDialog: false,
+      showRentalRateDialog: false,
+      showConditionDialog: false,
+      showCloneDialog: false,
 
-    rentalRate: {},
-    rentalCondition: {},
-  };
+      cloneRentalAgreementError: '',
+
+      rentalRate: {},
+      rentalCondition: {},
+    };
+  }
 
   componentDidMount() {
     const { rentalAgreement } = this.props;

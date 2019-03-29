@@ -26,9 +26,13 @@ class Main extends React.Component {
     closeSessionTimeoutDialog: PropTypes.func,
   };
 
-  state = {
-    headerHeight: 0,
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      headerHeight: 0,
+    };
+  }
 
   componentDidMount() {
     const height = document.getElementById('header-main').clientHeight;

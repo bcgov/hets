@@ -18,9 +18,13 @@ class FileAttachDialog extends React.Component {
     onUpload: PropTypes.func,
   };
 
-  state = {
-    files: [],
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      files: [],
+    };
+  }
 
   filesPicked = (files) => {
     var existingFiles = this.state.files.slice();

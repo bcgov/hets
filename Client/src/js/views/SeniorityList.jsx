@@ -16,10 +16,14 @@ class SeniorityList extends React.Component {
     localAreas: PropTypes.object,
   };
 
-  state = {
-    selectedEquipmentTypeIds: [],
-    selectedLocalAreaIds: [],
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      selectedEquipmentTypeIds: [],
+      selectedLocalAreaIds: [],
+    };
+  }
 
   componentDidMount() {
     this.fetch();

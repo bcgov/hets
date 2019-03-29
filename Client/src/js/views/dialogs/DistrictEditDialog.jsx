@@ -23,6 +23,7 @@ class DistrictEditDialog extends React.Component {
 
   constructor(props) {
     super(props);
+
     var isNew = props.district.id === 0;
 
     this.state = {

@@ -32,6 +32,7 @@ class UsersEditDialog extends React.Component {
 
   constructor(props) {
     super(props);
+
     var isNew = props.isNew;
 
     this.state = {

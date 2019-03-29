@@ -19,15 +19,19 @@ class OvertimeRateEditDialog extends React.Component {
     overtimeRateType: PropTypes.object.isRequired,
   };
 
-  state = {
-    rateId: this.props.overtimeRateType.id,
-    rateType: this.props.overtimeRateType.rateType || '',
-    description: this.props.overtimeRateType.description || '',
-    value: this.props.overtimeRateType.rate || 0,
-    concurrencyControlNumber: this.props.overtimeRateType.concurrencyControlNumber || 0,
-    descriptionError: '',
-    valueError: '',
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      rateId: props.overtimeRateType.id,
+      rateType: props.overtimeRateType.rateType || '',
+      description: props.overtimeRateType.description || '',
+      value: props.overtimeRateType.rate || 0,
+      concurrencyControlNumber: props.overtimeRateType.concurrencyControlNumber || 0,
+      descriptionError: '',
+      valueError: '',
+    };
+  }
 
   updateState = (state, callback) => {
     this.setState(state, callback);

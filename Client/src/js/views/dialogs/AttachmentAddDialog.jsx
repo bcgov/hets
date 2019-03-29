@@ -17,12 +17,16 @@ class AttachmentAddDialog extends React.Component {
     equipment: PropTypes.object.isRequired,
   };
 
-  state = {
-    forms: [{
-      typeName: '',
-      attachmentError: '',
-    }],
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      forms: [{
+        typeName: '',
+        attachmentError: '',
+      }],
+    };
+  }
 
   updateState = (state, index) => {
     const forms = this.state.forms.slice();

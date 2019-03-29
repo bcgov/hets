@@ -22,13 +22,17 @@ class Rollover extends React.Component {
     router: PropTypes.object,
   };
 
-  state = {
-    loading: true,
-    checkListStep1: false,
-    checkListStep2: false,
-    checkListStep3: false,
-    refreshStatusTimerId: null,
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: true,
+      checkListStep1: false,
+      checkListStep2: false,
+      checkListStep3: false,
+      refreshStatusTimerId: null,
+    };
+  }
 
   componentDidMount() {
     var user = this.props.currentUser;

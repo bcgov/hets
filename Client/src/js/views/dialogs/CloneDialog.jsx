@@ -28,11 +28,15 @@ class CloneDialog extends React.Component {
     cloneRentalAgreementError: PropTypes.string,
   };
 
-  state = {
-    loading: false,
-    rentalAgreementId: '',
-    type: BY_PROJECT,
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: false,
+      rentalAgreementId: '',
+      type: BY_PROJECT,
+    };
+  }
 
   componentDidMount() {
     var getProjectRentalAgreementsPromise = Api.getProjectRentalAgreements(this.props.rentalAgreement.project.id);

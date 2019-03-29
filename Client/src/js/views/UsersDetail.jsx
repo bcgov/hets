@@ -43,22 +43,26 @@ class UsersDetail extends React.Component {
     router: PropTypes.object,
   };
 
-  state = {
-    loading: true,
+  constructor(props) {
+    super(props);
 
-    district: {},
+    this.state = {
+      loading: true,
 
-    showEditDialog: false,
-    showUserRoleDialog: false,
-    showDistrictEditDialog: false,
+      district: {},
 
-    ui: {
-      // User roles
-      sortField: this.props.ui.sortField || 'roleName',
-      sortDesc: this.props.ui.sortDesc === true,
-      showExpiredOnly: false,
-    },
-  };
+      showEditDialog: false,
+      showUserRoleDialog: false,
+      showDistrictEditDialog: false,
+
+      ui: {
+        // User roles
+        sortField: props.ui.sortField || 'roleName',
+        sortDesc: props.ui.sortDesc === true,
+        showExpiredOnly: false,
+      },
+    };
+  }
 
   componentDidMount() {
     // if new user
@@ -383,10 +387,14 @@ class ExpireOverlay extends React.Component {
     hide: PropTypes.func,
   };
 
-  state = {
-    expiryDate: today(),
-    expiryDateError: '',
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      expiryDate: today(),
+      expiryDateError: '',
+    };
+  }
 
   updateState = (state, callback) => {
     this.setState(state, callback);

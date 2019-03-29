@@ -26,20 +26,24 @@ class BusinessPortal extends React.Component {
     uiOwners: PropTypes.object,
   };
 
-  state = {
-    loading: false,
-    validating: false,
-    success: false,
-    secretKey: '',
-    postalCode: '',
-    errors: {},
+  constructor(props) {
+    super(props);
 
-    // owners
-    uiOwners : {
-      sortField: this.props.uiOwners.sortField || 'organizationName',
-      sortDesc: this.props.uiOwners.sortDesc  === true,
-    },
-  };
+    this.state = {
+      loading: false,
+      validating: false,
+      success: false,
+      secretKey: '',
+      postalCode: '',
+      errors: {},
+
+      // owners
+      uiOwners : {
+        sortField: props.uiOwners.sortField || 'organizationName',
+        sortDesc: props.uiOwners.sortDesc  === true,
+      },
+    };
+  }
 
   componentDidMount() {
     const businessLoaded = Boolean(this.props.business);

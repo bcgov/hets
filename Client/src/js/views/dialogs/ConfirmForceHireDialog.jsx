@@ -16,9 +16,13 @@ class ConfirmForceHireDialog extends React.Component {
     onClose: PropTypes.func.isRequired,
   };
 
-  state = {
-    reasonForForceHire: '',
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      reasonForForceHire: '',
+    };
+  }
 
   componentDidMount() {
     this.input && this.input.focus();
