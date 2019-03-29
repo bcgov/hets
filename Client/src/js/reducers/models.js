@@ -242,7 +242,9 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, equipmentList: { data: {}, loading: false, loaded: false } };
 
     case Action.ADD_EQUIPMENT: case Action.UPDATE_EQUIPMENT:
-      return { ...state, equipment: action.equipment };
+      return produce(state, (draftState) => {
+        draftState.equipment[action.equipment.id] = action.equipment;
+      });
 
     case Action.UPDATE_EQUIPMENT_NOTES:
       return { ...state, equipmentNotes: action.notes };
