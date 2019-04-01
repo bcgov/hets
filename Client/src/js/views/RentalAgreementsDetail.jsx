@@ -53,8 +53,6 @@ class RentalAgreementsDetail extends React.Component {
       showConditionDialog: false,
       showCloneDialog: false,
 
-      cloneRentalAgreementError: '',
-
       rentalRate: {},
       rentalCondition: {},
     };
@@ -173,33 +171,7 @@ class RentalAgreementsDetail extends React.Component {
   };
 
   closeCloneDialog = () => {
-    this.setState({ showCloneDialog: false, cloneRentalAgreementError: '' });
-  };
-
-  cloneRentalAgreement = (rentalAgreementCloneId, type) => {
-    var data = {
-      projectId: this.props.rentalAgreement.project.id,
-      agreementToCloneId: rentalAgreementCloneId,
-      rentalAgreementId: this.props.rentalAgreement.id,
-    };
-    var clonePromise = Api.cloneProjectRentalAgreement;
-
-    if (type === Constant.BY_EQUIPMENT) {
-      data.equipmentId = this.props.rentalAgreement.equipment.id;
-      clonePromise = Api.cloneEquipmentRentalAgreement;
-    }
-
-    this.setState({ cloneRentalAgreementError: '' });
-    clonePromise(data).then(() => {
-      this.closeCloneDialog();
-      this.fetch();
-    }).catch((error) => {
-      if (error.status === 400 && (error.errorCode === 'HETS-11' || error.errorCode === 'HETS-12' || error.errorCode === 'HETS-13')) {
-        this.setState({ cloneRentalAgreementError: 'There was an error cloning the rental agreement.' });
-      } else {
-        throw error;
-      }
-    });
+    this.setState({ showCloneDialog: false });
   };
 
   render() {
@@ -530,8 +502,7 @@ class RentalAgreementsDetail extends React.Component {
           <CloneDialog
             show={this.state.showCloneDialog}
             rentalAgreement={rentalAgreement}
-            cloneRentalAgreementError={this.state.cloneRentalAgreementError}
-            onSave={this.cloneRentalAgreement}
+            onSave={this.fetch}
             onClose={this.closeCloneDialog}/>
         )}
       </div>
