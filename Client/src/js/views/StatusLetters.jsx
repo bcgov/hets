@@ -1,12 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, PageHeader, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
+import { Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../api';
 import * as Constant from '../constants';
 
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SearchBar from '../components/ui/SearchBar.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import DeleteButton from '../components/DeleteButton.jsx';
@@ -187,10 +189,10 @@ class StatusLetters extends React.Component {
     return (
       <div id="status-letters">
         <PageHeader>Status Letters / Mailing Labels</PageHeader>
-        <Well bsSize="small" className="clearfix">
+        <SearchBar>
           <Row>
-            <Col md={12}>
-              <ButtonToolbar className="btn-container">
+            <Col md={12} id="filters">
+              <ButtonToolbar>
                 <MultiDropdown
                   id="localAreaIds"
                   placeholder="Local Areas"
@@ -212,7 +214,7 @@ class StatusLetters extends React.Component {
               </ButtonToolbar>
             </Col>
           </Row>
-        </Well>
+        </SearchBar>
         {this.renderBatchReports()}
       </div>
     );

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import { PageHeader, Well, Row, Col, FormGroup, Alert, Button } from 'react-bootstrap';
+import { Well, Row, Col, FormGroup, Alert, Button } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Action from '../actionTypes';
@@ -11,6 +11,8 @@ import * as Constant from '../constants';
 import store from '../store';
 
 import Main from './Main.jsx';
+
+import PageHeader from '../components/ui/PageHeader.jsx';
 import Spinner from '../components/Spinner.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
 import SortTable from '../components/SortTable.jsx';

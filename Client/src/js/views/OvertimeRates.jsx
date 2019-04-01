@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { PageHeader, Button, ButtonGroup, Glyphicon, Well } from 'react-bootstrap';
+import { Button, ButtonGroup, Glyphicon, Well } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../api';
 import * as Constant from '../constants';
 
+import PageHeader from '../components/ui/PageHeader.jsx';
 import TableControl from '../components/TableControl.jsx';
 import Spinner from '../components/Spinner.jsx';
 import OvertimeRateEditDialog from './dialogs/OvertimeRateEditDialog.jsx';

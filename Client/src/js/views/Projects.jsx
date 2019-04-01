@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form  } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form  } from 'react-bootstrap';
 import _ from 'lodash';
 
 import ProjectsAddDialog from './dialogs/ProjectsAddDialog.jsx';
@@ -12,6 +12,9 @@ import * as Constant from '../constants';
 import * as Log from '../history';
 import store from '../store';
 
+import AddButtonContainer from '../components/ui/AddButtonContainer.jsx';
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SearchBar from '../components/ui/SearchBar.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
 import EditButton from '../components/EditButton.jsx';
 import Favourites from '../components/Favourites.jsx';
@@ -201,15 +204,15 @@ class Projects extends React.Component {
 
     return <div id="projects-list">
       <PageHeader>Projects { resultCount }
-        <ButtonGroup id="projects-buttons">
+        <ButtonGroup>
           <PrintButton disabled={!this.props.projects.loaded}/>
         </ButtonGroup>
       </PageHeader>
-      <Well id="projects-bar" bsSize="small" className="clearfix">
-        <Row>
-          <Form onSubmit={ this.search }>
-            <Col xs={9} sm={10}>
-              <ButtonToolbar id="projects-filters">
+      <SearchBar>
+        <Form onSubmit={ this.search }>
+          <Row>
+            <Col xs={9} sm={10} id="filters">
+              <ButtonToolbar>
                 <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
                   items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]} />
                 <FormInputControl id="projectName" type="text" placeholder="Project name" value={ this.state.search.projectName } updateState={ this.updateSearchState }></FormInputControl>
@@ -221,12 +224,14 @@ class Projects extends React.Component {
                 <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
               </ButtonToolbar>
             </Col>
-          </Form>
-          <Col xs={3} sm={2}>
-            <Favourites id="projects-faves-dropdown" type="project" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
-          </Col>
-        </Row>
-      </Well>
+            <Col xs={3} sm={2} id="search-buttons">
+              <Row>
+                <Favourites id="faves-dropdown" type="project" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+              </Row>
+            </Col>
+          </Row>
+        </Form>
+      </SearchBar>
 
       {(() => {
         if (this.props.projects.loading) {
@@ -243,7 +248,7 @@ class Projects extends React.Component {
           return this.renderResults(addProjectButton);
         }
 
-        return <div id="add-button-container">{ addProjectButton }</div>;
+        return <AddButtonContainer>{ addProjectButton }</AddButtonContainer>;
       })()}
       { this.state.showAddDialog && (
         <ProjectsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewProject } onClose={ this.closeAddDialog } />

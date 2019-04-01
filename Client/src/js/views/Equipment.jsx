@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import _ from 'lodash';
 import Moment from 'moment';
 
@@ -10,6 +10,8 @@ import * as Api from '../api';
 import * as Constant from '../constants';
 import store from '../store';
 
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SearchBar from '../components/ui/SearchBar.jsx';
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import DateControl from '../components/DateControl.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
@@ -198,16 +200,16 @@ class Equipment extends React.Component {
 
     return <div id="equipment-list">
       <PageHeader>Equipment { resultCount }
-        <ButtonGroup id="equipment-buttons">
+        <ButtonGroup>
           <PrintButton disabled={!this.props.equipmentList.loaded}/>
         </ButtonGroup>
       </PageHeader>
-      <Well id="equipment-bar" bsSize="small" className="clearfix">
+      <SearchBar>
         <Form onSubmit={ this.search }>
           <Row>
-            <Col xs={9} sm={10} id="equipment-filters">
+            <Col xs={9} sm={10} id="filters">
               <Row>
-                <ButtonToolbar id="equipment-filters-first-row">
+                <ButtonToolbar>
                   <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                     items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
                   <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
@@ -223,54 +225,44 @@ class Equipment extends React.Component {
                     updateState={this.updateSearchState}
                     showMaxItems={2}/>
                   <FormInputControl id="ownerName" type="text" placeholder="Company Name" value={ this.state.search.ownerName } updateState={ this.updateSearchState } />
-                  <span>
-                    <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
-                    <OverlayTrigger placement="top" rootClose overlay={ <Tooltip id="old-equipment-tooltip">Equipment 20 years or older</Tooltip> }>
-                      <span>
-                        <CheckboxControl inline id="twentyYears" checked={ this.state.search.twentyYears } updateState={ this.updateSearchState }>20+ Years</CheckboxControl>
-                      </span>
-                    </OverlayTrigger>
-                  </span>
+                  <CheckboxControl inline id="hired" checked={ this.state.search.hired } updateState={ this.updateSearchState }>Hired</CheckboxControl>
+                  <OverlayTrigger placement="top" rootClose overlay={ <Tooltip id="old-equipment-tooltip">Equipment 20 years or older</Tooltip> }>
+                    <CheckboxControl inline id="twentyYears" checked={ this.state.search.twentyYears } updateState={ this.updateSearchState }>20+ Years</CheckboxControl>
+                  </OverlayTrigger>
                 </ButtonToolbar>
               </Row>
               <Row>
-                <ButtonToolbar id="equipment-filters-second-row">
+                <ButtonToolbar>
                   <DateControl
                     id="lastVerifiedDate"
                     date={this.state.search.lastVerifiedDate}
                     label="Not Verified Since:"
                     title="Last Verified Date"
                     updateState={this.updateSearchState}/>
-                  <div className="input-container">
-                    <FormInputControl
-                      id="equipmentAttachment"
-                      placeholder="Attachment"
-                      type="text"
-                      value={this.state.search.equipmentAttachment}
-                      updateState={this.updateSearchState} />
-                  </div>
-                  <div className="input-container">
-                    <FormInputControl
-                      id="equipmentId"
-                      placeholder="Equipment Id"
-                      type="text"
-                      value={this.state.search.equipmentId}
-                      updateState={this.updateSearchState} />
-                  </div>
-                  <div className="input-container">
-                    <FormInputControl
-                      id="projectName"
-                      placeholder="Project Name"
-                      type="text"
-                      value={this.state.search.projectName}
-                      updateState={this.updateSearchState} />
-                  </div>
+                  <FormInputControl
+                    id="equipmentAttachment"
+                    placeholder="Attachment"
+                    type="text"
+                    value={this.state.search.equipmentAttachment}
+                    updateState={this.updateSearchState} />
+                  <FormInputControl
+                    id="equipmentId"
+                    placeholder="Equipment Id"
+                    type="text"
+                    value={this.state.search.equipmentId}
+                    updateState={this.updateSearchState} />
+                  <FormInputControl
+                    id="projectName"
+                    placeholder="Project Name"
+                    type="text"
+                    value={this.state.search.projectName}
+                    updateState={this.updateSearchState} />
                 </ButtonToolbar>
               </Row>
             </Col>
-            <Col xs={3} sm={2} id="equipment-search-buttons">
+            <Col xs={3} sm={2} id="search-buttons">
               <Row>
-                <Favourites id="equipment-faves-dropdown" type="equipment" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+                <Favourites id="faves-dropdown" type="equipment" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
               </Row>
               <Row>
                 <Button id="search-button" className="pull-right" bsStyle="primary" type="submit">Search</Button>
@@ -281,7 +273,7 @@ class Equipment extends React.Component {
             </Col>
           </Row>
         </Form>
-      </Well>
+      </SearchBar>
 
       {(() => {
 

@@ -2,102 +2,15 @@
 @import '../variables';
 
 #equipment-list {
-
-  #equipment-bar > .row {
-    @include flex;
-
-    .col-md-2 {
-      @include flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: flex-end;
-    }
-  }
-
-  #equipment-filters-first-row {
-    @include flex;
-    flex-wrap: wrap;
-
+  .search-bar #filters {
     .btn-group {
       width: calc(100% / 5);
       min-width: 150px;
     }
 
     .btn-group .btn {
-      margin-left: 0;
       width: 100%;
       max-width: 100%;
-      text-align: left;
-    }
-
-    > div {
-      margin: 5px;
-    }
-
-    .checkbox-control {
-      margin: 12px 5px 5px 5px;
-    }
-
-    > button {
-      margin: 5px;
-    }
-
-    > form > span {
-      margin-top: 10px;
-    }
-
-    > input {
-      float: left;
-      min-width: 175px;
-      margin: 5px;
-      width: auto;
-    }
-  }
-
-  #equipment-filters-second-row {
-    @include flex;
-    padding: 0 7px;
-
-    .input-container {
-      margin-left: 7px;
-      flex-grow: 1;
-    }
-
-    #lastVerifiedDate {
-      display: flex;
-      flex-shrink: 0;
-
-      label {
-        float: none;
-        margin-right: 7px;
-      }
-
-      .input-group {
-        display: block;
-        float: none;
-      }
-    }
-
-    .form-control {
-      margin: 0;
-    }
-
-    label {
-      margin: 7px 0;
-      font-weight: normal;
-    }
-  }
-
-  #equipment-faves-dropdown, #search-button, #clear-search-button {
-    width: 105px;
-    margin: 5px 0 0 5px;
-  }
-
-  #equipment-buttons {
-    float: right;
-
-    .btn {
-      width: 40px;
     }
   }
 }
