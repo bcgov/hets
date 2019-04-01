@@ -28,7 +28,10 @@ const DEFAULT_STATE = {
   appError: null,
   showErrorDialog: false,
   activeRentalAgreementId: null,
+  activeProjectId: null,
   activeRentalRequestId: null,
+  activeOwnerId: null,
+  activeEquipmentId: null,
 };
 
 export default function uiReducer(state = DEFAULT_STATE, action) {
@@ -108,6 +111,9 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
 
     case Action.SET_ACTIVE_OWNER_ID_UI:
       return { ...state, activeOwnerId: action.ownerId };
+
+    case Action.SET_ACTIVE_EQUIPMENT_ID_UI:
+      return { ...state, activeEquipmentId: action.equipmentId };
 
     case Action.UPDATE_AIT_REPORT_UI:
       return { ...state, aitResponses: action.aitResponses };

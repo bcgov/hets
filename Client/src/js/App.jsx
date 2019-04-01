@@ -128,6 +128,13 @@ function setActiveOwnerId(nextState, replace, callback) {
   Promise.resolve().then(callback);
 }
 
+function setActiveEquipmentId(nextState, replace, callback) {
+  store.dispatch({ type: Action.SET_ACTIVE_EQUIPMENT_ID_UI, equipmentId: nextState.params.equipmentId });
+  // TODO: When react was updated (HETS-1100) it broke how this worked. We now need to delay
+  // mounting the <Route> in order that `mapStateToProps` is called with the current store's state.
+  Promise.resolve().then(callback);
+}
+
 function keepAlive() {
   Api.keepAlive();
 }
@@ -154,7 +161,7 @@ const App = () => (
       <Route path="/" component={ Main } onEnter={ onEnterApplication }>
         <Route path={ Constant.HOME_PATHNAME } component={ Home }/>
         <Route path={ Constant.EQUIPMENT_PATHNAME } component={ Equipment }/>
-        <Route path={ `${ Constant.EQUIPMENT_PATHNAME }/:equipmentId` } component={ EquipmentDetail }/>
+        <Route path={ `${ Constant.EQUIPMENT_PATHNAME }/:equipmentId` } component={ EquipmentDetail } onEnter={ setActiveEquipmentId }/>
         <Route path={ Constant.OWNERS_PATHNAME } component={ Owners }/>
         <Route path={ `${ Constant.OWNERS_PATHNAME }/:ownerId` } component={ OwnersDetail } onEnter={setActiveOwnerId}/>
         <Route path={ `${ Constant.OWNERS_PATHNAME }/:ownerId/${ Constant.CONTACTS_PATHNAME }/:contactId` } component={ OwnersDetail } onEnter={setActiveOwnerId}/>
