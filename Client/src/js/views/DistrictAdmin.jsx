@@ -120,13 +120,8 @@ class DistrictAdmin extends React.Component {
     this.setState({ districtEquipmentType: equipment }, this.showDistrictEquipmentTypeAddEditDialog);
   };
 
-  onDistrictEquipmentTypeSave = (data) => {
-    let equipment = { ...data, district: { id: this.props.currentUser.district.id } };
-    const promise = equipment.id !== 0 ? Api.updateDistrictEquipmentType : Api.addDistrictEquipmentType;
-    promise(equipment).then(() => {
-      Api.getDistrictEquipmentTypes();
-      this.closeDistrictEquipmentTypeAddEditDialog();
-    });
+  districtEquipmentTypeSaved = () => {
+    Api.getDistrictEquipmentTypes();
   };
 
   deleteDistrictEquipmentType = (equipment) => {
@@ -261,7 +256,7 @@ class DistrictAdmin extends React.Component {
         <DistrictEquipmentTypeAddEditDialog
           show={this.state.showDistrictEquipmentTypeAddEditDialog}
           onClose={this.closeDistrictEquipmentTypeAddEditDialog}
-          onSave={this.onDistrictEquipmentTypeSave}
+          onSave={this.districtEquipmentTypeSaved}
           districtEquipmentType={this.state.districtEquipmentType}
         />
       }
