@@ -199,15 +199,9 @@ class EquipmentDetail extends React.Component {
     this.setState({ showPhysicalAttachmentDialog: false });
   };
 
-  addPhysicalAttachments = (attachmentTypeNames, equipment) => {
-    Api.addPhysicalAttachments(equipment.id, attachmentTypeNames).then(() => {
-      attachmentTypeNames.forEach((typeName) => {
-        Log.equipmentAttachmentAdded(equipment, typeName);
-      });
-      var equipId = this.props.params.equipmentId;
-      Api.getEquipment(equipId);
-      this.closePhysicalAttachmentDialog();
-    });
+  physicalAttachmentsAdded = () => {
+    var equipId = this.props.params.equipmentId;
+    Api.getEquipment(equipId);
   };
 
   openPhysicalAttachmentEditDialog = (attachment) => {
@@ -532,7 +526,7 @@ class EquipmentDetail extends React.Component {
         { this.state.showPhysicalAttachmentDialog && (
           <AttachmentAddDialog
             show={ this.state.showPhysicalAttachmentDialog }
-            onSave={ this.addPhysicalAttachments }
+            onSave={ this.physicalAttachmentsAdded }
             onClose={ this.closePhysicalAttachmentDialog }
             equipment={ equipment }/>
         )}
