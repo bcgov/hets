@@ -173,13 +173,6 @@ class EquipmentDetail extends React.Component {
     this.setState({ showSeniorityDialog: false });
   };
 
-  saveSeniorityEdit = (equipment) => {
-    Api.updateEquipment(equipment).finally(() => {
-      Log.equipmentSeniorityModified(this.props.equipment);
-      this.closeSeniorityDialog();
-    });
-  };
-
   openPhysicalAttachmentDialog = () => {
     this.setState({
       showPhysicalAttachmentDialog: true,
@@ -507,7 +500,6 @@ class EquipmentDetail extends React.Component {
         { this.state.showSeniorityDialog && (
           <SeniorityEditDialog
             show={ this.state.showSeniorityDialog }
-            onSave={ this.saveSeniorityEdit }
             onClose={ this.closeSeniorityDialog }/>
         )}
         { this.state.showPhysicalAttachmentDialog && (
