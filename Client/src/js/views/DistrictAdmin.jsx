@@ -96,16 +96,8 @@ class DistrictAdmin extends React.Component {
     this.setState({ showEquipmentTransferDialog: false });
   };
 
-  onConditionSave = (data) => {
-    let condition = { ...data, district: { id: this.props.currentUser.district.id } };
-    let promise = Api.addCondition;
-    if (condition.id !== 0) {
-      promise = Api.updateCondition;
-    }
-    promise(condition).then(() => {
-      Api.getRentalConditions();
-      this.closeConditionAddEditDialog();
-    });
+  conditionSaved = () => {
+    Api.getRentalConditions();
   };
 
   showDistrictEquipmentTypeAddEditDialog = () => {
@@ -261,7 +253,7 @@ class DistrictAdmin extends React.Component {
         <ConditionAddEditDialog
           show={this.state.showConditionAddEditDialog}
           onClose={this.closeConditionAddEditDialog}
-          onSave={this.onConditionSave}
+          onSave={this.conditionSaved}
           condition={this.state.condition}
         />
       }
