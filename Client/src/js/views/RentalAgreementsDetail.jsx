@@ -420,7 +420,8 @@ class RentalAgreementsDetail extends React.Component {
           {(() => {
             if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
-            var rentalConditions = rentalAgreement.rentalAgreementConditions;
+            // newly-added conditions (with an id of 0) need to appear at the end of the list
+            var rentalConditions = _.orderBy(rentalAgreement.rentalAgreementConditions, [c => c.id === 0, c => c.id], ['asc', 'asc']);
 
             var button = <Button title="Add Rental Condition" bsSize="small" className="no-margin" onClick={ this.addCondition }>
               <Glyphicon glyph="plus" className="mr-5" />
