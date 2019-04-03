@@ -41,7 +41,7 @@ class SeniorityEditDialog extends React.Component {
       isSeniorityOverridden: props.equipment.isSeniorityOverridden,
       seniorityOverrideReason: props.equipment.seniorityOverrideReason,
 
-      seniorityDateError: null,
+      approvedDateError: null,
       serviceHoursLastYearError: null,
       serviceHoursTwoYearsAgoError: null,
       serviceHoursThreeYearsAgoError: null,
