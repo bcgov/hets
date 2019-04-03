@@ -106,7 +106,7 @@ class ProjectsEditDialog extends React.Component {
     return valid;
   };
 
-  onSubmit = () => {
+  formSubmitted = () => {
     if (this.isValid()) {
       if (this.didChange()) {
         const project = {
@@ -139,18 +139,14 @@ class ProjectsEditDialog extends React.Component {
   };
 
   render() {
-    const { isSaving } = this.state;
-    const { show, onClose } = this.props;
-
     // TODO: Restrict Information box resize
     return (
       <FormDialog
         id="projects-edit"
-        show={show}
+        show={ this.props.show }
         title="Projects"
-        isSaving={isSaving}
-        onClose={onClose}
-        onSubmit={this.onSubmit}>
+        onClose={ this.props.onClose}
+        onSubmit={ this.formSubmitted }>
         <Form>
           <Grid fluid>
             <Row>
