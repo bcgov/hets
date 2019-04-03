@@ -164,7 +164,7 @@ class RentalRatesEditDialog extends React.Component {
                 <Col md={2}>
                   <FormGroup controlId={`rate${i}`} validationState={ form.rateError ? 'error' : null }>
                     <ControlLabel>Rate <sup>*</sup></ControlLabel>
-                    <FormInputControl type="float" min={ 0 } defaultValue={ form.rate.toFixed(2) } readOnly={ isReadOnly } updateState={ this.updateState } autoFocus />
+                    <FormInputControl type="float" min={ 0 } defaultValue={ (form.rate || 0).toFixed(2) } readOnly={ isReadOnly } updateState={ this.updateState } autoFocus />
                     <HelpBlock>{ form.rateError }</HelpBlock>
                   </FormGroup>
                 </Col>

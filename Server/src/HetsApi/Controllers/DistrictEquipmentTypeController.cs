@@ -119,18 +119,33 @@ namespace HetsApi.Controllers
             // get users district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, HttpContext);
 
-            IQueryable<DistrictEquipmentTypeHire> equipmentTypes = _context.HetRentalRequestRotationList.AsNoTracking()
-                .Include(x => x.RentalRequest)
-                    .ThenInclude(y => y.Project)
+            // get active status
+            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            // get fiscal year
+            HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
+                .First(x => x.DistrictId == districtId);
+
+            int? fiscalYear = status.CurrentFiscalYear;
+            if (fiscalYear == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // fiscal year in the status table stores the "start" of the year
+            DateTime fiscalYearStart = new DateTime((int)fiscalYear, 3, 31);
+
+            IEnumerable<DistrictEquipmentTypeHire> equipmentTypes = _context.HetRentalAgreement.AsNoTracking()
+                .Include(x => x.Project)
                 .Include(x => x.Equipment)
-                    .ThenInclude(y => y.DistrictEquipmentType)
-                .Where(x => x.RentalRequest.LocalArea.ServiceArea.DistrictId.Equals(districtId))
-                .GroupBy(x => x.Equipment.DistrictEquipmentType, (e, rotationLists) => new DistrictEquipmentTypeHire
-                {
-                    DistrictEquipmentTypeId = e.DistrictEquipmentTypeId,
-                    DistrictEquipmentName = e.DistrictEquipmentName,
-                    ProjectIds = rotationLists.Select(y => y.RentalRequest.ProjectId).Distinct().ToList(),
-                });
+                .ThenInclude(y => y.DistrictEquipmentType)
+            .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
+                        x.Equipment.EquipmentStatusTypeId == statusId &&
+                        x.Project.DbCreateTimestamp > fiscalYearStart)
+            .GroupBy(x => x.Equipment.DistrictEquipmentType, (et, ra) => new DistrictEquipmentTypeHire
+            {
+                DistrictEquipmentTypeId = et.DistrictEquipmentTypeId,
+                DistrictEquipmentName = et.DistrictEquipmentName,
+                ProjectIds = ra.Select(x => x.ProjectId).Distinct().ToList(),
+            });
 
             return new ObjectResult(new HetsResponse(equipmentTypes));
         }

@@ -113,7 +113,7 @@ class AitReport extends React.Component {
   componentDidMount() {
     Api.getProjectsCurrentFiscal();
     Api.getDistrictEquipmentTypeHires();
-    Api.getEquipmentHires();
+    Api.getEquipmentTs();
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
@@ -359,7 +359,7 @@ function mapStateToProps(state) {
     currentUser: state.user,
     projects: state.lookups.projectsCurrentFiscal,
     districtEquipmentTypes: state.lookups.districtEquipmentTypeHires,
-    equipment: state.lookups.equipment.hires,
+    equipment: state.lookups.equipment.ts,
     aitResponses: state.models.aitResponses,
     favourites: state.models.favourites.aitReport,
     search: state.search.aitResponses,
