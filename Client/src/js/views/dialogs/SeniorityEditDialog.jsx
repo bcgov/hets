@@ -33,7 +33,7 @@ class SeniorityEditDialog extends React.Component {
       serviceHoursLastYear: props.equipment.serviceHoursLastYear,
       serviceHoursTwoYearsAgo: props.equipment.serviceHoursTwoYearsAgo,
       serviceHoursThreeYearsAgo: props.equipment.serviceHoursThreeYearsAgo,
-      seniorityEffectiveDate: props.equipment.seniorityEffectiveDate || today(),
+      approvedDate: props.equipment.approvedDate || today(),
       yearsRegistered: props.equipment.yearsOfService,
       isSeniorityOverridden: props.equipment.isSeniorityOverridden,
       seniorityOverrideReason: props.equipment.seniorityOverrideReason,
@@ -55,7 +55,7 @@ class SeniorityEditDialog extends React.Component {
     if (this.state.serviceHoursLastYear !== this.props.equipment.serviceHoursLastYear) { return true; }
     if (this.state.serviceHoursTwoYearsAgo !== this.props.equipment.serviceHoursTwoYearsAgo) { return true; }
     if (this.state.serviceHoursThreeYearsAgo !== this.props.equipment.serviceHoursThreeYearsAgo) { return true; }
-    if (this.state.seniorityEffectiveDate !== this.props.equipment.seniorityEffectiveDate) { return true; }
+    if (this.state.approvedDate !== this.props.equipment.approvedDate) { return true; }
     if (this.state.yearsRegistered !== this.props.equipment.yearsRegistered) { return true; }
     if (this.state.isSeniorityOverridden !== this.props.equipment.isSeniorityOverridden) { return true; }
     if (this.state.seniorityOverrideReason !== this.props.equipment.seniorityOverrideReason) { return true; }
@@ -65,7 +65,7 @@ class SeniorityEditDialog extends React.Component {
 
   isValid = () => {
     this.setState({
-      seniorityDateError: null,
+      approvedDateError: null,
       serviceHoursLastYearError: null,
       serviceHoursTwoYearsAgoError: null,
       serviceHoursThreeYearsAgoError: null,
@@ -91,14 +91,14 @@ class SeniorityEditDialog extends React.Component {
     }
 
     // Validate registered date
-    if (isBlank(this.state.seniorityEffectiveDate)) {
-      this.setState({ seniorityDateError: 'Registered date is required' });
+    if (isBlank(this.state.approvedDate)) {
+      this.setState({ approvedDateError: 'Registered date is required' });
       valid = false;
-    } else if (!isValidDate(this.state.seniorityEffectiveDate)) {
-      this.setState({ seniorityDateError: 'Registered date not valid' });
+    } else if (!isValidDate(this.state.approvedDate)) {
+      this.setState({ approvedDateError: 'Registered date not valid' });
       valid = false;
-    } else if (daysFromToday(this.state.seniorityEffectiveDate) > 0) {
-      this.setState({ seniorityDateError: 'Registration date must be today or earlier' });
+    } else if (daysFromToday(this.state.approvedDate) > 0) {
+      this.setState({ approvedDateError: 'Registration date must be today or earlier' });
       valid = false;
     }
 
@@ -124,7 +124,7 @@ class SeniorityEditDialog extends React.Component {
       serviceHoursLastYear: (this.state.serviceHoursLastYear || 0).toFixed(2),
       serviceHoursTwoYearsAgo: (this.state.serviceHoursTwoYearsAgo || 0).toFixed(2),
       serviceHoursThreeYearsAgo: (this.state.serviceHoursThreeYearsAgo || 0).toFixed(2),
-      seniorityEffectiveDate: toZuluTime(this.state.seniorityEffectiveDate),
+      approvedDate: toZuluTime(this.state.approvedDate),
       yearsOfService: this.state.yearsRegistered,
       isSeniorityOverridden: this.state.isSeniorityOverridden,
       seniorityOverrideReason: this.state.seniorityOverrideReason,
@@ -175,10 +175,10 @@ class SeniorityEditDialog extends React.Component {
             </Row>
             <Row>
               <Col>
-                <FormGroup validationState={ this.state.seniorityDateError ? 'error' : null }>
+                <FormGroup validationState={ this.state.approvedDateError ? 'error' : null }>
                   <ControlLabel>Registered Date <sup>*</sup></ControlLabel>
-                  <DateControl id="seniorityEffectiveDate" date={ this.state.seniorityEffectiveDate } updateState={ this.updateState } title="registered date"/>
-                  <HelpBlock>{ this.state.seniorityDateError }</HelpBlock>
+                  <DateControl id="approvedDate" date={ this.state.approvedDate } updateState={ this.updateState } title="registered date"/>
+                  <HelpBlock>{ this.state.approvedDateError }</HelpBlock>
                 </FormGroup>
               </Col>
             </Row>
