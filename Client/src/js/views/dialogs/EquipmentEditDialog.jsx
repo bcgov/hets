@@ -49,7 +49,7 @@ class EquipmentEditDialog extends React.Component {
       pupLegalCapacity: props.equipment.pupLegalCapacity || '',
 
       serialNumberError: null,
-      duplicateSerialNumber: false,
+      duplicateSerialNumberWarning: false,
       makeError: '',
       modelError: '',
       yearError: null,
@@ -62,7 +62,7 @@ class EquipmentEditDialog extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (!_.isEqual(this.state.serialNumber, prevState.serialNumber)) {
-      this.setState({ duplicateSerialNumber: false, serialNumberError: '' });
+      this.setState({ duplicateSerialNumberWarning: false, serialNumberError: '' });
     }
   }
 
@@ -129,13 +129,13 @@ class EquipmentEditDialog extends React.Component {
   };
 
   checkForDuplicatesAndSave = () => {
-    if (this.state.duplicateSerialNumber) {
+    if (this.state.duplicateSerialNumberWarning) {
       // proceed regardless of duplicates
-      this.setState({ duplicateSerialNumber: false });
+      this.setState({ duplicateSerialNumberWarning: false });
       return this.onSave();
     }
 
-    return Api.equipmentDuplicateCheck(this.props.equipment.id, this.state.serialNumber, this.state.equipmentTypeId).then((response) => {
+    return Api.equipmentDuplicateCheck(this.props.equipment.id, this.state.serialNumber).then((response) => {
       if (response.data.length > 0) {
         const equipmentCodes = response.data.map((district) => {
           return district.duplicateEquipment.equipmentCode;
@@ -151,7 +151,7 @@ class EquipmentEditDialog extends React.Component {
         });
         return null;
       } else {
-        this.setState({ duplicateSerialNumber: false });
+        this.setState({ duplicateSerialNumberWarning: false });
         return this.onSave();
       }
     });
@@ -186,7 +186,7 @@ class EquipmentEditDialog extends React.Component {
 
     return <EditDialog id="equipment-edit" show={ this.props.show }
       onClose={ this.props.onClose } onSave={ this.checkForDuplicatesAndSave } didChange={ this.didChange } isValid={ this.isValid }
-      saveText={ this.state.duplicateSerialNumber ? 'Proceed Anyways' : 'Save' }
+      saveText={ this.state.duplicateSerialNumberWarning ? 'Proceed Anyways' : 'Save' }
       title={<strong>Equipment Id: <small>{ equipment.equipmentCode }</small></strong>}>
       {(() => {
         return <Form>

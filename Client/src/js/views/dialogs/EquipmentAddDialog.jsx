@@ -142,7 +142,7 @@ class EquipmentAddDialog extends React.Component {
 
       this.setState({ isSaving: true });
 
-      return Api.equipmentDuplicateCheck(0, this.state.serialNumber, this.state.equipmentTypeId).then((response) => {
+      return Api.equipmentDuplicateCheck(0, this.state.serialNumber).then((response) => {
         this.setState({ isSaving: false });
 
         if (response.data.length > 0) {
