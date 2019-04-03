@@ -329,7 +329,8 @@ class RentalAgreementsDetail extends React.Component {
 
             if (Object.keys(includedRates || []).length === 0) { return <div><Alert bsStyle="success">No included rates or attachments</Alert>{ button }</div>; }
 
-            includedRates = _.orderBy(includedRates, ['rate'], ['desc']);
+            // newly-added rates (with an id of 0) need to appear at the end of the list
+            includedRates = _.orderBy(includedRates, [r => r.id === 0, r => r.id], ['asc', 'asc']);
 
             return <div id="included-rates">
               <Table striped condensed hover bordered>
@@ -380,7 +381,8 @@ class RentalAgreementsDetail extends React.Component {
 
             if (Object.keys(asNeededRates || []).length === 0) { return <div><Alert bsStyle="success">No as-needed rates or attachments</Alert>{ button }</div>; }
 
-            asNeededRates = _.orderBy(asNeededRates, ['rate'], ['desc']);
+            // newly-added rates (with an id of 0) need to appear at the end of the list
+            asNeededRates = _.orderBy(asNeededRates, [r => r.id === 0, r => r.id], ['asc', 'asc']);
 
             return <div id="as-needed-rates">
               <Table striped condensed hover bordered>

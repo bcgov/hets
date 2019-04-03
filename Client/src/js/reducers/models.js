@@ -490,7 +490,7 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     case Action.ADD_RENTAL_RATES:
       return produce(state, (draftState) => {
         const rentalAgreementRates = draftState.rentalAgreement[action.rentalAgreementId].rentalAgreementRates;
-        rentalAgreementRates.unshift(...action.rentalRates);
+        rentalAgreementRates.push(...action.rentalRates);
       });
 
     case Action.UPDATE_RENTAL_RATES:
