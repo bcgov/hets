@@ -454,7 +454,7 @@ class EquipmentDetail extends React.Component {
                     </Col>
                     <Col lg={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Registered Date">
-                        { formatDateTime(equipment.seniorityEffectiveDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
+                        { formatDateTime(equipment.approvedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
                       </ColDisplay>
                     </Col>
                     <Col lg={12}>
