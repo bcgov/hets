@@ -55,11 +55,11 @@ namespace HetsData.Helpers
     }
 
     public class SeniorityListPdfViewModel
-    {     
+    {
         public string PrintedOn { get; set; }
 
         public List<SeniorityListRecord> SeniorityListRecords { get; set; }
-                
+
         public string ToJson()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
@@ -77,12 +77,12 @@ namespace HetsData.Helpers
 
         /// <summary>
         /// Calculate the Seniority List
-        /// </summary>        
+        /// </summary>
         /// <param name="localAreaId"></param>
         /// <param name="districtEquipmentTypeId"></param>
         /// <param name="context"></param>
         /// <param name="seniorityScoringRules"></param>
-        public static void CalculateSeniorityList(int localAreaId, int districtEquipmentTypeId, 
+        public static void CalculateSeniorityList(int localAreaId, int districtEquipmentTypeId,
             DbAppContext context, string seniorityScoringRules)
         {
             try
@@ -104,7 +104,7 @@ namespace HetsData.Helpers
 
                     if (equipmentTypeRecord != null)
                     {
-                        // get rules                  
+                        // get rules
                         int seniorityScoring = equipmentTypeRecord.IsDumpTruck
                             ? scoringRules.GetEquipmentScore("DumpTruck")
                             : scoringRules.GetEquipmentScore();
@@ -165,7 +165,7 @@ namespace HetsData.Helpers
 
         /// <summary>
         /// Assign blocks for the given local area and equipment type
-        /// </summary>        
+        /// </summary>
         /// <param name="localAreaId"></param>
         /// <param name="districtEquipmentTypeId"></param>
         /// <param name="blockSize"></param>
@@ -235,21 +235,21 @@ namespace HetsData.Helpers
                     return false; // not adding this record to the block
                 }
 
-                // check if this record's Owner already exists in the block   
+                // check if this record's Owner already exists in the block
                 if (currentBlock < (totalBlocks - 1) && blocks[currentBlock].Contains(equipment.Owner.OwnerId))
                 {
                     return false; // not adding this record to the block
                 }
 
                 // (HETS-877) check if this is a maintenance contractor - can only be in the last block
-                if (currentBlock < (totalBlocks - 1) && 
+                if (currentBlock < (totalBlocks - 1) &&
                     equipment.Owner.IsMaintenanceContractor != null &&
                     equipment.Owner.IsMaintenanceContractor == true)
                 {
                     return false; // not adding this record to the block
                 }
 
-                // add record to the block                        
+                // add record to the block
                 blocks[currentBlock].Add(equipment.Owner.OwnerId);
 
                 // update the equipment record
@@ -284,7 +284,7 @@ namespace HetsData.Helpers
         /// <param name="model"></param>
         /// <param name="scoringRules"></param>
         /// <param name="rotationList"></param>
-        /// <param name="context"></param>        
+        /// <param name="context"></param>
         /// <returns></returns>
         public static SeniorityViewModel ToSeniorityViewModel(HetEquipment model, SeniorityScoringRules scoringRules,
             HetRentalRequestRotationList rotationList, DbAppContext context)
@@ -302,7 +302,7 @@ namespace HetsData.Helpers
                     ? scoringRules.GetTotalBlocks("DumpTruck") + 1
                     : scoringRules.GetTotalBlocks() + 1;
             }
-            
+
             // get equipment block number
             int blockNumber = 0;
             if (model.BlockNumber != null)
@@ -339,9 +339,9 @@ namespace HetsData.Helpers
                 seniorityViewModel.OwnerId = model.OwnerId;
             }
 
-            // replacing Open with 3 (HETS-968 Rotation list -Wrong Block number for Open block)           
-            seniorityViewModel.Block = blockNumber == numberOfBlocks ? "3" : blockNumber.ToString();            
-            
+            // replacing Open with 3 (HETS-968 Rotation list -Wrong Block number for Open block)
+            seniorityViewModel.Block = blockNumber == numberOfBlocks ? "3" : blockNumber.ToString();
+
             // format the seniority value
             seniorityViewModel.Seniority = $"{model.Seniority:0.###}";
 
@@ -502,5 +502,5 @@ namespace HetsData.Helpers
         }
     }
 
-    #endregion    
+    #endregion
 }
