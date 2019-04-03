@@ -135,7 +135,7 @@ class EquipmentEditDialog extends React.Component {
       return this.onSave();
     }
 
-    return Api.equipmentDuplicateCheck(this.props.equipment.id, this.state.serialNumber, this.state.equipmentTypeId).then((response) => {
+    return Api.equipmentDuplicateCheck(this.props.equipment.id, this.state.serialNumber).then((response) => {
       if (response.data.length > 0) {
         const equipmentCodes = response.data.map((district) => {
           return district.duplicateEquipment.equipmentCode;
