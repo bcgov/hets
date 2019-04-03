@@ -897,7 +897,7 @@ namespace HetsApi.Controllers
         /// <param name="serialNumber"></param>
         /// <param name="typeId">District Equipment Type Id</param>
         [HttpGet]
-        [Route("{id}/duplicates/{serialNumber}/{typeId}")]
+        [Route("{id}/duplicates/{serialNumber}/{typeId?}")]
         [SwaggerOperation("EquipmentIdEquipmentDuplicatesGet")]
         [SwaggerResponse(200, type: typeof(List<DuplicateEquipmentModel>))]
         [RequiresPermission(HetPermission.Login)]
