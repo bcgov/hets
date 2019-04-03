@@ -6,11 +6,11 @@ import { FormGroup, HelpBlock, ControlLabel, FormControl, Grid, Row, Col } from 
 
 import * as Api from '../../api';
 import * as Constant from '../../constants';
+import * as Log from '../../history';
 
+import FormDialog from '../../components/FormDialog.jsx';
 import DropdownControl from '../../components/DropdownControl.jsx';
-import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 import { isBlank, notBlank } from '../../utils/string';
 
@@ -28,6 +28,7 @@ class ProjectsAddDialog extends React.Component {
     super(props);
 
     this.state = {
+      isSaving: false,
       name: '',
       fiscalYear: _.first(_.takeRight(props.fiscalYears, 2)),
       provincialProjectNumber: '',
@@ -98,29 +99,49 @@ class ProjectsAddDialog extends React.Component {
     return valid;
   };
 
-  onSave = () => {
-    this.props.onSave({
-      name: this.state.name,
-      fiscalYear: this.state.fiscalYear,
-      provincialProjectNumber: this.state.provincialProjectNumber,
-      district: { id: this.props.currentUser.district.id },
-      status: Constant.PROJECT_STATUS_CODE_ACTIVE,
-      responsibilityCentre: this.state.responsibilityCentre,
-      serviceLine: this.state.serviceLine,
-      stob: this.state.stob,
-      product: this.state.product,
-      businessFunction: this.state.businessFunction,
-      workActivity: this.state.workActivity,
-      costType: this.state.costType,
-      information: this.state.information,
-    });
+  formSubmitted = () => {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        this.setState({ isSaving: true });
+
+        var project = {
+          name: this.state.name,
+          fiscalYear: this.state.fiscalYear,
+          provincialProjectNumber: this.state.provincialProjectNumber,
+          district: { id: this.props.currentUser.district.id },
+          status: Constant.PROJECT_STATUS_CODE_ACTIVE,
+          responsibilityCentre: this.state.responsibilityCentre,
+          serviceLine: this.state.serviceLine,
+          stob: this.state.stob,
+          product: this.state.product,
+          businessFunction: this.state.businessFunction,
+          workActivity: this.state.workActivity,
+          costType: this.state.costType,
+          information: this.state.information,
+        };
+
+        const promise = Api.addProject(project);
+
+        promise.then((newProject) => {
+          Log.projectAdded(newProject);
+          this.setState({ isSaving: false });
+          if (this.props.onSave) { this.props.onSave(newProject); }
+          this.props.onClose();
+        });
+      } else {
+        this.props.onClose();
+      }
+    }
   };
 
   render() {
-    return <EditDialog id="add-project" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={<strong>Add Project</strong>}>
-      <Form>
+    return (
+      <FormDialog
+        id="add-project" show={ this.props.show }
+        title="Add Project"
+        isSaving={ this.state.isSaving }
+        onClose={ this.props.onClose }
+        onSubmit={ this.formSubmitted }>
         <Grid fluid>
           <Row>
             <Col xs={12}>
@@ -213,8 +234,8 @@ class ProjectsAddDialog extends React.Component {
             </Col>
           </Row>
         </Grid>
-      </Form>
-    </EditDialog>;
+      </FormDialog>
+    );
   }
 }
 

@@ -9,7 +9,6 @@ import ProjectsAddDialog from './dialogs/ProjectsAddDialog.jsx';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
-import * as Log from '../history';
 import store from '../store';
 
 import AddButtonContainer from '../components/ui/AddButtonContainer.jsx';
@@ -133,14 +132,10 @@ class Projects extends React.Component {
     this.setState({ showAddDialog: false });
   };
 
-  saveNewProject = (project) => {
-    Api.addProject(project).then((newProject) => {
-      this.fetch();
-      Log.projectAdded(newProject);
-      // Open it up
-      this.props.router.push({
-        pathname: `${ Constant.PROJECTS_PATHNAME }/${ newProject.id }`,
-      });
+  projectAdded = (project) => {
+    this.fetch();
+    this.props.router.push({
+      pathname: `${ Constant.PROJECTS_PATHNAME }/${ project.id }`,
     });
   };
 
@@ -251,7 +246,7 @@ class Projects extends React.Component {
         return <AddButtonContainer>{ addProjectButton }</AddButtonContainer>;
       })()}
       { this.state.showAddDialog && (
-        <ProjectsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewProject } onClose={ this.closeAddDialog } />
+        <ProjectsAddDialog show={ this.state.showAddDialog } onSave={ this.projectAdded } onClose={ this.closeAddDialog } />
       )}
     </div>;
   }
