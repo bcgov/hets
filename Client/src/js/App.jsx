@@ -52,10 +52,16 @@ function redirectIfRolloverActive(path) {
   var user = store.getState().user;
   if (!user.district) { return; }
 
-  Api.getRolloverStatus(user.district.id).then(() => {
-    var rolloverActive = store.getState().lookups.rolloverStatus.rolloverActive;
-    if (rolloverActive) {
+  const districtId = user.district.id;
+
+  Api.getRolloverStatus(districtId).then(() => {
+    const status = store.getState().lookups.rolloverStatus;
+
+    if (status.rolloverActive) {
       hashHistory.push('/' + Constant.ROLLOVER_PATHNAME);
+    } else if (status.rolloverComplete) {
+      // refresh fiscal years
+      Api.getFiscalYears(districtId);
     }
   });
 }

@@ -60,11 +60,19 @@ class Rollover extends React.Component {
   };
 
   refreshStatus = () => {
-    Api.getRolloverStatus(this.props.currentUser.district.id).then(() => {
-      var rolloverActive = this.props.rolloverStatus.rolloverActive;
-      if (!rolloverActive && this.state.refreshStatusTimerId !== null) {
+    const districtId = this.props.currentUser.district.id;
+
+    Api.getRolloverStatus(districtId).then(() => {
+      const status = this.props.rolloverStatus;
+
+      if (!status.rolloverActive && this.state.refreshStatusTimerId !== null) {
         clearInterval(this.state.refreshStatusTimerId);
         this.setState({ refreshStatusTimerId: null });
+      }
+
+      if (status.rolloverComplete) {
+        // refresh fiscal years
+        Api.getFiscalYears(districtId);
       }
     });
   };
