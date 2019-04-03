@@ -49,11 +49,8 @@ class OvertimeRates extends React.Component {
     this.setState({ showOvertimeRateEditDialog: false });
   };
 
-  onOvertimeRateSave = (data) => {
-    Api.updateOvertimeRateType(data).then(() => {
-      this.fetch();
-      this.closeOvertimeRateEditDialog();
-    });
+  overtimeRateSaved = () => {
+    this.fetch();
   };
 
   render() {
@@ -100,7 +97,7 @@ class OvertimeRates extends React.Component {
         <OvertimeRateEditDialog
           show={this.state.showOvertimeRateEditDialog}
           onClose={this.closeOvertimeRateEditDialog}
-          onSave={this.onOvertimeRateSave}
+          onSave={this.overtimeRateSaved}
           overtimeRateType={this.state.overtimeRateType}
         />
       }
