@@ -146,15 +146,6 @@ class EquipmentDetail extends React.Component {
     this.setState({ showEditDialog: false });
   };
 
-  saveEdit = (equipment) => {
-    return Api.updateEquipment(equipment).then(() => {
-      Log.equipmentModified(this.props.equipment);
-      this.closeEditDialog();
-
-      return null;
-    });
-  };
-
   updateStatusState = (state) => {
     if (state !== this.props.equipment.status) {
       this.setState({ status: state }, () => this.openChangeStatusDialog());
@@ -510,8 +501,8 @@ class EquipmentDetail extends React.Component {
         { this.state.showEditDialog && (
           <EquipmentEditDialog
             show={ this.state.showEditDialog }
-            onSave={ this.saveEdit }
-            onClose= { this.closeEditDialog }/>
+            onClose= { this.closeEditDialog }
+            equipment={ equipment }/>
         )}
         { this.state.showSeniorityDialog && (
           <SeniorityEditDialog
