@@ -8,7 +8,6 @@ import OwnersAddDialog from './dialogs/OwnersAddDialog.jsx';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
-import * as Log from '../history';
 import store from '../store';
 
 import AddButtonContainer from '../components/ui/AddButtonContainer.jsx';
@@ -139,13 +138,10 @@ class Owners extends React.Component {
     this.setState({ showAddDialog: false });
   };
 
-  saveNewOwner = (owner) => {
-    Api.addOwner(owner).then((newOwner) => {
-      Log.ownerAdded(newOwner);
-      // Open it up
-      this.props.router.push({
-        pathname: `${ Constant.OWNERS_PATHNAME }/${ newOwner.id }`,
-      });
+  ownerSaved = (owner) => {
+    this.fetch();
+    this.props.router.push({
+      pathname: `${ Constant.OWNERS_PATHNAME }/${ owner.id }`,
     });
   };
 
@@ -244,7 +240,7 @@ class Owners extends React.Component {
         return <AddButtonContainer>{ addOwnerButton }</AddButtonContainer>;
       })()}
       { this.state.showAddDialog &&
-        <OwnersAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewOwner } onClose={ this.closeAddDialog } />
+        <OwnersAddDialog show={ this.state.showAddDialog } onSave={ this.ownerSaved } onClose={ this.closeAddDialog } />
       }
     </div>;
   }
