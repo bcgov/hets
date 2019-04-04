@@ -611,8 +611,6 @@ namespace HetsData.Helpers
                 };
             }
 
-
-
             // determine current fiscal year - check for existing rotation lists this year
             // HETS-1195: Adjust seniority list and rotation list for lists hired between Apr1 and roll over
             // ** Need to use the "rollover date" to ensure we don't include records created
