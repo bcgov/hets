@@ -284,7 +284,7 @@ class EquipmentTransferDialog extends React.Component {
     return (
       <ModalDialog
         backdrop="static"
-        className={ 'edit-dialog' }
+        className={ 'form-dialog' }
         id="equipment-transfer"
         title="Equipment Transfer"
         bsSize="large"

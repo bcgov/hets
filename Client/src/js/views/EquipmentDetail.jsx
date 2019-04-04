@@ -146,15 +146,6 @@ class EquipmentDetail extends React.Component {
     this.setState({ showEditDialog: false });
   };
 
-  saveEdit = (equipment) => {
-    return Api.updateEquipment(equipment).then(() => {
-      Log.equipmentModified(this.props.equipment);
-      this.closeEditDialog();
-
-      return null;
-    });
-  };
-
   updateStatusState = (state) => {
     if (state !== this.props.equipment.status) {
       this.setState({ status: state }, () => this.openChangeStatusDialog());
@@ -182,13 +173,6 @@ class EquipmentDetail extends React.Component {
     this.setState({ showSeniorityDialog: false });
   };
 
-  saveSeniorityEdit = (equipment) => {
-    Api.updateEquipment(equipment).finally(() => {
-      Log.equipmentSeniorityModified(this.props.equipment);
-      this.closeSeniorityDialog();
-    });
-  };
-
   openPhysicalAttachmentDialog = () => {
     this.setState({
       showPhysicalAttachmentDialog: true,
@@ -199,15 +183,9 @@ class EquipmentDetail extends React.Component {
     this.setState({ showPhysicalAttachmentDialog: false });
   };
 
-  addPhysicalAttachments = (attachmentTypeNames, equipment) => {
-    Api.addPhysicalAttachments(equipment.id, attachmentTypeNames).then(() => {
-      attachmentTypeNames.forEach((typeName) => {
-        Log.equipmentAttachmentAdded(equipment, typeName);
-      });
-      var equipId = this.props.params.equipmentId;
-      Api.getEquipment(equipId);
-      this.closePhysicalAttachmentDialog();
-    });
+  physicalAttachmentsAdded = () => {
+    var equipId = this.props.params.equipmentId;
+    Api.getEquipment(equipId);
   };
 
   openPhysicalAttachmentEditDialog = (attachment) => {
@@ -221,13 +199,9 @@ class EquipmentDetail extends React.Component {
     this.setState({ showPhysicalAttachmentEditDialog: false });
   };
 
-  updatePhysicalAttachment = (attachment) => {
-    Api.updatePhysicalAttachment(attachment).then(() => {
-      Log.equipmentAttachmentUpdated(this.props.equipment, attachment.typeName);
-      var equipId = this.props.params.equipmentId;
-      Api.getEquipment(equipId);
-      this.closePhysicalAttachmentEditDialog();
-    });
+  physicalAttachmentEdited = () => {
+    var equipId = this.props.params.equipmentId;
+    Api.getEquipment(equipId);
   };
 
   deletePhysicalAttachment = (attachmentId) => {
@@ -520,26 +494,25 @@ class EquipmentDetail extends React.Component {
         { this.state.showEditDialog && (
           <EquipmentEditDialog
             show={ this.state.showEditDialog }
-            onSave={ this.saveEdit }
-            onClose= { this.closeEditDialog }/>
+            onClose= { this.closeEditDialog }
+            equipment={ equipment }/>
         )}
         { this.state.showSeniorityDialog && (
           <SeniorityEditDialog
             show={ this.state.showSeniorityDialog }
-            onSave={ this.saveSeniorityEdit }
             onClose={ this.closeSeniorityDialog }/>
         )}
         { this.state.showPhysicalAttachmentDialog && (
           <AttachmentAddDialog
             show={ this.state.showPhysicalAttachmentDialog }
-            onSave={ this.addPhysicalAttachments }
+            onSave={ this.physicalAttachmentsAdded }
             onClose={ this.closePhysicalAttachmentDialog }
             equipment={ equipment }/>
         )}
         { this.state.showPhysicalAttachmentEditDialog && (
           <AttachmentEditDialog
             show={ this.state.showPhysicalAttachmentEditDialog }
-            onSave={ this.updatePhysicalAttachment }
+            onSave={ this.physicalAttachmentEdited }
             onClose={ this.closePhysicalAttachmentEditDialog }
             equipment={ equipment }
             attachment={ this.state.equipmentPhysicalAttachment }/>

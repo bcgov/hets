@@ -96,16 +96,8 @@ class DistrictAdmin extends React.Component {
     this.setState({ showEquipmentTransferDialog: false });
   };
 
-  onConditionSave = (data) => {
-    let condition = { ...data, district: { id: this.props.currentUser.district.id } };
-    let promise = Api.addCondition;
-    if (condition.id !== 0) {
-      promise = Api.updateCondition;
-    }
-    promise(condition).then(() => {
-      Api.getRentalConditions();
-      this.closeConditionAddEditDialog();
-    });
+  conditionSaved = () => {
+    Api.getRentalConditions();
   };
 
   showDistrictEquipmentTypeAddEditDialog = () => {
@@ -128,13 +120,8 @@ class DistrictAdmin extends React.Component {
     this.setState({ districtEquipmentType: equipment }, this.showDistrictEquipmentTypeAddEditDialog);
   };
 
-  onDistrictEquipmentTypeSave = (data) => {
-    let equipment = { ...data, district: { id: this.props.currentUser.district.id } };
-    const promise = equipment.id !== 0 ? Api.updateDistrictEquipmentType : Api.addDistrictEquipmentType;
-    promise(equipment).then(() => {
-      Api.getDistrictEquipmentTypes();
-      this.closeDistrictEquipmentTypeAddEditDialog();
-    });
+  districtEquipmentTypeSaved = () => {
+    Api.getDistrictEquipmentTypes();
   };
 
   deleteDistrictEquipmentType = (equipment) => {
@@ -261,7 +248,7 @@ class DistrictAdmin extends React.Component {
         <ConditionAddEditDialog
           show={this.state.showConditionAddEditDialog}
           onClose={this.closeConditionAddEditDialog}
-          onSave={this.onConditionSave}
+          onSave={this.conditionSaved}
           condition={this.state.condition}
         />
       }
@@ -269,7 +256,7 @@ class DistrictAdmin extends React.Component {
         <DistrictEquipmentTypeAddEditDialog
           show={this.state.showDistrictEquipmentTypeAddEditDialog}
           onClose={this.closeDistrictEquipmentTypeAddEditDialog}
-          onSave={this.onDistrictEquipmentTypeSave}
+          onSave={this.districtEquipmentTypeSaved}
           districtEquipmentType={this.state.districtEquipmentType}
         />
       }

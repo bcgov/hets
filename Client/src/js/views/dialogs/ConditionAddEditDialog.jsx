@@ -1,15 +1,18 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 import {  FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
-import EditDialog from '../../components/EditDialog.jsx';
+import * as Api from '../../api';
+
+import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 
 class ConditionAddEditDialog extends React.Component {
   static propTypes = {
+    currentUser: PropTypes.object,
     onSave: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
     show: PropTypes.bool,
@@ -20,6 +23,7 @@ class ConditionAddEditDialog extends React.Component {
     super(props);
 
     this.state = {
+      isSaving: false,
       isNew: props.condition.id === 0,
 
       conditionId: props.condition.id,
@@ -75,11 +79,42 @@ class ConditionAddEditDialog extends React.Component {
     });
   };
 
+  formSubmitted = () => {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        this.setState({ isSaving: true });
+
+        const condition = {
+          id: this.state.conditionId,
+          conditionTypeCode: this.state.typeCode,
+          description: this.state.description,
+          concurrencyControlNumber: this.state.concurrencyControlNumber,
+          active: true,
+          district: { id: this.props.currentUser.district.id },
+        };
+
+        const promise = this.state.isNew ? Api.addCondition(condition) : Api.updateCondition(condition);
+
+        promise.then(() => {
+          this.setState({ isSaving: false });
+          if (this.props.onSave) { this.props.onSave(); }
+          this.props.onClose();
+        });
+      } else {
+        this.props.onClose();
+      }
+    }
+  };
+
   render() {
-    return <EditDialog id="equipment-add" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={<strong>Add Condition</strong>}>
-      <Form>
+    return (
+      <FormDialog
+        id="equipment-add"
+        show={ this.props.show }
+        title={ this.state.isNew ? 'Add Condition' : 'Edit Condition' }
+        isSaving={ this.state.isSaving }
+        onClose={ this.props.onClose }
+        onSubmit={ this.formSubmitted }>
         <FormGroup controlId="typeCode" validationState={ this.state.typeCodeError ? 'error' : null }>
           <ControlLabel>Type Code <sup>*</sup></ControlLabel>
           <FormInputControl type="text" value={ this.state.typeCode } updateState={ this.updateState }/>
@@ -90,9 +125,15 @@ class ConditionAddEditDialog extends React.Component {
           <FormInputControl type="text" value={ this.state.description } updateState={ this.updateState }/>
           <HelpBlock>{ this.state.descriptionError }</HelpBlock>
         </FormGroup>
-      </Form>
-    </EditDialog>;
+      </FormDialog>
+    );
   }
 }
 
-export default ConditionAddEditDialog;
+function mapStateToProps(state) {
+  return {
+    currentUser: state.user,
+  };
+}
+
+export default connect(mapStateToProps)(ConditionAddEditDialog);

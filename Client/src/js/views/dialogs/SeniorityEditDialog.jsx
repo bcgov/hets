@@ -6,10 +6,12 @@ import { connect } from 'react-redux';
 import { Grid, Row, Col } from 'react-bootstrap';
 import { FormControl, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
+import * as Api from '../../api';
+import * as Log from '../../history';
+
+import FormDialog from '../../components/FormDialog.jsx';
 import DateControl from '../../components/DateControl.jsx';
-import EditDialog from '../../components/EditDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 import { daysFromToday, isValidDate, toZuluTime, today } from '../../utils/date';
 import { isBlank, formatHours } from '../../utils/string';
@@ -18,7 +20,7 @@ class SeniorityEditDialog extends React.Component {
   static propTypes = {
     equipment: PropTypes.object,
 
-    onSave: PropTypes.func.isRequired,
+    onSave: PropTypes.func,
     onClose: PropTypes.func.isRequired,
     show: PropTypes.bool,
   };
@@ -27,6 +29,7 @@ class SeniorityEditDialog extends React.Component {
     super(props);
 
     this.state = {
+      isSaving: false,
       isNew: props.equipment.id === 0,
 
       hoursYtd: props.equipment.hoursYtd,
@@ -38,7 +41,7 @@ class SeniorityEditDialog extends React.Component {
       isSeniorityOverridden: props.equipment.isSeniorityOverridden,
       seniorityOverrideReason: props.equipment.seniorityOverrideReason,
 
-      seniorityDateError: null,
+      approvedDateError: null,
       serviceHoursLastYearError: null,
       serviceHoursTwoYearsAgoError: null,
       serviceHoursThreeYearsAgoError: null,
@@ -119,91 +122,110 @@ class SeniorityEditDialog extends React.Component {
     this.setState({ isSeniorityOverridden: true });
   };
 
-  onSave = () => {
-    this.props.onSave({ ...this.props.equipment, ...{
-      serviceHoursLastYear: (this.state.serviceHoursLastYear || 0).toFixed(2),
-      serviceHoursTwoYearsAgo: (this.state.serviceHoursTwoYearsAgo || 0).toFixed(2),
-      serviceHoursThreeYearsAgo: (this.state.serviceHoursThreeYearsAgo || 0).toFixed(2),
-      approvedDate: toZuluTime(this.state.approvedDate),
-      yearsOfService: this.state.yearsRegistered,
-      isSeniorityOverridden: this.state.isSeniorityOverridden,
-      seniorityOverrideReason: this.state.seniorityOverrideReason,
-    }});
+  formSubmitted = () => {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        this.setState({ isSaving: true });
+
+        const equipment = {
+          ...this.props.equipment,
+          serviceHoursLastYear: (this.state.serviceHoursLastYear || 0).toFixed(2),
+          serviceHoursTwoYearsAgo: (this.state.serviceHoursTwoYearsAgo || 0).toFixed(2),
+          serviceHoursThreeYearsAgo: (this.state.serviceHoursThreeYearsAgo || 0).toFixed(2),
+          approvedDate: toZuluTime(this.state.approvedDate),
+          yearsOfService: this.state.yearsRegistered,
+          isSeniorityOverridden: this.state.isSeniorityOverridden,
+          seniorityOverrideReason: this.state.seniorityOverrideReason,
+        };
+
+        const promise = Api.updateEquipment(equipment);
+
+        promise.then(() => {
+          Log.equipmentSeniorityModified(this.props.equipment);
+          this.setState({ isSaving: false });
+          if (this.props.onSave) { this.props.onSave(); }
+          this.props.onClose();
+        });
+      } else {
+        this.props.onClose();
+      }
+    }
   };
 
   render() {
-    return <EditDialog id="seniority-edit" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={<strong>Equipment Id: <small>{ this.props.equipment.equipmentCode }</small></strong>}>
-      {(() => {
-        return <Form>
-          <Grid fluid cols={6}>
-            <Row>
-              <Col>
-                <FormGroup>
-                  <ControlLabel>Hours YTD</ControlLabel>
-                  <FormControl.Static>{ formatHours(this.state.hoursYtd) }</FormControl.Static>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <FormGroup controlId="serviceHoursLastYear" validationState={ this.state.serviceHoursLastYearError ? 'error' : null }>
-                  <ControlLabel>Hours { this.props.equipment.yearMinus1 } <sup>*</sup></ControlLabel>
-                  <FormInputControl type="float" value={ this.state.serviceHoursLastYear } onChange={ this.serviceHoursChanged } updateState={ this.updateState } autoFocus/>
-                  <HelpBlock>{ this.state.serviceHoursLastYearError }</HelpBlock>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <FormGroup controlId="serviceHoursTwoYearsAgo" validationState={ this.state.serviceHoursTwoYearsAgoError ? 'error' : null }>
-                  <ControlLabel>Hours { this.props.equipment.yearMinus2 } <sup>*</sup></ControlLabel>
-                  <FormInputControl type="float" value={ this.state.serviceHoursTwoYearsAgo } onChange={ this.serviceHoursChanged } updateState={ this.updateState }/>
-                  <HelpBlock>{ this.state.serviceHoursTwoYearsAgoError }</HelpBlock>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <FormGroup controlId="serviceHoursThreeYearsAgo" validationState={ this.state.serviceHoursThreeYearsAgoError ? 'error' : null }>
-                  <ControlLabel>Hours { this.props.equipment.yearMinus3 } <sup>*</sup></ControlLabel>
-                  <FormInputControl type="float" value={ this.state.serviceHoursThreeYearsAgo } onChange={ this.serviceHoursChanged } updateState={ this.updateState }/>
-                  <HelpBlock>{ this.state.serviceHoursThreeYearsAgoError }</HelpBlock>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <FormGroup validationState={ this.state.approvedDateError ? 'error' : null }>
-                  <ControlLabel>Registered Date <sup>*</sup></ControlLabel>
-                  <DateControl id="approvedDate" date={ this.state.approvedDate } updateState={ this.updateState } title="registered date"/>
-                  <HelpBlock>{ this.state.approvedDateError }</HelpBlock>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <FormGroup controlId="yearsRegistered" validationState={ this.state.yearsRegisteredError ? 'error' : null }>
-                  <ControlLabel>Years Registered</ControlLabel>
-                  <FormInputControl type="float" value={ this.state.yearsRegistered } updateState={ this.updateState } />
-                  <HelpBlock>{ this.state.yearsRegisteredError }</HelpBlock>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <FormGroup controlId="seniorityOverrideReason" validationState={ this.state.overrideReasonError ? 'error' : null }>
-                  <ControlLabel>Override Reason <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" value={ this.state.seniorityOverrideReason } updateState={ this.updateState }/>
-                  <HelpBlock>{ this.state.overrideReasonError }</HelpBlock>
-                </FormGroup>
-              </Col>
-            </Row>
-          </Grid>
-        </Form>;
-      })()}
-    </EditDialog>;
+    return (
+      <FormDialog
+        id="seniority-edit"
+        show={ this.props.show }
+        title={ `Equipment Id: ${ this.props.equipment.equipmentCode }` }
+        onClose={ this.props.onClose }
+        onSubmit={ this.formSubmitted }>
+        <Grid fluid cols={6}>
+          <Row>
+            <Col>
+              <FormGroup>
+                <ControlLabel>Hours YTD</ControlLabel>
+                <FormControl.Static>{ formatHours(this.state.hoursYtd) }</FormControl.Static>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <FormGroup controlId="serviceHoursLastYear" validationState={ this.state.serviceHoursLastYearError ? 'error' : null }>
+                <ControlLabel>Hours { this.props.equipment.yearMinus1 } <sup>*</sup></ControlLabel>
+                <FormInputControl type="float" value={ this.state.serviceHoursLastYear } onChange={ this.serviceHoursChanged } updateState={ this.updateState } autoFocus/>
+                <HelpBlock>{ this.state.serviceHoursLastYearError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <FormGroup controlId="serviceHoursTwoYearsAgo" validationState={ this.state.serviceHoursTwoYearsAgoError ? 'error' : null }>
+                <ControlLabel>Hours { this.props.equipment.yearMinus2 } <sup>*</sup></ControlLabel>
+                <FormInputControl type="float" value={ this.state.serviceHoursTwoYearsAgo } onChange={ this.serviceHoursChanged } updateState={ this.updateState }/>
+                <HelpBlock>{ this.state.serviceHoursTwoYearsAgoError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <FormGroup controlId="serviceHoursThreeYearsAgo" validationState={ this.state.serviceHoursThreeYearsAgoError ? 'error' : null }>
+                <ControlLabel>Hours { this.props.equipment.yearMinus3 } <sup>*</sup></ControlLabel>
+                <FormInputControl type="float" value={ this.state.serviceHoursThreeYearsAgo } onChange={ this.serviceHoursChanged } updateState={ this.updateState }/>
+                <HelpBlock>{ this.state.serviceHoursThreeYearsAgoError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <FormGroup validationState={ this.state.approvedDateError ? 'error' : null }>
+                <ControlLabel>Registered Date <sup>*</sup></ControlLabel>
+                <DateControl id="approvedDate" date={ this.state.approvedDate } updateState={ this.updateState } title="registered date"/>
+                <HelpBlock>{ this.state.approvedDateError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <FormGroup controlId="yearsRegistered" validationState={ this.state.yearsRegisteredError ? 'error' : null }>
+                <ControlLabel>Years Registered</ControlLabel>
+                <FormInputControl type="float" value={ this.state.yearsRegistered } updateState={ this.updateState } />
+                <HelpBlock>{ this.state.yearsRegisteredError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <FormGroup controlId="seniorityOverrideReason" validationState={ this.state.overrideReasonError ? 'error' : null }>
+                <ControlLabel>Override Reason <sup>*</sup></ControlLabel>
+                <FormInputControl type="text" value={ this.state.seniorityOverrideReason } updateState={ this.updateState }/>
+                <HelpBlock>{ this.state.overrideReasonError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          </Row>
+        </Grid>
+      </FormDialog>
+    );
   }
 }
 
