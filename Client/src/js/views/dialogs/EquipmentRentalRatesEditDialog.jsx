@@ -106,7 +106,7 @@ class EquipmentRentalRatesEditDialog extends React.Component {
             <Col md={4}>
               <FormGroup controlId="equipmentRate" validationState={ this.state.equipmentRateError ? 'error' : null }>
                 <ControlLabel>Pay Rate <sup>*</sup></ControlLabel>
-                <FormInputControl type="float" min={ 0 } defaultValue={ this.state.equipmentRate.toFixed(2) } readOnly={ isReadOnly } updateState={ this.updateState } autoFocus/>
+                <FormInputControl type="float" min={ 0 } defaultValue={ (this.state.equipmentRate || 0).toFixed(2) } readOnly={ isReadOnly } updateState={ this.updateState } autoFocus/>
                 <HelpBlock>{ this.state.equipmentRateError }</HelpBlock>
               </FormGroup>
             </Col>

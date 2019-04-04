@@ -65,11 +65,19 @@ class Rollover extends React.Component {
   };
 
   refreshStatus = () => {
-    Api.getRolloverStatus(this.props.currentUser.district.id).then(() => {
-      var rolloverActive = this.props.rolloverStatus.rolloverActive;
-      if (!rolloverActive && this.state.refreshStatusTimerId !== null) {
+    const districtId = this.props.currentUser.district.id;
+
+    Api.getRolloverStatus(districtId).then(() => {
+      const status = this.props.rolloverStatus;
+
+      if (!status.rolloverActive && this.state.refreshStatusTimerId !== null) {
         clearInterval(this.state.refreshStatusTimerId);
         this.setState({ refreshStatusTimerId: null });
+      }
+
+      if (status.rolloverComplete) {
+        // refresh fiscal years
+        Api.getFiscalYears(districtId);
       }
     });
   };
@@ -112,7 +120,7 @@ class Rollover extends React.Component {
   };
 
   renderContent = () => {
-    var rolloverButtonDisabled = !this.state.checkListStep1 || !this.state.checkListStep2 || !this.state.checkListStep3;
+    var rolloverButtonDisabled = !this.state.checkListStep1 || !this.state.checkListStep2 || !this.state.checkListStep3 || !this.state.checkListStep4;
 
     return (
       <Well>
@@ -126,6 +134,9 @@ class Rollover extends React.Component {
           </CheckboxControl>
           <CheckboxControl id="checkListStep3" checked={ this.state.checkListStep3 } updateState={ this.updateState }>
             Take note of any equipment currently hired
+          </CheckboxControl>
+          <CheckboxControl id="checkListStep4" checked={ this.state.checkListStep4 } updateState={ this.updateState }>
+            Release all blocked rotation lists, as the hiring order may change after the roll over
           </CheckboxControl>
         </div>
 
