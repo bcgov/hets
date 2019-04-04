@@ -1241,8 +1241,16 @@ namespace HetsApi.Controllers
 
             if (district?.NextFiscalYear == null) return new BadRequestObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
 
-            int fiscalYear = (int)district.NextFiscalYear; // status table uses the start of the year
-            DateTime fiscalEnd = new DateTime(fiscalYear, 3, 31);
+            // HETS-1195: Adjust seniority list and rotation list for lists hired between Apr1 and roll over
+            // ** Need to use the "rollover date" to ensure we don't include records created
+            //    after April 1 (but before rollover)
+            DateTime fiscalEnd = district.RolloverEndDate;
+            int fiscalYear = Convert.ToInt32(district.NextFiscalYear); // status table uses the start of the year
+
+            if (fiscalEnd == new DateTime(0001, 01, 01, 00, 00, 00))
+            {
+                fiscalEnd = new DateTime(fiscalYear, 3, 31);
+            }
 
             // get status id
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
