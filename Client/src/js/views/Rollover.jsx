@@ -27,6 +27,7 @@ class Rollover extends React.Component {
     checkListStep1: false,
     checkListStep2: false,
     checkListStep3: false,
+    checkListStep4: false,
     refreshStatusTimerId: null,
   };
 
@@ -107,7 +108,7 @@ class Rollover extends React.Component {
   };
 
   renderContent = () => {
-    var rolloverButtonDisabled = !this.state.checkListStep1 || !this.state.checkListStep2 || !this.state.checkListStep3;
+    var rolloverButtonDisabled = !this.state.checkListStep1 || !this.state.checkListStep2 || !this.state.checkListStep3 || !this.state.checkListStep4;
 
     return (
       <Well>
@@ -121,6 +122,9 @@ class Rollover extends React.Component {
           </CheckboxControl>
           <CheckboxControl id="checkListStep3" checked={ this.state.checkListStep3 } updateState={ this.updateState }>
             Take note of any equipment currently hired
+          </CheckboxControl>
+          <CheckboxControl id="checkListStep4" checked={ this.state.checkListStep4 } updateState={ this.updateState }>
+            Release all blocked rotation lists, as the hiring order may change after the roll over
           </CheckboxControl>
         </div>
 
