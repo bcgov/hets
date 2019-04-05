@@ -1249,7 +1249,11 @@ namespace HetsApi.Controllers
 
             if (fiscalEnd == new DateTime(0001, 01, 01, 00, 00, 00))
             {
-                fiscalEnd = new DateTime(fiscalYear, 3, 31);
+                fiscalEnd = new DateTime(fiscalYear, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 23, 59, 59);
+            }
+            else
+            {
+                fiscalEnd = new DateTime(fiscalYear, fiscalEnd.Month, fiscalEnd.Day, 23, 59, 59);
             }
 
             // get status id
