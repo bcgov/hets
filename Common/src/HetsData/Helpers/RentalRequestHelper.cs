@@ -126,6 +126,10 @@ namespace HetsData.Helpers
                         .ThenInclude(r => r.DistrictEquipmentType)
                 .Include(x => x.HetRentalRequestRotationList)
                     .ThenInclude(y => y.Equipment)
+                        .ThenInclude(r => r.DistrictEquipmentType)
+                            .ThenInclude(y => y.EquipmentType)
+                .Include(x => x.HetRentalRequestRotationList)
+                    .ThenInclude(y => y.Equipment)
                         .ThenInclude(e => e.Owner)
                             .ThenInclude(c => c.PrimaryContact)
                 .FirstOrDefault(a => a.RentalRequestId == id);
