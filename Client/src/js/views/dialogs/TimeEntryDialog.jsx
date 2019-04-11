@@ -129,9 +129,9 @@ class TimeEntryDialog extends React.Component {
       this.setState({ isSaving: true });
 
       Api.getLatestRentalAgreement(this.state.equipmentId, this.state.projectId).then((agreement) => {
-        this.setState({ rentalAgreementId: agreement.id });
+        this.setState({ loaded: false, rentalAgreementId: agreement.id });
         return Promise.all([ this.fetchProject(this.state.projectId), this.fetchTimeRecords() ]).then(() => {
-          this.setState({ isSaving: false, selectingAgreement: false });
+          this.setState({ isSaving: false, selectingAgreement: false, loaded: true });
         });
       }).catch((error) => {
         this.setState({ isSaving: false });
