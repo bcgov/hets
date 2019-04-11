@@ -30,7 +30,6 @@ class Owners extends React.Component {
   static propTypes = {
     currentUser: PropTypes.object,
     ownerList: PropTypes.object,
-    owner: PropTypes.object,
     localAreas: PropTypes.object,
     favourites: PropTypes.object,
     search: PropTypes.object,
@@ -250,7 +249,6 @@ function mapStateToProps(state) {
   return {
     currentUser: state.user,
     ownerList: state.models.owners,
-    owner: state.models.owner,
     localAreas: state.lookups.localAreas,
     favourites: state.models.favourites.owner,
     search: state.search.owners,
