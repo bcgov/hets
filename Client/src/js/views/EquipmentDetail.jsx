@@ -70,6 +70,8 @@ class EquipmentDetail extends React.Component {
       loading: true,
       loadingDocuments: true,
       loadingNotes: true,
+      reloading: false,
+
       showEditDialog: false,
       showDocumentsDialog: false,
       showSeniorityDialog: false,
@@ -112,7 +114,8 @@ class EquipmentDetail extends React.Component {
   }
 
   fetch = () => {
-    return Api.getEquipment(this.props.equipmentId);
+    this.setState({ reloading: true });
+    return Api.getEquipment(this.props.equipmentId).then(() => this.setState({ reloading: false }));
   };
 
   showNotes = () => {
@@ -461,9 +464,7 @@ class EquipmentDetail extends React.Component {
             <Col md={12}>
               <Well>
                 <SubHeader title="History"/>
-                { equipment.historyEntity &&
-                  <History historyEntity={ equipment.historyEntity } refresh={ !this.state.loading } />
-                }
+                { equipment.historyEntity && <History historyEntity={ equipment.historyEntity } refresh={ !this.state.reloading } /> }
               </Well>
             </Col>
           </Row>

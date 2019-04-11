@@ -62,6 +62,7 @@ class ProjectsDetail extends React.Component {
     this.state = {
       loading: true,
       loadingDocuments: true,
+      reloading: false,
 
       showNotesDialog: false,
       showDocumentsDialog: false,
@@ -105,7 +106,8 @@ class ProjectsDetail extends React.Component {
   }
 
   fetch = () => {
-    return Api.getProject(this.props.projectId);
+    this.setState({ reloading: true });
+    return Api.getProject(this.props.projectId).then(() => this.setState({ reloading: false }));
   };
 
   updateState = (state, callback) => {
@@ -511,9 +513,7 @@ class ProjectsDetail extends React.Component {
               </Well>
               <Well>
                 <SubHeader title="History"/>
-                { project.historyEntity && (
-                  <History historyEntity={ project.historyEntity } refresh={ !loading } />
-                )}
+                { project.historyEntity && <History historyEntity={ project.historyEntity } refresh={ !this.state.reloading } /> }
               </Well>
             </Col>
           </Row>

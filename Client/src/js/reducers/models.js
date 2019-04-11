@@ -139,7 +139,12 @@ const DEFAULT_MODELS = {
   documents: {},
   document: {},
 
-  history: {},
+  history: {
+    equipment: {},
+    owner: {},
+    project: {},
+    rentalRequest: {},
+  },
 
   timeRecord: {
     data: {},
@@ -553,8 +558,25 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, rolePermissions: action.rolePermissions };
 
     // History
-    case Action.UPDATE_HISTORY:
-      return { ...state, history: action.history };
+    case Action.UPDATE_EQUIPMENT_HISTORY:
+      return produce(state, (draftState) => {
+        draftState.history.equipment[action.id] = action.history;
+      });
+
+    case Action.UPDATE_OWNER_HISTORY:
+      return produce(state, (draftState) => {
+        draftState.history.owner[action.id] = action.history;
+      });
+
+    case Action.UPDATE_PROJECT_HISTORY:
+      return produce(state, (draftState) => {
+        draftState.history.project[action.id] = action.history;
+      });
+
+    case Action.UPDATE_RENTAL_REQUEST_HISTORY:
+      return produce(state, (draftState) => {
+        draftState.history.rentalRequest[action.id] = action.history;
+      });
 
     // Notes
     case Action.DELETE_NOTE: {
