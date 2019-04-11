@@ -182,7 +182,7 @@ namespace HetsApi.Controllers
         [Route("{id}")]
         [SwaggerOperation("EquipmentIdPut")]
         [SwaggerResponse(200, type: typeof(HetEquipment))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult EquipmentIdPut([FromRoute]int id, [FromBody]HetEquipment item)
         {
             if (item == null || id != item.EquipmentId)
@@ -309,7 +309,7 @@ namespace HetsApi.Controllers
         [Route("{id}/status")]
         [SwaggerOperation("EquipmentIdStatusPut")]
         [SwaggerResponse(200, type: typeof(HetEquipment))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult EquipmentIdStatusPut([FromRoute]int id, [FromBody]EquipmentStatus item)
         {
             // not found
@@ -430,7 +430,7 @@ namespace HetsApi.Controllers
         [Route("")]
         [SwaggerOperation("EquipmentPost")]
         [SwaggerResponse(200, type: typeof(HetEquipment))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult EquipmentPost([FromBody]HetEquipment item)
         {
             // not found
@@ -684,7 +684,7 @@ namespace HetsApi.Controllers
         [Route("{id}/rentalAgreementClone")]
         [SwaggerOperation("EquipmentRentalAgreementClonePost")]
         [SwaggerResponse(200, type: typeof(HetRentalAgreement))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult EquipmentRentalAgreementClonePost([FromRoute]int id, [FromBody]EquipmentRentalAgreementClone item)
         {
             // not found
@@ -1088,7 +1088,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/history")]
         [SwaggerOperation("EquipmentIdHistoryPost")]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult EquipmentIdHistoryPost([FromRoute]int id, [FromBody]HetHistory item)
         {
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
@@ -1157,7 +1157,7 @@ namespace HetsApi.Controllers
         [Route("{id}/note")]
         [SwaggerOperation("EquipmentIdNotePost")]
         [SwaggerResponse(200, type: typeof(HetNote))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult EquipmentIdNotePost([FromRoute]int id, [FromBody]HetNote item)
         {
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);

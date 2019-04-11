@@ -60,7 +60,7 @@ namespace HetsApi.Controllers
         [Route("{id}/delete")]
         [SwaggerOperation("RolesIdDeletePost")]
         [SwaggerResponse(200, type: typeof(HetRole))]
-        [RequiresPermission(HetPermission.RolesAndPermissions)]
+        [RequiresPermission(HetPermission.RolesAndPermissions, HetPermission.WriteAccess)]
         public virtual IActionResult RolesIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetRole.Any(x => x.RoleId == id);
@@ -145,7 +145,7 @@ namespace HetsApi.Controllers
         [Route("{id}/permissions")]
         [SwaggerOperation("RolesIdPermissionsPost")]
         [SwaggerResponse(200, type: typeof(List<HetPermission>))]
-        [RequiresPermission(HetPermission.RolesAndPermissions)]
+        [RequiresPermission(HetPermission.RolesAndPermissions, HetPermission.WriteAccess)]
         public virtual IActionResult RolesIdPermissionsPost([FromRoute]int id, [FromBody]HetPermission item)
         {
             HetRole role = _context.HetRole.AsNoTracking()
@@ -200,7 +200,7 @@ namespace HetsApi.Controllers
         [Route("{id}/permissions")]
         [SwaggerOperation("RolesIdPermissionsPut")]
         [SwaggerResponse(200, type: typeof(List<HetPermission>))]
-        [RequiresPermission(HetPermission.RolesAndPermissions)]
+        [RequiresPermission(HetPermission.RolesAndPermissions, HetPermission.WriteAccess)]
         public virtual IActionResult RolesIdPermissionsPut([FromRoute]int id, [FromBody]HetPermission[] items)
         {
             HetRole role = _context.HetRole.AsNoTracking()
@@ -270,7 +270,7 @@ namespace HetsApi.Controllers
         [Route("{id}")]
         [SwaggerOperation("RolesIdPut")]
         [SwaggerResponse(200, type: typeof(HetRole))]
-        [RequiresPermission(HetPermission.RolesAndPermissions)]
+        [RequiresPermission(HetPermission.RolesAndPermissions, HetPermission.WriteAccess)]
         public virtual IActionResult RolesIdPut([FromRoute]int id, [FromBody]HetRole item)
         {
             bool exists = _context.HetRole.Any(x => x.RoleId == id);
@@ -305,7 +305,7 @@ namespace HetsApi.Controllers
         [Route("")]
         [SwaggerOperation("RolesPost")]
         [SwaggerResponse(200, type: typeof(HetRole))]
-        [RequiresPermission(HetPermission.RolesAndPermissions)]
+        [RequiresPermission(HetPermission.RolesAndPermissions, HetPermission.WriteAccess)]
         public virtual IActionResult RolesPost([FromBody]HetRole item)
         {
             HetRole role = new HetRole

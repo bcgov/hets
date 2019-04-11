@@ -41,7 +41,7 @@ namespace HetsApi.Controllers
         [Route("{id}/delete")]
         [SwaggerOperation("ContactsIdDeletePost")]
         [SwaggerResponse(200, type: typeof(HetContact))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult ContactsIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetContact.Any(a => a.ContactId == id);

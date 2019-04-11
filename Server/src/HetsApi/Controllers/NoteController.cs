@@ -41,7 +41,7 @@ namespace HetsApi.Controllers
         [Route("{id}/delete")]
         [SwaggerOperation("NotesIdDeletePost")]
         [SwaggerResponse(200, type: typeof(HetNote))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult NotesIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetNote.Any(a => a.NoteId == id);
@@ -71,7 +71,7 @@ namespace HetsApi.Controllers
         [Route("{id}")]
         [SwaggerOperation("NotesIdPut")]
         [SwaggerResponse(200, type: typeof(HetNote))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult NotesIdPut([FromRoute]int id, [FromBody]HetNote item)
         {
             bool exists = _context.HetNote.Any(a => a.NoteId == id);

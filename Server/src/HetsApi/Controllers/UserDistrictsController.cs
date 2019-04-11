@@ -69,7 +69,7 @@ namespace HetsApi.Controllers
         [Route("{id}/delete")]
         [SwaggerOperation("UserDistrictsIdDeletePost")]
         [SwaggerResponse(200, type: typeof(HetUserDistrict))]
-        [RequiresPermission(HetPermission.UserManagement)]
+        [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
         public virtual IActionResult UserDistrictsIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetUserDistrict.Any(a => a.UserDistrictId == id);
@@ -107,7 +107,7 @@ namespace HetsApi.Controllers
         [Route("{id}")]
         [SwaggerOperation("UserDistrictsIdPost")]
         [SwaggerResponse(200, type: typeof(HetUserDistrict))]
-        [RequiresPermission(HetPermission.UserManagement)]
+        [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
         public virtual IActionResult UserDistrictsIdPost([FromRoute]int id, [FromBody]HetUserDistrict item)
         {
             // not found
@@ -284,7 +284,7 @@ namespace HetsApi.Controllers
         [Route("{id}/switch")]
         [SwaggerOperation("UserDistrictsIdSwitchPost")]
         [SwaggerResponse(200, type: typeof(HetUserDistrict))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult UserDistrictsIdSwitchPost([FromRoute]int id)
         {
             bool exists = _context.HetUserDistrict.Any(a => a.UserDistrictId == id);

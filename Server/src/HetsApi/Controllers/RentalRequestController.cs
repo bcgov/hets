@@ -95,7 +95,7 @@ namespace HetsApi.Controllers
         [Route("{id}")]
         [SwaggerOperation("RentalRequestsIdPut")]
         [SwaggerResponse(200, type: typeof(HetRentalRequest))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult RentalRequestsIdPut([FromRoute]int id, [FromBody]HetRentalRequest item)
         {
             if (item == null || id != item.RentalRequestId)
@@ -209,7 +209,7 @@ namespace HetsApi.Controllers
         [Route("")]
         [SwaggerOperation("RentalRequestsPost")]
         [SwaggerResponse(200, type: typeof(HetRentalRequest))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult RentalRequestsPost([FromBody] HetRentalRequest item)
         {
             return CreateRentalRequest(item);
@@ -223,7 +223,7 @@ namespace HetsApi.Controllers
         [Route("viewOnly")]
         [SwaggerOperation("RentalRequestsViewOnlyPost")]
         [SwaggerResponse(200, type: typeof(HetRentalRequest))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult RentalRequestsViewOnlyPost([FromBody] HetRentalRequest item)
         {
             return CreateRentalRequest(item, true);
@@ -560,7 +560,7 @@ namespace HetsApi.Controllers
         [Route("{id}/rentalRequestRotationList")]
         [SwaggerOperation("RentalRequestRotationListIdPut")]
         [SwaggerResponse(200, type: typeof(HetRentalRequestRotationList))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult RentalRequestIdRotationListIdPut([FromRoute]int id, [FromBody]HetRentalRequestRotationList item)
         {
             // not found
@@ -813,7 +813,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/history")]
         [SwaggerOperation("RentalRequestsIdHistoryPost")]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult RentalRequestsIdHistoryPost([FromRoute]int id, [FromBody]HetHistory item)
         {
             bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);
@@ -882,7 +882,7 @@ namespace HetsApi.Controllers
         [Route("{id}/note")]
         [SwaggerOperation("RentalRequestsIdNotePost")]
         [SwaggerResponse(200, type: typeof(HetNote))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult RentalRequestsIdNotePost([FromRoute]int id, [FromBody]HetNote item)
         {
             bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);

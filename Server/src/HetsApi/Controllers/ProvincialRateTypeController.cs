@@ -95,7 +95,7 @@ namespace HetsApi.Controllers
         [Route("{id}")]
         [SwaggerOperation("ProvincialRatesIdPut")]
         [SwaggerResponse(200, type: typeof(HetProvincialRateType))]
-        [RequiresPermission(HetPermission.CodeTableManagement)]
+        [RequiresPermission(HetPermission.CodeTableManagement, HetPermission.WriteAccess)]
         public virtual IActionResult ProvincialRatesIdPut([FromRoute]int id, [FromBody]HetProvincialRateType item)
         {
             bool exists = _context.HetProvincialRateType.Any(a => a.RateType == item.RateType);

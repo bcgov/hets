@@ -158,7 +158,7 @@ namespace HetsApi.Controllers
         [Route("{id}/delete")]
         [SwaggerOperation("DistrictEquipmentTypesIdDeletePost")]
         [SwaggerResponse(200, type: typeof(HetDistrictEquipmentType))]
-        [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
+        [RequiresPermission(HetPermission.DistrictCodeTableManagement, HetPermission.WriteAccess)]
         public virtual IActionResult DistrictEquipmentTypesIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetDistrictEquipmentType.Any(a => a.DistrictEquipmentTypeId == id);
@@ -249,7 +249,7 @@ namespace HetsApi.Controllers
         [Route("{id}")]
         [SwaggerOperation("DistrictEquipmentTypesIdPost")]
         [SwaggerResponse(200, type: typeof(HetDistrictEquipmentType))]
-        [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
+        [RequiresPermission(HetPermission.DistrictCodeTableManagement, HetPermission.WriteAccess)]
         public virtual IActionResult DistrictEquipmentTypesIdPost([FromRoute]int id, [FromBody]HetDistrictEquipmentType item)
         {
             if (id != item.DistrictEquipmentTypeId)
@@ -350,7 +350,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("merge")]
         [SwaggerOperation("MergeDistrictEquipmentTypesPost")]
-        [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
+        [RequiresPermission(HetPermission.DistrictCodeTableManagement, HetPermission.WriteAccess)]
         public virtual IActionResult MergeDistrictEquipmentTypesPost()
         {
             string connectionString = GetConnectionString();
