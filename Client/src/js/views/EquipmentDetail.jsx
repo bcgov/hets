@@ -500,7 +500,8 @@ class EquipmentDetail extends React.Component {
         { this.state.showSeniorityDialog && (
           <SeniorityEditDialog
             show={ this.state.showSeniorityDialog }
-            onClose={ this.closeSeniorityDialog }/>
+            onClose={ this.closeSeniorityDialog }
+            equipment={ equipment }/>
         )}
         { this.state.showPhysicalAttachmentDialog && (
           <AttachmentAddDialog
