@@ -266,8 +266,8 @@ class AitReport extends React.Component {
     var districtEquipmentTypes = this.getFilteredDistrictEquipmentType();
     var equipment = this.getFilteredEquipment();
 
-    return <div id="ait-report">
-      <PageHeader>AIT Report { resultCount }
+    return <div id="rental-agreement-summary">
+      <PageHeader>Rental Agreement Summary { resultCount }
         <ButtonGroup>
           <PrintButton disabled={ !this.props.aitResponses.loaded }/>
         </ButtonGroup>
@@ -324,7 +324,7 @@ class AitReport extends React.Component {
               {(() => {
                 if (this.state.search.dateRange === CUSTOM) {
                   return <Row>
-                    <ButtonToolbar id="ait-report-custom-date-filters">
+                    <ButtonToolbar id="rental-agreement-summary-custom-date-filters">
                       <DateControl id="startDate" date={ this.state.search.startDate } updateState={ this.updateSearchState } label="From:" title="start date"/>
                       <DateControl id="endDate" date={ this.state.search.endDate } updateState={ this.updateSearchState } label="To:" title="end date"/>
                     </ButtonToolbar>
