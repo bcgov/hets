@@ -86,7 +86,7 @@ namespace HetsApi.Controllers
         [Route("{id}/delete")]
         [SwaggerOperation("BatchReportIdDeletePost")]
         [SwaggerResponse(200, type: typeof(HetBatchReport))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult BatchReportIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetBatchReport.Any(a => a.ReportId == id);

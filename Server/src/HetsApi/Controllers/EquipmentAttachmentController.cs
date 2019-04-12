@@ -43,7 +43,7 @@ namespace HetsApi.Controllers
         [Route("{id}/delete")]
         [SwaggerOperation("EquipmentAttachmentsIdDeletePost")]
         [SwaggerResponse(200, type: typeof(HetEquipmentAttachment))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult EquipmentAttachmentsIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetEquipmentAttachment.Any(a => a.EquipmentAttachmentId == id);
@@ -72,7 +72,7 @@ namespace HetsApi.Controllers
         [Route("{id}")]
         [SwaggerOperation("EquipmentAttachmentsIdPut")]
         [SwaggerResponse(200, type: typeof(HetEquipmentAttachment))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult EquipmentAttachmentsIdPut([FromRoute]int id, [FromBody]HetEquipmentAttachment item)
         {
             if (id != item.EquipmentAttachmentId)
@@ -119,7 +119,7 @@ namespace HetsApi.Controllers
         [Route("")]
         [SwaggerOperation("EquipmentAttachmentsPost")]
         [SwaggerResponse(200, type: typeof(HetEquipmentAttachment))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult EquipmentAttachmentsPost([FromBody]HetEquipmentAttachment item)
         {
             // not found
@@ -157,7 +157,7 @@ namespace HetsApi.Controllers
         [Route("bulk")]
         [SwaggerOperation("EquipmentAttachmentsBulkPost")]
         [SwaggerResponse(200, type: typeof(List<HetEquipmentAttachment>))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult EquipmentAttachmentsBulkPost([FromBody]HetEquipmentAttachment[] items)
         {
             // not found

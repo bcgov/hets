@@ -66,7 +66,7 @@ namespace HetsApi.Controllers
         [Route("{id}")]
         [SwaggerOperation("ProjectsIdPut")]
         [SwaggerResponse(200, type: typeof(HetProject))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult ProjectsIdPut([FromRoute]int id, [FromBody]HetProject item)
         {
             if (item == null || id != item.ProjectId)
@@ -127,7 +127,7 @@ namespace HetsApi.Controllers
         [Route("")]
         [SwaggerOperation("ProjectsPost")]
         [SwaggerResponse(200, type: typeof(HetProject))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult ProjectsPost([FromBody]HetProject item)
         {
             // not found
@@ -338,7 +338,7 @@ namespace HetsApi.Controllers
         [Route("{id}/rentalAgreementClone")]
         [SwaggerOperation("ProjectsRentalAgreementClonePost")]
         [SwaggerResponse(200, type: typeof(HetRentalAgreement))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult ProjectsRentalAgreementClonePost([FromRoute]int id, [FromBody]ProjectRentalAgreementClone item)
         {
             // not found
@@ -600,7 +600,7 @@ namespace HetsApi.Controllers
         [Route("{id}/timeRecord")]
         [SwaggerOperation("ProjectsIdTimeRecordsPost")]
         [SwaggerResponse(200, type: typeof(HetTimeRecord))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult ProjectsIdTimeRecordsPost([FromRoute]int id, [FromBody]HetTimeRecord item)
         {
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
@@ -705,7 +705,7 @@ namespace HetsApi.Controllers
         [Route("{id}/timeRecords")]
         [SwaggerOperation("ProjectsIdTimeRecordsBulkPostAsync")]
         [SwaggerResponse(200, type: typeof(HetTimeRecord))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult ProjectsIdTimeRecordsBulkPostAsync([FromRoute]int id, [FromBody]HetTimeRecord[] items)
         {
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
@@ -914,7 +914,7 @@ namespace HetsApi.Controllers
         [Route("{id}/contacts/{primary}")]
         [SwaggerOperation("ProjectsIdContactsPost")]
         [SwaggerResponse(200, type: typeof(HetContact))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult ProjectsIdContactsPost([FromRoute]int id, [FromBody]HetContact item, bool primary)
         {
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
@@ -1015,7 +1015,7 @@ namespace HetsApi.Controllers
         [Route("{id}/contacts")]
         [SwaggerOperation("ProjectsIdContactsPut")]
         [SwaggerResponse(200, type: typeof(List<HetContact>))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult ProjectsIdContactsPut([FromRoute]int id, [FromBody]HetContact[] items)
         {
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
@@ -1138,7 +1138,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/history")]
         [SwaggerOperation("ProjectsIdHistoryPost")]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult ProjectsIdHistoryPost([FromRoute]int id, [FromBody]HetHistory item)
         {
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
@@ -1207,7 +1207,7 @@ namespace HetsApi.Controllers
         [Route("{id}/note")]
         [SwaggerOperation("ProjectsIdNotePost")]
         [SwaggerResponse(200, type: typeof(HetNote))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult ProjectsIdNotePost([FromRoute]int id, [FromBody]HetNote item)
         {
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);

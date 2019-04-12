@@ -41,7 +41,7 @@ namespace HetsApi.Controllers
         [Route("{id}/delete")]
         [SwaggerOperation("RentalAgreementRatesIdDeletePost")]
         [SwaggerResponse(200, type: typeof(HetRentalAgreementRate))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult RentalAgreementRatesIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetRentalAgreementRate.Any(a => a.RentalAgreementRateId == id);
@@ -69,7 +69,7 @@ namespace HetsApi.Controllers
         [Route("{id}")]
         [SwaggerOperation("RentalAgreementRatesIdPut")]
         [SwaggerResponse(200, type: typeof(HetRentalAgreementRate))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult RentalAgreementRatesIdPut([FromRoute]int id, [FromBody]HetRentalAgreementRate item)
         {
             bool exists = _context.HetRentalAgreementRate.Any(a => a.RentalAgreementRateId == id);
