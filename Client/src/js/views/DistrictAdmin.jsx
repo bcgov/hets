@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { PageHeader, Button, ButtonGroup, Glyphicon, Well, Alert, Row, Col } from 'react-bootstrap';
@@ -19,22 +20,25 @@ import DistrictEquipmentTypeAddEditDialog from './dialogs/DistrictEquipmentTypeA
 import EquipmentTransferDialog from './dialogs/EquipmentTransferDialog.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
 
-import { caseInsensitiveSort, sortDir } from '../utils/array';
+import { caseInsensitiveSort, sort } from '../utils/array';
 
 
-var DistrictAdmin = React.createClass({
-  propTypes: {
-    currentUser: React.PropTypes.object,
-    rentalConditions: React.PropTypes.object,
-    districtEquipmentTypes: React.PropTypes.object,
-    equipmentTypes: React.PropTypes.object,
-    router: React.PropTypes.object,
-    uiEquipment: React.PropTypes.object,
-    dispatch: React.PropTypes.func,
-  },
 
-  getInitialState() {
-    return {
+class DistrictAdmin extends React.Component {
+  static propTypes = {
+    currentUser: PropTypes.object,
+    rentalConditions: PropTypes.object,
+    districtEquipmentTypes: PropTypes.object,
+    equipmentTypes: PropTypes.object,
+    router: PropTypes.object,
+    uiEquipment: PropTypes.object,
+    dispatch: PropTypes.func,
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
       showConditionAddEditDialog: false,
       showDistrictEquipmentTypeAddEditDialog: false,
       showEquipmentTransferDialog: false,
@@ -43,55 +47,55 @@ var DistrictAdmin = React.createClass({
 
       // Equipment
       uiEquipment : {
-        sortField: this.props.uiEquipment.sortField || 'districtEquipmentName',
-        sortDesc: this.props.uiEquipment.sortDesc  === true,
+        sortField: props.uiEquipment.sortField || 'districtEquipmentName',
+        sortDesc: props.uiEquipment.sortDesc  === true,
       },
     };
-  },
+  }
 
   componentDidMount() {
     Api.getRentalConditions();
     Api.getDistrictEquipmentTypes();
-  },
+  }
 
-  updateEquipmentUIState(state, callback) {
+  updateEquipmentUIState = (state, callback) => {
     this.setState({ uiEquipment: { ...this.state.uiEquipment, ...state }}, () => {
       this.props.dispatch({ type: Action.UPDATE_DISTRICT_EQUIPMENT_UI, districtEquipment: this.state.uiEquipment });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  addCondition() {
+  addCondition = () => {
     this.setState({ condition: { id: 0 } }, this.showConditionAddEditDialog);
-  },
+  };
 
-  editCondition(condition) {
+  editCondition = (condition) => {
     this.setState({ condition: condition }, this.showConditionAddEditDialog);
-  },
+  };
 
-  deleteCondition(condition) {
+  deleteCondition = (condition) => {
     Api.deleteCondition(condition.id).then(() => {
       Api.getRentalConditions();
     });
-  },
+  };
 
-  showConditionAddEditDialog() {
+  showConditionAddEditDialog = () => {
     this.setState({ showConditionAddEditDialog: true });
-  },
+  };
 
-  closeConditionAddEditDialog() {
+  closeConditionAddEditDialog = () => {
     this.setState({ showConditionAddEditDialog: false });
-  },
+  };
 
-  showEquipmentTransferDialog() {
+  showEquipmentTransferDialog = () => {
     this.setState({ showEquipmentTransferDialog: true });
-  },
+  };
 
-  closeEquipmentTransferDialog() {
+  closeEquipmentTransferDialog = () => {
     this.setState({ showEquipmentTransferDialog: false });
-  },
+  };
 
-  onConditionSave(data) {
+  onConditionSave = (data) => {
     let condition = { ...data, district: { id: this.props.currentUser.district.id } };
     let promise = Api.addCondition;
     if (condition.id !== 0) {
@@ -101,38 +105,38 @@ var DistrictAdmin = React.createClass({
       Api.getRentalConditions();
       this.closeConditionAddEditDialog();
     });
-  },
+  };
 
-  showDistrictEquipmentTypeAddEditDialog() {
+  showDistrictEquipmentTypeAddEditDialog = () => {
     this.setState({ showDistrictEquipmentTypeAddEditDialog: true });
-  },
+  };
 
-  closeDistrictEquipmentTypeAddEditDialog() {
+  closeDistrictEquipmentTypeAddEditDialog = () => {
     this.setState({ showDistrictEquipmentTypeAddEditDialog: false });
-  },
+  };
 
-  closeDistrictEquipmentTypeErrorDialog() {
+  closeDistrictEquipmentTypeErrorDialog = () => {
     this.setState({ showDistrictEquipmentTypeErrorDialog: false });
-  },
+  };
 
-  addDistrictEquipmentType() {
+  addDistrictEquipmentType = () => {
     this.setState({ districtEquipmentType: { id: 0 } }, this.showDistrictEquipmentTypeAddEditDialog);
-  },
+  };
 
-  editDistrictEquipmentType(equipment) {
+  editDistrictEquipmentType = (equipment) => {
     this.setState({ districtEquipmentType: equipment }, this.showDistrictEquipmentTypeAddEditDialog);
-  },
+  };
 
-  onDistrictEquipmentTypeSave(data) {
+  onDistrictEquipmentTypeSave = (data) => {
     let equipment = { ...data, district: { id: this.props.currentUser.district.id } };
     const promise = equipment.id !== 0 ? Api.updateDistrictEquipmentType : Api.addDistrictEquipmentType;
     promise(equipment).then(() => {
       Api.getDistrictEquipmentTypes();
       this.closeDistrictEquipmentTypeAddEditDialog();
     });
-  },
+  };
 
-  deleteDistrictEquipmentType(equipment) {
+  deleteDistrictEquipmentType = (equipment) => {
     Api.deleteDistrictEquipmentType(equipment).then(() => {
       return Api.getDistrictEquipmentTypes();
     }).catch((err) => {
@@ -142,7 +146,7 @@ var DistrictAdmin = React.createClass({
         throw err;
       }
     });
-  },
+  };
 
   render() {
     if (!this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) {
@@ -165,7 +169,7 @@ var DistrictAdmin = React.createClass({
 
           if (Object.keys(equipmentTypes).length === 0) { return <Alert bsStyle="success">No equipment types { addDistrictEquipmentButton }</Alert>; }
 
-          var sortedEquipmentTypes = caseInsensitiveSort(equipmentTypes, [this.state.uiEquipment.sortField], [sortDir(this.state.uiEquipment.sortDesc)]);
+          var sortedEquipmentTypes = sort(equipmentTypes, this.state.uiEquipment.sortField, this.state.uiEquipment.sortDesc, caseInsensitiveSort);
 
           var headers = [
             { field: 'districtEquipmentName',         title: 'Equipment Type/Description'  },
@@ -283,8 +287,8 @@ var DistrictAdmin = React.createClass({
         </ModalDialog>
       }
     </div>;
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

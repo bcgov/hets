@@ -1,9 +1,7 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import _ from 'lodash';
-
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem, OverlayTrigger, Dropdown, Popover, Button, Glyphicon, ControlLabel, FormGroup } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -16,40 +14,39 @@ import DropdownControl from '../components/DropdownControl.jsx';
 import { formatDateTimeUTCToLocal } from '../utils/date';
 import { currentPathStartsWith } from '../utils/routes';
 
-var TopNav = React.createClass({
-  propTypes: {
-    currentUser: React.PropTypes.object,
-    showWorkingIndicator: React.PropTypes.bool,
-    showNav: React.PropTypes.bool,
-    currentUserDistricts: React.PropTypes.object,
-    rolloverStatus: React.PropTypes.object,
-  },
 
-  getDefaultProps() {
-    return {
-      showNav: true,
-    };
-  },
+class TopNav extends React.Component {
+  static propTypes = {
+    currentUser: PropTypes.object,
+    showWorkingIndicator: PropTypes.bool,
+    showNav: PropTypes.bool,
+    currentUserDistricts: PropTypes.object,
+    rolloverStatus: PropTypes.object,
+  };
 
-  updateUserDistrict(state) {
+  static defaultProps = {
+    showNav: true,
+  };
+
+  updateUserDistrict = (state) => {
     var district = _.find(this.props.currentUserDistricts.data, district => { return district.district.id === state.districtId; });
     Api.switchUserDistrict(district.id).then(() => {
       location.reload();
       this.context.router.push({ pathname: Constant.HOME_PATHNAME });
     });
-  },
+  };
 
-  logout() {
+  logout = () => {
     Api.logoffUser().then(logoffUrl => {
       if (logoffUrl) {
         window.location.href = logoffUrl;
       }
     });
-  },
+  };
 
-  dismissRolloverNotice() {
+  dismissRolloverNotice = () => {
     Api.dismissRolloverMessage(this.props.currentUser.district.id);
-  },
+  };
 
   render() {
     var userDistricts = _.map(this.props.currentUserDistricts.data, district => {
@@ -190,11 +187,11 @@ var TopNav = React.createClass({
         </Navbar>
       </nav>
     </div>;
-  },
-});
+  }
+}
 
 TopNav.contextTypes = {
-  router: React.PropTypes.object.isRequired,
+  router: PropTypes.object.isRequired,
 };
 
 

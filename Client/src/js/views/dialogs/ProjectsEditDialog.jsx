@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { connect } from 'react-redux';
@@ -8,7 +9,6 @@ import _ from 'lodash';
 
 import * as Action from '../../actionTypes';
 import * as Api from '../../api';
-import * as Constant from '../../constants';
 import * as Log from '../../history';
 import store from '../../store';
 
@@ -19,46 +19,45 @@ import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
-var ProjectsEditDialog = React.createClass({
-  propTypes: {
-    fiscalYears: React.PropTypes.array,
-    project: React.PropTypes.object,
-    projects: React.PropTypes.object,
+class ProjectsEditDialog extends React.Component {
+  static propTypes = {
+    fiscalYears: PropTypes.array,
+    project: PropTypes.object,
+    projects: PropTypes.object,
 
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-  },
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+  };
 
-  getInitialState() {
-    return {
-      projectName: this.props.project.name || '',
-      projectStatus: this.props.project.status || Constant.PROJECT_STATUS_CODE_ACTIVE,
-      fiscalYear: this.props.project.fiscalYear || _.first( _.takeRight(this.props.fiscalYears, 2)),
-      provincialProjectNumber: this.props.project.provincialProjectNumber || '',
-      responsibilityCentre: this.props.project.responsibilityCentre || '',
-      serviceLine: this.props.project.serviceLine || '',
-      stob: this.props.project.stob || '',
-      product: this.props.project.product || '',
-      businessFunction: this.props.project.businessFunction || '',
-      workActivity: this.props.project.workActivity || '',
-      costType: this.props.project.costType || '',
-      projectInformation: this.props.project.information || '',
-      concurrencyControlNumber: this.props.project.concurrencyControlNumber || 0,
-      statusError: '',
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      projectName: props.project.name || '',
+      fiscalYear: props.project.fiscalYear || _.first( _.takeRight(props.fiscalYears, 2)),
+      provincialProjectNumber: props.project.provincialProjectNumber || '',
+      responsibilityCentre: props.project.responsibilityCentre || '',
+      serviceLine: props.project.serviceLine || '',
+      stob: props.project.stob || '',
+      product: props.project.product || '',
+      businessFunction: props.project.businessFunction || '',
+      workActivity: props.project.workActivity || '',
+      costType: props.project.costType || '',
+      projectInformation: props.project.information || '',
+      concurrencyControlNumber: props.project.concurrencyControlNumber || 0,
       projectNameError: '',
-      projectStatusCodeError: '',
     };
-  },
+  }
 
   componentDidMount() {
     Api.getProjects();
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     var project = this.props.project;
 
     if (this.state.projectName !== project.name) { return true; }
@@ -72,14 +71,12 @@ var ProjectsEditDialog = React.createClass({
     if (this.state.workActivity !== project.workActivity) { return true; }
     if (this.state.costType !== project.costType) { return true; }
     if (this.state.projectInformation !== project.information) { return true; }
-    if (this.state.projectStatus !== project.status) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
-      statusError: '',
       fiscalYearError: '',
       projectNameError: '',
     });
@@ -106,24 +103,17 @@ var ProjectsEditDialog = React.createClass({
       valid = false;
     }
 
-    if (isBlank(this.state.projectStatus)) {
-      this.setState({ projectStatusCodeError: 'Project status is required' });
-      valid = false;
-    }
-
     return valid;
-  },
+  };
 
-  onSubmit() {
+  onSubmit = () => {
     if (this.isValid()) {
       if (this.didChange()) {
         const project = {
           ...this.props.project,
           id: this.props.project.id,
-          canEditStatus: this.props.project.canEditStatus,
           district: this.props.project.district,
           name: this.state.projectName,
-          status: this.state.projectStatus,
           fiscalYear: this.state.fiscalYear,
           provincialProjectNumber: this.state.provincialProjectNumber,
           responsibilityCentre: this.state.responsibilityCentre,
@@ -146,7 +136,7 @@ var ProjectsEditDialog = React.createClass({
 
       this.props.onClose();
     }
-  },
+  };
 
   render() {
     const { isSaving } = this.state;
@@ -167,22 +157,12 @@ var ProjectsEditDialog = React.createClass({
               <Col xs={12}>
                 <FormGroup controlId="projectName" validationState={ this.state.projectNameError ? 'error' : null}>
                   <ControlLabel>Project Name <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" value={ this.state.projectName } updateState={ this.updateState} autoFocus/>
+                  <FormInputControl type="text" value={ this.state.projectName } updateState={ this.updateState} autoFocus maxLength="60"/>
                   <HelpBlock>{ this.state.projectNameError }</HelpBlock>
                 </FormGroup>
               </Col>
             </Row>
             <Row>
-              <Col xs={6}>
-                <FormGroup controlId="projectStatus" validationState={ this.state.projectStatusCodeError ? 'error' : null }>
-                  <ControlLabel>Project Status</ControlLabel>
-                  <DropdownControl id="projectStatus" title={ this.state.projectStatus } updateState={ this.updateState } disabled={ !this.props.project.canEditStatus }
-                    value={ this.state.projectStatus }
-                    items={[ Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED ]}
-                  />
-                  <HelpBlock>{ this.state.projectStatusCodeError }</HelpBlock>
-                </FormGroup>
-              </Col>
               <Col xs={6}>
                 <FormGroup controlId="fiscalYear" validationState={ this.state.fiscalYearError ? 'error' : null }>
                   <ControlLabel>Fiscal Year <sup>*</sup></ControlLabel>
@@ -192,15 +172,15 @@ var ProjectsEditDialog = React.createClass({
                   <HelpBlock>{ this.state.fiscalYearError }</HelpBlock>
                 </FormGroup>
               </Col>
-            </Row>
-            <Row>
               <Col xs={6}>
                 <FormGroup controlId="provincialProjectNumber">
                   <ControlLabel>Provincial Project Number</ControlLabel>
                   <FormInputControl type="text" value={ this.state.provincialProjectNumber } updateState={ this.updateState } />
                 </FormGroup>
               </Col>
-              <Col xs={6}>
+            </Row>
+            <Row>
+              <Col xs={12}>
                 <FormGroup controlId="responsibilityCentre">
                   <ControlLabel>Responsibility Centre</ControlLabel>
                   <FormInputControl type="text" value={ this.state.responsibilityCentre } updateState={ this.updateState } />
@@ -261,8 +241,8 @@ var ProjectsEditDialog = React.createClass({
         </Form>
       </FormDialog>
     );
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

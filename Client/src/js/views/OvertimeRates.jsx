@@ -1,9 +1,7 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { PageHeader, Button, ButtonGroup, Glyphicon, Well } from 'react-bootstrap';
-
 import _ from 'lodash';
 
 import * as Api from '../api';
@@ -13,46 +11,45 @@ import TableControl from '../components/TableControl.jsx';
 import Spinner from '../components/Spinner.jsx';
 import OvertimeRateEditDialog from './dialogs/OvertimeRateEditDialog.jsx';
 
-var OvertimeRates = React.createClass({
-  propTypes: {
-    currentUser: React.PropTypes.object,
-    overtimeRateTypes: React.PropTypes.array,
-    router: React.PropTypes.object,
-  },
 
-  getInitialState() {
-    return {
-      showOvertimeRateEditDialog: false,
-      overtimeRateType: {},
-    };
-  },
+class OvertimeRates extends React.Component {
+  static propTypes = {
+    currentUser: PropTypes.object,
+    overtimeRateTypes: PropTypes.array,
+    router: PropTypes.object,
+  };
+
+  state = {
+    showOvertimeRateEditDialog: false,
+    overtimeRateType: {},
+  };
 
   componentDidMount() {
     this.fetch();
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     Api.getOvertimeRateTypes();
-  },
+  };
 
-  editRate(overtimeRateType) {
+  editRate = (overtimeRateType) => {
     this.setState({ overtimeRateType: overtimeRateType }, this.showOvertimeRateEditDialog);
-  },
+  };
 
-  showOvertimeRateEditDialog() {
+  showOvertimeRateEditDialog = () => {
     this.setState({ showOvertimeRateEditDialog: true });
-  },
+  };
 
-  closeOvertimeRateEditDialog() {
+  closeOvertimeRateEditDialog = () => {
     this.setState({ showOvertimeRateEditDialog: false });
-  },
+  };
 
-  onOvertimeRateSave(data) {
+  onOvertimeRateSave = (data) => {
     Api.updateOvertimeRateType(data).then(() => {
       this.fetch();
       this.closeOvertimeRateEditDialog();
     });
-  },
+  };
 
   render() {
     if (!this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) {
@@ -103,8 +100,8 @@ var OvertimeRates = React.createClass({
         />
       }
     </div>;
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {

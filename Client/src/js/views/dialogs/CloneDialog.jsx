@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -16,24 +17,22 @@ import Spinner from '../../components/Spinner.jsx';
 
 import { formatDateTime } from '../../utils/date';
 
-var CloneDialog = React.createClass({
-  propTypes: {
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-    rentalAgreement: React.PropTypes.object,
-    projectRentalAgreements: React.PropTypes.object,
-    equipmentRentalAgreements: React.PropTypes.object,
-    cloneRentalAgreementError: React.PropTypes.string,
-  },
+class CloneDialog extends React.Component {
+  static propTypes = {
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    rentalAgreement: PropTypes.object,
+    projectRentalAgreements: PropTypes.object,
+    equipmentRentalAgreements: PropTypes.object,
+    cloneRentalAgreementError: PropTypes.string,
+  };
 
-  getInitialState() {
-    return {
-      loading: false,
-      rentalAgreementId: '',
-      type: BY_PROJECT,
-    };
-  },
+  state = {
+    loading: false,
+    rentalAgreementId: '',
+    type: BY_PROJECT,
+  };
 
   componentDidMount() {
     var getProjectRentalAgreementsPromise = Api.getProjectRentalAgreements(this.props.rentalAgreement.project.id);
@@ -42,29 +41,29 @@ var CloneDialog = React.createClass({
     return Promise.all([getProjectRentalAgreementsPromise, getEquipmentRentalAgreementsPromise]).finally(() => {
       this.setState({ loading: false });
     });
-  },
+  }
 
-  updateState(e) {
+  updateState = (e) => {
     this.setState({ [e.target.name]: e.target.value });
-  },
+  };
 
-  updateDropdownState(state) {
+  updateDropdownState = (state) => {
     this.setState(state);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.rentalAgreementId !== '') { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     return true;
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     this.props.onSave(parseInt(this.state.rentalAgreementId, 10), this.state.type);
-  },
+  };
 
   render() {
     var headers = [
@@ -127,8 +126,8 @@ var CloneDialog = React.createClass({
         </Col>
       </Row>
     </EditDialog>;
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

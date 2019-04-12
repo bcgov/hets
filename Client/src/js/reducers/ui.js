@@ -28,11 +28,10 @@ const DEFAULT_STATE = {
   appError: null,
   showErrorDialog: false,
   activeRentalAgreementId: null,
+  activeRentalRequestId: null,
 };
 
 export default function uiReducer(state = DEFAULT_STATE, action) {
-  var newState = {};
-
   switch(action.type) {
     // Requests
 
@@ -45,7 +44,7 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
     case Action.REQUESTS_ERROR:
       return { ...state, requests: { ...state.requests, error: action.error }, showErrorDialog: true };
 
-    // Screens
+      // Screens
 
     case Action.UPDATE_EQUIPMENT_LIST_UI:
       return { ...state, equipmentList: action.equipmentList };
@@ -104,13 +103,19 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
     case Action.SET_ACTIVE_PROJECT_ID_UI:
       return { ...state, activeProjectId: action.projectId };
 
+    case Action.SET_ACTIVE_RENTAL_REQUEST_ID_UI:
+      return { ...state, activeRentalRequestId: action.rentalRequestId };
+
+    case Action.SET_ACTIVE_OWNER_ID_UI:
+      return { ...state, activeOwnerId: action.ownerId };
+
     case Action.UPDATE_AIT_REPORT_UI:
       return { ...state, aitResponses: action.aitResponses };
 
-    case Action.GENERATE_ANOTHER_RENTAL_AGREEMENT:
-      return { ...state, activeRentalAgreementId: action.rentalAgreement.id };
+      // case Action.GENERATE_ANOTHER_RENTAL_AGREEMENT:
+      //   return { ...state, activeRentalAgreementId: action.rentalAgreement.id };
 
-    // Modals
+      // Modals
 
     case Action.SHOW_SESSION_TIMEOUT_DIALOG:
       return { ...state, showSessionTimeoutDialog: true };
@@ -125,7 +130,7 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
       return { ...state, showErrorDialog: false };
   }
 
-  return { ...state, ...newState };
+  return state;
 }
 
 export const uiSelector = (state) => state.ui;

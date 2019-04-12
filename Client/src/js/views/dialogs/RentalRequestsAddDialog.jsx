@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { FormGroup, HelpBlock, ControlLabel, Alert, Row, Col } from 'react-bootstrap';
@@ -16,24 +17,26 @@ import { isValidDate, today } from '../../utils/date';
 import { isBlank } from '../../utils/string';
 
 
-var RentalRequestsAddDialog = React.createClass({
-  propTypes: {
-    rentalRequest: React.PropTypes.object,
-    currentUser: React.PropTypes.object,
-    localAreas: React.PropTypes.object,
-    districtEquipmentTypes: React.PropTypes.object,
-    projects: React.PropTypes.object,
-    project: React.PropTypes.object,
-    onRentalAdded: React.PropTypes.func,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-    viewOnly: React.PropTypes.bool,
-  },
+class RentalRequestsAddDialog extends React.Component {
+  static propTypes = {
+    currentUser: PropTypes.object,
+    localAreas: PropTypes.object,
+    districtEquipmentTypes: PropTypes.object,
+    projects: PropTypes.object,
+    project: PropTypes.object,
+    onRentalAdded: PropTypes.func,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    viewOnly: PropTypes.bool,
+  };
 
-  getInitialState() {
-    const { project } = this.props;
-    return {
+  constructor(props) {
+    super(props);
+    const { project } = props;
+
+    this.state = {
       loading: false,
+      savingError: '',
       projectId: project ? project.id : 0,
       localAreaId: 0,
       equipmentTypeId: 0,
@@ -41,6 +44,7 @@ var RentalRequestsAddDialog = React.createClass({
       expectedHours: '',
       expectedStartDate: today(),
       expectedEndDate: '',
+      rentalRequestAttachments: [],
 
       projectError: '',
       localAreaError: '',
@@ -50,40 +54,40 @@ var RentalRequestsAddDialog = React.createClass({
       expectedStartDateError: '',
       expectedEndDateError: '',
     };
-  },
+  }
 
   componentDidMount() {
     Api.getDistrictEquipmentTypes();
     if (this.canChangeProject()) {
       Api.getProjectsCurrentFiscal();
     }
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  updateEquipmentTypeState(state) {
+  updateEquipmentTypeState = (state) => {
     var selectedEquipment =_.find(this.props.districtEquipmentTypes.data, { id: state.equipmentTypeId });
     var isDumpTruck = selectedEquipment.equipmentType.isDumpTruck;
     var expectedHours = isDumpTruck ? 600 : 300;
     this.setState({ ...state, expectedHours });
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.projectId !== 0) { return true; }
     if (this.state.localAreaId !== 0) { return true; }
     if (this.state.equipmentTypeId !== 0) { return true; }
     if (this.state.count !== 1) { return true; }
-    if (this.state.expectedHours !== this.props.rentalRequest.expectedHours) { return true; }
-    if (this.state.expectedStartDate !== this.props.rentalRequest.expectedStartDate) { return true; }
-    if (this.state.expectedEndDate !== this.props.rentalRequest.expectedEndDate) { return true; }
-    if (this.state.rentalRequestAttachments !== this.props.rentalRequest.rentalRequestAttachments) { return true; }
+    if (this.state.expectedHours !== '') { return true; }
+    if (this.state.expectedStartDate !== today()) { return true; }
+    if (this.state.expectedEndDate !== '') { return true; }
+    if (this.state.rentalRequestAttachments !== '') { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     // Clear out any previous errors
     var valid = true;
     this.setState({
@@ -146,24 +150,26 @@ var RentalRequestsAddDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onLocalAreaSelected(localArea) {
+  onLocalAreaSelected = (localArea) => {
     // clear the selected equipment type if it's not included in the types for the new local area
     var districtEquipmentTypes = this.getFilteredEquipmentTypes(localArea.id);
     if (_.filter(districtEquipmentTypes, type => type.id === this.state.equipmentTypeId).length === 0) {
       this.setState({ equipmentTypeId: 0 });
     }
-  },
+  };
 
-  onProjectSelected(/* project */) {
+  onProjectSelected = () => {
     // TODO Restrict the available local areas to a project service area
-  },
+  };
 
-  formSubmitted() {
+  formSubmitted = () => {
     if (this.isValid()) {
       if (this.didChange()) {
         this.setState({isSaving: true});
+
+        const { rentalRequestAttachments } = this.state;
 
         var request = {
           project: { id: this.state.projectId },
@@ -176,7 +182,7 @@ var RentalRequestsAddDialog = React.createClass({
           expectedEndDate: this.state.expectedEndDate,
           rentalRequestAttachments: [{
             id: 0,
-            attachment: this.state.rentalRequestAttachments,
+            attachment: rentalRequestAttachments.length === 0 ? undefined : rentalRequestAttachments,
           }],
         };
 
@@ -185,25 +191,30 @@ var RentalRequestsAddDialog = React.createClass({
 
           this.props.onRentalAdded(response);
           this.props.onClose();
-        }).catch(() => {
+        }).catch((err) => {
           this.setState({ isSaving: false });
+          if (err.errorCode) {
+            this.setState({ savingError: err.errorDescription });
+          } else {
+            throw err;
+          }
         });
       }
     }
-  },
+  };
 
-  getFilteredEquipmentTypes(localAreaId) {
+  getFilteredEquipmentTypes = (localAreaId) => {
     return _.chain(this.props.districtEquipmentTypes.data)
       .filter(type => type.equipmentCount > 0 && !localAreaId || _.filter(type.localAreas, localArea => localArea.id === localAreaId && localArea.equipmentCount > 0).length > 0)
       .sortBy('districtEquipmentName')
       .value();
-  },
+  };
 
-  canChangeProject() {
+  canChangeProject = () => {
     return !this.props.project && !this.props.viewOnly;
-  },
+  };
 
-  renderForm() {
+  renderForm = () => {
     const { project } = this.props;
 
     // Constrain the local area drop downs to those in the District of the current logged in user
@@ -219,106 +230,82 @@ var RentalRequestsAddDialog = React.createClass({
 
     return (
       <div>
-        <Row>
-          <Col md={12}>
-            <FormGroup controlId="projectId" validationState={ this.state.projectError ? 'error' : null }>
-              <ControlLabel>Project {this.canChangeProject() && (<sup>*</sup>)}</ControlLabel>
-              { this.canChangeProject() ? (
-                <FilterDropdown
-                  id="projectId"
-                  className="full-width"
-                  fieldName="label"
-                  disabled={!this.props.projects.loaded}
-                  selectedId={this.state.projectId}
-                  onSelect={this.onProjectSelected}
-                  updateState={this.updateState}
-                  items={projects}/>
-              ) : <div>{project ? project.name : 'Request - View Only' }</div>
-              }
-              <HelpBlock>{ this.state.projectError }</HelpBlock>
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col md={12}>
-            <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
-              <ControlLabel>Local Area <sup>*</sup></ControlLabel>
-              <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } onSelect={ this.onLocalAreaSelected } updateState={ this.updateState }
-                items={ localAreas } className="full-width"
-              />
-              <HelpBlock>{ this.state.localAreaError }</HelpBlock>
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col md={12}>
-            <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
-              <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
-              <FilterDropdown
-                id="equipmentTypeId"
-                className="full-width"
-                fieldName="districtEquipmentName"
-                disabled={!this.props.districtEquipmentTypes.loaded || !hasPickedLocalArea}
-                disabledTooltip="Select Local Area to see associated Equipment Type"
-                selectedId={ this.state.equipmentTypeId }
-                updateState={ this.updateEquipmentTypeState }
-                items={ districtEquipmentTypes }/>
-              <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          { !this.props.viewOnly && (
-            <Col md={12}>
-              <FormGroup controlId="count" validationState={ this.state.countError ? 'error' : null }>
-                <ControlLabel>Quantity <sup>*</sup></ControlLabel>
-                <FormInputControl type="number" min="0" value={ this.state.count } updateState={ this.updateState } />
-                <HelpBlock>{ this.state.countError }</HelpBlock>
-              </FormGroup>
-            </Col>
-          )}
-          { !this.props.viewOnly && (
-            <Col md={12}>
-              <FormGroup>
-                <ControlLabel>Attachment(s)</ControlLabel>
-                <FormInputControl id="rentalRequestAttachments" type="text" defaultValue={ this.state.rentalRequestAttachments } updateState={ this.updateState } />
-              </FormGroup>
-            </Col>
-          )}
-          { !this.props.viewOnly && (
-            <Col md={12}>
-              <FormGroup controlId="expectedHours" validationState={ this.state.expectedHoursError ? 'error' : null }>
-                <ControlLabel>Expected Hours <sup>*</sup></ControlLabel>
-                <FormInputControl type="number" className="full-width" min={0} value={ this.state.expectedHours } updateState={ this.updateState }/>
-                <HelpBlock>{ this.state.expectedHoursError }</HelpBlock>
-              </FormGroup>
-            </Col>
-          )}
-          { !this.props.viewOnly && (
-            <Col md={12}>
-              <FormGroup controlId="expectedStartDate" validationState={ this.state.expectedStartDateError ? 'error' : null }>
-                <ControlLabel>Start Date <sup>*</sup></ControlLabel>
-                <DateControl id="expectedStartDate" date={ this.state.expectedStartDate } updateState={ this.updateState } title="Dated At" />
-                <HelpBlock>{ this.state.expectedStartDateError }</HelpBlock>
-              </FormGroup>
-            </Col>
-          )}
-          { !this.props.viewOnly && (
-            <Col md={12}>
-              <FormGroup controlId="expectedEndDate" validationState={ this.state.expectedEndDateError ? 'error' : null }>
-                <ControlLabel>End Date</ControlLabel>
-                <DateControl id="expectedEndDate" date={ this.state.expectedEndDate } updateState={ this.updateState } title="Dated At" />
-                <HelpBlock>{ this.state.expectedEndDateError }</HelpBlock>
-              </FormGroup>
-            </Col>
-          )}
-        </Row>
-        { this.props.rentalRequest.error &&
-          <Alert bsStyle="danger">{ this.props.rentalRequest.errorMessage }</Alert>
+        <FormGroup controlId="projectId" validationState={ this.state.projectError ? 'error' : null }>
+          <ControlLabel>Project {!project && !this.props.viewOnly && (<sup>*</sup>)}</ControlLabel>
+          { this.canChangeProject() ? (
+            <FilterDropdown
+              id="projectId"
+              className="full-width"
+              fieldName="label"
+              disabled={!this.props.projects.loaded}
+              selectedId={this.state.projectId}
+              onSelect={this.onProjectSelected}
+              updateState={this.updateState}
+              items={projects}/>
+          ) : <div>{project ? project.name : 'Request - View Only' }</div>
+          }
+          <HelpBlock>{ this.state.projectError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
+          <ControlLabel>Local Area <sup>*</sup></ControlLabel>
+          <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } onSelect={ this.onLocalAreaSelected } updateState={ this.updateState }
+            items={ localAreas } className="full-width"
+          />
+          <HelpBlock>{ this.state.localAreaError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
+          <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
+          <FilterDropdown
+            id="equipmentTypeId"
+            className="full-width"
+            fieldName="districtEquipmentName"
+            disabled={!this.props.districtEquipmentTypes.loaded || !hasPickedLocalArea}
+            disabledTooltip="Select Local Area to see associated Equipment Type"
+            selectedId={ this.state.equipmentTypeId }
+            updateState={ this.updateEquipmentTypeState }
+            items={ districtEquipmentTypes }/>
+          <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
+        </FormGroup>
+        { !this.props.viewOnly && (
+          <FormGroup controlId="count" validationState={ this.state.countError ? 'error' : null }>
+            <ControlLabel>Quantity <sup>*</sup></ControlLabel>
+            <FormInputControl type="number" min="0" value={ this.state.count } updateState={ this.updateState } />
+            <HelpBlock>{ this.state.countError }</HelpBlock>
+          </FormGroup>
+        )}
+        { !this.props.viewOnly && (
+          <FormGroup>
+            <ControlLabel>Attachment(s)</ControlLabel>
+            <FormInputControl id="rentalRequestAttachments" type="text" defaultValue={ this.state.rentalRequestAttachments } updateState={ this.updateState } />
+          </FormGroup>
+        )}
+        { !this.props.viewOnly && (
+          <FormGroup controlId="expectedHours" validationState={ this.state.expectedHoursError ? 'error' : null }>
+            <ControlLabel>Expected Hours <sup>*</sup></ControlLabel>
+            <FormInputControl type="number" className="full-width" min={0} value={ this.state.expectedHours } updateState={ this.updateState }/>
+            <HelpBlock>{ this.state.expectedHoursError }</HelpBlock>
+          </FormGroup>
+        )}
+        { !this.props.viewOnly && (
+          <FormGroup controlId="expectedStartDate" validationState={ this.state.expectedStartDateError ? 'error' : null }>
+            <ControlLabel>Start Date <sup>*</sup></ControlLabel>
+            <DateControl id="expectedStartDate" date={ this.state.expectedStartDate } updateState={ this.updateState } title="Dated At" />
+            <HelpBlock>{ this.state.expectedStartDateError }</HelpBlock>
+          </FormGroup>
+        )}
+        { !this.props.viewOnly && (
+          <FormGroup controlId="expectedEndDate" validationState={ this.state.expectedEndDateError ? 'error' : null }>
+            <ControlLabel>End Date</ControlLabel>
+            <DateControl id="expectedEndDate" date={ this.state.expectedEndDate } updateState={ this.updateState } title="Dated At" />
+            <HelpBlock>{ this.state.expectedEndDateError }</HelpBlock>
+          </FormGroup>
+        )}
+        { this.state.savingError &&
+          <Alert bsStyle="danger">{ this.state.savingError }</Alert>
         }
       </div>
     );
-  },
+  };
 
   render() {
     const { isSaving } = this.state;
@@ -335,12 +322,11 @@ var RentalRequestsAddDialog = React.createClass({
         { this.renderForm()}
       </FormDialog>
     );
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {
-    rentalRequest: state.models.rentalRequest,
     currentUser: state.user,
     localAreas: state.lookups.localAreas,
     districtEquipmentTypes: state.lookups.districtEquipmentTypes,

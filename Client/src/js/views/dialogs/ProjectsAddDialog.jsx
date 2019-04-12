@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -13,20 +14,22 @@ import Form from '../../components/Form.jsx';
 
 import { isBlank, notBlank } from '../../utils/string';
 
-var ProjectsAddDialog = React.createClass({
-  propTypes: {
-    currentUser: React.PropTypes.object,
-    projects: React.PropTypes.object,
-    fiscalYears: React.PropTypes.array,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-  },
+class ProjectsAddDialog extends React.Component {
+  static propTypes = {
+    currentUser: PropTypes.object,
+    projects: PropTypes.object,
+    fiscalYears: PropTypes.array,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       name: '',
-      fiscalYear: _.first( _.takeRight(this.props.fiscalYears, 2)),
+      fiscalYear: _.first(_.takeRight(props.fiscalYears, 2)),
       provincialProjectNumber: '',
       responsibilityCentre: '',
       serviceLine: '',
@@ -39,17 +42,17 @@ var ProjectsAddDialog = React.createClass({
 
       nameError: '',
     };
-  },
+  }
 
   componentDidMount() {
     Api.getProjects();
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     return notBlank(this.state.name) ||
       notBlank(this.state.fiscalYear) ||
       notBlank(this.state.provincialProjectNumber) ||
@@ -61,9 +64,9 @@ var ProjectsAddDialog = React.createClass({
       notBlank(this.state.workActivity) ||
       notBlank(this.state.costType) ||
       notBlank(this.state.information);
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     // Clear out any previous errors
     var valid = true;
 
@@ -93,9 +96,9 @@ var ProjectsAddDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     this.props.onSave({
       name: this.state.name,
       fiscalYear: this.state.fiscalYear,
@@ -111,7 +114,7 @@ var ProjectsAddDialog = React.createClass({
       costType: this.state.costType,
       information: this.state.information,
     });
-  },
+  };
 
   render() {
     return <EditDialog id="add-project" show={ this.props.show }
@@ -123,7 +126,7 @@ var ProjectsAddDialog = React.createClass({
             <Col xs={12}>
               <FormGroup controlId="name" validationState={ this.state.nameError ? 'error' : null }>
                 <ControlLabel>Project Name <sup>*</sup></ControlLabel>
-                <FormInputControl type="text" value={ this.state.name } updateState={ this.updateState } autoFocus />
+                <FormInputControl type="text" value={ this.state.name } updateState={ this.updateState } autoFocus maxLength="60" />
                 <HelpBlock>{ this.state.nameError }</HelpBlock>
               </FormGroup>
             </Col>
@@ -212,8 +215,8 @@ var ProjectsAddDialog = React.createClass({
         </Grid>
       </Form>
     </EditDialog>;
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

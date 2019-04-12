@@ -8,13 +8,10 @@ const DEFAULT_USER = {
 };
 
 export default function userReducer(state = DEFAULT_USER, action) {
-  var newState = {};
-
   switch(action.type) {
     case Action.UPDATE_CURRENT_USER:
-      newState = { ...state, ...action.user };
-      break;
+      return { ...state, ...action.user };
   }
 
-  return { ...state, ...newState };
+  return state;
 }

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import { Glyphicon } from 'react-bootstrap';
@@ -5,19 +6,19 @@ import { Glyphicon } from 'react-bootstrap';
 import TooltipButton from './TooltipButton.jsx';
 
 
-var PrintButton = React.createClass({
-  propTypes: {
-    id: React.PropTypes.string,
-    className: React.PropTypes.string,
-    title: React.PropTypes.string,
-    disabled: React.PropTypes.bool,
-    disabledTooltip: React.PropTypes.node,
-    children: React.PropTypes.node,
-  },
+class PrintButton extends React.Component {
+  static propTypes = {
+    id: PropTypes.string,
+    className: PropTypes.string,
+    title: PropTypes.string,
+    disabled: PropTypes.bool,
+    disabledTooltip: PropTypes.node,
+    children: PropTypes.node,
+  };
 
-  print() {
+  print = () => {
     window.print();
-  },
+  };
 
   render() {
     const { id, className, disabled, disabledTooltip, children } = this.props;
@@ -33,8 +34,8 @@ var PrintButton = React.createClass({
         <span>{children}</span>
       </TooltipButton>
     );
-  },
-});
+  }
+}
 
 PrintButton.defaultProps = {
   disabledTooltip: 'Please perform a search to print',

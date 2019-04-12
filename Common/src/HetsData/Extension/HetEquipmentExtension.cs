@@ -2,9 +2,9 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HetsData.Model
-{    
+{
     public partial class HetEquipment
-    {        
+    {
         /// <summary>
         /// Status Codes
         /// </summary>
@@ -89,10 +89,10 @@ namespace HetsData.Model
         /// 1. Years of Service* SeniorityScoreConstant + (Average number of hours worked per year for the last 3 Years)
         ///    * Constant is 60 for Dump Trucks and
         ///    * Constant is 50 for all other equipment types
-        /// (constants are stored in the appSettings file)    
+        /// (constants are stored in the appSettings file)
         /// </summary>
         public void CalculateSeniority(int seniorityScoringConstant)
-        {            
+        {
             // get total hours worked over the last three years
             float totalHoursWorked = 0.0F;
 
@@ -131,10 +131,10 @@ namespace HetsData.Model
             // Calculate Years of Service
             // ***********************************************************************************
             // Business Rules:
-            // 1. When the equipment is added the years registered is set to a fraction of the 
-            //    fiscal left from the registered date to the end of current fiscal 
+            // 1. When the equipment is added the years registered is set to a fraction of the
+            //    fiscal left from the registered date to the end of current fiscal
             //    (decimals: 3 places)
-            // 2. On roll over the years registered increments by one for each year the equipment 
+            // 2. On roll over the years registered increments by one for each year the equipment
             //    stays active ((might need use the TO_DATE field to track when last it was rolled over)
             //    TO_DATE = END OF CURRENT FISCAL
 
@@ -152,7 +152,7 @@ namespace HetsData.Model
 
             // calculate and set the To Date
             YearsOfService = YearsOfService + 1;
-            ToDate = fiscalEnd;               
+            ToDate = fiscalEnd;
         }
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace HetsData.Model
         /// <param name="changed"></param>
         /// <returns>True if the changed record differs from this one</returns>
         public bool IsSeniorityAuditRequired(HetEquipment changed)
-        {            
+        {
             // change to seniority -> write audit
             if (Seniority != null && Seniority != changed.Seniority)
             {
@@ -169,7 +169,7 @@ namespace HetsData.Model
             }
 
             // change to local area -> write audit
-            if (LocalArea != null && LocalArea.LocalAreaId != changed.LocalArea.LocalAreaId)            
+            if (LocalArea != null && LocalArea.LocalAreaId != changed.LocalArea.LocalAreaId)
             {
                 return true;
             }
@@ -201,9 +201,9 @@ namespace HetsData.Model
             {
                 return true;
             }
-              
+
             return false;
-        }        
-        
+        }
+
     }
 }

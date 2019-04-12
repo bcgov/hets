@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { FormGroup, HelpBlock, ControlLabel, Row, Col } from 'react-bootstrap';
@@ -10,38 +11,36 @@ import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
-var OvertimeRateEditDialog = React.createClass({
-  propTypes: {
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-    overtimeRateType: React.PropTypes.object.isRequired,
-  },
+class OvertimeRateEditDialog extends React.Component {
+  static propTypes = {
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    overtimeRateType: PropTypes.object.isRequired,
+  };
 
-  getInitialState() {
-    return {
-      rateId: this.props.overtimeRateType.id,
-      rateType: this.props.overtimeRateType.rateType || '',
-      description: this.props.overtimeRateType.description || '',
-      value: this.props.overtimeRateType.rate || 0,
-      concurrencyControlNumber: this.props.overtimeRateType.concurrencyControlNumber || 0,
-      descriptionError: '',
-      valueError: '',
-    };
-  },
+  state = {
+    rateId: this.props.overtimeRateType.id,
+    rateType: this.props.overtimeRateType.rateType || '',
+    description: this.props.overtimeRateType.description || '',
+    value: this.props.overtimeRateType.rate || 0,
+    concurrencyControlNumber: this.props.overtimeRateType.concurrencyControlNumber || 0,
+    descriptionError: '',
+    valueError: '',
+  };
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.description !== this.props.overtimeRateType.description) { return true; }
     if (this.state.value !== this.props.overtimeRateType.value) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       descriptionError: '',
       valueError: '',
@@ -67,9 +66,9 @@ var OvertimeRateEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     this.props.onSave({
       id: this.state.rateId,
       rateType: this.state.rateType,
@@ -79,7 +78,7 @@ var OvertimeRateEditDialog = React.createClass({
       concurrencyControlNumber: this.state.concurrencyControlNumber,
       active: true,
     });
-  },
+  };
 
   render() {
     return <EditDialog id="overtime-rate-edit" show={ this.props.show }
@@ -108,7 +107,7 @@ var OvertimeRateEditDialog = React.createClass({
         </Row>
       </Form>
     </EditDialog>;
-  },
-});
+  }
+}
 
 export default OvertimeRateEditDialog;

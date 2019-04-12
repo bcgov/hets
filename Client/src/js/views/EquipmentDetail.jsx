@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
@@ -47,20 +48,22 @@ const EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE = 'This equipment is pa
   'Rental Request. Release the list (finish hiring / delete) before making this change';
 
 
-var EquipmentDetail = React.createClass({
-  propTypes: {
-    equipment: React.PropTypes.object,
-    notes: React.PropTypes.array,
-    attachments: React.PropTypes.object,
-    documents: React.PropTypes.object,
-    history: React.PropTypes.object,
-    params: React.PropTypes.object,
-    ui: React.PropTypes.object,
-    location: React.PropTypes.object,
-  },
+class EquipmentDetail extends React.Component {
+  static propTypes = {
+    equipment: PropTypes.object,
+    notes: PropTypes.array,
+    attachments: PropTypes.object,
+    documents: PropTypes.object,
+    history: PropTypes.object,
+    params: PropTypes.object,
+    ui: PropTypes.object,
+    location: PropTypes.object,
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       loading: true,
       showEditDialog: false,
       showDocumentsDialog: false,
@@ -72,23 +75,23 @@ var EquipmentDetail = React.createClass({
       equipmentPhysicalAttachment: {},
       ui : {
         // Physical Attachments
-        sortField: this.props.ui.sortField || 'attachmentTypeName',
-        sortDesc: this.props.ui.sortDesc === true,
+        sortField: props.ui.sortField || 'attachmentTypeName',
+        sortDesc: props.ui.sortDesc === true,
       },
     };
-  },
+  }
 
   componentDidMount() {
     this.fetch();
-  },
+  }
 
   componentDidUpdate(prevProps) {
     if (prevProps.params.equipmentId !== this.props.params.equipmentId) {
       this.fetch();
     }
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     this.setState({ loading: true });
 
     var equipmentId = this.props.params.equipmentId;
@@ -99,93 +102,93 @@ var EquipmentDetail = React.createClass({
     return Promise.all([getEquipmentPromise, documentsPromise, getEquipmentNotesPromise]).finally(() => {
       this.setState({ loading: false });
     });
-  },
+  };
 
-  showNotes() {
+  showNotes = () => {
     this.setState({ showNotesDialog: true });
-  },
+  };
 
-  closeNotesDialog() {
+  closeNotesDialog = () => {
     this.setState({ showNotesDialog: false });
-  },
+  };
 
-  showDocuments() {
+  showDocuments = () => {
     this.setState({ showDocumentsDialog: true });
-  },
+  };
 
-  closeDocumentsDialog() {
+  closeDocumentsDialog = () => {
     this.setState({ showDocumentsDialog: false });
-  },
+  };
 
-  updateUIState(state, callback) {
+  updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
       store.dispatch({ type: Action.UPDATE_PHYSICAL_ATTACHMENTS_UI, equipmentPhysicalAttachments: this.state.ui });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  openEditDialog() {
+  openEditDialog = () => {
     this.setState({ showEditDialog: true });
-  },
+  };
 
-  closeEditDialog() {
+  closeEditDialog = () => {
     this.setState({ showEditDialog: false });
-  },
+  };
 
-  saveEdit(equipment) {
+  saveEdit = (equipment) => {
     return Api.updateEquipment(equipment).then(() => {
       Log.equipmentModified(this.props.equipment);
       this.closeEditDialog();
 
       return null;
     });
-  },
+  };
 
-  updateStatusState(state) {
+  updateStatusState = (state) => {
     if (state !== this.props.equipment.status) {
       this.setState({ status: state }, () => this.openChangeStatusDialog());
     }
-  },
+  };
 
-  openChangeStatusDialog() {
+  openChangeStatusDialog = () => {
     this.setState({ showChangeStatusDialog: true });
-  },
+  };
 
-  closeChangeStatusDialog() {
+  closeChangeStatusDialog = () => {
     this.setState({ showChangeStatusDialog: false });
-  },
+  };
 
-  onStatusChanged(/* status */) {
+  onStatusChanged = () => {
     this.closeChangeStatusDialog();
     Api.getEquipmentNotes(this.props.equipment.id);
-  },
+  };
 
-  openSeniorityDialog() {
+  openSeniorityDialog = () => {
     this.setState({ showSeniorityDialog: true });
-  },
+  };
 
-  closeSeniorityDialog() {
+  closeSeniorityDialog = () => {
     this.setState({ showSeniorityDialog: false });
-  },
+  };
 
-  saveSeniorityEdit(equipment) {
+  saveSeniorityEdit = (equipment) => {
     Api.updateEquipment(equipment).finally(() => {
       Log.equipmentSeniorityModified(this.props.equipment);
       this.closeSeniorityDialog();
     });
-  },
+  };
 
-  openPhysicalAttachmentDialog() {
+  openPhysicalAttachmentDialog = () => {
     this.setState({
       showPhysicalAttachmentDialog: true,
     });
-  },
+  };
 
-  closePhysicalAttachmentDialog() {
+  closePhysicalAttachmentDialog = () => {
     this.setState({ showPhysicalAttachmentDialog: false });
-  },
+  };
 
-  addPhysicalAttachments(attachmentTypeNames, equipment) {
+  addPhysicalAttachments = (attachmentTypeNames, equipment) => {
     Api.addPhysicalAttachments(equipment.id, attachmentTypeNames).then(() => {
       attachmentTypeNames.forEach((typeName) => {
         Log.equipmentAttachmentAdded(equipment, typeName);
@@ -194,45 +197,45 @@ var EquipmentDetail = React.createClass({
       Api.getEquipment(equipId);
       this.closePhysicalAttachmentDialog();
     });
-  },
+  };
 
-  openPhysicalAttachmentEditDialog(attachment) {
+  openPhysicalAttachmentEditDialog = (attachment) => {
     this.setState({
       equipmentPhysicalAttachment: attachment,
       showPhysicalAttachmentEditDialog: true,
     });
-  },
+  };
 
-  closePhysicalAttachmentEditDialog() {
+  closePhysicalAttachmentEditDialog = () => {
     this.setState({ showPhysicalAttachmentEditDialog: false });
-  },
+  };
 
-  updatePhysicalAttachment(attachment) {
+  updatePhysicalAttachment = (attachment) => {
     Api.updatePhysicalAttachment(attachment).then(() => {
       Log.equipmentAttachmentUpdated(this.props.equipment, attachment.typeName);
       var equipId = this.props.params.equipmentId;
       Api.getEquipment(equipId);
       this.closePhysicalAttachmentEditDialog();
     });
-  },
+  };
 
-  deletePhysicalAttachment(attachmentId) {
+  deletePhysicalAttachment = (attachmentId) => {
     Api.deletePhysicalAttachment(attachmentId).then(() => {
       let attachment = _.find(this.props.equipment.equipmentAttachments, ((attachment) => attachment.id === attachmentId ));
       Log.equipmentAttachmentDeleted(this.props.equipment, attachment.typeName);
       var equipId = this.props.params.equipmentId;
       Api.getEquipment(equipId);
     });
-  },
+  };
 
-  getLastVerifiedStyle(equipment) {
+  getLastVerifiedStyle = (equipment) => {
     var daysSinceVerified = equipment.daysSinceVerified;
     if (daysSinceVerified >= Constant.EQUIPMENT_DAYS_SINCE_VERIFIED_CRITICAL) { return 'danger'; }
     if (daysSinceVerified >= Constant.EQUIPMENT_DAYS_SINCE_VERIFIED_WARNING) { return 'warning'; }
     return 'success';
-  },
+  };
 
-  getStatuses() {
+  getStatuses = () => {
     var dropdownItems = _.pull([
       Constant.EQUIPMENT_STATUS_CODE_APPROVED,
       Constant.EQUIPMENT_STATUS_CODE_PENDING,
@@ -244,7 +247,7 @@ var EquipmentDetail = React.createClass({
       return [];
     }
     return dropdownItems;
-  },
+  };
 
   render() {
     var equipment = this.props.equipment;
@@ -451,7 +454,7 @@ var EquipmentDetail = React.createClass({
                     </Col>
                     <Col lg={12}>
                       <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Registered Date">
-                        { formatDateTime(equipment.seniorityEffectiveDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
+                        { formatDateTime(equipment.approvedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
                       </ColDisplay>
                     </Col>
                     <Col lg={12}>
@@ -528,8 +531,8 @@ var EquipmentDetail = React.createClass({
         )}
       </div>
     );
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {

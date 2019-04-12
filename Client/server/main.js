@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*eslint-env node*/
 
 const path = require('path');
@@ -11,16 +12,18 @@ const WEBPACK_CONFIG = require('../webpack.config');
 
 const argv = require('minimist')(process.argv.slice(2));
 
-const PORT = argv.port || 8000;
-const HOST = argv.host || 'localhost';
-const API_HOST = argv.apihost || 'server-tran-hets-dev.pathfinder.gov.bc.ca';
-const API_PORT = argv.apiport || process.env.BC_GOV_HETS_API_PORT || 80;
-
 // Include your SmUserId on the command line or in ENV.
 const DEV_USER = argv.devuser || process.env.HETS_DEV_USER || '';
 
 const PROJECT_ROOT = path.join(__dirname, '..');
 const DIST_PATH = path.join(PROJECT_ROOT, 'dist');
+
+const PORT = argv.port || 8000;
+const HOST = argv.host || 'localhost';
+const API_HOST = argv.apihost || 'server-tran-hets-dev.pathfinder.gov.bc.ca';
+const API_PORT = argv.apiport || process.env.BC_GOV_HETS_API_PORT || 80;
+const SERVE_ONLY_STATIC = Boolean(argv.staticpath);
+const STATIC_PATH = SERVE_ONLY_STATIC ? argv.staticpath : DIST_PATH;
 
 const app = express();
 
@@ -50,28 +53,29 @@ app.use('/api', proxy(`http://${API_HOST}:${API_PORT}/api`, {
   },
 }));
 
-// Override WebPack config to work with this express server
-WEBPACK_CONFIG.output.path = '/';
-WEBPACK_CONFIG.output.publicPath = '/js/';
+if (!SERVE_ONLY_STATIC) {
+  // Override WebPack config to work with this express server
+  WEBPACK_CONFIG.output.path = '/';
+  WEBPACK_CONFIG.output.publicPath = '/js/';
 
-const compiler = webpack(WEBPACK_CONFIG);
-const middleware = webpackMiddleware(compiler, {
-  publicPath: WEBPACK_CONFIG.output.publicPath,
-  contentBase: 'src',
-  stats: {
-    colors: true,
-    hash: false,
-    timings: true,
-    chunks: false,
-    chunkModules: false,
-    modules: false,
-  },
-});
-app.use(require('webpack-hot-middleware')(compiler));
+  const compiler = webpack(WEBPACK_CONFIG);
+  const middleware = webpackMiddleware(compiler, {
+    publicPath: WEBPACK_CONFIG.output.publicPath,
+    contentBase: 'src',
+    stats: {
+      colors: true,
+      hash: false,
+      timings: true,
+      chunks: false,
+      chunkModules: false,
+      modules: false,
+    },
+  });
+  app.use(require('webpack-hot-middleware')(compiler));
+  app.use(middleware);
+}
 
-app.use(middleware);
-
-app.use(express.static(DIST_PATH));
+app.use(express.static(STATIC_PATH));
 
 app.use('/test', express.static(PROJECT_ROOT + '/test'));
 app.use('/node_modules', express.static(PROJECT_ROOT + '/node_modules'));

@@ -2,7 +2,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
-const _ = require('lodash');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
@@ -10,78 +10,57 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const DEV_USER = process.env.HETS_DEV_USER || '';
 
 var webpackPlugins = [
-  new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.js' }),
-  new webpack.LoaderOptionsPlugin({
-    options: {
-      eslint: {
-        failOnWarning: IS_PRODUCTION,
-        failOnError: true,
-      },
-    },
-  }),
+  new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en/),
 ];
-
 var eslintDevRule = {};
 
-if(IS_PRODUCTION) {
-  webpackPlugins.push(new webpack.optimize.UglifyJsPlugin({
-    compress: {
-      warnings: false,
-    },
-    mangle: {
-      except: [ '$super', '$', 'exports', 'require' ],
-    },
-  }));
+const entrypoints = {
+  app: [
+    '@babel/polyfill',
+    './src/js/init.js',
+  ],
+};
+
+if(!IS_PRODUCTION) {
   webpackPlugins.push(new webpack.DefinePlugin({
     'process.env':{
-      'NODE_ENV': JSON.stringify('production'),
-    },
-  }));
-  webpackPlugins.push(new webpack.NoEmitOnErrorsPlugin());
-} else {
-  webpackPlugins.push(new webpack.HotModuleReplacementPlugin());
-  webpackPlugins.push(new webpack.DefinePlugin({
-    'process.env':{
-      'NODE_ENV': JSON.stringify('development'),
       'DEV_USER': JSON.stringify(DEV_USER),
     },
   }));
+
+  webpackPlugins.push(new webpack.HotModuleReplacementPlugin());
+  entrypoints.app = [
+    entrypoints.app[0],
+    'react-hot-loader/patch', // has to be after @babel/polyfill
+    'webpack-hot-middleware/client',
+    entrypoints.app[1],
+  ];
 
   eslintDevRule = {
     enforce: 'pre',
     test: /\.jsx?$/,
     loader: 'eslint-loader',
     exclude: /node_modules/,
-    options: { emitWarning: true },
   };
 }
 
+
 module.exports = {
+  mode: IS_PRODUCTION ? 'production' : 'development',
   bail: IS_PRODUCTION,
   devtool: IS_PRODUCTION ? 'source-map' : 'cheap-source-map',
-  entry: {
-    app: _.compact([
-      IS_PRODUCTION ? null : 'webpack-hot-middleware/client',
-      './src/js/init.js',
-    ]),
-    vendor: [
-      'jquery',
-      'bluebird',
-      'lodash',
-      'react',
-      'react-bootstrap',
-      'react-bootstrap-datetimepicker',
-      'react-dom',
-      'react-redux',
-      'react-router',
-      'react-router-bootstrap',
-      'redux',
-    ],
-  },
+  entry: entrypoints,
   output: {
-    path: path.join(__dirname, '/dist/'),
-    filename: 'app.js',
+    path: path.resolve(__dirname, 'dist'),
+    filename: '[name].js',
+    chunkFilename: '[name].js',
+    sourceMapFilename: 'maps/[file].map',
     publicPath: '/',
+  },
+  resolve: {
+    alias: {
+      'react-dom': IS_PRODUCTION ? 'react-dom' : '@hot-loader/react-dom',
+    },
   },
   plugins: webpackPlugins,
   module: {
@@ -90,8 +69,32 @@ module.exports = {
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        loaders: ['react-hot-loader', 'babel-loader'],
+        loader: 'babel-loader',
       },
     ],
+  },
+  optimization: {
+    noEmitOnErrors: IS_PRODUCTION,
+    concatenateModules: true,
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /node_modules/,
+          chunks: 'initial',
+          name: 'vendor',
+          enforce: true,
+        },
+      },
+    } ,
+    minimizer: [
+      new UglifyJsPlugin({
+        sourceMap: true,
+      }),
+    ],
+  },
+  performance: {
+    hints: IS_PRODUCTION ? 'warning' : false,
+    maxAssetSize: 1 * 1024 * 1024,
+    maxEntrypointSize: 2 * 1024 * 1024,
   },
 };

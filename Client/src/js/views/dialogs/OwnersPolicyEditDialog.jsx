@@ -1,30 +1,31 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-
-import { connect } from 'react-redux';
-
 import { FormGroup, ControlLabel, HelpBlock, Row, Col } from 'react-bootstrap';
 
 import * as Constant from '../../constants';
+import * as Api from '../../api';
 
 import DateControl from '../../components/DateControl.jsx';
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 import { isValidDate, toZuluTime } from '../../utils/date';
 import { notBlank, isBlank } from '../../utils/string';
 
-var OwnersPolicyEditDialog = React.createClass({
-  propTypes: {
-    owner: React.PropTypes.object,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-  },
 
-  getInitialState() {
-    var owner = this.props.owner;
-    return {
+class OwnersPolicyEditDialog extends React.Component {
+  static propTypes = {
+    owner: PropTypes.object,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+  };
+
+  constructor(props) {
+    super(props);
+    var owner = props.owner;
+
+    this.state = {
       workSafeBCPolicyNumber: owner.workSafeBCPolicyNumber || '',
       workSafeBCExpiryDate: owner.workSafeBCExpiryDate || '',
       cglCompanyName: owner.cglCompanyName || '',
@@ -35,13 +36,13 @@ var OwnersPolicyEditDialog = React.createClass({
       workSafeBCExpiryDateError: '',
       cglEndDateError: '',
     };
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     var owner = this.props.owner;
 
     if (this.state.workSafeBCPolicyNumber !== owner.workSafeBCPolicyNumber) { return true; }
@@ -51,9 +52,9 @@ var OwnersPolicyEditDialog = React.createClass({
     if (this.state.cglEndDate !== owner.cglEndDate) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       workSafeBCPolicyNumberError: '',
       workSafeBCExpiryDateError: '',
@@ -78,24 +79,37 @@ var OwnersPolicyEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onSave() {
-    this.props.onSave({ ...this.props.owner, ...{
-      workSafeBCPolicyNumber: this.state.workSafeBCPolicyNumber,
-      workSafeBCExpiryDate: toZuluTime(this.state.workSafeBCExpiryDate),
-      cglCompanyName: this.state.cglCompanyName,
-      cglPolicyNumber: this.state.cglPolicyNumber,
-      cglEndDate: toZuluTime(this.state.cglEndDate),
-    }});
-  },
+  formSubmitted = () => {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        const owner = {
+          ...this.props.owner,
+          workSafeBCPolicyNumber: this.state.workSafeBCPolicyNumber,
+          workSafeBCExpiryDate: toZuluTime(this.state.workSafeBCExpiryDate),
+          cglCompanyName: this.state.cglCompanyName,
+          cglPolicyNumber: this.state.cglPolicyNumber,
+          cglEndDate: toZuluTime(this.state.cglEndDate),
+        };
+
+        Api.updateOwner(owner).then(() => {
+          if (this.props.onSave) { this.props.onSave(); }
+        });
+      }
+
+      this.props.onClose();
+    }
+  };
 
   render() {
-    console.log(this.props.owner);
-    return <EditDialog id="owners-edit" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={<strong>Owner Insurance</strong>}>
-      <Form>
+    return (
+      <FormDialog
+        id="owners-edit"
+        show={this.props.show}
+        title="Owner Insurance"
+        onClose={this.props.onClose}
+        onSubmit={this.formSubmitted}>
         <Row>
           <Col xs={6}>
             <FormGroup controlId="workSafeBCPolicyNumber" validationState={ this.state.workSafeBCPolicyNumberError ? 'error' : null }>
@@ -135,15 +149,9 @@ var OwnersPolicyEditDialog = React.createClass({
             </FormGroup>
           </Col>
         </Row>
-      </Form>
-    </EditDialog>;
-  },
-});
-
-function mapStateToProps(state) {
-  return {
-    owner: state.models.owner,
-  };
+      </FormDialog>
+    );
+  }
 }
 
-export default connect(mapStateToProps)(OwnersPolicyEditDialog);
+export default OwnersPolicyEditDialog;

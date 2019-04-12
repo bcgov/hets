@@ -37,10 +37,6 @@
 
   #projects-top {
     margin-bottom: 10px;
-
-    #project-documents-button {
-      margin-left: 5px;
-    }
   }
 
   #equipment-list {
@@ -89,11 +85,6 @@
 }
 
 #projects-edit {
-  [class*='col-'] {
-    padding-left: 7px;
-    padding-right: 7px;
-  }
-
   textarea {
     resize: vertical;
   }

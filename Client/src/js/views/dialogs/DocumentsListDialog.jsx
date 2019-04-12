@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { connect } from 'react-redux';
@@ -22,31 +23,33 @@ import FilePicker from '../../components/FilePicker.jsx';
 import { formatDateTime } from '../../utils/date';
 
 
-var DocumentsListDialog = React.createClass({
-  propTypes: {
-    parent: React.PropTypes.object.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
+class DocumentsListDialog extends React.Component {
+  static propTypes = {
+    parent: PropTypes.object.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
 
-    documents: React.PropTypes.object,
-    users: React.PropTypes.object,
-    ui: React.PropTypes.object,
-  },
+    documents: PropTypes.object,
+    users: PropTypes.object,
+    ui: PropTypes.object,
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       loading: false,
       documents: [],
       uploadInProgress: false,
       percentUploaded: 0,
       showAttachmentDialog: false,
       ui : {
-        sortField: this.props.ui.sortField || 'timestampSort',
-        sortDesc: this.props.ui.sortDesc !== false,
+        sortField: props.ui.sortField || 'timestampSort',
+        sortDesc: props.ui.sortDesc !== false,
       },
       uploadError: '',
     };
-  },
+  }
 
   componentDidMount() {
     this.setState({ loading: true });
@@ -55,30 +58,30 @@ var DocumentsListDialog = React.createClass({
     }).finally(() => {
       this.setState({ loading: false });
     });
-  },
+  }
 
-  getUserName(smUserId) {
+  getUserName = (smUserId) => {
     var user = _.find(this.props.users, user => { return user.smUserId === smUserId; });
     return user ? user.name : smUserId;
-  },
+  };
 
-  updateUIState(state, callback) {
+  updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
       store.dispatch({ type: Action.UPDATE_DOCUMENTS_UI, documents: this.state.ui });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  fetch() {
+  fetch = () => {
     this.setState({ loading: true });
     return this.props.parent.getDocumentsPromise(this.props.parent.id).then(() => {
       this.formatDocuments();
     }).finally(() => {
       this.setState({ loading: false });
     });
-  },
+  };
 
-  formatDocuments() {
+  formatDocuments = () => {
     var documents = _.map(this.props.documents, document => {
       return {
         ...document,
@@ -89,21 +92,21 @@ var DocumentsListDialog = React.createClass({
     this.setState({
       documents: documents,
     });
-  },
+  };
 
-  deleteDocument(document) {
+  deleteDocument = (document) => {
     Api.deleteDocument(document).then(() => {
       this.props.parent.documentDeleted(this.props.parent, document);
       return this.fetch();
     });
-  },
+  };
 
-  downloadDocument(document) {
+  downloadDocument = (document) => {
     // Get path to the document and open it in a new browser window to initiate download.
     window.open(Api.getDownloadDocumentURL(document));
-  },
+  };
 
-  uploadFiles(files) {
+  uploadFiles = (files) => {
     this.setState({ uploadError: '' });
 
     var invalidFiles = _.filter(files, file => file.size > Constant.MAX_ATTACHMENT_FILE_SIZE);
@@ -132,7 +135,7 @@ var DocumentsListDialog = React.createClass({
     }, (err) => {
       this.setState({ uploadInProgress: false, fileUploadError: err });
     });
-  },
+  };
 
   render() {
     var parent = this.props.parent;
@@ -197,8 +200,8 @@ var DocumentsListDialog = React.createClass({
         </div>
       </ModalDialog>
     );
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

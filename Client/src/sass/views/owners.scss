@@ -33,6 +33,10 @@
 #owners-detail {
   #owners-top {
     margin: 0 5px 10px 5px;
+
+    #owner-notes-button, #owner-documents-button {
+      margin-left: 5px;
+    }
   }
 
   #owners-header {
@@ -107,11 +111,6 @@
 }
 
 #owners-edit {
-  [class*='col-'] {
-    padding-left: 7px;
-    padding-right: 7px;
-  }
-
   .form-group {
     h4 {
       margin: 0;

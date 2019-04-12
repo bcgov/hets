@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {DropdownButton, MenuItem } from 'react-bootstrap';
 
@@ -6,29 +7,31 @@ import * as Constant from '../constants';
 import TooltipButton from './TooltipButton.jsx';
 
 
-var StatusDropdown = React.createClass({
-  propTypes: {
-    id: React.PropTypes.string,
-    className: React.PropTypes.string,
-    status: React.PropTypes.string.isRequired,
-    statuses: React.PropTypes.array.isRequired,
-    disabled: React.PropTypes.bool,
-    disabledTooltip: React.PropTypes.node,
-    onSelect: React.PropTypes.func.isRequired,
-  },
+class StatusDropdown extends React.Component {
+  static propTypes = {
+    id: PropTypes.string,
+    className: PropTypes.string,
+    status: PropTypes.string.isRequired,
+    statuses: PropTypes.array.isRequired,
+    disabled: PropTypes.bool,
+    disabledTooltip: PropTypes.node,
+    onSelect: PropTypes.func.isRequired,
+  };
 
-  computeBsStyle() {
+  computeBsStyle = () => {
     switch(this.props.status) {
       case Constant.EQUIPMENT_STATUS_CODE_APPROVED:
       case Constant.OWNER_STATUS_CODE_APPROVED:
+      case Constant.PROJECT_STATUS_CODE_ACTIVE:
         return 'success';
       case Constant.EQUIPMENT_STATUS_CODE_PENDING:
       case Constant.OWNER_STATUS_CODE_PENDING:
+      case Constant.PROJECT_STATUS_CODE_COMPLETED:
         return 'danger';
       default:
         return 'default';
     }
-  },
+  };
 
   render() {
     const {
@@ -67,8 +70,8 @@ var StatusDropdown = React.createClass({
         </DropdownButton>
       );
     }
-  },
-});
+  }
+}
 
 
 export default StatusDropdown;

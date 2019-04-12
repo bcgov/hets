@@ -1,6 +1,7 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-
 import { Form as BootstrapForm } from 'react-bootstrap';
+
 
 const Form = (props) => {
   const { children, onSubmit, ...rest } = props;
@@ -19,8 +20,8 @@ const Form = (props) => {
 };
 
 Form.propTypes = {
-  children: React.PropTypes.node,
-  onSubmit: React.PropTypes.func,
+  children: PropTypes.node,
+  onSubmit: PropTypes.func,
 };
 
 export default Form;

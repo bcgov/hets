@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form  } from 'react-bootstrap';
@@ -20,33 +21,35 @@ import Spinner from '../components/Spinner.jsx';
 import PrintButton from '../components/PrintButton.jsx';
 
 
-var Projects = React.createClass({
-  propTypes: {
-    fiscalYears: React.PropTypes.array,
-    projects: React.PropTypes.object,
-    favourites: React.PropTypes.object,
-    search: React.PropTypes.object,
-    ui: React.PropTypes.object,
-    router: React.PropTypes.object,
-  },
+class Projects extends React.Component {
+  static propTypes = {
+    fiscalYears: PropTypes.array,
+    projects: PropTypes.object,
+    favourites: PropTypes.object,
+    search: PropTypes.object,
+    ui: PropTypes.object,
+    router: PropTypes.object,
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       showAddDialog: false,
       search: {
-        statusCode: this.props.search.statusCode || Constant.PROJECT_STATUS_CODE_ACTIVE,
-        projectName: this.props.search.projectName || '',
-        projectNumber: this.props.search.projectNumber || '',
-        fiscalYear: this.props.search.fiscalYear || '',
+        statusCode: props.search.statusCode || Constant.PROJECT_STATUS_CODE_ACTIVE,
+        projectName: props.search.projectName || '',
+        projectNumber: props.search.projectNumber || '',
+        fiscalYear: props.search.fiscalYear || '',
       },
       ui : {
-        sortField: this.props.ui.sortField || 'name',
-        sortDesc: this.props.ui.sortDesc === true,
+        sortField: props.ui.sortField || 'name',
+        sortDesc: props.ui.sortDesc === true,
       },
     };
-  },
+  }
 
-  buildSearchParams() {
+  buildSearchParams = () => {
     var searchParams = {};
 
     if (this.state.search.projectName) {
@@ -66,7 +69,7 @@ var Projects = React.createClass({
     }
 
     return searchParams;
-  },
+  };
 
   componentDidMount() {
     // If this is the first load, then look for a default favourite
@@ -76,18 +79,18 @@ var Projects = React.createClass({
         this.loadFavourite(defaultFavourite);
       }
     }
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     Api.searchProjects(this.buildSearchParams());
-  },
+  };
 
-  search(e) {
+  search = (e) => {
     e.preventDefault();
     this.fetch();
-  },
+  };
 
-  clearSearch() {
+  clearSearch = () => {
     var defaultSearchParameters = {
       statusCode: Constant.PROJECT_STATUS_CODE_ACTIVE,
       projectName: '',
@@ -99,35 +102,35 @@ var Projects = React.createClass({
       store.dispatch({ type: Action.UPDATE_PROJECTS_SEARCH, projects: this.state.search });
       store.dispatch({ type: Action.CLEAR_PROJECTS });
     });
-  },
+  };
 
-  updateSearchState(state, callback) {
+  updateSearchState = (state, callback) => {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () =>{
       store.dispatch({ type: Action.UPDATE_PROJECTS_SEARCH, projects: this.state.search });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  updateUIState(state, callback) {
+  updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
       store.dispatch({ type: Action.UPDATE_PROJECTS_UI, projects: this.state.ui });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  loadFavourite(favourite) {
+  loadFavourite = (favourite) => {
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
-  },
+  };
 
-  openAddDialog() {
+  openAddDialog = () => {
     this.setState({ showAddDialog: true });
-  },
+  };
 
-  closeAddDialog() {
+  closeAddDialog = () => {
     this.setState({ showAddDialog: false });
-  },
+  };
 
-  saveNewProject(project) {
+  saveNewProject = (project) => {
     Api.addProject(project).then((newProject) => {
       this.fetch();
       Log.projectAdded(newProject);
@@ -136,9 +139,9 @@ var Projects = React.createClass({
         pathname: `${ Constant.PROJECTS_PATHNAME }/${ newProject.id }`,
       });
     });
-  },
+  };
 
-  renderResults(addProjectButton) {
+  renderResults = (addProjectButton) => {
     if (Object.keys(this.props.projects.data).length === 0) {
       return <Alert bsStyle="success">No Projects { addProjectButton }</Alert>;
     }
@@ -188,7 +191,7 @@ var Projects = React.createClass({
         })
       }
     </SortTable>;
-  },
+  };
 
   render() {
     var resultCount = '';
@@ -246,8 +249,8 @@ var Projects = React.createClass({
         <ProjectsAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewProject } onClose={ this.closeAddDialog } />
       )}
     </div>;
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {

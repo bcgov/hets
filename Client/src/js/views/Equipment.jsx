@@ -1,9 +1,7 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-
 import { connect } from 'react-redux';
-
-import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, ControlLabel, OverlayTrigger, Tooltip } from 'react-bootstrap';
-
+import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import _ from 'lodash';
 import Moment from 'moment';
 
@@ -26,41 +24,43 @@ import PrintButton from '../components/PrintButton.jsx';
 import { toZuluTime } from '../utils/date';
 
 
-var Equipment = React.createClass({
-  propTypes: {
-    currentUser: React.PropTypes.object,
-    equipmentList: React.PropTypes.object,
-    localAreas: React.PropTypes.object,
-    districtEquipmentTypes: React.PropTypes.object,
-    owners: React.PropTypes.object,
-    favourites: React.PropTypes.object,
-    search: React.PropTypes.object,
-    ui: React.PropTypes.object,
-  },
+class Equipment extends React.Component {
+  static propTypes = {
+    currentUser: PropTypes.object,
+    equipmentList: PropTypes.object,
+    localAreas: PropTypes.object,
+    districtEquipmentTypes: PropTypes.object,
+    owners: PropTypes.object,
+    favourites: PropTypes.object,
+    search: PropTypes.object,
+    ui: PropTypes.object,
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       showAddDialog: false,
       search: {
-        selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
-        selectedEquipmentTypesIds: this.props.search.selectedEquipmentTypesIds || [],
-        equipmentAttachment: this.props.search.equipmentAttachment || '',
-        ownerName: this.props.search.ownerName || '',
-        lastVerifiedDate: this.props.search.lastVerifiedDate || '',
-        hired: this.props.search.hired || false,
-        twentyYears: this.props.search.twentyYears || false,
-        statusCode: this.props.search.statusCode || Constant.EQUIPMENT_STATUS_CODE_APPROVED,
-        equipmentId: this.props.search.equipmentId || '',
-        projectName: this.props.search.projectName || '',
+        selectedLocalAreasIds: props.search.selectedLocalAreasIds || [],
+        selectedEquipmentTypesIds: props.search.selectedEquipmentTypesIds || [],
+        equipmentAttachment: props.search.equipmentAttachment || '',
+        ownerName: props.search.ownerName || '',
+        lastVerifiedDate: props.search.lastVerifiedDate || '',
+        hired: props.search.hired || false,
+        twentyYears: props.search.twentyYears || false,
+        statusCode: props.search.statusCode || Constant.EQUIPMENT_STATUS_CODE_APPROVED,
+        equipmentId: props.search.equipmentId || '',
+        projectName: props.search.projectName || '',
       },
       ui : {
-        sortField: this.props.ui.sortField || 'seniorityText',
-        sortDesc: this.props.ui.sortDesc === true,
+        sortField: props.ui.sortField || 'seniorityText',
+        sortDesc: props.ui.sortDesc === true,
       },
     };
-  },
+  }
 
-  buildSearchParams() {
+  buildSearchParams = () => {
     var searchParams = {};
 
     if (this.state.search.equipmentAttachment) {
@@ -105,7 +105,7 @@ var Equipment = React.createClass({
     }
 
     return searchParams;
-  },
+  };
 
   componentDidMount() {
     Api.getDistrictEquipmentTypes();
@@ -117,18 +117,18 @@ var Equipment = React.createClass({
         this.loadFavourite(defaultFavourite);
       }
     }
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     Api.searchEquipmentList(this.buildSearchParams());
-  },
+  };
 
-  search(e) {
+  search = (e) => {
     e.preventDefault();
     this.fetch();
-  },
+  };
 
-  clearSearch() {
+  clearSearch = () => {
     var defaultSearchParameters = {
       selectedLocalAreasIds:[],
       selectedEquipmentTypesIds: [],
@@ -146,27 +146,27 @@ var Equipment = React.createClass({
       store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: this.state.search });
       store.dispatch({ type: Action.CLEAR_EQUIPMENT_LIST });
     });
-  },
+  };
 
-  updateSearchState(state, callback) {
+  updateSearchState = (state, callback) => {
     this.setState({ search: { ...this.state.search, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: this.state.search });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  updateUIState(state, callback) {
+  updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_UI, equipmentList: this.state.ui });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  loadFavourite(favourite) {
+  loadFavourite = (favourite) => {
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
-  },
+  };
 
-  renderResults() {
+  renderResults = () => {
     if (Object.keys(this.props.equipmentList.data).length === 0) {
       return <Alert bsStyle="success">No equipment</Alert>;
     }
@@ -178,7 +178,7 @@ var Equipment = React.createClass({
         equipmentList={this.props.equipmentList.data}
       />
     );
-  },
+  };
 
   render() {
     // Constrain the local area drop downs to those in the District of the current logged in user
@@ -296,8 +296,8 @@ var Equipment = React.createClass({
       })()}
 
     </div>;
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {

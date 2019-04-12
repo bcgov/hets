@@ -1,11 +1,8 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
-
 import _ from 'lodash';
-
 import OwnersAddDialog from './dialogs/OwnersAddDialog.jsx';
 
 import * as Action from '../actionTypes';
@@ -24,39 +21,42 @@ import Spinner from '../components/Spinner.jsx';
 import Form from '../components/Form.jsx';
 import PrintButton from '../components/PrintButton.jsx';
 
-import { caseInsensitiveSort, sortDir } from '../utils/array.js';
+import { sort, caseInsensitiveSort } from '../utils/array.js';
 
-var Owners = React.createClass({
-  propTypes: {
-    currentUser: React.PropTypes.object,
-    ownerList: React.PropTypes.object,
-    owner: React.PropTypes.object,
-    localAreas: React.PropTypes.object,
-    favourites: React.PropTypes.object,
-    search: React.PropTypes.object,
-    ui: React.PropTypes.object,
-    router: React.PropTypes.object,
-  },
 
-  getInitialState() {
-    return {
+class Owners extends React.Component {
+  static propTypes = {
+    currentUser: PropTypes.object,
+    ownerList: PropTypes.object,
+    owner: PropTypes.object,
+    localAreas: PropTypes.object,
+    favourites: PropTypes.object,
+    search: PropTypes.object,
+    ui: PropTypes.object,
+    router: PropTypes.object,
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
       showAddDialog: false,
 
       search: {
-        selectedLocalAreasIds: this.props.search.selectedLocalAreasIds || [],
-        ownerCode: this.props.search.ownerCode || '',
-        ownerName: this.props.search.ownerName || '',
-        statusCode:  this.props.search.statusCode || Constant.OWNER_STATUS_CODE_APPROVED,
+        selectedLocalAreasIds: props.search.selectedLocalAreasIds || [],
+        ownerCode: props.search.ownerCode || '',
+        ownerName: props.search.ownerName || '',
+        statusCode:  props.search.statusCode || Constant.OWNER_STATUS_CODE_APPROVED,
       },
 
       ui : {
-        sortField: this.props.ui.sortField || 'organizationName',
-        sortDesc: this.props.ui.sortDesc === true,
+        sortField: props.ui.sortField || 'organizationName',
+        sortDesc: props.ui.sortDesc === true,
       },
     };
-  },
+  }
 
-  buildSearchParams() {
+  buildSearchParams = () => {
     var searchParams = {};
 
     if (this.state.search.ownerCode) {
@@ -76,7 +76,7 @@ var Owners = React.createClass({
     }
 
     return searchParams;
-  },
+  };
 
   componentDidMount() {
     // If this is the first load, then look for a default favourite
@@ -86,17 +86,17 @@ var Owners = React.createClass({
         this.loadFavourite(defaultFavourite);
       }
     }
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     Api.searchOwners(this.buildSearchParams());
-  },
+  };
 
-  search() {
+  search = () => {
     this.fetch();
-  },
+  };
 
-  clearSearch() {
+  clearSearch = () => {
     var defaultSearchParameters = {
       selectedLocalAreasIds: [],
       ownerCode: '',
@@ -108,45 +108,45 @@ var Owners = React.createClass({
       store.dispatch({ type: Action.UPDATE_OWNERS_SEARCH, owners: this.state.search });
       store.dispatch({ type: Action.CLEAR_OWNERS });
     });
-  },
+  };
 
-  updateSearchState(state, callback) {
+  updateSearchState = (state, callback) => {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () => {
       store.dispatch({ type: Action.UPDATE_OWNERS_SEARCH, owners: this.state.search });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  updateUIState(state, callback) {
+  updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_OWNERS_UI, owners: this.state.ui });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  loadFavourite(favourite) {
+  loadFavourite = (favourite) => {
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
-  },
+  };
 
-  openAddDialog() {
+  openAddDialog = () => {
     this.setState({ showAddDialog: true });
-  },
+  };
 
-  closeAddDialog() {
+  closeAddDialog = () => {
     this.setState({ showAddDialog: false });
-  },
+  };
 
-  saveNewOwner(owner) {
-    Api.addOwner(owner).then(() => {
-      Log.ownerAdded(this.props.owner);
+  saveNewOwner = (owner) => {
+    Api.addOwner(owner).then((newOwner) => {
+      Log.ownerAdded(newOwner);
       // Open it up
       this.props.router.push({
-        pathname: `${ Constant.OWNERS_PATHNAME }/${ this.props.owner.id }`,
+        pathname: `${ Constant.OWNERS_PATHNAME }/${ newOwner.id }`,
       });
     });
-  },
+  };
 
-  renderResults(ownerList, addOwnerButton) {
+  renderResults = (ownerList, addOwnerButton) => {
     if (Object.keys(this.props.ownerList.data).length === 0) { return <Alert bsStyle="success">No owners { addOwnerButton }</Alert>; }
 
     return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
@@ -182,7 +182,7 @@ var Owners = React.createClass({
         })
       }
     </SortTable>;
-  },
+  };
 
   render() {
     // Constrain the local area drop downs to those in the District of the current logged in user
@@ -195,7 +195,7 @@ var Owners = React.createClass({
       resultCount = '(' + Object.keys(this.props.ownerList.data).length + ')';
     }
 
-    var ownerList = caseInsensitiveSort(this.props.ownerList.data, [this.state.ui.sortField], [sortDir(this.state.ui.sortDesc)]);
+    var ownerList = sort(this.props.ownerList.data, this.state.ui.sortField, this.state.ui.sortDesc, caseInsensitiveSort);
 
     return <div id="owners-list">
       <PageHeader>Owners { resultCount }
@@ -244,8 +244,8 @@ var Owners = React.createClass({
         <OwnersAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewOwner } onClose={ this.closeAddDialog } />
       }
     </div>;
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

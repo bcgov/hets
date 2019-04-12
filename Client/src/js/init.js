@@ -1,11 +1,8 @@
-/* global require, module */
+/* global module */
 
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Promise from 'bluebird';
-
-import './utils/shims';
-
 
 Promise.config({
   cancellation: true,
@@ -14,7 +11,7 @@ Promise.config({
   },
 });
 
-import App from './app.jsx';
+import App from './App.jsx';
 import * as Api from './api';
 import { ApiError } from './utils/http';
 
@@ -29,18 +26,21 @@ function incrementProgressBar(gotoPercent) {
   progressBarEl.querySelector('span').textContent = `${progress}% Complete`;
 }
 
-function renderApp(AppComponent) {
-  const appElement = document.querySelector('#app');
+if (module.hot) {
+  // NOTE: this is a terrible hack to work around react-router v3's warning about changing routes
+  // because of Webpack HMR. See:
+  // https://github.com/gaearon/react-hot-loader/issues/298#issuecomment-236510239 for more
+  // information.
+  // This can be removed once HETS-1169 is completed.
 
-  ReactDOM.render(AppComponent, appElement);
-}
-
-
-if(module.hot) {
-  module.hot.accept('./app.jsx', () => {
-    const UpdatedApp = require('./app.jsx').default;
-    renderApp(UpdatedApp);
-  });
+  const orgError = console.error; // eslint-disable-line no-console
+  console.error = (...args) => { // eslint-disable-line no-console
+    const routeChangeWarning = args && args.length === 1 && typeof args[0] === 'string' && args[0].indexOf('You cannot change <Router routes>;') > -1;
+    if (!routeChangeWarning) {
+      // Log the error as normally
+      orgError.apply(console, args);
+    }
+  };
 }
 
 export default function startApp() {
@@ -63,10 +63,12 @@ function initializeApp() {
       incrementProgressBar(100);
 
       initializationEl.addEventListener('transitionend', () => {
-        renderApp(App);
+        const appElement = document.querySelector('#app');
+
+        ReactDOM.render(<App/>, appElement);
         initializationEl.classList.add('done');
         initializationEl.addEventListener('transitionend', () => {
-          initializationEl.remove();
+          initializationEl.parentNode.removeChild(initializationEl);
         });
       });
     });
@@ -80,16 +82,16 @@ function getLookups(user) {
     return Promise.resolve();
   } else {
     var districtId = user.district.id;
-    var districtsPromise = Api.getDistricts();
-    var regionsPromise = Api.getRegions();
-    var serviceAreasPromise = Api.getServiceAreas();
-    var localAreasPromise = Api.getLocalAreas(districtId);
-    var fiscalYearsPromise = Api.getFiscalYears(districtId);
-    var permissionsPromise = Api.getPermissions();
-    var currentUserDistrictsPromise = Api.getCurrentUserDistricts();
-    var favouritesPromise = Api.getFavourites();
-
-    return Promise.all([districtsPromise, regionsPromise, serviceAreasPromise, localAreasPromise, fiscalYearsPromise, permissionsPromise, currentUserDistrictsPromise, favouritesPromise]);
+    return Promise.all([
+      Api.getDistricts(),
+      Api.getRegions(),
+      Api.getServiceAreas(),
+      Api.getLocalAreas(districtId),
+      Api.getFiscalYears(districtId),
+      Api.getPermissions(),
+      Api.getCurrentUserDistricts(),
+      Api.getFavourites(),
+    ]);
   }
 }
 

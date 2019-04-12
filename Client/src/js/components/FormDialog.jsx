@@ -1,49 +1,49 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import { Modal as BootstrapModal, Button } from 'react-bootstrap';
+import { Modal, Button } from 'react-bootstrap';
 
-import ModalDialog from './ModalDialog.jsx';
 import Form from './Form.jsx';
 import Spinner from './Spinner.jsx';
 
 
-var FormDialog = React.createClass({
-  propTypes: {
-    show: React.PropTypes.bool.isRequired,
-    title: React.PropTypes.node,
-    id: React.PropTypes.string,
-    className: React.PropTypes.string,
-    bsSize: React.PropTypes.string,
-    isReadOnly: React.PropTypes.bool,
-    isSaving: React.PropTypes.bool,
-    onClose: React.PropTypes.func.isRequired,
-    onSubmit: React.PropTypes.func,
-    saveButtonLabel: React.PropTypes.string,
-    closeButtonLabel: React.PropTypes.string,
-    children: React.PropTypes.node,
-  },
+class FormDialog extends React.Component {
+  static propTypes = {
+    show: PropTypes.bool.isRequired,
+    title: PropTypes.node,
+    id: PropTypes.string,
+    className: PropTypes.string,
+    bsSize: PropTypes.string,
+    isReadOnly: PropTypes.bool,
+    isSaving: PropTypes.bool,
+    onClose: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func,
+    saveButtonLabel: PropTypes.string,
+    closeButtonLabel: PropTypes.string,
+    children: PropTypes.node,
+  };
 
-  closeDialog() {
+  closeDialog = () => {
     this.props.onClose();
-  },
+  };
 
-  formSubmitted() {
+  formSubmitted = () => {
     const { isSaving, onSubmit } = this.props;
 
     if (!isSaving) {
       onSubmit();
     }
-  },
+  };
 
-  renderBody() {
+  renderBody = () => {
     const { children, saveButtonLabel, closeButtonLabel, isReadOnly, isSaving } = this.props;
 
     return (
       <Form onSubmit={this.formSubmitted}>
-        <BootstrapModal.Body>
+        <Modal.Body>
           {children}
-        </BootstrapModal.Body>
-        <BootstrapModal.Footer>
+        </Modal.Body>
+        <Modal.Footer>
           <Button onClick={this.closeDialog}>{closeButtonLabel || 'Close'}</Button>
           {!isReadOnly && (
             <Button bsStyle="primary" type="submit" disabled={isSaving}>
@@ -51,27 +51,31 @@ var FormDialog = React.createClass({
               {isSaving && <Spinner/>}
             </Button>
           )}
-        </BootstrapModal.Footer>
+        </Modal.Footer>
       </Form>
     );
-  },
+  };
 
   render() {
     const { id, className, title, show, bsSize } = this.props;
 
     return (
-      <ModalDialog
+      <Modal
         backdrop="static"
         id={id}
         bsSize={bsSize}
         className={classNames('form-dialog', className)}
         show={show}
-        title={title}
-        onClose={this.closeDialog}>
+        onHide={this.closeDialog}>
+        <Modal.Header closeButton>
+          {title && (
+            <Modal.Title>{title}</Modal.Title>
+          )}
+        </Modal.Header>
         {show && this.renderBody()}
-      </ModalDialog>
+      </Modal>
     );
-  },
-});
+  }
+}
 
 export default FormDialog;

@@ -1,57 +1,76 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-
 import { FormControl } from 'react-bootstrap';
-
 import _ from 'lodash';
 
-var FormInputControl = React.createClass({
-  propTypes: {
-    type: React.PropTypes.string,
-    updateState: React.PropTypes.func,
-    autoFocus: React.PropTypes.bool,
-    onChange: React.PropTypes.func,
-    children: React.PropTypes.node,
-  },
+
+class FormInputControl extends React.Component {
+  static propTypes = {
+    type: PropTypes.string,
+    updateState: PropTypes.func,
+    autoFocus: PropTypes.bool,
+    autoComplete: PropTypes.string,
+    onChange: PropTypes.func,
+    children: PropTypes.node,
+    inputRef: PropTypes.func,
+  };
 
   componentDidMount() {
     if (this.props.autoFocus) {
       this.input.focus();
     }
-  },
+  }
 
-  changed(e) {
+  changed = (e) => {
+    const { type, updateState, onChange } = this.props;
+
     // On change listener
-    if (this.props.onChange) {
-      this.props.onChange(e);
-    }
+    if (onChange) { onChange(e); }
 
-    // Update state
-    if (this.props.updateState && e.target.id) {
+    if (updateState && e.target.id) {
       // Use e.target.id insted of this.props.id because it comes from the controlId.
       var value = e.target.value;
-      if (this.props.type === 'number' ) {
+      if (type === 'number' ) {
         value = parseInt(value, 10);
         if (_.isNaN(value)) {
           value = '';
         }
       }
-      if (this.props.type === 'float' ) {
+      if (type === 'float' ) {
         value = parseFloat(value);
         if (_.isNaN(value)) {
           value = '';
         }
       }
-      this.props.updateState({ [e.target.id]: value });
+
+      // Update state
+      updateState({ [e.target.id]: value });
     }
-  },
+  };
+
+  refChanged = (ref) => {
+    this.input = ref;
+    if (this.props.inputRef) { this.props.inputRef(ref); }
+  }
 
   render() {
-    var props = _.omit(this.props, 'updateState');
+    const { type, autoComplete, children } = this.props;
+    // XXX: eslint doesn't like `const { type, autoComplete, children, ...rest } = this.props;`
+    // using lodash omit for now
+    const rest = _.omit(this.props, 'type', 'autoComplete', 'children', 'updateState');
 
-    return <FormControl { ...props } type={ props.type === 'float' ? 'number' : props.type } onChange={ this.changed } inputRef={ ref => { this.input = ref; }}>
-      { this.props.children }
-    </FormControl>;
-  },
-});
+    return (
+      <FormControl
+        {...rest}
+        type={type === 'float' ? 'number' : type}
+        step={type === 'float' ? '0.01' : null}
+        onChange={this.changed}
+        inputRef={this.refChanged}
+        autoComplete={autoComplete || 'off'}>
+        {children}
+      </FormControl>
+    );
+  }
+}
 
 export default FormInputControl;
