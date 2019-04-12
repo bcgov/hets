@@ -32,6 +32,7 @@ export const PERMISSION_CODE_TABLE_MANAGEMENT = 'CodeTableManagement';
 export const PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT = 'DistrictCodeTableManagement';
 export const PERMISSION_DISTRICT_ROLLOVER = 'DistrictRollover';
 export const PERMISSION_VERSION = 'Version';
+export const PERMISSION_WRITE_ACCESS = 'WriteAccess';
 
 // Roles
 export const ADMINISTRATOR_ROLE = '4-HETS System Administrator';
