@@ -113,6 +113,16 @@ export function setHeaderHeight(num) {
   headerHeight = num;
 }
 
+// History
+export const HISTORY_OWNER = 'Owner';
+export const HISTORY_PROJECT = 'Project';
+export const HISTORY_EQUIPMENT = 'Equipment';
+export const HISTORY_REQUEST = 'Request';
+export const HISTORY_USER = 'User';
+export const HISTORY_ROLE = 'Role';
+export const HISTORY_CONTACT = 'Contact';
+export const HISTORY_DOCUMENT = 'Document';
+
 // Session
 export const SESSION_TIMEOUT = 7200000; // 120 minutes
 export const SESSION_KEEP_ALIVE_INTERVAL = 600000; // 10 minutes

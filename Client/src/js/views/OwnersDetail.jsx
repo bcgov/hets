@@ -70,6 +70,7 @@ class OwnersDetail extends React.Component {
 
     this.state = {
       loading: true,
+      reloading: false,
 
       showEditDialog: false,
       showContactDialog: false,
@@ -121,7 +122,8 @@ class OwnersDetail extends React.Component {
   }
 
   fetch = () => {
-    return Api.getOwner(this.props.ownerId);
+    this.setState({ reloading: true });
+    return Api.getOwner(this.props.ownerId).then(() => this.setState({ reloading: false }));
   };
 
   updateContactsUIState = (state, callback) => {
@@ -560,7 +562,7 @@ class OwnersDetail extends React.Component {
               </Well>
               <Well>
                 <SubHeader title="History"/>
-                { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ !loading } /> }
+                { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ !this.state.reloading } /> }
               </Well>
             </Col>
           </Row>

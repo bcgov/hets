@@ -519,7 +519,7 @@ export function addEquipmentHistory(equipmentId, history) {
     // Add display fields
     _.map(history, history => { parseHistory(history); });
 
-    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_HISTORY, history, id: equipmentId });
   });
 }
 
@@ -530,7 +530,7 @@ export function getEquipmentHistory(equipmentId, params) {
     // Add display fields
     _.map(history, history => { parseHistory(history); });
 
-    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_HISTORY, history, id: equipmentId });
   });
 }
 
@@ -831,7 +831,7 @@ export function addOwnerHistory(ownerId, history) {
     // Add display fields
     _.map(history, history => { parseHistory(history); });
 
-    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+    store.dispatch({ type: Action.UPDATE_OWNER_HISTORY, history, id: ownerId });
   });
 }
 
@@ -842,7 +842,7 @@ export function getOwnerHistory(ownerId, params) {
     // Add display fields
     _.map(history, history => { parseHistory(history); });
 
-    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+    store.dispatch({ type: Action.UPDATE_OWNER_HISTORY, history, id: ownerId });
   });
 }
 
@@ -1310,7 +1310,7 @@ export function addProjectHistory(projectId, history) {
     // Add display fields
     _.map(history, history => { parseHistory(history); });
 
-    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+    store.dispatch({ type: Action.UPDATE_PROJECT_HISTORY, history, id: projectId });
   });
 }
 
@@ -1321,7 +1321,7 @@ export function getProjectHistory(projectId, params) {
     // Add display fields
     _.map(history, history => { parseHistory(history); });
 
-    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+    store.dispatch({ type: Action.UPDATE_PROJECT_HISTORY, history, id: projectId });
   });
 }
 
@@ -1499,7 +1499,7 @@ export function addRentalRequestHistory(requestId, history) {
     // Add display fields
     _.map(history, history => { parseHistory(history); });
 
-    store.dispatch({ type: Action.UPDATE_HISTORY, history });
+    store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_HISTORY, history, id: requestId });
   });
 }
 
@@ -1510,7 +1510,7 @@ export function getRentalRequestHistory(requestId, params) {
     // Add display fields
     _.map(history, history => { parseHistory(history); });
 
-    store.dispatch({ type: Action.UPDATE_HISTORY, history });
+    store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_HISTORY, history, id: requestId });
   });
 }
 

@@ -62,6 +62,7 @@ class RentalRequestsDetail extends React.Component {
     this.state = {
       loading: true,
       loadingDocuments: false,
+      reloading: false,
 
       showEditDialog: false,
       showHireOfferDialog: false,
@@ -97,7 +98,8 @@ class RentalRequestsDetail extends React.Component {
   }
 
   fetch = () => {
-    return Api.getRentalRequest(this.props.rentalRequestId);
+    this.setState({ reloading: true });
+    return Api.getRentalRequest(this.props.rentalRequestId).then(() => this.setState({ reloading: false }));
   };
 
   updateState = (state, callback) => {
@@ -422,9 +424,7 @@ class RentalRequestsDetail extends React.Component {
 
       <Well className="history">
         <SubHeader title="History"/>
-        { rentalRequest.historyEntity && (
-          <History historyEntity={rentalRequest.historyEntity} refresh={!loading}/>
-        )}
+        { rentalRequest.historyEntity && <History historyEntity={ rentalRequest.historyEntity } refresh={ !this.state.reloading }/> }
       </Well>
       { this.state.showEditDialog && (
         <RentalRequestsEditDialog
