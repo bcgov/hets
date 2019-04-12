@@ -137,8 +137,12 @@ namespace HetsData.Helpers
                     if (rentalAgreement.Equipment.LocalArea != null)
                     {
                         rentalAgreement.LocalAreaName = rentalAgreement.Equipment.LocalArea.Name;
-                        rentalAgreement.Equipment.LocalArea = null;
                     }
+                }
+
+                foreach (HetRentalAgreement rentalAgreement in project.HetRentalAgreement)
+                {
+                    rentalAgreement.Equipment.LocalArea = null;
                 }
 
                 foreach (HetRentalRequest rentalRequest in project.HetRentalRequest)
