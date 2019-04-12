@@ -45,6 +45,8 @@ class AitReport extends React.Component {
   constructor(props) {
     super(props);
 
+    var today = Moment();
+
     this.state = {
       search: {
         projectIds: props.search.projectIds || [],
@@ -52,6 +54,8 @@ class AitReport extends React.Component {
         equipmentIds: props.search.equipmentIds || [],
         rentalAgreementNumber: props.search.rentalAgreementNumber || '',
         dateRange: props.search.dateRange || THIS_FISCAL,
+        startDate: props.search.startDate || startOfCurrentFiscal(today).format('YYYY-MM-DD'),
+        endDate: props.search.endDate || endOfCurrentFiscal(today).format('YYYY-MM-DD'),
       },
       ui : {
         sortField: props.ui.sortField || 'rentalAgreementNumber',
@@ -77,33 +81,13 @@ class AitReport extends React.Component {
       searchParams.equipment = this.state.search.equipmentIds;
     }
 
-    // Time period drop-down; e.g. "This Month"
-    var startDate;
-    var endDate;
-    var today = Moment();
-
-    switch (this.state.search.dateRange) {
-      case THIS_FISCAL:
-        // Fiscal Year: Apr 1 - March 31
-        startDate = startOfCurrentFiscal(today);
-        endDate = endOfCurrentFiscal(today);
-        break;
-      case LAST_FISCAL:
-        // Fiscal Year: Apr 1 - March 31
-        startDate = startOfPreviousFiscal(today);
-        endDate = endOfPreviousFiscal(today);
-        break;
-      case CUSTOM:
-        startDate = Moment(this.state.search.startDate);
-        endDate = Moment(this.state.search.endDate);
-        break;
-      default:
-        break;
-    }
+    var startDate = Moment(this.state.search.startDate);
+    var endDate = Moment(this.state.search.endDate);
 
     if (startDate && startDate.isValid()) {
       searchParams.startDate = toZuluTime(startDate.startOf('day'));
     }
+
     if (endDate && endDate.isValid()) {
       searchParams.endDate = toZuluTime(endDate.startOf('day'));
     }
@@ -134,12 +118,16 @@ class AitReport extends React.Component {
   };
 
   clearSearch = () => {
+    var today = Moment();
+
     var defaultSearchParameters = {
       projectIds: [],
       districtEquipmentTypes: [],
       equipmentIds: [],
       rentalAgreementNumber: '',
       dateRange: THIS_FISCAL,
+      startDate: startOfCurrentFiscal(today).format('YYYY-MM-DD'),
+      endDate: endOfCurrentFiscal(today).format('YYYY-MM-DD'),
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
@@ -224,6 +212,33 @@ class AitReport extends React.Component {
     }
 
     return _.includes(this.state.search.districtEquipmentTypes, districtEquipmentTypeId);
+  }
+
+  updateDateRangeSearchState = (state) => {
+    var today = Moment();
+    var startDate;
+    var endDate;
+
+    switch (state.dateRange) {
+      case THIS_FISCAL:
+        // Fiscal Year: Apr 1 - March 31
+        startDate = startOfCurrentFiscal(today);
+        endDate = endOfCurrentFiscal(today);
+        break;
+      case LAST_FISCAL:
+        // Fiscal Year: Apr 1 - March 31
+        startDate = startOfPreviousFiscal(today);
+        endDate = endOfPreviousFiscal(today);
+        break;
+      case CUSTOM:
+        startDate = today;
+        endDate = today;
+        break;
+      default:
+        break;
+    }
+
+    this.updateSearchState({ ...state, startDate: startDate.format('YYYY-MM-DD'), endDate: endDate.format('YYYY-MM-DD') });
   }
 
   updateProjectSearchState = (state) => {
@@ -314,7 +329,7 @@ class AitReport extends React.Component {
                   <DropdownControl
                     id="dateRange"
                     title={this.state.search.dateRange}
-                    updateState={this.updateSearchState}
+                    updateState={this.updateDateRangeSearchState}
                     placeholder="Dated On"
                     items={[ THIS_FISCAL, LAST_FISCAL, CUSTOM ]}/>
                   <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
