@@ -27,7 +27,7 @@
     "bluebird": "^3.5.2",
     "bootstrap": "^3.4.1",
     "classnames": "^2.2.5",
-    "jquery": "^3.1.1",
+    "jquery": "^3.4.0",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
     "object-assign-shim": "^1.0.0",
