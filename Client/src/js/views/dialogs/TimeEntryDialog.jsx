@@ -23,7 +23,6 @@ class TimeEntryDialog extends React.Component {
     show: PropTypes.bool.isRequired,
     multipleEntryAllowed: PropTypes.bool.isRequired,
     rentalAgreementId: PropTypes.number,
-    rentalAgreement: PropTypes.object,
     rentalAgreementTimeRecords: PropTypes.object,
     project: PropTypes.object,
     projectId: PropTypes.number,
@@ -547,7 +546,6 @@ class TimeEntryDialog extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    rentalAgreement: state.models.rentalAgreement,
     rentalAgreementTimeRecords: state.models.rentalAgreementTimeRecords,
     projects: state.lookups.projectsCurrentFiscal,
     equipment: state.lookups.equipment.ts,
