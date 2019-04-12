@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { connect } from 'react-redux';
-
 import { Grid, Row, Col } from 'react-bootstrap';
 import { FormControl, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
@@ -229,10 +227,4 @@ class SeniorityEditDialog extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    equipment: state.models.equipment,
-  };
-}
-
-export default connect(mapStateToProps)(SeniorityEditDialog);
+export default SeniorityEditDialog;
