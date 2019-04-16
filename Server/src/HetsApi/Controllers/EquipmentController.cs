@@ -141,6 +141,35 @@ namespace HetsApi.Controllers
         }
 
         /// <summary>
+        /// Get all equipment by district for rental agreement summary filtering
+        /// </summary>
+        [HttpGet]
+        [Route("agreementSummary")]
+        [SwaggerOperation("EquipmentGetAgreementSummary")]
+        [SwaggerResponse(200, type: typeof(List<EquipmentAgreementSummary>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult EquipmentGetAgreementSummary()
+        {
+            // get user's district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            IEnumerable<EquipmentAgreementSummary> equipment = _context.HetRentalAgreement.AsNoTracking()
+                .Include(x => x.Equipment)
+                .Where(x => x.DistrictId == districtId &&
+                            !x.Number.StartsWith("BCBid"))
+                .GroupBy(x => x.Equipment, (e, agreements) => new EquipmentAgreementSummary
+                {
+                    EquipmentCode = e.EquipmentCode,
+                    Id = e.EquipmentId,
+                    AgreementIds = agreements.Select(y => y.RentalAgreementId).Distinct().ToList(),
+                    ProjectIds = agreements.Select(y => y.ProjectId).Distinct().ToList(),
+                    DistrictEquipmentTypeId = e.DistrictEquipmentTypeId ?? 0,
+                });
+
+            return new ObjectResult(new HetsResponse(equipment));
+        }
+
+        /// <summary>
         /// Get all equipment for this district that are associated with a rotation list (lite)
         /// </summary>
         [HttpGet]

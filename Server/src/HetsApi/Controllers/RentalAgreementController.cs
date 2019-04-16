@@ -1344,6 +1344,39 @@ namespace HetsApi.Controllers
 
         #endregion
 
+        #region Get all agreements by district for rental agreement summary filtering
+
+        /// <summary>
+        /// Get all agreements by district for rental agreement summary filtering
+        /// </summary>
+        [HttpGet]
+        [Route("summaryLite")]
+        [SwaggerOperation("RentalAgreementsGetSummaryLite")]
+        [SwaggerResponse(200, type: typeof(List<RentalAgreementSummaryLite>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult RentalAgreementsGetSummaryLite()
+        {
+            // get user's district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            IQueryable<HetRentalAgreement> agreements = _context.HetRentalAgreement.AsNoTracking()
+                .Where(x => x.DistrictId.Equals(districtId) &&
+                            !x.Number.StartsWith("BCBid"));
+
+            // convert to "lite" model
+            List<RentalAgreementSummaryLite> result = new List<RentalAgreementSummaryLite>();
+
+            foreach (HetRentalAgreement item in agreements)
+            {
+                result.Add(RentalAgreementHelper.ToSummaryLiteModel(item));
+            }
+
+            // return to the client
+            return new ObjectResult(new HetsResponse(result));
+        }
+
+        #endregion
+
         #region AIT Report
 
         /// <summary>
