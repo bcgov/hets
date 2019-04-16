@@ -5,6 +5,7 @@ import { Modal, Button } from 'react-bootstrap';
 
 import Form from './Form.jsx';
 import Spinner from './Spinner.jsx';
+import Authorize from './Authorize.jsx';
 
 
 class FormDialog extends React.Component {
@@ -46,10 +47,12 @@ class FormDialog extends React.Component {
         <Modal.Footer>
           <Button onClick={this.closeDialog}>{closeButtonLabel || 'Close'}</Button>
           {!isReadOnly && (
-            <Button bsStyle="primary" type="submit" disabled={isSaving}>
-              {saveButtonLabel || 'Save'}
-              {isSaving && <Spinner/>}
-            </Button>
+            <Authorize>
+              <Button bsStyle="primary" type="submit" disabled={isSaving}>
+                {saveButtonLabel || 'Save'}
+                {isSaving && <Spinner/>}
+              </Button>
+            </Authorize>
           )}
         </Modal.Footer>
       </Form>
