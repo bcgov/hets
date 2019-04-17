@@ -284,16 +284,18 @@ class ProjectsDetail extends React.Component {
         { item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ?
           <div>Released</div>
           :
-          <OverlayTrigger
-            trigger="click"
-            placement="top"
-            rootClose
-            overlay={ <Confirm onConfirm={ this.confirmEndHire.bind(this, item) }/> }>
-            <Button
-              bsSize="xsmall">
-              <Glyphicon glyph="check" />
-            </Button>
-          </OverlayTrigger>
+          <Authorize>
+            <OverlayTrigger
+              trigger="click"
+              placement="top"
+              rootClose
+              overlay={ <Confirm onConfirm={ this.confirmEndHire.bind(this, item) }/> }>
+              <Button
+                bsSize="xsmall">
+                <Glyphicon glyph="check" />
+              </Button>
+            </OverlayTrigger>
+          </Authorize>
         }
       </td>
       <td><Link to={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${item.id}`}>Agreement</Link></td>

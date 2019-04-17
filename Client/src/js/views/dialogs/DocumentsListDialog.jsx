@@ -19,6 +19,7 @@ import ModalDialog from '../../components/ModalDialog.jsx';
 import SortTable from '../../components/SortTable.jsx';
 import Spinner from '../../components/Spinner.jsx';
 import FilePicker from '../../components/FilePicker.jsx';
+import Authorize from '../../components/Authorize.jsx';
 
 import { formatDateTime } from '../../utils/date';
 
@@ -149,12 +150,14 @@ class DocumentsListDialog extends React.Component {
           {this.state.uploadInProgress ?
             <ProgressBar active now={ this.state.percentUploaded } min={ 5 }/>
             :
-            <div className="file-picker-container">
-              <FilePicker onFilesSelected={ this.uploadFiles }/>
-              <div>Select one or more files{ parent.name ? ` to attach to ${ parent.name }` : null }</div>
-              <HelpBlock>The maximum size of each file is { Constant.MAX_ATTACHMENT_FILE_SIZE_READABLE }.</HelpBlock>
-              { this.state.uploadError && <div className="has-error"><HelpBlock>{ this.state.uploadError }</HelpBlock></div> }
-            </div>
+            <Authorize>
+              <div className="file-picker-container">
+                <FilePicker onFilesSelected={ this.uploadFiles }/>
+                <div>Select one or more files{ parent.name ? ` to attach to ${ parent.name }` : null }</div>
+                <HelpBlock>The maximum size of each file is { Constant.MAX_ATTACHMENT_FILE_SIZE_READABLE }.</HelpBlock>
+                { this.state.uploadError && <div className="has-error"><HelpBlock>{ this.state.uploadError }</HelpBlock></div> }
+              </div>
+            </Authorize>
           }
           <div>
             {(() => {
@@ -188,7 +191,7 @@ class DocumentsListDialog extends React.Component {
                       <td style={{ textAlign: 'right' }}>
                         <ButtonGroup>
                           <Button title="Download Document" onClick={ this.downloadDocument.bind(this, document) } bsSize="xsmall"><Glyphicon glyph="download-alt" /></Button>
-                          <DeleteButton name="Document" hide={ !document.canDelete } onConfirm={ this.deleteDocument.bind(this, document) }/>
+                          <Authorize><DeleteButton name="Document" hide={ !document.canDelete } onConfirm={ this.deleteDocument.bind(this, document) }/></Authorize>
                         </ButtonGroup>
                       </td>
                     </tr>;

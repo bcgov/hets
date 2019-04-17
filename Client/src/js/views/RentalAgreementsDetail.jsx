@@ -328,7 +328,7 @@ class RentalAgreementsDetail extends React.Component {
                         <td>{ obj.comment }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
-                            <DeleteButton name="Rate or Attachment" disabled={!obj.id} onConfirm={ this.deleteRentalRate.bind(this, obj) }/>
+                            <Authorize><DeleteButton name="Rate or Attachment" disabled={!obj.id} onConfirm={ this.deleteRentalRate.bind(this, obj) }/></Authorize>
                             <EditButton name="Rate or Attachment" disabled={!obj.id} onClick={ this.openRentalRateDialog.bind(this, obj) }/>
                           </ButtonGroup>
                         </td>
@@ -426,7 +426,7 @@ class RentalAgreementsDetail extends React.Component {
                         <td>{ obj.comment }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
-                            <DeleteButton name="Rental Condition" disabled={!obj.id} onConfirm={ this.deleteCondition.bind(this, obj) }/>
+                            <Authorize><DeleteButton name="Rental Condition" disabled={!obj.id} onConfirm={ this.deleteCondition.bind(this, obj) }/></Authorize>
                             <EditButton name="Rental Condition" disabled={!obj.id} onClick={ this.openConditionDialog.bind(this, obj) }/>
                           </ButtonGroup>
                         </td>
