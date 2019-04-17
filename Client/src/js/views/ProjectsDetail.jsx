@@ -33,6 +33,7 @@ import StatusDropdown from '../components/StatusDropdown.jsx';
 import TableControl from '../components/TableControl.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
+import Authorize from '../components/Authorize.jsx';
 
 import { activeProjectSelector, activeProjectIdSelector } from '../selectors/ui-selectors.js';
 
@@ -283,16 +284,18 @@ class ProjectsDetail extends React.Component {
         { item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ?
           <div>Released</div>
           :
-          <OverlayTrigger
-            trigger="click"
-            placement="top"
-            rootClose
-            overlay={ <Confirm onConfirm={ this.confirmEndHire.bind(this, item) }/> }>
-            <Button
-              bsSize="xsmall">
-              <Glyphicon glyph="check" />
-            </Button>
-          </OverlayTrigger>
+          <Authorize>
+            <OverlayTrigger
+              trigger="click"
+              placement="top"
+              rootClose
+              overlay={ <Confirm onConfirm={ this.confirmEndHire.bind(this, item) }/> }>
+              <Button
+                bsSize="xsmall">
+                <Glyphicon glyph="check" />
+              </Button>
+            </OverlayTrigger>
+          </Authorize>
         }
       </td>
       <td><Link to={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${item.id}`}>Agreement</Link></td>
@@ -422,7 +425,7 @@ class ProjectsDetail extends React.Component {
               <Well>
                 <SubHeader title="Hired Equipment / Requests">
                   <CheckboxControl id="includeCompletedRequests" inline checked={ this.state.includeCompletedRequests } updateState={ this.updateState }><small>Show Completed</small></CheckboxControl>
-                  <Button id="add-request-button" title="Add Request" bsSize="small" onClick={ this.openAddRequestDialog }><Glyphicon glyph="plus" /> Add</Button>
+                  <Authorize><Button id="add-request-button" title="Add Request" bsSize="small" onClick={ this.openAddRequestDialog }><Glyphicon glyph="plus" /> Add</Button></Authorize>
                 </SubHeader>
                 {(() => {
                   if (loading) { return <div className="spinner-container"><Spinner/></div>; }
@@ -462,7 +465,7 @@ class ProjectsDetail extends React.Component {
                 {(() => {
                   if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
-                  var addContactButton = <Button title="Add Contact" onClick={ this.openContactDialog.bind(this, 0) } bsSize="small"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
+                  var addContactButton = <Authorize><Button title="Add Contact" onClick={ this.openContactDialog.bind(this, 0) } bsSize="small"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button></Authorize>;
 
                   if (!project.contacts || project.contacts.length === 0) { return <Alert bsStyle="success">No contacts { addContactButton }</Alert>; }
 

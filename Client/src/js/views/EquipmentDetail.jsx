@@ -33,6 +33,7 @@ import SubHeader from '../components/ui/SubHeader.jsx';
 import StatusDropdown from '../components/StatusDropdown.jsx';
 import ReturnButton from '../components/ReturnButton.jsx';
 import PrintButton from '../components/PrintButton.jsx';
+import Authorize from '../components/Authorize.jsx';
 
 import { activeEquipmentSelector, activeEquipmentIdSelector } from '../selectors/ui-selectors';
 
@@ -354,7 +355,7 @@ class EquipmentDetail extends React.Component {
             </Col>
             <Col md={12}>
               <Well>
-                <SubHeader title="Attachments" editButtonTitle="Add Attachment" editIcon="plus" onEditClicked={ this.openPhysicalAttachmentDialog }/>
+                <Authorize><SubHeader title="Attachments" editButtonTitle="Add Attachment" editIcon="plus" onEditClicked={ this.openPhysicalAttachmentDialog }/></Authorize>
                 {(() => {
                   if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; }
                   if (!equipment.equipmentAttachments || Object.keys(equipment.equipmentAttachments).length === 0) { return <Alert bsStyle="success">No Attachments</Alert>; }
@@ -390,14 +391,16 @@ class EquipmentDetail extends React.Component {
                               >
                                 <Glyphicon glyph="pencil" />
                               </Button>
-                              <OverlayTrigger
-                                trigger="click"
-                                placement="top"
-                                rootClose
-                                overlay={ <Confirm onConfirm={ this.deletePhysicalAttachment.bind(this, attachment.id) }/> }
-                              >
-                                <Button title="Delete Attachment" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
-                              </OverlayTrigger>
+                              <Authorize>
+                                <OverlayTrigger
+                                  trigger="click"
+                                  placement="top"
+                                  rootClose
+                                  overlay={ <Confirm onConfirm={ this.deletePhysicalAttachment.bind(this, attachment.id) }/> }
+                                >
+                                  <Button title="Delete Attachment" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
+                                </OverlayTrigger>
+                              </Authorize>
                             </ButtonGroup>
                           </td>
                         </tr>;

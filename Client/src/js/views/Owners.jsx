@@ -22,6 +22,7 @@ import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import Form from '../components/Form.jsx';
 import PrintButton from '../components/PrintButton.jsx';
+import Authorize from '../components/Authorize.jsx';
 
 import { sort, caseInsensitiveSort } from '../utils/array.js';
 
@@ -228,9 +229,9 @@ class Owners extends React.Component {
       {(() => {
         if (this.props.ownerList.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-        var addOwnerButton = <Button title="Add Owner" bsSize="xsmall" onClick={ this.openAddDialog }>
+        var addOwnerButton = <Authorize><Button title="Add Owner" bsSize="xsmall" onClick={ this.openAddDialog }>
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong>
-        </Button>;
+        </Button></Authorize>;
 
         if (this.props.ownerList.loaded) {
           return this.renderResults(ownerList, addOwnerButton);

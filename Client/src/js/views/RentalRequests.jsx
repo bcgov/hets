@@ -28,6 +28,7 @@ import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import PrintButton from '../components/PrintButton.jsx';
+import Authorize from '../components/Authorize.jsx';
 
 import { formatDateTime, startOfCurrentFiscal, endOfCurrentFiscal, startOfPreviousFiscal, endOfPreviousFiscal, toZuluTime } from '../utils/date';
 
@@ -263,7 +264,7 @@ class RentalRequests extends React.Component {
             <td style={{ textAlign: 'right' }}>
               <ButtonGroup>
                 {request.canDelete && (
-                  <DeleteButton name="Rental Request" onConfirm={ this.deleteRequest.bind(this, request) } />
+                  <Authorize><DeleteButton name="Rental Request" onConfirm={ this.deleteRequest.bind(this, request) } /></Authorize>
                 )}
                 {request.canView && (
                   <EditButton name="Rental Request" view pathname={ `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ request.id }` }/>
@@ -335,15 +336,15 @@ class RentalRequests extends React.Component {
         if (this.props.rentalRequests.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
         var addViewOnlyRequestButton = (
-          <Button title="Add Rental Request (View Only)" className="hidden-print" bsSize="xsmall" onClick={ () => this.openAddDialog(true) }>
+          <Authorize><Button title="Add Rental Request (View Only)" className="hidden-print" bsSize="xsmall" onClick={ () => this.openAddDialog(true) }>
             <Glyphicon glyph="plus" />&nbsp;<strong>Request (View Only)</strong>
-          </Button>
+          </Button></Authorize>
         );
 
         var addRentalRequestButton = (
-          <Button title="Add Rental Request" className="hidden-print" bsSize="xsmall" onClick={ () => this.openAddDialog(false) }>
+          <Authorize><Button title="Add Rental Request" className="hidden-print" bsSize="xsmall" onClick={ () => this.openAddDialog(false) }>
             <Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong>
-          </Button>
+          </Button></Authorize>
         );
 
         var addRequestButtons = <div id="add-request-buttons">

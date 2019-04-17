@@ -24,7 +24,7 @@ import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import PrintButton from '../components/PrintButton.jsx';
-
+import Authorize from '../components/Authorize.jsx';
 
 class Users extends React.Component {
   static propTypes = {
@@ -169,9 +169,11 @@ class Users extends React.Component {
             <td>{ user.districtName }</td>
             <td style={{ textAlign: 'right' }}>
               <ButtonGroup>
-                <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.delete.bind(this, user) }/> }>
-                  <Button className={ user.canDelete ? '' : 'hidden' } title="Delete User" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
-                </OverlayTrigger>
+                <Authorize>
+                  <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.delete.bind(this, user) }/> }>
+                    <Button className={ user.canDelete ? '' : 'hidden' } title="Delete User" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
+                  </OverlayTrigger>
+                </Authorize>
                 <LinkContainer to={{ pathname: `${ Constant.USERS_PATHNAME }/${ user.id }` }}>
                   <Button className={ user.canEdit ? '' : 'hidden' } title="View User" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
                 </LinkContainer>
@@ -233,9 +235,9 @@ class Users extends React.Component {
           return <div style={{ textAlign: 'center' }}><Spinner/></div>;
         }
 
-        var addUserButton = <Button title="Add User" bsSize="xsmall" onClick={ this.openUsersEditDialog }>
+        var addUserButton = <Authorize><Button title="Add User" bsSize="xsmall" onClick={ this.openUsersEditDialog }>
           <Glyphicon glyph="plus" />&nbsp;<strong>Add User</strong>
-        </Button>;
+        </Button></Authorize>;
 
         if (this.props.users.loaded) {
           return this.renderResults(addUserButton);

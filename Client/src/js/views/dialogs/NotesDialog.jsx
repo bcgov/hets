@@ -11,6 +11,8 @@ import ModalDialog from '../../components/ModalDialog.jsx';
 import TableControl from '../../components/TableControl.jsx';
 import DeleteButton from '../../components/DeleteButton.jsx';
 import EditButton from '../../components/EditButton.jsx';
+import Authorize from '../../components/Authorize.jsx';
+
 import { formatDateTimeUTCToLocal } from '../../utils/date';
 
 
@@ -133,9 +135,11 @@ class NotesDialog extends React.Component {
         {showNoNotesMessage && (
           <Alert bsStyle="success" style={{ marginTop: 10 }}>No notes</Alert>
         )}
-        <Button title="Add Note" bsSize="small" onClick={ this.openNotesAddDialog }>
-          <Glyphicon glyph="plus" />&nbsp;<strong>Add Note</strong>
-        </Button>
+        <Authorize>
+          <Button title="Add Note" bsSize="small" onClick={ this.openNotesAddDialog }>
+            <Glyphicon glyph="plus" />&nbsp;<strong>Add Note</strong>
+          </Button>
+        </Authorize>
         { this.state.showNotesAddDialog && (
           <NotesAddDialog
             show={this.state.showNotesAddDialog}
