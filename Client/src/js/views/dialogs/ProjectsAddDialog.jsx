@@ -42,6 +42,8 @@ class ProjectsAddDialog extends React.Component {
       information: '',
 
       nameError: '',
+      fiscalYearError: '',
+      provincialProjectNumberError: '',
     };
   }
 
@@ -74,25 +76,38 @@ class ProjectsAddDialog extends React.Component {
     this.setState({
       nameError: '',
       fiscalYearError: '',
-      districtError: '',
+      provincialProjectNumberError: '',
     });
 
-    var projectName = this.state.name;
+    const { name, fiscalYear, provincialProjectNumber } = this.state;
 
-    if (isBlank(projectName)) {
-      this.setState({ nameError: 'Name is required' });
+    if (isBlank(name)) {
+      this.setState({ nameError: 'Project name is required' });
       valid = false;
-    } else {
-      var nameIgnoreCase = projectName.toLowerCase().trim();
-      var existingProjectName = _.find(this.props.projects.data, existingProjectName => existingProjectName.name.toLowerCase().trim() === nameIgnoreCase);
-      if (existingProjectName) {
-        this.setState({ nameError: 'This project name already exists'});
-        valid = false;
-      }
     }
 
-    if (isBlank(this.state.fiscalYear)) {
+    if (isBlank(fiscalYear)) {
       this.setState({ fiscalYearError: 'Fiscal year is required' });
+      valid = false;
+    }
+
+    if (isBlank(provincialProjectNumber)) {
+      this.setState({ provincialProjectNumberError: 'Provincial project number is required' });
+      valid = false;
+    }
+
+    if (!valid) {
+      return false;
+    }
+
+    const duplicateProject = _.find(this.props.projects.data, project => {
+      return project.name.toLowerCase().trim() === name.toLowerCase().trim() &&
+             project.fiscalYear.toLowerCase().trim() === fiscalYear.toLowerCase().trim() &&
+             project.provincialProjectNumber.toLowerCase().trim() === provincialProjectNumber.toLowerCase().trim();
+    });
+
+    if (duplicateProject) {
+      this.setState({ nameError: 'A project with the same name and project number exists for the selected fiscal year.'});
       valid = false;
     }
 
@@ -154,7 +169,7 @@ class ProjectsAddDialog extends React.Component {
           </Row>
           <Row>
             <Col xs={6}>
-              <FormGroup controlId="districtId" validationState={ this.state.districtError ? 'error' : null }>
+              <FormGroup controlId="districtId">
                 <ControlLabel>District</ControlLabel>
                 <FormControl.Static>{ this.props.currentUser.district.name }</FormControl.Static>
               </FormGroup>
@@ -171,9 +186,10 @@ class ProjectsAddDialog extends React.Component {
           </Row>
           <Row>
             <Col xs={6}>
-              <FormGroup controlId="provincialProjectNumber">
+              <FormGroup controlId="provincialProjectNumber" validationState={ this.state.provincialProjectNumberError ? 'error' : null }>
                 <ControlLabel>Provincial Project Number</ControlLabel>
                 <FormInputControl type="text" value={ this.state.provincialProjectNumber } updateState={ this.updateState } />
+                <HelpBlock>{ this.state.provincialProjectNumberError }</HelpBlock>
               </FormGroup>
             </Col>
             <Col xs={6}>
