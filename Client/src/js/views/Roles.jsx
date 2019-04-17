@@ -1,11 +1,9 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { PageHeader, Well, Alert } from 'react-bootstrap';
 import { ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-
 import _ from 'lodash';
 
 import * as Action from '../actionTypes';
@@ -20,61 +18,64 @@ import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import PrintButton from '../components/PrintButton.jsx';
 
-var Roles = React.createClass({
-  propTypes: {
-    roles: React.PropTypes.object,
-    currentUser: React.PropTypes.object,
-    search: React.PropTypes.object,
-    ui: React.PropTypes.object,
-  },
 
-  getInitialState() {
-    return {
+class Roles extends React.Component {
+  static propTypes = {
+    roles: PropTypes.object,
+    currentUser: PropTypes.object,
+    search: PropTypes.object,
+    ui: PropTypes.object,
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
       loading: true,
 
       search: {
-        key: this.props.search.key || 'name',
-        text: this.props.search.text || '',
-        params: this.props.search.params || null,
+        key: props.search.key || 'name',
+        text: props.search.text || '',
+        params: props.search.params || null,
       },
 
       ui : {
-        sortField: this.props.ui.sortField || 'name',
-        sortDesc: this.props.ui.sortDesc === true,
+        sortField: props.ui.sortField || 'name',
+        sortDesc: props.ui.sortDesc === true,
       },
     };
-  },
+  }
 
   componentDidMount() {
     this.fetch();
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     this.setState({ loading: true });
     Api.searchRoles().finally(() => {
       this.setState({ loading: false });
     });
-  },
+  };
 
-  updateSearchState(state, callback) {
+  updateSearchState = (state, callback) => {
     this.setState({ search: { ...this.state.search, ...state }}, () =>{
       store.dispatch({ type: Action.UPDATE_ROLES_SEARCH, roles: this.state.search });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  updateUIState(state, callback) {
+  updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
       store.dispatch({ type: Action.UPDATE_ROLES_UI, roles: this.state.ui });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  delete(role) {
+  delete = (role) => {
     Api.deleteRole(role).then(() => {
       this.fetch();
     });
-  },
+  };
 
   render() {
     var numRoles = this.state.loading ? '...' : Object.keys(this.props.roles).length;
@@ -151,8 +152,8 @@ var Roles = React.createClass({
         })()}
       </div>
     </div>;
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {

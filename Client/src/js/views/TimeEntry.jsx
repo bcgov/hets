@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
@@ -20,37 +21,39 @@ import PrintButton from '../components/PrintButton.jsx';
 import { formatDateTime } from '../utils/date';
 
 
-var TimeEntry = React.createClass({
-  propTypes: {
-    projects: React.PropTypes.object,
-    localAreas: React.PropTypes.object,
-    owners: React.PropTypes.object,
-    equipment: React.PropTypes.object,
-    timeEntries: React.PropTypes.object,
-    favourites: React.PropTypes.object,
-    search: React.PropTypes.object,
-    ui: React.PropTypes.object,
-    router: React.PropTypes.object,
-  },
+class TimeEntry extends React.Component {
+  static propTypes = {
+    projects: PropTypes.object,
+    localAreas: PropTypes.object,
+    owners: PropTypes.object,
+    equipment: PropTypes.object,
+    timeEntries: PropTypes.object,
+    favourites: PropTypes.object,
+    search: PropTypes.object,
+    ui: PropTypes.object,
+    router: PropTypes.object,
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       showTimeEntryDialog: false,
       allowMultipleTimeEntries: false,
       rentalAgreementId: null,
       timeEntryDialogProjectId: null,
       search: {
-        projectIds: this.props.search.projectIds || [],
-        localAreaIds: this.props.search.localAreaIds || [],
-        ownerIds: this.props.search.ownerIds || [],
-        equipmentIds: this.props.search.equipmentIds || [],
+        projectIds: props.search.projectIds || [],
+        localAreaIds: props.search.localAreaIds || [],
+        ownerIds: props.search.ownerIds || [],
+        equipmentIds: props.search.equipmentIds || [],
       },
       ui : {
-        sortField: this.props.ui.sortField || 'localAreaLabel',
-        sortDesc: this.props.ui.sortDesc === true,
+        sortField: props.ui.sortField || 'localAreaLabel',
+        sortDesc: props.ui.sortDesc === true,
       },
     };
-  },
+  }
 
   componentDidMount() {
     Api.getProjectsCurrentFiscal();
@@ -64,9 +67,9 @@ var TimeEntry = React.createClass({
         this.loadFavourite(defaultFavourite);
       }
     }
-  },
+  }
 
-  buildSearchParams() {
+  buildSearchParams = () => {
     var searchParams = {};
 
     if (this.state.search.projectIds.length > 0) {
@@ -86,18 +89,18 @@ var TimeEntry = React.createClass({
     }
 
     return searchParams;
-  },
+  };
 
-  fetch() {
+  fetch = () => {
     Api.searchTimeEntries(this.buildSearchParams());
-  },
+  };
 
-  search(e) {
+  search = (e) => {
     e.preventDefault();
     this.fetch();
-  },
+  };
 
-  clearSearch() {
+  clearSearch = () => {
     var defaultSearchParameters = {
       projectIds: [],
       localAreaIds: [],
@@ -109,43 +112,43 @@ var TimeEntry = React.createClass({
       store.dispatch({ type: Action.UPDATE_TIME_ENTRIES_SEARCH, timeEntries: this.state.search });
       store.dispatch({ type: Action.CLEAR_TIME_ENTRIES });
     });
-  },
+  };
 
-  updateSearchState(state, callback) {
+  updateSearchState = (state, callback) => {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () =>{
       store.dispatch({ type: Action.UPDATE_TIME_ENTRIES_SEARCH, timeEntries: this.state.search });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  updateUIState(state, callback) {
+  updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
       store.dispatch({ type: Action.UPDATE_TIME_ENTRIES_UI, timeEntries: this.state.ui });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  loadFavourite(favourite) {
+  loadFavourite = (favourite) => {
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
-  },
+  };
 
-  openTimeEntryDialog(timeEntry) {
+  openTimeEntryDialog = (timeEntry) => {
     this.setState({
       timeEntryDialogProjectId: timeEntry ? timeEntry.projectId : null,
       rentalAgreementId: timeEntry ? timeEntry.rentalAgreementId : null,
       allowMultipleTimeEntries: !timeEntry,
       showTimeEntryDialog: true,
     });
-  },
+  };
 
-  closeTimeEntryDialog() {
+  closeTimeEntryDialog = () => {
     this.setState({ showTimeEntryDialog: false });
     if (this.props.timeEntries.loaded) {
       this.fetch();
     }
-  },
+  };
 
-  renderResults(addTimeEntryButton) {
+  renderResults = (addTimeEntryButton) => {
     if (Object.keys(this.props.timeEntries.data).length === 0) {
       return <Alert bsStyle="success">No time entries { addTimeEntryButton }</Alert>;
     }
@@ -184,7 +187,7 @@ var TimeEntry = React.createClass({
             <td><Link to={`${Constant.OWNERS_PATHNAME}/${entry.ownerId}`}>{ entry.ownerName }</Link></td>
             <td><Link to={`${Constant.EQUIPMENT_PATHNAME}/${entry.equipmentId}`}>{ entry.equipmentCode }</Link></td>
             <td>{ entry.equipmentDetails }</td>
-            <td><Link to={`${Constant.PROJECTS_PATHNAME}/${entry.projectId}`}>{ entry.provincialProjectNumber }</Link></td>
+            <td><Link to={`${Constant.PROJECTS_PATHNAME}/${entry.projectId}`}>{ entry.provincialProjectNumber ? entry.provincialProjectNumber : 'N/A' }</Link></td>
             <td>{ entry.hours }</td>
             <td>{ formatDateTime(entry.workedDate, 'YYYY-MMM-DD') }</td>
             <td>{ formatDateTime(entry.enteredDate, 'YYYY-MMM-DD') }</td>
@@ -197,69 +200,69 @@ var TimeEntry = React.createClass({
         })
       }
     </SortTable>;
-  },
+  };
 
-  matchesProjectFilter(projectIds) {
+  matchesProjectFilter = (projectIds) => {
     if (this.state.search.projectIds.length == 0) {
       return true;
     }
 
     return _.intersection(this.state.search.projectIds, projectIds).length > 0;
-  },
+  };
 
-  matchesLocalAreaFilter(localAreaId) {
+  matchesLocalAreaFilter = (localAreaId) => {
     if (this.state.search.localAreaIds.length == 0) {
       return true;
     }
 
     return _.includes(this.state.search.localAreaIds, localAreaId);
-  },
+  };
 
-  matchesOwnerFilter(ownerId) {
+  matchesOwnerFilter = (ownerId) => {
     if (this.state.search.ownerIds.length == 0) {
       return true;
     }
 
     return _.includes(this.state.search.ownerIds, ownerId);
-  },
+  };
 
-  updateProjectSearchState(state) {
+  updateProjectSearchState = (state) => {
     this.updateSearchState(state, this.filterSelectedOwners);
-  },
+  };
 
-  updateLocalAreaSearchState(state) {
+  updateLocalAreaSearchState = (state) => {
     this.updateSearchState(state, this.filterSelectedOwners);
-  },
+  };
 
-  updateOwnerSearchState(state) {
+  updateOwnerSearchState = (state) => {
     this.updateSearchState(state, this.filterSelectedEquipment);
-  },
+  };
 
-  filterSelectedOwners() {
+  filterSelectedOwners = () => {
     var acceptableOwnerIds = _.map(this.getFilteredOwners(), 'id');
     var ownerIds = _.intersection(this.state.search.ownerIds, acceptableOwnerIds);
     this.updateSearchState({ ownerIds: ownerIds }, this.filterSelectedEquipment);
-  },
+  };
 
-  filterSelectedEquipment() {
+  filterSelectedEquipment = () => {
     var acceptableEquipmentIds = _.map(this.getFilteredEquipment(), 'id');
     var equipmentIds = _.intersection(this.state.search.equipmentIds, acceptableEquipmentIds);
     this.updateSearchState({ equipmentIds: equipmentIds });
-  },
+  };
 
-  getFilteredOwners() {
+  getFilteredOwners = () => {
     return _.chain(this.props.owners.data)
       .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesLocalAreaFilter(x.localAreaId))
       .sortBy('organizationName')
       .value();
-  },
+  };
 
-  getFilteredEquipment() {
+  getFilteredEquipment = () => {
     return _.chain(this.props.equipment.data)
       .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesOwnerFilter(x.ownerId) && this.matchesLocalAreaFilter(x.localAreaId))
       .sortBy('equipmentCode')
       .value();
-  },
+  };
 
   render() {
     var resultCount = '';
@@ -352,8 +355,8 @@ var TimeEntry = React.createClass({
           rentalAgreementId={this.state.rentalAgreementId}/>
       )}
     </div>;
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {

@@ -126,6 +126,10 @@ namespace HetsData.Helpers
                         .ThenInclude(r => r.DistrictEquipmentType)
                 .Include(x => x.HetRentalRequestRotationList)
                     .ThenInclude(y => y.Equipment)
+                        .ThenInclude(r => r.DistrictEquipmentType)
+                            .ThenInclude(y => y.EquipmentType)
+                .Include(x => x.HetRentalRequestRotationList)
+                    .ThenInclude(y => y.Equipment)
                         .ThenInclude(e => e.Owner)
                             .ThenInclude(c => c.PrimaryContact)
                 .FirstOrDefault(a => a.RentalRequestId == id);
@@ -587,43 +591,53 @@ namespace HetsData.Helpers
                 .OrderBy(x => x.RotationListSortOrder)
                 .ToList();
 
+            int? disEquipmentTypeId = rentalRequest.DistrictEquipmentTypeId;
+            int? localAreaId = rentalRequest.LocalAreaId;
+
             // check if we have a localAreaRotationList.askNextBlock"N" for the given local area
             bool localAreaRotationListExists = context.HetLocalAreaRotationList
-                .Any(a => a.LocalArea.LocalAreaId == rentalRequest.LocalAreaId);
+                .Any(a => a.LocalArea.LocalAreaId == localAreaId);
 
             HetLocalAreaRotationList newAreaRotationList;
 
             if (localAreaRotationListExists)
             {
                 newAreaRotationList = context.HetLocalAreaRotationList
-                    .First(a => a.LocalArea.LocalAreaId == rentalRequest.LocalAreaId);
+                    .First(a => a.LocalArea.LocalAreaId == localAreaId);
             }
             else
             {
                 // setup our new "local area rotation list"
                 newAreaRotationList = new HetLocalAreaRotationList
                 {
-                    LocalAreaId = rentalRequest.LocalAreaId,
-                    DistrictEquipmentTypeId = rentalRequest.DistrictEquipmentTypeId
+                    LocalAreaId = localAreaId,
+                    DistrictEquipmentTypeId = disEquipmentTypeId
                 };
             }
 
             // determine current fiscal year - check for existing rotation lists this year
-            DateTime fiscalStart;
+            // HETS-1195: Adjust seniority list and rotation list for lists hired between Apr1 and roll over
+            // ** Need to use the "rollover date" to ensure we don't include records created
+            //    after April 1 (but before rollover)
+            HetLocalArea localArea = context.HetLocalArea.AsNoTracking()
+                .Include(x => x.ServiceArea.District)
+                .First(x => x.LocalAreaId == localAreaId);
 
-            if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
+            HetDistrictStatus districtStatus = context.HetDistrictStatus.AsNoTracking()
+                .First(x => x.DistrictId == localArea.ServiceArea.DistrictId);
+
+            DateTime fiscalStart = districtStatus.RolloverEndDate;
+
+            if (fiscalStart == new DateTime(0001, 01, 01, 00, 00, 00))
             {
-                fiscalStart = new DateTime(DateTime.UtcNow.AddYears(-1).Year, 4, 1);
-            }
-            else
-            {
-                fiscalStart = new DateTime(DateTime.UtcNow.Year, 4, 1);
+                int fiscalYear = Convert.ToInt32(districtStatus.NextFiscalYear); // status table uses the start of the year
+                fiscalStart = new DateTime(fiscalYear - 1, 4, 1);
             }
 
             // get the last rotation list created this fiscal year
             bool previousRequestExists = context.HetRentalRequest
-                .Any(x => x.DistrictEquipmentType.DistrictEquipmentTypeId == rentalRequest.DistrictEquipmentTypeId &&
-                          x.LocalArea.LocalAreaId == rentalRequest.LocalAreaId &&
+                .Any(x => x.DistrictEquipmentType.DistrictEquipmentTypeId == disEquipmentTypeId &&
+                          x.LocalArea.LocalAreaId == localAreaId &&
                           x.AppCreateTimestamp >= fiscalStart);
 
             // *****************************************************************

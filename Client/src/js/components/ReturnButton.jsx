@@ -1,15 +1,16 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import { browserHistory } from 'react-router';
 import { Button, Glyphicon } from 'react-bootstrap';
 
 
-var ReturnButton = React.createClass({
-  propTypes: {
-    id: React.PropTypes.string,
-    className: React.PropTypes.string,
-    title: React.PropTypes.string,
-  },
+class ReturnButton extends React.Component {
+  static propTypes = {
+    id: PropTypes.string,
+    className: PropTypes.string,
+    title: PropTypes.string,
+  };
 
   render() {
     const { id, className, title } = this.props;
@@ -23,8 +24,8 @@ var ReturnButton = React.createClass({
         <Glyphicon glyph="arrow-left" /> Return
       </Button>
     );
-  },
-});
+  }
+}
 
 
 export default ReturnButton;

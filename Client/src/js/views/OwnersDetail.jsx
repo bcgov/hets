@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
@@ -35,8 +36,11 @@ import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
 import PrintButton from '../components/PrintButton.jsx';
 
+import { activeOwnerSelector, activeOwnerIdSelector } from '../selectors/ui-selectors.js';
+
 import { formatDateTime, today, toZuluTime } from '../utils/date';
-import { sortDir } from '../utils/array.js';
+import { sortDir, sort } from '../utils/array.js';
+import { firstLastName } from '../utils/string.js';
 
 /*
 
@@ -45,24 +49,26 @@ TODO:
 
 */
 
+const CONTACT_NAME_SORT_FIELDS = ['givenName', 'surname'];
+
 const OWNER_WITH_EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE = 'This owner has equipment that ' +
   'is part of an In Progress Rental Request. Release the list (finish hiring / delete) before making this change';
 
-var OwnersDetail = React.createClass({
-  propTypes: {
-    owner: React.PropTypes.object,
-    equipment: React.PropTypes.object,
-    contact: React.PropTypes.object,
-    documents: React.PropTypes.object,
-    params: React.PropTypes.object,
-    uiContacts: React.PropTypes.object,
-    uiEquipment: React.PropTypes.object,
-    router: React.PropTypes.object,
-    notes: React.PropTypes.array,
-  },
 
-  getInitialState() {
-    return {
+class OwnersDetail extends React.Component {
+  static propTypes = {
+    ownerId: PropTypes.number.isRequired,
+    owner: PropTypes.object,
+    documents: PropTypes.object,
+    uiContacts: PropTypes.object,
+    uiEquipment: PropTypes.object,
+    router: PropTypes.object.isRequired,
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
       loading: true,
 
       showEditDialog: false,
@@ -82,97 +88,100 @@ var OwnersDetail = React.createClass({
 
       // Contacts
       uiContacts : {
-        sortField: this.props.uiContacts.sortField || 'name',
-        sortDesc: this.props.uiContacts.sortDesc  === true,
+        sortField: props.uiContacts.sortField || CONTACT_NAME_SORT_FIELDS,
+        sortDesc: props.uiContacts.sortDesc  === true,
       },
 
       // Equipment
       uiEquipment : {
-        sortField: this.props.uiEquipment.sortField || 'equipmentNumber',
-        sortDesc: this.props.uiEquipment.sortDesc  === true,
+        sortField: props.uiEquipment.sortField || 'equipmentNumber',
+        sortDesc: props.uiEquipment.sortDesc  === true,
       },
     };
-  },
+  }
 
   componentDidMount() {
-    this.fetch();
-  },
+    const { ownerId, owner } = this.props;
 
-  fetch() {
-    this.setState({ loading: true });
+    /* Documents need be fetched every time as they are not project specific in the store ATM */
+    Api.getOwnerDocuments(ownerId).then(() => this.setState({ loadingDocuments: false }));
 
-    var ownerId = this.props.params.ownerId;
-    var ownerPromise = Api.getOwner(ownerId);
-    var documentsPromise = Api.getOwnerDocuments(ownerId);
-    var ownerNotesPromise = Api.getOwnerNotes(ownerId);
+    // Only show loading spinner if there is no existing project in the store
+    if (owner) {
+      this.setState({ loading: false });
+    }
 
-    return Promise.all([ownerPromise, documentsPromise, ownerNotesPromise]).finally(() => {
+    // Re-fetch project and notes every time
+    Promise.all([
+      this.fetch(),
+      Api.getOwnerNotes(ownerId),
+    ]).then(() => {
       this.setState({ loading: false });
     });
-  },
+  }
 
-  updateContactsUIState(state, callback) {
+  fetch = () => {
+    return Api.getOwner(this.props.ownerId);
+  };
+
+  updateContactsUIState = (state, callback) => {
     this.setState({ uiContacts: { ...this.state.uiContacts, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_OWNER_CONTACTS_UI, ownerContacts: this.state.uiContacts });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  updateEquipmentUIState(state, callback) {
+  updateEquipmentUIState = (state, callback) => {
     this.setState({ uiEquipment: { ...this.state.uiEquipment, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_OWNER_EQUIPMENT_UI, ownerEquipment: this.state.uiEquipment });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  updateStatusState(state) {
+  updateStatusState = (state) => {
     if (state !== this.props.owner.status) {
       this.setState({ status: state }, this.openChangeStatusDialog);
     }
-  },
+  };
 
-  openChangeStatusDialog() {
+  openChangeStatusDialog = () => {
     this.setState({ showChangeStatusDialog: true });
-  },
+  };
 
-  closeChangeStatusDialog() {
+  closeChangeStatusDialog = () => {
     this.setState({ showChangeStatusDialog: false });
-  },
+  };
 
-  onStatusChanged(/* status */) {
+  onStatusChanged = () => {
     this.closeChangeStatusDialog();
     Api.getOwnerNotes(this.props.owner.id);
-  },
+  };
 
-  showDocuments() {
+  showDocuments = () => {
     this.setState({ showDocumentsDialog: true });
-  },
+  };
 
-  closeDocumentsDialog() {
+  closeDocumentsDialog = () => {
     this.setState({ showDocumentsDialog: false });
-  },
+  };
 
-  openEditDialog() {
+  openEditDialog = () => {
     this.setState({ showEditDialog: true });
-  },
+  };
 
-  closeEditDialog() {
+  closeEditDialog = () => {
     this.setState({ showEditDialog: false });
-  },
+  };
 
-  saveEdit(owner) {
-    // This just ensures that the normalized data doesn't mess up the PUT call
-    Api.updateOwner({ ...owner, contacts: null }).finally(() => {
-      Log.ownerModified(this.props.owner);
-      this.closeEditDialog();
-    });
-  },
+  ownerSaved = () => {
+    Log.ownerModified(this.props.owner);
+  };
 
-  openContactDialog(contactId) {
+  openContactDialog = (contactId) => {
     var contact;
     if (contactId === 0) {
       // New
@@ -188,166 +197,162 @@ var OwnersDetail = React.createClass({
       contact: contact,
       showContactDialog: true,
     });
-  },
+  };
 
-  closeContactDialog() {
+  closeContactDialog = () => {
     this.setState({ showContactDialog: false });
-  },
+  };
 
-  deleteContact(contact) {
+  deleteContact = (contact) => {
     Api.deleteContact(contact).then(() => {
-      Log.ownerContactDeleted(this.props.owner, this.props.contact).then(() => {
+      Log.ownerContactDeleted(this.props.owner, contact).then(() => {
         // In addition to refreshing the contacts, we need to update the owner
         // to get primary contact info and history.
         this.fetch();
       });
     });
-  },
+  };
 
-  saveContact(contact) {
+  contactSaved = (contact) => {
     var isNew = !contact.id;
     var log = isNew ? Log.ownerContactAdded : Log.ownerContactUpdated;
 
-    Api.addOwnerContact(this.props.owner, contact).then(() => {
-      // Use this.props.contact to get the contact id
-      return log(this.props.owner, this.props.contact);
-    }).finally(() => {
+    log(this.props.owner, contact).then(() => {
       // In addition to refreshing the contacts, we need to update the owner
       // to get primary contact info and history.
       this.fetch();
-      this.closeContactDialog();
     });
-  },
 
-  openEquipmentDialog() {
+    this.closeContactDialog();
+  };
+
+  openEquipmentDialog = () => {
     this.setState({ showEquipmentDialog: true });
-  },
+  };
 
-  closeEquipmentDialog() {
+  closeEquipmentDialog = () => {
     this.setState({ showEquipmentDialog: false });
-  },
+  };
 
-  saveNewEquipment(equipment) {
-    return Api.addEquipment(equipment).then(() => {
-      // Open it up
-      Log.ownerEquipmentAdded(this.props.owner, this.props.equipment);
-      Log.equipmentAdded(this.props.equipment);
-      this.props.router.push({
-        pathname: `${Constant.EQUIPMENT_PATHNAME}/${this.props.equipment.id}`,
-        state: { returnUrl: `${Constant.OWNERS_PATHNAME}/${this.props.owner.id}` },
-      });
-
-      return null;
+  equipmentSaved = (equipment) => {
+    this.closeEquipmentDialog();
+    Log.ownerEquipmentAdded(this.props.owner, equipment);
+    Log.equipmentAdded(equipment);
+    // Open it up
+    this.props.router.push({
+      pathname: `${Constant.EQUIPMENT_PATHNAME}/${equipment.id}`,
+      state: { returnUrl: `${Constant.OWNERS_PATHNAME}/${this.props.owner.id}` },
     });
-  },
+  };
 
-  equipmentVerifyAll() {
+  equipmentVerifyAll = () => {
     var now = today();
     var owner = this.props.owner;
 
     // Update the last verified date on all pieces of equipment
-    var equipmentList =_.map(owner.equipmentList, equipment => {
-      return {...equipment, ...{
+    var equipmentList =_.map(owner.equipmentList, (equipment) => {
+      return {
+        ...equipment,
         lastVerifiedDate: toZuluTime(now),
         owner: { id: owner.id },
-      }};
+      };
     });
 
-    Api.updateOwnerEquipment(owner, equipmentList);
-  },
-
-  equipmentVerify(equipment) {
-    Api.updateEquipment({...equipment, ...{
-      lastVerifiedDate: toZuluTime(today()),
-      owner: { id: this.props.owner.id },
-    }}).then(() => {
-      Log.ownerEquipmentVerified(this.props.owner, equipment);
+    Api.updateOwnerEquipment(owner, equipmentList).then(() => {
       this.fetch();
     });
-  },
+  };
 
-  openPolicyDialog() {
-    this.setState({ showPolicyDialog: true });
-  },
+  equipmentVerify = (equipment) => {
+    const updatedEquipment = {
+      ...equipment,
+      lastVerifiedDate: toZuluTime(today()),
+      owner: { id: this.props.owner.id },
+    };
 
-  closePolicyDialog() {
-    this.setState({ showPolicyDialog: false });
-  },
+    Log.ownerEquipmentVerified(this.props.owner, updatedEquipment);
 
-  savePolicyEdit(owner) {
-    // This just ensures that the normalized data doesn't mess up the PUT call
-    Api.updateOwner({ ...owner, contacts: null }).finally(() => {
-      Log.ownerModifiedPolicy(this.props.owner);
-      this.closePolicyDialog();
+    Api.updateEquipment(updatedEquipment).then(() => {
+      this.fetch();
     });
-  },
+  };
 
-  openPolicyDocumentsDialog() {
+  openPolicyDialog = () => {
+    this.setState({ showPolicyDialog: true });
+  };
+
+  closePolicyDialog = () => {
+    this.setState({ showPolicyDialog: false });
+  };
+
+  policySaved = () => {
+    Log.ownerModifiedPolicy(this.props.owner);
+  };
+
+  openPolicyDocumentsDialog = () => {
     // TODO Show popup with links to policy documents
     this.setState({ showPolicyDocumentsDialog: true });
-  },
+  };
 
-  closePolicyDocumentsDialog() {
+  closePolicyDocumentsDialog = () => {
     this.setState({ showPolicyDocumentsDialog: false });
-  },
+  };
 
-  addPolicyDocument() {
+  addPolicyDocument = () => {
     // TODO Upload policy document (proof of policy coverage)
-  },
+  };
 
-  openNotesDialog() {
+  openNotesDialog = () => {
     this.setState({ showNotesDialog: true });
-  },
+  };
 
-  closeNotesDialog() {
+  closeNotesDialog = () => {
     this.setState({ showNotesDialog: false });
-  },
+  };
 
-  getStatuses() {
-    return _.pull([
+  render() {
+    const { loading, loadingDocuments } = this.state;
+    var owner = this.props.owner || {};
+
+    var isApproved = owner.status === Constant.OWNER_STATUS_CODE_APPROVED;
+    var restrictEquipmentAddTooltip = 'Equipment can only be added to an approved owner.';
+    var restrictEquipmentVerifyTooltip = 'Equipment can only be verified for an approved owner.';
+
+    const statuses = _.pull([
       Constant.OWNER_STATUS_CODE_APPROVED,
       Constant.OWNER_STATUS_CODE_PENDING,
       Constant.OWNER_STATUS_CODE_ARCHIVED,
-    ], this.props.owner.status);
-  },
-
-  render() {
-    var owner = this.props.owner;
-    var isApproved = this.props.owner.status === Constant.OWNER_STATUS_CODE_APPROVED;
-    var restrictEquipmentAddTooltip = 'Equipment can only be added to an approved owner.';
-    var restrictEquipmentVerifyTooltip = 'Equipment can only be verified for an approved owner.';
+    ], owner.status);
 
     return (
       <div id="owners-detail">
         <div>
-          {(() => {
-            if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+          <Row id="owners-top" className="top-container">
+            <Col sm={9}>
+              <StatusDropdown
+                id="owner-status-dropdown"
+                status={loading ? 'Loading ...' : owner.status}
+                statuses={statuses}
+                disabled={owner.activeRentalRequest || loading}
+                disabledTooltip={OWNER_WITH_EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
+                onSelect={this.updateStatusState}/>
+              <Button id="owner-notes-button" title="Notes" disabled={loading} onClick={ this.openNotesDialog }>
+                Notes ({ loading ? ' ' : owner.notes.length })
+              </Button>
+              <Button id="owner-documents-button" title="Documents" disabled={loading} onClick={ this.showDocuments }>
+                Documents ({ loadingDocuments ? ' ' :  Object.keys(this.props.documents).length })
+              </Button>
+              <Label className={ owner.isMaintenanceContractor ? 'ml-5' : 'hide' }>Maintenance Contractor</Label>
+            </Col>
+            <Col sm={3}>
+              <div className="pull-right">
+                <PrintButton disabled={loading}/>
+                <ReturnButton/>
+              </div>
+            </Col>
+          </Row>
 
-            return (
-              <Row id="owners-top" className="top-container">
-                <Col sm={9}>
-                  <StatusDropdown
-                    id="owner-status-dropdown"
-                    status={owner.status}
-                    statuses={this.getStatuses()}
-                    disabled={owner.activeRentalRequest}
-                    disabledTooltip={OWNER_WITH_EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
-                    onSelect={this.updateStatusState}/>
-                  <Button className="ml-5 mr-5" title="Notes" onClick={ this.openNotesDialog }>Notes ({ this.props.notes.length })</Button>
-                  <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
-                  <Label className={ owner.isMaintenanceContractor ? 'ml-5' : 'hide' }>Maintenance Contractor</Label>
-                </Col>
-                <Col sm={3}>
-                  <div className="pull-right">
-                    <PrintButton/>
-                    <ReturnButton/>
-                  </div>
-                </Col>
-              </Row>
-            );
-          })()}
-
-          <PageHeader id="owners-header" title="Company" subTitle={ owner.organizationName }/>
+          <PageHeader id="owners-header" title="Company" subTitle={loading ? '...' : owner.organizationName }/>
 
           <Row>
             <Col md={12}>
@@ -355,11 +360,11 @@ var OwnersDetail = React.createClass({
                 <SubHeader
                   title="Owner Information"
                   editButtonTitle="Edit Owner"
-                  editButtonDisabled={owner.activeRentalRequest}
-                  editButtonDisabledTooltip={OWNER_WITH_EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
+                  editButtonDisabled={loading || owner.activeRentalRequest}
+                  editButtonDisabledTooltip={!loading && OWNER_WITH_EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
                   onEditClicked={ this.openEditDialog }/>
                 {(() => {
-                  if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+                  if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
                   return <div id="owners-data">
                     <Row className="equal-height">
@@ -400,9 +405,9 @@ var OwnersDetail = React.createClass({
             </Col>
             <Col md={12}>
               <Well>
-                <SubHeader title="Policy" editButtonTitle="Edit Policy Information" onEditClicked={ this.openPolicyDialog }/>
+                <SubHeader title="Policy" editButtonTitle="Edit Policy Information" editButtonDisabled={loading} onEditClicked={ this.openPolicyDialog }/>
                 {(() => {
-                  if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+                  if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
                   return <Row id="owners-policy" className="equal-height">
                     <Col lg={4} md={6} sm={12} xs={12}>
@@ -436,26 +441,23 @@ var OwnersDetail = React.createClass({
               <Well>
                 <SubHeader title="Contacts"/>
                 {(() => {
-                  if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; }
+                  if (loading ) { return <div className="spinner-container"><Spinner/></div>; }
 
                   var addContactButton = <Button title="Add Contact" onClick={ this.openContactDialog.bind(this, 0) } bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
 
                   if (!owner.contacts || owner.contacts.length === 0) { return <Alert bsStyle="success">No contacts { addContactButton }</Alert>; }
 
-                  var contacts = _.sortBy(owner.contacts, this.state.uiContacts.sortField);
-                  if (this.state.uiContacts.sortDesc) {
-                    _.reverse(contacts);
-                  }
+                  var contacts = sort(owner.contacts, this.state.uiContacts.sortField, this.state.uiContacts.sortDesc);
 
                   var headers = [
-                    { field: 'name',              title: 'Name'  },
-                    { field: 'phone',             title: 'Phone' },
-                    { field: 'mobilePhoneNumber', title: 'Cell'  },
-                    { field: 'faxPhoneNumber',    title: 'Fax'   },
-                    { field: 'emailAddress',      title: 'Email' },
-                    { field: 'role',              title: 'Role'  },
-                    { field: 'notes',             title: 'Notes'  },
-                    { field: 'addContact',        title: 'Add Contact', style: { textAlign: 'right'  },
+                    { field: CONTACT_NAME_SORT_FIELDS, title: 'Name'  },
+                    { field: 'phone',                  title: 'Phone' },
+                    { field: 'mobilePhoneNumber',      title: 'Cell'  },
+                    { field: 'faxPhoneNumber',         title: 'Fax'   },
+                    { field: 'emailAddress',           title: 'Email' },
+                    { field: 'role',                   title: 'Role'  },
+                    { field: 'notes',                  title: 'Notes' },
+                    { field: 'addContact',             title: 'Add Contact', style: { textAlign: 'right'  },
                       node: addContactButton,
                     },
                   ];
@@ -464,17 +466,24 @@ var OwnersDetail = React.createClass({
                     {
                       contacts.map((contact) => {
                         return <tr key={ contact.id }>
-                          <td>{ contact.isPrimary && <Glyphicon glyph="star" /> } { contact.name }</td>
+                          <td>
+                            { contact.isPrimary && <Glyphicon glyph="star" /> }
+                            { firstLastName(contact.givenName, contact.surname) }
+                          </td>
                           <td>{ contact.phone }</td>
                           <td>{ contact.mobilePhoneNumber }</td>
                           <td>{ contact.faxPhoneNumber }</td>
-                          <td><a href={ `mailto:${ contact.emailAddress }` } target="_blank">{ contact.emailAddress }</a></td>
+                          <td><a href={ `mailto:${ contact.emailAddress }` } rel="noopener noreferrer" target="_blank">{ contact.emailAddress }</a></td>
                           <td>{ contact.role }</td>
                           <td>{ contact.notes ? 'Y' : '' }</td>
                           <td style={{ textAlign: 'right' }}>
                             <ButtonGroup>
-                              <DeleteButton name="Contact" hide={ !contact.canDelete || contact.isPrimary } onConfirm={ this.deleteContact.bind(this, contact) }/>
-                              <EditButton name="Contact" view={ !contact.canEdit } onClick={ this.openContactDialog.bind(this, contact.id) } />
+                              {contact.canDelete && !contact.isPrimary && (
+                                <DeleteButton name="Contact" onConfirm={ this.deleteContact.bind(this, contact) }/>
+                              )}
+                              {contact.canEdit && (
+                                <EditButton name="Contact" onClick={ this.openContactDialog.bind(this, contact.id) } />
+                              )}
                             </ButtonGroup>
                           </td>
                         </tr>;
@@ -484,7 +493,7 @@ var OwnersDetail = React.createClass({
                 })()}
               </Well>
               <Well>
-                <SubHeader title={`Equipment (${ owner.numberOfEquipment })`}>
+                <SubHeader title={`Equipment (${ loading ? ' ' : owner.numberOfEquipment })`}>
                   <CheckboxControl id="showAttachments" className="mr-5" inline updateState={this.updateState}><small>Show Attachments</small></CheckboxControl>
                   <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.equipmentVerifyAll }></Confirm> }>
                     <TooltipButton disabled={!isApproved} disabledTooltip={restrictEquipmentVerifyTooltip} className="mr-5" title="Verify All Equipment" bsSize="small">Verify All</TooltipButton>
@@ -492,7 +501,7 @@ var OwnersDetail = React.createClass({
                   <TooltipButton disabled={ !isApproved } disabledTooltip={ restrictEquipmentAddTooltip } title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></TooltipButton>
                 </SubHeader>
                 {(() => {
-                  if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+                  if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
                   if (!owner.equipmentList || owner.equipmentList.length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
 
@@ -551,64 +560,75 @@ var OwnersDetail = React.createClass({
               </Well>
               <Well>
                 <SubHeader title="History"/>
-                { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ !this.state.loading } /> }
+                { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ !loading } /> }
               </Well>
             </Col>
           </Row>
         </div>
         { this.state.showChangeStatusDialog && (
           <OwnerChangeStatusDialog
-            show={ this.state.showChangeStatusDialog}
-            status={ this.state.status }
-            owner={ owner }
-            onClose={ this.closeChangeStatusDialog }
-            onStatusChanged={ this.onStatusChanged }/>
+            show={this.state.showChangeStatusDialog}
+            owner={owner}
+            status={this.state.status}
+            onClose={this.closeChangeStatusDialog}
+            onStatusChanged={this.onStatusChanged}/>
         )}
         { this.state.showNotesDialog && (
           <NotesDialog
             show={this.state.showNotesDialog}
-            id={this.props.params.ownerId}
-            notes={this.props.notes}
+            id={this.props.ownerId}
+            notes={owner.notes}
             getNotes={Api.getOwnerNotes}
             saveNote={Api.addOwnerNote}
             onClose={this.closeNotesDialog}/>
         )}
         { this.state.showDocumentsDialog && (
           <DocumentsListDialog
-            show={ owner && this.state.showDocumentsDialog }
-            parent={ owner }
-            onClose={ this.closeDocumentsDialog }/>
+            show={this.state.showDocumentsDialog}
+            parent={owner}
+            onClose={this.closeDocumentsDialog}/>
         )}
         { this.state.showEditDialog && (
-          <OwnersEditDialog show={ this.state.showEditDialog } onSave={ this.saveEdit } onClose={ this.closeEditDialog } />
+          <OwnersEditDialog
+            show={this.state.showEditDialog}
+            owner={owner}
+            onSave={this.ownerSaved}
+            onClose={this.closeEditDialog}/>
         )}
         { this.state.showEquipmentDialog && (
-          <EquipmentAddDialog show={ this.state.showEquipmentDialog } onSave={ this.saveNewEquipment } onClose={ this.closeEquipmentDialog } />
+          <EquipmentAddDialog
+            show={this.state.showEquipmentDialog}
+            owner={owner}
+            onSave={this.equipmentSaved}
+            onClose={this.closeEquipmentDialog}/>
         )}
         { this.state.showPolicyDialog && (
-          <OwnersPolicyEditDialog show={ this.state.showPolicyDialog } onSave={ this.savePolicyEdit } onClose={ this.closePolicyDialog } />
+          <OwnersPolicyEditDialog
+            show={this.state.showPolicyDialog}
+            owner={owner}
+            onSave={this.policySaved}
+            onClose={this.closePolicyDialog}/>
         )}
         { this.state.showContactDialog && (
           <ContactsEditDialog
-            show={ this.state.showContactDialog }
-            contact={ this.state.contact }
-            onSave={ this.saveContact }
-            onClose={ this.closeContactDialog }
-            isFirstContact={!this.props.owner.contacts || this.props.owner.contacts.length === 0}/>
+            show={this.state.showContactDialog}
+            contact={this.state.contact}
+            parent={owner}
+            saveContact={Api.saveOwnerContact}
+            defaultPrimary={owner.contacts.length === 0}
+            onSave={this.contactSaved}
+            onClose={this.closeContactDialog}/>
         )}
       </div>
     );
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {
   return {
-    owner: state.models.owner,
-    notes: state.models.ownerNotes,
-    equipment: state.models.equipment,
-    equipmentAttachments: state.models.equipmentAttachments,
-    contact: state.models.contact,
+    owner: activeOwnerSelector(state),
+    ownerId: activeOwnerIdSelector(state),
     documents: state.models.documents,
     uiContacts: state.ui.ownerContacts,
     uiEquipment: state.ui.ownerEquipment,

@@ -1,39 +1,40 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-
 import { InputGroup } from 'react-bootstrap';
+import _ from 'lodash';
 
 import DropdownControl from '../components/DropdownControl.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 
-import _ from 'lodash';
-
 import { notBlank } from '../utils/string';
 
 
-var searchControl = React.createClass({
-  propTypes: {
+class SearchControl extends React.Component {
+  static propTypes = {
     // This is an array of objects { id, name }
-    items: React.PropTypes.array.isRequired,
+    items: PropTypes.array.isRequired,
 
-    search: React.PropTypes.object.isRequired,
-    updateState: React.PropTypes.func.isRequired,
-  },
+    search: PropTypes.object.isRequired,
+    updateState: PropTypes.func.isRequired,
+  };
 
-  getInitialState() {
-    return {
-      key: this.props.search.key || '',
-      text: this.props.search.text || '',
-      params: this.props.search.params || null,
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      key: props.search.key || '',
+      text: props.search.text || '',
+      params: props.search.params || null,
     };
-  },
+  }
 
   componentDidMount() {
     this.updated({
       params: this.getParams(),
     });
-  },
+  }
 
-  getParams() {
+  getParams = () => {
     var params = null;
 
     if (notBlank(this.state.key) && notBlank(this.state.text)) {
@@ -42,9 +43,9 @@ var searchControl = React.createClass({
     }
 
     return params;
-  },
+  };
 
-  updated(state) {
+  updated = (state) => {
     if (state.text) {
       state.text = state.text.trim();
     }
@@ -58,7 +59,7 @@ var searchControl = React.createClass({
         this.props.updateState(this.state);
       });
     });
-  },
+  };
 
   render() {
     var props = _.omit(this.props, 'updateState', 'search', 'items');
@@ -71,7 +72,7 @@ var searchControl = React.createClass({
         <FormInputControl id="text" type="text" value={ this.state.text } updateState={ this.updated }/>
       </InputGroup>
     </div>;
-  },
-});
+  }
+}
 
-export default searchControl;
+export default SearchControl;

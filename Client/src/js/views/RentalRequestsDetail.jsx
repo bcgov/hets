@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
@@ -32,6 +33,7 @@ import SubHeader from '../components/ui/SubHeader.jsx';
 import { formatDateTime, formatDateTimeUTCToLocal } from '../utils/date';
 import { concat } from '../utils/string';
 import PrintButton from '../components/PrintButton.jsx';
+import { activeRentalRequestSelector, activeRentalRequestIdSelector } from '../selectors/ui-selectors.js';
 
 /*
 
@@ -45,138 +47,135 @@ const STATUS_FORCE_HIRE = 'Force Hire';
 const STATUS_ASKED = 'Asked';
 const STATUS_IN_PROGRESS = 'In Progress';
 
-var RentalRequestsDetail = React.createClass({
-  propTypes: {
-    rentalRequest: React.PropTypes.object,
-    rentalRequestRotationList: React.PropTypes.object,
-    notes: React.PropTypes.array,
-    attachments: React.PropTypes.object,
-    documents: React.PropTypes.object,
-    history: React.PropTypes.object,
-    params: React.PropTypes.object,
-    ui: React.PropTypes.object,
-    router: React.PropTypes.object,
-  },
+class RentalRequestsDetail extends React.Component {
+  static propTypes = {
+    rentalRequestId: PropTypes.number,
+    rentalRequest: PropTypes.object,
+    documents: PropTypes.object,
+    ui: PropTypes.object,
+    router: PropTypes.object,
+  };
 
-  getInitialState() {
-    return {
-      loading: false,
-      loadingHistory: false,
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: true,
+      loadingDocuments: false,
 
       showEditDialog: false,
       showHireOfferDialog: false,
       showNotesDialog: false,
-
       showAttachments: false,
 
       rotationListHireOffer: {},
       showAllResponseFields: false,
 
-      isNew: this.props.params.rentalRequestId == 0,
+      isNew: props.rentalRequestId == 0,
     };
-  },
+  }
 
   componentDidMount() {
-    this.fetch();
-  },
+    const { rentalRequestId, rentalRequest } = this.props;
 
-  fetch() {
-    this.setState({ loading: true });
-    var rentalRequestId = this.props.params.rentalRequestId;
-    var rentalRequestsPromise = Api.getRentalRequest(rentalRequestId);
-    var rotationListPromise = Api.getRentalRequestRotationList(rentalRequestId);
-    var documentsPromise = Api.getRentalRequestDocuments(rentalRequestId);
-    var rentalRequestNotesPromise = Api.getRentalRequestNotes(rentalRequestId);
+    /* Documents need be fetched every time as they are not rentalRequest specific in the store ATM */
+    Api.getRentalRequestDocuments(rentalRequestId).then(() => this.setState({ loadingDocuments: false }));
 
+    // Only show loading spinner if there is no existing rental request in the store
+    if (rentalRequest) {
+      this.setState({ loading: false });
+    }
 
-    return Promise.all([rentalRequestsPromise, rotationListPromise, documentsPromise, rentalRequestNotesPromise]).finally(() => {
+    // Re-fetch rental request, rotationlist, and notes every time
+    Promise.all([
+      this.fetch(),
+      Api.getRentalRequestNotes(rentalRequestId),
+      Api.getRentalRequestRotationList(rentalRequestId),
+    ]).then(() => {
       this.setState({ loading: false });
     });
-  },
+  }
 
-  updateState(state, callback) {
+  fetch = () => {
+    return Api.getRentalRequest(this.props.rentalRequestId);
+  };
+
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  updateContactsUIState(state, callback) {
+  updateContactsUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_PROJECT_CONTACTS_UI, projectContacts: this.state.ui });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  showNotes() {
+  showNotes = () => {
     this.setState({ showNotesDialog: true });
-  },
+  };
 
-  closeNotesDialog() {
+  closeNotesDialog = () => {
     this.setState({ showNotesDialog: false });
-  },
+  };
 
-  showDocuments() {
+  showDocuments = () => {
     this.setState({ showDocumentsDialog: true });
-  },
+  };
 
-  closeDocumentsDialog() {
+  closeDocumentsDialog = () => {
     this.setState({ showDocumentsDialog: false });
-  },
+  };
 
-  addDocument() {
+  addDocument = () => {
 
-  },
+  };
 
-  openEditDialog() {
+  openEditDialog = () => {
     this.setState({ showEditDialog: true });
-  },
+  };
 
-  closeEditDialog() {
+  closeEditDialog = () => {
     this.setState({ showEditDialog: false });
-  },
+  };
 
-  saveEdit(rentalRequest) {
-    Api.updateRentalRequest(rentalRequest).finally(() => {
-      Log.rentalRequestModified(this.props.rentalRequest.data);
-      this.closeEditDialog();
-      Api.getRentalRequestRotationList(this.props.params.rentalRequestId);
-    });
-  },
+  rentalRequestSaved = () => {
+    Promise.all([
+      this.fetch(),
+      Api.getRentalRequestRotationList(this.props.rentalRequestId),
+    ]);
+  };
 
-  openHireOfferDialog(hireOffer, showAllResponseFields) {
+  openHireOfferDialog = (hireOffer, showAllResponseFields) => {
     this.setState({
       rotationListHireOffer: hireOffer,
       showAllResponseFields,
       showHireOfferDialog: true,
     });
-  },
+  };
 
-  closeHireOfferDialog() {
+  closeHireOfferDialog = () => {
     this.setState({ showHireOfferDialog: false });
-  },
+  };
 
-  saveHireOffer(hireOffer) {
-    let hireOfferUpdated = { ...hireOffer };
-    delete hireOfferUpdated.showAllResponseFields;
-    delete hireOfferUpdated.displayFields;
-    delete hireOfferUpdated.rentalAgreement;
+  hireOfferSaved = (hireOffer) => {
+    Log.rentalRequestEquipmentHired(this.props.rentalRequest, hireOffer.equipment, hireOffer.offerResponse);
 
-    Api.updateRentalRequestRotationList(hireOfferUpdated, this.props.rentalRequest.data).then(() => {
-      Log.rentalRequestEquipmentHired(this.props.rentalRequest.data, hireOffer.equipment, hireOffer.offerResponse);
+    this.closeHireOfferDialog();
 
-      var rotationListItem = _.find(this.props.rentalRequestRotationList.data, i => i.id === hireOffer.id);
-      if (rotationListItem && rotationListItem.rentalAgreementId && !hireOfferUpdated.rentalAgreementId) {
-        // navigate to rental agreement if it was newly generated
-        this.props.router.push({ pathname: `${ Constant.RENTAL_AGREEMENTS_PATHNAME }/${ rotationListItem.rentalAgreementId }` });
-      } else {
-        // close popup dialog and refresh page data
-        this.closeHireOfferDialog();
-        this.fetch();
-      }
-    });
-  },
+    var rotationListItem = _.find(this.props.rentalRequest.rotationList, i => i.id === hireOffer.id);
+    if (rotationListItem && rotationListItem.rentalAgreementId && !hireOffer.rentalAgreementId) {
+      // navigate to rental agreement if it was newly generated
+      this.props.router.push({ pathname: `${ Constant.RENTAL_AGREEMENTS_PATHNAME }/${ rotationListItem.rentalAgreementId }` });
+    } else {
+      // close popup dialog and refresh page data
+      this.fetch();
+    }
+  };
 
-  printSeniorityList() {
-    var localAreaIds = [ this.props.rentalRequest.data.localAreaId ];
-    var districtEquipmentTypeIds = [ this.props.rentalRequest.data.districtEquipmentTypeId ];
+  printSeniorityList = () => {
+    var localAreaIds = [ this.props.rentalRequest.localAreaId ];
+    var districtEquipmentTypeIds = [ this.props.rentalRequest.districtEquipmentTypeId ];
     Api.equipmentSeniorityListPdf(localAreaIds, districtEquipmentTypeIds).then(response => {
       var filename = 'SeniorityList-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.pdf';
 
@@ -199,13 +198,13 @@ var RentalRequestsDetail = React.createClass({
       //release the reference to the file by revoking the Object URL
       window.URL.revokeObjectURL(url);
     });
-  },
+  };
 
-  addRequest() {
+  addRequest = () => {
 
-  },
+  };
 
-  renderStatusText(listItem) {
+  renderStatusText = (listItem) => {
     let text = 'Hire';
     if (listItem.offerResponse === STATUS_NO && listItem.offerRefusalReason == Constant.HIRING_REFUSAL_OTHER) {
       text = listItem.offerResponseNote;
@@ -217,22 +216,29 @@ var RentalRequestsDetail = React.createClass({
       text = listItem.offerResponse;
     }
     return text;
-  },
+  };
 
   render() {
-    var rentalRequest = this.props.rentalRequest.data;
+    const { loading, loadingDocuments } = this.state;
+    var rentalRequest = this.props.rentalRequest || {};
 
     var canEditRequest = rentalRequest.projectId > 0 && rentalRequest.status !== Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
 
     return <div id="rental-requests-detail">
       <PageOrientation type="landscape"/>
       <Row id="rental-requests-top">
-        <Col sm={10}>
-          <Label bsStyle={ rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default' }>{ rentalRequest.status }</Label>
-          <Button title="Notes" onClick={ this.showNotes }>Notes ({this.props.notes.length})</Button>
-          <Button title="Documents" onClick={ this.showDocuments }>Documents ({ Object.keys(this.props.documents).length })</Button>
+        <Col sm={9}>
+          <div id="rental-request-status">
+            <Label bsStyle={ rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default' }>{ rentalRequest.status }</Label>
+          </div>
+          <Button title="Notes" disabled={loading} onClick={ this.showNotes }>
+            Notes ({ loading ? ' ' : rentalRequest.notes.length })
+          </Button>
+          <Button id="project-documents-button" title="Documents" disabled={loading} onClick={ this.showDocuments }>
+            Documents ({ loadingDocuments ? ' ' :  Object.keys(this.props.documents).length })
+          </Button>
         </Col>
-        <Col sm={2}>
+        <Col sm={3}>
           <div className="pull-right">
             <ReturnButton/>
           </div>
@@ -242,7 +248,7 @@ var RentalRequestsDetail = React.createClass({
       <Well className="request-information">
         <SubHeader title="Request Information" editButtonTitle="Edit Rental Request" onEditClicked={canEditRequest ? this.openEditDialog : null}/>
         {(() => {
-          if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+          if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
           var requestAttachments = rentalRequest.rentalRequestAttachments && rentalRequest.rentalRequestAttachments[0] ? rentalRequest.rentalRequestAttachments[0].attachment : 'None';
 
@@ -285,19 +291,19 @@ var RentalRequestsDetail = React.createClass({
 
       <Well>
         <SubHeader title="Hire Rotation List">
-          <PrintButton title="Print Hire Rotation List" disabled={ this.state.loading } disabledTooltip="Please wait for the request information to finish loading.">
+          <PrintButton title="Print Hire Rotation List" disabled={ loading } disabledTooltip="Please wait for the request information to finish loading.">
             Hire Rotation List
           </PrintButton>
-          <TooltipButton onClick={ this.printSeniorityList } disabled={ this.state.loading } disabledTooltip="Please wait for the request information to finish loading.">
+          <TooltipButton onClick={ this.printSeniorityList } disabled={ loading } disabledTooltip="Please wait for the request information to finish loading.">
             <Glyphicon glyph="print" title="Print Seniority List" className="mr-5" />
             <span>Seniority List</span>
           </TooltipButton>
           <CheckboxControl id="showAttachments" inline updateState={ this.updateState }><small>Show Attachments</small></CheckboxControl>
         </SubHeader>
         {(() => {
-          if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+          if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
-          var rotationList = this.props.rentalRequestRotationList.data.rentalRequestRotationList;
+          var rotationList = this.props.rentalRequest.rotationList;
 
           if (Object.keys(rotationList || []).length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
 
@@ -323,14 +329,18 @@ var RentalRequestsDetail = React.createClass({
 
           return <TableControl id="rotation-list" headers={ headers }>
             {
-              _.map(rotationList, (listItem) => {
+              _.map(rotationList, (listItem, i) => {
                 const owner = listItem.equipment.owner;
                 var showAllResponseFields = false;
                 if ((numberEquipmentAvailableForNormalHire > 0) && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse) && (rentalRequest.yesCount < rentalRequest.equipmentCount)) {
                   showAllResponseFields = true;
                   numberEquipmentAvailableForNormalHire -= 1;
                 }
-                return (
+
+                const showBlankLine = i > 0 && rotationList[i - 1].equipment.blockNumber !== listItem.equipment.blockNumber;
+
+                return [
+                  showBlankLine && <tr key={listItem.equipment.blockNumber} className="blank-row"><td colSpan="14">&nbsp;</td></tr>,
                   <tr key={ listItem.id }>
                     <td>{ listItem.equipment.seniorityString }</td>
                     <td>{ listItem.equipment.blockNumber }</td>
@@ -402,8 +412,8 @@ var RentalRequestsDetail = React.createClass({
                       </ButtonGroup>
                     </td>
                     <td></td>
-                  </tr>
-                );
+                  </tr>,
+                ];
               })
             }
           </TableControl>;
@@ -412,55 +422,51 @@ var RentalRequestsDetail = React.createClass({
 
       <Well className="history">
         <SubHeader title="History"/>
-        { rentalRequest.historyEntity &&
-          <History historyEntity={ rentalRequest.historyEntity } refresh={ !this.state.loading } />
-        }
+        { rentalRequest.historyEntity && (
+          <History historyEntity={rentalRequest.historyEntity} refresh={!loading}/>
+        )}
       </Well>
-      { this.state.showEditDialog &&
+      { this.state.showEditDialog && (
         <RentalRequestsEditDialog
-          show={ this.state.showEditDialog }
-          onSave={ this.saveEdit }
-          onClose={ this.closeEditDialog }
-        />
-      }
-      { this.state.showHireOfferDialog &&
+          show={this.state.showEditDialog}
+          rentalRequest={this.props.rentalRequest}
+          onSave={this.rentalRequestSaved}
+          onClose={this.closeEditDialog}/>
+      )}
+      { this.state.showHireOfferDialog && (
         <HireOfferEditDialog
-          show={ this.state.showHireOfferDialog }
-          hireOffer={ this.state.rotationListHireOffer }
+          show={this.state.showHireOfferDialog}
+          hireOffer={this.state.rotationListHireOffer}
+          rentalRequest={this.props.rentalRequest}
           showAllResponseFields={this.state.showAllResponseFields}
-          onSave={ this.saveHireOffer }
-          onClose={ this.closeHireOfferDialog }
-        />
-      }
-      { this.state.showDocumentsDialog &&
+          onSave={this.hireOfferSaved}
+          onClose={this.closeHireOfferDialog}/>
+      )}
+      { this.state.showDocumentsDialog && (
         <DocumentsListDialog
-          show={ this.state.showDocumentsDialog }
-          parent={ rentalRequest }
-          onClose={ this.closeDocumentsDialog }
-        />
-      }
-      { this.state.showNotesDialog && (
+          show={this.state.showDocumentsDialog}
+          parent={rentalRequest}
+          onClose={this.closeDocumentsDialog}/>
+      )}
+      { this.state.showNotesDialog &&
         <NotesDialog
-          id={this.props.params.rentalRequestId}
+          id={String(this.props.rentalRequestId)}
           show={this.state.showNotesDialog}
-          notes={this.props.notes}
+          notes={this.props.rentalRequest.notes}
           getNotes={Api.getRentalRequestNotes}
           saveNote={Api.addRentalRequestNote}
           onClose={this.closeNotesDialog}/>
-      )}
+      }
     </div>;
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {
   return {
-    rentalRequest: state.models.rentalRequest,
-    rentalRequestRotationList: state.models.rentalRequestRotationList,
-    notes: state.models.rentalRequestNotes,
-    attachments: state.models.rentalRequestAttachments,
+    rentalRequest: activeRentalRequestSelector(state),
+    rentalRequestId: activeRentalRequestIdSelector(state),
     documents: state.models.documents,
-    history: state.models.rentalRequestHistory,
   };
 }
 

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 export const toSearchString = (searchParams = {}) => {
@@ -17,19 +18,19 @@ export const createMailtoLink = (email, headers) => {
 /**
  * A react component to create and display a mailto link.
  */
-var Mailto = React.createClass({
-  propTypes: {
-    children: React.PropTypes.node.isRequired,
-    email: React.PropTypes.string.isRequired,
-    headers: React.PropTypes.object,
-  },
+class Mailto extends React.Component {
+  static propTypes = {
+    children: PropTypes.node.isRequired,
+    email: PropTypes.string.isRequired,
+    headers: PropTypes.object,
+  };
 
   render() {
     const { email, headers, children, ...others } = this.props;
     return <a href={ createMailtoLink(email, headers) } { ...others }>
       { children }
     </a>;
-  },
-});
+  }
+}
 
 export default Mailto;

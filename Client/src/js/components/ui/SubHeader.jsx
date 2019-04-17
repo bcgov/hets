@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import { Glyphicon } from 'react-bootstrap';
@@ -5,18 +6,18 @@ import { Glyphicon } from 'react-bootstrap';
 import TooltipButton from '../TooltipButton.jsx';
 
 
-var SubHeader = React.createClass({
-  propTypes: {
-    title: React.PropTypes.string,
-    id: React.PropTypes.string,
-    className: React.PropTypes.string,
-    editButtonTitle: React.PropTypes.string,
-    editButtonDisabled: React.PropTypes.bool,
-    editButtonDisabledTooltip: React.PropTypes.node,
-    editIcon: React.PropTypes.string,
-    onEditClicked: React.PropTypes.func,
-    children: React.PropTypes.node,
-  },
+class SubHeader extends React.Component {
+  static propTypes = {
+    title: PropTypes.string,
+    id: PropTypes.string,
+    className: PropTypes.string,
+    editButtonTitle: PropTypes.string,
+    editButtonDisabled: PropTypes.bool,
+    editButtonDisabledTooltip: PropTypes.node,
+    editIcon: PropTypes.string,
+    onEditClicked: PropTypes.func,
+    children: PropTypes.node,
+  };
 
   render() {
     const {
@@ -53,8 +54,8 @@ var SubHeader = React.createClass({
         </span>
       </h3>
     );
-  },
-});
+  }
+}
 
 
 SubHeader.defaultProps = {

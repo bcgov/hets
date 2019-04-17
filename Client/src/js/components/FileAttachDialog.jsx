@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Button, Glyphicon } from 'react-bootstrap';
 
@@ -5,44 +6,43 @@ import ModalDialog from './ModalDialog.jsx';
 import FilePicker from './FilePicker.jsx';
 import FileUpload from './FileUpload.jsx';
 
-var FileAttachDialog = React.createClass({
-  propTypes: {
-    id: React.PropTypes.string,
-    className: React.PropTypes.string,
-    parentName: React.PropTypes.string,
-    uploadPath: React.PropTypes.string,
-    show: React.PropTypes.bool.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    onUpload: React.PropTypes.func,
-  },
 
-  getInitialState() {
-    return {
-      files: [],
-    };
-  },
+class FileAttachDialog extends React.Component {
+  static propTypes = {
+    id: PropTypes.string,
+    className: PropTypes.string,
+    parentName: PropTypes.string,
+    uploadPath: PropTypes.string,
+    show: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onUpload: PropTypes.func,
+  };
 
-  filesPicked(files) {
+  state = {
+    files: [],
+  };
+
+  filesPicked = (files) => {
     var existingFiles = this.state.files.slice();
     existingFiles.push.apply(existingFiles, files);
     this.setState({ files: existingFiles });
-  },
+  };
 
-  removeFile(file) {
+  removeFile = (file) => {
     var pos = this.state.files.indexOf(file);
     var files = this.state.files.slice();
     files.splice(pos, 1);
     this.setState({ files: files });
-  },
+  };
 
-  filesUploaded(result) {
+  filesUploaded = (result) => {
     if (!(result instanceof Error)) {
       this.setState({ files: [] });
       if (this.props.onUpload) {
         this.props.onUpload();
       }
     }
-  },
+  };
 
   render() {
     var fileList;
@@ -74,7 +74,7 @@ var FileAttachDialog = React.createClass({
         Select one or more files{ this.props.parentName ? ` to attach to ${ this.props.parentName }` : null }
       </p>
     </ModalDialog>;
-  },
-});
+  }
+}
 
 export default FileAttachDialog;

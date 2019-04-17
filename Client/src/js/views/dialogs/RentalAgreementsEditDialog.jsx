@@ -1,58 +1,56 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-import { Grid, Row, Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
+import * as Api from '../../api';
+
 import DateControl from '../../components/DateControl.jsx';
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Spinner from '../../components/Spinner.jsx';
-import Form from '../../components/Form.jsx';
 
 import { isValidDate } from '../../utils/date';
 import { isBlank, notBlank } from '../../utils/string';
 
 
-var RentalAgreementsEditDialog = React.createClass({
-  propTypes: {
-    rentalAgreement: React.PropTypes.object.isRequired,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-    owner: React.PropTypes.object,
-  },
+class RentalAgreementsEditDialog extends React.Component {
+  static propTypes = {
+    rentalAgreement: PropTypes.object.isRequired,
+    show: PropTypes.bool,
+    owner: PropTypes.object,
+    onSave: PropTypes.func,
+    onClose: PropTypes.func.isRequired,
+  };
 
-  getInitialState() {
-    return {
-      loading: true,
-      estimateStartWork: this.props.rentalAgreement.estimateStartWork || '',
-      estimateHours: this.props.rentalAgreement.estimateHours || 0,
-      datedOn: this.props.rentalAgreement.datedOn || '',
-      agreementCity: this.props.rentalAgreement.agreementCity || '',
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      estimateStartWork: props.rentalAgreement.estimateStartWork || '',
+      estimateHours: props.rentalAgreement.estimateHours || 0,
+      datedOn: props.rentalAgreement.datedOn || '',
+      agreementCity: props.rentalAgreement.agreementCity || '',
 
       estimateStartWorkError: '',
       estimateHoursError: '',
       datedOnError: '',
     };
-  },
+  }
 
-  componentDidMount() {
-    this.setState({ loading: false });
-  },
-
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.estimateStartWork !== this.props.rentalAgreement.estimateStartWork) { return true; }
     if (this.state.estimateHours !== this.props.rentalAgreement.estimateHours) { return true; }
     if (this.state.datedOn !== this.props.rentalAgreement.datedOn) { return true; }
     if (this.state.note !== this.props.rentalAgreement.note) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       estimateStartWorkError: '',
       estimateHoursError: '',
@@ -80,65 +78,73 @@ var RentalAgreementsEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onSave() {
-    this.props.onSave({ ...this.props.rentalAgreement, ...{
-      estimateStartWork: this.state.estimateStartWork,
-      estimateHours: this.state.estimateHours,
-      datedOn: this.state.datedOn,
-      agreementCity: this.state.agreementCity,
-    }});
-  },
+  formSubmitted = () => {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        const rentalAgreement = {
+          ...this.props.rentalAgreement,
+          estimateStartWork: this.state.estimateStartWork,
+          estimateHours: this.state.estimateHours,
+          datedOn: this.state.datedOn,
+          agreementCity: this.state.agreementCity,
+        };
+
+        Api.updateRentalAgreement(rentalAgreement).then(() => {
+          if (this.props.onSave) { this.props.onSave(); }
+        });
+      }
+
+      this.props.onClose();
+    }
+  };
 
   render() {
     // Read-only if the user cannot edit the rental agreement
     var isReadOnly = !this.props.rentalAgreement.canEdit && this.props.rentalAgreement.id !== 0;
 
-    return <EditDialog id="rental-agreements-edit" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={<strong>Rental Agreement Details</strong>}>
-      {(() => {
-        if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
-        return <Form>
-          <Grid fluid>
-            <Row>
-              <Col md={6}>
-                <FormGroup controlId="estimateStartWork" validationState={ this.state.estimateStartWorkError ? 'error' : null }>
-                  <ControlLabel>Estimated Commencement</ControlLabel>
-                  <DateControl id="estimateStartWork" disabled={ isReadOnly } date={ this.state.estimateStartWork } updateState={ this.updateState } title="Estimated Commencement" />
-                  <HelpBlock>{ this.state.estimateStartWorkError }</HelpBlock>
-                </FormGroup>
-              </Col>
-              <Col md={6}>
-                <FormGroup controlId="estimateHours" validationState={ this.state.estimateHoursError ? 'error' : null }>
-                  <ControlLabel>Estimated Period Hours <sup>*</sup></ControlLabel>
-                  <FormInputControl type="number" min={0} defaultValue={ this.state.estimateHours } readOnly={ isReadOnly } updateState={ this.updateState }/>
-                  <HelpBlock>{ this.state.estimateHoursError }</HelpBlock>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={6}>
-                <FormGroup controlId="datedOn" validationState={ this.state.datedOnError ? 'error' : null }>
-                  <ControlLabel>Dated On</ControlLabel>
-                  <DateControl id="datedOn" disabled={ isReadOnly } date={ this.state.datedOn } updateState={ this.updateState } title="Dated On" />
-                  <HelpBlock>{ this.state.datedOnError }</HelpBlock>
-                </FormGroup>
-              </Col>
-              <Col md={6}>
-                <FormGroup controlId="agreementCity">
-                  <ControlLabel>Dated At</ControlLabel>
-                  <FormInputControl type="text" value={ this.state.agreementCity } updateState={ this.updateState } />
-                </FormGroup>
-              </Col>
-            </Row>
-          </Grid>
-        </Form>;
-      })()}
-    </EditDialog>;
-  },
-});
+    return (
+      <FormDialog
+        id="rental-agreements-edit"
+        show={this.props.show}
+        title="Rental Agreement Details"
+        onSubmit={this.formSubmitted}
+        onClose={this.props.onClose}>
+        <Row>
+          <Col md={6}>
+            <FormGroup controlId="estimateStartWork" validationState={ this.state.estimateStartWorkError ? 'error' : null }>
+              <ControlLabel>Estimated Commencement</ControlLabel>
+              <DateControl id="estimateStartWork" disabled={ isReadOnly } date={ this.state.estimateStartWork } updateState={ this.updateState } title="Estimated Commencement" />
+              <HelpBlock>{ this.state.estimateStartWorkError }</HelpBlock>
+            </FormGroup>
+          </Col>
+          <Col md={6}>
+            <FormGroup controlId="estimateHours" validationState={ this.state.estimateHoursError ? 'error' : null }>
+              <ControlLabel>Estimated Period Hours <sup>*</sup></ControlLabel>
+              <FormInputControl type="number" min={0} defaultValue={ this.state.estimateHours } readOnly={ isReadOnly } updateState={ this.updateState }/>
+              <HelpBlock>{ this.state.estimateHoursError }</HelpBlock>
+            </FormGroup>
+          </Col>
+        </Row>
+        <Row>
+          <Col md={6}>
+            <FormGroup controlId="datedOn" validationState={ this.state.datedOnError ? 'error' : null }>
+              <ControlLabel>Dated On</ControlLabel>
+              <DateControl id="datedOn" disabled={ isReadOnly } date={ this.state.datedOn } updateState={ this.updateState } title="Dated On" />
+              <HelpBlock>{ this.state.datedOnError }</HelpBlock>
+            </FormGroup>
+          </Col>
+          <Col md={6}>
+            <FormGroup controlId="agreementCity">
+              <ControlLabel>Dated At</ControlLabel>
+              <FormInputControl type="text" value={ this.state.agreementCity } updateState={ this.updateState } />
+            </FormGroup>
+          </Col>
+        </Row>
+      </FormDialog>
+    );
+  }
+}
 
 export default RentalAgreementsEditDialog;

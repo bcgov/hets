@@ -19,6 +19,7 @@ namespace HetsData.Helpers
         public int? OwnerId { get; set; }
         public int? LocalAreaId { get; set; }
         public List<int?> ProjectIds { get; set; }
+        public int DistrictEquipmentTypeId { get; set; }
     }
 
     public class EquipmentStatus
@@ -415,29 +416,18 @@ namespace HetsData.Helpers
             // determine current fiscal year - check for existing rotation lists this year
             // * the rollover uses the dates from the status table (rolloverDate)
             // *******************************************************************************
-            DateTime currentDateTime = DateTime.UtcNow;
-            if (rolloverDate != null) currentDateTime = (DateTime)rolloverDate;
+            HetEquipment equipment = context.HetEquipment.AsNoTracking()
+                .Include(x => x.LocalArea.ServiceArea.District)
+                .First(x => x.EquipmentId == id);
 
-            DateTime fiscalStart;
-            DateTime fiscalEnd;
+            HetDistrictStatus district = context.HetDistrictStatus.AsNoTracking()
+                .First(x => x.DistrictId == equipment.LocalArea.ServiceArea.DistrictId);
 
-            if (currentDateTime.Month == 1 || currentDateTime.Month == 2 || currentDateTime.Month == 3)
-            {
-                fiscalStart = new DateTime(currentDateTime.AddYears(-1).Year, 4, 1);
-            }
-            else
-            {
-                fiscalStart = new DateTime(currentDateTime.Year, 4, 1);
-            }
+            if (district?.NextFiscalYear == null) throw new ArgumentException("Error retrieving district status record");
 
-            if (currentDateTime.Month == 1 || currentDateTime.Month == 2 || currentDateTime.Month == 3)
-            {
-                fiscalEnd = new DateTime(currentDateTime.Year, 3, 31);
-            }
-            else
-            {
-                fiscalEnd = new DateTime(currentDateTime.AddYears(1).Year, 3, 31);
-            }
+            int fiscalYear = (int)district.NextFiscalYear; // status table uses the start of the year
+            DateTime fiscalEnd = new DateTime(fiscalYear, 3, 31);
+            DateTime fiscalStart = new DateTime(fiscalYear - 1, 4, 1);
 
             // *******************************************************************************
             // get all the time data for the current fiscal year

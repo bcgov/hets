@@ -1,54 +1,53 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-
 import { connect } from 'react-redux';
-
-import { Grid, Row, Col } from 'react-bootstrap';
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
-
 import _ from 'lodash';
 
 import * as Constant from '../../constants';
 import * as Api from '../../api';
 
 import DropdownControl from '../../components/DropdownControl.jsx';
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
-var UsersEditDialog = React.createClass({
-  propTypes: {
-    user: React.PropTypes.object,
-    districts: React.PropTypes.object,
 
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-    isNew: React.PropTypes.bool,
-  },
+class UsersEditDialog extends React.Component {
+  static propTypes = {
+    user: PropTypes.object.isRequired,
+    districts: PropTypes.object,
 
-  getDefaultProps() {
-    return {
-      isNew: false,
-    };
-  },
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    isNew: PropTypes.bool,
+  };
 
-  getInitialState() {
-    var isNew = this.props.isNew;
-    return {
+  static defaultProps = {
+    isNew: false,
+  };
+
+  constructor(props) {
+    super(props);
+    var isNew = props.isNew;
+
+    this.state = {
       isNew: isNew,
 
-      active: !isNew ? this.props.user.active === true : false,
-      givenName: !isNew ? this.props.user.givenName : '',
-      surname: !isNew ? this.props.user.surname : '',
-      smUserId: !isNew ? this.props.user.smUserId : '',
-      email: !isNew ? this.props.user.email : '',
-      districtId: !isNew ? this.props.user.district.id : 0,
-      agreementCity: !isNew ? this.props.user.agreementCity : '',
+      isSaving: false,
 
-      status: !isNew && this.props.user.active ? Constant.USER_STATUS_ACTIVE : Constant.USER_STATUS_ARCHIVED,
+      active: !isNew ? props.user.active === true : false,
+      givenName: !isNew ? props.user.givenName : '',
+      surname: !isNew ? props.user.surname : '',
+      smUserId: !isNew ? props.user.smUserId : '',
+      email: !isNew ? props.user.email : '',
+      districtId: !isNew ? props.user.district.id : 0,
+      agreementCity: !isNew ? props.user.agreementCity : '',
+
+      status: !isNew && props.user.active ? Constant.USER_STATUS_ACTIVE : Constant.USER_STATUS_ARCHIVED,
 
       givenNameError: false,
       surnameError: false,
@@ -56,20 +55,20 @@ var UsersEditDialog = React.createClass({
       emailError: false,
       districtIdError: false,
     };
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  updateStatus(state, callback) {
+  updateStatus = (state, callback) => {
     this.setState({
       status: state.status,
       active: state.status === Constant.USER_STATUS_ACTIVE,
     }, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.active !== this.props.user.active) { return true; }
     if (this.state.givenName !== this.props.user.givenName) { return true; }
     if (this.state.surname !== this.props.user.surname) { return true; }
@@ -79,9 +78,9 @@ var UsersEditDialog = React.createClass({
     if (this.state.agreementCity !== this.props.user.agreementCity) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       givenNameError: false,
       surnameError: false,
@@ -118,110 +117,107 @@ var UsersEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onSave() {
-    const user = { ...this.props.user, ...{
-      active: this.state.active,
-      givenName: this.state.givenName,
-      surname: this.state.surname,
-      smUserId: this.state.smUserId,
-      email: this.state.email,
-      district: { id: this.state.districtId },
-      agreementCity: this.state.agreementCity,
-    }};
+  formSubmitted = () => {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        this.setState({ isSaving: true });
 
-    const isNewUser = this.state.isNew;
-    const addOrUpdateUser = isNewUser ? Api.addUser : Api.updateUser;
+        const user = {
+          ...this.props.user,
+          active: this.state.active,
+          givenName: this.state.givenName,
+          surname: this.state.surname,
+          smUserId: this.state.smUserId,
+          email: this.state.email,
+          district: { id: this.state.districtId },
+          agreementCity: this.state.agreementCity,
+        };
 
-    addOrUpdateUser(user).then((userResponse) => {
-      // Make sure we get the new user's ID
-      if (isNewUser) {
-        user.id = userResponse.id;
-      }
+        const isNewUser = this.state.isNew;
+        const addOrUpdateUser = isNewUser ? Api.addUser : Api.updateUser;
 
-      // Let the parent page component know that the user has been saved
-      this.props.onSave(user);
-    }, (err) => {
-      if (err.errorCode === 'HETS-38') {
-        this.setState({ smUserIdError: err.errorDescription });
+        addOrUpdateUser(user).then((userResponse) => {
+          this.setState({ isSaving: false });
+
+          // Make sure we get the new user's ID
+          if (isNewUser) {
+            user.id = userResponse.id;
+          }
+
+          // Let the parent page component know that the user has been saved
+          this.props.onSave(user);
+        }, (err) => {
+          this.setState({ isSaving: false });
+
+          if (err.errorCode === 'HETS-38') {
+            this.setState({ smUserIdError: err.errorDescription });
+          } else {
+            this.props.onClose();
+            throw err;
+          }
+        });
       } else {
-        throw err;
+        this.props.onClose();
       }
-    });
-  },
+    }
+  };
 
   render() {
     var districts = _.sortBy(this.props.districts, 'name');
 
-    return <EditDialog id="users-edit" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={ <strong>User</strong> }>
-      {(() => {
-        return <Form>
-          <Grid fluid>
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId="givenName" validationState={ this.state.givenNameError ? 'error' : null }>
-                  <ControlLabel>Given Name <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.givenName } updateState={ this.updateState } autoFocus/>
-                  <HelpBlock>{ this.state.givenNameError }</HelpBlock>
-                </FormGroup>
-              </Col>
-              <Col md={12}>
-                <FormGroup controlId="surname" validationState={ this.state.surnameError ? 'error' : null }>
-                  <ControlLabel>Surname <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.surname } updateState={ this.updateState }/>
-                  <HelpBlock>{ this.state.surnameError }</HelpBlock>
-                </FormGroup>
-              </Col>
-              <Col md={12}>
-                <FormGroup controlId="smUserId" validationState={ this.state.smUserIdError ? 'error' : null }>
-                  <ControlLabel>User ID <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.smUserId } updateState={ this.updateState }/>
-                  <HelpBlock>{ this.state.smUserIdError }</HelpBlock>
-                </FormGroup>
-              </Col>
-              <Col md={12}>
-                <FormGroup controlId="status">
-                  <ControlLabel>Status</ControlLabel>
-                  <DropdownControl id="status" title={ this.state.status } updateState={ this.updateStatus }
-                    items={[ Constant.USER_STATUS_ACTIVE, Constant.USER_STATUS_ARCHIVED ]} className="full-width"
-                  />
-                </FormGroup>
-              </Col>
-              <Col md={12}>
-                <FormGroup controlId="email" validationState={ this.state.emailError ? 'error' : null }>
-                  <ControlLabel>E-mail <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.email } updateState={ this.updateState }/>
-                  <HelpBlock>{ this.state.emailError }</HelpBlock>
-                </FormGroup>
-              </Col>
-              <Col md={12}>
-                <FormGroup controlId="districtId" validationState={ this.state.districtIdError ? 'error' : null }>
-                  <ControlLabel>District <sup>*</sup></ControlLabel>
-                  <FilterDropdown id="districtId" placeholder="None" blankLine
-                    items={ districts } selectedId={ this.state.districtId } updateState={ this.updateState }  className="full-width" />
-                  <HelpBlock>{ this.state.districtIdError }</HelpBlock>
-                </FormGroup>
-              </Col>
-              <Col md={12}>
-                <FormGroup controlId="agreementCity">
-                  <ControlLabel>Location</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.agreementCity } updateState={ this.updateState }/>
-                </FormGroup>
-              </Col>
-            </Row>
-          </Grid>
-        </Form>;
-      })()}
-    </EditDialog>;
-  },
-});
+    return (
+      <FormDialog
+        id="users-edit"
+        show={this.props.show}
+        title="User"
+        isSaving={this.state.isSaving}
+        onSubmit={this.formSubmitted}
+        onClose={this.props.onClose}>
+        <FormGroup controlId="givenName" validationState={ this.state.givenNameError ? 'error' : null }>
+          <ControlLabel>Given Name <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" defaultValue={ this.state.givenName } updateState={ this.updateState } autoFocus/>
+          <HelpBlock>{ this.state.givenNameError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="surname" validationState={ this.state.surnameError ? 'error' : null }>
+          <ControlLabel>Surname <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" defaultValue={ this.state.surname } updateState={ this.updateState }/>
+          <HelpBlock>{ this.state.surnameError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="smUserId" validationState={ this.state.smUserIdError ? 'error' : null }>
+          <ControlLabel>User ID <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" defaultValue={ this.state.smUserId } updateState={ this.updateState }/>
+          <HelpBlock>{ this.state.smUserIdError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="status">
+          <ControlLabel>Status</ControlLabel>
+          <DropdownControl id="status" title={ this.state.status } updateState={ this.updateStatus }
+            items={[ Constant.USER_STATUS_ACTIVE, Constant.USER_STATUS_ARCHIVED ]} className="full-width"
+          />
+        </FormGroup>
+        <FormGroup controlId="email" validationState={ this.state.emailError ? 'error' : null }>
+          <ControlLabel>E-mail <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" defaultValue={ this.state.email } updateState={ this.updateState }/>
+          <HelpBlock>{ this.state.emailError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="districtId" validationState={ this.state.districtIdError ? 'error' : null }>
+          <ControlLabel>District <sup>*</sup></ControlLabel>
+          <FilterDropdown id="districtId" placeholder="None" blankLine
+            items={ districts } selectedId={ this.state.districtId } updateState={ this.updateState }  className="full-width" />
+          <HelpBlock>{ this.state.districtIdError }</HelpBlock>
+        </FormGroup>
+        <FormGroup controlId="agreementCity">
+          <ControlLabel>Location</ControlLabel>
+          <FormInputControl type="text" defaultValue={ this.state.agreementCity } updateState={ this.updateState }/>
+        </FormGroup>
+      </FormDialog>
+    );
+  }
+}
 
 function mapStateToProps(state) {
   return {
-    user: state.models.user,
     districts: state.lookups.districts,
   };
 }

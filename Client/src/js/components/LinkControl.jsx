@@ -1,33 +1,35 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-
 import { FormControl, InputGroup, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
-
 import _ from 'lodash';
 
-var LinkControl = React.createClass({
-  propTypes: {
+
+class LinkControl extends React.Component {
+  static propTypes = {
     // url(value) returns a URL, default is value.
-    url: React.PropTypes.func,
-    value: React.PropTypes.string,
-    id: React.PropTypes.string,
-    label: React.PropTypes.string,
-    title: React.PropTypes.string,
-    className: React.PropTypes.string,
-    updateState: React.PropTypes.func,
-    onChange: React.PropTypes.func,
-  },
+    url: PropTypes.func,
+    value: PropTypes.string,
+    id: PropTypes.string,
+    label: PropTypes.string,
+    title: PropTypes.string,
+    className: PropTypes.string,
+    updateState: PropTypes.func,
+    onChange: PropTypes.func,
+  };
 
-  getInitialState() {
-    return {
-      url: this.getUrl(this.props.value),
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      url: this.getUrl(props.value),
     };
-  },
+  }
 
-  getUrl(value) {
+  getUrl = (value) => {
     return this.props.url ? this.props.url(value) : value;
-  },
+  };
 
-  changed(e) {
+  changed = (e) => {
     // On change listener
     if (this.props.onChange) {
       this.props.onChange(e);
@@ -43,7 +45,7 @@ var LinkControl = React.createClass({
     this.setState({
       url: this.getUrl(e.target.value),
     });
-  },
+  };
 
   render() {
     var props = _.omit(this.props, 'updateState', 'url', 'id');
@@ -60,7 +62,7 @@ var LinkControl = React.createClass({
         </InputGroup.Button>
       </InputGroup>
     </div>;
-  },
-});
+  }
+}
 
 export default LinkControl;

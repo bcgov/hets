@@ -67,19 +67,19 @@ namespace HetsData.Helpers
 
         #endregion
 
-        #region Annual Rollover Process        
+        #region Annual Rollover Process
 
         /// <summary>
         /// Annual Rollover
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="districtId"></param>        
+        /// <param name="districtId"></param>
         /// <param name="seniorityScoringRules"></param>
         /// <param name="connectionString"></param>
         public static void AnnualRolloverJob(PerformContext context, int districtId, string seniorityScoringRules, string connectionString)
         {
             try
-            {                
+            {
                 // open a connection to the database
                 DbAppContext dbContext = new DbAppContext(connectionString);
 
@@ -112,14 +112,14 @@ namespace HetsData.Helpers
                     progress.SetValue(100);
                     return;
                 }
-                
+
                 // get equipment status
                 int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", dbContext);
                 if (statusId == null)
                 {
                     context.WriteLine("Equipment Status not found");
                     progress.SetValue(100);
-                    return;                    
+                    return;
                 }
 
                 // determine the "Rollover Date" (required for testing)
@@ -173,7 +173,7 @@ namespace HetsData.Helpers
 
                     foreach (HetDistrictEquipmentType equipmentType in equipmentTypes)
                     {
-                        // it this a dump truck? 
+                        // it this a dump truck?
                         bool isDumpTruck = equipmentType.EquipmentType.IsDumpTruck;
 
                         // get rules for scoring and seniority block
@@ -236,7 +236,7 @@ namespace HetsData.Helpers
 
                 // **********************************************************
                 // regenerate Owner Secret Keys for this district
-                // **********************************************************    
+                // **********************************************************
                 dbContext = new DbAppContext(connectionString);
 
                 context.WriteLine("");
@@ -271,18 +271,18 @@ namespace HetsData.Helpers
                     HetOwner ownerRecord = dbContext.HetOwner.First(x => x.OwnerId == owner.OwnerId);
                     ownerRecord.SharedKey = key;
                     dbContext.HetOwner.Update(ownerRecord);
-                    
+
                     decimal tempProgress = Convert.ToDecimal(i) / Convert.ToDecimal(ownerCount);
                     tempProgress = tempProgress * 100;
                     int percentComplete = Convert.ToInt32(tempProgress);
 
                     if (percentComplete < 1) percentComplete = 1;
                     if (percentComplete > 99) percentComplete = 100;
-                    
+
                     progress.SetValue(percentComplete);
                 }
 
-                // save remaining updates - done!                
+                // save remaining updates - done!
                 dbContext.SaveChangesForImport();
                 progress.SetValue(100);
                 context.WriteLine("Generate New Secret Keys - Done");

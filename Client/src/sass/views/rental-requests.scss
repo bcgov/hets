@@ -63,6 +63,12 @@
     }
   }
 
+  #rental-request-status {
+    float: left;
+    min-width: 100px;
+    padding-top: 7px;
+  }
+
   #rotation-list {
     width: 100%;
     overflow-y: auto;
@@ -87,7 +93,7 @@
       margin: 0;
     }
 
-    th:nth-child(2), td:nth-child(2), th:last-child, td:last-child {
+    th:nth-child(2), td:nth-child(2), th:nth-child(11), td:nth-child(11) {
       display: none;
     }
 
@@ -95,28 +101,22 @@
       width: 250px;
     }
 
+    // tr.blank-row {}
+
     .attachment {
       display: inline-block;
     }
   }
 }
 
-#rental-requests-edit {
-  [class*='col-'] {
-    padding-left: 7px;
-    padding-right: 7px;
-  }
-}
-
 #hire-offer-edit {
-  [class*='col-'] {
-    padding-left: 7px;
-    padding-right: 7px;
-  }
-
   input[type='number'] {
     width: auto;
     min-width: 175px;
+  }
+
+  .spinner-container {
+    height: 24px;
   }
 }
 

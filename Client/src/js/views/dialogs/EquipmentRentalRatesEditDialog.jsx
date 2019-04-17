@@ -1,49 +1,52 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Grid, Row, Col } from 'react-bootstrap';
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import * as Constant from '../../constants';
+import * as Api from '../../api';
 
 import DropdownControl from '../../components/DropdownControl.jsx';
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
 
-var EquipmentRentalRatesEditDialog = React.createClass({
-  propTypes: {
-    rentalAgreement: React.PropTypes.object.isRequired,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-  },
+class EquipmentRentalRatesEditDialog extends React.Component {
+  static propTypes = {
+    show: PropTypes.bool,
+    rentalAgreement: PropTypes.object.isRequired,
+    onSave: PropTypes.func,
+    onClose: PropTypes.func.isRequired,
+  };
 
-  getInitialState() {
-    return {
-      equipmentRate: this.props.rentalAgreement.equipmentRate || 0,
-      ratePeriod: this.props.rentalAgreement.ratePeriod || Constant.RENTAL_RATE_PERIOD_HOURLY,
-      rateComment: this.props.rentalAgreement.rateComment || '',
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      equipmentRate: props.rentalAgreement.equipmentRate || 0,
+      ratePeriod: props.rentalAgreement.ratePeriod || Constant.RENTAL_RATE_PERIOD_HOURLY,
+      rateComment: props.rentalAgreement.rateComment || '',
 
       equipmentRateError: '',
       ratePeriodError: '',
     };
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.equipmentRate !== this.props.rentalAgreement.equipmentRate) { return true; }
     if (this.state.ratePeriod !== this.props.rentalAgreement.ratePeriod) { return true; }
     if (this.state.rateComment !== this.props.rentalAgreement.rateComment) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       equipmentRateError: '',
       ratePeriodError: '',
@@ -65,31 +68,45 @@ var EquipmentRentalRatesEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onSave() {
-    this.props.onSave({ ...this.props.rentalAgreement, ...{
-      equipmentRate: this.state.equipmentRate,
-      ratePeriod: this.state.ratePeriod,
-      rateComment: this.state.rateComment,
-    }});
-  },
+  formSubmitted = () => {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        const rentalAgreement = {
+          ...this.props.rentalAgreement,
+          equipmentRate: this.state.equipmentRate,
+          ratePeriod: this.state.ratePeriod,
+          rateComment: this.state.rateComment,
+        };
+
+        Api.updateRentalAgreement(rentalAgreement).then(() => {
+          if (this.props.onSave) { this.props.onSave(); }
+        });
+      }
+
+      this.props.onClose();
+    }
+  };
 
   render() {
     // Read-only if the user cannot edit the rental agreement
     var isReadOnly = !this.props.rentalAgreement.canEdit && this.props.rentalAgreement.id !== 0;
     var ratePeriods = [ Constant.RENTAL_RATE_PERIOD_HOURLY, Constant.RENTAL_RATE_PERIOD_DAILY, Constant.RENTAL_RATE_PERIOD_WEEKLY, Constant.RENTAL_RATE_PERIOD_MONTHLY, Constant.RENTAL_RATE_PERIOD_NEGOTIATED ];
 
-    return <EditDialog id="rental-agreements-edit" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={<strong>Rental Agreement</strong>}>
-      <Form>
+    return (
+      <FormDialog
+        id="rental-agreements-edit"
+        show={this.props.show}
+        title="Rental Agreement"
+        onSubmit={this.formSubmitted}
+        onClose={this.props.onClose}>
         <Grid fluid>
           <Row>
             <Col md={4}>
               <FormGroup controlId="equipmentRate" validationState={ this.state.equipmentRateError ? 'error' : null }>
                 <ControlLabel>Pay Rate <sup>*</sup></ControlLabel>
-                <FormInputControl type="float" min={ 0 } defaultValue={ this.state.equipmentRate.toFixed(2) } readOnly={ isReadOnly } updateState={ this.updateState } autoFocus/>
+                <FormInputControl type="float" min={ 0 } defaultValue={ (this.state.equipmentRate || 0).toFixed(2) } readOnly={ isReadOnly } updateState={ this.updateState } autoFocus/>
                 <HelpBlock>{ this.state.equipmentRateError }</HelpBlock>
               </FormGroup>
             </Col>
@@ -109,9 +126,9 @@ var EquipmentRentalRatesEditDialog = React.createClass({
             </Col>
           </Row>
         </Grid>
-      </Form>
-    </EditDialog>;
-  },
-});
+      </FormDialog>
+    );
+  }
+}
 
 export default EquipmentRentalRatesEditDialog;

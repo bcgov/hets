@@ -1,13 +1,15 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-import RootCloseWrapper from 'react-overlays/lib/RootCloseWrapper';
+import { RootCloseWrapper } from 'react-overlays';
 
-var RootCloseMenu = React.createClass({
-  propTypes: {
-    open: React.PropTypes.bool,
-    pullRight: React.PropTypes.bool,
-    onClose: React.PropTypes.func,
-    children: React.PropTypes.node,
-  },
+
+class RootCloseMenu extends React.Component {
+  static propTypes = {
+    open: PropTypes.bool,
+    pullRight: PropTypes.bool,
+    onClose: PropTypes.func,
+    children: PropTypes.node,
+  };
 
   render() {
     return <RootCloseWrapper disabled={ !this.props.open } onRootClose={ this.props.onClose }>
@@ -15,8 +17,8 @@ var RootCloseMenu = React.createClass({
         { this.props.children }
       </div>
     </RootCloseWrapper>;
-  },
-});
+  }
+}
 
 
 export default RootCloseMenu;

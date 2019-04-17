@@ -191,6 +191,15 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetUserDistrict)
                 .First(x => x.UserId == id);
 
+            // validate that user id is unique
+            // HETS-1033 - Post Live: Add validation on User ID while editing a user
+            string smUserId = item.SmUserId?.Trim().ToLower();
+
+            HetUser existingUser = _context.HetUser.AsNoTracking()
+                .FirstOrDefault(x => x.SmUserId.ToLower() == smUserId && x.UserId != user.UserId);
+
+            if (existingUser != null) return new BadRequestObjectResult(new HetsResponse("HETS-38", ErrorViewModel.GetDescription("HETS-38", _configuration)));
+
             user.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             user.Active = item.Active;
             user.Email = item.Email;

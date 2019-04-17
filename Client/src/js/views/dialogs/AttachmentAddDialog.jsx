@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
@@ -8,38 +9,36 @@ import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
-var AttachmentAddDialog = React.createClass({
-  propTypes: {
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-    equipment: React.PropTypes.object.isRequired,
-  },
+class AttachmentAddDialog extends React.Component {
+  static propTypes = {
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+    equipment: PropTypes.object.isRequired,
+  };
 
-  getInitialState() {
-    return {
-      forms: [{
-        typeName: '',
-        attachmentError: '',
-      }],
-    };
-  },
+  state = {
+    forms: [{
+      typeName: '',
+      attachmentError: '',
+    }],
+  };
 
-  updateState(state, index) {
+  updateState = (state, index) => {
     const forms = this.state.forms.slice();
 
     forms[index].typeName = state.typeName;
 
     this.setState({forms});
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.typeName !== '') { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     const forms = this.state.forms.slice();
 
     var valid = false;
@@ -55,9 +54,9 @@ var AttachmentAddDialog = React.createClass({
     this.setState({forms});
 
     return valid;
-  },
+  };
 
-  addInput() {
+  addInput = () => {
     if (this.state.forms.length < 10) {
       const forms = this.state.forms.slice(); // shallow clone
 
@@ -68,20 +67,20 @@ var AttachmentAddDialog = React.createClass({
 
       this.setState({forms});
     }
-  },
+  };
 
-  removeInput() {
+  removeInput = () => {
     if (this.state.forms.length > 1) {
       let forms = this.state.forms.slice();
       forms.splice(forms.length - 1, 1);
       this.setState({forms});
     }
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     const attachmentTypeNames = this.state.forms.map((form) => form.typeName);
     this.props.onSave(attachmentTypeNames, this.props.equipment);
-  },
+  };
 
   render() {
     const { forms } = this.state;
@@ -119,7 +118,7 @@ var AttachmentAddDialog = React.createClass({
         )}
       </div>
     </EditDialog>;
-  },
-});
+  }
+}
 
 export default AttachmentAddDialog;

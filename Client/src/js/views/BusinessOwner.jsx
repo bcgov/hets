@@ -1,8 +1,8 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Well, Row, Col, Alert, Glyphicon, Label } from 'react-bootstrap';
 import _ from 'lodash';
-import Promise from 'bluebird';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -20,21 +20,22 @@ import PrintButton from '../components/PrintButton.jsx';
 
 import { formatDateTime } from '../utils/date';
 import { sortDir } from '../utils/array';
+import { activeOwnerSelector } from '../selectors/ui-selectors';
 
 
-var BusinessOwner = React.createClass({
-  propTypes: {
-    owner: React.PropTypes.object,
-    equipment: React.PropTypes.object,
-    contact: React.PropTypes.object,
-    uiEquipment: React.PropTypes.object,
-    uiContacts: React.PropTypes.object,
-    params: React.PropTypes.object,
-  },
+class BusinessOwner extends React.Component {
+  static propTypes = {
+    owner: PropTypes.object,
+    uiEquipment: PropTypes.object,
+    uiContacts: PropTypes.object,
+    params: PropTypes.object,
+  };
 
-  getInitialState() {
-    return {
-      loading: true,
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: false,
 
       success: false,
 
@@ -44,58 +45,56 @@ var BusinessOwner = React.createClass({
 
       // Contacts
       uiContacts : {
-        sortField: this.props.uiContacts.sortField || 'name',
-        sortDesc: this.props.uiContacts.sortDesc  === true,
+        sortField: props.uiContacts.sortField || 'name',
+        sortDesc: props.uiContacts.sortDesc  === true,
       },
 
       // Equipment
       uiEquipment : {
-        sortField: this.props.uiEquipment.sortField || 'equipmentNumber',
-        sortDesc: this.props.uiEquipment.sortDesc  === true,
+        sortField: props.uiEquipment.sortField || 'equipmentNumber',
+        sortDesc: props.uiEquipment.sortDesc  === true,
       },
     };
-  },
+  }
 
   componentDidMount() {
-    this.fetch();
-  },
+    const ownerLoaded = Boolean(this.props.owner);
+    this.setState({ loading: !ownerLoaded, success: ownerLoaded });
+
+    this.fetch().then(() => {
+      this.setState({ loading: false });
+    });
+  }
 
   componentDidUpdate(prevProps) {
     if (this.props.params.ownerId !== prevProps.params.ownerId) {
       this.fetch();
     }
-  },
+  }
 
-  fetch() {
-    this.setState({ loading: true });
-    this.setState({ success: false });
+  fetch = () => {
+    var {ownerId} = this.props.params;
 
-    store.dispatch({ type: Action.UPDATE_OWNER, owner: null });
-
-    var ownerId = this.props.params.ownerId;
-    var ownerPromise = Api.getOwnerForBusiness(ownerId);
-
-    return Promise.all([ownerPromise]).finally(() => {
-      if (!_.isEmpty(this.props.owner)) {
-        this.setState({ success: true });
-      }
-      this.setState({ loading: false });
+    return Api.getOwnerForBusiness(ownerId).then(() => {
+      this.setState({ success: true });
+    }).catch(() => {
+      this.setState({ success: false });
     });
-  },
+  };
 
-  updateContactsUIState(state, callback) {
+  updateContactsUIState = (state, callback) => {
     this.setState({ uiContacts: { ...this.state.uiContacts, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_OWNER_CONTACTS_UI, ownerContacts: this.state.uiContacts });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  updateEquipmentUIState(state, callback) {
+  updateEquipmentUIState = (state, callback) => {
     this.setState({ uiEquipment: { ...this.state.uiEquipment, ...state }}, () => {
       store.dispatch({ type: Action.UPDATE_OWNER_EQUIPMENT_UI, ownerEquipment: this.state.uiEquipment });
       if (callback) { callback(); }
     });
-  },
+  };
 
   render() {
     return (
@@ -107,9 +106,9 @@ var BusinessOwner = React.createClass({
         </div>
       </Main>
     );
-  },
+  }
 
-  renderPage() {
+  renderPage = () => {
     var owner = this.props.owner;
 
     return <div id="owners-detail">
@@ -202,10 +201,7 @@ var BusinessOwner = React.createClass({
           {(() => {
             if (!owner.contacts || Object.keys(owner.contacts).length === 0) { return <Alert bsStyle="success">No contacts</Alert>; }
 
-            var contacts = _.sortBy(owner.contacts, this.state.uiContacts.sortField);
-            if (this.state.uiContacts.sortDesc) {
-              _.reverse(contacts);
-            }
+            var contacts = _.orderBy(owner.contacts, [this.state.uiContacts.sortField], sortDir(this.state.uiContacts.sortDesc));
 
             var headers = [
               { field: 'name',              title: 'Name'  },
@@ -224,7 +220,7 @@ var BusinessOwner = React.createClass({
                     <td>{ contact.phone }</td>
                     <td>{ contact.mobilePhoneNumber }</td>
                     <td>{ contact.faxPhoneNumber }</td>
-                    <td><a href={ `mailto:${ contact.emailAddress }` } target="_blank">{ contact.emailAddress }</a></td>
+                    <td><a href={ `mailto:${ contact.emailAddress }` } rel="noopener noreferrer" target="_blank">{ contact.emailAddress }</a></td>
                     <td>{ contact.role }</td>
                   </tr>;
                 })
@@ -266,9 +262,9 @@ var BusinessOwner = React.createClass({
         </Well>
       </div>
     </div>;
-  },
+  };
 
-  renderError() {
+  renderError = () => {
     return <div id="owners-detail">
       <div>
         {(() => {
@@ -294,14 +290,12 @@ var BusinessOwner = React.createClass({
         })()}
       </div>
     </div>;
-  },
-});
+  };
+}
 
 function mapStateToProps(state) {
   return {
-    owner: state.models.owner,
-    equipment: state.models.equipment,
-    contact: state.models.contact,
+    owner: activeOwnerSelector(state),
     uiEquipment: state.ui.ownerEquipment,
     uiContacts: state.ui.ownerContacts,
   };

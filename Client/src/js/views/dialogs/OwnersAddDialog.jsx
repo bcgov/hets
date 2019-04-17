@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
@@ -20,69 +21,62 @@ const HELP_TEXT = {
   residency: 'You have not indicated the owner meets the Residency requirements of the HETS Program. If that is the case, the owner may not be registered in this local area until they have met this requirement. If this check was missed inadvertently, return and activate the checkbox. If the owner does not meet the residency requirement, return and cancel from the Add Owner popup.',
 };
 
-var OwnersAddDialog = React.createClass({
-  propTypes: {
-    owners: React.PropTypes.object,
-    currentUser: React.PropTypes.object,
-    localAreas: React.PropTypes.object,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-  },
+class OwnersAddDialog extends React.Component {
+  static propTypes = {
+    owners: PropTypes.object,
+    currentUser: PropTypes.object,
+    localAreas: PropTypes.object,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+  };
 
-  getInitialState() {
-    // Local Area (default to the first local area of the District of the logged in User, but allow any local area to be selected)
-    // var currentUser = this.props.currentUser;
-    // var localAreas = this.props.localAreas;
-    // var defaultLocalAreaId = _.find(localAreas, (x) => x.serviceArea.district.id === currentUser.district.id);
+  state = {
+    name: '',
+    doingBusinessAs: '',
+    givenName: '',
+    surname: '',
+    address1: '',
+    address2: '',
+    city: '',
+    province: 'BC',
+    postalCode: '',
+    ownerCode: '',
+    // localAreaId: defaultLocalAreaId.id || 0,
+    localAreaId: 0,
+    isMaintenanceContractor: false,
+    meetsResidency: true,
+    registeredCompanyNumber: '',
+    workSafeBCPolicyNumber: '',
+    primaryContactPhone: '',
+    primaryContactGivenName: '',
+    primaryContactSurname: '',
+    primaryContactRole: '',
+    status: Constant.OWNER_STATUS_CODE_APPROVED,
 
-    return {
-      name: '',
-      doingBusinessAs: '',
-      givenName: '',
-      surname: '',
-      address1: '',
-      address2: '',
-      city: '',
-      province: 'BC',
-      postalCode: '',
-      ownerCode: '',
-      // localAreaId: defaultLocalAreaId.id || 0,
-      localAreaId: 0,
-      isMaintenanceContractor: false,
-      meetsResidency: true,
-      registeredCompanyNumber: '',
-      workSafeBCPolicyNumber: '',
-      primaryContactPhone: '',
-      primaryContactGivenName: '',
-      primaryContactSurname: '',
-      primaryContactRole: '',
-      status: Constant.OWNER_STATUS_CODE_APPROVED,
-
-      nameError: '',
-      ownerGivenNameError: '',
-      ownerSurameError: '',
-      address1Error: '',
-      cityError: '',
-      provinceError: '',
-      postalCodeError: '',
-      ownerCodeError: '',
-      localAreaError: '',
-      residencyError: '',
-      workSafeBCPolicyNumberError: '',
-      primaryContactPhoneError: '',
-    };
-  },
+    nameError: '',
+    ownerGivenNameError: '',
+    ownerSurameError: '',
+    address1Error: '',
+    cityError: '',
+    provinceError: '',
+    postalCodeError: '',
+    ownerCodeError: '',
+    localAreaError: '',
+    residencyError: '',
+    workSafeBCPolicyNumberError: '',
+    primaryContactPhoneError: '',
+  };
 
   componentDidMount() {
     Api.getOwnersLite();
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.organizationName !== '') { return true; }
     if (this.state.doingBusinessAs !== '') { return true; }
     if (this.state.givenName !== '') { return true; }
@@ -103,9 +97,9 @@ var OwnersAddDialog = React.createClass({
     if (this.state.status != Constant.OWNER_STATUS_CODE_APPROVED) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     // Clear out any previous errors
     var valid = true;
 
@@ -208,9 +202,9 @@ var OwnersAddDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onSave() {
+  onSave = () => {
     this.props.onSave({
       organizationName: this.state.name,
       doingBusinessAs: this.state.doingBusinessAs,
@@ -233,7 +227,7 @@ var OwnersAddDialog = React.createClass({
       primaryContactRole: this.state.primaryContactRole,
       status: this.state.status,
     });
-  },
+  };
 
   render() {
     // Constrain the local area drop downs to those in the District of the current logged in user
@@ -341,8 +335,8 @@ var OwnersAddDialog = React.createClass({
         </FormGroup>
       </Form>
     </EditDialog>;
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

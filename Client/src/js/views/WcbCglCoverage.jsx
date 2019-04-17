@@ -1,7 +1,8 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import { PageHeader, Well, Alert, Row, Col, Button, ButtonGroup, ControlLabel  } from 'react-bootstrap';
+import { PageHeader, Well, Alert, Button, ButtonGroup } from 'react-bootstrap';
 import _ from 'lodash';
 import Moment from 'moment';
 
@@ -21,34 +22,36 @@ import PrintButton from '../components/PrintButton.jsx';
 import { formatDateTime, toZuluTime } from '../utils/date';
 
 
-var WcbCglCoverage = React.createClass({
-  propTypes: {
-    localAreas: React.PropTypes.object,
-    owners: React.PropTypes.object,
-    ownersCoverage: React.PropTypes.object,
-    favourites: React.PropTypes.object,
-    search: React.PropTypes.object,
-    ui: React.PropTypes.object,
-    router: React.PropTypes.object,
-  },
+class WcbCglCoverage extends React.Component {
+  static propTypes = {
+    localAreas: PropTypes.object,
+    owners: PropTypes.object,
+    ownersCoverage: PropTypes.object,
+    favourites: PropTypes.object,
+    search: PropTypes.object,
+    ui: PropTypes.object,
+    router: PropTypes.object,
+  };
 
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+
+    this.state = {
       loading: true,
       search: {
-        localAreaIds: this.props.search.localAreaIds || [],
-        ownerIds: this.props.search.ownerIds || [],
-        wcbExpiry: this.props.search.wcbExpiry || '',
-        cglExpiry: this.props.search.cglExpiry || '',
+        localAreaIds: props.search.localAreaIds || [],
+        ownerIds: props.search.ownerIds || [],
+        wcbExpiry: props.search.wcbExpiry || '',
+        cglExpiry: props.search.cglExpiry || '',
       },
       ui : {
-        sortField: this.props.ui.sortField || 'localAreaLabel',
-        sortDesc: this.props.ui.sortDesc === true,
+        sortField: props.ui.sortField || 'localAreaLabel',
+        sortDesc: props.ui.sortDesc === true,
       },
     };
-  },
+  }
 
-  buildSearchParams() {
+  buildSearchParams = () => {
     var searchParams = {};
 
     if (this.state.search.localAreaIds.length > 0) {
@@ -70,7 +73,7 @@ var WcbCglCoverage = React.createClass({
     }
 
     return searchParams;
-  },
+  };
 
   componentDidMount() {
     Api.getOwnersLite();
@@ -82,18 +85,18 @@ var WcbCglCoverage = React.createClass({
         this.loadFavourite(defaultFavourite);
       }
     }
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     Api.searchOwnersCoverage(this.buildSearchParams());
-  },
+  };
 
-  search(e) {
+  search = (e) => {
     e.preventDefault();
     this.fetch();
-  },
+  };
 
-  clearSearch() {
+  clearSearch = () => {
     var defaultSearchParameters = {
       localAreaIds: [],
       ownerIds: [],
@@ -105,27 +108,27 @@ var WcbCglCoverage = React.createClass({
       store.dispatch({ type: Action.UPDATE_OWNERS_COVERAGE_SEARCH, ownersCoverage: this.state.search });
       store.dispatch({ type: Action.CLEAR_OWNERS_COVERAGE });
     });
-  },
+  };
 
-  updateSearchState(state, callback) {
+  updateSearchState = (state, callback) => {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () =>{
       store.dispatch({ type: Action.UPDATE_OWNERS_COVERAGE_SEARCH, ownersCoverage: this.state.search });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  updateUIState(state, callback) {
+  updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
       store.dispatch({ type: Action.UPDATE_OWNERS_COVERAGE_UI, ownersCoverage: this.state.ui });
       if (callback) { callback(); }
     });
-  },
+  };
 
-  loadFavourite(favourite) {
+  loadFavourite = (favourite) => {
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
-  },
+  };
 
-  renderResults() {
+  renderResults = () => {
     if (Object.keys(this.props.ownersCoverage.data).length === 0) {
       return <Alert bsStyle="success">No results</Alert>;
     }
@@ -169,32 +172,32 @@ var WcbCglCoverage = React.createClass({
         })
       }
     </SortTable>;
-  },
+  };
 
-  matchesLocalAreaFilter(localAreaId) {
+  matchesLocalAreaFilter = (localAreaId) => {
     if (this.state.search.localAreaIds.length == 0) {
       return true;
     }
 
     return _.includes(this.state.search.localAreaIds, localAreaId);
-  },
+  };
 
-  updateLocalAreaSearchState(state) {
+  updateLocalAreaSearchState = (state) => {
     this.updateSearchState(state, this.filterSelectedOwners);
-  },
+  };
 
-  filterSelectedOwners() {
+  filterSelectedOwners = () => {
     var acceptableOwnerIds = _.map(this.getFilteredOwners(), 'id');
     var ownerIds = _.intersection(this.state.search.ownerIds, acceptableOwnerIds);
     this.updateSearchState({ ownerIds: ownerIds }, this.filterSelectedEquipment);
-  },
+  };
 
-  getFilteredOwners() {
+  getFilteredOwners = () => {
     return _.chain(this.props.owners.data)
       .filter(x => this.matchesLocalAreaFilter(x.localAreaId))
       .sortBy('organizationName')
       .value();
-  },
+  };
 
   render() {
     var resultCount = '';
@@ -262,8 +265,8 @@ var WcbCglCoverage = React.createClass({
         }
       })()}
     </div>;
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {

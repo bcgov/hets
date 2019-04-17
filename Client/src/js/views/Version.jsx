@@ -1,8 +1,8 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { PageHeader, Well } from 'react-bootstrap';
 import { Button, Glyphicon } from 'react-bootstrap';
-import $ from 'jquery';
 
 import * as Api from '../api';
 import * as Constant from '../constants';
@@ -16,20 +16,18 @@ import { formatDateTime } from '../utils/date';
 import { request } from '../utils/http';
 
 
-var Version = React.createClass({
-  propTypes: {
-    version: React.PropTypes.object,
-  },
+class Version extends React.Component {
+  static propTypes = {
+    version: PropTypes.object,
+  };
 
-  getInitialState() {
-    return {
-      loading: false,
-      showRawSection: false,
-      buildtime : '',
-      version : '',
-      commit : '',
-    };
-  },
+  state = {
+    loading: false,
+    showRawSection: false,
+    buildtime : '',
+    version : '',
+    commit : '',
+  };
 
   componentDidMount() {
     this.setState({ loading: true });
@@ -38,23 +36,26 @@ var Version = React.createClass({
         this.setState({ loading: false });
       });
     });
-  },
+  }
 
-  fetchLocal() {
+  fetchLocal = () => {
     return request('buildinfo.html', { silent: true }).then(xhr => {
       if (xhr.status === 200) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(xhr.responseText, 'text/html');
+
         this.setState({
-          buildTime : $(xhr.responseText).find('#buildtime').data('buildtime'),
-          version : $(xhr.responseText).find('#version').text(),
-          commit : $(xhr.responseText).find('#commit').text(),
+          buildTime : doc.getElementById('buildtime').dataset.buildtime,
+          version : doc.getElementById('version').textContent,
+          commit : doc.getElementById('commit').textContent,
         });
       }
     }).catch(err => {
       console.err('Failed to find buildinfo: ', err);
     });
-  },
+  };
 
-  showRaw(e) {
+  showRaw = (e) => {
     if (this.state.showRawSection) {
       this.setState({ showRawSection: false });
       e.target.textContent = 'Show Raw Versions';
@@ -62,13 +63,13 @@ var Version = React.createClass({
       this.setState({ showRawSection: true });
       e.target.textContent = 'Hide Raw Versions';
     }
-  },
+  };
 
-  email() {
+  email = () => {
 
-  },
+  };
 
-  render: function() {
+  render() {
     return <div id="version">
       <PageHeader id="version-header">Version
         <div id="version-buttons" style={ { float: 'right' } }>
@@ -128,8 +129,8 @@ var Version = React.createClass({
         </div>;
       })()}
     </div>;
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {

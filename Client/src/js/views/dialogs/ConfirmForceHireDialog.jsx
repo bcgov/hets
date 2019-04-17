@@ -1,41 +1,38 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Grid, Row, Col, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
-var ConfirmForceHireDialog = React.createClass({
-  propTypes: {
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-  },
 
-  getInitialState() {
-    return {
-      reasonForForceHire: '',
-    };
-  },
+class ConfirmForceHireDialog extends React.Component {
+  static propTypes = {
+    show: PropTypes.bool,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+  };
+
+  state = {
+    reasonForForceHire: '',
+  };
 
   componentDidMount() {
     this.input && this.input.focus();
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     return true;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       noteError: '',
     });
@@ -48,18 +45,21 @@ var ConfirmForceHireDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onSave() {
+  formSubmitted = () => {
     this.props.onSave(this.state.reasonForForceHire);
-  },
+  };
 
   render() {
-    return <EditDialog id="confirm-force-hire" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={<strong>Force Hire</strong>}
-      backdropClassName="confirm-force-hire">
-      <Form>
+    return (
+      <FormDialog
+        id="confirm-force-hire"
+        show={this.props.show}
+        onSubmit={this.formSubmitted}
+        onClose={this.props.onClose}
+        title="Force Hire"
+        backdropClassName="confirm-force-hire">
         <Grid fluid>
           <Col md={12}>
             <p><strong>Are you sure you want to do a Force Hire?</strong></p>
@@ -74,9 +74,9 @@ var ConfirmForceHireDialog = React.createClass({
             </Col>
           </Row>
         </Grid>
-      </Form>
-    </EditDialog>;
-  },
-});
+      </FormDialog>
+    );
+  }
+}
 
 export default connect()(ConfirmForceHireDialog);

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
@@ -6,26 +7,28 @@ import _ from 'lodash';
 import * as Api from '../../api';
 
 import CheckboxControl from '../../components/CheckboxControl.jsx';
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
-var OwnersEditDialog = React.createClass({
-  propTypes: {
-    owner: React.PropTypes.object,
-    owners: React.PropTypes.object,
-    localAreas: React.PropTypes.object,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-  },
 
-  getInitialState() {
-    var owner = this.props.owner;
-    return {
+class OwnersEditDialog extends React.Component {
+  static propTypes = {
+    owner: PropTypes.object,
+    owners: PropTypes.object,
+    localAreas: PropTypes.object,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    show: PropTypes.bool,
+  };
+
+  constructor(props) {
+    super(props);
+    var owner = props.owner;
+
+    this.state = {
       organizationName: owner.organizationName || '',
       givenName: owner.givenName || '',
       surname: owner.surname || '',
@@ -47,17 +50,17 @@ var OwnersEditDialog = React.createClass({
       organizationNameError: '',
       localAreaError: '',
     };
-  },
+  }
 
   componentDidMount() {
     Api.getOwnersLite();
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     var owner = this.props.owner;
 
     if (this.state.organizationName !== owner.organizationName) { return true; }
@@ -74,9 +77,9 @@ var OwnersEditDialog = React.createClass({
     if (this.state.isMaintenanceContractor !== owner.isMaintenanceContractor) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       companyAddressError: '',
       organizationNameError: '',
@@ -127,36 +130,48 @@ var OwnersEditDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onSave() {
-    this.props.onSave({ ...this.props.owner, ...{
-      organizationName: this.state.organizationName,
-      givenName: this.state.givenName,
-      surname: this.state.surname,
-      address1: this.state.address1,
-      address2: this.state.address2,
-      city: this.state.city,
-      province: this.state.province,
-      postalCode: this.state.postalCode,
-      localArea: { id: this.state.localAreaId },
-      isMaintenanceContractor: this.state.isMaintenanceContractor,
-      doingBusinessAs: this.state.doingBusinessAs,
-      registeredCompanyNumber: this.state.registeredCompanyNumber,
-      status: this.state.status,
-    }});
-  },
+  formSubmitted = () => {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        const owner = {
+          ...this.props.owner,
+          organizationName: this.state.organizationName,
+          givenName: this.state.givenName,
+          surname: this.state.surname,
+          address1: this.state.address1,
+          address2: this.state.address2,
+          city: this.state.city,
+          province: this.state.province,
+          postalCode: this.state.postalCode,
+          localArea: { id: this.state.localAreaId },
+          isMaintenanceContractor: this.state.isMaintenanceContractor,
+          doingBusinessAs: this.state.doingBusinessAs,
+          registeredCompanyNumber: this.state.registeredCompanyNumber,
+          status: this.state.status,
+        };
+
+        Api.updateOwner(owner).then(() => {
+          if (this.props.onSave) { this.props.onSave(); }
+        });
+      }
+
+      this.props.onClose();
+    }
+  };
 
   render() {
     var owner = this.props.owner;
     var localAreas = _.sortBy(this.props.localAreas, 'name');
 
-    return <EditDialog id="owners-edit" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title= {
-        <strong>Owner</strong>
-      }>
-      <Form>
+    return (
+      <FormDialog
+        id="owners-edit"
+        show={this.props.show}
+        title="Owner"
+        onClose={this.props.onClose}
+        onSubmit={this.formSubmitted}>
         <FormGroup controlId="ownerCode">
           <ControlLabel>Owner Code</ControlLabel>
           <h4>{ owner.ownerCode }</h4>
@@ -214,14 +229,13 @@ var OwnersEditDialog = React.createClass({
         <FormGroup controlId="isMaintenanceContractor">
           <CheckboxControl id="isMaintenanceContractor" checked={ this.state.isMaintenanceContractor } updateState={ this.updateState }>Maintenance Contractor</CheckboxControl>
         </FormGroup>
-      </Form>
-    </EditDialog>;
-  },
-});
+      </FormDialog>
+    );
+  }
+}
 
 function mapStateToProps(state) {
   return {
-    owner: state.models.owner,
     owners: state.lookups.owners.lite,
     localAreas: state.lookups.localAreas,
   };

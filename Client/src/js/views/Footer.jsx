@@ -1,16 +1,15 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Row } from 'react-bootstrap';
 
 
-var Footer = React.createClass({
-  propTypes: {
-    currentUser: React.PropTypes.object,
-  },
+class Footer extends React.Component {
+  static propTypes = {
+    currentUser: PropTypes.object,
+  };
 
-  render: function () {
+  render() {
     return <footer id="footer">
       <div id="footerWrapper">
         <div id="footerAdminSection">
@@ -31,8 +30,8 @@ var Footer = React.createClass({
         </div>
       </div>
     </footer>;
-  },
-});
+  }
+}
 
 
 function mapStateToProps(state) {

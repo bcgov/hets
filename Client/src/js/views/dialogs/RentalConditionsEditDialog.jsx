@@ -1,211 +1,205 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Grid, Row, Col } from 'react-bootstrap';
 import { FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../../api';
 
 import DropdownControl from '../../components/DropdownControl.jsx';
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 import { NON_STANDARD_CONDITION } from '../../constants';
 
 
-var RentalConditionsEditDialog = React.createClass({
-  propTypes: {
-    rentalCondition: React.PropTypes.object.isRequired,
-    rentalConditions: React.PropTypes.object.isRequired,
-    onSave: React.PropTypes.func.isRequired,
-    onSaveMultiple: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-  },
+class RentalConditionsEditDialog extends React.Component {
+  static propTypes = {
+    show: PropTypes.bool.isRequired,
+    rentalAgreementId: PropTypes.number.isRequired,
+    rentalCondition: PropTypes.object.isRequired,
+    rentalConditions: PropTypes.object.isRequired,
+    onSave: PropTypes.func,
+    onClose: PropTypes.func.isRequired,
+  };
 
-  getInitialState() {
-    var isNew = this.props.rentalCondition.id === 0;
+  constructor(props) {
+    super(props);
+    var isNew = props.rentalCondition.id === 0;
 
-    return {
+    this.state = {
       isNew: isNew,
-      numberOfInputs: 1,
 
-      forms: {
-        1: {
-          conditionName: this.props.rentalCondition.conditionName || '',
-          comment: this.props.rentalCondition.comment || '',
+      forms: [{
+        conditionName: props.rentalCondition.conditionName || '',
+        comment: props.rentalCondition.comment || '',
 
-          conditionNameError: '',
-          commentError: '',
-        },
-      },
-      concurrencyControlNumber: this.props.rentalCondition.concurrencyControlNumber || 0,
+        conditionNameError: '',
+        commentError: '',
+      }],
+      concurrencyControlNumber: props.rentalCondition.concurrencyControlNumber || 0,
     };
-  },
+  }
 
   componentDidMount() {
     Api.getRentalConditions();
-  },
+  }
 
-  updateState(value) {
+  updateState = (value) => {
     let property = Object.keys(value)[0];
     let stateValue = _.values(value)[0];
     let number = property.match(/\d+/g)[0];
     let stateName = property.match(/[a-zA-Z]+/g)[0];
     let state = { [stateName]:  stateValue };
-    let updatedState = { ...this.state.forms, [number]: { ...this.state.forms[number], ...state } };
-    this.setState({ forms: updatedState });
-  },
+    const updatedForms = this.state.forms.slice();
+    updatedForms.splice(number, 1, { ...updatedForms[number], ...state});
+    this.setState({ forms: updatedForms });
+  };
 
-  didChange() {
+  didChange = () => {
     return true;
-  },
+  };
 
-  isValid() {
-    let forms = { ...this.state.forms };
+  isValid = () => {
+    const forms = this.state.forms.slice();
 
-    let formsResetObj = forms;
-    Object.keys(forms).forEach((key) => {
-      let state = { ...forms[key], conditionNameError: '', commentError: '' };
-      formsResetObj[key] = state;
+    forms.forEach((form, i) => {
+      let state = {
+        ...form,
+        conditionNameError: '',
+        commentError: '',
+      };
+      forms[i] = state;
     });
 
-    this.setState({ forms: formsResetObj });
     let valid = true;
 
-    let formsErrorsObj = forms;
-    Object.keys(forms).forEach((key) => {
-
-      if (forms[key].conditionName === NON_STANDARD_CONDITION && isBlank(forms[key].comment)) {
-        let state = { ...forms[key], commentError: 'Comment is required for non-standard conditions.' };
-        formsErrorsObj[key] = state;
+    forms.forEach((form, i) => {
+      if (form.conditionName === NON_STANDARD_CONDITION && isBlank(form.comment)) {
+        forms[i] = { ...form, commentError: 'Comment is required for non-standard conditions.' };
         valid = false;
       }
 
-      if (isBlank(forms[key].conditionName)) {
-        let state = { ...forms[key], conditionNameError: 'Rental condition is required' };
-        formsErrorsObj[key] = state;
+      if (isBlank(form.conditionName)) {
+        forms[i] = { ...form, conditionNameError: 'Rental condition is required' };
         valid = false;
       }
-
     });
 
-    this.setState({ forms: formsErrorsObj });
+    this.setState({ forms });
 
     return valid;
-  },
+  };
 
-  onSave() {
-    let forms = this.state.forms;
-    let conditions = Object.keys(forms).map((key) => {
-      return {
-        id: this.props.rentalCondition.id || 0,
-        rentalAgreement: { id: this.props.rentalCondition.rentalAgreement.id },
-        conditionName: this.state.forms[key].conditionName,
-        comment: this.state.forms[key].conditionName === NON_STANDARD_CONDITION ? this.state.forms[key].comment : '',
-        concurrencyControlNumber: this.state.concurrencyControlNumber,
-      };
-    });
-    this.state.isNew ? this.props.onSaveMultiple(conditions) : this.props.onSave(conditions[0]);
-  },
+  formSubmitted = () => {
+    const { rentalAgreementId, onSave, onClose } = this.props;
 
-  addInput() {
-    if (this.state.numberOfInputs < 10) {
-      let numberOfInputs = Object.keys(this.state.forms).length;
-      this.setState({
-        numberOfInputs: this.state.numberOfInputs + 1,
-        forms: {
-          ...this.state.forms,
-          [numberOfInputs + 1]: {
-          },
-        },
-      });
+    if (this.isValid()) {
+      if (this.didChange()) {
+        const forms = this.state.forms;
+        const conditions = forms.map((form) => {
+          return {
+            id: this.props.rentalCondition.id || 0,
+            rentalAgreement: { id: rentalAgreementId },
+            conditionName: form.conditionName,
+            comment: form.conditionName === NON_STANDARD_CONDITION ? form.comment : '',
+            concurrencyControlNumber: this.state.concurrencyControlNumber,
+          };
+        });
+
+        (this.state.isNew ? Api.addRentalConditions(rentalAgreementId, conditions) : Api.updateRentalCondition(_.first(conditions))).then(() => {
+          if (onSave) { onSave(); }
+        });
+      }
+      onClose();
     }
-  },
+  };
 
-  removeInput() {
-    if (this.state.numberOfInputs > 1) {
-      let numberOfInputs = Object.keys(this.state.forms).length;
-      let forms = { ...this.state.forms };
-      delete forms[numberOfInputs];
-      this.setState({
-        numberOfInputs: this.state.numberOfInputs - 1,
-        forms: forms,
+  addInput = () => {
+    if (this.state.forms.length < 10) {
+      const forms = this.state.forms.slice();
+      forms.push({
+        conditionName: '',
+        comment: '',
+        conditionNameError: '',
+        commentError: '',
       });
+
+      this.setState({ forms });
     }
-  },
+  };
+
+  removeInput = () => {
+    if (this.state.forms.length > 1) {
+      const forms = this.state.forms.slice();
+      forms.pop();
+      this.setState({ forms });
+    }
+  };
 
   render() {
     // Read-only if the user cannot edit the rental agreement
     var isReadOnly = !this.props.rentalCondition.canEdit && this.props.rentalCondition.id !== 0;
     var conditions = _.map([ ...this.props.rentalConditions.data, { description: NON_STANDARD_CONDITION } ], 'description');
 
-    return <EditDialog id="rental-conditions-edit" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={<strong>Rental Agreement - Conditions</strong>}>
-      <div className="forms-container">
-        { Object.keys(this.state.forms).map(key => (
-          <Form key={key}>
-            <Grid fluid>
-              <Row>
-                <Col md={12}>
-                  <FormGroup controlId={`conditionName${key}`} validationState={ this.state.forms[key].conditionNameError ? 'error' : null }>
-                    <ControlLabel>Conditions <sup>*</sup></ControlLabel>
-                    {/*TODO - use lookup list*/}
-                    <DropdownControl
-                      id={`conditionName${key}`}
-                      disabled={isReadOnly || !this.props.rentalConditions.loaded}
-                      updateState={this.updateState}
-                      items={conditions}
-                      title={this.state.forms[key].conditionName}
-                      className="full-width" />
-                    <HelpBlock>{ this.state.forms[key].conditionNameError }</HelpBlock>
-                  </FormGroup>
-                </Col>
-              </Row>
-              { this.state.forms[key].conditionName === NON_STANDARD_CONDITION &&
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId={`comment${key}`} validationState={ this.state.forms[key].commentError ? 'error' : null }>
-                  <ControlLabel>Comment</ControlLabel>
-                  <FormInputControl componentClass="textarea" defaultValue={ this.state.forms[key].comment } readOnly={ isReadOnly } updateState={ this.updateState } />
-                  <HelpBlock>{ this.state.forms[key].commentError }</HelpBlock>
+    return (
+      <FormDialog
+        id="rental-conditions-edit"
+        show={this.props.show}
+        onClose={this.props.onClose}
+        onSubmit={this.formSubmitted}
+        title="Rental Agreement – Conditions">
+        <div className="forms-container">
+          { this.state.forms.map((form, i) => (
+            <div className="form-item" key={i}>
+              <div>
+                <FormGroup controlId={`conditionName${i}`} validationState={ form.conditionNameError ? 'error' : null }>
+                  <ControlLabel>Conditions <sup>*</sup></ControlLabel>
+                  {/*TODO - use lookup list*/}
+                  <DropdownControl
+                    id={`conditionName${i}`}
+                    disabled={isReadOnly || !this.props.rentalConditions.loaded}
+                    updateState={this.updateState}
+                    items={conditions}
+                    title={form.conditionName}
+                    className="full-width" />
+                  <HelpBlock>{ form.conditionNameError }</HelpBlock>
                 </FormGroup>
-              </Col>
-            </Row>
-              }
-            </Grid>
-          </Form>
-        ))}
-      </div>
-      <Grid fluid>
-        <Row className="align-right">
-          <Col md={12}>
-            { this.state.isNew && this.state.numberOfInputs > 1 &&
+              </div>
+              { form.conditionName === NON_STANDARD_CONDITION && (
+                <div>
+                  <FormGroup controlId={`comment${i}`} validationState={ form.commentError ? 'error' : null }>
+                    <ControlLabel>Comment <sup>*</sup></ControlLabel>
+                    <FormInputControl componentClass="textarea" defaultValue={ form.comment } readOnly={ isReadOnly } updateState={ this.updateState } />
+                    <HelpBlock>{ form.commentError }</HelpBlock>
+                  </FormGroup>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="align-right">
+          { this.state.isNew && this.state.forms.length > 1 && (
             <Button
               bsSize="xsmall"
               className="remove-btn"
-              onClick={ this.removeInput }
-            >
+              onClick={ this.removeInput }>
               <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
             </Button>
-            }
-            { this.state.isNew && this.state.numberOfInputs < 10 &&
+          )}
+          { this.state.isNew && this.state.forms.length < 10 && (
             <Button
               bsSize="xsmall"
-              onClick={ this.addInput }
-            >
+              onClick={ this.addInput }>
               <Glyphicon glyph="plus" />&nbsp;<strong>Add</strong>
             </Button>
-            }
-          </Col>
-        </Row>
-      </Grid>
-    </EditDialog>;
-  },
-});
+          )}
+        </div>
+      </FormDialog>
+    );
+  }
+}
 
 
 function mapStateToProps(state) {

@@ -133,7 +133,8 @@ namespace HetsApi.Controllers
                     Id = e.EquipmentId,
                     OwnerId = e.OwnerId,
                     LocalAreaId = e.LocalAreaId,
-                    ProjectIds = agreements.Select(y => y.ProjectId).ToList()
+                    ProjectIds = agreements.Select(y => y.ProjectId).Distinct().ToList(),
+                    DistrictEquipmentTypeId = e.DistrictEquipmentTypeId ?? 0,
                 });
 
             return new ObjectResult(new HetsResponse(equipment));
@@ -165,7 +166,8 @@ namespace HetsApi.Controllers
                     EquipmentCode = e.EquipmentCode,
                     Id = e.EquipmentId,
                     OwnerId = e.OwnerId,
-                    ProjectIds = rotationLists.Select(y => y.RentalRequest.ProjectId).ToList(),
+                    ProjectIds = rotationLists.Select(y => y.RentalRequest.ProjectId).Distinct().ToList(),
+                    DistrictEquipmentTypeId = e.DistrictEquipmentTypeId ?? 0,
                 });
 
             return new ObjectResult(new HetsResponse(equipment));
@@ -895,7 +897,7 @@ namespace HetsApi.Controllers
         /// <param name="serialNumber"></param>
         /// <param name="typeId">District Equipment Type Id</param>
         [HttpGet]
-        [Route("{id}/duplicates/{serialNumber}/{typeId}")]
+        [Route("{id}/duplicates/{serialNumber}/{typeId?}")]
         [SwaggerOperation("EquipmentIdEquipmentDuplicatesGet")]
         [SwaggerResponse(200, type: typeof(List<DuplicateEquipmentModel>))]
         [RequiresPermission(HetPermission.Login)]
@@ -1239,8 +1241,20 @@ namespace HetsApi.Controllers
 
             if (district?.NextFiscalYear == null) return new BadRequestObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
 
-            int fiscalYear = (int)district.NextFiscalYear; // status table uses the start of the year
-            DateTime fiscalEnd = new DateTime(fiscalYear, 3, 31);
+            // HETS-1195: Adjust seniority list and rotation list for lists hired between Apr1 and roll over
+            // ** Need to use the "rollover date" to ensure we don't include records created
+            //    after April 1 (but before rollover)
+            DateTime fiscalEnd = district.RolloverEndDate;
+            int fiscalYear = Convert.ToInt32(district.NextFiscalYear); // status table uses the start of the year
+
+            if (fiscalEnd == new DateTime(0001, 01, 01, 00, 00, 00))
+            {
+                fiscalEnd = new DateTime(fiscalYear, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 23, 59, 59);
+            }
+            else
+            {
+                fiscalEnd = new DateTime(fiscalYear, fiscalEnd.Month, fiscalEnd.Day, 23, 59, 59);
+            }
 
             // get status id
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);

@@ -9,6 +9,10 @@
     }
   }
 
+  #rental-agreement-header {
+    min-height: 169px;
+  }
+
   #rental-agreements-note {
     margin: 10px 0;
   }
@@ -36,13 +40,6 @@
       right: 0;
       top: 0;
     }
-  }
-}
-
-#rental-agreements-edit {
-  [class*='col-'] {
-    padding-left: 7px;
-    padding-right: 7px;
   }
 }
 

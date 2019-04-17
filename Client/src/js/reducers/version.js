@@ -10,12 +10,10 @@ const DEFAULT_VERSION = {
 };
 
 export default function versionReducer(state = DEFAULT_VERSION, action) {
-  var newState = {};
-
   switch(action.type) {
     case Action.UPDATE_VERSION:
       return { ...state, ...action.version };
   }
 
-  return { ...state, ...newState };
+  return state;
 }

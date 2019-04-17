@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
 
@@ -10,28 +11,26 @@ import FormInputControl from '../../components/FormInputControl.jsx';
 import { isBlank } from '../../utils/string';
 
 
-var EquipmentChangeStatusDialog = React.createClass({
-  propTypes: {
-    show: React.PropTypes.bool,
-    status: React.PropTypes.string.isRequired,
-    equipment: React.PropTypes.object.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    onStatusChanged: React.PropTypes.func.isRequired,
-  },
+class EquipmentChangeStatusDialog extends React.Component {
+  static propTypes = {
+    show: PropTypes.bool,
+    status: PropTypes.string.isRequired,
+    equipment: PropTypes.object.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onStatusChanged: PropTypes.func.isRequired,
+  };
 
-  getInitialState() {
-    return {
-      saving: false,
-      comment: '',
-      commentError: '',
-    };
-  },
+  state = {
+    saving: false,
+    comment: '',
+    commentError: '',
+  };
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       commentError: '',
       statusError: '',
@@ -45,9 +44,9 @@ var EquipmentChangeStatusDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  formSubmitted() {
+  formSubmitted = () => {
     if (this.isValid()) {
       this.setState({isSaving: true});
       const status = {
@@ -68,7 +67,7 @@ var EquipmentChangeStatusDialog = React.createClass({
         }
       });
     }
-  },
+  };
 
   render() {
     return (
@@ -86,7 +85,7 @@ var EquipmentChangeStatusDialog = React.createClass({
         </FormGroup>
       </FormDialog>
     );
-  },
-});
+  }
+}
 
 export default EquipmentChangeStatusDialog;

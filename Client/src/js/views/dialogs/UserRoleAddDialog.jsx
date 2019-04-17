@@ -1,68 +1,65 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Grid, Row, Col } from 'react-bootstrap';
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
-
 import _ from 'lodash';
 
 import * as Api from '../../api';
 import * as Constant from '../../constants';
 
 import DateControl from '../../components/DateControl.jsx';
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import DropdownControl from '../../components/DropdownControl.jsx';
 import Spinner from '../../components/Spinner.jsx';
-import Form from '../../components/Form.jsx';
 
 import { isValidDate, toZuluTime } from '../../utils/date';
 import { isBlank, notBlank } from '../../utils/string';
 
 
-var UserRoleAddDialog = React.createClass({
-  propTypes: {
-    roles: React.PropTypes.object,
-    currentUser: React.PropTypes.object,
-    onSave: React.PropTypes.func.isRequired,
-    onClose: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool,
-  },
+class UserRoleAddDialog extends React.Component {
+  static propTypes = {
+    show: PropTypes.bool,
+    user: PropTypes.object,
+    roles: PropTypes.object,
+    currentUser: PropTypes.object,
+    onSave: PropTypes.func,
+    onClose: PropTypes.func.isRequired,
+  };
 
-  getInitialState() {
-    return {
-      loading: false,
+  state = {
+    loading: false,
+    isSaving: false,
 
-      roleId: 0,
-      effectiveDate: '',
-      expiryDate: '',
+    roleId: 0,
+    effectiveDate: '',
+    expiryDate: '',
 
-      roleIdError: '',
-      effectiveDateError: '',
-      expiryDateError: '',
-    };
-  },
+    roleIdError: '',
+    effectiveDateError: '',
+    expiryDateError: '',
+  };
 
   componentDidMount() {
     this.setState({ loading: true });
-    Api.getRoles().finally(() => {
+    Api.getRoles().then(() => {
       this.setState({ loading: false });
     });
-  },
+  }
 
-  updateState(state, callback) {
+  updateState = (state, callback) => {
     this.setState(state, callback);
-  },
+  };
 
-  didChange() {
+  didChange = () => {
     if (this.state.roleId !== 0) { return true; }
     if (notBlank(this.state.effectiveDate)) { return true; }
     if (notBlank(this.state.expiryDate)) { return true; }
 
     return false;
-  },
+  };
 
-  isValid() {
+  isValid = () => {
     this.setState({
       roleIdError: false,
       effectiveDateError: false,
@@ -89,64 +86,83 @@ var UserRoleAddDialog = React.createClass({
     }
 
     return valid;
-  },
+  };
 
-  onSave() {
-    this.props.onSave({
-      roleId: this.state.roleId,
-      effectiveDate: toZuluTime(this.state.effectiveDate),
-      expiryDate: toZuluTime(this.state.expiryDate),
-    });
-  },
+  formSubmitted = () => {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        this.setState({ isSaving: true });
+
+        const userRole = {
+          roleId: this.state.roleId,
+          effectiveDate: toZuluTime(this.state.effectiveDate),
+          expiryDate: toZuluTime(this.state.expiryDate),
+        };
+
+        Api.addUserRole(this.props.user.id, userRole).then(() => {
+          this.setState({ isSaving: false });
+          if (this.props.onSave) { this.props.onSave(); }
+          this.props.onClose();
+        });
+
+      } else {
+        this.props.onClose();
+      }
+    }
+  };
 
   render() {
     var isAdministrator = _.some(this.props.currentUser.userRoles, { roleName: Constant.ADMINISTRATOR_ROLE });
-
-    if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
     var filteredRoles = isAdministrator ? this.props.roles : _.reject(this.props.roles, { name: Constant.ADMINISTRATOR_ROLE });
 
     var roles = _.sortBy(filteredRoles, 'name');
 
-    return <EditDialog id="add-role"
-      show={ this.props.show }
-      title={ <strong>Add Role</strong> }
-      onClose={ this.props.onClose }
-      onSave={ this.onSave }
-      didChange={ this.didChange }
-      isValid={ this.isValid }>
-      <Form>
-        <Grid fluid>
-          <Row>
-            <Col md={4}>
-              <FormGroup controlId="roleId" validationState={ this.state.roleIdError ? 'error' : null }>
-                <ControlLabel>Role <sup>*</sup></ControlLabel>
-                <DropdownControl id="roleId" placeholder="None" blankLine
-                  items={ roles } selectedId={ this.state.roleId } updateState={ this.updateState }
-                />
-                <HelpBlock>{ this.state.roleIdError }</HelpBlock>
-              </FormGroup>
-            </Col>
-            <Col md={4}>
-              <FormGroup controlId="effectiveDate" validationState={ this.state.effectiveDateError ? 'error' : null }>
-                <ControlLabel>Effective Date <sup>*</sup></ControlLabel>
-                <DateControl id="effectiveDate" date={ this.state.effectiveDate } updateState={ this.updateState } title="effective date"/>
-                <HelpBlock>{ this.state.effectiveDateError }</HelpBlock>
-              </FormGroup>
-            </Col>
-            <Col md={4}>
-              <FormGroup controlId="expiryDate" validationState={ this.state.expiryDateError ? 'error' : null }>
-                <ControlLabel>Expiry Date</ControlLabel>
-                <DateControl id="expiryDate" date={ this.state.expiryDate } updateState={ this.updateState } title="expiry date"/>
-                <HelpBlock>{ this.state.expiryDateError }</HelpBlock>
-              </FormGroup>
-            </Col>
-          </Row>
-        </Grid>
-      </Form>
-    </EditDialog>;
-  },
-});
+    return (
+      <FormDialog
+        id="add-role"
+        show={this.props.show}
+        title="Add Role"
+        isSaving={this.state.isSaving}
+        onClose={this.props.onClose}
+        onSubmit={this.formSubmitted}>
+        {(() => {
+          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+
+          return (
+            <Grid fluid>
+              <Row>
+                <Col md={4}>
+                  <FormGroup controlId="roleId" validationState={ this.state.roleIdError ? 'error' : null }>
+                    <ControlLabel>Role <sup>*</sup></ControlLabel>
+                    <DropdownControl id="roleId" placeholder="None" blankLine
+                      items={ roles } selectedId={ this.state.roleId } updateState={ this.updateState }
+                    />
+                    <HelpBlock>{ this.state.roleIdError }</HelpBlock>
+                  </FormGroup>
+                </Col>
+                <Col md={4}>
+                  <FormGroup controlId="effectiveDate" validationState={ this.state.effectiveDateError ? 'error' : null }>
+                    <ControlLabel>Effective Date <sup>*</sup></ControlLabel>
+                    <DateControl id="effectiveDate" date={ this.state.effectiveDate } updateState={ this.updateState } title="effective date"/>
+                    <HelpBlock>{ this.state.effectiveDateError }</HelpBlock>
+                  </FormGroup>
+                </Col>
+                <Col md={4}>
+                  <FormGroup controlId="expiryDate" validationState={ this.state.expiryDateError ? 'error' : null }>
+                    <ControlLabel>Expiry Date</ControlLabel>
+                    <DateControl id="expiryDate" date={ this.state.expiryDate } updateState={ this.updateState } title="expiry date"/>
+                    <HelpBlock>{ this.state.expiryDateError }</HelpBlock>
+                  </FormGroup>
+                </Col>
+              </Row>
+            </Grid>
+          );
+        })()}
+      </FormDialog>
+    );
+  }
+}
 
 function mapStateToProps(state) {
   return {

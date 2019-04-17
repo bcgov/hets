@@ -1,32 +1,33 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { ControlLabel, InputGroup, Button, Glyphicon } from 'react-bootstrap';
-
 import _ from 'lodash';
 import Moment from 'moment';
 import DateTime from 'react-datetime';
 
-var DateControl = React.createClass({
-  propTypes: {
-    id: React.PropTypes.string.isRequired,
-    date: React.PropTypes.string,
-    format: React.PropTypes.string,
-    className: React.PropTypes.string,
-    label: React.PropTypes.string,
-    onChange: React.PropTypes.func,
-    updateState: React.PropTypes.func,
-    placeholder: React.PropTypes.string,
-    title: React.PropTypes.string,
-    disabled: React.PropTypes.bool,
-    isValidDate: React.PropTypes.func,
-  },
 
-  clicked() {
+class DateControl extends React.Component {
+  static propTypes = {
+    id: PropTypes.string.isRequired,
+    date: PropTypes.string,
+    format: PropTypes.string,
+    className: PropTypes.string,
+    label: PropTypes.string,
+    onChange: PropTypes.func,
+    updateState: PropTypes.func,
+    placeholder: PropTypes.string,
+    title: PropTypes.string,
+    disabled: PropTypes.bool,
+    isValidDate: PropTypes.func,
+  };
+
+  clicked = () => {
     if (!this.props.disabled) {
       this.input.focus();
     }
-  },
+  };
 
-  dateChanged(date) {
+  dateChanged = (date) => {
     // ignore invalid dates
     if (_.isString(date) || !date || !date.isValid()) {
       return;
@@ -34,16 +35,16 @@ var DateControl = React.createClass({
 
     var dateString = date.format(this.props.format || 'YYYY-MM-DD');
     this.notifyValueChanged(dateString);
-  },
+  };
 
-  dateBlurred(date) {
+  dateBlurred = (date) => {
     // when focus leaves input, if date is invalid, reset value to empty string
     if (_.isString(date) || !date || !date.isValid()) {
       this.notifyValueChanged('');
     }
-  },
+  };
 
-  notifyValueChanged(dateString) {
+  notifyValueChanged = (dateString) => {
     // On change listener
     if (this.props.onChange) {
       this.props.onChange(dateString, this.props.id);
@@ -55,7 +56,7 @@ var DateControl = React.createClass({
         [this.props.id]: dateString,
       });
     }
-  },
+  };
 
   render() {
     var date = Moment.utc(this.props.date);
@@ -74,12 +75,12 @@ var DateControl = React.createClass({
           inputProps={{ placeholder: placeholder, disabled: disabled, ref: input => { this.input = input; } }} isValidDate={ this.props.isValidDate }
         />
         <InputGroup.Button>
-          <Button onClick={ this.clicked }><Glyphicon glyph="calendar" title={ this.props.title }/></Button>
+          <Button disabled={disabled} onClick={ this.clicked }><Glyphicon glyph="calendar" title={ this.props.title }/></Button>
         </InputGroup.Button>
       </InputGroup>
     </div>;
-  },
-});
+  }
+}
 
 
 export default DateControl;

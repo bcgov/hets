@@ -10,9 +10,9 @@ export const activeRentalAgreementIdSelector = createSelector(
 );
 
 export const activeRentalAgreementSelector = createSelector(
-  uiSelector,
+  activeRentalAgreementIdSelector,
   modelsSelector,
-  (ui, models) => models.rentalAgreement[ui.activeRentalAgreementId] || null
+  (activeRentalAgreementId, models) => models.rentalAgreement[activeRentalAgreementId] || null
 );
 
 
@@ -22,7 +22,31 @@ export const activeProjectIdSelector = createSelector(
 );
 
 export const activeProjectSelector = createSelector(
-  uiSelector,
+  activeProjectIdSelector,
   modelsSelector,
-  (ui, models) => models.project[ui.activeProjectId] || null
+  (activeProjectId, models) => models.project[activeProjectId] || null
+);
+
+
+export const activeRentalRequestIdSelector = createSelector(
+  uiSelector,
+  (ui) => parseInt(ui.activeRentalRequestId, 10)
+);
+
+export const activeRentalRequestSelector = createSelector(
+  activeRentalRequestIdSelector,
+  modelsSelector,
+  (activeRentalRequestId, models) => models.rentalRequest[activeRentalRequestId] || null
+);
+
+
+export const activeOwnerIdSelector = createSelector(
+  uiSelector,
+  (ui) => parseInt(ui.activeOwnerId, 10)
+);
+
+export const activeOwnerSelector = createSelector(
+  activeOwnerIdSelector,
+  modelsSelector,
+  (activeOwnerId, models) => models.owner[activeOwnerId] || null
 );

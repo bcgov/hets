@@ -1,9 +1,7 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-
 import { connect } from 'react-redux';
-
 import { Well, PageHeader, Row, Col, Button } from 'react-bootstrap';
-
 import _ from 'lodash';
 
 import * as Action from '../actionTypes';
@@ -13,22 +11,23 @@ import store from '../store';
 
 import SubHeader from '../components/ui/SubHeader.jsx';
 
-var Home = React.createClass({
-  propTypes: {
-    currentUser: React.PropTypes.object,
-    searchSummaryCounts: React.PropTypes.object,
-    router: React.PropTypes.object,
-  },
+
+class Home extends React.Component {
+  static propTypes = {
+    currentUser: PropTypes.object,
+    searchSummaryCounts: PropTypes.object,
+    router: PropTypes.object,
+  };
 
   componentDidMount() {
     this.fetch();
-  },
+  }
 
-  fetch() {
+  fetch = () => {
     Api.getSearchSummaryCounts();
-  },
+  };
 
-  goToUnapprovedOwners() {
+  goToUnapprovedOwners = () => {
     var unapprovedStatus = Constant.OWNER_STATUS_CODE_PENDING;
 
     // update search parameters
@@ -39,9 +38,9 @@ var Home = React.createClass({
 
     // navigate to search page
     this.props.router.push({ pathname: Constant.OWNERS_PATHNAME });
-  },
+  };
 
-  goToUnapprovedEquipment() {
+  goToUnapprovedEquipment = () => {
     var unapprovedStatus = Constant.EQUIPMENT_STATUS_CODE_PENDING;
 
     // update search parameters
@@ -52,9 +51,9 @@ var Home = React.createClass({
 
     // navigate to search page
     this.props.router.push({ pathname: Constant.EQUIPMENT_PATHNAME });
-  },
+  };
 
-  goToHiredEquipment() {
+  goToHiredEquipment = () => {
     // update search parameters
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_LIST_SEARCH, equipmentList: { statusCode: Constant.EQUIPMENT_STATUS_CODE_APPROVED, hired: true  } });
 
@@ -63,9 +62,9 @@ var Home = React.createClass({
 
     // navigate to search page
     this.props.router.push({ pathname: Constant.EQUIPMENT_PATHNAME });
-  },
+  };
 
-  goToBlockedRotationLists() {
+  goToBlockedRotationLists = () => {
     // update search parameters
     store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_SEARCH, rentalRequests: { statusCode: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS  } });
 
@@ -74,7 +73,7 @@ var Home = React.createClass({
 
     // navigate to search page
     this.props.router.push({ pathname: Constant.RENTAL_REQUESTS_PATHNAME });
-  },
+  };
 
   render() {
     var counts = this.props.searchSummaryCounts;
@@ -93,8 +92,8 @@ var Home = React.createClass({
         </Row>
       </Well>
     </div>;
-  },
-});
+  }
+}
 
 function mapStateToProps(state) {
   return {
