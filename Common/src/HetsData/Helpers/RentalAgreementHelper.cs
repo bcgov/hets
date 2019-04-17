@@ -10,6 +10,12 @@ namespace HetsData.Helpers
 {
     #region Rental Agreement Models
 
+    public class RentalAgreementSummaryLite
+    {
+        public int Id { get; set; }
+        public DateTime? DatedOn { get; set; }
+    }
+
     public class RentalAgreementPdfViewModel
     {
         public int Id { get; set; }
@@ -92,7 +98,28 @@ namespace HetsData.Helpers
         }
 
         #endregion
-        
+
+        #region Convert full agreement record to RentalAgreementSummary version
+
+        /// <summary>
+        /// Convert to RentalAgreementSummary Model
+        /// </summary>
+        /// <param name="agreement"></param>
+        public static RentalAgreementSummaryLite ToSummaryLiteModel(HetRentalAgreement agreement)
+        {
+            RentalAgreementSummaryLite agreementSummary = new RentalAgreementSummaryLite();
+
+            if (agreement != null)
+            {
+                agreementSummary.Id = agreement.RentalAgreementId;
+                agreementSummary.DatedOn = agreement.DatedOn;
+            }
+
+            return agreementSummary;
+        }
+
+        #endregion
+
         #region Adjust Agreement Pdf
 
         /// <summary>

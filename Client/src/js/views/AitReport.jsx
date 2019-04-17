@@ -22,7 +22,7 @@ import PrintButton from '../components/PrintButton.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 
-import { formatDateTime, startOfCurrentFiscal, endOfCurrentFiscal, startOfPreviousFiscal, endOfPreviousFiscal, toZuluTime } from '../utils/date';
+import { formatDateTime, startOfCurrentFiscal, endOfCurrentFiscal, startOfPreviousFiscal, endOfPreviousFiscal, toZuluTime, dateIsBetween } from '../utils/date';
 
 const THIS_FISCAL = 'This Fiscal';
 const LAST_FISCAL = 'Last Fiscal';
@@ -32,6 +32,7 @@ const CUSTOM = 'Custom';
 class AitReport extends React.Component {
   static propTypes = {
     currentUser: PropTypes.object,
+    agreementSummaryLite: PropTypes.object,
     projects: PropTypes.object,
     districtEquipmentTypes: PropTypes.object,
     equipment: PropTypes.object,
@@ -45,6 +46,8 @@ class AitReport extends React.Component {
   constructor(props) {
     super(props);
 
+    var today = Moment();
+
     this.state = {
       search: {
         projectIds: props.search.projectIds || [],
@@ -52,6 +55,8 @@ class AitReport extends React.Component {
         equipmentIds: props.search.equipmentIds || [],
         rentalAgreementNumber: props.search.rentalAgreementNumber || '',
         dateRange: props.search.dateRange || THIS_FISCAL,
+        startDate: props.search.startDate || startOfCurrentFiscal(today).format('YYYY-MM-DD'),
+        endDate: props.search.endDate || endOfCurrentFiscal(today).format('YYYY-MM-DD'),
       },
       ui : {
         sortField: props.ui.sortField || 'rentalAgreementNumber',
@@ -77,33 +82,13 @@ class AitReport extends React.Component {
       searchParams.equipment = this.state.search.equipmentIds;
     }
 
-    // Time period drop-down; e.g. "This Month"
-    var startDate;
-    var endDate;
-    var today = Moment();
-
-    switch (this.state.search.dateRange) {
-      case THIS_FISCAL:
-        // Fiscal Year: Apr 1 - March 31
-        startDate = startOfCurrentFiscal(today);
-        endDate = endOfCurrentFiscal(today);
-        break;
-      case LAST_FISCAL:
-        // Fiscal Year: Apr 1 - March 31
-        startDate = startOfPreviousFiscal(today);
-        endDate = endOfPreviousFiscal(today);
-        break;
-      case CUSTOM:
-        startDate = Moment(this.state.search.startDate);
-        endDate = Moment(this.state.search.endDate);
-        break;
-      default:
-        break;
-    }
+    var startDate = Moment(this.state.search.startDate);
+    var endDate = Moment(this.state.search.endDate);
 
     if (startDate && startDate.isValid()) {
       searchParams.startDate = toZuluTime(startDate.startOf('day'));
     }
+
     if (endDate && endDate.isValid()) {
       searchParams.endDate = toZuluTime(endDate.startOf('day'));
     }
@@ -111,9 +96,10 @@ class AitReport extends React.Component {
   };
 
   componentDidMount() {
-    Api.getProjectsCurrentFiscal();
-    Api.getDistrictEquipmentTypeHires();
-    Api.getEquipmentTs();
+    Api.getRentalAgreementSummaryLite();
+    Api.getProjectsAgreementSummary();
+    Api.getDistrictEquipmentTypesAgreementSummary();
+    Api.getEquipmentAgreementSummary();
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
@@ -134,12 +120,16 @@ class AitReport extends React.Component {
   };
 
   clearSearch = () => {
+    var today = Moment();
+
     var defaultSearchParameters = {
       projectIds: [],
       districtEquipmentTypes: [],
       equipmentIds: [],
       rentalAgreementNumber: '',
       dateRange: THIS_FISCAL,
+      startDate: startOfCurrentFiscal(today).format('YYYY-MM-DD'),
+      endDate: endOfCurrentFiscal(today).format('YYYY-MM-DD'),
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
@@ -210,6 +200,18 @@ class AitReport extends React.Component {
     </SortTable>;
   };
 
+  matchesDateFilter = (agreementIds) => {
+    const startDate = Moment(this.state.search.startDate);
+    const endDate = Moment(this.state.search.endDate);
+
+    const matchingAgreementIds = _.chain(this.props.agreementSummaryLite.data)
+      .filter(a => dateIsBetween(Moment(a.datedOn), startDate, endDate))
+      .map('id')
+      .value();
+
+    return _.intersection(matchingAgreementIds, agreementIds).length > 0;
+  };
+
   matchesProjectFilter = (projectIds) => {
     if (this.state.search.projectIds.length == 0) {
       return true;
@@ -226,8 +228,49 @@ class AitReport extends React.Component {
     return _.includes(this.state.search.districtEquipmentTypes, districtEquipmentTypeId);
   }
 
+  updateDateRangeSearchState = (state) => {
+    var today = Moment();
+    var startDate;
+    var endDate;
+
+    switch (state.dateRange) {
+      case THIS_FISCAL:
+        // Fiscal Year: Apr 1 - March 31
+        startDate = startOfCurrentFiscal(today);
+        endDate = endOfCurrentFiscal(today);
+        break;
+      case LAST_FISCAL:
+        // Fiscal Year: Apr 1 - March 31
+        startDate = startOfPreviousFiscal(today);
+        endDate = endOfPreviousFiscal(today);
+        break;
+      case CUSTOM:
+        startDate = today;
+        endDate = today;
+        break;
+      default:
+        break;
+    }
+
+    this.updateSearchState({ ...state, startDate: startDate.format('YYYY-MM-DD'), endDate: endDate.format('YYYY-MM-DD') }, this.filterSelectedProjects);
+  }
+
+  updateDateSearchState = (state) => {
+    this.updateSearchState(state, this.filterSelectedProjects);
+  };
+
   updateProjectSearchState = (state) => {
     this.updateSearchState(state, this.filterSelectedEquipmentType);
+  };
+
+  updateEquipmentTypeSearchState = (state) => {
+    this.updateSearchState(state, this.filterSelectedEquipment);
+  };
+
+  filterSelectedProjects = () => {
+    var acceptableProjects = _.map(this.getFilteredProjects(), 'id');
+    var projectIds = _.intersection(this.state.search.projectIds, acceptableProjects);
+    this.updateSearchState({ projectIds: projectIds }, this.filterSelectedEquipmentType);
   };
 
   filterSelectedEquipmentType = () => {
@@ -236,22 +279,29 @@ class AitReport extends React.Component {
     this.updateSearchState({ districtEquipmentTypes: districtEquipmentTypes }, this.filterSelectedEquipment);
   };
 
-  getFilteredDistrictEquipmentType = () => {
-    return _.chain(this.props.districtEquipmentTypes.data)
-      .filter(x => this.matchesProjectFilter(x.projectIds))
-      .sortBy('districtEquipmentName')
-      .value();
-  };
-
   filterSelectedEquipment = () => {
     var acceptableEquipmentIds = _.map(this.getFilteredEquipment(), 'id');
     var equipmentIds = _.intersection(this.state.search.equipmentIds, acceptableEquipmentIds);
     this.updateSearchState({ equipmentIds: equipmentIds });
   };
 
+  getFilteredProjects = () => {
+    return _.chain(this.props.projects.data)
+      .filter(x => this.matchesDateFilter(x.agreementIds))
+      .sortBy('name')
+      .value();
+  };
+
+  getFilteredDistrictEquipmentType = () => {
+    return _.chain(this.props.districtEquipmentTypes.data)
+      .filter(x => this.matchesDateFilter(x.agreementIds) && this.matchesProjectFilter(x.projectIds))
+      .sortBy('name')
+      .value();
+  };
+
   getFilteredEquipment = () => {
     return _.chain(this.props.equipment.data)
-      .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesDistrictEquipmentTypeFilter(x.districtEquipmentTypeId))
+      .filter(x => this.matchesDateFilter(x.agreementIds) && this.matchesProjectFilter(x.projectIds) && this.matchesDistrictEquipmentTypeFilter(x.districtEquipmentTypeId))
       .sortBy('equipmentCode')
       .value();
   };
@@ -262,12 +312,12 @@ class AitReport extends React.Component {
       resultCount = '(' + Object.keys(this.props.aitResponses.data).length + ')';
     }
 
-    var projects = _.sortBy(this.props.projects.data, 'name');
+    var projects = this.getFilteredProjects();
     var districtEquipmentTypes = this.getFilteredDistrictEquipmentType();
     var equipment = this.getFilteredEquipment();
 
-    return <div id="ait-report">
-      <PageHeader>AIT Report { resultCount }
+    return <div id="rental-agreement-summary">
+      <PageHeader>Rental Agreement Summary { resultCount }
         <ButtonGroup>
           <PrintButton disabled={ !this.props.aitResponses.loaded }/>
         </ButtonGroup>
@@ -281,7 +331,6 @@ class AitReport extends React.Component {
                   <MultiDropdown
                     id="projectIds"
                     placeholder="Projects"
-                    fieldName="label"
                     disabled={!this.props.projects.loaded}
                     items={projects}
                     selectedIds={this.state.search.projectIds}
@@ -289,7 +338,6 @@ class AitReport extends React.Component {
                     showMaxItems={2} />
                   <MultiDropdown
                     id="districtEquipmentTypes"
-                    fieldName="districtEquipmentName"
                     placeholder="Equipment Types"
                     items={districtEquipmentTypes}
                     disabled={!this.props.districtEquipmentTypes.loaded}
@@ -314,7 +362,7 @@ class AitReport extends React.Component {
                   <DropdownControl
                     id="dateRange"
                     title={this.state.search.dateRange}
-                    updateState={this.updateSearchState}
+                    updateState={this.updateDateRangeSearchState}
                     placeholder="Dated On"
                     items={[ THIS_FISCAL, LAST_FISCAL, CUSTOM ]}/>
                   <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
@@ -324,9 +372,9 @@ class AitReport extends React.Component {
               {(() => {
                 if (this.state.search.dateRange === CUSTOM) {
                   return <Row>
-                    <ButtonToolbar id="ait-report-custom-date-filters">
-                      <DateControl id="startDate" date={ this.state.search.startDate } updateState={ this.updateSearchState } label="From:" title="start date"/>
-                      <DateControl id="endDate" date={ this.state.search.endDate } updateState={ this.updateSearchState } label="To:" title="end date"/>
+                    <ButtonToolbar id="rental-agreement-summary-custom-date-filters">
+                      <DateControl id="startDate" date={ this.state.search.startDate } updateState={ this.updateDateSearchState } label="From:" title="start date"/>
+                      <DateControl id="endDate" date={ this.state.search.endDate } updateState={ this.updateDateSearchState } label="To:" title="end date"/>
                     </ButtonToolbar>
                   </Row>;
                 }
@@ -357,9 +405,10 @@ class AitReport extends React.Component {
 function mapStateToProps(state) {
   return {
     currentUser: state.user,
-    projects: state.lookups.projectsCurrentFiscal,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypeHires,
-    equipment: state.lookups.equipment.ts,
+    agreementSummaryLite: state.lookups.agreementSummaryLite,
+    projects: state.lookups.projectsAgreementSummary,
+    districtEquipmentTypes: state.lookups.districtEquipmentTypesAgreementSummary,
+    equipment: state.lookups.equipment.agreementSummary,
     aitResponses: state.models.aitResponses,
     favourites: state.models.favourites.aitReport,
     search: state.search.aitResponses,

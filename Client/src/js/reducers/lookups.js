@@ -18,6 +18,10 @@ const DEFAULT_LOOKUPS = {
       data: {},
       loaded: false,
     },
+    agreementSummary: {
+      data: {},
+      loaded: false,
+    },
     ts: {
       data: {},
       loaded: false,
@@ -31,7 +35,7 @@ const DEFAULT_LOOKUPS = {
     data: {},
     loaded: false,
   },
-  districtEquipmentTypeHires: {
+  districtEquipmentTypesAgreementSummary: {
     data: {},
     loaded: false,
   },
@@ -71,6 +75,14 @@ const DEFAULT_LOOKUPS = {
     data: {},
     loaded: false,
   },
+  projectsAgreementSummary: {
+    data: {},
+    loaded: false,
+  },
+  agreementSummaryLite: {
+    data: {},
+    loaded: false,
+  },
   users: {},
   rolloverStatus: {},
   searchSummaryCounts: {},
@@ -104,8 +116,8 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
     case Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_LOOKUP:
       return { ...state, districtEquipmentTypes: { data: action.districtEquipmentTypes, loaded: true } };
 
-    case Action.UPDATE_DISTRICT_EQUIPMENT_TYPE_HIRES_LOOKUP:
-      return { ...state, districtEquipmentTypeHires: { data: action.districtEquipmentTypeHires, loaded: true } };
+    case Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_AGREEMENT_SUMMARY_LOOKUP:
+      return { ...state, districtEquipmentTypesAgreementSummary: { data: action.districtEquipmentTypes, loaded: true } };
 
     case Action.UPDATE_FISCAL_YEARS_LOOKUP:
       return { ...state, fiscalYears: action.fiscalYears };
@@ -138,6 +150,9 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
     case Action.UPDATE_EQUIPMENT_LITE_LOOKUP:
       return { ...state, equipment: { ...state.equipment, lite: { data: action.equipment, loaded: true } } };
 
+    case Action.UPDATE_EQUIPMENT_AGREEMENT_SUMMARY_LOOKUP:
+      return { ...state, equipment: { ...state.equipment, agreementSummary: { data: action.equipment, loaded: true } } };
+
     case Action.UPDATE_EQUIPMENT_TS_LOOKUP:
       return { ...state, equipment: { ...state.equipment, ts: { data: action.equipment, loaded: true } } };
 
@@ -150,6 +165,9 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
     case Action.UPDATE_PROJECTS_LOOKUP:
       return { ...state, projects: { ...state.projects, data: action.projects, loaded: true } };
 
+    case Action.UPDATE_PROJECTS_AGREEMENT_SUMMARY_LOOKUP:
+      return { ...state, projectsAgreementSummary: { data: action.projects, loaded: true } };
+
     case Action.UPDATE_PROJECTS_CURRENT_FISCAL_LOOKUP:
       return {
         ...state,
@@ -159,6 +177,9 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
           loaded: true,
         },
       };
+
+    case Action.UPDATE_AGREEMENT_SUMMARY_LITE_LOOKUP:
+      return { ...state, agreementSummaryLite: { data: action.agreements, loaded: true } };
 
     case Action.UPDATE_USERS_LOOKUP:
       return { ...state, users: action.users };

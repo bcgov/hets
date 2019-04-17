@@ -463,6 +463,15 @@ export function getEquipmentLite() {
   });
 }
 
+export function getEquipmentAgreementSummary() {
+  const silent = store.getState().lookups.equipment.ts.loaded;
+  return new ApiRequest('/equipment/agreementSummary', { silent }).get().then(response => {
+    var equipment = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_AGREEMENT_SUMMARY_LOOKUP, equipment: equipment });
+  });
+}
+
 export function getEquipmentTs() {
   const silent = store.getState().lookups.equipment.ts.loaded;
   return new ApiRequest('/equipment/liteTs', { silent }).get().then(response => {
@@ -1197,6 +1206,15 @@ export function getProjects() {
   });
 }
 
+export function getProjectsAgreementSummary() {
+  const silent = store.getState().lookups.projectsAgreementSummary.loaded;
+  return new ApiRequest('/projects/agreementSummary', { silent }).get().then(response => {
+    var projects = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_PROJECTS_AGREEMENT_SUMMARY_LOOKUP, projects: projects });
+  });
+}
+
 export function getProjectsCurrentFiscal() {
   const silent = store.getState().lookups.projectsCurrentFiscal.loaded;
   return new ApiRequest('/projects', { silent }).get({ currentFiscal: true }).then(response => {
@@ -1741,6 +1759,14 @@ function convertRentalAgreement(agreement) {
   };
 }
 
+export function getRentalAgreementSummaryLite() {
+  return new ApiRequest('/rentalagreements/summaryLite').get().then(response => {
+    var agreements = response.data;
+
+    store.dispatch({ type: Action.UPDATE_AGREEMENT_SUMMARY_LITE_LOOKUP, agreements });
+  });
+}
+
 export function getRentalAgreement(id) {
   return new ApiRequest(`/rentalagreements/${ id }`).get().then(response => {
     var agreement = response.data;
@@ -2172,12 +2198,12 @@ export function getDistrictEquipmentTypes() {
   });
 }
 
-export function getDistrictEquipmentTypeHires() {
-  const silent = store.getState().lookups.districtEquipmentTypeHires.loaded;
-  return new ApiRequest('/districtequipmenttypes/hires', { silent }).get().then(response => {
-    var districtEquipmentTypeHires = normalize(response.data);
+export function getDistrictEquipmentTypesAgreementSummary() {
+  const silent = store.getState().lookups.districtEquipmentTypesAgreementSummary.loaded;
+  return new ApiRequest('/districtequipmenttypes/agreementSummary', { silent }).get().then(response => {
+    var districtEquipmentTypes = normalize(response.data);
 
-    store.dispatch({ type: Action.UPDATE_DISTRICT_EQUIPMENT_TYPE_HIRES_LOOKUP, districtEquipmentTypeHires: districtEquipmentTypeHires });
+    store.dispatch({ type: Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_AGREEMENT_SUMMARY_LOOKUP, districtEquipmentTypes });
   });
 }
 

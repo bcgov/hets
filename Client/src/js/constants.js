@@ -19,7 +19,7 @@ export const TIME_ENTRY_PATHNAME = 'time-entry';
 export const VERSION_PATHNAME = 'version';
 export const BUSINESS_PORTAL_PATHNAME = '/business';
 export const BUSINESS_DETAILS_PATHNAME = '/business/details';
-export const AIT_REPORT_PATHNAME = 'reports/ait-report';
+export const AIT_REPORT_PATHNAME = 'reports/rental-agreement-summary';
 
 // Permissions
 export const PERMISSION_LOGIN = 'Login';

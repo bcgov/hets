@@ -291,6 +291,35 @@ namespace HetsApi.Controllers
             return new ObjectResult(new HetsResponse(result));
         }
 
+        /// <summary>
+        /// Get all projects by district for rental agreement summary filtering
+        /// </summary>
+        [HttpGet]
+        [Route("agreementSummary")]
+        [SwaggerOperation("ProjectsGetAgreementSummary")]
+        [SwaggerResponse(200, type: typeof(List<ProjectAgreementSummary>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult ProjectsGetAgreementSummary()
+        {
+            // get user's district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            List<ProjectAgreementSummary> result = _context.HetRentalAgreement.AsNoTracking()
+                .Include(x => x.Project)
+                .Where(x => x.DistrictId.Equals(districtId) &&
+                            !x.Number.StartsWith("BCBid"))
+                .GroupBy(x => x.Project, (p, agreements) => new ProjectAgreementSummary
+                {
+                    Id = p.ProjectId,
+                    Name = p.Name,
+                    AgreementIds = agreements.Select(y => y.RentalAgreementId).Distinct().ToList(),
+                })
+                .ToList();
+
+            // return to the client
+            return new ObjectResult(new HetsResponse(result));
+        }
+
         #endregion
 
         #region Clone Project Agreements

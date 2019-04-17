@@ -332,11 +332,11 @@ namespace HetsData.Helpers
         }
     }
 
-    public class DistrictEquipmentTypeHire
+    public class DistrictEquipmentTypeAgreementSummary
     {
-        [JsonProperty("Id")]
-        public int DistrictEquipmentTypeId { get; set; }
-        public string DistrictEquipmentName { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public List<int> AgreementIds { get; set; }
         public List<int?> ProjectIds { get; set; }
     }
 }
