@@ -21,6 +21,7 @@ import FormInputControl from '../components/FormInputControl.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import PrintButton from '../components/PrintButton.jsx';
+import Authorize from '../components/Authorize.jsx';
 
 
 class Projects extends React.Component {
@@ -234,9 +235,9 @@ class Projects extends React.Component {
         }
 
         var addProjectButton = (
-          <Button title="Add Project" bsSize="xsmall" onClick={ this.openAddDialog }>
+          <Authorize><Button title="Add Project" bsSize="xsmall" onClick={ this.openAddDialog }>
             <Glyphicon glyph="plus" />&nbsp;<strong>Add Project</strong>
-          </Button>
+          </Button></Authorize>
         );
 
         if (this.props.projects.loaded) {

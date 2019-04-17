@@ -18,7 +18,7 @@ import SearchControl from '../components/SearchControl.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import PrintButton from '../components/PrintButton.jsx';
-
+import Authorize from '../components/Authorize.jsx';
 
 class Roles extends React.Component {
   static propTypes = {
@@ -112,7 +112,7 @@ class Roles extends React.Component {
         if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
         var addRoleButton = <LinkContainer to={{ pathname: `${ Constant.ROLES_PATHNAME }/0` }}>
-          <Button title="Add Role" bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add Role</strong></Button>
+          <Authorize><Button title="Add Role" bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add Role</strong></Button></Authorize>
         </LinkContainer>;
         if (Object.keys(this.props.roles).length === 0) { return <Alert bsStyle="success">No roles { addRoleButton }</Alert>; }
 

@@ -26,6 +26,7 @@ import Form from '../components/Form.jsx';
 import PrintButton from '../components/PrintButton.jsx';
 import ReturnButton from '../components/ReturnButton.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
+import Authorize from '../components/Authorize.jsx';
 
 import { daysFromToday, formatDateTime, today, isValidDate, toZuluTime } from '../utils/date';
 import { isBlank, notBlank } from '../utils/string';
@@ -250,7 +251,7 @@ class UsersDetail extends React.Component {
             <Well>
               <SubHeader title="Districts"/>
               {(() => {
-                var addDistrictButton = <Button title="Add District" bsSize="small" onClick={ this.addUserDistrict }><Glyphicon glyph="plus" />&nbsp;<strong>Add District</strong></Button>;
+                var addDistrictButton = <Authorize><Button title="Add District" bsSize="small" onClick={ this.addUserDistrict }><Glyphicon glyph="plus" />&nbsp;<strong>Add District</strong></Button></Authorize>;
 
                 if (loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
@@ -272,9 +273,11 @@ class UsersDetail extends React.Component {
                           <td style={{ textAlign: 'right' }}>
                             { !district.isPrimary &&
                               <ButtonGroup>
-                                <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteDistrict.bind(this, district) } /> }>
-                                  <Button title="Delete District" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
-                                </OverlayTrigger>
+                                <Authorize>
+                                  <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteDistrict.bind(this, district) } /> }>
+                                    <Button title="Delete District" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
+                                  </OverlayTrigger>
+                                </Authorize>
                                 <Button title="Edit District" bsSize="xsmall" onClick={ this.editUserDistrict.bind(this, district) }><Glyphicon glyph="edit" /></Button>
                               </ButtonGroup>
                             }
@@ -297,7 +300,7 @@ class UsersDetail extends React.Component {
               {(() => {
                 if (loading ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-                var addUserRoleButton = <Button title="Add User Role" onClick={ this.openUserRoleDialog } bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add Role</strong></Button>;
+                var addUserRoleButton = <Authorize><Button title="Add User Role" onClick={ this.openUserRoleDialog } bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add Role</strong></Button></Authorize>;
 
                 var userRoles = _.filter(user.userRoles, userRole => {
                   var include = notBlank(userRole.roleName);
@@ -334,11 +337,13 @@ class UsersDetail extends React.Component {
                         <td style={{ textAlign: 'right' }}>
                           {
                             userRole.expiryDate ? null :
-                              <OverlayTrigger trigger="click" placement="left" rootClose
-                                overlay={ <ExpireOverlay userRole={ userRole } onSave={ this.updateUserRole }/> }
-                              >
-                                <Button title="Expire User Role" bsSize="xsmall"><Glyphicon glyph="pencil" />&nbsp;Expire</Button>
-                              </OverlayTrigger>
+                              <Authorize>
+                                <OverlayTrigger trigger="click" placement="left" rootClose
+                                  overlay={ <ExpireOverlay userRole={ userRole } onSave={ this.updateUserRole }/> }
+                                >
+                                  <Button title="Expire User Role" bsSize="xsmall"><Glyphicon glyph="pencil" />&nbsp;Expire</Button>
+                                </OverlayTrigger>
+                              </Authorize>
                           }
                         </td>
                       </tr>;

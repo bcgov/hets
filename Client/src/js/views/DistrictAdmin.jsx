@@ -17,6 +17,8 @@ import TableControl from '../components/TableControl.jsx';
 import Spinner from '../components/Spinner.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import Confirm from '../components/Confirm.jsx';
+import Authorize from '../components/Authorize.jsx';
+
 import ConditionAddEditDialog from './dialogs/ConditionAddEditDialog.jsx';
 import DistrictEquipmentTypeAddEditDialog from './dialogs/DistrictEquipmentTypeAddEditDialog.jsx';
 import EquipmentTransferDialog from './dialogs/EquipmentTransferDialog.jsx';
@@ -151,7 +153,7 @@ class DistrictAdmin extends React.Component {
         {(() => {
           if (!this.props.districtEquipmentTypes.loaded) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-          var addDistrictEquipmentButton = <Button title="Add District Equipment" bsSize="xsmall" onClick={ this.addDistrictEquipmentType }><Glyphicon glyph="plus" />&nbsp;<strong>Add District Equipment Type</strong></Button>;
+          var addDistrictEquipmentButton = <Authorize><Button title="Add District Equipment" bsSize="xsmall" onClick={ this.addDistrictEquipmentType }><Glyphicon glyph="plus" />&nbsp;<strong>Add District Equipment Type</strong></Button></Authorize>;
 
           var equipmentTypes = this.props.districtEquipmentTypes.data;
 
@@ -178,9 +180,11 @@ class DistrictAdmin extends React.Component {
                     <td>{ equipment.equipmentType.name }</td>
                     <td style={{ textAlign: 'right' }}>
                       <ButtonGroup>
-                        <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteDistrictEquipmentType.bind(this, equipment) }/> }>
-                          <Button title="Delete District Equipment Type" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
-                        </OverlayTrigger>
+                        <Authorize>
+                          <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteDistrictEquipmentType.bind(this, equipment) }/> }>
+                            <Button title="Delete District Equipment Type" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
+                          </OverlayTrigger>
+                        </Authorize>
                         <Button title="Edit District Equipment Type" bsSize="xsmall" onClick={ this.editDistrictEquipmentType.bind(this, equipment) }><Glyphicon glyph="edit" /></Button>
                       </ButtonGroup>
                     </td>
@@ -197,7 +201,7 @@ class DistrictAdmin extends React.Component {
         {(() => {
           if (this.props.rentalConditions.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-          var addConditionButton = <Button title="Add Condition" bsSize="xsmall" onClick={ this.addCondition }><Glyphicon glyph="plus" />&nbsp;<strong>Add Condition</strong></Button>;
+          var addConditionButton = <Authorize><Button title="Add Condition" bsSize="xsmall" onClick={ this.addCondition }><Glyphicon glyph="plus" />&nbsp;<strong>Add Condition</strong></Button></Authorize>;
 
           if (Object.keys(this.props.rentalConditions.data).length === 0) { return <Alert bsStyle="success">No users { addConditionButton }</Alert>; }
 
@@ -229,15 +233,15 @@ class DistrictAdmin extends React.Component {
           );
         })()}
       </Well>
-
-      <Well className="clearfix">
-        <SubHeader title="Equipment Transfer (Bulk)"/>
-        <Row>
-          <Col xs={9}>Bulk transfer will enable the user to transfer equipment associated with one owner code to another owner code.</Col>
-          <Col xs={3}><span className="pull-right"><Button onClick={ this.showEquipmentTransferDialog }>Equipment Transfer</Button></span></Col>
-        </Row>
-      </Well>
-
+      <Authorize>
+        <Well className="clearfix">
+          <SubHeader title="Equipment Transfer (Bulk)"/>
+          <Row>
+            <Col xs={9}>Bulk transfer will enable the user to transfer equipment associated with one owner code to another owner code.</Col>
+            <Col xs={3}><span className="pull-right"><Button onClick={ this.showEquipmentTransferDialog }>Equipment Transfer</Button></span></Col>
+          </Row>
+        </Well>
+      </Authorize>
       { this.state.showEquipmentTransferDialog &&
         <EquipmentTransferDialog
           show={ this.state.showEquipmentTransferDialog }

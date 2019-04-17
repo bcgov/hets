@@ -20,6 +20,7 @@ import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import PrintButton from '../components/PrintButton.jsx';
+import Authorize from '../components/Authorize.jsx';
 
 import { formatDateTime } from '../utils/date';
 
@@ -341,9 +342,9 @@ class TimeEntry extends React.Component {
           return <div style={{ textAlign: 'center' }}><Spinner/></div>;
         }
 
-        var addTimeEntryButton = <Button title="Add Time" bsSize="xsmall" onClick={ this.openTimeEntryDialog.bind(this, null) }>
+        var addTimeEntryButton = <Authorize><Button title="Add Time" bsSize="xsmall" onClick={ this.openTimeEntryDialog.bind(this, null) }>
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Time</strong>
-        </Button>;
+        </Button></Authorize>;
 
         if (this.props.timeEntries.loaded) {
           return this.renderResults(addTimeEntryButton);

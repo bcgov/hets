@@ -35,13 +35,13 @@ import ReturnButton from '../components/ReturnButton.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
 import PrintButton from '../components/PrintButton.jsx';
+import Authorize from '../components/Authorize.jsx';
 
 import { activeOwnerSelector, activeOwnerIdSelector } from '../selectors/ui-selectors.js';
 
 import { formatDateTime, today, toZuluTime } from '../utils/date';
 import { sortDir, sort } from '../utils/array.js';
 import { firstLastName } from '../utils/string.js';
-import Authorize from '../components/Authorize.jsx';
 
 /*
 
