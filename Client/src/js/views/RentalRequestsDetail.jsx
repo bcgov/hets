@@ -321,7 +321,7 @@ class RentalRequestsDetail extends React.Component {
             { field: 'equipmentDetails',        node: <div><span>Equip.</span> <span>Details</span></div> },
             { field: 'equipmentOwner',          title: 'Owner'             },
             { field: 'primaryContactName',      title: 'Contact'           },
-            { field: 'primaryContactWorkPhone', node: <div><span>Work</span> <span>Phone</span></div> },
+            { field: 'primaryContactWorkPhone', node: <div><span>Phone</span></div> },
             { field: 'primaryContactCellPhone', node: <div><span>Cell</span> <span>Phone</span></div> },
             { field: 'status',                  title: 'Status'            },
             { field: '',                        title: 'Comments'          },

@@ -217,7 +217,7 @@ class ContactsEditDialog extends React.Component {
           <Row>
             <Col md={12}>
               <FormGroup controlId="workPhoneNumber" validationState={ this.state.workPhoneNumberError ? 'error' : null }>
-                <ControlLabel>Work Phone {this.state.isPrimary && <sup>*</sup>}</ControlLabel>
+                <ControlLabel>Phone {this.state.isPrimary && <sup>*</sup>}</ControlLabel>
                 <FormInputControl type="text" defaultValue={ this.state.workPhoneNumber } placeholder="250-555-1212x123" readOnly={ isReadOnly } updateState={ this.updateState }/>
                 <HelpBlock>{ this.state.workPhoneNumberError }</HelpBlock>
               </FormGroup>

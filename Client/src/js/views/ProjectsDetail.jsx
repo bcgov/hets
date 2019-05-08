@@ -473,8 +473,8 @@ class ProjectsDetail extends React.Component {
 
                   var headers = [
                     { field: 'name',              title: 'Name'         },
-                    { field: 'phone',             title: 'Phone Number' },
-                    { field: 'mobilePhoneNumber', title: 'Cell'         },
+                    { field: 'phone',             title: 'Phone'        },
+                    { field: 'mobilePhoneNumber', title: 'Cell Phone'   },
                     { field: 'faxPhoneNumber',    title: 'Fax'          },
                     { field: 'emailAddress',      title: 'Email'        },
                     { field: 'role',              title: 'Role'         },
