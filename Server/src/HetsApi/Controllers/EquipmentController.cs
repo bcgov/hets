@@ -236,6 +236,7 @@ namespace HetsApi.Controllers
             float? originalServiceHoursThreeYearsAgo = equipment.ServiceHoursThreeYearsAgo;
             int? originalLocalAreaId = equipment.LocalAreaId;
             int? originalDistrictEquipmentTypeId = equipment.DistrictEquipmentTypeId;
+            float? originalYearsOfService = equipment.YearsOfService;
 
             // check if we need to rework the equipment's seniority
             bool rebuildSeniority = (originalSeniorityEffectiveDate == null && item.SeniorityEffectiveDate != null) ||
@@ -273,6 +274,13 @@ namespace HetsApi.Controllers
             if ((originalServiceHoursThreeYearsAgo == null && item.ServiceHoursThreeYearsAgo != null) ||
                 (originalServiceHoursThreeYearsAgo != null && item.ServiceHoursThreeYearsAgo != null &&
                  originalServiceHoursThreeYearsAgo != item.ServiceHoursThreeYearsAgo))
+            {
+                rebuildSeniority = true;
+            }
+
+            if ((originalYearsOfService == null && item.YearsOfService != null) ||
+                (originalYearsOfService != null && item.YearsOfService != null &&
+                 originalYearsOfService != item.YearsOfService))
             {
                 rebuildSeniority = true;
             }
