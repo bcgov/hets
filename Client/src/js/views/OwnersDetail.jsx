@@ -453,13 +453,13 @@ class OwnersDetail extends React.Component {
                   var contacts = sort(owner.contacts, this.state.uiContacts.sortField, this.state.uiContacts.sortDesc);
 
                   var headers = [
-                    { field: CONTACT_NAME_SORT_FIELDS, title: 'Name'  },
-                    { field: 'phone',                  title: 'Phone' },
-                    { field: 'mobilePhoneNumber',      title: 'Cell'  },
-                    { field: 'faxPhoneNumber',         title: 'Fax'   },
-                    { field: 'emailAddress',           title: 'Email' },
-                    { field: 'role',                   title: 'Role'  },
-                    { field: 'notes',                  title: 'Notes' },
+                    { field: CONTACT_NAME_SORT_FIELDS, title: 'Name'        },
+                    { field: 'phone',                  title: 'Phone'       },
+                    { field: 'mobilePhoneNumber',      title: 'Cell Phone'  },
+                    { field: 'faxPhoneNumber',         title: 'Fax'         },
+                    { field: 'emailAddress',           title: 'Email'       },
+                    { field: 'role',                   title: 'Role'        },
+                    { field: 'notes',                  title: 'Notes'       },
                     { field: 'addContact',             title: 'Add Contact', style: { textAlign: 'right'  },
                       node: addContactButton,
                     },
