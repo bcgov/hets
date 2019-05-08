@@ -163,6 +163,9 @@ class OwnersAddDialog extends React.Component {
     if (isBlank(this.state.postalCode)) {
       this.setState({ postalCodeError: 'Postal code is required' });
       valid = false;
+    } else if (!Constant.POSTAL_CODE_REGEX.test(this.state.postalCode)) {
+      this.setState({ postalCodeError: 'Invalid postal code' });
+      valid = false;
     }
 
     if (isBlank(this.state.ownerCode)) {
