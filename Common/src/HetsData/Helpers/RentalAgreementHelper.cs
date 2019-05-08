@@ -281,7 +281,7 @@ namespace HetsData.Helpers
                 pdfModel.RateComment = agreement.RateComment;
                 pdfModel.RatePeriod = agreement.RatePeriodType.Description;
                 pdfModel.AgreementCity = agreement.AgreementCity;
-                pdfModel.DatedOn = DateTime.UtcNow.ToString("MM/dd/yyyy");
+                pdfModel.DatedOn = (agreement.DatedOn ?? DateTime.UtcNow).ToString("MM/dd/yyyy");
                 
                 // format the note
                 if (!string.IsNullOrEmpty(agreement.Note))
