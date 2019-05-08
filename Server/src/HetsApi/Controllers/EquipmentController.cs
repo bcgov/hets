@@ -1308,8 +1308,8 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetRentalAgreement)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
                             x.EquipmentStatusTypeId.Equals(statusId))
-                .OrderBy(x => x.LocalArea)
-                    .ThenBy(x => x.DistrictEquipmentType)
+                .OrderBy(x => x.LocalArea.Name)
+                    .ThenBy(x => x.DistrictEquipmentType.DistrictEquipmentName)
                     .ThenBy(x => x.BlockNumber)
                     .ThenByDescending(x => x.NumberInBlock);
 
