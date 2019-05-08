@@ -3,6 +3,7 @@ import React from 'react';
 import { FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
 
 import * as Api from '../../api';
+import * as Constant from '../../constants';
 import * as Log from '../../history';
 
 import FormDialog from '../../components/FormDialog.jsx';
@@ -73,6 +74,8 @@ class EquipmentChangeStatusDialog extends React.Component {
   };
 
   render() {
+    var maxLength = Constant.MAX_LENGTH_STATUS_COMMENT;
+
     return (
       <FormDialog
         id="notes"
@@ -83,8 +86,9 @@ class EquipmentChangeStatusDialog extends React.Component {
         onSubmit={this.formSubmitted}>
         <FormGroup controlId="comment" validationState={this.state.commentError ? 'error' : null}>
           <ControlLabel>Comment</ControlLabel>
-          <FormInputControl value={this.state.comment} componentClass="textarea" updateState={this.updateState} />
+          <FormInputControl value={this.state.comment} componentClass="textarea" updateState={this.updateState} maxLength={ maxLength } />
           <HelpBlock>{this.state.commentError}</HelpBlock>
+          <p>Maximum { maxLength } characters.</p>
         </FormGroup>
       </FormDialog>
     );
