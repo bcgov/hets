@@ -133,6 +133,7 @@ export const MAX_LENGTH_CGL_COMPANY_NAME = 150;
 export const MAX_LENGTH_NOTE_TEXT = 2048;
 export const MAX_LENGTH_PHONE_NUMBER = 20;
 export const MAX_LENGTH_RENTAL_AGREEMENT_NOTE = 150;
+export const MAX_LENGTH_STATUS_COMMENT = 255;
 
 // Max File Sizes
 export const MAX_ATTACHMENT_FILE_SIZE = 5242880; // 5 MB
