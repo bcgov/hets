@@ -187,7 +187,7 @@ class ProjectsAddDialog extends React.Component {
           <Row>
             <Col xs={6}>
               <FormGroup controlId="provincialProjectNumber" validationState={ this.state.provincialProjectNumberError ? 'error' : null }>
-                <ControlLabel>Provincial Project Number</ControlLabel>
+                <ControlLabel>Provincial Project Number <sup>*</sup></ControlLabel>
                 <FormInputControl type="text" value={ this.state.provincialProjectNumber } updateState={ this.updateState } />
                 <HelpBlock>{ this.state.provincialProjectNumberError }</HelpBlock>
               </FormGroup>
