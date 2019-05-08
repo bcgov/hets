@@ -70,6 +70,7 @@ class UsersEditDialog extends React.Component {
   };
 
   didChange = () => {
+    if (this.props.isNew) { return true; }
     if (this.state.active !== this.props.user.active) { return true; }
     if (this.state.givenName !== this.props.user.givenName) { return true; }
     if (this.state.surname !== this.props.user.surname) { return true; }
