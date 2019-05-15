@@ -16,11 +16,11 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
         "POSTGRESQL_DATABASE": "hets",
-        "POSTGRESQL_USER": "trdbhetd",
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "POSTGRESQL_USER": "postgres",
         "DATABASE_SERVICE_NAME": "localhost",
-        "POSTGRESQL_PASSWORD": "<pwd>"
+        "POSTGRESQL_PASSWORD": "test"
       }
     }
   }
