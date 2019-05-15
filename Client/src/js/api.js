@@ -923,7 +923,7 @@ export function changeOwnerStatus(status) {
 }
 
 export function scheduleStatusLettersPdf(params) {
-  return new ApiRequest('owners/verificationPdf').post(params, { responseType: Constant.RESPONSE_TYPE_BLOB });
+  return new ApiRequest('owners/verificationDoc').post(params, { responseType: Constant.RESPONSE_TYPE_BLOB });
 }
 
 export function getMailingLabelsPdf(params) {

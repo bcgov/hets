@@ -5,12 +5,12 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore.Storage;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Annotations;
@@ -19,7 +19,6 @@ using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HetsApi.Controllers
 {
@@ -659,22 +658,19 @@ namespace HetsApi.Controllers
 
         #endregion
 
-        #region Get Verification Pdfs
+        #region Get Verification Report
 
         /// <summary>
-        /// Get owner verification pdf
+        /// Get owner verification report
         /// </summary>
-        /// <remarks>Returns a PDF version of the owner verification notices</remarks>
+        /// <remarks>Returns an OpenXml Document version of the owner verification notices</remarks>
         /// <param name="parameters">Array of local area and owner id numbers to generate notices for</param>
         [HttpPost]
-        [Route("verificationPdf")]
-        [SwaggerOperation("OwnersIdVerificationPdfPost")]
+        [Route("verificationDoc")]
+        [SwaggerOperation("OwnersIdVerificationPost")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult OwnersIdVerificationPdfPost([FromBody]ReportParameters parameters)
+        public virtual IActionResult OwnersIdVerificationPost([FromBody]ReportParameters parameters)
         {
-            // get user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
-
             // get equipment status
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
             if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
@@ -684,33 +680,23 @@ namespace HetsApi.Controllers
             int? ownerStatusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
             if (ownerStatusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            string pdfService = _configuration["PDF_SERVICE_NAME"];
-            string pdfUrl = _configuration.GetSection("Constants:OwnerVerificationPdfUrl").Value;
-            string reportsRoot = _configuration["ReportsPath"];
+            // get owner report data
+            OwnerVerificationReportModel reportModel = OwnerHelper.GetOwnerVerificationLetterData(_context, parameters.LocalAreas, parameters.Owners, statusId, ownerStatusId);
 
-            // get connection string
-            string connectionString = GetConnectionString();
+            // convert to open xml document
+            DateTime now = DateTime.UtcNow;
+            string documentName = $"OwnerVerification-{DateTime.Now:yyyy-MM-dd-H-mm}.docx";
+            byte[] document = HetsReport.OwnerVerification.GetOwnerVerification(reportModel, documentName);
 
-            // create new job!
-            HetBatchReport report = new HetBatchReport
+            // return document
+            FileContentResult result = new FileContentResult(document, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             {
-                DistrictId = Convert.ToInt32(districtId),
-                StartDate = DateTime.Now,
-                Complete = false,
-                ReportName = "Owner Verification Letters"
+                FileDownloadName = documentName
             };
 
-            _context.HetBatchReport.Add(report);
-            _context.SaveChanges();
+            Response.Headers.Add("Content-Disposition", "inline; filename=" + documentName);
 
-            int reportId = report.ReportId;
-
-            // queue the job
-            BackgroundJob.Enqueue(() => OwnerHelper.OwnerVerificationLetters(null,
-                reportId, parameters.LocalAreas, parameters.Owners, statusId, ownerStatusId,
-                pdfService, pdfUrl, reportsRoot, connectionString));
-
-            return new ObjectResult(report);
+            return result;
         }
 
         #endregion
