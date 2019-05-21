@@ -228,7 +228,7 @@ class RentalRequestsDetail extends React.Component {
 
     return <div id="rental-requests-detail">
       <PageOrientation type="landscape"/>
-      <Row id="rental-requests-top">
+      <Row id="rental-requests-top" className="hidden-print">
         <Col sm={9}>
           <div id="rental-request-status">
             <Label bsStyle={ rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default' }>{ rentalRequest.status }</Label>
@@ -248,7 +248,8 @@ class RentalRequestsDetail extends React.Component {
       </Row>
 
       <Well className="request-information">
-        <SubHeader title="Request Information" editButtonTitle="Edit Rental Request" onEditClicked={canEditRequest ? this.openEditDialog : null}/>
+        <SubHeader title="Request Information" className="hidden-print" editButtonTitle="Edit Rental Request" onEditClicked={canEditRequest ? this.openEditDialog : null}/>
+        <SubHeader title="Hire Rotation List" className="visible-print text-center"></SubHeader>
         {(() => {
           if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -292,7 +293,7 @@ class RentalRequestsDetail extends React.Component {
       </Well>
 
       <Well>
-        <SubHeader title="Hire Rotation List">
+        <SubHeader title="Hire Rotation List" className="hidden-print">
           <PrintButton title="Print Hire Rotation List" disabled={ loading } disabledTooltip="Please wait for the request information to finish loading.">
             Hire Rotation List
           </PrintButton>
