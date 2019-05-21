@@ -1,9 +1,9 @@
 #=========================================================
 # OpenShift Jenkins pipeline template parameters for:
 # Jenkinsfile: ./Jenkins/DeployToUAT-Jenkinsfile
-# JSON Template File: https://raw.githubusercontent.com/BCDevOps/openshift-tools/master/provisioning/pipeline/resources/pipeline-build.json
+# Template File: https://raw.githubusercontent.com/BCDevOps/openshift-tools/master/provisioning/pipeline/resources/pipeline-build.json
 #=========================================================
-NAME=deploytotest
+NAME=deploytouat
 # GITHUB_WEBHOOK_SECRET=[a-zA-Z0-9]{40}
 SOURCE_REPOSITORY_URL=https://github.com/bcgov/hets.git
 SOURCE_REPOSITORY_REF=master
