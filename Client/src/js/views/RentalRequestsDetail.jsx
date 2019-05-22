@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import { Link } from 'react-router';
@@ -224,9 +225,15 @@ class RentalRequestsDetail extends React.Component {
     const { loading, loadingDocuments } = this.state;
     var rentalRequest = this.props.rentalRequest || {};
 
-    var canEditRequest = rentalRequest.projectId > 0 && rentalRequest.status !== Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
+    var viewOnly = !rentalRequest.projectId;
+    var canEditRequest = !viewOnly && rentalRequest.status !== Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
 
-    return <div id="rental-requests-detail">
+    return <div id="rental-requests-detail" className={ classNames({ 'view-only': viewOnly }) }>
+      <div id="watermark" className="visible-print">
+        View Only
+        <br />
+        Not for Hiring
+      </div>
       <PageOrientation type="landscape"/>
       <Row id="rental-requests-top">
         <Col sm={9}>
@@ -399,7 +406,7 @@ class RentalRequestsDetail extends React.Component {
                               </OverlayTrigger>
                             );
                           }
-                          if (rentalRequest.projectId > 0 && rentalRequest.status === STATUS_IN_PROGRESS && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse)) {
+                          if (!viewOnly && rentalRequest.status === STATUS_IN_PROGRESS && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse)) {
                             return (
                               <Button
                                 bsStyle="link"
