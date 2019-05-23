@@ -922,7 +922,7 @@ export function changeOwnerStatus(status) {
   });
 }
 
-export function scheduleStatusLettersPdf(params) {
+export function getStatusLettersDoc(params) {
   return new ApiRequest('owners/verificationDoc').post(params, { responseType: Constant.RESPONSE_TYPE_BLOB });
 }
 

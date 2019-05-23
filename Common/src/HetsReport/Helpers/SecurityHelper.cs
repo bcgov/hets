@@ -11,12 +11,12 @@ namespace HetsReport.Helpers
     {
         private const string Password = "$H3t_R3p0rt_S3c$riT1";
 
-        public static WordprocessingDocument PasswordProtect(WordprocessingDocument wordDocument)
+        public static void PasswordProtect(WordprocessingDocument wordDocument)
         {
             try
             {
                 // password protect document
-                string password = SecurityHelper.Password;
+                string password = Password;
 
                 // generate the salt
                 byte[] arrSalt = new byte[16];
@@ -155,24 +155,17 @@ namespace HetsReport.Helpers
 
                 wordDocument.ExtendedFilePropertiesPart.Properties.Save();
 
-                DocumentProtection dp = new DocumentProtection
-                {
-                    Edit = DocumentProtectionValues.Comments,
-                    Enforcement = true
-                };
+                DocumentProtection dp = new DocumentProtection {Edit = DocumentProtectionValues.Comments, Enforcement = true};
 
                 wordDocument.MainDocumentPart.DocumentSettingsPart.Settings.AppendChild(dp);
 
                 wordDocument.MainDocumentPart.DocumentSettingsPart.Settings.Save();
-
-                return wordDocument;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 throw;
             }
-
         }
 
         static readonly int[] InitialCodeArray = { 0xE1F0, 0x1D0F, 0xCC9C, 0x84C0, 0x110C, 0x0E10, 0xF1CE, 0x313E, 0x1872, 0xE139, 0xD40F, 0x84F9, 0x280C, 0xA96A, 0x4EC3 };

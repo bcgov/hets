@@ -86,12 +86,42 @@ class StatusLetters extends React.Component {
       window.URL.revokeObjectURL(url);
     });
   };
+  
+  downloadDoc = (promise, filename) => {
+    promise.then((response) => {
+      var blob;
+      if (window.navigator.msSaveBlob) {
+        blob = window.navigator.msSaveBlob(response, filename);
+      } else {
+        blob = new Blob([response], {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+      }
+      //Create a link element, hide it, direct
+      //it towards the blob, and then 'click' it programatically
+      let a = document.createElement('a');
+      a.style.cssText = 'display: none';
+      document.body.appendChild(a);
+      //Create a DOMString representing the blob
+      //and point the link element towards it
+      let url = window.URL.createObjectURL(blob);
+      a.href = url;
+      a.download = filename;
+      //programatically click the link to trigger the download
+      a.click();
+      //release the reference to the file by revoking the Object URL
+      window.URL.revokeObjectURL(url);
+    });
+  };
 
   getStatusLetters = () => {
-    this.setState({ loading: true });
-    Api.scheduleStatusLettersPdf({ localAreas: this.state.localAreaIds, owners: this.state.ownerIds }).then(() => {
-      return this.fetch();
-    });
+    //this.setState({ loading: true });
+    //Api.scheduleStatusLettersPdf({ localAreas: this.state.localAreaIds, owners: this.state.ownerIds }).then(() => {
+      //return this.fetch();
+    //});
+	
+	var promise = Api.getStatusLettersDoc({ localAreas: this.state.localAreaIds, owners: this.state.ownerIds });
+    var filename = 'StatusLetters-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';
+
+    this.downloadDoc(promise, filename);
   };
 
   getMailingLabels = () => {

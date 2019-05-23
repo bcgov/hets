@@ -5,11 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DocumentFormat.OpenXml" Version="2.9.1" />
+    <None Remove="Templates\OwnerVerification-Template.docx" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Templates\" />
+    <EmbeddedResource Include="Templates\OwnerVerification-Template.docx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DocumentFormat.OpenXml" Version="2.9.1" />
   </ItemGroup>
 
   <ItemGroup>

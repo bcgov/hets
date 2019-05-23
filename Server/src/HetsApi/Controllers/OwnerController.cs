@@ -685,7 +685,7 @@ namespace HetsApi.Controllers
 
             // convert to open xml document
             DateTime now = DateTime.UtcNow;
-            string documentName = $"OwnerVerification-{DateTime.Now:yyyy-MM-dd-H-mm}.docx";
+            string documentName = $"OwnerVerification-{DateTime.Now:yyyy-MM-dd}.docx";
             byte[] document = HetsReport.OwnerVerification.GetOwnerVerification(reportModel, documentName);
 
             // return document

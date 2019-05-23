@@ -327,5 +327,82 @@ namespace HetsReport.Helpers
 
             return ToTitleCaseHelper(restOfString, sb.ToString());
         }
+
+        public static void ConvertFieldCodes(OpenXmlElement mainElement)
+        {
+            //  search for all the Run elements
+            Run[] runs = mainElement.Descendants<Run>().ToArray();
+            if (runs.Length == 0) return;
+
+            Dictionary<Run, Run[]> newFields = new Dictionary<Run, Run[]>();
+
+            int cursor = 0;
+
+            do
+            {
+                Run run = runs[cursor];
+
+                if (run.HasChildren && run.Descendants<FieldChar>().Any() &&
+                    (run.Descendants<FieldChar>().First().FieldCharType & FieldCharValues.Begin) == FieldCharValues.Begin)
+                {
+                    List<Run> innerRuns = new List<Run> { run };
+
+                    //  loop until we find the 'end' FieldChar
+                    bool found = false;
+                    string instruction = null;
+                    RunProperties runProp = null;
+
+                    do
+                    {
+                        cursor++;
+                        run = runs[cursor];
+
+                        innerRuns.Add(run);
+
+                        if (run.HasChildren && run.Descendants<FieldCode>().Any())
+                            instruction += run.GetFirstChild<FieldCode>().Text;
+
+                        if (run.HasChildren && run.Descendants<FieldChar>().Any() &&
+                            (run.Descendants<FieldChar>().First().FieldCharType & FieldCharValues.End) == FieldCharValues.End)
+                        {
+                            found = true;
+                        }
+
+                        if (run.HasChildren && run.Descendants<RunProperties>().Any())
+                            runProp = run.GetFirstChild<RunProperties>();
+
+                    } while (found == false && cursor < runs.Length);
+
+                    //  something went wrong : found Begin but no End. Throw exception
+                    if (!found) throw new Exception("Found a Begin FieldChar but no End !");
+
+                    if (!string.IsNullOrEmpty(instruction))
+                    {
+                        //  build new Run containing a SimpleField
+                        Run newRun = new Run();
+
+                        if (runProp != null) newRun.AppendChild(runProp.CloneNode(true));
+
+                        SimpleField simpleField = new SimpleField { Instruction = instruction };
+
+                        newRun.AppendChild(simpleField);
+
+                        newFields.Add(newRun, innerRuns.ToArray());
+                    }
+                }
+
+                cursor++;
+
+            } while (cursor < runs.Length);
+
+            //  replace all FieldCodes by old-style SimpleFields
+            foreach (KeyValuePair<Run, Run[]> kvp in newFields)
+            {
+                kvp.Value[0].Parent.ReplaceChild(kvp.Key, kvp.Value[0]);
+
+                for (int i = 1; i < kvp.Value.Length; i++)
+                    kvp.Value[i].Remove();
+            }
+        }
     }
 }
