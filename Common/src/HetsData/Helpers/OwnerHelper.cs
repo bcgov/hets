@@ -476,6 +476,30 @@ namespace HetsData.Helpers
                         // strip out inactive and archived equipment
                         owner.HetEquipment = owner.HetEquipment.Where(x => x.EquipmentStatusTypeId == equipmentStatusId).ToList();
 
+                        // setup address line 2
+                        string temp = owner.Address2;
+
+                        if (string.IsNullOrEmpty(temp) && !string.IsNullOrEmpty(owner.City))
+                            temp = $"{owner.City}";
+
+                        if (!string.IsNullOrEmpty(temp) && !string.IsNullOrEmpty(owner.City) && owner.City.Trim() != temp.Trim())
+                            temp = $"{temp}, {owner.City}";
+
+                        if (string.IsNullOrEmpty(temp) && !string.IsNullOrEmpty(owner.Province))
+                            temp = $"{owner.Province}";
+
+                        if (!string.IsNullOrEmpty(temp) && !string.IsNullOrEmpty(owner.Province))
+                            temp = $"{temp}, {owner.Province}";
+
+                        if (string.IsNullOrEmpty(temp) && !string.IsNullOrEmpty(owner.PostalCode))
+                            temp = $"{owner.PostalCode}";
+
+                        if (!string.IsNullOrEmpty(temp) && !string.IsNullOrEmpty(owner.PostalCode))
+                            temp = $"{temp}  {owner.PostalCode}";
+
+                        owner.Address2 = temp;
+
+
                         model.Owners.Add(owner);
                     }
 

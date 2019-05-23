@@ -688,8 +688,15 @@ namespace HetsApi.Controllers
             string pdfUrl = _configuration.GetSection("Constants:OwnerVerificationPdfUrl").Value;
             string reportsRoot = _configuration["ReportsPath"];
 
+<<<<<<< HEAD
+            // convert to open xml document
+            DateTime now = DateTime.UtcNow;
+            string documentName = $"OwnerVerification-{DateTime.Now:yyyy-MM-dd}.docx";
+            byte[] document = HetsReport.OwnerVerification.GetOwnerVerification(reportModel, documentName);
+=======
             // get connection string
             string connectionString = GetConnectionString();
+>>>>>>> parent of d06eeee8... Adding new OpenXml Report functionality (wip)
 
             // create new job!
             HetBatchReport report = new HetBatchReport
