@@ -31,7 +31,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\src\HetsCommon\HetsCommon.csproj" />
     <ProjectReference Include="..\..\..\Common\src\HetsData\HetsData.csproj" />
-    <ProjectReference Include="..\..\..\Common\src\HetsReport\HetsReport.csproj" />
   </ItemGroup>
 
   <ItemGroup>
