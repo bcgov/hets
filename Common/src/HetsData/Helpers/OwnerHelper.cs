@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Text.RegularExpressions;
-using Hangfire.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using HetsData.Model;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace HetsData.Helpers
 {
@@ -28,6 +21,19 @@ namespace HetsData.Helpers
         public string MobilePhoneNumber { get; set; }
         public int EquipmentCount { get; set; }
         public string Status { get; set; }
+    }
+
+    public class OwnerVerificationReportModel
+    {
+        public string ReportDate { get; set; }
+        public string Title { get; set; }
+        public int DistrictId { get; set; }
+        public int MinistryDistrictId { get; set; }
+        public string DistrictName { get; set; }
+        public string DistrictAddress { get; set; }
+        public string DistrictContact { get; set; }
+        public string LocalAreaName { get; set; }
+        public List<HetOwner> Owners { get; set; }
     }
 
     public class OwnerWcbCgl
@@ -352,31 +358,18 @@ namespace HetsData.Helpers
 
         #endregion
 
-        #region Owner Verification Job
+        #region Owner Verification Data
 
-        public static void OwnerVerificationLetters(PerformContext context,
-            int reportId, int?[] localAreas, int?[] owners, int? equipmentStatusId,
-            int? ownerStatusId, string pdfService, string pdfUrl, string reportsRoot,
-            string connectionString)
+        public static OwnerVerificationReportModel GetOwnerVerificationLetterData(
+            DbAppContext context, int?[] localAreas, int?[] owners,
+            int? equipmentStatusId, int? ownerStatusId)
         {
             try
             {
-                // open a connection to the database
-                DbAppContext dbContext = new DbAppContext(connectionString);
-
-                // get report record
-                bool exists = dbContext.HetBatchReport.Any(x => x.ReportId == reportId);
-
-                if (!exists) throw new ArgumentException("Invalid report id");
-
-                HetBatchReport report = dbContext.HetBatchReport.First(x => x.ReportId == reportId);
-
-                // report starting
-                report.StartDate = DateTime.Now;
-                dbContext.SaveChanges();
+                OwnerVerificationReportModel model = new OwnerVerificationReportModel();
 
                 // get owner records
-                IQueryable<HetOwner> ownerRecords = dbContext.HetOwner.AsNoTracking()
+                IQueryable<HetOwner> ownerRecords = context.HetOwner.AsNoTracking()
                     .Include(x => x.PrimaryContact)
                     .Include(x => x.Business)
                     .Include(x => x.HetEquipment)
@@ -425,8 +418,8 @@ namespace HetsData.Helpers
                     // generate pdf document name [unique portion only]
                     string fileName = "OwnerVerification";
 
-                    // setup model for submission to the Pdf service
-                    OwnerVerificationPdfViewModel model = new OwnerVerificationPdfViewModel
+                    // setup model document generation
+                    model = new OwnerVerificationReportModel
                     {
                         ReportDate = DateTime.Now.ToString("yyyy-MM-dd"),
                         Title = fileName,
@@ -502,76 +495,9 @@ namespace HetsData.Helpers
 
                         model.Owners.Add(owner);
                     }
-
-                    // setup payload
-                    string payload = JsonConvert.SerializeObject(model, new JsonSerializerSettings
-                    {
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                        ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                        Formatting = Formatting.Indented,
-                        DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                        DateTimeZoneHandling = DateTimeZoneHandling.Utc
-                    });
-
-                    // pass the request on to the Pdf Micro Service
-                    string targetUrl = pdfService + pdfUrl;
-
-                    targetUrl = targetUrl + "/" + fileName;
-
-                    // call the MicroService
-                    try
-                    {
-                        HttpClient client = new HttpClient();
-
-                        StringContent stringContent = new StringContent(JsonConvert.SerializeObject(payload),
-                            Encoding.UTF8, "application/json");
-
-                        client.Timeout = TimeSpan.FromMinutes(10);
-                        HttpResponseMessage response = client.PostAsync(targetUrl, stringContent).Result;
-
-                        // success
-                        if (response.StatusCode == HttpStatusCode.OK)
-                        {
-                            fileName = $"{fileName}.{reportId}.pdf";
-
-                            string folder = reportsRoot.Contains("\\")
-                                ? $"{reportsRoot}\\{model.DistrictId}\\{DateTime.UtcNow.Year}\\"
-                                : $"{reportsRoot}/{model.DistrictId}/{DateTime.UtcNow.Year}/";
-
-                            byte[] pdfResponseBytes = GetPdf(response);
-
-                            // save file and update status
-                            if (FileUtility.ByteArrayToFile(folder, fileName, pdfResponseBytes))
-                            {
-                                report.ReportLink = folder + fileName;
-                                report.Complete = true;
-                                report.EndDate = DateTime.Now;
-                                dbContext.SaveChanges();
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.Write("Error generating pdf: " + ex.Message);
-                        throw;
-                    }
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
 
-        private static byte[] GetPdf(HttpResponseMessage response)
-        {
-            try
-            {
-                var pdfResponseBytes = response.Content.ReadAsByteArrayAsync();
-                pdfResponseBytes.Wait();
-
-                return pdfResponseBytes.Result;
+                return model;
             }
             catch (Exception e)
             {

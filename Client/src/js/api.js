@@ -922,13 +922,8 @@ export function changeOwnerStatus(status) {
   });
 }
 
-<<<<<<< HEAD
 export function getStatusLettersDoc(params) {
   return new ApiRequest('owners/verificationDoc').post(params, { responseType: Constant.RESPONSE_TYPE_BLOB });
-=======
-export function scheduleStatusLettersPdf(params) {
-  return new ApiRequest('owners/verificationPdf').post(params, { responseType: Constant.RESPONSE_TYPE_BLOB });
->>>>>>> parent of d06eeee8... Adding new OpenXml Report functionality (wip)
 }
 
 export function getMailingLabelsPdf(params) {
