@@ -1,8 +1,22 @@
 @page {
-  margin: 5mm;
+  margin: 10mm 5mm;
 }
 
 @media print {
+  #watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 72px;
+    font-weight: bold;
+    color: hsl(0, 0, 90%) !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    z-index: -1;
+  }
+
   .search-bar,
   .history,
   .btn-group,
@@ -60,6 +74,23 @@
       border: none;
     }
 
+    .request-information {
+      margin-top: 0;
+    }
+
+    #rental-requests-data {
+      font-size: 8px;
+      line-height: 1;
+
+      > div {
+        width: 35%;
+      }
+
+      > div:nth-child(even) {
+        margin-left: 30%;
+      }
+    }
+
     #rotation-list {
       font-size: 8px;
     }
@@ -68,6 +99,11 @@
       #rotation-list {
         font-size: 10px;
       }
+    }
+
+    /* override bootstrap's white background so watermark can be seen clearly */
+    td, th {
+      background: transparent !important;
     }
   }
 

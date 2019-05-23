@@ -13,6 +13,8 @@ import FormInputControl from '../../components/FormInputControl.jsx';
 import { isBlank } from '../../utils/string';
 import { OWNER_STATUS_CODE_APPROVED } from '../../constants';
 
+const ARCHIVE_WARNING_MESSAGE = 'This action will archive the owner and all their equipment and remove them from the seniority list.';
+
 class ChangeStatusDialog extends React.Component {
   static propTypes = {
     show: PropTypes.bool,
@@ -29,6 +31,7 @@ class ChangeStatusDialog extends React.Component {
       comment: '',
       commentError: '',
       statusError: '',
+      archiveWarning: props.status === Constant.OWNER_STATUS_CODE_ARCHIVED ? ARCHIVE_WARNING_MESSAGE : '',
     };
   }
 
@@ -122,10 +125,13 @@ class ChangeStatusDialog extends React.Component {
     var statusErrorText = this.state.statusError && this.state.statusError.length <= 1 ? 'The following is also required:' : 'The following are also required:';
     var maxLength = Constant.MAX_LENGTH_STATUS_COMMENT;
 
+    const archiving = this.props.status === Constant.OWNER_STATUS_CODE_ARCHIVED;
+
     return (
       <FormDialog
         id="notes"
         title="Reason for Status Change"
+        saveButtonLabel={ archiving ? 'Proceed Anyways' : 'Save' }
         show={this.props.show}
         isSaving={this.state.isSaving}
         onClose={this.props.onClose}
@@ -144,6 +150,7 @@ class ChangeStatusDialog extends React.Component {
               }
             </ul>
           </HelpBlock>
+          { archiving && <div className="has-error"><HelpBlock>{ this.state.archiveWarning }</HelpBlock></div> }
         </FormGroup>
       </FormDialog>
     );
