@@ -1,12 +1,16 @@
-@import './mixins.scss';
+@import "./mixins.scss";
 
 $nav-background-color: #38598a;
 $nav-background-color-test: #448a38;
 $nav-background-color-dev: #8a3844;
+$nav-background-color-trn: #744e91;
+$nav-background-color-uat: #d98747;
 
 $nav-active-background-color: #5475a7;
 $nav-active-background-color-test: #60a654;
 $nav-active-background-color-dev: #a65460;
+$nav-active-background-color-trn: #9b5ab5;
+$nav-active-background-color-uat: #db976d;
 
 #header {
   #working-indicator {
@@ -42,9 +46,9 @@ $nav-active-background-color-dev: #a65460;
   border-radius: 0;
   border: 0;
   border-top: 2px solid #fcba19;
-  -webkit-box-shadow: 0 3px 3px 1px rgba(51, 51, 51, .5);
-  -moz-box-shadow: 0 3px 3px 1px rgba(51, 51, 51, .5);
-  box-shadow: 0 3px 3px 1px rgba(51, 51, 51, .5);
+  -webkit-box-shadow: 0 3px 3px 1px rgba(51, 51, 51, 0.5);
+  -moz-box-shadow: 0 3px 3px 1px rgba(51, 51, 51, 0.5);
+  box-shadow: 0 3px 3px 1px rgba(51, 51, 51, 0.5);
 
   > .container {
     @include flex;
@@ -73,7 +77,8 @@ $nav-active-background-color-dev: #a65460;
       margin-top: 10px;
     }
 
-    .dropdown-control, .dropdown-control .btn {
+    .dropdown-control,
+    .dropdown-control .btn {
       width: 100%;
     }
 
@@ -161,6 +166,42 @@ $nav-active-background-color-dev: #a65460;
     .navbar-nav > .active > a:hover,
     .navbar-nav > .active > a:focus {
       background-color: $nav-active-background-color-dev;
+    }
+  }
+
+  &.env-uat {
+    background-color: $nav-background-color-uat;
+
+    .navbar-nav > li > .dropdown-menu,
+    .navbar-nav > .open > a,
+    .navbar-nav > .open > a:hover,
+    .navbar-nav > .open > a:focus {
+      background-color: $nav-background-color-uat;
+    }
+    .navbar-nav > li > .dropdown-menu > li > a:hover,
+    .navbar-nav > li > .dropdown-menu > li > a:focus,
+    .navbar-nav > .active > a,
+    .navbar-nav > .active > a:hover,
+    .navbar-nav > .active > a:focus {
+      background-color: $nav-active-background-color-uat;
+    }
+  }
+
+  &.env-trn {
+    background-color: $nav-background-color-trn;
+
+    .navbar-nav > li > .dropdown-menu,
+    .navbar-nav > .open > a,
+    .navbar-nav > .open > a:hover,
+    .navbar-nav > .open > a:focus {
+      background-color: $nav-background-color-trn;
+    }
+    .navbar-nav > li > .dropdown-menu > li > a:hover,
+    .navbar-nav > li > .dropdown-menu > li > a:focus,
+    .navbar-nav > .active > a,
+    .navbar-nav > .active > a:hover,
+    .navbar-nav > .active > a:focus {
+      background-color: $nav-active-background-color-trn;
     }
   }
 }
