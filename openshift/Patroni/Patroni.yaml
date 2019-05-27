@@ -146,7 +146,7 @@ objects:
             value: 0.0.0.0:5432
           - name: PATRONI_RESTAPI_LISTEN
             value: 0.0.0.0:8008
-          image: docker-registry.default.svc:5000/${NAMESPACE}/patroni:10
+          image: docker-registry.default.svc:5000/${NAMESPACE}/patroni:v10-stable
           imagePullPolicy: IfNotPresent
           name: ${APPLICATION_NAME}
           ports:
@@ -262,7 +262,7 @@ parameters:
 - description: The OpenShift Namespace where the patroni and postgresql ImageStream resides.
   displayName: ImageStream Namespace
   name: NAMESPACE
-  value: openshift
+  value: bcgov
 - description: Username of the superuser account for initialization.
   displayName: Superuser Username
   name: PATRONI_SUPERUSER_USERNAME
