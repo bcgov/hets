@@ -113,7 +113,6 @@ namespace HetsReport
                                 }
 
                                 // append table to document
-                                //Paragraph paragraph = ownerDocument.MainDocumentPart.Document.Body.AppendChild(new Paragraph());
                                 if (tableParagraph != null)
                                 {
                                     Run run = tableParagraph.AppendChild(new Run());
@@ -121,6 +120,7 @@ namespace HetsReport
                                 }
 
                                 ownerDocument.MainDocumentPart.Document.Save();
+                                ownerDocument.Save();
 
                                 // merge owner into the master document
                                 if (ownerCount == 1)
@@ -160,24 +160,32 @@ namespace HetsReport
                                         footer.Remove();
                                     }
 
+                                    // DELETE section properties from owner document
+                                    List<SectionProperties> properties = ownerDocument.MainDocumentPart.Document.Descendants<SectionProperties>().ToList();
+
+                                    foreach (SectionProperties property in properties)
+                                    {
+                                        property.Remove();
+                                    }
+
                                     ownerDocument.Save();
 
                                     // insert section break in master
                                     MainDocumentPart mainPart = wordDocument.MainDocumentPart;
 
                                     Paragraph para = new Paragraph();
-
                                     SectionProperties sectProp = new SectionProperties();
-
-                                    SectionType secType = new SectionType() {Val = SectionMarkValues.OddPage};
+                                    SectionType secSbType = new SectionType() { Val = SectionMarkValues.OddPage };
                                     PageSize pageSize = new PageSize() { Width = 11900U, Height = 16840U, Orient = PageOrientationValues.Portrait };
                                     PageMargin pageMargin = new PageMargin() { Top = 2642, Right = 23U, Bottom = 278, Left = 23U, Header = 714, Footer = 0, Gutter = 0};
-                                    PageNumberType pageNum = new PageNumberType() {Start = 1};
 
-                                    sectProp.AppendChild(secType);
+                                    // page numbering throws out the "odd page" section breaks
+                                    //PageNumberType pageNum = new PageNumberType() {Start = 1};
+
+                                    sectProp.AppendChild(secSbType);
                                     sectProp.AppendChild(pageSize);
                                     sectProp.AppendChild(pageMargin);
-                                    sectProp.AppendChild(pageNum);
+                                    //sectProp.AppendChild(pageNum);
 
                                     ParagraphProperties paragraphProperties = new ParagraphProperties(sectProp);
                                     para.AppendChild(paragraphProperties);
@@ -197,7 +205,12 @@ namespace HetsReport
                                     chunk.FeedData(ownerStream);
 
                                     AltChunk altChunk = new AltChunk {Id = altChunkId };
-                                    mainPart.Document.Body.InsertAfter(altChunk, mainPart.Document.Body.Elements<Paragraph>().Last());
+
+                                    Paragraph para3 = new Paragraph();
+                                    Run run3 = para3.InsertAfter(new Run(), para3.LastChild);
+                                    run3.AppendChild(altChunk);
+
+                                    mainPart.Document.Body.InsertAfter(para3, mainPart.Document.Body.LastChild);
                                     mainPart.Document.Save();
                                 }
                             }
