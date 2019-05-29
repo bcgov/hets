@@ -1,0 +1,68 @@
+{
+    "kind": "List",
+    "apiVersion": "v1",
+    "metadata": {},
+    "items": [
+        {
+            "apiVersion": "image.openshift.io/v1",
+            "kind": "ImageStream",
+            "metadata": {
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "patroni",
+                    "phase": "build"
+                },
+                "name": "patroni"
+            }
+        },
+        {
+            "apiVersion": "build.openshift.io/v1",
+            "kind": "BuildConfig",
+            "metadata": {
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "patroni",
+                    "phase": "build"
+                },
+                "name": "patroni"
+            },
+            "spec": {
+                "nodeSelector": null,
+                "output": {
+                    "to": {
+                        "kind": "ImageStreamTag",
+                        "name": "patroni:latest"
+                    }
+                },
+                "postCommit": {},
+                "resources": {},
+                "source": {
+                    "contextDir": "patroni/docker",
+                    "git": {
+                        "ref": "1.9",
+                        "uri": "https://github.com/bcgov/hets.git"
+                    },
+                    "type": "Git"
+                },
+                "strategy": {
+                    "dockerStrategy": {
+                        "from": {
+                            "kind": "DockerImage",
+                            "name": "docker-registry.default.svc:5000/bcgov/patroni:v10-stable"
+                        }
+                    },
+                    "type": "Docker"
+                },
+                "triggers": [
+                    {
+                        "type": "ConfigChange"
+                    },
+                    {
+                        "imageChange": {},
+                        "type": "ImageChange"
+                    }
+                ]
+            }
+        }
+    ]
+}
