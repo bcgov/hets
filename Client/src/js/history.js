@@ -1,17 +1,8 @@
 import React from 'react';
 
 import * as Api from './api';
+import * as Constant from './constants';
 
-
-// History Entity Types
-export const OWNER = 'Owner';
-export const PROJECT = 'Project';
-export const EQUIPMENT = 'Equipment';
-export const REQUEST = 'Request';
-export const USER = 'User';
-export const ROLE = 'Role';
-export const CONTACT = 'Contact';
-export const DOCUMENT = 'Document';
 
 // History Events
 export const OWNER_ADDED = 'Owner %e was added.';
@@ -92,24 +83,24 @@ export function log(historyEntity, event, ...entities) {
   var addHistoryPromise = null;
 
   switch (historyEntity.type) {
-    case OWNER:
+    case Constant.HISTORY_OWNER:
       addHistoryPromise = Api.addOwnerHistory;
       break;
 
-    case PROJECT:
+    case Constant.HISTORY_PROJECT:
       addHistoryPromise = Api.addProjectHistory;
       break;
 
-    case EQUIPMENT:
+    case Constant.HISTORY_EQUIPMENT:
       addHistoryPromise = Api.addEquipmentHistory;
       break;
 
-    case REQUEST:
+    case Constant.HISTORY_REQUEST:
       addHistoryPromise = Api.addRentalRequestHistory;
       break;
 
-    case USER:
-    case ROLE:
+    case Constant.HISTORY_USER:
+    case Constant.HISTORY_ROLE:
       break;
   }
 
@@ -158,20 +149,20 @@ export function get(historyEntity, offset, limit) {
   };
 
   switch (historyEntity.type) {
-    case OWNER:
+    case Constant.HISTORY_OWNER:
       return Api.getOwnerHistory(historyEntity.id, params);
 
-    case PROJECT:
+    case Constant.HISTORY_PROJECT:
       return Api.getProjectHistory(historyEntity.id, params);
 
-    case EQUIPMENT:
+    case Constant.HISTORY_EQUIPMENT:
       return Api.getEquipmentHistory(historyEntity.id, params);
 
-    case REQUEST:
+    case Constant.HISTORY_REQUEST:
       return Api.getRentalRequestHistory(historyEntity.id, params);
 
-    case USER:
-    case ROLE:
+    case Constant.HISTORY_USER:
+    case Constant.HISTORY_ROLE:
       break;
   }
 

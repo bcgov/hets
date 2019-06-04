@@ -141,6 +141,35 @@ namespace HetsApi.Controllers
         }
 
         /// <summary>
+        /// Get all equipment by district for rental agreement summary filtering
+        /// </summary>
+        [HttpGet]
+        [Route("agreementSummary")]
+        [SwaggerOperation("EquipmentGetAgreementSummary")]
+        [SwaggerResponse(200, type: typeof(List<EquipmentAgreementSummary>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult EquipmentGetAgreementSummary()
+        {
+            // get user's district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            IEnumerable<EquipmentAgreementSummary> equipment = _context.HetRentalAgreement.AsNoTracking()
+                .Include(x => x.Equipment)
+                .Where(x => x.DistrictId == districtId &&
+                            !x.Number.StartsWith("BCBid"))
+                .GroupBy(x => x.Equipment, (e, agreements) => new EquipmentAgreementSummary
+                {
+                    EquipmentCode = e.EquipmentCode,
+                    Id = e.EquipmentId,
+                    AgreementIds = agreements.Select(y => y.RentalAgreementId).Distinct().ToList(),
+                    ProjectIds = agreements.Select(y => y.ProjectId).Distinct().ToList(),
+                    DistrictEquipmentTypeId = e.DistrictEquipmentTypeId ?? 0,
+                });
+
+            return new ObjectResult(new HetsResponse(equipment));
+        }
+
+        /// <summary>
         /// Get all equipment for this district that are associated with a rotation list (lite)
         /// </summary>
         [HttpGet]
@@ -182,7 +211,7 @@ namespace HetsApi.Controllers
         [Route("{id}")]
         [SwaggerOperation("EquipmentIdPut")]
         [SwaggerResponse(200, type: typeof(HetEquipment))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult EquipmentIdPut([FromRoute]int id, [FromBody]HetEquipment item)
         {
             if (item == null || id != item.EquipmentId)
@@ -207,6 +236,7 @@ namespace HetsApi.Controllers
             float? originalServiceHoursThreeYearsAgo = equipment.ServiceHoursThreeYearsAgo;
             int? originalLocalAreaId = equipment.LocalAreaId;
             int? originalDistrictEquipmentTypeId = equipment.DistrictEquipmentTypeId;
+            float? originalYearsOfService = equipment.YearsOfService;
 
             // check if we need to rework the equipment's seniority
             bool rebuildSeniority = (originalSeniorityEffectiveDate == null && item.SeniorityEffectiveDate != null) ||
@@ -244,6 +274,13 @@ namespace HetsApi.Controllers
             if ((originalServiceHoursThreeYearsAgo == null && item.ServiceHoursThreeYearsAgo != null) ||
                 (originalServiceHoursThreeYearsAgo != null && item.ServiceHoursThreeYearsAgo != null &&
                  originalServiceHoursThreeYearsAgo != item.ServiceHoursThreeYearsAgo))
+            {
+                rebuildSeniority = true;
+            }
+
+            if ((originalYearsOfService == null && item.YearsOfService != null) ||
+                (originalYearsOfService != null && item.YearsOfService != null &&
+                 originalYearsOfService != item.YearsOfService))
             {
                 rebuildSeniority = true;
             }
@@ -309,7 +346,7 @@ namespace HetsApi.Controllers
         [Route("{id}/status")]
         [SwaggerOperation("EquipmentIdStatusPut")]
         [SwaggerResponse(200, type: typeof(HetEquipment))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult EquipmentIdStatusPut([FromRoute]int id, [FromBody]EquipmentStatus item)
         {
             // not found
@@ -430,7 +467,7 @@ namespace HetsApi.Controllers
         [Route("")]
         [SwaggerOperation("EquipmentPost")]
         [SwaggerResponse(200, type: typeof(HetEquipment))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult EquipmentPost([FromBody]HetEquipment item)
         {
             // not found
@@ -684,7 +721,7 @@ namespace HetsApi.Controllers
         [Route("{id}/rentalAgreementClone")]
         [SwaggerOperation("EquipmentRentalAgreementClonePost")]
         [SwaggerResponse(200, type: typeof(HetRentalAgreement))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult EquipmentRentalAgreementClonePost([FromRoute]int id, [FromBody]EquipmentRentalAgreementClone item)
         {
             // not found
@@ -1088,7 +1125,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/history")]
         [SwaggerOperation("EquipmentIdHistoryPost")]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult EquipmentIdHistoryPost([FromRoute]int id, [FromBody]HetHistory item)
         {
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
@@ -1157,7 +1194,7 @@ namespace HetsApi.Controllers
         [Route("{id}/note")]
         [SwaggerOperation("EquipmentIdNotePost")]
         [SwaggerResponse(200, type: typeof(HetNote))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult EquipmentIdNotePost([FromRoute]int id, [FromBody]HetNote item)
         {
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
@@ -1271,8 +1308,8 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetRentalAgreement)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
                             x.EquipmentStatusTypeId.Equals(statusId))
-                .OrderBy(x => x.LocalArea)
-                    .ThenBy(x => x.DistrictEquipmentType)
+                .OrderBy(x => x.LocalArea.Name)
+                    .ThenBy(x => x.DistrictEquipmentType.DistrictEquipmentName)
                     .ThenBy(x => x.BlockNumber)
                     .ThenByDescending(x => x.NumberInBlock);
 

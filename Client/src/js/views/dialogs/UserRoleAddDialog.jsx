@@ -27,18 +27,22 @@ class UserRoleAddDialog extends React.Component {
     onClose: PropTypes.func.isRequired,
   };
 
-  state = {
-    loading: false,
-    isSaving: false,
+  constructor(props) {
+    super(props);
 
-    roleId: 0,
-    effectiveDate: '',
-    expiryDate: '',
+    this.state = {
+      loading: false,
+      isSaving: false,
 
-    roleIdError: '',
-    effectiveDateError: '',
-    expiryDateError: '',
-  };
+      roleId: 0,
+      effectiveDate: '',
+      expiryDate: '',
+
+      roleIdError: '',
+      effectiveDateError: '',
+      expiryDateError: '',
+    };
+  }
 
   componentDidMount() {
     this.setState({ loading: true });

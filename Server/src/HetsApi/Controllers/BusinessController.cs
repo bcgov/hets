@@ -120,13 +120,13 @@ namespace HetsApi.Controllers
             if (owner == null)
             {
                 // shared key not found
-                return new NotFoundObjectResult(new HetsResponse("HETS-20", ErrorViewModel.GetDescription("HETS-20", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-20", ErrorViewModel.GetDescription("HETS-20", _configuration)));
             }
 
             if (owner.BusinessId != null)
             {
                 // shared key already used
-                return new NotFoundObjectResult(new HetsResponse("HETS-21", ErrorViewModel.GetDescription("HETS-21", _configuration)));
+                return new BadRequestObjectResult(new HetsResponse("HETS-21", ErrorViewModel.GetDescription("HETS-21", _configuration)));
             }
 
             // update owner

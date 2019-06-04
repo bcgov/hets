@@ -120,5 +120,5 @@ export function endOfPreviousFiscal(dateTime) {
 
 export function isValidYear(year) {
   let currentYear = new Date().getFullYear();
-  return (year.length === 4 && year.match(/\d{4}/) && parseInt(year, 10) <= currentYear && parseInt(year, 10) >= 1900 );
+  return (year.length === 4 && year.match(/\d{4}/) && parseInt(year, 10) <= currentYear + 1 && parseInt(year, 10) >= 1900 );
 }

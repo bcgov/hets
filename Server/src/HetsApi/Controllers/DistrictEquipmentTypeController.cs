@@ -107,45 +107,30 @@ namespace HetsApi.Controllers
         }
 
         /// <summary>
-        /// Get all district equipment types for this district that are associated with a rotation list 
+        /// Get all district equipment types by district for rental agreement summary filtering
         /// </summary>
         [HttpGet]
-        [Route("hires")]
-        [SwaggerOperation("DistrictEquipmentTypeGetHires")]
-        [SwaggerResponse(200, type: typeof(List<DistrictEquipmentTypeHire>))]
+        [Route("agreementSummary")]
+        [SwaggerOperation("DistrictEquipmentTypesGetAgreementSummary")]
+        [SwaggerResponse(200, type: typeof(List<DistrictEquipmentTypeAgreementSummary>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult DistrictEquipmentTypeGetHires()
+        public virtual IActionResult DistrictEquipmentTypesGetAgreementSummary()
         {
-            // get users district
+            // get user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, HttpContext);
 
-            // get active status
-            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
-            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
-
-            // get fiscal year
-            HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
-                .First(x => x.DistrictId == districtId);
-
-            int? fiscalYear = status.CurrentFiscalYear;
-            if (fiscalYear == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-
-            // fiscal year in the status table stores the "start" of the year
-            DateTime fiscalYearStart = new DateTime((int)fiscalYear, 3, 31);
-
-            IEnumerable<DistrictEquipmentTypeHire> equipmentTypes = _context.HetRentalAgreement.AsNoTracking()
-                .Include(x => x.Project)
-                .Include(x => x.Equipment)
-                .ThenInclude(y => y.DistrictEquipmentType)
-            .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
-                        x.Equipment.EquipmentStatusTypeId == statusId &&
-                        x.Project.DbCreateTimestamp > fiscalYearStart)
-            .GroupBy(x => x.Equipment.DistrictEquipmentType, (et, ra) => new DistrictEquipmentTypeHire
-            {
-                DistrictEquipmentTypeId = et.DistrictEquipmentTypeId,
-                DistrictEquipmentName = et.DistrictEquipmentName,
-                ProjectIds = ra.Select(x => x.ProjectId).Distinct().ToList(),
-            });
+            IEnumerable<DistrictEquipmentTypeAgreementSummary> equipmentTypes = _context.HetRentalAgreement.AsNoTracking()
+                .Include(x => x.Equipment.DistrictEquipmentType)
+                .Where(x => x.DistrictId == districtId &&
+                            !x.Number.StartsWith("BCBid"))
+                .GroupBy(x => x.Equipment.DistrictEquipmentType, (t, agreements) => new DistrictEquipmentTypeAgreementSummary
+                {
+                    Id = t.DistrictEquipmentTypeId,
+                    Name = t.DistrictEquipmentName,
+                    AgreementIds = agreements.Select(y => y.RentalAgreementId).Distinct().ToList(),
+                    ProjectIds = agreements.Select(y => y.ProjectId).Distinct().ToList(),
+                })
+                .ToList();
 
             return new ObjectResult(new HetsResponse(equipmentTypes));
         }
@@ -158,7 +143,7 @@ namespace HetsApi.Controllers
         [Route("{id}/delete")]
         [SwaggerOperation("DistrictEquipmentTypesIdDeletePost")]
         [SwaggerResponse(200, type: typeof(HetDistrictEquipmentType))]
-        [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
+        [RequiresPermission(HetPermission.DistrictCodeTableManagement, HetPermission.WriteAccess)]
         public virtual IActionResult DistrictEquipmentTypesIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetDistrictEquipmentType.Any(a => a.DistrictEquipmentTypeId == id);
@@ -249,7 +234,7 @@ namespace HetsApi.Controllers
         [Route("{id}")]
         [SwaggerOperation("DistrictEquipmentTypesIdPost")]
         [SwaggerResponse(200, type: typeof(HetDistrictEquipmentType))]
-        [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
+        [RequiresPermission(HetPermission.DistrictCodeTableManagement, HetPermission.WriteAccess)]
         public virtual IActionResult DistrictEquipmentTypesIdPost([FromRoute]int id, [FromBody]HetDistrictEquipmentType item)
         {
             if (id != item.DistrictEquipmentTypeId)
@@ -350,7 +335,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("merge")]
         [SwaggerOperation("MergeDistrictEquipmentTypesPost")]
-        [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
+        [RequiresPermission(HetPermission.DistrictCodeTableManagement, HetPermission.WriteAccess)]
         public virtual IActionResult MergeDistrictEquipmentTypesPost()
         {
             string connectionString = GetConnectionString();

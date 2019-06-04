@@ -36,7 +36,7 @@ function parseUser(user) {
 
   user.path = `${ Constant.USERS_PATHNAME }/${ user.id }`;
   user.url = `#/${ user.path }`;
-  user.historyEntity = History.makeHistoryEntity(History.USER, user);
+  user.historyEntity = History.makeHistoryEntity(Constant.HISTORY_USER, user);
 
   user.canEdit = true;
   user.canDelete = true;
@@ -210,7 +210,7 @@ export function getSearchSummaryCounts() {
 function parseRole(role) {
   role.path = `${ Constant.ROLES_PATHNAME }/${ role.id }`;
   role.url = `#/${ role.path }`;
-  role.historyEntity = History.makeHistoryEntity(History.ROLE, role);
+  role.historyEntity = History.makeHistoryEntity(Constant.HISTORY_ROLE, role);
 
   role.canEdit = true;
   role.canDelete = false;
@@ -412,7 +412,7 @@ function parseEquipment(equipment) {
   equipment.path = `${ Constant.EQUIPMENT_PATHNAME }/${ equipment.id }`;
   equipment.url = `#/${ equipment.path }`;
   equipment.name = `code ${ equipment.equipmentCode }`;
-  equipment.historyEntity = History.makeHistoryEntity(History.EQUIPMENT, equipment);
+  equipment.historyEntity = History.makeHistoryEntity(Constant.HISTORY_EQUIPMENT, equipment);
   equipment.documentAdded = Log.equipmentDocumentAdded;
   equipment.documentsAdded = Log.equipmentDocumentsAdded;
   equipment.documentDeleted = Log.equipmentDocumentDeleted;
@@ -460,6 +460,15 @@ export function getEquipmentLite() {
     var equipment = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP, equipment: equipment });
+  });
+}
+
+export function getEquipmentAgreementSummary() {
+  const silent = store.getState().lookups.equipment.ts.loaded;
+  return new ApiRequest('/equipment/agreementSummary', { silent }).get().then(response => {
+    var equipment = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_AGREEMENT_SUMMARY_LOOKUP, equipment: equipment });
   });
 }
 
@@ -519,7 +528,7 @@ export function addEquipmentHistory(equipmentId, history) {
     // Add display fields
     _.map(history, history => { parseHistory(history); });
 
-    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_HISTORY, history, id: equipmentId });
   });
 }
 
@@ -530,7 +539,7 @@ export function getEquipmentHistory(equipmentId, params) {
     // Add display fields
     _.map(history, history => { parseHistory(history); });
 
-    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT_HISTORY, history, id: equipmentId });
   });
 }
 
@@ -708,7 +717,7 @@ function parseOwner(owner) {
   owner.path = `${ Constant.OWNERS_PATHNAME }/${ owner.id }`;
   owner.url = `#/${ owner.path }`;
   owner.name = owner.organizationName;
-  owner.historyEntity = History.makeHistoryEntity(History.OWNER, owner);
+  owner.historyEntity = History.makeHistoryEntity(Constant.HISTORY_OWNER, owner);
   owner.documentAdded = Log.ownerDocumentAdded;
   owner.documentsAdded = Log.ownerDocumentsAdded;
   owner.documentDeleted = Log.ownerDocumentDeleted;
@@ -831,7 +840,7 @@ export function addOwnerHistory(ownerId, history) {
     // Add display fields
     _.map(history, history => { parseHistory(history); });
 
-    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+    store.dispatch({ type: Action.UPDATE_OWNER_HISTORY, history, id: ownerId });
   });
 }
 
@@ -842,7 +851,7 @@ export function getOwnerHistory(ownerId, params) {
     // Add display fields
     _.map(history, history => { parseHistory(history); });
 
-    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+    store.dispatch({ type: Action.UPDATE_OWNER_HISTORY, history, id: ownerId });
   });
 }
 
@@ -928,13 +937,6 @@ export function transferEquipment(donorOwnerId, recipientOwnerId, equipment, inc
     getEquipmentHires();
 
     return response;
-  }).catch((err) => {
-    if (err.errorCode) {
-      store.dispatch({ type: Action.EQUIPMENT_TRANSFER_ERROR, errorMessage: err.errorDescription });
-      throw new Error('Unable to add transfer equipment');
-    } else {
-      throw err;
-    }
   });
 }
 
@@ -959,7 +961,7 @@ function parseContact(contact, parent) {
 
   contact.path = parentPath ? `${ parentPath }/${ Constant.CONTACTS_PATHNAME }/${ contact.id }` : null;
   contact.url = contact.path ? `#/${ contact.path }` : null;
-  contact.historyEntity = History.makeHistoryEntity(History.CONTACT, contact);
+  contact.historyEntity = History.makeHistoryEntity(Constant.HISTORY_CONTACT, contact);
 
   contact.canEdit = true;
   contact.canDelete = true;
@@ -1054,7 +1056,7 @@ function parseDocument(document) {
   document.name = document.fileName;
 
   document.canDelete = true;
-  document.historyEntity = History.makeHistoryEntity(History.DOCUMENT, document);
+  document.historyEntity = History.makeHistoryEntity(Constant.HISTORY_DOCUMENT, document);
 }
 
 export function deleteDocument(document) {
@@ -1091,7 +1093,7 @@ function parseProject(project) {
 
   project.path = `${ Constant.PROJECTS_PATHNAME }/${ project.id }`;
   project.url = `#/${ project.path }`;
-  project.historyEntity = History.makeHistoryEntity(History.PROJECT, project);
+  project.historyEntity = History.makeHistoryEntity(Constant.HISTORY_PROJECT, project);
   project.documentAdded = Log.projectDocumentAdded;
   project.documentsAdded = Log.projectDocumentsAdded;
   project.documentDeleted = Log.projectDocumentDeleted;
@@ -1201,6 +1203,15 @@ export function getProjects() {
     _.map(projects, project => { parseProject(project); });
 
     store.dispatch({ type: Action.UPDATE_PROJECTS_LOOKUP, projects: projects });
+  });
+}
+
+export function getProjectsAgreementSummary() {
+  const silent = store.getState().lookups.projectsAgreementSummary.loaded;
+  return new ApiRequest('/projects/agreementSummary', { silent }).get().then(response => {
+    var projects = normalize(response.data);
+
+    store.dispatch({ type: Action.UPDATE_PROJECTS_AGREEMENT_SUMMARY_LOOKUP, projects: projects });
   });
 }
 
@@ -1317,7 +1328,7 @@ export function addProjectHistory(projectId, history) {
     // Add display fields
     _.map(history, history => { parseHistory(history); });
 
-    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+    store.dispatch({ type: Action.UPDATE_PROJECT_HISTORY, history, id: projectId });
   });
 }
 
@@ -1328,7 +1339,7 @@ export function getProjectHistory(projectId, params) {
     // Add display fields
     _.map(history, history => { parseHistory(history); });
 
-    store.dispatch({ type: Action.UPDATE_HISTORY, history: history });
+    store.dispatch({ type: Action.UPDATE_PROJECT_HISTORY, history, id: projectId });
   });
 }
 
@@ -1433,7 +1444,7 @@ function parseRentalRequest(rentalRequest) {
   rentalRequest.path = `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ rentalRequest.id }`;
   rentalRequest.url = `#/${ rentalRequest.path }`;
   rentalRequest.name = 'TBD';
-  rentalRequest.historyEntity = History.makeHistoryEntity(History.REQUEST, rentalRequest);
+  rentalRequest.historyEntity = History.makeHistoryEntity(Constant.HISTORY_REQUEST, rentalRequest);
   rentalRequest.documentAdded = Log.rentalRequestDocumentAdded;
   rentalRequest.documentsAdded = Log.rentalRequestDocumentsAdded;
   rentalRequest.documentDeleted = Log.rentalRequestDocumentDeleted;
@@ -1506,7 +1517,7 @@ export function addRentalRequestHistory(requestId, history) {
     // Add display fields
     _.map(history, history => { parseHistory(history); });
 
-    store.dispatch({ type: Action.UPDATE_HISTORY, history });
+    store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_HISTORY, history, id: requestId });
   });
 }
 
@@ -1517,7 +1528,7 @@ export function getRentalRequestHistory(requestId, params) {
     // Add display fields
     _.map(history, history => { parseHistory(history); });
 
-    store.dispatch({ type: Action.UPDATE_HISTORY, history });
+    store.dispatch({ type: Action.UPDATE_RENTAL_REQUEST_HISTORY, history, id: requestId });
   });
 }
 
@@ -1620,7 +1631,7 @@ function parseRotationListItem(item, numberOfBlocks) {
   item.equipment = item.equipment || {};
   item.equipment = {
     ...item.equipment,
-    historyEntity: History.makeHistoryEntity(History.EQUIPMENT, {
+    historyEntity: History.makeHistoryEntity(Constant.HISTORY_EQUIPMENT, {
       ...item.equipment,
       name: item.equipment.equipmentCode,
       path: `${ Constant.EQUIPMENT_PATHNAME }/${ item.equipment.id }`,
@@ -1697,7 +1708,7 @@ function parseRentalAgreement(agreement) {
   agreement.rentalAgreementConditions.forEach(obj => parseRentalCondition(obj, agreement));
 
   agreement.equipment = { ...agreement.equipment,
-    historyEntity: History.makeHistoryEntity(History.EQUIPMENT, {
+    historyEntity: History.makeHistoryEntity(Constant.HISTORY_EQUIPMENT, {
       ...agreement.equipment,
       name: agreement.equipment.equipmentCode,
       path: `${ Constant.EQUIPMENT_PATHNAME }/${ agreement.equipment.id }`,
@@ -1746,6 +1757,14 @@ function convertRentalAgreement(agreement) {
     equipmentId: agreement.equipmentId || null,
     projectId: agreement.projectId || null,
   };
+}
+
+export function getRentalAgreementSummaryLite() {
+  return new ApiRequest('/rentalagreements/summaryLite').get().then(response => {
+    var agreements = response.data;
+
+    store.dispatch({ type: Action.UPDATE_AGREEMENT_SUMMARY_LITE_LOOKUP, agreements });
+  });
 }
 
 export function getRentalAgreement(id) {
@@ -2179,12 +2198,12 @@ export function getDistrictEquipmentTypes() {
   });
 }
 
-export function getDistrictEquipmentTypeHires() {
-  const silent = store.getState().lookups.districtEquipmentTypeHires.loaded;
-  return new ApiRequest('/districtequipmenttypes/hires', { silent }).get().then(response => {
-    var districtEquipmentTypeHires = normalize(response.data);
+export function getDistrictEquipmentTypesAgreementSummary() {
+  const silent = store.getState().lookups.districtEquipmentTypesAgreementSummary.loaded;
+  return new ApiRequest('/districtequipmenttypes/agreementSummary', { silent }).get().then(response => {
+    var districtEquipmentTypes = normalize(response.data);
 
-    store.dispatch({ type: Action.UPDATE_DISTRICT_EQUIPMENT_TYPE_HIRES_LOOKUP, districtEquipmentTypeHires: districtEquipmentTypeHires });
+    store.dispatch({ type: Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_AGREEMENT_SUMMARY_LOOKUP, districtEquipmentTypes });
   });
 }
 

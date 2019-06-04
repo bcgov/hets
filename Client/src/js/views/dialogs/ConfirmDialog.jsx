@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 
 class ConfirmDialog extends React.Component {
   static propTypes = {
@@ -14,26 +14,19 @@ class ConfirmDialog extends React.Component {
     children: PropTypes.node,
   };
 
-  didChange = () => {
-    return true;
-  };
-
-  isValid = () => {
-    return true;
-  };
-
-  onSave = () => {
-    this.props.onSave();
-  };
-
   render() {
-    return <EditDialog id="confirm-dialog" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={<strong>{ this.props.title }</strong>}
-      closeText={ this.props.closeText || 'Cancel' } saveText={ this.props.saveText || 'Confirm' } backdropClassName="confirm"
-    >
-      { this.props.children }
-    </EditDialog>;
+    return (
+      <FormDialog
+        id="confirm-dialog"
+        show={ this.props.show }
+        title={ this.props.title }
+        closeButtonLabel={ this.props.closeText || 'Cancel' }
+        saveButtonLabel={ this.props.saveText || 'Confirm' }
+        onClose={ this.props.onClose }
+        onSubmit={ this.props.onSave }>
+        { this.props.children }
+      </FormDialog>
+    );
   }
 }
 

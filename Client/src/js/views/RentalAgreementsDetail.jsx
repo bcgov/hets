@@ -22,6 +22,7 @@ import Spinner from '../components/Spinner.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
 import ReturnButton from '../components/ReturnButton.jsx';
+import Authorize from '../components/Authorize.jsx';
 
 import { activeRentalAgreementSelector, activeRentalAgreementIdSelector } from '../selectors/ui-selectors';
 
@@ -40,21 +41,23 @@ class RentalAgreementsDetail extends React.Component {
     router: PropTypes.object,
   };
 
-  state = {
-    loading: true,
-    rentalAgreementDocumentLoading: false,
+  constructor(props) {
+    super(props);
 
-    showEditDialog: false,
-    showEquipmentRateDialog: false,
-    showRentalRateDialog: false,
-    showConditionDialog: false,
-    showCloneDialog: false,
+    this.state = {
+      loading: true,
+      rentalAgreementDocumentLoading: false,
 
-    cloneRentalAgreementError: '',
+      showEditDialog: false,
+      showEquipmentRateDialog: false,
+      showRentalRateDialog: false,
+      showConditionDialog: false,
+      showCloneDialog: false,
 
-    rentalRate: {},
-    rentalCondition: {},
-  };
+      rentalRate: {},
+      rentalCondition: {},
+    };
+  }
 
   componentDidMount() {
     const { rentalAgreement } = this.props;
@@ -169,33 +172,7 @@ class RentalAgreementsDetail extends React.Component {
   };
 
   closeCloneDialog = () => {
-    this.setState({ showCloneDialog: false, cloneRentalAgreementError: '' });
-  };
-
-  cloneRentalAgreement = (rentalAgreementCloneId, type) => {
-    var data = {
-      projectId: this.props.rentalAgreement.project.id,
-      agreementToCloneId: rentalAgreementCloneId,
-      rentalAgreementId: this.props.rentalAgreement.id,
-    };
-    var clonePromise = Api.cloneProjectRentalAgreement;
-
-    if (type === Constant.BY_EQUIPMENT) {
-      data.equipmentId = this.props.rentalAgreement.equipment.id;
-      clonePromise = Api.cloneEquipmentRentalAgreement;
-    }
-
-    this.setState({ cloneRentalAgreementError: '' });
-    clonePromise(data).then(() => {
-      this.closeCloneDialog();
-      this.fetch();
-    }).catch((error) => {
-      if (error.errorCode) {
-        this.setState({ cloneRentalAgreementError: 'There was an error cloning the rental agreement.' });
-      } else {
-        throw error;
-      }
-    });
+    this.setState({ showCloneDialog: false });
   };
 
   render() {
@@ -204,7 +181,7 @@ class RentalAgreementsDetail extends React.Component {
 
     var buttons =
       <div className="pull-right">
-        <Button disabled={ !rentalAgreement.isActive } onClick={ this.openCloneDialog }>Copy Other Rental Agreement</Button>
+        <Authorize><Button disabled={ !rentalAgreement.isActive } onClick={ this.openCloneDialog }>Copy Other Rental Agreement</Button></Authorize>
         <Button title="Print PDF" onClick={ this.generateRentalAgreementDocument }><Glyphicon glyph="print" /></Button>
         <ReturnButton/>
       </div>;
@@ -322,10 +299,10 @@ class RentalAgreementsDetail extends React.Component {
             // as-needed rates are shown in the next section
             var includedRates = _.filter(rentalAgreement.rentalAgreementRates, { isIncludedInTotal: true });
 
-            var button = <TooltipButton title="Add Included Rates and Attachments" bsSize="small" className="no-margin" onClick={ this.addRentalRate.bind(this, true) } enabledTooltip="These rates will be added to the total, along with the equipment pay rate.">
+            var button = <Authorize><TooltipButton title="Add Included Rates and Attachments" bsSize="small" className="no-margin" onClick={ this.addRentalRate.bind(this, true) } enabledTooltip="These rates will be added to the total, along with the equipment pay rate.">
               <Glyphicon glyph="plus" className="mr-5" />
               <span>Add Included Rates and Attachments</span>
-            </TooltipButton>;
+            </TooltipButton></Authorize>;
 
             if (Object.keys(includedRates || []).length === 0) { return <div><Alert bsStyle="success">No included rates or attachments</Alert>{ button }</div>; }
 
@@ -351,7 +328,7 @@ class RentalAgreementsDetail extends React.Component {
                         <td>{ obj.comment }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
-                            <DeleteButton name="Rate or Attachment" disabled={!obj.id} onConfirm={ this.deleteRentalRate.bind(this, obj) }/>
+                            <Authorize><DeleteButton name="Rate or Attachment" disabled={!obj.id} onConfirm={ this.deleteRentalRate.bind(this, obj) }/></Authorize>
                             <EditButton name="Rate or Attachment" disabled={!obj.id} onClick={ this.openRentalRateDialog.bind(this, obj) }/>
                           </ButtonGroup>
                         </td>
@@ -374,10 +351,10 @@ class RentalAgreementsDetail extends React.Component {
             // included rates are shown in the previous section
             var asNeededRates = _.filter(rentalAgreement.rentalAgreementRates, { isIncludedInTotal: false });
 
-            var button = <TooltipButton title="Add Other Rates and Attachments" bsSize="small" className="no-margin" onClick={ this.addRentalRate.bind(this, false) } enabledTooltip="These rates will NOT be added to the total.">
+            var button = <Authorize><TooltipButton title="Add Other Rates and Attachments" bsSize="small" className="no-margin" onClick={ this.addRentalRate.bind(this, false) } enabledTooltip="These rates will NOT be added to the total.">
               <Glyphicon glyph="plus" className="mr-5" />
               <span>Add Other Rates and Attachments</span>
-            </TooltipButton>;
+            </TooltipButton></Authorize>;
 
             if (Object.keys(asNeededRates || []).length === 0) { return <div><Alert bsStyle="success">No as-needed rates or attachments</Alert>{ button }</div>; }
 
@@ -403,7 +380,7 @@ class RentalAgreementsDetail extends React.Component {
                         <td>{ obj.comment }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
-                            <DeleteButton name="Rate or Attachment" disabled={!obj.id} onConfirm={ this.deleteRentalRate.bind(this, obj) }/>
+                            <Authorize><DeleteButton name="Rate or Attachment" disabled={!obj.id} onConfirm={ this.deleteRentalRate.bind(this, obj) }/></Authorize>
                             <EditButton name="Rate or Attachment" disabled={!obj.id} onClick={ this.openRentalRateDialog.bind(this, obj) }/>
                           </ButtonGroup>
                         </td>
@@ -425,10 +402,10 @@ class RentalAgreementsDetail extends React.Component {
             // newly-added conditions (with an id of 0) need to appear at the end of the list
             var rentalConditions = _.orderBy(rentalAgreement.rentalAgreementConditions, [c => c.id === 0, c => c.id], ['asc', 'asc']);
 
-            var button = <Button title="Add Rental Condition" bsSize="small" className="no-margin" onClick={ this.addCondition }>
+            var button = <Authorize><Button title="Add Rental Condition" bsSize="small" className="no-margin" onClick={ this.addCondition }>
               <Glyphicon glyph="plus" className="mr-5" />
               <span>Add</span>
-            </Button>;
+            </Button></Authorize>;
 
             if (Object.keys(rentalConditions || []).length === 0) { return <div><Alert bsStyle="success">No rental conditions</Alert>{ button }</div>; }
 
@@ -449,7 +426,7 @@ class RentalAgreementsDetail extends React.Component {
                         <td>{ obj.comment }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
-                            <DeleteButton name="Rental Condition" disabled={!obj.id} onConfirm={ this.deleteCondition.bind(this, obj) }/>
+                            <Authorize><DeleteButton name="Rental Condition" disabled={!obj.id} onConfirm={ this.deleteCondition.bind(this, obj) }/></Authorize>
                             <EditButton name="Rental Condition" disabled={!obj.id} onClick={ this.openConditionDialog.bind(this, obj) }/>
                           </ButtonGroup>
                         </td>
@@ -526,8 +503,7 @@ class RentalAgreementsDetail extends React.Component {
           <CloneDialog
             show={this.state.showCloneDialog}
             rentalAgreement={rentalAgreement}
-            cloneRentalAgreementError={this.state.cloneRentalAgreementError}
-            onSave={this.cloneRentalAgreement}
+            onSave={this.fetch}
             onClose={this.closeCloneDialog}/>
         )}
       </div>

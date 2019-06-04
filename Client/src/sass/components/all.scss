@@ -2,7 +2,7 @@
 @import './clone-dialog';
 @import './date-control';
 @import './dropdown-control';
-@import './edit-dialog';
+@import './form-dialog';
 @import './favourites';
 @import './file-upload';
 @import './filter-dropdown';
@@ -15,5 +15,7 @@
 @import './search-control';
 @import './sort-table';
 
+@import './ui/add-button-container';
 @import './ui/page-header';
 @import './ui/subheader';
+@import './ui/search-bar';

@@ -140,7 +140,7 @@ namespace HetsApi.Controllers
         [Route("{id}/dismissRolloverMessage")]
         [SwaggerOperation("DismissRolloverMessagePost")]
         [SwaggerResponse(200, type: typeof(HetDistrictStatus))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult DismissRolloverMessagePost([FromRoute]int id)
         {
             bool exists = _context.HetDistrictStatus.Any(a => a.DistrictId == id);

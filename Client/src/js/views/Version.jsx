@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { PageHeader, Well } from 'react-bootstrap';
-import { Button, Glyphicon } from 'react-bootstrap';
+import { Well, Button, Glyphicon } from 'react-bootstrap';
 
 import * as Api from '../api';
 import * as Constant from '../constants';
 
+import PageHeader from '../components/ui/PageHeader.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
 import Spinner from '../components/Spinner.jsx';
 import Unimplemented from '../components/Unimplemented.jsx';
@@ -21,13 +21,17 @@ class Version extends React.Component {
     version: PropTypes.object,
   };
 
-  state = {
-    loading: false,
-    showRawSection: false,
-    buildtime : '',
-    version : '',
-    commit : '',
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: false,
+      showRawSection: false,
+      buildtime : '',
+      version : '',
+      commit : '',
+    };
+  }
 
   componentDidMount() {
     this.setState({ loading: true });

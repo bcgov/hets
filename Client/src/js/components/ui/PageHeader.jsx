@@ -16,7 +16,7 @@ class PageHeader extends React.Component {
     const { title, subTitle,id, className, children } = this.props;
 
     return (
-      <h1 id={id} className={classNames('clearfix', 'ui-page-header', className)}>
+      <h1 id={id} className={classNames('clearfix', 'page-header', 'ui-page-header', className)}>
         {title}
         {subTitle ? ': ' : ''}{subTitle && <small>{ subTitle }</small>}
         {children}

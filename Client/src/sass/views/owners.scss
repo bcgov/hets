@@ -1,35 +1,3 @@
-#owners-list {
-  #owners-filters {
-    > div {
-      margin: 5px;
-    }
-
-    > button {
-      margin: 5px;
-    }
-
-    > input {
-      float: left;
-      min-width: 175px;
-      margin: 5px;
-      width: auto;
-    }
-  }
-
-  #owners-buttons {
-    float: right;
-
-    .btn-group > button {
-      width: 40px;
-    }
-  }
-
-  #add-button-container {
-    float: right;
-    margin-top: 10px;
-  }
-}
-
 #owners-detail {
   #owners-top {
     margin: 0 5px 10px 5px;

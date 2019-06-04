@@ -77,7 +77,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/delete")]
         [SwaggerOperation("UsersIdDeletePost")]
-        [RequiresPermission(HetPermission.UserManagement)]
+        [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
         public virtual IActionResult UsersIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetUser.Any(x => x.UserId == id);
@@ -118,7 +118,7 @@ namespace HetsApi.Controllers
         [Route("")]
         [SwaggerOperation("UsersPost")]
         [SwaggerResponse(200, type: typeof(HetUser))]
-        [RequiresPermission(HetPermission.UserManagement)]
+        [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
         public virtual IActionResult UsersPost([FromBody]HetUser item)
         {
             // not found
@@ -171,7 +171,7 @@ namespace HetsApi.Controllers
         [Route("{id}")]
         [SwaggerOperation("UsersIdPut")]
         [SwaggerResponse(200, type: typeof(HetUser))]
-        [RequiresPermission(HetPermission.UserManagement)]
+        [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
         public virtual IActionResult UsersIdPut([FromRoute]int id, [FromBody]HetUser item)
         {
             if (item == null || id != item.UserId)
@@ -406,7 +406,7 @@ namespace HetsApi.Controllers
         [Route("{id}/roles")]
         [SwaggerOperation("UsersIdRolesPost")]
         [SwaggerResponse(200, type: typeof(List<HetUserRole>))]
-        [RequiresPermission(HetPermission.UserManagement)]
+        [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
         public virtual IActionResult UsersIdRolesPost([FromRoute]int id, [FromBody]HetUserRole item)
         {
             bool exists = _context.HetUser.Any(x => x.UserId == id);
@@ -458,7 +458,7 @@ namespace HetsApi.Controllers
         [Route("{id}/roles")]
         [SwaggerOperation("UsersIdRolesPut")]
         [SwaggerResponse(200, type: typeof(List<HetUserRole>))]
-        [RequiresPermission(HetPermission.UserManagement)]
+        [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
         public virtual IActionResult UsersIdRolesPut([FromRoute]int id, [FromBody]HetUserRole[] items)
         {
             bool exists = _context.HetUser.Any(x => x.UserId == id);

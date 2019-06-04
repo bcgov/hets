@@ -8,11 +8,11 @@ import _ from 'lodash';
 import { Grid, Row, Col, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import * as Api from '../../api';
+import * as Log from '../../history';
 
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
-import Form from '../../components/Form.jsx';
 
 import { isBlank, notBlank } from '../../utils/string';
 import { isValidYear } from '../../utils/date';
@@ -20,11 +20,11 @@ import { isValidYear } from '../../utils/date';
 class EquipmentEditDialog extends React.Component {
   static propTypes = {
     currentUser: PropTypes.object,
-    equipment: PropTypes.object,
+    equipment: PropTypes.object.isRequired,
     localAreas: PropTypes.object,
     districtEquipmentTypes: PropTypes.object,
 
-    onSave: PropTypes.func.isRequired,
+    onSave: PropTypes.func,
     onClose: PropTypes.func.isRequired,
     show: PropTypes.bool,
   };
@@ -33,6 +33,7 @@ class EquipmentEditDialog extends React.Component {
     super(props);
 
     this.state = {
+      isSaving: false,
       isNew: props.equipment.id === 0,
 
       localAreaId: props.equipment.localArea.id || 0,
@@ -128,37 +129,46 @@ class EquipmentEditDialog extends React.Component {
     return valid;
   };
 
-  checkForDuplicatesAndSave = () => {
-    if (this.state.duplicateSerialNumberWarning) {
-      // proceed regardless of duplicates
-      this.setState({ duplicateSerialNumberWarning: false });
-      return this.onSave();
-    }
+  formSubmitted = () => {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        if (this.state.duplicateSerialNumberWarning) {
+          // proceed regardless of duplicates
+          this.setState({ duplicateSerialNumberWarning: false });
+          return this.saveEquipment();
+        }
 
-    return Api.equipmentDuplicateCheck(this.props.equipment.id, this.state.serialNumber).then((response) => {
-      if (response.data.length > 0) {
-        const equipmentCodes = response.data.map((district) => {
-          return district.duplicateEquipment.equipmentCode;
+        return Api.equipmentDuplicateCheck(this.props.equipment.id, this.state.serialNumber).then((response) => {
+          if (response.data.length > 0) {
+            const equipmentCodes = response.data.map((district) => {
+              return district.duplicateEquipment.equipmentCode;
+            });
+            var districts = _.chain(response.data)
+              .map(district => district.districtName)
+              .uniq()
+              .value();
+            const districtsPlural = districts.length === 1 ? 'district' : 'districts';
+            this.setState({
+              serialNumberError: `Serial number is currently in use for the equipment ${equipmentCodes.join(', ')}, in the following ${districtsPlural}: ${districts.join(', ')}`,
+              duplicateSerialNumberWarning: true,
+            });
+            return null;
+          } else {
+            this.setState({ duplicateSerialNumberWarning: false });
+            return this.saveEquipment();
+          }
         });
-        var districts = _.chain(response.data)
-          .map(district => district.districtName)
-          .uniq()
-          .value();
-        const districtsPlural = districts.length === 1 ? 'district' : 'districts';
-        this.setState({
-          serialNumberError: `Serial number is currently in use for the equipment ${equipmentCodes.join(', ')}, in the following ${districtsPlural}: ${districts.join(', ')}`,
-          duplicateSerialNumberWarning: true,
-        });
-        return null;
       } else {
-        this.setState({ duplicateSerialNumberWarning: false });
-        return this.onSave();
+        this.props.onClose();
       }
-    });
+    }
   };
 
-  onSave = () => {
-    return this.props.onSave({ ...this.props.equipment, ...{
+  saveEquipment = () => {
+    this.setState({ isSaving: true });
+
+    const equipment = {
+      ...this.props.equipment,
       localArea: { id: this.state.localAreaId },
       districtEquipmentTypeId: this.state.equipmentTypeId,
       serialNumber: this.state.serialNumber,
@@ -171,7 +181,16 @@ class EquipmentEditDialog extends React.Component {
       licencedGvw: this.state.licencedGvw,
       legalCapacity: this.state.legalCapacity,
       pupLegalCapacity: this.state.pupLegalCapacity,
-    }});
+    };
+
+    const promise = Api.updateEquipment(equipment);
+
+    promise.then(() => {
+      Log.equipmentModified(this.props.equipment);
+      this.setState({ isSaving: false });
+      if (this.props.onSave) { this.props.onSave(); }
+      this.props.onClose();
+    });
   };
 
   render() {
@@ -184,140 +203,141 @@ class EquipmentEditDialog extends React.Component {
       .sortBy('districtEquipmentName')
       .value();
 
-    return <EditDialog id="equipment-edit" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.checkForDuplicatesAndSave } didChange={ this.didChange } isValid={ this.isValid }
-      saveText={ this.state.duplicateSerialNumberWarning ? 'Proceed Anyways' : 'Save' }
-      title={<strong>Equipment Id: <small>{ equipment.equipmentCode }</small></strong>}>
-      {(() => {
-        return <Form>
-          <Grid fluid>
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
-                  <ControlLabel>Service Area - Local Area</ControlLabel>
-                  <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } updateState={ this.updateState }
-                    items={ localAreas }
-                    className="full-width"
-                  />
-                  <HelpBlock>{ this.state.localAreaError }</HelpBlock>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
-                  <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
-                  <FilterDropdown
-                    id="equipmentTypeId"
-                    className="full-width"
-                    fieldName="districtEquipmentName"
-                    disabled={!this.props.districtEquipmentTypes.loaded}
-                    items={districtEquipmentTypes}
-                    selectedId={this.state.equipmentTypeId}
-                    updateState={this.updateState}/>
-                  <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId="make" validationState={ this.state.makeError ? 'error' : null }>
-                  <ControlLabel>Make <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.make } updateState={ this.updateState } autoFocus/>
-                  <HelpBlock>{ this.state.makeError }</HelpBlock>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId="model" validationState={ this.state.modelError ? 'error' : null }>
-                  <ControlLabel>Model <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.model } updateState={ this.updateState }/>
-                  <HelpBlock>{ this.state.modelError }</HelpBlock>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId="year" validationState={ this.state.yearError ? 'error' : null }>
-                  <ControlLabel>Year <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.year } updateState={ this.updateState }/>
-                  <HelpBlock>{ this.state.yearError }</HelpBlock>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId="size">
-                  <ControlLabel>Size</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.size } updateState={ this.updateState }/>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId="type">
-                  <ControlLabel>Type</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.type } updateState={ this.updateState }/>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId="licencePlate">
-                  <ControlLabel>Licence Number</ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.licencePlate } updateState={ this.updateState }/>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={12}>
-                <FormGroup controlId="serialNumber" validationState={ this.state.serialNumberError ? 'error' : null }>
-                  <ControlLabel>Serial Number <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" defaultValue={ this.state.serialNumber } updateState={ this.updateState } />
-                  <HelpBlock>{ this.state.serialNumberError }</HelpBlock>
-                </FormGroup>
-              </Col>
-            </Row>
-            { equipment.isDumpTruck &&
-              <div>
-                <Row>
-                  <Col md={12}>
-                    <FormGroup controlId="licencedGvw">
-                      <ControlLabel>Licenced GVW</ControlLabel>
-                      <FormInputControl type="text" defaultValue={ this.state.licencedGvw } updateState={ this.updateState }/>
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md={12}>
-                    <FormGroup controlId="legalCapacity">
-                      <ControlLabel>Truck Legal Capacity</ControlLabel>
-                      <FormInputControl type="text" defaultValue={ this.state.legalCapacity } updateState={ this.updateState }/>
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md={12}>
-                    <FormGroup controlId="pupLegalCapacity">
-                      <ControlLabel>Pup Legal Capacity</ControlLabel>
-                      <FormInputControl type="text" defaultValue={ this.state.pupLegalCapacity } updateState={ this.updateState }/>
-                    </FormGroup>
-                  </Col>
-                </Row>
-              </div>
-            }
-          </Grid>
-        </Form>;
-      })()}
-    </EditDialog>;
+    return (
+      <FormDialog
+        id="equipment-edit"
+        show={ this.props.show }
+        title={ `Equipment Id: ${ equipment.equipmentCode }` }
+        saveButtonLabel={ this.state.duplicateSerialNumberWarning ? 'Proceed Anyways' : 'Save' }
+        isSaving={ this.state.isSaving }
+        onClose={ this.props.onClose }
+        onSubmit={ this.formSubmitted }>
+        <Grid fluid>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
+                <ControlLabel>Service Area - Local Area</ControlLabel>
+                <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } updateState={ this.updateState }
+                  items={ localAreas }
+                  className="full-width"
+                />
+                <HelpBlock>{ this.state.localAreaError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
+                <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
+                <FilterDropdown
+                  id="equipmentTypeId"
+                  className="full-width"
+                  fieldName="districtEquipmentName"
+                  disabled={!this.props.districtEquipmentTypes.loaded}
+                  items={districtEquipmentTypes}
+                  selectedId={this.state.equipmentTypeId}
+                  updateState={this.updateState}/>
+                <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="make" validationState={ this.state.makeError ? 'error' : null }>
+                <ControlLabel>Make <sup>*</sup></ControlLabel>
+                <FormInputControl type="text" defaultValue={ this.state.make } updateState={ this.updateState } autoFocus/>
+                <HelpBlock>{ this.state.makeError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="model" validationState={ this.state.modelError ? 'error' : null }>
+                <ControlLabel>Model <sup>*</sup></ControlLabel>
+                <FormInputControl type="text" defaultValue={ this.state.model } updateState={ this.updateState }/>
+                <HelpBlock>{ this.state.modelError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="year" validationState={ this.state.yearError ? 'error' : null }>
+                <ControlLabel>Year <sup>*</sup></ControlLabel>
+                <FormInputControl type="text" defaultValue={ this.state.year } updateState={ this.updateState }/>
+                <HelpBlock>{ this.state.yearError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="size">
+                <ControlLabel>Size</ControlLabel>
+                <FormInputControl type="text" defaultValue={ this.state.size } updateState={ this.updateState }/>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="type">
+                <ControlLabel>Type</ControlLabel>
+                <FormInputControl type="text" defaultValue={ this.state.type } updateState={ this.updateState }/>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="licencePlate">
+                <ControlLabel>Licence Number</ControlLabel>
+                <FormInputControl type="text" defaultValue={ this.state.licencePlate } updateState={ this.updateState }/>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
+              <FormGroup controlId="serialNumber" validationState={ this.state.serialNumberError ? 'error' : null }>
+                <ControlLabel>Serial Number <sup>*</sup></ControlLabel>
+                <FormInputControl type="text" defaultValue={ this.state.serialNumber } updateState={ this.updateState } />
+                <HelpBlock>{ this.state.serialNumberError }</HelpBlock>
+              </FormGroup>
+            </Col>
+          </Row>
+          { equipment.isDumpTruck &&
+            <div>
+              <Row>
+                <Col md={12}>
+                  <FormGroup controlId="licencedGvw">
+                    <ControlLabel>Licenced GVW</ControlLabel>
+                    <FormInputControl type="text" defaultValue={ this.state.licencedGvw } updateState={ this.updateState }/>
+                  </FormGroup>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={12}>
+                  <FormGroup controlId="legalCapacity">
+                    <ControlLabel>Truck Legal Capacity</ControlLabel>
+                    <FormInputControl type="text" defaultValue={ this.state.legalCapacity } updateState={ this.updateState }/>
+                  </FormGroup>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={12}>
+                  <FormGroup controlId="pupLegalCapacity">
+                    <ControlLabel>Pup Legal Capacity</ControlLabel>
+                    <FormInputControl type="text" defaultValue={ this.state.pupLegalCapacity } updateState={ this.updateState }/>
+                  </FormGroup>
+                </Col>
+              </Row>
+            </div>
+          }
+        </Grid>
+      </FormDialog>
+    );
   }
 }
 
 function mapStateToProps(state) {
   return {
     currentUser: state.user,
-    equipment: state.models.equipment,
     localAreas: state.lookups.localAreas,
     districtEquipmentTypes: state.lookups.districtEquipmentTypes,
   };

@@ -1,45 +1,4 @@
 #rental-requests-list {
-  #rental-requests-filters {
-    > div {
-      margin: 5px;
-    }
-
-    > button {
-      margin: 5px;
-    }
-
-    > input {
-      float: left;
-      min-width: 175px;
-      margin: 5px;
-      width: auto;
-    }
-  }
-
-  #rental-requests-custom-date-filters {
-    .input-group {
-      margin: 5px;
-    }
-
-    label {
-      margin-top: 13px;
-      margin-left: 7px;
-    }
-  }
-
-  #rental-requests-buttons {
-    float: right;
-
-    .btn {
-      width: 40px;
-    }
-  }
-
-  #add-button-container {
-    float: right;
-    margin-top: 10px;
-  }
-
   #add-request-buttons {
     margin-left: auto;
 

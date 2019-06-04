@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 import _ from 'lodash';
 
+import * as Constant from '../../constants';
 import * as Api from '../../api';
 
 import CheckboxControl from '../../components/CheckboxControl.jsx';
@@ -26,6 +27,7 @@ class OwnersEditDialog extends React.Component {
 
   constructor(props) {
     super(props);
+
     var owner = props.owner;
 
     this.state = {
@@ -121,6 +123,9 @@ class OwnersEditDialog extends React.Component {
 
     if (isBlank(this.state.postalCode)) {
       this.setState({ postalCodeError: 'Postal code is required' });
+      valid = false;
+    } else if (!Constant.POSTAL_CODE_REGEX.test(this.state.postalCode)) {
+      this.setState({ postalCodeError: 'Invalid postal code' });
       valid = false;
     }
 

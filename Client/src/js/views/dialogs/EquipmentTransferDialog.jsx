@@ -29,24 +29,27 @@ class EquipmentTransferDialog extends React.Component {
   static propTypes = {
     equipment: PropTypes.object.isRequired,
     owners: PropTypes.object.isRequired,
-    equipmentTransfer: PropTypes.object.isRequired,
     onClose: PropTypes.func.isRequired,
     show: PropTypes.bool.isRequired,
   };
 
-  state = {
-    stage: STAGE_SELECT_OWNER,
-    donorOwnerCode: '',
-    recipientOwnerCode: '',
-    seniorityOption: 1,
-    donorOwnerCodeError: '',
-    recipientOwnerCodeError: '',
-    seniorityOptionError: '',
-    selectedEquipmentIds: [],
-    selectAllEquipment: false,
-    waitingForResponse: false,
-    equipmentTransferError: '',
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      stage: STAGE_SELECT_OWNER,
+      donorOwnerCode: '',
+      recipientOwnerCode: '',
+      seniorityOption: 1,
+      donorOwnerCodeError: '',
+      recipientOwnerCodeError: '',
+      seniorityOptionError: '',
+      selectedEquipmentIds: [],
+      selectAllEquipment: false,
+      waitingForResponse: false,
+      equipmentTransferError: '',
+    };
+  }
 
   componentDidMount() {
     Api.getOwnersLite();
@@ -261,7 +264,7 @@ class EquipmentTransferDialog extends React.Component {
           var includeSeniority = this.state.seniorityOption === OPTION_EQUIPMENT_AND_SENIORITY.id;
 
           Api.transferEquipment(donorOwnerId, recipientOwnerId, equipment, includeSeniority).catch((error) => {
-            if (error.errorCode) {
+            if (error.status === 400 && (error.errorCode === 'HETS-31' || error.errorCode === 'HETS-32' || error.errorCode === 'HETS-33' || error.errorCode === 'HETS-34')) {
               this.setState({ equipmentTransferError: error.errorDescription });
             } else {
               throw error;
@@ -281,7 +284,7 @@ class EquipmentTransferDialog extends React.Component {
     return (
       <ModalDialog
         backdrop="static"
-        className={ 'edit-dialog' }
+        className={ 'form-dialog' }
         id="equipment-transfer"
         title="Equipment Transfer"
         bsSize="large"
@@ -303,7 +306,6 @@ function mapStateToProps(state) {
   return {
     equipment: state.models.ownerEquipment,
     owners: state.lookups.owners.lite,
-    equipmentTransfer: state.models.equipmentTransfer,
   };
 }
 

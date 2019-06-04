@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, InputGroup, Form } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, InputGroup, Form } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import _ from 'lodash';
 
@@ -12,6 +12,9 @@ import * as Api from '../api';
 import * as Constant from '../constants';
 import store from '../store';
 
+import AddButtonContainer from '../components/ui/AddButtonContainer.jsx';
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SearchBar from '../components/ui/SearchBar.jsx';
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import Confirm from '../components/Confirm.jsx';
 import Favourites from '../components/Favourites.jsx';
@@ -21,7 +24,7 @@ import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import PrintButton from '../components/PrintButton.jsx';
-
+import Authorize from '../components/Authorize.jsx';
 
 class Users extends React.Component {
   static propTypes = {
@@ -166,9 +169,11 @@ class Users extends React.Component {
             <td>{ user.districtName }</td>
             <td style={{ textAlign: 'right' }}>
               <ButtonGroup>
-                <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.delete.bind(this, user) }/> }>
-                  <Button className={ user.canDelete ? '' : 'hidden' } title="Delete User" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
-                </OverlayTrigger>
+                <Authorize>
+                  <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.delete.bind(this, user) }/> }>
+                    <Button className={ user.canDelete ? '' : 'hidden' } title="Delete User" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
+                  </OverlayTrigger>
+                </Authorize>
                 <LinkContainer to={{ pathname: `${ Constant.USERS_PATHNAME }/${ user.id }` }}>
                   <Button className={ user.canEdit ? '' : 'hidden' } title="View User" bsSize="xsmall"><Glyphicon glyph="edit" /></Button>
                 </LinkContainer>
@@ -200,48 +205,47 @@ class Users extends React.Component {
           <PrintButton disabled={!this.props.users.loaded}/>
         </ButtonGroup>
       </PageHeader>
-      <div>
-        <Well id="users-bar" bsSize="small" className="clearfix">
+      <SearchBar>
+        <Form onSubmit={ this.search }>
           <Row>
-            <Col sm={10}>
-              <Form onSubmit={ this.search }>
-                <ButtonToolbar id="users-search">
-                  <MultiDropdown id="selectedDistrictsIds" placeholder="Districts"
-                    items={ districts } selectedIds={ this.state.search.selectedDistrictsIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
-                  <InputGroup>
-                    <InputGroup.Addon>Surname</InputGroup.Addon>
-                    <FormInputControl id="surname" type="text" value={ this.state.search.surname } updateState={ this.updateSearchState }/>
-                  </InputGroup>
-                  <CheckboxControl inline id="hideInactive" checked={ this.state.search.hideInactive } updateState={ this.updateSearchState }>Hide Inactive</CheckboxControl>
-                  <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
-                  <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
-                </ButtonToolbar>
-              </Form>
+            <Col sm={10} id="filters">
+              <ButtonToolbar>
+                <MultiDropdown id="selectedDistrictsIds" placeholder="Districts"
+                  items={ districts } selectedIds={ this.state.search.selectedDistrictsIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
+                <InputGroup>
+                  <InputGroup.Addon>Surname</InputGroup.Addon>
+                  <FormInputControl id="surname" type="text" value={ this.state.search.surname } updateState={ this.updateSearchState }/>
+                </InputGroup>
+                <CheckboxControl inline id="hideInactive" checked={ this.state.search.hideInactive } updateState={ this.updateSearchState }>Hide Inactive</CheckboxControl>
+                <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
+                <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
+              </ButtonToolbar>
             </Col>
-            <Col sm={2}>
-              <Row id="users-faves">
+            <Col sm={2} id="search-buttons">
+              <Row>
                 <Favourites id="users-faves-dropdown" type="user" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
               </Row>
             </Col>
           </Row>
-        </Well>
+        </Form>
+      </SearchBar>
 
-        {(() => {
-          if (this.props.users.loading) {
-            return <div style={{ textAlign: 'center' }}><Spinner/></div>;
-          }
+      {(() => {
+        if (this.props.users.loading) {
+          return <div style={{ textAlign: 'center' }}><Spinner/></div>;
+        }
 
-          var addUserButton = <Button title="Add User" bsSize="xsmall" onClick={ this.openUsersEditDialog }>
-            <Glyphicon glyph="plus" />&nbsp;<strong>Add User</strong>
-          </Button>;
+        var addUserButton = <Authorize><Button title="Add User" bsSize="xsmall" onClick={ this.openUsersEditDialog }>
+          <Glyphicon glyph="plus" />&nbsp;<strong>Add User</strong>
+        </Button></Authorize>;
 
-          if (this.props.users.loaded) {
-            return this.renderResults(addUserButton);
-          }
+        if (this.props.users.loaded) {
+          return this.renderResults(addUserButton);
+        }
 
-          return <div id="add-button-container">{ addUserButton }</div>;
-        })()}
-      </div>
+        return <AddButtonContainer>{ addUserButton }</AddButtonContainer>;
+      })()}
+
       { this.state.showUsersEditDialog &&
         <UsersEditDialog
           isNew

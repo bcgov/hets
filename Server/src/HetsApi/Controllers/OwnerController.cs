@@ -214,7 +214,7 @@ namespace HetsApi.Controllers
         [Route("{id}")]
         [SwaggerOperation("OwnersIdPut")]
         [SwaggerResponse(200, type: typeof(HetOwner))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult OwnersIdPut([FromRoute]int id, [FromBody]HetOwner item)
         {
             if (item == null || id != item.OwnerId)
@@ -338,7 +338,7 @@ namespace HetsApi.Controllers
         [Route("{id}/status")]
         [SwaggerOperation("OwnersIdStatusPut")]
         [SwaggerResponse(200, type: typeof(HetEquipment))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult OwnersIdStatusPut([FromRoute]int id, [FromBody]OwnerStatus item)
         {
             // not found
@@ -454,7 +454,7 @@ namespace HetsApi.Controllers
         [Route("")]
         [SwaggerOperation("OwnersPost")]
         [SwaggerResponse(200, type: typeof(HetOwner))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult OwnersPost([FromBody]HetOwner item)
         {
             // not found
@@ -950,7 +950,7 @@ namespace HetsApi.Controllers
         [Route("{id}/equipment")]
         [SwaggerOperation("OwnersIdEquipmentPut")]
         [SwaggerResponse(200, type: typeof(List<HetEquipment>))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult OwnersIdEquipmentPut([FromRoute]int id, [FromBody]HetEquipment[] items)
         {
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
@@ -1004,7 +1004,7 @@ namespace HetsApi.Controllers
         [Route("{id}/equipmentTransfer/{targetOwnerId}/{includeSeniority}")]
         [SwaggerOperation("OwnersIdEquipmentTransferPost")]
         [SwaggerResponse(200, type: typeof(List<HetEquipment>))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult OwnersIdEquipmentTransferPost([FromRoute]int id, [FromRoute]int targetOwnerId,
             [FromRoute]bool includeSeniority, [FromBody]HetEquipment[] items)
         {
@@ -1069,7 +1069,7 @@ namespace HetsApi.Controllers
             }
 
             // check they are both active
-            if (currentOwner.OwnerStatusTypeId != ownerStatusId &&
+            if (currentOwner.OwnerStatusTypeId != ownerStatusId ||
                 targetOwner.OwnerStatusTypeId != ownerStatusId)
             {
                 return new BadRequestObjectResult(new HetsResponse("HETS-32", ErrorViewModel.GetDescription("HETS-32", _configuration)));
@@ -1317,7 +1317,7 @@ namespace HetsApi.Controllers
         [Route("{id}/contacts/{primary}")]
         [SwaggerOperation("OwnersIdContactsPost")]
         [SwaggerResponse(200, type: typeof(HetContact))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult OwnersIdContactsPost([FromRoute]int id, [FromRoute]bool primary, [FromBody]HetContact item)
         {
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
@@ -1416,7 +1416,7 @@ namespace HetsApi.Controllers
         [Route("{id}/contacts")]
         [SwaggerOperation("OwnersIdContactsPut")]
         [SwaggerResponse(200, type: typeof(List<HetContact>))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult OwnersIdContactsPut([FromRoute]int id, [FromBody]HetContact[] items)
         {
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
@@ -1539,7 +1539,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/history")]
         [SwaggerOperation("OwnersIdHistoryPost")]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult OwnersIdHistoryPost([FromRoute]int id, [FromBody]HetHistory item)
         {
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
@@ -1608,7 +1608,7 @@ namespace HetsApi.Controllers
         [Route("{id}/note")]
         [SwaggerOperation("OwnersIdNotePost")]
         [SwaggerResponse(200, type: typeof(HetNote))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult OwnersIdNotePost([FromRoute]int id, [FromBody]HetNote item)
         {
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
@@ -1672,7 +1672,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("GenerateKeys")]
         [SwaggerOperation("OwnersGenerateKeysPost")]
-        [RequiresPermission(HetPermission.Admin)]
+        [RequiresPermission(HetPermission.Admin, HetPermission.WriteAccess)]
         public virtual IActionResult OwnersGenerateKeysPost()
         {
             // get records
@@ -1720,6 +1720,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("GenerateKeysApi")]
         [SwaggerOperation("GenerateKeysApiPost")]
+        [RequiresPermission(HetPermission.Admin, HetPermission.WriteAccess)]
         public virtual IActionResult GenerateKeysApiPost()
         {
             // security...

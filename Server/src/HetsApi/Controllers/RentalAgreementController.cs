@@ -73,7 +73,7 @@ namespace HetsApi.Controllers
         [Route("{id}")]
         [SwaggerOperation("RentalAgreementsIdPut")]
         [SwaggerResponse(200, type: typeof(HetRentalAgreement))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult RentalAgreementsIdPut([FromRoute]int id, [FromBody]HetRentalAgreement item)
         {
             if (item == null || id != item.RentalAgreementId)
@@ -203,7 +203,7 @@ namespace HetsApi.Controllers
         [Route("")]
         [SwaggerOperation("RentalAgreementsPost")]
         [SwaggerResponse(200, type: typeof(HetRentalAgreement))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult RentalAgreementsPost([FromBody]HetRentalAgreement item)
         {
             // not found
@@ -297,7 +297,7 @@ namespace HetsApi.Controllers
         [Route("{id}/release")]
         [SwaggerOperation("RentalAgreementsIdReleasePost")]
         [SwaggerResponse(200, type: typeof(HetRentalAgreement))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult RentalAgreementsIdReleasePost([FromRoute]int id)
         {
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
@@ -512,7 +512,7 @@ namespace HetsApi.Controllers
         [Route("{id}/timeRecord")]
         [SwaggerOperation("RentalAgreementsIdTimeRecordsPost")]
         [SwaggerResponse(200, type: typeof(HetTimeRecord))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult RentalAgreementsIdTimeRecordsPost([FromRoute]int id, [FromBody]HetTimeRecord item)
         {
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
@@ -574,7 +574,7 @@ namespace HetsApi.Controllers
         [Route("{id}/timeRecords")]
         [SwaggerOperation("RentalAgreementsIdTimeRecordsBulkPostAsync")]
         [SwaggerResponse(200, type: typeof(HetTimeRecord))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult RentalAgreementsIdTimeRecordsBulkPostAsync([FromRoute]int id, [FromBody]HetTimeRecord[] items)
         {
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
@@ -665,7 +665,7 @@ namespace HetsApi.Controllers
         [Route("{id}/rateRecord")]
         [SwaggerOperation("RentalAgreementsIdRentalAgreementRatesPost")]
         [SwaggerResponse(200, type: typeof(HetRentalAgreementRate))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult RentalAgreementsIdRentalAgreementRatesPost([FromRoute]int id, [FromBody]HetRentalAgreementRate item)
         {
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
@@ -730,7 +730,7 @@ namespace HetsApi.Controllers
         [Route("{id}/rateRecords")]
         [SwaggerOperation("RentalAgreementsIdRentalAgreementRatesBulkPost")]
         [SwaggerResponse(200, type: typeof(HetRentalAgreementRate))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult RentalAgreementsIdRentalAgreementRatesBulkPost([FromRoute]int id, [FromBody]HetRentalAgreementRate[] items)
         {
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
@@ -820,7 +820,7 @@ namespace HetsApi.Controllers
         [Route("{id}/conditionRecord")]
         [SwaggerOperation("RentalAgreementsIdRentalAgreementConditionsPost")]
         [SwaggerResponse(200, type: typeof(HetRentalAgreementCondition))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult RentalAgreementsIdRentalAgreementConditionsPost([FromRoute]int id, [FromBody]HetRentalAgreementCondition item)
         {
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
@@ -872,7 +872,7 @@ namespace HetsApi.Controllers
         [Route("{id}/conditionRecords")]
         [SwaggerOperation("RentalAgreementsIdRentalAgreementConditionsBulkPost")]
         [SwaggerResponse(200, type: typeof(HetRentalAgreementCondition))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult RentalAgreementsIdRentalAgreementConditionsBulkPost([FromRoute]int id, [FromBody]HetRentalAgreementCondition[] items)
         {
             bool exists = _context.HetRentalAgreement.Any(a => a.RentalAgreementId == id);
@@ -929,7 +929,7 @@ namespace HetsApi.Controllers
         [Route("createBlankAgreement")]
         [SwaggerOperation("BlankRentalAgreementPost")]
         [SwaggerResponse(200, type: typeof(HetRentalAgreement))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult BlankRentalAgreementPost()
         {
             // get current users district
@@ -1095,7 +1095,7 @@ namespace HetsApi.Controllers
         [Route("deleteBlankAgreement/{id}")]
         [SwaggerOperation("DeleteBlankRentalAgreementPost")]
         [SwaggerResponse(200, type: typeof(HetRentalAgreement))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult DeleteBlankRentalAgreementPost([FromRoute]int id)
         {
             // get current users district
@@ -1164,7 +1164,7 @@ namespace HetsApi.Controllers
         [Route("updateCloneBlankAgreement/{id}")]
         [SwaggerOperation("CloneBlankRentalAgreementPost")]
         [SwaggerResponse(200, type: typeof(HetRentalAgreement))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult CloneBlankRentalAgreementPost([FromRoute]int id, [FromBody]HetRentalAgreement agreement)
         {
             // check the ids
@@ -1340,6 +1340,39 @@ namespace HetsApi.Controllers
 
             // return to the client
             return new ObjectResult(new HetsResponse(agreement));
+        }
+
+        #endregion
+
+        #region Get all agreements by district for rental agreement summary filtering
+
+        /// <summary>
+        /// Get all agreements by district for rental agreement summary filtering
+        /// </summary>
+        [HttpGet]
+        [Route("summaryLite")]
+        [SwaggerOperation("RentalAgreementsGetSummaryLite")]
+        [SwaggerResponse(200, type: typeof(List<RentalAgreementSummaryLite>))]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult RentalAgreementsGetSummaryLite()
+        {
+            // get user's district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
+            IQueryable<HetRentalAgreement> agreements = _context.HetRentalAgreement.AsNoTracking()
+                .Where(x => x.DistrictId.Equals(districtId) &&
+                            !x.Number.StartsWith("BCBid"));
+
+            // convert to "lite" model
+            List<RentalAgreementSummaryLite> result = new List<RentalAgreementSummaryLite>();
+
+            foreach (HetRentalAgreement item in agreements)
+            {
+                result.Add(RentalAgreementHelper.ToSummaryLiteModel(item));
+            }
+
+            // return to the client
+            return new ObjectResult(new HetsResponse(result));
         }
 
         #endregion

@@ -50,3 +50,15 @@ export const activeOwnerSelector = createSelector(
   modelsSelector,
   (activeOwnerId, models) => models.owner[activeOwnerId] || null
 );
+
+
+export const activeEquipmentIdSelector = createSelector(
+  uiSelector,
+  (ui) => parseInt(ui.activeEquipmentId, 10)
+);
+
+export const activeEquipmentSelector = createSelector(
+  activeEquipmentIdSelector,
+  modelsSelector,
+  (activeEquipmentId, models) => models.equipment[activeEquipmentId] || null
+);

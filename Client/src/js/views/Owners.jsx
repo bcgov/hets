@@ -1,16 +1,18 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { PageHeader, Well, Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
 import OwnersAddDialog from './dialogs/OwnersAddDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
-import * as Log from '../history';
 import store from '../store';
 
+import AddButtonContainer from '../components/ui/AddButtonContainer.jsx';
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SearchBar from '../components/ui/SearchBar.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
 import EditButton from '../components/EditButton.jsx';
 import Favourites from '../components/Favourites.jsx';
@@ -20,6 +22,7 @@ import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import Form from '../components/Form.jsx';
 import PrintButton from '../components/PrintButton.jsx';
+import Authorize from '../components/Authorize.jsx';
 
 import { sort, caseInsensitiveSort } from '../utils/array.js';
 
@@ -28,7 +31,6 @@ class Owners extends React.Component {
   static propTypes = {
     currentUser: PropTypes.object,
     ownerList: PropTypes.object,
-    owner: PropTypes.object,
     localAreas: PropTypes.object,
     favourites: PropTypes.object,
     search: PropTypes.object,
@@ -136,13 +138,10 @@ class Owners extends React.Component {
     this.setState({ showAddDialog: false });
   };
 
-  saveNewOwner = (owner) => {
-    Api.addOwner(owner).then((newOwner) => {
-      Log.ownerAdded(newOwner);
-      // Open it up
-      this.props.router.push({
-        pathname: `${ Constant.OWNERS_PATHNAME }/${ newOwner.id }`,
-      });
+  ownerSaved = (owner) => {
+    this.fetch();
+    this.props.router.push({
+      pathname: `${ Constant.OWNERS_PATHNAME }/${ owner.id }`,
     });
   };
 
@@ -154,8 +153,8 @@ class Owners extends React.Component {
       { field: 'localAreaName',          title: 'Local Area'                                      },
       { field: 'organizationName',       title: 'Company Name'                                    },
       { field: 'primaryContactName',     title: 'Primary Contact Name'                            },
-      { field: 'workPhoneNumber',        title: 'Work Number'                                     },
-      { field: 'mobilePhoneNumber',      title: 'Cell Number'                                     },
+      { field: 'workPhoneNumber',        title: 'Phone'                                           },
+      { field: 'mobilePhoneNumber',      title: 'Cell Phone'                                      },
       { field: 'equipmentCount',         title: 'Equipment',       style: { textAlign: 'center' } },
       { field: 'status',                 title: 'Status',          style: { textAlign: 'center' } },
       { field: 'addOwner',               title: 'Add Owner',       style: { textAlign: 'right'  },
@@ -199,17 +198,15 @@ class Owners extends React.Component {
 
     return <div id="owners-list">
       <PageHeader>Owners { resultCount }
-        <div id="owners-buttons">
-          <ButtonGroup>
-            <PrintButton disabled={!this.props.ownerList.loaded}/>
-          </ButtonGroup>
-        </div>
+        <ButtonGroup>
+          <PrintButton disabled={!this.props.ownerList.loaded}/>
+        </ButtonGroup>
       </PageHeader>
-      <Well id="owners-bar" bsSize="small" className="clearfix">
-        <Row>
-          <Col xs={9} sm={10}>
-            <Form onSubmit={ this.search }>
-              <ButtonToolbar id="owners-filters">
+      <SearchBar>
+        <Form onSubmit={ this.search }>
+          <Row>
+            <Col xs={9} sm={10} id="filters">
+              <ButtonToolbar>
                 <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                   items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
                 <DropdownControl id="statusCode" title={ this.state.search.statusCode } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
@@ -219,29 +216,31 @@ class Owners extends React.Component {
                 <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
                 <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
               </ButtonToolbar>
-            </Form>
-          </Col>
-          <Col xs={3} sm={2}>
-            <Favourites id="owners-faves-dropdown" type="owner" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
-          </Col>
-        </Row>
-      </Well>
+            </Col>
+            <Col xs={3} sm={2} id="search-buttons">
+              <Row>
+                <Favourites id="faves-dropdown" type="owner" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+              </Row>
+            </Col>
+          </Row>
+        </Form>
+      </SearchBar>
 
       {(() => {
         if (this.props.ownerList.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-        var addOwnerButton = <Button title="Add Owner" bsSize="xsmall" onClick={ this.openAddDialog }>
+        var addOwnerButton = <Authorize><Button title="Add Owner" bsSize="xsmall" onClick={ this.openAddDialog }>
           <Glyphicon glyph="plus" />&nbsp;<strong>Add Owner</strong>
-        </Button>;
+        </Button></Authorize>;
 
         if (this.props.ownerList.loaded) {
           return this.renderResults(ownerList, addOwnerButton);
         }
 
-        return <div id="add-button-container">{ addOwnerButton }</div>;
+        return <AddButtonContainer>{ addOwnerButton }</AddButtonContainer>;
       })()}
       { this.state.showAddDialog &&
-        <OwnersAddDialog show={ this.state.showAddDialog } onSave={ this.saveNewOwner } onClose={ this.closeAddDialog } />
+        <OwnersAddDialog show={ this.state.showAddDialog } onSave={ this.ownerSaved } onClose={ this.closeAddDialog } />
       }
     </div>;
   }
@@ -251,7 +250,6 @@ function mapStateToProps(state) {
   return {
     currentUser: state.user,
     ownerList: state.models.owners,
-    owner: state.models.owner,
     localAreas: state.lookups.localAreas,
     favourites: state.models.favourites.owner,
     search: state.search.owners,

@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: patroni-pgsql-persistent
+  annotations:
+    description: Patroni Postgresql database cluster, with persistent storage.
+    iconClass: icon-postgresql
+    openshift.io/display-name: Patroni Postgresql (Persistent)
+    openshift.io/long-description: This template deploys a patroni postgresql HA cluster with persistent storage.
+    tags: postgresql
+objects:
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: ${SERVICE_ACCOUNT}
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: ${SERVICE_ACCOUNT}
+  subjects:
+  - kind: ServiceAccount
+    name: ${SERVICE_ACCOUNT}
+parameters:
+- description: The name of the application for labelling all artifacts.
+  displayName: Application Name
+  name: APPLICATION_NAME
+  value: patroni-persistent
+- description: The name of the patroni-pgsql cluster.
+  displayName: Cluster Name
+  name: PATRONI_CLUSTER_NAME
+  value: patroni-persistent
+- description: The name of the OpenShift Service exposed for the patroni-persistent-master container.
+  displayName: Master service name.  
+  name: PATRONI_MASTER_SERVICE_NAME
+  value: patroni-persistent-master
+- description: The name of the OpenShift Service exposed for the patroni-persistent-replica containers.
+  displayName: Replica service name. 
+  name: PATRONI_REPLICA_SERVICE_NAME
+  value: patroni-persistent-replica
+- description: Maximum amount of memory the container can use.
+  displayName: Memory Limit
+  name: MEMORY_LIMIT
+  value: 512Mi
+- description: The OpenShift Namespace where the patroni and postgresql ImageStream resides.
+  displayName: ImageStream Namespace
+  name: NAMESPACE
+  value: openshift
+- description: Username of the superuser account for initialization.
+  displayName: Superuser Username
+  name: PATRONI_SUPERUSER_USERNAME
+  value: postgres
+- description: Password of the superuser account for initialization.
+  displayName: Superuser Passsword
+  name: PATRONI_SUPERUSER_PASSWORD
+  value: postgres
+- description: Username of the replication account for initialization.
+  displayName: Replication Username
+  name: PATRONI_REPLICATION_USERNAME
+  value: postgres
+- description: Password of the replication account for initialization.
+  displayName: Repication Passsword
+  name: PATRONI_REPLICATION_PASSWORD
+  value: postgres
+- description: Service account name used for pods and rolebindings to form a cluster in the project. 
+  displayName: Service Account
+  name: SERVICE_ACCOUNT
+  value: patroni-persistent
+- description: The size of the persistent volume to create. 
+  displayName: Persistent Volume Size
+  name: PVC_SIZE
+  value: 5Gi

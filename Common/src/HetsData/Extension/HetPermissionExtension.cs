@@ -53,6 +53,11 @@ namespace HetsData.Model
         public const string Version = "Version";
 
         /// <summary>
+        /// Write Access Permission
+        /// </summary>
+        public const string WriteAccess = "WriteAccess";
+
+        /// <summary>
         /// All Permissions List
         /// </summary>
         public static readonly IEnumerable<HetPermission> AllPermissions = new List<HetPermission>
@@ -110,6 +115,12 @@ namespace HetsData.Model
                 Code = Version,
                 Name = "Version",
                 Description = "Permission to view application's version page"
+            },
+            new HetPermission
+            {
+                Code = WriteAccess,
+                Name = "WriteAccess",
+                Description = "Permistion to add, update and delete records"
             }
         };
     }
