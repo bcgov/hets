@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import { PageHeader, Well, Row, Col, FormGroup, Alert, Button } from 'react-bootstrap';
+import { Well, Row, Col, FormGroup, Alert, Button } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Action from '../actionTypes';
@@ -11,6 +11,8 @@ import * as Constant from '../constants';
 import store from '../store';
 
 import Main from './Main.jsx';
+
+import PageHeader from '../components/ui/PageHeader.jsx';
 import Spinner from '../components/Spinner.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
 import SortTable from '../components/SortTable.jsx';
@@ -26,18 +28,24 @@ class BusinessPortal extends React.Component {
     uiOwners: PropTypes.object,
   };
 
-  state = {
-    loading: false,
-    validating: false,
-    success: false,
-    errors: {},
+  constructor(props) {
+    super(props);
 
-    // owners
-    uiOwners : {
-      sortField: this.props.uiOwners.sortField || 'organizationName',
-      sortDesc: this.props.uiOwners.sortDesc  === true,
-    },
-  };
+    this.state = {
+      loading: false,
+      validating: false,
+      success: false,
+      secretKey: '',
+      postalCode: '',
+      errors: {},
+
+      // owners
+      uiOwners : {
+        sortField: props.uiOwners.sortField || 'organizationName',
+        sortDesc: props.uiOwners.sortDesc  === true,
+      },
+    };
+  }
 
   componentDidMount() {
     const businessLoaded = Boolean(this.props.business);
@@ -74,12 +82,13 @@ class BusinessPortal extends React.Component {
       // clear input fields
       this.inputPostalCode.value = '';
       this.inputSecretKey.value = '';
-    }).catch((err) => {
-      console.error(err);
-      if (err.errorCode) { // must be a server validation error
-        this.setState({ errors: { secretKey: err.errorDescription } });
+    }).catch((error) => {
+      if (error.status === 400 && (error.errorCode === 'HETS-19' || error.errorCode === 'HETS-20' || error.errorCode === 'HETS-21')) {
+        this.setState({ errors: { secretKey: error.errorDescription } });
+      } else if (error.status === 400 && error.errorCode === 'HETS-22') {
+        this.setState({ errors: { postalCode: error.errorDescription } });
       } else {
-        throw err;
+        throw error;
       }
     }).finally(() => {
       this.setState({ validating: false });

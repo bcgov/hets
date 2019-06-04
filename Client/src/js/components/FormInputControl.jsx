@@ -8,11 +8,11 @@ class FormInputControl extends React.Component {
   static propTypes = {
     type: PropTypes.string,
     updateState: PropTypes.func,
+    inputRef: PropTypes.func,
     autoFocus: PropTypes.bool,
     autoComplete: PropTypes.string,
     onChange: PropTypes.func,
     children: PropTypes.node,
-    inputRef: PropTypes.func,
   };
 
   componentDidMount() {

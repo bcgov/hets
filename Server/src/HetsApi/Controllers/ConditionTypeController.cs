@@ -69,7 +69,7 @@ namespace HetsApi.Controllers
         [Route("{id}/delete")]
         [SwaggerOperation("ConditionTypesIdDeletePost")]
         [SwaggerResponse(200, type: typeof(HetConditionType))]
-        [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
+        [RequiresPermission(HetPermission.DistrictCodeTableManagement, HetPermission.WriteAccess)]
         public virtual IActionResult ConditionTypesIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetConditionType.Any(a => a.ConditionTypeId == id);
@@ -115,7 +115,7 @@ namespace HetsApi.Controllers
         [Route("{id}")]
         [SwaggerOperation("ConditionTypesIdPost")]
         [SwaggerResponse(200, type: typeof(HetConditionType))]
-        [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
+        [RequiresPermission(HetPermission.DistrictCodeTableManagement, HetPermission.WriteAccess)]
         public virtual IActionResult ConditionTypesIdPost([FromRoute]int id, [FromBody]HetConditionType item)
         {
             if (id != item.ConditionTypeId)

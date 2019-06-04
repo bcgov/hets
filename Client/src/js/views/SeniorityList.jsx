@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, PageHeader, Row, Col, ButtonToolbar, Button } from 'react-bootstrap';
+import { Row, Col, ButtonToolbar, Button } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../api';
 
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SearchBar from '../components/ui/SearchBar.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 
 
@@ -16,10 +18,14 @@ class SeniorityList extends React.Component {
     localAreas: PropTypes.object,
   };
 
-  state = {
-    selectedEquipmentTypeIds: [],
-    selectedLocalAreaIds: [],
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      selectedEquipmentTypeIds: [],
+      selectedLocalAreaIds: [],
+    };
+  }
 
   componentDidMount() {
     this.fetch();
@@ -80,9 +86,9 @@ class SeniorityList extends React.Component {
 
     return <div id="seniority-list">
       <PageHeader>Seniority List</PageHeader>
-      <Well bsSize="small" className="clearfix">
+      <SearchBar>
         <Row>
-          <Col md={12}>
+          <Col md={12} id="filters">
             <ButtonToolbar className="btn-container">
               <MultiDropdown id="selectedLocalAreaIds" className="fixed-width small" placeholder="Local Areas" items={ localAreas }
                 selectedIds={ this.state.selectedLocalAreaIds } updateState={ this.updateState } onChange={ this.onLocalAreasChanged } showMaxItems={ 2 } />
@@ -101,7 +107,7 @@ class SeniorityList extends React.Component {
             </ButtonToolbar>
           </Col>
         </Row>
-      </Well>
+      </SearchBar>
     </div>;
   }
 }

@@ -41,7 +41,7 @@ namespace HetsApi.Controllers
         [Route("{id}/delete")]
         [SwaggerOperation("AttachmentsIdDeletePost")]
         [SwaggerResponse(200, type: typeof(HetDigitalFile))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult AttachmentsIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetDigitalFile.Any(a => a.DigitalFileId == id);

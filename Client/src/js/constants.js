@@ -19,7 +19,7 @@ export const TIME_ENTRY_PATHNAME = 'time-entry';
 export const VERSION_PATHNAME = 'version';
 export const BUSINESS_PORTAL_PATHNAME = '/business';
 export const BUSINESS_DETAILS_PATHNAME = '/business/details';
-export const AIT_REPORT_PATHNAME = 'reports/ait-report';
+export const AIT_REPORT_PATHNAME = 'reports/rental-agreement-summary';
 
 // Permissions
 export const PERMISSION_LOGIN = 'Login';
@@ -32,6 +32,7 @@ export const PERMISSION_CODE_TABLE_MANAGEMENT = 'CodeTableManagement';
 export const PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT = 'DistrictCodeTableManagement';
 export const PERMISSION_DISTRICT_ROLLOVER = 'DistrictRollover';
 export const PERMISSION_VERSION = 'Version';
+export const PERMISSION_WRITE_ACCESS = 'WriteAccess';
 
 // Roles
 export const ADMINISTRATOR_ROLE = '4-HETS System Administrator';
@@ -96,6 +97,7 @@ export const DATE_TIME_FILENAME = 'YYYY-MM-DD-HHmmss';
 export const EMAIL_REGEX = /\S+@\S+\.\S+/;
 export const NANP_REGEX = /^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/;
 export const MONEY_REGEX = /^\d+(\.\d\d?)?$/;
+export const POSTAL_CODE_REGEX = /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/;
 
 // Conditions
 export const NON_STANDARD_CONDITION = 'Other';
@@ -113,6 +115,16 @@ export function setHeaderHeight(num) {
   headerHeight = num;
 }
 
+// History
+export const HISTORY_OWNER = 'Owner';
+export const HISTORY_PROJECT = 'Project';
+export const HISTORY_EQUIPMENT = 'Equipment';
+export const HISTORY_REQUEST = 'Request';
+export const HISTORY_USER = 'User';
+export const HISTORY_ROLE = 'Role';
+export const HISTORY_CONTACT = 'Contact';
+export const HISTORY_DOCUMENT = 'Document';
+
 // Session
 export const SESSION_TIMEOUT = 7200000; // 120 minutes
 export const SESSION_KEEP_ALIVE_INTERVAL = 600000; // 10 minutes
@@ -122,6 +134,7 @@ export const MAX_LENGTH_CGL_COMPANY_NAME = 150;
 export const MAX_LENGTH_NOTE_TEXT = 2048;
 export const MAX_LENGTH_PHONE_NUMBER = 20;
 export const MAX_LENGTH_RENTAL_AGREEMENT_NOTE = 150;
+export const MAX_LENGTH_STATUS_COMMENT = 255;
 
 // Max File Sizes
 export const MAX_ATTACHMENT_FILE_SIZE = 5242880; // 5 MB

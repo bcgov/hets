@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using HetsApi.Model;
+using Microsoft.Extensions.Configuration;
 
 namespace HetsApi.Authorization
 {
@@ -30,16 +32,18 @@ namespace HetsApi.Authorization
         {
             private readonly IAuthorizationService _authService;
             private readonly PermissionRequirement _requiredPermissions;
+            private readonly IConfiguration _configuration;
 
             /// <summary>
             /// Implements permission verification
             /// </summary>
             /// <param name="authService"></param>
             /// <param name="requiredPermissions"></param>
-            public ImplementationRequiresPermissionAttribute(IAuthorizationService authService, PermissionRequirement requiredPermissions)
+            public ImplementationRequiresPermissionAttribute(IAuthorizationService authService, PermissionRequirement requiredPermissions, IConfiguration configuration)
             {
                 _authService = authService;
                 _requiredPermissions = requiredPermissions;
+                _configuration = configuration;
             }
 
             /// <summary>
@@ -77,19 +81,13 @@ namespace HetsApi.Authorization
 
                 if (!result.Succeeded)
                 {
-                    context.Result = new UnauthorizedResult();
-
-                    HttpResponse response = context.HttpContext.Response;
-
-                    string responseText = "<HTML><HEAD><META http-equiv=\"Content - Type\" content=\"text / html; charset = windows - 1252\"></HEAD><BODY></BODY></HTML>";
-                    byte[] data = Encoding.UTF8.GetBytes(responseText);
-
-                    response.StatusCode = 403; // forbidden
-                    response.Body.Write(data, 0, data.Length);
-                    await response.Body.FlushAsync();
+                    context.Result = new BadRequestObjectResult(new HetsResponse("HETS-43", ErrorViewModel.GetDescription("HETS-43", _configuration)));
+                }
+                else
+                {
+                    await next();
                 }
 
-                await next();
             }
         }
     }

@@ -45,7 +45,6 @@ const DEFAULT_MODELS = {
   equipmentRentalAgreements: {
     data: {},
   },
-  equipmentTransfer: {},
 
   owners: {
     data: {},
@@ -140,7 +139,12 @@ const DEFAULT_MODELS = {
   documents: {},
   document: {},
 
-  history: {},
+  history: {
+    equipment: {},
+    owner: {},
+    project: {},
+    rentalRequest: {},
+  },
 
   timeRecord: {
     data: {},
@@ -243,16 +247,15 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, equipmentList: { data: {}, loading: false, loaded: false } };
 
     case Action.ADD_EQUIPMENT: case Action.UPDATE_EQUIPMENT:
-      return { ...state, equipment: action.equipment };
+      return produce(state, (draftState) => {
+        draftState.equipment[action.equipment.id] = action.equipment;
+      });
 
     case Action.UPDATE_EQUIPMENT_NOTES:
       return { ...state, equipmentNotes: action.notes };
 
     case Action.UPDATE_EQUIPMENT_RENTAL_AGREEMENTS:
       return { ...state, equipmentRentalAgreements: { data: action.rentalAgreements } };
-
-    case Action.EQUIPMENT_TRANSFER_ERROR:
-      return { ...state, equipmentTransfer: { ...state.equipmentTransfer, error: true, errorMessage: action.errorMessage } };
 
     // Owners
     case Action.OWNERS_REQUEST:
@@ -555,8 +558,25 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       return { ...state, rolePermissions: action.rolePermissions };
 
     // History
-    case Action.UPDATE_HISTORY:
-      return { ...state, history: action.history };
+    case Action.UPDATE_EQUIPMENT_HISTORY:
+      return produce(state, (draftState) => {
+        draftState.history.equipment[action.id] = action.history;
+      });
+
+    case Action.UPDATE_OWNER_HISTORY:
+      return produce(state, (draftState) => {
+        draftState.history.owner[action.id] = action.history;
+      });
+
+    case Action.UPDATE_PROJECT_HISTORY:
+      return produce(state, (draftState) => {
+        draftState.history.project[action.id] = action.history;
+      });
+
+    case Action.UPDATE_RENTAL_REQUEST_HISTORY:
+      return produce(state, (draftState) => {
+        draftState.history.rentalRequest[action.id] = action.history;
+      });
 
     // Notes
     case Action.DELETE_NOTE: {

@@ -6,13 +6,13 @@ import _ from 'lodash';
 
 import * as Constant from '../../constants';
 import * as Api from '../../api';
+import * as Log from '../../history';
 
+import FormDialog from '../../components/FormDialog.jsx';
 import CheckboxControl from '../../components/CheckboxControl.jsx';
 import DropdownControl from '../../components/DropdownControl.jsx';
-import EditDialog from '../../components/EditDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 import { isBlank, onlyLetters } from '../../utils/string';
 
@@ -31,42 +31,47 @@ class OwnersAddDialog extends React.Component {
     show: PropTypes.bool,
   };
 
-  state = {
-    name: '',
-    doingBusinessAs: '',
-    givenName: '',
-    surname: '',
-    address1: '',
-    address2: '',
-    city: '',
-    province: 'BC',
-    postalCode: '',
-    ownerCode: '',
-    // localAreaId: defaultLocalAreaId.id || 0,
-    localAreaId: 0,
-    isMaintenanceContractor: false,
-    meetsResidency: true,
-    registeredCompanyNumber: '',
-    workSafeBCPolicyNumber: '',
-    primaryContactPhone: '',
-    primaryContactGivenName: '',
-    primaryContactSurname: '',
-    primaryContactRole: '',
-    status: Constant.OWNER_STATUS_CODE_APPROVED,
+  constructor(props) {
+    super(props);
 
-    nameError: '',
-    ownerGivenNameError: '',
-    ownerSurameError: '',
-    address1Error: '',
-    cityError: '',
-    provinceError: '',
-    postalCodeError: '',
-    ownerCodeError: '',
-    localAreaError: '',
-    residencyError: '',
-    workSafeBCPolicyNumberError: '',
-    primaryContactPhoneError: '',
-  };
+    this.state = {
+      isSaving: false,
+      name: '',
+      doingBusinessAs: '',
+      givenName: '',
+      surname: '',
+      address1: '',
+      address2: '',
+      city: '',
+      province: 'BC',
+      postalCode: '',
+      ownerCode: '',
+      // localAreaId: defaultLocalAreaId.id || 0,
+      localAreaId: 0,
+      isMaintenanceContractor: false,
+      meetsResidency: true,
+      registeredCompanyNumber: '',
+      workSafeBCPolicyNumber: '',
+      primaryContactPhone: '',
+      primaryContactGivenName: '',
+      primaryContactSurname: '',
+      primaryContactRole: '',
+      status: Constant.OWNER_STATUS_CODE_APPROVED,
+
+      nameError: '',
+      ownerGivenNameError: '',
+      ownerSurameError: '',
+      address1Error: '',
+      cityError: '',
+      provinceError: '',
+      postalCodeError: '',
+      ownerCodeError: '',
+      localAreaError: '',
+      residencyError: '',
+      workSafeBCPolicyNumberError: '',
+      primaryContactPhoneError: '',
+    };
+  }
 
   componentDidMount() {
     Api.getOwnersLite();
@@ -158,6 +163,9 @@ class OwnersAddDialog extends React.Component {
     if (isBlank(this.state.postalCode)) {
       this.setState({ postalCodeError: 'Postal code is required' });
       valid = false;
+    } else if (!Constant.POSTAL_CODE_REGEX.test(this.state.postalCode)) {
+      this.setState({ postalCodeError: 'Invalid postal code' });
+      valid = false;
     }
 
     if (isBlank(this.state.ownerCode)) {
@@ -204,29 +212,46 @@ class OwnersAddDialog extends React.Component {
     return valid;
   };
 
-  onSave = () => {
-    this.props.onSave({
-      organizationName: this.state.name,
-      doingBusinessAs: this.state.doingBusinessAs,
-      givenName: this.state.givenName,
-      surname: this.state.surname,
-      address1: this.state.address1,
-      address2: this.state.address2,
-      city: this.state.city,
-      province: this.state.province,
-      postalCode: this.state.postalCode,
-      ownerCode: this.state.ownerCode,
-      localArea: { id: this.state.localAreaId },
-      isMaintenanceContractor: this.state.isMaintenanceContractor,
-      meetsResidency: this.state.meetsResidency,
-      registeredCompanyNumber: this.state.registeredCompanyNumber,
-      workSafeBCPolicyNumber: this.state.workSafeBCPolicyNumber,
-      primaryContactGivenName: this.state.primaryContactGivenName,
-      primaryContactSurname: this.state.primaryContactSurname,
-      primaryContactPhone: this.state.primaryContactPhone,
-      primaryContactRole: this.state.primaryContactRole,
-      status: this.state.status,
-    });
+  formSubmitted = () => {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        this.setState({ isSaving: true });
+
+        var owner = {
+          organizationName: this.state.name,
+          doingBusinessAs: this.state.doingBusinessAs,
+          givenName: this.state.givenName,
+          surname: this.state.surname,
+          address1: this.state.address1,
+          address2: this.state.address2,
+          city: this.state.city,
+          province: this.state.province,
+          postalCode: this.state.postalCode,
+          ownerCode: this.state.ownerCode,
+          localArea: { id: this.state.localAreaId },
+          isMaintenanceContractor: this.state.isMaintenanceContractor,
+          meetsResidency: this.state.meetsResidency,
+          registeredCompanyNumber: this.state.registeredCompanyNumber,
+          workSafeBCPolicyNumber: this.state.workSafeBCPolicyNumber,
+          primaryContactGivenName: this.state.primaryContactGivenName,
+          primaryContactSurname: this.state.primaryContactSurname,
+          primaryContactPhone: this.state.primaryContactPhone,
+          primaryContactRole: this.state.primaryContactRole,
+          status: this.state.status,
+        };
+
+        const promise = Api.addOwner(owner);
+
+        promise.then((newOwner) => {
+          Log.ownerAdded(newOwner);
+          this.setState({ isSaving: false });
+          if (this.props.onSave) { this.props.onSave(newOwner); }
+          this.props.onClose();
+        });
+      } else {
+        this.props.onClose();
+      }
+    }
   };
 
   render() {
@@ -235,10 +260,14 @@ class OwnersAddDialog extends React.Component {
       .sortBy('name')
       .value();
 
-    return <EditDialog id="add-owner" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={<strong>Add Owner</strong>}>
-      <Form>
+    return (
+      <FormDialog
+        id="add-owner"
+        show={ this.props.show }
+        title="Add Owner"
+        isSaving={ this.state.isSaving }
+        onClose={ this.props.onClose }
+        onSubmit={ this.formSubmitted }>
         <FormGroup controlId="name" validationState={ this.state.nameError ? 'error' : null }>
           <ControlLabel>Company Name <sup>*</sup></ControlLabel>
           <FormInputControl type="text" value={ this.state.name } updateState={ this.updateState } autoFocus />
@@ -333,8 +362,8 @@ class OwnersAddDialog extends React.Component {
           <CheckboxControl id="meetsResidency" checked={ this.state.meetsResidency } updateState={ this.updateState }>Meets Residency</CheckboxControl>
           <HelpBlock>{ this.state.residencyError }</HelpBlock>
         </FormGroup>
-      </Form>
-    </EditDialog>;
+      </FormDialog>
+    );
   }
 }
 

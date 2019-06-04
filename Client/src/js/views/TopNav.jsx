@@ -96,7 +96,7 @@ class TopNav extends React.Component {
               </LinkContainer>
               <NavDropdown id="reports-dropdown" title="Reports" disabled={ navigationDisabled }>
                 <LinkContainer to={{ pathname: `/${ Constant.AIT_REPORT_PATHNAME }` }} active={ currentPathStartsWith(Constant.AIT_REPORT_PATHNAME) }>
-                  <MenuItem>AIT report</MenuItem>
+                  <MenuItem>Rental Agreement Summary</MenuItem>
                 </LinkContainer>
                 <LinkContainer to={{ pathname: `/${ Constant.SENIORITY_LIST_PATHNAME }` }} active={ currentPathStartsWith(Constant.SENIORITY_LIST_PATHNAME) }>
                   <MenuItem>Seniority List</MenuItem>

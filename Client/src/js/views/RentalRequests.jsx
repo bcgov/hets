@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Alert, Row, Col, PageHeader, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form } from 'react-bootstrap';
 import { Link } from 'react-router';
 import _ from 'lodash';
 import Moment from 'moment';
@@ -14,6 +14,9 @@ import * as Constant from '../constants';
 import * as Log from '../history';
 import store from '../store';
 
+import AddButtonContainer from '../components/ui/AddButtonContainer.jsx';
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SearchBar from '../components/ui/SearchBar.jsx';
 import DateControl from '../components/DateControl.jsx';
 import DeleteButton from '../components/DeleteButton.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
@@ -25,6 +28,7 @@ import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import PrintButton from '../components/PrintButton.jsx';
+import Authorize from '../components/Authorize.jsx';
 
 import { formatDateTime, startOfCurrentFiscal, endOfCurrentFiscal, startOfPreviousFiscal, endOfPreviousFiscal, toZuluTime } from '../utils/date';
 
@@ -260,7 +264,7 @@ class RentalRequests extends React.Component {
             <td style={{ textAlign: 'right' }}>
               <ButtonGroup>
                 {request.canDelete && (
-                  <DeleteButton name="Rental Request" onConfirm={ this.deleteRequest.bind(this, request) } />
+                  <Authorize><DeleteButton name="Rental Request" onConfirm={ this.deleteRequest.bind(this, request) } /></Authorize>
                 )}
                 {request.canView && (
                   <EditButton name="Rental Request" view pathname={ `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ request.id }` }/>
@@ -286,16 +290,16 @@ class RentalRequests extends React.Component {
 
     return <div id="rental-requests-list">
       <PageHeader>Rental Requests { resultCount }
-        <ButtonGroup id="rental-requests-buttons">
+        <ButtonGroup>
           <PrintButton disabled={!this.props.rentalRequests.loaded}/>
         </ButtonGroup>
       </PageHeader>
-      <Well id="rental-requests-bar" bsSize="small" className="clearfix">
+      <SearchBar id="rental-requests-bar">
         <Form onSubmit={ this.search }>
           <Row>
-            <Col xs={9} sm={10}>
+            <Col xs={9} sm={10} id="filters">
               <Row>
-                <ButtonToolbar id="rental-requests-filters">
+                <ButtonToolbar>
                   <MultiDropdown id="selectedLocalAreasIds" placeholder="Local Areas"
                     items={ localAreas } selectedIds={ this.state.search.selectedLocalAreasIds } updateState={ this.updateSearchState } showMaxItems={ 2 } />
                   <DropdownControl id="status" title={ this.state.search.status } updateState={ this.updateSearchState } blankLine="(All)" placeholder="Status"
@@ -312,35 +316,35 @@ class RentalRequests extends React.Component {
                 if (this.state.search.dateRange === CUSTOM) {
                   return <Row>
                     <ButtonToolbar id="rental-requests-custom-date-filters">
-                      <span>
-                        <DateControl id="startDate" date={ this.state.search.startDate } updateState={ this.updateSearchState } label="From:" title="start date"/>
-                        <DateControl id="endDate" date={ this.state.search.endDate } updateState={ this.updateSearchState } label="To:" title="end date"/>
-                      </span>
+                      <DateControl id="startDate" date={ this.state.search.startDate } updateState={ this.updateSearchState } label="From:" title="start date"/>
+                      <DateControl id="endDate" date={ this.state.search.endDate } updateState={ this.updateSearchState } label="To:" title="end date"/>
                     </ButtonToolbar>
                   </Row>;
                 }
               })()}
             </Col>
-            <Col xs={3} sm={2}>
-              <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+            <Col xs={3} sm={2} id="search-buttons">
+              <Row>
+                <Favourites id="rental-requests-faves-dropdown" type="rentalRequests" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
+              </Row>
             </Col>
           </Row>
         </Form>
-      </Well>
+      </SearchBar>
 
       {(() => {
         if (this.props.rentalRequests.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
         var addViewOnlyRequestButton = (
-          <Button title="Add Rental Request (View Only)" className="hidden-print" bsSize="xsmall" onClick={ () => this.openAddDialog(true) }>
+          <Authorize><Button title="Add Rental Request (View Only)" className="hidden-print" bsSize="xsmall" onClick={ () => this.openAddDialog(true) }>
             <Glyphicon glyph="plus" />&nbsp;<strong>Request (View Only)</strong>
-          </Button>
+          </Button></Authorize>
         );
 
         var addRentalRequestButton = (
-          <Button title="Add Rental Request" className="hidden-print" bsSize="xsmall" onClick={ () => this.openAddDialog(false) }>
+          <Authorize><Button title="Add Rental Request" className="hidden-print" bsSize="xsmall" onClick={ () => this.openAddDialog(false) }>
             <Glyphicon glyph="plus" />&nbsp;<strong>Add Rental Request</strong>
-          </Button>
+          </Button></Authorize>
         );
 
         var addRequestButtons = <div id="add-request-buttons">
@@ -352,7 +356,7 @@ class RentalRequests extends React.Component {
           return this.renderResults(addRequestButtons);
         }
 
-        return <div id="add-button-container">{ addRequestButtons }</div>;
+        return <AddButtonContainer>{ addRequestButtons }</AddButtonContainer>;
       })()}
       { this.state.showAddDialog && (
         <RentalRequestsAddDialog

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { PageHeader, Button, ButtonGroup, Glyphicon, Well, Alert, Row, Col } from 'react-bootstrap';
+import { Button, ButtonGroup, Glyphicon, Well, Alert, Row, Col } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../api';
@@ -9,16 +9,19 @@ import * as Constant from '../constants';
 import * as Action from '../actionTypes';
 // import store from '../store';
 
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SubHeader from '../components/ui/SubHeader.jsx';
 import ModalDialog from '../components/ModalDialog.jsx';
 import SortTable from '../components/SortTable.jsx';
 import TableControl from '../components/TableControl.jsx';
 import Spinner from '../components/Spinner.jsx';
 import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import Confirm from '../components/Confirm.jsx';
+import Authorize from '../components/Authorize.jsx';
+
 import ConditionAddEditDialog from './dialogs/ConditionAddEditDialog.jsx';
 import DistrictEquipmentTypeAddEditDialog from './dialogs/DistrictEquipmentTypeAddEditDialog.jsx';
 import EquipmentTransferDialog from './dialogs/EquipmentTransferDialog.jsx';
-import SubHeader from '../components/ui/SubHeader.jsx';
 
 import { caseInsensitiveSort, sort } from '../utils/array';
 
@@ -95,16 +98,8 @@ class DistrictAdmin extends React.Component {
     this.setState({ showEquipmentTransferDialog: false });
   };
 
-  onConditionSave = (data) => {
-    let condition = { ...data, district: { id: this.props.currentUser.district.id } };
-    let promise = Api.addCondition;
-    if (condition.id !== 0) {
-      promise = Api.updateCondition;
-    }
-    promise(condition).then(() => {
-      Api.getRentalConditions();
-      this.closeConditionAddEditDialog();
-    });
+  conditionSaved = () => {
+    Api.getRentalConditions();
   };
 
   showDistrictEquipmentTypeAddEditDialog = () => {
@@ -127,23 +122,18 @@ class DistrictAdmin extends React.Component {
     this.setState({ districtEquipmentType: equipment }, this.showDistrictEquipmentTypeAddEditDialog);
   };
 
-  onDistrictEquipmentTypeSave = (data) => {
-    let equipment = { ...data, district: { id: this.props.currentUser.district.id } };
-    const promise = equipment.id !== 0 ? Api.updateDistrictEquipmentType : Api.addDistrictEquipmentType;
-    promise(equipment).then(() => {
-      Api.getDistrictEquipmentTypes();
-      this.closeDistrictEquipmentTypeAddEditDialog();
-    });
+  districtEquipmentTypeSaved = () => {
+    Api.getDistrictEquipmentTypes();
   };
 
   deleteDistrictEquipmentType = (equipment) => {
     Api.deleteDistrictEquipmentType(equipment).then(() => {
       return Api.getDistrictEquipmentTypes();
-    }).catch((err) => {
-      if (err.errorCode) {
-        this.setState({ showDistrictEquipmentTypeErrorDialog: true, districtEquipmentTypeError: err.errorDescription });
+    }).catch((error) => {
+      if (error.status === 400 && error.errorCode === 'HETS-37') {
+        this.setState({ showDistrictEquipmentTypeErrorDialog: true, districtEquipmentTypeError: error.errorDescription });
       } else {
-        throw err;
+        throw error;
       }
     });
   };
@@ -163,7 +153,7 @@ class DistrictAdmin extends React.Component {
         {(() => {
           if (!this.props.districtEquipmentTypes.loaded) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-          var addDistrictEquipmentButton = <Button title="Add District Equipment" bsSize="xsmall" onClick={ this.addDistrictEquipmentType }><Glyphicon glyph="plus" />&nbsp;<strong>Add District Equipment Type</strong></Button>;
+          var addDistrictEquipmentButton = <Authorize><Button title="Add District Equipment" bsSize="xsmall" onClick={ this.addDistrictEquipmentType }><Glyphicon glyph="plus" />&nbsp;<strong>Add District Equipment Type</strong></Button></Authorize>;
 
           var equipmentTypes = this.props.districtEquipmentTypes.data;
 
@@ -190,9 +180,11 @@ class DistrictAdmin extends React.Component {
                     <td>{ equipment.equipmentType.name }</td>
                     <td style={{ textAlign: 'right' }}>
                       <ButtonGroup>
-                        <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteDistrictEquipmentType.bind(this, equipment) }/> }>
-                          <Button title="Delete District Equipment Type" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
-                        </OverlayTrigger>
+                        <Authorize>
+                          <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.deleteDistrictEquipmentType.bind(this, equipment) }/> }>
+                            <Button title="Delete District Equipment Type" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
+                          </OverlayTrigger>
+                        </Authorize>
                         <Button title="Edit District Equipment Type" bsSize="xsmall" onClick={ this.editDistrictEquipmentType.bind(this, equipment) }><Glyphicon glyph="edit" /></Button>
                       </ButtonGroup>
                     </td>
@@ -209,7 +201,7 @@ class DistrictAdmin extends React.Component {
         {(() => {
           if (this.props.rentalConditions.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-          var addConditionButton = <Button title="Add Condition" bsSize="xsmall" onClick={ this.addCondition }><Glyphicon glyph="plus" />&nbsp;<strong>Add Condition</strong></Button>;
+          var addConditionButton = <Authorize><Button title="Add Condition" bsSize="xsmall" onClick={ this.addCondition }><Glyphicon glyph="plus" />&nbsp;<strong>Add Condition</strong></Button></Authorize>;
 
           if (Object.keys(this.props.rentalConditions.data).length === 0) { return <Alert bsStyle="success">No users { addConditionButton }</Alert>; }
 
@@ -241,15 +233,15 @@ class DistrictAdmin extends React.Component {
           );
         })()}
       </Well>
-
-      <Well className="clearfix">
-        <SubHeader title="Equipment Transfer (Bulk)"/>
-        <Row>
-          <Col xs={9}>Bulk transfer will enable the user to transfer equipment associated with one owner code to another owner code.</Col>
-          <Col xs={3}><span className="pull-right"><Button onClick={ this.showEquipmentTransferDialog }>Equipment Transfer</Button></span></Col>
-        </Row>
-      </Well>
-
+      <Authorize>
+        <Well className="clearfix">
+          <SubHeader title="Equipment Transfer (Bulk)"/>
+          <Row>
+            <Col xs={9}>Bulk transfer will enable the user to transfer equipment associated with one owner code to another owner code.</Col>
+            <Col xs={3}><span className="pull-right"><Button onClick={ this.showEquipmentTransferDialog }>Equipment Transfer</Button></span></Col>
+          </Row>
+        </Well>
+      </Authorize>
       { this.state.showEquipmentTransferDialog &&
         <EquipmentTransferDialog
           show={ this.state.showEquipmentTransferDialog }
@@ -260,7 +252,7 @@ class DistrictAdmin extends React.Component {
         <ConditionAddEditDialog
           show={this.state.showConditionAddEditDialog}
           onClose={this.closeConditionAddEditDialog}
-          onSave={this.onConditionSave}
+          onSave={this.conditionSaved}
           condition={this.state.condition}
         />
       }
@@ -268,7 +260,7 @@ class DistrictAdmin extends React.Component {
         <DistrictEquipmentTypeAddEditDialog
           show={this.state.showDistrictEquipmentTypeAddEditDialog}
           onClose={this.closeDistrictEquipmentTypeAddEditDialog}
-          onSave={this.onDistrictEquipmentTypeSave}
+          onSave={this.districtEquipmentTypeSaved}
           districtEquipmentType={this.state.districtEquipmentType}
         />
       }

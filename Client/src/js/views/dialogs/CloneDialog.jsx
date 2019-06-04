@@ -8,9 +8,9 @@ import Promise from 'bluebird';
 import { Row, Col, Radio, Alert, FormGroup, ControlLabel } from 'react-bootstrap';
 
 import * as Api from '../../api';
-import { BY_EQUIPMENT, BY_PROJECT } from '../../constants';
+import * as Constant from '../../constants';
 
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import TableControl from '../../components/TableControl.jsx';
 import DropdownControl from '../../components/DropdownControl.jsx';
 import Spinner from '../../components/Spinner.jsx';
@@ -25,14 +25,19 @@ class CloneDialog extends React.Component {
     rentalAgreement: PropTypes.object,
     projectRentalAgreements: PropTypes.object,
     equipmentRentalAgreements: PropTypes.object,
-    cloneRentalAgreementError: PropTypes.string,
   };
 
-  state = {
-    loading: false,
-    rentalAgreementId: '',
-    type: BY_PROJECT,
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isSaving: false,
+      cloneRentalAgreementError: '',
+      loading: false,
+      rentalAgreementId: '',
+      type: Constant.BY_PROJECT,
+    };
+  }
 
   componentDidMount() {
     var getProjectRentalAgreementsPromise = Api.getProjectRentalAgreements(this.props.rentalAgreement.project.id);
@@ -61,8 +66,40 @@ class CloneDialog extends React.Component {
     return true;
   };
 
-  onSave = () => {
-    this.props.onSave(parseInt(this.state.rentalAgreementId, 10), this.state.type);
+  formSubmitted = () => {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        this.setState({ isSaving: true });
+
+        var data = {
+          projectId: this.props.rentalAgreement.project.id,
+          agreementToCloneId: parseInt(this.state.rentalAgreementId, 10),
+          rentalAgreementId: this.props.rentalAgreement.id,
+          equipmentId: this.props.rentalAgreement.equipmentId,
+        };
+
+        const promise = this.state.type === Constant.BY_EQUIPMENT ? Api.cloneEquipmentRentalAgreement(data) : Api.cloneProjectRentalAgreement(data);
+
+        promise.then(() => {
+          this.setState({ isSaving: false });
+          if (this.props.onSave) { this.props.onSave(); }
+          this.onClose();
+        }).catch((error) => {
+          if (error.status === 400 && (error.errorCode === 'HETS-11' || error.errorCode === 'HETS-12' || error.errorCode === 'HETS-13')) {
+            this.setState({ isSaving: false, cloneRentalAgreementError: 'There was an error cloning the rental agreement.' });
+          } else {
+            throw error;
+          }
+        });
+      } else {
+        this.onClose();
+      }
+    }
+  };
+
+  onClose = () => {
+    this.setState({ cloneRentalAgreementError: '' });
+    this.props.onClose();
   };
 
   render() {
@@ -76,7 +113,7 @@ class CloneDialog extends React.Component {
       { field: 'datedOn',                  title: 'Dated On'                 },
     ];
 
-    var rentalAgreements = _.filter(this.state.type === BY_PROJECT ?
+    var rentalAgreements = _.filter(this.state.type === Constant.BY_PROJECT ?
       this.props.projectRentalAgreements.data : this.props.equipmentRentalAgreements.data, item => {
       return item.id !== this.props.rentalAgreement.id;
     });
@@ -85,47 +122,55 @@ class CloneDialog extends React.Component {
       return rentalAgreement.datedOn;
     }));
 
-    return <EditDialog id="clone-dialog" show={ this.props.show } bsSize="large"
-      onClose={ this.props.onClose } onSave={ this.onSave } isValid={ this.isValid } didChange={ this.didChange } saveText="Clone"
-      title={<strong>Clone Rental Agreement</strong>}>
-      <Row>
-        <Col md={12}>
-          <FormGroup controlId="type">
-            <ControlLabel>Rental Agreements</ControlLabel>
-            <DropdownControl id="type" updateState={ this.updateDropdownState }
-              selectedId={ this.state.type } title={ this.state.type } items={[BY_PROJECT, BY_EQUIPMENT]}
-            />
-          </FormGroup>
-          <p>Select a rental agreement to clone...</p>
-          {(() => {
-            if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+    return (
+      <FormDialog
+        id="clone-dialog"
+        show={ this.props.show }
+        title="Clone Rental Agreement"
+        saveButtonLabel="Clone"
+        bsSize="large"
+        isSaving={ this.state.isSaving }
+        onClose={ this.onClose }
+        onSubmit={ this.formSubmitted }>
+        <Row>
+          <Col md={12}>
+            <FormGroup controlId="type">
+              <ControlLabel>Rental Agreements</ControlLabel>
+              <DropdownControl id="type" updateState={ this.updateDropdownState }
+                selectedId={ this.state.type } title={ this.state.type } items={[Constant.BY_PROJECT, Constant.BY_EQUIPMENT]}
+              />
+            </FormGroup>
+            <p>Select a rental agreement to clone...</p>
+            {(() => {
+              if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
-            if (!rentalAgreements || Object.keys(rentalAgreements).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No rental agreements.</Alert>; }
+              if (!rentalAgreements || Object.keys(rentalAgreements).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No rental agreements.</Alert>; }
 
-            return (
-              <TableControl id="notes-list" headers={ headers }>
-                {
-                  _.map(rentalAgreements, (rentalAgreement) => {
-                    return <tr key={ rentalAgreement.id }>
-                      <td><Radio name="rentalAgreementId" value={ rentalAgreement.id } onChange={ this.updateState } /></td>
-                      <td>{ rentalAgreement.equipment.equipmentCode }</td>
-                      <td>{ rentalAgreement.equipment.districtEquipmentType.districtEquipmentName }</td>
-                      <td>{`${rentalAgreement.equipment.year} ${rentalAgreement.equipment.make}/${rentalAgreement.equipment.model}/${rentalAgreement.equipment.size}`}</td>
-                      <td>{ rentalAgreement.project && rentalAgreement.project.name }</td>
-                      <td>{ rentalAgreement.number }</td>
-                      <td>{ formatDateTime(rentalAgreement.datedOn, 'YYYY-MMM-DD') }</td>
-                    </tr>;
-                  })
-                }
-              </TableControl>
-            );
-          })()}
-          { this.props.cloneRentalAgreementError &&
-            <Alert bsStyle="danger">{ this.props.cloneRentalAgreementError }</Alert>
-          }
-        </Col>
-      </Row>
-    </EditDialog>;
+              return (
+                <TableControl id="notes-list" headers={ headers }>
+                  {
+                    _.map(rentalAgreements, (rentalAgreement) => {
+                      return <tr key={ rentalAgreement.id }>
+                        <td><Radio name="rentalAgreementId" value={ rentalAgreement.id } onChange={ this.updateState } /></td>
+                        <td>{ rentalAgreement.equipment.equipmentCode }</td>
+                        <td>{ rentalAgreement.equipment.districtEquipmentType.districtEquipmentName }</td>
+                        <td>{`${rentalAgreement.equipment.year} ${rentalAgreement.equipment.make}/${rentalAgreement.equipment.model}/${rentalAgreement.equipment.size}`}</td>
+                        <td>{ rentalAgreement.project && rentalAgreement.project.name }</td>
+                        <td>{ rentalAgreement.number }</td>
+                        <td>{ formatDateTime(rentalAgreement.datedOn, 'YYYY-MMM-DD') }</td>
+                      </tr>;
+                    })
+                  }
+                </TableControl>
+              );
+            })()}
+            { this.state.cloneRentalAgreementError &&
+              <Alert bsStyle="danger">{ this.state.cloneRentalAgreementError }</Alert>
+            }
+          </Col>
+        </Row>
+      </FormDialog>
+    );
   }
 }
 

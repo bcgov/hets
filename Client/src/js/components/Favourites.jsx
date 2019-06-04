@@ -12,6 +12,8 @@ import DeleteButton from '../components/DeleteButton.jsx';
 import EditButton from '../components/EditButton.jsx';
 import FormDialog from '../components/FormDialog.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
+import Authorize from '../components/Authorize.jsx';
+
 import RootCloseMenu from './RootCloseMenu.jsx';
 
 import { isBlank } from '../utils/string';
@@ -116,11 +118,15 @@ class Favourites extends React.Component {
     pullRight: PropTypes.bool,
   };
 
-  state = {
-    favouriteToEdit: {},
-    showEditDialog: false,
-    open: false,
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      favouriteToEdit: {},
+      showEditDialog: false,
+      open: false,
+    };
+  }
 
   addFavourite = () => {
     this.editFavourite({
@@ -176,7 +182,7 @@ class Favourites extends React.Component {
     var title = this.props.title || 'Favourites';
     var className = `favourites ${ this.props.className || '' } ${ this.props.pullRight ? 'pull-right' : '' }`;
 
-    return <Dropdown id={ this.props.id } className={ className } title={ title }
+    return <Authorize><Dropdown id={ this.props.id } className={ className } title={ title }
       open={ this.state.open } onToggle={ this.toggle }>
       <Dropdown.Toggle>{ title }</Dropdown.Toggle>
       <RootCloseMenu bsRole="menu">
@@ -211,7 +217,7 @@ class Favourites extends React.Component {
       { this.state.showEditDialog ?
         <EditFavouritesDialog show={ this.state.showEditDialog } favourite={ this.state.favouriteToEdit } onSave={ this.favoriteSaved } onClose={ this.closeDialog } /> : null
       }
-    </Dropdown>;
+    </Dropdown></Authorize>;
   }
 }
 

@@ -3,6 +3,7 @@ import React from 'react';
 import { FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
 
 import * as Api from '../../api';
+import * as Constant from '../../constants';
 import * as Log from '../../history';
 
 import FormDialog from '../../components/FormDialog.jsx';
@@ -20,11 +21,15 @@ class EquipmentChangeStatusDialog extends React.Component {
     onStatusChanged: PropTypes.func.isRequired,
   };
 
-  state = {
-    saving: false,
-    comment: '',
-    commentError: '',
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      saving: false,
+      comment: '',
+      commentError: '',
+    };
+  }
 
   updateState = (state, callback) => {
     this.setState(state, callback);
@@ -33,7 +38,6 @@ class EquipmentChangeStatusDialog extends React.Component {
   isValid = () => {
     this.setState({
       commentError: '',
-      statusError: '',
     });
 
     var valid = true;
@@ -59,17 +63,19 @@ class EquipmentChangeStatusDialog extends React.Component {
         this.setState({isSaving: false});
         this.props.onStatusChanged();
         Log.equipmentStatusModified(this.props.equipment, status.status, status.statusComment);
-      }).catch((err) => {
-        if (err.status === 400 && err.errorCode === 'HETS-39') {
-          this.setState({ commentError: err.errorDescription });
+      }).catch((error) => {
+        if (error.status === 400 && (error.errorCode === 'HETS-39' || error.errorCode === 'HETS-41')) {
+          this.setState({ commentError: error.errorDescription });
         } else {
-          throw err;
+          throw error;
         }
       });
     }
   };
 
   render() {
+    var maxLength = Constant.MAX_LENGTH_STATUS_COMMENT;
+
     return (
       <FormDialog
         id="notes"
@@ -80,8 +86,9 @@ class EquipmentChangeStatusDialog extends React.Component {
         onSubmit={this.formSubmitted}>
         <FormGroup controlId="comment" validationState={this.state.commentError ? 'error' : null}>
           <ControlLabel>Comment</ControlLabel>
-          <FormInputControl value={this.state.comment} componentClass="textarea" updateState={this.updateState} />
+          <FormInputControl value={this.state.comment} componentClass="textarea" updateState={this.updateState} maxLength={ maxLength } />
           <HelpBlock>{this.state.commentError}</HelpBlock>
+          <p>Maximum { maxLength } characters.</p>
         </FormGroup>
       </FormDialog>
     );

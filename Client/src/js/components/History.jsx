@@ -12,6 +12,8 @@ import store from '../store';
 import SortTable from './SortTable.jsx';
 import Spinner from './Spinner.jsx';
 
+import { makeGetHistorySelector } from '../selectors/history-selectors.js';
+
 import { formatDateTimeUTCToLocal } from '../utils/date';
 import { sortDir } from '../utils/array';
 
@@ -36,11 +38,9 @@ class HistoryComponent extends React.Component {
     super(props);
 
     this.state = {
-      hasFetched: false,
-      loading: false,
+      loading: !this.props.history,
       fetchingMore: false,
 
-      history: [],
       canShowMore: false,
 
       ui : {
@@ -66,7 +66,17 @@ class HistoryComponent extends React.Component {
   fetch = (first) => {
     // Easy mode: show 10 the first time and let the user load all of them with the
     // "Show More" button. Can adapt for paginated / offset&limit calls if necessary.
-    this.setState({ hasFetched: true, loading: true });
+
+    if (first) {
+      if (this.props.history) {
+        // if old data exists, update it in the background without displaying a loading spinner
+        this.setState({ loading: false });
+      } else {
+        // if no data exists, display spinner while it loads
+        this.setState({ loading: true });
+      }
+    }
+
     return History.get(this.props.historyEntity, 0, first ? API_LIMIT : null).finally(() => {
       this.setState({
         loading: false,
@@ -83,14 +93,12 @@ class HistoryComponent extends React.Component {
   };
 
   render() {
-    const { hasFetched, loading, fetchingMore } = this.state;
-
-    const showLoadingSpinner = !hasFetched || (loading && !fetchingMore);
+    const { loading, fetchingMore } = this.state;
 
     return (
       <div>
         {(() => {
-          if (showLoadingSpinner) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+          if (loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
 
           if (Object.keys(this.props.history).length === 0) { return <Alert bsStyle="success">No history</Alert>; }
 
@@ -132,12 +140,16 @@ class HistoryComponent extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    history: state.models.history,
-    users: state.lookups.users,
-    ui: state.ui.history,
+const makeMapStateToProps = () => {
+  const getHistorySelector = makeGetHistorySelector();
+  const mapStateToProps = (state, props) => {
+    return {
+      history: getHistorySelector(state, props),
+      users: state.lookups.users,
+      ui: state.ui.history,
+    };
   };
-}
+  return mapStateToProps;
+};
 
-export default connect(mapStateToProps)(HistoryComponent);
+export default connect(makeMapStateToProps)(HistoryComponent);

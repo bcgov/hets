@@ -44,7 +44,7 @@ namespace HetsApi.Controllers
         [Route("equipment/{id}/attachments")]
         [SwaggerOperation("EquipmentIdAttachmentsPost")]
         [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult EquipmentIdAttachmentsPost([FromRoute] int id, [FromForm]IList<IFormFile> files)
         {
             // validate the id
@@ -114,7 +114,7 @@ namespace HetsApi.Controllers
         [Route("projects/{id}/attachments")]
         [SwaggerOperation("ProjectIdAttachmentsPost")]
         [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult ProjectIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
             // validate the id
@@ -185,7 +185,7 @@ namespace HetsApi.Controllers
         [Route("owners/{id}/attachments")]
         [SwaggerOperation("OwnerIdAttachmentsPost")]
         [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult OwnerIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
             // validate the id
@@ -256,7 +256,7 @@ namespace HetsApi.Controllers
         [Route("rentalRequests/{id}/attachments")]
         [SwaggerOperation("RentalRequestIdAttachmentsPost")]
         [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult RentalRequestIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
             // validate the id

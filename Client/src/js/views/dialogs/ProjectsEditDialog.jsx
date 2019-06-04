@@ -33,7 +33,7 @@ class ProjectsEditDialog extends React.Component {
     super(props);
 
     this.state = {
-      projectName: props.project.name || '',
+      name: props.project.name || '',
       fiscalYear: props.project.fiscalYear || _.first( _.takeRight(props.fiscalYears, 2)),
       provincialProjectNumber: props.project.provincialProjectNumber || '',
       responsibilityCentre: props.project.responsibilityCentre || '',
@@ -45,7 +45,9 @@ class ProjectsEditDialog extends React.Component {
       costType: props.project.costType || '',
       projectInformation: props.project.information || '',
       concurrencyControlNumber: props.project.concurrencyControlNumber || 0,
-      projectNameError: '',
+      nameError: '',
+      fiscalYearError: '',
+      provincialProjectNumberError: '',
     };
   }
 
@@ -60,7 +62,7 @@ class ProjectsEditDialog extends React.Component {
   didChange = () => {
     var project = this.props.project;
 
-    if (this.state.projectName !== project.name) { return true; }
+    if (this.state.name !== project.name) { return true; }
     if (this.state.fiscalYear !== project.fiscalYear) { return true; }
     if (this.state.provincialProjectNumber !== project.provincialProjectNumber) { return true; }
     if (this.state.responsibilityCentre !== project.responsibilityCentre) { return true; }
@@ -76,44 +78,58 @@ class ProjectsEditDialog extends React.Component {
   };
 
   isValid = () => {
+    var valid = true;
+
     this.setState({
+      nameError: '',
       fiscalYearError: '',
-      projectNameError: '',
+      provincialProjectNumberError: '',
     });
 
-    var valid = true;
-    var project = this.props.project;
-    var projectName = this.state.projectName;
+    const { name, fiscalYear, provincialProjectNumber } = this.state;
 
-    if(isBlank(projectName)) {
-      this.setState({ projectNameError: 'Project name is required' });
+    if (isBlank(name)) {
+      this.setState({ nameError: 'Project name is required' });
       valid = false;
-    } else if (projectName !== project.projectName) {
-      var nameIgnoreCase = projectName.toLowerCase().trim();
-      var existingProjects = _.reject(this.props.projects.data, { id: project.id });
-      var existingProjectName = _.find(existingProjects, existingProjectName => existingProjectName.name.toLowerCase().trim() === nameIgnoreCase);
-      if (existingProjectName) {
-        this.setState({ projectNameError: 'This project name already exists'});
-        valid = false;
-      }
     }
 
-    if (isBlank(this.state.fiscalYear)) {
+    if (isBlank(fiscalYear)) {
       this.setState({ fiscalYearError: 'Fiscal year is required' });
+      valid = false;
+    }
+
+    if (isBlank(provincialProjectNumber)) {
+      this.setState({ provincialProjectNumberError: 'Provincial project number is required' });
+      valid = false;
+    }
+
+    if (!valid) {
+      return false;
+    }
+
+    const duplicateProject = _.find(this.props.projects.data, project => {
+      return project.id !== this.props.project.id &&
+             project.name.toLowerCase().trim() === name.toLowerCase().trim() &&
+             project.fiscalYear.toLowerCase().trim() === fiscalYear.toLowerCase().trim() &&
+             project.provincialProjectNumber.toLowerCase().trim() === provincialProjectNumber.toLowerCase().trim();
+    });
+
+    if (duplicateProject) {
+      this.setState({ nameError: 'A project with the same name and project number exists for the selected fiscal year.'});
       valid = false;
     }
 
     return valid;
   };
 
-  onSubmit = () => {
+  formSubmitted = () => {
     if (this.isValid()) {
       if (this.didChange()) {
         const project = {
           ...this.props.project,
           id: this.props.project.id,
           district: this.props.project.district,
-          name: this.state.projectName,
+          name: this.state.name,
           fiscalYear: this.state.fiscalYear,
           provincialProjectNumber: this.state.provincialProjectNumber,
           responsibilityCentre: this.state.responsibilityCentre,
@@ -139,26 +155,22 @@ class ProjectsEditDialog extends React.Component {
   };
 
   render() {
-    const { isSaving } = this.state;
-    const { show, onClose } = this.props;
-
     // TODO: Restrict Information box resize
     return (
       <FormDialog
         id="projects-edit"
-        show={show}
+        show={ this.props.show }
         title="Projects"
-        isSaving={isSaving}
-        onClose={onClose}
-        onSubmit={this.onSubmit}>
+        onClose={ this.props.onClose}
+        onSubmit={ this.formSubmitted }>
         <Form>
           <Grid fluid>
             <Row>
               <Col xs={12}>
-                <FormGroup controlId="projectName" validationState={ this.state.projectNameError ? 'error' : null}>
+                <FormGroup controlId="name" validationState={ this.state.nameError ? 'error' : null}>
                   <ControlLabel>Project Name <sup>*</sup></ControlLabel>
-                  <FormInputControl type="text" value={ this.state.projectName } updateState={ this.updateState} autoFocus maxLength="60"/>
-                  <HelpBlock>{ this.state.projectNameError }</HelpBlock>
+                  <FormInputControl type="text" value={ this.state.name } updateState={ this.updateState} autoFocus maxLength="60"/>
+                  <HelpBlock>{ this.state.nameError }</HelpBlock>
                 </FormGroup>
               </Col>
             </Row>
@@ -173,9 +185,10 @@ class ProjectsEditDialog extends React.Component {
                 </FormGroup>
               </Col>
               <Col xs={6}>
-                <FormGroup controlId="provincialProjectNumber">
-                  <ControlLabel>Provincial Project Number</ControlLabel>
+                <FormGroup controlId="provincialProjectNumber" validationState={ this.state.provincialProjectNumberError ? 'error' : null }>
+                  <ControlLabel>Provincial Project Number <sup>*</sup></ControlLabel>
                   <FormInputControl type="text" value={ this.state.provincialProjectNumber } updateState={ this.updateState } />
+                  <HelpBlock>{ this.state.provincialProjectNumberError }</HelpBlock>
                 </FormGroup>
               </Col>
             </Row>

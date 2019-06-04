@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, PageHeader, Row, Col, Button } from 'react-bootstrap';
+import { Well, Row, Col, Button } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Action from '../actionTypes';
@@ -9,6 +9,7 @@ import * as Api from '../api';
 import * as Constant from '../constants';
 import store from '../store';
 
+import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
 
 

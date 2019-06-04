@@ -3,11 +3,11 @@ import React from 'react';
 
 import { FormGroup, HelpBlock, ControlLabel, Row, Col } from 'react-bootstrap';
 
+import * as Api from '../../api';
 import * as Constant from '../../constants';
 
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 
@@ -19,15 +19,20 @@ class OvertimeRateEditDialog extends React.Component {
     overtimeRateType: PropTypes.object.isRequired,
   };
 
-  state = {
-    rateId: this.props.overtimeRateType.id,
-    rateType: this.props.overtimeRateType.rateType || '',
-    description: this.props.overtimeRateType.description || '',
-    value: this.props.overtimeRateType.rate || 0,
-    concurrencyControlNumber: this.props.overtimeRateType.concurrencyControlNumber || 0,
-    descriptionError: '',
-    valueError: '',
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isSaving: false,
+      rateId: props.overtimeRateType.id,
+      rateType: props.overtimeRateType.rateType || '',
+      description: props.overtimeRateType.description || '',
+      value: props.overtimeRateType.rate || 0,
+      concurrencyControlNumber: props.overtimeRateType.concurrencyControlNumber || 0,
+      descriptionError: '',
+      valueError: '',
+    };
+  }
 
   updateState = (state, callback) => {
     this.setState(state, callback);
@@ -68,23 +73,43 @@ class OvertimeRateEditDialog extends React.Component {
     return valid;
   };
 
-  onSave = () => {
-    this.props.onSave({
-      id: this.state.rateId,
-      rateType: this.state.rateType,
-      description: this.state.description,
-      rate: this.state.value.toFixed(2),
-      periodType: Constant.RENTAL_RATE_PERIOD_HOURLY,
-      concurrencyControlNumber: this.state.concurrencyControlNumber,
-      active: true,
-    });
+  formSubmitted = () => {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        this.setState({ isSaving: true });
+
+        var rateType = {
+          id: this.state.rateId,
+          rateType: this.state.rateType,
+          description: this.state.description,
+          rate: this.state.value.toFixed(2),
+          periodType: Constant.RENTAL_RATE_PERIOD_HOURLY,
+          concurrencyControlNumber: this.state.concurrencyControlNumber,
+          active: true,
+        };
+
+        const promise = Api.updateOvertimeRateType(rateType);
+
+        promise.then(() => {
+          this.setState({ isSaving: false });
+          if (this.props.onSave) { this.props.onSave(); }
+          this.props.onClose();
+        });
+      } else {
+        this.props.onClose();
+      }
+    }
   };
 
   render() {
-    return <EditDialog id="overtime-rate-edit" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={<strong>Edit Overtime Rate</strong>}>
-      <Form>
+    return (
+      <FormDialog
+        id="overtime-rate-edit"
+        show={ this.props.show }
+        title="Edit Overtime Rate"
+        isSaving={ this.state.isSaving }
+        onClose={ this.props.onClose }
+        onSubmit={ this.formSubmitted }>
         <Row>
           <Col xs={6}>
             <FormGroup controlId="description" validationState={ this.state.descriptionError ? 'error' : null }>
@@ -105,8 +130,8 @@ class OvertimeRateEditDialog extends React.Component {
             </FormGroup>
           </Col>
         </Row>
-      </Form>
-    </EditDialog>;
+      </FormDialog>
+    );
   }
 }
 

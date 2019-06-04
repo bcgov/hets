@@ -3,9 +3,11 @@ import React from 'react';
 
 import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
-import EditDialog from '../../components/EditDialog.jsx';
+import * as Api from '../../api';
+import * as Log from '../../history';
+
+import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 class AttachmentEditDialog extends React.Component {
   static propTypes = {
@@ -20,6 +22,7 @@ class AttachmentEditDialog extends React.Component {
     super(props);
 
     this.state = {
+      isSaving: false,
       typeName: props.attachment.typeName,
       concurrencyControlNumber: props.attachment.concurrencyControlNumber || 0,
       attachmentError: '',
@@ -51,27 +54,48 @@ class AttachmentEditDialog extends React.Component {
     return valid;
   };
 
-  onSave = () => {
-    this.props.onSave({
-      id: this.props.attachment.id,
-      typeName: this.state.typeName,
-      concurrencyControlNumber: this.state.concurrencyControlNumber,
-      equipment: { id: this.props.equipment.id },
-    });
+  formSubmitted = () => {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        this.setState({ isSaving: true });
+
+        const attachment = {
+          id: this.props.attachment.id,
+          typeName: this.state.typeName,
+          concurrencyControlNumber: this.state.concurrencyControlNumber,
+          equipment: { id: this.props.equipment.id },
+        };
+
+        const promise = Api.updatePhysicalAttachment(attachment);
+
+        promise.then(() => {
+          Log.equipmentAttachmentUpdated(this.props.equipment, attachment.typeName);
+          this.setState({ isSaving: false });
+          if (this.props.onSave) { this.props.onSave(); }
+          this.props.onClose();
+        });
+      } else {
+        this.props.onClose();
+      }
+    }
   };
 
   render() {
-    return <EditDialog id="attachment-edit" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={<strong>Edit Attachment</strong>}>
-      <Form>
+    return (
+      <FormDialog
+        id="attachment-edit"
+        show={ this.props.show }
+        title="Edit Attachment"
+        isSaving={ this.state.isSaving }
+        onClose={ this.props.onClose }
+        onSubmit={ this.formSubmitted }>
         <FormGroup controlId="typeName" validationState={ this.state.attachmentError ? 'error' : null }>
           <ControlLabel>Attachment</ControlLabel>
           <FormInputControl type="text" defaultValue={ this.state.typeName } updateState={ this.updateState }/>
           <HelpBlock>{ this.state.attachmentError }</HelpBlock>
         </FormGroup>
-      </Form>
-    </EditDialog>;
+      </FormDialog>
+    );
   }
 }
 

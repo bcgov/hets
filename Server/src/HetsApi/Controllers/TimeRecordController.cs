@@ -47,7 +47,7 @@ namespace HetsApi.Controllers
         [Route("{id}/delete")]
         [SwaggerOperation("TimeRecordsIdDeletePost")]
         [SwaggerResponse(200, type: typeof(List<HetTimeRecord>))]
-        [RequiresPermission(HetPermission.Login)]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual IActionResult TimeRecordsIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetTimeRecord.Any(a => a.TimeRecordId == id);

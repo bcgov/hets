@@ -35,6 +35,7 @@ import ReturnButton from '../components/ReturnButton.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
 import PrintButton from '../components/PrintButton.jsx';
+import Authorize from '../components/Authorize.jsx';
 
 import { activeOwnerSelector, activeOwnerIdSelector } from '../selectors/ui-selectors.js';
 
@@ -70,6 +71,7 @@ class OwnersDetail extends React.Component {
 
     this.state = {
       loading: true,
+      reloading: false,
 
       showEditDialog: false,
       showContactDialog: false,
@@ -121,7 +123,8 @@ class OwnersDetail extends React.Component {
   }
 
   fetch = () => {
-    return Api.getOwner(this.props.ownerId);
+    this.setState({ reloading: true });
+    return Api.getOwner(this.props.ownerId).then(() => this.setState({ reloading: false }));
   };
 
   updateContactsUIState = (state, callback) => {
@@ -443,20 +446,20 @@ class OwnersDetail extends React.Component {
                 {(() => {
                   if (loading ) { return <div className="spinner-container"><Spinner/></div>; }
 
-                  var addContactButton = <Button title="Add Contact" onClick={ this.openContactDialog.bind(this, 0) } bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button>;
+                  var addContactButton = <Authorize><Button title="Add Contact" onClick={ this.openContactDialog.bind(this, 0) } bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button></Authorize>;
 
                   if (!owner.contacts || owner.contacts.length === 0) { return <Alert bsStyle="success">No contacts { addContactButton }</Alert>; }
 
                   var contacts = sort(owner.contacts, this.state.uiContacts.sortField, this.state.uiContacts.sortDesc);
 
                   var headers = [
-                    { field: CONTACT_NAME_SORT_FIELDS, title: 'Name'  },
-                    { field: 'phone',                  title: 'Phone' },
-                    { field: 'mobilePhoneNumber',      title: 'Cell'  },
-                    { field: 'faxPhoneNumber',         title: 'Fax'   },
-                    { field: 'emailAddress',           title: 'Email' },
-                    { field: 'role',                   title: 'Role'  },
-                    { field: 'notes',                  title: 'Notes' },
+                    { field: CONTACT_NAME_SORT_FIELDS, title: 'Name'        },
+                    { field: 'phone',                  title: 'Phone'       },
+                    { field: 'mobilePhoneNumber',      title: 'Cell Phone'  },
+                    { field: 'faxPhoneNumber',         title: 'Fax'         },
+                    { field: 'emailAddress',           title: 'Email'       },
+                    { field: 'role',                   title: 'Role'        },
+                    { field: 'notes',                  title: 'Notes'       },
                     { field: 'addContact',             title: 'Add Contact', style: { textAlign: 'right'  },
                       node: addContactButton,
                     },
@@ -479,7 +482,7 @@ class OwnersDetail extends React.Component {
                           <td style={{ textAlign: 'right' }}>
                             <ButtonGroup>
                               {contact.canDelete && !contact.isPrimary && (
-                                <DeleteButton name="Contact" onConfirm={ this.deleteContact.bind(this, contact) }/>
+                                <Authorize><DeleteButton name="Contact" onConfirm={ this.deleteContact.bind(this, contact) }/></Authorize>
                               )}
                               {contact.canEdit && (
                                 <EditButton name="Contact" onClick={ this.openContactDialog.bind(this, contact.id) } />
@@ -495,10 +498,12 @@ class OwnersDetail extends React.Component {
               <Well>
                 <SubHeader title={`Equipment (${ loading ? ' ' : owner.numberOfEquipment })`}>
                   <CheckboxControl id="showAttachments" className="mr-5" inline updateState={this.updateState}><small>Show Attachments</small></CheckboxControl>
-                  <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.equipmentVerifyAll }></Confirm> }>
-                    <TooltipButton disabled={!isApproved} disabledTooltip={restrictEquipmentVerifyTooltip} className="mr-5" title="Verify All Equipment" bsSize="small">Verify All</TooltipButton>
-                  </OverlayTrigger>
-                  <TooltipButton disabled={ !isApproved } disabledTooltip={ restrictEquipmentAddTooltip } title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></TooltipButton>
+                  <Authorize>
+                    <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.equipmentVerifyAll }></Confirm> }>
+                      <TooltipButton disabled={!isApproved} disabledTooltip={restrictEquipmentVerifyTooltip} className="mr-5" title="Verify All Equipment" bsSize="small">Verify All</TooltipButton>
+                    </OverlayTrigger>
+                    <TooltipButton disabled={ !isApproved } disabledTooltip={ restrictEquipmentAddTooltip } title="Add Equipment" bsSize="small" onClick={ this.openEquipmentDialog }><Glyphicon glyph="plus" /></TooltipButton>
+                  </Authorize>
                 </SubHeader>
                 {(() => {
                   if (loading) { return <div className="spinner-container"><Spinner/></div>; }
@@ -549,9 +554,11 @@ class OwnersDetail extends React.Component {
                             }
                           </td>
                           <td>{ equipment.isApproved ? formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) : 'Not Approved' }</td>
-                          <td style={{ textAlign: 'right' }}>
-                            <TooltipButton disabled={ !isApproved } disabledTooltip={ restrictEquipmentVerifyTooltip } title="Verify Equipment" bsSize="xsmall" onClick={ this.equipmentVerify.bind(this, equipment) }><Glyphicon glyph="ok" /> OK</TooltipButton>
-                          </td>
+                          <Authorize>
+                            <td style={{ textAlign: 'right' }}>
+                              <TooltipButton disabled={ !isApproved } disabledTooltip={ restrictEquipmentVerifyTooltip } title="Verify Equipment" bsSize="xsmall" onClick={ this.equipmentVerify.bind(this, equipment) }><Glyphicon glyph="ok" /> OK</TooltipButton>
+                            </td>
+                          </Authorize>
                         </tr>;
                       })
                     }
@@ -560,7 +567,7 @@ class OwnersDetail extends React.Component {
               </Well>
               <Well>
                 <SubHeader title="History"/>
-                { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ !loading } /> }
+                { owner.historyEntity && <History historyEntity={ owner.historyEntity } refresh={ !this.state.reloading } /> }
               </Well>
             </Col>
           </Row>

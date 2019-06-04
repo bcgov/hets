@@ -22,11 +22,15 @@ class ChangeStatusDialog extends React.Component {
     onStatusChanged: PropTypes.func.isRequired,
   };
 
-  state = {
-    comment: '',
-    commentError: '',
-    statusError: '',
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      comment: '',
+      commentError: '',
+      statusError: '',
+    };
+  }
 
   updateState = (state, callback) => {
     this.setState(state, callback);
@@ -104,11 +108,11 @@ class ChangeStatusDialog extends React.Component {
             }
           });
         }
-      }).catch((err) => {
-        if (err.status === 400 && err.errorCode === 'HETS-39') {
-          this.setState({ commentError: err.errorDescription });
+      }).catch((error) => {
+        if (error.status === 400 && error.errorCode === 'HETS-40') {
+          this.setState({ commentError: error.errorDescription });
         } else {
-          throw err;
+          throw error;
         }
       });
     }
@@ -116,6 +120,7 @@ class ChangeStatusDialog extends React.Component {
 
   render() {
     var statusErrorText = this.state.statusError && this.state.statusError.length <= 1 ? 'The following is also required:' : 'The following are also required:';
+    var maxLength = Constant.MAX_LENGTH_STATUS_COMMENT;
 
     return (
       <FormDialog
@@ -127,8 +132,9 @@ class ChangeStatusDialog extends React.Component {
         onSubmit={this.formSubmitted}>
         <FormGroup controlId="comment" validationState={this.state.commentError ? 'error' : null}>
           <ControlLabel>Comment</ControlLabel>
-          <FormInputControl value={this.state.comment} componentClass="textarea" updateState={this.updateState} />
+          <FormInputControl value={this.state.comment} componentClass="textarea" updateState={this.updateState} maxLength={ maxLength } />
           <HelpBlock>{this.state.commentError}</HelpBlock>
+          <p>Maximum { maxLength } characters.</p>
           <HelpBlock>{this.state.statusError && statusErrorText}
             <ul>
               {

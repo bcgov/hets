@@ -22,6 +22,15 @@ namespace HetsData.Helpers
         public int DistrictEquipmentTypeId { get; set; }
     }
 
+    public class EquipmentAgreementSummary
+    {
+        public int Id { get; set; }
+        public string EquipmentCode { get; set; }
+        public List<int> AgreementIds { get; set; }
+        public List<int?> ProjectIds { get; set; }
+        public int DistrictEquipmentTypeId { get; set; }
+    }
+
     public class EquipmentStatus
     {
         public string Status { get; set; }

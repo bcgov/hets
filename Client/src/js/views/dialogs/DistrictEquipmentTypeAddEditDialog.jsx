@@ -6,10 +6,9 @@ import _ from 'lodash';
 
 import * as Api from '../../api';
 
-import EditDialog from '../../components/EditDialog.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 
 const PROHIBITED_SECTIONS = [ 1.2, 1.8, 2.3, 2.6, 3.3, 6.3, 7.4, 8.2, 9.3, 11.2, 12.2, 13.5, 13.6, 16.3 ];
@@ -17,6 +16,7 @@ const PROHIBITED_SECTIONS = [ 1.2, 1.8, 2.3, 2.6, 3.3, 6.3, 7.4, 8.2, 9.3, 11.2,
 
 class DistrictEquipmentTypeAddEditDialog extends React.Component {
   static propTypes = {
+    currentUser: PropTypes.object,
     show: PropTypes.bool,
     districtEquipmentType: PropTypes.object,
     equipmentTypes: PropTypes.object,
@@ -28,6 +28,7 @@ class DistrictEquipmentTypeAddEditDialog extends React.Component {
     super(props);
 
     this.state = {
+      isSaving: false,
       isNew: props.districtEquipmentType.id === 0,
 
       id: props.districtEquipmentType.id || 0,
@@ -83,22 +84,43 @@ class DistrictEquipmentTypeAddEditDialog extends React.Component {
     return valid;
   };
 
-  onSave = () => {
-    this.props.onSave({
-      id: this.state.id,
-      equipmentType: { id: this.state.equipmentTypeId },
-      districtEquipmentName: this.state.districtEquipmentName,
-      concurrencyControlNumber: this.state.concurrencyControlNumber,
-    });
+  formSubmitted = () => {
+    if (this.isValid()) {
+      if (this.didChange()) {
+        this.setState({ isSaving: true });
+
+        const equipmentType = {
+          id: this.state.id,
+          equipmentType: { id: this.state.equipmentTypeId },
+          districtEquipmentName: this.state.districtEquipmentName,
+          concurrencyControlNumber: this.state.concurrencyControlNumber,
+          district: { id: this.props.currentUser.district.id },
+        };
+
+        const promise = equipmentType.id !== 0 ? Api.updateDistrictEquipmentType(equipmentType) : Api.addDistrictEquipmentType(equipmentType);
+
+        promise.then(() => {
+          this.setState({ isSaving: false });
+          if (this.props.onSave) { this.props.onSave(); }
+          this.props.onClose();
+        });
+      } else {
+        this.props.onClose();
+      }
+    }
   };
 
   render() {
     var equipmentTypes = _.sortBy(this.props.equipmentTypes.data, 'blueBookSection');
 
-    return <EditDialog id="district-equipment-add" show={ this.props.show }
-      onClose={ this.props.onClose } onSave={ this.onSave } didChange={ this.didChange } isValid={ this.isValid }
-      title={<strong>Add District Equipment Type</strong>}>
-      <Form>
+    return (
+      <FormDialog
+        id="district-equipment-add"
+        show={ this.props.show }
+        title={ this.state.isNew ? 'Add District Equipment Type' : 'Edit District Equipment Type' }
+        isSaving={this.state.isSaving}
+        onClose={ this.props.onClose }
+        onSubmit={ this.formSubmitted }>
         <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeIdError ? 'error' : null }>
           <ControlLabel>Blue Book Section <sup>*</sup></ControlLabel>
           <FilterDropdown
@@ -117,13 +139,14 @@ class DistrictEquipmentTypeAddEditDialog extends React.Component {
           <FormInputControl type="text" value={ this.state.districtEquipmentName } updateState={ this.updateState }/>
           <HelpBlock>{ this.state.districtEquipmentNameError }</HelpBlock>
         </FormGroup>
-      </Form>
-    </EditDialog>;
+      </FormDialog>
+    );
   }
 }
 
 function mapStateToProps(state) {
   return {
+    currentUser: state.user,
     equipmentTypes: state.lookups.equipmentTypes,
   };
 }
