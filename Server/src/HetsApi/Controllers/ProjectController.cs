@@ -269,12 +269,14 @@ namespace HetsApi.Controllers
             int? fiscalYear = status.CurrentFiscalYear;
             if (fiscalYear == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
+            string fiscalYearStr = $"{fiscalYear}/{fiscalYear + 1}";
+
             // HETS-1005 - Time entry tab search issues
             // * we need retrieve all projects that have been created this year
             //   since users can add time records to closed projects
             IQueryable<HetProject> projects = _context.HetProject.AsNoTracking()
                 .Where(x => x.DistrictId.Equals(districtId) &&
-                            (!currentFiscal || x.FiscalYear.Equals(fiscalYear)));
+                            (!fiscalYearStr || x.FiscalYear.Equals(fiscalYearStr)));
 
             // convert Project Model to the "ProjectLite" Model
             List<ProjectLite> result = new List<ProjectLite>();
