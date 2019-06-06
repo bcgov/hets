@@ -276,7 +276,7 @@ namespace HetsApi.Controllers
             //   since users can add time records to closed projects
             IQueryable<HetProject> projects = _context.HetProject.AsNoTracking()
                 .Where(x => x.DistrictId.Equals(districtId) &&
-                            (!fiscalYearStr || x.FiscalYear.Equals(fiscalYearStr)));
+                            (!currentFiscal || x.FiscalYear.Equals(fiscalYearStr)));
 
             // convert Project Model to the "ProjectLite" Model
             List<ProjectLite> result = new List<ProjectLite>();

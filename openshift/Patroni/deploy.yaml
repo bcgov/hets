@@ -1,0 +1,388 @@
+{
+    "kind": "List",
+    "apiVersion": "v1",
+    "metadata": {},
+    "items": [
+        {
+            "apiVersion": "v1",
+            "kind": "Service",
+            "metadata": {
+                "creationTimestamp": null,
+                "labels": {
+                    "application": "hets-test-patroni",
+                    "cluster-name": "hets-test-patroni"
+                },
+                "name": "hets-test-patroni"
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "port": 5432,
+                        "protocol": "TCP",
+                        "targetPort": 5432
+                    }
+                ],
+                "sessionAffinity": "None",
+                "type": "ClusterIP"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Service",
+            "metadata": {
+                "creationTimestamp": null,
+                "labels": {
+                    "application": "hets-test-patroni",
+                    "cluster-name": "hets-test-patroni"
+                },
+                "name": "hets-test-patroni-master"
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "port": 5432,
+                        "protocol": "TCP",
+                        "targetPort": 5432
+                    }
+                ],
+                "selector": {
+                    "application": "hets-test-patroni",
+                    "cluster-name": "hets-test-patroni",
+                    "role": "master"
+                },
+                "sessionAffinity": "None",
+                "type": "ClusterIP"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Secret",
+            "metadata": {
+                "labels": {
+                    "application": "hets-test-patroni",
+                    "cluster-name": "hets-test-patroni"
+                },
+                "name": "hets-test-patroni"
+            },
+            "stringData": {
+                "replication-password": "postgres",
+                "superuser-password": "postgres"
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Service",
+            "metadata": {
+                "creationTimestamp": null,
+                "labels": {
+                    "application": "hets-test-patroni",
+                    "cluster-name": "hets-test-patroni"
+                },
+                "name": "hets-test-patroni-replica"
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "port": 5432,
+                        "protocol": "TCP",
+                        "targetPort": 5432
+                    }
+                ],
+                "selector": {
+                    "application": "hets-test-patroni",
+                    "cluster-name": "hets-test-patroni",
+                    "role": "replica"
+                },
+                "sessionAffinity": "None",
+                "type": "ClusterIP"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "apiVersion": "apps/v1",
+            "kind": "StatefulSet",
+            "metadata": {
+                "creationTimestamp": null,
+                "generation": 3,
+                "labels": {
+                    "app": "hets-test-instance",
+                    "application": "hets-test-patroni",
+                    "cluster-name": "hets-test-patroni"
+                },
+                "name": "hets-test-patroni"
+            },
+            "spec": {
+                "podManagementPolicy": "OrderedReady",
+                "replicas": 3,
+                "revisionHistoryLimit": 10,
+                "selector": {
+                    "matchLabels": {
+                        "application": "hets-test-patroni",
+                        "cluster-name": "hets-test-patroni"
+                    }
+                },
+                "serviceName": "hets-test-patroni",
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "application": "hets-test-patroni",
+                            "cluster-name": "hets-test-patroni"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "env": [
+                                    {
+                                        "name": "APP_USER",
+                                        "value": "trdbhetd"
+                                    },
+                                    {
+                                        "name": "APP_PASSWORD",
+                                        "value": "IhUFdcC0wGJeIMDJ"
+                                    },
+                                    {
+                                        "name": "APP_DATABASE",
+                                        "value": "hets"
+                                    },
+                                    {
+                                        "name": "POD_IP",
+                                        "valueFrom": {
+                                            "fieldRef": {
+                                                "apiVersion": "v1",
+                                                "fieldPath": "status.podIP"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "PATRONI_KUBERNETES_NAMESPACE",
+                                        "valueFrom": {
+                                            "fieldRef": {
+                                                "apiVersion": "v1",
+                                                "fieldPath": "metadata.namespace"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "PATRONI_KUBERNETES_LABELS",
+                                        "value": "{application: hets-test-patroni, cluster-name: hets-test-patroni}"
+                                    },
+                                    {
+                                        "name": "PATRONI_SUPERUSER_USERNAME",
+                                        "value": "postgres"
+                                    },
+                                    {
+                                        "name": "PATRONI_SUPERUSER_PASSWORD",
+                                        "valueFrom": {
+                                            "secretKeyRef": {
+                                                "key": "superuser-password",
+                                                "name": "hets-test-patroni"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "PATRONI_REPLICATION_USERNAME",
+                                        "value": "postgres"
+                                    },
+                                    {
+                                        "name": "PATRONI_REPLICATION_PASSWORD",
+                                        "valueFrom": {
+                                            "secretKeyRef": {
+                                                "key": "replication-password",
+                                                "name": "hets-test-patroni"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "PATRONI_SCOPE",
+                                        "value": "hets-test-patroni"
+                                    },
+                                    {
+                                        "name": "PATRONI_NAME",
+                                        "valueFrom": {
+                                            "fieldRef": {
+                                                "apiVersion": "v1",
+                                                "fieldPath": "metadata.name"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "PATRONI_POSTGRESQL_DATA_DIR",
+                                        "value": "/home/postgres/pgdata/pgroot/data"
+                                    },
+                                    {
+                                        "name": "PATRONI_POSTGRESQL_PGPASS",
+                                        "value": "/tmp/pgpass"
+                                    },
+                                    {
+                                        "name": "PATRONI_POSTGRESQL_LISTEN",
+                                        "value": "0.0.0.0:5432"
+                                    },
+                                    {
+                                        "name": "PATRONI_RESTAPI_LISTEN",
+                                        "value": "0.0.0.0:8008"
+                                    }
+                                ],
+                                "image": "docker-registry.default.svc:5000/bcgov/patroni:v10-stable",
+                                "imagePullPolicy": "IfNotPresent",
+                                "name": "hets-test-patroni",
+                                "ports": [
+                                    {
+                                        "containerPort": 8008,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 5432,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {
+                                    "limits": {
+                                        "cpu": "1",
+                                        "memory": "1G"
+                                    },
+                                    "requests": {
+                                        "cpu": "0.1",
+                                        "memory": "0.5G"
+                                    }
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/home/postgres/pgdata",
+                                        "name": "hets-test-patroni"
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Always",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "serviceAccount": "patroni-persistent",
+                        "serviceAccountName": "patroni-persistent",
+                        "terminationGracePeriodSeconds": 0,
+                        "volumes": [
+                            {
+                                "name": "hets-test-patroni",
+                                "persistentVolumeClaim": {
+                                    "claimName": "hets-test-patroni"
+                                }
+                            }
+                        ]
+                    }
+                },
+                "updateStrategy": {
+                    "type": "OnDelete"
+                },
+                "volumeClaimTemplates": [
+                    {
+                        "metadata": {
+                            "labels": {
+                                "application": "hets-test-patroni"
+                            },
+                            "name": "hets-test-patroni"
+                        },
+                        "spec": {
+                            "accessModes": [
+                                "ReadWriteOnce"
+                            ],
+                            "resources": {
+                                "requests": {
+                                    "storage": "5Gi"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Endpoints",
+            "metadata": {
+                "labels": {
+                    "application": "hets-test-patroni",
+                    "cluster-name": "hets-test-patroni"
+                },
+                "name": "hets-test-patroni"
+            },
+            "subsets": []
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "ServiceAccount",
+            "metadata": {
+                "name": "patroni-persistent"
+            }
+        },
+        {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "Role",
+            "metadata": {
+                "name": "patroni-persistent"
+            },
+            "rules": [
+                {
+                    "apiGroups": [
+                        ""
+                    ],
+                    "resources": [
+                        "configmaps"
+                    ],
+                    "verbs": [
+                        "create",
+                        "get",
+                        "list",
+                        "patch",
+                        "update",
+                        "watch",
+                        "delete"
+                    ]
+                },
+                {
+                    "apiGroups": [
+                        ""
+                    ],
+                    "resources": [
+                        "endpoints"
+                    ],
+                    "verbs": [
+                        "get",
+                        "patch",
+                        "update",
+                        "create",
+                        "list",
+                        "watch",
+                        "delete"
+                    ]
+                },
+                {
+                    "apiGroups": [
+                        ""
+                    ],
+                    "resources": [
+                        "pods"
+                    ],
+                    "verbs": [
+                        "get",
+                        "list",
+                        "patch",
+                        "update",
+                        "watch"
+                    ]
+                }
+            ]
+        }
+    ]
+}
