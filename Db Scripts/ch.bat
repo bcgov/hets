@@ -3,11 +3,6 @@
 ECHO Delete previous log file
 del create_log.txt
 
-ECHO Drop database if it exists
-psql -h localhost -p 5433 -U postgres -d postgres -a -q -f .\DROP\DROP_0_HETS_DB.sql > create_log.txt
-psql -h localhost -p 5433 -U postgres -d postgres -a -q -f .\DROP\DROP_1_HETS_DB.sql >> create_log.txt
-psql -h localhost -p 5433 -U postgres -d postgres -a -q -f .\DROP\DROP_2_HETS_DB-role.sql >> create_log.txt
-
 ECHO Create HETS database
 psql -h localhost -p 5433 -U postgres -d postgres -a -q -f .\CREATE\CREATE_0_HETS_DB.sql >> create_log.txt
 
