@@ -62,15 +62,18 @@ namespace HetsReport
 
                             // create note
                             string note = "";
-                            foreach (NoteLine line in reportModel.Note)
+                            if (reportModel.Note != null)
                             {
-                                if (!string.IsNullOrEmpty(note))
+                                foreach (NoteLine line in reportModel.Note)
                                 {
-                                    note += $"{crLf.ToString()}{line.Line}";
-                                }
-                                else
-                                {
-                                    note += $"{line.Line}";
+                                    if (!string.IsNullOrEmpty(note))
+                                    {
+                                        note += $"{crLf.ToString()}{line.Line}";
+                                    }
+                                    else
+                                    {
+                                        note += $"{line.Line}";
+                                    }
                                 }
                             }
 
@@ -84,65 +87,77 @@ namespace HetsReport
                             // rates included in total
                             string rateString1 = "";
                             string comment1 = "";
-                            foreach (HetRentalAgreementRate rate in reportModel.RentalAgreementRatesWithTotal)
+                            if (reportModel.RentalAgreementRatesWithTotal != null)
                             {
-                                if (!string.IsNullOrEmpty(rateString1))
+                                foreach (HetRentalAgreementRate rate in reportModel.RentalAgreementRatesWithTotal)
                                 {
-                                    rateString1 += $"{crLf.ToString()}{rate.RateString}";
-                                    comment1 += $"{crLf.ToString()}{rate.Comment}";
-                                }
-                                else
-                                {
-                                    rateString1 += $"{rate.RateString}";
-                                    comment1 += $"{rate.Comment}";
+                                    if (!string.IsNullOrEmpty(rateString1))
+                                    {
+                                        rateString1 += $"{crLf.ToString()}{rate.RateString}";
+                                        comment1 += $"{crLf.ToString()}{rate.Comment}";
+                                    }
+                                    else
+                                    {
+                                        rateString1 += $"{rate.RateString}";
+                                        comment1 += $"{rate.Comment}";
+                                    }
                                 }
                             }
 
                             // rates not included in total
                             string rateString2 = "";
                             string comment2 = "";
-                            foreach (HetRentalAgreementRate rate in reportModel.RentalAgreementRatesWithoutTotal)
+                            if (reportModel.RentalAgreementRatesWithoutTotal != null)
                             {
-                                if (!string.IsNullOrEmpty(rateString1))
+                                foreach (HetRentalAgreementRate rate in reportModel.RentalAgreementRatesWithoutTotal)
                                 {
-                                    rateString2 += $"{crLf.ToString()}{rate.RateString}";
-                                    comment2 += $"{crLf.ToString()}{rate.Comment}";
-                                }
-                                else
-                                {
-                                    rateString2 += $"{rate.RateString}";
-                                    comment2 += $"{rate.Comment}";
+                                    if (!string.IsNullOrEmpty(rateString1))
+                                    {
+                                        rateString2 += $"{crLf.ToString()}{rate.RateString}";
+                                        comment2 += $"{crLf.ToString()}{rate.Comment}";
+                                    }
+                                    else
+                                    {
+                                        rateString2 += $"{rate.RateString}";
+                                        comment2 += $"{rate.Comment}";
+                                    }
                                 }
                             }
 
                             // agreement conditions
                             string comment3 = "";
-                            foreach (HetRentalAgreementCondition cond in reportModel.RentalAgreementConditions)
+                            if (reportModel.RentalAgreementConditions != null)
                             {
-                                if (!string.IsNullOrEmpty(rateString1))
+                                foreach (HetRentalAgreementCondition cond in reportModel.RentalAgreementConditions)
                                 {
-                                    comment3 += $"{crLf.ToString()}{cond.Comment}";
-                                }
-                                else
-                                {
-                                    comment3 += $"{cond.Comment}";
+                                    if (!string.IsNullOrEmpty(rateString1))
+                                    {
+                                        comment3 += $"{crLf.ToString()}{cond.Comment}";
+                                    }
+                                    else
+                                    {
+                                        comment3 += $"{cond.Comment}";
+                                    }
                                 }
                             }
 
                             // rates not included in total
                             string overtimeRate = "";
                             string overtimeComment = "";
-                            foreach (HetRentalAgreementRate rate in reportModel.RentalAgreementRatesOvertime.OrderByDescending(x => x.Comment))
+                            if (reportModel.RentalAgreementRatesOvertime != null)
                             {
-                                if (!string.IsNullOrEmpty(rateString1))
+                                foreach (HetRentalAgreementRate rate in reportModel.RentalAgreementRatesOvertime.OrderByDescending(x => x.Comment))
                                 {
-                                    overtimeRate += $"{crLf.ToString()}{rate.RateString}";
-                                    overtimeComment += $"{crLf.ToString()}{rate.Comment}";
-                                }
-                                else
-                                {
-                                    overtimeRate += $"{rate.RateString}";
-                                    overtimeComment += $"{rate.Comment}";
+                                    if (!string.IsNullOrEmpty(rateString1))
+                                    {
+                                        overtimeRate += $"{crLf.ToString()}{rate.RateString}";
+                                        overtimeComment += $"{crLf.ToString()}{rate.Comment}";
+                                    }
+                                    else
+                                    {
+                                        overtimeRate += $"{rate.RateString}";
+                                        overtimeComment += $"{rate.Comment}";
+                                    }
                                 }
                             }
 
