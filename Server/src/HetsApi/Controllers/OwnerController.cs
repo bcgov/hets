@@ -670,6 +670,9 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult OwnersIdVerificationPost([FromBody]ReportParameters parameters)
         {
+            // get initial results - must be limited to user's district
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+
             // get equipment status
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
             if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
@@ -680,7 +683,7 @@ namespace HetsApi.Controllers
             if (ownerStatusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get owner report data
-            OwnerVerificationReportModel reportModel = OwnerHelper.GetOwnerVerificationLetterData(_context, parameters.LocalAreas, parameters.Owners, statusId, ownerStatusId);
+            OwnerVerificationReportModel reportModel = OwnerHelper.GetOwnerVerificationLetterData(_context, parameters.LocalAreas, parameters.Owners, statusId, ownerStatusId, districtId);
 
             // convert to open xml document
             string documentName = $"OwnerVerification-{DateTime.Now:yyyy-MM-dd}.docx";
