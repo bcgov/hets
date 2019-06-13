@@ -111,7 +111,7 @@ namespace HetsReport
                             {
                                 foreach (HetRentalAgreementRate rate in reportModel.RentalAgreementRatesWithoutTotal)
                                 {
-                                    if (!string.IsNullOrEmpty(rateString1))
+                                    if (!string.IsNullOrEmpty(rateString2))
                                     {
                                         rateString2 += $"{crLf.ToString()}{rate.RateString}";
                                         comment2 += $"{crLf.ToString()}{rate.Comment}";
@@ -130,7 +130,7 @@ namespace HetsReport
                             {
                                 foreach (HetRentalAgreementCondition cond in reportModel.RentalAgreementConditions)
                                 {
-                                    if (!string.IsNullOrEmpty(rateString1))
+                                    if (!string.IsNullOrEmpty(comment3))
                                     {
                                         comment3 += $"{crLf.ToString()}{cond.Comment}";
                                     }
@@ -148,7 +148,7 @@ namespace HetsReport
                             {
                                 foreach (HetRentalAgreementRate rate in reportModel.RentalAgreementRatesOvertime.OrderByDescending(x => x.Comment))
                                 {
-                                    if (!string.IsNullOrEmpty(rateString1))
+                                    if (!string.IsNullOrEmpty(overtimeRate))
                                     {
                                         overtimeRate += $"{crLf.ToString()}{rate.RateString}";
                                         overtimeComment += $"{crLf.ToString()}{rate.Comment}";
