@@ -6,10 +6,14 @@
 
   <ItemGroup>
     <None Remove="Templates\OwnerVerification-Template.docx" />
+    <None Remove="Templates\RentalAgreement-Template.docx" />
+    <None Remove="Templates\SeniorityList-Template.docx" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Templates\OwnerVerification-Template.docx" />
+    <EmbeddedResource Include="Templates\RentalAgreement-Template.docx" />
+    <EmbeddedResource Include="Templates\SeniorityList-Template.docx" />
   </ItemGroup>
 
   <ItemGroup>
