@@ -8,16 +8,15 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using HetsData.Helpers;
-using HetsData.Model;
 using HetsReport.Helpers;
 
 namespace HetsReport
 {
-    public static class OwnerVerification
+    public static class SeniorityList
     {
-        private const string ResourceName = "HetsReport.Templates.OwnerVerification-Template.docx";
+        private const string ResourceName = "HetsReport.Templates.SeniorityList-Template.docx";
 
-        public static byte[] GetOwnerVerification(OwnerVerificationReportModel reportModel, string name)
+        public static byte[] GetSeniorityList(SeniorityListReportViewModel reportModel, string name)
         {
             try
             {
@@ -26,7 +25,7 @@ namespace HetsReport
                 // ******************************************************
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 byte[] byteArray;
-                int ownerCount = 0;
+                int recordCount = 0;
 
                 using (Stream templateStream = assembly.GetManifestResourceStream(ResourceName))
                 {
@@ -53,48 +52,42 @@ namespace HetsReport
                         // ******************************************************
                         // merge document content
                         // ******************************************************
-                        foreach (HetOwner owner in reportModel.Owners)
+                        foreach (SeniorityListRecord seniorityList in reportModel.SeniorityListRecords)
                         {
-                            ownerCount++;
+                            recordCount++;
 
-                            using (MemoryStream ownerStream = new MemoryStream())
+                            using (MemoryStream listStream = new MemoryStream())
                             {
-                                WordprocessingDocument ownerDocument = (WordprocessingDocument)wordTemplate.Clone(ownerStream);
-                                ownerDocument.Save();
+                                WordprocessingDocument listDocument = (WordprocessingDocument)wordTemplate.Clone(listStream);
+                                listDocument.Save();
 
                                 Dictionary<string, string> values = new Dictionary<string, string>
                                 {
-                                    { "districtAddress", reportModel.DistrictAddress },
-                                    { "districtContact", reportModel.DistrictContact },
-                                    { "organizationName", owner.OrganizationName },
-                                    { "address1", owner.Address1 },
-                                    { "address2", owner.Address2 },
-                                    { "reportDate", reportModel.ReportDate },
-                                    { "ownerCode", owner.OwnerCode },
-                                    { "sharedKeyHeader", owner.SharedKeyHeader },
-                                    { "sharedKey", owner.SharedKey },
-                                    { "workPhoneNumber", owner.PrimaryContact.WorkPhoneNumber }
+                                    { "printedOn", reportModel.PrintedOn },
+                                    { "districtName", seniorityList.DistrictName },
+                                    { "localAreaName", seniorityList.LocalAreaName },
+                                    { "districtEquipmentTypeName", seniorityList.DistrictEquipmentTypeName }
                                 };
 
                                 // update main document
-                                MergeHelper.ConvertFieldCodes(ownerDocument.MainDocumentPart.Document);
-                                MergeHelper.MergeFieldsInElement(values, ownerDocument.MainDocumentPart.Document);
-                                ownerDocument.MainDocumentPart.Document.Save();
+                                MergeHelper.ConvertFieldCodes(listDocument.MainDocumentPart.Document);
+                                MergeHelper.MergeFieldsInElement(values, listDocument.MainDocumentPart.Document);
+                                listDocument.MainDocumentPart.Document.Save();
 
-                                // setup table for equipment data
-                                Table equipmentTable = GenerateEquipmentTable(owner.HetEquipment);
+                                // setup table for seniority list
+                                Table seniorityTable = GenerateSeniorityTable(seniorityList.SeniorityList, seniorityList);
 
                                 // find our paragraph
                                 Paragraph tableParagraph = null;
                                 bool found = false;
 
-                                foreach (OpenXmlElement paragraphs in ownerDocument.MainDocumentPart.Document.Body.Elements())
+                                foreach (OpenXmlElement paragraphs in listDocument.MainDocumentPart.Document.Body.Elements())
                                 {
                                     foreach (OpenXmlElement paragraphRun in paragraphs.Elements())
                                     {
                                         foreach (OpenXmlElement text in paragraphRun.Elements())
                                         {
-                                            if (text.InnerText.Contains("Owner Equipment Table"))
+                                            if (text.InnerText.Contains("SeniorityListTable"))
                                             {
                                                 // insert table here...
                                                 text.RemoveAllChildren();
@@ -114,34 +107,34 @@ namespace HetsReport
                                 if (tableParagraph != null)
                                 {
                                     Run run = tableParagraph.AppendChild(new Run());
-                                    run.AppendChild(equipmentTable);
+                                    run.AppendChild(seniorityTable);
                                 }
 
-                                ownerDocument.MainDocumentPart.Document.Save();
-                                ownerDocument.Save();
+                                listDocument.MainDocumentPart.Document.Save();
+                                listDocument.Save();
 
                                 // merge owner into the master document
-                                if (ownerCount == 1)
+                                if (recordCount == 1)
                                 {
                                     // update document header
-                                    foreach (HeaderPart headerPart in ownerDocument.MainDocumentPart.HeaderParts)
+                                    foreach (HeaderPart headerPart in listDocument.MainDocumentPart.HeaderParts)
                                     {
                                         MergeHelper.ConvertFieldCodes(headerPart.Header);
                                         MergeHelper.MergeFieldsInElement(values, headerPart.Header);
                                         headerPart.Header.Save();
                                     }
 
-                                    wordDocument = (WordprocessingDocument) ownerDocument.Clone(documentStream);
+                                    wordDocument = (WordprocessingDocument)listDocument.Clone(documentStream);
 
-                                    ownerDocument.Close();
-                                    ownerDocument.Dispose();
+                                    listDocument.Close();
+                                    listDocument.Dispose();
                                 }
                                 else
                                 {
                                     // DELETE document header from owner document
-                                    ownerDocument.MainDocumentPart.DeleteParts(ownerDocument.MainDocumentPart.HeaderParts);
+                                    listDocument.MainDocumentPart.DeleteParts(listDocument.MainDocumentPart.HeaderParts);
 
-                                    List<HeaderReference> headers = ownerDocument.MainDocumentPart.Document.Descendants<HeaderReference>().ToList();
+                                    List<HeaderReference> headers = listDocument.MainDocumentPart.Document.Descendants<HeaderReference>().ToList();
 
                                     foreach (HeaderReference header in headers)
                                     {
@@ -149,9 +142,9 @@ namespace HetsReport
                                     }
 
                                     // DELETE document footers from owner document
-                                    ownerDocument.MainDocumentPart.DeleteParts(ownerDocument.MainDocumentPart.FooterParts);
+                                    listDocument.MainDocumentPart.DeleteParts(listDocument.MainDocumentPart.FooterParts);
 
-                                    List<FooterReference> footers = ownerDocument.MainDocumentPart.Document.Descendants<FooterReference>().ToList();
+                                    List<FooterReference> footers = listDocument.MainDocumentPart.Document.Descendants<FooterReference>().ToList();
 
                                     foreach (FooterReference footer in footers)
                                     {
@@ -159,50 +152,35 @@ namespace HetsReport
                                     }
 
                                     // DELETE section properties from owner document
-                                    List<SectionProperties> properties = ownerDocument.MainDocumentPart.Document.Descendants<SectionProperties>().ToList();
+                                    List<SectionProperties> properties = listDocument.MainDocumentPart.Document.Descendants<SectionProperties>().ToList();
 
                                     foreach (SectionProperties property in properties)
                                     {
                                         property.Remove();
                                     }
 
-                                    ownerDocument.Save();
+                                    listDocument.Save();
 
                                     // insert section break in master
                                     MainDocumentPart mainPart = wordDocument.MainDocumentPart;
 
-                                    Paragraph para = new Paragraph();
-                                    SectionProperties sectProp = new SectionProperties();
-                                    SectionType secSbType = new SectionType() { Val = SectionMarkValues.OddPage };
-                                    PageSize pageSize = new PageSize() { Width = 11900U, Height = 16840U, Orient = PageOrientationValues.Portrait };
-                                    PageMargin pageMargin = new PageMargin() { Top = 2642, Right = 23U, Bottom = 278, Left = 23U, Header = 714, Footer = 0, Gutter = 0};
+                                    Paragraph pageBreak = new Paragraph(new Run(new Break { Type = BreakValues.Page }));
 
-                                    // page numbering throws out the "odd page" section breaks
-                                    //PageNumberType pageNum = new PageNumberType() {Start = 1};
-
-                                    sectProp.AppendChild(secSbType);
-                                    sectProp.AppendChild(pageSize);
-                                    sectProp.AppendChild(pageMargin);
-                                    //sectProp.AppendChild(pageNum);
-
-                                    ParagraphProperties paragraphProperties = new ParagraphProperties(sectProp);
-                                    para.AppendChild(paragraphProperties);
-
-                                    mainPart.Document.Body.InsertAfter(para, mainPart.Document.Body.LastChild);
+                                    mainPart.Document.Body.InsertAfter(pageBreak, mainPart.Document.Body.LastChild);
                                     mainPart.Document.Save();
 
                                     // append document body
-                                    string altChunkId = $"AltChunkId{ownerCount}";
+                                    string altChunkId = $"AltChunkId{recordCount}";
 
                                     AlternativeFormatImportPart chunk = mainPart.AddAlternativeFormatImportPart(AlternativeFormatImportPartType.WordprocessingML, altChunkId);
 
-                                    ownerDocument.Close();
-                                    ownerDocument.Dispose();
+                                    listDocument.Close();
+                                    listDocument.Dispose();
 
-                                    ownerStream.Seek(0, SeekOrigin.Begin);
-                                    chunk.FeedData(ownerStream);
+                                    listStream.Seek(0, SeekOrigin.Begin);
+                                    chunk.FeedData(listStream);
 
-                                    AltChunk altChunk = new AltChunk {Id = altChunkId };
+                                    AltChunk altChunk = new AltChunk { Id = altChunkId };
 
                                     Paragraph para3 = new Paragraph();
                                     Run run3 = para3.InsertAfter(new Run(), para3.LastChild);
@@ -241,7 +219,7 @@ namespace HetsReport
             }
         }
 
-        private static Table GenerateEquipmentTable(IEnumerable<HetEquipment> equipmentList)
+        private static Table GenerateSeniorityTable(IEnumerable<SeniorityViewModel> seniorityList, SeniorityListRecord seniorityRecord)
         {
             try
             {
@@ -279,18 +257,23 @@ namespace HetsReport
                 tableRow1.AppendChild(rowProperties);
 
                 // add columns
-                tableRow1.AppendChild(SetupHeaderCell("Still own / Re-register?", "1600"));
-                tableRow1.AppendChild(SetupHeaderCell("Local Area", "1600"));
-                tableRow1.AppendChild(SetupHeaderCell("Equipment Id", "1600"));
-                tableRow1.AppendChild(SetupHeaderCell("Equipment Type", "1600"));
-                tableRow1.AppendChild(SetupHeaderCell("Year/Make/Model/Serial Number/Size", "3000"));
-                tableRow1.AppendChild(SetupHeaderCell("Attachments", "2600"));
-                tableRow1.AppendChild(SetupHeaderCell("Owner Comments (sold, retired, etc.)", "3000"));
+                tableRow1.AppendChild(SetupHeaderCell("Block", "1000"));
+                tableRow1.AppendChild(SetupHeaderCell("Equip ID", "1600"));
+                tableRow1.AppendChild(SetupHeaderCell("Working", "1000"));
+                tableRow1.AppendChild(SetupHeaderCell("Last Called", "1000"));
+                tableRow1.AppendChild(SetupHeaderCell("Company Name", "2600"));
+                tableRow1.AppendChild(SetupHeaderCell("Yr/Mk/Md/Sz", "3000"));
+                tableRow1.AppendChild(SetupHeaderCell(seniorityRecord.YearMinus1, "1000"));
+                tableRow1.AppendChild(SetupHeaderCell(seniorityRecord.YearMinus2, "1000"));
+                tableRow1.AppendChild(SetupHeaderCell(seniorityRecord.YearMinus3, "1000"));
+                tableRow1.AppendChild(SetupHeaderCell("YTD", "1000"));
+                tableRow1.AppendChild(SetupHeaderCell("Seniority", "1000"));
+                tableRow1.AppendChild(SetupHeaderCell("Yrs Reg", "1000"));
 
                 table.AppendChild(tableRow1);
 
-                // add rows for each equipment record
-                foreach (HetEquipment equipment in equipmentList)
+                // add rows for each record
+                foreach (SeniorityViewModel seniority in seniorityList)
                 {
                     TableRow tableRowEquipment = new TableRow();
 
@@ -299,30 +282,18 @@ namespace HetsReport
                     tableRowEquipment.AppendChild(equipmentRowProperties);
 
                     // add equipment data
-                    tableRowEquipment.AppendChild(SetupCell("       Yes     No"));
-                    tableRowEquipment.AppendChild(SetupCell(equipment.LocalArea.Name));
-                    tableRowEquipment.AppendChild(SetupCell(equipment.EquipmentCode));
-                    tableRowEquipment.AppendChild(SetupCell(equipment.DistrictEquipmentType.DistrictEquipmentName));
-
-                    string temp = $"{equipment.Year}/{equipment.Make}/{equipment.Model}/{equipment.SerialNumber}/{equipment.Size}";
-                    tableRowEquipment.AppendChild(SetupCell(temp));
-
-                    // attachments list
-                    temp = "";
-                    int row = 1;
-
-                    foreach (HetEquipmentAttachment attachment in equipment.HetEquipmentAttachment)
-                    {
-                        temp = row == 1 ?
-                            $"{attachment.Description}" :
-                            $"{temp} / {attachment.Description}";
-
-                        row++;
-                    }
-                    tableRowEquipment.AppendChild(SetupCell(temp));
-
-                    // last column (blank)
-                    tableRowEquipment.AppendChild(SetupCell(""));
+                    tableRowEquipment.AppendChild(SetupCell(seniority.Block));
+                    tableRowEquipment.AppendChild(SetupCell(seniority.EquipmentCode));
+                    tableRowEquipment.AppendChild(SetupCell(seniority.IsHired));
+                    tableRowEquipment.AppendChild(SetupCell(seniority.LastCalled));
+                    tableRowEquipment.AppendChild(SetupCell(seniority.OwnerName));
+                    tableRowEquipment.AppendChild(SetupCell(seniority.YearMakeModelSize));
+                    tableRowEquipment.AppendChild(SetupCell(seniority.HoursYearMinus1));
+                    tableRowEquipment.AppendChild(SetupCell(seniority.HoursYearMinus2));
+                    tableRowEquipment.AppendChild(SetupCell(seniority.HoursYearMinus3));
+                    tableRowEquipment.AppendChild(SetupCell(seniority.YtdHours));
+                    tableRowEquipment.AppendChild(SetupCell(seniority.Seniority));
+                    tableRowEquipment.AppendChild(SetupCell(seniority.YearsRegistered));
 
                     table.AppendChild(tableRowEquipment);
                 }
@@ -343,22 +314,22 @@ namespace HetsReport
                 TableCell tableCell = new TableCell();
 
                 TableCellProperties tableCellProperties = new TableCellProperties();
-                TableCellWidth tableCellWidth = new TableCellWidth() {Width = width, Type = TableWidthUnitValues.Dxa};
-                Shading shading = new Shading() {Val = ShadingPatternValues.Clear, Fill = "F4F7FC", Color = "auto"};
+                TableCellWidth tableCellWidth = new TableCellWidth() { Width = width, Type = TableWidthUnitValues.Dxa };
+                Shading shading = new Shading() { Val = ShadingPatternValues.Clear, Fill = "F4F7FC", Color = "auto" };
 
                 tableCellProperties.AppendChild(tableCellWidth);
                 tableCellProperties.AppendChild(shading);
                 tableCell.AppendChild(tableCellProperties);
 
                 // add text (with specific formatting)
-                Paragraph paragraph = new Paragraph() {RsidParagraphAddition = "00607D74", RsidRunAdditionDefault = "00607D74", ParagraphId = "6ED85602", TextId = "77777777"};
+                Paragraph paragraph = new Paragraph() { RsidParagraphAddition = "00607D74", RsidRunAdditionDefault = "00607D74", ParagraphId = "6ED85602", TextId = "77777777" };
 
                 ParagraphProperties paragraphProperties = new ParagraphProperties();
                 ParagraphMarkRunProperties paragraphMarkRunProperties = new ParagraphMarkRunProperties();
 
-                paragraphMarkRunProperties.AppendChild(new Color {Val = "000000"});
-                paragraphMarkRunProperties.AppendChild(new RunFonts {Ascii = "Arial"});
-                paragraphMarkRunProperties.AppendChild(new FontSize() {Val = "7pt"});
+                paragraphMarkRunProperties.AppendChild(new Color { Val = "000000" });
+                paragraphMarkRunProperties.AppendChild(new RunFonts { Ascii = "Arial" });
+                paragraphMarkRunProperties.AppendChild(new FontSize() { Val = "7pt" });
                 paragraphMarkRunProperties.AppendChild(new Bold());
 
                 paragraphProperties.AppendChild(paragraphMarkRunProperties);
