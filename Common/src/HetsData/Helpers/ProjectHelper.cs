@@ -157,8 +157,19 @@ namespace HetsData.Helpers
                     if (rentalRequest.LocalArea != null)
                     {
                         rentalRequest.LocalAreaName = rentalRequest.LocalArea.Name;
-                        rentalRequest.LocalArea = null;
                     }
+                }
+
+                //To make rental agreement lightweight
+                foreach (HetRentalAgreement rentalAgreement in project.HetRentalAgreement)
+                {
+                    rentalAgreement.Equipment.LocalArea = null;
+                }
+
+                //To make rental request lightweight
+                foreach (HetRentalRequest rentalRequest in project.HetRentalRequest)
+                {
+                    rentalRequest.LocalArea = null;
                 }
 
                 // Only allow editing the "Status" field under the following conditions:

@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import { Link } from 'react-router';
@@ -174,16 +175,14 @@ class RentalRequestsDetail extends React.Component {
       this.fetch();
     }
   };
-
-  printSeniorityList = () => {
-    var localAreaIds = [ this.props.rentalRequest.localAreaId ];
-    var districtEquipmentTypeIds = [ this.props.rentalRequest.districtEquipmentTypeId ];
-    Api.equipmentSeniorityListPdf(localAreaIds, districtEquipmentTypeIds).then(response => {
-      var filename = 'SeniorityList-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.pdf';
-
-      var blob = new Blob([response], {type: 'image/pdf'});
+  
+  downloadDoc = (promise, filename) => {
+    promise.then((response) => {
+      var blob;
       if (window.navigator.msSaveBlob) {
-        blob = window.navigator.msSaveBlob([response], filename);
+        blob = window.navigator.msSaveBlob(response, filename);
+      } else {
+        blob = new Blob([response], {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
       }
       //Create a link element, hide it, direct
       //it towards the blob, and then 'click' it programatically
@@ -200,6 +199,14 @@ class RentalRequestsDetail extends React.Component {
       //release the reference to the file by revoking the Object URL
       window.URL.revokeObjectURL(url);
     });
+  };
+
+  printSeniorityList = () => {
+    var localAreaIds = [ this.props.rentalRequest.localAreaId ];
+    var districtEquipmentTypeIds = [ this.props.rentalRequest.districtEquipmentTypeId ];
+    var promise = Api.equipmentSeniorityListDoc(localAreaIds, districtEquipmentTypeIds);
+	var filename = 'SeniorityList-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';	
+	this.downloadDoc(promise, filename);
   };
 
   addRequest = () => {
@@ -224,11 +231,17 @@ class RentalRequestsDetail extends React.Component {
     const { loading, loadingDocuments } = this.state;
     var rentalRequest = this.props.rentalRequest || {};
 
-    var canEditRequest = rentalRequest.projectId > 0 && rentalRequest.status !== Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
+    var viewOnly = !rentalRequest.projectId;
+    var canEditRequest = !viewOnly && rentalRequest.status !== Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
 
-    return <div id="rental-requests-detail">
+    return <div id="rental-requests-detail" className={ classNames({ 'view-only': viewOnly }) }>
+      <div id="watermark" className="visible-print">
+        View Only
+        <br />
+        Not for Hiring
+      </div>
       <PageOrientation type="landscape"/>
-      <Row id="rental-requests-top">
+      <Row id="rental-requests-top" className="hidden-print">
         <Col sm={9}>
           <div id="rental-request-status">
             <Label bsStyle={ rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default' }>{ rentalRequest.status }</Label>
@@ -248,7 +261,8 @@ class RentalRequestsDetail extends React.Component {
       </Row>
 
       <Well className="request-information">
-        <SubHeader title="Request Information" editButtonTitle="Edit Rental Request" onEditClicked={canEditRequest ? this.openEditDialog : null}/>
+        <SubHeader title="Request Information" className="hidden-print" editButtonTitle="Edit Rental Request" onEditClicked={canEditRequest ? this.openEditDialog : null}/>
+        <SubHeader title="Hire Rotation List" className="visible-print text-center"></SubHeader>
         {(() => {
           if (loading) { return <div className="spinner-container"><Spinner/></div>; }
 
@@ -292,7 +306,7 @@ class RentalRequestsDetail extends React.Component {
       </Well>
 
       <Well>
-        <SubHeader title="Hire Rotation List">
+        <SubHeader title="Hire Rotation List" className="hidden-print">
           <PrintButton title="Print Hire Rotation List" disabled={ loading } disabledTooltip="Please wait for the request information to finish loading.">
             Hire Rotation List
           </PrintButton>
@@ -399,7 +413,7 @@ class RentalRequestsDetail extends React.Component {
                               </OverlayTrigger>
                             );
                           }
-                          if (rentalRequest.projectId > 0 && rentalRequest.status === STATUS_IN_PROGRESS && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse)) {
+                          if (!viewOnly && rentalRequest.status === STATUS_IN_PROGRESS && (listItem.offerResponse === STATUS_ASKED || !listItem.offerResponse)) {
                             return (
                               <Button
                                 bsStyle="link"
