@@ -1,25 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
+using HetsReport;
 
 namespace HetsApi.Controllers
 {
@@ -322,21 +317,19 @@ namespace HetsApi.Controllers
             return new ObjectResult(new HetsResponse(RentalAgreementHelper.GetRecord(id, _context)));
         }
 
-        #region Agreement Pdf
+        #region Rental Agreement Document
 
         /// <summary>
-        /// Get a pdf version of a rental agreement
+        /// Get an OpenXML version of a rental agreement
         /// </summary>
-        /// <remarks>Returns a PDF version of the specified rental agreement</remarks>
-        /// <param name="id">id of RentalAgreement to obtain the PDF for</param>
+        /// <remarks>Returns an OpenXML version of the specified rental agreement</remarks>
+        /// <param name="id">id of RentalAgreement to get</param>
         [HttpGet]
-        [Route("{id}/pdf")]
-        [SwaggerOperation("RentalAgreementsIdPdfGet")]
+        [Route("{id}/doc")]
+        [SwaggerOperation("RentalAgreementsIdDocGet")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult RentalAgreementsIdPdfGet([FromRoute]int id)
+        public virtual IActionResult RentalAgreementsIdDocGet([FromRoute]int id)
         {
-            _logger.LogInformation("Rental Agreement Pdf [Id: {0}]", id);
-
             // get user info - agreement city
             User user = UserAccountHelper.GetUser(_context, _httpContext);
             string agreementCity = user.AgreementCity;
@@ -359,101 +352,30 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetRentalAgreementRate)
                 .FirstOrDefault(a => a.RentalAgreementId == id);
 
-            if (rentalAgreement != null)
+            if (rentalAgreement == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // construct the view model
+            RentalAgreementDocViewModel reportModel = rentalAgreement.GetRentalAgreementReportModel(agreementCity);
+
+            string ownerName = rentalAgreement.Equipment?.Owner?.OrganizationName?.Trim().ToLower();
+            ownerName = CleanName(ownerName);
+            ownerName = ownerName.Replace(" ", "");
+            ownerName = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(ownerName);
+            string fileName = rentalAgreement.Number + "_" + ownerName;
+
+            // convert to open xml document
+            string documentName = $"{fileName}.docx";
+            byte[] document = RentalAgreement.GetRentalAgreement(reportModel, documentName);
+
+            // return document
+            FileContentResult result = new FileContentResult(document, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             {
-                // construct the view model
-                RentalAgreementPdfViewModel rentalAgreementPdfViewModel = RentalAgreementHelper.ToPdfModel(rentalAgreement, agreementCity);
+                FileDownloadName = documentName
+            };
 
-                string payload = JsonConvert.SerializeObject(rentalAgreementPdfViewModel, new JsonSerializerSettings
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                    Formatting = Formatting.Indented,
-                    DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                    DateTimeZoneHandling = DateTimeZoneHandling.Utc
-                });
+            Response.Headers.Add("Content-Disposition", "inline; filename=" + documentName);
 
-                _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - Payload Length: {1}", id, payload.Length);
-
-                // pass the request on to the Pdf Micro Service
-                string pdfHost = _configuration["PDF_SERVICE_NAME"];
-                string pdfUrl = _configuration.GetSection("Constants:RentalAgreementPdfUrl").Value;
-                string targetUrl = pdfHost + pdfUrl;
-
-                // generate pdf document name [unique portion only]
-                string ownerName = rentalAgreement.Equipment?.Owner?.OrganizationName?.Trim().ToLower();
-                ownerName = CleanName(ownerName);
-                ownerName = ownerName.Replace(" ", "");
-                ownerName = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(ownerName);
-                string fileName = rentalAgreement.Number + "_" + ownerName;
-
-                targetUrl = targetUrl + "/" + fileName;
-
-                _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Service Url: {1}", id, targetUrl);
-
-                // call the MicroService
-                try
-                {
-                    HttpClient client = new HttpClient();
-                    StringContent stringContent = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-
-                    _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - Calling HETS Pdf Service", id);
-                    HttpResponseMessage response = client.PostAsync(targetUrl, stringContent).Result;
-
-                    // success
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Service Response: OK", id);
-
-                        var pdfResponseBytes = GetPdf(response);
-
-                        // convert to string and log
-                        string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
-
-                        fileName = fileName + ".pdf";
-
-                        _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Filename: {1}", id, fileName);
-                        _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Size: {1}", id, pdfResponse.Length);
-
-                        // return content
-                        FileContentResult result = new FileContentResult(pdfResponseBytes, "application/pdf")
-                        {
-                            FileDownloadName = fileName
-                        };
-
-                        return result;
-                    }
-
-                    _logger.LogInformation("Rental Agreement Pdf [Id: {0}] - HETS Pdf Service Response: {1}", id, response.StatusCode);
-                }
-                catch (Exception ex)
-                {
-                    Debug.Write("Error generating pdf: " + ex.Message);
-                    return new BadRequestObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
-                }
-
-                // problem occured
-                return new BadRequestObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
-            }
-
-            // record not found
-            return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-        }
-
-        private static byte[] GetPdf(HttpResponseMessage response)
-        {
-            try
-            {
-                var pdfResponseBytes = response.Content.ReadAsByteArrayAsync();
-                pdfResponseBytes.Wait();
-
-                return pdfResponseBytes.Result;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            return result;
         }
 
         private static string CleanName(string name)
@@ -1401,8 +1323,6 @@ namespace HetsApi.Controllers
             int?[] districtEquipmentTypeArray = ArrayHelper.ParseIntArray(districtEquipmentTypes);
             int?[] equipmentArray = ArrayHelper.ParseIntArray(equipment);
 
-            List<AitReport> result;
-
             IQueryable<HetRentalAgreement> agreements = _context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.RentalAgreementStatusType)
                 .Include(x => x.Equipment)
@@ -1447,7 +1367,7 @@ namespace HetsApi.Controllers
                 agreements = agreements.Where(x => x.DatedOn <= endDate);
             }
 
-            result = agreements
+            var result = agreements
                 .Select(x => AitReport.MapFromHetRentalAgreement(x))
                 .ToList();
 
@@ -1455,6 +1375,5 @@ namespace HetsApi.Controllers
         }
 
         #endregion
-
     }
 }
