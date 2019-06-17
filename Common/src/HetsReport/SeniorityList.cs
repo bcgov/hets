@@ -63,10 +63,11 @@ namespace HetsReport
 
                                 Dictionary<string, string> values = new Dictionary<string, string>
                                 {
-                                    { "printedOn", reportModel.PrintedOn },
-                                    { "districtName", seniorityList.DistrictName },
-                                    { "localAreaName", seniorityList.LocalAreaName },
-                                    { "districtEquipmentTypeName", seniorityList.DistrictEquipmentTypeName }
+                                    {"classification", reportModel.Classification},
+                                    {"printedOn", reportModel.PrintedOn},
+                                    {"districtName", seniorityList.DistrictName},
+                                    {"localAreaName", seniorityList.LocalAreaName},
+                                    {"districtEquipmentTypeName", seniorityList.DistrictEquipmentTypeName}
                                 };
 
                                 // update main document

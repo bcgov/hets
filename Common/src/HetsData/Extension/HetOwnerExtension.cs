@@ -23,6 +23,9 @@ namespace HetsData.Model
         public string ReportDate { get; set; }
 
         [NotMapped]
+        public string Classification { get; set; }
+
+        [NotMapped]
         public string Title { get; set; }
 
         [NotMapped]

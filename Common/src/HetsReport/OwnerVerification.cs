@@ -64,6 +64,7 @@ namespace HetsReport
 
                                 Dictionary<string, string> values = new Dictionary<string, string>
                                 {
+                                    { "classification", owner.Classification },
                                     { "districtAddress", reportModel.DistrictAddress },
                                     { "districtContact", reportModel.DistrictContact },
                                     { "organizationName", owner.OrganizationName },
@@ -76,17 +77,45 @@ namespace HetsReport
                                     { "workPhoneNumber", owner.PrimaryContact.WorkPhoneNumber }
                                 };
 
-                                // update main document
+                                // update classification number first [ClassificationNumber]
+                                owner.Classification = owner.Classification.Replace("&", "&amp;");
+                                bool found = false;
+
+                                foreach (OpenXmlElement paragraphs in ownerDocument.MainDocumentPart.Document.Body.Elements())
+                                {
+                                    foreach (OpenXmlElement paragraphRun in paragraphs.Elements())
+                                    {
+                                        foreach (OpenXmlElement text in paragraphRun.Elements())
+                                        {
+                                            if (text.InnerText.Contains("ClassificationNumber"))
+                                            {
+                                                // replace text
+                                                text.InnerXml = text.InnerXml.Replace("<w:t>ClassificationNumber</w:t>",
+                                                    $"<w:t xml:space='preserve'>Classification Number: {owner.Classification}</w:t>");
+
+                                                found = true;
+                                                break;
+                                            }
+                                        }
+
+                                        if (found) break;
+                                    }
+
+                                    if (found) break;
+                                }
+
+                                ownerDocument.MainDocumentPart.Document.Save();
+                                ownerDocument.Save();
+
+                                // update merge fields
                                 MergeHelper.ConvertFieldCodes(ownerDocument.MainDocumentPart.Document);
                                 MergeHelper.MergeFieldsInElement(values, ownerDocument.MainDocumentPart.Document);
                                 ownerDocument.MainDocumentPart.Document.Save();
 
                                 // setup table for equipment data
                                 Table equipmentTable = GenerateEquipmentTable(owner.HetEquipment);
-
-                                // find our paragraph
                                 Paragraph tableParagraph = null;
-                                bool found = false;
+                                found = false;
 
                                 foreach (OpenXmlElement paragraphs in ownerDocument.MainDocumentPart.Document.Body.Elements())
                                 {

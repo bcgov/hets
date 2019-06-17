@@ -18,6 +18,7 @@ namespace HetsData.Helpers
 
     public class RentalAgreementDocViewModel
     {
+        public string Classification { get; set; }
         public int Id { get; set; }
         public string Number { get; set; }
         public string Status { get; set; }
@@ -339,6 +340,9 @@ namespace HetsData.Helpers
                 }
 
                 docModel = CalculateTotals(docModel);
+
+                // classification (Rental Agreement)
+                docModel.Classification = $"23010-30/{agreement.Number}";
             }
 
             return docModel;
