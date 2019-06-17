@@ -452,6 +452,9 @@ namespace HetsData.Helpers
                         owner.DistrictContact = model.DistrictContact;
                         owner.LocalAreaName = model.LocalAreaName;
 
+                        // classification
+                        owner.Classification = $"23010-23/{model.DistrictName}/{owner.OwnerCode}";
+
                         if (!string.IsNullOrEmpty(owner.SharedKey))
                         {
                             owner.SharedKeyHeader = "Secret Key: ";
@@ -492,7 +495,6 @@ namespace HetsData.Helpers
                             temp = $"{temp}  {owner.PostalCode}";
 
                         owner.Address2 = temp;
-
 
                         model.Owners.Add(owner);
                     }

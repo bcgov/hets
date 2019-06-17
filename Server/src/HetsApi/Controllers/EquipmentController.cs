@@ -1277,14 +1277,9 @@ namespace HetsApi.Controllers
             DateTime fiscalEnd = district.RolloverEndDate;
             int fiscalYear = Convert.ToInt32(district.NextFiscalYear); // status table uses the start of the year
 
-            if (fiscalEnd == new DateTime(0001, 01, 01, 00, 00, 00))
-            {
-                fiscalEnd = new DateTime(fiscalYear, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 23, 59, 59);
-            }
-            else
-            {
-                fiscalEnd = new DateTime(fiscalYear, fiscalEnd.Month, fiscalEnd.Day, 23, 59, 59);
-            }
+            fiscalEnd = fiscalEnd == new DateTime(0001, 01, 01, 00, 00, 00) ?
+                new DateTime(fiscalYear, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 23, 59, 59) :
+                new DateTime(fiscalYear, fiscalEnd.Month, fiscalEnd.Day, 23, 59, 59);
 
             // get status id
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
@@ -1405,6 +1400,8 @@ namespace HetsApi.Controllers
                 }
             }
 
+            // classification and print date
+            seniorityList.Classification = $"23010-22/FY({(fiscalYear - 1).ToString().Substring(2, 2)}-{fiscalYear.ToString().Substring(2, 2)})";
             seniorityList.PrintedOn = $"{DateTime.Now.AddHours(-8):dd-MM-yyyy H:mm:ss}";
 
             // convert to open xml document

@@ -13,7 +13,7 @@ namespace HetsReport.Helpers
     {
         private static readonly Regex InstructionRegEx =
             new Regex(
-                @"^[\s]*MERGEFIELD[\s]+(?<name>[#\w]*){1}               # This retrieves the field's name (Named Capture Group -> name)
+                @"^[\s]*MERGEFIELD[\s]+(?<name>[#\w]*){1}                      # This retrieves the field's name (Named Capture Group -> name)
                             [\s]*(\\\*[\s]+(?<Format>[\w]*){1})?               # Retrieves field's format flag (Named Capture Group -> Format)
                             [\s]*(\\b[\s]+[""]?(?<PreText>[^\\]*){1})?         # Retrieves text to display before field data (Named Capture Group -> PreText)
                                                                                # Retrieves text to display after field data (Named Capture Group -> PostText)

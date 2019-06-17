@@ -163,6 +163,7 @@ namespace HetsReport
 
                             Dictionary<string, string> values = new Dictionary<string, string>
                             {
+                                {"classification", reportModel.Classification},
                                 {"equipmentCode", reportModel.Equipment.EquipmentCode},
                                 {"number", reportModel.Number},
                                 {"organizationName", reportModel.Equipment.Owner.OrganizationName},
