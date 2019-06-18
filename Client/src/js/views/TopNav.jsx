@@ -60,10 +60,6 @@ class TopNav extends React.Component {
       environmentClass = 'env-dev';
     } else if (this.props.currentUser.environment === 'Test') {
       environmentClass = 'env-test';
-    }else if (this.props.currentUser.environment === 'Training') {
-      environmentClass = 'env-trn';
-    }else if (this.props.currentUser.environment === 'UAT') {
-      environmentClass = 'env-uat';
     }
 
     return <div id="header">

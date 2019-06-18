@@ -71,14 +71,6 @@ namespace HetsApi.Controllers
             {
                 environment = "Development";
             }
-            else if (_env.IsEnvironment("Training"))
-            {
-                environment = "Training";
-            }
-            else if (_env.IsEnvironment("UAT"))
-            {
-                environment = "UAT";
-            }
 
             if (info.ApplicationVersions[0] != null)
             {

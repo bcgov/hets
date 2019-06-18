@@ -1,18 +1,23 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
-using HetsReport;
 
 namespace HetsApi.Controllers
 {
@@ -1244,21 +1249,23 @@ namespace HetsApi.Controllers
 
         #endregion
 
-        #region Seniority List Doc
+        #region Seniority List Pdf
 
         /// <summary>
-        /// Get an openXml version of the seniority list
+        /// Get a pdf version of the seniority list
         /// </summary>
-        /// <remarks>Returns an openXml version of the seniority list</remarks>
+        /// <remarks>Returns a PDF version of the seniority list</remarks>
         /// <param name="localAreas">Local Areas (comma separated list of id numbers)</param>
         /// <param name="types">Equipment Types (comma separated list of id numbers)</param>
         /// <param name="counterCopy">If true, use the Counter Copy template</param>
         [HttpGet]
-        [Route("seniorityListDoc")]
-        [SwaggerOperation("EquipmentSeniorityListDocGet")]
+        [Route("seniorityListPdf")]
+        [SwaggerOperation("EquipmentSeniorityListPdfGet")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentSeniorityListDocGet([FromQuery]string localAreas, [FromQuery]string types, [FromQuery]bool counterCopy = false)
+        public virtual IActionResult EquipmentSeniorityListPdfGet([FromQuery]string localAreas, [FromQuery]string types, [FromQuery]bool counterCopy = false)
         {
+            _logger.LogInformation("Equipment Seniority List Pdf");
+
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
             int?[] typesArray = ArrayHelper.ParseIntArray(types);
 
@@ -1327,7 +1334,7 @@ namespace HetsApi.Controllers
             // **********************************************************************
             // convert Equipment Model to Pdf View Model
             // **********************************************************************
-            SeniorityListReportViewModel seniorityList = new SeniorityListReportViewModel();
+            SeniorityListPdfViewModel seniorityList = new SeniorityListPdfViewModel();
             SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
             SeniorityListRecord listRecord = new SeniorityListRecord();
 
@@ -1366,7 +1373,7 @@ namespace HetsApi.Controllers
                     }
 
                     // get the rotation info for the first block
-                    if (item.BlockNumber != null) currentBlock = (int) item.BlockNumber;
+                    currentBlock = (int)item.BlockNumber;
 
                     rotation = GetRotationList(_context, item.LocalArea.LocalAreaId,
                         item.DistrictEquipmentType.DistrictEquipmentTypeId,
@@ -1407,19 +1414,77 @@ namespace HetsApi.Controllers
 
             seniorityList.PrintedOn = $"{DateTime.Now.AddHours(-8):dd-MM-yyyy H:mm:ss}";
 
-            // convert to open xml document
-            string documentName = $"SeniorityList-{DateTime.Now:yyyy-MM-dd}.docx";
-            byte[] document = SeniorityList.GetSeniorityList(seniorityList, documentName);
-
-            // return document
-            FileContentResult result = new FileContentResult(document, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            // **********************************************************************
+            // create the payload and call the pdf service
+            // **********************************************************************
+            string payload = JsonConvert.SerializeObject(seniorityList, new JsonSerializerSettings
             {
-                FileDownloadName = documentName
-            };
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented,
+                DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                DateTimeZoneHandling = DateTimeZoneHandling.Utc
+            });
 
-            Response.Headers.Add("Content-Disposition", "inline; filename=" + documentName);
+            _logger.LogInformation("Equipment Seniority List Pdf - Payload Length: {0}", payload.Length);
 
-            return result;
+            // pass the request on to the Pdf Micro Service
+            string pdfHost = _configuration["PDF_SERVICE_NAME"];
+            string pdfUrl = _configuration.GetSection("Constants:SeniorityListPdfUrl").Value;
+            string targetUrl = $"{pdfHost}{pdfUrl}";
+
+            // generate pdf document name [unique portion only]
+            string fileName = "HETS_SeniorityList";
+
+            targetUrl = $"{targetUrl}/{fileName}/{counterCopy}";
+
+            _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Service Url: {0}", targetUrl);
+
+            // call the MicroService
+            try
+            {
+                HttpClient client = new HttpClient();
+                StringContent stringContent = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+
+                _logger.LogInformation("Equipment Seniority List Pdf - Calling HETS Pdf Service");
+                HttpResponseMessage response = client.PostAsync(targetUrl, stringContent).Result;
+
+                // success
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Service Response: OK");
+
+                    var pdfResponseBytes = GetPdf(response);
+
+                    // convert to string and log
+                    string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
+
+                    fileName = fileName + $"-{DateTime.Now:yyyy-MM-dd-H-mm}" + ".pdf";
+
+                    _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Filename: {0}", fileName);
+                    _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Size: {0}", pdfResponse.Length);
+
+                    // return content
+                    FileContentResult pdfResult = new FileContentResult(pdfResponseBytes, "application/pdf")
+                    {
+                        FileDownloadName = fileName
+                    };
+
+                    Response.Headers.Add("Content-Disposition", "inline; filename=" + fileName);
+
+                    return pdfResult;
+                }
+
+                _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Service Response: {0}", response.StatusCode);
+
+                // problem occured
+                return new BadRequestObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
+            }
+            catch (Exception ex)
+            {
+                Debug.Write("Error generating pdf: " + ex.Message);
+                return new BadRequestObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
+            }
         }
 
         private static HetRentalRequestRotationList GetRotationList(DbAppContext context,
@@ -1450,6 +1515,22 @@ namespace HetsApi.Controllers
                                          x.AskedDateTime <= fiscalEnd);
 
                 return blockRotation;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        private static byte[] GetPdf(HttpResponseMessage response)
+        {
+            try
+            {
+                var pdfResponseBytes = response.Content.ReadAsByteArrayAsync();
+                pdfResponseBytes.Wait();
+
+                return pdfResponseBytes.Result;
             }
             catch (Exception e)
             {

@@ -746,8 +746,10 @@ namespace HetsData.Helpers
                             }
                         }
                     }
-
-                    foundLast = rentalRequest.HetRentalRequestRotationList.ElementAt(j).EquipmentId == lastEquipment?.EquipmentId;
+                    else
+                    {
+                        foundLast = rentalRequest.HetRentalRequestRotationList.ElementAt(j).EquipmentId == lastEquipment?.EquipmentId;
+                    }
                 }
             }
 

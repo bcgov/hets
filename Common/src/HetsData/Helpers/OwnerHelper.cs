@@ -1,10 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Text.RegularExpressions;
+using Hangfire.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using HetsData.Model;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace HetsData.Helpers
 {
@@ -21,19 +28,6 @@ namespace HetsData.Helpers
         public string MobilePhoneNumber { get; set; }
         public int EquipmentCount { get; set; }
         public string Status { get; set; }
-    }
-
-    public class OwnerVerificationReportModel
-    {
-        public string ReportDate { get; set; }
-        public string Title { get; set; }
-        public int DistrictId { get; set; }
-        public int MinistryDistrictId { get; set; }
-        public string DistrictName { get; set; }
-        public string DistrictAddress { get; set; }
-        public string DistrictContact { get; set; }
-        public string LocalAreaName { get; set; }
-        public List<HetOwner> Owners { get; set; }
     }
 
     public class OwnerWcbCgl
@@ -358,18 +352,31 @@ namespace HetsData.Helpers
 
         #endregion
 
-        #region Owner Verification Data
+        #region Owner Verification Job
 
-        public static OwnerVerificationReportModel GetOwnerVerificationLetterData(
-            DbAppContext context, int?[] localAreas, int?[] owners,
-            int? equipmentStatusId, int? ownerStatusId, int? districtId)
+        public static void OwnerVerificationLetters(PerformContext context,
+            int reportId, int?[] localAreas, int?[] owners, int? equipmentStatusId,
+            int? ownerStatusId, string pdfService, string pdfUrl, string reportsRoot,
+            string connectionString)
         {
             try
             {
-                OwnerVerificationReportModel model = new OwnerVerificationReportModel();
+                // open a connection to the database
+                DbAppContext dbContext = new DbAppContext(connectionString);
+
+                // get report record
+                bool exists = dbContext.HetBatchReport.Any(x => x.ReportId == reportId);
+
+                if (!exists) throw new ArgumentException("Invalid report id");
+
+                HetBatchReport report = dbContext.HetBatchReport.First(x => x.ReportId == reportId);
+
+                // report starting
+                report.StartDate = DateTime.Now;
+                dbContext.SaveChanges();
 
                 // get owner records
-                IQueryable<HetOwner> ownerRecords = context.HetOwner.AsNoTracking()
+                IQueryable<HetOwner> ownerRecords = dbContext.HetOwner.AsNoTracking()
                     .Include(x => x.PrimaryContact)
                     .Include(x => x.Business)
                     .Include(x => x.HetEquipment)
@@ -381,8 +388,7 @@ namespace HetsData.Helpers
                     .Include(x => x.LocalArea)
                         .ThenInclude(s => s.ServiceArea)
                             .ThenInclude(d => d.District)
-                    .Where(x => x.OwnerStatusTypeId == ownerStatusId &&
-                                x.LocalArea.ServiceArea.DistrictId == districtId)
+                    .Where(x => x.OwnerStatusTypeId == ownerStatusId)
                     .OrderBy(x => x.LocalArea.Name).ThenBy(x => x.OrganizationName);
 
                 if (owners?.Length > 0)
@@ -419,8 +425,8 @@ namespace HetsData.Helpers
                     // generate pdf document name [unique portion only]
                     string fileName = "OwnerVerification";
 
-                    // setup model document generation
-                    model = new OwnerVerificationReportModel
+                    // setup model for submission to the Pdf service
+                    OwnerVerificationPdfViewModel model = new OwnerVerificationPdfViewModel
                     {
                         ReportDate = DateTime.Now.ToString("yyyy-MM-dd"),
                         Title = fileName,
@@ -470,35 +476,78 @@ namespace HetsData.Helpers
                         // strip out inactive and archived equipment
                         owner.HetEquipment = owner.HetEquipment.Where(x => x.EquipmentStatusTypeId == equipmentStatusId).ToList();
 
-                        // setup address line 2
-                        string temp = owner.Address2;
-
-                        if (string.IsNullOrEmpty(temp) && !string.IsNullOrEmpty(owner.City))
-                            temp = $"{owner.City}";
-
-                        if (!string.IsNullOrEmpty(temp) && !string.IsNullOrEmpty(owner.City) && owner.City.Trim() != temp.Trim())
-                            temp = $"{temp}, {owner.City}";
-
-                        if (string.IsNullOrEmpty(temp) && !string.IsNullOrEmpty(owner.Province))
-                            temp = $"{owner.Province}";
-
-                        if (!string.IsNullOrEmpty(temp) && !string.IsNullOrEmpty(owner.Province))
-                            temp = $"{temp}, {owner.Province}";
-
-                        if (string.IsNullOrEmpty(temp) && !string.IsNullOrEmpty(owner.PostalCode))
-                            temp = $"{owner.PostalCode}";
-
-                        if (!string.IsNullOrEmpty(temp) && !string.IsNullOrEmpty(owner.PostalCode))
-                            temp = $"{temp}  {owner.PostalCode}";
-
-                        owner.Address2 = temp;
-
-
                         model.Owners.Add(owner);
                     }
-                }
 
-                return model;
+                    // setup payload
+                    string payload = JsonConvert.SerializeObject(model, new JsonSerializerSettings
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                        Formatting = Formatting.Indented,
+                        DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                        DateTimeZoneHandling = DateTimeZoneHandling.Utc
+                    });
+
+                    // pass the request on to the Pdf Micro Service
+                    string targetUrl = pdfService + pdfUrl;
+
+                    targetUrl = targetUrl + "/" + fileName;
+
+                    // call the MicroService
+                    try
+                    {
+                        HttpClient client = new HttpClient();
+
+                        StringContent stringContent = new StringContent(JsonConvert.SerializeObject(payload),
+                            Encoding.UTF8, "application/json");
+
+                        client.Timeout = TimeSpan.FromMinutes(10);
+                        HttpResponseMessage response = client.PostAsync(targetUrl, stringContent).Result;
+
+                        // success
+                        if (response.StatusCode == HttpStatusCode.OK)
+                        {
+                            fileName = $"{fileName}.{reportId}.pdf";
+
+                            string folder = reportsRoot.Contains("\\")
+                                ? $"{reportsRoot}\\{model.DistrictId}\\{DateTime.UtcNow.Year}\\"
+                                : $"{reportsRoot}/{model.DistrictId}/{DateTime.UtcNow.Year}/";
+
+                            byte[] pdfResponseBytes = GetPdf(response);
+
+                            // save file and update status
+                            if (FileUtility.ByteArrayToFile(folder, fileName, pdfResponseBytes))
+                            {
+                                report.ReportLink = folder + fileName;
+                                report.Complete = true;
+                                report.EndDate = DateTime.Now;
+                                dbContext.SaveChanges();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Write("Error generating pdf: " + ex.Message);
+                        throw;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        private static byte[] GetPdf(HttpResponseMessage response)
+        {
+            try
+            {
+                var pdfResponseBytes = response.Content.ReadAsByteArrayAsync();
+                pdfResponseBytes.Wait();
+
+                return pdfResponseBytes.Result;
             }
             catch (Exception e)
             {

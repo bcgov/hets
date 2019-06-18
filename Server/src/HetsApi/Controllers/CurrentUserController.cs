@@ -213,14 +213,6 @@ namespace HetsApi.Controllers
                 {
                     user.Environment = "Test";
                 }
-                else if (_env.IsEnvironment("Training"))
-                {
-                    user.Environment = "Training";
-                }
-                else if (_env.IsEnvironment("UAT"))
-                {
-                    user.Environment = "UAT";
-                }
             }
             else
             {
@@ -326,13 +318,6 @@ namespace HetsApi.Controllers
             else if (_env.IsStaging())
             {
                 logoffUrl = _configuration.GetSection("Constants:LogoffUrl-Test").Value;
-            }else if (_env.IsEnvironment("Training"))
-            {
-                logoffUrl = _configuration.GetSection("Constants:LogoffUrl-Training").Value;
-            }
-            else if (_env.IsEnvironment("UAT"))
-            {
-                logoffUrl = _configuration.GetSection("Constants:LogoffUrl-UAT").Value;
             }
 
             LogoffModel response = new LogoffModel {LogoffUrl = logoffUrl};

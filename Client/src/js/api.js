@@ -605,13 +605,13 @@ export function cloneEquipmentRentalAgreement(data) {
   });
 }
 
-export function equipmentSeniorityListDoc(localAreas, types, counterCopy) {
+export function equipmentSeniorityListPdf(localAreas, types, counterCopy) {
   var params = { localareas: localAreas, types: types };
   if (counterCopy) {
     params.counterCopy = counterCopy;
   }
 
-  return new ApiRequest('/equipment/seniorityListDoc').get(params, { responseType: Constant.RESPONSE_TYPE_BLOB }).then(response => {
+  return new ApiRequest('/equipment/seniorityListPdf').get(params, { responseType: Constant.RESPONSE_TYPE_BLOB }).then(response => {
     return response;
   });
 }
@@ -922,8 +922,8 @@ export function changeOwnerStatus(status) {
   });
 }
 
-export function getStatusLettersDoc(params) {
-  return new ApiRequest('owners/verificationDoc').post(params, { responseType: Constant.RESPONSE_TYPE_BLOB });
+export function scheduleStatusLettersPdf(params) {
+  return new ApiRequest('owners/verificationPdf').post(params, { responseType: Constant.RESPONSE_TYPE_BLOB });
 }
 
 export function getMailingLabelsPdf(params) {
@@ -1840,7 +1840,7 @@ export function releaseRentalAgreement(rentalAgreementId) {
 }
 
 export function generateRentalAgreementDocument(rentalAgreementId) {
-  return new ApiRequest(`rentalagreements/${rentalAgreementId}/doc`).get(null, { ignoreResponse: true });
+  return new ApiRequest(`rentalagreements/${rentalAgreementId}/pdf`).get(null, { ignoreResponse: true });
 }
 
 export function searchAitReport(params) {
@@ -2357,4 +2357,28 @@ export function deleteTimeRecord(timeRecordId) {
   return new ApiRequest(`/timerecords/${timeRecordId}/delete`).post().then((response) => {
     store.dispatch({ type: Action.DELETE_TIME_RECORD, timeRecord: response.data });
   });
+}
+
+////////////////////
+// Batch Reports
+////////////////////
+
+export function getBatchReports() {
+  return new ApiRequest('/reports').get().then((response) => {
+    const batchReports = response.data.map((report) => {
+      report.startDate = new Date(report.startDate);
+      return report;
+    });
+    store.dispatch({ type: Action.UPDATE_BATCH_REPORTS, batchReports });
+  });
+}
+
+export function deleteBatchReport(reportId) {
+  store.dispatch({ type: Action.DELETE_BATCH_REPORT, batchReportId: reportId });
+
+  return new ApiRequest(`/reports/${reportId}/delete`).post();
+}
+
+export function getStatusLettersPdf(reportId) {
+  return new ApiRequest(`/reports/${reportId}/download`).get(null, { responseType: Constant.RESPONSE_TYPE_BLOB });
 }

@@ -5,13 +5,10 @@ import { Row, Col, ButtonToolbar, Button } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../api';
-import * as Constant from '../constants';
 
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SearchBar from '../components/ui/SearchBar.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
-
-import { formatDateTimeUTCToLocal } from '../utils/date';
 
 
 class SeniorityList extends React.Component {
@@ -53,13 +50,15 @@ class SeniorityList extends React.Component {
       .value();
   };
 
-  downloadFile = (promise, filename, mimeType) => {
-    promise.then((response) => {
-      var blob;
+  getRotationList = (counterCopy) => {
+    Api.equipmentSeniorityListPdf(this.state.selectedLocalAreaIds, this.state.selectedEquipmentTypeIds, counterCopy).then(response => {
+      var filename = counterCopy ? 'counter_copy.pdf' : 'seniority_list.pdf';
+
+      var blob = new Blob([response], {type: 'image/pdf'});
       if (window.navigator.msSaveBlob) {
-        blob = window.navigator.msSaveBlob(response, filename);
-      } else {
-        blob = new Blob([response], {type: mimeType});
+        // ie11
+        window.navigator.msSaveBlob(blob, filename);
+        return;
       }
       //Create a link element, hide it, direct
       //it towards the blob, and then 'click' it programatically
@@ -76,14 +75,6 @@ class SeniorityList extends React.Component {
       //release the reference to the file by revoking the Object URL
       window.URL.revokeObjectURL(url);
     });
-  };
-  
-  getRotationList = () => {
-    const promise = Api.equipmentSeniorityListDoc(this.state.selectedLocalAreaIds, this.state.selectedEquipmentTypeIds, false);
-    const filename = 'SeniorityList-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';
-    const mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-
-    this.downloadFile(promise, filename, mimeType);
   };
 
   render() {

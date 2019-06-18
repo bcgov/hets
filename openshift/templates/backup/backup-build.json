@@ -1,7 +1,8 @@
 {
   "kind": "Template",
   "apiVersion": "v1",
-  "metadata": {
+  "metadata":
+  {
     "name": "${NAME}-build-template",
     "creationTimestamp": null
   },
@@ -9,20 +10,24 @@
     {
       "kind": "ImageStream",
       "apiVersion": "v1",
-      "metadata": {
+      "metadata":
+      {
         "name": "${NAME}"
       }
     },
     {
       "kind": "BuildConfig",
       "apiVersion": "v1",
-      "metadata": {
+      "metadata":
+      {
         "name": "${NAME}",
-        "labels": {
+        "labels":
+        {
           "app": "${NAME}"
         }
       },
-      "spec": {
+      "spec":
+      {
         "triggers": [
           {
             "type": "ImageChange"
@@ -32,26 +37,33 @@
           }
         ],
         "runPolicy": "Serial",
-        "source": {
+        "source":
+        {
           "type": "Git",
-          "git": {
+          "git":
+          {
             "uri": "${GIT_REPO_URL}",
             "ref": "${GIT_REF}"
           },
           "contextDir": "${SOURCE_CONTEXT_DIR}"
         },
-        "strategy": {
+        "strategy":
+        {
           "type": "Docker",
-          "dockerStrategy": {
-            "from": {
+          "dockerStrategy":
+          {           
+            "from":
+            {
               "kind": "${SOURCE_IMAGE_KIND}",
-              "name": "${SOURCE_IMAGE_NAME}:${SOURCE_IMAGE_TAG}"
+              "name": "${SOURCE_IMAGE_NAME}:${SOURCE_IMAGE_TAG}"              
             },
-            "dockerfilePath": "${DOCKER_FILE_PATH}"
+            "dockerfilePath": "${DOCKER_FILE_PATH}"            
           }
         },
-        "output": {
-          "to": {
+        "output":
+        {
+          "to":
+          {
             "kind": "ImageStreamTag",
             "name": "${NAME}:${OUTPUT_IMAGE_TAG}"
           }
@@ -72,7 +84,7 @@
       "displayName": "Git Repo URL",
       "description": "The URL to your GIT repo.",
       "required": true,
-      "value": "https://github.com/BCDevOps/backup-container.git"
+      "value": "https://github.com/bcgov/hets.git"
     },
     {
       "name": "GIT_REF",
@@ -86,7 +98,7 @@
       "displayName": "Source Context Directory",
       "description": "The source context directory.",
       "required": false,
-      "value": "/docker"
+      "value": "/Backup"
     },
     {
       "name": "SOURCE_IMAGE_KIND",
@@ -114,7 +126,7 @@
       "displayName": "Docker File Path",
       "description": "The path to the docker file defining the build.",
       "required": false,
-      "value": "Dockerfile"
+      "value": "backup.Dockerfile"
     },
     {
       "name": "OUTPUT_IMAGE_TAG",
