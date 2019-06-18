@@ -49,15 +49,11 @@ class EquipmentEditDialog extends React.Component {
       legalCapacity: props.equipment.legalCapacity || '',
       pupLegalCapacity: props.equipment.pupLegalCapacity || '',
 
-      localAreaError: '',
-      localAreaSeniorityChangeWarning: false,
-      equipmentTypeError: '',
-      equipmentTypeSeniorityChangeWarning: false,
-      serialNumberError: '',
+      serialNumberError: null,
       duplicateSerialNumberWarning: false,
       makeError: '',
       modelError: '',
-      yearError: '',
+      yearError: null,
     };
   }
 
@@ -94,9 +90,7 @@ class EquipmentEditDialog extends React.Component {
 
   isValid = () => {
     this.setState({
-      localAreaError: '',
-      equipmentTypeError: '',
-      serialNumberError: '',
+      serialNumberError: null,
       makeError: '',
       modelError: '',
       yearError: '',
@@ -104,13 +98,13 @@ class EquipmentEditDialog extends React.Component {
 
     var valid = true;
 
-    if (this.state.equipmentTypeId === 0) {
-      this.setState({ equipmentTypeError: 'Equipment type is required.' });
+    if (isBlank(this.state.serialNumber)) {
+      this.setState({ serialNumberError: 'Serial number is required' });
       valid = false;
     }
 
-    if (isBlank(this.state.serialNumber)) {
-      this.setState({ serialNumberError: 'Serial number is required' });
+    if (this.state.equipmentTypeId === 0) {
+      this.setState({ equipmentTypeError: 'Equipment type is required.' });
       valid = false;
     }
 
@@ -199,34 +193,6 @@ class EquipmentEditDialog extends React.Component {
     });
   };
 
-  onLocalAreaChanged() {
-    if (this.state.localAreaId !== this.props.equipment.localArea.id) {
-      this.setState({
-        localAreaError: 'This action will change the seniority of the equipment.',
-        localAreaSeniorityChangeWarning: true,
-      });
-    } else {
-      this.setState({
-        localAreaError: '',
-        localAreaSeniorityChangeWarning: false,
-      });
-    }
-  }
-
-  onEquipmentTypeChanged() {
-    if (this.state.equipmentTypeId !== this.props.equipment.districtEquipmentTypeId) {
-      this.setState({
-        equipmentTypeError: 'This action will change the seniority of the equipment.',
-        equipmentTypeSeniorityChangeWarning: true,
-      });
-    } else {
-      this.setState({
-        equipmentTypeError: '',
-        equipmentTypeSeniorityChangeWarning: false,
-      });
-    }
-  }
-
   render() {
     var equipment = this.props.equipment;
 
@@ -237,14 +203,12 @@ class EquipmentEditDialog extends React.Component {
       .sortBy('districtEquipmentName')
       .value();
 
-    const saveWarning = this.state.duplicateSerialNumberWarning || this.state.localAreaSeniorityChangeWarning || this.state.equipmentTypeSeniorityChangeWarning;
-
     return (
       <FormDialog
         id="equipment-edit"
         show={ this.props.show }
         title={ `Equipment Id: ${ equipment.equipmentCode }` }
-        saveButtonLabel={ saveWarning ? 'Proceed Anyways' : 'Save' }
+        saveButtonLabel={ this.state.duplicateSerialNumberWarning ? 'Proceed Anyways' : 'Save' }
         isSaving={ this.state.isSaving }
         onClose={ this.props.onClose }
         onSubmit={ this.formSubmitted }>
@@ -253,7 +217,7 @@ class EquipmentEditDialog extends React.Component {
             <Col md={12}>
               <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
                 <ControlLabel>Service Area - Local Area</ControlLabel>
-                <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } updateState={ (state) => this.updateState(state, this.onLocalAreaChanged) }
+                <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } updateState={ this.updateState }
                   items={ localAreas }
                   className="full-width"
                 />
@@ -272,7 +236,7 @@ class EquipmentEditDialog extends React.Component {
                   disabled={!this.props.districtEquipmentTypes.loaded}
                   items={districtEquipmentTypes}
                   selectedId={this.state.equipmentTypeId}
-                  updateState={ (state) => this.updateState(state, this.onEquipmentTypeChanged) }/>
+                  updateState={this.updateState}/>
                 <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
               </FormGroup>
             </Col>

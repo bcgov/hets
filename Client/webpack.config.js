@@ -48,7 +48,7 @@ if(!IS_PRODUCTION) {
 module.exports = {
   mode: IS_PRODUCTION ? 'production' : 'development',
   bail: IS_PRODUCTION,
-  devtool: IS_PRODUCTION ? 'source-map' : 'source-map',
+  devtool: IS_PRODUCTION ? 'source-map' : 'cheap-source-map',
   entry: entrypoints,
   output: {
     path: path.resolve(__dirname, 'dist'),

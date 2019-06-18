@@ -51,7 +51,6 @@ class OwnersEditDialog extends React.Component {
       postalCodeError: '',
       organizationNameError: '',
       localAreaError: '',
-      localAreaSeniorityChangeWarning: false,
     };
   }
 
@@ -167,32 +166,15 @@ class OwnersEditDialog extends React.Component {
     }
   };
 
-  onLocalAreaChanged() {
-    if (this.state.localAreaId !== this.props.owner.localArea.id) {
-      this.setState({
-        localAreaError: 'This action will change the local area and seniority of all the equipment for this owner.',
-        localAreaSeniorityChangeWarning: true,
-      });
-    } else {
-      this.setState({
-        localAreaError: '',
-        localAreaSeniorityChangeWarning: false,
-      });
-    }
-  }
-
   render() {
     var owner = this.props.owner;
     var localAreas = _.sortBy(this.props.localAreas, 'name');
-
-    const saveWarning = this.state.localAreaSeniorityChangeWarning;
 
     return (
       <FormDialog
         id="owners-edit"
         show={this.props.show}
         title="Owner"
-        saveButtonLabel={ saveWarning ? 'Proceed Anyways' : 'Save' }
         onClose={this.props.onClose}
         onSubmit={this.formSubmitted}>
         <FormGroup controlId="ownerCode">
@@ -242,7 +224,7 @@ class OwnersEditDialog extends React.Component {
         </FormGroup>
         <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
           <ControlLabel>Service Area - Local Area <sup>*</sup></ControlLabel>
-          <FilterDropdown id="localAreaId" items={ localAreas } selectedId={ this.state.localAreaId } updateState={ (state) => this.updateState(state, this.onLocalAreaChanged) } className="full-width" />
+          <FilterDropdown id="localAreaId" items={ localAreas } selectedId={ this.state.localAreaId } updateState={ this.updateState } className="full-width" />
           <HelpBlock>{ this.state.localAreaError }</HelpBlock>
         </FormGroup>
         <FormGroup controlId="registeredCompanyNumber">
