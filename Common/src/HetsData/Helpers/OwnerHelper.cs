@@ -362,7 +362,7 @@ namespace HetsData.Helpers
 
         public static OwnerVerificationReportModel GetOwnerVerificationLetterData(
             DbAppContext context, int?[] localAreas, int?[] owners,
-            int? equipmentStatusId, int? ownerStatusId, int? districtId)
+            int? equipmentStatusId, int? ownerStatusId)
         {
             try
             {
@@ -381,8 +381,7 @@ namespace HetsData.Helpers
                     .Include(x => x.LocalArea)
                         .ThenInclude(s => s.ServiceArea)
                             .ThenInclude(d => d.District)
-                    .Where(x => x.OwnerStatusTypeId == ownerStatusId &&
-                                x.LocalArea.ServiceArea.DistrictId == districtId)
+                    .Where(x => x.OwnerStatusTypeId == ownerStatusId)
                     .OrderBy(x => x.LocalArea.Name).ThenBy(x => x.OrganizationName);
 
                 if (owners?.Length > 0)

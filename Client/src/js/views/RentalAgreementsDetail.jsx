@@ -163,7 +163,7 @@ class RentalAgreementsDetail extends React.Component {
 
   generateRentalAgreementDocument = () => {
     Api.generateRentalAgreementDocument(this.props.rentalAgreementId).then(() => {
-      window.open(buildApiPath(`/rentalagreements/${ this.props.rentalAgreementId }/doc`));
+      window.open(buildApiPath(`/rentalagreements/${ this.props.rentalAgreementId }/pdf`));
     });
   };
 

@@ -605,13 +605,13 @@ export function cloneEquipmentRentalAgreement(data) {
   });
 }
 
-export function equipmentSeniorityListDoc(localAreas, types, counterCopy) {
+export function equipmentSeniorityListPdf(localAreas, types, counterCopy) {
   var params = { localareas: localAreas, types: types };
   if (counterCopy) {
     params.counterCopy = counterCopy;
   }
 
-  return new ApiRequest('/equipment/seniorityListDoc').get(params, { responseType: Constant.RESPONSE_TYPE_BLOB }).then(response => {
+  return new ApiRequest('/equipment/seniorityListPdf').get(params, { responseType: Constant.RESPONSE_TYPE_BLOB }).then(response => {
     return response;
   });
 }
@@ -1840,7 +1840,7 @@ export function releaseRentalAgreement(rentalAgreementId) {
 }
 
 export function generateRentalAgreementDocument(rentalAgreementId) {
-  return new ApiRequest(`rentalagreements/${rentalAgreementId}/doc`).get(null, { ignoreResponse: true });
+  return new ApiRequest(`rentalagreements/${rentalAgreementId}/pdf`).get(null, { ignoreResponse: true });
 }
 
 export function searchAitReport(params) {

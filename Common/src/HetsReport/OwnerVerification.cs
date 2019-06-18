@@ -73,7 +73,9 @@ namespace HetsReport
                                     { "ownerCode", owner.OwnerCode },
                                     { "sharedKeyHeader", owner.SharedKeyHeader },
                                     { "sharedKey", owner.SharedKey },
-                                    { "workPhoneNumber", owner.PrimaryContact.WorkPhoneNumber }
+                                    { "workPhoneNumber", owner.PrimaryContact.WorkPhoneNumber },
+                                    { "mobilePhoneNumber", owner.PrimaryContact.MobilePhoneNumber },
+                                    { "faxPhoneNumber", owner.PrimaryContact.FaxPhoneNumber }
                                 };
 
                                 // update main document

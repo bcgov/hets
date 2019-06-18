@@ -175,14 +175,16 @@ class RentalRequestsDetail extends React.Component {
       this.fetch();
     }
   };
-  
-  downloadDoc = (promise, filename) => {
-    promise.then((response) => {
-      var blob;
+
+  printSeniorityList = () => {
+    var localAreaIds = [ this.props.rentalRequest.localAreaId ];
+    var districtEquipmentTypeIds = [ this.props.rentalRequest.districtEquipmentTypeId ];
+    Api.equipmentSeniorityListPdf(localAreaIds, districtEquipmentTypeIds).then(response => {
+      var filename = 'SeniorityList-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.pdf';
+
+      var blob = new Blob([response], {type: 'image/pdf'});
       if (window.navigator.msSaveBlob) {
-        blob = window.navigator.msSaveBlob(response, filename);
-      } else {
-        blob = new Blob([response], {type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+        blob = window.navigator.msSaveBlob([response], filename);
       }
       //Create a link element, hide it, direct
       //it towards the blob, and then 'click' it programatically
@@ -199,14 +201,6 @@ class RentalRequestsDetail extends React.Component {
       //release the reference to the file by revoking the Object URL
       window.URL.revokeObjectURL(url);
     });
-  };
-
-  printSeniorityList = () => {
-    var localAreaIds = [ this.props.rentalRequest.localAreaId ];
-    var districtEquipmentTypeIds = [ this.props.rentalRequest.districtEquipmentTypeId ];
-    var promise = Api.equipmentSeniorityListDoc(localAreaIds, districtEquipmentTypeIds);
-	var filename = 'SeniorityList-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';	
-	this.downloadDoc(promise, filename);
   };
 
   addRequest = () => {

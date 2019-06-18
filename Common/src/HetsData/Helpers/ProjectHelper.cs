@@ -147,11 +147,6 @@ namespace HetsData.Helpers
                     }
                 }
 
-                foreach (HetRentalAgreement rentalAgreement in project.HetRentalAgreement)
-                {
-                    rentalAgreement.Equipment.LocalArea = null;
-                }
-
                 foreach (HetRentalRequest rentalRequest in project.HetRentalRequest)
                 {
                     if (rentalRequest.LocalArea != null)
