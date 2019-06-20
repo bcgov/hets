@@ -77,7 +77,7 @@ class SeniorityList extends React.Component {
       window.URL.revokeObjectURL(url);
     });
   };
-  
+
   getRotationList = () => {
     const promise = Api.equipmentSeniorityListDoc(this.state.selectedLocalAreaIds, this.state.selectedEquipmentTypeIds, false);
     const filename = 'SeniorityList-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';
