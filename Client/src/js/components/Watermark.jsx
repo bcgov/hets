@@ -9,7 +9,7 @@ class Watermark extends React.Component {
   render() {
     if (this.props.enable) {
       return (
-        <div id="watermark" className="visible-print">
+        <div className="visible-print watermark">
           View Only
           <br />
           Not for Hiring
