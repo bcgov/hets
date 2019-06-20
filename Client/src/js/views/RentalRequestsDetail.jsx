@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import { Link } from 'react-router';
@@ -30,6 +29,7 @@ import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
 import ReturnButton from '../components/ReturnButton.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
+import Watermark from '../components/Watermark.jsx';
 
 import { formatDateTime, formatDateTimeUTCToLocal } from '../utils/date';
 import { concat } from '../utils/string';
@@ -175,7 +175,7 @@ class RentalRequestsDetail extends React.Component {
       this.fetch();
     }
   };
-  
+
   downloadDoc = (promise, filename) => {
     promise.then((response) => {
       var blob;
@@ -205,8 +205,8 @@ class RentalRequestsDetail extends React.Component {
     var localAreaIds = [ this.props.rentalRequest.localAreaId ];
     var districtEquipmentTypeIds = [ this.props.rentalRequest.districtEquipmentTypeId ];
     var promise = Api.equipmentSeniorityListDoc(localAreaIds, districtEquipmentTypeIds);
-	var filename = 'SeniorityList-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';	
-	this.downloadDoc(promise, filename);
+    var filename = 'SeniorityList-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';
+    this.downloadDoc(promise, filename);
   };
 
   addRequest = () => {
@@ -234,12 +234,8 @@ class RentalRequestsDetail extends React.Component {
     var viewOnly = !rentalRequest.projectId;
     var canEditRequest = !viewOnly && rentalRequest.status !== Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
 
-    return <div id="rental-requests-detail" className={ classNames({ 'view-only': viewOnly }) }>
-      <div id="watermark" className="visible-print">
-        View Only
-        <br />
-        Not for Hiring
-      </div>
+    return <div id="rental-requests-detail">
+      <Watermark enable={viewOnly}/>
       <PageOrientation type="landscape"/>
       <Row id="rental-requests-top" className="hidden-print">
         <Col sm={9}>
