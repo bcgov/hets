@@ -1401,7 +1401,7 @@ namespace HetsApi.Controllers
             }
 
             // classification and print date
-            seniorityList.Classification = $"23010-22/FY({(fiscalYear - 1).ToString().Substring(2, 2)}-{fiscalYear.ToString().Substring(2, 2)})";
+            seniorityList.Classification = $"23010-22/{(fiscalYear - 1).ToString().Substring(2, 2)}-{fiscalYear.ToString().Substring(2, 2)}";
             seniorityList.PrintedOn = $"{DateTime.Now.AddHours(-8):dd-MM-yyyy H:mm:ss}";
 
             // convert to open xml document
