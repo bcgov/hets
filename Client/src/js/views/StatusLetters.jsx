@@ -70,15 +70,7 @@ class StatusLetters extends React.Component {
     const mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 
     this.downloadFile(promise, filename, mimeType);
-  };
-
-  getMailingLabels = () => {
-    const promise = Api.getMailingLabelsPdf({ localAreas: this.state.localAreaIds, owners: this.state.ownerIds });
-    const filename = 'MailingLabels-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.pdf';
-    const mimeType = 'image/pdf';
-
-    this.downloadFile(promise, filename, mimeType);
-  };
+  };  
 
   matchesLocalAreaFilter = (localAreaId) => {
     if (this.state.localAreaIds.length == 0) {
@@ -111,7 +103,7 @@ class StatusLetters extends React.Component {
 
     return (
       <div id="status-letters">
-        <PageHeader>Status Letters / Mailing Labels</PageHeader>
+        <PageHeader>Status Letters</PageHeader>
         <SearchBar>
           <Row>
             <Col md={12} id="filters">
@@ -133,7 +125,6 @@ class StatusLetters extends React.Component {
                   updateState={this.updateState}
                   showMaxItems={2} />
                 <Button onClick={ this.getStatusLetters } bsStyle="primary">Status Letters</Button>
-                <Button onClick={ this.getMailingLabels } bsStyle="primary">Mailing Labels</Button>
               </ButtonToolbar>
             </Col>
           </Row>
