@@ -252,7 +252,7 @@ namespace HetsReport
                 TableRow tableRow1 = new TableRow();
 
                 TableRowProperties rowProperties = new TableRowProperties();
-                rowProperties.AppendChild(new TableRowHeight() { Val = 500, HeightType = HeightRuleValues.Exact });
+                rowProperties.AppendChild(new TableRowHeight() { Val = 800, HeightType = HeightRuleValues.Exact });
                 rowProperties.AppendChild(new TableHeader() { Val = OnOffOnlyValues.On });
 
                 tableRow1.AppendChild(rowProperties);

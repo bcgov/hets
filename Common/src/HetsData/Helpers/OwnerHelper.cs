@@ -453,7 +453,7 @@ namespace HetsData.Helpers
                         owner.LocalAreaName = model.LocalAreaName;
 
                         // classification
-                        owner.Classification = $"23010-23/{model.DistrictName}/{owner.OwnerCode}";
+                        owner.Classification = $"23010-23/{model.MinistryDistrictId.ToString()}/{owner.OwnerCode}";
 
                         if (!string.IsNullOrEmpty(owner.SharedKey))
                         {
