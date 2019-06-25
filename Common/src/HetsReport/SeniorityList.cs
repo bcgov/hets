@@ -231,15 +231,6 @@ namespace HetsReport
                 TableStyle tableStyle1 = new TableStyle() { Val = "TableGrid" };
                 TableWidth tableWidth1 = new TableWidth() { Width = "0", Type = TableWidthUnitValues.Auto };
 
-                // border
-                TableBorders tblBorders = new TableBorders();
-
-                TopBorder topBorder = new TopBorder {Val = new EnumValue<BorderValues>(BorderValues.Thick), Color = "A1A2A3" };
-                tblBorders.AppendChild(topBorder);
-
-                BottomBorder bottomBorder = new BottomBorder {Val = new EnumValue<BorderValues>(BorderValues.Thick), Color = "A1A2A3" };
-                tblBorders.AppendChild(bottomBorder);
-
                 TableLook tableLook1 = new TableLook()
                 {
                     Val = "04A0",
@@ -254,7 +245,6 @@ namespace HetsReport
                 tableProperties1.AppendChild(tableStyle1);
                 tableProperties1.AppendChild(tableWidth1);
                 tableProperties1.AppendChild(tableLook1);
-                tableProperties1.AppendChild(tblBorders);
 
                 table.AppendChild(tableProperties1);
 
@@ -262,7 +252,8 @@ namespace HetsReport
                 TableRow tableRow1 = new TableRow();
 
                 TableRowProperties rowProperties = new TableRowProperties();
-                rowProperties.AppendChild(new TableRowHeight() { Val = 350, HeightType = HeightRuleValues.AtLeast });
+
+                rowProperties.AppendChild(new TableRowHeight() { Val = 200, HeightType = HeightRuleValues.AtLeast });
                 rowProperties.AppendChild(new TableHeader() { Val = OnOffOnlyValues.On });
 
                 tableRow1.AppendChild(rowProperties);
@@ -289,7 +280,7 @@ namespace HetsReport
                     TableRow tableRowEquipment = new TableRow();
 
                     TableRowProperties equipmentRowProperties = new TableRowProperties();
-                    equipmentRowProperties.AppendChild(new TableRowHeight() { Val = 500, HeightType = HeightRuleValues.AtLeast });
+                    equipmentRowProperties.AppendChild(new TableRowHeight() { Val = 200, HeightType = HeightRuleValues.AtLeast });
                     tableRowEquipment.AppendChild(equipmentRowProperties);
 
                     // add equipment data
@@ -328,8 +319,26 @@ namespace HetsReport
                 TableCellWidth tableCellWidth = new TableCellWidth() { Width = width, Type = TableWidthUnitValues.Dxa };
                 Shading shading = new Shading() { Val = ShadingPatternValues.Clear, Fill = "F4F7FC", Color = "auto" };
 
+                // border & padding
+                TableCellBorders borders = new TableCellBorders();
+
+                TopBorder topBorder = new TopBorder { Val = new EnumValue<BorderValues>(BorderValues.Thick), Color = "A1A2A3" };
+                borders.AppendChild(topBorder);
+
+                BottomBorder bottomBorder = new BottomBorder { Val = new EnumValue<BorderValues>(BorderValues.Thick), Color = "A1A2A3" };
+                borders.AppendChild(bottomBorder);
+
+                TableCellMargin margin = new TableCellMargin();
+                TopMargin topMargin = new TopMargin() { Width = "40" };
+                BottomMargin bottomMargin = new BottomMargin() { Width = "40" };
+                margin.AppendChild(topMargin);
+                margin.AppendChild(bottomMargin);
+
                 tableCellProperties.AppendChild(tableCellWidth);
                 tableCellProperties.AppendChild(shading);
+                tableCellProperties.AppendChild(borders);
+                tableCellProperties.AppendChild(margin);
+
                 tableCell.AppendChild(tableCellProperties);
 
                 // add text (with specific formatting)
@@ -365,6 +374,28 @@ namespace HetsReport
             try
             {
                 TableCell tableCell = new TableCell();
+
+                TableCellProperties tableCellProperties = new TableCellProperties();
+
+                // border & padding
+                TableCellBorders borders = new TableCellBorders();
+
+                TopBorder topBorder = new TopBorder { Val = new EnumValue<BorderValues>(BorderValues.Thick), Color = "A1A2A3" };
+                borders.AppendChild(topBorder);
+
+                BottomBorder bottomBorder = new BottomBorder { Val = new EnumValue<BorderValues>(BorderValues.Thick), Color = "A1A2A3" };
+                borders.AppendChild(bottomBorder);
+
+                TableCellMargin margin = new TableCellMargin();
+                TopMargin topMargin = new TopMargin() { Width = "40" };
+                BottomMargin bottomMargin = new BottomMargin() { Width = "40" };
+                margin.AppendChild(topMargin);
+                margin.AppendChild(bottomMargin);
+
+                tableCellProperties.AppendChild(borders);
+                tableCellProperties.AppendChild(margin);
+
+                tableCell.AppendChild(tableCellProperties);
 
                 // add text (with specific formatting)
                 Paragraph paragraph = new Paragraph() { RsidParagraphAddition = "00607D74", RsidRunAdditionDefault = "00607D74", ParagraphId = "6ED85602", TextId = "77777777" };
