@@ -231,6 +231,15 @@ namespace HetsReport
                 TableStyle tableStyle1 = new TableStyle() { Val = "TableGrid" };
                 TableWidth tableWidth1 = new TableWidth() { Width = "0", Type = TableWidthUnitValues.Auto };
 
+                // border
+                TableBorders tblBorders = new TableBorders();
+
+                TopBorder topBorder = new TopBorder {Val = new EnumValue<BorderValues>(BorderValues.Thick), Color = "A1A2A3" };
+                tblBorders.AppendChild(topBorder);
+
+                BottomBorder bottomBorder = new BottomBorder {Val = new EnumValue<BorderValues>(BorderValues.Thick), Color = "A1A2A3" };
+                tblBorders.AppendChild(bottomBorder);
+
                 TableLook tableLook1 = new TableLook()
                 {
                     Val = "04A0",
@@ -245,6 +254,7 @@ namespace HetsReport
                 tableProperties1.AppendChild(tableStyle1);
                 tableProperties1.AppendChild(tableWidth1);
                 tableProperties1.AppendChild(tableLook1);
+                tableProperties1.AppendChild(tblBorders);
 
                 table.AppendChild(tableProperties1);
 
@@ -252,7 +262,7 @@ namespace HetsReport
                 TableRow tableRow1 = new TableRow();
 
                 TableRowProperties rowProperties = new TableRowProperties();
-                rowProperties.AppendChild(new TableRowHeight() { Val = 800, HeightType = HeightRuleValues.Exact });
+                rowProperties.AppendChild(new TableRowHeight() { Val = 350, HeightType = HeightRuleValues.AtLeast });
                 rowProperties.AppendChild(new TableHeader() { Val = OnOffOnlyValues.On });
 
                 tableRow1.AppendChild(rowProperties);
