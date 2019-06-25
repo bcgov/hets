@@ -91,7 +91,7 @@ namespace HetsReport
                                             {
                                                 // replace text
                                                 text.InnerXml = text.InnerXml.Replace("<w:t>ClassificationNumber</w:t>",
-                                                    $"<w:t xml:space='preserve'>Classification Number: {owner.Classification}</w:t>");
+                                                    $"<w:t xml:space='preserve'>ORCS: {owner.Classification}</w:t>");
 
                                                 found = true;
                                                 break;
