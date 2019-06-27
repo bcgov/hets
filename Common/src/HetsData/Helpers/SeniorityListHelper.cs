@@ -183,7 +183,9 @@ namespace HetsData.Helpers
                     .Where(x => x.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved &&
                                 x.LocalArea.LocalAreaId == localAreaId &&
                                 x.DistrictEquipmentTypeId == districtEquipmentTypeId)
-                    .OrderByDescending(x => x.Seniority).ThenBy(x => x.ReceivedDate)
+                    .OrderByDescending(x => x.Seniority)
+                        .ThenBy(x => x.ReceivedDate)
+                        .ThenBy(x => x.EquipmentCode)
                     .Select(x => x)
                     .ToList();
 
