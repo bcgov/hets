@@ -14,6 +14,7 @@ using HetsData.Helpers;
 using HetsData.Model;
 using HetsReport;
 using Hangfire;
+using System.Text;
 
 namespace HetsApi.Controllers
 {
