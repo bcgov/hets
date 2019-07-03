@@ -91,7 +91,7 @@
       $(".homeFunction").attr("disabled", true);
 
       $.ajax({
-        url: "/api/districtEquipmentTypes/recalculate",
+        url: "/api/equipment/recalculatesenioritylist",
         type: "POST",
         timeout: 2400000, // sets timeout to 40 min
         success: function (response) {
@@ -122,13 +122,13 @@
 
   @if (Model.DevelopmentEnvironment)
   {
-    <div>
-      <h3>Reset User Id</h3>
-      <label>UserId:</label> <input text="" id="newUserId" />
-      <button onclick="updateUserId(newUserId.value);">Override User Context</button>&nbsp;&nbsp;
-      <button onclick="expireUserId();">Clear User Context</button>
-    </div>
-    <hr />
+  <div>
+    <h3>Reset User Id</h3>
+    <label>UserId:</label> <input text="" id="newUserId" />
+    <button onclick="updateUserId(newUserId.value);">Override User Context</button>&nbsp;&nbsp;
+    <button onclick="expireUserId();">Clear User Context</button>
+  </div>
+  <hr />
   }
 
   <div>
@@ -148,11 +148,11 @@
 
   @if (Model.DevelopmentEnvironment)
   {
-    <hr />
-    <div>
-      <h4>View HETS API</h4>
-      <a class="homeFunction" href="~/swagger/">Swagger</a>
-    </div>
+  <hr />
+  <div>
+    <h4>View HETS API</h4>
+    <a class="homeFunction" href="~/swagger/">Swagger</a>
+  </div>
   }
 
   <hr />

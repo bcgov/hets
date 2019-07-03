@@ -351,29 +351,6 @@ namespace HetsApi.Controllers
             return new ObjectResult(new HetsResponse("Merge job added to hangfire"));
         }
 
-        /// <summary>
-        /// Recalculate Seniority List for the equipments with the same seniority and received date by equipment code
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("recalculate")]
-        [SwaggerOperation("RecalculateSeniorityPost")]
-        [RequiresPermission(HetPermission.DistrictCodeTableManagement, HetPermission.WriteAccess)]
-        public virtual IActionResult RecalculateSeniorityPost()
-        {
-            string connectionString = GetConnectionString();
-
-            IConfigurationSection scoringRules = _configuration.GetSection("SeniorityScoringRules");
-            string seniorityScoringRules = GetConfigJson(scoringRules);
-
-            // queue the job
-            BackgroundJob.Enqueue(() => DistrictEquipmentTypeHelper.RecalculateSeniorityList(null,
-                seniorityScoringRules, connectionString));
-
-            // return ok
-            return new ObjectResult(new HetsResponse("Recalculate job added to hangfire"));
-        }
-
         #region Get Scoring Rules
 
         private string GetConfigJson(IConfigurationSection scoringRules)
