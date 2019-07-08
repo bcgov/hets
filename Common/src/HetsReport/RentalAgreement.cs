@@ -193,7 +193,9 @@ namespace HetsReport
                                 {"comment2", comment2},
                                 {"comment3", comment3},
                                 {"overtimeRate", overtimeRate},
-                                {"overtimeComment", overtimeComment}
+                                {"overtimeComment", overtimeComment},
+                                {"doingBusinessAs", reportModel.DoingBusinessAs},
+                                {"emailAddress", reportModel.EmailAddress}
                             };
 
                             // update main document
