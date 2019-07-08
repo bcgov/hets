@@ -41,6 +41,8 @@ namespace HetsData.Helpers
         public string RatePeriod { get; set; }
         public string RateComment { get; set; }
         public bool ConditionsPresent { get; set; }
+        public string DoingBusinessAs { get; set; }
+        public string EmailAddress { get; set; }
     }
 
     public class NoteLine
@@ -283,6 +285,8 @@ namespace HetsData.Helpers
                 docModel.RatePeriod = agreement.RatePeriodType.Description;
                 docModel.AgreementCity = agreement.AgreementCity;
                 docModel.DatedOn = (agreement.DatedOn ?? DateTime.UtcNow).ToString("MM/dd/yyyy");
+                docModel.DoingBusinessAs = agreement.Equipment.Owner.DoingBusinessAs;
+                docModel.EmailAddress = agreement.Equipment.Owner.PrimaryContact.EmailAddress;                
 
                 // format owner address
                 string tempAddress = agreement.Equipment.Owner.Address2;
