@@ -302,19 +302,20 @@ namespace HetsReport
                 TableRow tableRow1 = new TableRow();
 
                 TableRowProperties rowProperties = new TableRowProperties();
-                rowProperties.AppendChild(new TableRowHeight() { Val = 500, HeightType = HeightRuleValues.Exact });
+
+                rowProperties.AppendChild(new TableRowHeight() { Val = 200, HeightType = HeightRuleValues.AtLeast });
                 rowProperties.AppendChild(new TableHeader() { Val = OnOffOnlyValues.On });
 
                 tableRow1.AppendChild(rowProperties);
 
                 // add columns
-                tableRow1.AppendChild(SetupHeaderCell("Still own / Re-register?", "1600"));
-                tableRow1.AppendChild(SetupHeaderCell("Local Area", "1600"));
-                tableRow1.AppendChild(SetupHeaderCell("Equipment Id", "1600"));
+                tableRow1.AppendChild(SetupHeaderCell("Still own/ Re-register?", "1200", true));
+                tableRow1.AppendChild(SetupHeaderCell("Local Area", "1000", true));
+                tableRow1.AppendChild(SetupHeaderCell("Equipment Id", "1200", true));
                 tableRow1.AppendChild(SetupHeaderCell("Equipment Type", "1600"));
-                tableRow1.AppendChild(SetupHeaderCell("Year/Make/Model/Serial Number/Size", "3000"));
-                tableRow1.AppendChild(SetupHeaderCell("Attachments", "2600"));
-                tableRow1.AppendChild(SetupHeaderCell("Owner Comments (sold, retired, etc.)", "3000"));
+                tableRow1.AppendChild(SetupHeaderCell("Year/Make/Model/Serial Number/Size", "2400"));
+                tableRow1.AppendChild(SetupHeaderCell("Attachments", "1200"));
+                tableRow1.AppendChild(SetupHeaderCell("Owner Comments (sold, retired, etc.)", "2600", true));
 
                 table.AppendChild(tableRow1);
 
@@ -324,13 +325,13 @@ namespace HetsReport
                     TableRow tableRowEquipment = new TableRow();
 
                     TableRowProperties equipmentRowProperties = new TableRowProperties();
-                    equipmentRowProperties.AppendChild(new TableRowHeight() { Val = 500, HeightType = HeightRuleValues.AtLeast });
+                    equipmentRowProperties.AppendChild(new TableRowHeight() { Val = 200, HeightType = HeightRuleValues.AtLeast });
                     tableRowEquipment.AppendChild(equipmentRowProperties);
 
                     // add equipment data
-                    tableRowEquipment.AppendChild(SetupCell("       Yes     No"));
-                    tableRowEquipment.AppendChild(SetupCell(equipment.LocalArea.Name));
-                    tableRowEquipment.AppendChild(SetupCell(equipment.EquipmentCode));
+                    tableRowEquipment.AppendChild(SetupCell("Yes   No", true));
+                    tableRowEquipment.AppendChild(SetupCell(equipment.LocalArea.Name, true));
+                    tableRowEquipment.AppendChild(SetupCell(equipment.EquipmentCode, true));
                     tableRowEquipment.AppendChild(SetupCell(equipment.DistrictEquipmentType.DistrictEquipmentName));
 
                     string temp = $"{equipment.Year}/{equipment.Make}/{equipment.Model}/{equipment.SerialNumber}/{equipment.Size}";
@@ -365,32 +366,54 @@ namespace HetsReport
             }
         }
 
-        private static TableCell SetupHeaderCell(string text, string width)
+        private static TableCell SetupHeaderCell(string text, string width, bool center = false)
         {
             try
             {
                 TableCell tableCell = new TableCell();
 
                 TableCellProperties tableCellProperties = new TableCellProperties();
-                TableCellWidth tableCellWidth = new TableCellWidth() {Width = width, Type = TableWidthUnitValues.Dxa};
-                Shading shading = new Shading() {Val = ShadingPatternValues.Clear, Fill = "F4F7FC", Color = "auto"};
+                TableCellWidth tableCellWidth = new TableCellWidth() { Width = width, Type = TableWidthUnitValues.Dxa };
+                Shading shading = new Shading() { Val = ShadingPatternValues.Clear, Fill = "FFFFFF", Color = "auto" };
+
+                // border & padding
+                TableCellBorders borders = new TableCellBorders();
+
+                TopBorder topBorder = new TopBorder { Val = new EnumValue<BorderValues>(BorderValues.Thick), Color = "A1A2A3" };
+                borders.AppendChild(topBorder);
+
+                BottomBorder bottomBorder = new BottomBorder { Val = new EnumValue<BorderValues>(BorderValues.Thick), Color = "A1A2A3" };
+                borders.AppendChild(bottomBorder);
+
+                TableCellMargin margin = new TableCellMargin();
+                TopMargin topMargin = new TopMargin() { Width = "40" };
+                BottomMargin bottomMargin = new BottomMargin() { Width = "40" };
+                margin.AppendChild(topMargin);
+                margin.AppendChild(bottomMargin);
 
                 tableCellProperties.AppendChild(tableCellWidth);
                 tableCellProperties.AppendChild(shading);
+                tableCellProperties.AppendChild(borders);
+                tableCellProperties.AppendChild(margin);
+
                 tableCell.AppendChild(tableCellProperties);
 
                 // add text (with specific formatting)
-                Paragraph paragraph = new Paragraph() {RsidParagraphAddition = "00607D74", RsidRunAdditionDefault = "00607D74", ParagraphId = "6ED85602", TextId = "77777777"};
+                Paragraph paragraph = new Paragraph() { RsidParagraphAddition = "00607D74", RsidRunAdditionDefault = "00607D74", ParagraphId = "6ED85602", TextId = "77777777" };
 
                 ParagraphProperties paragraphProperties = new ParagraphProperties();
                 ParagraphMarkRunProperties paragraphMarkRunProperties = new ParagraphMarkRunProperties();
 
-                paragraphMarkRunProperties.AppendChild(new Color {Val = "000000"});
-                paragraphMarkRunProperties.AppendChild(new RunFonts {Ascii = "Arial"});
-                paragraphMarkRunProperties.AppendChild(new FontSize() {Val = "7pt"});
+                paragraphMarkRunProperties.AppendChild(new Color { Val = "000000" });
+                paragraphMarkRunProperties.AppendChild(new RunFonts { Ascii = "Arial" });
+                paragraphMarkRunProperties.AppendChild(new FontSize() { Val = "7pt" });
                 paragraphMarkRunProperties.AppendChild(new Bold());
 
+                Justification justification = new Justification() { Val = JustificationValues.Left };
+                if (center) justification.Val = JustificationValues.Center;
+
                 paragraphProperties.AppendChild(paragraphMarkRunProperties);
+                paragraphProperties.AppendChild(justification);
                 paragraph.AppendChild(paragraphProperties);
 
                 paragraph.AppendChild(new Text(text));
@@ -407,11 +430,33 @@ namespace HetsReport
             }
         }
 
-        private static TableCell SetupCell(string text)
+        private static TableCell SetupCell(string text, bool center = false)
         {
             try
             {
                 TableCell tableCell = new TableCell();
+
+                TableCellProperties tableCellProperties = new TableCellProperties();
+
+                // border & padding
+                TableCellBorders borders = new TableCellBorders();
+
+                TopBorder topBorder = new TopBorder { Val = new EnumValue<BorderValues>(BorderValues.Thick), Color = "A1A2A3" };
+                borders.AppendChild(topBorder);
+
+                BottomBorder bottomBorder = new BottomBorder { Val = new EnumValue<BorderValues>(BorderValues.Thick), Color = "A1A2A3" };
+                borders.AppendChild(bottomBorder);
+
+                TableCellMargin margin = new TableCellMargin();
+                TopMargin topMargin = new TopMargin() { Width = "40" };
+                BottomMargin bottomMargin = new BottomMargin() { Width = "40" };
+                margin.AppendChild(topMargin);
+                margin.AppendChild(bottomMargin);
+
+                tableCellProperties.AppendChild(borders);
+                tableCellProperties.AppendChild(margin);
+
+                tableCell.AppendChild(tableCellProperties);
 
                 // add text (with specific formatting)
                 Paragraph paragraph = new Paragraph() { RsidParagraphAddition = "00607D74", RsidRunAdditionDefault = "00607D74", ParagraphId = "6ED85602", TextId = "77777777" };
@@ -423,7 +468,11 @@ namespace HetsReport
                 paragraphMarkRunProperties.AppendChild(new RunFonts { Ascii = "Arial" });
                 paragraphMarkRunProperties.AppendChild(new FontSize() { Val = "7pt" });
 
+                Justification justification = new Justification() { Val = JustificationValues.Left };
+                if (center) justification.Val = JustificationValues.Center;
+
                 paragraphProperties.AppendChild(paragraphMarkRunProperties);
+                paragraphProperties.AppendChild(justification);
                 paragraph.AppendChild(paragraphProperties);
 
                 paragraph.AppendChild(new Text(text));
