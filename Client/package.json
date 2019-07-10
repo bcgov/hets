@@ -5,7 +5,9 @@
   "main": "dist/index.html",
   "scripts": {
     "test": "gulp test",
-    "start": "gulp --apihost localhost --apiport 8080"
+    "start": "gulp --apihost localhost --apiport 8080",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -43,7 +45,8 @@
     "redux-freeze": "^0.1.7",
     "redux-promise-middleware": "^6.0.1",
     "redux-thunk": "^2.3.0",
-    "reselect": "^4.0.0"
+    "reselect": "^4.0.0",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "@babel/core": "^7.3.4",
@@ -98,5 +101,6 @@
     "Firefox ESR",
     "IE 11",
     "not IE < 11"
-  ]
+  ],
+  "snyk": true
 }
