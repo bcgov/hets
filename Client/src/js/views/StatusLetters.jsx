@@ -70,7 +70,7 @@ class StatusLetters extends React.Component {
     const mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 
     this.downloadFile(promise, filename, mimeType);
-  };  
+  };
 
   matchesLocalAreaFilter = (localAreaId) => {
     if (this.state.localAreaIds.length == 0) {
