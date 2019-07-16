@@ -2,8 +2,8 @@
 // In other words all of the images that are currently deployed in TEST will be tagged for deployment to PROD.
 
 // Define these in the order they should be deployed.
-def APP_NAMES = ['server', 'pdf', 'frontend']
-def SOURCE_TAG = 'test'
+def APP_NAMES = ['server', 'frontend']
+def SOURCE_TAG = 'uat'
 def DESTINATION_TAG = 'prod'
 
 node {
