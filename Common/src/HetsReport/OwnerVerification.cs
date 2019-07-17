@@ -81,27 +81,23 @@ namespace HetsReport
                                 owner.Classification = owner.Classification.Replace("&", "&amp;");
                                 bool found = false;
 
-                                foreach (OpenXmlElement paragraphs in ownerDocument.MainDocumentPart.Document.Body.Elements())
+                                foreach (var headerpart in ownerDocument.MainDocumentPart.HeaderParts)
                                 {
-                                    foreach (OpenXmlElement paragraphRun in paragraphs.Elements())
+                                    foreach(var header in headerpart.Header)
                                     {
-                                        foreach (OpenXmlElement text in paragraphRun.Elements())
+                                        foreach(var element in header.Elements())
                                         {
-                                            if (text.InnerText.Contains("ClassificationNumber"))
+                                            if (element.InnerText.Contains("ClassificationNumber"))
                                             {
                                                 // replace text
-                                                text.InnerXml = text.InnerXml.Replace("<w:t>ClassificationNumber</w:t>",
+                                                element.InnerXml = element.InnerXml.Replace("<w:t xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">ClassificationNumber</w:t>",
                                                     $"<w:t xml:space='preserve'>ORCS: {owner.Classification}</w:t>");
 
                                                 found = true;
                                                 break;
                                             }
                                         }
-
-                                        if (found) break;
                                     }
-
-                                    if (found) break;
                                 }
 
                                 ownerDocument.MainDocumentPart.Document.Save();
@@ -385,6 +381,12 @@ namespace HetsReport
                 BottomBorder bottomBorder = new BottomBorder { Val = new EnumValue<BorderValues>(BorderValues.Thick), Color = "A1A2A3" };
                 borders.AppendChild(bottomBorder);
 
+                RightBorder rightBorder = new RightBorder { Val = new EnumValue<BorderValues>(BorderValues.Nil) };
+                borders.AppendChild(rightBorder);
+
+                LeftBorder leftBorder = new LeftBorder { Val = new EnumValue<BorderValues>(BorderValues.Nil) };
+                borders.AppendChild(leftBorder);
+
                 TableCellMargin margin = new TableCellMargin();
                 TopMargin topMargin = new TopMargin() { Width = "40" };
                 BottomMargin bottomMargin = new BottomMargin() { Width = "40" };
@@ -446,6 +448,12 @@ namespace HetsReport
 
                 BottomBorder bottomBorder = new BottomBorder { Val = new EnumValue<BorderValues>(BorderValues.Thick), Color = "A1A2A3" };
                 borders.AppendChild(bottomBorder);
+
+                RightBorder rightBorder = new RightBorder { Val = new EnumValue<BorderValues>(BorderValues.Nil) };
+                borders.AppendChild(rightBorder);
+
+                LeftBorder leftBorder = new LeftBorder { Val = new EnumValue<BorderValues>(BorderValues.Nil) };
+                borders.AppendChild(leftBorder);
 
                 TableCellMargin margin = new TableCellMargin();
                 TopMargin topMargin = new TopMargin() { Width = "40" };
