@@ -81,23 +81,27 @@ namespace HetsReport
                                 owner.Classification = owner.Classification.Replace("&", "&amp;");
                                 bool found = false;
 
-                                foreach (var headerpart in ownerDocument.MainDocumentPart.HeaderParts)
+                                foreach (OpenXmlElement paragraphs in ownerDocument.MainDocumentPart.Document.Body.Elements())
                                 {
-                                    foreach(var header in headerpart.Header)
+                                    foreach (OpenXmlElement paragraphRun in paragraphs.Elements())
                                     {
-                                        foreach(var element in header.Elements())
+                                        foreach (OpenXmlElement text in paragraphRun.Elements())
                                         {
-                                            if (element.InnerText.Contains("ClassificationNumber"))
+                                            if (text.InnerText.Contains("ClassificationNumber"))
                                             {
                                                 // replace text
-                                                element.InnerXml = element.InnerXml.Replace("<w:t xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">ClassificationNumber</w:t>",
+                                                text.InnerXml = text.InnerXml.Replace("<w:t>ClassificationNumber</w:t>",
                                                     $"<w:t xml:space='preserve'>ORCS: {owner.Classification}</w:t>");
 
                                                 found = true;
                                                 break;
                                             }
                                         }
+
+                                        if (found) break;
                                     }
+
+                                    if (found) break;
                                 }
 
                                 ownerDocument.MainDocumentPart.Document.Save();
