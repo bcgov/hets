@@ -130,13 +130,15 @@ namespace HetsReport
                             {
                                 foreach (HetRentalAgreementCondition cond in reportModel.RentalAgreementConditions)
                                 {
+                                    var conditionComment = string.IsNullOrEmpty(cond.Comment) ? cond.ConditionName : cond.Comment;
+
                                     if (!string.IsNullOrEmpty(comment3))
                                     {
-                                        comment3 += $"{crLf.ToString()}{cond.Comment}";
+                                        comment3 += $"{crLf.ToString()}{conditionComment}";
                                     }
                                     else
                                     {
-                                        comment3 += $"{cond.Comment}";
+                                        comment3 += $"{conditionComment}";
                                     }
                                 }
                             }
