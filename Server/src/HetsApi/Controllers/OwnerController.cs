@@ -878,6 +878,55 @@ namespace HetsApi.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("mailingLabelsDoc")]
+        [SwaggerOperation("OwnersIdMailingLabelsDocPost")]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult OwnersIdMailingLabelsDocPost([FromBody]ReportParameters parameters)
+        {
+            _logger.LogInformation("Owner Mailing Labels");
+
+            int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
+            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+
+            IQueryable<HetOwner> ownerRecords = _context.HetOwner.AsNoTracking()
+                .Include(x => x.PrimaryContact)
+                .Include(x => x.LocalArea)
+                    .ThenInclude(s => s.ServiceArea)
+                        .ThenInclude(d => d.District)
+                .Where(x => x.OwnerStatusTypeId == statusId)
+                .OrderBy(x => x.LocalArea.Name).ThenBy(x => x.OrganizationName);
+
+            if (parameters.Owners.Length > 0)
+            {
+                ownerRecords = ownerRecords.Where(x => parameters.Owners.Contains(x.OwnerId));
+            }
+
+            if (parameters.LocalAreas?.Length > 0)
+            {
+                ownerRecords = ownerRecords.Where(x => parameters.LocalAreas.Contains(x.LocalAreaId));
+            }
+
+            List<HetOwner> owners = ownerRecords.ToList();
+
+            if (!owners.Any())
+            {
+                return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            }
+
+            var fileName = $"MailingLabels-{DateTime.Now:yyyy-MM-dd-H-mm}.docx";
+            var file = MailingLabel.GetMailingLabel(owners);
+
+            FileContentResult result = new FileContentResult(file, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            {
+                FileDownloadName = fileName
+            };
+
+            Response.Headers.Add("Content-Disposition", "inline; filename=" + fileName);
+
+            return result;
+        }
+
         #endregion
 
         #region Owner Equipment Records
