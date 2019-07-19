@@ -926,8 +926,8 @@ export function getStatusLettersDoc(params) {
   return new ApiRequest('owners/verificationDoc').post(params, { responseType: Constant.RESPONSE_TYPE_BLOB });
 }
 
-export function getMailingLabelsPdf(params) {
-  return new ApiRequest('owners/mailingLabelsPdf').post(params, { responseType: Constant.RESPONSE_TYPE_BLOB });
+export function getMailingLabelsDoc(params) {
+  return new ApiRequest('owners/mailingLabelsDoc').post(params, { responseType: Constant.RESPONSE_TYPE_BLOB });
 }
 
 export function transferEquipment(donorOwnerId, recipientOwnerId, equipment, includeSeniority) {
