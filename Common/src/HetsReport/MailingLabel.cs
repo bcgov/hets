@@ -37,6 +37,7 @@ namespace HetsReport
                             run.AppendChild(CreateMailingLabels(owners));
                         }
 
+                        labelDoc.Save();
                         labelDoc.CompressionOption = CompressionOption.Maximum;
                         SecurityHelper.PasswordProtect(labelDoc);
 
@@ -134,9 +135,8 @@ namespace HetsReport
                     rowProps.AppendChild(new TableRowHeight { Val = CentimeterToDxa(5.08), HeightType = HeightRuleValues.Exact }); 
                     tableRow.AppendChild(rowProps);
 
-                    tableRow.AppendChild(SetupCell(ownerTuple.Item1, 10.16));
-                    tableRow.AppendChild(SetupCell(0.48));
-                    tableRow.AppendChild(SetupCell(ownerTuple.Item2, 10.16));
+                    tableRow.AppendChild(SetupCell(ownerTuple.Item1, 10.16, 0.27));
+                    tableRow.AppendChild(SetupCell(ownerTuple.Item2, 10.16, 0.75)); //to add 0.48 cm
 
                     table.AppendChild(tableRow);
                 }
@@ -165,11 +165,16 @@ namespace HetsReport
         }
 
 
-        private static TableCell SetupCell(HetOwner owner, double widthInCm)
+        private static TableCell SetupCell(HetOwner owner, double widthInCm, double start)
         {
             try
             {
-                var tableCell = SetupCell(widthInCm);
+                var tableCell = new TableCell();
+
+                var tableCellProperties = new TableCellProperties();
+                tableCellProperties.AppendChild(new TableCellWidth { Width = CentimeterToDxa(widthInCm).ToString(), Type = TableWidthUnitValues.Dxa });
+                tableCellProperties.AppendChild(new TableCellVerticalAlignment() { Val = TableVerticalAlignmentValues.Center });
+                tableCell.AppendChild(tableCellProperties);
 
                 var paragraphProperties = new ParagraphProperties();
 
@@ -180,7 +185,7 @@ namespace HetsReport
                 paragraphProperties.AppendChild(paragraphMarkRunProperties);
 
                 paragraphProperties.AppendChild(new Justification { Val = JustificationValues.Left });
-                paragraphProperties.AppendChild(new Indentation { Start = CentimeterToDxa(0.27).ToString() });
+                paragraphProperties.AppendChild(new Indentation { Start = CentimeterToDxa(start).ToString() });
 
                 var paragraph = new Paragraph();
                 paragraph.AppendChild(paragraphProperties);
@@ -199,18 +204,6 @@ namespace HetsReport
                 Console.WriteLine(e);
                 throw;
             }
-        }
-
-        private static TableCell SetupCell(double widthInCm)
-        {
-            var tableCell = new TableCell();
-
-            var tableCellProperties = new TableCellProperties();
-            tableCellProperties.AppendChild(new TableCellWidth { Width = CentimeterToDxa(widthInCm).ToString(), Type = TableWidthUnitValues.Dxa });
-            tableCellProperties.AppendChild(new TableCellVerticalAlignment() { Val = TableVerticalAlignmentValues.Center });
-            tableCell.AppendChild(tableCellProperties);
-
-            return tableCell;
         }
 
         private static UInt32 CentimeterToDxa(double cm)
