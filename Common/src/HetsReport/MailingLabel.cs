@@ -38,7 +38,7 @@ namespace HetsReport
                         }
 
                         labelDoc.CompressionOption = CompressionOption.Maximum;
-                        //SecurityHelper.PasswordProtect(labelDoc);
+                        SecurityHelper.PasswordProtect(labelDoc);
 
                         byteArray = GetByteArray(labelDoc);
                     }
