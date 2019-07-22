@@ -13,6 +13,8 @@ namespace HetsReport
     public static class MailingLabel
     {
         private const string ResourceName = "HetsReport.Templates.MailingLabel-Template.docx";
+        private const double CentimeterToPoint = 28.3464566929134;
+
         public static byte[] GetMailingLabel(List<HetOwner> owners)
         {
             try
@@ -36,7 +38,7 @@ namespace HetsReport
                         }
 
                         labelDoc.CompressionOption = CompressionOption.Maximum;
-                        SecurityHelper.PasswordProtect(labelDoc);
+                        //SecurityHelper.PasswordProtect(labelDoc);
 
                         byteArray = GetByteArray(labelDoc);
                     }
@@ -101,8 +103,6 @@ namespace HetsReport
 
             try
             {
-                var ownerTuples = owners.ToTuples();
-
                 var table = new Table();
 
                 var tableProperties1 = new TableProperties();
@@ -126,16 +126,17 @@ namespace HetsReport
 
                 table.AppendChild(tableProperties1);
 
-                foreach (var ownerTuple in ownerTuples)
+                foreach (var ownerTuple in owners.ToTuples())
                 {
                     var tableRow = new TableRow();
 
                     var rowProps = new TableRowProperties();
-                    rowProps.AppendChild(new TableRowHeight { Val = 3000, HeightType = HeightRuleValues.Exact });
+                    rowProps.AppendChild(new TableRowHeight { Val = CentimeterToDxa(5.08), HeightType = HeightRuleValues.Exact }); 
                     tableRow.AppendChild(rowProps);
 
-                    tableRow.AppendChild(SetupCell(ownerTuple.Item1));
-                    tableRow.AppendChild(SetupCell(ownerTuple.Item2));
+                    tableRow.AppendChild(SetupCell(ownerTuple.Item1, 10.16));
+                    tableRow.AppendChild(SetupCell(0.48));
+                    tableRow.AppendChild(SetupCell(ownerTuple.Item2, 10.16));
 
                     table.AppendChild(tableRow);
                 }
@@ -153,42 +154,22 @@ namespace HetsReport
         {
             var ownerTuples = new List<Tuple<HetOwner, HetOwner>>();
 
-            for (int i = 0; i < owners.Count; i++)
+            for (int i = 0; i < owners.Count; i = i + 2)
             {
                 var l = owners[i];
-
-                if (i + 1 < owners.Count)
-                {
-                    var r = owners[i + 1];
-
-                    ownerTuples.Add(new Tuple<HetOwner, HetOwner>(l, r));
-                }
-                else
-                {
-                    ownerTuples.Add(new Tuple<HetOwner, HetOwner>(l, null));
-                }
+                var r = i + 1 < owners.Count ? owners[i + 1] : null;
+                ownerTuples.Add(new Tuple<HetOwner, HetOwner>(l, r));
             }
 
             return ownerTuples;
         }
 
 
-        private static TableCell SetupCell(HetOwner owner)
+        private static TableCell SetupCell(HetOwner owner, double widthInCm)
         {
             try
             {
-                var tableCell = new TableCell();
-
-                var tableCellProperties = new TableCellProperties();
-                tableCellProperties.AppendChild(new TableCellWidth { Width = "50", Type = TableWidthUnitValues.Pct });
-                tableCell.AppendChild(tableCellProperties);
-
-                var margin = new TableCellMargin
-                {
-                    StartMargin = new StartMargin { Width = "1000" },
-                    TopMargin = new TopMargin { Width = "1000" }
-                };
-                tableCell.AppendChild(margin);
+                var tableCell = SetupCell(widthInCm);
 
                 var paragraphProperties = new ParagraphProperties();
 
@@ -199,6 +180,7 @@ namespace HetsReport
                 paragraphProperties.AppendChild(paragraphMarkRunProperties);
 
                 paragraphProperties.AppendChild(new Justification { Val = JustificationValues.Left });
+                paragraphProperties.AppendChild(new Indentation { Start = CentimeterToDxa(0.27).ToString() });
 
                 var paragraph = new Paragraph();
                 paragraph.AppendChild(paragraphProperties);
@@ -217,6 +199,24 @@ namespace HetsReport
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        private static TableCell SetupCell(double widthInCm)
+        {
+            var tableCell = new TableCell();
+
+            var tableCellProperties = new TableCellProperties();
+            tableCellProperties.AppendChild(new TableCellWidth { Width = CentimeterToDxa(widthInCm).ToString(), Type = TableWidthUnitValues.Dxa });
+            tableCellProperties.AppendChild(new TableCellVerticalAlignment() { Val = TableVerticalAlignmentValues.Center });
+            tableCell.AppendChild(tableCellProperties);
+
+            return tableCell;
+        }
+
+        private static UInt32 CentimeterToDxa(double cm)
+        {
+            double dxa = CentimeterToPoint * cm * 20;
+            return Convert.ToUInt32(dxa);
         }
 
         private static void PopulateParagraph(HetOwner owner, Paragraph paragraph)
