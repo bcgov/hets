@@ -322,10 +322,10 @@ namespace HetsReport
                 // border & padding
                 TableCellBorders borders = new TableCellBorders();
 
-                TopBorder topBorder = new TopBorder { Val = new EnumValue<BorderValues>(BorderValues.Thick), Color = "A1A2A3" };
+                TopBorder topBorder = new TopBorder { Val = new EnumValue<BorderValues>(BorderValues.Thick), Color = "000000" };
                 borders.AppendChild(topBorder);
 
-                BottomBorder bottomBorder = new BottomBorder { Val = new EnumValue<BorderValues>(BorderValues.Thick), Color = "A1A2A3" };
+                BottomBorder bottomBorder = new BottomBorder { Val = new EnumValue<BorderValues>(BorderValues.Thick), Color = "000000" };
                 borders.AppendChild(bottomBorder);
 
                 TableCellMargin margin = new TableCellMargin();
@@ -338,6 +338,7 @@ namespace HetsReport
                 tableCellProperties.AppendChild(shading);
                 tableCellProperties.AppendChild(borders);
                 tableCellProperties.AppendChild(margin);
+                tableCellProperties.AppendChild(new TableCellVerticalAlignment() { Val = TableVerticalAlignmentValues.Center });
 
                 tableCell.AppendChild(tableCellProperties);
 
