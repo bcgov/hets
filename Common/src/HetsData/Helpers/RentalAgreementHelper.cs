@@ -16,8 +16,9 @@ namespace HetsData.Helpers
         public DateTime? DatedOn { get; set; }
     }
 
-    public class RentalAgreementPdfViewModel
+    public class RentalAgreementDocViewModel
     {
+        public string Classification { get; set; }
         public int Id { get; set; }
         public string Number { get; set; }
         public string Status { get; set; }
@@ -40,6 +41,8 @@ namespace HetsData.Helpers
         public string RatePeriod { get; set; }
         public string RateComment { get; set; }
         public bool ConditionsPresent { get; set; }
+        public string DoingBusinessAs { get; set; }
+        public string EmailAddress { get; set; }
     }
 
     public class NoteLine
@@ -125,12 +128,12 @@ namespace HetsData.Helpers
         /// <summary>
         /// Uses the rates data to calculate the totals and setup the required data for printing
         /// </summary>
-        public static RentalAgreementPdfViewModel CalculateTotals(RentalAgreementPdfViewModel agreement)
+        public static RentalAgreementDocViewModel CalculateTotals(RentalAgreementDocViewModel agreement)
         {
             // **********************************************
-            // setup the rates lists -> 
+            // setup the rates lists ->
             // 1. overtime records
-            // 2. records in the total and 
+            // 2. records in the total and
             // 3. records not included
             // **********************************************
             agreement.RentalAgreementRatesOvertime = agreement.RentalAgreementRates
@@ -153,7 +156,7 @@ namespace HetsData.Helpers
             foreach (HetRentalAgreementRate rentalRate in agreement.RentalAgreementRatesWithTotal)
             {
                 if (rentalRate.Rate != null)  temp = temp + (float)rentalRate.Rate;
-                
+
                 // format the rate / percent at the same time
                 rentalRate.RateString = FormatRateString(rentalRate, agreement);
             }
@@ -224,7 +227,7 @@ namespace HetsData.Helpers
             return period;
         }
 
-        private static string FormatRateString(HetRentalAgreementRate rentalRate, RentalAgreementPdfViewModel agreement)
+        private static string FormatRateString(HetRentalAgreementRate rentalRate, RentalAgreementDocViewModel agreement)
         {
             string temp = "";
 
@@ -265,60 +268,88 @@ namespace HetsData.Helpers
         /// <param name="agreement"></param>
         /// <param name="agreementCity"></param>
         /// <returns></returns>
-        public static RentalAgreementPdfViewModel ToPdfModel(this HetRentalAgreement agreement, string agreementCity)
+        public static RentalAgreementDocViewModel GetRentalAgreementReportModel(this HetRentalAgreement agreement, string agreementCity)
         {
-            RentalAgreementPdfViewModel pdfModel = new RentalAgreementPdfViewModel();
+            RentalAgreementDocViewModel docModel = new RentalAgreementDocViewModel();
 
             if (agreement != null)
             {
-                pdfModel.AgreementCity = agreementCity;           
-                pdfModel.Equipment = agreement.Equipment;
-                pdfModel.EquipmentRate = agreement.EquipmentRate;
-                pdfModel.EstimateHours = agreement.EstimateHours;
-                pdfModel.EstimateStartWork = ConvertDate(agreement.EstimateStartWork);
-                pdfModel.Number = agreement.Number;
-                pdfModel.Project = agreement.Project;
-                pdfModel.RateComment = agreement.RateComment;
-                pdfModel.RatePeriod = agreement.RatePeriodType.Description;
-                pdfModel.AgreementCity = agreement.AgreementCity;
-                pdfModel.DatedOn = (agreement.DatedOn ?? DateTime.UtcNow).ToString("MM/dd/yyyy");
-                
+                docModel.AgreementCity = agreementCity;
+                docModel.Equipment = agreement.Equipment;
+                docModel.EquipmentRate = agreement.EquipmentRate;
+                docModel.EstimateHours = agreement.EstimateHours;
+                docModel.EstimateStartWork = ConvertDate(agreement.EstimateStartWork);
+                docModel.Number = agreement.Number;
+                docModel.Project = agreement.Project;
+                docModel.RateComment = agreement.RateComment;
+                docModel.RatePeriod = agreement.RatePeriodType.Description;
+                docModel.AgreementCity = agreement.AgreementCity;
+                docModel.DatedOn = (agreement.DatedOn ?? DateTime.UtcNow).ToString("MM/dd/yyyy");
+                docModel.DoingBusinessAs = agreement.Equipment.Owner.DoingBusinessAs;
+                docModel.EmailAddress = agreement.Equipment.Owner.PrimaryContact.EmailAddress;                
+
+                // format owner address
+                string tempAddress = agreement.Equipment.Owner.Address2;
+
+                if (string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.City))
+                    tempAddress = $"{agreement.Equipment.Owner.City}";
+
+                if (!string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.City) && agreement.Equipment.Owner.City.Trim() != tempAddress.Trim())
+                    tempAddress = $"{tempAddress}, {agreement.Equipment.Owner.City}";
+
+                if (string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.Province))
+                    tempAddress = $"{agreement.Equipment.Owner.Province}";
+
+                if (!string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.Province))
+                    tempAddress = $"{tempAddress}, {agreement.Equipment.Owner.Province}";
+
+                if (string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.PostalCode))
+                    tempAddress = $"{agreement.Equipment.Owner.PostalCode}";
+
+                if (!string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.PostalCode))
+                    tempAddress = $"{tempAddress}  {agreement.Equipment.Owner.PostalCode}";
+
+                agreement.Equipment.Owner.Address2 = tempAddress;
+
                 // format the note
                 if (!string.IsNullOrEmpty(agreement.Note))
-                {                    
+                {
                     string temp = Regex.Replace(agreement.Note, @"\n", "<BR>");
                     string[] tempArray = temp.Split("<BR>");
 
-                    pdfModel.Note = new List<NoteLine>();
+                    docModel.Note = new List<NoteLine>();
 
                     foreach (string row in tempArray)
                     {
                         NoteLine line = new NoteLine { Line = row };
-                        pdfModel.Note.Add(line);
+                        docModel.Note.Add(line);
                     }
                 }
-                
+
                 // ensure they are ordered the way they were added
-                pdfModel.RentalAgreementConditions = agreement.HetRentalAgreementCondition
+                docModel.RentalAgreementConditions = agreement.HetRentalAgreementCondition
                     .OrderBy(x => x.RentalAgreementConditionId)
                     .ToList();
 
-                pdfModel.RentalAgreementRates = agreement.HetRentalAgreementRate.Where(x => x.Active).ToList();
-                pdfModel.Status = agreement.RentalAgreementStatusType.Description;
-                pdfModel.ConditionsPresent = agreement.HetRentalAgreementCondition.Count > 0;
+                docModel.RentalAgreementRates = agreement.HetRentalAgreementRate.Where(x => x.Active).ToList();
+                docModel.Status = agreement.RentalAgreementStatusType.Description;
+                docModel.ConditionsPresent = agreement.HetRentalAgreementCondition.Count > 0;
 
-                foreach (HetRentalAgreementCondition condition in pdfModel.RentalAgreementConditions)
+                foreach (HetRentalAgreementCondition condition in docModel.RentalAgreementConditions)
                 {
                     if (!string.IsNullOrEmpty(condition.Comment))
                     {
                         condition.ConditionName = condition.Comment;
                     }
                 }
-                
-                pdfModel = CalculateTotals(pdfModel);
+
+                docModel = CalculateTotals(docModel);
+
+                // classification (Rental Agreement)
+                docModel.Classification = $"23010-30/{agreement.Number}";
             }
 
-            return pdfModel;
+            return docModel;
         }
 
         private static string ConvertDate(DateTime? dateObject)
@@ -327,7 +358,7 @@ namespace HetsData.Helpers
 
             if (dateObject != null)
             {
-                // since the PDF template is raw HTML and won't convert a date object, we must adjust the time zone here                    
+                // since the PDF template is raw HTML and won't convert a date object, we must adjust the time zone here
                 TimeZoneInfo tzi;
 
                 try
@@ -409,11 +440,11 @@ namespace HetsData.Helpers
 
                 // fiscal year in the status table stores the "start" of the year
                 DateTime fiscalYearStart = new DateTime((int)fiscalYear, 4, 1);
-                fiscalYear = fiscalYear + 1;                
+                fiscalYear = fiscalYear + 1;
 
                 // count the number of rental agreements in the system in this district
                 int currentCount = context.HetRentalAgreement
-                    .Count(x => x.DistrictId == districtId && 
+                    .Count(x => x.DistrictId == districtId &&
                                 x.AppCreateTimestamp >= fiscalYearStart);
 
                 currentCount++;
@@ -423,7 +454,7 @@ namespace HetsData.Helpers
                 //   FY = last 2 digits of the year
                 //   DD - District(2 digits - 1 to 11)
                 result = fiscalYear.ToString().Substring(2, 2) + "-" +
-                         ministryDistrictId + "-" + 
+                         ministryDistrictId + "-" +
                          currentCount.ToString("D4");
             }
 
@@ -463,7 +494,7 @@ namespace HetsData.Helpers
                 HetRentalAgreement agreement = context.HetRentalAgreement.AsNoTracking()
                     .Include(x => x.Project.District)
                     .OrderBy(x => x.RentalAgreementId)
-                    .LastOrDefault(x => x.DistrictId == districtId && 
+                    .LastOrDefault(x => x.DistrictId == districtId &&
                                         x.AppCreateTimestamp >= fiscalYearStart &&
                                         x.Number.Contains("-D"));
 
@@ -494,7 +525,7 @@ namespace HetsData.Helpers
                 .First(x => x.DistrictId == districtId);
 
             int? fiscalYear = status.CurrentFiscalYear;
-            
+
             // get agreement and time records
             HetRentalAgreement agreement = context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.Equipment)
@@ -509,7 +540,7 @@ namespace HetsData.Helpers
             int maxHours = 0;
             string equipmentCode = "";
 
-            if (agreement.Equipment?.EquipmentId != null && 
+            if (agreement.Equipment?.EquipmentId != null &&
                 agreement.Equipment.DistrictEquipmentType?.EquipmentType != null)
             {
                 maxHours = Convert.ToInt32(agreement.Equipment.DistrictEquipmentType.EquipmentType.IsDumpTruck ?
@@ -540,7 +571,7 @@ namespace HetsData.Helpers
             {
                 DateTime fiscalYearStart = new DateTime((int)fiscalYear, 4, 1);
 
-                timeRecord.TimeRecords = new List<HetTimeRecord>();                
+                timeRecord.TimeRecords = new List<HetTimeRecord>();
                 timeRecord.TimeRecords.AddRange(agreement.HetTimeRecord.Where(x => x.WorkedDate >= fiscalYearStart));
             }
 

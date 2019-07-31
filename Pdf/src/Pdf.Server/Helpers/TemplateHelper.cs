@@ -12,12 +12,12 @@ namespace Pdf.Server.Helpers
         public string JsonString { get; set; }
         public string Template { get; set; }
         public string RenderJsUrl { get; set; }
-    }    
+    }
 
     public class TemplateHelper
     {
         // Read Template
-        // Pass data + template to mustache and generate output        
+        // Pass data + template to mustache and generate output
         public static async Task<string> RenderDocument(INodeServices nodeServices, HtmlRequest request)
         {
             try
@@ -42,7 +42,7 @@ namespace Pdf.Server.Helpers
                     throw new Exception("Mustache template not found");
 
                 // create json object
-                JObject json = JObject.Parse(request.JsonString);                
+                JObject json = JObject.Parse(request.JsonString);
 
                 // call mustache js to generate html response
                 string result = await nodeServices.InvokeAsync<string>(request.RenderJsUrl, templateContent, json);
@@ -52,7 +52,7 @@ namespace Pdf.Server.Helpers
             {
                 Console.WriteLine(e);
                 throw;
-            }            
-        }        
+            }
+        }
     }
 }

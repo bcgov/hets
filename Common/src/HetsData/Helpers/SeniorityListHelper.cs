@@ -54,8 +54,9 @@ namespace HetsData.Helpers
         public List<SeniorityViewModel> SeniorityList { get; set; }
     }
 
-    public class SeniorityListPdfViewModel
+    public class SeniorityListReportViewModel
     {
+        public string Classification { get; set; }
         public string PrintedOn { get; set; }
 
         public List<SeniorityListRecord> SeniorityListRecords { get; set; }

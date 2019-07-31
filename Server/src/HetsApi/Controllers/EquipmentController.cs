@@ -1,24 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
+using HetsReport;
 using Hangfire;
+using System.Text;
 
 namespace HetsApi.Controllers
 {
@@ -1357,23 +1353,21 @@ namespace HetsApi.Controllers
 
         #endregion
 
-        #region Seniority List Pdf
+        #region Seniority List Doc
 
         /// <summary>
-        /// Get a pdf version of the seniority list
+        /// Get an openXml version of the seniority list
         /// </summary>
-        /// <remarks>Returns a PDF version of the seniority list</remarks>
+        /// <remarks>Returns an openXml version of the seniority list</remarks>
         /// <param name="localAreas">Local Areas (comma separated list of id numbers)</param>
         /// <param name="types">Equipment Types (comma separated list of id numbers)</param>
         /// <param name="counterCopy">If true, use the Counter Copy template</param>
         [HttpGet]
-        [Route("seniorityListPdf")]
-        [SwaggerOperation("EquipmentSeniorityListPdfGet")]
+        [Route("seniorityListDoc")]
+        [SwaggerOperation("EquipmentSeniorityListDocGet")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentSeniorityListPdfGet([FromQuery]string localAreas, [FromQuery]string types, [FromQuery]bool counterCopy = false)
+        public virtual IActionResult EquipmentSeniorityListDocGet([FromQuery]string localAreas, [FromQuery]string types, [FromQuery]bool counterCopy = false)
         {
-            _logger.LogInformation("Equipment Seniority List Pdf");
-
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
             int?[] typesArray = ArrayHelper.ParseIntArray(types);
 
@@ -1392,14 +1386,9 @@ namespace HetsApi.Controllers
             DateTime fiscalEnd = district.RolloverEndDate;
             int fiscalYear = Convert.ToInt32(district.NextFiscalYear); // status table uses the start of the year
 
-            if (fiscalEnd == new DateTime(0001, 01, 01, 00, 00, 00))
-            {
-                fiscalEnd = new DateTime(fiscalYear, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 23, 59, 59);
-            }
-            else
-            {
-                fiscalEnd = new DateTime(fiscalYear, fiscalEnd.Month, fiscalEnd.Day, 23, 59, 59);
-            }
+            fiscalEnd = fiscalEnd == new DateTime(0001, 01, 01, 00, 00, 00) ?
+                new DateTime(fiscalYear, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 23, 59, 59) :
+                new DateTime(fiscalYear, fiscalEnd.Month, fiscalEnd.Day, 23, 59, 59);
 
             // get status id
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
@@ -1442,7 +1431,7 @@ namespace HetsApi.Controllers
             // **********************************************************************
             // convert Equipment Model to Pdf View Model
             // **********************************************************************
-            SeniorityListPdfViewModel seniorityList = new SeniorityListPdfViewModel();
+            SeniorityListReportViewModel seniorityList = new SeniorityListReportViewModel();
             SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
             SeniorityListRecord listRecord = new SeniorityListRecord();
 
@@ -1481,7 +1470,7 @@ namespace HetsApi.Controllers
                     }
 
                     // get the rotation info for the first block
-                    currentBlock = (int)item.BlockNumber;
+                    if (item.BlockNumber != null) currentBlock = (int) item.BlockNumber;
 
                     rotation = GetRotationList(_context, item.LocalArea.LocalAreaId,
                         item.DistrictEquipmentType.DistrictEquipmentTypeId,
@@ -1520,79 +1509,23 @@ namespace HetsApi.Controllers
                 }
             }
 
+            // classification and print date
+            seniorityList.Classification = $"23010-22/{(fiscalYear - 1).ToString().Substring(2, 2)}-{fiscalYear.ToString().Substring(2, 2)}";
             seniorityList.PrintedOn = $"{DateTime.Now.AddHours(-8):dd-MM-yyyy H:mm:ss}";
 
-            // **********************************************************************
-            // create the payload and call the pdf service
-            // **********************************************************************
-            string payload = JsonConvert.SerializeObject(seniorityList, new JsonSerializerSettings
+            // convert to open xml document
+            string documentName = $"SeniorityList-{DateTime.Now:yyyy-MM-dd}.docx";
+            byte[] document = SeniorityList.GetSeniorityList(seniorityList, documentName);
+
+            // return document
+            FileContentResult result = new FileContentResult(document, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                Formatting = Formatting.Indented,
-                DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                DateTimeZoneHandling = DateTimeZoneHandling.Utc
-            });
+                FileDownloadName = documentName
+            };
 
-            _logger.LogInformation("Equipment Seniority List Pdf - Payload Length: {0}", payload.Length);
+            Response.Headers.Add("Content-Disposition", "inline; filename=" + documentName);
 
-            // pass the request on to the Pdf Micro Service
-            string pdfHost = _configuration["PDF_SERVICE_NAME"];
-            string pdfUrl = _configuration.GetSection("Constants:SeniorityListPdfUrl").Value;
-            string targetUrl = $"{pdfHost}{pdfUrl}";
-
-            // generate pdf document name [unique portion only]
-            string fileName = "HETS_SeniorityList";
-
-            targetUrl = $"{targetUrl}/{fileName}/{counterCopy}";
-
-            _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Service Url: {0}", targetUrl);
-
-            // call the MicroService
-            try
-            {
-                HttpClient client = new HttpClient();
-                StringContent stringContent = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-
-                _logger.LogInformation("Equipment Seniority List Pdf - Calling HETS Pdf Service");
-                HttpResponseMessage response = client.PostAsync(targetUrl, stringContent).Result;
-
-                // success
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Service Response: OK");
-
-                    var pdfResponseBytes = GetPdf(response);
-
-                    // convert to string and log
-                    string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
-
-                    fileName = fileName + $"-{DateTime.Now:yyyy-MM-dd-H-mm}" + ".pdf";
-
-                    _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Filename: {0}", fileName);
-                    _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Size: {0}", pdfResponse.Length);
-
-                    // return content
-                    FileContentResult pdfResult = new FileContentResult(pdfResponseBytes, "application/pdf")
-                    {
-                        FileDownloadName = fileName
-                    };
-
-                    Response.Headers.Add("Content-Disposition", "inline; filename=" + fileName);
-
-                    return pdfResult;
-                }
-
-                _logger.LogInformation("Equipment Seniority List Pdf - HETS Pdf Service Response: {0}", response.StatusCode);
-
-                // problem occured
-                return new BadRequestObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
-            }
-            catch (Exception ex)
-            {
-                Debug.Write("Error generating pdf: " + ex.Message);
-                return new BadRequestObjectResult(new HetsResponse("HETS-05", ErrorViewModel.GetDescription("HETS-05", _configuration)));
-            }
+            return result;
         }
 
         private static HetRentalRequestRotationList GetRotationList(DbAppContext context,
@@ -1623,22 +1556,6 @@ namespace HetsApi.Controllers
                                          x.AskedDateTime <= fiscalEnd);
 
                 return blockRotation;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-
-        private static byte[] GetPdf(HttpResponseMessage response)
-        {
-            try
-            {
-                var pdfResponseBytes = response.Content.ReadAsByteArrayAsync();
-                pdfResponseBytes.Wait();
-
-                return pdfResponseBytes.Result;
             }
             catch (Exception e)
             {
