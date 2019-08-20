@@ -665,7 +665,11 @@ namespace HetsData.Helpers
 
                     foreach (EquipmentCodeModel equipment in equipmentList)
                     {
-                        equipment.EquipmentNumber = int.Parse(Regex.Match(equipment.EquipmentCode, @"\d+").Value);
+                        // TH-51215 Dupilicate Equipment IDs
+                        // The previous code causes incorrect sorting when owner code containers numeric characters
+                        string equipmentCode = equipment.EquipmentCode.Replace(ownerCode, "");
+
+                        equipment.EquipmentNumber = int.Parse(Regex.Match(equipmentCode, @"\d+").Value);
                     }
 
                     // 2. sort by the numeric and get last equipment
@@ -688,7 +692,7 @@ namespace HetsData.Helpers
                         }
                         else
                         {
-                            char[] testChars = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+                            char[] testChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
                             int index = lastEquipment.EquipmentCode.IndexOfAny(testChars);
 
                             if (index >= 0 && lastEquipment.EquipmentCode.Length > index)
@@ -775,7 +779,7 @@ namespace HetsData.Helpers
 
 
         /// <summary>
-        /// Recalculates seniority with the new sorting rule (sorting by equipment code) for the district equipment types that have the same seniority and received date 
+        /// Recalculates seniority with the new sorting rule (sorting by equipment code) for the district equipment types that have the same seniority and received date
         /// </summary>
         /// <param name="context"></param>
         /// <param name="seniorityScoringRules"></param>
