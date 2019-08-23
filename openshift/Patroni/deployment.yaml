@@ -371,7 +371,7 @@ parameters:
     To change the sync mode after initial deployment will require changing the dynamic config.  Default is false.
   displayName: Sync Mode
   name: PATRONI_SYNCHRONOUS_MODE
-  value: 'false'
+  value: 'true'
 - description: The OpenShift Namespace where the patroni and postgresql ImageStream
     resides.
   displayName: ImageStream Namespace
