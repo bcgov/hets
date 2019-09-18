@@ -1,0 +1,11 @@
+C:\Workspace\hets\PDF\src\PDF.Server\bin\Local\netcoreapp2.0\PDF.Server.deps.json
+C:\Workspace\hets\PDF\src\PDF.Server\bin\Local\netcoreapp2.0\PDF.Server.runtimeconfig.json
+C:\Workspace\hets\PDF\src\PDF.Server\bin\Local\netcoreapp2.0\PDF.Server.runtimeconfig.dev.json
+C:\Workspace\hets\PDF\src\PDF.Server\bin\Local\netcoreapp2.0\PDF.Server.dll
+C:\Workspace\hets\PDF\src\PDF.Server\bin\Local\netcoreapp2.0\PDF.Server.pdb
+C:\Workspace\hets\PDF\src\PDF.Server\obj\Local\netcoreapp2.0\PDF.Server.csprojAssemblyReference.cache
+C:\Workspace\hets\PDF\src\PDF.Server\obj\Local\netcoreapp2.0\PDF.Server.csproj.CoreCompileInputs.cache
+C:\Workspace\hets\PDF\src\PDF.Server\obj\Local\netcoreapp2.0\PDF.Server.AssemblyInfoInputs.cache
+C:\Workspace\hets\PDF\src\PDF.Server\obj\Local\netcoreapp2.0\PDF.Server.AssemblyInfo.cs
+C:\Workspace\hets\PDF\src\PDF.Server\obj\Local\netcoreapp2.0\PDF.Server.dll
+C:\Workspace\hets\PDF\src\PDF.Server\obj\Local\netcoreapp2.0\PDF.Server.pdb
