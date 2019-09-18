@@ -12,6 +12,7 @@
     <OutputType>Exe</OutputType>
     <PackageId>FrontEnd</PackageId>
     <Configurations>Debug;Release</Configurations>
+    <Version>1.9.2.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="wwwroot;node_modules;bower_components" />

@@ -6,7 +6,8 @@
     <Copyright>Copyright© 2017, Province of British Columbia</Copyright>
     <AssemblyTitle>Hets Data</AssemblyTitle>
     <AssemblyName>HetsData</AssemblyName>	
-    <PackageId>HetsData</PackageId>
+    <PackageId>HetsData</PackageId>	
+    <Version>1.9.2.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
