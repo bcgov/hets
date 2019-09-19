@@ -350,6 +350,7 @@ namespace HetsApi.Controllers
                     .ThenInclude(p => p.District.Region)
                 .Include(x => x.HetRentalAgreementCondition)
                 .Include(x => x.HetRentalAgreementRate)
+                    .ThenInclude(x => x.RatePeriodType)
                 .FirstOrDefault(a => a.RentalAgreementId == id);
 
             if (rentalAgreement == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
