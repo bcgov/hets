@@ -98,7 +98,7 @@ namespace HetsData.Model
                 entity.Property(e => e.ReportId)
                     .HasColumnName("REPORT_ID");
 
-                entity.HasIndex(e => e.DistrictId);               
+                entity.HasIndex(e => e.DistrictId);
 
                 entity.Property(e => e.AppCreateTimestamp)
                     .HasColumnName("APP_CREATE_TIMESTAMP")
@@ -206,7 +206,7 @@ namespace HetsData.Model
 
                 entity.Property(e => e.AppLastUpdateUserid)
                     .HasColumnName("APP_LAST_UPDATE_USERID")
-                    .HasMaxLength(255);                
+                    .HasMaxLength(255);
 
                 entity.Property(e => e.ConcurrencyControlNumber).HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
@@ -239,11 +239,11 @@ namespace HetsData.Model
                     .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
 
                 entity.Property(e => e.WasAsked).HasColumnName("WAS_ASKED");
-                
+
                 entity.Property(e => e.OfferRefusalReason)
                     .HasColumnName("OFFER_REFUSAL_REASON")
                     .HasMaxLength(50);
-            
+
                 entity.Property(e => e.IsForceHire).HasColumnName("IS_FORCE_HIRE");
 
                 entity.Property(e => e.EquipmentId).HasColumnName("EQUIPMENT_ID");
@@ -328,7 +328,7 @@ namespace HetsData.Model
 
                 entity.Property(e => e.DbLastUpdateUserId)
                     .HasColumnName("DB_LAST_UPDATE_USER_ID")
-                    .HasMaxLength(63);                
+                    .HasMaxLength(63);
             });
 
             modelBuilder.Entity<HetBusinessUser>(entity =>
@@ -1014,7 +1014,7 @@ namespace HetsData.Model
                 entity.HasOne(d => d.District)
                     .WithMany(p => p.HetDistrictStatus)
                     .HasForeignKey(d => d.DistrictId)
-                    .HasConstraintName("FK_HET_DISTRICT_STATUS_DISTRICT_ID");                
+                    .HasConstraintName("FK_HET_DISTRICT_STATUS_DISTRICT_ID");
             });
 
             modelBuilder.Entity<HetDistrictEquipmentType>(entity =>
@@ -2562,7 +2562,7 @@ namespace HetsData.Model
                     .HasMaxLength(50);
 
                 entity.Property(e => e.IsMaintenanceContractor).HasColumnName("IS_MAINTENANCE_CONTRACTOR");
-                
+
                 entity.Property(e => e.LocalAreaId).HasColumnName("LOCAL_AREA_ID");
 
                 entity.Property(e => e.MeetsResidency).HasColumnName("MEETS_RESIDENCY");
@@ -2972,7 +2972,7 @@ namespace HetsData.Model
 
                 entity.Property(e => e.CostType)
                     .HasColumnName("COST_TYPE")
-                    .HasMaxLength(255);                
+                    .HasMaxLength(255);
 
                 entity.Property(e => e.PrimaryContactId).HasColumnName("PRIMARY_CONTACT_ID");
 
@@ -3818,8 +3818,16 @@ namespace HetsData.Model
 
                 entity.Property(e => e.Rate).HasColumnName("RATE");
 
+                entity.Property(e => e.RatePeriodTypeId).HasColumnName("RATE_PERIOD_TYPE_ID");
+
                 entity.Property(e => e.RentalAgreementId).HasColumnName("RENTAL_AGREEMENT_ID");
-                
+
+                entity.HasOne(d => d.RatePeriodType)
+                    .WithMany(p => p.HetRentalAgreementRate)
+                    .HasForeignKey(d => d.RatePeriodTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_HET_RENTAL_AGREEMENT_RATE_PERIOD_TYPE_ID");
+
                 entity.HasOne(d => d.RentalAgreement)
                     .WithMany(p => p.HetRentalAgreementRate)
                     .HasForeignKey(d => d.RentalAgreementId)
@@ -3905,6 +3913,8 @@ namespace HetsData.Model
                 entity.Property(e => e.IsIncludedInTotal).HasColumnName("IS_INCLUDED_IN_TOTAL");
 
                 entity.Property(e => e.Rate).HasColumnName("RATE");
+
+                entity.Property(e => e.RatePeriodTypeId).HasColumnName("RATE_PERIOD_TYPE_ID");
 
                 entity.Property(e => e.RentalAgreementId).HasColumnName("RENTAL_AGREEMENT_ID");
 
