@@ -1,6 +1,7 @@
 
 -- HETS-1266 - Add individual rate types to all records
 ALTER TABLE public."HET_RENTAL_AGREEMENT_RATE" ADD COLUMN "RATE_PERIOD_TYPE_ID" integer;
+ALTER TABLE public."HET_RENTAL_AGREEMENT_RATE_HIST" ADD COLUMN "SET" boolean;
 ALTER TABLE public."HET_RENTAL_AGREEMENT_RATE_HIST" ADD COLUMN "RATE_PERIOD_TYPE_ID" integer;
 
 -- CREATE FK TO RENTAL RATE TYPE
@@ -49,6 +50,7 @@ AS $BODY$
 			 "DB_CREATE_USER_ID", 
 			 "DB_LAST_UPDATE_USER_ID", 
 			 "IS_INCLUDED_IN_TOTAL",
+			 "SET",
 			 "RATE_PERIOD_TYPE_ID"
             )
             VALUES( 
@@ -76,6 +78,7 @@ AS $BODY$
 			  NEW."DB_CREATE_USER_ID", 
 			  NEW."DB_LAST_UPDATE_USER_ID", 
 			  NEW."IS_INCLUDED_IN_TOTAL",
+			  NEW."SET",
 			  NEW."RATE_PERIOD_TYPE_ID"
              );
              RETURN NEW;
@@ -112,6 +115,7 @@ AS $BODY$
 			 "DB_CREATE_USER_ID", 
 			 "DB_LAST_UPDATE_USER_ID", 
 			 "IS_INCLUDED_IN_TOTAL",
+			 "SET",
 			 "RATE_PERIOD_TYPE_ID"
             )
             VALUES( 
@@ -139,6 +143,7 @@ AS $BODY$
 			  NEW."DB_CREATE_USER_ID", 
 			  NEW."DB_LAST_UPDATE_USER_ID", 
 			  NEW."IS_INCLUDED_IN_TOTAL",
+			  NEW."SET",
 			  NEW."RATE_PERIOD_TYPE_ID"
              );
      	RETURN NEW;
