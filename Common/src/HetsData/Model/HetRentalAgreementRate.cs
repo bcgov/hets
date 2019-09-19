@@ -17,6 +17,7 @@ namespace HetsData.Model
         public string Comment { get; set; }
         [JsonIgnore] public string ComponentName { get; set; }
         public float? Rate { get; set; }
+        public int? RatePeriodTypeId { get; set; }
         public bool Overtime { get; set; }
         public bool Active { get; set; }
         public bool IsIncludedInTotal { get; set; }
@@ -37,6 +38,8 @@ namespace HetsData.Model
         public int ConcurrencyControlNumber { get; set; }
 
         public HetRentalAgreement RentalAgreement { get; set; }
+
+        public HetRatePeriodType RatePeriodType { get; set; }
 
         [JsonIgnore]
         public ICollection<HetTimeRecord> HetTimeRecord { get; set; }

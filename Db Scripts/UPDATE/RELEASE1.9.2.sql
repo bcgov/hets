@@ -1,0 +1,172 @@
+
+-- HETS-1266 - Add individual rate types to all records
+ALTER TABLE public."HET_RENTAL_AGREEMENT_RATE" ADD COLUMN "RATE_PERIOD_TYPE_ID" integer;
+ALTER TABLE public."HET_RENTAL_AGREEMENT_RATE_HIST" ADD COLUMN "RATE_PERIOD_TYPE_ID" integer;
+
+-- CREATE FK TO RENTAL RATE TYPE
+ALTER TABLE ONLY public."HET_RENTAL_AGREEMENT_RATE"
+    ADD CONSTRAINT "FK_HET_RENTAL_AGREEMENT_RATE_PERIOD_TYPE_ID" FOREIGN KEY ("RATE_PERIOD_TYPE_ID") REFERENCES public."HET_RATE_PERIOD_TYPE"("RATE_PERIOD_TYPE_ID");
+
+-- UPDATE ASSOCIATED TRIGGER (FOR HISTORY RECORDS)
+DROP TRIGGER het_rntagr_ar_iud_tr ON public."HET_RENTAL_AGREEMENT_RATE";
+DROP FUNCTION public.het_rntagr_ar_iud_tr();
+
+CREATE FUNCTION public.het_rntagr_ar_iud_tr()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF 
+AS $BODY$
+
+	DECLARE
+        l_current_timestamp timestamp;
+	BEGIN
+        l_current_timestamp := current_timestamp;
+    	IF(TG_OP = 'INSERT') THEN
+        	INSERT INTO public."HET_RENTAL_AGREEMENT_RATE_HIST"
+            (
+			 "RENTAL_AGREEMENT_RATE_HIST_ID",
+             "RENTAL_AGREEMENT_RATE_ID",
+             "EFFECTIVE_DATE",
+             "END_DATE",
+			 "COMMENT",
+			 "COMPONENT_NAME", 
+			 "DB_CREATE_TIMESTAMP", 
+			 "APP_CREATE_USER_DIRECTORY", 
+			 "DB_LAST_UPDATE_TIMESTAMP", 
+			 "APP_LAST_UPDATE_USER_DIRECTORY", 
+			 "RATE", 
+			 "OVERTIME",
+	         "ACTIVE",
+			 "RENTAL_AGREEMENT_ID", 
+			 "CONCURRENCY_CONTROL_NUMBER",
+			 "APP_CREATE_TIMESTAMP", 
+			 "APP_CREATE_USER_GUID",
+			 "APP_CREATE_USERID", 
+			 "APP_LAST_UPDATE_TIMESTAMP", 
+			 "APP_LAST_UPDATE_USER_GUID", 
+			 "APP_LAST_UPDATE_USERID", 
+			 "DB_CREATE_USER_ID", 
+			 "DB_LAST_UPDATE_USER_ID", 
+			 "IS_INCLUDED_IN_TOTAL",
+			 "RATE_PERIOD_TYPE_ID"
+            )
+            VALUES( 
+              nextval('"HET_RENTAL_AGREEMENT_RATE_HIST_ID_seq"'::regclass),
+              NEW."RENTAL_AGREEMENT_RATE_ID",
+              l_current_timestamp,
+              NULL,
+			  NEW."COMMENT", 
+			  NEW."COMPONENT_NAME", 
+			  NEW."DB_CREATE_TIMESTAMP", 
+			  NEW."APP_CREATE_USER_DIRECTORY", 
+			  NEW."DB_LAST_UPDATE_TIMESTAMP", 
+			  NEW."APP_LAST_UPDATE_USER_DIRECTORY", 
+			  NEW."RATE", 
+			  NEW."OVERTIME",
+	          NEW."ACTIVE",
+			  NEW."RENTAL_AGREEMENT_ID",
+			  NEW."CONCURRENCY_CONTROL_NUMBER",			  
+			  NEW."APP_CREATE_TIMESTAMP", 
+			  NEW."APP_CREATE_USER_GUID", 
+			  NEW."APP_CREATE_USERID", 
+			  NEW."APP_LAST_UPDATE_TIMESTAMP", 
+			  NEW."APP_LAST_UPDATE_USER_GUID", 
+			  NEW."APP_LAST_UPDATE_USERID", 
+			  NEW."DB_CREATE_USER_ID", 
+			  NEW."DB_LAST_UPDATE_USER_ID", 
+			  NEW."IS_INCLUDED_IN_TOTAL",
+			  NEW."RATE_PERIOD_TYPE_ID"
+             );
+             RETURN NEW;
+        ELSIF (TG_OP = 'UPDATE') THEN
+        	---- First update the previously active row
+            UPDATE public."HET_RENTAL_AGREEMENT_RATE_HIST" rntagrhis
+            SET "END_DATE" = l_current_timestamp
+            WHERE rntagrhis."RENTAL_AGREEMENT_RATE_ID" = NEW."RENTAL_AGREEMENT_RATE_ID"
+            AND rntagrhis."END_DATE" IS NULL;
+            ---- Now insert the new current row
+        	INSERT INTO public."HET_RENTAL_AGREEMENT_RATE_HIST"
+            (
+			 "RENTAL_AGREEMENT_RATE_HIST_ID",
+             "RENTAL_AGREEMENT_RATE_ID",
+             "EFFECTIVE_DATE",
+             "END_DATE",
+			 "COMMENT",
+			 "COMPONENT_NAME", 
+			 "DB_CREATE_TIMESTAMP", 
+			 "APP_CREATE_USER_DIRECTORY", 
+			 "DB_LAST_UPDATE_TIMESTAMP", 
+			 "APP_LAST_UPDATE_USER_DIRECTORY", 
+			 "RATE", 
+			 "OVERTIME",
+	         "ACTIVE",
+			 "RENTAL_AGREEMENT_ID", 
+			 "CONCURRENCY_CONTROL_NUMBER",
+			 "APP_CREATE_TIMESTAMP", 
+			 "APP_CREATE_USER_GUID",
+			 "APP_CREATE_USERID", 
+			 "APP_LAST_UPDATE_TIMESTAMP", 
+			 "APP_LAST_UPDATE_USER_GUID", 
+			 "APP_LAST_UPDATE_USERID", 
+			 "DB_CREATE_USER_ID", 
+			 "DB_LAST_UPDATE_USER_ID", 
+			 "IS_INCLUDED_IN_TOTAL",
+			 "RATE_PERIOD_TYPE_ID"
+            )
+            VALUES( 
+              nextval('"HET_RENTAL_AGREEMENT_RATE_HIST_ID_seq"'::regclass),
+              NEW."RENTAL_AGREEMENT_RATE_ID",
+              l_current_timestamp,
+              NULL,
+			  NEW."COMMENT", 
+			  NEW."COMPONENT_NAME", 
+			  NEW."DB_CREATE_TIMESTAMP", 
+			  NEW."APP_CREATE_USER_DIRECTORY", 
+			  NEW."DB_LAST_UPDATE_TIMESTAMP", 
+			  NEW."APP_LAST_UPDATE_USER_DIRECTORY", 
+			  NEW."RATE", 
+			  NEW."OVERTIME",
+	          NEW."ACTIVE",
+			  NEW."RENTAL_AGREEMENT_ID", 
+			  NEW."CONCURRENCY_CONTROL_NUMBER",
+			  NEW."APP_CREATE_TIMESTAMP", 
+			  NEW."APP_CREATE_USER_GUID", 
+			  NEW."APP_CREATE_USERID", 
+			  NEW."APP_LAST_UPDATE_TIMESTAMP", 
+			  NEW."APP_LAST_UPDATE_USER_GUID", 
+			  NEW."APP_LAST_UPDATE_USERID", 
+			  NEW."DB_CREATE_USER_ID", 
+			  NEW."DB_LAST_UPDATE_USER_ID", 
+			  NEW."IS_INCLUDED_IN_TOTAL",
+			  NEW."RATE_PERIOD_TYPE_ID"
+             );
+     	RETURN NEW;
+        ELSIF (TG_OP = 'DELETE') THEN
+        	---- First update the previously active row
+            UPDATE public."HET_RENTAL_AGREEMENT_RATE_HIST" rntagrhis
+            SET "END_DATE" = l_current_timestamp
+            WHERE rntagrhis."RENTAL_AGREEMENT_RATE_ID" = OLD."RENTAL_AGREEMENT_RATE_ID"
+            AND rntagrhis."END_DATE" IS NULL;
+            RETURN NEW;
+    END IF;
+    RETURN NULL;
+   	END;
+
+$BODY$;
+
+ALTER FUNCTION public.het_rntagr_ar_iud_tr()
+    OWNER TO postgres;
+
+CREATE TRIGGER het_rntagr_ar_iud_tr
+    AFTER INSERT OR DELETE OR UPDATE 
+    ON public."HET_RENTAL_AGREEMENT_RATE"
+    FOR EACH ROW
+    EXECUTE PROCEDURE public.het_rntagr_ar_iud_tr();
+
+-- UPDATE EXISTING RECORDS (POPULATE THE RATE TYPE)
+UPDATE public."HET_RENTAL_AGREEMENT_RATE" RR
+SET "RATE_PERIOD_TYPE_ID" = RA."RATE_PERIOD_TYPE_ID",
+    "CONCURRENCY_CONTROL_NUMBER" = RR."CONCURRENCY_CONTROL_NUMBER" + 1
+FROM "HET_RENTAL_AGREEMENT" RA
+WHERE RA."RENTAL_AGREEMENT_ID" = RR."RENTAL_AGREEMENT_ID";
