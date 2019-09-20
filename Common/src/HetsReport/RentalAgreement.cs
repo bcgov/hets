@@ -4,7 +4,6 @@ using System.IO;
 using System.IO.Packaging;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using HetsData.Helpers;
@@ -14,7 +13,6 @@ using HetsReport.Helpers;
 namespace HetsReport
 {
     public static class RentalAgreement
-
     {
         private const string ResourceName = "HetsReport.Templates.RentalAgreement-Template.docx";
 
