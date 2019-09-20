@@ -25,14 +25,17 @@ namespace HetsReport
                 // get document template
                 // ******************************************************
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                byte[] byteArray;
+                byte[] byteArray = new byte[] { };
                 int ownerCount = 0;
 
                 using (Stream templateStream = assembly.GetManifestResourceStream(ResourceName))
                 {
-                    byteArray = new byte[templateStream.Length];
-                    templateStream.Read(byteArray, 0, byteArray.Length);
-                    templateStream.Close();
+                    if (templateStream != null)
+                    {
+                        byteArray = new byte[templateStream.Length];
+                        templateStream.Read(byteArray, 0, byteArray.Length);
+                        templateStream.Close();
+                    }
                 }
 
                 using (MemoryStream documentStream = new MemoryStream())
@@ -62,19 +65,29 @@ namespace HetsReport
                                 WordprocessingDocument ownerDocument = (WordprocessingDocument)wordTemplate.Clone(ownerStream);
                                 ownerDocument.Save();
 
+                                // update contact information
+                                string[] contactLabels = GetContactLabels(owner.PrimaryContact.WorkPhoneNumber, owner.PrimaryContact.MobilePhoneNumber, owner.PrimaryContact.FaxPhoneNumber);
+                                string[] contactInfo = GetContactDetail(owner.PrimaryContact.WorkPhoneNumber, owner.PrimaryContact.MobilePhoneNumber, owner.PrimaryContact.FaxPhoneNumber);
+
                                 Dictionary<string, string> values = new Dictionary<string, string>
                                 {
                                     { "classification", owner.Classification },
                                     { "districtAddress", reportModel.DistrictAddress },
                                     { "districtContact", reportModel.DistrictContact },
                                     { "organizationName", owner.OrganizationName },
+                                    { "doingBusinessAs", owner.DoingBusinessAs},
                                     { "address1", owner.Address1 },
                                     { "address2", owner.Address2 },
                                     { "reportDate", reportModel.ReportDate },
                                     { "ownerCode", owner.OwnerCode },
                                     { "sharedKeyHeader", owner.SharedKeyHeader },
                                     { "sharedKey", owner.SharedKey },
-                                    { "workPhoneNumber", owner.PrimaryContact.WorkPhoneNumber }
+                                    { "contactLabels0", contactLabels[0]},
+                                    { "contactLabels1", contactLabels[1]},
+                                    { "contactLabels2", contactLabels[2]},
+                                    { "contactInfo0", contactInfo[0]},
+                                    { "contactInfo1", contactInfo[1]},
+                                    { "contactInfo2", contactInfo[2]}
                                 };
 
                                 // update classification number first [ClassificationNumber]
@@ -309,12 +322,12 @@ namespace HetsReport
                 tableRow1.AppendChild(rowProperties);
 
                 // add columns
-                tableRow1.AppendChild(SetupHeaderCell("Still own/ Re-register?", "1200", true));
+                tableRow1.AppendChild(SetupHeaderCell("Still own/ Re-register?", "1600", true));
                 tableRow1.AppendChild(SetupHeaderCell("Local Area", "1000", true));
                 tableRow1.AppendChild(SetupHeaderCell("Equipment Id", "1200", true));
-                tableRow1.AppendChild(SetupHeaderCell("Equipment Type", "1600"));
-                tableRow1.AppendChild(SetupHeaderCell("Year/Make/Model/Serial Number/Size", "2400"));
-                tableRow1.AppendChild(SetupHeaderCell("Attachments", "1200"));
+                tableRow1.AppendChild(SetupHeaderCell("Equipment Type", "1600", true));
+                tableRow1.AppendChild(SetupHeaderCell("Year/Make/Model/Serial Number/Size", "2400", true));
+                tableRow1.AppendChild(SetupHeaderCell("Attachments", "800", true));
                 tableRow1.AppendChild(SetupHeaderCell("Owner Comments (sold, retired, etc.)", "2600", true));
 
                 table.AppendChild(tableRow1);
@@ -499,6 +512,56 @@ namespace HetsReport
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        private static string[] GetContactLabels(string workPhoneNumber, string mobilePhoneNumber, string faxPhoneNumber)
+        {
+            string[] temp = new string[3];
+
+            if (!string.IsNullOrEmpty(workPhoneNumber))
+            {
+                temp[0] = "Phone:";
+            }
+
+            if (!string.IsNullOrEmpty(mobilePhoneNumber))
+            {
+                if (string.IsNullOrEmpty(temp[0])) temp[0] = "Cell:";
+                else temp[1] = "Cell:";
+            }
+
+            if (!string.IsNullOrEmpty(faxPhoneNumber))
+            {
+                if (string.IsNullOrEmpty(temp[0])) temp[0] = "Fax:";
+                else if (string.IsNullOrEmpty(temp[1])) temp[1] = "Fax:";
+                else temp[2] = "Fax:";
+            }
+
+            return temp;
+        }
+
+        private static string[] GetContactDetail(string workPhoneNumber, string mobilePhoneNumber, string faxPhoneNumber)
+        {
+            string[] temp = new string[3];
+
+            if (!string.IsNullOrEmpty(workPhoneNumber))
+            {
+                temp[0] = $"{workPhoneNumber}";
+            }
+
+            if (!string.IsNullOrEmpty(mobilePhoneNumber))
+            {
+                if (string.IsNullOrEmpty(temp[0])) temp[0] = $"{mobilePhoneNumber}";
+                else temp[1] = $"{mobilePhoneNumber}";
+            }
+
+            if (!string.IsNullOrEmpty(faxPhoneNumber))
+            {
+                if (string.IsNullOrEmpty(temp[0])) temp[0] = $"{faxPhoneNumber}";
+                else if (string.IsNullOrEmpty(temp[1])) temp[1] = $"{faxPhoneNumber}";
+                else temp[2] = $"{faxPhoneNumber}";
+            }
+
+            return temp;
         }
     }
 }
