@@ -1,3 +1,4 @@
+using System.Data;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -6,6 +7,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
+using HetsData.Helpers;
 using HetsData.Model;
 
 namespace HetsApi.Controllers
@@ -77,6 +79,9 @@ namespace HetsApi.Controllers
             // not found
             if (!exists || id != item.RentalAgreementRateId) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
+            // set the rate period type id
+            int ratePeriodTypeId = StatusHelper.GetRatePeriodId(item.RatePeriod, _context) ?? throw new DataException("Rate Period Id cannot be null");
+
             // get record
             HetRentalAgreementRate rate = _context.HetRentalAgreementRate.First(a => a.RentalAgreementRateId == id);
 
@@ -86,6 +91,7 @@ namespace HetsApi.Controllers
             rate.ComponentName = item.ComponentName;
             rate.IsIncludedInTotal = item.IsIncludedInTotal;
             rate.Rate = item.Rate;
+            rate.RatePeriodTypeId = ratePeriodTypeId;
             rate.Active = true;
             rate.Overtime = false;
             rate.Set = item.Set;
@@ -93,7 +99,7 @@ namespace HetsApi.Controllers
             // save the changes
             _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(item));
+            return new ObjectResult(new HetsResponse(rate));
         }
     }
 }

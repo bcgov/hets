@@ -597,6 +597,7 @@ namespace HetsData.Helpers
         {
             HetRentalAgreement agreement = context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.HetRentalAgreementRate)
+                    .ThenInclude(x => x.RatePeriodType)
                 .First(x => x.RentalAgreementId == id);
 
             List<HetRentalAgreementRate> rates = new List<HetRentalAgreementRate>();
