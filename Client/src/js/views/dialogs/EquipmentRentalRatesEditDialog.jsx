@@ -103,14 +103,14 @@ class EquipmentRentalRatesEditDialog extends React.Component {
         onClose={this.props.onClose}>
         <Grid fluid>
           <Row>
-            <Col md={4}>
+            <Col md={3}>
               <FormGroup controlId="equipmentRate" validationState={ this.state.equipmentRateError ? 'error' : null }>
                 <ControlLabel>Pay Rate <sup>*</sup></ControlLabel>
                 <FormInputControl type="float" min={ 0 } defaultValue={ (this.state.equipmentRate || 0).toFixed(2) } readOnly={ isReadOnly } updateState={ this.updateState } autoFocus/>
                 <HelpBlock>{ this.state.equipmentRateError }</HelpBlock>
               </FormGroup>
             </Col>
-            <Col md={2}>
+            <Col md={3}>
               <FormGroup controlId="ratePeriod" validationState={ this.state.ratePeriodError ? 'error' : null }>
                 <ControlLabel>Period <sup>*</sup></ControlLabel>
                 <DropdownControl id="ratePeriod" disabled={ isReadOnly } title={ this.state.ratePeriod } updateState={ this.updateState }
