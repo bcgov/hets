@@ -57,7 +57,7 @@ class EquipmentRentalRatesEditDialog extends React.Component {
     if (isBlank(this.state.equipmentRate) ) {
       this.setState({ equipmentRateError: 'Pay rate is required' });
       valid = false;
-    } else if (this.state.equipmentRate < 1) {
+    } else if (this.state.equipmentRate < 0) {
       this.setState({ equipmentRateError: 'Pay rate not valid' });
       valid = false;
     }

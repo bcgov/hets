@@ -94,7 +94,7 @@ class RentalRatesEditDialog extends React.Component {
       if (isBlank(form.rate) ) {
         forms[i] = { ...forms[i], rateError: 'Pay rate is required' };
         valid = false;
-      } else if (form.rate < 1) {
+      } else if (form.rate < 0) {
         forms[i] = { ...forms[i], rateError: 'Pay rate not valid' };
         valid = false;
       }
