@@ -376,7 +376,7 @@ class RentalAgreementsDetail extends React.Component {
                     _.map(asNeededRates, (obj, i) => {
                       return <tr key={ obj.id || i }>
                         <td>{ formatCurrency(obj.rate) }</td>
-                        <td>{ obj.set ? 'Set' : obj.ratePeriod }</td>
+                        <td>{ obj.set ? Constant.RENTAL_RATE_PERIOD_SET : obj.ratePeriod }</td>
                         <td>{ obj.comment }</td>
                         <td style={{ textAlign: 'right' }}>
                           <ButtonGroup>
