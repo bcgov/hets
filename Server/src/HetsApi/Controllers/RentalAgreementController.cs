@@ -129,6 +129,13 @@ namespace HetsApi.Controllers
             agreement.ProjectId = item.ProjectId;
             agreement.EquipmentId = item.EquipmentId;
 
+            // update the rate period for all included rates and attachments
+            foreach (HetRentalAgreementRate agreementRate in agreement.HetRentalAgreementRate.Where(x => !x.Overtime && x.IsIncludedInTotal))
+            {
+                agreementRate.RatePeriod = agreement.RatePeriod;
+                agreementRate.RatePeriodTypeId = agreement.RatePeriodTypeId;
+            }
+
             // update the agreement overtime records (default overtime flag)
             if (item.HetRentalAgreementOvertimeRate != null)
             {

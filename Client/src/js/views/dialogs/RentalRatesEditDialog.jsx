@@ -7,7 +7,6 @@ import _ from 'lodash';
 import * as Constant from '../../constants';
 import * as Api from '../../api';
 
-import CheckboxControl from '../../components/CheckboxControl.jsx';
 import DropdownControl from '../../components/DropdownControl.jsx';
 import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
@@ -35,6 +34,10 @@ class RentalRatesEditDialog extends React.Component {
   constructor(props) {
     super(props);
 
+    const ratePeriod = props.rentalRate.id === 0 ?
+      props.rentalAgreement.ratePeriod || Constant.RENTAL_RATE_PERIOD_HOURLY :
+      props.rentalRate.ratePeriod;
+
     this.state = {
       isNew: props.rentalRate.id === 0,
 
@@ -42,13 +45,13 @@ class RentalRatesEditDialog extends React.Component {
         isIncludedInTotal: props.rentalRate.isIncludedInTotal || false,
         rateType: {},
         rate: props.rentalRate.rate || 0.0,
-        ratePeriod: props.rentalRate.id === 0 ? props.rentalAgreement.ratePeriod || Constant.RENTAL_RATE_PERIOD_HOURLY : props.rentalRate.ratePeriod,
-        comment: props.rentalRate.comment || '',
+        ratePeriod: ratePeriod,
+        uiRatePeriod: props.rentalRate.set ? Constant.RENTAL_RATE_PERIOD_SET : ratePeriod,
         set: props.rentalRate.set || false,
+        comment: props.rentalRate.comment || '',
 
         componentNameError: '',
         rateError: '',
-        ratePeriodError: '',
         commentError: '',
       }],
       concurrencyControlNumber: props.rentalRate.concurrencyControlNumber || 0,
@@ -66,6 +69,18 @@ class RentalRatesEditDialog extends React.Component {
     this.setState({ forms: updatedForms });
   };
 
+  updateUiRatePeriod = (value, index) => {
+    const uiRatePeriod = _.values(value)[0];
+    const updatedForms = this.state.forms.slice();
+    const state = {
+      uiRatePeriod: uiRatePeriod,
+      set: uiRatePeriod === Constant.RENTAL_RATE_PERIOD_SET,
+      ratePeriod: uiRatePeriod === Constant.RENTAL_RATE_PERIOD_SET ? this.props.rentalAgreement.ratePeriod : uiRatePeriod,
+    };
+    updatedForms.splice(index, 1, { ...updatedForms[index], ...state});
+    this.setState({ forms: updatedForms });
+  };
+
   didChange = () => {
     return true;
   };
@@ -77,7 +92,6 @@ class RentalRatesEditDialog extends React.Component {
       let state = {
         ...form,
         rateError: '',
-        ratePeriodError: '',
         commentError: '',
       };
       forms[i] = state;
@@ -94,13 +108,8 @@ class RentalRatesEditDialog extends React.Component {
       if (isBlank(form.rate) ) {
         forms[i] = { ...forms[i], rateError: 'Pay rate is required' };
         valid = false;
-      } else if (form.rate < 1) {
+      } else if (form.rate < 0) {
         forms[i] = { ...forms[i], rateError: 'Pay rate not valid' };
-        valid = false;
-      }
-
-      if (!form.set && isBlank(form.ratePeriod)) {
-        forms[i] = { ...forms[i], ratePeriodError: 'Period is required' };
         valid = false;
       }
     });
@@ -141,12 +150,16 @@ class RentalRatesEditDialog extends React.Component {
   addInput = () => {
     if (this.state.forms.length < 10) {
       const forms = this.state.forms.slice();
+
+      const ratePeriod = this.props.rentalAgreement.ratePeriod || Constant.RENTAL_RATE_PERIOD_HOURLY;
+
       forms.push({
         isIncludedInTotal: this.props.rentalRate.isIncludedInTotal || false,
         rate: this.props.rentalRate.rate || 0.0,
-        ratePeriod: this.props.rentalAgreement.ratePeriod || Constant.RENTAL_RATE_PERIOD_HOURLY,
-        comment: this.props.rentalRate.comment || '',
+        ratePeriod: ratePeriod,
+        uiRatePeriod: this.props.rentalRate.set ? Constant.RENTAL_RATE_PERIOD_SET : ratePeriod,
         set: this.props.rentalRate.set || false,
+        comment: this.props.rentalRate.comment || '',
 
         rateError: '',
         commentError: '',
@@ -166,19 +179,20 @@ class RentalRatesEditDialog extends React.Component {
 
   renderForm(form, i) {
     // Read-only if the user cannot edit the rental agreement
-    var isReadOnly = !this.props.rentalRate.canEdit && this.props.rentalRate.id !== 0;
+    const isReadOnly = !this.props.rentalRate.canEdit && this.props.rentalRate.id !== 0;
 
-    let ratePeriodElement = form.set ?
+    const uiRatePeriods = _.concat(ratePeriods, Constant.RENTAL_RATE_PERIOD_SET);
+
+    const ratePeriodElement = this.props.rentalRate.isIncludedInTotal ?
       <>
-        <ControlLabel>Period <sup>*</sup></ControlLabel>
-        <div style={ { marginTop: '10px', marginBottom: '10px' } }>Set</div>
+        <ControlLabel>Period</ControlLabel>
+        <div style={ { marginTop: '10px', marginBottom: '10px' } }>{ form.uiRatePeriod }</div>
       </>
       :
-      <FormGroup controlId={`ratePeriod${i}`} validationState={ form.ratePeriodError ? 'error' : null }>
+      <FormGroup controlId={`uiRatePeriod${i}`}>
         <ControlLabel>Period <sup>*</sup></ControlLabel>
-        <DropdownControl id={`ratePeriod${i}`} disabled={ isReadOnly } title={ form.ratePeriod } updateState={ this.updateState }
-          items={ ratePeriods } />
-        <HelpBlock>{ form.ratePeriodError }</HelpBlock>
+        <DropdownControl id={`uiRatePeriod${i}`} disabled={ isReadOnly } title={ form.uiRatePeriod } updateState={ (state) => this.updateUiRatePeriod(state, i) }
+          items={ uiRatePeriods } />
       </FormGroup>;
 
     return (
@@ -191,19 +205,10 @@ class RentalRatesEditDialog extends React.Component {
               <HelpBlock>{ form.rateError }</HelpBlock>
             </FormGroup>
           </Col>
-          {
-            !this.props.rentalRate.isIncludedInTotal &&
-            <Col md={2}>
-              <FormGroup controlId={`set${i}`}>
-                <ControlLabel>Set</ControlLabel>
-                <CheckboxControl id={`set${i}`} checked={ form.set } updateState={ this.updateState }>Set</CheckboxControl>
-              </FormGroup>
-            </Col>
-          }
           <Col md={3}>
             { ratePeriodElement }
           </Col>
-          <Col md={ this.props.rentalRate.isIncludedInTotal ? 7 : 5 }>
+          <Col md={7}>
             <FormGroup controlId={`comment${i}`} validationState={ form.commentError ? 'error' : null }>
               <ControlLabel>Comment <sup>*</sup></ControlLabel>
               <FormInputControl defaultValue={ form.comment } readOnly={ isReadOnly } updateState={ this.updateState } />
