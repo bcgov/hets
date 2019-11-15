@@ -351,15 +351,15 @@ namespace HetsReport
 
                 GridColumn gc4 = new GridColumn { Width = col4Width };
                 tableRow1.AppendChild(gc4);
-                tableRow1.AppendChild(SetupHeaderCell("Equipment Type", col4Width, true));
+                tableRow1.AppendChild(SetupHeaderCell("Equipment Type", col4Width));
 
                 GridColumn gc5 = new GridColumn { Width = col5Width };
                 tableRow1.AppendChild(gc5);
-                tableRow1.AppendChild(SetupHeaderCell("Year/Make/Model/Serial Number/Size", col5Width, true));
+                tableRow1.AppendChild(SetupHeaderCell("Year/Make/Model/Serial Number/Size", col5Width));
 
                 GridColumn gc6 = new GridColumn { Width = col6Width };
                 tableRow1.AppendChild(gc6);
-                tableRow1.AppendChild(SetupHeaderCell("Attachments", col6Width, true));
+                tableRow1.AppendChild(SetupHeaderCell("Attachments", col6Width));
 
                 GridColumn gc7 = new GridColumn { Width = col7Width };
                 tableRow1.AppendChild(gc7);
