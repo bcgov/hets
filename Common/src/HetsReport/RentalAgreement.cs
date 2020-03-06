@@ -13,7 +13,6 @@ using HetsReport.Helpers;
 namespace HetsReport
 {
     public static class RentalAgreement
-
     {
         private const string ResourceName = "HetsReport.Templates.RentalAgreement-Template.docx";
 
@@ -28,13 +27,16 @@ namespace HetsReport
                 // get document template
                 // ******************************************************
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                byte[] byteArray;
+                byte[] byteArray = new byte[] { };
 
                 using (Stream templateStream = assembly.GetManifestResourceStream(ResourceName))
                 {
-                    byteArray = new byte[templateStream.Length];
-                    templateStream.Read(byteArray, 0, byteArray.Length);
-                    templateStream.Close();
+                    if (templateStream != null)
+                    {
+                        byteArray = new byte[templateStream.Length];
+                        templateStream.Read(byteArray, 0, byteArray.Length);
+                        templateStream.Close();
+                    }
                 }
 
                 using (MemoryStream documentStream = new MemoryStream())
@@ -83,6 +85,10 @@ namespace HetsReport
                                 $"{reportModel.Equipment.Model}/" +
                                 $"{reportModel.Equipment.Size}/" +
                                 $"{reportModel.Equipment.SerialNumber}";
+
+                            // update address and contact information
+                            string addressInfo = GetAddressDetail(reportModel.Equipment.Owner.OrganizationName, reportModel.DoingBusinessAs, reportModel.Equipment.Owner.Address1, reportModel.Equipment.Owner.Address2);
+                            string contactInfo = GetContactDetail(reportModel.Equipment.Owner.PrimaryContact.WorkPhoneNumber, reportModel.Equipment.Owner.PrimaryContact.MobilePhoneNumber, reportModel.Equipment.Owner.PrimaryContact.FaxPhoneNumber, reportModel.EmailAddress);
 
                             // rates included in total
                             string rateString1 = "";
@@ -168,13 +174,9 @@ namespace HetsReport
                                 {"classification", reportModel.Classification},
                                 {"equipmentCode", reportModel.Equipment.EquipmentCode},
                                 {"number", reportModel.Number},
-                                {"organizationName", reportModel.Equipment.Owner.OrganizationName},
-                                {"address1", reportModel.Equipment.Owner.Address1},
-                                {"address2", reportModel.Equipment.Owner.Address2},
                                 {"ownerCode", reportModel.Equipment.Owner.OwnerCode},
-                                {"workPhoneNumber", reportModel.Equipment.Owner.PrimaryContact.WorkPhoneNumber},
-                                {"mobilePhoneNumber", reportModel.Equipment.Owner.PrimaryContact.MobilePhoneNumber},
-                                {"faxPhoneNumber", reportModel.Equipment.Owner.PrimaryContact.FaxPhoneNumber},
+                                {"addressInfo", addressInfo},
+                                {"contactInfo", contactInfo},
                                 {"equipmentFullName", equipmentName},
                                 {"noteLine", note},
                                 {"baseRateString", reportModel.BaseRateString},
@@ -195,9 +197,7 @@ namespace HetsReport
                                 {"comment2", comment2},
                                 {"comment3", comment3},
                                 {"overtimeRate", overtimeRate},
-                                {"overtimeComment", overtimeComment},
-                                {"doingBusinessAs", reportModel.DoingBusinessAs},
-                                {"emailAddress", reportModel.EmailAddress}
+                                {"overtimeComment", overtimeComment}
                             };
 
                             // update main document
@@ -236,6 +236,71 @@ namespace HetsReport
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        private static string GetAddressDetail(string businessName, string dbaName,
+            string address1, string address2)
+        {
+            char[] characters = System.Text.Encoding.ASCII.GetChars(new byte[] { 10 });
+            char crLf = characters[0];
+
+            char[] tabCharacters = System.Text.Encoding.ASCII.GetChars(new byte[] { 9 });
+            char tab = tabCharacters[0];
+
+            string temp = "";
+
+            if (!string.IsNullOrEmpty(businessName))
+            {
+                temp += $"Name of Registered Owner or Firm: {tab.ToString()}{businessName}{crLf.ToString()}";
+            }
+
+            if (!string.IsNullOrEmpty(dbaName))
+            {
+                temp += $"Doing Business As: {tab.ToString()}{dbaName}{crLf.ToString()}";
+            }
+
+            if (!string.IsNullOrEmpty(address1))
+            {
+                temp += $"Address: {tab.ToString()}{address1}{crLf.ToString()}";
+            }
+
+            if (!string.IsNullOrEmpty(address2))
+            {
+                temp += $"         {tab.ToString()}{address2}";
+            }
+
+            return temp;
+        }
+
+        private static string GetContactDetail(string workPhoneNumber, string mobilePhoneNumber,
+            string faxPhoneNumber, string emailAddress)
+        {
+            char[] characters = System.Text.Encoding.ASCII.GetChars(new byte[] { 10 });
+            char crLf = characters[0];
+
+            string temp = "";
+
+            if (!string.IsNullOrEmpty(workPhoneNumber))
+            {
+                temp += $"Phone: {workPhoneNumber}{crLf.ToString()}";
+            }
+
+            if (!string.IsNullOrEmpty(mobilePhoneNumber))
+            {
+                temp += $"Cell: {mobilePhoneNumber}{crLf.ToString()}";
+            }
+
+            if (!string.IsNullOrEmpty(faxPhoneNumber))
+            {
+                temp += $"Fax: {faxPhoneNumber}{crLf.ToString()}";
+            }
+
+            if (!string.IsNullOrEmpty(emailAddress))
+            {
+                temp += $"Email: {emailAddress}";
+            }
+
+            return temp;
         }
     }
 }

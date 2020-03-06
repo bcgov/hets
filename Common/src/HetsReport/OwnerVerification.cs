@@ -25,14 +25,17 @@ namespace HetsReport
                 // get document template
                 // ******************************************************
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                byte[] byteArray;
+                byte[] byteArray = new byte[] { };
                 int ownerCount = 0;
 
                 using (Stream templateStream = assembly.GetManifestResourceStream(ResourceName))
                 {
-                    byteArray = new byte[templateStream.Length];
-                    templateStream.Read(byteArray, 0, byteArray.Length);
-                    templateStream.Close();
+                    if (templateStream != null)
+                    {
+                        byteArray = new byte[templateStream.Length];
+                        templateStream.Read(byteArray, 0, byteArray.Length);
+                        templateStream.Close();
+                    }
                 }
 
                 using (MemoryStream documentStream = new MemoryStream())
@@ -62,19 +65,36 @@ namespace HetsReport
                                 WordprocessingDocument ownerDocument = (WordprocessingDocument)wordTemplate.Clone(ownerStream);
                                 ownerDocument.Save();
 
+                                // update address and contact information
+                                string[] addressLabels = GetAddressLabels(owner.OrganizationName, owner.DoingBusinessAs, owner.Address1, owner.Address2);
+                                string[] addressInfo = GetAddressDetail(owner.OrganizationName, owner.DoingBusinessAs, owner.Address1, owner.Address2);
+
+                                string[] contactLabels = GetContactLabels(owner.PrimaryContact.WorkPhoneNumber, owner.PrimaryContact.MobilePhoneNumber, owner.PrimaryContact.FaxPhoneNumber);
+                                string[] contactInfo = GetContactDetail(owner.PrimaryContact.WorkPhoneNumber, owner.PrimaryContact.MobilePhoneNumber, owner.PrimaryContact.FaxPhoneNumber);
+
                                 Dictionary<string, string> values = new Dictionary<string, string>
                                 {
                                     { "classification", owner.Classification },
                                     { "districtAddress", reportModel.DistrictAddress },
                                     { "districtContact", reportModel.DistrictContact },
-                                    { "organizationName", owner.OrganizationName },
-                                    { "address1", owner.Address1 },
-                                    { "address2", owner.Address2 },
+                                    { "addressLabels0", addressLabels[0]},
+                                    { "addressLabels1", addressLabels[1]},
+                                    { "addressLabels2", addressLabels[2]},
+                                    { "addressLabels3", addressLabels[3]},
+                                    { "addressInfo0", addressInfo[0]},
+                                    { "addressInfo1", addressInfo[1]},
+                                    { "addressInfo2", addressInfo[2]},
+                                    { "addressInfo3", addressInfo[3]},
                                     { "reportDate", reportModel.ReportDate },
                                     { "ownerCode", owner.OwnerCode },
                                     { "sharedKeyHeader", owner.SharedKeyHeader },
                                     { "sharedKey", owner.SharedKey },
-                                    { "workPhoneNumber", owner.PrimaryContact.WorkPhoneNumber }
+                                    { "contactLabels0", contactLabels[0]},
+                                    { "contactLabels1", contactLabels[1]},
+                                    { "contactLabels2", contactLabels[2]},
+                                    { "contactInfo0", contactInfo[0]},
+                                    { "contactInfo1", contactInfo[1]},
+                                    { "contactInfo2", contactInfo[2]}
                                 };
 
                                 // update classification number first [ClassificationNumber]
@@ -279,7 +299,7 @@ namespace HetsReport
 
                 TableProperties tableProperties1 = new TableProperties();
                 TableStyle tableStyle1 = new TableStyle() { Val = "TableGrid" };
-                TableWidth tableWidth1 = new TableWidth() { Width = "0", Type = TableWidthUnitValues.Auto };
+                TableLayout tableLayout1 = new TableLayout() { Type = TableLayoutValues.Fixed };
 
                 TableLook tableLook1 = new TableLook()
                 {
@@ -292,8 +312,8 @@ namespace HetsReport
                     NoVerticalBand = true
                 };
 
+                tableProperties1.AppendChild(tableLayout1);
                 tableProperties1.AppendChild(tableStyle1);
-                tableProperties1.AppendChild(tableWidth1);
                 tableProperties1.AppendChild(tableLook1);
 
                 table.AppendChild(tableProperties1);
@@ -303,19 +323,47 @@ namespace HetsReport
 
                 TableRowProperties rowProperties = new TableRowProperties();
 
-                rowProperties.AppendChild(new TableRowHeight() { Val = 200, HeightType = HeightRuleValues.AtLeast });
-                rowProperties.AppendChild(new TableHeader() { Val = OnOffOnlyValues.On });
+                rowProperties.AppendChild(new TableRowHeight { Val = 200, HeightType = HeightRuleValues.AtLeast });
+                rowProperties.AppendChild(new TableHeader { Val = OnOffOnlyValues.On });
 
                 tableRow1.AppendChild(rowProperties);
 
                 // add columns
-                tableRow1.AppendChild(SetupHeaderCell("Still own/ Re-register?", "1200", true));
-                tableRow1.AppendChild(SetupHeaderCell("Local Area", "1000", true));
-                tableRow1.AppendChild(SetupHeaderCell("Equipment Id", "1200", true));
-                tableRow1.AppendChild(SetupHeaderCell("Equipment Type", "1600"));
-                tableRow1.AppendChild(SetupHeaderCell("Year/Make/Model/Serial Number/Size", "2400"));
-                tableRow1.AppendChild(SetupHeaderCell("Attachments", "1200"));
-                tableRow1.AppendChild(SetupHeaderCell("Owner Comments (sold, retired, etc.)", "2600", true));
+                string col1Width = "1100";
+                string col2Width = "1260";
+                string col3Width = "1260";
+                string col4Width = "2200";
+                string col5Width = "2700";
+                string col6Width = "1800";
+                string col7Width = "1500";
+
+                GridColumn gc1 = new GridColumn { Width = col1Width };
+                tableRow1.AppendChild(gc1);
+                tableRow1.AppendChild(SetupHeaderCell("Still own/ Re-register?", col1Width, true));
+
+                GridColumn gc2 = new GridColumn { Width = col2Width };
+                tableRow1.AppendChild(gc2);
+                tableRow1.AppendChild(SetupHeaderCell("Local Area", col2Width, true));
+
+                GridColumn gc3 = new GridColumn { Width = col3Width };
+                tableRow1.AppendChild(gc3);
+                tableRow1.AppendChild(SetupHeaderCell("Equipment Id", col3Width, true));
+
+                GridColumn gc4 = new GridColumn { Width = col4Width };
+                tableRow1.AppendChild(gc4);
+                tableRow1.AppendChild(SetupHeaderCell("Equipment Type", col4Width));
+
+                GridColumn gc5 = new GridColumn { Width = col5Width };
+                tableRow1.AppendChild(gc5);
+                tableRow1.AppendChild(SetupHeaderCell("Year/Make/Model/Serial Number/Size", col5Width));
+
+                GridColumn gc6 = new GridColumn { Width = col6Width };
+                tableRow1.AppendChild(gc6);
+                tableRow1.AppendChild(SetupHeaderCell("Attachments", col6Width));
+
+                GridColumn gc7 = new GridColumn { Width = col7Width };
+                tableRow1.AppendChild(gc7);
+                tableRow1.AppendChild(SetupHeaderCell("Owner Comments (sold, retired, etc.)", col7Width, true));
 
                 table.AppendChild(tableRow1);
 
@@ -325,17 +373,17 @@ namespace HetsReport
                     TableRow tableRowEquipment = new TableRow();
 
                     TableRowProperties equipmentRowProperties = new TableRowProperties();
-                    equipmentRowProperties.AppendChild(new TableRowHeight() { Val = 200, HeightType = HeightRuleValues.AtLeast });
+                    equipmentRowProperties.AppendChild(new TableRowHeight { Val = 200, HeightType = HeightRuleValues.AtLeast });
                     tableRowEquipment.AppendChild(equipmentRowProperties);
 
                     // add equipment data
-                    tableRowEquipment.AppendChild(SetupCell("Yes   No", true));
-                    tableRowEquipment.AppendChild(SetupCell(equipment.LocalArea.Name, true));
-                    tableRowEquipment.AppendChild(SetupCell(equipment.EquipmentCode, true));
-                    tableRowEquipment.AppendChild(SetupCell(equipment.DistrictEquipmentType.DistrictEquipmentName));
+                    tableRowEquipment.AppendChild(SetupCell("Yes   No", col1Width, true));
+                    tableRowEquipment.AppendChild(SetupCell(equipment.LocalArea.Name, col2Width, true));
+                    tableRowEquipment.AppendChild(SetupCell(equipment.EquipmentCode, col3Width, true));
+                    tableRowEquipment.AppendChild(SetupCell(equipment.DistrictEquipmentType.DistrictEquipmentName, col4Width));
 
-                    string temp = $"{equipment.Year}/{equipment.Make}/{equipment.Model}/{equipment.SerialNumber}/{equipment.Size}";
-                    tableRowEquipment.AppendChild(SetupCell(temp));
+                    string temp = $"{equipment.Year} / {equipment.Make} / {equipment.Model} / {equipment.SerialNumber} / {equipment.Size}";
+                    tableRowEquipment.AppendChild(SetupCell(temp, col5Width));
 
                     // attachments list
                     temp = "";
@@ -349,10 +397,10 @@ namespace HetsReport
 
                         row++;
                     }
-                    tableRowEquipment.AppendChild(SetupCell(temp));
+                    tableRowEquipment.AppendChild(SetupCell(temp, col6Width));
 
                     // last column (blank)
-                    tableRowEquipment.AppendChild(SetupCell(""));
+                    tableRowEquipment.AppendChild(SetupCell("", col7Width));
 
                     table.AppendChild(tableRowEquipment);
                 }
@@ -373,8 +421,8 @@ namespace HetsReport
                 TableCell tableCell = new TableCell();
 
                 TableCellProperties tableCellProperties = new TableCellProperties();
-                TableCellWidth tableCellWidth = new TableCellWidth() { Width = width, Type = TableWidthUnitValues.Dxa };
-                Shading shading = new Shading() { Val = ShadingPatternValues.Clear, Fill = "FFFFFF", Color = "auto" };
+                TableCellWidth tableCellWidth = new TableCellWidth { Width = width, Type = TableWidthUnitValues.Dxa };
+                Shading shading = new Shading { Val = ShadingPatternValues.Clear, Fill = "FFFFFF", Color = "auto" };
 
                 // border & padding
                 TableCellBorders borders = new TableCellBorders();
@@ -436,13 +484,14 @@ namespace HetsReport
             }
         }
 
-        private static TableCell SetupCell(string text, bool center = false)
+        private static TableCell SetupCell(string text, string width, bool center = false)
         {
             try
             {
                 TableCell tableCell = new TableCell();
 
                 TableCellProperties tableCellProperties = new TableCellProperties();
+                TableCellWidth tableCellWidth = new TableCellWidth() { Width = width, Type = TableWidthUnitValues.Dxa };
 
                 // border & padding
                 TableCellBorders borders = new TableCellBorders();
@@ -465,6 +514,7 @@ namespace HetsReport
                 margin.AppendChild(topMargin);
                 margin.AppendChild(bottomMargin);
 
+                tableCellProperties.AppendChild(tableCellWidth);
                 tableCellProperties.AppendChild(borders);
                 tableCellProperties.AppendChild(margin);
 
@@ -499,6 +549,124 @@ namespace HetsReport
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        private static string[] GetAddressLabels(string businessName, string dbaName,
+            string address1, string address2)
+        {
+            string[] temp = new string[4];
+
+            if (!string.IsNullOrEmpty(businessName))
+            {
+                temp[0] = "Owner:";
+            }
+
+            if (!string.IsNullOrEmpty(dbaName))
+            {
+                if (string.IsNullOrEmpty(temp[0])) temp[0] = "Doing Business As:";
+                else temp[1] = "Doing Business As:";
+            }
+
+            if (!string.IsNullOrEmpty(address1))
+            {
+                if (string.IsNullOrEmpty(temp[0])) temp[0] = "Address:";
+                else if (string.IsNullOrEmpty(temp[1])) temp[1] = "Address:";
+                else temp[2] = "Address:";
+            }
+
+            if (!string.IsNullOrEmpty(address2))
+            {
+                if (string.IsNullOrEmpty(temp[0])) temp[0] = " ";
+                else if (string.IsNullOrEmpty(temp[1])) temp[1] = " ";
+                else if (string.IsNullOrEmpty(temp[2])) temp[2] = " ";
+                else temp[3] = " ";
+            }
+
+            return temp;
+        }
+
+        private static string[] GetAddressDetail(string businessName, string dbaName,
+            string address1, string address2)
+        {
+            string[] temp = new string[4];
+
+            if (!string.IsNullOrEmpty(businessName))
+            {
+                temp[0] = $"{businessName}";
+            }
+
+            if (!string.IsNullOrEmpty(dbaName))
+            {
+                if (string.IsNullOrEmpty(temp[0])) temp[0] = $"{dbaName}";
+                else temp[1] = $"{dbaName}";
+            }
+
+            if (!string.IsNullOrEmpty(address1))
+            {
+                if (string.IsNullOrEmpty(temp[0])) temp[0] = $"{address1}";
+                else if (string.IsNullOrEmpty(temp[1])) temp[1] = $"{address1}";
+                else temp[2] = $"{address1}";
+            }
+
+            if (!string.IsNullOrEmpty(address2))
+            {
+                if (string.IsNullOrEmpty(temp[0])) temp[0] = $"{address2}";
+                else if (string.IsNullOrEmpty(temp[1])) temp[1] = $"{address2}";
+                else if (string.IsNullOrEmpty(temp[2])) temp[2] = $"{address2}";
+                else temp[3] = $"{address2}";
+            }
+
+            return temp;
+        }
+
+        private static string[] GetContactLabels(string workPhoneNumber, string mobilePhoneNumber, string faxPhoneNumber)
+        {
+            string[] temp = new string[3];
+
+            if (!string.IsNullOrEmpty(workPhoneNumber))
+            {
+                temp[0] = "Phone:";
+            }
+
+            if (!string.IsNullOrEmpty(mobilePhoneNumber))
+            {
+                if (string.IsNullOrEmpty(temp[0])) temp[0] = "Cell:";
+                else temp[1] = "Cell:";
+            }
+
+            if (!string.IsNullOrEmpty(faxPhoneNumber))
+            {
+                if (string.IsNullOrEmpty(temp[0])) temp[0] = "Fax:";
+                else if (string.IsNullOrEmpty(temp[1])) temp[1] = "Fax:";
+                else temp[2] = "Fax:";
+            }
+
+            return temp;
+        }
+
+        private static string[] GetContactDetail(string workPhoneNumber, string mobilePhoneNumber, string faxPhoneNumber)
+        {
+            string[] temp = new string[3];
+
+            if (!string.IsNullOrEmpty(workPhoneNumber))
+            {
+                temp[0] = $"{workPhoneNumber}";
+            }
+
+            if (!string.IsNullOrEmpty(mobilePhoneNumber))
+            {
+                if (string.IsNullOrEmpty(temp[0])) temp[0] = $"{mobilePhoneNumber}";
+                else temp[1] = $"{mobilePhoneNumber}";
+            }
+
+            if (!string.IsNullOrEmpty(faxPhoneNumber))
+            {
+                if (string.IsNullOrEmpty(temp[0])) temp[0] = $"{faxPhoneNumber}";
+                else if (string.IsNullOrEmpty(temp[1])) temp[1] = $"{faxPhoneNumber}";
+                else temp[2] = $"{faxPhoneNumber}";
+            }
+
+            return temp;
         }
     }
 }

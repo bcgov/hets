@@ -9,6 +9,7 @@ namespace HetsData.Model
         public HetRatePeriodType()
         {
             HetRentalAgreement = new HashSet<HetRentalAgreement>();
+            HetRentalAgreementRate = new HashSet<HetRentalAgreementRate>();
         }
 
         [JsonProperty("Id")]
@@ -35,5 +36,8 @@ namespace HetsData.Model
 
         [JsonIgnore]
         public ICollection<HetRentalAgreement> HetRentalAgreement { get; set; }
+
+        [JsonIgnore]
+        public ICollection<HetRentalAgreementRate> HetRentalAgreementRate { get; set; }
     }
 }

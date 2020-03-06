@@ -129,6 +129,13 @@ namespace HetsApi.Controllers
             agreement.ProjectId = item.ProjectId;
             agreement.EquipmentId = item.EquipmentId;
 
+            // update the rate period for all included rates and attachments
+            foreach (HetRentalAgreementRate agreementRate in agreement.HetRentalAgreementRate.Where(x => !x.Overtime && x.IsIncludedInTotal))
+            {
+                agreementRate.RatePeriod = agreement.RatePeriod;
+                agreementRate.RatePeriodTypeId = agreement.RatePeriodTypeId;
+            }
+
             // update the agreement overtime records (default overtime flag)
             if (item.HetRentalAgreementOvertimeRate != null)
             {
@@ -350,6 +357,7 @@ namespace HetsApi.Controllers
                     .ThenInclude(p => p.District.Region)
                 .Include(x => x.HetRentalAgreementCondition)
                 .Include(x => x.HetRentalAgreementRate)
+                    .ThenInclude(x => x.RatePeriodType)
                 .FirstOrDefault(a => a.RentalAgreementId == id);
 
             if (rentalAgreement == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -595,6 +603,9 @@ namespace HetsApi.Controllers
             // not found
             if (!exists || item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
+            // set the rate period type id
+            int ratePeriodTypeId = StatusHelper.GetRatePeriodId(item.RatePeriod, _context) ?? throw new DataException("Rate Period Id cannot be null");
+
             // add or update rate records
             if (item.RentalAgreementRateId > 0)
             {
@@ -611,14 +622,11 @@ namespace HetsApi.Controllers
                 rate.Active = true;
                 rate.IsIncludedInTotal = item.IsIncludedInTotal;
                 rate.Rate = item.Rate;
+                rate.RatePeriodTypeId = ratePeriodTypeId;
                 rate.Set = item.Set;
             }
             else // add rate records
             {
-                // set the rate period type id
-                int? rateTypeId = StatusHelper.GetRatePeriodId(item.RatePeriod, _context);
-                if (rateTypeId == null) throw new DataException("Rate Period Id cannot be null");
-
                 int agreementId = item.RentalAgreement.RentalAgreementId;
 
                 HetRentalAgreementRate rate = new HetRentalAgreementRate
@@ -630,6 +638,7 @@ namespace HetsApi.Controllers
                     Active = true,
                     IsIncludedInTotal = item.IsIncludedInTotal,
                     Rate = item.Rate,
+                    RatePeriodTypeId = ratePeriodTypeId,
                     Set = item.Set
                 };
 
@@ -663,6 +672,9 @@ namespace HetsApi.Controllers
             // process each rate records
             foreach (HetRentalAgreementRate item in items)
             {
+                // set the rate period type id
+                int ratePeriodTypeId = StatusHelper.GetRatePeriodId(item.RatePeriod, _context) ?? throw new DataException("Rate Period Id cannot be null");
+
                 // add or update rate records
                 if (item.RentalAgreementRateId > 0)
                 {
@@ -679,6 +691,7 @@ namespace HetsApi.Controllers
                     rate.Active = true;
                     rate.IsIncludedInTotal = item.IsIncludedInTotal;
                     rate.Rate = item.Rate;
+                    rate.RatePeriodTypeId = ratePeriodTypeId;
                     rate.Set = item.Set;
                 }
                 else // add rate records
@@ -694,6 +707,7 @@ namespace HetsApi.Controllers
                         Active = true,
                         IsIncludedInTotal = item.IsIncludedInTotal,
                         Rate = item.Rate,
+                        RatePeriodTypeId = ratePeriodTypeId,
                         Set = item.Set
                     };
 

@@ -449,7 +449,8 @@ namespace HetsApi.Controllers
                     Set = rate.Set,
                     Overtime = rate.Overtime,
                     Active = rate.Active,
-                    IsIncludedInTotal = rate.IsIncludedInTotal
+                    IsIncludedInTotal = rate.IsIncludedInTotal,
+                    RatePeriodTypeId = rate.RatePeriodTypeId
                 };
 
                 if (agreements[newRentalAgreementIndex].HetRentalAgreementRate == null)
@@ -548,24 +549,7 @@ namespace HetsApi.Controllers
             // ******************************************************************
             // return update rental agreement to update the screen
             // ******************************************************************
-            HetRentalAgreement result = _context.HetRentalAgreement.AsNoTracking()
-                .Include(x => x.Equipment)
-                    .ThenInclude(y => y.Owner)
-                .Include(x => x.Equipment)
-                    .ThenInclude(y => y.DistrictEquipmentType)
-                        .ThenInclude(d => d.EquipmentType)
-                .Include(x => x.Equipment)
-                    .ThenInclude(y => y.HetEquipmentAttachment)
-                .Include(x => x.Equipment)
-                    .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
-                .Include(x => x.Project)
-                    .ThenInclude(p => p.District.Region)
-                .Include(x => x.HetRentalAgreementCondition)
-                .Include(x => x.HetRentalAgreementRate)
-                .Include(x => x.HetTimeRecord)
-                .First(a => a.RentalAgreementId == item.RentalAgreementId);
-
-            return new ObjectResult(new HetsResponse(result));
+            return new ObjectResult(new HetsResponse(RentalAgreementHelper.GetRecord(item.RentalAgreementId, _context)));
         }
 
         #endregion

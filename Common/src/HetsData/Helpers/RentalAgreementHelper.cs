@@ -85,6 +85,7 @@ namespace HetsData.Helpers
                     .ThenInclude(p => p.ProjectStatusType)
                 .Include(x => x.HetRentalAgreementCondition)
                 .Include(x => x.HetRentalAgreementRate)
+                    .ThenInclude(x => x.RatePeriodType)
                 .Include(x => x.HetTimeRecord)
                 .FirstOrDefault(a => a.RentalAgreementId == id);
 
@@ -158,7 +159,7 @@ namespace HetsData.Helpers
                 if (rentalRate.Rate != null)  temp = temp + (float)rentalRate.Rate;
 
                 // format the rate / percent at the same time
-                rentalRate.RateString = FormatRateString(rentalRate, agreement);
+                rentalRate.RateString = FormatRateString(rentalRate, agreement, rentalRate.RatePeriodType.RatePeriodTypeCode);
             }
 
             // add the base amount to the total too
@@ -186,7 +187,7 @@ namespace HetsData.Helpers
 
             foreach (HetRentalAgreementRate rentalRate in agreement.RentalAgreementRatesWithoutTotal)
             {
-                rentalRate.RateString = FormatRateString(rentalRate, agreement);
+                rentalRate.RateString = FormatRateString(rentalRate, agreement, rentalRate.RatePeriodType.RatePeriodTypeCode);
             }
 
             return agreement;
@@ -227,7 +228,7 @@ namespace HetsData.Helpers
             return period;
         }
 
-        private static string FormatRateString(HetRentalAgreementRate rentalRate, RentalAgreementDocViewModel agreement)
+        private static string FormatRateString(HetRentalAgreementRate rentalRate, RentalAgreementDocViewModel agreement, string ratePeriodType)
         {
             string temp = "";
 
@@ -235,6 +236,10 @@ namespace HetsData.Helpers
             if (rentalRate.Rate != null && rentalRate.Set)
             {
                 temp = $"$ {rentalRate.Rate:0.00} / Set";
+            }
+            else if (rentalRate.Rate != null && !string.IsNullOrEmpty(ratePeriodType))
+            {
+                temp = $"$ {rentalRate.Rate:0.00} / {FormatRatePeriod(ratePeriodType)}";
             }
             else if (rentalRate.Rate != null)
             {
@@ -286,7 +291,7 @@ namespace HetsData.Helpers
                 docModel.AgreementCity = agreement.AgreementCity;
                 docModel.DatedOn = (agreement.DatedOn ?? DateTime.UtcNow).ToString("MM/dd/yyyy");
                 docModel.DoingBusinessAs = agreement.Equipment.Owner.DoingBusinessAs;
-                docModel.EmailAddress = agreement.Equipment.Owner.PrimaryContact.EmailAddress;                
+                docModel.EmailAddress = agreement.Equipment.Owner.PrimaryContact.EmailAddress;
 
                 // format owner address
                 string tempAddress = agreement.Equipment.Owner.Address2;
@@ -592,6 +597,7 @@ namespace HetsData.Helpers
         {
             HetRentalAgreement agreement = context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.HetRentalAgreementRate)
+                    .ThenInclude(x => x.RatePeriodType)
                 .First(x => x.RentalAgreementId == id);
 
             List<HetRentalAgreementRate> rates = new List<HetRentalAgreementRate>();
