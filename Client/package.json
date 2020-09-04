@@ -30,7 +30,7 @@
     "immer": "^2.1.3",
     "lodash": "^4.17.14",
     "moment": "^2.22.2",
-    "node-sass": "^4.12.0",
+    "node-sass": "^4.13.1",
     "react": "^16.8.4",
     "react-bootstrap": "^0.32.4",
     "react-datetime": "^2.16.3",
