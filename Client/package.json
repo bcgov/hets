@@ -5,7 +5,7 @@
   "main": "dist/index.html",
   "scripts": {
     "test": "gulp test",
-    "start": "gulp --apihost localhost --apiport 8080"
+    "start": "gulp --apihost localhost --apiport 27238"
   },
   "repository": {
     "type": "git",
@@ -28,9 +28,9 @@
     "bootstrap": "^3.4.1",
     "classnames": "^2.2.6",
     "immer": "^2.1.3",
-    "lodash": "^4.17.14",
+    "lodash": "^4.17.21",
     "moment": "^2.22.2",
-    "node-sass": "^4.12.0",
+    "node-sass": "^4.14.1",
     "react": "^16.8.4",
     "react-bootstrap": "^0.32.4",
     "react-datetime": "^2.16.3",
@@ -83,7 +83,7 @@
     "gulp-util": "~3.0.7",
     "gulp-watch": "~4.3.5",
     "http-proxy-middleware": "^0.19.1",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.5",
     "mocha": "^5.2.0",
     "morgan": "^1.9.1",
     "toxy": "^0.3.12",

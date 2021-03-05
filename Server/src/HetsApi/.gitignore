@@ -276,3 +276,6 @@ __pycache__/
 
 *.DotSettings
 *.DotSettings.user
+
+**/*.Local.json
+**/appsettings.Development.json
