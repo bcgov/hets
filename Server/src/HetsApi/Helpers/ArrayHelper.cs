@@ -6,6 +6,8 @@
         {
             int?[] result;
 
+            if (source == null) return null;
+
             try
             {
                 string[] tokens = source.Split(',');
