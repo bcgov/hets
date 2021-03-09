@@ -19,3 +19,4 @@ applicationHost.config
 
 *.DotSettings
 *.DotSettings.user
+node_modules/
