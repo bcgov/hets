@@ -1,0 +1,75 @@
+{
+  "kind": "List",
+  "apiVersion": "v1",
+  "metadata": {},
+  "items": [
+    {
+      "apiVersion": "image.openshift.io/v1",
+      "kind": "ImageStream",
+      "metadata": {
+        "creationTimestamp": null,
+        "labels": {
+          "shared": "true",
+          "template": "backup-build"
+        },
+        "name": "hets-backup"
+      },
+      "spec": {
+        "lookupPolicy": {
+          "local": false
+        }
+      }
+    },
+    {
+      "apiVersion": "build.openshift.io/v1",
+      "kind": "BuildConfig",
+      "metadata": {
+        "creationTimestamp": null,
+        "labels": {
+          "build": "hets-backup",
+          "template": "backup-build"
+        },
+        "name": "hets-backup"
+      },
+      "spec": {
+        "completionDeadlineSeconds": 600,
+        "nodeSelector": null,
+        "output": {
+          "to": {
+            "kind": "ImageStreamTag",
+            "name": "hets-backup:latest"
+          }
+        },
+        "postCommit": {},
+        "resources": {
+          "limits": {
+            "cpu": 2,
+            "memory": "4Gi"
+          },
+          "requests": {
+            "cpu": 1,
+            "memory": "2Gi"
+          }
+        },
+        "source": {
+          "contextDir": "/docker",
+          "git": {
+            "ref": "master",
+            "uri": "https://github.com/BCDevOps/backup-container.git"
+          },
+          "type": "Git"
+        },
+        "strategy": {
+          "dockerStrategy": {
+            "from": {
+              "kind": "DockerImage",
+              "name": "docker.io/centos/postgresql-12-centos7:20200917-804ef01"
+            }
+          },
+          "dockerfilePath": "Dockerfile",
+          "type": "Docker"
+        }
+      }
+    }
+  ]
+}
