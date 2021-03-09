@@ -83,10 +83,6 @@ objects:
           from:
             kind: ImageStreamTag
             name: dotnet-21-rhel7:2.1-41
-      output:
-        to:
-          kind: ImageStreamTag
-          name: ${NAME}:${VERSION}
 parameters:
   - description: Name of the project (HETS)
     displayName: PROJECT_NAME
