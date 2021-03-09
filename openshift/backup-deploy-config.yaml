@@ -85,7 +85,7 @@ objects:
                     path: "${CONFIG_FILE_NAME}"
           containers:
             - name: "backup"
-              image: image-registry.openshift-image-registry.svc:5000/e82e9a-tools/${NAME}:latest
+              image: image-registry.openshift-image-registry.svc:5000/e0cee6-tools/${NAME}:latest
               ports: []
               env:
                 - name: BACKUP_STRATEGY
