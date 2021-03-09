@@ -102,7 +102,7 @@ objects:
             from:
               kind: ImageStreamTag
               name: ${IMAGE_STREAM_TAG}
-              namespace: e82e9a-tools
+              namespace: e0cee6-tools
           type: ImageChange
   - kind: PersistentVolumeClaim
     apiVersion: v1
