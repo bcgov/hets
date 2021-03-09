@@ -2,11 +2,11 @@
 const options = require("@bcgov/pipeline-cli").Util.parseArguments();
 const changeId = options.pr; //aka pull-request
 const version = "1.0.0";
-const name = "hello";
+const name = "hets";
 
 const phases = {
   build: {
-    namespace: "tran-hets-tools",
+    namespace: "e0cee6-tools",
     name: `${name}`,
     phase: "build",
     changeId: changeId,
@@ -16,7 +16,7 @@ const phases = {
     tag: `build-${version}-${changeId}`,
   },
   dev: {
-    namespace: "tran-hets-dev",
+    namespace: "e0cee6-dev",
     name: `${name}`,
     phase: "dev",
     changeId: changeId,
@@ -24,9 +24,17 @@ const phases = {
     instance: `${name}-dev-${changeId}`,
     version: `${version}-${changeId}`,
     tag: `dev-${version}-${changeId}`,
+    host: `hets-${changeId}-e0cee6-dev.apps.silver.devops.gov.bc.ca`,
+    dotnet_env: "Development",
+    dbUser: "trdbhetd",
+    dbSize: "5Gi",
+    transient: true,
+    backupVolume: "hets",
+    backupVolumeSize: "5Gi",
+    verificationVolumeSize: "5Gi",
   },
   test: {
-    namespace: "tran-hets-test",
+    namespace: "e0cee6-test",
     name: `${name}`,
     phase: "test",
     changeId: changeId,
@@ -34,9 +42,33 @@ const phases = {
     instance: `${name}-test`,
     version: `${version}`,
     tag: `test-${version}`,
+    host: `hets-e0cee6-test.apps.silver.devops.gov.bc.ca`,
+    dbUser: "trdbhett",
+    dbSize: "5Gi",
+    dotnet_env: "Staging",
+    backupVolume: "hets",
+    backupVolumeSize: "5Gi",
+    verificationVolumeSize: "5Gi",
+  },
+  uat: {
+    namespace: "e0cee6-test",
+    name: `${name}`,
+    phase: "uat",
+    changeId: changeId,
+    suffix: `-uat`,
+    instance: `${name}-uat`,
+    version: `${version}`,
+    tag: `test-${version}`,
+    host: `hets-e0cee6-uat.apps.silver.devops.gov.bc.ca`,
+    dbUser: "trdbhett",
+    dbSize: "5Gi",
+    dotnet_env: "UAT",
+    backupVolume: "hets",
+    backupVolumeSize: "5Gi",
+    verificationVolumeSize: "5Gi",
   },
   prod: {
-    namespace: "tran-hets-prod",
+    namespace: "e0cee6-prod",
     name: `${name}`,
     phase: "prod",
     changeId: changeId,
@@ -44,6 +76,13 @@ const phases = {
     instance: `${name}-prod`,
     version: `${version}`,
     tag: `prod-${version}`,
+    host: `hets-e0cee6-prod.apps.silver.devops.gov.bc.ca`,
+    dbUser: "trdbhetp",
+    dbSize: "10Gi",
+    dotnet_env: "Production",
+    backupVolume: "hets",
+    backupVolumeSize: "10Gi",
+    verificationVolumeSize: "10Gi",
   },
 };
 

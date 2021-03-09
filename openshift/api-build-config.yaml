@@ -92,7 +92,7 @@ parameters:
     displayName: PROJECT_NAME
     name: PROJECT_NAME
     required: true
-    value: "hets"
+    value: "het"
   - name: NAME
     displayName: Name
     description: The name assigned to all of the resources defined in this template.
