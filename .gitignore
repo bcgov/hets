@@ -2,7 +2,6 @@
 *_BuildConfig.json
 *_SecretConfig.json
 *.local.*
-secrets
 sonar-runner/.gradle
 sonar-runner/.settings
 sonar-runner/build
