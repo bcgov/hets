@@ -1,4 +1,4 @@
-FROM dotnet-20-rhel7:latest
+FROM dotnet-21-rhel7:2.1-41
 
 # Dockerfile for HETS Client
 
@@ -10,7 +10,7 @@ RUN yum install -y readline-devel bzip2 git && \
 # install Node.js
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION  v8.9.1
-	
+
 RUN mkdir /opt/rh/rh-nodejs6 \
     && touch /opt/rh/rh-nodejs6/enable \
     && chmod a+rx /opt/rh/rh-nodejs6/enable \
