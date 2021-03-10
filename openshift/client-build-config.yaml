@@ -79,19 +79,8 @@ parameters:
     description: The source context directory.
     required: false
     value: "/Client"
-  - name: SOURCE_IMAGE_KIND
-    displayName: Source Image Kind
-    description: The 'kind' (type) of the  source image; typically ImageStreamTag, or
-      DockerImage.
-    required: true
-    value: DockerImage
   - name: DOCKER_FILE_PATH
     displayName: Docker File Path
     description: The path to the docker file defining the build.
     required: false
     value: Dockerfile
-  - name: OUTPUT_IMAGE_TAG
-    displayName: Output Image Tag
-    description: The tag given to the built image.
-    required: true
-    value: latest
