@@ -1,8 +1,6 @@
 FROM image-registry.openshift-image-registry.svc:5000/e0cee6-tools/node:1 AS builder
 LABEL maintainer="young-jin.chung@gov.bc.ca"
 
-ENV NODE_ENV production
-
 COPY . /src
 
 RUN cd /src/Client && npm ci && \
