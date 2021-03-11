@@ -9,13 +9,13 @@
           "version": "1.0.0",
           "environments": {
             "build": {
-              "namespace": "tran-hets-tools"
+              "namespace": "e0cee6-tools"
             },
             "dev": {
-              "namespace": "tran-hets-dev"
+              "namespace": "e0cee6-dev"
             },
             "prod": {
-              "namespace": "tran-hets-prod"
+              "namespace": "e0cee6-prod"
             }
           },
           "jenkinsJobName": "_jenkins",
@@ -30,16 +30,16 @@
           "path": ".",
           "environments": {
             "build": {
-              "namespace": "tran-hets-tools"
+              "namespace": "e0cee6-tools"
             },
             "dev": {
-              "namespace": "tran-hets-dev"
+              "namespace": "e0cee6-dev"
             },
             "test": {
-              "namespace": "tran-hets-test"
+              "namespace": "e0cee6-test"
             },
             "prod": {
-              "namespace": "tran-hets-prod"
+              "namespace": "e0cee6-prod"
             }
           }
         }
