@@ -1,4 +1,4 @@
-FROM tran-hets-tools/client
+FROM e0cee6-tools/hets-client
 # Dockerfile for the application front end
 
 # Switch to root for package installs
@@ -14,7 +14,7 @@ ENV NVM_DIR /usr/local/nvm
 
 RUN . $NVM_DIR/nvm.sh && \
     nvm use v8.9.1
-	
+
 # disable the production switch 	
 RUN npm config set -g production false	
 RUN npm install
@@ -29,4 +29,4 @@ RUN npm install
 # modify 
 RUN chown -R 1001:0 /opt/app-root/ && fix-permissions /opt/app-root/
 
-User 1001
+USER 1001
