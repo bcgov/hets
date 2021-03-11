@@ -1,4 +1,4 @@
-FROM e0cee6-tools/client
+FROM e0cee6-tools/hets-client
 # Dockerfile for the application front end
 
 # Switch to root for package installs

@@ -119,7 +119,7 @@ namespace FrontEnd
                 options.Scheme = defaultConfig.Scheme;
             }
 
-            string apiServerUri = Configuration["MIDDLEWARE_NAME"];
+            string apiServerUri = Configuration["API_SERVER"];
 
             if (apiServerUri != null)
             {

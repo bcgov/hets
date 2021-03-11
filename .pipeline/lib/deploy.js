@@ -94,6 +94,22 @@ module.exports = (settings) => {
     )
   );
 
+  objects.push(
+    ...oc.processDeploymentTemplate(
+      `${templatesLocalBaseUrl}/client-deploy-config.yaml`,
+      {
+        param: {
+          PROJECT_NAME: `${phases[phase].name}`,
+          NAME: `${phases[phase].name}-client`,
+          SUFFIX: phases[phase].suffix,
+          VERSION: phases[phase].tag,
+          ENV: phases[phase].phase,
+          ASPNETCORE_ENVIRONMENT: phases[phase].dotnet_env,
+        },
+      }
+    )
+  );
+
   oc.applyRecommendedLabels(
     objects,
     phases[phase].name,

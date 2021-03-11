@@ -52,11 +52,11 @@ objects:
                   protocol: TCP
               resources:
                 requests:
-                  cpu: 10m
-                  memory: 128Mi
+                  cpu: 1
+                  memory: 1G
                 limits:
-                  cpu: 250m
-                  memory: 512Mi
+                  cpu: 2
+                  memory: 2G
               terminationMessagePath: /dev/termination-log
               terminationMessagePolicy: File
               volumeMounts:
