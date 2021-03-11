@@ -58,7 +58,7 @@ objects:
                       name: "${PROJECT_NAME}-${DB_NAME}-${ENV}"
                       key: connection-string
                 - name: API_SERVER
-                  value: "api:8080"
+                  value: "${PROJECT_NAME}-api${SUFFIX}:8080"
                 - name: ASPNETCORE_ENVIRONMENT
                   value: "${ASPNETCORE_ENVIRONMENT}"
       test: false
@@ -85,6 +85,25 @@ objects:
           targetPort: 8080
       selector:
         deploymentconfig: ${NAME}${SUFFIX}
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      annotations:
+        haproxy.router.openshift.io/timeout: 1h
+      creationTimestamp: null
+      name: ${NAME}${SUFFIX}
+    spec:
+      host: ${HOST}
+      path: "/"
+      port:
+        targetPort: web
+      tls:
+        termination: edge
+      to:
+        kind: Service
+        name: ${NAME}${SUFFIX}
+        weight: 100
+      wildcardPolicy: None
 parameters:
   - description: Name of the project (HETS)
     displayName: PROJECT_NAME
@@ -111,6 +130,11 @@ parameters:
     name: VERSION
     required: true
     value: "v1.0.0"
+  - description: HOST
+    displayName: HOST
+    name: HOST
+    required: true
+    value: ""
   - name: DB_NAME
     displayName: DB Name
     description:

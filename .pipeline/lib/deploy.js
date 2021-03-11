@@ -104,6 +104,7 @@ module.exports = (settings) => {
           SUFFIX: phases[phase].suffix,
           VERSION: phases[phase].tag,
           ENV: phases[phase].phase,
+          HOST: phases[phase].host,
           ASPNETCORE_ENVIRONMENT: phases[phase].dotnet_env,
         },
       }
