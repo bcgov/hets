@@ -149,9 +149,9 @@ objects:
                   cpu: "${CPU_LIMIT}"
                   memory: "${MEMORY_LIMIT}"
               volumeMounts:
-                - name: "${NAME}-${BACKUP_VOLUME_NAME}-${ENV}"
+                - name: "${NAME}-${BACKUP_VOLUME_NAME}"
                   mountPath: "${BACKUP_DIR}"
-                - name: "${NAME}-${VERIFICATION_VOLUME_NAME}-${ENV}"
+                - name: "${NAME}-${VERIFICATION_VOLUME_NAME}"
                   mountPath: "${VERIFICATION_VOLUME_MOUNT_PATH}"
                 - name: "${NAME}-config-volume"
                   mountPath: "${CONFIG_MOUNT_PATH}${CONFIG_FILE_NAME}"
