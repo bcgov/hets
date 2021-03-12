@@ -25,7 +25,7 @@
           "uuid": "aadd0377-f7c0-4035-a9ae-5b4c77748461"
         },
         ".": {
-          "name": "hello",
+          "name": "hets",
           "version": "1.0.0",
           "path": ".",
           "environments": {
