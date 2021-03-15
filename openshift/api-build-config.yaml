@@ -118,7 +118,7 @@ parameters:
     displayName: Source Context Directory
     description: The source context directory.
     required: false
-    value: ''
+    value: 'Server'
   - name: SOURCE_IMAGE_KIND
     displayName: Source Image Kind
     description: The 'kind' (type) of the  source image; typically ImageStreamTag, or
@@ -129,4 +129,4 @@ parameters:
     displayName: DotNet Startup Project
     description: The path to the startup project for the .Net application.
     required: true
-    value: Server/src/HetsApi/HetsApi.csproj
+    value: HetsApi/HetsApi.csproj

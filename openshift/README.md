@@ -7,6 +7,8 @@ This document will not go into the details of how to use BCDK and pipeline-cli. 
 - [BCDK](https://github.com/BCDevOps/bcdk)
 - [pipeline-cli](https://github.com/BCDevOps/pipeline-cli)
 
+HETS is using the official BCDevOps Backup Container for backing up DB. Below is README file from [BCDevOps backup-container](https://github.com/BCDevOps/backup-container)
+
 ## Prerequisites
 
 - Admin access to OpenShift namespaces, preferably using the standard BC Gov setup of `tools`, `dev`, `test` and `prod` namespaces

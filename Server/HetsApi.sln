@@ -2,15 +2,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A9D01C84-816F-449E-B0B3-CA5CE4DB13A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsCommon", "HetsCommon\HetsCommon.csproj", "{FF1DB058-3D10-4065-A42B-E9EB5BEB0982}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsCommon", "..\Common\src\HetsCommon\HetsCommon.csproj", "{FF1DB058-3D10-4065-A42B-E9EB5BEB0982}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsData", "HetsData\HetsData.csproj", "{E88FFF3D-CE15-43E9-B1BE-4111E5862E2B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsData", "..\Common\src\HetsData\HetsData.csproj", "{E88FFF3D-CE15-43E9-B1BE-4111E5862E2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsApi", "HetsApi\HetsApi.csproj", "{292B510E-6283-4616-AD2A-D8A994FD4285}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsApi", "src\HetsApi\HetsApi.csproj", "{292B510E-6283-4616-AD2A-D8A994FD4285}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsReport", "..\Common\src\HetsReport\HetsReport.csproj", "{7DFA1859-E5B0-4460-A5A5-5E5288A4AC94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsReport", "HetsReport\HetsReport.csproj", "{7DFA1859-E5B0-4460-A5A5-5E5288A4AC94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
