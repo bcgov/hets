@@ -49,14 +49,9 @@ objects:
                   cpu: 250m
                   memory: 512Mi
                 limits:
-                  cpu: 500m
-                  memory: 768Mi
+                  cpu: 250m
+                  memory: 512Mi
               env:
-                - name: ConnectionStrings__HETS
-                  valueFrom:
-                    secretKeyRef:
-                      name: "${PROJECT_NAME}-${DB_NAME}-${ENV}"
-                      key: connection-string
                 - name: API_SERVER
                   value: "${PROJECT_NAME}-api${SUFFIX}:8080"
                 - name: ASPNETCORE_ENVIRONMENT
@@ -135,13 +130,6 @@ parameters:
     name: HOST
     required: true
     value: ""
-  - name: DB_NAME
-    displayName: DB Name
-    description:
-      The name assigned to all of the CCW microservice objects defined in
-      this template.
-    required: true
-    value: db
   - name: ASPNETCORE_ENVIRONMENT
     displayName: AspNetCore Environment
     description: The ASP Net Core deployment environment setting.
