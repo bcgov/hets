@@ -14,6 +14,7 @@ const phases = {
     instance: `${name}-build-${changeId}`,
     version: `${version}-${changeId}`,
     tag: `build-${version}-${changeId}`,
+    transient: true,
   },
   dev: {
     namespace: "e0cee6-dev",
