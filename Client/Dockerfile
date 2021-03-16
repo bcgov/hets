@@ -10,7 +10,7 @@ FROM image-registry.openshift-image-registry.svc:5000/e0cee6-tools/dotnet-21-rhe
 
 COPY --from=builder /src/Client/dist /opt/app-root/dist
 
-COPY --from=builder /src/. /opt/app-root/src
+COPY --from=builder /src/FrontEnd /opt/app-root/src/FrontEnd
 
 RUN $STI_SCRIPTS_PATH/assemble
 

@@ -45,7 +45,7 @@ namespace HetsApi.Controllers
 
             if ((_httpContext.Connection.RemoteIpAddress.ToString().StartsWith("::1") ||
                  _httpContext.Connection.RemoteIpAddress.ToString().StartsWith("::ffff:127.0.0.1")) &&
-                     url.StartsWith("http://localhost:8080"))
+                     url.StartsWith("http://localhost:27238"))
             {
                 accessEnabled = true;
             }

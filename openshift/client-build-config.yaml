@@ -123,4 +123,4 @@ parameters:
     displayName: DotNet Startup Project
     description: The path to the startup project for the .Net application.
     required: true
-    value: "FrontEnd/src/FrontEnd/FrontEnd.csproj"
+    value: "FrontEnd/FrontEnd/FrontEnd.csproj"

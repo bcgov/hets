@@ -29,9 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\src\HetsCommon\HetsCommon.csproj" />
-    <ProjectReference Include="..\..\..\Common\src\HetsData\HetsData.csproj" />
-    <ProjectReference Include="..\..\..\Common\src\HetsReport\HetsReport.csproj" />
+    <ProjectReference Include="..\HetsCommon\HetsCommon.csproj" />
+    <ProjectReference Include="..\HetsData\HetsData.csproj" />
+    <ProjectReference Include="..\HetsReport\HetsReport.csproj" />
   </ItemGroup>
 
   <ItemGroup>
