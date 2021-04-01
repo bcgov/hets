@@ -66,11 +66,11 @@ objects:
                 protocol: TCP
               resources:
                 requests:
-                  cpu: 500m
-                  memory: 2G
+                  cpu: ${CPU}
+                  memory: ${MEMORY}
                 limits:
-                  cpu: 1
-                  memory: 2G
+                  cpu: ${CPU}
+                  memory: ${MEMORY}
               env:
                 - name: ConnectionStrings__HETS
                   valueFrom:
@@ -182,3 +182,13 @@ parameters:
     description: The path for storing batch reports.
     required: true
     value: "/reports/"
+  - description: CPU
+    displayName: CPU Request
+    name: CPU
+    required: true
+    value: ""
+  - description: MEMORY
+    displayName: MEMORY Request
+    name: MEMORY
+    required: true
+    value: ""

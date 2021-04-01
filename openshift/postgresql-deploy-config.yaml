@@ -52,11 +52,11 @@ objects:
                   protocol: TCP
               resources:
                 requests:
-                  cpu: 1
-                  memory: 1G
+                  cpu: ${CPU}
+                  memory: ${MEMORY}
                 limits:
-                  cpu: 2
-                  memory: 2G
+                  cpu: ${CPU}
+                  memory: ${MEMORY}
               terminationMessagePath: /dev/termination-log
               terminationMessagePolicy: File
               volumeMounts:
@@ -176,3 +176,13 @@ parameters:
     description: The class of the volume; netapp-file-standard, netapp-file-block
     required: false
     value: netapp-file-standard
+  - description: CPU
+    displayName: CPU Request
+    name: CPU
+    required: true
+    value: ""
+  - description: MEMORY
+    displayName: MEMORY Request
+    name: MEMORY
+    required: true
+    value: ""
