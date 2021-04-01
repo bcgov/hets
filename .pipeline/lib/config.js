@@ -125,12 +125,12 @@ const phases = {
     backupVolume: "hets",
     backupVolumeSize: "10Gi",
     verificationVolumeSize: "10Gi",
-    db_cpu: "2",
-    db_memory: "2Gi",
-    api_cpu: "2",
-    api_memory: "2Gi",
-    client_cpu: "100m",
-    client_memory: "100Mi",
+    db_cpu: "1",
+    db_memory: "1Gi",
+    api_cpu: "1",
+    api_memory: "1Gi",
+    client_cpu: "200m",
+    client_memory: "200Mi",
   },
 };
 
