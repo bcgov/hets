@@ -46,11 +46,11 @@ objects:
                 protocol: TCP
               resources:
                 requests:
-                  cpu: 250m
-                  memory: 512Mi
+                  cpu: ${CPU}
+                  memory: ${MEMORY}
                 limits:
-                  cpu: 250m
-                  memory: 512Mi
+                  cpu: ${CPU}
+                  memory: ${MEMORY}
               env:
                 - name: API_SERVER
                   value: "${PROJECT_NAME}-api${SUFFIX}:8080"
@@ -135,3 +135,13 @@ parameters:
     description: The ASP Net Core deployment environment setting.
     required: true
     value: Development
+  - description: CPU
+    displayName: CPU Request
+    name: CPU
+    required: true
+    value: ""
+  - description: MEMORY
+    displayName: MEMORY Request
+    name: MEMORY
+    required: true
+    value: ""
