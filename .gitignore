@@ -2,7 +2,6 @@
 *_BuildConfig.json
 *_SecretConfig.json
 *.local.*
-secrets
 sonar-runner/.gradle
 sonar-runner/.settings
 sonar-runner/build
@@ -19,3 +18,4 @@ applicationHost.config
 
 *.DotSettings
 *.DotSettings.user
+node_modules/

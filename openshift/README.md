@@ -1,200 +1,172 @@
-Hired Equipment Tracking System
-======================
+# OpenShift Deployment and Pipeline
 
-## Running in OpenShift
+HETS (Hired Equipment Tracking System) makes use of BCDK and pipline-cli to manage OpenShift deployments. These tools enable a Github Pull Request (PR) based CI/CD pipeline. Once the Jenkins instance is configured and deployed, it will monitor Github repository for pull requests and start a new build based on that.
 
-This project uses the scripts found in [openshift-project-tools](https://github.com/BCDevOps/openshift-project-tools) to setup and maintain OpenShift environments (both local and hosted).  Refer to the [OpenShift Scripts](https://github.com/BCDevOps/openshift-project-tools/blob/master/bin/README.md) documentation for details.
+This document will not go into the details of how to use BCDK and pipeline-cli. For documentation on those, you can refer to the following links
 
-**These scripts are designed to be run on the command line (using Git Bash for example) in the root `openshift` directory of your project's source code.**
+- [BCDK](https://github.com/BCDevOps/bcdk)
+- [pipeline-cli](https://github.com/BCDevOps/pipeline-cli)
 
-## Running in a Local OpenShift Cluster
+HETS is using the official BCDevOps Backup Container for backing up DB. Below is README file from [BCDevOps backup-container](https://github.com/BCDevOps/backup-container)
 
-At times running in a local cluster is a little different than running in the production cluster.
+## Prerequisites
 
-Differences can include:
-* Resource settings.
-* Available image runtimes.
-* Source repositories (such as your development repo).
-* Etc.
+- Admin access to OpenShift namespaces, preferably using the standard BC Gov setup of `tools`, `dev`, `test` and `prod` namespaces
+- Github personal access token for an account that has contributor access to your repository. It needs to include `repo:status`, `repo_deployment`, `public_repo` and `admin:repo_hook` permissions
 
-To target a different repo and branch, create a `setting.local.sh` file in your project's local `openshift` directory and override the GIT parameters, for example;
+### Github Personal Access Token
+
+The Github Personal Access Token is used to give Jenkins access to monitor your repository for changes and create the necessary webhooks. It is recommended to use a shared team Github account for this.
+
+The access token must have `repo:status`, `repo_deployment`, `public_repo` and `admin:repo_hook` permissions for the pipeline to work properly.
+
+Please refer to [Github's guide](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) for more details.
+
+## Pipeline Setup
+
+This section will describe the necessary steps required to configure the pipeline to run in your OpenShift environment.
+
+### Create Secret Objects
+
+There are a few secret objects that must be created manually in the `dev`, `test`, and `prod` namespaces. These are required for the pods to function properly.
+
+You can use the following templates to create the secret objects. Make sure to replace the parameter variables with actual values encoded to base64.
+
+- [db-postgresql-secrets.yaml](secrets/db-postgresql-secrets.yaml)
+- [jenkins.yaml](secrets/jenkins.yaml)
+
+### Configure Pipeline-cli
+
+The `.jenkins` and `.pipeline` directories contain the scripts genereated by the BCDK tool in order to use pipeline-cli against your OpenShift namespaces. The scripts in the `.jenkins` and `.pipeline` directories in this repository are configured to run against the official SBI OpenShift namespaces (`e0cee6-`).
+
+You will need to configure the scripts in the `.jenkins` and `.pipeline` directories to work with your OpenShift namespaces. There are two ways to do this:
+
+1. Update the namespace values in both `lib/config.js` file and create the Jenkins secret objects maually.
+2. Re-run the BCDK tool to setup your namespaces and pipeline-cli automatically. However you will need to merge the generated scripts with the scripts in this repository.
+
+#### Update Manually
+
+This is easier method to adapt the pipeline scripts to your namespaces. The scripts need to be updated are
+
+- [.jenkins/.pipeline/lib/config.js](/.jenkins/.pipeline/lib/config.js)
+- [.pipeline/lib/config.js](/.pipeline/lib/config.js)
+
+The values to modify are the `namespace` and `host` values. Update them to match your OpenShift namespaces.
+
+The last step is to create the Jenkins secret objects in the `tools` namespace. Use your Github username and personal access token.
+
+```yaml
+apiVersion: template.openshift.io/v1
+kind: Template
+objects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      annotations: null
+      name: template.${NAME}-slave-user
+    stringData:
+      metadata.name: template.${NAME}-slave-user
+      username: jenkins-slave
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      annotations: null
+      name: template.${NAME}-github
+    stringData:
+      metadata.name: template.${NAME}-github
+      username: ${GH_USERNAME}
+      password: ${GH_ACCESS_TOKEN}
+parameters:
+  - description: A name used for all objects
+    displayName: Name
+    name: NAME
+    required: true
+    value: jenkins
+  - name: GH_USERNAME
+    required: true
+  - description: GitHub Personal Access Token
+    name: GH_ACCESS_TOKEN
+    required: true
 ```
-export GIT_URI="https://github.com/WadeBarnes/hets.git"
-export GIT_REF="openshift-updates"
-```
 
-Then run the following command from the project's local `openshift` directory:
-```
-genParams.sh -l
-```
+#### Update using BCDK
 
-This will generate local settings files for all of the builds, deployments, and Jenkins pipelines.
-The settings in these files will be specific to your local configuration and will be applied when you run the `genBuilds.sh` or `genDepls.sh` scripts with the `-l` switch.
+Refer to the official [BCDK documentation](https://github.com/BCDevOps/bcdk) on how to use this method. After you have ran the BCDK generators, you will need to merge the generated scripts and the existing scripts in this repository.
 
-### Important Local Configuration for the HETS project
+## Deploy Jenkins
 
-Before you deploy your local build configurations ...
+The Jenkins instance is used to run the pipeline automatically when pull requests are detected. For that to happen you will need to build and deploy Jenkins to the `tools` namespace
 
-The client, server, and pdf components of the project use .Net 2.0 s2i images for their builds.  In the pathfinder environment these components utilize the `dotnet-20-rhel7` image which is available at registry.access.redhat.com/dotnet/dotnet-20-rhel7.  For local builds this image can still be downloaded, however you will receive errors during any builds (Docker builds) that try to use `yum` to install any additional packages.
+**IMPORTANT!** Make sure the `jenkins-prod` service account from `tools` namespace have admin access to the `dev`, `test`, and `prod` namespaces. This allows Jenkins to deploy to the namespaces and perform cleanups.
 
-To resolve this issue the project defines builds for `dotnet-20-runtime-centos7` and `dotnet-20-centos7`; which at the time of writing were not available in image form.  The `dotnet-20-centos7` s2i image is the CentOS equivalent of the `dotnet-20-rhel7` s2i image that can be used for local development.  These two images are not used in the Pathfinder environment and exist only to be used in a local environment.
-
-To switch to the `dotnet-20-centos7` image for local deployment, open your `client-build.local.param` and `dotnet-20-node-89-build.local.param` file and update the following 2 lines;
+Use the following steps to deploy Jenkins. This assumes you have already logged in
 
 ```
-# SOURCE_IMAGE_KIND=DockerImage
-# SOURCE_IMAGE_NAME=registry.access.redhat.com/dotnet/dotnet-20-rhel7
+# Switch to tools namespace
+oc project <namespace>-tools
+
+# Change working directory to .jenkins/.pipeline
+cd .jenkins/.pipeline
+
+# Install required NPM modules
+npm install
+
+# Build Jenkins from local code package
+# --dev-mode=true enables uploading local source code as an archive
+# dev-mode is useful for building changes without pushing to remote first
+# --pr=0 indicates pull request 0, generally used for dev-mode builds
+npm run build -- --pr=0 --dev-mode=true
+
+# Wait for builds to finish and deploy
+npm run deploy -- --pr=0 --env=prod
+
+# Optionally you can deploy as dev first
+# npm run deploy -- --pr=0 --env=dev
 ```
-with
+
+Once the prod Jenkins instance is running, you should see new webhooks created in your repository settings. Jenkins is now ready to monitor pull requests.
+
+## Pull Request Build and Deploy
+
+Once Jenkins is properly configured and deployed, it is ready to monitor pull requests.
+
+Every pull request made to your repository will trigger a new build and create a standalone deployment in the `dev` namespace. This allows you to test new features independantly of other features.
+
+If [configured properly](https://github.com/BCDevOps/bcdk#automatically-clean-up-pull-request-deployments), Jenkins will also automatically clean up the environments when a pull request is merged or closed.
+
+**Note!** Pull requests to a branch other than `master` will cause the pipeline to end after deploying the `dev` namespace. Pull requests to `master` will cause Jenkins to execute all the stages in the [Jenkinsfile](/Jenkinsfile) unless manually terminated.
+
+## Manually Build and Deploy
+
+Use the following steps to manually build and deploy. This assumes you have already logged in.
+
 ```
-SOURCE_IMAGE_KIND=ImageStreamTag
-SOURCE_IMAGE_NAME=dotnet-20-centos7
+# Change directory to .pipeline
+cd .pipeline
+
+# Installed the required NPM packages
+npm install
+
+# Create build for a particular PR on Github
+npm run build -- --pr=<pr#>
+
+# Deploy to dev, test, or prod
+npm run deploy -- --pr=<pr#> --env=<env>
 ```
 
-### Preparing for local deployment
+You can also build from your local source code using the `--dev-mode=true` flag. This will upload your local source repository instead of cloning the repository from Github. You may need to delete the `client/node_modules` directory before using `dev-mode`. The `node_modules` directory contains too many files and will often cause the build to fail.
 
-1. Install the oc cli.  If you are working on a Windows 10 machine you get can up and running quickly using the scripts found here; [Chocolatey Scripts](https://github.com/WadeBarnes/dev-tools/tree/master/chocolatey).
-1. Start an OpenShift cluster.  If you are using Docker you can use the `oc-cluster-up.sh` scripts from [openshift-project-tools](https://github.com/BCDevOps/openshift-project-tools).
-1. Run `generateLocalProjects.sh` to create the projects in your local cluster.
-1. Run `initOSProjects.sh` to update the deployment permissions on the projects.
-1. To fix the routes in your local deployment environments use the `updateRoutes.sh` script.
+`dev-mode` is useful for testing the pipeline without pushing any changes to the remote repository.
 
-From here on out the commands used to deploy and management the application configurations are basically the same for a local cluster as they are for the Pathfinder environment.
-
-## Deploying your project
-
-All of the commands listed in the following sections must be run from the root `openshift` directory of your project's source code.
-
-### Before you begin ...
-
-If you are updating an existing environment you will need to be conscious of retaining access to the existing data in the given environment.  User accounts, database names, and database credentials can all be affected.  The processes affecting them should be reviewed and understood before proceeding.
-
-For example, the process of deploying and managing database credentials has changed.  The process has moved to using shared secretes that are mounted as environment variables, where previously they were provisioned as discrete environment variables in each component's environment.  Further the new deployment process, by default, will create a random set of credentials for each deployment or update (a new set every time you run `genDepls.sh`).  Being that the credentials are shared, there is a single source and place that needs to be updated.  You simply need to ensure the credentials are updated to the values expected by the pre-configured environment if needed.
-
-### Initialization
-
-If you are working with a new set of OpenShift projects, or you have run a `oc delete all --all` to start over, run the `initOSProjects.sh` script, this will repair the cluster file system services (in the Pathfinder environment), and ensure the deployment environments have the correct permissions to deploy images from the tools project.
-
-### Generating the Builds, Images and Pipelines in the Tools Project
-
-Run;
 ```
-genBuilds.sh
+npm run build --pr=0 --dev-mode=true
 ```
-, and follow the instructions.
 
-All of the builds should start automatically as their dependencies are available, starting with builds with only docker image and source dependencies.
+You can clean up builds and deployments using
 
-The process of deploying the Jenkins pipelines will automatically provision a Jenkins instance if one does not already exist.  This makes it easy to start fresh; you can simply delete the existing instance along with it's associated PVC, and fresh instances will be provisioned.
-
-### Deploying the Secrets
-
-The application relies on a number of secrets used during initialization that must be loaded into the environment before components such as the server will function properly.  There is a script and a template to make deployment easy, but you have to provide the appropriate content.
-
-Secrets should NEVER be checked into source control, and they should be managed securely.
-
-The secrets are used to initialize the user accounts for a given environment and must contain JSON in the following form.
-
-**users.json**
-`[
-{
-"active": true,
-"email": ""email address,
-"givenName": "Given Name",
-"id": "Id field",
-"initials": "Initials",
-"smUserID": "Siteminder User ID",
-"surname": "Surname",
-"groupMemberships": [{"Group" : {"name": "Group Name"}}],
-"userRoles": [{"Role": {"Name": "Role Name"}}]
- },
-<other users>
-]`
-
-**districts.json**
-
-`[
-{
-"endDate": null,
-"id": "1",
-"ministryDistrict": "1",
-"name": "Lower Mainland",
-"region": {
-"id": "1",
-"ministryRegionID": "1"
-},
-"startDate": "1/1/2009"
-},
-<other districts>`
-]`
-
-**regions.json**
-
-`[
-{
-"Name": "South Coast",
-"endDate": null,
-"id": "1",
-"ministryRegionID": "1",
-"startDate": "1/1/2009"
-},
-<other regions>
-]`
-
-Create the following files in your project directory:
-
-`.../hets/openshift/secrets/server-secret/districts.json`
-
-`.../hets/openshift/secrets/server-secret/regions.json`
-
-`.../hets/openshift/secrets/server-secret/users.json`
-
-Populate the files with the json content appropriate for the intended environment (the content will likely be different for some environments such as prod).
-
-Run;
 ```
-genSecrets.sh -e <environmentName/>
+npm run clean -- --pr=<pr#> ---env=<env>
+
+# Alternative you can use --env=all if you have the transient option configured properly
+npm run clean -- --pr=<pr#> --env=all
 ```
-, to deploy the secrets to the desired environments.
-
-Review the results in the OpenShift web interface to ensure the secrets were deployed as expected.
-
-### Generate the Deployment Configurations and Deploy the Components
-
-Run;
-```
-genDepls.sh -e <environmentName/>
-```
-, and follow the instructions to deploy the application components to the desired environments.
-
-### Wire up your Jenkins Pipelines
-
-When the Jenkins Pipelines were provisioned when your ran `genBuilds.sh` web-hook URLs and secrets were generated automatically.  To trigger the pipelines via GIT commits, register the URL(s) for the pipelines with GIT.
-
-Copy and paste the pipeline's web-hook url into the Payload URL of the GIT web-hook (it comes complete with the secret).
-
-Set the content type to **application/json**
-
-Select **Just the push event**
-
-Check **Active**
-
-Click **Add webhook**
-
-## Environment Variables
-
-The following environment variables are used by the application:
-
-| Environment Variable | Purpose | Example | Notes |
-| ---------------------| ------- | ------- | ----- |
-| DATABASE_SERVICE_NAME | Database service | postgresql | set to localhost for local development |
-| POSTGRESQL_USER | PGSQL User | test | Must have enough access to create tables |
-| POSTGRESQL_PASSWORD | PGSQL User's Password | test | |
-| POSTGRESQL_DATABASE | Database name | hets | |
-| UserInitializationFile | Location of user seed data | /secrets/users.json | Json format following the User model definition |
-| DistrictInitializationFile | Location of District seed data | /secrets/districts.json | Json format following the District model definition |
-| RegionInitializationFile | Location of Region seed data | /secrets/regions.json | Json format following the Region model definition |
-| PDF_SERVICE_NAME | PDF microservice location | http://pdf:8080 | |
-| ASPNETCORE_ENVIRONMENT | Type of deployment | Development | Set to other Production (or anything other than Development) to disable development features such as user visible stack traces. |
-
-Credit:  [George Walker](https://github.com/GeorgeWalker), [Wade Barnes](https://github.com/WadeBarnes) contributed to this page.

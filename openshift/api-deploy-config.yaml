@@ -1,0 +1,194 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: ${PROJECT_NAME}
+  creationTimestamp:
+labels:
+  template: api-deploy
+objects:
+  - apiVersion: v1 #is: api
+    kind: ImageStream
+    metadata:
+      creationTimestamp: null
+      labels:
+        shared: "true"
+      name: ${NAME}
+    spec:
+      lookupPolicy:
+        local: false
+  - kind: PersistentVolumeClaim
+    apiVersion: v1
+    metadata:
+      name: "${NAME}${SUFFIX}-${PERSISTENT_VOLUME_NAME}"
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: "${PERSISTENT_VOLUME_SIZE}"
+  - kind: PersistentVolumeClaim
+    apiVersion: v1
+    metadata:
+      name: "${NAME}${SUFFIX}-${PERSISTENT_VOLUME_NAME_REPORTS}"
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: "${PERSISTENT_VOLUME_SIZE}"
+  - kind: DeploymentConfig
+    apiVersion: v1
+    metadata:
+      name: ${NAME}${SUFFIX}
+    spec:
+      replicas: 1
+      selector:
+        deploymentconfig: ${NAME}${SUFFIX}
+      strategy:
+        activeDeadlineSeconds: 21600
+        rollingParams:
+          intervalSeconds: 1
+          maxSurge: 1
+          maxUnavailable: 1
+          timeoutSeconds: 600
+          updatePeriodSeconds: 1
+        type: Rolling
+      template:
+        metadata:
+          labels:
+            deploymentconfig: ${NAME}${SUFFIX}
+        spec:
+          containers:
+            - image: ${NAME}:${VERSION}
+              name: api
+              ports:
+              - containerPort: 8080
+                protocol: TCP
+              resources:
+                requests:
+                  cpu: ${CPU}
+                  memory: ${MEMORY}
+                limits:
+                  cpu: ${CPU}
+                  memory: ${MEMORY}
+              env:
+                - name: ConnectionStrings__HETS
+                  valueFrom:
+                    secretKeyRef:
+                      name: "${PROJECT_NAME}-${DB_NAME}-${ENV}"
+                      key: connection-string
+                - name: ASPNETCORE_ENVIRONMENT
+                  value: "${ASPNETCORE_ENVIRONMENT}"
+                - name: UploadPath
+                  value: "${UPLOAD_PATH}"
+                - name: ReportsPath
+                  value: "${REPORTS_PATH}"
+              volumeMounts:
+                - name: "${NAME}${SUFFIX}-${NAME}-docs"
+                  mountPath: "/uploads"
+                - name: "${NAME}${SUFFIX}-${NAME}-reports"
+                  mountPath: "/reports"
+          volumes:
+            - name: "${NAME}${SUFFIX}-${NAME}-docs"
+              persistentVolumeClaim:
+                claimName: "${NAME}${SUFFIX}-${PERSISTENT_VOLUME_NAME}"
+            - name: "${NAME}${SUFFIX}-${NAME}-reports"
+              persistentVolumeClaim:
+                claimName: "${NAME}${SUFFIX}-${PERSISTENT_VOLUME_NAME_REPORTS}"
+      test: false
+      triggers:
+        - imageChangeParams:
+            automatic: true
+            containerNames:
+              - api
+            from:
+              kind: ImageStreamTag
+              name: ${NAME}:${VERSION}
+          type: ImageChange
+        - type: ConfigChange
+  - apiVersion: v1 #service: api
+    kind: Service
+    metadata:
+      creationTimestamp: null
+      name: ${NAME}${SUFFIX}
+    spec:
+      ports:
+        - name: web
+          port: 8080
+          protocol: TCP
+          targetPort: 8080
+      selector:
+        deploymentconfig: ${NAME}${SUFFIX}
+parameters:
+  - description: Name of the project (HETS)
+    displayName: PROJECT_NAME
+    name: PROJECT_NAME
+    required: true
+    value: "het"
+  - name: NAME
+    displayName: Name
+    description: The name assigned to all of the resources defined in this template.
+    required: true
+    value: api
+  - description: A name suffix used for all objects
+    displayName: Suffix
+    name: SUFFIX
+    required: false
+    value: "-dev"
+  - description: Environment short name (dev,test,uat,prod)
+    displayName: ENV
+    name: ENV
+    required: false
+    value: "dev"
+  - description: A version used for the image tags
+    displayName: version
+    name: VERSION
+    required: true
+    value: "v1.0.0"
+  - name: PERSISTENT_VOLUME_NAME
+    displayName: Persistent Volume Name
+    description: The name of the persistent volume associated with the deployment.
+    required: true
+    value: server-docs-pvc
+  - name: PERSISTENT_VOLUME_NAME_REPORTS
+    displayName: Persistent Volume Name for Reports
+    description: The name of the persistent volume associated with the deployment (reports).
+    required: true
+    value: server-reports-pvc
+  - name: PERSISTENT_VOLUME_SIZE
+    displayName: Persistent Volume Size
+    description: The size of the persistent volume , e.g. 512Mi, 1Gi, 2Gi.
+    required: true
+    value: 1Gi
+  - name: DB_NAME
+    displayName: DB Name
+    description:
+      The name assigned to all of the CCW microservice objects defined in
+      this template.
+    required: true
+    value: db
+  - name: ASPNETCORE_ENVIRONMENT
+    displayName: AspNetCore Environment
+    description: The ASP Net Core deployment environment setting.
+    required: true
+    value: Development
+  - name: UPLOAD_PATH
+    displayName: Upload Path
+    description: The path for uploading files.
+    required: true
+    value: "/uploads/"
+  - name: REPORTS_PATH
+    displayName: Reports Path
+    description: The path for storing batch reports.
+    required: true
+    value: "/reports/"
+  - description: CPU
+    displayName: CPU Request
+    name: CPU
+    required: true
+    value: ""
+  - description: MEMORY
+    displayName: MEMORY Request
+    name: MEMORY
+    required: true
+    value: ""
