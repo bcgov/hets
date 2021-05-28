@@ -157,7 +157,7 @@ objects:
                   mountPath: "${CONFIG_MOUNT_PATH}${CONFIG_FILE_NAME}"
                   subPath: "${CONFIG_FILE_NAME}"
 parameters:
-  - description: Name of the project (SCHOOLBUS)
+  - description: Name of the project (HETS)
     displayName: PROJECT_NAME
     name: PROJECT_NAME
     required: true
@@ -221,7 +221,7 @@ parameters:
       Used for backward compatibility only. Not needed when using the recommended
       'backup.conf' configuration.  The name of the database.
     required: false
-    value: "schoolbus"
+    value: "hets"
   - name: MONGODB_AUTHENTICATION_DATABASE
     displayName: MongoDB Authentication Database
     description:
@@ -375,7 +375,7 @@ parameters:
       MUST be taken from the manually provisioned claim; nfs-backup storage MUST be
       provisioned manually.
     required: true
-    value: sbi-backup-schoolbus
+    value: sbi-backup-hets
   - name: BACKUP_VOLUME_SIZE
     displayName: Backup Volume Size
     description:
