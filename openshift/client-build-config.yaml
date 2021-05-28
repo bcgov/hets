@@ -118,7 +118,7 @@ parameters:
     displayName: Docker File Path
     description: The path to the docker file defining the build.
     required: false
-    value: "Client/Dockerfile"
+    value: "client/Dockerfile"
   - name: DOTNET_STARTUP_PROJECT
     displayName: DotNet Startup Project
     description: The path to the startup project for the .Net application.
