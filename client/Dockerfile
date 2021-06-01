@@ -6,11 +6,11 @@ COPY . /src
 RUN cd /src/client && npm ci && \
   ./node_modules/.bin/gulp --production --commit=$OPENSHIFT_BUILD_COMMIT
 
-FROM image-registry.openshift-image-registry.svc:5000/e0cee6-tools/dotnet-21-rhel7:2.1-41
+FROM image-registry.openshift-image-registry.svc:5000/e0cee6-tools/nginx-116-rhel8:1
 
-COPY --from=builder /src/client/dist /opt/app-root/dist
-
-COPY --from=builder /src/FrontEnd /opt/app-root/src/FrontEnd
+COPY --from=builder /src/client/dist/. /tmp/src
+COPY --from=builder /src/nginx-start/. /tmp/src/nginx-start
+COPY --from=builder /src/nginx.conf.tmpl /tmp/src/nginx.conf.tmpl
 
 RUN $STI_SCRIPTS_PATH/assemble
 
