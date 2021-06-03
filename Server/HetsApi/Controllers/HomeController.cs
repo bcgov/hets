@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using HetsApi.Model;
+using Microsoft.Extensions.Hosting;
 
 namespace HetsApi.Controllers
 {
@@ -11,13 +12,13 @@ namespace HetsApi.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class HomeController : Controller
     {
-        private readonly IHostingEnvironment _env;
+        private readonly IWebHostEnvironment _env;
 
         /// <summary>
         /// Authentication Controller Constructor
         /// </summary>
         /// <param name="env"></param>
-        public HomeController(IHostingEnvironment env)
+        public HomeController(IWebHostEnvironment env)
         {
             _env = env;
         }

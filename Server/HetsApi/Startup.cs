@@ -13,6 +13,12 @@ using Hangfire.Console;
 using HetsApi.Authorization;
 using HetsApi.Authentication;
 using HetsData.Model;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Hosting;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace HetsApi
 {
@@ -21,21 +27,14 @@ namespace HetsApi
     /// </summary>
     public class Startup
     {
-        private readonly IHostingEnvironment _hostingEnv;
+        private readonly IWebHostEnvironment _hostingEnv;
 
-        public IConfigurationRoot Configuration { get; }
+        public IConfiguration Configuration { get; }
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             _hostingEnv = env;
-
-            IConfigurationBuilder builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -48,6 +47,24 @@ namespace HetsApi
             // add database context
             services.AddDbContext<DbAppContext>(options => options.UseNpgsql(connectionString));
 
+            services
+                .AddControllers(options =>
+                {
+                    var policy = new AuthorizationPolicyBuilder()
+                        .RequireAuthenticatedUser()
+                        .Build();
+                    options.Filters.Add(new AuthorizeFilter(policy));
+                })
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
+                    options.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.IsoDateFormat;
+                    options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
             // setup SiteMinder authentication (core 2.0+)
             services.AddAuthentication(options =>
             {
@@ -55,7 +72,6 @@ namespace HetsApi
                 options.DefaultChallengeScheme = SiteMinderAuthOptions.AuthenticationSchemeName;
             }).AddSiteMinderAuth(options =>
             {
-
             });
 
             // setup authorization
@@ -67,18 +83,6 @@ namespace HetsApi
             {
                 options.MultipartBodyLengthLimit = 1073741824; // 1 GB
             });
-
-            services.AddMvc(options => options.AddDefaultAuthorizationPolicyFilter())
-                .AddJsonOptions(
-                    opts => {
-                        opts.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                        opts.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
-                        opts.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.IsoDateFormat;
-                        opts.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
-
-                        // ReferenceLoopHandling is set to Ignore to prevent JSON parser issues with the user / roles model.
-                        opts.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                    });
 
             // enable Hangfire
             PostgreSqlStorageOptions postgreSqlStorageOptions = new PostgreSqlStorageOptions {
@@ -99,14 +103,12 @@ namespace HetsApi
             {
                 services.AddSwaggerGen(options =>
                 {
-                    options.SwaggerDoc("v1", new Info
+                    options.SwaggerDoc("v1", new OpenApiInfo
                     {
                         Version = "v1",
                         Title = "HETS REST API",
                         Description = "Hired Equipment Tracking System"
                     });
-
-                    options.DescribeAllEnumsAsStrings();
                 });
             }
         }
@@ -117,28 +119,55 @@ namespace HetsApi
         /// <param name="app"></param>
         /// <param name="env"></param>
         /// <param name="loggerFactory"></param>
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            if (env.IsDevelopment())
+                app.UseDeveloperExceptionPage();
 
-            // web site error handler  (Testing: app.UseDeveloperExceptionPage();)
-            app.UseWhen(x => !x.Request.Path.Value.StartsWith("/api"), builder =>
+            //app.UseMiddleware<ExceptionMiddleware>();
+
+            //TryMigrateDatabase(app, logger);
+
+            //var healthCheckOptions = new HealthCheckOptions
+            //{
+            //    ResponseWriter = async (c, r) =>
+            //    {
+            //        c.Response.ContentType = MediaTypeNames.Application.Json;
+            //        var result = JsonSerializer.Serialize(
+            //           new
+            //           {
+            //               checks = r.Entries.Select(e =>
+            //          new {
+            //              description = e.Key,
+            //              status = e.Value.Status.ToString(),
+            //              tags = e.Value.Tags,
+            //              responseTime = e.Value.Duration.TotalMilliseconds
+            //          }),
+            //               totalResponseTime = r.TotalDuration.TotalMilliseconds
+            //           });
+            //        await c.Response.WriteAsync(result);
+            //    }
+            //};
+
+            //app.UseHealthChecks("/healthz", healthCheckOptions);
+
+            app.UseRouting();
+            app.UseCors();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
             {
-                builder.UseExceptionHandler(Configuration.GetSection("Constants:ErrorUrl").Value);
+                endpoints.MapControllers();
             });
 
-            // authenticate users
-            app.UseAuthentication();
-
-            // enable Hangfire
-            BackgroundJobServerOptions jsOptions = new BackgroundJobServerOptions
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
             {
-                WorkerCount = 1                
-            };
+                options.SwaggerEndpoint(Configuration.GetSection("Constants:SwaggerApiUrl").Value, "HETS REST API v1");
+                options.DocExpansion(DocExpansion.None);
+            });
 
-            app.UseHangfireServer(jsOptions);
-
+            // enable Hangfire Dashboard
             // disable the back to site link
             DashboardOptions dashboardOptions = new DashboardOptions
             {
@@ -149,24 +178,12 @@ namespace HetsApi
             // enable the hangfire dashboard
             app.UseHangfireDashboard(Configuration.GetSection("Constants:HangfireUrl").Value, dashboardOptions);
 
-            // setup mvc routes
-            app.UseMvc(routes =>
+            BackgroundJobServerOptions jsOptions = new BackgroundJobServerOptions
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}");
-            });
+                WorkerCount = 1                
+            };
 
-            if (_hostingEnv.IsDevelopment())
-            {
-                string swaggerApi = Configuration.GetSection("Constants:SwaggerApiUrl").Value;
-                app.UseSwagger();
-                app.UseSwaggerUI(options =>
-                {
-                    options.SwaggerEndpoint(swaggerApi, "HETS REST API v1");
-                    options.DocExpansion(DocExpansion.None);
-                });
-            }
+            app.UseHangfireServer(jsOptions);
         }
 
         /// <summary>

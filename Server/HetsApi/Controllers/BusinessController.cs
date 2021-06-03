@@ -25,9 +25,9 @@ namespace HetsApi.Controllers
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
         private readonly HttpContext _httpContext;
-        private readonly IHostingEnvironment _env;
+        private readonly IWebHostEnvironment _env;
 
-        public BusinessController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IHostingEnvironment hostingEnv)
+        public BusinessController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment hostingEnv)
         {
             _context = context;
             _configuration = configuration;
