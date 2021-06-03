@@ -1,0 +1,7 @@
+.print-button {
+  margin-right: 5px;
+
+  span:not(:empty) {
+    margin-left: 5px;
+  }
+}

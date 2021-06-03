@@ -1,0 +1,48 @@
+#users-detail {
+  #users-top {
+    margin-bottom: 10px;
+  }
+
+  #users-access {
+    .checkbox-control {
+      float: right;
+      font-size: 14px;
+    }
+
+    input {
+      margin-top: 0;
+    }
+  }
+
+  .well {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+
+  .label {
+    font-size: 100%;
+    margin-right: 5px;
+  }
+
+  .checkbox {
+    margin-top: 0;
+    margin-bottom: 0;
+    height: 16px;
+  }
+
+  .col-display-label {
+    width: 100px;
+  }
+
+  .alert {
+    .btn {
+      float: right;
+    }
+  }
+}
+
+#users-role-popover {
+  .date-control {
+    margin-right: 10px;
+  }
+}

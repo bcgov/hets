@@ -1,0 +1,86 @@
+#rental-requests-list {
+  #add-request-buttons {
+    margin-left: auto;
+
+    .btn {
+      display: block;
+      width: 100%;
+    }
+
+    .btn:first-child {
+      margin-bottom: 10px;
+    }
+  }
+}
+
+#rental-requests-detail {
+  #rental-requests-top {
+    margin-bottom: 10px;
+
+    .btn {
+      margin-left: 5px;
+    }
+  }
+
+  #rental-request-status {
+    float: left;
+    min-width: 100px;
+    padding-top: 7px;
+  }
+
+  #rotation-list {
+    width: 100%;
+    overflow-y: auto;
+  }
+
+  .request-information {
+    margin-top: 20px;
+  }
+
+  .label {
+    font-size: 100%;
+    margin-right: 5px;
+  }
+
+  .btn, .checkbox-control {
+    margin-left: 20px;
+  }
+
+  #rotation-list {
+    .btn-link {
+      padding: 0;
+      margin: 0;
+    }
+
+    th:nth-child(2), td:nth-child(2), th:nth-child(11), td:nth-child(11) {
+      display: none;
+    }
+
+    td:nth-child(5) {
+      width: 250px;
+    }
+
+    // tr.blank-row {}
+
+    .attachment {
+      display: inline-block;
+    }
+  }
+}
+
+#hire-offer-edit {
+  input[type='number'] {
+    width: auto;
+    min-width: 175px;
+  }
+
+  .spinner-container {
+    height: 24px;
+  }
+}
+
+#confirm-dialog, #hire-offer-edit {
+  &.modal {
+    z-index: 1040;
+  }
+}
