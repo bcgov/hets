@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using HetsApi.Authentication;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.Extensions.Hosting;
 
 namespace HetsApi.Controllers
 {
@@ -17,7 +18,7 @@ namespace HetsApi.Controllers
     public class AuthenticationController : Controller
     {
         private readonly SiteMinderAuthOptions _options = new SiteMinderAuthOptions();
-        private readonly IHostingEnvironment _env;
+        private readonly IWebHostEnvironment _env;
         private readonly HttpContext _httpContext;
 
         /// <summary>
@@ -25,7 +26,7 @@ namespace HetsApi.Controllers
         /// </summary>
         /// <param name="env"></param>
         /// <param name="httpContextAccessor"></param>
-        public AuthenticationController(IHostingEnvironment env, IHttpContextAccessor httpContextAccessor)
+        public AuthenticationController(IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor)
         {
             _env = env;
             _httpContext = httpContextAccessor.HttpContext;

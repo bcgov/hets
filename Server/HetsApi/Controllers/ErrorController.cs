@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
 using HetsApi.Model;
+using Microsoft.Extensions.Hosting;
 
 namespace HetsApi.Controllers
 {
@@ -16,13 +17,13 @@ namespace HetsApi.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class ErrorController : Controller
     {
-        private readonly IHostingEnvironment _env;
+        private readonly IWebHostEnvironment _env;
 
         /// <summary>
         /// Error Controller Constructor
         /// </summary>
         /// <param name="env"></param>
-        public ErrorController(IHostingEnvironment env)
+        public ErrorController(IWebHostEnvironment env)
         {
             _env = env;
         }

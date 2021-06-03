@@ -8,6 +8,7 @@ using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Model;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace HetsApi.Controllers
 {
@@ -22,9 +23,9 @@ namespace HetsApi.Controllers
 
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
-        private readonly IHostingEnvironment _env;
+        private readonly IWebHostEnvironment _env;
 
-        public VersionController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IHostingEnvironment env)
+        public VersionController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment env)
         {
             _context = context;
             _configuration = configuration;

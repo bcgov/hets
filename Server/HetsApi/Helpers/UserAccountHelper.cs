@@ -8,6 +8,7 @@ using HetsData.Helpers;
 using HetsData.Model;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Hosting;
 
 namespace HetsApi.Helpers
 {
@@ -49,7 +50,7 @@ namespace HetsApi.Helpers
         /// <param name="httpContext"></param>
         /// <param name="hostingEnv"></param>
         /// <returns></returns>
-        public static string GetBusinessGuid(HttpContext httpContext, IHostingEnvironment hostingEnv)
+        public static string GetBusinessGuid(HttpContext httpContext, IWebHostEnvironment hostingEnv)
         {
             string guid = "";
 

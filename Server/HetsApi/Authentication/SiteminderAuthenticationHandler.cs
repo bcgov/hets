@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using HetsData.Model;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Hosting;
 
 namespace HetsApi.Authentication
 {
@@ -200,7 +201,7 @@ namespace HetsApi.Authentication
             {
                 HttpContext context = Request.HttpContext;
                 DbAppContext dbAppContext = (DbAppContext)context.RequestServices.GetService(typeof(DbAppContext));
-                IHostingEnvironment hostingEnv = (IHostingEnvironment)context.RequestServices.GetService(typeof(IHostingEnvironment));
+                IWebHostEnvironment hostingEnv = (IWebHostEnvironment)context.RequestServices.GetService(typeof(IWebHostEnvironment));
 
                 UserSettings userSettings = new UserSettings();
                 string userId = "";
