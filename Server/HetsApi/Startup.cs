@@ -86,16 +86,14 @@ namespace HetsApi
                 options.MultipartBodyLengthLimit = 1073741824; // 1 GB
             });
 
-            // enable Hangfire
             //enable Hangfire
-
             services.AddHangfire(configuration =>
                 configuration
-                //.UseSerilogLogProvider()
+                .UseSerilogLogProvider()
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseRecommendedSerializerSettings()
-                .UsePostgreSqlStorage(connectionString)                
+                .UsePostgreSqlStorage(connectionString)
             );
 
             services.AddHangfireServer(options =>
@@ -119,41 +117,33 @@ namespace HetsApi
         /// </summary>
         /// <param name="app"></param>
         /// <param name="env"></param>
-        /// <param name="loggerFactory"></param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-                app.UseDeveloperExceptionPage();
+            // web site error handler  (Testing: app.UseDeveloperExceptionPage();)
+            app.UseWhen(x => !x.Request.Path.Value.StartsWith("/api"), builder =>
+            {
+                builder.UseExceptionHandler(Configuration.GetSection("Constants:ErrorUrl").Value);
+            });
 
-            //app.UseMiddleware<ExceptionMiddleware>();
 
-            //TryMigrateDatabase(app, logger);
+            // enable Hangfire
+            BackgroundJobServerOptions jsOptions = new BackgroundJobServerOptions
+            {
+                WorkerCount = 1                
+            };
 
-            //var healthCheckOptions = new HealthCheckOptions
-            //{
-            //    ResponseWriter = async (c, r) =>
-            //    {
-            //        c.Response.ContentType = MediaTypeNames.Application.Json;
-            //        var result = JsonSerializer.Serialize(
-            //           new
-            //           {
-            //               checks = r.Entries.Select(e =>
-            //          new {
-            //              description = e.Key,
-            //              status = e.Value.Status.ToString(),
-            //              tags = e.Value.Tags,
-            //              responseTime = e.Value.Duration.TotalMilliseconds
-            //          }),
-            //               totalResponseTime = r.TotalDuration.TotalMilliseconds
-            //           });
-            //        await c.Response.WriteAsync(result);
-            //    }
-            //};
+            app.UseHangfireServer(jsOptions);
+
+            // disable the back to site link
+            DashboardOptions dashboardOptions = new DashboardOptions
+            {
+                AppPath = null,
+                Authorization = new[] { new HangfireAuthorizationFilter() }
+            };
 
             //app.UseHealthChecks("/healthz", healthCheckOptions);
 
             app.UseRouting();
-            app.UseCors();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
@@ -162,9 +152,10 @@ namespace HetsApi
             });
 
             app.UseSwagger();
+            string swaggerApi = Configuration.GetSection("Constants:SwaggerApiUrl").Value;
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint(Configuration.GetSection("Constants:SwaggerApiUrl").Value, "HETS REST API v1");
+                options.SwaggerEndpoint(swaggerApi, "HETS REST API v1");
                 options.DocExpansion(DocExpansion.None);
             });
         }
