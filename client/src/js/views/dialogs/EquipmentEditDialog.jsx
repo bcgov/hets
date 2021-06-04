@@ -1,21 +1,28 @@
-import PropTypes from 'prop-types';
-import React from 'react';
+import PropTypes from "prop-types";
+import React from "react";
 
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 
-import _ from 'lodash';
+import _ from "lodash";
 
-import { Grid, Row, Col, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import {
+  Grid,
+  Row,
+  Col,
+  FormGroup,
+  HelpBlock,
+  ControlLabel,
+} from "react-bootstrap";
 
-import * as Api from '../../api';
-import * as Log from '../../history';
+import * as Api from "../../api";
+import * as Log from "../../history";
 
-import FormDialog from '../../components/FormDialog.jsx';
-import FormInputControl from '../../components/FormInputControl.jsx';
-import FilterDropdown from '../../components/FilterDropdown.jsx';
+import FormDialog from "../../components/FormDialog.jsx";
+import FormInputControl from "../../components/FormInputControl.jsx";
+import FilterDropdown from "../../components/FilterDropdown.jsx";
 
-import { isBlank, notBlank } from '../../utils/string';
-import { isValidYear } from '../../utils/date';
+import { isBlank, notBlank } from "../../utils/string";
+import { isValidYear } from "../../utils/date";
 
 class EquipmentEditDialog extends React.Component {
   static propTypes = {
@@ -38,26 +45,26 @@ class EquipmentEditDialog extends React.Component {
 
       localAreaId: props.equipment.localArea.id || 0,
       equipmentTypeId: props.equipment.districtEquipmentTypeId || null,
-      serialNumber: props.equipment.serialNumber || '',
-      make: props.equipment.make || '',
-      size: props.equipment.size || '',
-      model: props.equipment.model || '',
-      year: props.equipment.year || '',
-      licencePlate: props.equipment.licencePlate || '',
-      type: props.equipment.type || '',
-      licencedGvw: props.equipment.licencedGvw || '',
-      legalCapacity: props.equipment.legalCapacity || '',
-      pupLegalCapacity: props.equipment.pupLegalCapacity || '',
+      serialNumber: props.equipment.serialNumber || "",
+      make: props.equipment.make || "",
+      size: props.equipment.size || "",
+      model: props.equipment.model || "",
+      year: props.equipment.year || "",
+      licencePlate: props.equipment.licencePlate || "",
+      type: props.equipment.type || "",
+      licencedGvw: props.equipment.licencedGvw || "",
+      legalCapacity: props.equipment.legalCapacity || "",
+      pupLegalCapacity: props.equipment.pupLegalCapacity || "",
 
-      localAreaError: '',
+      localAreaError: "",
       localAreaSeniorityChangeWarning: false,
-      equipmentTypeError: '',
+      equipmentTypeError: "",
       equipmentTypeSeniorityChangeWarning: false,
-      serialNumberError: '',
+      serialNumberError: "",
       duplicateSerialNumberWarning: false,
-      makeError: '',
-      modelError: '',
-      yearError: '',
+      makeError: "",
+      modelError: "",
+      yearError: "",
     };
   }
 
@@ -67,7 +74,10 @@ class EquipmentEditDialog extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (!_.isEqual(this.state.serialNumber, prevState.serialNumber)) {
-      this.setState({ duplicateSerialNumberWarning: false, serialNumberError: '' });
+      this.setState({
+        duplicateSerialNumberWarning: false,
+        serialNumberError: "",
+      });
     }
   }
 
@@ -76,59 +86,83 @@ class EquipmentEditDialog extends React.Component {
   };
 
   didChange = () => {
-    if (this.state.localAreaId !== this.props.equipment.localArea.id) { return true; }
-    if (this.state.equipmentTypeId !== 0) { return true; }
-    if (this.state.serialNumber !== this.props.equipment.serialNumber) { return true; }
-    if (this.state.make !== this.props.equipment.make) { return true; }
-    if (this.state.size !== this.props.equipment.size) { return true; }
-    if (this.state.model !== this.props.equipment.model) { return true; }
-    if (this.state.year !== this.props.equipment.year) { return true; }
-    if (this.state.licencePlate !== this.props.equipment.licencePlate) { return true; }
-    if (this.state.type !== this.props.equipment.type) { return true; }
-    if (this.state.licencedGvw !== this.props.equipment.licencedGvw) { return true; }
-    if (this.state.legalCapacity !== this.props.equipment.legalCapacity) { return true; }
-    if (this.state.pupLegalCapacity !== this.props.equipment.pupLegalCapacity) { return true; }
+    if (this.state.localAreaId !== this.props.equipment.localArea.id) {
+      return true;
+    }
+    if (this.state.equipmentTypeId !== 0) {
+      return true;
+    }
+    if (this.state.serialNumber !== this.props.equipment.serialNumber) {
+      return true;
+    }
+    if (this.state.make !== this.props.equipment.make) {
+      return true;
+    }
+    if (this.state.size !== this.props.equipment.size) {
+      return true;
+    }
+    if (this.state.model !== this.props.equipment.model) {
+      return true;
+    }
+    if (this.state.year !== this.props.equipment.year) {
+      return true;
+    }
+    if (this.state.licencePlate !== this.props.equipment.licencePlate) {
+      return true;
+    }
+    if (this.state.type !== this.props.equipment.type) {
+      return true;
+    }
+    if (this.state.licencedGvw !== this.props.equipment.licencedGvw) {
+      return true;
+    }
+    if (this.state.legalCapacity !== this.props.equipment.legalCapacity) {
+      return true;
+    }
+    if (this.state.pupLegalCapacity !== this.props.equipment.pupLegalCapacity) {
+      return true;
+    }
 
     return false;
   };
 
   isValid = () => {
     this.setState({
-      localAreaError: '',
-      equipmentTypeError: '',
-      serialNumberError: '',
-      makeError: '',
-      modelError: '',
-      yearError: '',
+      localAreaError: "",
+      equipmentTypeError: "",
+      serialNumberError: "",
+      makeError: "",
+      modelError: "",
+      yearError: "",
     });
 
     var valid = true;
 
     if (this.state.equipmentTypeId === 0) {
-      this.setState({ equipmentTypeError: 'Equipment type is required.' });
+      this.setState({ equipmentTypeError: "Equipment type is required." });
       valid = false;
     }
 
     if (isBlank(this.state.serialNumber)) {
-      this.setState({ serialNumberError: 'Serial number is required' });
+      this.setState({ serialNumberError: "Serial number is required" });
       valid = false;
     }
 
     if (isBlank(this.state.make)) {
-      this.setState({ makeError: 'Make is required.' });
+      this.setState({ makeError: "Make is required." });
       valid = false;
     }
 
     if (isBlank(this.state.model)) {
-      this.setState({ modelError: 'Model is required.' });
+      this.setState({ modelError: "Model is required." });
       valid = false;
     }
 
     if (isBlank(this.state.year)) {
-      this.setState({ yearError: 'Year is required.' });
+      this.setState({ yearError: "Year is required." });
       valid = false;
     } else if (notBlank(this.state.year) && !isValidYear(this.state.year)) {
-      this.setState({ yearError: 'This is not a valid year.' });
+      this.setState({ yearError: "This is not a valid year." });
       valid = false;
     }
 
@@ -144,18 +178,24 @@ class EquipmentEditDialog extends React.Component {
           return this.saveEquipment();
         }
 
-        return Api.equipmentDuplicateCheck(this.props.equipment.id, this.state.serialNumber).then((response) => {
+        return Api.equipmentDuplicateCheck(
+          this.props.equipment.id,
+          this.state.serialNumber
+        ).then((response) => {
           if (response.data.length > 0) {
             const equipmentCodes = response.data.map((district) => {
               return district.duplicateEquipment.equipmentCode;
             });
             var districts = _.chain(response.data)
-              .map(district => district.districtName)
+              .map((district) => district.districtName)
               .uniq()
               .value();
-            const districtsPlural = districts.length === 1 ? 'district' : 'districts';
+            const districtsPlural =
+              districts.length === 1 ? "district" : "districts";
             this.setState({
-              serialNumberError: `Serial number is currently in use for the equipment ${equipmentCodes.join(', ')}, in the following ${districtsPlural}: ${districts.join(', ')}`,
+              serialNumberError: `Serial number is currently in use for the equipment ${equipmentCodes.join(
+                ", "
+              )}, in the following ${districtsPlural}: ${districts.join(", ")}`,
               duplicateSerialNumberWarning: true,
             });
             return null;
@@ -194,7 +234,9 @@ class EquipmentEditDialog extends React.Component {
     promise.then(() => {
       Log.equipmentModified(this.props.equipment);
       this.setState({ isSaving: false });
-      if (this.props.onSave) { this.props.onSave(); }
+      if (this.props.onSave) {
+        this.props.onSave();
+      }
       this.props.onClose();
     });
   };
@@ -202,26 +244,31 @@ class EquipmentEditDialog extends React.Component {
   onLocalAreaChanged() {
     if (this.state.localAreaId !== this.props.equipment.localArea.id) {
       this.setState({
-        localAreaError: 'This action will change the seniority of the equipment.',
+        localAreaError:
+          "This action will change the seniority of the equipment.",
         localAreaSeniorityChangeWarning: true,
       });
     } else {
       this.setState({
-        localAreaError: '',
+        localAreaError: "",
         localAreaSeniorityChangeWarning: false,
       });
     }
   }
 
   onEquipmentTypeChanged() {
-    if (this.state.equipmentTypeId !== this.props.equipment.districtEquipmentTypeId) {
+    if (
+      this.state.equipmentTypeId !==
+      this.props.equipment.districtEquipmentTypeId
+    ) {
       this.setState({
-        equipmentTypeError: 'This action will change the seniority of the equipment.',
+        equipmentTypeError:
+          "This action will change the seniority of the equipment.",
         equipmentTypeSeniorityChangeWarning: true,
       });
     } else {
       this.setState({
-        equipmentTypeError: '',
+        equipmentTypeError: "",
         equipmentTypeSeniorityChangeWarning: false,
       });
     }
@@ -230,41 +277,58 @@ class EquipmentEditDialog extends React.Component {
   render() {
     var equipment = this.props.equipment;
 
-    var localAreas = _.sortBy(this.props.localAreas, 'name');
+    var localAreas = _.sortBy(this.props.localAreas, "name");
 
     var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes.data)
-      .filter(type => type.district.id == this.props.currentUser.district.id)
-      .sortBy('districtEquipmentName')
+      .filter((type) => type.district.id === this.props.currentUser.district.id)
+      .sortBy("districtEquipmentName")
       .value();
 
-    const saveWarning = this.state.duplicateSerialNumberWarning || this.state.localAreaSeniorityChangeWarning || this.state.equipmentTypeSeniorityChangeWarning;
+    const saveWarning =
+      this.state.duplicateSerialNumberWarning ||
+      this.state.localAreaSeniorityChangeWarning ||
+      this.state.equipmentTypeSeniorityChangeWarning;
 
     return (
       <FormDialog
         id="equipment-edit"
-        show={ this.props.show }
-        title={ `Equipment Id: ${ equipment.equipmentCode }` }
-        saveButtonLabel={ saveWarning ? 'Proceed Anyways' : 'Save' }
-        isSaving={ this.state.isSaving }
-        onClose={ this.props.onClose }
-        onSubmit={ this.formSubmitted }>
+        show={this.props.show}
+        title={`Equipment Id: ${equipment.equipmentCode}`}
+        saveButtonLabel={saveWarning ? "Proceed Anyways" : "Save"}
+        isSaving={this.state.isSaving}
+        onClose={this.props.onClose}
+        onSubmit={this.formSubmitted}
+      >
         <Grid fluid>
           <Row>
             <Col md={12}>
-              <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
+              <FormGroup
+                controlId="localAreaId"
+                validationState={this.state.localAreaError ? "error" : null}
+              >
                 <ControlLabel>Service Area - Local Area</ControlLabel>
-                <FilterDropdown id="localAreaId" selectedId={ this.state.localAreaId } updateState={ (state) => this.updateState(state, this.onLocalAreaChanged) }
-                  items={ localAreas }
+                <FilterDropdown
+                  id="localAreaId"
+                  selectedId={this.state.localAreaId}
+                  updateState={(state) =>
+                    this.updateState(state, this.onLocalAreaChanged)
+                  }
+                  items={localAreas}
                   className="full-width"
                 />
-                <HelpBlock>{ this.state.localAreaError }</HelpBlock>
+                <HelpBlock>{this.state.localAreaError}</HelpBlock>
               </FormGroup>
             </Col>
           </Row>
           <Row>
             <Col md={12}>
-              <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeError ? 'error' : null }>
-                <ControlLabel>Equipment Type <sup>*</sup></ControlLabel>
+              <FormGroup
+                controlId="equipmentTypeId"
+                validationState={this.state.equipmentTypeError ? "error" : null}
+              >
+                <ControlLabel>
+                  Equipment Type <sup>*</sup>
+                </ControlLabel>
                 <FilterDropdown
                   id="equipmentTypeId"
                   className="full-width"
@@ -272,35 +336,66 @@ class EquipmentEditDialog extends React.Component {
                   disabled={!this.props.districtEquipmentTypes.loaded}
                   items={districtEquipmentTypes}
                   selectedId={this.state.equipmentTypeId}
-                  updateState={ (state) => this.updateState(state, this.onEquipmentTypeChanged) }/>
-                <HelpBlock>{ this.state.equipmentTypeError }</HelpBlock>
+                  updateState={(state) =>
+                    this.updateState(state, this.onEquipmentTypeChanged)
+                  }
+                />
+                <HelpBlock>{this.state.equipmentTypeError}</HelpBlock>
               </FormGroup>
             </Col>
           </Row>
           <Row>
             <Col md={12}>
-              <FormGroup controlId="make" validationState={ this.state.makeError ? 'error' : null }>
-                <ControlLabel>Make <sup>*</sup></ControlLabel>
-                <FormInputControl type="text" defaultValue={ this.state.make } updateState={ this.updateState } autoFocus/>
-                <HelpBlock>{ this.state.makeError }</HelpBlock>
+              <FormGroup
+                controlId="make"
+                validationState={this.state.makeError ? "error" : null}
+              >
+                <ControlLabel>
+                  Make <sup>*</sup>
+                </ControlLabel>
+                <FormInputControl
+                  type="text"
+                  defaultValue={this.state.make}
+                  updateState={this.updateState}
+                  autoFocus
+                />
+                <HelpBlock>{this.state.makeError}</HelpBlock>
               </FormGroup>
             </Col>
           </Row>
           <Row>
             <Col md={12}>
-              <FormGroup controlId="model" validationState={ this.state.modelError ? 'error' : null }>
-                <ControlLabel>Model <sup>*</sup></ControlLabel>
-                <FormInputControl type="text" defaultValue={ this.state.model } updateState={ this.updateState }/>
-                <HelpBlock>{ this.state.modelError }</HelpBlock>
+              <FormGroup
+                controlId="model"
+                validationState={this.state.modelError ? "error" : null}
+              >
+                <ControlLabel>
+                  Model <sup>*</sup>
+                </ControlLabel>
+                <FormInputControl
+                  type="text"
+                  defaultValue={this.state.model}
+                  updateState={this.updateState}
+                />
+                <HelpBlock>{this.state.modelError}</HelpBlock>
               </FormGroup>
             </Col>
           </Row>
           <Row>
             <Col md={12}>
-              <FormGroup controlId="year" validationState={ this.state.yearError ? 'error' : null }>
-                <ControlLabel>Year <sup>*</sup></ControlLabel>
-                <FormInputControl type="text" defaultValue={ this.state.year } updateState={ this.updateState }/>
-                <HelpBlock>{ this.state.yearError }</HelpBlock>
+              <FormGroup
+                controlId="year"
+                validationState={this.state.yearError ? "error" : null}
+              >
+                <ControlLabel>
+                  Year <sup>*</sup>
+                </ControlLabel>
+                <FormInputControl
+                  type="text"
+                  defaultValue={this.state.year}
+                  updateState={this.updateState}
+                />
+                <HelpBlock>{this.state.yearError}</HelpBlock>
               </FormGroup>
             </Col>
           </Row>
@@ -308,7 +403,11 @@ class EquipmentEditDialog extends React.Component {
             <Col md={12}>
               <FormGroup controlId="size">
                 <ControlLabel>Size</ControlLabel>
-                <FormInputControl type="text" defaultValue={ this.state.size } updateState={ this.updateState }/>
+                <FormInputControl
+                  type="text"
+                  defaultValue={this.state.size}
+                  updateState={this.updateState}
+                />
               </FormGroup>
             </Col>
           </Row>
@@ -316,7 +415,11 @@ class EquipmentEditDialog extends React.Component {
             <Col md={12}>
               <FormGroup controlId="type">
                 <ControlLabel>Type</ControlLabel>
-                <FormInputControl type="text" defaultValue={ this.state.type } updateState={ this.updateState }/>
+                <FormInputControl
+                  type="text"
+                  defaultValue={this.state.type}
+                  updateState={this.updateState}
+                />
               </FormGroup>
             </Col>
           </Row>
@@ -324,26 +427,43 @@ class EquipmentEditDialog extends React.Component {
             <Col md={12}>
               <FormGroup controlId="licencePlate">
                 <ControlLabel>Licence Number</ControlLabel>
-                <FormInputControl type="text" defaultValue={ this.state.licencePlate } updateState={ this.updateState }/>
+                <FormInputControl
+                  type="text"
+                  defaultValue={this.state.licencePlate}
+                  updateState={this.updateState}
+                />
               </FormGroup>
             </Col>
           </Row>
           <Row>
             <Col md={12}>
-              <FormGroup controlId="serialNumber" validationState={ this.state.serialNumberError ? 'error' : null }>
-                <ControlLabel>Serial Number <sup>*</sup></ControlLabel>
-                <FormInputControl type="text" defaultValue={ this.state.serialNumber } updateState={ this.updateState } />
-                <HelpBlock>{ this.state.serialNumberError }</HelpBlock>
+              <FormGroup
+                controlId="serialNumber"
+                validationState={this.state.serialNumberError ? "error" : null}
+              >
+                <ControlLabel>
+                  Serial Number <sup>*</sup>
+                </ControlLabel>
+                <FormInputControl
+                  type="text"
+                  defaultValue={this.state.serialNumber}
+                  updateState={this.updateState}
+                />
+                <HelpBlock>{this.state.serialNumberError}</HelpBlock>
               </FormGroup>
             </Col>
           </Row>
-          { equipment.isDumpTruck &&
+          {equipment.isDumpTruck && (
             <div>
               <Row>
                 <Col md={12}>
                   <FormGroup controlId="licencedGvw">
                     <ControlLabel>Licenced GVW</ControlLabel>
-                    <FormInputControl type="text" defaultValue={ this.state.licencedGvw } updateState={ this.updateState }/>
+                    <FormInputControl
+                      type="text"
+                      defaultValue={this.state.licencedGvw}
+                      updateState={this.updateState}
+                    />
                   </FormGroup>
                 </Col>
               </Row>
@@ -351,7 +471,11 @@ class EquipmentEditDialog extends React.Component {
                 <Col md={12}>
                   <FormGroup controlId="legalCapacity">
                     <ControlLabel>Truck Legal Capacity</ControlLabel>
-                    <FormInputControl type="text" defaultValue={ this.state.legalCapacity } updateState={ this.updateState }/>
+                    <FormInputControl
+                      type="text"
+                      defaultValue={this.state.legalCapacity}
+                      updateState={this.updateState}
+                    />
                   </FormGroup>
                 </Col>
               </Row>
@@ -359,12 +483,16 @@ class EquipmentEditDialog extends React.Component {
                 <Col md={12}>
                   <FormGroup controlId="pupLegalCapacity">
                     <ControlLabel>Pup Legal Capacity</ControlLabel>
-                    <FormInputControl type="text" defaultValue={ this.state.pupLegalCapacity } updateState={ this.updateState }/>
+                    <FormInputControl
+                      type="text"
+                      defaultValue={this.state.pupLegalCapacity}
+                      updateState={this.updateState}
+                    />
                   </FormGroup>
                 </Col>
               </Row>
             </div>
-          }
+          )}
         </Grid>
       </FormDialog>
     );

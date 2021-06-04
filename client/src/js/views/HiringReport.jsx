@@ -1,25 +1,32 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { Link } from 'react-router';
-import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Form  } from 'react-bootstrap';
-import _ from 'lodash';
+import PropTypes from "prop-types";
+import React from "react";
+import { connect } from "react-redux";
+import { Link } from "react-router";
+import {
+  Alert,
+  Row,
+  Col,
+  ButtonToolbar,
+  Button,
+  ButtonGroup,
+  Form,
+} from "react-bootstrap";
+import _ from "lodash";
 
-import * as Action from '../actionTypes';
-import * as Api from '../api';
-import * as Constant from '../constants';
-import store from '../store';
+import * as Action from "../actionTypes";
+import * as Api from "../api";
+import * as Constant from "../constants";
+import store from "../store";
 
-import PageHeader from '../components/ui/PageHeader.jsx';
-import SearchBar from '../components/ui/SearchBar.jsx';
-import Favourites from '../components/Favourites.jsx';
-import MultiDropdown from '../components/MultiDropdown.jsx';
-import SortTable from '../components/SortTable.jsx';
-import Spinner from '../components/Spinner.jsx';
-import PrintButton from '../components/PrintButton.jsx';
+import PageHeader from "../components/ui/PageHeader.jsx";
+import SearchBar from "../components/ui/SearchBar.jsx";
+import Favourites from "../components/Favourites.jsx";
+import MultiDropdown from "../components/MultiDropdown.jsx";
+import SortTable from "../components/SortTable.jsx";
+import Spinner from "../components/Spinner.jsx";
+import PrintButton from "../components/PrintButton.jsx";
 
-import { formatDateTime } from '../utils/date';
-
+import { formatDateTime } from "../utils/date";
 
 class HiringReport extends React.Component {
   static propTypes = {
@@ -44,8 +51,8 @@ class HiringReport extends React.Component {
         ownerIds: props.search.ownerIds || [],
         equipmentIds: props.search.equipmentIds || [],
       },
-      ui : {
-        sortField: props.ui.sortField || 'name',
+      ui: {
+        sortField: props.ui.sortField || "name",
         sortDesc: props.ui.sortDesc === true,
       },
     };
@@ -58,7 +65,7 @@ class HiringReport extends React.Component {
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
-      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      var defaultFavourite = _.find(this.props.favourites, (f) => f.isDefault);
       if (defaultFavourite) {
         this.loadFavourite(defaultFavourite);
       }
@@ -105,22 +112,38 @@ class HiringReport extends React.Component {
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
-      store.dispatch({ type: Action.UPDATE_HIRING_RESPONSES_SEARCH, hiringResponses: this.state.search });
+      store.dispatch({
+        type: Action.UPDATE_HIRING_RESPONSES_SEARCH,
+        hiringResponses: this.state.search,
+      });
       store.dispatch({ type: Action.CLEAR_HIRING_RESPONSES });
     });
   };
 
   updateSearchState = (state, callback) => {
-    this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () =>{
-      store.dispatch({ type: Action.UPDATE_HIRING_RESPONSES_SEARCH, hiringResponses: this.state.search });
-      if (callback) { callback(); }
-    });
+    this.setState(
+      { search: { ...this.state.search, ...state, ...{ loaded: true } } },
+      () => {
+        store.dispatch({
+          type: Action.UPDATE_HIRING_RESPONSES_SEARCH,
+          hiringResponses: this.state.search,
+        });
+        if (callback) {
+          callback();
+        }
+      }
+    );
   };
 
   updateUIState = (state, callback) => {
-    this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
-      store.dispatch({ type: Action.UPDATE_HIRING_RESPONSES_UI, hiringResponses: this.state.ui });
-      if (callback) { callback(); }
+    this.setState({ ui: { ...this.state.ui, ...state } }, () => {
+      store.dispatch({
+        type: Action.UPDATE_HIRING_RESPONSES_UI,
+        hiringResponses: this.state.ui,
+      });
+      if (callback) {
+        callback();
+      }
     });
   };
 
@@ -133,53 +156,82 @@ class HiringReport extends React.Component {
       return <Alert bsStyle="success">No results</Alert>;
     }
 
-    var hiringResponses = _.sortBy(this.props.hiringResponses.data, response => {
-      var sortValue = response[this.state.ui.sortField];
-      if (typeof sortValue === 'string') {
-        return sortValue.toLowerCase();
+    var hiringResponses = _.sortBy(
+      this.props.hiringResponses.data,
+      (response) => {
+        var sortValue = response[this.state.ui.sortField];
+        if (typeof sortValue === "string") {
+          return sortValue.toLowerCase();
+        }
+        return sortValue;
       }
-      return sortValue;
-    });
+    );
 
     if (this.state.ui.sortDesc) {
       _.reverse(hiringResponses);
     }
 
-    return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-      { field: 'localAreaLabel',          title: 'Local Area'                               },
-      { field: 'ownerCode',               title: 'Owner Code'                               },
-      { field: 'companyName',             title: 'Company Name'                             },
-      { field: 'sortableEquipmentCode',   title: 'Equip. ID'                                },
-      { field: 'equipmentDetails',        title: 'Make/Model/Size/Year'                     },
-      { field: 'projectNumber',           title: 'Project #'                                },
-      { field: 'noteDate',                title: 'Note Date'                                },
-      { field: 'noteType',                title: 'Note Type'                                },
-      { field: 'reason',                  title: 'Reason'                                   },
-      { field: 'userId',                  title: 'User ID'                                  },
-    ]}>
-      {
-        _.map(hiringResponses, (entry) => {
-          var reason = entry.reason == Constant.HIRING_REFUSAL_OTHER ? entry.offerResponseNote : entry.reason;
+    return (
+      <SortTable
+        sortField={this.state.ui.sortField}
+        sortDesc={this.state.ui.sortDesc}
+        onSort={this.updateUIState}
+        headers={[
+          { field: "localAreaLabel", title: "Local Area" },
+          { field: "ownerCode", title: "Owner Code" },
+          { field: "companyName", title: "Company Name" },
+          { field: "sortableEquipmentCode", title: "Equip. ID" },
+          { field: "equipmentDetails", title: "Make/Model/Size/Year" },
+          { field: "projectNumber", title: "Project #" },
+          { field: "noteDate", title: "Note Date" },
+          { field: "noteType", title: "Note Type" },
+          { field: "reason", title: "Reason" },
+          { field: "userId", title: "User ID" },
+        ]}
+      >
+        {_.map(hiringResponses, (entry) => {
+          var reason =
+            entry.reason === Constant.HIRING_REFUSAL_OTHER
+              ? entry.offerResponseNote
+              : entry.reason;
 
-          return <tr key={ entry.id }>
-            <td>{ entry.localAreaLabel }</td>
-            <td>{ entry.ownerCode }</td>
-            <td><Link to={`${Constant.OWNERS_PATHNAME}/${entry.ownerId}`}>{ entry.companyName }</Link></td>
-            <td><Link to={`${Constant.EQUIPMENT_PATHNAME}/${entry.equipmentId}`}>{ entry.equipmentCode }</Link></td>
-            <td>{ entry.equipmentDetails }</td>
-            <td><Link to={`${Constant.PROJECTS_PATHNAME}/${entry.projectId}`}>{ entry.projectNumber ? entry.projectNumber : 'N/A' }</Link></td>
-            <td>{ formatDateTime(entry.noteDate, 'YYYY-MMM-DD') }</td>
-            <td>{ entry.noteType }</td>
-            <td>{ reason }</td>
-            <td>{ entry.userName } ({ entry.userId })</td>
-          </tr>;
-        })
-      }
-    </SortTable>;
+          return (
+            <tr key={entry.id}>
+              <td>{entry.localAreaLabel}</td>
+              <td>{entry.ownerCode}</td>
+              <td>
+                <Link to={`${Constant.OWNERS_PATHNAME}/${entry.ownerId}`}>
+                  {entry.companyName}
+                </Link>
+              </td>
+              <td>
+                <Link
+                  to={`${Constant.EQUIPMENT_PATHNAME}/${entry.equipmentId}`}
+                >
+                  {entry.equipmentCode}
+                </Link>
+              </td>
+              <td>{entry.equipmentDetails}</td>
+              <td>
+                <Link to={`${Constant.PROJECTS_PATHNAME}/${entry.projectId}`}>
+                  {entry.projectNumber ? entry.projectNumber : "N/A"}
+                </Link>
+              </td>
+              <td>{formatDateTime(entry.noteDate, "YYYY-MMM-DD")}</td>
+              <td>{entry.noteType}</td>
+              <td>{reason}</td>
+              <td>
+                {entry.userName} ({entry.userId})
+              </td>
+            </tr>
+          );
+        })}
+      </SortTable>
+    );
   };
 
   matchesProjectFilter = (projectIds) => {
-    if (this.state.search.projectIds.length == 0) {
+    if (this.state.search.projectIds.length === 0) {
       return true;
     }
 
@@ -187,7 +239,7 @@ class HiringReport extends React.Component {
   };
 
   matchesLocalAreaFilter = (localAreaId) => {
-    if (this.state.search.localAreaIds.length == 0) {
+    if (this.state.search.localAreaIds.length === 0) {
       return true;
     }
 
@@ -195,7 +247,7 @@ class HiringReport extends React.Component {
   };
 
   matchesOwnerFilter = (ownerId) => {
-    if (this.state.search.ownerIds.length == 0) {
+    if (this.state.search.ownerIds.length === 0) {
       return true;
     }
 
@@ -215,113 +267,152 @@ class HiringReport extends React.Component {
   };
 
   filterSelectedOwners = () => {
-    var acceptableOwnerIds = _.map(this.getFilteredOwners(), 'id');
-    var ownerIds = _.intersection(this.state.search.ownerIds, acceptableOwnerIds);
-    this.updateSearchState({ ownerIds: ownerIds }, this.filterSelectedEquipment);
+    var acceptableOwnerIds = _.map(this.getFilteredOwners(), "id");
+    var ownerIds = _.intersection(
+      this.state.search.ownerIds,
+      acceptableOwnerIds
+    );
+    this.updateSearchState(
+      { ownerIds: ownerIds },
+      this.filterSelectedEquipment
+    );
   };
 
   filterSelectedEquipment = () => {
-    var acceptableEquipmentIds = _.map(this.getFilteredEquipment(), 'id');
-    var equipmentIds = _.intersection(this.state.search.equipmentIds, acceptableEquipmentIds);
+    var acceptableEquipmentIds = _.map(this.getFilteredEquipment(), "id");
+    var equipmentIds = _.intersection(
+      this.state.search.equipmentIds,
+      acceptableEquipmentIds
+    );
     this.updateSearchState({ equipmentIds: equipmentIds });
   };
 
   getFilteredOwners = () => {
     return _.chain(this.props.owners.data)
-      .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesLocalAreaFilter(x.localAreaId))
-      .sortBy('organizationName')
+      .filter(
+        (x) =>
+          this.matchesProjectFilter(x.projectIds) &&
+          this.matchesLocalAreaFilter(x.localAreaId)
+      )
+      .sortBy("organizationName")
       .value();
   };
 
   getFilteredEquipment = () => {
     return _.chain(this.props.equipment.data)
-      .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesOwnerFilter(x.ownerId))
-      .sortBy('equipmentCode')
+      .filter(
+        (x) =>
+          this.matchesProjectFilter(x.projectIds) &&
+          this.matchesOwnerFilter(x.ownerId)
+      )
+      .sortBy("equipmentCode")
       .value();
   };
 
   render() {
-    var resultCount = '';
+    var resultCount = "";
     if (this.props.hiringResponses.loaded) {
-      resultCount = '(' + Object.keys(this.props.hiringResponses.data).length + ')';
+      resultCount =
+        "(" + Object.keys(this.props.hiringResponses.data).length + ")";
     }
 
-    var projects = _.sortBy(this.props.projects.data, 'name');
-    var localAreas = _.sortBy(this.props.localAreas, 'name');
+    var projects = _.sortBy(this.props.projects.data, "name");
+    var localAreas = _.sortBy(this.props.localAreas, "name");
     var owners = this.getFilteredOwners();
     var equipment = this.getFilteredEquipment();
 
-    return <div id="hiring-report">
-      <PageHeader>Hiring Report - Not Hired / Force Hire { resultCount }
-        <ButtonGroup>
-          <PrintButton disabled={!this.props.hiringResponses.loaded}/>
-        </ButtonGroup>
-      </PageHeader>
-      <SearchBar>
-        <Form onSubmit={ this.search }>
-          <Row>
-            <Col xs={9} sm={10} id="filters">
-              <ButtonToolbar>
-                <MultiDropdown
-                  id="projectIds"
-                  disabled={!this.props.projects.loaded}
-                  placeholder="Projects"
-                  fieldName="label"
-                  items={projects}
-                  selectedIds={this.state.search.projectIds}
-                  updateState={this.updateProjectSearchState}
-                  showMaxItems={2}/>
-                <MultiDropdown
-                  id="localAreaIds"
-                  placeholder="Local Areas"
-                  items={localAreas}
-                  selectedIds={this.state.search.localAreaIds}
-                  updateState={this.updateLocalAreaSearchState}
-                  showMaxItems={2}/>
-                <MultiDropdown
-                  id="ownerIds"
-                  disabled={!this.props.owners.loaded}
-                  placeholder="Companies"
-                  fieldName="organizationName"
-                  items={owners}
-                  selectedIds={this.state.search.ownerIds}
-                  updateState={this.updateOwnerSearchState}
-                  showMaxItems={2}/>
-                <MultiDropdown
-                  id="equipmentIds"
-                  disabled={!this.props.equipment.loaded}
-                  placeholder="Equipment"
-                  fieldName="equipmentCode"
-                  items={equipment}
-                  selectedIds={this.state.search.equipmentIds}
-                  updateState={this.updateSearchState}
-                  showMaxItems={2}/>
-                <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
-                <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
-              </ButtonToolbar>
-            </Col>
-            <Col xs={3} sm={2} id="search-buttons">
-              <Row>
-                <Favourites id="hiring-report-faves-dropdown" type="hiringReport" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
-              </Row>
-            </Col>
-          </Row>
-        </Form>
-      </SearchBar>
+    return (
+      <div id="hiring-report">
+        <PageHeader>
+          Hiring Report - Not Hired / Force Hire {resultCount}
+          <ButtonGroup>
+            <PrintButton disabled={!this.props.hiringResponses.loaded} />
+          </ButtonGroup>
+        </PageHeader>
+        <SearchBar>
+          <Form onSubmit={this.search}>
+            <Row>
+              <Col xs={9} sm={10} id="filters">
+                <ButtonToolbar>
+                  <MultiDropdown
+                    id="projectIds"
+                    disabled={!this.props.projects.loaded}
+                    placeholder="Projects"
+                    fieldName="label"
+                    items={projects}
+                    selectedIds={this.state.search.projectIds}
+                    updateState={this.updateProjectSearchState}
+                    showMaxItems={2}
+                  />
+                  <MultiDropdown
+                    id="localAreaIds"
+                    placeholder="Local Areas"
+                    items={localAreas}
+                    selectedIds={this.state.search.localAreaIds}
+                    updateState={this.updateLocalAreaSearchState}
+                    showMaxItems={2}
+                  />
+                  <MultiDropdown
+                    id="ownerIds"
+                    disabled={!this.props.owners.loaded}
+                    placeholder="Companies"
+                    fieldName="organizationName"
+                    items={owners}
+                    selectedIds={this.state.search.ownerIds}
+                    updateState={this.updateOwnerSearchState}
+                    showMaxItems={2}
+                  />
+                  <MultiDropdown
+                    id="equipmentIds"
+                    disabled={!this.props.equipment.loaded}
+                    placeholder="Equipment"
+                    fieldName="equipmentCode"
+                    items={equipment}
+                    selectedIds={this.state.search.equipmentIds}
+                    updateState={this.updateSearchState}
+                    showMaxItems={2}
+                  />
+                  <Button id="search-button" bsStyle="primary" type="submit">
+                    Search
+                  </Button>
+                  <Button id="clear-search-button" onClick={this.clearSearch}>
+                    Clear
+                  </Button>
+                </ButtonToolbar>
+              </Col>
+              <Col xs={3} sm={2} id="search-buttons">
+                <Row>
+                  <Favourites
+                    id="hiring-report-faves-dropdown"
+                    type="hiringReport"
+                    favourites={this.props.favourites}
+                    data={this.state.search}
+                    onSelect={this.loadFavourite}
+                    pullRight
+                  />
+                </Row>
+              </Col>
+            </Row>
+          </Form>
+        </SearchBar>
 
-      {(() => {
-        if (this.props.hiringResponses.loading) {
-          return <div style={{ textAlign: 'center' }}><Spinner/></div>;
-        }
+        {(() => {
+          if (this.props.hiringResponses.loading) {
+            return (
+              <div style={{ textAlign: "center" }}>
+                <Spinner />
+              </div>
+            );
+          }
 
-        if (this.props.hiringResponses.loaded) {
-          return this.renderResults();
-        }
-      })()}
-    </div>;
+          if (this.props.hiringResponses.loaded) {
+            return this.renderResults();
+          }
+        })()}
+      </div>
+    );
   }
 }
-
 
 function mapStateToProps(state) {
   return {

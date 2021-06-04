@@ -1,25 +1,20 @@
-/* global process, require, module */
+import { createStore, applyMiddleware, compose } from "redux";
+import thunk from "redux-thunk";
 
-import { createStore, applyMiddleware, compose } from 'redux';
-import thunk from 'redux-thunk';
-
-import allReducers from './reducers/all';
-
+import allReducers from "./reducers/all";
 
 const composeEnhancers =
-  typeof window === 'object' &&
-  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
-    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-      // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
-    }) : compose;
+  typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+        // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
+      })
+    : compose;
 
-const middleware = [
-  thunk,
-];
+const middleware = [thunk];
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   // Only add this redux store mutation detection middleware in dev
-  const freeze = require('redux-freeze');
+  const freeze = require("redux-freeze");
   middleware.push(freeze);
 }
 
@@ -29,10 +24,10 @@ const store = createStore(
   composeEnhancers(applyMiddleware(...middleware))
 );
 
-if(process.env.NODE_ENV !== 'production') {
-  if(module.hot) {
-    module.hot.accept('./reducers/all', () =>
-      store.replaceReducer(require('./reducers/all').default)
+if (process.env.NODE_ENV !== "production") {
+  if (module.hot) {
+    module.hot.accept("./reducers/all", () =>
+      store.replaceReducer(require("./reducers/all").default)
     );
   }
 }

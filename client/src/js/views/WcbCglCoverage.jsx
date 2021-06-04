@@ -1,28 +1,34 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { Link } from 'react-router';
-import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup } from 'react-bootstrap';
-import _ from 'lodash';
-import Moment from 'moment';
+import PropTypes from "prop-types";
+import React from "react";
+import { connect } from "react-redux";
+import { Link } from "react-router";
+import {
+  Alert,
+  Row,
+  Col,
+  ButtonToolbar,
+  Button,
+  ButtonGroup,
+} from "react-bootstrap";
+import _ from "lodash";
+import Moment from "moment";
 
-import * as Action from '../actionTypes';
-import * as Api from '../api';
-import * as Constant from '../constants';
-import store from '../store';
+import * as Action from "../actionTypes";
+import * as Api from "../api";
+import * as Constant from "../constants";
+import store from "../store";
 
-import PageHeader from '../components/ui/PageHeader.jsx';
-import SearchBar from '../components/ui/SearchBar.jsx';
-import DateControl from '../components/DateControl.jsx';
-import Favourites from '../components/Favourites.jsx';
-import Form from '../components/Form.jsx';
-import MultiDropdown from '../components/MultiDropdown.jsx';
-import SortTable from '../components/SortTable.jsx';
-import Spinner from '../components/Spinner.jsx';
-import PrintButton from '../components/PrintButton.jsx';
+import PageHeader from "../components/ui/PageHeader.jsx";
+import SearchBar from "../components/ui/SearchBar.jsx";
+import DateControl from "../components/DateControl.jsx";
+import Favourites from "../components/Favourites.jsx";
+import Form from "../components/Form.jsx";
+import MultiDropdown from "../components/MultiDropdown.jsx";
+import SortTable from "../components/SortTable.jsx";
+import Spinner from "../components/Spinner.jsx";
+import PrintButton from "../components/PrintButton.jsx";
 
-import { formatDateTime, toZuluTime } from '../utils/date';
-
+import { formatDateTime, toZuluTime } from "../utils/date";
 
 class WcbCglCoverage extends React.Component {
   static propTypes = {
@@ -43,11 +49,11 @@ class WcbCglCoverage extends React.Component {
       search: {
         localAreaIds: props.search.localAreaIds || [],
         ownerIds: props.search.ownerIds || [],
-        wcbExpiry: props.search.wcbExpiry || '',
-        cglExpiry: props.search.cglExpiry || '',
+        wcbExpiry: props.search.wcbExpiry || "",
+        cglExpiry: props.search.cglExpiry || "",
       },
-      ui : {
-        sortField: props.ui.sortField || 'localAreaLabel',
+      ui: {
+        sortField: props.ui.sortField || "localAreaLabel",
         sortDesc: props.ui.sortDesc === true,
       },
     };
@@ -66,12 +72,12 @@ class WcbCglCoverage extends React.Component {
 
     var wcbExpiryDate = Moment(this.state.search.wcbExpiry);
     if (wcbExpiryDate && wcbExpiryDate.isValid()) {
-      searchParams.wcbExpiry = toZuluTime(wcbExpiryDate.startOf('day'));
+      searchParams.wcbExpiry = toZuluTime(wcbExpiryDate.startOf("day"));
     }
 
     var cglExpiryDate = Moment(this.state.search.cglExpiry);
     if (cglExpiryDate && cglExpiryDate.isValid()) {
-      searchParams.cglExpiry = toZuluTime(cglExpiryDate.startOf('day'));
+      searchParams.cglExpiry = toZuluTime(cglExpiryDate.startOf("day"));
     }
 
     return searchParams;
@@ -82,7 +88,7 @@ class WcbCglCoverage extends React.Component {
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
-      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      var defaultFavourite = _.find(this.props.favourites, (f) => f.isDefault);
       if (defaultFavourite) {
         this.loadFavourite(defaultFavourite);
       }
@@ -102,27 +108,43 @@ class WcbCglCoverage extends React.Component {
     var defaultSearchParameters = {
       localAreaIds: [],
       ownerIds: [],
-      wcbExpiry: '',
-      cglExpiry: '',
+      wcbExpiry: "",
+      cglExpiry: "",
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
-      store.dispatch({ type: Action.UPDATE_OWNERS_COVERAGE_SEARCH, ownersCoverage: this.state.search });
+      store.dispatch({
+        type: Action.UPDATE_OWNERS_COVERAGE_SEARCH,
+        ownersCoverage: this.state.search,
+      });
       store.dispatch({ type: Action.CLEAR_OWNERS_COVERAGE });
     });
   };
 
   updateSearchState = (state, callback) => {
-    this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () =>{
-      store.dispatch({ type: Action.UPDATE_OWNERS_COVERAGE_SEARCH, ownersCoverage: this.state.search });
-      if (callback) { callback(); }
-    });
+    this.setState(
+      { search: { ...this.state.search, ...state, ...{ loaded: true } } },
+      () => {
+        store.dispatch({
+          type: Action.UPDATE_OWNERS_COVERAGE_SEARCH,
+          ownersCoverage: this.state.search,
+        });
+        if (callback) {
+          callback();
+        }
+      }
+    );
   };
 
   updateUIState = (state, callback) => {
-    this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
-      store.dispatch({ type: Action.UPDATE_OWNERS_COVERAGE_UI, ownersCoverage: this.state.ui });
-      if (callback) { callback(); }
+    this.setState({ ui: { ...this.state.ui, ...state } }, () => {
+      store.dispatch({
+        type: Action.UPDATE_OWNERS_COVERAGE_UI,
+        ownersCoverage: this.state.ui,
+      });
+      if (callback) {
+        callback();
+      }
     });
   };
 
@@ -135,9 +157,9 @@ class WcbCglCoverage extends React.Component {
       return <Alert bsStyle="success">No results</Alert>;
     }
 
-    var ownersCoverage = _.sortBy(this.props.ownersCoverage.data, entry => {
+    var ownersCoverage = _.sortBy(this.props.ownersCoverage.data, (entry) => {
       var sortValue = entry[this.state.ui.sortField];
-      if (typeof sortValue === 'string') {
+      if (typeof sortValue === "string") {
         return sortValue.toLowerCase();
       }
       return sortValue;
@@ -147,37 +169,48 @@ class WcbCglCoverage extends React.Component {
       _.reverse(ownersCoverage);
     }
 
-    return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-      { field: 'localAreaLabel',       title: 'Local Area'   },
-      { field: 'ownerCode',            title: 'Owner Code'   },
-      { field: 'organizationName',     title: 'Company Name' },
-      { field: 'primaryContactNumber', title: 'Phone'        },
-      { field: 'primaryContactCell',   title: 'Cell'         },
-      { field: 'wcbNumber',            title: 'WCB Number'   },
-      { field: 'wcbExpiryDate',        title: 'WCB Expires'  },
-      { field: 'cglNumber',            title: 'CGL Policy'   },
-      { field: 'cglExpiryDate',        title: 'CGL Expires'  },
-    ]}>
-      {
-        _.map(ownersCoverage, (entry) => {
-          return <tr key={ entry.id }>
-            <td>{ entry.localAreaLabel }</td>
-            <td>{ entry.ownerCode }</td>
-            <td><Link to={`${Constant.OWNERS_PATHNAME}/${entry.id}`}>{ entry.organizationName }</Link></td>
-            <td>{ entry.primaryContactNumber }</td>
-            <td>{ entry.primaryContactCell }</td>
-            <td>{ entry.wcbNumber }</td>
-            <td>{ formatDateTime(entry.wcbExpiryDate, 'YYYY-MMM-DD') }</td>
-            <td>{ entry.cglNumber }</td>
-            <td>{ formatDateTime(entry.cglExpiryDate, 'YYYY-MMM-DD') }</td>
-          </tr>;
-        })
-      }
-    </SortTable>;
+    return (
+      <SortTable
+        sortField={this.state.ui.sortField}
+        sortDesc={this.state.ui.sortDesc}
+        onSort={this.updateUIState}
+        headers={[
+          { field: "localAreaLabel", title: "Local Area" },
+          { field: "ownerCode", title: "Owner Code" },
+          { field: "organizationName", title: "Company Name" },
+          { field: "primaryContactNumber", title: "Phone" },
+          { field: "primaryContactCell", title: "Cell" },
+          { field: "wcbNumber", title: "WCB Number" },
+          { field: "wcbExpiryDate", title: "WCB Expires" },
+          { field: "cglNumber", title: "CGL Policy" },
+          { field: "cglExpiryDate", title: "CGL Expires" },
+        ]}
+      >
+        {_.map(ownersCoverage, (entry) => {
+          return (
+            <tr key={entry.id}>
+              <td>{entry.localAreaLabel}</td>
+              <td>{entry.ownerCode}</td>
+              <td>
+                <Link to={`${Constant.OWNERS_PATHNAME}/${entry.id}`}>
+                  {entry.organizationName}
+                </Link>
+              </td>
+              <td>{entry.primaryContactNumber}</td>
+              <td>{entry.primaryContactCell}</td>
+              <td>{entry.wcbNumber}</td>
+              <td>{formatDateTime(entry.wcbExpiryDate, "YYYY-MMM-DD")}</td>
+              <td>{entry.cglNumber}</td>
+              <td>{formatDateTime(entry.cglExpiryDate, "YYYY-MMM-DD")}</td>
+            </tr>
+          );
+        })}
+      </SortTable>
+    );
   };
 
   matchesLocalAreaFilter = (localAreaId) => {
-    if (this.state.search.localAreaIds.length == 0) {
+    if (this.state.search.localAreaIds.length === 0) {
       return true;
     }
 
@@ -189,88 +222,117 @@ class WcbCglCoverage extends React.Component {
   };
 
   filterSelectedOwners = () => {
-    var acceptableOwnerIds = _.map(this.getFilteredOwners(), 'id');
-    var ownerIds = _.intersection(this.state.search.ownerIds, acceptableOwnerIds);
-    this.updateSearchState({ ownerIds: ownerIds }, this.filterSelectedEquipment);
+    var acceptableOwnerIds = _.map(this.getFilteredOwners(), "id");
+    var ownerIds = _.intersection(
+      this.state.search.ownerIds,
+      acceptableOwnerIds
+    );
+    this.updateSearchState(
+      { ownerIds: ownerIds },
+      this.filterSelectedEquipment
+    );
   };
 
   getFilteredOwners = () => {
     return _.chain(this.props.owners.data)
-      .filter(x => this.matchesLocalAreaFilter(x.localAreaId))
-      .sortBy('organizationName')
+      .filter((x) => this.matchesLocalAreaFilter(x.localAreaId))
+      .sortBy("organizationName")
       .value();
   };
 
   render() {
-    var resultCount = '';
+    var resultCount = "";
     if (this.props.ownersCoverage.loaded) {
-      resultCount = '(' + Object.keys(this.props.ownersCoverage.data).length + ')';
+      resultCount =
+        "(" + Object.keys(this.props.ownersCoverage.data).length + ")";
     }
 
-    var localAreas = _.sortBy(this.props.localAreas, 'name');
+    var localAreas = _.sortBy(this.props.localAreas, "name");
     var owners = this.getFilteredOwners();
 
-    return <div id="wcg-cgl-coverage">
-      <PageHeader>WCB / CGL Coverage { resultCount }
-        <ButtonGroup>
-          <PrintButton disabled={!this.props.ownersCoverage.loaded}/>
-        </ButtonGroup>
-      </PageHeader>
-      <SearchBar>
-        <Form onSubmit={ this.search }>
-          <Row>
-            <Col xs={9} sm={10} id="filters">
-              <ButtonToolbar>
-                <MultiDropdown
-                  id="localAreaIds"
-                  placeholder="Local Areas"
-                  items={localAreas}
-                  selectedIds={this.state.search.localAreaIds}
-                  updateState={this.updateLocalAreaSearchState}
-                  showMaxItems={2} />
-                <MultiDropdown
-                  id="ownerIds"
-                  disabled={!this.props.owners.loaded}
-                  placeholder="Companies"
-                  fieldName="organizationName"
-                  items={owners}
-                  selectedIds={this.state.search.ownerIds}
-                  updateState={this.updateSearchState}
-                  showMaxItems={2} />
-                <DateControl
-                  id="wcbExpiry"
-                  date={this.state.search.wcbExpiry}
-                  updateState={this.updateSearchState}
-                  label="WCB Exp Before:"
-                  title="WCB Expiry Before"/>
-                <DateControl
-                  id="cglExpiry"
-                  date={this.state.search.cglExpiry}
-                  updateState={this.updateSearchState}
-                  label="CGL Exp Before:"
-                  title="CGL Expiry Before"/>
-                <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
-                <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
-              </ButtonToolbar>
-            </Col>
-            <Col xs={3} sm={2} id="search-buttons">
-              <Row>
-                <Favourites id="wcg-cgl-coverage-faves-dropdown" type="ownersCoverage" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
-              </Row>
-            </Col>
-          </Row>
-        </Form>
-      </SearchBar>
+    return (
+      <div id="wcg-cgl-coverage">
+        <PageHeader>
+          WCB / CGL Coverage {resultCount}
+          <ButtonGroup>
+            <PrintButton disabled={!this.props.ownersCoverage.loaded} />
+          </ButtonGroup>
+        </PageHeader>
+        <SearchBar>
+          <Form onSubmit={this.search}>
+            <Row>
+              <Col xs={9} sm={10} id="filters">
+                <ButtonToolbar>
+                  <MultiDropdown
+                    id="localAreaIds"
+                    placeholder="Local Areas"
+                    items={localAreas}
+                    selectedIds={this.state.search.localAreaIds}
+                    updateState={this.updateLocalAreaSearchState}
+                    showMaxItems={2}
+                  />
+                  <MultiDropdown
+                    id="ownerIds"
+                    disabled={!this.props.owners.loaded}
+                    placeholder="Companies"
+                    fieldName="organizationName"
+                    items={owners}
+                    selectedIds={this.state.search.ownerIds}
+                    updateState={this.updateSearchState}
+                    showMaxItems={2}
+                  />
+                  <DateControl
+                    id="wcbExpiry"
+                    date={this.state.search.wcbExpiry}
+                    updateState={this.updateSearchState}
+                    label="WCB Exp Before:"
+                    title="WCB Expiry Before"
+                  />
+                  <DateControl
+                    id="cglExpiry"
+                    date={this.state.search.cglExpiry}
+                    updateState={this.updateSearchState}
+                    label="CGL Exp Before:"
+                    title="CGL Expiry Before"
+                  />
+                  <Button id="search-button" bsStyle="primary" type="submit">
+                    Search
+                  </Button>
+                  <Button id="clear-search-button" onClick={this.clearSearch}>
+                    Clear
+                  </Button>
+                </ButtonToolbar>
+              </Col>
+              <Col xs={3} sm={2} id="search-buttons">
+                <Row>
+                  <Favourites
+                    id="wcg-cgl-coverage-faves-dropdown"
+                    type="ownersCoverage"
+                    favourites={this.props.favourites}
+                    data={this.state.search}
+                    onSelect={this.loadFavourite}
+                    pullRight
+                  />
+                </Row>
+              </Col>
+            </Row>
+          </Form>
+        </SearchBar>
 
-      {(() => {
-        if (this.props.ownersCoverage.loading) {
-          return <div style={{ textAlign: 'center' }}><Spinner/></div>;
-        }
-        if (this.props.ownersCoverage.loaded) {
-          return this.renderResults();
-        }
-      })()}
-    </div>;
+        {(() => {
+          if (this.props.ownersCoverage.loading) {
+            return (
+              <div style={{ textAlign: "center" }}>
+                <Spinner />
+              </div>
+            );
+          }
+          if (this.props.ownersCoverage.loaded) {
+            return this.renderResults();
+          }
+        })()}
+      </div>
+    );
   }
 }
 

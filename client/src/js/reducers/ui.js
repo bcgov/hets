@@ -1,4 +1,4 @@
-import * as Action from '../actionTypes';
+import * as Action from "../actionTypes";
 
 const DEFAULT_STATE = {
   requests: {
@@ -35,7 +35,7 @@ const DEFAULT_STATE = {
 };
 
 export default function uiReducer(state = DEFAULT_STATE, action) {
-  switch(action.type) {
+  switch (action.type) {
     // Requests
 
     case Action.REQUESTS_BEGIN:
@@ -45,15 +45,22 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
       return { ...state, requests: { ...state.requests, waiting: false } };
 
     case Action.REQUESTS_ERROR:
-      return { ...state, requests: { ...state.requests, error: action.error }, showErrorDialog: true };
+      return {
+        ...state,
+        requests: { ...state.requests, error: action.error },
+        showErrorDialog: true,
+      };
 
-      // Screens
+    // Screens
 
     case Action.UPDATE_EQUIPMENT_LIST_UI:
       return { ...state, equipmentList: action.equipmentList };
 
     case Action.UPDATE_PHYSICAL_ATTACHMENTS_UI:
-      return { ...state, equipmentPhysicalAttachments: action.equipmentPhysicalAttachments };
+      return {
+        ...state,
+        equipmentPhysicalAttachments: action.equipmentPhysicalAttachments,
+      };
 
     case Action.UPDATE_OWNERS_UI:
       return { ...state, owners: action.owners };
@@ -118,10 +125,10 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
     case Action.UPDATE_AIT_REPORT_UI:
       return { ...state, aitResponses: action.aitResponses };
 
-      // case Action.GENERATE_ANOTHER_RENTAL_AGREEMENT:
-      //   return { ...state, activeRentalAgreementId: action.rentalAgreement.id };
+    // case Action.GENERATE_ANOTHER_RENTAL_AGREEMENT:
+    //   return { ...state, activeRentalAgreementId: action.rentalAgreement.id };
 
-      // Modals
+    // Modals
 
     case Action.SHOW_SESSION_TIMEOUT_DIALOG:
       return { ...state, showSessionTimeoutDialog: true };
@@ -134,9 +141,9 @@ export default function uiReducer(state = DEFAULT_STATE, action) {
 
     case Action.CLOSE_ERROR_DIALOG:
       return { ...state, showErrorDialog: false };
+    default:
+      return state;
   }
-
-  return state;
 }
 
 export const uiSelector = (state) => state.ui;

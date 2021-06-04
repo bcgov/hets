@@ -1,10 +1,10 @@
-@import 'gov3';
-@import 'init';
-@import 'header';
-@import 'views/all';
-@import 'components/all';
-@import 'print';
-@import 'mixins';
+@import "gov3";
+@import "init";
+@import "header";
+@import "views/all";
+@import "components/all";
+@import "print";
+@import "mixins";
 
 #app {
   height: 100%;
@@ -24,7 +24,7 @@
 
 .spinner-container {
   text-align: center;
-  padding: .5rem 0;
+  padding: 0.5rem 0;
 }
 
 .spinner {
@@ -32,7 +32,7 @@
   vertical-align: baseline;
   width: 24px;
   height: 24px;
-  animation: rotate .8s infinite linear;
+  animation: rotate 0.8s infinite linear;
   border: 2px solid #2e6da4;
   border-right-color: transparent !important;
   border-radius: 50%;
@@ -62,8 +62,12 @@ th {
 }
 
 @keyframes rotate {
-  0%    { transform: rotate(0deg); }
-  100%  { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 a.light {
@@ -78,7 +82,7 @@ a.light {
   margin-top: 30px;
 
   &:before {
-    content: '';
+    content: "";
   }
 
   .btn {
@@ -88,7 +92,7 @@ a.light {
 
 .alert-warning {
   &:before {
-    content: '';
+    content: "";
   }
 }
 

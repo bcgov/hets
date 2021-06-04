@@ -39,7 +39,7 @@ The following software requirements are required:
    ```
 
 Now you will be able to access the web app when you go to
-[http:://localhost:4375](http:://localhost:4375)
+[http:://localhost:3000](http:://localhost:3000)
 
 ## Development
 
@@ -64,26 +64,18 @@ API requests follow an [action creator pattern](https://redux.js.org/basics/acti
 and they are all defined in a [api](./src/js/api.js) file.
 
 [SASS](https://sass-lang.com/) is a CSS preprocessor. The SCSS flavour of SASS is used for all the
-files in the project. The React Bootstrap's CSS is built as a seperate `vendor.css` file in
-`dist/css/`. The application’s SCSS files are all located in the `src/sass/` directory.
+files in the project.
 
 The web application uses [Webpack](https://webpack.js.org/)’s
 [Hot Module Replacement](https://webpack.js.org/concepts/hot-module-replacement/) which will update
 the UI whenever a [React Component](https://reactjs.org/docs/react-component.html) is saved on disk.
 
-[Gulp](https://gulpjs.com/) is the tool used for the front-end build system. Inside the
-[gulpfile.js](https://github.com/bcgov/hets/tree/master/client/gulpfile.js) are defined a series of
-tasks that can be run to build the project. The common ones are:
+[Create React App](https://www.npmjs.com/package/create-react-app) is the tool used for the front-end build system. Inside the
 
-1. `gulp` — starts a local Node webserver which will watch and re-build JS, SASS, and copy static
-   files into `dist/`
-2. `gulp --production` — builds a production optimized version of the application into `dist/`
-3. `gulp clean` — deletes all the files in the `dist/` directory.
-4. `gulp test` — runs unit and integration tests.
+<!-- temporary fix using create react app I did not create any tests -->
+<!-- ### Running tests
 
-### Running tests
-
-There are only a few unit tests for HETS at the moment which can be run with: `npm test`.
+There are only a few unit tests for HETS at the moment which can be run with: `npm test`. -->
 
 ## Coding style
 
@@ -93,9 +85,10 @@ fail to build the JS.
 
 ## Deployment
 
-Deployment is done by running `build.bat` which calls `gulp --production` to build a complete
+<!-- temporary fix Not sure how it is deployed  -->
+<!-- Deployment is done by running `build.bat` which calls `gulp --production` to build a complete
 production optimized web application in dist/. The files in dist/ are then copied to the right spot
-in OpenShift.
+in OpenShift. -->
 
 ## Built With
 

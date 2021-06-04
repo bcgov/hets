@@ -1,4 +1,4 @@
-import * as Action from '../actionTypes';
+import * as Action from "../actionTypes";
 
 const DEFAULT_SEARCHES = {
   equipmentList: {},
@@ -14,7 +14,7 @@ const DEFAULT_SEARCHES = {
 };
 
 export default function searchReducer(state = DEFAULT_SEARCHES, action) {
-  switch(action.type) {
+  switch (action.type) {
     case Action.UPDATE_EQUIPMENT_LIST_SEARCH:
       return { ...state, equipmentList: action.equipmentList };
 
@@ -44,7 +44,7 @@ export default function searchReducer(state = DEFAULT_SEARCHES, action) {
 
     case Action.UPDATE_AIT_SEARCH:
       return { ...state, aitResponses: action.aitResponses };
+    default:
+      return state;
   }
-
-  return state;
 }

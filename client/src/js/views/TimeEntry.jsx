@@ -1,29 +1,37 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { Link } from 'react-router';
-import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form  } from 'react-bootstrap';
-import _ from 'lodash';
+import PropTypes from "prop-types";
+import React from "react";
+import { connect } from "react-redux";
+import { Link } from "react-router";
+import {
+  Alert,
+  Row,
+  Col,
+  ButtonToolbar,
+  Button,
+  ButtonGroup,
+  Glyphicon,
+  Form,
+} from "react-bootstrap";
+import _ from "lodash";
 
-import TimeEntryDialog from './dialogs/TimeEntryDialog.jsx';
+import TimeEntryDialog from "./dialogs/TimeEntryDialog.jsx";
 
-import * as Action from '../actionTypes';
-import * as Api from '../api';
-import * as Constant from '../constants';
-import store from '../store';
+import * as Action from "../actionTypes";
+import * as Api from "../api";
+import * as Constant from "../constants";
+import store from "../store";
 
-import AddButtonContainer from '../components/ui/AddButtonContainer.jsx';
-import PageHeader from '../components/ui/PageHeader.jsx';
-import SearchBar from '../components/ui/SearchBar.jsx';
-import Favourites from '../components/Favourites.jsx';
-import MultiDropdown from '../components/MultiDropdown.jsx';
-import SortTable from '../components/SortTable.jsx';
-import Spinner from '../components/Spinner.jsx';
-import PrintButton from '../components/PrintButton.jsx';
-import Authorize from '../components/Authorize.jsx';
+import AddButtonContainer from "../components/ui/AddButtonContainer.jsx";
+import PageHeader from "../components/ui/PageHeader.jsx";
+import SearchBar from "../components/ui/SearchBar.jsx";
+import Favourites from "../components/Favourites.jsx";
+import MultiDropdown from "../components/MultiDropdown.jsx";
+import SortTable from "../components/SortTable.jsx";
+import Spinner from "../components/Spinner.jsx";
+import PrintButton from "../components/PrintButton.jsx";
+import Authorize from "../components/Authorize.jsx";
 
-import { formatDateTime } from '../utils/date';
-
+import { formatDateTime } from "../utils/date";
 
 class TimeEntry extends React.Component {
   static propTypes = {
@@ -52,8 +60,8 @@ class TimeEntry extends React.Component {
         ownerIds: props.search.ownerIds || [],
         equipmentIds: props.search.equipmentIds || [],
       },
-      ui : {
-        sortField: props.ui.sortField || 'localAreaLabel',
+      ui: {
+        sortField: props.ui.sortField || "localAreaLabel",
         sortDesc: props.ui.sortDesc === true,
       },
     };
@@ -66,7 +74,7 @@ class TimeEntry extends React.Component {
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
-      var defaultFavourite = _.find(this.props.favourites, f => f.isDefault);
+      var defaultFavourite = _.find(this.props.favourites, (f) => f.isDefault);
       if (defaultFavourite) {
         this.loadFavourite(defaultFavourite);
       }
@@ -113,22 +121,38 @@ class TimeEntry extends React.Component {
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
-      store.dispatch({ type: Action.UPDATE_TIME_ENTRIES_SEARCH, timeEntries: this.state.search });
+      store.dispatch({
+        type: Action.UPDATE_TIME_ENTRIES_SEARCH,
+        timeEntries: this.state.search,
+      });
       store.dispatch({ type: Action.CLEAR_TIME_ENTRIES });
     });
   };
 
   updateSearchState = (state, callback) => {
-    this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } }}, () =>{
-      store.dispatch({ type: Action.UPDATE_TIME_ENTRIES_SEARCH, timeEntries: this.state.search });
-      if (callback) { callback(); }
-    });
+    this.setState(
+      { search: { ...this.state.search, ...state, ...{ loaded: true } } },
+      () => {
+        store.dispatch({
+          type: Action.UPDATE_TIME_ENTRIES_SEARCH,
+          timeEntries: this.state.search,
+        });
+        if (callback) {
+          callback();
+        }
+      }
+    );
   };
 
   updateUIState = (state, callback) => {
-    this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
-      store.dispatch({ type: Action.UPDATE_TIME_ENTRIES_UI, timeEntries: this.state.ui });
-      if (callback) { callback(); }
+    this.setState({ ui: { ...this.state.ui, ...state } }, () => {
+      store.dispatch({
+        type: Action.UPDATE_TIME_ENTRIES_UI,
+        timeEntries: this.state.ui,
+      });
+      if (callback) {
+        callback();
+      }
     });
   };
 
@@ -154,12 +178,14 @@ class TimeEntry extends React.Component {
 
   renderResults = (addTimeEntryButton) => {
     if (Object.keys(this.props.timeEntries.data).length === 0) {
-      return <Alert bsStyle="success">No time entries { addTimeEntryButton }</Alert>;
+      return (
+        <Alert bsStyle="success">No time entries {addTimeEntryButton}</Alert>
+      );
     }
 
-    var timeEntries = _.sortBy(this.props.timeEntries.data, timeEntry => {
+    var timeEntries = _.sortBy(this.props.timeEntries.data, (timeEntry) => {
       var sortValue = timeEntry[this.state.ui.sortField];
-      if (typeof sortValue === 'string') {
+      if (typeof sortValue === "string") {
         return sortValue.toLowerCase();
       }
       return sortValue;
@@ -169,45 +195,77 @@ class TimeEntry extends React.Component {
       _.reverse(timeEntries);
     }
 
-    return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-      { field: 'localAreaLabel',          title: 'Local Area'                               },
-      { field: 'ownerCode',               title: 'Owner Code'                               },
-      { field: 'ownerName',               title: 'Company Name'                             },
-      { field: 'sortableEquipmentCode',   title: 'Equip. ID'                                },
-      { field: 'equipmentDetails',        title: 'Make/Model/Size/Year'                     },
-      { field: 'provincialProjectNumber', title: 'Project #'                                },
-      { field: 'hours',                   title: 'Hours'                                    },
-      { field: 'workedDate',              title: 'Date Worked'                              },
-      { field: 'enteredDate',             title: 'Date Entered'                             },
-      { field: 'addTime',                 title: 'Add Time Entry', style: { textAlign: 'right'  },
-        node: addTimeEntryButton,
-      },
-    ]}>
-      {
-        _.map(timeEntries, (entry) => {
-          return <tr key={ entry.id }>
-            <td>{ entry.localAreaLabel }</td>
-            <td>{ entry.ownerCode }</td>
-            <td><Link to={`${Constant.OWNERS_PATHNAME}/${entry.ownerId}`}>{ entry.ownerName }</Link></td>
-            <td><Link to={`${Constant.EQUIPMENT_PATHNAME}/${entry.equipmentId}`}>{ entry.equipmentCode }</Link></td>
-            <td>{ entry.equipmentDetails }</td>
-            <td><Link to={`${Constant.PROJECTS_PATHNAME}/${entry.projectId}`}>{ entry.provincialProjectNumber ? entry.provincialProjectNumber : 'N/A' }</Link></td>
-            <td>{ entry.hours }</td>
-            <td>{ formatDateTime(entry.workedDate, 'YYYY-MMM-DD') }</td>
-            <td>{ formatDateTime(entry.enteredDate, 'YYYY-MMM-DD') }</td>
-            <td style={{ textAlign: 'right' }}>
-              <ButtonGroup>
-                <Button title="Edit Time" bsSize="xsmall" onClick={ this.openTimeEntryDialog.bind(this, entry) }><Glyphicon glyph="edit" /></Button>
-              </ButtonGroup>
-            </td>
-          </tr>;
-        })
-      }
-    </SortTable>;
+    return (
+      <SortTable
+        sortField={this.state.ui.sortField}
+        sortDesc={this.state.ui.sortDesc}
+        onSort={this.updateUIState}
+        headers={[
+          { field: "localAreaLabel", title: "Local Area" },
+          { field: "ownerCode", title: "Owner Code" },
+          { field: "ownerName", title: "Company Name" },
+          { field: "sortableEquipmentCode", title: "Equip. ID" },
+          { field: "equipmentDetails", title: "Make/Model/Size/Year" },
+          { field: "provincialProjectNumber", title: "Project #" },
+          { field: "hours", title: "Hours" },
+          { field: "workedDate", title: "Date Worked" },
+          { field: "enteredDate", title: "Date Entered" },
+          {
+            field: "addTime",
+            title: "Add Time Entry",
+            style: { textAlign: "right" },
+            node: addTimeEntryButton,
+          },
+        ]}
+      >
+        {_.map(timeEntries, (entry) => {
+          return (
+            <tr key={entry.id}>
+              <td>{entry.localAreaLabel}</td>
+              <td>{entry.ownerCode}</td>
+              <td>
+                <Link to={`${Constant.OWNERS_PATHNAME}/${entry.ownerId}`}>
+                  {entry.ownerName}
+                </Link>
+              </td>
+              <td>
+                <Link
+                  to={`${Constant.EQUIPMENT_PATHNAME}/${entry.equipmentId}`}
+                >
+                  {entry.equipmentCode}
+                </Link>
+              </td>
+              <td>{entry.equipmentDetails}</td>
+              <td>
+                <Link to={`${Constant.PROJECTS_PATHNAME}/${entry.projectId}`}>
+                  {entry.provincialProjectNumber
+                    ? entry.provincialProjectNumber
+                    : "N/A"}
+                </Link>
+              </td>
+              <td>{entry.hours}</td>
+              <td>{formatDateTime(entry.workedDate, "YYYY-MMM-DD")}</td>
+              <td>{formatDateTime(entry.enteredDate, "YYYY-MMM-DD")}</td>
+              <td style={{ textAlign: "right" }}>
+                <ButtonGroup>
+                  <Button
+                    title="Edit Time"
+                    bsSize="xsmall"
+                    onClick={this.openTimeEntryDialog.bind(this, entry)}
+                  >
+                    <Glyphicon glyph="edit" />
+                  </Button>
+                </ButtonGroup>
+              </td>
+            </tr>
+          );
+        })}
+      </SortTable>
+    );
   };
 
   matchesProjectFilter = (projectIds) => {
-    if (this.state.search.projectIds.length == 0) {
+    if (this.state.search.projectIds.length === 0) {
       return true;
     }
 
@@ -215,7 +273,7 @@ class TimeEntry extends React.Component {
   };
 
   matchesLocalAreaFilter = (localAreaId) => {
-    if (this.state.search.localAreaIds.length == 0) {
+    if (this.state.search.localAreaIds.length === 0) {
       return true;
     }
 
@@ -223,7 +281,7 @@ class TimeEntry extends React.Component {
   };
 
   matchesOwnerFilter = (ownerId) => {
-    if (this.state.search.ownerIds.length == 0) {
+    if (this.state.search.ownerIds.length === 0) {
       return true;
     }
 
@@ -243,127 +301,176 @@ class TimeEntry extends React.Component {
   };
 
   filterSelectedOwners = () => {
-    var acceptableOwnerIds = _.map(this.getFilteredOwners(), 'id');
-    var ownerIds = _.intersection(this.state.search.ownerIds, acceptableOwnerIds);
-    this.updateSearchState({ ownerIds: ownerIds }, this.filterSelectedEquipment);
+    var acceptableOwnerIds = _.map(this.getFilteredOwners(), "id");
+    var ownerIds = _.intersection(
+      this.state.search.ownerIds,
+      acceptableOwnerIds
+    );
+    this.updateSearchState(
+      { ownerIds: ownerIds },
+      this.filterSelectedEquipment
+    );
   };
 
   filterSelectedEquipment = () => {
-    var acceptableEquipmentIds = _.map(this.getFilteredEquipment(), 'id');
-    var equipmentIds = _.intersection(this.state.search.equipmentIds, acceptableEquipmentIds);
+    var acceptableEquipmentIds = _.map(this.getFilteredEquipment(), "id");
+    var equipmentIds = _.intersection(
+      this.state.search.equipmentIds,
+      acceptableEquipmentIds
+    );
     this.updateSearchState({ equipmentIds: equipmentIds });
   };
 
   getFilteredOwners = () => {
     return _.chain(this.props.owners.data)
-      .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesLocalAreaFilter(x.localAreaId))
-      .sortBy('organizationName')
+      .filter(
+        (x) =>
+          this.matchesProjectFilter(x.projectIds) &&
+          this.matchesLocalAreaFilter(x.localAreaId)
+      )
+      .sortBy("organizationName")
       .value();
   };
 
   getFilteredEquipment = () => {
     return _.chain(this.props.equipment.data)
-      .filter(x => this.matchesProjectFilter(x.projectIds) && this.matchesOwnerFilter(x.ownerId) && this.matchesLocalAreaFilter(x.localAreaId))
-      .sortBy('equipmentCode')
+      .filter(
+        (x) =>
+          this.matchesProjectFilter(x.projectIds) &&
+          this.matchesOwnerFilter(x.ownerId) &&
+          this.matchesLocalAreaFilter(x.localAreaId)
+      )
+      .sortBy("equipmentCode")
       .value();
   };
 
   render() {
-    var resultCount = '';
+    var resultCount = "";
     if (this.props.timeEntries.loaded) {
-      resultCount = '(' + Object.keys(this.props.timeEntries.data).length + ')';
+      resultCount = "(" + Object.keys(this.props.timeEntries.data).length + ")";
     }
 
-    var projects = _.sortBy(this.props.projects.data, 'name');
-    var localAreas = _.sortBy(this.props.localAreas, 'name');
+    var projects = _.sortBy(this.props.projects.data, "name");
+    var localAreas = _.sortBy(this.props.localAreas, "name");
     var owners = this.getFilteredOwners();
     var equipment = this.getFilteredEquipment();
 
-    return <div id="time-entry-list">
-      <PageHeader>Time Entry { resultCount }
-        <ButtonGroup>
-          <PrintButton disabled={!this.props.timeEntries.loaded}/>
-        </ButtonGroup>
-      </PageHeader>
-      <SearchBar>
-        <Form onSubmit={ this.search }>
-          <Row>
-            <Col xs={9} sm={10} id="filters">
-              <ButtonToolbar>
-                <MultiDropdown
-                  id="projectIds"
-                  disabled={!this.props.projects.loaded}
-                  placeholder="Projects"
-                  fieldName="label"
-                  items={projects}
-                  selectedIds={this.state.search.projectIds}
-                  updateState={this.updateProjectSearchState}
-                  showMaxItems={2} />
-                <MultiDropdown
-                  id="localAreaIds"
-                  placeholder="Local Areas"
-                  items={localAreas}
-                  selectedIds={this.state.search.localAreaIds}
-                  updateState={this.updateLocalAreaSearchState}
-                  showMaxItems={2} />
-                <MultiDropdown
-                  id="ownerIds"
-                  disabled={!this.props.owners.loaded}
-                  placeholder="Companies"
-                  fieldName="organizationName"
-                  items={owners}
-                  selectedIds={this.state.search.ownerIds}
-                  updateState={this.updateOwnerSearchState}
-                  showMaxItems={2} />
-                <MultiDropdown
-                  id="equipmentIds"
-                  disabled={!this.props.equipment.loaded}
-                  placeholder="Equipment"
-                  fieldName="equipmentCode"
-                  items={equipment}
-                  selectedIds={this.state.search.equipmentIds}
-                  updateState={this.updateSearchState}
-                  showMaxItems={2} />
-                <Button id="search-button" bsStyle="primary" type="submit">Search</Button>
-                <Button id="clear-search-button" onClick={ this.clearSearch }>Clear</Button>
-              </ButtonToolbar>
-            </Col>
-            <Col xs={3} sm={2} id="search-buttons">
-              <Row>
-                <Favourites id="time-entry-faves-dropdown" type="timeEntry" favourites={ this.props.favourites } data={ this.state.search } onSelect={ this.loadFavourite } pullRight />
-              </Row>
-            </Col>
-          </Row>
-        </Form>
-      </SearchBar>
+    return (
+      <div id="time-entry-list">
+        <PageHeader>
+          Time Entry {resultCount}
+          <ButtonGroup>
+            <PrintButton disabled={!this.props.timeEntries.loaded} />
+          </ButtonGroup>
+        </PageHeader>
+        <SearchBar>
+          <Form onSubmit={this.search}>
+            <Row>
+              <Col xs={9} sm={10} id="filters">
+                <ButtonToolbar>
+                  <MultiDropdown
+                    id="projectIds"
+                    disabled={!this.props.projects.loaded}
+                    placeholder="Projects"
+                    fieldName="label"
+                    items={projects}
+                    selectedIds={this.state.search.projectIds}
+                    updateState={this.updateProjectSearchState}
+                    showMaxItems={2}
+                  />
+                  <MultiDropdown
+                    id="localAreaIds"
+                    placeholder="Local Areas"
+                    items={localAreas}
+                    selectedIds={this.state.search.localAreaIds}
+                    updateState={this.updateLocalAreaSearchState}
+                    showMaxItems={2}
+                  />
+                  <MultiDropdown
+                    id="ownerIds"
+                    disabled={!this.props.owners.loaded}
+                    placeholder="Companies"
+                    fieldName="organizationName"
+                    items={owners}
+                    selectedIds={this.state.search.ownerIds}
+                    updateState={this.updateOwnerSearchState}
+                    showMaxItems={2}
+                  />
+                  <MultiDropdown
+                    id="equipmentIds"
+                    disabled={!this.props.equipment.loaded}
+                    placeholder="Equipment"
+                    fieldName="equipmentCode"
+                    items={equipment}
+                    selectedIds={this.state.search.equipmentIds}
+                    updateState={this.updateSearchState}
+                    showMaxItems={2}
+                  />
+                  <Button id="search-button" bsStyle="primary" type="submit">
+                    Search
+                  </Button>
+                  <Button id="clear-search-button" onClick={this.clearSearch}>
+                    Clear
+                  </Button>
+                </ButtonToolbar>
+              </Col>
+              <Col xs={3} sm={2} id="search-buttons">
+                <Row>
+                  <Favourites
+                    id="time-entry-faves-dropdown"
+                    type="timeEntry"
+                    favourites={this.props.favourites}
+                    data={this.state.search}
+                    onSelect={this.loadFavourite}
+                    pullRight
+                  />
+                </Row>
+              </Col>
+            </Row>
+          </Form>
+        </SearchBar>
 
-      {(() => {
-        if (this.props.timeEntries.loading) {
-          return <div style={{ textAlign: 'center' }}><Spinner/></div>;
-        }
+        {(() => {
+          if (this.props.timeEntries.loading) {
+            return (
+              <div style={{ textAlign: "center" }}>
+                <Spinner />
+              </div>
+            );
+          }
 
-        var addTimeEntryButton = <Authorize><Button title="Add Time" bsSize="xsmall" onClick={ this.openTimeEntryDialog.bind(this, null) }>
-          <Glyphicon glyph="plus" />&nbsp;<strong>Add Time</strong>
-        </Button></Authorize>;
+          var addTimeEntryButton = (
+            <Authorize>
+              <Button
+                title="Add Time"
+                bsSize="xsmall"
+                onClick={this.openTimeEntryDialog.bind(this, null)}
+              >
+                <Glyphicon glyph="plus" />
+                &nbsp;<strong>Add Time</strong>
+              </Button>
+            </Authorize>
+          );
 
-        if (this.props.timeEntries.loaded) {
-          return this.renderResults(addTimeEntryButton);
-        }
+          if (this.props.timeEntries.loaded) {
+            return this.renderResults(addTimeEntryButton);
+          }
 
-        return <AddButtonContainer>{ addTimeEntryButton }</AddButtonContainer>;
-      })()}
-      { this.state.showTimeEntryDialog && (
-        <TimeEntryDialog
-          show={this.state.showTimeEntryDialog}
-          onClose={this.closeTimeEntryDialog}
-          projectId={this.state.timeEntryDialogProjectId}
-          multipleEntryAllowed={this.state.allowMultipleTimeEntries}
-          rentalAgreementId={this.state.rentalAgreementId}/>
-      )}
-    </div>;
+          return <AddButtonContainer>{addTimeEntryButton}</AddButtonContainer>;
+        })()}
+        {this.state.showTimeEntryDialog && (
+          <TimeEntryDialog
+            show={this.state.showTimeEntryDialog}
+            onClose={this.closeTimeEntryDialog}
+            projectId={this.state.timeEntryDialogProjectId}
+            multipleEntryAllowed={this.state.allowMultipleTimeEntries}
+            rentalAgreementId={this.state.rentalAgreementId}
+          />
+        )}
+      </div>
+    );
   }
 }
-
 
 function mapStateToProps(state) {
   return {
