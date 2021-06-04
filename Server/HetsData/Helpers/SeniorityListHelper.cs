@@ -145,14 +145,12 @@ namespace HetsData.Helpers
                                 equipment.CalculateSeniority(seniorityScoring);
                                 equipment.SeniorityEffectiveDate = DateTime.UtcNow;
                             }
-
-                            context.HetEquipment.Update(equipment);
                         }
 
-                        context.SaveChanges();
-
                         // put equipment into the correct blocks
-                        AssignBlocks(localAreaId, districtEquipmentTypeId, blockSize, totalBlocks, context);
+                        AssignBlocks(localAreaId, districtEquipmentTypeId, blockSize, totalBlocks, context, false);
+
+                        context.SaveChanges();
                     }
                 }
             }
@@ -258,8 +256,6 @@ namespace HetsData.Helpers
                 // update the equipment record
                 equipment.BlockNumber = currentBlock + 1;
                 equipment.NumberInBlock = blocks[currentBlock].Count;
-
-                context.HetEquipment.Update(equipment);
 
                 if (saveChanges)
                 {
