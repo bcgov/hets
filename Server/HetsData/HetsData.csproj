@@ -18,6 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HetsCommon\HetsCommon.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Hangfire.Core">
       <HintPath>..\..\..\..\..\Users\paulm\.nuget\packages\hangfire.core\1.6.20\lib\netstandard1.3\Hangfire.Core.dll</HintPath>
     </Reference>

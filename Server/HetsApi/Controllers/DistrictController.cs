@@ -14,6 +14,7 @@ using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
+using HetsData.Hangfire;
 
 namespace HetsApi.Controllers
 {
@@ -27,11 +28,13 @@ namespace HetsApi.Controllers
         private readonly Object _thisLock = new Object();
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IAnnualRollover _annualRollover;
 
-        public DistrictController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public DistrictController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IAnnualRollover annualRollover)
         {
             _context = context;
             _configuration = configuration;
+            _annualRollover = annualRollover;
 
             // set context data
             User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
@@ -130,7 +133,7 @@ namespace HetsApi.Controllers
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get status of current district
-            return new ObjectResult(new HetsResponse(AnnualRolloverHelper.GetRecord(id, _context)));
+            return new ObjectResult(new HetsResponse(_annualRollover.GetRecord(id)));
         }
 
         /// <summary>
@@ -146,7 +149,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetDistrictStatus.Any(a => a.DistrictId == id);
 
             // not found - return new status record
-            if (!exists) return new ObjectResult(new HetsResponse(AnnualRolloverHelper.GetRecord(id, _context)));
+            if (!exists) return new ObjectResult(new HetsResponse(_annualRollover.GetRecord(id)));
 
             // get record and update
             HetDistrictStatus status = _context.HetDistrictStatus
@@ -165,7 +168,7 @@ namespace HetsApi.Controllers
             }
 
             // get status of current district
-            return new ObjectResult(new HetsResponse(AnnualRolloverHelper.GetRecord(id, _context)));
+            return new ObjectResult(new HetsResponse(_annualRollover.GetRecord(id)));
         }
 
         /// <summary>
@@ -195,7 +198,7 @@ namespace HetsApi.Controllers
             }
 
             // get record and ensure it isn't already processing
-            HetDistrictStatus status = AnnualRolloverHelper.GetRecord(id, _context);
+            HetDistrictStatus status = _annualRollover.GetRecord(id);
 
             if (status == null)
             {
@@ -223,7 +226,8 @@ namespace HetsApi.Controllers
             string connectionString = GetConnectionString();
 
             // queue the job
-            BackgroundJob.Enqueue(() => AnnualRolloverHelper.AnnualRolloverJob(null, id, seniorityScoringRules, connectionString));
+            //BackgroundJob.Enqueue(() => AnnualRolloverHelper.AnnualRolloverJob(null, id, seniorityScoringRules, connectionString));
+            BackgroundJob.Enqueue<AnnualRollover>(x => x.AnnualRolloverJob(id, seniorityScoringRules));
 
             // get counts for this district
             int localAreaCount = _context.HetLocalArea

@@ -15,6 +15,7 @@ using HetsData.Model;
 using HetsReport;
 using Hangfire;
 using System.Text;
+using HetsData.Hangfire;
 
 namespace HetsApi.Controllers
 {
@@ -544,8 +545,10 @@ namespace HetsApi.Controllers
             string seniorityScoringRules = GetConfigJson(scoringRules);
 
             // queue the job
-            BackgroundJob.Enqueue(() => EquipmentHelper.RecalculateSeniorityList(null,
-                seniorityScoringRules, connectionString));
+            //BackgroundJob.Enqueue(() => EquipmentHelper.RecalculateSeniorityList(null,
+            //    seniorityScoringRules, connectionString));
+
+            BackgroundJob.Enqueue<SeniorityCalculator>(x => x.RecalculateSeniorityList(seniorityScoringRules));
 
             // return ok
             return new ObjectResult(new HetsResponse("Recalculate job added to hangfire"));
@@ -768,7 +771,9 @@ namespace HetsApi.Controllers
             SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
             List<EquipmentLite> result = new List<EquipmentLite>();
 
-            foreach (HetEquipment item in data)
+            var dataList = data.ToList();
+
+            foreach (HetEquipment item in dataList)
             {
                 result.Add(EquipmentHelper.ToLiteModel(item, scoringRules, (int)agreementStatusId, _context));
             }

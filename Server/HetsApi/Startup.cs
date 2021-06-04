@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Hosting;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using HetsData.Hangfire;
 
 namespace HetsApi
 {
@@ -46,6 +47,7 @@ namespace HetsApi
 
             // add database context
             services.AddDbContext<DbAppContext>(options => options.UseNpgsql(connectionString));
+            services.AddScoped<IAnnualRollover, AnnualRollover>();
 
             services
                 .AddControllers(options =>
@@ -85,32 +87,31 @@ namespace HetsApi
             });
 
             // enable Hangfire
-            PostgreSqlStorageOptions postgreSqlStorageOptions = new PostgreSqlStorageOptions {
-                SchemaName = "public"
-            };
-            if (connectionString != null)
-            {
-                PostgreSqlStorage storage = new PostgreSqlStorage(connectionString, postgreSqlStorageOptions);
-                services.AddHangfire(config =>
-                {
-                    config.UseStorage(storage);
-                    config.UseConsole();
-                });
-            }
+            //enable Hangfire
 
-            // Configure Swagger - only required in the Development Environment
-            if (_hostingEnv.IsDevelopment())
+            services.AddHangfire(configuration =>
+                configuration
+                //.UseSerilogLogProvider()
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UsePostgreSqlStorage(connectionString)                
+            );
+
+            services.AddHangfireServer(options =>
             {
-                services.AddSwaggerGen(options =>
+                options.WorkerCount = 1;
+            });
+
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    options.SwaggerDoc("v1", new OpenApiInfo
-                    {
-                        Version = "v1",
-                        Title = "HETS REST API",
-                        Description = "Hired Equipment Tracking System"
-                    });
+                    Version = "v1",
+                    Title = "HETS REST API",
+                    Description = "Hired Equipment Tracking System"
                 });
-            }
+            });
         }
 
         /// <summary>
@@ -166,24 +167,6 @@ namespace HetsApi
                 options.SwaggerEndpoint(Configuration.GetSection("Constants:SwaggerApiUrl").Value, "HETS REST API v1");
                 options.DocExpansion(DocExpansion.None);
             });
-
-            // enable Hangfire Dashboard
-            // disable the back to site link
-            DashboardOptions dashboardOptions = new DashboardOptions
-            {
-                AppPath = null,
-                Authorization = new[] { new HangfireAuthorizationFilter() }
-            };
-
-            // enable the hangfire dashboard
-            app.UseHangfireDashboard(Configuration.GetSection("Constants:HangfireUrl").Value, dashboardOptions);
-
-            BackgroundJobServerOptions jsOptions = new BackgroundJobServerOptions
-            {
-                WorkerCount = 1                
-            };
-
-            app.UseHangfireServer(jsOptions);
         }
 
         /// <summary>
@@ -206,8 +189,10 @@ namespace HetsApi
             else
             {
                 // environment variables override all other settings (OpenShift)
-                connectionString = $"Host={host};Username={username};Password={password};Database={database};";
+                connectionString = $"Host={host};Username={username};Password={password};Database={database}";
             }
+
+            connectionString += ";Timeout=600;CommandTimeout=0;";
 
             return connectionString;
         }

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using HetsData.Model;
 using Hangfire.Server;
 using Hangfire.Console;
+using HetsApi.Helpers;
 
 namespace HetsData.Helpers
 {
@@ -419,7 +420,7 @@ namespace HetsData.Helpers
         /// <param name="id"></param>
         /// <param name="context"></param>
         /// <param name="rolloverDate"></param>
-        public static float GetYtdServiceHours(int id, DbAppContext context, DateTime? rolloverDate = null)
+        public static float GetYtdServiceHours(int id, DbAppContext context)
         {
             float result = 0.0F;
 
@@ -434,9 +435,17 @@ namespace HetsData.Helpers
             HetDistrictStatus district = context.HetDistrictStatus.AsNoTracking()
                 .First(x => x.DistrictId == equipment.LocalArea.ServiceArea.DistrictId);
 
-            if (district?.NextFiscalYear == null) throw new ArgumentException("Error retrieving district status record");
+            var fiscalYear = DateTime.Today.Year;
 
-            int fiscalYear = (int)district.NextFiscalYear; // status table uses the start of the year
+            if (district?.NextFiscalYear == null)
+            {
+                fiscalYear = FiscalHelper.GetCurrentFiscalStartYear() + 1;
+            }
+            else
+            {
+                fiscalYear = (int)district.NextFiscalYear; // status table uses the start of the year
+            }
+
             DateTime fiscalEnd = new DateTime(fiscalYear, 3, 31);
             DateTime fiscalStart = new DateTime(fiscalYear - 1, 4, 1);
 
@@ -492,11 +501,11 @@ namespace HetsData.Helpers
             if (!exists) throw new ArgumentException("District Equipment Type is invalid");
 
             // get the local area
-            HetLocalArea localArea = context.HetLocalArea.AsNoTracking()
+            HetLocalArea localArea = context.HetLocalArea
                 .First(a => a.LocalAreaId == localAreaId);
 
             // get the equipment type
-            HetDistrictEquipmentType districtEquipmentType = context.HetDistrictEquipmentType.AsNoTracking()
+            HetDistrictEquipmentType districtEquipmentType = context.HetDistrictEquipmentType
                 .Include(x => x.EquipmentType)
                 .First(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
