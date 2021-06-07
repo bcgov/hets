@@ -2941,7 +2941,6 @@ export function validateOwner(secretKey, postalCode) {
 ////////////////////
 
 function parseRolloverStatus(status) {
-  status.rolloverInactive = status.progressPercentage == null;
   status.rolloverActive =
     status.progressPercentage != null &&
     status.progressPercentage >= 0 &&
@@ -2953,6 +2952,7 @@ export function getRolloverStatus(districtId) {
   return new ApiRequest(`/districts/${districtId}/rolloverStatus`)
     .get(null, { silent: true })
     .then((response) => {
+      console.log(response);
       var status = response.data;
       parseRolloverStatus(status);
       store.dispatch({

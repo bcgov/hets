@@ -51,6 +51,9 @@ namespace HetsData.Model
         public ICollection<HetDistrictStatus> HetDistrictStatus { get; set; }
 
         [JsonIgnore]
+        public HetRolloverProgress HetRolloverProgress { get; set; }
+
+        [JsonIgnore]
         public ICollection<HetDistrictEquipmentType> HetDistrictEquipmentType { get; set; }
 
         [JsonIgnore]

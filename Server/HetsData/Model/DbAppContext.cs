@@ -4562,21 +4562,20 @@ namespace HetsData.Model
 
             modelBuilder.Entity<HetRolloverProgress>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.DistrictId);
 
                 entity.ToTable("HET_ROLLOVER_PROGRESS");
 
-                entity.HasIndex(e => e.DistrictId)
-                    .HasName("HET_ROLLOVER_PROGRESS_UK")
-                    .IsUnique();
-
-                entity.Property(e => e.DistrictId).HasColumnName("DISTRICT_ID");
+                entity.Property(e => e.DistrictId)
+                    .HasColumnName("DISTRICT_ID")
+                    .ValueGeneratedNever();
 
                 entity.Property(e => e.ProgressPercentage).HasColumnName("PROGRESS_PERCENTAGE");
 
                 entity.HasOne(d => d.District)
-                    .WithOne()
+                    .WithOne(p => p.HetRolloverProgress)
                     .HasForeignKey<HetRolloverProgress>(d => d.DistrictId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_HET_ROLLOVER_PROGRESS_DISTRICT_ID");
             });
 

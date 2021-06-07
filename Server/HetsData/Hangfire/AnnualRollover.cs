@@ -2,6 +2,7 @@
 using HetsApi.Helpers;
 using HetsData.Helpers;
 using HetsData.Model;
+using HetsData.View;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,18 +14,19 @@ namespace HetsData.Hangfire
     {
         public HetDistrictStatus GetRecord(int id);
         public void AnnualRolloverJob(int districtId, string seniorityScoringRules);
+        public RolloverProgressDto KickoffProgress(int districtId);
     }
 
     public class AnnualRollover : IAnnualRollover
     {
         private DbAppContext _dbContextMain;
-        private DbAppContext _dbContextSub;
+        private DbAppMonitorContext _dbContextMonitor;
         private string _jobId;
 
-        public AnnualRollover(DbAppContext dbContextMain, DbAppContext dbContextSub)
+        public AnnualRollover(DbAppContext dbContextMain, DbAppMonitorContext dbContextMonitor)
         {
             _dbContextMain = dbContextMain;
-            _dbContextSub = dbContextSub;
+            _dbContextMonitor = dbContextMonitor;
             _jobId = Guid.NewGuid().ToString();
         }
 
@@ -54,8 +56,6 @@ namespace HetsData.Hangfire
                     NextFiscalYear = rolloverYear,
                     DisplayRolloverMessage = false
                 };
-
-                _dbContextMain.HetDistrictStatus.Add(status);
             }
 
             return status;
@@ -96,7 +96,7 @@ namespace HetsData.Hangfire
                 WriteLog("Starting - District #" + district.DistrictNumber);
 
                 // get status record - and ensure we're active
-                HetDistrictStatus status = GetRecord(districtId);
+                HetDistrictStatus status = GetStatus(districtId);
 
                 if (status == null)
                 {
@@ -194,18 +194,21 @@ namespace HetsData.Hangfire
 
                         // increment counters and update status
                         equipmentCompleteCount++;
-                        WriteLog($"Equipment Type ({equipmentCompleteCount}/{equipmentTypes.Count}");
+                        WriteLog($"Equipment Type ({equipmentCompleteCount}/{equipmentTypes.Count})");
                     }
 
                     // increment counters and update status
                     localAreaCompleteCount++;
-                    WriteLog($"Local Area ({localAreaCompleteCount}/{localAreas.Count}");
+                    UpdateProgress(districtId, localAreaCompleteCount, localAreas.Count);
+                    WriteLog($"Local Area ({localAreaCompleteCount}/{localAreas.Count})");
                 }
 
                 // done!
                 UpdateStatusComplete(status, localAreaCompleteCount, equipmentCompleteCount);
                 _dbContextMain.SaveChanges(); //commit;
-                WriteLog("Save Completed");
+                UpdateProgress(districtId, 0, 0, true);
+
+                WriteLog("Rollover Save Completed");
 
                 // **********************************************************
                 // regenerate Owner Secret Keys for this district
@@ -239,7 +242,7 @@ namespace HetsData.Hangfire
                     HetOwner ownerRecord = _dbContextMain.HetOwner.First(x => x.OwnerId == owner.OwnerId);
                     ownerRecord.SharedKey = key;
 
-                    WriteLog($"Owner {i}/{ownerCount}");
+                    WriteLog($"Owner ({i}/{ownerCount})");
                 }
 
                 // save remaining updates - done!
@@ -264,6 +267,86 @@ namespace HetsData.Hangfire
             status.CurrentFiscalYear = rolloverYear;
             status.NextFiscalYear = rolloverYear + 1;
             status.DisplayRolloverMessage = true;
+        }
+
+        private void UpdateProgress(int districtId, int localAreaCompleteCount, int localAreaCount, bool finished = false)
+        {
+            decimal percentage = localAreaCount == 0 ? 80 : Convert.ToDecimal(localAreaCompleteCount) / Convert.ToDecimal(localAreaCount) * 80;
+
+            if (finished) percentage = 100;
+
+            try
+            {
+                var progress = _dbContextMonitor.HetRolloverProgress.FirstOrDefault(x => x.DistrictId == districtId);
+                if (progress == null)
+                {
+                    progress = new HetRolloverProgress { DistrictId = districtId, ProgressPercentage = (int?)percentage };
+                    _dbContextMonitor.Add(progress);
+                }
+                else
+                {
+                    progress.ProgressPercentage = (int?)percentage;
+                }
+
+                _dbContextMonitor.SaveChanges();                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public RolloverProgressDto KickoffProgress(int districtId)
+        {
+            try
+            {
+                var progress = _dbContextMonitor.HetRolloverProgress.FirstOrDefault(x => x.DistrictId == districtId);
+
+                if (progress == null)
+                {
+                    progress = new HetRolloverProgress { DistrictId = districtId, ProgressPercentage = (int?)0 };
+                    _dbContextMonitor.HetRolloverProgress.Add(progress);
+                }
+                else
+                {
+                    progress.ProgressPercentage = (int?)0;
+                }
+
+                _dbContextMonitor.SaveChanges();
+
+                return new RolloverProgressDto { DistrictId = districtId, ProgressPercentage = 0 };
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        private HetDistrictStatus GetStatus(int id)
+        {
+            HetDistrictStatus status = _dbContextMain.HetDistrictStatus
+                .Include(a => a.District)
+                .FirstOrDefault(a => a.DistrictId == id);
+
+            // if there isn't a status - we'll add one now
+            if (status == null)
+            {
+                var rolloverYear = FiscalHelper.GetCurrentFiscalStartYear();
+
+                status = new HetDistrictStatus
+                {
+                    DistrictId = id,
+                    CurrentFiscalYear = rolloverYear - 1,
+                    NextFiscalYear = rolloverYear,
+                    DisplayRolloverMessage = false
+                };
+
+                _dbContextMain.HetDistrictStatus.Add(status);
+            }
+
+            return status;
         }
 
         private void WriteLog(string message)
