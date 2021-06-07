@@ -12,9 +12,12 @@ using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
-using HetsData.Helpers;
+using HetsData.View;
 using HetsData.Model;
 using HetsData.Hangfire;
+using Hangfire.Storage;
+using Newtonsoft.Json;
+using Hangfire.Common;
 
 namespace HetsApi.Controllers
 {
@@ -29,12 +32,14 @@ namespace HetsApi.Controllers
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
         private readonly IAnnualRollover _annualRollover;
+        private IMonitoringApi _monitoringApi;
 
         public DistrictController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IAnnualRollover annualRollover)
         {
             _context = context;
             _configuration = configuration;
             _annualRollover = annualRollover;
+            _monitoringApi = JobStorage.Current.GetMonitoringApi();
 
             // set context data
             User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
@@ -127,14 +132,43 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult RolloverStatusGet([FromRoute]int id)
         {
-            bool exists = _context.HetDistrict.Any(a => a.DistrictId == id);
+            var typeFullName = "HetsData.Hangfire.AnnualRollover";
+            var methodName = "AnnualRolloverJob";
+            var rolloverJob = $"{typeFullName}-{methodName}-{id}";
+
+            var jobProcessing = _monitoringApi.ProcessingJobs(0, 10000)
+                .ToList();
+
+            var jobExists = jobProcessing.Any(x => GetJobFingerprint(x.Value.Job) == rolloverJob);
+
+            var status = _annualRollover.GetRecord(id);
+
+            var progress = _context.HetRolloverProgress.FirstOrDefault(a => a.DistrictId == id);
 
             // not found
-            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (progress == null) return new ObjectResult(new HetsResponse(new RolloverProgressDto { DistrictId = id, ProgressPercentage = null }));
+
+            if (!jobExists)
+            {
+                return new ObjectResult(new HetsResponse(new RolloverProgressDto { DistrictId = id, ProgressPercentage = status.ProgressPercentage }));
+            }
 
             // get status of current district
-            return new ObjectResult(new HetsResponse(_annualRollover.GetRecord(id)));
+            return new ObjectResult(new HetsResponse(new RolloverProgressDto { DistrictId = id, ProgressPercentage = progress.ProgressPercentage }));
         }
+
+        private string GetJobFingerprint(Job job)
+        {
+            var args = "";
+
+            if (job.Args.Count > 0)
+            {
+                args = job.Args[0].ToString();
+            }
+
+            return $"{job.Type.FullName}-{job.Method.Name}-{args}";
+        }
+
 
         /// <summary>
         /// Dismiss district rollover status message
@@ -149,7 +183,7 @@ namespace HetsApi.Controllers
             bool exists = _context.HetDistrictStatus.Any(a => a.DistrictId == id);
 
             // not found - return new status record
-            if (!exists) return new ObjectResult(new HetsResponse(_annualRollover.GetRecord(id)));
+            if (!exists) return NotFound();
 
             // get record and update
             HetDistrictStatus status = _context.HetDistrictStatus
@@ -163,9 +197,13 @@ namespace HetsApi.Controllers
             {
                 status.ProgressPercentage = null;
                 status.DisplayRolloverMessage = false;
-
-                _context.SaveChanges();
             }
+
+            var progress = _context.HetRolloverProgress.FirstOrDefault(a => a.DistrictId == id);
+
+            progress.ProgressPercentage = null;
+
+            _context.SaveChanges();
 
             // get status of current district
             return new ObjectResult(new HetsResponse(_annualRollover.GetRecord(id)));
@@ -222,65 +260,12 @@ namespace HetsApi.Controllers
             IConfigurationSection scoringRules = _configuration.GetSection("SeniorityScoringRules");
             string seniorityScoringRules = GetConfigJson(scoringRules);
 
-            // get connection string
-            string connectionString = GetConnectionString();
-
             // queue the job
             //BackgroundJob.Enqueue(() => AnnualRolloverHelper.AnnualRolloverJob(null, id, seniorityScoringRules, connectionString));
             BackgroundJob.Enqueue<AnnualRollover>(x => x.AnnualRolloverJob(id, seniorityScoringRules));
+            var progressDto = _annualRollover.KickoffProgress(id);
 
-            // get counts for this district
-            int localAreaCount = _context.HetLocalArea
-                .Count(a => a.ServiceArea.DistrictId == id);
-
-            int equipmentCount = _context.HetDistrictEquipmentType
-                .Count(a => a.DistrictId == id);
-
-            // update status - job is kicked off
-            status.LocalAreaCount = localAreaCount;
-            status.DistrictEquipmentTypeCount = equipmentCount;
-            status.ProgressPercentage = 1;
-            status.DisplayRolloverMessage = true;
-
-            _context.HetDistrictStatus.Update(status);
-            _context.SaveChanges();
-
-            return new ObjectResult(status);
-        }
-
-        #endregion
-
-        #region Get Database Connection String
-
-        /// <summary>
-        /// Retrieve database connection string
-        /// </summary>
-        /// <returns></returns>
-        private string GetConnectionString()
-        {
-            string connectionString;
-
-            lock (_thisLock)
-            {
-                string host = _configuration["DATABASE_SERVICE_NAME"];
-                string username = _configuration["POSTGRESQL_USER"];
-                string password = _configuration["POSTGRESQL_PASSWORD"];
-                string database = _configuration["POSTGRESQL_DATABASE"];
-
-                if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) ||
-                    string.IsNullOrEmpty(database))
-                {
-                    // When things get cleaned up properly, this is the only call we'll have to make.
-                    connectionString = _configuration.GetConnectionString("HETS");
-                }
-                else
-                {
-                    // Environment variables override all other settings; same behaviour as the configuration provider when things get cleaned up.
-                    connectionString = $"Host={host};Username={username};Password={password};Database={database};";
-                }
-            }
-
-            return connectionString;
+            return new ObjectResult(progressDto);
         }
 
         #endregion

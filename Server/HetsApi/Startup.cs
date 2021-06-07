@@ -126,21 +126,14 @@ namespace HetsApi
                 builder.UseExceptionHandler(Configuration.GetSection("Constants:ErrorUrl").Value);
             });
 
-
-            // enable Hangfire
-            BackgroundJobServerOptions jsOptions = new BackgroundJobServerOptions
-            {
-                WorkerCount = 1                
-            };
-
-            app.UseHangfireServer(jsOptions);
-
             // disable the back to site link
             DashboardOptions dashboardOptions = new DashboardOptions
             {
                 AppPath = null,
                 Authorization = new[] { new HangfireAuthorizationFilter() }
             };
+
+            app.UseHangfireDashboard(Configuration.GetSection("Constants:HangfireUrl").Value, dashboardOptions);
 
             //app.UseHealthChecks("/healthz", healthCheckOptions);
 
