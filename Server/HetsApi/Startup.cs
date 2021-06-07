@@ -47,6 +47,7 @@ namespace HetsApi
 
             // add database context
             services.AddDbContext<DbAppContext>(options => options.UseNpgsql(connectionString));
+            services.AddDbContext<DbAppMonitorContext>(options => options.UseNpgsql(connectionString));
             services.AddScoped<IAnnualRollover, AnnualRollover>();
 
             services
