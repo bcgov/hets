@@ -303,10 +303,11 @@ namespace HetsApi.Controllers
             // get user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
 
-            List<ProjectAgreementSummary> result = _context.HetRentalAgreement.AsNoTracking()
+            var result = _context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.Project)
                 .Where(x => x.DistrictId.Equals(districtId) &&
                             !x.Number.StartsWith("BCBid"))
+                .ToList()
                 .GroupBy(x => x.Project, (p, agreements) => new ProjectAgreementSummary
                 {
                     Id = p.ProjectId,

@@ -120,23 +120,24 @@ namespace HetsApi.Controllers
             DateTime fiscalYearStart = new DateTime((int)fiscalYear, 3, 31);
 
             // get all active owners for this district (and any projects they're associated with)
-            IEnumerable<EquipmentLiteList> equipment = _context.HetRentalAgreement.AsNoTracking()
+            var equipments = _context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.Project)
                 .Include(x => x.Equipment)
                 .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
                             x.Equipment.EquipmentStatusTypeId == statusId &&
                             x.Project.DbCreateTimestamp > fiscalYearStart)
+                .ToList()
                 .GroupBy(x => x.Equipment, (e, agreements) => new EquipmentLiteList
                 {
                     EquipmentCode = e.EquipmentCode,
                     Id = e.EquipmentId,
                     OwnerId = e.OwnerId,
                     LocalAreaId = e.LocalAreaId,
-                    ProjectIds = agreements.Select(y => y.ProjectId).Distinct().ToList(),
+                    ProjectIds = agreements.Select(y => y.ProjectId).Distinct(),
                     DistrictEquipmentTypeId = e.DistrictEquipmentTypeId ?? 0,
                 });
 
-            return new ObjectResult(new HetsResponse(equipment));
+            return new ObjectResult(new HetsResponse(equipments));
         }
 
         /// <summary>
@@ -152,10 +153,11 @@ namespace HetsApi.Controllers
             // get user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
 
-            IEnumerable<EquipmentAgreementSummary> equipment = _context.HetRentalAgreement.AsNoTracking()
+            var equipments = _context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.Equipment)
                 .Where(x => x.DistrictId == districtId &&
                             !x.Number.StartsWith("BCBid"))
+                .ToList()
                 .GroupBy(x => x.Equipment, (e, agreements) => new EquipmentAgreementSummary
                 {
                     EquipmentCode = e.EquipmentCode,
@@ -165,7 +167,7 @@ namespace HetsApi.Controllers
                     DistrictEquipmentTypeId = e.DistrictEquipmentTypeId ?? 0,
                 });
 
-            return new ObjectResult(new HetsResponse(equipment));
+            return new ObjectResult(new HetsResponse(equipments));
         }
 
         /// <summary>
@@ -181,7 +183,7 @@ namespace HetsApi.Controllers
             // get users district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
 
-            IQueryable<EquipmentLiteList> equipment = _context.HetRentalRequestRotationList.AsNoTracking()
+            var equipments = _context.HetRentalRequestRotationList.AsNoTracking()
                 .Include(x => x.RentalRequest)
                     .ThenInclude(y => y.LocalArea)
                         .ThenInclude(z => z.ServiceArea)
@@ -189,6 +191,7 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.Project)
                 .Include(x => x.Equipment)
                 .Where(x => x.RentalRequest.LocalArea.ServiceArea.DistrictId.Equals(districtId))
+                .ToList()
                 .GroupBy(x => x.Equipment, (e, rotationLists) => new EquipmentLiteList
                 {
                     EquipmentCode = e.EquipmentCode,
@@ -198,7 +201,7 @@ namespace HetsApi.Controllers
                     DistrictEquipmentTypeId = e.DistrictEquipmentTypeId ?? 0,
                 });
 
-            return new ObjectResult(new HetsResponse(equipment));
+            return new ObjectResult(new HetsResponse(equipments));
         }
 
         /// <summary>
