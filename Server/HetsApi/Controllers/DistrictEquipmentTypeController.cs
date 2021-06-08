@@ -119,10 +119,11 @@ namespace HetsApi.Controllers
             // get user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, HttpContext);
 
-            IEnumerable<DistrictEquipmentTypeAgreementSummary> equipmentTypes = _context.HetRentalAgreement.AsNoTracking()
+            var equipmentTypes = _context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.Equipment.DistrictEquipmentType)
                 .Where(x => x.DistrictId == districtId &&
                             !x.Number.StartsWith("BCBid"))
+                .ToList()
                 .GroupBy(x => x.Equipment.DistrictEquipmentType, (t, agreements) => new DistrictEquipmentTypeAgreementSummary
                 {
                     Id = t.DistrictEquipmentTypeId,

@@ -136,7 +136,7 @@ namespace HetsApi.Controllers
             if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get all active owners for this district (and any projects they're associated with)
-            var ownerList = _context.HetRentalRequestRotationList.AsNoTracking()
+            var owners = _context.HetRentalRequestRotationList.AsNoTracking()
                 .Include(x => x.RentalRequest)
                     .ThenInclude(y => y.LocalArea)
                         .ThenInclude(z => z.ServiceArea)
@@ -144,9 +144,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.Equipment)
                     .ThenInclude(y => y.Owner)
                 .Where(x => x.RentalRequest.LocalArea.ServiceArea.DistrictId.Equals(districtId))
-                .ToList();
-
-            var owners = ownerList
+                .ToList()
                 .GroupBy(x => x.Equipment.Owner, (o, rotationLists) => new OwnerLiteProjects
                 {
                     OwnerCode = o.OwnerCode,
