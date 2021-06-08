@@ -26,7 +26,6 @@ namespace HetsApi.Controllers
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class EquipmentController : Controller
     {
-        private readonly Object _thisLock = new Object();
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
         private readonly HttpContext _httpContext;
@@ -542,15 +541,10 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.DistrictCodeTableManagement, HetPermission.WriteAccess)]
         public virtual IActionResult RecalculateSeniorityListPost()
         {
-            string connectionString = GetConnectionString();
-
             IConfigurationSection scoringRules = _configuration.GetSection("SeniorityScoringRules");
             string seniorityScoringRules = GetConfigJson(scoringRules);
 
             // queue the job
-            //BackgroundJob.Enqueue(() => EquipmentHelper.RecalculateSeniorityList(null,
-            //    seniorityScoringRules, connectionString));
-
             BackgroundJob.Enqueue<SeniorityCalculator>(x => x.RecalculateSeniorityList(seniorityScoringRules));
 
             // return ok
@@ -601,41 +595,6 @@ namespace HetsApi.Controllers
 
             jsonString = jsonString + "},";
             return jsonString;
-        }
-
-        #endregion
-
-        #region Get Database Connection String
-
-        /// <summary>
-        /// Retrieve database connection string
-        /// </summary>
-        /// <returns></returns>
-        private string GetConnectionString()
-        {
-            string connectionString;
-
-            lock (_thisLock)
-            {
-                string host = _configuration["DATABASE_SERVICE_NAME"];
-                string username = _configuration["POSTGRESQL_USER"];
-                string password = _configuration["POSTGRESQL_PASSWORD"];
-                string database = _configuration["POSTGRESQL_DATABASE"];
-
-                if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) ||
-                    string.IsNullOrEmpty(database))
-                {
-                    // When things get cleaned up properly, this is the only call we'll have to make.
-                    connectionString = _configuration.GetConnectionString("HETS");
-                }
-                else
-                {
-                    // Environment variables override all other settings; same behaviour as the configuration provider when things get cleaned up.
-                    connectionString = $"Host={host};Username={username};Password={password};Database={database};";
-                }
-            }
-
-            return connectionString;
         }
 
         #endregion
@@ -1430,8 +1389,9 @@ namespace HetsApi.Controllers
             // manage the rotation list data
             HetRentalRequestRotationList rotation = null;
             int currentBlock = -1;
+            var items = data.ToList();
 
-            foreach (HetEquipment item in data)
+            foreach (HetEquipment item in items)
             {
                 if (listRecord.LocalAreaName != item.LocalArea.Name ||
                     listRecord.DistrictEquipmentTypeName != item.DistrictEquipmentType.DistrictEquipmentName)
@@ -1464,7 +1424,7 @@ namespace HetsApi.Controllers
                     // get the rotation info for the first block
                     if (item.BlockNumber != null) currentBlock = (int) item.BlockNumber;
 
-                    rotation = GetRotationList(_context, item.LocalArea.LocalAreaId,
+                    rotation = GetRotationList(item.LocalArea.LocalAreaId,
                         item.DistrictEquipmentType.DistrictEquipmentTypeId,
                         currentBlock, fiscalEnd);
                 }
@@ -1473,7 +1433,7 @@ namespace HetsApi.Controllers
                     // get the rotation info for the next block
                     currentBlock = (int)item.BlockNumber;
 
-                    rotation = GetRotationList(_context, item.LocalArea.LocalAreaId,
+                    rotation = GetRotationList(item.LocalArea.LocalAreaId,
                         item.DistrictEquipmentType.DistrictEquipmentTypeId,
                         currentBlock, fiscalEnd);
                 }
@@ -1520,8 +1480,7 @@ namespace HetsApi.Controllers
             return result;
         }
 
-        private static HetRentalRequestRotationList GetRotationList(DbAppContext context,
-            int localAreaId, int districtEquipmentTypeId, int currentBlock, DateTime fiscalEnd)
+        private HetRentalRequestRotationList GetRotationList(int localAreaId, int districtEquipmentTypeId, int currentBlock, DateTime fiscalEnd)
         {
             try
             {
@@ -1531,7 +1490,7 @@ namespace HetsApi.Controllers
                 //   * For "Forced Hire" there will be no changes to this
                 //     column in the seniority list (as if nothing happened and nobody got called)
                 //   * Must be this fiscal year
-                HetRentalRequestRotationList blockRotation = context.HetRentalRequestRotationList.AsNoTracking()
+                HetRentalRequestRotationList blockRotation = _context.HetRentalRequestRotationList.AsNoTracking()
                     .Include(x => x.Equipment)
                     .Include(x => x.RentalRequest)
                         .ThenInclude(x => x.LocalArea)

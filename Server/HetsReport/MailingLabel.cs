@@ -214,9 +214,9 @@ namespace HetsReport
 
         private static void PopulateParagraph(HetOwner owner, Paragraph paragraph)
         {
-            paragraph.AppendChild(new Text(owner.OrganizationName.Trim()));
+            paragraph.AppendChild(new Text(owner.OrganizationName?.Trim()));
             paragraph.AppendChild(new Break());
-            paragraph.AppendChild(new Text(owner.Address1.Trim()));
+            paragraph.AppendChild(new Text(owner.Address1?.Trim()));
             paragraph.AppendChild(new Break());
 
             if (!string.IsNullOrWhiteSpace(owner.Address2))
@@ -225,7 +225,7 @@ namespace HetsReport
                 paragraph.AppendChild(new Text(", "));
             }
 
-            paragraph.AppendChild(new Text($"{owner.City.Trim()}, {owner.Province.Trim()} {owner.PostalCode.Trim()}"));
+            paragraph.AppendChild(new Text($"{owner.City?.Trim()}, {owner.Province?.Trim()} {owner.PostalCode?.Trim()}"));
         }
     }
 
