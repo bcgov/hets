@@ -110,7 +110,7 @@ namespace HetsData.Helpers
         /// <param name="context"></param>
         public static HetRentalRequest GetRecordWithRotationList(int id, SeniorityScoringRules scoringRules, DbAppContext context)
         {
-            //load up the rental request with the equipment decoupled for now
+            //load up the rental request with the equipment decoupled
             HetRentalRequest request = context.HetRentalRequest.AsNoTracking()
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(y => y.EquipmentType)
@@ -147,7 +147,7 @@ namespace HetsData.Helpers
                         .Where(x => x.EquipmentHistId == equipmentHist.Max(m => m.EquipmentHistId))
                         .FirstOrDefault();
                     
-                    // there is an explicit operator conversion in the HetEquipmentExtension class
+                    // there is an explicit operator conversion in the HetsData.Extension.HetEquipmentExtension class
                     equipment = (HetEquipment)foundHistItem;
                 }
                 else
@@ -181,7 +181,7 @@ namespace HetsData.Helpers
                 }
             }
             
-            /*
+            /* -- original code to pull the request, rotation list and equipment
             HetRentalRequest request = context.HetRentalRequest.AsNoTracking()
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(y => y.EquipmentType)
