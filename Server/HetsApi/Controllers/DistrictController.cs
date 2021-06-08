@@ -261,7 +261,6 @@ namespace HetsApi.Controllers
             string seniorityScoringRules = GetConfigJson(scoringRules);
 
             // queue the job
-            //BackgroundJob.Enqueue(() => AnnualRolloverHelper.AnnualRolloverJob(null, id, seniorityScoringRules, connectionString));
             BackgroundJob.Enqueue<AnnualRollover>(x => x.AnnualRolloverJob(id, seniorityScoringRules));
             var progressDto = _annualRollover.KickoffProgress(id);
 

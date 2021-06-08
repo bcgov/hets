@@ -1005,8 +1005,9 @@ namespace HetsApi.Controllers
 
             // convert Rental Request Model to the "RentalRequestHires" Model
             List<RentalRequestHires> result = new List<RentalRequestHires>();
-
-            foreach (HetRentalRequestRotationList item in data)
+            
+            var items = data.ToList();
+            foreach (HetRentalRequestRotationList item in items)
             {
                 HetUser user = _context.HetUser.AsNoTracking()
                     .FirstOrDefault(x => x.SmUserId == item.AppCreateUserid);
