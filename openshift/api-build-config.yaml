@@ -9,7 +9,7 @@ objects:
   - apiVersion: v1
     kind: ImageStream
     metadata:
-      name: dotnet-21-rhel7
+      name: dotnet-31-rhel7
       labels:
         shared: "true"
     spec:
@@ -19,8 +19,8 @@ objects:
         - annotations: null
           from:
             kind: DockerImage
-            name: registry.redhat.io/dotnet/dotnet-21-rhel7:2.1-41
-          name: "2.1-41"
+            name: registry.redhat.io/dotnet/dotnet-31-rhel7:3.1-5
+          name: "3.1"
           referencePolicy:
             type: Local
   - apiVersion: v1
@@ -82,7 +82,7 @@ objects:
               value: "${DOTNET_STARTUP_PROJECT}"
           from:
             kind: ImageStreamTag
-            name: dotnet-21-rhel7:2.1-41
+            name: "dotnet-31-rhel7:3.1"
 parameters:
   - description: Name of the project (HETS)
     displayName: PROJECT_NAME
