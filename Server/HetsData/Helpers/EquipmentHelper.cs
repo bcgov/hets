@@ -785,50 +785,5 @@ namespace HetsData.Helpers
         }
 
         #endregion
-
-
-        /// <summary>
-        /// Recalculates seniority with the new sorting rule (sorting by equipment code) for the district equipment types that have the same seniority and received date
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="seniorityScoringRules"></param>
-        /// <param name="connectionString"></param>
-        public static void RecalculateSeniorityList(PerformContext context, string seniorityScoringRules, string connectionString)
-        {
-            // open a connection to the database
-            DbAppContext dbContext = new DbAppContext(connectionString);
-
-            // get equipment status
-            int? equipmentStatusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", dbContext);
-            if (equipmentStatusId == null)
-            {
-                throw new ArgumentException("Status Code not found");
-            }
-
-            context.WriteLine("Recalculation Started");
-
-            var progress = context.WriteProgressBar();
-            progress.SetValue(0);
-
-            var equipments = dbContext.HetEquipment.AsNoTracking()
-                .Where(x => x.EquipmentStatusTypeId == equipmentStatusId)
-                .GroupBy(x => new { x.LocalAreaId, x.DistrictEquipmentTypeId, x.Seniority, x.ReceivedDate })
-                .Where(x => x.Count() > 1)
-                .Select(x => new { x.Key.LocalAreaId, x.Key.DistrictEquipmentTypeId })
-                .Distinct()
-                .ToList();
-
-            var count = 0;
-            foreach (var equipment in equipments)
-            {
-                EquipmentHelper.RecalculateSeniority(equipment.LocalAreaId, equipment.DistrictEquipmentTypeId, dbContext, seniorityScoringRules);
-                progress.SetValue(Convert.ToInt32(++count / equipments.Count * 100));
-                context.WriteLine($"Processed {count} / {equipments.Count}");
-            }
-
-            progress.SetValue(100);
-
-            context.WriteLine("Recalculation Finished");
-        }
     }
 }

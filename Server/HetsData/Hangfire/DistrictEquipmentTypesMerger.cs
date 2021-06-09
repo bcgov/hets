@@ -18,8 +18,7 @@ namespace HetsData.Hangfire
             _jobId = Guid.NewGuid().ToString();
         }
 
-        public void MergeDistrictEquipmentTypes(string seniorityScoringRules,
-    string connectionString)
+        public void MergeDistrictEquipmentTypes(string seniorityScoringRules)
         {
             // get equipment status
             int? equipmentStatusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _dbContext);
