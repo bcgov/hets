@@ -101,12 +101,12 @@ namespace HetsApi.Helpers
 
             // is this a business?
             bool isBusinessUser = IsBusiness(httpContext);
-            string userId = GetUserId(httpContext);
+            string userId = GetUserId(httpContext)?.ToLower();
 
             if (!isBusinessUser)
             {
                 HetUser tmpUser = context.HetUser.AsNoTracking()
-                    .FirstOrDefault(x => x.SmUserId.ToLower().Equals(userId.ToLower()));
+                    .FirstOrDefault(x => x.SmUserId.ToLower() == userId);
 
                 if (tmpUser != null)
                 {
@@ -124,7 +124,7 @@ namespace HetsApi.Helpers
             else
             {
                 HetBusinessUser tmpUser = context.HetBusinessUser.AsNoTracking()
-                    .FirstOrDefault(x => x.BceidUserId.ToLower().Equals(userId.ToLower()));
+                    .FirstOrDefault(x => x.BceidUserId.ToLower() == userId);
 
                 if (tmpUser != null)
                 {
@@ -182,7 +182,7 @@ namespace HetsApi.Helpers
                 using (IDbContextTransaction transaction = context.Database.BeginTransaction())
                 {
                     // lock the table during this transaction
-                    context.Database.ExecuteSqlCommand(@"LOCK TABLE ""HET_USER"" IN EXCLUSIVE MODE;");
+                    context.Database.ExecuteSqlRaw(@"LOCK TABLE ""HET_USER"" IN EXCLUSIVE MODE;");
 
                     HetUser updUser = context.HetUser.First(x => x.UserId == updUserId);
 
