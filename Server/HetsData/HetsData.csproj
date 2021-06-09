@@ -1,20 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
 	<Description>Common data code for the HETS application</Description>
     <Copyright>Copyright© 2017, Province of British Columbia</Copyright>
     <AssemblyTitle>Hets Data</AssemblyTitle>
     <AssemblyName>HetsData</AssemblyName>	
     <PackageId>HetsData</PackageId>	
-    <Version>1.9.2.0</Version>
+    <Version>1.9.3.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Hangfire.Console" Version="1.4.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.2" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.7" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.6" />
   </ItemGroup>
 
   <ItemGroup>

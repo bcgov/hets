@@ -181,7 +181,10 @@ namespace HetsApi.Authentication
         /// <param name="loggerFactory"></param>
         /// <param name="encoder"></param>
         /// <param name="clock"></param>
-        public SiteMinderAuthenticationHandler(IOptionsMonitor<SiteMinderAuthOptions> configureOptions, ILoggerFactory loggerFactory, UrlEncoder encoder, ISystemClock clock) : base(configureOptions, loggerFactory, encoder, clock)
+        public SiteMinderAuthenticationHandler(IOptionsMonitor<SiteMinderAuthOptions> configureOptions, 
+            ILoggerFactory loggerFactory,            
+            UrlEncoder encoder, 
+            ISystemClock clock) : base(configureOptions, loggerFactory, encoder, clock)
         {
             _logger = loggerFactory.CreateLogger(typeof(SiteMinderAuthenticationHandler));
         }
@@ -392,7 +395,7 @@ namespace HetsApi.Authentication
                             using (IDbContextTransaction transaction = dbAppContext.Database.BeginTransaction())
                             {
                                 // lock the table during this transaction
-                                dbAppContext.Database.ExecuteSqlCommand(@"LOCK TABLE ""HET_USER"" IN EXCLUSIVE MODE;");
+                                dbAppContext.Database.ExecuteSqlRaw(@"LOCK TABLE ""HET_USER"" IN EXCLUSIVE MODE;");
 
                                 HetUser user = dbAppContext.HetUser.First(x => x.UserId == updUserId);
                                 user.DistrictId = districtId;
