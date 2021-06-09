@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using HetsData.Hangfire;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace HetsApi
 {
@@ -64,18 +65,24 @@ namespace HetsApi
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            // setup SiteMinder authentication (core 2.0+)
             services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = SiteMinderAuthOptions.AuthenticationSchemeName;
-                options.DefaultChallengeScheme = SiteMinderAuthOptions.AuthenticationSchemeName;
-            }).AddSiteMinderAuth(options =>
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
             {
+                options.Authority = Configuration.GetValue<string>("JWT:Authority");
+                options.Audience = Configuration.GetValue<string>("JWT:Audience");
+                options.RequireHttpsMetadata = false;
+                options.IncludeErrorDetails = true;
+                options.EventsType = typeof(HetsJwtBearerEvents);
             });
 
             // setup authorization
             services.AddAuthorization();
             services.RegisterPermissionHandler();
+            services.AddScoped<HetsJwtBearerEvents>();
 
             // allow for large files to be uploaded
             services.Configure<FormOptions>(options =>
