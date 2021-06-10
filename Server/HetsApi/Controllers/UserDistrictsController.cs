@@ -302,6 +302,7 @@ namespace HetsApi.Controllers
                 new CookieOptions
                 {
                     Path = "/",
+                    Secure = true,
                     SameSite = SameSiteMode.None
                 }
             );
