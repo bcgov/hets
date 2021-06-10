@@ -119,10 +119,10 @@ namespace HetsApi.Controllers
 
             // validate that user id is unique
             // HETS-1033 - Post Live: Add validation on User ID while adding a new user
-            item.SmUserId = item.SmUserId?.Trim().ToLower();
+            item.SmUserId = item.SmUserId?.Trim().ToUpper();
 
             HetUser existingUser = _context.HetUser.AsNoTracking()
-                .FirstOrDefault(x => x.SmUserId.ToLower() == item.SmUserId);
+                .FirstOrDefault(x => x.SmUserId.ToUpper() == item.SmUserId);
 
             if (existingUser != null) return new BadRequestObjectResult(new HetsResponse("HETS-38", ErrorViewModel.GetDescription("HETS-38", _configuration)));
 
@@ -186,10 +186,10 @@ namespace HetsApi.Controllers
 
             // validate that user id is unique
             // HETS-1033 - Post Live: Add validation on User ID while editing a user
-            string smUserId = item.SmUserId?.Trim().ToLower();
+            string smUserId = item.SmUserId?.Trim().ToUpper();
 
             HetUser existingUser = _context.HetUser.AsNoTracking()
-                .FirstOrDefault(x => x.SmUserId.ToLower() == smUserId && x.UserId != user.UserId);
+                .FirstOrDefault(x => x.SmUserId.ToUpper() == smUserId && x.UserId != user.UserId);
 
             if (existingUser != null) return new BadRequestObjectResult(new HetsResponse("HETS-38", ErrorViewModel.GetDescription("HETS-38", _configuration)));
 

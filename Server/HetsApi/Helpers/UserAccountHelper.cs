@@ -95,7 +95,7 @@ namespace HetsApi.Helpers
             if (!isBusinessUser)
             {
                 HetUser tmpUser = context.HetUser.AsNoTracking()
-                    .FirstOrDefault(x => x.SmUserId.ToLower() == userId);
+                    .FirstOrDefault(x => x.SmUserId.ToUpper() == userId);
 
                 if (tmpUser != null)
                 {
@@ -141,10 +141,10 @@ namespace HetsApi.Helpers
         /// Get user record
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="userId"></param>
+        /// <param name="username"></param>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public static HetUser GetUser(DbAppContext context, string userId, string guid = null)
+        public static HetUser GetUser(DbAppContext context, string username, string guid = null)
         {
             HetUser user = null;
 
@@ -155,7 +155,7 @@ namespace HetsApi.Helpers
 
             if (user == null)
             {
-                user = GetUserBySmUserId(userId, context);
+                user = GetUserBySmUserId(username, context);
             }
 
             if (user == null)
@@ -178,7 +178,7 @@ namespace HetsApi.Helpers
                     updUser.Guid = guid;
                     updUser.AppLastUpdateUserDirectory = user.SmAuthorizationDirectory;
                     updUser.AppLastUpdateUserGuid = guid;
-                    updUser.AppLastUpdateUserid = userId;
+                    updUser.AppLastUpdateUserid = username;
                     updUser.AppLastUpdateTimestamp = DateTime.UtcNow;
 
                     context.HetUser.Update(updUser);
@@ -194,7 +194,7 @@ namespace HetsApi.Helpers
                 user.Guid = guid;
                 user.AppLastUpdateUserDirectory = user.SmAuthorizationDirectory;
                 user.AppLastUpdateUserGuid = guid;
-                user.AppLastUpdateUserid = userId;
+                user.AppLastUpdateUserid = username;
                 user.AppLastUpdateTimestamp = DateTime.UtcNow;
             }
             else if (!string.IsNullOrEmpty(user.Guid) &&
@@ -240,7 +240,7 @@ namespace HetsApi.Helpers
         {
             HetUser user = context.HetUser.AsNoTracking()
                 .Where(x => x.SmUserId != null &&
-                            x.SmUserId.ToLower().Equals(smUserId.ToLower()))
+                            x.SmUserId.ToUpper() == smUserId)
                 .Include(u => u.HetUserRole)
                     .ThenInclude(r => r.Role)
                         .ThenInclude(rp => rp.HetRolePermission)
