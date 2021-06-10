@@ -47,7 +47,7 @@ namespace HetsApi.Controllers
             List<HetUserDistrict> result = _context.HetUserDistrict.AsNoTracking()
                 .Include(x => x.User)
                 .Include(x => x.District)
-                .Where(x => x.User.SmUserId == userId)
+                .Where(x => x.User.SmUserId.ToUpper() == userId)
                 .ToList();
 
             return new ObjectResult(new HetsResponse(result));
@@ -290,7 +290,7 @@ namespace HetsApi.Controllers
 
             string userId = _context.SmUserId;
 
-            HetUser user = _context.HetUser.First(a => a.SmUserId == userId);
+            HetUser user = _context.HetUser.First(a => a.SmUserId.ToUpper() == userId);
             user.DistrictId = userDistrict.DistrictId;
 
             _context.SaveChanges();

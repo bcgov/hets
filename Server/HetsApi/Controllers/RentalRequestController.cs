@@ -1003,7 +1003,7 @@ namespace HetsApi.Controllers
             foreach (HetRentalRequestRotationList item in items)
             {
                 HetUser user = _context.HetUser.AsNoTracking()
-                    .FirstOrDefault(x => x.SmUserId == item.AppCreateUserid);
+                    .FirstOrDefault(x => x.SmUserId.ToUpper() == item.AppCreateUserid.ToUpper());
 
                 result.Add(RentalRequestHelper.ToHiresModel(item, user));
             }
