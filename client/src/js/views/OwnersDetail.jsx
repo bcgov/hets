@@ -11,7 +11,7 @@ import {
   Glyphicon,
   Label,
 } from "react-bootstrap";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import _ from "lodash";
 import Promise from "bluebird";
 
@@ -80,7 +80,9 @@ class OwnersDetail extends React.Component {
     documents: PropTypes.object,
     uiContacts: PropTypes.object,
     uiEquipment: PropTypes.object,
-    router: PropTypes.object.isRequired,
+    //temporary fix don't use router anymore
+    // router: PropTypes.object.isRequired,
+    match: PropTypes.object,
   };
 
   constructor(props) {
@@ -105,6 +107,8 @@ class OwnersDetail extends React.Component {
 
       status: "",
 
+      ownerId: this.props.match.params.ownerId,
+
       // Contacts
       uiContacts: {
         sortField: props.uiContacts.sortField || CONTACT_NAME_SORT_FIELDS,
@@ -120,9 +124,17 @@ class OwnersDetail extends React.Component {
   }
 
   componentDidMount() {
-    const { ownerId, owner } = this.props;
+    console.log(this.props);
+    store.dispatch({
+      type: Action.SET_ACTIVE_OWNER_ID_UI,
+      ownerId: this.props.match.params.ownerId,
+    });
+    const ownerId = this.props.match.params.ownerId;
+    const { owner } = this.props;
+    // const { ownerId, owner } = this.props;
 
     /* Documents need be fetched every time as they are not project specific in the store ATM */
+    debugger;
     Api.getOwnerDocuments(ownerId).then(() =>
       this.setState({ loadingDocuments: false })
     );
@@ -140,7 +152,7 @@ class OwnersDetail extends React.Component {
 
   fetch = () => {
     this.setState({ reloading: true });
-    return Api.getOwner(this.props.ownerId).then(() =>
+    return Api.getOwner(this.props.match.params.ownerId).then(() =>
       this.setState({ reloading: false })
     );
   };

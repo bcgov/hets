@@ -40,7 +40,7 @@ function parseUser(user) {
   });
 
   user.path = `${Constant.USERS_PATHNAME}/${user.id}`;
-  user.url = `#/${user.path}`;
+  user.url = `${user.path}`;
   user.historyEntity = History.makeHistoryEntity(Constant.HISTORY_USER, user);
 
   user.canEdit = true;
@@ -244,7 +244,7 @@ export function getSearchSummaryCounts() {
 
 function parseRole(role) {
   role.path = `${Constant.ROLES_PATHNAME}/${role.id}`;
-  role.url = `#/${role.path}`;
+  role.url = `${role.path}`;
   role.historyEntity = History.makeHistoryEntity(Constant.HISTORY_ROLE, role);
 
   role.canEdit = true;
@@ -450,7 +450,7 @@ function parseEquipment(equipment) {
   equipment.operator = equipment.operator || ""; // TODO Needs review from business
   equipment.organizationName = equipment.owner.organizationName;
   equipment.ownerPath = equipment.owner.id
-    ? `#/owners/${equipment.owner.id}`
+    ? `/owners/${equipment.owner.id}`
     : "";
   equipment.typeName = equipment.districtEquipmentType
     ? equipment.districtEquipmentType.districtEquipmentName
@@ -505,7 +505,7 @@ function parseEquipment(equipment) {
   equipment.currentWorkDescription = equipment.currentWorkDescription || "";
 
   equipment.path = `${Constant.EQUIPMENT_PATHNAME}/${equipment.id}`;
-  equipment.url = `#/${equipment.path}`;
+  equipment.url = `${equipment.path}`;
   equipment.name = `code ${equipment.equipmentCode}`;
   equipment.historyEntity = History.makeHistoryEntity(
     Constant.HISTORY_EQUIPMENT,
@@ -926,7 +926,7 @@ function parseOwner(owner) {
       : "";
 
   owner.path = `${Constant.OWNERS_PATHNAME}/${owner.id}`;
-  owner.url = `#/${owner.path}`;
+  owner.url = `${owner.path}`;
   owner.name = owner.organizationName;
   owner.historyEntity = History.makeHistoryEntity(
     Constant.HISTORY_OWNER,
@@ -1258,7 +1258,7 @@ function parseContact(contact, parent) {
   contact.path = parentPath
     ? `${parentPath}/${Constant.CONTACTS_PATHNAME}/${contact.id}`
     : null;
-  contact.url = contact.path ? `#/${contact.path}` : null;
+  contact.url = contact.path ? `${contact.path}` : null;
   contact.historyEntity = History.makeHistoryEntity(
     Constant.HISTORY_CONTACT,
     contact
@@ -1410,7 +1410,7 @@ function parseProject(project) {
   project.information = project.information || "";
 
   project.path = `${Constant.PROJECTS_PATHNAME}/${project.id}`;
-  project.url = `#/${project.path}`;
+  project.url = `${project.path}`;
   project.historyEntity = History.makeHistoryEntity(
     Constant.HISTORY_PROJECT,
     project
@@ -1945,7 +1945,7 @@ function parseRentalRequest(rentalRequest) {
   rentalRequest.isRentalRequest = true;
 
   rentalRequest.path = `${Constant.RENTAL_REQUESTS_PATHNAME}/${rentalRequest.id}`;
-  rentalRequest.url = `#/${rentalRequest.path}`;
+  rentalRequest.url = `${rentalRequest.path}`;
   rentalRequest.name = "TBD";
   rentalRequest.historyEntity = History.makeHistoryEntity(
     Constant.HISTORY_REQUEST,
@@ -2256,7 +2256,7 @@ function parseRotationListItem(item, numberOfBlocks) {
       ...item.equipment,
       name: item.equipment.equipmentCode,
       path: `${Constant.EQUIPMENT_PATHNAME}/${item.equipment.id}`,
-      url: `#/${Constant.EQUIPMENT_PATHNAME}/${item.equipment.id}`,
+      url: `${Constant.EQUIPMENT_PATHNAME}/${item.equipment.id}`,
     }),
   };
 
@@ -2386,7 +2386,7 @@ function parseRentalAgreement(agreement) {
   }
 
   agreement.path = `${Constant.RENTAL_AGREEMENTS_PATHNAME}/${agreement.id}`;
-  agreement.url = `#/${agreement.path}`;
+  agreement.url = `${agreement.path}`;
 
   agreement.number = agreement.number || "";
   agreement.note = agreement.note || "";
@@ -2411,7 +2411,7 @@ function parseRentalAgreement(agreement) {
       ...agreement.equipment,
       name: agreement.equipment.equipmentCode,
       path: `${Constant.EQUIPMENT_PATHNAME}/${agreement.equipment.id}`,
-      url: `#/${Constant.EQUIPMENT_PATHNAME}/${agreement.equipment.id}`,
+      url: `${Constant.EQUIPMENT_PATHNAME}/${agreement.equipment.id}`,
     }),
   };
 
@@ -2442,7 +2442,7 @@ function parseRentalAgreement(agreement) {
     ? `${Constant.PROJECTS_PATHNAME}/${agreement.projectId}`
     : "";
   agreement.projectUrl = agreement.projectPath
-    ? `#/${agreement.projectPath}`
+    ? `${agreement.projectPath}`
     : "";
 
   agreement.canEdit = true;
@@ -2618,7 +2618,7 @@ function parseRentalRate(rentalRate, parent = {}) {
   rentalRate.path = rentalRate.rentalAgreement.path
     ? `${rentalRate.rentalAgreement.path}/${Constant.RENTAL_RATES_PATHNAME}/${rentalRate.id}`
     : null;
-  rentalRate.url = rentalRate.path ? `#/${rentalRate.path}` : null;
+  rentalRate.url = rentalRate.path ? `${rentalRate.path}` : null;
 
   rentalRate.rate = rentalRate.rate || 0.0;
   rentalRate.percentOfEquipmentRate = rentalRate.percentOfEquipmentRate || 0;
@@ -2760,9 +2760,7 @@ function parseRentalCondition(rentalCondition, parent = {}) {
   rentalCondition.path = rentalCondition.rentalAgreement.path
     ? `${rentalCondition.rentalAgreement.path}/${Constant.RENTAL_CONDITIONS_PATHNAME}/${rentalCondition.id}`
     : null;
-  rentalCondition.url = rentalCondition.path
-    ? `#/${rentalCondition.path}`
-    : null;
+  rentalCondition.url = rentalCondition.path ? `${rentalCondition.path}` : null;
 
   rentalCondition.canEdit = true;
   rentalCondition.canDelete = true;

@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Provider } from "react-redux";
-import { Router, Route, Redirect, hashHistory } from "react-router";
+// import { Router, Route, Redirect, hashHistory } from "react-router";
+import { hashHistory } from "react-router";
+import {
+  BrowserRouter as Router,
+  Route,
+  Redirect,
+  Switch,
+} from "react-router-dom";
 // import { hot } from "react-hot-loader/root";
 
 import * as Api from "./api";
@@ -267,7 +274,7 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <Router history={hashHistory}>
+      {/* <Router history={hashHistory}>
         <Redirect from="/" to="/home" />
         <Route
           path={Constant.BUSINESS_PORTAL_PATHNAME}
@@ -362,6 +369,135 @@ const App = () => {
           <Route path={Constant.AIT_REPORT_PATHNAME} component={AitReport} />
           <Route path={Constant.VERSION_PATHNAME} component={Version} />
           <Route path="*" component={FourOhFour} />
+        </Route>
+      </Router> */}
+      <Router>
+        {/* temporary fix do we need this? seems to mess things up */}
+        {/* <Redirect from="/" to="/home" /> */}
+        <Route
+          path={Constant.BUSINESS_PORTAL_PATHNAME}
+          component={BusinessPortal}
+          onEnter={onEnterBusiness}
+        />
+        <Route
+          path={`${Constant.BUSINESS_DETAILS_PATHNAME}/:ownerId`}
+          component={BusinessOwner}
+          onEnter={onEnterBusinessDetails}
+        />
+        <Route path={"/"} onEnter={onEnterApplication}>
+          {/* temporary fix comment Main taken out of Route to be a children render method. Cannot mix components + children render methods in React-Router-Dom */}
+          <Main>
+            <Switch>
+              <Route path={Constant.HOME_PATHNAME} exact component={Home} />
+              <Route
+                path={Constant.EQUIPMENT_PATHNAME}
+                exact
+                component={Equipment}
+              />
+              <Route
+                path={`${Constant.EQUIPMENT_PATHNAME}/:equipmentId`}
+                exact
+                component={EquipmentDetail}
+                onEnter={setActiveEquipmentId}
+              />
+              <Route path={Constant.OWNERS_PATHNAME} exact component={Owners} />
+              <Route
+                path={`${Constant.OWNERS_PATHNAME}/:ownerId`}
+                exact
+                component={OwnersDetail}
+                onEnter={setActiveOwnerId}
+              />
+              {/* Temporary fix does this route ever get called? Seems to just pull up modal in OwnersDetail */}
+              <Route
+                path={`${Constant.OWNERS_PATHNAME}/:ownerId/${Constant.CONTACTS_PATHNAME}/:contactId`}
+                exact
+                component={OwnersDetail}
+                onEnter={setActiveOwnerId}
+              />
+              <Route
+                path={Constant.PROJECTS_PATHNAME}
+                exact
+                component={Projects}
+              />
+              <Route
+                path={`${Constant.PROJECTS_PATHNAME}/:projectId`}
+                exact
+                component={ProjectsDetail}
+                onEnter={setActiveProjectId}
+              />
+              <Route
+                path={`${Constant.PROJECTS_PATHNAME}/:projectId/${Constant.CONTACTS_PATHNAME}/:contactId`}
+                exact
+                component={ProjectsDetail}
+                onEnter={setActiveProjectId}
+              />
+              <Route
+                path={Constant.RENTAL_REQUESTS_PATHNAME}
+                exact
+                component={RentalRequests}
+              />
+              <Route
+                path={`${Constant.RENTAL_REQUESTS_PATHNAME}/:rentalRequestId`}
+                exact
+                component={RentalRequestsDetail}
+                onEnter={setActiveRentalRequestId}
+              />
+              <Route
+                path={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/:rentalAgreementId`}
+                exact
+                component={RentalAgreementsDetail}
+                onEnter={setActiveRentalAgreementId}
+              />
+              <Route
+                path={Constant.OVERTIME_RATES_PATHNAME}
+                exact
+                component={OvertimeRates}
+              />
+              <Route path={Constant.USERS_PATHNAME} exact component={Users} />
+              <Route
+                path={`${Constant.USERS_PATHNAME}/:userId`}
+                exact
+                component={UsersDetail}
+              />
+              <Route path={Constant.ROLES_PATHNAME} exact component={Roles} />
+              <Route
+                path={`${Constant.ROLES_PATHNAME}/:roleId`}
+                exact
+                component={RolesDetail}
+              />
+              <Route path={Constant.ROLLOVER_PATHNAME} component={Rollover} />
+              <Route
+                path={Constant.DISTRICT_ADMIN_PATHNAME}
+                component={DistrictAdmin}
+              />
+              <Route
+                path={Constant.TIME_ENTRY_PATHNAME}
+                component={TimeEntry}
+              />
+              <Route
+                path={Constant.SENIORITY_LIST_PATHNAME}
+                component={SeniorityList}
+              />
+              <Route
+                path={Constant.STATUS_LETTERS_REPORT_PATHNAME}
+                component={StatusLetters}
+              />
+              <Route
+                path={Constant.HIRING_REPORT_PATHNAME}
+                component={HiringReport}
+              />
+              <Route
+                path={Constant.OWNERS_COVERAGE_PATHNAME}
+                component={WcbCglCoverage}
+              />
+              <Route
+                path={Constant.AIT_REPORT_PATHNAME}
+                component={AitReport}
+              />
+              <Route path={Constant.VERSION_PATHNAME} component={Version} />
+              <Route path="*" component={FourOhFour} />
+            </Switch>
+          </Main>
         </Route>
       </Router>
     </Provider>
