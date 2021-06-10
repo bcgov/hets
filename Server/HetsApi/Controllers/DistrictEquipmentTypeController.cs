@@ -13,6 +13,7 @@ using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
+using HetsData.Hangfire;
 
 namespace HetsApi.Controllers
 {
@@ -32,13 +33,6 @@ namespace HetsApi.Controllers
         {
             _context = context;
             _configuration = configuration;
-
-            // set context data
-            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
-            _context.SmUserId = user.SmUserId;
-            _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.UserGuid;
-            _context.SmBusinessGuid = user.BusinessGuid;
         }
 
         /// <summary>
@@ -339,14 +333,11 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.DistrictCodeTableManagement, HetPermission.WriteAccess)]
         public virtual IActionResult MergeDistrictEquipmentTypesPost()
         {
-            string connectionString = GetConnectionString();
-
             IConfigurationSection scoringRules = _configuration.GetSection("SeniorityScoringRules");
             string seniorityScoringRules = GetConfigJson(scoringRules);
 
             // queue the job
-            BackgroundJob.Enqueue(() => DistrictEquipmentTypeHelper.MergeDistrictEquipmentTypes(null,
-                seniorityScoringRules, connectionString));
+            BackgroundJob.Enqueue<DistrictEquipmentTypesMerger>(x => x.MergeDistrictEquipmentTypes(seniorityScoringRules));
 
             // return ok
             return new ObjectResult(new HetsResponse("Merge job added to hangfire"));
@@ -396,41 +387,6 @@ namespace HetsApi.Controllers
 
             jsonString = jsonString + "},";
             return jsonString;
-        }
-
-        #endregion
-
-        #region Get Database Connection String
-
-        /// <summary>
-        /// Retrieve database connection string
-        /// </summary>
-        /// <returns></returns>
-        private string GetConnectionString()
-        {
-            string connectionString;
-
-            lock (_thisLock)
-            {
-                string host = _configuration["DATABASE_SERVICE_NAME"];
-                string username = _configuration["POSTGRESQL_USER"];
-                string password = _configuration["POSTGRESQL_PASSWORD"];
-                string database = _configuration["POSTGRESQL_DATABASE"];
-
-                if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) ||
-                    string.IsNullOrEmpty(database))
-                {
-                    // When things get cleaned up properly, this is the only call we'll have to make.
-                    connectionString = _configuration.GetConnectionString("HETS");
-                }
-                else
-                {
-                    // Environment variables override all other settings; same behaviour as the configuration provider when things get cleaned up.
-                    connectionString = $"Host={host};Username={username};Password={password};Database={database};";
-                }
-            }
-
-            return connectionString;
         }
 
         #endregion

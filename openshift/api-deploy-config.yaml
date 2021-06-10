@@ -77,6 +77,16 @@ objects:
                     secretKeyRef:
                       name: "${PROJECT_NAME}-${DB_NAME}-${ENV}"
                       key: connection-string
+                - name: JWT__Authority
+                  valueFrom:
+                    secretKeyRef:
+                      name: sso-configs
+                      key: JWT_SSO_AUTHORITY
+                - name: JWT__Audience
+                  valueFrom:
+                    secretKeyRef:
+                      name: sso-configs
+                      key: JWT_SSO_AUDIENCE
                 - name: ASPNETCORE_ENVIRONMENT
                   value: "${ASPNETCORE_ENVIRONMENT}"
                 - name: UploadPath

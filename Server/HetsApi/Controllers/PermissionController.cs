@@ -24,13 +24,6 @@ namespace HetsApi.Controllers
         public PermissionController(DbAppContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
-
-            // set context data
-            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
-            _context.SmUserId = user.SmUserId;
-            _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.UserGuid;
-            _context.SmBusinessGuid = user.BusinessGuid;
         }
 
         /// <summary>

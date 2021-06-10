@@ -36,13 +36,6 @@ namespace HetsApi.Controllers
             _configuration = configuration;
             _httpContext = httpContextAccessor.HttpContext;
             _logger = loggerFactory.CreateLogger<RentalAgreementController>();
-
-            // set context data
-            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
-            _context.SmUserId = user.SmUserId;
-            _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.UserGuid;
-            _context.SmBusinessGuid = user.BusinessGuid;
         }
 
         /// <summary>

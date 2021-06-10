@@ -33,13 +33,6 @@ namespace HetsApi.Controllers
             _configuration = configuration;
             _httpContext = httpContextAccessor.HttpContext;
             _env = hostingEnv;
-
-            // set context data
-            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
-            _context.SmUserId = user.SmUserId;
-            _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.UserGuid;
-            _context.SmBusinessGuid = user.BusinessGuid;
         }
 
         #region Get Business for the logged on business user
@@ -269,7 +262,7 @@ namespace HetsApi.Controllers
         private bool CanAccessOwner(int businessId, int ownerId)
         {
             // validate that the current user can access this record
-            string userId = UserAccountHelper.GetUserId(_httpContext);
+            string userId = _context.SmUserId;
             bool isBusiness = UserAccountHelper.IsBusiness(_httpContext);
 
             // not a business user
@@ -293,7 +286,7 @@ namespace HetsApi.Controllers
         private bool CanAccessBusiness(int businessId)
         {
             // validate that the current user can access this record
-            string userId = UserAccountHelper.GetUserId(_httpContext);
+            string userId = _context.SmUserId;
             bool isBusiness = UserAccountHelper.IsBusiness(_httpContext);
 
             // not a business user

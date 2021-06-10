@@ -18,6 +18,7 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@bcgov/pipeline-cli": "^1.0.1-0"
+    "@bcgov/pipeline-cli": "^1.0.1-0",
+    "axios": "^0.21.1"
   }
 }
