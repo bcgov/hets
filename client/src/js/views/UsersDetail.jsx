@@ -139,9 +139,7 @@ class UsersDetail extends React.Component {
     this.closeEditDialog();
     if (this.props.match.params.userId === '0') {
       // Go back to user list if cancelling new user
-      this.props.router.push({
-        pathname: Constant.USERS_PATHNAME,
-      });
+      this.props.history.push(Constant.USERS_PATHNAME);
     }
   };
 

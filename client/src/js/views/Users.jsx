@@ -35,7 +35,7 @@ class Users extends React.Component {
     favourites: PropTypes.object,
     search: PropTypes.object,
     ui: PropTypes.object,
-    router: PropTypes.object,
+    history: PropTypes.object,
   };
 
   constructor(props) {
@@ -140,9 +140,7 @@ class Users extends React.Component {
 
   onUserSaved = (user) => {
     this.closeUsersEditDialog();
-    this.props.router.push({
-      pathname: `${Constant.USERS_PATHNAME}/${user.id}`,
-    });
+    this.props.history.push(`${Constant.USERS_PATHNAME}/${user.id}`);
   };
 
   renderResults = (addUserButton) => {
