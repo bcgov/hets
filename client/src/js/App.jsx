@@ -1,54 +1,47 @@
-import React, { useEffect, useState } from "react";
-import { Provider } from "react-redux";
-// import { Router, Route, Redirect, hashHistory } from "react-router";
-import { hashHistory } from "react-router";
-import {
-  BrowserRouter as Router,
-  Route,
-  Redirect,
-  Switch,
-} from "react-router-dom";
-// import { hot } from "react-hot-loader/root";
+import React, { useEffect, useState } from 'react';
+import { Provider } from 'react-redux';
+import { hashHistory } from 'react-router';
+import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 
-import * as Api from "./api";
-import { ApiError } from "./utils/http";
+import * as Api from './api';
+import { ApiError } from './utils/http';
 
-import * as Constant from "./constants";
-import * as Action from "./actionTypes";
-import store from "./store";
+import * as Constant from './constants';
+import * as Action from './actionTypes';
+import store from './store';
 
-import { ProgressBar } from "react-bootstrap";
-import Main from "./views/Main.jsx";
-import Home from "./views/Home.jsx";
-import BusinessPortal from "./views/BusinessPortal.jsx";
-import BusinessOwner from "./views/BusinessOwner.jsx";
-import Equipment from "./views/Equipment.jsx";
-import EquipmentDetail from "./views/EquipmentDetail.jsx";
-import Owners from "./views/Owners.jsx";
-import OwnersDetail from "./views/OwnersDetail.jsx";
-import Projects from "./views/Projects.jsx";
-import ProjectsDetail from "./views/ProjectsDetail.jsx";
-import RentalRequests from "./views/RentalRequests.jsx";
-import RentalRequestsDetail from "./views/RentalRequestsDetail.jsx";
-import RentalAgreementsDetail from "./views/RentalAgreementsDetail.jsx";
-import OvertimeRates from "./views/OvertimeRates.jsx";
-import Users from "./views/Users.jsx";
-import UsersDetail from "./views/UsersDetail.jsx";
-import Roles from "./views/Roles.jsx";
-import RolesDetail from "./views/RolesDetail.jsx";
-import Rollover from "./views/Rollover.jsx";
-import DistrictAdmin from "./views/DistrictAdmin.jsx";
-import TimeEntry from "./views/TimeEntry.jsx";
-import SeniorityList from "./views/SeniorityList.jsx";
-import StatusLetters from "./views/StatusLetters.jsx";
-import HiringReport from "./views/HiringReport.jsx";
-import WcbCglCoverage from "./views/WcbCglCoverage.jsx";
-import AitReport from "./views/AitReport.jsx";
-import Version from "./views/Version.jsx";
-import FourOhFour from "./views/404.jsx";
+import { ProgressBar } from 'react-bootstrap';
+import Main from './views/Main.jsx';
+import Home from './views/Home.jsx';
+import BusinessPortal from './views/BusinessPortal.jsx';
+import BusinessOwner from './views/BusinessOwner.jsx';
+import Equipment from './views/Equipment.jsx';
+import EquipmentDetail from './views/EquipmentDetail.jsx';
+import Owners from './views/Owners.jsx';
+import OwnersDetail from './views/OwnersDetail.jsx';
+import Projects from './views/Projects.jsx';
+import ProjectsDetail from './views/ProjectsDetail.jsx';
+import RentalRequests from './views/RentalRequests.jsx';
+import RentalRequestsDetail from './views/RentalRequestsDetail.jsx';
+import RentalAgreementsDetail from './views/RentalAgreementsDetail.jsx';
+import OvertimeRates from './views/OvertimeRates.jsx';
+import Users from './views/Users.jsx';
+import UsersDetail from './views/UsersDetail.jsx';
+import Roles from './views/Roles.jsx';
+import RolesDetail from './views/RolesDetail.jsx';
+import Rollover from './views/Rollover.jsx';
+import DistrictAdmin from './views/DistrictAdmin.jsx';
+import TimeEntry from './views/TimeEntry.jsx';
+import SeniorityList from './views/SeniorityList.jsx';
+import StatusLetters from './views/StatusLetters.jsx';
+import HiringReport from './views/HiringReport.jsx';
+import WcbCglCoverage from './views/WcbCglCoverage.jsx';
+import AitReport from './views/AitReport.jsx';
+import Version from './views/Version.jsx';
+import FourOhFour from './views/404.jsx';
 
 hashHistory.listen((location) => {
-  if (location.action !== "POP") {
+  if (location.action !== 'POP') {
     return;
   }
 
@@ -58,7 +51,7 @@ hashHistory.listen((location) => {
 // redirects regular users to rollover page if rollover in progress
 function redirectIfRolloverActive(path) {
   var onBusinessPage = path.indexOf(Constant.BUSINESS_PORTAL_PATHNAME) === 0;
-  var onRolloverPage = path === "/" + Constant.ROLLOVER_PATHNAME;
+  var onRolloverPage = path === '/' + Constant.ROLLOVER_PATHNAME;
   if (onBusinessPage || onRolloverPage) {
     return;
   }
@@ -74,7 +67,7 @@ function redirectIfRolloverActive(path) {
     const status = store.getState().lookups.rolloverStatus;
 
     if (status.rolloverActive) {
-      hashHistory.push("/" + Constant.ROLLOVER_PATHNAME);
+      hashHistory.push('/' + Constant.ROLLOVER_PATHNAME);
     } else if (status.rolloverComplete) {
       // refresh fiscal years
       Api.getFiscalYears(districtId);
@@ -90,7 +83,7 @@ function onEnterBusiness() {
 
   // redirect HETS users to home page
   if (store.getState().user.hasPermission(Constant.PERMISSION_LOGIN)) {
-    hashHistory.push("/");
+    hashHistory.push('/');
     return false;
   }
 
@@ -182,17 +175,11 @@ function showSessionTimoutDialog() {
   store.dispatch({ type: Action.SHOW_SESSION_TIMEOUT_DIALOG });
 }
 
-var sessionTimeoutTimer = window.setInterval(
-  showSessionTimoutDialog,
-  Constant.SESSION_TIMEOUT
-);
+var sessionTimeoutTimer = window.setInterval(showSessionTimoutDialog, Constant.SESSION_TIMEOUT);
 
 export function resetSessionTimeoutTimer() {
   window.clearInterval(sessionTimeoutTimer);
-  sessionTimeoutTimer = window.setInterval(
-    showSessionTimoutDialog,
-    Constant.SESSION_TIMEOUT
-  );
+  sessionTimeoutTimer = window.setInterval(showSessionTimoutDialog, Constant.SESSION_TIMEOUT);
 }
 
 export function getLookups(user) {
@@ -245,9 +232,9 @@ const App = () => {
 
         <div id="init-process" className="progress">
           <ProgressBar
-            variant={apiError === null ? "info" : "danger"}
+            variant={apiError === null ? 'info' : 'danger'}
             striped
-            className={apiError === null ? "active" : "progress-bar-danger"}
+            className={apiError === null ? 'active' : 'progress-bar-danger'}
             now={loadProgress}
             min={0}
             max={100}
@@ -374,26 +361,18 @@ const App = () => {
       <Router>
         {/* temporary fix do we need this? seems to mess things up */}
         {/* <Redirect from="/" to="/home" /> */}
-        <Route
-          path={Constant.BUSINESS_PORTAL_PATHNAME}
-          component={BusinessPortal}
-          onEnter={onEnterBusiness}
-        />
+        <Route path={Constant.BUSINESS_PORTAL_PATHNAME} component={BusinessPortal} onEnter={onEnterBusiness} />
         <Route
           path={`${Constant.BUSINESS_DETAILS_PATHNAME}/:ownerId`}
           component={BusinessOwner}
           onEnter={onEnterBusinessDetails}
         />
-        <Route path={"/"} onEnter={onEnterApplication}>
+        <Route path={'/'} onEnter={onEnterApplication}>
           {/* temporary fix comment Main taken out of Route to be a children render method. Cannot mix components + children render methods in React-Router-Dom */}
           <Main>
             <Switch>
               <Route path={Constant.HOME_PATHNAME} exact component={Home} />
-              <Route
-                path={Constant.EQUIPMENT_PATHNAME}
-                exact
-                component={Equipment}
-              />
+              <Route path={Constant.EQUIPMENT_PATHNAME} exact component={Equipment} />
               <Route
                 path={`${Constant.EQUIPMENT_PATHNAME}/:equipmentId`}
                 exact
@@ -414,11 +393,7 @@ const App = () => {
                 component={OwnersDetail}
                 onEnter={setActiveOwnerId}
               />
-              <Route
-                path={Constant.PROJECTS_PATHNAME}
-                exact
-                component={Projects}
-              />
+              <Route path={Constant.PROJECTS_PATHNAME} exact component={Projects} />
               <Route
                 path={`${Constant.PROJECTS_PATHNAME}/:projectId`}
                 exact
@@ -431,11 +406,7 @@ const App = () => {
                 component={ProjectsDetail}
                 onEnter={setActiveProjectId}
               />
-              <Route
-                path={Constant.RENTAL_REQUESTS_PATHNAME}
-                exact
-                component={RentalRequests}
-              />
+              <Route path={Constant.RENTAL_REQUESTS_PATHNAME} exact component={RentalRequests} />
               <Route
                 path={`${Constant.RENTAL_REQUESTS_PATHNAME}/:rentalRequestId`}
                 exact
@@ -448,52 +419,19 @@ const App = () => {
                 component={RentalAgreementsDetail}
                 onEnter={setActiveRentalAgreementId}
               />
-              <Route
-                path={Constant.OVERTIME_RATES_PATHNAME}
-                exact
-                component={OvertimeRates}
-              />
+              <Route path={Constant.OVERTIME_RATES_PATHNAME} exact component={OvertimeRates} />
               <Route path={Constant.USERS_PATHNAME} exact component={Users} />
-              <Route
-                path={`${Constant.USERS_PATHNAME}/:userId`}
-                exact
-                component={UsersDetail}
-              />
+              <Route path={`${Constant.USERS_PATHNAME}/:userId`} exact component={UsersDetail} />
               <Route path={Constant.ROLES_PATHNAME} exact component={Roles} />
-              <Route
-                path={`${Constant.ROLES_PATHNAME}/:roleId`}
-                exact
-                component={RolesDetail}
-              />
+              <Route path={`${Constant.ROLES_PATHNAME}/:roleId`} exact component={RolesDetail} />
               <Route path={Constant.ROLLOVER_PATHNAME} component={Rollover} />
-              <Route
-                path={Constant.DISTRICT_ADMIN_PATHNAME}
-                component={DistrictAdmin}
-              />
-              <Route
-                path={Constant.TIME_ENTRY_PATHNAME}
-                component={TimeEntry}
-              />
-              <Route
-                path={Constant.SENIORITY_LIST_PATHNAME}
-                component={SeniorityList}
-              />
-              <Route
-                path={Constant.STATUS_LETTERS_REPORT_PATHNAME}
-                component={StatusLetters}
-              />
-              <Route
-                path={Constant.HIRING_REPORT_PATHNAME}
-                component={HiringReport}
-              />
-              <Route
-                path={Constant.OWNERS_COVERAGE_PATHNAME}
-                component={WcbCglCoverage}
-              />
-              <Route
-                path={Constant.AIT_REPORT_PATHNAME}
-                component={AitReport}
-              />
+              <Route path={Constant.DISTRICT_ADMIN_PATHNAME} component={DistrictAdmin} />
+              <Route path={Constant.TIME_ENTRY_PATHNAME} component={TimeEntry} />
+              <Route path={Constant.SENIORITY_LIST_PATHNAME} component={SeniorityList} />
+              <Route path={Constant.STATUS_LETTERS_REPORT_PATHNAME} component={StatusLetters} />
+              <Route path={Constant.HIRING_REPORT_PATHNAME} component={HiringReport} />
+              <Route path={Constant.OWNERS_COVERAGE_PATHNAME} component={WcbCglCoverage} />
+              <Route path={Constant.AIT_REPORT_PATHNAME} component={AitReport} />
               <Route path={Constant.VERSION_PATHNAME} component={Version} />
               <Route path="*" component={FourOhFour} />
             </Switch>
