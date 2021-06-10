@@ -1,17 +1,15 @@
-import _ from "lodash";
-// import Promise from "bluebird";
+import _ from 'lodash';
 
-import * as Action from "../actionTypes";
-import store from "../store";
+import * as Action from '../actionTypes';
+import store from '../store';
+import { keycloak } from '../Keycloak';
 
-import * as Constant from "../constants";
+import * as Constant from '../constants';
 
-import { resetSessionTimeoutTimer } from "../App.jsx";
+import { resetSessionTimeoutTimer } from '../App.jsx';
 
 const ROOT_API_PREFIX =
-  window.location.pathname === "/"
-    ? ""
-    : window.location.pathname.split("/").slice(0, -1).join("/");
+  window.location.pathname === '/' ? '' : window.location.pathname.split('/').slice(0, -1).join('/');
 
 var numRequestsInFlight = 0;
 
@@ -31,7 +29,7 @@ function decrementRequests() {
 }
 
 export const HttpError = function (msg, method, path, status, body) {
-  this.message = msg || "";
+  this.message = msg || '';
   this.method = method;
   this.path = path;
   this.status = status || null;
@@ -42,16 +40,8 @@ HttpError.prototype = Object.create(Error.prototype, {
   constructor: { value: HttpError },
 });
 
-export const ApiError = function (
-  msg,
-  method,
-  path,
-  status,
-  errorCode,
-  errorDescription,
-  json
-) {
-  this.message = msg || "";
+export const ApiError = function (msg, method, path, status, errorCode, errorDescription, json) {
+  this.message = msg || '';
   this.method = method;
   this.path = path;
   this.status = status || null;
@@ -78,31 +68,35 @@ Resource404.prototype = Object.create(Error.prototype, {
   },
 });
 
-export function request(path, options) {
+export async function request(path, options) {
+  try {
+    await keycloak.updateToken(10);
+  } catch {
+    console.log('Failed to refresh the token, or the session has expired');
+  }
+
   options = options || {};
+  options.headers = Object.assign(
+    {
+      Authorization: `Bearer ${keycloak.token}`,
+    },
+    options.headers || {}
+  );
 
   var xhr = new XMLHttpRequest();
-
-  // calling server service
-  // console.log('Calling service. Path: ' + path);
-
-  if (!options.headers) {
-    options.headers = {};
-  }
+  var method = (options.method || 'GET').toUpperCase();
 
   if (!options.files) {
     options.headers = Object.assign(
       {
-        "Content-Type": "application/x-www-form-urlencoded",
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
       options.headers
     );
   }
 
-  var method = (options.method || "GET").toUpperCase();
-
   if (options.onUploadProgress) {
-    xhr.upload.addEventListener("progress", function (e) {
+    xhr.upload.addEventListener('progress', function (e) {
       if (e.lengthComputable) {
         options.onUploadProgress((e.loaded / e.total) * 100);
       } else {
@@ -110,22 +104,22 @@ export function request(path, options) {
       }
     });
 
-    xhr.upload.addEventListener("load", function (/*e*/) {
+    xhr.upload.addEventListener('load', function (/*e*/) {
       options.onUploadProgress(100);
     });
   }
 
-  if (options.responseType && window.navigator.appName !== "Netscape") {
+  if (options.responseType && window.navigator.appName !== 'Netscape') {
     xhr.responseType = options.responseType;
-  } else if (options.responseType && window.navigator.appName === "Netscape") {
+  } else if (options.responseType && window.navigator.appName === 'Netscape') {
     xhr.open(options.method, path);
     xhr.responseType = options.responseType;
   }
 
   return new Promise((resolve, reject) => {
-    xhr.addEventListener("load", function () {
+    xhr.addEventListener('load', function () {
       if (xhr.status >= 400) {
-        var responseText = "";
+        var responseText = '';
         try {
           responseText = xhr.responseText;
         } catch (e) {
@@ -146,17 +140,17 @@ export function request(path, options) {
       }
     });
 
-    xhr.addEventListener("error", function () {
-      reject(
-        new HttpError(`Request ${method} ${path} failed to send`, method, path)
-      );
+    xhr.addEventListener('error', function () {
+      reject(new HttpError(`Request ${method} ${path} failed to send`, method, path));
     });
 
-    var qs = _.map(
-      options.querystring,
-      (value, key) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-    ).join("&");
-    xhr.open(method, `${path}${qs ? "?" : ""}${qs}`, true);
+    var qs = _.map(options.querystring, (value, key) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join(
+      '&'
+    );
+
+    if (options.responseType) xhr.responseType = options.responseType;
+
+    xhr.open(method, `${path}${qs ? '?' : ''}${qs}`, true);
 
     Object.keys(options.headers).forEach((key) => {
       xhr.setRequestHeader(key, options.headers[key]);
@@ -170,13 +164,13 @@ export function request(path, options) {
 
     if (options.files) {
       payload = new FormData();
-      if (typeof options.body === "object") {
+      if (typeof options.body === 'object') {
         Object.keys(options.body).forEach((key) => {
           payload.append(key, options.body[key]);
         });
       }
       options.files.forEach((file) => {
-        payload.append("files", file, file.name);
+        payload.append('files', file, file.name);
       });
     }
 
@@ -194,12 +188,12 @@ export function jsonRequest(path, options) {
   }
 
   var jsonHeaders = {
-    Accept: "application/json",
+    Accept: 'application/json',
   };
 
   if (options.body) {
     options.body = JSON.stringify(options.body);
-    jsonHeaders["Content-Type"] = "application/json";
+    jsonHeaders['Content-Type'] = 'application/json';
   }
 
   options.headers = Object.assign(options.headers || {}, jsonHeaders);
@@ -240,15 +234,7 @@ export function jsonRequest(path, options) {
           /* not json */
         }
 
-        throw new ApiError(
-          errMsg,
-          err.method,
-          err.path,
-          err.status,
-          errorCode,
-          errorDescription,
-          json
-        );
+        throw new ApiError(errMsg, err.method, err.path, err.status, errorCode, errorDescription, json);
       } else {
         throw err;
       }
@@ -256,7 +242,7 @@ export function jsonRequest(path, options) {
 }
 
 export function buildApiPath(path) {
-  return `${ROOT_API_PREFIX}/api/${path}`.replace("//", "/"); // remove double slashes
+  return `${ROOT_API_PREFIX}/api/${path}`.replace('//', '/'); // remove double slashes
 }
 
 export function ApiRequest(path, options) {
@@ -266,7 +252,7 @@ export function ApiRequest(path, options) {
 
 ApiRequest.prototype.get = function apiGet(params, options) {
   return jsonRequest(this.path, {
-    method: "GET",
+    method: 'GET',
     querystring: params,
     ...this.options,
     ...options,
@@ -275,7 +261,7 @@ ApiRequest.prototype.get = function apiGet(params, options) {
 
 ApiRequest.prototype.post = function apiPost(data, options) {
   return jsonRequest(this.path, {
-    method: "POST",
+    method: 'POST',
     body: data,
     ...this.options,
     ...options,
@@ -284,7 +270,7 @@ ApiRequest.prototype.post = function apiPost(data, options) {
 
 ApiRequest.prototype.put = function apiPut(data, options) {
   return jsonRequest(this.path, {
-    method: "PUT",
+    method: 'PUT',
     body: data,
     ...this.options,
     ...options,
@@ -293,7 +279,7 @@ ApiRequest.prototype.put = function apiPut(data, options) {
 
 ApiRequest.prototype.delete = function apiDelete(data, options) {
   return jsonRequest(this.path, {
-    method: "DELETE",
+    method: 'DELETE',
     body: data,
     ...this.options,
     ...options,

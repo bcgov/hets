@@ -24,12 +24,12 @@ namespace HetsData.Model
         /// <returns></returns>
         public ClaimsPrincipal ToClaimsPrincipal(string authenticationType)
         {
-            return new ClaimsPrincipal(ToClaimsIdentity(authenticationType));
+            return new ClaimsPrincipal(ToClaimsIdentity());
         }
 
-        private ClaimsIdentity ToClaimsIdentity(string authenticationType)
+        public ClaimsIdentity ToClaimsIdentity()
         {
-            return new ClaimsIdentity(GetClaims(), authenticationType);
+            return new ClaimsIdentity(GetClaims());
         }
 
         private List<Claim> GetClaims()

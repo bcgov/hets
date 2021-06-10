@@ -30,13 +30,6 @@ namespace HetsApi.Controllers
             _context = context;
             _configuration = configuration;
             _env = env;
-
-            // set context data
-            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
-            _context.SmUserId = user.SmUserId;
-            _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.UserGuid;
-            _context.SmBusinessGuid = user.BusinessGuid;
         }
 
         /// <summary>

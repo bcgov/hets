@@ -22,17 +22,6 @@ namespace HetsApi.Helpers
         private const string ConstSiteMinderBusinessNumber = "smgov_businessnumber";
 
         /// <summary>
-        /// Get user id from http context
-        /// </summary>
-        /// <param name="httpContext"></param>
-        /// <returns></returns>
-        public static string GetUserId(HttpContext httpContext)
-        {
-            string userId = httpContext.User.Identity.Name;
-            return userId;
-        }
-
-        /// <summary>
         /// Check if this is a Business User
         /// </summary>
         /// <param name="httpContext"></param>
@@ -84,7 +73,7 @@ namespace HetsApi.Helpers
         /// <returns></returns>
         public static int? GetUsersDistrictId(DbAppContext context, HttpContext httpContext)
         {
-            string userId = GetUserId(httpContext);
+            string userId = context.SmUserId;
             int? districtId = context.HetUser.FirstOrDefault(x => x.SmUserId == userId)?.DistrictId;
             return districtId;
         }
@@ -101,7 +90,7 @@ namespace HetsApi.Helpers
 
             // is this a business?
             bool isBusinessUser = IsBusiness(httpContext);
-            string userId = GetUserId(httpContext)?.ToLower();
+            string userId = context.SmUserId;
 
             if (!isBusinessUser)
             {

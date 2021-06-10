@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using HetsData;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace HetsApi.Authentication
 {
@@ -22,7 +23,6 @@ namespace HetsApi.Authentication
 
         public HetsJwtBearerEvents(IWebHostEnvironment env,
             DbAppContext dbContext,
-
             ILogger<HetsJwtBearerEvents> logger) : base()
         {
             _dbContext = dbContext;
@@ -50,6 +50,8 @@ namespace HetsApi.Authentication
 
         public override async Task TokenValidated(TokenValidatedContext context)
         {
+            await Task.CompletedTask;
+
             var userSettings = new UserSettings();
 
             var (username, userGuid, directory) = context.Principal.GetUserInfo();
@@ -69,20 +71,25 @@ namespace HetsApi.Authentication
                 }
             }
 
-            var addClaimResult = AddClaimsFromUserInfo(userSettings);
+            var addClaimResult = AddClaimsFromUserInfo(context.Principal, userSettings);
             if (!addClaimResult.success)
             {
                 context.Fail(addClaimResult.message);
                 return;
             }
 
-            await Task.CompletedTask;
+            _dbContext.SmUserId = username;
+            _dbContext.DirectoryName = directory;
+            _dbContext.SmUserGuid = userGuid;
+            _dbContext.SmBusinessGuid = userSettings.SiteMinderBusinessGuid;
+
         }
 
         private (bool success, string message) LoadIdirUser(TokenValidatedContext context, string username, string userGuid, UserSettings userSettings)
         {
             try
             {
+                userSettings.UserId = username;
                 userSettings.HetsUser = UserAccountHelper.GetUser(_dbContext, username, userGuid);
 
                 if (userSettings.HetsUser == null)
@@ -154,23 +161,23 @@ namespace HetsApi.Authentication
             }
         }
 
-        private (bool success, string message) AddClaimsFromUserInfo(UserSettings userSettings)
+        private (bool success, string message) AddClaimsFromUserInfo(ClaimsPrincipal principal, UserSettings userSettings)
         {
             if (userSettings.BusinessUser)
             {
-                var userPrincipal = userSettings.HetsBusinessUser.ToClaimsPrincipal(JwtBearerDefaults.AuthenticationScheme);
+                principal.AddIdentity(userSettings.HetsBusinessUser.ToClaimsIdentity());
 
-                if (!userPrincipal.HasClaim(HetUser.PermissionClaim, HetPermission.BusinessLogin))
+                if (!principal.HasClaim(HetUser.PermissionClaim, HetPermission.BusinessLogin))
                 {
                     return (false, $"{Constants.MissingDbUserIdError} {userSettings.UserId}");
                 }
             }
             else
             {
-                var userPrincipal = userSettings.HetsUser.ToClaimsPrincipal(JwtBearerDefaults.AuthenticationScheme);
+                principal.AddIdentity(userSettings.HetsUser.ToClaimsIdentity());
 
-                if (!userPrincipal.HasClaim(HetUser.PermissionClaim, HetPermission.Login) &&
-                    !userPrincipal.HasClaim(HetUser.PermissionClaim, HetPermission.BusinessLogin))
+                if (!principal.HasClaim(HetUser.PermissionClaim, HetPermission.Login) &&
+                    !principal.HasClaim(HetUser.PermissionClaim, HetPermission.BusinessLogin))
                 {
                     return (false, $"{Constants.MissingDbUserIdError} {userSettings.UserId}");
                 }

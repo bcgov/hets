@@ -38,13 +38,6 @@ namespace HetsApi.Controllers
             _logger = loggerFactory.CreateLogger(typeof(CurrentUserController));
             _env = env;
             _httpContext = httpContextAccessor.HttpContext;
-
-            // set context data
-            User user = UserAccountHelper.GetUser(context, _httpContext);
-            _context.SmUserId = user.SmUserId;
-            _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.UserGuid;
-            _context.SmBusinessGuid = user.BusinessGuid;
         }
 
         /// <summary>
