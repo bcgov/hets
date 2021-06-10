@@ -44,6 +44,23 @@ objects:
                   cpu: ${CPU}
                   memory: ${MEMORY}
               env:
+                - name: REACT_APP_SSO_HOST
+                  valueFrom:
+                    secretKeyRef:
+                      name: sso-configs
+                      key: CLIENT_SSO_HOST
+                - name: REACT_APP_SSO_REALM
+                  valueFrom:
+                    secretKeyRef:
+                      name: sso-configs
+                      key: CLIENT_SSO_REALM
+                - name: REACT_APP_SSO_CLIENT
+                  valueFrom:
+                    secretKeyRef:
+                      name: sso-configs
+                      key: CLIENT_SSO_CLIENTID
+                - name: REACT_APP_API_HOST
+                  value: ${HOST}
                 - name: HETS_DEPLOY_SUFFIX
                   value: ${SUFFIX}
       test: false
