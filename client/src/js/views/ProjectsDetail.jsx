@@ -55,6 +55,7 @@ class ProjectsDetail extends React.Component {
     documents: PropTypes.object,
     uiContacts: PropTypes.object,
     history: PropTypes.object,
+    match: PropTypes.object,
   };
 
   constructor(props) {
@@ -87,7 +88,14 @@ class ProjectsDetail extends React.Component {
   }
 
   componentDidMount() {
-    const { projectId, project } = this.props;
+    //temporary fix: Why is this required for this component to work? It breaks when removed. Even though component doesn't need projectId from redux.
+    store.dispatch({
+      type: Action.SET_ACTIVE_PROJECT_ID_UI,
+      projectId: this.props.match.params.projectId,
+    });
+
+    const { project } = this.props;
+    const projectId = this.props.match.params.projectId;
 
     /* Documents need be fetched every time as they are not project specific in the store ATM */
     Api.getProjectDocuments(projectId).then(() => this.setState({ loadingDocuments: false }));
@@ -105,7 +113,7 @@ class ProjectsDetail extends React.Component {
 
   fetch = () => {
     this.setState({ reloading: true });
-    return Api.getProject(this.props.projectId).then(() => this.setState({ reloading: false }));
+    return Api.getProject(this.props.match.params.projectId).then(() => this.setState({ reloading: false }));
   };
 
   updateState = (state, callback) => {
@@ -208,7 +216,7 @@ class ProjectsDetail extends React.Component {
 
   confirmEndHire = (item) => {
     Api.releaseRentalAgreement(item.id).then(() => {
-      Api.getProject(this.props.projectId);
+      Api.getProject(this.props.match.params.projectId);
       Log.projectEquipmentReleased(this.props.project, item.equipment);
     });
   };
@@ -229,7 +237,7 @@ class ProjectsDetail extends React.Component {
   cancelRequest = (request) => {
     store.dispatch({
       type: Action.DELETE_PROJECT_RENTAL_REQUEST,
-      projectId: this.props.projectId,
+      projectId: this.props.match.params.projectId,
       requestId: request.id,
     });
     Api.cancelRentalRequest(request.id).then(() => {
@@ -365,7 +373,7 @@ class ProjectsDetail extends React.Component {
                   onSelect={this.updateStatusState}
                 />
                 <Button title="Notes" className="ml-5 mr-5" disabled={loading} onClick={this.showNotes}>
-                  Notes ({loading ? ' ' : project.notes.length})
+                  Notes ({loading ? ' ' : project.notes?.length})
                 </Button>
                 <Button id="project-documents-button" title="Documents" disabled={loading} onClick={this.showDocuments}>
                   Documents ({loadingDocuments ? ' ' : Object.keys(this.props.documents).length})
@@ -634,7 +642,7 @@ class ProjectsDetail extends React.Component {
         {this.state.showNotesDialog && (
           <NotesDialog
             show={this.state.showNotesDialog}
-            id={String(this.props.projectId)}
+            id={String(this.props.match.params.projectId)}
             getNotes={Api.getProjectNotes}
             saveNote={Api.addProjectNote}
             onClose={this.closeNotesDialog}
@@ -683,7 +691,7 @@ class ProjectsDetail extends React.Component {
 function mapStateToProps(state) {
   return {
     project: activeProjectSelector(state),
-    projectId: activeProjectIdSelector(state),
+    projectId: activeProjectIdSelector(state), //TODO: see if this is still required. Seems to work fine without it.
     documents: state.models.documents,
     uiContacts: state.ui.projectContacts,
   };

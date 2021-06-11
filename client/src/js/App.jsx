@@ -378,28 +378,31 @@ const App = () => {
                 path={`${Constant.EQUIPMENT_PATHNAME}/:equipmentId`}
                 exact
                 component={EquipmentDetail}
-                onEnter={setActiveEquipmentId}
+                // temporary fix onEnter doesn't work. Will need to move logic into component.
+                // onEnter={setActiveEquipmentId}
               />
               <Route path={Constant.OWNERS_PATHNAME} exact component={Owners} />
               <Route
                 path={`${Constant.OWNERS_PATHNAME}/:ownerId`}
                 exact
                 component={OwnersDetail}
-                // temporary fix onEnter doesn't work. Will need to move this logic into component.
+                // temporary fix onEnter doesn't work. Will need to move logic into component.
                 // onEnter={setActiveOwnerId}
               />
               <Route
                 path={`${Constant.OWNERS_PATHNAME}/:ownerId/${Constant.CONTACTS_PATHNAME}/:contactId`}
                 exact
                 component={OwnersDetail}
-                onEnter={setActiveOwnerId}
+                // temporary fix onEnter doesn't work. Will need to move logic into component.
+                // onEnter={setActiveOwnerId}
               />
               <Route path={Constant.PROJECTS_PATHNAME} exact component={Projects} />
               <Route
                 path={`${Constant.PROJECTS_PATHNAME}/:projectId`}
                 exact
                 component={ProjectsDetail}
-                onEnter={setActiveProjectId}
+                // temporary fix onEnter doesn't work. Will need to move logic into component.
+                // onEnter={setActiveProjectId}
               />
               <Route
                 path={`${Constant.PROJECTS_PATHNAME}/:projectId/${Constant.CONTACTS_PATHNAME}/:contactId`}
