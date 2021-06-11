@@ -359,8 +359,9 @@ const App = () => {
         </Route>
       </Router> */}
       <Router>
-        {/* temporary fix do we need this? seems to mess things up */}
-        {/* <Redirect from="/" to="/home" /> */}
+        <Route exact path="/">
+          <Redirect to="/home" />
+        </Route>
         <Route path={Constant.BUSINESS_PORTAL_PATHNAME} component={BusinessPortal} onEnter={onEnterBusiness} />
         <Route
           path={`${Constant.BUSINESS_DETAILS_PATHNAME}/:ownerId`}
@@ -386,7 +387,6 @@ const App = () => {
                 component={OwnersDetail}
                 onEnter={setActiveOwnerId}
               />
-              {/* Temporary fix does this route ever get called? Seems to just pull up modal in OwnersDetail */}
               <Route
                 path={`${Constant.OWNERS_PATHNAME}/:ownerId/${Constant.CONTACTS_PATHNAME}/:contactId`}
                 exact
