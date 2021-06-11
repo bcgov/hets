@@ -46,7 +46,6 @@ class TopNav extends React.Component {
       return district.district.id === state.districtId;
     });
     Api.switchUserDistrict(district.id).then(() => {
-      debugger;
       this.props.history.push(Constant.HOME_PATHNAME);
       window.location.reload();
 

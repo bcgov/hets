@@ -89,8 +89,6 @@ class OwnersDetail extends React.Component {
 
       status: '',
 
-      ownerId: this.props.match.params.ownerId,
-
       // Contacts
       uiContacts: {
         sortField: props.uiContacts.sortField || CONTACT_NAME_SORT_FIELDS,
@@ -106,7 +104,6 @@ class OwnersDetail extends React.Component {
   }
 
   componentDidMount() {
-    console.log(this.props);
     store.dispatch({
       type: Action.SET_ACTIVE_OWNER_ID_UI,
       ownerId: this.props.match.params.ownerId,
@@ -116,7 +113,6 @@ class OwnersDetail extends React.Component {
     // const { ownerId, owner } = this.props;
 
     /* Documents need be fetched every time as they are not project specific in the store ATM */
-    debugger;
     Api.getOwnerDocuments(ownerId).then(() => this.setState({ loadingDocuments: false }));
 
     // Only show loading spinner if there is no existing project in the store
@@ -357,7 +353,7 @@ class OwnersDetail extends React.Component {
                 onSelect={this.updateStatusState}
               />
               <Button id="owner-notes-button" title="Notes" disabled={loading} onClick={this.openNotesDialog}>
-                Notes ({loading ? ' ' : owner.notes.length})
+                Notes ({loading ? ' ' : owner.notes?.length})
               </Button>
               <Button id="owner-documents-button" title="Documents" disabled={loading} onClick={this.showDocuments}>
                 Documents ({loadingDocuments ? ' ' : Object.keys(this.props.documents).length})

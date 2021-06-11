@@ -1,68 +1,59 @@
-import React from "react";
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-import * as Api from "./api";
-import * as Constant from "./constants";
+import * as Api from './api';
+import * as Constant from './constants';
 
 // History Events
-export const OWNER_ADDED = "Owner %e was added.";
-export const OWNER_MODIFIED = "Owner %e was modified.";
-export const OWNER_MODIFIED_STATUS =
-  'Owner %e status changed to "%e". Comment: %e';
-export const OWNER_MODIFIED_NAME = "Owner %e is now %e";
-export const OWNER_EQUIPMENT_ADDED = "Owner %e added equipment %e.";
-export const OWNER_EQUIPMENT_VERIFIED = "Owner %e verified equipment %e.";
-export const OWNER_MODIFIED_POLICY = "Owner %e modified policy.";
-export const OWNER_DOCUMENT_ADDED = "Owner %e added document %e.";
-export const OWNER_DOCUMENTS_ADDED = "Owner %e added documents.";
-export const OWNER_DOCUMENT_DELETED = "Owner %e removed document %e.";
-export const OWNER_CONTACT_ADDED = "Owner %e added contact %e.";
-export const OWNER_CONTACT_UPDATED = "Owner %e modified contact %e.";
-export const OWNER_CONTACT_DELETED = "Owner %e removed contact %e.";
+export const OWNER_ADDED = 'Owner %e was added.';
+export const OWNER_MODIFIED = 'Owner %e was modified.';
+export const OWNER_MODIFIED_STATUS = 'Owner %e status changed to "%e". Comment: %e';
+export const OWNER_MODIFIED_NAME = 'Owner %e is now %e';
+export const OWNER_EQUIPMENT_ADDED = 'Owner %e added equipment %e.';
+export const OWNER_EQUIPMENT_VERIFIED = 'Owner %e verified equipment %e.';
+export const OWNER_MODIFIED_POLICY = 'Owner %e modified policy.';
+export const OWNER_DOCUMENT_ADDED = 'Owner %e added document %e.';
+export const OWNER_DOCUMENTS_ADDED = 'Owner %e added documents.';
+export const OWNER_DOCUMENT_DELETED = 'Owner %e removed document %e.';
+export const OWNER_CONTACT_ADDED = 'Owner %e added contact %e.';
+export const OWNER_CONTACT_UPDATED = 'Owner %e modified contact %e.';
+export const OWNER_CONTACT_DELETED = 'Owner %e removed contact %e.';
 
-export const PROJECT_ADDED = "Project %e was added.";
-export const PROJECT_MODIFIED = "Project %e was modified.";
-export const PROJECT_MODIFIED_STATUS = "Project %e status changed to %e.";
-export const PROJECT_MODIFIED_NAME = "Project %e is now %e";
-export const PROJECT_EQUIPMENT_ADDED = "Project %e added equipment %e.";
-export const PROJECT_CONTACT_ADDED = "Project %e added contact %e.";
-export const PROJECT_CONTACT_UPDATED = "Project %e modified contact %e.";
-export const PROJECT_CONTACT_DELETED = "Project %e removed contact %e.";
-export const PROJECT_DOCUMENT_ADDED = "Project %e added document %e.";
-export const PROJECT_DOCUMENTS_ADDED = "Project %e added documents.";
-export const PROJECT_DOCUMENT_DELETED = "Project %e removed document %e.";
-export const PROJECT_EQUIPMENT_RELEASED = "Project %e released equipment %e.";
-export const PROJECT_RENTAL_REQUEST_ADDED =
-  "Project %e added rental request %e.";
+export const PROJECT_ADDED = 'Project %e was added.';
+export const PROJECT_MODIFIED = 'Project %e was modified.';
+export const PROJECT_MODIFIED_STATUS = 'Project %e status changed to %e.';
+export const PROJECT_MODIFIED_NAME = 'Project %e is now %e';
+export const PROJECT_EQUIPMENT_ADDED = 'Project %e added equipment %e.';
+export const PROJECT_CONTACT_ADDED = 'Project %e added contact %e.';
+export const PROJECT_CONTACT_UPDATED = 'Project %e modified contact %e.';
+export const PROJECT_CONTACT_DELETED = 'Project %e removed contact %e.';
+export const PROJECT_DOCUMENT_ADDED = 'Project %e added document %e.';
+export const PROJECT_DOCUMENTS_ADDED = 'Project %e added documents.';
+export const PROJECT_DOCUMENT_DELETED = 'Project %e removed document %e.';
+export const PROJECT_EQUIPMENT_RELEASED = 'Project %e released equipment %e.';
+export const PROJECT_RENTAL_REQUEST_ADDED = 'Project %e added rental request %e.';
 
-export const USER_ADDED = "User %e was added.";
-export const USER_MODIFIED = "User %e was modified.";
-export const USER_DELETED = "User %e was deleted.";
+export const USER_ADDED = 'User %e was added.';
+export const USER_MODIFIED = 'User %e was modified.';
+export const USER_DELETED = 'User %e was deleted.';
 
-export const EQUIPMENT_ADDED = "Equipment %e was added.";
-export const EQUIPMENT_MODIFIED = "Equipment %e was modified.";
-export const EQUIPMENT_STATUS_MODIFIED =
-  'Equipment %e status changed to "%e". Comment: %e';
-export const EQUIPMENT_SENIORITY_MODIFIED =
-  "Equipment %e seniority was modified.";
-export const EQUIPMENT_DOCUMENT_ADDED = "Equipment %e added document %e.";
-export const EQUIPMENT_DOCUMENTS_ADDED = "Equipment %e added documents.";
-export const EQUIPMENT_DOCUMENT_DELETED = "Equipment %e removed document %e.";
-export const EQUIPMENT_ATTACHMENT_ADDED = "Equipment %e added attachment %e.";
-export const EQUIPMENT_ATTACHMENT_UPDATED =
-  "Equipment %e modified attachment %e.";
-export const EQUIPMENT_ATTACHMENT_DELETED =
-  "Equipment %e removed attachment %e.";
+export const EQUIPMENT_ADDED = 'Equipment %e was added.';
+export const EQUIPMENT_MODIFIED = 'Equipment %e was modified.';
+export const EQUIPMENT_STATUS_MODIFIED = 'Equipment %e status changed to "%e". Comment: %e';
+export const EQUIPMENT_SENIORITY_MODIFIED = 'Equipment %e seniority was modified.';
+export const EQUIPMENT_DOCUMENT_ADDED = 'Equipment %e added document %e.';
+export const EQUIPMENT_DOCUMENTS_ADDED = 'Equipment %e added documents.';
+export const EQUIPMENT_DOCUMENT_DELETED = 'Equipment %e removed document %e.';
+export const EQUIPMENT_ATTACHMENT_ADDED = 'Equipment %e added attachment %e.';
+export const EQUIPMENT_ATTACHMENT_UPDATED = 'Equipment %e modified attachment %e.';
+export const EQUIPMENT_ATTACHMENT_DELETED = 'Equipment %e removed attachment %e.';
 
-export const RENTAL_REQUEST_ADDED = "Rental request %e was added.";
-export const RENTAL_REQUEST_MODIFIED = "Rental request was modified.";
-export const RENTAL_REQUEST_DOCUMENT_ADDED =
-  "Rental request %e added document %e.";
-export const RENTAL_REQUEST_DOCUMENTS_ADDED =
-  "Rental request %e added documents.";
-export const RENTAL_REQUEST_DOCUMENT_DELETED =
-  "Rental request %e removed document %e.";
-export const RENTAL_REQUEST_EQUIPMENT_HIRED =
-  "Rental request %e equipment %e was given a response of %e.";
+export const RENTAL_REQUEST_ADDED = 'Rental request %e was added.';
+export const RENTAL_REQUEST_MODIFIED = 'Rental request was modified.';
+export const RENTAL_REQUEST_DOCUMENT_ADDED = 'Rental request %e added document %e.';
+export const RENTAL_REQUEST_DOCUMENTS_ADDED = 'Rental request %e added documents.';
+export const RENTAL_REQUEST_DOCUMENT_DELETED = 'Rental request %e removed document %e.';
+export const RENTAL_REQUEST_EQUIPMENT_HIRED = 'Rental request %e equipment %e was given a response of %e.';
 
 // Helper to create an entity object
 export function makeHistoryEntity(type, entity) {
@@ -127,9 +118,13 @@ export function log(historyEntity, event, ...entities) {
 function buildLink(entity, closeFunc) {
   // Return a link if the entity has a path; just the description otherwise.
   return entity.path ? (
-    <a onClick={closeFunc} href={entity.url}>
+    //temporary fix will see if using entity.path works.
+    // <a onClick={closeFunc} href={entity.url}>
+    //   {entity.description}
+    // </a>
+    <Link onClick={closeFunc} to={`/${entity.path}`}>
       {entity.description}
-    </a>
+    </Link>
   ) : (
     <span>{entity.description}</span>
   );
@@ -141,16 +136,14 @@ export function renderEvent(historyText, closeFunc) {
     var event = JSON.parse(historyText);
 
     // Parse the text and return it inside a <div>, replacing field placeholders with linked content.
-    var tokens = event.text.split("%e");
+    var tokens = event.text.split('%e');
     return (
       <div>
         {tokens.map((token, index) => {
           return (
             <span key={index}>
               {token}
-              {index < tokens.length - 1
-                ? buildLink(event.entities[index], closeFunc || null)
-                : null}
+              {index < tokens.length - 1 ? buildLink(event.entities[index], closeFunc || null) : null}
             </span>
           );
         })}
@@ -202,12 +195,7 @@ export function ownerModified(owner) {
 }
 
 export function ownerModifiedStatus(owner, status, statusComment) {
-  return log(
-    owner.historyEntity,
-    OWNER_MODIFIED_STATUS,
-    { description: status },
-    { description: statusComment }
-  );
+  return log(owner.historyEntity, OWNER_MODIFIED_STATUS, { description: status }, { description: statusComment });
 }
 
 export function ownerContactAdded(owner, contact) {
@@ -227,19 +215,11 @@ export function ownerModifiedPolicy(owner) {
 }
 
 export function ownerEquipmentAdded(owner, equipment) {
-  return log(
-    owner.historyEntity,
-    OWNER_EQUIPMENT_ADDED,
-    equipment.historyEntity
-  );
+  return log(owner.historyEntity, OWNER_EQUIPMENT_ADDED, equipment.historyEntity);
 }
 
 export function ownerEquipmentVerified(owner, equipment) {
-  return log(
-    owner.historyEntity,
-    OWNER_EQUIPMENT_VERIFIED,
-    equipment.historyEntity
-  );
+  return log(owner.historyEntity, OWNER_EQUIPMENT_VERIFIED, equipment.historyEntity);
 }
 
 export function ownerDocumentAdded(owner, document) {
@@ -253,11 +233,7 @@ export function ownerDocumentsAdded(owner) {
 }
 
 export function ownerDocumentDeleted(owner, document) {
-  return log(
-    owner.historyEntity,
-    OWNER_DOCUMENT_DELETED,
-    document.historyEntity
-  );
+  return log(owner.historyEntity, OWNER_DOCUMENT_DELETED, document.historyEntity);
 }
 
 export function projectAdded(project) {
@@ -275,27 +251,15 @@ export function projectModifiedStatus(project) {
 }
 
 export function projectContactAdded(project, contact) {
-  return log(
-    project.historyEntity,
-    PROJECT_CONTACT_ADDED,
-    contact.historyEntity
-  );
+  return log(project.historyEntity, PROJECT_CONTACT_ADDED, contact.historyEntity);
 }
 
 export function projectContactUpdated(project, contact) {
-  return log(
-    project.historyEntity,
-    PROJECT_CONTACT_UPDATED,
-    contact.historyEntity
-  );
+  return log(project.historyEntity, PROJECT_CONTACT_UPDATED, contact.historyEntity);
 }
 
 export function projectContactDeleted(project, contact) {
-  return log(
-    project.historyEntity,
-    PROJECT_CONTACT_DELETED,
-    contact.historyEntity
-  );
+  return log(project.historyEntity, PROJECT_CONTACT_DELETED, contact.historyEntity);
 }
 
 export function projectDocumentAdded(project, document) {
@@ -309,27 +273,15 @@ export function projectDocumentsAdded(project) {
 }
 
 export function projectDocumentDeleted(project, document) {
-  return log(
-    project.historyEntity,
-    PROJECT_DOCUMENT_DELETED,
-    document.historyEntity
-  );
+  return log(project.historyEntity, PROJECT_DOCUMENT_DELETED, document.historyEntity);
 }
 
 export function projectEquipmentReleased(project, equipment) {
-  return log(
-    project.historyEntity,
-    PROJECT_EQUIPMENT_RELEASED,
-    equipment.historyEntity
-  );
+  return log(project.historyEntity, PROJECT_EQUIPMENT_RELEASED, equipment.historyEntity);
 }
 
 export function projectRentalRequestAdded(project, rentalRequest) {
-  return log(
-    project.historyEntity,
-    PROJECT_RENTAL_REQUEST_ADDED,
-    rentalRequest.historyEntity
-  );
+  return log(project.historyEntity, PROJECT_RENTAL_REQUEST_ADDED, rentalRequest.historyEntity);
 }
 
 export function equipmentAdded(equipment) {
@@ -364,11 +316,7 @@ export function equipmentDocumentsAdded(equipment) {
 }
 
 export function equipmentDocumentDeleted(equipment, document) {
-  return log(
-    equipment.historyEntity,
-    EQUIPMENT_DOCUMENT_DELETED,
-    document.historyEntity
-  );
+  return log(equipment.historyEntity, EQUIPMENT_DOCUMENT_DELETED, document.historyEntity);
 }
 
 export function equipmentAttachmentAdded(equipment, attachment) {
@@ -408,23 +356,12 @@ export function rentalRequestDocumentsAdded(rentalRequest) {
 }
 
 export function rentalRequestDocumentDeleted(rentalRequest, document) {
-  return log(
-    rentalRequest.historyEntity,
-    RENTAL_REQUEST_DOCUMENT_DELETED,
-    document.historyEntity
-  );
+  return log(rentalRequest.historyEntity, RENTAL_REQUEST_DOCUMENT_DELETED, document.historyEntity);
 }
 
-export function rentalRequestEquipmentHired(
-  rentalRequest,
-  equipment,
-  offerResponse
-) {
+export function rentalRequestEquipmentHired(rentalRequest, equipment, offerResponse) {
   console.log(equipment);
-  return log(
-    rentalRequest.historyEntity,
-    RENTAL_REQUEST_EQUIPMENT_HIRED,
-    equipment.historyEntity,
-    { description: offerResponse }
-  );
+  return log(rentalRequest.historyEntity, RENTAL_REQUEST_EQUIPMENT_HIRED, equipment.historyEntity, {
+    description: offerResponse,
+  });
 }
