@@ -55,6 +55,7 @@ class RentalRequestsDetail extends React.Component {
     documents: PropTypes.object,
     ui: PropTypes.object,
     history: PropTypes.object,
+    match: PropTypes.object,
   };
 
   constructor(props) {
@@ -78,7 +79,13 @@ class RentalRequestsDetail extends React.Component {
   }
 
   componentDidMount() {
-    const { rentalRequestId, rentalRequest } = this.props;
+    store.dispatch({
+      type: Action.SET_ACTIVE_RENTAL_REQUEST_ID_UI,
+      rentalRequestId: this.props.match.params.rentalRequestId,
+    });
+
+    const { rentalRequest } = this.props;
+    const rentalRequestId = this.props.match.params.rentalRequestId;
 
     /* Documents need be fetched every time as they are not rentalRequest specific in the store ATM */
     Api.getRentalRequestDocuments(rentalRequestId).then(() => this.setState({ loadingDocuments: false }));
@@ -100,7 +107,9 @@ class RentalRequestsDetail extends React.Component {
 
   fetch = () => {
     this.setState({ reloading: true });
-    return Api.getRentalRequest(this.props.rentalRequestId).then(() => this.setState({ reloading: false }));
+    return Api.getRentalRequest(this.props.match.params.rentalRequestId).then(() =>
+      this.setState({ reloading: false })
+    );
   };
 
   updateState = (state, callback) => {
@@ -146,7 +155,7 @@ class RentalRequestsDetail extends React.Component {
   };
 
   rentalRequestSaved = () => {
-    Promise.all([this.fetch(), Api.getRentalRequestRotationList(this.props.rentalRequestId)]);
+    Promise.all([this.fetch(), Api.getRentalRequestRotationList(this.props.match.params.rentalRequestId)]);
   };
 
   openHireOfferDialog = (hireOffer, showAllResponseFields) => {
@@ -162,11 +171,15 @@ class RentalRequestsDetail extends React.Component {
   };
 
   hireOfferSaved = (hireOffer) => {
-    Log.rentalRequestEquipmentHired(this.props.rentalRequest, hireOffer.equipment, hireOffer.offerResponse);
+    Log.rentalRequestEquipmentHired(
+      this.props.match.params.rentalRequest,
+      hireOffer.equipment,
+      hireOffer.offerResponse
+    );
 
     this.closeHireOfferDialog();
 
-    var rotationListItem = _.find(this.props.rentalRequest.rotationList, (i) => i.id === hireOffer.id);
+    var rotationListItem = _.find(this.props.rentalRequest.match.params.rotationList, (i) => i.id === hireOffer.id);
     if (rotationListItem && rotationListItem.rentalAgreementId && !hireOffer.rentalAgreementId) {
       // navigate to rental agreement if it was newly generated
       this.props.history.push(`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${rotationListItem.rentalAgreementId}`);
@@ -574,7 +587,7 @@ class RentalRequestsDetail extends React.Component {
         )}
         {this.state.showNotesDialog && (
           <NotesDialog
-            id={String(this.props.rentalRequestId)}
+            id={String(this.props.match.params.rentalRequestId)}
             show={this.state.showNotesDialog}
             notes={this.props.rentalRequest.notes}
             getNotes={Api.getRentalRequestNotes}

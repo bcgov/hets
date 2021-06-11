@@ -415,7 +415,8 @@ const App = () => {
                 path={`${Constant.RENTAL_REQUESTS_PATHNAME}/:rentalRequestId`}
                 exact
                 component={RentalRequestsDetail}
-                onEnter={setActiveRentalRequestId}
+                // temporary fix onEnter doesn't work. Will need to move logic into component.
+                // onEnter={setActiveRentalRequestId}
               />
               <Route
                 path={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/:rentalAgreementId`}
