@@ -385,6 +385,7 @@ function getBlockDisplayName(blockNumber, numberOfBlocks, seniority) {
 }
 
 function parseEquipment(equipment) {
+  debugger;
   if (!equipment.owner) {
     equipment.owner = { id: 0, organizationName: '' };
   }

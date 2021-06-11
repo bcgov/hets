@@ -110,7 +110,6 @@ class OwnersDetail extends React.Component {
     });
     const ownerId = this.props.match.params.ownerId;
     const { owner } = this.props;
-    // const { ownerId, owner } = this.props;
 
     /* Documents need be fetched every time as they are not project specific in the store ATM */
     Api.getOwnerDocuments(ownerId).then(() => this.setState({ loadingDocuments: false }));
@@ -739,7 +738,7 @@ class OwnersDetail extends React.Component {
         {this.state.showNotesDialog && (
           <NotesDialog
             show={this.state.showNotesDialog}
-            id={this.props.ownerId}
+            id={this.props.match.params.ownerId}
             notes={owner.notes}
             getNotes={Api.getOwnerNotes}
             saveNote={Api.addOwnerNote}
@@ -796,7 +795,7 @@ class OwnersDetail extends React.Component {
 function mapStateToProps(state) {
   return {
     owner: activeOwnerSelector(state),
-    ownerId: activeOwnerIdSelector(state),
+    ownerId: activeOwnerIdSelector(state), //TODO: check if ownerID is still needed as a redux prop. Could be removed?
     documents: state.models.documents,
     uiContacts: state.ui.ownerContacts,
     uiEquipment: state.ui.ownerEquipment,

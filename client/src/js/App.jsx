@@ -385,7 +385,8 @@ const App = () => {
                 path={`${Constant.OWNERS_PATHNAME}/:ownerId`}
                 exact
                 component={OwnersDetail}
-                onEnter={setActiveOwnerId}
+                // temporary fix onEnter doesn't work. Will need to move this logic into component.
+                // onEnter={setActiveOwnerId}
               />
               <Route
                 path={`${Constant.OWNERS_PATHNAME}/:ownerId/${Constant.CONTACTS_PATHNAME}/:contactId`}
