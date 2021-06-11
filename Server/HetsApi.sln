@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsCommon", "HetsCommon\HetsCommon.csproj", "{FF1DB058-3D10-4065-A42B-E9EB5BEB0982}"
 EndProject
@@ -9,6 +9,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsApi", "HetsApi\HetsApi.csproj", "{292B510E-6283-4616-AD2A-D8A994FD4285}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsReport", "HetsReport\HetsReport.csproj", "{7DFA1859-E5B0-4460-A5A5-5E5288A4AC94}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsBceid", "HetsBceid\HetsBceid.csproj", "{7E21ACC0-6FAF-42F3-8DFF-B281D0183D31}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,13 +34,13 @@ Global
 		{7DFA1859-E5B0-4460-A5A5-5E5288A4AC94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DFA1859-E5B0-4460-A5A5-5E5288A4AC94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DFA1859-E5B0-4460-A5A5-5E5288A4AC94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E21ACC0-6FAF-42F3-8DFF-B281D0183D31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E21ACC0-6FAF-42F3-8DFF-B281D0183D31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E21ACC0-6FAF-42F3-8DFF-B281D0183D31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E21ACC0-6FAF-42F3-8DFF-B281D0183D31}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BAABCEB5-DF1F-44BB-92B9-01FF124FABA6}
