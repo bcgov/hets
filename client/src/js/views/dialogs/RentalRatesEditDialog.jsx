@@ -34,26 +34,29 @@ class RentalRatesEditDialog extends React.Component {
   constructor(props) {
     super(props);
 
-    const ratePeriod = props.rentalRate.id === 0 ?
-      props.rentalAgreement.ratePeriod || Constant.RENTAL_RATE_PERIOD_HOURLY :
-      props.rentalRate.ratePeriod;
+    const ratePeriod =
+      props.rentalRate.id === 0
+        ? props.rentalAgreement.ratePeriod || Constant.RENTAL_RATE_PERIOD_HOURLY
+        : props.rentalRate.ratePeriod;
 
     this.state = {
       isNew: props.rentalRate.id === 0,
 
-      forms: [{
-        isIncludedInTotal: props.rentalRate.isIncludedInTotal || false,
-        rateType: {},
-        rate: props.rentalRate.rate || 0.0,
-        ratePeriod: ratePeriod,
-        uiRatePeriod: props.rentalRate.set ? Constant.RENTAL_RATE_PERIOD_SET : ratePeriod,
-        set: props.rentalRate.set || false,
-        comment: props.rentalRate.comment || '',
+      forms: [
+        {
+          isIncludedInTotal: props.rentalRate.isIncludedInTotal || false,
+          rateType: {},
+          rate: props.rentalRate.rate || 0.0,
+          ratePeriod: ratePeriod,
+          uiRatePeriod: props.rentalRate.set ? Constant.RENTAL_RATE_PERIOD_SET : ratePeriod,
+          set: props.rentalRate.set || false,
+          comment: props.rentalRate.comment || '',
 
-        componentNameError: '',
-        rateError: '',
-        commentError: '',
-      }],
+          componentNameError: '',
+          rateError: '',
+          commentError: '',
+        },
+      ],
       concurrencyControlNumber: props.rentalRate.concurrencyControlNumber || 0,
     };
   }
@@ -63,9 +66,9 @@ class RentalRatesEditDialog extends React.Component {
     let stateValue = _.values(value)[0];
     let number = property.match(/\d+/g)[0];
     let stateName = property.match(/[a-zA-Z]+/g)[0];
-    let state = { [stateName]:  stateValue };
+    let state = { [stateName]: stateValue };
     const updatedForms = this.state.forms.slice();
-    updatedForms.splice(number, 1, { ...updatedForms[number], ...state});
+    updatedForms.splice(number, 1, { ...updatedForms[number], ...state });
     this.setState({ forms: updatedForms });
   };
 
@@ -75,9 +78,10 @@ class RentalRatesEditDialog extends React.Component {
     const state = {
       uiRatePeriod: uiRatePeriod,
       set: uiRatePeriod === Constant.RENTAL_RATE_PERIOD_SET,
-      ratePeriod: uiRatePeriod === Constant.RENTAL_RATE_PERIOD_SET ? this.props.rentalAgreement.ratePeriod : uiRatePeriod,
+      ratePeriod:
+        uiRatePeriod === Constant.RENTAL_RATE_PERIOD_SET ? this.props.rentalAgreement.ratePeriod : uiRatePeriod,
     };
-    updatedForms.splice(index, 1, { ...updatedForms[index], ...state});
+    updatedForms.splice(index, 1, { ...updatedForms[index], ...state });
     this.setState({ forms: updatedForms });
   };
 
@@ -105,7 +109,7 @@ class RentalRatesEditDialog extends React.Component {
         valid = false;
       }
 
-      if (isBlank(form.rate) ) {
+      if (isBlank(form.rate)) {
         forms[i] = { ...forms[i], rateError: 'Pay rate is required' };
         valid = false;
       } else if (form.rate < 0) {
@@ -138,9 +142,13 @@ class RentalRatesEditDialog extends React.Component {
           };
         });
 
-        (this.state.isNew ? Api.addRentalRates(rentalAgreement.id, rates) : Api.updateRentalRate(_.first(rates))).then(() => {
-          if (onSave) { onSave(); }
-        });
+        (this.state.isNew ? Api.addRentalRates(rentalAgreement.id, rates) : Api.updateRentalRate(_.first(rates))).then(
+          () => {
+            if (onSave) {
+              onSave();
+            }
+          }
+        );
       }
 
       onClose();
@@ -183,36 +191,53 @@ class RentalRatesEditDialog extends React.Component {
 
     const uiRatePeriods = _.concat(ratePeriods, Constant.RENTAL_RATE_PERIOD_SET);
 
-    const ratePeriodElement = this.props.rentalRate.isIncludedInTotal ?
+    const ratePeriodElement = this.props.rentalRate.isIncludedInTotal ? (
       <>
         <ControlLabel>Period</ControlLabel>
-        <div style={ { marginTop: '10px', marginBottom: '10px' } }>{ form.uiRatePeriod }</div>
+        <div style={{ marginTop: '10px', marginBottom: '10px' }}>{form.uiRatePeriod}</div>
       </>
-      :
+    ) : (
       <FormGroup controlId={`uiRatePeriod${i}`}>
-        <ControlLabel>Period <sup>*</sup></ControlLabel>
-        <DropdownControl id={`uiRatePeriod${i}`} disabled={ isReadOnly } title={ form.uiRatePeriod } updateState={ (state) => this.updateUiRatePeriod(state, i) }
-          items={ uiRatePeriods } />
-      </FormGroup>;
+        <ControlLabel>
+          Period <sup>*</sup>
+        </ControlLabel>
+        <DropdownControl
+          id={`uiRatePeriod${i}`}
+          disabled={isReadOnly}
+          title={form.uiRatePeriod}
+          updateState={(state) => this.updateUiRatePeriod(state, i)}
+          items={uiRatePeriods}
+        />
+      </FormGroup>
+    );
 
     return (
       <div className="form-item" key={i}>
         <Row>
           <Col md={2}>
-            <FormGroup controlId={`rate${i}`} validationState={ form.rateError ? 'error' : null }>
-              <ControlLabel>Rate <sup>*</sup></ControlLabel>
-              <FormInputControl type="float" min={ 0 } defaultValue={ (form.rate || 0).toFixed(2) } readOnly={ isReadOnly } updateState={ this.updateState } autoFocus />
-              <HelpBlock>{ form.rateError }</HelpBlock>
+            <FormGroup controlId={`rate${i}`} validationState={form.rateError ? 'error' : null}>
+              <ControlLabel>
+                Rate <sup>*</sup>
+              </ControlLabel>
+              <FormInputControl
+                type="float"
+                min={0}
+                defaultValue={(form.rate || 0).toFixed(2)}
+                readOnly={isReadOnly}
+                updateState={this.updateState}
+                autoFocus
+              />
+              <HelpBlock>{form.rateError}</HelpBlock>
             </FormGroup>
           </Col>
-          <Col md={3}>
-            { ratePeriodElement }
-          </Col>
+          <Col md={3}>{ratePeriodElement}</Col>
           <Col md={7}>
-            <FormGroup controlId={`comment${i}`} validationState={ form.commentError ? 'error' : null }>
-              <ControlLabel>Comment <sup>*</sup></ControlLabel>
-              <FormInputControl defaultValue={ form.comment } readOnly={ isReadOnly } updateState={ this.updateState } />
-              <HelpBlock>{ form.commentError }</HelpBlock>
+            <FormGroup controlId={`comment${i}`} validationState={form.commentError ? 'error' : null}>
+              <ControlLabel>
+                Comment <sup>*</sup>
+              </ControlLabel>
+              <FormInputControl defaultValue={form.comment} readOnly={isReadOnly} updateState={this.updateState} />
+              <HelpBlock>{form.commentError}</HelpBlock>
             </FormGroup>
           </Col>
         </Row>
@@ -229,24 +254,20 @@ class RentalRatesEditDialog extends React.Component {
         show={this.props.show}
         title={`Rental Agreement – ${status} Rates and Attachments`}
         onSubmit={this.formSubmitted}
-        onClose={this.props.onClose}>
-        <div className="forms-container">
-          { this.state.forms.map((form, i) => this.renderForm(form, i))}
-        </div>
+        onClose={this.props.onClose}
+      >
+        <div className="forms-container">{this.state.forms.map((form, i) => this.renderForm(form, i))}</div>
         <div className="align-right">
-          { this.state.isNew && this.state.forms.length > 1 && (
-            <Button
-              bsSize="xsmall"
-              className="remove-btn"
-              onClick={ this.removeInput }>
-              <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
+          {this.state.isNew && this.state.forms.length > 1 && (
+            <Button bsSize="xsmall" className="remove-btn" onClick={this.removeInput}>
+              <Glyphicon glyph="minus" />
+              &nbsp;<strong>Remove</strong>
             </Button>
           )}
-          { this.state.isNew && this.state.forms.length < 10 && (
-            <Button
-              bsSize="xsmall"
-              onClick={ this.addInput }>
-              <Glyphicon glyph="plus" />&nbsp;<strong>Add</strong>
+          {this.state.isNew && this.state.forms.length < 10 && (
+            <Button bsSize="xsmall" onClick={this.addInput}>
+              <Glyphicon glyph="plus" />
+              &nbsp;<strong>Add</strong>
             </Button>
           )}
         </div>

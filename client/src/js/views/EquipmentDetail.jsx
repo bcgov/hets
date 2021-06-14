@@ -264,7 +264,6 @@ class EquipmentDetail extends React.Component {
   };
 
   render() {
-    // debugger;
     var equipment = this.props.equipment || {};
     const { loadingNotes, loadingDocuments } = this.state;
 

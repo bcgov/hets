@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Well, Row, Col, Table, Alert, Button, Glyphicon, Label, ButtonGroup } from 'react-bootstrap';
 import _ from 'lodash';
 
@@ -12,8 +12,10 @@ import RentalAgreementOvertimeNotesDialog from './dialogs/RentalAgreementOvertim
 import RentalRatesEditDialog from './dialogs/RentalRatesEditDialog.jsx';
 import CloneDialog from './dialogs/CloneDialog.jsx';
 
+import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
+import store from '../store';
 
 import ColDisplay from '../components/ColDisplay.jsx';
 import DeleteButton from '../components/DeleteButton.jsx';
@@ -37,7 +39,7 @@ class RentalAgreementsDetail extends React.Component {
     rentalConditions: PropTypes.array,
     ui: PropTypes.object,
     location: PropTypes.object,
-    router: PropTypes.object,
+    match: PropTypes.object,
   };
 
   constructor(props) {
@@ -59,6 +61,11 @@ class RentalAgreementsDetail extends React.Component {
   }
 
   componentDidMount() {
+    store.dispatch({
+      type: Action.SET_ACTIVE_RENTAL_AGREEMENT_ID_UI,
+      rentalAgreementId: this.props.match.params.rentalAgreementId,
+    });
+
     const { rentalAgreement } = this.props;
 
     // Only show loading spinner if there is no existing rental agreement in the store
@@ -73,7 +80,7 @@ class RentalAgreementsDetail extends React.Component {
   }
 
   fetch = () => {
-    return Api.getRentalAgreement(this.props.rentalAgreementId);
+    return Api.getRentalAgreement(this.props.match.params.rentalAgreementId);
   };
 
   updateState = (state, callback) => {
@@ -159,8 +166,8 @@ class RentalAgreementsDetail extends React.Component {
   };
 
   generateRentalAgreementDocument = () => {
-    Api.generateRentalAgreementDocument(this.props.rentalAgreementId).then(() => {
-      window.open(buildApiPath(`/rentalagreements/${this.props.rentalAgreementId}/doc`));
+    Api.generateRentalAgreementDocument(this.props.match.params.rentalAgreementId).then(() => {
+      window.open(buildApiPath(`/rentalagreements/${this.props.match.params.rentalAgreementId}/doc`));
     });
   };
 
@@ -229,13 +236,7 @@ class RentalAgreementsDetail extends React.Component {
                   </Col>
                   <Col lg={6} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Rental Request:">
-                      <Link
-                        to={{
-                          pathname: 'rental-requests/' + rentalAgreement.rentalRequestId,
-                        }}
-                      >
-                        View
-                      </Link>
+                      <Link to={`${Constant.RENTAL_REQUESTS_PATHNAME}/${rentalAgreement.rentalRequestId}`}>View</Link>
                     </ColDisplay>
                   </Col>
                   <Col lg={6} md={6} sm={12} xs={12}>
@@ -260,11 +261,7 @@ class RentalAgreementsDetail extends React.Component {
                   </Col>
                   <Col lg={6} md={6} sm={12} xs={12}>
                     <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment ID:">
-                      <Link
-                        to={{
-                          pathname: 'equipment/' + rentalAgreement.equipment.id,
-                        }}
-                      >
+                      <Link to={`${Constant.EQUIPMENT_PATHNAME}/${rentalAgreement.equipment.id}`}>
                         {rentalAgreement.equipment.equipmentCode}
                       </Link>
                     </ColDisplay>

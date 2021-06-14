@@ -2344,7 +2344,7 @@ function parseRentalRate(rentalRate, parent = {}) {
 
   rentalRate.rate = rentalRate.rate || 0.0;
   rentalRate.percentOfEquipmentRate = rentalRate.percentOfEquipmentRate || 0;
-  rentalRate.ratePeriod = rentalRate.ratePeriod || rentalRate.ratePeriodType.ratePeriodTypeCode;
+  rentalRate.ratePeriod = rentalRate.ratePeriod || rentalRate?.ratePeriodType?.ratePeriodTypeCode;
   rentalRate.comment = rentalRate.comment || '';
 
   // UI display fields
