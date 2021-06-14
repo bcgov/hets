@@ -54,6 +54,13 @@ class Main extends React.Component {
     }
   }
 
+  componentDidUpdate(prevProps) {
+    //this is the converted hashHistory change listener to check for rollOverStatus whenever user navigates.
+    if (prevProps.location.pathname !== this.props.location.pathname) {
+      this.redirectIfRolloverActive(this.props.location.pathname);
+    }
+  }
+
   // redirects regular users to rollover page if rollover in progress
   redirectIfRolloverActive(path) {
     var onBusinessPage = path.indexOf(Constant.BUSINESS_PORTAL_PATHNAME) === 0;
@@ -79,15 +86,6 @@ class Main extends React.Component {
         Api.getFiscalYears(districtId);
       }
     });
-  }
-
-  componentDidUpdate(prevProps) {
-    //this is the converted hashHistory path change listener to check if routes have
-    console.log(prevProps.location.pathname);
-    console.log(this.props.location.pathname);
-    if (prevProps.location.pathname !== this.props.location.pathname) {
-      this.redirectIfRolloverActive(this.props.location.pathname);
-    }
   }
 
   unhandledRejection = (e) => {
