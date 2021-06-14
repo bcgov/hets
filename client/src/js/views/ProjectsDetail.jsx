@@ -88,7 +88,8 @@ class ProjectsDetail extends React.Component {
   }
 
   componentDidMount() {
-    //temporary fix: Why is this required for this component to work? It breaks when removed. Even though component doesn't need projectId from redux.
+    //dispatch Set_ACTIVE_PROJECT_ID_UI needed for activeProjectSelector(state) to work. Solution uses redux state to pass argument values to another selector.
+    //https://github.com/reduxjs/reselect#q-how-do-i-create-a-selector-that-takes-an-argument
     store.dispatch({
       type: Action.SET_ACTIVE_PROJECT_ID_UI,
       projectId: this.props.match.params.projectId,

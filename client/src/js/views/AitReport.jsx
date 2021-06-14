@@ -1,34 +1,26 @@
-import PropTypes from "prop-types";
-import React from "react";
-import { connect } from "react-redux";
-import { Link } from "react-router";
-import {
-  Alert,
-  Row,
-  Col,
-  ButtonToolbar,
-  Button,
-  ButtonGroup,
-  Form,
-} from "react-bootstrap";
-import _ from "lodash";
-import Moment from "moment";
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Form } from 'react-bootstrap';
+import _ from 'lodash';
+import Moment from 'moment';
 
-import * as Action from "../actionTypes";
-import * as Api from "../api";
-import * as Constant from "../constants";
-import store from "../store";
+import * as Action from '../actionTypes';
+import * as Api from '../api';
+import * as Constant from '../constants';
+import store from '../store';
 
-import PageHeader from "../components/ui/PageHeader.jsx";
-import SearchBar from "../components/ui/SearchBar.jsx";
-import DateControl from "../components/DateControl.jsx";
-import DropdownControl from "../components/DropdownControl.jsx";
-import Favourites from "../components/Favourites.jsx";
-import FormInputControl from "../components/FormInputControl.jsx";
-import MultiDropdown from "../components/MultiDropdown.jsx";
-import PrintButton from "../components/PrintButton.jsx";
-import SortTable from "../components/SortTable.jsx";
-import Spinner from "../components/Spinner.jsx";
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SearchBar from '../components/ui/SearchBar.jsx';
+import DateControl from '../components/DateControl.jsx';
+import DropdownControl from '../components/DropdownControl.jsx';
+import Favourites from '../components/Favourites.jsx';
+import FormInputControl from '../components/FormInputControl.jsx';
+import MultiDropdown from '../components/MultiDropdown.jsx';
+import PrintButton from '../components/PrintButton.jsx';
+import SortTable from '../components/SortTable.jsx';
+import Spinner from '../components/Spinner.jsx';
 
 import {
   formatDateTime,
@@ -38,11 +30,11 @@ import {
   endOfPreviousFiscal,
   toZuluTime,
   dateIsBetween,
-} from "../utils/date";
+} from '../utils/date';
 
-const THIS_FISCAL = "This Fiscal";
-const LAST_FISCAL = "Last Fiscal";
-const CUSTOM = "Custom";
+const THIS_FISCAL = 'This Fiscal';
+const LAST_FISCAL = 'Last Fiscal';
+const CUSTOM = 'Custom';
 
 class AitReport extends React.Component {
   static propTypes = {
@@ -68,17 +60,13 @@ class AitReport extends React.Component {
         projectIds: props.search.projectIds || [],
         districtEquipmentTypes: props.search.districtEquipmentTypes || [],
         equipmentIds: props.search.equipmentIds || [],
-        rentalAgreementNumber: props.search.rentalAgreementNumber || "",
+        rentalAgreementNumber: props.search.rentalAgreementNumber || '',
         dateRange: props.search.dateRange || THIS_FISCAL,
-        startDate:
-          props.search.startDate ||
-          startOfCurrentFiscal(today).format("YYYY-MM-DD"),
-        endDate:
-          props.search.endDate ||
-          endOfCurrentFiscal(today).format("YYYY-MM-DD"),
+        startDate: props.search.startDate || startOfCurrentFiscal(today).format('YYYY-MM-DD'),
+        endDate: props.search.endDate || endOfCurrentFiscal(today).format('YYYY-MM-DD'),
       },
       ui: {
-        sortField: props.ui.sortField || "rentalAgreementNumber",
+        sortField: props.ui.sortField || 'rentalAgreementNumber',
         sortDesc: props.ui.sortDesc === true,
       },
     };
@@ -86,7 +74,7 @@ class AitReport extends React.Component {
 
   buildSearchParams = () => {
     var searchParams = {
-      rentalAgreementNumber: this.state.search.rentalAgreementNumber || "",
+      rentalAgreementNumber: this.state.search.rentalAgreementNumber || '',
     };
 
     if (this.state.search.projectIds.length > 0) {
@@ -94,8 +82,7 @@ class AitReport extends React.Component {
     }
 
     if (this.state.search.districtEquipmentTypes.length > 0) {
-      searchParams.districtEquipmentTypes =
-        this.state.search.districtEquipmentTypes;
+      searchParams.districtEquipmentTypes = this.state.search.districtEquipmentTypes;
     }
 
     if (this.state.search.equipmentIds.length > 0) {
@@ -106,11 +93,11 @@ class AitReport extends React.Component {
     var endDate = Moment(this.state.search.endDate);
 
     if (startDate && startDate.isValid()) {
-      searchParams.startDate = toZuluTime(startDate.startOf("day"));
+      searchParams.startDate = toZuluTime(startDate.startOf('day'));
     }
 
     if (endDate && endDate.isValid()) {
-      searchParams.endDate = toZuluTime(endDate.startOf("day"));
+      searchParams.endDate = toZuluTime(endDate.startOf('day'));
     }
     return searchParams;
   };
@@ -146,10 +133,10 @@ class AitReport extends React.Component {
       projectIds: [],
       districtEquipmentTypes: [],
       equipmentIds: [],
-      rentalAgreementNumber: "",
+      rentalAgreementNumber: '',
       dateRange: THIS_FISCAL,
-      startDate: startOfCurrentFiscal(today).format("YYYY-MM-DD"),
-      endDate: endOfCurrentFiscal(today).format("YYYY-MM-DD"),
+      startDate: startOfCurrentFiscal(today).format('YYYY-MM-DD'),
+      endDate: endOfCurrentFiscal(today).format('YYYY-MM-DD'),
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
@@ -162,18 +149,15 @@ class AitReport extends React.Component {
   };
 
   updateSearchState = (state, callback) => {
-    this.setState(
-      { search: { ...this.state.search, ...state, ...{ loaded: true } } },
-      () => {
-        store.dispatch({
-          type: Action.UPDATE_AIT_SEARCH,
-          aitResponses: this.state.search,
-        });
-        if (callback) {
-          callback();
-        }
+    this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } } }, () => {
+      store.dispatch({
+        type: Action.UPDATE_AIT_SEARCH,
+        aitResponses: this.state.search,
+      });
+      if (callback) {
+        callback();
       }
-    );
+    });
   };
 
   updateUIState = (state, callback) => {
@@ -203,7 +187,7 @@ class AitReport extends React.Component {
 
     var aitResponses = _.sortBy(this.props.aitResponses.data, (response) => {
       var sortValue = response[this.state.ui.sortField];
-      if (typeof sortValue === "string") {
+      if (typeof sortValue === 'string') {
         return sortValue.toLowerCase();
       }
       return sortValue;
@@ -219,37 +203,31 @@ class AitReport extends React.Component {
         sortDesc={this.state.ui.sortDesc}
         onSort={this.updateUIState}
         headers={[
-          { field: "rentalAgreementNumber", title: "Rental Agreement" },
-          { field: "equipmentCode", title: "Equip ID" },
-          { field: "districtEquipmentName", title: "Equipment Type" },
-          { field: "projectNumber", title: "Project #" },
-          { field: "datedOn", title: "Date On" },
-          { field: "startDate", title: "Start Date" },
+          { field: 'rentalAgreementNumber', title: 'Rental Agreement' },
+          { field: 'equipmentCode', title: 'Equip ID' },
+          { field: 'districtEquipmentName', title: 'Equipment Type' },
+          { field: 'projectNumber', title: 'Project #' },
+          { field: 'datedOn', title: 'Date On' },
+          { field: 'startDate', title: 'Start Date' },
         ]}
       >
         {_.map(aitResponses, (entry) => {
           return (
             <tr key={entry.id}>
               <td>
-                <Link to={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${entry.id}`}>
-                  {entry.rentalAgreementNumber}
-                </Link>
+                <Link to={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${entry.id}`}>{entry.rentalAgreementNumber}</Link>
               </td>
               <td>
-                <Link
-                  to={`${Constant.EQUIPMENT_PATHNAME}/${entry.equipmentId}`}
-                >
-                  {entry.equipmentCode}
-                </Link>
+                <Link to={`${Constant.EQUIPMENT_PATHNAME}/${entry.equipmentId}`}>{entry.equipmentCode}</Link>
               </td>
               <td>{entry.districtEquipmentName}</td>
               <td>
                 <Link to={`${Constant.PROJECTS_PATHNAME}/${entry.projectId}`}>
-                  {entry.projectNumber ? entry.projectNumber : "N/A"}
+                  {entry.projectNumber ? entry.projectNumber : 'N/A'}
                 </Link>
               </td>
-              <td>{formatDateTime(entry.datedOn, "YYYY-MMM-DD")}</td>
-              <td>{formatDateTime(entry.startDate, "YYYY-MMM-DD")}</td>
+              <td>{formatDateTime(entry.datedOn, 'YYYY-MMM-DD')}</td>
+              <td>{formatDateTime(entry.startDate, 'YYYY-MMM-DD')}</td>
             </tr>
           );
         })}
@@ -263,7 +241,7 @@ class AitReport extends React.Component {
 
     const matchingAgreementIds = _.chain(this.props.agreementSummaryLite.data)
       .filter((a) => dateIsBetween(Moment(a.datedOn), startDate, endDate))
-      .map("id")
+      .map('id')
       .value();
 
     return _.intersection(matchingAgreementIds, agreementIds).length > 0;
@@ -282,10 +260,7 @@ class AitReport extends React.Component {
       return true;
     }
 
-    return _.includes(
-      this.state.search.districtEquipmentTypes,
-      districtEquipmentTypeId
-    );
+    return _.includes(this.state.search.districtEquipmentTypes, districtEquipmentTypeId);
   };
 
   updateDateRangeSearchState = (state) => {
@@ -315,8 +290,8 @@ class AitReport extends React.Component {
     this.updateSearchState(
       {
         ...state,
-        startDate: startDate.format("YYYY-MM-DD"),
-        endDate: endDate.format("YYYY-MM-DD"),
+        startDate: startDate.format('YYYY-MM-DD'),
+        endDate: endDate.format('YYYY-MM-DD'),
       },
       this.filterSelectedProjects
     );
@@ -335,56 +310,37 @@ class AitReport extends React.Component {
   };
 
   filterSelectedProjects = () => {
-    var acceptableProjects = _.map(this.getFilteredProjects(), "id");
-    var projectIds = _.intersection(
-      this.state.search.projectIds,
-      acceptableProjects
-    );
-    this.updateSearchState(
-      { projectIds: projectIds },
-      this.filterSelectedEquipmentType
-    );
+    var acceptableProjects = _.map(this.getFilteredProjects(), 'id');
+    var projectIds = _.intersection(this.state.search.projectIds, acceptableProjects);
+    this.updateSearchState({ projectIds: projectIds }, this.filterSelectedEquipmentType);
   };
 
   filterSelectedEquipmentType = () => {
-    var acceptableDistrictEquipmentTypes = _.map(
-      this.getFilteredDistrictEquipmentType(),
-      "id"
-    );
+    var acceptableDistrictEquipmentTypes = _.map(this.getFilteredDistrictEquipmentType(), 'id');
     var districtEquipmentTypes = _.intersection(
       this.state.search.districtEquipmentTypes,
       acceptableDistrictEquipmentTypes
     );
-    this.updateSearchState(
-      { districtEquipmentTypes: districtEquipmentTypes },
-      this.filterSelectedEquipment
-    );
+    this.updateSearchState({ districtEquipmentTypes: districtEquipmentTypes }, this.filterSelectedEquipment);
   };
 
   filterSelectedEquipment = () => {
-    var acceptableEquipmentIds = _.map(this.getFilteredEquipment(), "id");
-    var equipmentIds = _.intersection(
-      this.state.search.equipmentIds,
-      acceptableEquipmentIds
-    );
+    var acceptableEquipmentIds = _.map(this.getFilteredEquipment(), 'id');
+    var equipmentIds = _.intersection(this.state.search.equipmentIds, acceptableEquipmentIds);
     this.updateSearchState({ equipmentIds: equipmentIds });
   };
 
   getFilteredProjects = () => {
     return _.chain(this.props.projects.data)
       .filter((x) => this.matchesDateFilter(x.agreementIds))
-      .sortBy("name")
+      .sortBy('name')
       .value();
   };
 
   getFilteredDistrictEquipmentType = () => {
     return _.chain(this.props.districtEquipmentTypes.data)
-      .filter(
-        (x) =>
-          this.matchesDateFilter(x.agreementIds) &&
-          this.matchesProjectFilter(x.projectIds)
-      )
-      .sortBy("name")
+      .filter((x) => this.matchesDateFilter(x.agreementIds) && this.matchesProjectFilter(x.projectIds))
+      .sortBy('name')
       .value();
   };
 
@@ -396,15 +352,14 @@ class AitReport extends React.Component {
           this.matchesProjectFilter(x.projectIds) &&
           this.matchesDistrictEquipmentTypeFilter(x.districtEquipmentTypeId)
       )
-      .sortBy("equipmentCode")
+      .sortBy('equipmentCode')
       .value();
   };
 
   render() {
-    var resultCount = "";
+    var resultCount = '';
     if (this.props.aitResponses.loaded) {
-      resultCount =
-        "(" + Object.keys(this.props.aitResponses.data).length + ")";
+      resultCount = '(' + Object.keys(this.props.aitResponses.data).length + ')';
     }
 
     var projects = this.getFilteredProjects();
@@ -519,7 +474,7 @@ class AitReport extends React.Component {
         {(() => {
           if (this.props.aitResponses.loading) {
             return (
-              <div style={{ textAlign: "center" }}>
+              <div style={{ textAlign: 'center' }}>
                 <Spinner />
               </div>
             );
@@ -539,8 +494,7 @@ function mapStateToProps(state) {
     currentUser: state.user,
     agreementSummaryLite: state.lookups.agreementSummaryLite,
     projects: state.lookups.projectsAgreementSummary,
-    districtEquipmentTypes:
-      state.lookups.districtEquipmentTypesAgreementSummary,
+    districtEquipmentTypes: state.lookups.districtEquipmentTypesAgreementSummary,
     equipment: state.lookups.equipment.agreementSummary,
     aitResponses: state.models.aitResponses,
     favourites: state.models.favourites.aitReport,
