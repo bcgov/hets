@@ -333,10 +333,6 @@ class TopNav extends React.Component {
   }
 }
 
-TopNav.contextTypes = {
-  router: PropTypes.object.isRequired,
-};
-
 function mapStateToProps(state) {
   return {
     currentUser: state.user,
@@ -346,4 +342,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default withRouter(connect(mapStateToProps, null, null, { pure: false })(TopNav));
+export default connect(mapStateToProps, null, null, { pure: false })(withRouter(TopNav));

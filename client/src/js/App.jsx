@@ -40,13 +40,14 @@ import AitReport from './views/AitReport.jsx';
 import Version from './views/Version.jsx';
 import FourOhFour from './views/404.jsx';
 
-hashHistory.listen((location) => {
-  if (location.action !== 'POP') {
-    return;
-  }
+//temporary fix moved to Main.jsx
+// hashHistory.listen((location) => {
+//   if (location.action !== 'POP') {
+//     return;
+//   }
 
-  redirectIfRolloverActive(location.pathname);
-});
+//   redirectIfRolloverActive(location.pathname);
+// });
 
 // redirects regular users to rollover page if rollover in progress
 function redirectIfRolloverActive(path) {
@@ -368,81 +369,79 @@ const App = () => {
           component={BusinessOwner}
           onEnter={onEnterBusinessDetails}
         />
-        <Route path={'/'} onEnter={onEnterApplication}>
-          {/* temporary fix comment Main taken out of Route to be a children render method. Cannot mix components + children render methods in React-Router-Dom */}
-          <Main>
-            <Switch>
-              <Route path={Constant.HOME_PATHNAME} exact component={Home} />
-              <Route path={Constant.EQUIPMENT_PATHNAME} exact component={Equipment} />
-              <Route
-                path={`${Constant.EQUIPMENT_PATHNAME}/:equipmentId`}
-                exact
-                component={EquipmentDetail}
-                // temporary fix onEnter doesn't work. Will need to move logic into component.
-                // onEnter={setActiveEquipmentId}
-              />
-              <Route path={Constant.OWNERS_PATHNAME} exact component={Owners} />
-              <Route
-                path={`${Constant.OWNERS_PATHNAME}/:ownerId`}
-                exact
-                component={OwnersDetail}
-                // temporary fix onEnter doesn't work. Will need to move logic into component.
-                // onEnter={setActiveOwnerId}
-              />
-              <Route
-                path={`${Constant.OWNERS_PATHNAME}/:ownerId/${Constant.CONTACTS_PATHNAME}/:contactId`}
-                exact
-                component={OwnersDetail}
-                // temporary fix onEnter doesn't work. Will need to move logic into component.
-                // onEnter={setActiveOwnerId}
-              />
-              <Route path={Constant.PROJECTS_PATHNAME} exact component={Projects} />
-              <Route
-                path={`${Constant.PROJECTS_PATHNAME}/:projectId`}
-                exact
-                component={ProjectsDetail}
-                // temporary fix onEnter doesn't work. Will need to move logic into component.
-                // onEnter={setActiveProjectId}
-              />
-              <Route
-                path={`${Constant.PROJECTS_PATHNAME}/:projectId/${Constant.CONTACTS_PATHNAME}/:contactId`}
-                exact
-                component={ProjectsDetail}
-                // temporary fix onEnter doesn't work. Will need to move logic into component.
-                // onEnter={setActiveProjectId}
-              />
-              <Route path={Constant.RENTAL_REQUESTS_PATHNAME} exact component={RentalRequests} />
-              <Route
-                path={`${Constant.RENTAL_REQUESTS_PATHNAME}/:rentalRequestId`}
-                exact
-                component={RentalRequestsDetail}
-                // temporary fix onEnter doesn't work. Will need to move logic into component.
-                // onEnter={setActiveRentalRequestId}
-              />
-              <Route
-                path={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/:rentalAgreementId`}
-                exact
-                component={RentalAgreementsDetail}
-                onEnter={setActiveRentalAgreementId}
-              />
-              <Route path={Constant.OVERTIME_RATES_PATHNAME} exact component={OvertimeRates} />
-              <Route path={Constant.USERS_PATHNAME} exact component={Users} />
-              <Route path={`${Constant.USERS_PATHNAME}/:userId`} exact component={UsersDetail} />
-              <Route path={Constant.ROLES_PATHNAME} exact component={Roles} />
-              <Route path={`${Constant.ROLES_PATHNAME}/:roleId`} exact component={RolesDetail} />
-              <Route path={Constant.ROLLOVER_PATHNAME} component={Rollover} />
-              <Route path={Constant.DISTRICT_ADMIN_PATHNAME} component={DistrictAdmin} />
-              <Route path={Constant.TIME_ENTRY_PATHNAME} component={TimeEntry} />
-              <Route path={Constant.SENIORITY_LIST_PATHNAME} component={SeniorityList} />
-              <Route path={Constant.STATUS_LETTERS_REPORT_PATHNAME} component={StatusLetters} />
-              <Route path={Constant.HIRING_REPORT_PATHNAME} component={HiringReport} />
-              <Route path={Constant.OWNERS_COVERAGE_PATHNAME} component={WcbCglCoverage} />
-              <Route path={Constant.AIT_REPORT_PATHNAME} component={AitReport} />
-              <Route path={Constant.VERSION_PATHNAME} component={Version} />
-              <Route path="*" component={FourOhFour} />
-            </Switch>
-          </Main>
-        </Route>
+        <Main>
+          <Switch>
+            <Route path={Constant.HOME_PATHNAME} exact component={Home} />
+            <Route path={Constant.EQUIPMENT_PATHNAME} exact component={Equipment} />
+            <Route
+              path={`${Constant.EQUIPMENT_PATHNAME}/:equipmentId`}
+              exact
+              component={EquipmentDetail}
+              // temporary fix onEnter doesn't work. Will need to move logic into component.
+              // onEnter={setActiveEquipmentId}
+            />
+            <Route path={Constant.OWNERS_PATHNAME} exact component={Owners} />
+            <Route
+              path={`${Constant.OWNERS_PATHNAME}/:ownerId`}
+              exact
+              component={OwnersDetail}
+              // temporary fix onEnter doesn't work. Will need to move logic into component.
+              // onEnter={setActiveOwnerId}
+            />
+            <Route
+              path={`${Constant.OWNERS_PATHNAME}/:ownerId/${Constant.CONTACTS_PATHNAME}/:contactId`}
+              exact
+              component={OwnersDetail}
+              // temporary fix onEnter doesn't work. Will need to move logic into component.
+              // onEnter={setActiveOwnerId}
+            />
+            <Route path={Constant.PROJECTS_PATHNAME} exact component={Projects} />
+            <Route
+              path={`${Constant.PROJECTS_PATHNAME}/:projectId`}
+              exact
+              component={ProjectsDetail}
+              // temporary fix onEnter doesn't work. Will need to move logic into component.
+              // onEnter={setActiveProjectId}
+            />
+            <Route
+              path={`${Constant.PROJECTS_PATHNAME}/:projectId/${Constant.CONTACTS_PATHNAME}/:contactId`}
+              exact
+              component={ProjectsDetail}
+              // temporary fix onEnter doesn't work. Will need to move logic into component.
+              // onEnter={setActiveProjectId}
+            />
+            <Route path={Constant.RENTAL_REQUESTS_PATHNAME} exact component={RentalRequests} />
+            <Route
+              path={`${Constant.RENTAL_REQUESTS_PATHNAME}/:rentalRequestId`}
+              exact
+              component={RentalRequestsDetail}
+              // temporary fix onEnter doesn't work. Will need to move logic into component.
+              // onEnter={setActiveRentalRequestId}
+            />
+            <Route
+              path={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/:rentalAgreementId`}
+              exact
+              component={RentalAgreementsDetail}
+              // temporary fix onEnter doesn't work. Will need to move logic into component.
+              // onEnter={setActiveRentalAgreementId}
+            />
+            <Route path={Constant.OVERTIME_RATES_PATHNAME} exact component={OvertimeRates} />
+            <Route path={Constant.USERS_PATHNAME} exact component={Users} />
+            <Route path={`${Constant.USERS_PATHNAME}/:userId`} exact component={UsersDetail} />
+            <Route path={Constant.ROLES_PATHNAME} exact component={Roles} />
+            <Route path={`${Constant.ROLES_PATHNAME}/:roleId`} exact component={RolesDetail} />
+            <Route path={Constant.ROLLOVER_PATHNAME} component={Rollover} />
+            <Route path={Constant.DISTRICT_ADMIN_PATHNAME} component={DistrictAdmin} />
+            <Route path={Constant.TIME_ENTRY_PATHNAME} component={TimeEntry} />
+            <Route path={Constant.SENIORITY_LIST_PATHNAME} component={SeniorityList} />
+            <Route path={Constant.STATUS_LETTERS_REPORT_PATHNAME} component={StatusLetters} />
+            <Route path={Constant.HIRING_REPORT_PATHNAME} component={HiringReport} />
+            <Route path={Constant.OWNERS_COVERAGE_PATHNAME} component={WcbCglCoverage} />
+            <Route path={Constant.AIT_REPORT_PATHNAME} component={AitReport} />
+            <Route path={Constant.VERSION_PATHNAME} component={Version} />
+            <Route path="*" component={FourOhFour} />
+          </Switch>
+        </Main>
       </Router>
     </Provider>
   );
