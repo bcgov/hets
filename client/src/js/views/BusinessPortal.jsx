@@ -25,6 +25,7 @@ class BusinessPortal extends React.Component {
     user: PropTypes.object,
     business: PropTypes.object,
     uiOwners: PropTypes.object,
+    match: PropTypes.object,
   };
 
   constructor(props) {
@@ -47,6 +48,11 @@ class BusinessPortal extends React.Component {
   }
 
   componentDidMount() {
+    store.dispatch({
+      type: Action.SET_ACTIVE_OWNER_ID_UI,
+      ownerId: this.props.match.params.ownerId,
+    });
+
     const businessLoaded = Boolean(this.props.business);
     this.setState({ loading: !businessLoaded, success: businessLoaded });
 

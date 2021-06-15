@@ -4,15 +4,19 @@ import App from './js/App';
 import reportWebVitals from './reportWebVitals';
 
 import * as Keycloak from './js/Keycloak';
+import { Provider } from 'react-redux';
+import store from './js/store';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import './sass/main.scss';
 
 Keycloak.init(() => {
   ReactDOM.render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>,
+    <Provider store={store}>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </Provider>,
     document.getElementById('root')
   );
 });

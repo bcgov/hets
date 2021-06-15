@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Provider } from 'react-redux';
+import { Provider, connect } from 'react-redux';
 import { hashHistory } from 'react-router';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 
@@ -40,40 +40,6 @@ import AitReport from './views/AitReport.jsx';
 import Version from './views/Version.jsx';
 import FourOhFour from './views/404.jsx';
 
-function onEnterBusiness() {
-  // allow access to business users
-  if (store.getState().user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
-    return true;
-  }
-
-  // redirect HETS users to home page
-  if (store.getState().user.hasPermission(Constant.PERMISSION_LOGIN)) {
-    hashHistory.push('/');
-    return false;
-  }
-
-  return false;
-
-  // TODO: redirect other users to 'unauthorized access' page
-  //hashHistory.push('/');
-}
-
-function onEnterBusinessDetails(nextState, replace, callback) {
-  if (onEnterBusiness()) {
-    setActiveOwnerId(nextState, replace, callback);
-  }
-}
-
-function setActiveOwnerId(nextState, replace, callback) {
-  store.dispatch({
-    type: Action.SET_ACTIVE_OWNER_ID_UI,
-    ownerId: nextState.params.ownerId,
-  });
-  // TODO: When react was updated (HETS-1100) it broke how this worked. We now need to delay
-  // mounting the <Route> in order that `mapStateToProps` is called with the current store's state.
-  Promise.resolve().then(callback);
-}
-
 function keepAlive() {
   Api.keepAlive();
 }
@@ -109,7 +75,88 @@ export function getLookups(user) {
   }
 }
 
-const App = () => {
+const Routes = (user) => {
+  //render Routes based on user permissions
+  if (user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
+    return BusinessRoutes(user);
+  }
+
+  if (user.hasPermission(Constant.PERMISSION_LOGIN)) {
+    return AdminRoutes(user);
+  }
+
+  return <Redirect to={Constant.UNAUTHORIZED_PATHNAME} />;
+};
+
+const BusinessRoutes = (user) => {
+  return (
+    <Switch>
+      <Route path={Constant.BUSINESS_PORTAL_PATHNAME} component={BusinessPortal} />
+      <Route path={`${Constant.BUSINESS_DETAILS_PATHNAME}/:ownerId`} component={BusinessOwner} />
+      {CommonRoutes()}
+    </Switch>
+  );
+};
+
+const AdminRoutes = (user) => {
+  return (
+    <Switch>
+      <Route path={Constant.HOME_PATHNAME} exact component={Home} />
+      <Route path={Constant.EQUIPMENT_PATHNAME} exact component={Equipment} />
+      <Route path={`${Constant.EQUIPMENT_PATHNAME}/:equipmentId`} exact component={EquipmentDetail} />
+      <Route path={Constant.OWNERS_PATHNAME} exact component={Owners} />
+      <Route path={`${Constant.OWNERS_PATHNAME}/:ownerId`} exact component={OwnersDetail} />
+      <Route
+        path={`${Constant.OWNERS_PATHNAME}/:ownerId${Constant.CONTACTS_PATHNAME}/:contactId`}
+        exact
+        component={OwnersDetail}
+      />
+      <Route path={Constant.PROJECTS_PATHNAME} exact component={Projects} />
+      <Route path={`${Constant.PROJECTS_PATHNAME}/:projectId`} exact component={ProjectsDetail} />
+      <Route
+        path={`${Constant.PROJECTS_PATHNAME}/:projectId${Constant.CONTACTS_PATHNAME}/:contactId`}
+        exact
+        component={ProjectsDetail}
+      />
+      <Route path={Constant.RENTAL_REQUESTS_PATHNAME} exact component={RentalRequests} />
+      <Route path={`${Constant.RENTAL_REQUESTS_PATHNAME}/:rentalRequestId`} exact component={RentalRequestsDetail} />
+      <Route
+        path={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/:rentalAgreementId`}
+        exact
+        component={RentalAgreementsDetail}
+      />
+      <Route path={Constant.OVERTIME_RATES_PATHNAME} exact component={OvertimeRates} />
+      <Route path={Constant.USERS_PATHNAME} exact component={Users} />
+      <Route path={`${Constant.USERS_PATHNAME}/:userId`} exact component={UsersDetail} />
+      <Route path={Constant.ROLES_PATHNAME} exact component={Roles} />
+      <Route path={`${Constant.ROLES_PATHNAME}/:roleId`} exact component={RolesDetail} />
+      <Route path={Constant.ROLLOVER_PATHNAME} component={Rollover} />
+      <Route path={Constant.DISTRICT_ADMIN_PATHNAME} component={DistrictAdmin} />
+      <Route path={Constant.TIME_ENTRY_PATHNAME} component={TimeEntry} />
+      <Route path={Constant.SENIORITY_LIST_PATHNAME} component={SeniorityList} />
+      <Route path={Constant.STATUS_LETTERS_REPORT_PATHNAME} component={StatusLetters} />
+      <Route path={Constant.HIRING_REPORT_PATHNAME} component={HiringReport} />
+      <Route path={Constant.OWNERS_COVERAGE_PATHNAME} component={WcbCglCoverage} />
+      <Route path={Constant.AIT_REPORT_PATHNAME} component={AitReport} />
+      <Route path={Constant.VERSION_PATHNAME} component={Version} />
+      {CommonRoutes()}
+    </Switch>
+  );
+};
+
+const CommonRoutes = () => {
+  return (
+    <>
+      <Route path={Constant.UNAUTHORIZED_PATHNAME} components={Unauthorized} />
+      <Route path="*" component={FourOhFour} />{' '}
+    </>
+  );
+};
+
+//additional components
+const Unauthorized = () => <>Unauthorized</>;
+
+const App = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState(null);
   const [loadProgress, setLoadProgress] = useState(5);
@@ -169,67 +216,74 @@ const App = () => {
     );
 
   return (
-    <Provider store={store}>
-      <Router>
-        <Route exact path="/">
-          <Redirect to="/home" />
-        </Route>
-        <Route path={Constant.BUSINESS_PORTAL_PATHNAME} component={BusinessPortal} onEnter={onEnterBusiness} />
-        <Route
-          path={`${Constant.BUSINESS_DETAILS_PATHNAME}/:ownerId`}
-          component={BusinessOwner}
-          onEnter={onEnterBusinessDetails}
-        />
-        <Main>
-          <Switch>
-            <Route path={Constant.HOME_PATHNAME} exact component={Home} />
-            <Route path={Constant.EQUIPMENT_PATHNAME} exact component={Equipment} />
-            <Route path={`${Constant.EQUIPMENT_PATHNAME}/:equipmentId`} exact component={EquipmentDetail} />
-            <Route path={Constant.OWNERS_PATHNAME} exact component={Owners} />
-            <Route path={`${Constant.OWNERS_PATHNAME}/:ownerId`} exact component={OwnersDetail} />
-            <Route
-              path={`${Constant.OWNERS_PATHNAME}/:ownerId${Constant.CONTACTS_PATHNAME}/:contactId`}
-              exact
-              component={OwnersDetail}
-            />
-            <Route path={Constant.PROJECTS_PATHNAME} exact component={Projects} />
-            <Route path={`${Constant.PROJECTS_PATHNAME}/:projectId`} exact component={ProjectsDetail} />
-            <Route
-              path={`${Constant.PROJECTS_PATHNAME}/:projectId${Constant.CONTACTS_PATHNAME}/:contactId`}
-              exact
-              component={ProjectsDetail}
-            />
-            <Route path={Constant.RENTAL_REQUESTS_PATHNAME} exact component={RentalRequests} />
-            <Route
-              path={`${Constant.RENTAL_REQUESTS_PATHNAME}/:rentalRequestId`}
-              exact
-              component={RentalRequestsDetail}
-            />
-            <Route
-              path={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/:rentalAgreementId`}
-              exact
-              component={RentalAgreementsDetail}
-            />
-            <Route path={Constant.OVERTIME_RATES_PATHNAME} exact component={OvertimeRates} />
-            <Route path={Constant.USERS_PATHNAME} exact component={Users} />
-            <Route path={`${Constant.USERS_PATHNAME}/:userId`} exact component={UsersDetail} />
-            <Route path={Constant.ROLES_PATHNAME} exact component={Roles} />
-            <Route path={`${Constant.ROLES_PATHNAME}/:roleId`} exact component={RolesDetail} />
-            <Route path={Constant.ROLLOVER_PATHNAME} component={Rollover} />
-            <Route path={Constant.DISTRICT_ADMIN_PATHNAME} component={DistrictAdmin} />
-            <Route path={Constant.TIME_ENTRY_PATHNAME} component={TimeEntry} />
-            <Route path={Constant.SENIORITY_LIST_PATHNAME} component={SeniorityList} />
-            <Route path={Constant.STATUS_LETTERS_REPORT_PATHNAME} component={StatusLetters} />
-            <Route path={Constant.HIRING_REPORT_PATHNAME} component={HiringReport} />
-            <Route path={Constant.OWNERS_COVERAGE_PATHNAME} component={WcbCglCoverage} />
-            <Route path={Constant.AIT_REPORT_PATHNAME} component={AitReport} />
-            <Route path={Constant.VERSION_PATHNAME} component={Version} />
-            <Route path="*" component={FourOhFour} />
-          </Switch>
-        </Main>
-      </Router>
-    </Provider>
+    // <Router>
+    //   <Route exact path="/">
+    //     <Redirect to="/home" />
+    //   </Route>
+
+    //   <Main>
+    //     <Switch>
+    //       <Route path={Constant.HOME_PATHNAME} exact component={Home} />
+    //       <Route path={Constant.EQUIPMENT_PATHNAME} exact component={Equipment} />
+    //       <Route path={`${Constant.EQUIPMENT_PATHNAME}/:equipmentId`} exact component={EquipmentDetail} />
+    //       <Route path={Constant.OWNERS_PATHNAME} exact component={Owners} />
+    //       <Route path={`${Constant.OWNERS_PATHNAME}/:ownerId`} exact component={OwnersDetail} />
+    //       <Route
+    //         path={`${Constant.OWNERS_PATHNAME}/:ownerId${Constant.CONTACTS_PATHNAME}/:contactId`}
+    //         exact
+    //         component={OwnersDetail}
+    //       />
+    //       <Route path={Constant.PROJECTS_PATHNAME} exact component={Projects} />
+    //       <Route path={`${Constant.PROJECTS_PATHNAME}/:projectId`} exact component={ProjectsDetail} />
+    //       <Route
+    //         path={`${Constant.PROJECTS_PATHNAME}/:projectId${Constant.CONTACTS_PATHNAME}/:contactId`}
+    //         exact
+    //         component={ProjectsDetail}
+    //       />
+    //       <Route path={Constant.RENTAL_REQUESTS_PATHNAME} exact component={RentalRequests} />
+    //       <Route
+    //         path={`${Constant.RENTAL_REQUESTS_PATHNAME}/:rentalRequestId`}
+    //         exact
+    //         component={RentalRequestsDetail}
+    //       />
+    //       <Route
+    //         path={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/:rentalAgreementId`}
+    //         exact
+    //         component={RentalAgreementsDetail}
+    //       />
+    //       <Route path={Constant.OVERTIME_RATES_PATHNAME} exact component={OvertimeRates} />
+    //       <Route path={Constant.USERS_PATHNAME} exact component={Users} />
+    //       <Route path={`${Constant.USERS_PATHNAME}/:userId`} exact component={UsersDetail} />
+    //       <Route path={Constant.ROLES_PATHNAME} exact component={Roles} />
+    //       <Route path={`${Constant.ROLES_PATHNAME}/:roleId`} exact component={RolesDetail} />
+    //       <Route path={Constant.ROLLOVER_PATHNAME} component={Rollover} />
+    //       <Route path={Constant.DISTRICT_ADMIN_PATHNAME} component={DistrictAdmin} />
+    //       <Route path={Constant.TIME_ENTRY_PATHNAME} component={TimeEntry} />
+    //       <Route path={Constant.SENIORITY_LIST_PATHNAME} component={SeniorityList} />
+    //       <Route path={Constant.STATUS_LETTERS_REPORT_PATHNAME} component={StatusLetters} />
+    //       <Route path={Constant.HIRING_REPORT_PATHNAME} component={HiringReport} />
+    //       <Route path={Constant.OWNERS_COVERAGE_PATHNAME} component={WcbCglCoverage} />
+    //       <Route path={Constant.AIT_REPORT_PATHNAME} component={AitReport} />
+    //       <Route path={Constant.VERSION_PATHNAME} component={Version} />
+    //       <Route path="*" component={FourOhFour} />
+    //     </Switch>
+    //   </Main>
+    // </Router>
+    <Router>
+      <Route exact path="/">
+        <Redirect to="/home" />
+      </Route>
+      <Main>
+        <Switch>{Routes(user)}</Switch>
+      </Main>
+    </Router>
   );
 };
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    user: state.user,
+  };
+};
+
+export default connect(mapStateToProps, null)(App);
