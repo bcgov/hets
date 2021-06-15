@@ -40,15 +40,6 @@ import AitReport from './views/AitReport.jsx';
 import Version from './views/Version.jsx';
 import FourOhFour from './views/404.jsx';
 
-//temporary fix moved to Main.jsx
-// hashHistory.listen((location) => {
-//   if (location.action !== 'POP') {
-//     return;
-//   }
-
-//   redirectIfRolloverActive(location.pathname);
-// });
-
 // redirects regular users to rollover page if rollover in progress
 function redirectIfRolloverActive(path) {
   var onBusinessPage = path.indexOf(Constant.BUSINESS_PORTAL_PATHNAME) === 0;
