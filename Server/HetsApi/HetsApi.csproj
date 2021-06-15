@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HetsBceid\HetsBceid.csproj" />
     <ProjectReference Include="..\HetsCommon\HetsCommon.csproj" />
     <ProjectReference Include="..\HetsData\HetsData.csproj" />
     <ProjectReference Include="..\HetsReport\HetsReport.csproj" />
