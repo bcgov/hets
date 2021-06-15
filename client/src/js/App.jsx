@@ -188,14 +188,14 @@ const App = () => {
             <Route path={Constant.OWNERS_PATHNAME} exact component={Owners} />
             <Route path={`${Constant.OWNERS_PATHNAME}/:ownerId`} exact component={OwnersDetail} />
             <Route
-              path={`${Constant.OWNERS_PATHNAME}/:ownerId/${Constant.CONTACTS_PATHNAME}/:contactId`}
+              path={`${Constant.OWNERS_PATHNAME}/:ownerId${Constant.CONTACTS_PATHNAME}/:contactId`}
               exact
               component={OwnersDetail}
             />
             <Route path={Constant.PROJECTS_PATHNAME} exact component={Projects} />
             <Route path={`${Constant.PROJECTS_PATHNAME}/:projectId`} exact component={ProjectsDetail} />
             <Route
-              path={`${Constant.PROJECTS_PATHNAME}/:projectId/${Constant.CONTACTS_PATHNAME}/:contactId`}
+              path={`${Constant.PROJECTS_PATHNAME}/:projectId${Constant.CONTACTS_PATHNAME}/:contactId`}
               exact
               component={ProjectsDetail}
             />

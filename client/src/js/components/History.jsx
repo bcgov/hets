@@ -17,7 +17,6 @@ import { makeGetHistorySelector } from '../selectors/history-selectors.js';
 import { formatDateTimeUTCToLocal } from '../utils/date';
 import { sortDir } from '../utils/array';
 
-
 // API limit: how many to fetch first time
 const API_LIMIT = 10;
 
@@ -43,7 +42,7 @@ class HistoryComponent extends React.Component {
 
       canShowMore: false,
 
-      ui : {
+      ui: {
         sortField: props.ui.sortField || 'timestampSort',
         sortDesc: props.ui.sortDesc !== false,
       },
@@ -57,9 +56,11 @@ class HistoryComponent extends React.Component {
   }
 
   updateUIState = (state, callback) => {
-    this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
+    this.setState({ ui: { ...this.state.ui, ...state } }, () => {
       store.dispatch({ type: Action.UPDATE_HISTORY_UI, history: this.state.ui });
-      if (callback) { callback(); }
+      if (callback) {
+        callback();
+      }
     });
   };
 
@@ -98,42 +99,76 @@ class HistoryComponent extends React.Component {
     return (
       <div>
         {(() => {
-          if (loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+          if (loading) {
+            return (
+              <div style={{ textAlign: 'center' }}>
+                <Spinner />
+              </div>
+            );
+          }
 
-          if (Object.keys(this.props.history).length === 0) { return <Alert bsStyle="success">No history</Alert>; }
+          if (Object.keys(this.props.history).length === 0) {
+            return <Alert bsStyle="success">No history</Alert>;
+          }
 
           var history = _.orderBy(this.props.history, [this.state.ui.sortField], sortDir(this.state.ui.sortDesc));
 
           var headers = [
-            { field: 'timestampSort',       title: 'Timestamp' },
-            { field: 'userName',            title: 'User'      },
-            { field: 'event', noSort: true, title: 'Event'     },
-            { field: 'showMore',            title: 'Show More', style: { textAlign: 'right'  },
-              node: fetchingMore? <Spinner/> : (
-                <Button bsSize="xsmall" onClick={ this.showMore } className={ this.state.canShowMore ? '' : 'hidden' }>
+            { field: 'timestampSort', title: 'Timestamp' },
+            { field: 'userName', title: 'User' },
+            { field: 'event', noSort: true, title: 'Event' },
+            {
+              field: 'showMore',
+              title: 'Show More',
+              style: { textAlign: 'right' },
+              node: fetchingMore ? (
+                <Spinner />
+              ) : (
+                <Button bsSize="xsmall" onClick={this.showMore} className={this.state.canShowMore ? '' : 'hidden'}>
                   <Glyphicon glyph="refresh" title="Show More" />
                 </Button>
               ),
             },
           ];
-          return <SortTable id="history-list" sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={ headers }>
-            {
-              history.map((history) => {
-                const event = History.renderEvent(history.historyText, this.props.onClose);
-                const formattedTimestamp = formatDateTimeUTCToLocal(history.lastUpdateTimestamp, Constant.DATE_TIME_LOG);
+          return (
+            <SortTable
+              id="history-list"
+              sortField={this.state.ui.sortField}
+              sortDesc={this.state.ui.sortDesc}
+              onSort={this.updateUIState}
+              headers={headers}
+            >
+              {history
+                .map((history) => {
+                  const event = History.renderEvent(history.historyText, this.props.onClose);
+                  const formattedTimestamp = formatDateTimeUTCToLocal(
+                    history.lastUpdateTimestamp,
+                    Constant.DATE_TIME_LOG
+                  );
 
-                return <tr key={ history.id }>
-                  <td>{ formattedTimestamp }</td>
-                  <td>{ history.lastUpdateUserid }</td>
-                  <td className="history-event" colSpan="2">{ event }</td>
-                </tr>;
-              }).concat(fetchingMore ? [
-                <tr key="loading-more">
-                  <td colSpan="4" style={{ textAlign: 'center' }}><Spinner/></td>
-                </tr>,
-              ] : [])
-            }
-          </SortTable>;
+                  return (
+                    <tr key={history.id}>
+                      <td>{formattedTimestamp}</td>
+                      <td>{history.lastUpdateUserid}</td>
+                      <td className="history-event" colSpan="2">
+                        {event}
+                      </td>
+                    </tr>
+                  );
+                })
+                .concat(
+                  fetchingMore
+                    ? [
+                        <tr key="loading-more">
+                          <td colSpan="4" style={{ textAlign: 'center' }}>
+                            <Spinner />
+                          </td>
+                        </tr>,
+                      ]
+                    : []
+                )}
+            </SortTable>
+          );
         })()}
       </div>
     );

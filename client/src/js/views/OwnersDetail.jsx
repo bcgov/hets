@@ -657,16 +657,12 @@ class OwnersDetail extends React.Component {
                       headers={headers}
                     >
                       {_.map(equipmentList, (equipment) => {
-                        const location = {
-                          pathname: `${Constant.EQUIPMENT_PATHNAME}/${equipment.id}`,
-                          state: {
-                            returnUrl: `${Constant.OWNERS_PATHNAME}/${owner.id}`,
-                          },
-                        };
                         return (
                           <tr key={equipment.id}>
                             <td>
-                              <Link to={location}>{equipment.equipmentCode}</Link>
+                              <Link to={`${Constant.EQUIPMENT_PATHNAME}/${equipment.id}`}>
+                                {equipment.equipmentCode}
+                              </Link>
                             </td>
                             <td>{equipment.localArea.name}</td>
                             <td>{equipment.typeName}</td>

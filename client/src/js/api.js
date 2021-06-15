@@ -1145,7 +1145,7 @@ function parseContact(contact, parent) {
 
   contact.isPrimary = contact.id === primaryContactId;
 
-  contact.path = parentPath ? `${parentPath}/${Constant.CONTACTS_PATHNAME}/${contact.id}` : null;
+  contact.path = parentPath ? `${parentPath}${Constant.CONTACTS_PATHNAME}/${contact.id}` : null;
   contact.url = contact.path ? `${contact.path}` : null;
   contact.historyEntity = History.makeHistoryEntity(Constant.HISTORY_CONTACT, contact);
 
