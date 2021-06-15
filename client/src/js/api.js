@@ -1807,7 +1807,7 @@ export function getRentalRequest(id) {
 }
 
 export function addRentalRequest(rentalRequest, viewOnly) {
-  var path = viewOnly ? '/rentalrequests/viewOnly' : '/rentalrequests';
+  var path = viewOnly ? 'rentalrequests/viewOnly' : 'rentalrequests';
 
   return new ApiRequest(path).post(rentalRequest).then((response) => {
     var rentalRequest = response.data;

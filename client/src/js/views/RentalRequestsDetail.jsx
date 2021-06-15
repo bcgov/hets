@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import Promise from 'bluebird';
 import Moment from 'moment';
@@ -171,15 +171,11 @@ class RentalRequestsDetail extends React.Component {
   };
 
   hireOfferSaved = (hireOffer) => {
-    Log.rentalRequestEquipmentHired(
-      this.props.match.params.rentalRequest,
-      hireOffer.equipment,
-      hireOffer.offerResponse
-    );
+    Log.rentalRequestEquipmentHired(this.props.rentalRequest, hireOffer.equipment, hireOffer.offerResponse);
 
     this.closeHireOfferDialog();
 
-    var rotationListItem = _.find(this.props.rentalRequest.match.params.rotationList, (i) => i.id === hireOffer.id);
+    var rotationListItem = _.find(this.props.rentalRequest.rotationList, (i) => i.id === hireOffer.id);
     if (rotationListItem && rotationListItem.rentalAgreementId && !hireOffer.rentalAgreementId) {
       // navigate to rental agreement if it was newly generated
       this.props.history.push(`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${rotationListItem.rentalAgreementId}`);
@@ -259,7 +255,7 @@ class RentalRequestsDetail extends React.Component {
               </Label>
             </div>
             <Button title="Notes" disabled={loading} onClick={this.showNotes}>
-              Notes ({loading ? ' ' : rentalRequest.notes.length})
+              Notes ({loading ? ' ' : rentalRequest.notes?.length})
             </Button>
             <Button id="project-documents-button" title="Documents" disabled={loading} onClick={this.showDocuments}>
               Documents ({loadingDocuments ? ' ' : Object.keys(this.props.documents).length})
@@ -385,7 +381,7 @@ class RentalRequestsDetail extends React.Component {
               );
             }
 
-            var rotationList = this.props.rentalRequest.rotationList;
+            var rotationList = this.props.rentalRequest?.rotationList;
 
             if (Object.keys(rotationList || []).length === 0) {
               return <Alert bsStyle="success">No equipment</Alert>;

@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Well, Row, Col } from 'react-bootstrap';
 import { Alert, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import Promise from 'bluebird';
 
@@ -251,7 +251,7 @@ class ProjectsDetail extends React.Component {
       <tr key={item.id}>
         <td>
           <Link
-            to={`rental-requests/${item.id}`}
+            to={`${Constant.RENTAL_REQUESTS_PATHNAME}/${item.id}`}
             className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}
           >
             Request
@@ -281,7 +281,7 @@ class ProjectsDetail extends React.Component {
       <tr key={item.id}>
         <td>
           <Link
-            to={`equipment/${item.equipmentId}`}
+            to={`${Constant.EQUIPMENT_PATHNAME}/${item.equipmentId}`}
             className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}
           >
             {item.equipmentCode}

@@ -360,7 +360,6 @@ export function rentalRequestDocumentDeleted(rentalRequest, document) {
 }
 
 export function rentalRequestEquipmentHired(rentalRequest, equipment, offerResponse) {
-  console.log(equipment);
   return log(rentalRequest.historyEntity, RENTAL_REQUEST_EQUIPMENT_HIRED, equipment.historyEntity, {
     description: offerResponse,
   });
