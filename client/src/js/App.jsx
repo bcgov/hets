@@ -40,33 +40,6 @@ import AitReport from './views/AitReport.jsx';
 import Version from './views/Version.jsx';
 import FourOhFour from './views/404.jsx';
 
-// redirects regular users to rollover page if rollover in progress
-function redirectIfRolloverActive(path) {
-  var onBusinessPage = path.indexOf(Constant.BUSINESS_PORTAL_PATHNAME) === 0;
-  var onRolloverPage = path === '/' + Constant.ROLLOVER_PATHNAME;
-  if (onBusinessPage || onRolloverPage) {
-    return;
-  }
-
-  var user = store.getState().user;
-  if (!user.district) {
-    return;
-  }
-
-  const districtId = user.district.id;
-
-  Api.getRolloverStatus(districtId).then(() => {
-    const status = store.getState().lookups.rolloverStatus;
-
-    if (status.rolloverActive) {
-      hashHistory.push('/' + Constant.ROLLOVER_PATHNAME);
-    } else if (status.rolloverComplete) {
-      // refresh fiscal years
-      Api.getFiscalYears(districtId);
-    }
-  });
-}
-
 function onEnterBusiness() {
   // allow access to business users
   if (store.getState().user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
@@ -91,66 +64,10 @@ function onEnterBusinessDetails(nextState, replace, callback) {
   }
 }
 
-function onEnterApplication() {
-  // allow access to HETS users
-  if (store.getState().user.hasPermission(Constant.PERMISSION_LOGIN)) {
-    redirectIfRolloverActive(hashHistory.getCurrentLocation().pathname);
-    return;
-  }
-
-  // redirect business users to business page
-  if (store.getState().user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
-    hashHistory.push(Constant.BUSINESS_PORTAL_PATHNAME);
-  }
-
-  // TODO: redirect other users to 'unauthorized access' page
-  //hashHistory.push('/');
-}
-
-function setActiveRentalAgreementId(nextState, replace, callback) {
-  store.dispatch({
-    type: Action.SET_ACTIVE_RENTAL_AGREEMENT_ID_UI,
-    rentalAgreementId: nextState.params.rentalAgreementId,
-  });
-  // TODO: When react was updated (HETS-1100) it broke how this worked. We now need to delay
-  // mounting the <Route> in order that `mapStateToProps` is called with the current store's state.
-  Promise.resolve().then(callback);
-}
-
-function setActiveRentalRequestId(nextState, replace, callback) {
-  store.dispatch({
-    type: Action.SET_ACTIVE_RENTAL_REQUEST_ID_UI,
-    rentalRequestId: nextState.params.rentalRequestId,
-  });
-  // TODO: When react was updated (HETS-1100) it broke how this worked. We now need to delay
-  // mounting the <Route> in order that `mapStateToProps` is called with the current store's state.
-  Promise.resolve().then(callback);
-}
-
-function setActiveProjectId(nextState, replace, callback) {
-  store.dispatch({
-    type: Action.SET_ACTIVE_PROJECT_ID_UI,
-    projectId: nextState.params.projectId,
-  });
-  // TODO: When react was updated (HETS-1100) it broke how this worked. We now need to delay
-  // mounting the <Route> in order that `mapStateToProps` is called with the current store's state.
-  Promise.resolve().then(callback);
-}
-
 function setActiveOwnerId(nextState, replace, callback) {
   store.dispatch({
     type: Action.SET_ACTIVE_OWNER_ID_UI,
     ownerId: nextState.params.ownerId,
-  });
-  // TODO: When react was updated (HETS-1100) it broke how this worked. We now need to delay
-  // mounting the <Route> in order that `mapStateToProps` is called with the current store's state.
-  Promise.resolve().then(callback);
-}
-
-function setActiveEquipmentId(nextState, replace, callback) {
-  store.dispatch({
-    type: Action.SET_ACTIVE_EQUIPMENT_ID_UI,
-    equipmentId: nextState.params.equipmentId,
   });
   // TODO: When react was updated (HETS-1100) it broke how this worked. We now need to delay
   // mounting the <Route> in order that `mapStateToProps` is called with the current store's state.
