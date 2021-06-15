@@ -118,11 +118,9 @@ export function log(historyEntity, event, ...entities) {
 function buildLink(entity, closeFunc) {
   // Return a link if the entity has a path; just the description otherwise.
   return entity.path ? (
-    //temporary fix will see if using entity.path works.
-    // <a onClick={closeFunc} href={entity.url}>
-    //   {entity.description}
-    // </a>
-    <Link onClick={closeFunc} to={`/${entity.path}`}>
+    //some entity.paths when application was using react-router did not have /url. Post react-router-dom adds the /.
+    //Thus, rather than change the DB information we check to see if an additional / is required in the url.
+    <Link onClick={closeFunc} to={entity.path[0] === '/' ? entity.path : `/${entity.path}`}>
       {entity.description}
     </Link>
   ) : (
