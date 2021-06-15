@@ -262,103 +262,6 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      {/* <Router history={hashHistory}>
-        <Redirect from="/" to="/home" />
-        <Route
-          path={Constant.BUSINESS_PORTAL_PATHNAME}
-          component={BusinessPortal}
-          onEnter={onEnterBusiness}
-        />
-        <Route
-          path={`${Constant.BUSINESS_DETAILS_PATHNAME}/:ownerId`}
-          component={BusinessOwner}
-          onEnter={onEnterBusinessDetails}
-        />
-        <Route path="/" component={Main} onEnter={onEnterApplication}>
-          <Route path={Constant.HOME_PATHNAME} component={Home} />
-          <Route path={Constant.EQUIPMENT_PATHNAME} component={Equipment} />
-          <Route
-            path={`${Constant.EQUIPMENT_PATHNAME}/:equipmentId`}
-            component={EquipmentDetail}
-            onEnter={setActiveEquipmentId}
-          />
-          <Route path={Constant.OWNERS_PATHNAME} component={Owners} />
-          <Route
-            path={`${Constant.OWNERS_PATHNAME}/:ownerId`}
-            component={OwnersDetail}
-            onEnter={setActiveOwnerId}
-          />
-          <Route
-            path={`${Constant.OWNERS_PATHNAME}/:ownerId/${Constant.CONTACTS_PATHNAME}/:contactId`}
-            component={OwnersDetail}
-            onEnter={setActiveOwnerId}
-          />
-          <Route path={Constant.PROJECTS_PATHNAME} component={Projects} />
-          <Route
-            path={`${Constant.PROJECTS_PATHNAME}/:projectId`}
-            component={ProjectsDetail}
-            onEnter={setActiveProjectId}
-          />
-          <Route
-            path={`${Constant.PROJECTS_PATHNAME}/:projectId/${Constant.CONTACTS_PATHNAME}/:contactId`}
-            component={ProjectsDetail}
-            onEnter={setActiveProjectId}
-          />
-          <Route
-            path={Constant.RENTAL_REQUESTS_PATHNAME}
-            component={RentalRequests}
-          />
-          <Route
-            path={`${Constant.RENTAL_REQUESTS_PATHNAME}/:rentalRequestId`}
-            component={RentalRequestsDetail}
-            onEnter={setActiveRentalRequestId}
-          />
-          <Route
-            path={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/:rentalAgreementId`}
-            component={RentalAgreementsDetail}
-            onEnter={setActiveRentalAgreementId}
-          />
-          <Route
-            path={Constant.OVERTIME_RATES_PATHNAME}
-            component={OvertimeRates}
-          />
-          <Route path={Constant.USERS_PATHNAME} component={Users} />
-          <Route
-            path={`${Constant.USERS_PATHNAME}/:userId`}
-            component={UsersDetail}
-          />
-          <Route path={Constant.ROLES_PATHNAME} component={Roles} />
-          <Route
-            path={`${Constant.ROLES_PATHNAME}/:roleId`}
-            component={RolesDetail}
-          />
-          <Route path={Constant.ROLLOVER_PATHNAME} component={Rollover} />
-          <Route
-            path={Constant.DISTRICT_ADMIN_PATHNAME}
-            component={DistrictAdmin}
-          />
-          <Route path={Constant.TIME_ENTRY_PATHNAME} component={TimeEntry} />
-          <Route
-            path={Constant.SENIORITY_LIST_PATHNAME}
-            component={SeniorityList}
-          />
-          <Route
-            path={Constant.STATUS_LETTERS_REPORT_PATHNAME}
-            component={StatusLetters}
-          />
-          <Route
-            path={Constant.HIRING_REPORT_PATHNAME}
-            component={HiringReport}
-          />
-          <Route
-            path={Constant.OWNERS_COVERAGE_PATHNAME}
-            component={WcbCglCoverage}
-          />
-          <Route path={Constant.AIT_REPORT_PATHNAME} component={AitReport} />
-          <Route path={Constant.VERSION_PATHNAME} component={Version} />
-          <Route path="*" component={FourOhFour} />
-        </Route>
-      </Router> */}
       <Router>
         <Route exact path="/">
           <Redirect to="/home" />
@@ -373,57 +276,31 @@ const App = () => {
           <Switch>
             <Route path={Constant.HOME_PATHNAME} exact component={Home} />
             <Route path={Constant.EQUIPMENT_PATHNAME} exact component={Equipment} />
-            <Route
-              path={`${Constant.EQUIPMENT_PATHNAME}/:equipmentId`}
-              exact
-              component={EquipmentDetail}
-              // temporary fix onEnter doesn't work. Will need to move logic into component.
-              // onEnter={setActiveEquipmentId}
-            />
+            <Route path={`${Constant.EQUIPMENT_PATHNAME}/:equipmentId`} exact component={EquipmentDetail} />
             <Route path={Constant.OWNERS_PATHNAME} exact component={Owners} />
-            <Route
-              path={`${Constant.OWNERS_PATHNAME}/:ownerId`}
-              exact
-              component={OwnersDetail}
-              // temporary fix onEnter doesn't work. Will need to move logic into component.
-              // onEnter={setActiveOwnerId}
-            />
+            <Route path={`${Constant.OWNERS_PATHNAME}/:ownerId`} exact component={OwnersDetail} />
             <Route
               path={`${Constant.OWNERS_PATHNAME}/:ownerId/${Constant.CONTACTS_PATHNAME}/:contactId`}
               exact
               component={OwnersDetail}
-              // temporary fix onEnter doesn't work. Will need to move logic into component.
-              // onEnter={setActiveOwnerId}
             />
             <Route path={Constant.PROJECTS_PATHNAME} exact component={Projects} />
-            <Route
-              path={`${Constant.PROJECTS_PATHNAME}/:projectId`}
-              exact
-              component={ProjectsDetail}
-              // temporary fix onEnter doesn't work. Will need to move logic into component.
-              // onEnter={setActiveProjectId}
-            />
+            <Route path={`${Constant.PROJECTS_PATHNAME}/:projectId`} exact component={ProjectsDetail} />
             <Route
               path={`${Constant.PROJECTS_PATHNAME}/:projectId/${Constant.CONTACTS_PATHNAME}/:contactId`}
               exact
               component={ProjectsDetail}
-              // temporary fix onEnter doesn't work. Will need to move logic into component.
-              // onEnter={setActiveProjectId}
             />
             <Route path={Constant.RENTAL_REQUESTS_PATHNAME} exact component={RentalRequests} />
             <Route
               path={`${Constant.RENTAL_REQUESTS_PATHNAME}/:rentalRequestId`}
               exact
               component={RentalRequestsDetail}
-              // temporary fix onEnter doesn't work. Will need to move logic into component.
-              // onEnter={setActiveRentalRequestId}
             />
             <Route
               path={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/:rentalAgreementId`}
               exact
               component={RentalAgreementsDetail}
-              // temporary fix onEnter doesn't work. Will need to move logic into component.
-              // onEnter={setActiveRentalAgreementId}
             />
             <Route path={Constant.OVERTIME_RATES_PATHNAME} exact component={OvertimeRates} />
             <Route path={Constant.USERS_PATHNAME} exact component={Users} />
