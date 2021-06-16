@@ -48,11 +48,6 @@ class Main extends React.Component {
       this.redirectIfRolloverActive(this.props.location.pathname);
       return;
     }
-
-    // redirect business users to business page
-    if (this.props.user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
-      this.props.history.push(Constant.BUSINESS_PORTAL_PATHNAME);
-    }
   }
 
   componentDidUpdate(prevProps) {
@@ -76,7 +71,6 @@ class Main extends React.Component {
     }
 
     const districtId = user.district.id;
-
     Api.getRolloverStatus(districtId).then(() => {
       const status = this.props.lookups.rolloverStatus;
 

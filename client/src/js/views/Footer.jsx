@@ -1,9 +1,9 @@
-import PropTypes from "prop-types";
-import React from "react";
-import { connect } from "react-redux";
-import { Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { HOME_PATHNAME } from "../constants";
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { Row } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import { HOME_PATHNAME, VERSION_PATHNAME } from '../constants';
 
 class Footer extends React.Component {
   static propTypes = {
@@ -22,37 +22,25 @@ class Footer extends React.Component {
                     <Link to={HOME_PATHNAME}>Home</Link>
                   </li>
                   <li>
-                    <a href="http://www2.gov.bc.ca/gov/content/about-gov-bc-ca">
-                      About gov.bc.ca
-                    </a>
+                    <a href="http://www2.gov.bc.ca/gov/content/about-gov-bc-ca">About gov.bc.ca</a>
                   </li>
                   <li>
-                    <a href="http://www2.gov.bc.ca/gov/content/home/disclaimer">
-                      Disclaimer{" "}
-                    </a>
+                    <a href="http://www2.gov.bc.ca/gov/content/home/disclaimer">Disclaimer </a>
                   </li>
                   <li>
-                    <a href="http://www2.gov.bc.ca/gov/content/home/privacy">
-                      Privacy
-                    </a>
+                    <a href="http://www2.gov.bc.ca/gov/content/home/privacy">Privacy</a>
                   </li>
                   <li>
-                    <a href="http://www2.gov.bc.ca/gov/content/home/accessibility">
-                      Accessibility
-                    </a>
+                    <a href="http://www2.gov.bc.ca/gov/content/home/accessibility">Accessibility</a>
                   </li>
                   <li>
-                    <a href="http://www2.gov.bc.ca/gov/content/home/copyright">
-                      Copyright
-                    </a>
+                    <a href="http://www2.gov.bc.ca/gov/content/home/copyright">Copyright</a>
                   </li>
                   <li>
-                    <a href="http://www2.gov.bc.ca/gov/content/home/contact-us">
-                      Contact Us
-                    </a>
+                    <a href="http://www2.gov.bc.ca/gov/content/home/contact-us">Contact Us</a>
                   </li>
                   <li className="pull-right" style={{ border: 0 }}>
-                    <a href="#/version">Version</a>
+                    <Link to={VERSION_PATHNAME}>Version</Link>
                   </li>
                 </ul>
               </Row>

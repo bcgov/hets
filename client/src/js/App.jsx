@@ -93,7 +93,7 @@ const BusinessRoutes = (user) => {
       <Route exact path="/">
         <Redirect to={Constant.BUSINESS_PORTAL_PATHNAME} />
       </Route>
-      <Route path={Constant.BUSINESS_PORTAL_PATHNAME} component={BusinessPortal} />
+      <Route path={Constant.BUSINESS_PORTAL_PATHNAME} exact component={BusinessPortal} />
       <Route path={`${Constant.BUSINESS_DETAILS_PATHNAME}/:ownerId`} component={BusinessOwner} />
       {CommonRoutes()}
     </Switch>
@@ -144,7 +144,6 @@ const AdminRoutes = (user) => {
         <Route path={Constant.HIRING_REPORT_PATHNAME} component={HiringReport} />
         <Route path={Constant.OWNERS_COVERAGE_PATHNAME} component={WcbCglCoverage} />
         <Route path={Constant.AIT_REPORT_PATHNAME} component={AitReport} />
-        <Route path={Constant.VERSION_PATHNAME} component={Version} />
         {CommonRoutes()}
       </Switch>
     </Main>
@@ -154,6 +153,7 @@ const AdminRoutes = (user) => {
 const CommonRoutes = () => {
   return (
     <>
+      <Route path={Constant.VERSION_PATHNAME} component={Version} />
       <Route path={Constant.UNAUTHORIZED_PATHNAME} components={Unauthorized} />
       <Route path="*" component={FourOhFour} />{' '}
     </>
@@ -224,12 +224,7 @@ const App = ({ user }) => {
 
   return (
     <Router>
-      <Route exact path="/">
-        <Redirect to="/home" />
-      </Route>
-      {/* <Main> */}
       <Switch>{Routes(user)}</Switch>
-      {/* </Main> */}
     </Router>
   );
 };
