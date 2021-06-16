@@ -176,7 +176,7 @@ export function getCurrentUserDistricts() {
 }
 
 export function getUserDistricts(userId) {
-  return new ApiRequest(`users/${userId}/districts`).get().then((response) => {
+  return new ApiRequest(`/users/${userId}/districts`).get().then((response) => {
     store.dispatch({
       type: Action.USER_DISTRICTS,
       userDistricts: response.data,

@@ -108,44 +108,144 @@ const AdminRoutes = (user) => {
         <Route exact path="/">
           <Redirect to={Constant.HOME_PATHNAME} />
         </Route>
-        {/* <AuthorizedRoute path={Constant.HOME_PATHNAME} requires={'Login'} exact component={Home} /> */}
-        <Route path={Constant.HOME_PATHNAME} exact component={Home} />
-        <Route path={Constant.EQUIPMENT_PATHNAME} exact component={Equipment} />
-        <Route path={`${Constant.EQUIPMENT_PATHNAME}/:equipmentId`} exact component={EquipmentDetail} />
-        <Route path={Constant.OWNERS_PATHNAME} exact component={Owners} />
-        <Route path={`${Constant.OWNERS_PATHNAME}/:ownerId`} exact component={OwnersDetail} />
-        <Route
+        <AuthorizedRoute requires={Constant.PERMISSION_LOGIN} path={Constant.HOME_PATHNAME} exact component={Home} />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_LOGIN}
+          path={Constant.EQUIPMENT_PATHNAME}
+          exact
+          component={Equipment}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_LOGIN}
+          path={`${Constant.EQUIPMENT_PATHNAME}/:equipmentId`}
+          exact
+          component={EquipmentDetail}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_LOGIN}
+          path={Constant.OWNERS_PATHNAME}
+          exact
+          component={Owners}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_LOGIN}
+          path={`${Constant.OWNERS_PATHNAME}/:ownerId`}
+          exact
+          component={OwnersDetail}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_LOGIN}
           path={`${Constant.OWNERS_PATHNAME}/:ownerId${Constant.CONTACTS_PATHNAME}/:contactId`}
           exact
           component={OwnersDetail}
         />
-        <Route path={Constant.PROJECTS_PATHNAME} exact component={Projects} />
-        <Route path={`${Constant.PROJECTS_PATHNAME}/:projectId`} exact component={ProjectsDetail} />
-        <Route
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_LOGIN}
+          path={Constant.PROJECTS_PATHNAME}
+          exact
+          component={Projects}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_LOGIN}
+          path={`${Constant.PROJECTS_PATHNAME}/:projectId`}
+          exact
+          component={ProjectsDetail}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_LOGIN}
           path={`${Constant.PROJECTS_PATHNAME}/:projectId${Constant.CONTACTS_PATHNAME}/:contactId`}
           exact
           component={ProjectsDetail}
         />
-        <Route path={Constant.RENTAL_REQUESTS_PATHNAME} exact component={RentalRequests} />
-        <Route path={`${Constant.RENTAL_REQUESTS_PATHNAME}/:rentalRequestId`} exact component={RentalRequestsDetail} />
-        <Route
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_LOGIN}
+          path={Constant.RENTAL_REQUESTS_PATHNAME}
+          exact
+          component={RentalRequests}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_LOGIN}
+          path={`${Constant.RENTAL_REQUESTS_PATHNAME}/:rentalRequestId`}
+          exact
+          component={RentalRequestsDetail}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_LOGIN}
           path={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/:rentalAgreementId`}
           exact
           component={RentalAgreementsDetail}
         />
-        <Route path={Constant.OVERTIME_RATES_PATHNAME} exact component={OvertimeRates} />
-        <Route path={Constant.USERS_PATHNAME} exact component={Users} />
-        <Route path={`${Constant.USERS_PATHNAME}/:userId`} exact component={UsersDetail} />
-        <Route path={Constant.ROLES_PATHNAME} exact component={Roles} />
-        <Route path={`${Constant.ROLES_PATHNAME}/:roleId`} exact component={RolesDetail} />
-        <Route path={Constant.ROLLOVER_PATHNAME} component={Rollover} />
-        <Route path={Constant.DISTRICT_ADMIN_PATHNAME} component={DistrictAdmin} />
-        <Route path={Constant.TIME_ENTRY_PATHNAME} component={TimeEntry} />
-        <Route path={Constant.SENIORITY_LIST_PATHNAME} component={SeniorityList} />
-        <Route path={Constant.STATUS_LETTERS_REPORT_PATHNAME} component={StatusLetters} />
-        <Route path={Constant.HIRING_REPORT_PATHNAME} component={HiringReport} />
-        <Route path={Constant.OWNERS_COVERAGE_PATHNAME} component={WcbCglCoverage} />
-        <Route path={Constant.AIT_REPORT_PATHNAME} component={AitReport} />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_ADMIN}
+          path={Constant.OVERTIME_RATES_PATHNAME}
+          exact
+          component={OvertimeRates}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_USER_MANAGEMENT}
+          path={Constant.USERS_PATHNAME}
+          exact
+          component={Users}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_USER_MANAGEMENT}
+          path={`${Constant.USERS_PATHNAME}/:userId`}
+          exact
+          component={UsersDetail}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_ROLES_AND_PERMISSIONS}
+          path={Constant.ROLES_PATHNAME}
+          exact
+          component={Roles}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_ROLES_AND_PERMISSIONS}
+          path={`${Constant.ROLES_PATHNAME}/:roleId`}
+          exact
+          component={RolesDetail}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_DISTRICT_ROLLOVER}
+          path={Constant.ROLLOVER_PATHNAME}
+          component={Rollover}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT}
+          path={Constant.DISTRICT_ADMIN_PATHNAME}
+          component={DistrictAdmin}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_LOGIN}
+          path={Constant.TIME_ENTRY_PATHNAME}
+          component={TimeEntry}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_LOGIN}
+          path={Constant.SENIORITY_LIST_PATHNAME}
+          component={SeniorityList}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_LOGIN}
+          path={Constant.STATUS_LETTERS_REPORT_PATHNAME}
+          component={StatusLetters}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_LOGIN}
+          path={Constant.HIRING_REPORT_PATHNAME}
+          component={HiringReport}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_LOGIN}
+          path={Constant.OWNERS_COVERAGE_PATHNAME}
+          component={WcbCglCoverage}
+        />
+        <AuthorizedRoute
+          requires={Constant.PERMISSION_LOGIN}
+          path={Constant.AIT_REPORT_PATHNAME}
+          component={AitReport}
+        />
+        <AuthorizedRoute requires={Constant.PERMISSION_VERSION} path={Constant.VERSION_PATHNAME} component={Version} />
         {CommonRoutes()}
       </Switch>
     </Main>
@@ -155,7 +255,6 @@ const AdminRoutes = (user) => {
 const CommonRoutes = () => {
   return (
     <Switch>
-      <Route path={Constant.VERSION_PATHNAME} component={Version} />
       <Route path={Constant.UNAUTHORIZED_PATHNAME} component={Unauthorized} />
       <Route path="*" component={FourOhFour} />
     </Switch>
