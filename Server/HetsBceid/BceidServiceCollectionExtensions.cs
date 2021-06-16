@@ -14,7 +14,7 @@ namespace HetsBceid
             {
                 var username = config.GetValue<string>("ServiceAccount:User");
                 var password = config.GetValue<string>("ServiceAccount:Password");
-                var url = config.GetValue<string>("BCEID:Url");
+                var url = config.GetValue<string>("BCEID:URL");
                 var osid = config.GetValue<string>("BCEID:OSID");
                 var cacheLifeSpan = config.GetValue<int>("BCEID:CacheLifespan");
 

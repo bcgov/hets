@@ -223,7 +223,7 @@ namespace HetsApi.Controllers
                         .ThenInclude(y => y.Role)
                             .ThenInclude(z => z.HetRolePermission)
                                 .ThenInclude(z => z.Permission)
-                    .FirstOrDefault(x => x.BceidUserId.Equals(userId, StringComparison.InvariantCultureIgnoreCase));
+                    .FirstOrDefault(x => x.BceidUserId.ToUpper() == userId);
 
                 if (tmpUser != null)
                 {

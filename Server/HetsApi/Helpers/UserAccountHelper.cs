@@ -9,6 +9,7 @@ using HetsData.Model;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Hosting;
+using HetsBceid;
 
 namespace HetsApi.Helpers
 {
@@ -31,38 +32,6 @@ namespace HetsApi.Helpers
             return httpContext.User.Claims
                 .Any(claim => claim.Type == ClaimTypes.Actor &&
                               claim.Value == "BusinessUser");
-        }
-
-        /// <summary>
-        /// Get the Business Guid from the Http Headers
-        /// </summary>
-        /// <param name="httpContext"></param>
-        /// <param name="hostingEnv"></param>
-        /// <returns></returns>
-        public static string GetBusinessGuid(HttpContext httpContext, IWebHostEnvironment hostingEnv)
-        {
-            string guid = "";
-
-            // check if we have a dev token first
-            if (hostingEnv.IsDevelopment())
-            {
-                string temp = httpContext.Request.Cookies[ConstDevBusinessTokenKey];
-
-                if (!string.IsNullOrEmpty(temp) &&
-                    temp.Contains(','))
-                {
-                    var credential = temp.Split(',');
-                    guid = credential[1];
-                }
-            }
-
-            // get the guid from the SM headers
-            if (string.IsNullOrEmpty(guid))
-            {
-                guid = httpContext.Request.Headers[ConstSiteMinderBusinessGuidKey];
-            }
-
-            return guid;
         }
 
         /// <summary>
@@ -254,12 +223,12 @@ namespace HetsApi.Helpers
         /// Get business user record
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="httpContext"></param>
+        /// <param name="account"></param>
         /// <param name="userId"></param>
         /// <param name="businessGuid"></param>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public static HetBusinessUser GetBusinessUser(DbAppContext context, HttpContext httpContext, string userId, string businessGuid, string guid = null)
+        public static HetBusinessUser GetBusinessUser(DbAppContext context, BceidAccount account, string userId, string businessGuid, string guid = null)
         {
             // find the business
             HetBusiness business = context.HetBusiness.AsNoTracking()
@@ -282,8 +251,8 @@ namespace HetsApi.Helpers
                 };
 
                 // get additional business data
-                string legalName = httpContext.Request.Headers[ConstSiteMinderBusinessLegalName];
-                string businessNumber = httpContext.Request.Headers[ConstSiteMinderBusinessNumber];
+                string legalName = account.BusinessLegalName;
+                string businessNumber = account.BusinessNumber.ToString();
 
                 if (!string.IsNullOrEmpty(legalName))
                 {
@@ -302,8 +271,8 @@ namespace HetsApi.Helpers
             else
             {
                 // update business information
-                string legalName = httpContext.Request.Headers[ConstSiteMinderBusinessLegalName];
-                string businessNumber = httpContext.Request.Headers[ConstSiteMinderBusinessNumber];
+                string legalName = account.BusinessLegalName;
+                string businessNumber = account.BusinessNumber.ToString();
 
                 if (!string.IsNullOrEmpty(legalName))
                 {
@@ -347,8 +316,8 @@ namespace HetsApi.Helpers
                 };
 
                 // get additional user data
-                string displayName = httpContext.Request.Headers[ConstSiteMinderUserDisplayName];
-                string email = httpContext.Request.Headers[ConstSiteMinderEmail];
+                string displayName = account.DisplayName;
+                string email = account.Email;
 
                 if (!string.IsNullOrEmpty(displayName))
                 {
@@ -384,8 +353,8 @@ namespace HetsApi.Helpers
             else
             {
                 // update the user
-                string displayName = httpContext.Request.Headers[ConstSiteMinderUserDisplayName];
-                string email = httpContext.Request.Headers[ConstSiteMinderEmail];
+                string displayName = account.DisplayName;
+                string email = account.Email;
 
                 if (!string.IsNullOrEmpty(displayName))
                 {

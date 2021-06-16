@@ -17,6 +17,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using HetsData.Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using HetsBceid;
 
 namespace HetsApi
 {
@@ -114,6 +115,8 @@ namespace HetsApi
                     Description = "Hired Equipment Tracking System"
                 });
             });
+
+            services.AddBceidSoapClient(Configuration);
         }
 
         /// <summary>

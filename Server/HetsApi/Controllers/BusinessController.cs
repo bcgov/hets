@@ -47,7 +47,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.BusinessLogin)]
         public virtual IActionResult BceidBusinessGet()
         {
-            string businessGuid = UserAccountHelper.GetBusinessGuid(_httpContext, _env);
+            string businessGuid = _context.SmBusinessGuid;
 
             if (businessGuid == null) return new NotFoundObjectResult(new HetsResponse(""));
 
@@ -80,7 +80,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.BusinessLogin)]
         public virtual IActionResult BceidValidateOwner([FromQuery]string sharedKey, [FromQuery]string postalCode)
         {
-            string businessGuid = UserAccountHelper.GetBusinessGuid(_httpContext, _env);
+            string businessGuid = _context.SmBusinessGuid;
 
             if (string.IsNullOrEmpty(sharedKey))
             {
@@ -163,7 +163,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult BceidOwnersGet()
         {
             // get business
-            string businessGuid = UserAccountHelper.GetBusinessGuid(_httpContext, _env);
+            string businessGuid = _context.SmBusinessGuid;
 
             HetBusiness business = _context.HetBusiness.AsNoTracking()
                 .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
@@ -198,7 +198,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult BceidOwnerIdGet([FromRoute]int id)
         {
             // get business
-            string businessGuid = UserAccountHelper.GetBusinessGuid(_httpContext, _env);
+            string businessGuid = _context.SmBusinessGuid;
 
             HetBusiness business = _context.HetBusiness.AsNoTracking()
                 .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
@@ -224,7 +224,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult BceidOwnerEquipmentGet([FromRoute]int id)
         {
             // get business
-            string businessGuid = UserAccountHelper.GetBusinessGuid(_httpContext, _env);
+            string businessGuid = _context.SmBusinessGuid;
 
             HetBusiness business = _context.HetBusiness.AsNoTracking()
                 .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
@@ -277,7 +277,7 @@ namespace HetsApi.Controllers
 
             // get user
             HetBusinessUser user = owner?.Business?.HetBusinessUser
-                .FirstOrDefault(x => x.BceidUserId.Equals(userId, StringComparison.InvariantCultureIgnoreCase));
+                .FirstOrDefault(x => x.BceidUserId.ToUpper() == userId);
 
             // no access to business or business doesn't exist
             return user != null;
@@ -299,7 +299,7 @@ namespace HetsApi.Controllers
 
             // get user
             HetBusinessUser user = business?.HetBusinessUser
-                .FirstOrDefault(x => x.BceidUserId.Equals(userId, StringComparison.InvariantCultureIgnoreCase));
+                .FirstOrDefault(x => x.BceidUserId.ToUpper() == userId);
 
             // no access to business or business doesn't exist
             return user != null;
