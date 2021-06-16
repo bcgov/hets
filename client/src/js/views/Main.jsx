@@ -51,8 +51,11 @@ class Main extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    //this is the converted hashHistory change listener to check for rollOverStatus whenever user navigates.
-    if (prevProps.location.pathname !== this.props.location.pathname) {
+    //this is the converted hashHistory change listener to check for rollOverStatus whenever user navigates. Only check if user is not BCeiD
+    if (
+      prevProps.location.pathname !== this.props.location.pathname &&
+      this.props.user.hasPermission(Constant.PERMISSION_LOGIN)
+    ) {
       this.redirectIfRolloverActive(this.props.location.pathname);
     }
   }

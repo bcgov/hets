@@ -5,6 +5,8 @@ import { Route, Redirect } from 'react-router-dom';
 
 import * as Constant from '../constants';
 
+//only renders React-Router-Dom route if user has permission.
+
 const AuthorizedRoute = ({ children, user, requires, ...rest }) => {
   if (user.permissions.includes(requires)) {
     return <Route {...rest} />;

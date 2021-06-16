@@ -10,8 +10,6 @@ import * as Api from '../api';
 import * as Constant from '../constants';
 import store from '../store';
 
-import Main from './Main.jsx';
-
 import PageHeader from '../components/ui/PageHeader.jsx';
 import Spinner from '../components/Spinner.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
@@ -105,18 +103,16 @@ class BusinessPortal extends React.Component {
 
   render() {
     return (
-      <Main showNav={false}>
-        <div id="business-portal">
-          <PageHeader>Business Portal</PageHeader>
-          {this.state.loading && (
-            <div className="spinner-container">
-              <Spinner />
-            </div>
-          )}
-          {!this.state.loading && this.state.success && this.renderPage()}
-          {!this.state.loading && !this.state.success && this.renderError()}
-        </div>
-      </Main>
+      <div id="business-portal">
+        <PageHeader>Business Portal</PageHeader>
+        {this.state.loading && (
+          <div className="spinner-container">
+            <Spinner />
+          </div>
+        )}
+        {!this.state.loading && this.state.success && this.renderPage()}
+        {!this.state.loading && !this.state.success && this.renderError()}
+      </div>
     );
   }
 

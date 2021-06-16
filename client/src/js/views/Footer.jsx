@@ -19,7 +19,7 @@ class Footer extends React.Component {
               <Row id="footerAdminLinks">
                 <ul className="inline">
                   <li>
-                    <Link to={HOME_PATHNAME}>Home</Link>
+                    <Link to={'/'}>Home</Link>
                   </li>
                   <li>
                     <a href="http://www2.gov.bc.ca/gov/content/about-gov-bc-ca">About gov.bc.ca</a>

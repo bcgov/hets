@@ -9,7 +9,6 @@ import * as Api from '../api';
 import * as Constant from '../constants';
 import store from '../store';
 
-import Main from './Main.jsx';
 import Spinner from '../components/Spinner.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
 import SortTable from '../components/SortTable.jsx';
@@ -107,17 +106,15 @@ class BusinessOwner extends React.Component {
 
   render() {
     return (
-      <Main showNav={false}>
-        <div id="business-owner-screen">
-          {this.state.loading && (
-            <div className="spinner-container">
-              <Spinner />
-            </div>
-          )}
-          {!this.state.loading && this.state.success && this.renderPage()}
-          {!this.state.loading && !this.state.success && this.renderError()}
-        </div>
-      </Main>
+      <div id="business-owner-screen">
+        {this.state.loading && (
+          <div className="spinner-container">
+            <Spinner />
+          </div>
+        )}
+        {!this.state.loading && this.state.success && this.renderPage()}
+        {!this.state.loading && !this.state.success && this.renderError()}
+      </div>
     );
   }
 
