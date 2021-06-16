@@ -1095,19 +1095,19 @@ export function changeOwnerStatus(status) {
 }
 
 export function getStatusLettersDoc(params) {
-  return new ApiRequest('owners/verificationDoc').post(params, {
+  return new ApiRequest('/owners/verificationDoc').post(params, {
     responseType: Constant.RESPONSE_TYPE_BLOB,
   });
 }
 
 export function getMailingLabelsDoc(params) {
-  return new ApiRequest('owners/mailingLabelsDoc').post(params, {
+  return new ApiRequest('/owners/mailingLabelsDoc').post(params, {
     responseType: Constant.RESPONSE_TYPE_BLOB,
   });
 }
 
 export function transferEquipment(donorOwnerId, recipientOwnerId, equipment, includeSeniority) {
-  return new ApiRequest(`owners/${donorOwnerId}/equipmentTransfer/${recipientOwnerId}/${includeSeniority}`)
+  return new ApiRequest(`/owners/${donorOwnerId}/equipmentTransfer/${recipientOwnerId}/${includeSeniority}`)
     .post(equipment)
     .then((response) => {
       getEquipmentLite();
@@ -1917,7 +1917,7 @@ export function addRentalRequestNote(rentalRequestId, note) {
 }
 
 export function cancelRentalRequest(rentalRequestId) {
-  return new ApiRequest(`rentalrequests/${rentalRequestId}/cancel`).get().then(() => {
+  return new ApiRequest(`/rentalrequests/${rentalRequestId}/cancel`).get().then(() => {
     getEquipmentHires();
   });
 }
@@ -2267,7 +2267,7 @@ export function updateRentalAgreement(agreement) {
 }
 
 export function getRentalAgreementTimeRecords(rentalAgreementId) {
-  return new ApiRequest(`rentalagreements/${rentalAgreementId}/timeRecords`).get().then((response) => {
+  return new ApiRequest(`/rentalagreements/${rentalAgreementId}/timeRecords`).get().then((response) => {
     var rentalAgreementTimeRecords = response.data;
 
     store.dispatch({
@@ -2279,7 +2279,7 @@ export function getRentalAgreementTimeRecords(rentalAgreementId) {
 
 export function addRentalAgreementTimeRecords(rentalRequestId, timeRecords) {
   let formattedTimeRecords = formatTimeRecords(timeRecords, rentalRequestId);
-  return new ApiRequest(`rentalagreements/${rentalRequestId}/timeRecords`)
+  return new ApiRequest(`/rentalagreements/${rentalRequestId}/timeRecords`)
     .post(formattedTimeRecords)
     .then((response) => {
       var rentalAgreementTimeRecords = normalize(response.data.timeRecords);
@@ -2293,13 +2293,13 @@ export function addRentalAgreementTimeRecords(rentalRequestId, timeRecords) {
 }
 
 export function releaseRentalAgreement(rentalAgreementId) {
-  return new ApiRequest(`rentalagreements/${rentalAgreementId}/release`).post().then((response) => {
+  return new ApiRequest(`/rentalagreements/${rentalAgreementId}/release`).post().then((response) => {
     return response;
   });
 }
 
 export function generateRentalAgreementDocument(rentalAgreementId) {
-  return new ApiRequest(`rentalagreements/${rentalAgreementId}/doc`).get(null, {
+  return new ApiRequest(`/rentalagreements/${rentalAgreementId}/doc`).get(null, {
     ignoreResponse: true,
   });
 }
@@ -2379,7 +2379,7 @@ export function addRentalRates(rentalAgreementId, rentalRates) {
     rentalAgreementId,
   });
 
-  return new ApiRequest(`rentalagreements/${rentalAgreementId}/rateRecords`).post(rentalRates).then((response) => {
+  return new ApiRequest(`/rentalagreements/${rentalAgreementId}/rateRecords`).post(rentalRates).then((response) => {
     const data = _.find(response.data, { rentalAgreementId });
     var rentalRates = data.rentalAgreement.rentalAgreementRates;
 
@@ -2500,7 +2500,7 @@ export function addRentalConditions(rentalAgreementId, rentalConditions) {
     rentalAgreementId,
   });
 
-  return new ApiRequest(`rentalagreements/${rentalAgreementId}/conditionRecords`)
+  return new ApiRequest(`/rentalagreements/${rentalAgreementId}/conditionRecords`)
     .post(rentalConditions)
     .then((response) => {
       const data = _.find(response.data, { rentalAgreementId });
@@ -2574,13 +2574,13 @@ export function deleteCondition(id) {
 }
 
 export function addCondition(condition) {
-  return new ApiRequest('conditiontypes/0').post(condition).then((response) => {
+  return new ApiRequest('/conditiontypes/0').post(condition).then((response) => {
     return response;
   });
 }
 
 export function updateCondition(condition) {
-  return new ApiRequest(`conditiontypes/${condition.id}`).post(condition).then((response) => {
+  return new ApiRequest(`/conditiontypes/${condition.id}`).post(condition).then((response) => {
     return response;
   });
 }

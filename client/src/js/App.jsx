@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
+import AuthorizedRoute from './components/AuthorizedRoute';
 
 import * as Api from './api';
 import { ApiError } from './utils/http';
@@ -107,6 +108,7 @@ const AdminRoutes = (user) => {
         <Route exact path="/">
           <Redirect to={Constant.HOME_PATHNAME} />
         </Route>
+        {/* <AuthorizedRoute path={Constant.HOME_PATHNAME} requires={'Login'} exact component={Home} /> */}
         <Route path={Constant.HOME_PATHNAME} exact component={Home} />
         <Route path={Constant.EQUIPMENT_PATHNAME} exact component={Equipment} />
         <Route path={`${Constant.EQUIPMENT_PATHNAME}/:equipmentId`} exact component={EquipmentDetail} />
@@ -152,11 +154,11 @@ const AdminRoutes = (user) => {
 
 const CommonRoutes = () => {
   return (
-    <>
+    <Switch>
       <Route path={Constant.VERSION_PATHNAME} component={Version} />
-      <Route path={Constant.UNAUTHORIZED_PATHNAME} components={Unauthorized} />
-      <Route path="*" component={FourOhFour} />{' '}
-    </>
+      <Route path={Constant.UNAUTHORIZED_PATHNAME} component={Unauthorized} />
+      <Route path="*" component={FourOhFour} />
+    </Switch>
   );
 };
 

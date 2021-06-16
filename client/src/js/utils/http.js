@@ -246,7 +246,7 @@ export function buildApiPath(path) {
 }
 
 export function ApiRequest(path, options) {
-  this.path = `/api/${path}`;
+  this.path = `/api${path}`;
   this.options = options;
 }
 
