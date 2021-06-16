@@ -90,6 +90,9 @@ const Routes = (user) => {
 const BusinessRoutes = (user) => {
   return (
     <Switch>
+      <Route exact path="/">
+        <Redirect to={Constant.BUSINESS_PORTAL_PATHNAME} />
+      </Route>
       <Route path={Constant.BUSINESS_PORTAL_PATHNAME} component={BusinessPortal} />
       <Route path={`${Constant.BUSINESS_DETAILS_PATHNAME}/:ownerId`} component={BusinessOwner} />
       {CommonRoutes()}
@@ -101,6 +104,9 @@ const AdminRoutes = (user) => {
   return (
     <Main>
       <Switch>
+        <Route exact path="/">
+          <Redirect to={Constant.HOME_PATHNAME} />
+        </Route>
         <Route path={Constant.HOME_PATHNAME} exact component={Home} />
         <Route path={Constant.EQUIPMENT_PATHNAME} exact component={Equipment} />
         <Route path={`${Constant.EQUIPMENT_PATHNAME}/:equipmentId`} exact component={EquipmentDetail} />

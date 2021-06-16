@@ -26,7 +26,7 @@ class Main extends React.Component {
 
         <p>
           Sorry, but the page you were trying to view ({this.state.path}) does not exist. You can try going to the{' '}
-          <Link to={Constant.HOME_PATHNAME}>home</Link> page.
+          <Link to={'/'}>home</Link> page.
         </p>
       </div>
     );

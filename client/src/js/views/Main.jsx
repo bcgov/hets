@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as Api from '../api';
 import * as Constant from '../constants';
+import { logout } from '../Keycloak';
 import { unhandledApiError, closeSessionTimeoutDialog } from '../actions';
 
 import TopNav from './TopNav.jsx';
@@ -103,11 +104,7 @@ class Main extends React.Component {
   };
 
   onEndSession = () => {
-    Api.logoffUser().then((logoffUrl) => {
-      if (logoffUrl) {
-        window.location.href = logoffUrl;
-      }
-    });
+    logout();
     this.props.closeSessionTimeoutDialog();
   };
 

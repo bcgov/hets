@@ -21,6 +21,7 @@ import NavLinkWrapper from '../components/ui/NavLinkWrapper';
 
 import * as Constant from '../constants';
 import * as Api from '../api';
+import { logout } from '../Keycloak';
 
 import Spinner from '../components/Spinner.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
@@ -48,14 +49,6 @@ class TopNav extends React.Component {
     Api.switchUserDistrict(district.id).then(() => {
       this.props.history.push(Constant.HOME_PATHNAME);
       window.location.reload();
-    });
-  };
-
-  logout = () => {
-    Api.logoffUser().then((logoffUrl) => {
-      if (logoffUrl) {
-        window.location.href = logoffUrl;
-      }
     });
   };
 
@@ -316,7 +309,7 @@ class TopNav extends React.Component {
                         items={userDistricts}
                       />
                     </FormGroup>
-                    <Button onClick={this.logout} bsStyle="primary">
+                    <Button onClick={() => logout()} bsStyle="primary">
                       Logout
                     </Button>
                   </Dropdown.Menu>
