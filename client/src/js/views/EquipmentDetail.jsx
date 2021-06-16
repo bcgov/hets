@@ -114,16 +114,6 @@ class EquipmentDetail extends React.Component {
     });
   }
 
-  componentDidUpdate(prevProps) {
-    //temporary fix. Two versions here. Remove if not needed.
-    // if (prevProps.params.equipmentId !== this.props.params.equipmentId) {
-    //   this.fetch();
-    // }
-    // if (prevProps.match.params.equipmentId !== this.props.match.params.equipmentId) {
-    //   this.fetch();
-    // }
-  }
-
   fetch = () => {
     this.setState({ reloading: true });
     return Api.getEquipment(this.props.match.params.equipmentId).then(() => this.setState({ reloading: false }));

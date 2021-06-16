@@ -52,9 +52,6 @@ class UsersDetail extends React.Component {
     userDistricts: PropTypes.object,
     districts: PropTypes.object,
     match: PropTypes.object,
-    // temporary fix update to react-router-dom doesn't use router and params. Will remove when fix is implemented
-    // params: PropTypes.object,
-    // router: PropTypes.object,
   };
 
   constructor(props) {

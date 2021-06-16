@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Provider, connect } from 'react-redux';
-import { hashHistory } from 'react-router';
+import { connect } from 'react-redux';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 
 import * as Api from './api';

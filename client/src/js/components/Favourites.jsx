@@ -18,7 +18,6 @@ import RootCloseMenu from './RootCloseMenu.jsx';
 
 import { isBlank } from '../utils/string';
 
-
 class EditFavouritesDialog extends React.Component {
   static propTypes = {
     favourite: PropTypes.object.isRequired,
@@ -43,8 +42,12 @@ class EditFavouritesDialog extends React.Component {
   };
 
   didChange = () => {
-    if (this.state.name !== this.props.favourite.name) { return true; }
-    if (this.state.isDefault !== this.props.favourite.isDefault) { return true; }
+    if (this.state.name !== this.props.favourite.name) {
+      return true;
+    }
+    if (this.state.isDefault !== this.props.favourite.isDefault) {
+      return true;
+    }
 
     return false;
   };
@@ -60,7 +63,7 @@ class EditFavouritesDialog extends React.Component {
   onSubmit = () => {
     if (this.isValid()) {
       if (this.didChange()) {
-        this.setState({isSaving: true});
+        this.setState({ isSaving: true });
 
         const favourite = {
           ...this.props.favourite,
@@ -92,10 +95,19 @@ class EditFavouritesDialog extends React.Component {
         show={show}
         isSaving={isSaving}
         onClose={onClose}
-        onSubmit={this.onSubmit}>
+        onSubmit={this.onSubmit}
+      >
         <FormGroup controlId="name" validationState={nameError ? 'error' : null}>
-          <ControlLabel>Name <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" readOnly={isSaving} defaultValue={name} updateState={this.updateState} autoFocus />
+          <ControlLabel>
+            Name <sup>*</sup>
+          </ControlLabel>
+          <FormInputControl
+            type="text"
+            readOnly={isSaving}
+            defaultValue={name}
+            updateState={this.updateState}
+            autoFocus
+          />
           <HelpBlock>{nameError}</HelpBlock>
         </FormGroup>
         <CheckboxControl id="isDefault" checked={isDefault} updateState={this.updateState}>
@@ -145,8 +157,8 @@ class Favourites extends React.Component {
   favoriteSaved = (favourite) => {
     // Make sure there's only one default
     if (favourite.isDefault) {
-      var oldDefault = _.find(this.props.favourites, f => f.isDefault);
-      if (oldDefault && (favourite.id !== oldDefault.id)) {
+      var oldDefault = _.find(this.props.favourites, (f) => f.isDefault);
+      if (oldDefault && favourite.id !== oldDefault.id) {
         Api.updateFavourite({
           ...oldDefault,
           isDefault: false,
@@ -180,46 +192,61 @@ class Favourites extends React.Component {
 
   render() {
     var title = this.props.title || 'Favourites';
-    var className = `favourites ${ this.props.className || '' } ${ this.props.pullRight ? 'pull-right' : '' }`;
+    var className = `favourites ${this.props.className || ''} ${this.props.pullRight ? 'pull-right' : ''}`;
 
-    return <Authorize><Dropdown id={ this.props.id } className={ className } title={ title }
-      open={ this.state.open } onToggle={ this.toggle }>
-      <Dropdown.Toggle>{ title }</Dropdown.Toggle>
-      <RootCloseMenu bsRole="menu">
-        <div className="favourites-button-bar">
-          <Button onClick={ this.addFavourite }>Favourite Current Selection</Button>
-        </div>
-        {(() => {
-          if (Object.keys(this.props.favourites).length === 0) { return <Alert bsStyle="success" style={{ margin: '5px' }}>No favourites</Alert>; }
+    return (
+      <Authorize>
+        <Dropdown id={this.props.id} className={className} title={title} open={this.state.open} onToggle={this.toggle}>
+          <Dropdown.Toggle>{title}</Dropdown.Toggle>
+          <RootCloseMenu bsRole="menu">
+            <div className="favourites-button-bar">
+              <Button onClick={this.addFavourite}>Favourite Current Selection</Button>
+            </div>
+            {(() => {
+              if (Object.keys(this.props.favourites).length === 0) {
+                return (
+                  <Alert bsStyle="success" style={{ margin: '5px' }}>
+                    No favourites
+                  </Alert>
+                );
+              }
 
-          return <ul>
-            {
-              _.map(this.props.favourites, (favourite) => {
-                return <li key={ favourite.id }>
-                  <Col md={1}>
-                    { favourite.isDefault ? <Glyphicon glyph="star" /> : '' }
-                  </Col>
-                  <Col md={8}>
-                    <a onClick={ this.selectFavourite.bind(this, favourite) }>{ favourite.name }</a>
-                  </Col>
-                  <Col md={3}>
-                    <ButtonToolbar>
-                      <DeleteButton name="Favourite" onConfirm={ this.deleteFavourite.bind(this, favourite) }/>
-                      <EditButton name="Favourite" onClick={ this.editFavourite.bind(this, favourite) }/>
-                    </ButtonToolbar>
-                  </Col>
-                </li>;
-              })
-            }
-          </ul>;
-        })()}
-      </RootCloseMenu>
-      { this.state.showEditDialog ?
-        <EditFavouritesDialog show={ this.state.showEditDialog } favourite={ this.state.favouriteToEdit } onSave={ this.favoriteSaved } onClose={ this.closeDialog } /> : null
-      }
-    </Dropdown></Authorize>;
+              return (
+                <ul>
+                  {_.map(this.props.favourites, (favourite) => {
+                    return (
+                      <li key={favourite.id}>
+                        <Col md={1}>{favourite.isDefault ? <Glyphicon glyph="star" /> : ''}</Col>
+                        <Col md={8}>
+                          <span className="favourite__item" onClick={this.selectFavourite.bind(this, favourite)}>
+                            {favourite.name}
+                          </span>
+                        </Col>
+                        <Col md={3}>
+                          <ButtonToolbar>
+                            <DeleteButton name="Favourite" onConfirm={this.deleteFavourite.bind(this, favourite)} />
+                            <EditButton name="Favourite" onClick={this.editFavourite.bind(this, favourite)} />
+                          </ButtonToolbar>
+                        </Col>
+                      </li>
+                    );
+                  })}
+                </ul>
+              );
+            })()}
+          </RootCloseMenu>
+          {this.state.showEditDialog ? (
+            <EditFavouritesDialog
+              show={this.state.showEditDialog}
+              favourite={this.state.favouriteToEdit}
+              onSave={this.favoriteSaved}
+              onClose={this.closeDialog}
+            />
+          ) : null}
+        </Dropdown>
+      </Authorize>
+    );
   }
 }
-
 
 export default Favourites;

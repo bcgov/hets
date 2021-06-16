@@ -246,9 +246,6 @@ export function buildApiPath(path) {
 }
 
 export function ApiRequest(path, options) {
-  //temporary fix to see if this will work. We don't need to build the Api Path now that route doesn't contain #
-  //if it works we do not need buildApiPath or Root_API_PREFIX
-  // this.path = buildApiPath(path);
   this.path = `/api/${path}`;
   this.options = options;
 }

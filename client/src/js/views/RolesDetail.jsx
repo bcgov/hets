@@ -1,26 +1,26 @@
-import PropTypes from "prop-types";
-import React from "react";
-import { connect } from "react-redux";
-import { Well, Grid, Row, Col } from "react-bootstrap";
-import { FormGroup, HelpBlock, ControlLabel } from "react-bootstrap";
-import { Table, Button } from "react-bootstrap";
-import _ from "lodash";
-import Promise from "bluebird";
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { Well, Grid, Row, Col } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { Table, Button } from 'react-bootstrap';
+import _ from 'lodash';
+import Promise from 'bluebird';
 
-import * as Action from "../actionTypes";
-import * as Api from "../api";
-import * as Constant from "../constants";
-import store from "../store";
+import * as Action from '../actionTypes';
+import * as Api from '../api';
+import * as Constant from '../constants';
+import store from '../store';
 
-import FormInputControl from "../components/FormInputControl.jsx";
-import Spinner from "../components/Spinner.jsx";
-import Form from "../components/Form.jsx";
-import PageHeader from "../components/ui/PageHeader.jsx";
-import SubHeader from "../components/ui/SubHeader.jsx";
-import ReturnButton from "../components/ReturnButton.jsx";
-import PrintButton from "../components/PrintButton.jsx";
+import FormInputControl from '../components/FormInputControl.jsx';
+import Spinner from '../components/Spinner.jsx';
+import Form from '../components/Form.jsx';
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SubHeader from '../components/ui/SubHeader.jsx';
+import ReturnButton from '../components/ReturnButton.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
-import { isBlank } from "../utils/string";
+import { isBlank } from '../utils/string';
 
 class RolesDetail extends React.Component {
   static propTypes = {
@@ -30,9 +30,6 @@ class RolesDetail extends React.Component {
     permissions: PropTypes.object,
     history: PropTypes.object,
     match: PropTypes.object,
-    // temporary fix router and params are no longer used
-    // params: PropTypes.object,
-    // router: PropTypes.object,
   };
 
   constructor(props) {
@@ -41,15 +38,15 @@ class RolesDetail extends React.Component {
     this.state = {
       loading: false,
 
-      name: "",
-      description: "",
+      name: '',
+      description: '',
 
-      nameError: "",
-      descriptionError: "",
+      nameError: '',
+      descriptionError: '',
 
       selectedPermissionIds: [],
 
-      isNew: props.match.params.roleId === "0",
+      isNew: props.match.params.roleId === '0',
     };
   }
 
@@ -68,18 +65,13 @@ class RolesDetail extends React.Component {
 
   fetch = () => {
     var rolePromise = Api.getRole(this.props.match.params.roleId);
-    var permissionsPromise = Api.getRolePermissions(
-      this.props.match.params.roleId
-    );
+    var permissionsPromise = Api.getRolePermissions(this.props.match.params.roleId);
 
     this.setState({ loading: true });
     Promise.all([rolePromise, permissionsPromise]).then(() => {
-      var selectedPermissionIds = _.map(
-        this.props.rolePermissions,
-        (rolePermission) => {
-          return rolePermission.permission.id;
-        }
-      );
+      var selectedPermissionIds = _.map(this.props.rolePermissions, (rolePermission) => {
+        return rolePermission.permission.id;
+      });
       this.setState({
         loading: false,
         name: this.props.role.name,
@@ -112,12 +104,12 @@ class RolesDetail extends React.Component {
     var valid = true;
 
     if (isBlank(this.state.name)) {
-      this.setState({ nameError: "Name is required" });
+      this.setState({ nameError: 'Name is required' });
       valid = false;
     }
 
     if (isBlank(this.state.description)) {
-      this.setState({ descriptionError: "Description is required" });
+      this.setState({ descriptionError: 'Description is required' });
       valid = false;
     }
 
@@ -136,15 +128,10 @@ class RolesDetail extends React.Component {
   };
 
   didChangePermissions = () => {
-    var originalPermissionIds = _.map(
-      this.props.rolePermissions,
-      (rolePermission) => {
-        return rolePermission.permission.id;
-      }
-    );
-    if (
-      _.xor(originalPermissionIds, this.state.selectedPermissionIds).length > 0
-    ) {
+    var originalPermissionIds = _.map(this.props.rolePermissions, (rolePermission) => {
+      return rolePermission.permission.id;
+    });
+    if (_.xor(originalPermissionIds, this.state.selectedPermissionIds).length > 0) {
       return true;
     }
 
@@ -203,9 +190,7 @@ class RolesDetail extends React.Component {
     var role = this.props.role;
 
     if (
-      !this.props.currentUser.hasPermission(
-        Constant.PERMISSION_ROLES_AND_PERMISSIONS
-      ) &&
+      !this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) &&
       !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)
     ) {
       return <div>You do not have permission to view this page.</div>;
@@ -221,7 +206,7 @@ class RolesDetail extends React.Component {
         {(() => {
           if (this.state.loading) {
             return (
-              <div style={{ textAlign: "center" }}>
+              <div style={{ textAlign: 'center' }}>
                 <Spinner />
               </div>
             );
@@ -229,7 +214,7 @@ class RolesDetail extends React.Component {
 
           return (
             <div id="roles-header">
-              <PageHeader title="Role" subTitle={role.name || "New"} />
+              <PageHeader title="Role" subTitle={role.name || 'New'} />
             </div>
           );
         })()}
@@ -237,7 +222,7 @@ class RolesDetail extends React.Component {
           {(() => {
             if (this.state.loading) {
               return (
-                <div style={{ textAlign: "center" }}>
+                <div style={{ textAlign: 'center' }}>
                   <Spinner />
                 </div>
               );
@@ -248,28 +233,16 @@ class RolesDetail extends React.Component {
                 <Grid fluid>
                   <Row>
                     <Col md={3}>
-                      <FormGroup
-                        controlId="name"
-                        validationState={this.state.nameError ? "error" : null}
-                      >
+                      <FormGroup controlId="name" validationState={this.state.nameError ? 'error' : null}>
                         <ControlLabel>
                           Name <sup>*</sup>
                         </ControlLabel>
-                        <FormInputControl
-                          type="text"
-                          defaultValue={this.state.name}
-                          updateState={this.updateState}
-                        />
+                        <FormInputControl type="text" defaultValue={this.state.name} updateState={this.updateState} />
                         <HelpBlock>{this.state.nameError}</HelpBlock>
                       </FormGroup>
                     </Col>
                     <Col md={9}>
-                      <FormGroup
-                        controlId="description"
-                        validationState={
-                          this.state.descriptionError ? "error" : null
-                        }
-                      >
+                      <FormGroup controlId="description" validationState={this.state.descriptionError ? 'error' : null}>
                         <ControlLabel>
                           Description <sup>*</sup>
                         </ControlLabel>
@@ -292,13 +265,13 @@ class RolesDetail extends React.Component {
           {(() => {
             if (this.state.loading) {
               return (
-                <div style={{ textAlign: "center" }}>
+                <div style={{ textAlign: 'center' }}>
                   <Spinner />
                 </div>
               );
             }
 
-            var permissions = _.sortBy(this.props.permissions, "name");
+            var permissions = _.sortBy(this.props.permissions, 'name');
 
             return (
               <Table striped condensed hover bordered>
@@ -310,17 +283,14 @@ class RolesDetail extends React.Component {
                 </thead>
                 <tbody>
                   {_.map(permissions, (permission) => {
-                    var selected =
-                      this.state.selectedPermissionIds.indexOf(
-                        permission.id
-                      ) !== -1;
+                    var selected = this.state.selectedPermissionIds.indexOf(permission.id) !== -1;
                     return (
                       <tr
                         key={permission.id}
-                        className={selected ? "selected" : ""}
+                        className={selected ? 'selected' : ''}
                         onClick={this.permissionClicked.bind(this, permission)}
                       >
-                        <td style={{ whiteSpace: "nowrap" }}>
+                        <td style={{ whiteSpace: 'nowrap' }}>
                           <strong>{permission.name}</strong>
                         </td>
                         <td>{permission.description}</td>

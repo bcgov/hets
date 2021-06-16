@@ -48,9 +48,6 @@ class TopNav extends React.Component {
     Api.switchUserDistrict(district.id).then(() => {
       this.props.history.push(Constant.HOME_PATHNAME);
       window.location.reload();
-
-      //temporary fix, check if history.push works.
-      // this.context.router.push({ pathname: Constant.HOME_PATHNAME });
     });
   };
 
