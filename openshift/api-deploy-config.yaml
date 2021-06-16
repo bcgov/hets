@@ -87,6 +87,31 @@ objects:
                     secretKeyRef:
                       name: sso-configs
                       key: JWT_SSO_AUDIENCE
+                - name: ServiceAccount__User
+                  valueFrom:
+                    secretKeyRef:
+                      name: service-account
+                      key: SERVICE_USER
+                - name: ServiceAccount__Password
+                  valueFrom:
+                    secretKeyRef:
+                      name: service-account
+                      key: SERVICE_PASSWORD
+                - name: BCEID__OSID
+                  valueFrom:
+                    secretKeyRef:
+                      name: bceid-service
+                      key: OSID
+                - name: BCEID__URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: bceid-service
+                      key: URL
+                - name: BCEID__CacheLifespan
+                  valueFrom:
+                    secretKeyRef:
+                      name: bceid-service
+                      key: CacheLifespan
                 - name: ASPNETCORE_ENVIRONMENT
                   value: "${ASPNETCORE_ENVIRONMENT}"
                 - name: UploadPath
