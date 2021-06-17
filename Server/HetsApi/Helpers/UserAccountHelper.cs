@@ -43,7 +43,7 @@ namespace HetsApi.Helpers
         public static int? GetUsersDistrictId(DbAppContext context, HttpContext httpContext)
         {
             string userId = context.SmUserId;
-            int? districtId = context.HetUser.FirstOrDefault(x => x.SmUserId == userId)?.DistrictId;
+            int? districtId = context.HetUser.FirstOrDefault(x => x.SmUserId.ToUpper() == userId)?.DistrictId;
             return districtId;
         }
 
