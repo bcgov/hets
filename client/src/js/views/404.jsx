@@ -2,8 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import * as Constant from '../constants';
-
 class Main extends React.Component {
   static propTypes = {
     location: PropTypes.object,

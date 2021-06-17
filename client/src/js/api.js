@@ -1245,7 +1245,12 @@ export function deleteDocument(document) {
   return new ApiRequest(`/attachments/${document.id}/delete`).post();
 }
 
+export function getDownloadDocument(document) {
+  return new ApiRequest(`/attachments/${document.id}/download`);
+}
+
 export function getDownloadDocumentURL(document) {
+  //XXX: Not used in the application. Last checked 17 Jun 2021.
   // Not an API call, per se, as it must be called from the browser window.
   return `${window.location.origin}${window.location.pathname}api/attachments/${document.id}/download`;
 }

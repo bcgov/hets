@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { saveAs } from 'file-saver';
 
 import { connect } from 'react-redux';
 
@@ -8,6 +9,9 @@ import { Alert, Button, ButtonGroup, Glyphicon, ProgressBar, HelpBlock } from 'r
 import _ from 'lodash';
 
 import { request, buildApiPath } from '../../utils/http';
+
+///temporary fix testing
+import { keycloak } from '../../Keycloak';
 
 import * as Action from '../../actionTypes';
 import * as Api from '../../api';
@@ -22,7 +26,6 @@ import FilePicker from '../../components/FilePicker.jsx';
 import Authorize from '../../components/Authorize.jsx';
 
 import { formatDateTime } from '../../utils/date';
-
 
 class DocumentsListDialog extends React.Component {
   static propTypes = {
@@ -44,7 +47,7 @@ class DocumentsListDialog extends React.Component {
       uploadInProgress: false,
       percentUploaded: 0,
       showAttachmentDialog: false,
-      ui : {
+      ui: {
         sortField: props.ui.sortField || 'timestampSort',
         sortDesc: props.ui.sortDesc !== false,
       },
@@ -54,36 +57,45 @@ class DocumentsListDialog extends React.Component {
 
   componentDidMount() {
     this.setState({ loading: true });
-    Api.getUsers().then(() => {
-      return this.formatDocuments();
-    }).finally(() => {
-      this.setState({ loading: false });
-    });
+    Api.getUsers()
+      .then(() => {
+        return this.formatDocuments();
+      })
+      .finally(() => {
+        this.setState({ loading: false });
+      });
   }
 
   getUserName = (smUserId) => {
-    var user = _.find(this.props.users, user => { return user.smUserId === smUserId; });
+    var user = _.find(this.props.users, (user) => {
+      return user.smUserId === smUserId;
+    });
     return user ? user.name : smUserId;
   };
 
   updateUIState = (state, callback) => {
-    this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
+    this.setState({ ui: { ...this.state.ui, ...state } }, () => {
       store.dispatch({ type: Action.UPDATE_DOCUMENTS_UI, documents: this.state.ui });
-      if (callback) { callback(); }
+      if (callback) {
+        callback();
+      }
     });
   };
 
   fetch = () => {
     this.setState({ loading: true });
-    return this.props.parent.getDocumentsPromise(this.props.parent.id).then(() => {
-      this.formatDocuments();
-    }).finally(() => {
-      this.setState({ loading: false });
-    });
+    return this.props.parent
+      .getDocumentsPromise(this.props.parent.id)
+      .then(() => {
+        this.formatDocuments();
+      })
+      .finally(() => {
+        this.setState({ loading: false });
+      });
   };
 
   formatDocuments = () => {
-    var documents = _.map(this.props.documents, document => {
+    var documents = _.map(this.props.documents, (document) => {
       return {
         ...document,
         userName: this.getUserName(document.lastUpdateUserid),
@@ -103,14 +115,22 @@ class DocumentsListDialog extends React.Component {
   };
 
   downloadDocument = (document) => {
-    // Get path to the document and open it in a new browser window to initiate download.
-    window.open(Api.getDownloadDocumentURL(document));
+    let fName = '';
+    Api.getDownloadDocument(document)
+      .getBlob()
+      .then((res) => {
+        //use Header content-disposition for the file name
+        //looks like ""attachment; filename=adobe.pdf; filename*=UTF-8''adobe.pdf""
+        fName = res.getResponseHeader('content-disposition').match(/(?<=filename=)(.*)(?=; filename)/)[0];
+        saveAs(res.response, fName);
+      })
+      .catch((error) => console.log(error));
   };
 
   uploadFiles = (files) => {
     this.setState({ uploadError: '' });
 
-    var invalidFiles = _.filter(files, file => file.size > Constant.MAX_ATTACHMENT_FILE_SIZE);
+    var invalidFiles = _.filter(files, (file) => file.size > Constant.MAX_ATTACHMENT_FILE_SIZE);
     if (invalidFiles.length > 0) {
       this.setState({ uploadError: 'One of the selected files is too large.' });
       return;
@@ -126,46 +146,70 @@ class DocumentsListDialog extends React.Component {
         this.setState({ percentUploaded: percent });
       },
     };
-
-    this.uploadPromise = request(buildApiPath(this.props.parent.uploadDocumentPath), options).then(() => {
-      _.map(files, ((file) => {
-        this.props.parent.documentAdded(this.props.parent, file.name);
-      }));
-      this.setState({ uploadInProgress: false, percentUploaded: null });
-      this.fetch();
-    }, (err) => {
-      this.setState({ uploadInProgress: false, fileUploadError: err });
-    });
+    this.uploadPromise = request(buildApiPath(this.props.parent.uploadDocumentPath), options).then(
+      () => {
+        _.map(files, (file) => {
+          this.props.parent.documentAdded(this.props.parent, file.name);
+        });
+        this.setState({ uploadInProgress: false, percentUploaded: null });
+        this.fetch();
+      },
+      (err) => {
+        let message = err.message.split(`"`)[0].replace('"', ''); //extracts error message without HTML text.Odd issue where I can't detect \ so need to rely on "
+        this.setState({ uploadInProgress: false, uploadError: message });
+      }
+    );
   };
 
   render() {
     var parent = this.props.parent;
 
     return (
-      <ModalDialog id="documents-dialog" backdrop="static" bsSize="lg" show={ this.props.show } onClose={ this.props.onClose }
-        title={ <strong>Documents for { parent.name }</strong> }
-        footer={ <Button title="Close" onClick={ this.props.onClose }>Close</Button> }
+      <ModalDialog
+        id="documents-dialog"
+        backdrop="static"
+        bsSize="lg"
+        show={this.props.show}
+        onClose={this.props.onClose}
+        title={<strong>Documents for {parent.name}</strong>}
+        footer={
+          <Button title="Close" onClick={this.props.onClose}>
+            Close
+          </Button>
+        }
       >
         <div>
-          {this.state.uploadInProgress ?
-            <ProgressBar active now={ this.state.percentUploaded } min={ 5 }/>
-            :
+          {this.state.uploadInProgress ? (
+            <ProgressBar active now={this.state.percentUploaded} min={5} />
+          ) : (
             <Authorize>
               <div className="file-picker-container">
-                <FilePicker onFilesSelected={ this.uploadFiles }/>
-                <div>Select one or more files{ parent.name ? ` to attach to ${ parent.name }` : null }</div>
-                <HelpBlock>The maximum size of each file is { Constant.MAX_ATTACHMENT_FILE_SIZE_READABLE }.</HelpBlock>
-                { this.state.uploadError && <div className="has-error"><HelpBlock>{ this.state.uploadError }</HelpBlock></div> }
+                <FilePicker onFilesSelected={this.uploadFiles} />
+                <div>Select one or more files{parent.name ? ` to attach to ${parent.name}` : null}</div>
+                <HelpBlock>The maximum size of each file is {Constant.MAX_ATTACHMENT_FILE_SIZE_READABLE}.</HelpBlock>
+                {this.state.uploadError && (
+                  <div className="has-error">
+                    <HelpBlock>{this.state.uploadError}</HelpBlock>
+                  </div>
+                )}
               </div>
             </Authorize>
-          }
+          )}
           <div>
             {(() => {
-              if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+              if (this.state.loading) {
+                return (
+                  <div style={{ textAlign: 'center' }}>
+                    <Spinner />
+                  </div>
+                );
+              }
 
               var numDocuments = Object.keys(this.state.documents).length;
 
-              if (numDocuments === 0) { return <Alert bsStyle="success">No documents</Alert>; }
+              if (numDocuments === 0) {
+                return <Alert bsStyle="success">No documents</Alert>;
+              }
 
               var documents = _.sortBy(this.state.documents, this.state.ui.sortField);
               if (this.state.ui.sortDesc) {
@@ -173,31 +217,51 @@ class DocumentsListDialog extends React.Component {
               }
 
               var headers = [
-                { field: 'timestampSort',  title: 'Uploaded On' },
-                { field: 'userName',       title: 'Uploaded By' },
-                { field: 'fileName',       title: 'File Name'   },
-                { field: 'fileSize',       title: 'File Size'   },
-                { field: 'attachDocument', title: 'Attach Document', style: { textAlign: 'right'  } },
+                { field: 'timestampSort', title: 'Uploaded On' },
+                { field: 'userName', title: 'Uploaded By' },
+                { field: 'fileName', title: 'File Name' },
+                { field: 'fileSize', title: 'File Size' },
+                { field: 'attachDocument', title: 'Attach Document', style: { textAlign: 'right' } },
               ];
 
-              return <SortTable id="documents-list" sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={ headers }>
-                {
-                  _.map(documents, (document) => {
-                    return <tr key={ document.id }>
-                      <td>{ document.formattedTimestamp }</td>
-                      <td>{ document.userName }</td>
-                      <td>{ document.fileName }</td>
-                      <td>{ document.fileSizeDisplay }</td>
-                      <td style={{ textAlign: 'right' }}>
-                        <ButtonGroup>
-                          <Button title="Download Document" onClick={ this.downloadDocument.bind(this, document) } bsSize="xsmall"><Glyphicon glyph="download-alt" /></Button>
-                          <Authorize><DeleteButton name="Document" hide={ !document.canDelete } onConfirm={ this.deleteDocument.bind(this, document) }/></Authorize>
-                        </ButtonGroup>
-                      </td>
-                    </tr>;
-                  })
-                }
-              </SortTable>;
+              return (
+                <SortTable
+                  id="documents-list"
+                  sortField={this.state.ui.sortField}
+                  sortDesc={this.state.ui.sortDesc}
+                  onSort={this.updateUIState}
+                  headers={headers}
+                >
+                  {_.map(documents, (document) => {
+                    return (
+                      <tr key={document.id}>
+                        <td>{document.formattedTimestamp}</td>
+                        <td>{document.userName}</td>
+                        <td>{document.fileName}</td>
+                        <td>{document.fileSizeDisplay}</td>
+                        <td style={{ textAlign: 'right' }}>
+                          <ButtonGroup>
+                            <Button
+                              title="Download Document"
+                              onClick={this.downloadDocument.bind(this, document)}
+                              bsSize="xsmall"
+                            >
+                              <Glyphicon glyph="download-alt" />
+                            </Button>
+                            <Authorize>
+                              <DeleteButton
+                                name="Document"
+                                hide={!document.canDelete}
+                                onConfirm={this.deleteDocument.bind(this, document)}
+                              />
+                            </Authorize>
+                          </ButtonGroup>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </SortTable>
+              );
             })()}
           </div>
         </div>

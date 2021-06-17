@@ -242,7 +242,7 @@ export function jsonRequest(path, options) {
 }
 
 export function buildApiPath(path) {
-  return `${ROOT_API_PREFIX}/api/${path}`.replace('//', '/'); // remove double slashes
+  return `/api${path}`.replace('//', '/'); // remove double slashes
 }
 
 export function ApiRequest(path, options) {
@@ -257,6 +257,10 @@ ApiRequest.prototype.get = function apiGet(params, options) {
     ...this.options,
     ...options,
   });
+};
+
+ApiRequest.prototype.getBlob = function apiGet() {
+  return request(this.path, { method: 'GET', responseType: 'blob' });
 };
 
 ApiRequest.prototype.post = function apiPost(data, options) {

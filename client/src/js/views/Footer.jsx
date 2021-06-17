@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { HOME_PATHNAME, VERSION_PATHNAME } from '../constants';
+import { VERSION_PATHNAME, PERMISSION_VERSION } from '../constants';
 
 class Footer extends React.Component {
   static propTypes = {
@@ -39,9 +39,11 @@ class Footer extends React.Component {
                   <li>
                     <a href="http://www2.gov.bc.ca/gov/content/home/contact-us">Contact Us</a>
                   </li>
-                  <li className="pull-right" style={{ border: 0 }}>
-                    <Link to={VERSION_PATHNAME}>Version</Link>
-                  </li>
+                  {this.props.currentUser.hasPermission(PERMISSION_VERSION) && (
+                    <li className="pull-right" style={{ border: 0 }}>
+                      <Link to={VERSION_PATHNAME}>Version</Link>
+                    </li>
+                  )}
                 </ul>
               </Row>
             </div>
