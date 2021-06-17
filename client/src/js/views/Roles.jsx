@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+import { Link } from 'react-router-dom';
 import _ from 'lodash';
 
 import * as Action from '../actionTypes';
@@ -40,7 +40,7 @@ class Roles extends React.Component {
         params: props.search.params || null,
       },
 
-      ui : {
+      ui: {
         sortField: props.ui.sortField || 'name',
         sortDesc: props.ui.sortDesc === true,
       },
@@ -59,16 +59,23 @@ class Roles extends React.Component {
   };
 
   updateSearchState = (state, callback) => {
-    this.setState({ search: { ...this.state.search, ...state }}, () =>{
-      store.dispatch({ type: Action.UPDATE_ROLES_SEARCH, roles: this.state.search });
-      if (callback) { callback(); }
+    this.setState({ search: { ...this.state.search, ...state } }, () => {
+      store.dispatch({
+        type: Action.UPDATE_ROLES_SEARCH,
+        roles: this.state.search,
+      });
+      if (callback) {
+        callback();
+      }
     });
   };
 
   updateUIState = (state, callback) => {
-    this.setState({ ui: { ...this.state.ui, ...state }}, () =>{
+    this.setState({ ui: { ...this.state.ui, ...state } }, () => {
       store.dispatch({ type: Action.UPDATE_ROLES_UI, roles: this.state.ui });
-      if (callback) { callback(); }
+      if (callback) {
+        callback();
+      }
     });
   };
 
@@ -81,83 +88,129 @@ class Roles extends React.Component {
   render() {
     var numRoles = this.state.loading ? '...' : Object.keys(this.props.roles).length;
 
-    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) {
-      return (
-        <div>You do not have permission to view this page.</div>
-      );
+    if (
+      !this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) &&
+      !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)
+    ) {
+      return <div>You do not have permission to view this page.</div>;
     }
 
-    return <div id="roles-list">
-      <PageHeader>Roles ({ numRoles })
-        <ButtonGroup id="roles-buttons" className="pull-right">
-          <PrintButton/>
-        </ButtonGroup>
-      </PageHeader>
-      <SearchBar>
-        <Row>
-          <Col xs={9} sm={10} id="filters">
-            <ButtonToolbar>
-              <SearchControl id="search" search={ this.state.search } updateState={ this.updateSearchState }
-                items={[
-                  { id: 'name',        name: 'Name' },
-                  { id: 'description', name: 'Description' },
-                ]}
-              />
-            </ButtonToolbar>
-          </Col>
-        </Row>
-      </SearchBar>
+    return (
+      <div id="roles-list">
+        <PageHeader>
+          Roles ({numRoles})
+          <ButtonGroup id="roles-buttons" className="pull-right">
+            <PrintButton />
+          </ButtonGroup>
+        </PageHeader>
+        <SearchBar>
+          <Row>
+            <Col xs={9} sm={10} id="filters">
+              <ButtonToolbar>
+                <SearchControl
+                  id="search"
+                  search={this.state.search}
+                  updateState={this.updateSearchState}
+                  items={[
+                    { id: 'name', name: 'Name' },
+                    { id: 'description', name: 'Description' },
+                  ]}
+                />
+              </ButtonToolbar>
+            </Col>
+          </Row>
+        </SearchBar>
 
-      {(() => {
-        if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
-        var addRoleButton = <LinkContainer to={{ pathname: `${ Constant.ROLES_PATHNAME }/0` }}>
-          <Authorize><Button title="Add Role" bsSize="xsmall"><Glyphicon glyph="plus" />&nbsp;<strong>Add Role</strong></Button></Authorize>
-        </LinkContainer>;
-        if (Object.keys(this.props.roles).length === 0) { return <Alert bsStyle="success">No roles { addRoleButton }</Alert>; }
-
-        var roles = _.sortBy(_.filter(this.props.roles, role => {
-          if (!this.state.search.params) {
-            return true;
+        {(() => {
+          if (this.state.loading) {
+            return (
+              <div style={{ textAlign: 'center' }}>
+                <Spinner />
+              </div>
+            );
           }
-          return role[this.state.search.key] && role[this.state.search.key].toLowerCase().indexOf(this.state.search.text.toLowerCase()) !== -1;
-        }), this.state.ui.sortField);
 
-        if (this.state.ui.sortDesc) {
-          _.reverse(roles);
-        }
-
-        return <SortTable sortField={ this.state.ui.sortField } sortDesc={ this.state.ui.sortDesc } onSort={ this.updateUIState } headers={[
-          { field: 'name',        title: 'Name'    },
-          { field: 'description', title: 'Description' },
-          { field: 'addRole',     title: 'Add Role',  style: { textAlign: 'right'  },
-            node: addRoleButton,
-          },
-        ]}>
-          {
-            _.map(roles, (role) => {
-              return <tr key={ role.id }>
-                <td>{ role.name }</td>
-                <td>{ role.description }</td>
-                <td style={{ textAlign: 'right' }}>
-                  <ButtonGroup>
-                    <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.delete.bind(this, role) }/> }>
-                      <Button className={ role.canDelete ? '' : 'hidden' } title="Delete Role" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
-                    </OverlayTrigger>
-                    <LinkContainer to={{ pathname: `${ Constant.ROLES_PATHNAME }/${ role.id }` }}>
-                      <Button className={ role.canEdit ? '' : 'hidden' } title="Edit Role" bsSize="xsmall"><Glyphicon glyph="pencil" /></Button>
-                    </LinkContainer>
-                  </ButtonGroup>
-                </td>
-              </tr>;
-            })
+          var addRoleButton = (
+            <Link to={`${Constant.ROLES_PATHNAME}/0`}>
+              <Authorize>
+                <Button title="Add Role" bsSize="xsmall">
+                  <Glyphicon glyph="plus" />
+                  &nbsp;<strong>Add Role</strong>
+                </Button>
+              </Authorize>
+            </Link>
+          );
+          if (Object.keys(this.props.roles).length === 0) {
+            return <Alert bsStyle="success">No roles {addRoleButton}</Alert>;
           }
-        </SortTable>;
-      })()}
-    </div>;
+
+          var roles = _.sortBy(
+            _.filter(this.props.roles, (role) => {
+              if (!this.state.search.params) {
+                return true;
+              }
+              return (
+                role[this.state.search.key] &&
+                role[this.state.search.key].toLowerCase().indexOf(this.state.search.text.toLowerCase()) !== -1
+              );
+            }),
+            this.state.ui.sortField
+          );
+
+          if (this.state.ui.sortDesc) {
+            _.reverse(roles);
+          }
+
+          return (
+            <SortTable
+              sortField={this.state.ui.sortField}
+              sortDesc={this.state.ui.sortDesc}
+              onSort={this.updateUIState}
+              headers={[
+                { field: 'name', title: 'Name' },
+                { field: 'description', title: 'Description' },
+                {
+                  field: 'addRole',
+                  title: 'Add Role',
+                  style: { textAlign: 'right' },
+                  node: addRoleButton,
+                },
+              ]}
+            >
+              {_.map(roles, (role) => {
+                return (
+                  <tr key={role.id}>
+                    <td>{role.name}</td>
+                    <td>{role.description}</td>
+                    <td style={{ textAlign: 'right' }}>
+                      <ButtonGroup>
+                        <OverlayTrigger
+                          trigger="click"
+                          placement="top"
+                          rootClose
+                          overlay={<Confirm onConfirm={this.delete.bind(this, role)} />}
+                        >
+                          <Button className={role.canDelete ? '' : 'hidden'} title="Delete Role" bsSize="xsmall">
+                            <Glyphicon glyph="trash" />
+                          </Button>
+                        </OverlayTrigger>
+                        <Link to={`${Constant.ROLES_PATHNAME}/${role.id}`}>
+                          <Button className={role.canEdit ? '' : 'hidden'} title="Edit Role" bsSize="xsmall">
+                            <Glyphicon glyph="pencil" />
+                          </Button>
+                        </Link>
+                      </ButtonGroup>
+                    </td>
+                  </tr>
+                );
+              })}
+            </SortTable>
+          );
+        })()}
+      </div>
+    );
   }
 }
-
 
 function mapStateToProps(state) {
   return {

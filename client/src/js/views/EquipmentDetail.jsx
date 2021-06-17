@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Well, Row, Col } from 'react-bootstrap';
 import { Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import _ from 'lodash';
@@ -47,9 +47,9 @@ TODO:
 
 */
 
-const EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE = 'This equipment is part of an In Progress ' +
+const EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE =
+  'This equipment is part of an In Progress ' +
   'Rental Request. Release the list (finish hiring / delete) before making this change';
-
 
 class EquipmentDetail extends React.Component {
   static propTypes = {
@@ -81,7 +81,7 @@ class EquipmentDetail extends React.Component {
       showNotesDialog: false,
       showChangeStatusDialog: false,
       equipmentPhysicalAttachment: {},
-      ui : {
+      ui: {
         // Physical Attachments
         sortField: props.ui.sortField || 'attachmentTypeName',
         sortDesc: props.ui.sortDesc === true,
@@ -90,7 +90,15 @@ class EquipmentDetail extends React.Component {
   }
 
   componentDidMount() {
-    const { equipment, equipmentId } = this.props;
+    store.dispatch({
+      type: Action.SET_ACTIVE_EQUIPMENT_ID_UI,
+      equipmentId: this.props.match.params.equipmentId,
+    });
+
+    let equipmentId = this.props.match.params.equipmentId;
+
+    const { equipment } = this.props;
+
     // Only show loading spinner if there is no existing equipment in the store
     if (equipment) {
       this.setState({ loading: false });
@@ -101,22 +109,14 @@ class EquipmentDetail extends React.Component {
     Api.getEquipmentDocuments(equipmentId).then(() => this.setState({ loadingDocuments: false }));
 
     // Re-fetch equipment every time
-    Promise.all([
-      this.fetch(),
-    ]).then(() => {
+    Promise.all([this.fetch()]).then(() => {
       this.setState({ loading: false });
     });
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.params.equipmentId !== this.props.params.equipmentId) {
-      this.fetch();
-    }
-  }
-
   fetch = () => {
     this.setState({ reloading: true });
-    return Api.getEquipment(this.props.equipmentId).then(() => this.setState({ reloading: false }));
+    return Api.getEquipment(this.props.match.params.equipmentId).then(() => this.setState({ reloading: false }));
   };
 
   showNotes = () => {
@@ -137,8 +137,13 @@ class EquipmentDetail extends React.Component {
 
   updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
-      store.dispatch({ type: Action.UPDATE_PHYSICAL_ATTACHMENTS_UI, equipmentPhysicalAttachments: this.state.ui });
-      if (callback) { callback(); }
+      store.dispatch({
+        type: Action.UPDATE_PHYSICAL_ATTACHMENTS_UI,
+        equipmentPhysicalAttachments: this.state.ui,
+      });
+      if (callback) {
+        callback();
+      }
     });
   };
 
@@ -188,7 +193,7 @@ class EquipmentDetail extends React.Component {
   };
 
   physicalAttachmentsAdded = () => {
-    var equipId = this.props.params.equipmentId;
+    var equipId = this.props.match.params.equipmentId;
     Api.getEquipment(equipId);
   };
 
@@ -204,32 +209,42 @@ class EquipmentDetail extends React.Component {
   };
 
   physicalAttachmentEdited = () => {
-    var equipId = this.props.params.equipmentId;
+    var equipId = this.props.match.params.equipmentId;
     Api.getEquipment(equipId);
   };
 
   deletePhysicalAttachment = (attachmentId) => {
     Api.deletePhysicalAttachment(attachmentId).then(() => {
-      let attachment = _.find(this.props.equipment.equipmentAttachments, ((attachment) => attachment.id === attachmentId ));
+      let attachment = _.find(
+        this.props.equipment.equipmentAttachments,
+        (attachment) => attachment.id === attachmentId
+      );
       Log.equipmentAttachmentDeleted(this.props.equipment, attachment.typeName);
-      var equipId = this.props.params.equipmentId;
+      var equipId = this.props.match.params.equipmentId;
       Api.getEquipment(equipId);
     });
   };
 
   getLastVerifiedStyle = (equipment) => {
     var daysSinceVerified = equipment.daysSinceVerified;
-    if (daysSinceVerified >= Constant.EQUIPMENT_DAYS_SINCE_VERIFIED_CRITICAL) { return 'danger'; }
-    if (daysSinceVerified >= Constant.EQUIPMENT_DAYS_SINCE_VERIFIED_WARNING) { return 'warning'; }
+    if (daysSinceVerified >= Constant.EQUIPMENT_DAYS_SINCE_VERIFIED_CRITICAL) {
+      return 'danger';
+    }
+    if (daysSinceVerified >= Constant.EQUIPMENT_DAYS_SINCE_VERIFIED_WARNING) {
+      return 'warning';
+    }
     return 'success';
   };
 
   getStatuses = () => {
-    var dropdownItems = _.pull([
-      Constant.EQUIPMENT_STATUS_CODE_APPROVED,
-      Constant.EQUIPMENT_STATUS_CODE_PENDING,
-      Constant.EQUIPMENT_STATUS_CODE_ARCHIVED,
-    ], this.props.equipment.status);
+    var dropdownItems = _.pull(
+      [
+        Constant.EQUIPMENT_STATUS_CODE_APPROVED,
+        Constant.EQUIPMENT_STATUS_CODE_PENDING,
+        Constant.EQUIPMENT_STATUS_CODE_ARCHIVED,
+      ],
+      this.props.equipment.status
+    );
     if (this.props.equipment.ownerStatus === Constant.OWNER_STATUS_CODE_PENDING) {
       return _.pull(dropdownItems, Constant.EQUIPMENT_STATUS_CODE_APPROVED);
     } else if (this.props.equipment.ownerStatus === Constant.OWNER_STATUS_CODE_ARCHIVED) {
@@ -248,46 +263,67 @@ class EquipmentDetail extends React.Component {
       <div id="equipment-detail">
         <div>
           {(() => {
-            if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+            if (this.state.loading) {
+              return (
+                <div className="spinner-container">
+                  <Spinner />
+                </div>
+              );
+            }
 
             return (
               <div className="top-container">
                 <Row id="equipment-top">
                   <Col sm={9}>
                     <Row>
-                      { this.props.equipment &&
+                      {this.props.equipment && (
                         <StatusDropdown
                           id="equipment-status-dropdown"
                           status={equipment.status}
                           statuses={this.getStatuses()}
                           disabled={equipment.activeRentalRequest}
                           disabledTooltip={EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
-                          onSelect={this.updateStatusState}/>
-                      }
-                      <Button className="mr-5 ml-5" title="Notes" onClick={ this.showNotes } disabled={ loadingNotes }>Notes { !loadingNotes && `(${ this.props.notes.length })` }</Button>
-                      <Button title="Documents" onClick={ this.showDocuments } disabled={ loadingDocuments }>Documents { !loadingDocuments && `(${ Object.keys(this.props.documents).length })` }</Button>
+                          onSelect={this.updateStatusState}
+                        />
+                      )}
+                      <Button className="mr-5 ml-5" title="Notes" onClick={this.showNotes} disabled={loadingNotes}>
+                        Notes {!loadingNotes && `(${this.props.notes.length})`}
+                      </Button>
+                      <Button title="Documents" onClick={this.showDocuments} disabled={loadingDocuments}>
+                        Documents {!loadingDocuments && `(${Object.keys(this.props.documents).length})`}
+                      </Button>
                     </Row>
                   </Col>
                   <Col sm={3}>
                     <div className="pull-right">
-                      <PrintButton/>
-                      <ReturnButton/>
+                      <PrintButton />
+                      <ReturnButton />
                     </div>
                   </Col>
                 </Row>
                 <Row id="equipment-bottom">
-                  <Label className={ equipment.isMaintenanceContractor ? '' : 'hide' }>Maintenance Contractor</Label>
-                  <Label bsStyle={ equipment.isHired ? 'success' : 'default' }>{ equipment.isHired ? 'Hired' : 'Not Hired' }</Label>
-                  <Label bsStyle={ lastVerifiedStyle }>Last Verified: { formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</Label>
+                  <Label className={equipment.isMaintenanceContractor ? '' : 'hide'}>Maintenance Contractor</Label>
+                  <Label bsStyle={equipment.isHired ? 'success' : 'default'}>
+                    {equipment.isHired ? 'Hired' : 'Not Hired'}
+                  </Label>
+                  <Label bsStyle={lastVerifiedStyle}>
+                    Last Verified: {formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY)}
+                  </Label>
                 </Row>
                 <div className="equipment-header">
-                  <PageHeader title="Equipment Id" subTitle={`${ equipment.equipmentCode } (${ equipment.typeName })`}/>
-                  <PageHeader title="Company" subTitle={<Link to={`${Constant.OWNERS_PATHNAME}/${equipment.ownerId}`}>{ equipment.organizationName }</Link>}/>
+                  <PageHeader title="Equipment Id" subTitle={`${equipment.equipmentCode} (${equipment.typeName})`} />
+                  <PageHeader
+                    title="Company"
+                    subTitle={
+                      <Link to={`${Constant.OWNERS_PATHNAME}/${equipment.ownerId}`}>{equipment.organizationName}</Link>
+                    }
+                  />
                   <div className="district-office">
-                    <strong>District Office:</strong> { equipment.districtName }
+                    <strong>District Office:</strong> {equipment.districtName}
                   </div>
                   <div className="local-area">
-                    <strong>Service/Local Area:</strong> { equipment.localArea && `${ equipment.localArea.serviceAreaId } - ${ equipment.localAreaName }` }
+                    <strong>Service/Local Area:</strong>{' '}
+                    {equipment.localArea && `${equipment.localArea.serviceAreaId} - ${equipment.localAreaName}`}
                   </div>
                 </div>
               </div>
@@ -302,111 +338,157 @@ class EquipmentDetail extends React.Component {
                   editButtonTitle="Edit Equipment"
                   editButtonDisabled={equipment.activeRentalRequest}
                   editButtonDisabledTooltip={EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
-                  onEditClicked={ this.openEditDialog }/>
+                  onEditClicked={this.openEditDialog}
+                />
                 {(() => {
-                  if (this.state.loading) { return <div className="spinner-container"><Spinner /></div>; }
+                  if (this.state.loading) {
+                    return (
+                      <div className="spinner-container">
+                        <Spinner />
+                      </div>
+                    );
+                  }
 
-                  return <Row className="equal-height">
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment Type">{ equipment.typeName }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Make">{ equipment.make }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Model">{ equipment.model }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Year">{ equipment.year }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Size">{ equipment.size }</ColDisplay>
-                    </Col>
-                    { equipment.isDumpTruck &&
+                  return (
+                    <Row className="equal-height">
                       <Col lg={4} md={6} sm={12} xs={12}>
-                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Licenced GVW">{ equipment.licencedGvw }</ColDisplay>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Equipment Type">
+                          {equipment.typeName}
+                        </ColDisplay>
                       </Col>
-                    }
-                    { equipment.isDumpTruck &&
                       <Col lg={4} md={6} sm={12} xs={12}>
-                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Truck Legal Capacity">{ equipment.legalCapacity }</ColDisplay>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Make">
+                          {equipment.make}
+                        </ColDisplay>
                       </Col>
-                    }
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Type">{ equipment.type }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Licence Number">{ equipment.licencePlate }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Serial Number">
-                        { equipment.serialNumber }
-                        { equipment.hasDuplicates ? <BadgeLabel bsStyle="danger">!</BadgeLabel> : null }
-                      </ColDisplay>
-                    </Col>
-                    { equipment.isDumpTruck &&
                       <Col lg={4} md={6} sm={12} xs={12}>
-                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Pup Legal Capacity">{ equipment.pupLegalCapacity }</ColDisplay>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Model">
+                          {equipment.model}
+                        </ColDisplay>
                       </Col>
-                    }
-                  </Row>;
+                      <Col lg={4} md={6} sm={12} xs={12}>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Year">
+                          {equipment.year}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={4} md={6} sm={12} xs={12}>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Size">
+                          {equipment.size}
+                        </ColDisplay>
+                      </Col>
+                      {equipment.isDumpTruck && (
+                        <Col lg={4} md={6} sm={12} xs={12}>
+                          <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Licenced GVW">
+                            {equipment.licencedGvw}
+                          </ColDisplay>
+                        </Col>
+                      )}
+                      {equipment.isDumpTruck && (
+                        <Col lg={4} md={6} sm={12} xs={12}>
+                          <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Truck Legal Capacity">
+                            {equipment.legalCapacity}
+                          </ColDisplay>
+                        </Col>
+                      )}
+                      <Col lg={4} md={6} sm={12} xs={12}>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Type">
+                          {equipment.type}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={4} md={6} sm={12} xs={12}>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Licence Number">
+                          {equipment.licencePlate}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={4} md={6} sm={12} xs={12}>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Serial Number">
+                          {equipment.serialNumber}
+                          {equipment.hasDuplicates ? <BadgeLabel bsStyle="danger">!</BadgeLabel> : null}
+                        </ColDisplay>
+                      </Col>
+                      {equipment.isDumpTruck && (
+                        <Col lg={4} md={6} sm={12} xs={12}>
+                          <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Pup Legal Capacity">
+                            {equipment.pupLegalCapacity}
+                          </ColDisplay>
+                        </Col>
+                      )}
+                    </Row>
+                  );
                 })()}
               </Well>
             </Col>
             <Col md={12}>
               <Well>
-                <Authorize><SubHeader title="Attachments" editButtonTitle="Add Attachment" editIcon="plus" onEditClicked={ this.openPhysicalAttachmentDialog }/></Authorize>
+                <Authorize>
+                  <SubHeader
+                    title="Attachments"
+                    editButtonTitle="Add Attachment"
+                    editIcon="plus"
+                    onEditClicked={this.openPhysicalAttachmentDialog}
+                  />
+                </Authorize>
                 {(() => {
-                  if (this.state.loading ) { return <div className="spinner-container"><Spinner/></div>; }
-                  if (!equipment.equipmentAttachments || Object.keys(equipment.equipmentAttachments).length === 0) { return <Alert bsStyle="success">No Attachments</Alert>; }
+                  if (this.state.loading) {
+                    return (
+                      <div className="spinner-container">
+                        <Spinner />
+                      </div>
+                    );
+                  }
+                  if (!equipment.equipmentAttachments || Object.keys(equipment.equipmentAttachments).length === 0) {
+                    return <Alert bsStyle="success">No Attachments</Alert>;
+                  }
 
                   var physicalAttachments = _.sortBy(equipment.equipmentAttachments, this.state.ui.sortField);
                   if (this.state.ui.sortDesc) {
                     _.reverse(physicalAttachments);
                   }
 
+                  var headers = [{ field: 'attachmentTypeName', title: 'Type' }, { field: 'blank' }];
 
-                  var headers = [
-                    { field: 'attachmentTypeName', title: 'Type' },
-                    { field: 'blank' },
-                  ];
-
-                  return <SortTable
-                    id="physical-attachment-list"
-                    sortField={ this.state.ui.sortField }
-                    sortDesc={ this.state.ui.sortDesc }
-                    onSort={ this.updateUIState }
-                    headers={ headers }
-                  >
-                    {
-                      _.map(physicalAttachments, (attachment) => {
-                        return <tr key={ attachment.id }>
-                          <td>{ attachment.typeName }</td>
-                          <td style={{ textAlign: 'right' }}>
-                            <ButtonGroup>
-                              <Button
-                                title="Edit Attachment"
-                                bsSize="xsmall"
-                                onClick={ this.openPhysicalAttachmentEditDialog.bind(this, attachment) }
-                              >
-                                <Glyphicon glyph="pencil" />
-                              </Button>
-                              <Authorize>
-                                <OverlayTrigger
-                                  trigger="click"
-                                  placement="top"
-                                  rootClose
-                                  overlay={ <Confirm onConfirm={ this.deletePhysicalAttachment.bind(this, attachment.id) }/> }
+                  return (
+                    <SortTable
+                      id="physical-attachment-list"
+                      sortField={this.state.ui.sortField}
+                      sortDesc={this.state.ui.sortDesc}
+                      onSort={this.updateUIState}
+                      headers={headers}
+                    >
+                      {_.map(physicalAttachments, (attachment) => {
+                        return (
+                          <tr key={attachment.id}>
+                            <td>{attachment.typeName}</td>
+                            <td style={{ textAlign: 'right' }}>
+                              <ButtonGroup>
+                                <Button
+                                  title="Edit Attachment"
+                                  bsSize="xsmall"
+                                  onClick={this.openPhysicalAttachmentEditDialog.bind(this, attachment)}
                                 >
-                                  <Button title="Delete Attachment" bsSize="xsmall"><Glyphicon glyph="trash" /></Button>
-                                </OverlayTrigger>
-                              </Authorize>
-                            </ButtonGroup>
-                          </td>
-                        </tr>;
-                      })
-                    }
-                  </SortTable>;
+                                  <Glyphicon glyph="pencil" />
+                                </Button>
+                                <Authorize>
+                                  <OverlayTrigger
+                                    trigger="click"
+                                    placement="top"
+                                    rootClose
+                                    overlay={
+                                      <Confirm onConfirm={this.deletePhysicalAttachment.bind(this, attachment.id)} />
+                                    }
+                                  >
+                                    <Button title="Delete Attachment" bsSize="xsmall">
+                                      <Glyphicon glyph="trash" />
+                                    </Button>
+                                  </OverlayTrigger>
+                                </Authorize>
+                              </ButtonGroup>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </SortTable>
+                  );
                 })()}
               </Well>
             </Col>
@@ -419,119 +501,158 @@ class EquipmentDetail extends React.Component {
                   editButtonTitle="Edit Seniority"
                   editButtonDisabled={equipment.activeRentalRequest}
                   editButtonDisabledTooltip={EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
-                  onEditClicked={ this.openSeniorityDialog }/>
+                  onEditClicked={this.openSeniorityDialog}
+                />
                 {(() => {
-                  if (this.state.loading) { return <div className="spinner-container"><Spinner/></div>; }
+                  if (this.state.loading) {
+                    return (
+                      <div className="spinner-container">
+                        <Spinner />
+                      </div>
+                    );
+                  }
 
-                  return <Row>
-                    <Col lg={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Seniority">{ equipment.seniorityString }</ColDisplay>
-                    </Col>
-                    <Col lg={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Hours YTD">{ formatHours(equipment.hoursYtd) }</ColDisplay>
-                    </Col>
-                    <Col lg={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.yearMinus1 }</span> }>{ formatHours(equipment.serviceHoursLastYear) }</ColDisplay>
-                    </Col>
-                    <Col lg={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.yearMinus2 }</span> }>{ formatHours(equipment.serviceHoursTwoYearsAgo) }</ColDisplay>
-                    </Col>
-                    <Col lg={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label={ <span>Hours { equipment.yearMinus3 }</span> }>{ formatHours(equipment.serviceHoursThreeYearsAgo) }</ColDisplay>
-                    </Col>
-                    <Col lg={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Years Registered">{ equipment.yearsOfService }</ColDisplay>
-                    </Col>
-                    <Col lg={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Received Date">
-                        { formatDateTime(equipment.receivedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
-                      </ColDisplay>
-                    </Col>
-                    <Col lg={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Registered Date">
-                        { formatDateTime(equipment.approvedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }
-                      </ColDisplay>
-                    </Col>
-                    <Col lg={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Override Status">
-                        { equipment.isSeniorityOverridden ? 'Manually Updated' : 'Not Overriden'}
-                      </ColDisplay>
-                    </Col>
-                    <Col lg={12}>
-                      <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Override Reason">{ equipment.seniorityOverrideReason }</ColDisplay>
-                    </Col>
-                  </Row>;
+                  return (
+                    <Row>
+                      <Col lg={12}>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Seniority">
+                          {equipment.seniorityString}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={12}>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Hours YTD">
+                          {formatHours(equipment.hoursYtd)}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={12}>
+                        <ColDisplay
+                          labelProps={{ xs: 4 }}
+                          fieldProps={{ xs: 8 }}
+                          label={<span>Hours {equipment.yearMinus1}</span>}
+                        >
+                          {formatHours(equipment.serviceHoursLastYear)}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={12}>
+                        <ColDisplay
+                          labelProps={{ xs: 4 }}
+                          fieldProps={{ xs: 8 }}
+                          label={<span>Hours {equipment.yearMinus2}</span>}
+                        >
+                          {formatHours(equipment.serviceHoursTwoYearsAgo)}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={12}>
+                        <ColDisplay
+                          labelProps={{ xs: 4 }}
+                          fieldProps={{ xs: 8 }}
+                          label={<span>Hours {equipment.yearMinus3}</span>}
+                        >
+                          {formatHours(equipment.serviceHoursThreeYearsAgo)}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={12}>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Years Registered">
+                          {equipment.yearsOfService}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={12}>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Received Date">
+                          {formatDateTime(equipment.receivedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY)}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={12}>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Registered Date">
+                          {formatDateTime(equipment.approvedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY)}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={12}>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Override Status">
+                          {equipment.isSeniorityOverridden ? 'Manually Updated' : 'Not Overriden'}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={12}>
+                        <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Override Reason">
+                          {equipment.seniorityOverrideReason}
+                        </ColDisplay>
+                      </Col>
+                    </Row>
+                  );
                 })()}
               </Well>
             </Col>
             <Col md={12}>
               <Well>
-                <SubHeader title="History"/>
-                { equipment.historyEntity && <History historyEntity={ equipment.historyEntity } refresh={ !this.state.reloading } /> }
+                <SubHeader title="History" />
+                {equipment.historyEntity && (
+                  <History historyEntity={equipment.historyEntity} refresh={!this.state.reloading} />
+                )}
               </Well>
             </Col>
           </Row>
         </div>
-        { this.state.showChangeStatusDialog && (
+        {this.state.showChangeStatusDialog && (
           <EquipmentChangeStatusDialog
-            show={ this.state.showChangeStatusDialog}
-            status={ this.state.status }
-            equipment={ equipment }
-            onClose={ this.closeChangeStatusDialog }
-            onStatusChanged={ this.onStatusChanged }/>
+            show={this.state.showChangeStatusDialog}
+            status={this.state.status}
+            equipment={equipment}
+            onClose={this.closeChangeStatusDialog}
+            onStatusChanged={this.onStatusChanged}
+          />
         )}
-        { this.state.showNotesDialog && (
+        {this.state.showNotesDialog && (
           <NotesDialog
             show={this.state.showNotesDialog}
-            id={this.props.params.equipmentId}
+            id={this.props.match.params.equipmentId}
             notes={this.props.notes}
             getNotes={Api.getEquipmentNotes}
             saveNote={Api.addEquipmentNote}
-            onClose={this.closeNotesDialog}/>
+            onClose={this.closeNotesDialog}
+          />
         )}
-        { this.state.showDocumentsDialog && (
+        {this.state.showDocumentsDialog && (
           <DocumentsListDialog
-            show={ this.props.equipment && this.state.showDocumentsDialog }
-            parent={ this.props.equipment }
-            onClose={ this.closeDocumentsDialog }/>
+            show={this.props.equipment && this.state.showDocumentsDialog}
+            parent={this.props.equipment}
+            onClose={this.closeDocumentsDialog}
+          />
         )}
-        { this.state.showEditDialog && (
-          <EquipmentEditDialog
-            show={ this.state.showEditDialog }
-            onClose= { this.closeEditDialog }
-            equipment={ equipment }/>
+        {this.state.showEditDialog && (
+          <EquipmentEditDialog show={this.state.showEditDialog} onClose={this.closeEditDialog} equipment={equipment} />
         )}
-        { this.state.showSeniorityDialog && (
+        {this.state.showSeniorityDialog && (
           <SeniorityEditDialog
-            show={ this.state.showSeniorityDialog }
-            onClose={ this.closeSeniorityDialog }
-            equipment={ equipment }/>
+            show={this.state.showSeniorityDialog}
+            onClose={this.closeSeniorityDialog}
+            equipment={equipment}
+          />
         )}
-        { this.state.showPhysicalAttachmentDialog && (
+        {this.state.showPhysicalAttachmentDialog && (
           <AttachmentAddDialog
-            show={ this.state.showPhysicalAttachmentDialog }
-            onSave={ this.physicalAttachmentsAdded }
-            onClose={ this.closePhysicalAttachmentDialog }
-            equipment={ equipment }/>
+            show={this.state.showPhysicalAttachmentDialog}
+            onSave={this.physicalAttachmentsAdded}
+            onClose={this.closePhysicalAttachmentDialog}
+            equipment={equipment}
+          />
         )}
-        { this.state.showPhysicalAttachmentEditDialog && (
+        {this.state.showPhysicalAttachmentEditDialog && (
           <AttachmentEditDialog
-            show={ this.state.showPhysicalAttachmentEditDialog }
-            onSave={ this.physicalAttachmentEdited }
-            onClose={ this.closePhysicalAttachmentEditDialog }
-            equipment={ equipment }
-            attachment={ this.state.equipmentPhysicalAttachment }/>
+            show={this.state.showPhysicalAttachmentEditDialog}
+            onSave={this.physicalAttachmentEdited}
+            onClose={this.closePhysicalAttachmentEditDialog}
+            equipment={equipment}
+            attachment={this.state.equipmentPhysicalAttachment}
+          />
         )}
       </div>
     );
   }
 }
 
-
 function mapStateToProps(state) {
   return {
     equipment: activeEquipmentSelector(state),
-    equipmentId: activeEquipmentIdSelector(state),
+    equipmentId: activeEquipmentIdSelector(state), //TODO: check if this is still needed. Seems to work when commented out.
     notes: state.models.equipmentNotes,
     attachments: state.models.equipmentAttachments,
     documents: state.models.documents,

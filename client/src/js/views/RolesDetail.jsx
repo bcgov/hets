@@ -22,15 +22,14 @@ import PrintButton from '../components/PrintButton.jsx';
 
 import { isBlank } from '../utils/string';
 
-
 class RolesDetail extends React.Component {
   static propTypes = {
     currentUser: PropTypes.object,
     role: PropTypes.object,
     rolePermissions: PropTypes.object,
     permissions: PropTypes.object,
-    params: PropTypes.object,
-    router: PropTypes.object,
+    history: PropTypes.object,
+    match: PropTypes.object,
   };
 
   constructor(props) {
@@ -47,7 +46,7 @@ class RolesDetail extends React.Component {
 
       selectedPermissionIds: [],
 
-      isNew: props.params.roleId === '0',
+      isNew: props.match.params.roleId === '0',
     };
   }
 
@@ -55,19 +54,22 @@ class RolesDetail extends React.Component {
     if (this.state.isNew) {
       // Clear the role and permissions store
       store.dispatch({ type: Action.UPDATE_ROLE, role: {} });
-      store.dispatch({ type: Action.UPDATE_ROLE_PERMISSIONS, rolePermissions: {} });
+      store.dispatch({
+        type: Action.UPDATE_ROLE_PERMISSIONS,
+        rolePermissions: {},
+      });
     } else {
       this.fetch();
     }
   }
 
   fetch = () => {
-    var rolePromise = Api.getRole(this.props.params.roleId);
-    var permissionsPromise = Api.getRolePermissions(this.props.params.roleId);
+    var rolePromise = Api.getRole(this.props.match.params.roleId);
+    var permissionsPromise = Api.getRolePermissions(this.props.match.params.roleId);
 
     this.setState({ loading: true });
     Promise.all([rolePromise, permissionsPromise]).then(() => {
-      var selectedPermissionIds = _.map(this.props.rolePermissions, rolePermission => {
+      var selectedPermissionIds = _.map(this.props.rolePermissions, (rolePermission) => {
         return rolePermission.permission.id;
       });
       this.setState({
@@ -115,26 +117,35 @@ class RolesDetail extends React.Component {
   };
 
   didChangeRole = () => {
-    if (this.state.name !== this.props.role.name) { return true; }
-    if (this.state.description !== this.props.role.description) { return true; }
+    if (this.state.name !== this.props.role.name) {
+      return true;
+    }
+    if (this.state.description !== this.props.role.description) {
+      return true;
+    }
 
     return false;
   };
 
   didChangePermissions = () => {
-    var originalPermissionIds = _.map(this.props.rolePermissions, rolePermission => {
+    var originalPermissionIds = _.map(this.props.rolePermissions, (rolePermission) => {
       return rolePermission.permission.id;
     });
-    if (_.xor(originalPermissionIds, this.state.selectedPermissionIds).length > 0) { return true; }
+    if (_.xor(originalPermissionIds, this.state.selectedPermissionIds).length > 0) {
+      return true;
+    }
 
     return false;
   };
 
   savePermissions = () => {
     if (this.didChangePermissions()) {
-      Api.updateRolePermissions(this.props.role.id, _.map(this.state.selectedPermissionIds, id => {
-        return { id: id };
-      })).then(() => {
+      Api.updateRolePermissions(
+        this.props.role.id,
+        _.map(this.state.selectedPermissionIds, (id) => {
+          return { id: id };
+        })
+      ).then(() => {
         this.returnToList();
       });
     } else {
@@ -143,7 +154,7 @@ class RolesDetail extends React.Component {
   };
 
   returnToList = () => {
-    this.props.router.push({
+    this.props.history.push({
       pathname: Constant.ROLES_PATHNAME,
     });
   };
@@ -159,10 +170,13 @@ class RolesDetail extends React.Component {
             this.savePermissions();
           });
         } else {
-          Api.updateRole({ ...this.props.role, ...{
-            name: this.state.name,
-            description: this.state.description,
-          }}).then(() => {
+          Api.updateRole({
+            ...this.props.role,
+            ...{
+              name: this.state.name,
+              description: this.state.description,
+            },
+          }).then(() => {
             this.savePermissions();
           });
         }
@@ -175,84 +189,126 @@ class RolesDetail extends React.Component {
   render() {
     var role = this.props.role;
 
-    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) && !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) {
-      return (
-        <div>You do not have permission to view this page.</div>
-      );
+    if (
+      !this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) &&
+      !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)
+    ) {
+      return <div>You do not have permission to view this page.</div>;
     }
 
-    return <div id="roles-detail">
-      <div id="roles-top">
-        <PrintButton/>
-        <ReturnButton/>
+    return (
+      <div id="roles-detail">
+        <div id="roles-top">
+          <PrintButton />
+          <ReturnButton />
+        </div>
+
+        {(() => {
+          if (this.state.loading) {
+            return (
+              <div style={{ textAlign: 'center' }}>
+                <Spinner />
+              </div>
+            );
+          }
+
+          return (
+            <div id="roles-header">
+              <PageHeader title="Role" subTitle={role.name || 'New'} />
+            </div>
+          );
+        })()}
+        <Well>
+          {(() => {
+            if (this.state.loading) {
+              return (
+                <div style={{ textAlign: 'center' }}>
+                  <Spinner />
+                </div>
+              );
+            }
+
+            return (
+              <Form id="roles-edit" onSubmit={this.onSave}>
+                <Grid fluid>
+                  <Row>
+                    <Col md={3}>
+                      <FormGroup controlId="name" validationState={this.state.nameError ? 'error' : null}>
+                        <ControlLabel>
+                          Name <sup>*</sup>
+                        </ControlLabel>
+                        <FormInputControl type="text" defaultValue={this.state.name} updateState={this.updateState} />
+                        <HelpBlock>{this.state.nameError}</HelpBlock>
+                      </FormGroup>
+                    </Col>
+                    <Col md={9}>
+                      <FormGroup controlId="description" validationState={this.state.descriptionError ? 'error' : null}>
+                        <ControlLabel>
+                          Description <sup>*</sup>
+                        </ControlLabel>
+                        <FormInputControl
+                          type="text"
+                          defaultValue={this.state.description}
+                          updateState={this.updateState}
+                        />
+                        <HelpBlock>{this.state.descriptionError}</HelpBlock>
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                </Grid>
+              </Form>
+            );
+          })()}
+        </Well>
+        <Well id="roles-permissions">
+          <SubHeader title="Permissions" />
+          {(() => {
+            if (this.state.loading) {
+              return (
+                <div style={{ textAlign: 'center' }}>
+                  <Spinner />
+                </div>
+              );
+            }
+
+            var permissions = _.sortBy(this.props.permissions, 'name');
+
+            return (
+              <Table striped condensed hover bordered>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {_.map(permissions, (permission) => {
+                    var selected = this.state.selectedPermissionIds.indexOf(permission.id) !== -1;
+                    return (
+                      <tr
+                        key={permission.id}
+                        className={selected ? 'selected' : ''}
+                        onClick={this.permissionClicked.bind(this, permission)}
+                      >
+                        <td style={{ whiteSpace: 'nowrap' }}>
+                          <strong>{permission.name}</strong>
+                        </td>
+                        <td>{permission.description}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </Table>
+            );
+          })()}
+        </Well>
+        <Button bsStyle="primary" onClick={this.onSave}>
+          Save
+        </Button>
       </div>
-
-      {(() => {
-        if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
-        return <div id="roles-header">
-          <PageHeader title="Role" subTitle={ role.name || 'New' }/>
-        </div>;
-      })()}
-      <Well>
-        {(() => {
-          if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
-          return <Form id="roles-edit" onSubmit={this.onSave}>
-            <Grid fluid>
-              <Row>
-                <Col md={3}>
-                  <FormGroup controlId="name" validationState={ this.state.nameError ? 'error' : null }>
-                    <ControlLabel>Name <sup>*</sup></ControlLabel>
-                    <FormInputControl type="text" defaultValue={ this.state.name } updateState={ this.updateState }/>
-                    <HelpBlock>{ this.state.nameError }</HelpBlock>
-                  </FormGroup>
-                </Col>
-                <Col md={9}>
-                  <FormGroup controlId="description" validationState={ this.state.descriptionError ? 'error' : null }>
-                    <ControlLabel>Description <sup>*</sup></ControlLabel>
-                    <FormInputControl type="text" defaultValue={ this.state.description } updateState={ this.updateState }/>
-                    <HelpBlock>{ this.state.descriptionError }</HelpBlock>
-                  </FormGroup>
-                </Col>
-              </Row>
-            </Grid>
-          </Form>;
-        })()}
-      </Well>
-      <Well id="roles-permissions">
-        <SubHeader title="Permissions"/>
-        {(() => {
-          if (this.state.loading ) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
-
-          var permissions = _.sortBy(this.props.permissions, 'name');
-
-          return <Table striped condensed hover bordered>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                _.map(permissions, permission => {
-                  var selected = this.state.selectedPermissionIds.indexOf(permission.id) !== -1;
-                  return <tr key={ permission.id } className={ selected ? 'selected' : '' } onClick={ this.permissionClicked.bind(this, permission) }>
-                    <td style={{ whiteSpace: 'nowrap' }}><strong>{ permission.name }</strong></td>
-                    <td>{ permission.description }</td>
-                  </tr>;
-                })
-              }
-            </tbody>
-          </Table>;
-        })()}
-      </Well>
-      <Button bsStyle="primary" onClick={ this.onSave }>Save</Button>
-    </div>;
+    );
   }
 }
-
 
 function mapStateToProps(state) {
   return {

@@ -1,35 +1,27 @@
-import PropTypes from "prop-types";
-import React from "react";
-import { connect } from "react-redux";
-import {
-  Grid,
-  Row,
-  Col,
-  Radio,
-  FormGroup,
-  ControlLabel,
-  HelpBlock,
-} from "react-bootstrap";
-import _ from "lodash";
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { Grid, Row, Col, Radio, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
+import _ from 'lodash';
 
-import * as Api from "../../api";
-import * as Constant from "../../constants";
+import * as Api from '../../api';
+import * as Constant from '../../constants';
 
-import ConfirmForceHireDialog from "../dialogs/ConfirmForceHireDialog.jsx";
-import ConfirmDialog from "../dialogs/ConfirmDialog.jsx";
+import ConfirmForceHireDialog from '../dialogs/ConfirmForceHireDialog.jsx';
+import ConfirmDialog from '../dialogs/ConfirmDialog.jsx';
 
-import CheckboxControl from "../../components/CheckboxControl.jsx";
-import DropdownControl from "../../components/DropdownControl.jsx";
-import FormDialog from "../../components/FormDialog.jsx";
-import FormInputControl from "../../components/FormInputControl.jsx";
+import CheckboxControl from '../../components/CheckboxControl.jsx';
+import DropdownControl from '../../components/DropdownControl.jsx';
+import FormDialog from '../../components/FormDialog.jsx';
+import FormInputControl from '../../components/FormInputControl.jsx';
 
-import { today, toZuluTime, formatDateTime } from "../../utils/date";
-import { isBlank } from "../../utils/string";
+import { today, toZuluTime, formatDateTime } from '../../utils/date';
+import { isBlank } from '../../utils/string';
 
-const STATUS_YES = "Yes";
-const STATUS_NO = "No";
-const STATUS_ASKED = "Asked";
-const STATUS_FORCE_HIRE = "Force Hire";
+const STATUS_YES = 'Yes';
+const STATUS_NO = 'No';
+const STATUS_ASKED = 'Asked';
+const STATUS_FORCE_HIRE = 'Force Hire';
 
 const refusalReasons = [
   Constant.HIRING_REFUSAL_EQUIPMENT_NOT_AVAILABLE,
@@ -41,7 +33,7 @@ const refusalReasons = [
 ];
 
 class HireOfferEditDialog extends React.Component {
-  static displayName = "HireOfferEditDialog";
+  static displayName = 'HireOfferEditDialog';
 
   static propTypes = {
     hireOffer: PropTypes.object.isRequired,
@@ -64,17 +56,17 @@ class HireOfferEditDialog extends React.Component {
 
       isForceHire: this.props.hireOffer.isForceHire || false,
       wasAsked: this.props.hireOffer.wasAsked || false,
-      askedDateTime: this.props.hireOffer.askedDateTime || "",
-      offerResponse: this.props.hireOffer.offerResponse || "",
-      offerStatus: this.props.hireOffer.offerResponse || "",
+      askedDateTime: this.props.hireOffer.askedDateTime || '',
+      offerResponse: this.props.hireOffer.offerResponse || '',
+      offerStatus: this.props.hireOffer.offerResponse || '',
       offerRefusalReason: this.props.hireOffer.offerRefusalReason,
-      offerResponseDatetime: this.props.hireOffer.offerResponseDatetime || "",
-      offerResponseNote: this.props.hireOffer.offerResponseNote || "",
-      note: this.props.hireOffer.note || "",
+      offerResponseDatetime: this.props.hireOffer.offerResponseDatetime || '',
+      offerResponseNote: this.props.hireOffer.offerResponseNote || '',
+      note: this.props.hireOffer.note || '',
 
-      offerResponseError: "",
-      offerResponseNoteError: "",
-      offerRefusalReasonError: "",
+      offerResponseError: '',
+      offerResponseNoteError: '',
+      offerRefusalReasonError: '',
 
       showConfirmForceHireDialog: false,
       showConfirmMaxHoursHireDialog: false,
@@ -95,8 +87,7 @@ class HireOfferEditDialog extends React.Component {
       isForceHire: value === STATUS_FORCE_HIRE,
       wasAsked: STATUS_ASKED,
       askedDateTime: value === STATUS_ASKED ? today() : null,
-      equipmentVerifiedActive:
-        value === STATUS_YES || value === STATUS_FORCE_HIRE ? true : false,
+      equipmentVerifiedActive: value === STATUS_YES || value === STATUS_FORCE_HIRE ? true : false,
     });
   };
 
@@ -113,20 +104,13 @@ class HireOfferEditDialog extends React.Component {
     if (this.state.offerResponse !== this.props.hireOffer.offerResponse) {
       return true;
     }
-    if (
-      this.state.offerRefusalReason !== this.props.hireOffer.offerRefusalReason
-    ) {
+    if (this.state.offerRefusalReason !== this.props.hireOffer.offerRefusalReason) {
       return true;
     }
-    if (
-      this.state.offerResponseDatetime !==
-      this.props.hireOffer.offerResponseDatetime
-    ) {
+    if (this.state.offerResponseDatetime !== this.props.hireOffer.offerResponseDatetime) {
       return true;
     }
-    if (
-      this.state.offerResponseNote !== this.props.hireOffer.offerResponseNote
-    ) {
+    if (this.state.offerResponseNote !== this.props.hireOffer.offerResponseNote) {
       return true;
     }
     if (this.state.note !== this.props.hireOffer.note) {
@@ -138,25 +122,22 @@ class HireOfferEditDialog extends React.Component {
 
   isValid = () => {
     this.setState({
-      offerResponseError: "",
-      offerRefusalReasonError: "",
-      offerResponseNoteError: "",
-      rentalAgreementError: "",
+      offerResponseError: '',
+      offerRefusalReasonError: '',
+      offerResponseNoteError: '',
+      rentalAgreementError: '',
     });
 
     var valid = true;
 
     if (isBlank(this.state.offerResponse)) {
-      this.setState({ offerResponseError: "A response is required" });
+      this.setState({ offerResponseError: 'A response is required' });
       valid = false;
     }
 
-    if (
-      this.state.offerResponse === STATUS_NO &&
-      isBlank(this.state.offerRefusalReason)
-    ) {
+    if (this.state.offerResponse === STATUS_NO && isBlank(this.state.offerRefusalReason)) {
       this.setState({
-        offerRefusalReasonError: "A refusal reason is required",
+        offerRefusalReasonError: 'A refusal reason is required',
       });
       valid = false;
     }
@@ -166,7 +147,7 @@ class HireOfferEditDialog extends React.Component {
       this.state.offerRefusalReason === Constant.HIRING_REFUSAL_OTHER &&
       isBlank(this.state.offerResponseNote)
     ) {
-      this.setState({ offerResponseNoteError: "Note is required" });
+      this.setState({ offerResponseNoteError: 'Note is required' });
       valid = false;
     }
 
@@ -174,26 +155,17 @@ class HireOfferEditDialog extends React.Component {
   };
 
   formSubmitted = () => {
+    debugger;
     if (this.isValid()) {
       if (this.didChange()) {
         this.setState({ isSaving: true });
 
-        var isDumpTruck =
-          this.props.hireOffer.equipment.districtEquipmentType.equipmentType
-            .isDumpTruck;
+        var isDumpTruck = this.props.hireOffer.equipment.districtEquipmentType.equipmentType.isDumpTruck;
         var hoursYtd = this.props.hireOffer.equipment.hoursYtd;
 
-        if (
-          this.state.offerStatus !== STATUS_NO &&
-          !isDumpTruck &&
-          hoursYtd >= 300
-        ) {
+        if (this.state.offerStatus !== STATUS_NO && !isDumpTruck && hoursYtd >= 300) {
           this.openConfirmMaxHoursHireDialog();
-        } else if (
-          this.state.offerStatus !== STATUS_NO &&
-          isDumpTruck &&
-          hoursYtd >= 600
-        ) {
+        } else if (this.state.offerStatus !== STATUS_NO && isDumpTruck && hoursYtd >= 600) {
           this.openConfirmMaxHoursHireDialog();
         } else if (this.state.offerStatus === STATUS_FORCE_HIRE) {
           this.openConfirmForceHireDialog();
@@ -241,13 +213,11 @@ class HireOfferEditDialog extends React.Component {
 
     promise.then(() => {
       const hireOffer = {
-        ..._.omit(this.props.hireOffer, "displayFields", "rentalAgreement"),
+        ..._.omit(this.props.hireOffer, 'displayFields', 'rentalAgreement'),
         isForceHire: this.state.isForceHire,
         wasAsked: this.state.wasAsked ? true : false,
         askedDateTime:
-          this.state.offerResponse === STATUS_ASKED
-            ? formatDateTime(new Date())
-            : toZuluTime(this.state.askedDateTime),
+          this.state.offerResponse === STATUS_ASKED ? formatDateTime(new Date()) : toZuluTime(this.state.askedDateTime),
         offerResponse: this.state.offerResponse,
         offerResponseDatetime: toZuluTime(this.state.offerResponseDatetime),
         offerRefusalReason: this.state.offerRefusalReason,
@@ -255,10 +225,7 @@ class HireOfferEditDialog extends React.Component {
         note: this.state.note,
       };
 
-      Api.updateRentalRequestRotationList(
-        hireOffer,
-        this.props.rentalRequest
-      ).then(() => {
+      Api.updateRentalRequestRotationList(hireOffer, this.props.rentalRequest).then(() => {
         this.setState({ isSaving: false });
         if (this.props.onSave) {
           this.props.onSave(hireOffer);
@@ -268,10 +235,7 @@ class HireOfferEditDialog extends React.Component {
   };
 
   onConfirmForceHire = (reasonForForceHire) => {
-    this.setState(
-      { note: reasonForForceHire, showConfirmForceHireDialog: false },
-      this.saveHireOffer
-    );
+    this.setState({ note: reasonForForceHire, showConfirmForceHireDialog: false }, this.saveHireOffer);
   };
 
   openConfirmForceHireDialog = () => {
@@ -292,8 +256,7 @@ class HireOfferEditDialog extends React.Component {
 
   render() {
     // Read-only if the user cannot edit the rental agreement
-    var isReadOnly =
-      !this.props.rentalRequest.canEdit && this.props.rentalRequest.id !== 0;
+    var isReadOnly = !this.props.rentalRequest.canEdit && this.props.rentalRequest.id !== 0;
 
     return (
       <FormDialog
@@ -306,9 +269,7 @@ class HireOfferEditDialog extends React.Component {
       >
         <Grid fluid>
           <Col md={12}>
-            <FormGroup
-              validationState={this.state.offerResponseError ? "error" : null}
-            >
+            <FormGroup validationState={this.state.offerResponseError ? 'error' : null}>
               <ControlLabel>Response</ControlLabel>
               <Row>
                 <Col md={12}>
@@ -316,10 +277,7 @@ class HireOfferEditDialog extends React.Component {
                     <Radio
                       onChange={() => this.offerStatusChanged(STATUS_YES)}
                       checked={this.state.offerStatus === STATUS_YES}
-                      disabled={
-                        !this.props.showAllResponseFields &&
-                        !this.props.hireOffer.offerResponse
-                      }
+                      disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
                     >
                       Yes
                     </Radio>
@@ -332,10 +290,7 @@ class HireOfferEditDialog extends React.Component {
                     <Radio
                       onChange={() => this.offerStatusChanged(STATUS_NO)}
                       checked={this.state.offerStatus === STATUS_NO}
-                      disabled={
-                        !this.props.showAllResponseFields &&
-                        !this.props.hireOffer.offerResponse
-                      }
+                      disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
                     >
                       No
                     </Radio>
@@ -345,11 +300,7 @@ class HireOfferEditDialog extends React.Component {
               {this.state.offerStatus === STATUS_NO && (
                 <Row>
                   <Col md={12}>
-                    <FormGroup
-                      validationState={
-                        this.state.offerRefusalReasonError ? "error" : null
-                      }
-                    >
+                    <FormGroup validationState={this.state.offerRefusalReasonError ? 'error' : null}>
                       {/*TODO - use lookup list*/}
                       <ControlLabel>Refusal Reason</ControlLabel>
                       <DropdownControl
@@ -360,9 +311,7 @@ class HireOfferEditDialog extends React.Component {
                         updateState={this.updateState}
                         items={refusalReasons}
                       />
-                      <HelpBlock>
-                        {this.state.offerRefusalReasonError}
-                      </HelpBlock>
+                      <HelpBlock>{this.state.offerRefusalReasonError}</HelpBlock>
                     </FormGroup>
                   </Col>
                 </Row>
@@ -371,9 +320,7 @@ class HireOfferEditDialog extends React.Component {
                 <Col md={12}>
                   <FormGroup>
                     <Radio
-                      onChange={() =>
-                        this.offerStatusChanged(STATUS_FORCE_HIRE)
-                      }
+                      onChange={() => this.offerStatusChanged(STATUS_FORCE_HIRE)}
                       checked={this.state.offerStatus === STATUS_FORCE_HIRE}
                     >
                       Force Hire
@@ -387,10 +334,7 @@ class HireOfferEditDialog extends React.Component {
                     <Radio
                       onChange={() => this.offerStatusChanged(STATUS_ASKED)}
                       checked={this.state.offerStatus === STATUS_ASKED}
-                      disabled={
-                        !this.props.showAllResponseFields &&
-                        !this.props.hireOffer.offerResponse
-                      }
+                      disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
                     >
                       Asked
                     </Radio>
@@ -404,9 +348,7 @@ class HireOfferEditDialog extends React.Component {
             <Col md={12}>
               <FormGroup
                 controlId="offerResponseNote"
-                validationState={
-                  this.state.offerResponseNoteError ? "error" : null
-                }
+                validationState={this.state.offerResponseNoteError ? 'error' : null}
               >
                 <ControlLabel>Note</ControlLabel>
                 <FormInputControl
@@ -448,8 +390,8 @@ class HireOfferEditDialog extends React.Component {
             onClose={this.onCancelMaxHoursHire}
           >
             <p>
-              Equipment/Dump Truck has already reached the maximum hours for the
-              year. Do you still want to hire this Equipment/Dump Truck?
+              Equipment/Dump Truck has already reached the maximum hours for the year. Do you still want to hire this
+              Equipment/Dump Truck?
             </p>
           </ConfirmDialog>
         )}

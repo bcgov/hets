@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Button, Glyphicon } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+import { Link } from 'react-router-dom';
 import _ from 'lodash';
-
 
 class EditButton extends React.Component {
   static propTypes = {
@@ -17,13 +16,19 @@ class EditButton extends React.Component {
   render() {
     var props = _.omit(this.props, 'view', 'name', 'hide', 'pathname');
 
-    var button = <Button title={ `${ this.props.view ? 'View' : 'Edit' } ${ this.props.name }` } bsSize="xsmall" className={ this.props.hide ? 'hidden' : '' } { ...props }>
-      <Glyphicon glyph={ this.props.view ? 'edit' : 'pencil' } />
-    </Button>;
+    var button = (
+      <Button
+        title={`${this.props.view ? 'View' : 'Edit'} ${this.props.name}`}
+        bsSize="xsmall"
+        className={this.props.hide ? 'hidden' : ''}
+        {...props}
+      >
+        <Glyphicon glyph={this.props.view ? 'edit' : 'pencil'} />
+      </Button>
+    );
 
-    return this.props.pathname ? <LinkContainer to={{ pathname: this.props.pathname }}>{ button }</LinkContainer> : button;
+    return this.props.pathname ? <Link to={this.props.pathname}> {button} </Link> : button;
   }
 }
-
 
 export default EditButton;

@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Well, Row, Col } from 'react-bootstrap';
 import { Alert, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import Promise from 'bluebird';
 
@@ -43,10 +43,10 @@ import { firstLastName } from '../utils/string.js';
 import ReturnButton from '../components/ReturnButton.jsx';
 import PrintButton from '../components/PrintButton.jsx';
 
-
 const CONTACT_NAME_SORT_FIELDS = ['givenName', 'surname'];
 
-const STATUS_NOT_EDITABLE_MESSAGE = 'The project can only be marked as completed when it has no active requests or actively hired equipment.';
+const STATUS_NOT_EDITABLE_MESSAGE =
+  'The project can only be marked as completed when it has no active requests or actively hired equipment.';
 
 class ProjectsDetail extends React.Component {
   static propTypes = {
@@ -54,7 +54,8 @@ class ProjectsDetail extends React.Component {
     project: PropTypes.object,
     documents: PropTypes.object,
     uiContacts: PropTypes.object,
-    router: PropTypes.object,
+    history: PropTypes.object,
+    match: PropTypes.object,
   };
 
   constructor(props) {
@@ -79,7 +80,7 @@ class ProjectsDetail extends React.Component {
       rentalAgreement: {},
 
       // Contacts
-      uiContacts : {
+      uiContacts: {
         sortField: props.uiContacts.sortField || CONTACT_NAME_SORT_FIELDS,
         sortDesc: props.uiContacts.sortDesc === true,
       },
@@ -87,7 +88,15 @@ class ProjectsDetail extends React.Component {
   }
 
   componentDidMount() {
-    const { projectId, project } = this.props;
+    //dispatch Set_ACTIVE_PROJECT_ID_UI needed for activeProjectSelector(state) to work. Solution uses redux state to pass argument values to another selector.
+    //https://github.com/reduxjs/reselect#q-how-do-i-create-a-selector-that-takes-an-argument
+    store.dispatch({
+      type: Action.SET_ACTIVE_PROJECT_ID_UI,
+      projectId: this.props.match.params.projectId,
+    });
+
+    const { project } = this.props;
+    const projectId = this.props.match.params.projectId;
 
     /* Documents need be fetched every time as they are not project specific in the store ATM */
     Api.getProjectDocuments(projectId).then(() => this.setState({ loadingDocuments: false }));
@@ -98,17 +107,14 @@ class ProjectsDetail extends React.Component {
     }
 
     // Re-fetch project and notes every time
-    Promise.all([
-      this.fetch(),
-      Api.getProjectNotes(projectId),
-    ]).then(() => {
+    Promise.all([this.fetch(), Api.getProjectNotes(projectId)]).then(() => {
       this.setState({ loading: false });
     });
   }
 
   fetch = () => {
     this.setState({ reloading: true });
-    return Api.getProject(this.props.projectId).then(() => this.setState({ reloading: false }));
+    return Api.getProject(this.props.match.params.projectId).then(() => this.setState({ reloading: false }));
   };
 
   updateState = (state, callback) => {
@@ -116,9 +122,11 @@ class ProjectsDetail extends React.Component {
   };
 
   updateContactsUIState = (state, callback) => {
-    this.setState({ uiContacts: { ...this.state.uiContacts, ...state }}, () => {
+    this.setState({ uiContacts: { ...this.state.uiContacts, ...state } }, () => {
       store.dispatch({ type: Action.UPDATE_PROJECT_CONTACTS_UI, projectContacts: this.state.uiContacts });
-      if (callback) { callback(); }
+      if (callback) {
+        callback();
+      }
     });
   };
 
@@ -138,9 +146,7 @@ class ProjectsDetail extends React.Component {
     this.setState({ showDocumentsDialog: false });
   };
 
-  addDocument = () => {
-
-  };
+  addDocument = () => {};
 
   openEditDialog = () => {
     this.setState({ showEditDialog: true });
@@ -169,7 +175,7 @@ class ProjectsDetail extends React.Component {
   };
 
   closeContactDialog = () => {
-    this.setState({ contact:null, showContactDialog: false });
+    this.setState({ contact: null, showContactDialog: false });
   };
 
   deleteContact = (contact) => {
@@ -206,14 +212,12 @@ class ProjectsDetail extends React.Component {
 
     Log.projectRentalRequestAdded(this.props.project, rentalRequest);
 
-    this.props.router.push({
-      pathname: `${ Constant.RENTAL_REQUESTS_PATHNAME }/${ rentalRequest.id }`,
-    });
+    this.props.history.push(`${Constant.RENTAL_REQUESTS_PATHNAME}/${rentalRequest.id}`);
   };
 
   confirmEndHire = (item) => {
     Api.releaseRentalAgreement(item.id).then(() => {
-      Api.getProject(this.props.projectId);
+      Api.getProject(this.props.match.params.projectId);
       Log.projectEquipmentReleased(this.props.project, item.equipment);
     });
   };
@@ -232,85 +236,99 @@ class ProjectsDetail extends React.Component {
   };
 
   cancelRequest = (request) => {
-    store.dispatch({ type: Action.DELETE_PROJECT_RENTAL_REQUEST, projectId: this.props.projectId, requestId: request.id });
+    store.dispatch({
+      type: Action.DELETE_PROJECT_RENTAL_REQUEST,
+      projectId: this.props.match.params.projectId,
+      requestId: request.id,
+    });
     Api.cancelRentalRequest(request.id).then(() => {
       this.fetch();
     });
   };
 
   renderRentalRequestListItem = (item) => {
-    return <tr key={ item.id }>
-      <td>
-        <Link
-          to={ `rental-requests/${item.id}` }
-          className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}>
-          Request
-        </Link>
-      </td>
-      <td>{ item.localAreaName }</td>
-      <td>{ item.equipmentTypeName }</td>
-      <td>{ item.equipmentCount }</td>
-      <td>TBD</td>
-      <td>N/A</td>
-      <td>N/A</td>
-      <td>N/A</td>
-      <td>N/A</td>
-      <td>
-        <DeleteButton name="Cancel Rental Request" hide={ item.yesCount > 0 } onConfirm={ this.cancelRequest.bind(this, item) }/>
-      </td>
-    </tr>;
+    return (
+      <tr key={item.id}>
+        <td>
+          <Link
+            to={`${Constant.RENTAL_REQUESTS_PATHNAME}/${item.id}`}
+            className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}
+          >
+            Request
+          </Link>
+        </td>
+        <td>{item.localAreaName}</td>
+        <td>{item.equipmentTypeName}</td>
+        <td>{item.equipmentCount}</td>
+        <td>TBD</td>
+        <td>N/A</td>
+        <td>N/A</td>
+        <td>N/A</td>
+        <td>N/A</td>
+        <td>
+          <DeleteButton
+            name="Cancel Rental Request"
+            hide={item.yesCount > 0}
+            onConfirm={this.cancelRequest.bind(this, item)}
+          />
+        </td>
+      </tr>
+    );
   };
 
   renderRentalAgreementListItem = (item) => {
-    return <tr key={ item.id }>
-      <td>
-        <Link
-          to={ `equipment/${item.equipmentId}` }
-          className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}>
-          { item.equipmentCode }
-        </Link>
-      </td>
-      <td>{ item.localAreaName }</td>
-      <td>{ item.equipmentTypeName }</td>
-      <td>&nbsp;</td>
-      <td>{ item.equipment.equipmentDetails }</td>
-      <td>{ item.isCompleted ?
-        'Completed'
-        :
-        <EditButton name="Time Entry" onClick={this.openTimeEntryDialog.bind(this, item)} />
-      }
-      </td>
-      <td>
-        { item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ?
-          <div>Released</div>
-          :
-          <Authorize>
-            <OverlayTrigger
-              trigger="click"
-              placement="top"
-              rootClose
-              overlay={ <Confirm onConfirm={ this.confirmEndHire.bind(this, item) }/> }>
-              <Button
-                bsSize="xsmall">
-                <Glyphicon glyph="check" />
-              </Button>
-            </OverlayTrigger>
-          </Authorize>
-        }
-      </td>
-      <td><Link to={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${item.id}`}>Agreement</Link></td>
-      <td>{ formatDateTime(item.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
-      <td></td>
-    </tr>;
+    return (
+      <tr key={item.id}>
+        <td>
+          <Link
+            to={`${Constant.EQUIPMENT_PATHNAME}/${item.equipmentId}`}
+            className={item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? 'light' : ''}
+          >
+            {item.equipmentCode}
+          </Link>
+        </td>
+        <td>{item.localAreaName}</td>
+        <td>{item.equipmentTypeName}</td>
+        <td>&nbsp;</td>
+        <td>{item.equipment.equipmentDetails}</td>
+        <td>
+          {item.isCompleted ? (
+            'Completed'
+          ) : (
+            <EditButton name="Time Entry" onClick={this.openTimeEntryDialog.bind(this, item)} />
+          )}
+        </td>
+        <td>
+          {item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? (
+            <div>Released</div>
+          ) : (
+            <Authorize>
+              <OverlayTrigger
+                trigger="click"
+                placement="top"
+                rootClose
+                overlay={<Confirm onConfirm={this.confirmEndHire.bind(this, item)} />}
+              >
+                <Button bsSize="xsmall">
+                  <Glyphicon glyph="check" />
+                </Button>
+              </OverlayTrigger>
+            </Authorize>
+          )}
+        </td>
+        <td>
+          <Link to={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${item.id}`}>Agreement</Link>
+        </td>
+        <td>{formatDateTime(item.datedOn, Constant.DATE_YEAR_SHORT_MONTH_DAY)}</td>
+        <td></td>
+      </tr>
+    );
   };
 
   getStatuses = () => {
     var project = this.props.project || {};
 
-    return _.pull([
-      Constant.PROJECT_STATUS_CODE_ACTIVE,
-      Constant.PROJECT_STATUS_CODE_COMPLETED,
-    ], project.status);
+    return _.pull([Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED], project.status);
   };
 
   updateStatusState = (state) => {
@@ -335,7 +353,7 @@ class ProjectsDetail extends React.Component {
     var rentalRequests = _.orderBy(project.rentalRequests, ['id'], ['desc']);
     var rentalAgreements = _.orderBy(project.rentalAgreements, ['id'], ['desc']);
 
-    var combinedList =_.concat(rentalRequests, rentalAgreements);
+    var combinedList = _.concat(rentalRequests, rentalAgreements);
     // Exclude completed items
     if (!this.state.includeCompletedRequests) {
       _.remove(combinedList, (x) => !x.isActive);
@@ -349,205 +367,303 @@ class ProjectsDetail extends React.Component {
               <Col sm={9}>
                 <StatusDropdown
                   id="project-status-dropdown"
-                  status={ project.status || Constant.PROJECT_STATUS_CODE_ACTIVE }
-                  statuses={ this.getStatuses() }
-                  disabled={ !project.canEditStatus }
-                  disabledTooltip={ STATUS_NOT_EDITABLE_MESSAGE }
-                  onSelect={ this.updateStatusState } />
-                <Button title="Notes" className="ml-5 mr-5" disabled={ loading } onClick={ this.showNotes }>
-                  Notes ({ loading ? ' ' : project.notes.length })
+                  status={project.status || Constant.PROJECT_STATUS_CODE_ACTIVE}
+                  statuses={this.getStatuses()}
+                  disabled={!project.canEditStatus}
+                  disabledTooltip={STATUS_NOT_EDITABLE_MESSAGE}
+                  onSelect={this.updateStatusState}
+                />
+                <Button title="Notes" className="ml-5 mr-5" disabled={loading} onClick={this.showNotes}>
+                  Notes ({loading ? ' ' : project.notes?.length})
                 </Button>
-                <Button id="project-documents-button" title="Documents" disabled={ loading } onClick={ this.showDocuments }>
-                  Documents ({ loadingDocuments ? ' ' :  Object.keys(this.props.documents).length })
+                <Button id="project-documents-button" title="Documents" disabled={loading} onClick={this.showDocuments}>
+                  Documents ({loadingDocuments ? ' ' : Object.keys(this.props.documents).length})
                 </Button>
               </Col>
               <Col sm={3}>
                 <div className="pull-right">
-                  <PrintButton disabled={loading}/>
-                  <ReturnButton/>
+                  <PrintButton disabled={loading} />
+                  <ReturnButton />
                 </div>
               </Col>
             </Row>
-            <PageHeader title="Project" subTitle={loading ? '...' : project.name}/>
-            <PageHeader title="District" subTitle={loading ? '...' : project.districtName}/>
+            <PageHeader title="Project" subTitle={loading ? '...' : project.name} />
+            <PageHeader title="District" subTitle={loading ? '...' : project.districtName} />
           </div>
 
           <Row>
             <Col md={12}>
               <Well>
-                <SubHeader title="Project Information" editButtonTitle="Edit Project" editButtonDisabled={loading} onEditClicked={ this.openEditDialog }/>
+                <SubHeader
+                  title="Project Information"
+                  editButtonTitle="Edit Project"
+                  editButtonDisabled={loading}
+                  onEditClicked={this.openEditDialog}
+                />
                 {(() => {
-                  if (loading) { return <div className="spinner-container"><Spinner/></div>; }
+                  if (loading) {
+                    return (
+                      <div className="spinner-container">
+                        <Spinner />
+                      </div>
+                    );
+                  }
 
-                  var mailto = <a href={ `mailto:${project.primaryContactEmail}` }>
-                    { project.primaryContactName }
-                  </a>;
+                  var mailto = <a href={`mailto:${project.primaryContactEmail}`}>{project.primaryContactName}</a>;
 
-                  return <Row id="projects-data" className="equal-height">
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Fiscal Year">{ project.fiscalYear }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Provincial Project Number">{ project.provincialProjectNumber }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Responsibility Centre">{ project.responsibilityCentre }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Service Line">{ project.serviceLine }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="STOB">{ project.stob }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Product">{ project.product }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Business Function">{ project.businessFunction }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Work Activity">{ project.workActivity }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Cost Type">{ project.costType }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Project Information">{ project.information }</ColDisplay>
-                    </Col>
-                    <Col lg={4} md={6} sm={12} xs={12}>
-                      <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label={ project.primaryContactRole || 'Primary Contact' }>
-                        { project.primaryContactEmail ? mailto : `${project.primaryContactName}` }{ project.primaryContactPhone ? `, ${project.primaryContactPhone}` : '' }
-                      </ColDisplay>
-                    </Col>
-                  </Row>;
+                  return (
+                    <Row id="projects-data" className="equal-height">
+                      <Col lg={4} md={6} sm={12} xs={12}>
+                        <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Fiscal Year">
+                          {project.fiscalYear}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={4} md={6} sm={12} xs={12}>
+                        <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Provincial Project Number">
+                          {project.provincialProjectNumber}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={4} md={6} sm={12} xs={12}>
+                        <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Responsibility Centre">
+                          {project.responsibilityCentre}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={4} md={6} sm={12} xs={12}>
+                        <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Service Line">
+                          {project.serviceLine}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={4} md={6} sm={12} xs={12}>
+                        <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="STOB">
+                          {project.stob}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={4} md={6} sm={12} xs={12}>
+                        <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Product">
+                          {project.product}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={4} md={6} sm={12} xs={12}>
+                        <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Business Function">
+                          {project.businessFunction}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={4} md={6} sm={12} xs={12}>
+                        <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Work Activity">
+                          {project.workActivity}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={4} md={6} sm={12} xs={12}>
+                        <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Cost Type">
+                          {project.costType}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={4} md={6} sm={12} xs={12}>
+                        <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="Project Information">
+                          {project.information}
+                        </ColDisplay>
+                      </Col>
+                      <Col lg={4} md={6} sm={12} xs={12}>
+                        <ColDisplay
+                          labelProps={{ xs: 6 }}
+                          fieldProps={{ xs: 6 }}
+                          label={project.primaryContactRole || 'Primary Contact'}
+                        >
+                          {project.primaryContactEmail ? mailto : `${project.primaryContactName}`}
+                          {project.primaryContactPhone ? `, ${project.primaryContactPhone}` : ''}
+                        </ColDisplay>
+                      </Col>
+                    </Row>
+                  );
                 })()}
               </Well>
               <Well>
                 <SubHeader title="Hired Equipment / Requests">
-                  <CheckboxControl id="includeCompletedRequests" inline checked={ this.state.includeCompletedRequests } updateState={ this.updateState }><small>Show Completed</small></CheckboxControl>
-                  <Authorize><Button id="add-request-button" title="Add Request" bsSize="small" onClick={ this.openAddRequestDialog }><Glyphicon glyph="plus" /> Add</Button></Authorize>
+                  <CheckboxControl
+                    id="includeCompletedRequests"
+                    inline
+                    checked={this.state.includeCompletedRequests}
+                    updateState={this.updateState}
+                  >
+                    <small>Show Completed</small>
+                  </CheckboxControl>
+                  <Authorize>
+                    <Button
+                      id="add-request-button"
+                      title="Add Request"
+                      bsSize="small"
+                      onClick={this.openAddRequestDialog}
+                    >
+                      <Glyphicon glyph="plus" /> Add
+                    </Button>
+                  </Authorize>
                 </SubHeader>
                 {(() => {
-                  if (loading) { return <div className="spinner-container"><Spinner/></div>; }
+                  if (loading) {
+                    return (
+                      <div className="spinner-container">
+                        <Spinner />
+                      </div>
+                    );
+                  }
 
-                  if (Object.keys(combinedList).length === 0) { return <Alert bsStyle="success">No equipment</Alert>; }
+                  if (Object.keys(combinedList).length === 0) {
+                    return <Alert bsStyle="success">No equipment</Alert>;
+                  }
 
                   var headers = [
-                    { field: 'equipmentCode',     title: 'ID'               },
-                    { field: 'localAreaName',     title: 'Local Area'       },
-                    { field: 'equipmentTypeName', title: 'Type'             },
-                    { field: 'equipmentCount',    title: 'Quantity'         },
-                    { field: 'equipmentMake',     title: 'Year Make/Model/Size'  },
-                    { field: 'lastTimeRecord',    title: 'Time Entry'       },
-                    { field: 'release',           title: 'Release'          },
-                    { field: 'agreement',         title: 'Agreement'        },
-                    { field: 'hiredDate',         title: 'Hired Date'       },
-                    { field: 'blank'                                        },
+                    { field: 'equipmentCode', title: 'ID' },
+                    { field: 'localAreaName', title: 'Local Area' },
+                    { field: 'equipmentTypeName', title: 'Type' },
+                    { field: 'equipmentCount', title: 'Quantity' },
+                    { field: 'equipmentMake', title: 'Year Make/Model/Size' },
+                    { field: 'lastTimeRecord', title: 'Time Entry' },
+                    { field: 'release', title: 'Release' },
+                    { field: 'agreement', title: 'Agreement' },
+                    { field: 'hiredDate', title: 'Hired Date' },
+                    { field: 'blank' },
                   ];
 
-                  return <TableControl id="equipment-list" headers={ headers }>
-                    {
-                      _.map(combinedList, (listItem) => {
+                  return (
+                    <TableControl id="equipment-list" headers={headers}>
+                      {_.map(combinedList, (listItem) => {
                         if (listItem.isRentalRequest) {
                           return this.renderRentalRequestListItem(listItem);
                         } else {
                           return this.renderRentalAgreementListItem(listItem);
                         }
-                      })
-                    }
-                  </TableControl>;
+                      })}
+                    </TableControl>
+                  );
                 })()}
               </Well>
             </Col>
             <Col md={12}>
               <Well>
-                <SubHeader title="Contacts"/>
+                <SubHeader title="Contacts" />
                 {(() => {
-                  if (loading) { return <div className="spinner-container"><Spinner/></div>; }
+                  if (loading) {
+                    return (
+                      <div className="spinner-container">
+                        <Spinner />
+                      </div>
+                    );
+                  }
 
-                  var addContactButton = <Authorize><Button title="Add Contact" onClick={ this.openContactDialog.bind(this, 0) } bsSize="small"><Glyphicon glyph="plus" />&nbsp;<strong>Add</strong></Button></Authorize>;
+                  var addContactButton = (
+                    <Authorize>
+                      <Button title="Add Contact" onClick={this.openContactDialog.bind(this, 0)} bsSize="small">
+                        <Glyphicon glyph="plus" />
+                        &nbsp;<strong>Add</strong>
+                      </Button>
+                    </Authorize>
+                  );
 
-                  if (!project.contacts || project.contacts.length === 0) { return <Alert bsStyle="success">No contacts { addContactButton }</Alert>; }
+                  if (!project.contacts || project.contacts.length === 0) {
+                    return <Alert bsStyle="success">No contacts {addContactButton}</Alert>;
+                  }
 
-                  var contacts = sort(project.contacts, this.state.uiContacts.sortField, this.state.uiContacts.sortDesc, caseInsensitiveSort);
+                  var contacts = sort(
+                    project.contacts,
+                    this.state.uiContacts.sortField,
+                    this.state.uiContacts.sortDesc,
+                    caseInsensitiveSort
+                  );
 
                   var headers = [
-                    { field: 'name',              title: 'Name'         },
-                    { field: 'phone',             title: 'Phone'        },
-                    { field: 'mobilePhoneNumber', title: 'Cell Phone'   },
-                    { field: 'faxPhoneNumber',    title: 'Fax'          },
-                    { field: 'emailAddress',      title: 'Email'        },
-                    { field: 'role',              title: 'Role'         },
-                    { field: 'notes',             title: 'Notes'        },
-                    { field: 'addContact',        title: 'Add Contact', style: { textAlign: 'right'  },
+                    { field: 'name', title: 'Name' },
+                    { field: 'phone', title: 'Phone' },
+                    { field: 'mobilePhoneNumber', title: 'Cell Phone' },
+                    { field: 'faxPhoneNumber', title: 'Fax' },
+                    { field: 'emailAddress', title: 'Email' },
+                    { field: 'role', title: 'Role' },
+                    { field: 'notes', title: 'Notes' },
+                    {
+                      field: 'addContact',
+                      title: 'Add Contact',
+                      style: { textAlign: 'right' },
                       node: addContactButton,
                     },
                   ];
 
-                  return <SortTable id="contact-list" sortField={ this.state.uiContacts.sortField } sortDesc={ this.state.uiContacts.sortDesc } onSort={ this.updateContactsUIState } headers={ headers }>
-                    {
-                      contacts.map((contact) => {
-                        return <tr key={ contact.id }>
-                          <td>
-                            { contact.isPrimary && <Glyphicon glyph="star" /> }
-                            { firstLastName(contact.givenName, contact.surname) }
-                          </td>
-                          <td>{ contact.phone }</td>
-                          <td>{ contact.mobilePhoneNumber }</td>
-                          <td>{ contact.faxPhoneNumber }</td>
-                          <td><a href={ `mailto:${ contact.emailAddress }` } rel="noopener noreferrer" target="_blank">{ contact.emailAddress }</a></td>
-                          <td>{ contact.role }</td>
-                          <td>{ contact.notes ? 'Y' : '' }</td>
-                          <td style={{ textAlign: 'right' }}>
-                            <ButtonGroup>
-                              {contact.canDelete && (
-                                <DeleteButton name="Contact" onConfirm={ this.deleteContact.bind(this, contact) } />
-                              )}
-                              {contact.canEdit && (
-                                <EditButton name="Contact" onClick={ this.openContactDialog.bind(this, contact.id) } />
-                              )}
-                            </ButtonGroup>
-                          </td>
-                        </tr>;
-                      })
-                    }
-                  </SortTable>;
+                  return (
+                    <SortTable
+                      id="contact-list"
+                      sortField={this.state.uiContacts.sortField}
+                      sortDesc={this.state.uiContacts.sortDesc}
+                      onSort={this.updateContactsUIState}
+                      headers={headers}
+                    >
+                      {contacts.map((contact) => {
+                        return (
+                          <tr key={contact.id}>
+                            <td>
+                              {contact.isPrimary && <Glyphicon glyph="star" />}
+                              {firstLastName(contact.givenName, contact.surname)}
+                            </td>
+                            <td>{contact.phone}</td>
+                            <td>{contact.mobilePhoneNumber}</td>
+                            <td>{contact.faxPhoneNumber}</td>
+                            <td>
+                              <a href={`mailto:${contact.emailAddress}`} rel="noopener noreferrer" target="_blank">
+                                {contact.emailAddress}
+                              </a>
+                            </td>
+                            <td>{contact.role}</td>
+                            <td>{contact.notes ? 'Y' : ''}</td>
+                            <td style={{ textAlign: 'right' }}>
+                              <ButtonGroup>
+                                {contact.canDelete && (
+                                  <DeleteButton name="Contact" onConfirm={this.deleteContact.bind(this, contact)} />
+                                )}
+                                {contact.canEdit && (
+                                  <EditButton name="Contact" onClick={this.openContactDialog.bind(this, contact.id)} />
+                                )}
+                              </ButtonGroup>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </SortTable>
+                  );
                 })()}
               </Well>
               <Well>
-                <SubHeader title="History"/>
-                { project.historyEntity && <History historyEntity={ project.historyEntity } refresh={ !this.state.reloading } /> }
+                <SubHeader title="History" />
+                {project.historyEntity && (
+                  <History historyEntity={project.historyEntity} refresh={!this.state.reloading} />
+                )}
               </Well>
             </Col>
           </Row>
         </div>
         {this.state.showEditDialog && (
-          <ProjectsEditDialog
-            show={this.state.showEditDialog}
-            project={project}
-            onClose={this.closeEditDialog}/>
+          <ProjectsEditDialog show={this.state.showEditDialog} project={project} onClose={this.closeEditDialog} />
         )}
         {this.state.showNotesDialog && (
           <NotesDialog
             show={this.state.showNotesDialog}
-            id={String(this.props.projectId)}
+            id={String(this.props.match.params.projectId)}
             getNotes={Api.getProjectNotes}
             saveNote={Api.addProjectNote}
             onClose={this.closeNotesDialog}
-            notes={project.notes}/>
+            notes={project.notes}
+          />
         )}
         {this.state.showDocumentsDialog && (
           <DocumentsListDialog
             show={this.state.showDocumentsDialog}
             parent={project}
-            onClose={this.closeDocumentsDialog}/>
+            onClose={this.closeDocumentsDialog}
+          />
         )}
         {this.state.showAddRequestDialog && (
           <RentalRequestsAddDialog
             show={this.state.showAddRequestDialog}
             project={project}
             onClose={this.closeAddRequestDialog}
-            onRentalAdded={this.newRentalAdded}/>
+            onRentalAdded={this.newRentalAdded}
+          />
         )}
         {this.state.showTimeEntryDialog && (
           <TimeEntryDialog
@@ -555,7 +671,8 @@ class ProjectsDetail extends React.Component {
             project={project}
             rentalAgreementId={this.state.rentalAgreement.id}
             multipleEntryAllowed={false}
-            onClose={this.closeTimeEntryDialog}/>
+            onClose={this.closeTimeEntryDialog}
+          />
         )}
         {this.state.showContactDialog && (
           <ContactsEditDialog
@@ -564,18 +681,18 @@ class ProjectsDetail extends React.Component {
             contact={this.state.contact}
             parent={project}
             onSave={this.contactSaved}
-            onClose={this.closeContactDialog}/>
+            onClose={this.closeContactDialog}
+          />
         )}
       </div>
     );
   }
 }
 
-
 function mapStateToProps(state) {
   return {
     project: activeProjectSelector(state),
-    projectId: activeProjectIdSelector(state),
+    projectId: activeProjectIdSelector(state), //TODO: see if this is still required. Seems to work fine without it.
     documents: state.models.documents,
     uiContacts: state.ui.projectContacts,
   };

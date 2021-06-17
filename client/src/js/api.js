@@ -1,15 +1,15 @@
-import * as Action from "./actionTypes";
-import * as Constant from "./constants";
-import * as History from "./history";
-import * as Log from "./history";
-import store from "./store";
+import * as Action from './actionTypes';
+import * as Constant from './constants';
+import * as History from './history';
+import * as Log from './history';
+import store from './store';
 
-import { ApiRequest } from "./utils/http";
-import { lastFirstName, firstLastName, concat } from "./utils/string";
-import { daysAgo, sortableDateTime, today } from "./utils/date";
+import { ApiRequest } from './utils/http';
+import { lastFirstName, firstLastName, concat } from './utils/string';
+import { daysAgo, sortableDateTime, today } from './utils/date';
 
-import _ from "lodash";
-import Moment from "moment";
+import _ from 'lodash';
+import Moment from 'moment';
 
 function normalize(response) {
   return _.fromPairs(response.map((object) => [object.id, object]));
@@ -21,7 +21,7 @@ function normalize(response) {
 
 function parseUser(user) {
   if (!user.district) {
-    user.district = { id: 0, name: "" };
+    user.district = { id: 0, name: '' };
   }
   if (!user.userRoles) {
     user.userRoles = [];
@@ -33,14 +33,13 @@ function parseUser(user) {
 
   _.each(user.userRoles, (userRole) => {
     userRole.roleId = userRole.role && userRole.role.id ? userRole.role.id : 0;
-    userRole.roleName =
-      userRole.role && userRole.role.name ? userRole.role.name : "";
+    userRole.roleName = userRole.role && userRole.role.name ? userRole.role.name : '';
     userRole.effectiveDateSort = sortableDateTime(user.effectiveDate);
     userRole.expiryDateSort = sortableDateTime(user.expiryDate);
   });
 
   user.path = `${Constant.USERS_PATHNAME}/${user.id}`;
-  user.url = `#/${user.path}`;
+  user.url = `${user.path}`;
   user.historyEntity = History.makeHistoryEntity(Constant.HISTORY_USER, user);
 
   user.canEdit = true;
@@ -48,7 +47,7 @@ function parseUser(user) {
 }
 
 export function getCurrentUser() {
-  return new ApiRequest("/users/current").get().then((response) => {
+  return new ApiRequest('/users/current').get().then((response) => {
     var user = response.data;
 
     // Add display fields
@@ -74,12 +73,12 @@ export function getCurrentUser() {
 
 export function keepAlive() {
   // endpoint to keep session active
-  return new ApiRequest("/users/current").get(null, { keepAlive: true });
+  return new ApiRequest('/users/current').get(null, { keepAlive: true });
 }
 
 export function searchUsers(params) {
   store.dispatch({ type: Action.USERS_REQUEST });
-  return new ApiRequest("/users/search").get(params).then((response) => {
+  return new ApiRequest('/users/search').get(params).then((response) => {
     var users = normalize(response.data);
 
     // Add display fields
@@ -92,7 +91,7 @@ export function searchUsers(params) {
 }
 
 export function getUsers() {
-  return new ApiRequest("/users").get().then((response) => {
+  return new ApiRequest('/users').get().then((response) => {
     var users = normalize(response.data);
 
     // Add display fields
@@ -116,7 +115,7 @@ export function getUser(userId) {
 }
 
 export function addUser(user) {
-  return new ApiRequest("/users").post(user).then((response) => {
+  return new ApiRequest('/users').post(user).then((response) => {
     var user = response.data;
 
     // Add display fields
@@ -160,16 +159,14 @@ export function addUserRole(userId, userRole) {
 }
 
 export function updateUserRoles(userId, userRoleArray) {
-  return new ApiRequest(`/users/${userId}/roles`)
-    .put(userRoleArray)
-    .then(() => {
-      // After updating the user's role, refresh the user state.
-      return getUser(userId);
-    });
+  return new ApiRequest(`/users/${userId}/roles`).put(userRoleArray).then(() => {
+    // After updating the user's role, refresh the user state.
+    return getUser(userId);
+  });
 }
 
 export function getCurrentUserDistricts() {
-  return new ApiRequest("/userdistricts").get().then((response) => {
+  return new ApiRequest('/userdistricts').get().then((response) => {
     store.dispatch({
       type: Action.CURRENT_USER_DISTRICTS,
       currentUserDistricts: response.data,
@@ -179,7 +176,7 @@ export function getCurrentUserDistricts() {
 }
 
 export function getUserDistricts(userId) {
-  return new ApiRequest(`users/${userId}/districts`).get().then((response) => {
+  return new ApiRequest(`/users/${userId}/districts`).get().then((response) => {
     store.dispatch({
       type: Action.USER_DISTRICTS,
       userDistricts: response.data,
@@ -189,39 +186,33 @@ export function getUserDistricts(userId) {
 }
 
 export function addUserDistrict(district) {
-  return new ApiRequest(`/userdistricts/${district.id}`)
-    .post(district)
-    .then((response) => {
-      store.dispatch({
-        type: Action.USER_DISTRICTS,
-        userDistricts: response.data,
-      });
-      return response;
+  return new ApiRequest(`/userdistricts/${district.id}`).post(district).then((response) => {
+    store.dispatch({
+      type: Action.USER_DISTRICTS,
+      userDistricts: response.data,
     });
+    return response;
+  });
 }
 
 export function editUserDistrict(district) {
-  return new ApiRequest(`/userdistricts/${district.id}`)
-    .post(district)
-    .then((response) => {
-      store.dispatch({
-        type: Action.USER_DISTRICTS,
-        userDistricts: response.data,
-      });
-      return response;
+  return new ApiRequest(`/userdistricts/${district.id}`).post(district).then((response) => {
+    store.dispatch({
+      type: Action.USER_DISTRICTS,
+      userDistricts: response.data,
     });
+    return response;
+  });
 }
 
 export function deleteUserDistrict(district) {
-  return new ApiRequest(`/userdistricts/${district.id}/delete`)
-    .post()
-    .then((response) => {
-      store.dispatch({
-        type: Action.USER_DISTRICTS,
-        userDistricts: response.data,
-      });
-      return response;
+  return new ApiRequest(`/userdistricts/${district.id}/delete`).post().then((response) => {
+    store.dispatch({
+      type: Action.USER_DISTRICTS,
+      userDistricts: response.data,
     });
+    return response;
+  });
 }
 
 export function switchUserDistrict(districtId) {
@@ -229,7 +220,7 @@ export function switchUserDistrict(districtId) {
 }
 
 export function getSearchSummaryCounts() {
-  return new ApiRequest("/counts").get().then((response) => {
+  return new ApiRequest('/counts').get().then((response) => {
     store.dispatch({
       type: Action.UPDATE_SEARCH_SUMMARY_COUNTS,
       searchSummaryCounts: response.data,
@@ -244,7 +235,7 @@ export function getSearchSummaryCounts() {
 
 function parseRole(role) {
   role.path = `${Constant.ROLES_PATHNAME}/${role.id}`;
-  role.url = `#/${role.path}`;
+  role.url = `${role.path}`;
   role.historyEntity = History.makeHistoryEntity(Constant.HISTORY_ROLE, role);
 
   role.canEdit = true;
@@ -252,7 +243,7 @@ function parseRole(role) {
 }
 
 export function searchRoles(params) {
-  return new ApiRequest("/roles").get(params).then((response) => {
+  return new ApiRequest('/roles').get(params).then((response) => {
     var roles = normalize(response.data);
 
     // Add display fields
@@ -276,7 +267,7 @@ export function getRole(roleId) {
 }
 
 export function addRole(role) {
-  return new ApiRequest("/roles").post(role).then((response) => {
+  return new ApiRequest('/roles').post(role).then((response) => {
     var role = response.data;
 
     // Add display fields
@@ -309,25 +300,21 @@ export function deleteRole(role) {
 }
 
 export function getRolePermissions(roleId) {
-  return new ApiRequest(`/roles/${roleId}/permissions`)
-    .get()
-    .then((response) => {
-      var permissions = normalize(response.data);
+  return new ApiRequest(`/roles/${roleId}/permissions`).get().then((response) => {
+    var permissions = normalize(response.data);
 
-      store.dispatch({
-        type: Action.UPDATE_ROLE_PERMISSIONS,
-        rolePermissions: permissions,
-      });
+    store.dispatch({
+      type: Action.UPDATE_ROLE_PERMISSIONS,
+      rolePermissions: permissions,
     });
+  });
 }
 
 export function updateRolePermissions(roleId, permissionsArray) {
-  return new ApiRequest(`/roles/${roleId}/permissions`)
-    .put(permissionsArray)
-    .then(() => {
-      // After updating the role's permissions, refresh the permissions state.
-      return getRolePermissions(roleId);
-    });
+  return new ApiRequest(`/roles/${roleId}/permissions`).put(permissionsArray).then(() => {
+    // After updating the role's permissions, refresh the permissions state.
+    return getRolePermissions(roleId);
+  });
 }
 
 ////////////////////
@@ -335,9 +322,9 @@ export function updateRolePermissions(roleId, permissionsArray) {
 ////////////////////
 
 export function getFavourites() {
-  return new ApiRequest("/users/current/favourites").get().then((response) => {
+  return new ApiRequest('/users/current/favourites').get().then((response) => {
     var favourites = _.chain(response.data)
-      .groupBy("type")
+      .groupBy('type')
       .mapValues((type) =>
         _.chain(type)
           .values()
@@ -352,38 +339,26 @@ export function getFavourites() {
 }
 
 export function addFavourite(favourite) {
-  return new ApiRequest("/users/current/favourites")
-    .post(favourite)
-    .then((response) => {
-      store.dispatch({ type: Action.ADD_FAVOURITE, favourite: response.data });
-    });
+  return new ApiRequest('/users/current/favourites').post(favourite).then((response) => {
+    store.dispatch({ type: Action.ADD_FAVOURITE, favourite: response.data });
+  });
 }
 
 export function updateFavourite(favourite) {
-  return new ApiRequest("/users/current/favourites")
-    .put(favourite)
-    .then((response) => {
-      store.dispatch({
-        type: Action.UPDATE_FAVOURITE,
-        favourite: response.data,
-      });
+  return new ApiRequest('/users/current/favourites').put(favourite).then((response) => {
+    store.dispatch({
+      type: Action.UPDATE_FAVOURITE,
+      favourite: response.data,
     });
+  });
 }
 
 export function deleteFavourite(favourite) {
-  return new ApiRequest(`/users/current/favourites/${favourite.id}/delete`)
-    .post()
-    .then((response) => {
-      store.dispatch({
-        type: Action.DELETE_FAVOURITE,
-        favourite: response.data,
-      });
+  return new ApiRequest(`/users/current/favourites/${favourite.id}/delete`).post().then((response) => {
+    store.dispatch({
+      type: Action.DELETE_FAVOURITE,
+      favourite: response.data,
     });
-}
-
-export function logoffUser() {
-  return new ApiRequest("/users/current/logoff").get().then((response) => {
-    return response.error ? null : response.data.logoffUrl;
   });
 }
 
@@ -400,27 +375,27 @@ function getBlockDisplayName(blockNumber, numberOfBlocks, seniority) {
   } else if (seniority != null) {
     return `Open - ${seniority}`;
   }
-  return "Open";
+  return 'Open';
 }
 
 function parseEquipment(equipment) {
   if (!equipment.owner) {
-    equipment.owner = { id: 0, organizationName: "" };
+    equipment.owner = { id: 0, organizationName: '' };
   }
   if (!equipment.districtEquipmentType) {
-    equipment.districtEquipmentType = { id: 0, districtEquipmentName: "" };
+    equipment.districtEquipmentType = { id: 0, districtEquipmentName: '' };
   }
   if (!equipment.localArea) {
-    equipment.localArea = { id: 0, name: "" };
+    equipment.localArea = { id: 0, name: '' };
   }
   if (!equipment.localArea.serviceArea) {
-    equipment.localArea.serviceArea = { id: 0, name: "" };
+    equipment.localArea.serviceArea = { id: 0, name: '' };
   }
   if (!equipment.localArea.serviceArea.district) {
-    equipment.localArea.serviceArea.district = { id: 0, name: "" };
+    equipment.localArea.serviceArea.district = { id: 0, name: '' };
   }
   if (!equipment.localArea.serviceArea.district.region) {
-    equipment.localArea.serviceArea.district.region = { id: 0, name: "" };
+    equipment.localArea.serviceArea.district.region = { id: 0, name: '' };
   }
   if (!equipment.status) {
     equipment.status = Constant.EQUIPMENT_STATUS_CODE_PENDING;
@@ -429,66 +404,52 @@ function parseEquipment(equipment) {
     equipment.equipmentAttachments = [];
   }
 
-  equipment.isApproved =
-    equipment.status === Constant.EQUIPMENT_STATUS_CODE_APPROVED;
+  equipment.isApproved = equipment.status === Constant.EQUIPMENT_STATUS_CODE_APPROVED;
   equipment.isNew = equipment.status === Constant.EQUIPMENT_STATUS_CODE_PENDING;
-  equipment.isArchived =
-    equipment.status === Constant.EQUIPMENT_STATUS_CODE_ARCHIVED;
-  equipment.isMaintenanceContractor =
-    equipment.owner.isMaintenanceContractor === true;
+  equipment.isArchived = equipment.status === Constant.EQUIPMENT_STATUS_CODE_ARCHIVED;
+  equipment.isMaintenanceContractor = equipment.owner.isMaintenanceContractor === true;
   equipment.isDumpTruck =
-    (equipment.districtEquipmentType.equipmentType &&
-      equipment.districtEquipmentType.equipmentType.isDumpTruck) ||
+    (equipment.districtEquipmentType.equipmentType && equipment.districtEquipmentType.equipmentType.isDumpTruck) ||
     false;
 
   equipment.ownerStatus = equipment.owner.status;
 
   // UI display fields
-  equipment.serialNumber = equipment.serialNumber || "";
-  equipment.equipmentCode = equipment.equipmentCode || "";
-  equipment.licencePlate = equipment.licencePlate || "";
-  equipment.operator = equipment.operator || ""; // TODO Needs review from business
+  equipment.serialNumber = equipment.serialNumber || '';
+  equipment.equipmentCode = equipment.equipmentCode || '';
+  equipment.licencePlate = equipment.licencePlate || '';
+  equipment.operator = equipment.operator || ''; // TODO Needs review from business
   equipment.organizationName = equipment.owner.organizationName;
-  equipment.ownerPath = equipment.owner.id
-    ? `#/owners/${equipment.owner.id}`
-    : "";
-  equipment.typeName = equipment.districtEquipmentType
-    ? equipment.districtEquipmentType.districtEquipmentName
-    : "";
+  equipment.ownerPath = equipment.owner.id ? `/owners/${equipment.owner.id}` : '';
+  equipment.typeName = equipment.districtEquipmentType ? equipment.districtEquipmentType.districtEquipmentName : '';
   equipment.localAreaName = equipment.localArea.name;
   equipment.districtName = equipment.localArea.serviceArea.district.name;
-  equipment.lastVerifiedDate = equipment.lastVerifiedDate || "";
+  equipment.lastVerifiedDate = equipment.lastVerifiedDate || '';
   equipment.daysSinceVerified = daysAgo(equipment.lastVerifiedDate);
   equipment.details = [
-    equipment.make || "-",
-    equipment.model || "-",
-    equipment.size || "-",
-    equipment.year || "-",
-  ].join("/");
+    equipment.make || '-',
+    equipment.model || '-',
+    equipment.size || '-',
+    equipment.year || '-',
+  ].join('/');
 
   // Seniority data
   equipment.serviceHoursThisYear = equipment.serviceHoursThisYear || 0;
   equipment.serviceHoursLastYear = equipment.serviceHoursLastYear || 0;
   equipment.serviceHoursTwoYearsAgo = equipment.serviceHoursTwoYearsAgo || 0;
-  equipment.serviceHoursThreeYearsAgo =
-    equipment.serviceHoursThreeYearsAgo || 0;
+  equipment.serviceHoursThreeYearsAgo = equipment.serviceHoursThreeYearsAgo || 0;
 
   equipment.isSeniorityOverridden = equipment.isSeniorityOverridden || false;
-  equipment.seniorityOverrideReason = equipment.seniorityOverrideReason || "";
+  equipment.seniorityOverrideReason = equipment.seniorityOverrideReason || '';
 
   // The number of years of active service of this piece of equipment at the time seniority is calculated - April 1 of the current fiscal year
   equipment.yearsOfService = equipment.yearsOfService || 0;
-  equipment.receivedDate = equipment.receivedDate || "";
-  equipment.approvedDate = equipment.approvedDate || "";
+  equipment.receivedDate = equipment.receivedDate || '';
+  equipment.approvedDate = equipment.approvedDate || '';
   // The max date of a time card for this fiscal year - can be null if there are none.
-  equipment.lastTimeRecordDateThisYear =
-    equipment.lastTimeRecordDateThisYear || "";
+  equipment.lastTimeRecordDateThisYear = equipment.lastTimeRecordDateThisYear || '';
   // e.g. "Open-500" or "1-744"
-  equipment.seniorityText = getBlockDisplayName(
-    equipment.blockNumber,
-    equipment.numberOfBlocks,
-    equipment.seniority
-  );
+  equipment.seniorityText = getBlockDisplayName(equipment.blockNumber, equipment.numberOfBlocks, equipment.seniority);
 
   equipment.currentYear = Moment().year();
   equipment.lastYear = equipment.currentYear - 1;
@@ -502,15 +463,12 @@ function parseEquipment(equipment) {
 
   equipment.isHired = equipment.isHired || false;
   // TODO Descriptive text for time entries. Needs to be added to backend
-  equipment.currentWorkDescription = equipment.currentWorkDescription || "";
+  equipment.currentWorkDescription = equipment.currentWorkDescription || '';
 
   equipment.path = `${Constant.EQUIPMENT_PATHNAME}/${equipment.id}`;
-  equipment.url = `#/${equipment.path}`;
+  equipment.url = `${equipment.path}`;
   equipment.name = `code ${equipment.equipmentCode}`;
-  equipment.historyEntity = History.makeHistoryEntity(
-    Constant.HISTORY_EQUIPMENT,
-    equipment
-  );
+  equipment.historyEntity = History.makeHistoryEntity(Constant.HISTORY_EQUIPMENT, equipment);
   equipment.documentAdded = Log.equipmentDocumentAdded;
   equipment.documentsAdded = Log.equipmentDocumentsAdded;
   equipment.documentDeleted = Log.equipmentDocumentDeleted;
@@ -525,28 +483,23 @@ function parseEquipment(equipment) {
 
 function generateSortableEquipmentCode(equipment) {
   return equipment.equipmentPrefix && equipment.equipmentNumber
-    ? `${equipment.equipmentPrefix}${_.padStart(
-        equipment.equipmentNumber,
-        3,
-        "0"
-      )}`
+    ? `${equipment.equipmentPrefix}${_.padStart(equipment.equipmentNumber, 3, '0')}`
     : equipment.equipmentCode;
 }
 
 export function searchEquipmentList(params) {
   store.dispatch({ type: Action.EQUIPMENT_LIST_REQUEST });
-  return new ApiRequest("/equipment/search").get(params).then((response) => {
+  return new ApiRequest('/equipment/search').get(params).then((response) => {
     var equipmentList = normalize(response.data);
 
     _.map(equipmentList, (equipment) => {
       equipment.details = [
-        equipment.make || "-",
-        equipment.model || "-",
-        equipment.size || "-",
-        equipment.year || "-",
-      ].join("/");
-      equipment.sortableEquipmentCode =
-        generateSortableEquipmentCode(equipment);
+        equipment.make || '-',
+        equipment.model || '-',
+        equipment.size || '-',
+        equipment.year || '-',
+      ].join('/');
+      equipment.sortableEquipmentCode = generateSortableEquipmentCode(equipment);
     });
 
     store.dispatch({
@@ -569,62 +522,54 @@ export function getEquipment(equipmentId) {
 
 export function getEquipmentLite() {
   const silent = store.getState().lookups.equipment.lite.loaded;
-  return new ApiRequest("/equipment/lite", { silent })
-    .get()
-    .then((response) => {
-      var equipment = normalize(response.data);
+  return new ApiRequest('/equipment/lite', { silent }).get().then((response) => {
+    var equipment = normalize(response.data);
 
-      store.dispatch({
-        type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP,
-        equipment: equipment,
-      });
+    store.dispatch({
+      type: Action.UPDATE_EQUIPMENT_LITE_LOOKUP,
+      equipment: equipment,
     });
+  });
 }
 
 export function getEquipmentAgreementSummary() {
   const silent = store.getState().lookups.equipment.ts.loaded;
-  return new ApiRequest("/equipment/agreementSummary", { silent })
-    .get()
-    .then((response) => {
-      var equipment = normalize(response.data);
+  return new ApiRequest('/equipment/agreementSummary', { silent }).get().then((response) => {
+    var equipment = normalize(response.data);
 
-      store.dispatch({
-        type: Action.UPDATE_EQUIPMENT_AGREEMENT_SUMMARY_LOOKUP,
-        equipment: equipment,
-      });
+    store.dispatch({
+      type: Action.UPDATE_EQUIPMENT_AGREEMENT_SUMMARY_LOOKUP,
+      equipment: equipment,
     });
+  });
 }
 
 export function getEquipmentTs() {
   const silent = store.getState().lookups.equipment.ts.loaded;
-  return new ApiRequest("/equipment/liteTs", { silent })
-    .get()
-    .then((response) => {
-      var equipment = normalize(response.data);
+  return new ApiRequest('/equipment/liteTs', { silent }).get().then((response) => {
+    var equipment = normalize(response.data);
 
-      store.dispatch({
-        type: Action.UPDATE_EQUIPMENT_TS_LOOKUP,
-        equipment: equipment,
-      });
+    store.dispatch({
+      type: Action.UPDATE_EQUIPMENT_TS_LOOKUP,
+      equipment: equipment,
     });
+  });
 }
 
 export function getEquipmentHires() {
   const silent = store.getState().lookups.equipment.hires.loaded;
-  return new ApiRequest("/equipment/liteHires", { silent })
-    .get()
-    .then((response) => {
-      var equipment = normalize(response.data);
+  return new ApiRequest('/equipment/liteHires', { silent }).get().then((response) => {
+    var equipment = normalize(response.data);
 
-      store.dispatch({
-        type: Action.UPDATE_EQUIPMENT_HIRES_LOOKUP,
-        equipment: equipment,
-      });
+    store.dispatch({
+      type: Action.UPDATE_EQUIPMENT_HIRES_LOOKUP,
+      equipment: equipment,
     });
+  });
 }
 
 export function addEquipment(equipment) {
-  return new ApiRequest("/equipment").post(equipment).then((response) => {
+  return new ApiRequest('/equipment').post(equipment).then((response) => {
     var equipment = response.data;
 
     // Add display fields
@@ -641,72 +586,64 @@ export function addEquipment(equipment) {
 }
 
 export function updateEquipment(equipment) {
-  return new ApiRequest(`/equipment/${equipment.id}`)
-    .put(equipment)
-    .then((response) => {
-      var equipment = response.data;
+  return new ApiRequest(`/equipment/${equipment.id}`).put(equipment).then((response) => {
+    var equipment = response.data;
 
-      // Add display fields
-      parseEquipment(equipment);
+    // Add display fields
+    parseEquipment(equipment);
 
-      store.dispatch({ type: Action.UPDATE_EQUIPMENT, equipment: equipment });
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT, equipment: equipment });
 
-      getEquipmentLite();
-      getEquipmentTs();
-      getEquipmentHires();
-    });
+    getEquipmentLite();
+    getEquipmentTs();
+    getEquipmentHires();
+  });
 }
 
 export function addEquipmentHistory(equipmentId, history) {
-  return new ApiRequest(`/equipment/${equipmentId}/history`)
-    .post(history)
-    .then((response) => {
-      var history = normalize(response.data);
-      // Add display fields
-      _.map(history, (history) => {
-        parseHistory(history);
-      });
-
-      store.dispatch({
-        type: Action.UPDATE_EQUIPMENT_HISTORY,
-        history,
-        id: equipmentId,
-      });
+  return new ApiRequest(`/equipment/${equipmentId}/history`).post(history).then((response) => {
+    var history = normalize(response.data);
+    // Add display fields
+    _.map(history, (history) => {
+      parseHistory(history);
     });
+
+    store.dispatch({
+      type: Action.UPDATE_EQUIPMENT_HISTORY,
+      history,
+      id: equipmentId,
+    });
+  });
 }
 
 export function getEquipmentHistory(equipmentId, params) {
-  return new ApiRequest(`/equipment/${equipmentId}/history`)
-    .get(params)
-    .then((response) => {
-      var history = normalize(response.data);
+  return new ApiRequest(`/equipment/${equipmentId}/history`).get(params).then((response) => {
+    var history = normalize(response.data);
 
-      // Add display fields
-      _.map(history, (history) => {
-        parseHistory(history);
-      });
-
-      store.dispatch({
-        type: Action.UPDATE_EQUIPMENT_HISTORY,
-        history,
-        id: equipmentId,
-      });
+    // Add display fields
+    _.map(history, (history) => {
+      parseHistory(history);
     });
+
+    store.dispatch({
+      type: Action.UPDATE_EQUIPMENT_HISTORY,
+      history,
+      id: equipmentId,
+    });
+  });
 }
 
 export function getEquipmentDocuments(equipmentId) {
-  return new ApiRequest(`/equipment/${equipmentId}/attachments`)
-    .get()
-    .then((response) => {
-      var documents = normalize(response.data);
+  return new ApiRequest(`/equipment/${equipmentId}/attachments`).get().then((response) => {
+    var documents = normalize(response.data);
 
-      // Add display fields
-      _.map(documents, (document) => {
-        parseDocument(document);
-      });
-
-      store.dispatch({ type: Action.UPDATE_DOCUMENTS, documents: documents });
+    // Add display fields
+    _.map(documents, (document) => {
+      parseDocument(document);
     });
+
+    store.dispatch({ type: Action.UPDATE_DOCUMENTS, documents: documents });
+  });
 }
 
 // XXX: Looks like this is unused
@@ -715,27 +652,23 @@ export function getEquipmentDocuments(equipmentId) {
 // }
 
 export function getEquipmentNotes(equipmentId) {
-  return new ApiRequest(`/equipment/${equipmentId}/notes`)
-    .get()
-    .then((response) => {
-      store.dispatch({
-        type: Action.UPDATE_EQUIPMENT_NOTES,
-        notes: response.data,
-      });
-      return response.data;
+  return new ApiRequest(`/equipment/${equipmentId}/notes`).get().then((response) => {
+    store.dispatch({
+      type: Action.UPDATE_EQUIPMENT_NOTES,
+      notes: response.data,
     });
+    return response.data;
+  });
 }
 
 export function addEquipmentNote(equipmentId, note) {
-  return new ApiRequest(`/equipment/${equipmentId}/note`)
-    .post(note)
-    .then((response) => {
-      store.dispatch({
-        type: Action.UPDATE_EQUIPMENT_NOTES,
-        notes: response.data,
-      });
-      return response.data;
+  return new ApiRequest(`/equipment/${equipmentId}/note`).post(note).then((response) => {
+    store.dispatch({
+      type: Action.UPDATE_EQUIPMENT_NOTES,
+      notes: response.data,
     });
+    return response.data;
+  });
 }
 
 export function equipmentDuplicateCheck(id, serialNumber) {
@@ -743,43 +676,37 @@ export function equipmentDuplicateCheck(id, serialNumber) {
 }
 
 export function changeEquipmentStatus(status) {
-  return new ApiRequest(`/equipment/${status.id}/status`)
-    .put(status)
-    .then((response) => {
-      var equipment = response.data;
-      // Add display fields
-      parseEquipment(equipment);
-      store.dispatch({ type: Action.UPDATE_EQUIPMENT, equipment: equipment });
-      return response;
-    });
+  return new ApiRequest(`/equipment/${status.id}/status`).put(status).then((response) => {
+    var equipment = response.data;
+    // Add display fields
+    parseEquipment(equipment);
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT, equipment: equipment });
+    return response;
+  });
 }
 
 export function getEquipmentRentalAgreements(equipmentId) {
-  return new ApiRequest(`/equipment/${equipmentId}/rentalAgreements`)
-    .get()
-    .then((response) => {
-      var rentalAgreements = normalize(response.data);
-      store.dispatch({
-        type: Action.UPDATE_EQUIPMENT_RENTAL_AGREEMENTS,
-        rentalAgreements: rentalAgreements,
-      });
-      return rentalAgreements;
+  return new ApiRequest(`/equipment/${equipmentId}/rentalAgreements`).get().then((response) => {
+    var rentalAgreements = normalize(response.data);
+    store.dispatch({
+      type: Action.UPDATE_EQUIPMENT_RENTAL_AGREEMENTS,
+      rentalAgreements: rentalAgreements,
     });
+    return rentalAgreements;
+  });
 }
 
 export function cloneEquipmentRentalAgreement(data) {
-  return new ApiRequest(`/equipment/${data.equipmentId}/rentalAgreementClone`)
-    .post(data)
-    .then((response) => {
-      var agreement = response.data;
-      // Add display fields
-      parseRentalAgreement(agreement);
-      store.dispatch({
-        type: Action.UPDATE_RENTAL_AGREEMENT,
-        rentalAgreement: agreement,
-      });
-      return response;
+  return new ApiRequest(`/equipment/${data.equipmentId}/rentalAgreementClone`).post(data).then((response) => {
+    var agreement = response.data;
+    // Add display fields
+    parseRentalAgreement(agreement);
+    store.dispatch({
+      type: Action.UPDATE_RENTAL_AGREEMENT,
+      rentalAgreement: agreement,
     });
+    return response;
+  });
 }
 
 export function equipmentSeniorityListDoc(localAreas, types, counterCopy) {
@@ -788,7 +715,7 @@ export function equipmentSeniorityListDoc(localAreas, types, counterCopy) {
     params.counterCopy = counterCopy;
   }
 
-  return new ApiRequest("/equipment/seniorityListDoc")
+  return new ApiRequest('/equipment/seniorityListDoc')
     .get(params, { responseType: Constant.RESPONSE_TYPE_BLOB })
     .then((response) => {
       return response;
@@ -828,42 +755,36 @@ export function addPhysicalAttachments(equipmentId, attachmentTypeNames) {
     // "concurrencyControlNumber": 0,
     return {
       typeName,
-      description: "",
+      description: '',
       equipmentId,
       equipment: { id: equipmentId },
     };
   });
 
-  return new ApiRequest("/equipmentAttachments/bulk")
-    .post(attachments)
-    .then((response) => {
-      store.dispatch({
-        type: Action.ADD_EQUIPMENT_ATTACHMENTS,
-        physicalAttachments: response.data,
-      });
+  return new ApiRequest('/equipmentAttachments/bulk').post(attachments).then((response) => {
+    store.dispatch({
+      type: Action.ADD_EQUIPMENT_ATTACHMENTS,
+      physicalAttachments: response.data,
     });
+  });
 }
 
 export function updatePhysicalAttachment(attachment) {
-  return new ApiRequest(`/equipmentAttachments/${attachment.id}`)
-    .put(attachment)
-    .then((response) => {
-      store.dispatch({
-        type: Action.UPDATE_EQUIPMENT_ATTACHMENT,
-        physicalAttachment: response.data,
-      });
+  return new ApiRequest(`/equipmentAttachments/${attachment.id}`).put(attachment).then((response) => {
+    store.dispatch({
+      type: Action.UPDATE_EQUIPMENT_ATTACHMENT,
+      physicalAttachment: response.data,
     });
+  });
 }
 
 export function deletePhysicalAttachment(attachmentId) {
-  return new ApiRequest(`/equipmentAttachments/${attachmentId}/delete`)
-    .post()
-    .then((response) => {
-      store.dispatch({
-        type: Action.DELETE_EQUIPMENT_ATTACHMENT,
-        physicalAttachment: response.data,
-      });
+  return new ApiRequest(`/equipmentAttachments/${attachmentId}/delete`).post().then((response) => {
+    store.dispatch({
+      type: Action.DELETE_EQUIPMENT_ATTACHMENT,
+      physicalAttachment: response.data,
     });
+  });
 }
 
 ////////////////////
@@ -885,16 +806,16 @@ function parseOwner(owner) {
   delete owner.cglendDate;
 
   if (!owner.localArea) {
-    owner.localArea = { id: 0, name: "" };
+    owner.localArea = { id: 0, name: '' };
   }
   if (!owner.localArea.serviceArea) {
-    owner.localArea.serviceArea = { id: 0, name: "" };
+    owner.localArea.serviceArea = { id: 0, name: '' };
   }
   if (!owner.localArea.serviceArea.district) {
-    owner.localArea.serviceArea.district = { id: 0, name: "" };
+    owner.localArea.serviceArea.district = { id: 0, name: '' };
   }
   if (!owner.localArea.serviceArea.district.region) {
-    owner.localArea.serviceArea.district.region = { id: 0, name: "" };
+    owner.localArea.serviceArea.district.region = { id: 0, name: '' };
   }
   if (!owner.contacts) {
     owner.contacts = [];
@@ -906,40 +827,32 @@ function parseOwner(owner) {
     owner.equipmentList = [];
   }
 
-  owner.organizationName = owner.organizationName || "";
-  owner.ownerCode = owner.ownerCode || "";
-  owner.doingBusinessAs = owner.doingBusinessAs || "";
-  owner.registeredCompanyNumber = owner.registeredCompanyNumber || "";
+  owner.organizationName = owner.organizationName || '';
+  owner.ownerCode = owner.ownerCode || '';
+  owner.doingBusinessAs = owner.doingBusinessAs || '';
+  owner.registeredCompanyNumber = owner.registeredCompanyNumber || '';
   owner.meetsResidency = owner.meetsResidency || false;
-  owner.workSafeBCPolicyNumber = owner.workSafeBCPolicyNumber || "";
-  owner.workSafeBCExpiryDate = owner.workSafeBCExpiryDate || "";
-  owner.cglEndDate = owner.cglEndDate || "";
-  owner.address1 = owner.address1 || "";
-  owner.address2 = owner.address2 || "";
-  owner.city = owner.city || "";
-  owner.province = owner.province || "";
-  owner.postalCode = owner.postalCode || "";
+  owner.workSafeBCPolicyNumber = owner.workSafeBCPolicyNumber || '';
+  owner.workSafeBCExpiryDate = owner.workSafeBCExpiryDate || '';
+  owner.cglEndDate = owner.cglEndDate || '';
+  owner.address1 = owner.address1 || '';
+  owner.address2 = owner.address2 || '';
+  owner.city = owner.city || '';
+  owner.province = owner.province || '';
+  owner.postalCode = owner.postalCode || '';
   owner.fullAddress = `${owner.address1} ${owner.address2} ${owner.city} ${owner.province} ${owner.postalCode}`;
-  owner.ownerName =
-    owner.givenName && owner.surname
-      ? `${owner.givenName} ${owner.surname}`
-      : "";
+  owner.ownerName = owner.givenName && owner.surname ? `${owner.givenName} ${owner.surname}` : '';
 
   owner.path = `${Constant.OWNERS_PATHNAME}/${owner.id}`;
-  owner.url = `#/${owner.path}`;
+  owner.url = `${owner.path}`;
   owner.name = owner.organizationName;
-  owner.historyEntity = History.makeHistoryEntity(
-    Constant.HISTORY_OWNER,
-    owner
-  );
+  owner.historyEntity = History.makeHistoryEntity(Constant.HISTORY_OWNER, owner);
   owner.documentAdded = Log.ownerDocumentAdded;
   owner.documentsAdded = Log.ownerDocumentsAdded;
   owner.documentDeleted = Log.ownerDocumentDeleted;
 
   // Add display fields for owner contacts
-  owner.contacts = owner.contacts.map((contact) =>
-    parseContact(contact, owner)
-  );
+  owner.contacts = owner.contacts.map((contact) => parseContact(contact, owner));
 
   _.map(owner.documents, (document) => {
     parseDocument(document);
@@ -955,11 +868,8 @@ function parseOwner(owner) {
   owner.isMaintenanceContractor = owner.isMaintenanceContractor || false;
   owner.isApproved = owner.status === Constant.OWNER_STATUS_CODE_APPROVED;
   owner.primaryContactName = owner.primaryContact
-    ? firstLastName(
-        owner.primaryContact.givenName,
-        owner.primaryContact.surname
-      )
-    : "";
+    ? firstLastName(owner.primaryContact.givenName, owner.primaryContact.surname)
+    : '';
   owner.localAreaName = owner.localArea.name;
   owner.districtName = owner.localArea.serviceArea.district.name;
   owner.numberOfEquipment = Object.keys(owner.equipmentList).length;
@@ -975,7 +885,7 @@ function parseOwner(owner) {
 
 export function searchOwners(params) {
   store.dispatch({ type: Action.OWNERS_REQUEST });
-  return new ApiRequest("/owners/search").get(params).then((response) => {
+  return new ApiRequest('/owners/search').get(params).then((response) => {
     var owners = normalize(response.data);
     store.dispatch({ type: Action.UPDATE_OWNERS, owners: owners });
   });
@@ -995,7 +905,7 @@ export function getOwner(ownerId) {
 }
 
 export function addOwner(owner) {
-  return new ApiRequest("/owners").post(owner).then((response) => {
+  return new ApiRequest('/owners').post(owner).then((response) => {
     var owner = response.data;
 
     // Add display fields
@@ -1011,16 +921,14 @@ export function updateOwner(owner) {
   store.dispatch({ type: Action.UPDATE_OWNER, owner });
 
   // Omit `contacts` to ensure that the existing contacts don't mess up the PUT call
-  return new ApiRequest(`/owners/${owner.id}`)
-    .put(_.omit(owner, "contacts"))
-    .then((response) => {
-      var owner = response.data;
+  return new ApiRequest(`/owners/${owner.id}`).put(_.omit(owner, 'contacts')).then((response) => {
+    var owner = response.data;
 
-      // Add display fields
-      parseOwner(owner);
+    // Add display fields
+    parseOwner(owner);
 
-      store.dispatch({ type: Action.UPDATE_OWNER, owner });
-    });
+    store.dispatch({ type: Action.UPDATE_OWNER, owner });
+  });
 }
 
 // XXX: Looks like this is unused
@@ -1047,85 +955,76 @@ export function saveOwnerContact(owner, contact) {
     });
   }
 
-  return new ApiRequest(`/owners/${owner.id}/contacts/${contact.isPrimary}`)
-    .post(contact)
-    .then((response) => {
-      var updatedContact = response.data;
+  return new ApiRequest(`/owners/${owner.id}/contacts/${contact.isPrimary}`).post(contact).then((response) => {
+    var updatedContact = response.data;
 
-      // Add display fields
-      parseContact(updatedContact, owner); // owner's primary contact could be outdated
-      updatedContact.isPrimary = contact.isPrimary;
+    // Add display fields
+    parseContact(updatedContact, owner); // owner's primary contact could be outdated
+    updatedContact.isPrimary = contact.isPrimary;
 
-      if (isNew) {
-        // add newly created contact to Redux store's contacts
-        store.dispatch({
-          type: Action.ADD_OWNER_CONTACT,
-          ownerId: owner.id,
-          contact: updatedContact,
-        });
-      } else {
-        // Update Redux store's data with the server's data
-        store.dispatch({
-          type: Action.UPDATE_OWNER_CONTACT,
-          ownerId: owner.id,
-          contact: updatedContact,
-        });
-      }
+    if (isNew) {
+      // add newly created contact to Redux store's contacts
+      store.dispatch({
+        type: Action.ADD_OWNER_CONTACT,
+        ownerId: owner.id,
+        contact: updatedContact,
+      });
+    } else {
+      // Update Redux store's data with the server's data
+      store.dispatch({
+        type: Action.UPDATE_OWNER_CONTACT,
+        ownerId: owner.id,
+        contact: updatedContact,
+      });
+    }
 
-      return updatedContact;
-    });
+    return updatedContact;
+  });
 }
 
 export function addOwnerHistory(ownerId, history) {
-  return new ApiRequest(`/owners/${ownerId}/history`)
-    .post(history)
-    .then((response) => {
-      var history = normalize(response.data);
-      // Add display fields
-      _.map(history, (history) => {
-        parseHistory(history);
-      });
-
-      store.dispatch({
-        type: Action.UPDATE_OWNER_HISTORY,
-        history,
-        id: ownerId,
-      });
+  return new ApiRequest(`/owners/${ownerId}/history`).post(history).then((response) => {
+    var history = normalize(response.data);
+    // Add display fields
+    _.map(history, (history) => {
+      parseHistory(history);
     });
+
+    store.dispatch({
+      type: Action.UPDATE_OWNER_HISTORY,
+      history,
+      id: ownerId,
+    });
+  });
 }
 
 export function getOwnerHistory(ownerId, params) {
-  return new ApiRequest(`/owners/${ownerId}/history`)
-    .get(params)
-    .then((response) => {
-      var history = normalize(response.data);
-
-      // Add display fields
-      _.map(history, (history) => {
-        parseHistory(history);
-      });
-
-      store.dispatch({
-        type: Action.UPDATE_OWNER_HISTORY,
-        history,
-        id: ownerId,
-      });
+  return new ApiRequest(`/owners/${ownerId}/history`).get(params).then((response) => {
+    var history = normalize(response.data);
+    // Add display fields
+    _.map(history, (history) => {
+      parseHistory(history);
     });
+
+    store.dispatch({
+      type: Action.UPDATE_OWNER_HISTORY,
+      history,
+      id: ownerId,
+    });
+  });
 }
 
 export function getOwnerDocuments(ownerId) {
-  return new ApiRequest(`/owners/${ownerId}/attachments`)
-    .get()
-    .then((response) => {
-      var documents = normalize(response.data);
+  return new ApiRequest(`/owners/${ownerId}/attachments`).get().then((response) => {
+    var documents = normalize(response.data);
 
-      // Add display fields
-      _.map(documents, (document) => {
-        parseDocument(document);
-      });
-
-      store.dispatch({ type: Action.UPDATE_DOCUMENTS, documents: documents });
+    // Add display fields
+    _.map(documents, (document) => {
+      parseDocument(document);
     });
+
+    store.dispatch({ type: Action.UPDATE_DOCUMENTS, documents: documents });
+  });
 }
 
 // XXX: Looks like this is unused
@@ -1134,31 +1033,27 @@ export function getOwnerDocuments(ownerId) {
 // }
 
 export function getOwnerEquipment(ownerId) {
-  return new ApiRequest(`/owners/${ownerId}/equipment`)
-    .get()
-    .then((response) => {
-      var equipmentList = normalize(response.data);
+  return new ApiRequest(`/owners/${ownerId}/equipment`).get().then((response) => {
+    var equipmentList = normalize(response.data);
 
-      _.map(equipmentList, (equipment) => {
-        equipment.details = [
-          equipment.make || "-",
-          equipment.model || "-",
-          equipment.size || "-",
-          equipment.year || "-",
-        ].join("/");
-      });
-
-      store.dispatch({
-        type: Action.UPDATE_OWNER_EQUIPMENT,
-        equipment: equipmentList,
-      });
+    _.map(equipmentList, (equipment) => {
+      equipment.details = [
+        equipment.make || '-',
+        equipment.model || '-',
+        equipment.size || '-',
+        equipment.year || '-',
+      ].join('/');
     });
+
+    store.dispatch({
+      type: Action.UPDATE_OWNER_EQUIPMENT,
+      equipment: equipmentList,
+    });
+  });
 }
 
 export function updateOwnerEquipment(owner, equipmentArray) {
-  return new ApiRequest(`/owners/${owner.id}/equipment`)
-    .put(equipmentArray)
-    .then(() => {});
+  return new ApiRequest(`/owners/${owner.id}/equipment`).put(equipmentArray).then(() => {});
 }
 
 export function getOwnerNotes(ownerId) {
@@ -1174,11 +1069,9 @@ export function getOwnerNotes(ownerId) {
 
 export function addOwnerNote(ownerId, note) {
   store.dispatch({ type: Action.ADD_OWNER_NOTE, ownerId, note });
-  return new ApiRequest(`/owners/${ownerId}/note`)
-    .post(note)
-    .then((response) => {
-      return response.data;
-    });
+  return new ApiRequest(`/owners/${ownerId}/note`).post(note).then((response) => {
+    return response.data;
+  });
 }
 
 // XXX: Looks like this is unused
@@ -1192,38 +1085,29 @@ export function addOwnerNote(ownerId, note) {
 // }
 
 export function changeOwnerStatus(status) {
-  return new ApiRequest(`/owners/${status.id}/status`)
-    .put(status)
-    .then((response) => {
-      var owner = response.data;
-      // Add display fields
-      parseOwner(owner);
-      store.dispatch({ type: Action.UPDATE_OWNER, owner: owner });
-      return response;
-    });
+  return new ApiRequest(`/owners/${status.id}/status`).put(status).then((response) => {
+    var owner = response.data;
+    // Add display fields
+    parseOwner(owner);
+    store.dispatch({ type: Action.UPDATE_OWNER, owner: owner });
+    return response;
+  });
 }
 
 export function getStatusLettersDoc(params) {
-  return new ApiRequest("owners/verificationDoc").post(params, {
+  return new ApiRequest('/owners/verificationDoc').post(params, {
     responseType: Constant.RESPONSE_TYPE_BLOB,
   });
 }
 
 export function getMailingLabelsDoc(params) {
-  return new ApiRequest("owners/mailingLabelsDoc").post(params, {
+  return new ApiRequest('/owners/mailingLabelsDoc').post(params, {
     responseType: Constant.RESPONSE_TYPE_BLOB,
   });
 }
 
-export function transferEquipment(
-  donorOwnerId,
-  recipientOwnerId,
-  equipment,
-  includeSeniority
-) {
-  return new ApiRequest(
-    `owners/${donorOwnerId}/equipmentTransfer/${recipientOwnerId}/${includeSeniority}`
-  )
+export function transferEquipment(donorOwnerId, recipientOwnerId, equipment, includeSeniority) {
+  return new ApiRequest(`/owners/${donorOwnerId}/equipmentTransfer/${recipientOwnerId}/${includeSeniority}`)
     .post(equipment)
     .then((response) => {
       getEquipmentLite();
@@ -1244,25 +1128,20 @@ function parseContact(contact, parent) {
     ? `${contact.workPhoneNumber} (w)`
     : contact.mobilePhoneNumber
     ? `${contact.mobilePhoneNumber} (c)`
-    : "";
+    : '';
 
-  var parentPath = "";
+  var parentPath = '';
   var primaryContactId = 0;
   if (parent) {
-    parentPath = parent.path || "";
+    parentPath = parent.path || '';
     primaryContactId = parent.primaryContact ? parent.primaryContact.id : 0;
   }
 
   contact.isPrimary = contact.id === primaryContactId;
 
-  contact.path = parentPath
-    ? `${parentPath}/${Constant.CONTACTS_PATHNAME}/${contact.id}`
-    : null;
-  contact.url = contact.path ? `#/${contact.path}` : null;
-  contact.historyEntity = History.makeHistoryEntity(
-    Constant.HISTORY_CONTACT,
-    contact
-  );
+  contact.path = parentPath ? `${parentPath}${Constant.CONTACTS_PATHNAME}/${contact.id}` : null;
+  contact.url = contact.path ? `${contact.path}` : null;
+  contact.historyEntity = History.makeHistoryEntity(Constant.HISTORY_CONTACT, contact);
 
   contact.canEdit = true;
   contact.canDelete = true;
@@ -1319,16 +1198,14 @@ function parseContact(contact, parent) {
 
 export function deleteContact(contact) {
   store.dispatch({ type: Action.DELETE_CONTACT, contact });
-  return new ApiRequest(`/contacts/${contact.id}/delete`)
-    .post()
-    .then((response) => {
-      var contact = response.data;
+  return new ApiRequest(`/contacts/${contact.id}/delete`).post().then((response) => {
+    var contact = response.data;
 
-      // Add display fields
-      parseContact(contact);
+    // Add display fields
+    parseContact(contact);
 
-      store.dispatch({ type: Action.DELETE_CONTACT, contact });
-    });
+    store.dispatch({ type: Action.DELETE_CONTACT, contact });
+  });
 }
 
 ////////////////////
@@ -1361,17 +1238,19 @@ function parseDocument(document) {
   document.name = document.fileName;
 
   document.canDelete = true;
-  document.historyEntity = History.makeHistoryEntity(
-    Constant.HISTORY_DOCUMENT,
-    document
-  );
+  document.historyEntity = History.makeHistoryEntity(Constant.HISTORY_DOCUMENT, document);
 }
 
 export function deleteDocument(document) {
   return new ApiRequest(`/attachments/${document.id}/delete`).post();
 }
 
+export function getDownloadDocument(document) {
+  return new ApiRequest(`/attachments/${document.id}/download`);
+}
+
 export function getDownloadDocumentURL(document) {
+  //XXX: Not used in the application. Last checked 17 Jun 2021.
   // Not an API call, per se, as it must be called from the browser window.
   return `${window.location.origin}${window.location.pathname}api/attachments/${document.id}/download`;
 }
@@ -1390,10 +1269,10 @@ function parseHistory(history) {
 
 function parseProject(project) {
   if (!project.district) {
-    project.district = { id: 0, name: "" };
+    project.district = { id: 0, name: '' };
   }
   if (!project.district.region) {
-    project.district.region = { id: 0, name: "" };
+    project.district.region = { id: 0, name: '' };
   }
   if (!project.contacts) {
     project.contacts = [];
@@ -1405,24 +1284,19 @@ function parseProject(project) {
     project.rentalAgreements = [];
   }
 
-  project.name = project.name || "";
-  project.provincialProjectNumber = project.provincialProjectNumber || "";
-  project.information = project.information || "";
+  project.name = project.name || '';
+  project.provincialProjectNumber = project.provincialProjectNumber || '';
+  project.information = project.information || '';
 
   project.path = `${Constant.PROJECTS_PATHNAME}/${project.id}`;
-  project.url = `#/${project.path}`;
-  project.historyEntity = History.makeHistoryEntity(
-    Constant.HISTORY_PROJECT,
-    project
-  );
+  project.url = `${project.path}`;
+  project.historyEntity = History.makeHistoryEntity(Constant.HISTORY_PROJECT, project);
   project.documentAdded = Log.projectDocumentAdded;
   project.documentsAdded = Log.projectDocumentsAdded;
   project.documentDeleted = Log.projectDocumentDeleted;
 
   // Add display fields for contacts
-  project.contacts = project.contacts.map((contact) =>
-    parseContact(contact, project)
-  );
+  project.contacts = project.contacts.map((contact) => parseContact(contact, project));
 
   // Add display fields for rental requests and rental agreements
   _.map(project.rentalRequests, (obj) => {
@@ -1432,10 +1306,8 @@ function parseProject(project) {
     parseRentalAgreement(obj);
   });
 
-  project.numberOfRequests =
-    project.numberOfRequests || Object.keys(project.rentalRequests).length;
-  project.numberOfHires =
-    project.numberOfHires || Object.keys(project.rentalAgreements).length;
+  project.numberOfRequests = project.numberOfRequests || Object.keys(project.rentalRequests).length;
+  project.numberOfHires = project.numberOfHires || Object.keys(project.rentalAgreements).length;
 
   // UI display fields
   project.label = `${project.provincialProjectNumber} - ${project.name}`;
@@ -1444,22 +1316,13 @@ function parseProject(project) {
   project.districtName = project.district.name;
 
   project.primaryContactName = project.primaryContact
-    ? firstLastName(
-        project.primaryContact.givenName,
-        project.primaryContact.surname
-      )
-    : "";
-  project.primaryContactRole = project.primaryContact
-    ? project.primaryContact.role
-    : "";
-  project.primaryContactEmail = project.primaryContact
-    ? project.primaryContact.emailAddress
-    : "";
+    ? firstLastName(project.primaryContact.givenName, project.primaryContact.surname)
+    : '';
+  project.primaryContactRole = project.primaryContact ? project.primaryContact.role : '';
+  project.primaryContactEmail = project.primaryContact ? project.primaryContact.emailAddress : '';
   project.primaryContactPhone = project.primaryContact
-    ? project.primaryContact.workPhoneNumber ||
-      project.primaryContact.mobilePhoneNumber ||
-      ""
-    : "";
+    ? project.primaryContact.workPhoneNumber || project.primaryContact.mobilePhoneNumber || ''
+    : '';
 
   project.getDocumentsPromise = getProjectDocuments;
   project.uploadDocumentPath = `/projects/${project.id}/attachments`;
@@ -1474,7 +1337,7 @@ function formatTimeRecords(timeRecords, rentalRequestId) {
     let timeRecord = {};
     timeRecord.workedDate = timeRecords[key].date;
     timeRecord.hours = timeRecords[key].hours;
-    timeRecord.timePeriod = "Week";
+    timeRecord.timePeriod = 'Week';
     timeRecord.rentalAgreement = { id: rentalRequestId };
     return timeRecord;
   });
@@ -1483,7 +1346,7 @@ function formatTimeRecords(timeRecords, rentalRequestId) {
 
 export function searchProjects(params) {
   store.dispatch({ type: Action.PROJECTS_REQUEST });
-  return new ApiRequest("/projects/search").get(params).then((response) => {
+  return new ApiRequest('/projects/search').get(params).then((response) => {
     var projects = normalize(response.data);
 
     // Add display fields
@@ -1497,17 +1360,12 @@ export function searchProjects(params) {
 
 export function searchTimeEntries(params) {
   store.dispatch({ type: Action.TIME_ENTRIES_REQUEST });
-  return new ApiRequest("/timeRecords/search").get(params).then((response) => {
+  return new ApiRequest('/timeRecords/search').get(params).then((response) => {
     var timeEntries = normalize(response.data);
 
     _.map(timeEntries, (entry) => {
       entry.localAreaLabel = `${entry.serviceAreaId} - ${entry.localAreaName}`;
-      entry.equipmentDetails = [
-        entry.make || "-",
-        entry.model || "-",
-        entry.size || "-",
-        entry.year || "-",
-      ].join("/");
+      entry.equipmentDetails = [entry.make || '-', entry.model || '-', entry.size || '-', entry.year || '-'].join('/');
       entry.sortableEquipmentCode = generateSortableEquipmentCode(entry);
     });
 
@@ -1520,32 +1378,30 @@ export function searchTimeEntries(params) {
 
 export function searchHiringReport(params) {
   store.dispatch({ type: Action.HIRING_RESPONSES_REQUEST });
-  return new ApiRequest("/rentalRequests/hireReport")
-    .get(params)
-    .then((response) => {
-      var hiringResponses = normalize(response.data);
+  return new ApiRequest('/rentalRequests/hireReport').get(params).then((response) => {
+    var hiringResponses = normalize(response.data);
 
-      _.map(hiringResponses, (entry) => {
-        entry.localAreaLabel = `${entry.serviceAreaId} - ${entry.localAreaName}`;
-        entry.equipmentDetails = [
-          entry.equipmentMake || "-",
-          entry.equipmentModel || "-",
-          entry.equipmentSize || "-",
-          entry.equipmentYear || "-",
-        ].join("/");
-        entry.sortableEquipmentCode = generateSortableEquipmentCode(entry);
-      });
-
-      store.dispatch({
-        type: Action.UPDATE_HIRING_RESPONSES,
-        hiringResponses: hiringResponses,
-      });
+    _.map(hiringResponses, (entry) => {
+      entry.localAreaLabel = `${entry.serviceAreaId} - ${entry.localAreaName}`;
+      entry.equipmentDetails = [
+        entry.equipmentMake || '-',
+        entry.equipmentModel || '-',
+        entry.equipmentSize || '-',
+        entry.equipmentYear || '-',
+      ].join('/');
+      entry.sortableEquipmentCode = generateSortableEquipmentCode(entry);
     });
+
+    store.dispatch({
+      type: Action.UPDATE_HIRING_RESPONSES,
+      hiringResponses: hiringResponses,
+    });
+  });
 }
 
 export function searchOwnersCoverage(params) {
   store.dispatch({ type: Action.OWNERS_COVERAGE_REQUEST });
-  return new ApiRequest("/owners/wcbCglReport").get(params).then((response) => {
+  return new ApiRequest('/owners/wcbCglReport').get(params).then((response) => {
     var ownersCoverage = normalize(response.data);
 
     _.map(ownersCoverage, (entry) => {
@@ -1561,54 +1417,48 @@ export function searchOwnersCoverage(params) {
 
 export function getProjects() {
   const silent = store.getState().lookups.projects.loaded;
-  return new ApiRequest("/projects", { silent })
-    .get({ currentFiscal: false })
-    .then((response) => {
-      var projects = normalize(response.data);
+  return new ApiRequest('/projects', { silent }).get({ currentFiscal: false }).then((response) => {
+    var projects = normalize(response.data);
 
-      // Add display fields
-      _.map(projects, (project) => {
-        parseProject(project);
-      });
-
-      store.dispatch({
-        type: Action.UPDATE_PROJECTS_LOOKUP,
-        projects: projects,
-      });
+    // Add display fields
+    _.map(projects, (project) => {
+      parseProject(project);
     });
+
+    store.dispatch({
+      type: Action.UPDATE_PROJECTS_LOOKUP,
+      projects: projects,
+    });
+  });
 }
 
 export function getProjectsAgreementSummary() {
   const silent = store.getState().lookups.projectsAgreementSummary.loaded;
-  return new ApiRequest("/projects/agreementSummary", { silent })
-    .get()
-    .then((response) => {
-      var projects = normalize(response.data);
+  return new ApiRequest('/projects/agreementSummary', { silent }).get().then((response) => {
+    var projects = normalize(response.data);
 
-      store.dispatch({
-        type: Action.UPDATE_PROJECTS_AGREEMENT_SUMMARY_LOOKUP,
-        projects: projects,
-      });
+    store.dispatch({
+      type: Action.UPDATE_PROJECTS_AGREEMENT_SUMMARY_LOOKUP,
+      projects: projects,
     });
+  });
 }
 
 export function getProjectsCurrentFiscal() {
   const silent = store.getState().lookups.projectsCurrentFiscal.loaded;
-  return new ApiRequest("/projects", { silent })
-    .get({ currentFiscal: true })
-    .then((response) => {
-      var projects = normalize(response.data);
+  return new ApiRequest('/projects', { silent }).get({ currentFiscal: true }).then((response) => {
+    var projects = normalize(response.data);
 
-      // Add display fields
-      _.map(projects, (project) => {
-        parseProject(project);
-      });
-
-      store.dispatch({
-        type: Action.UPDATE_PROJECTS_CURRENT_FISCAL_LOOKUP,
-        projects: projects,
-      });
+    // Add display fields
+    _.map(projects, (project) => {
+      parseProject(project);
     });
+
+    store.dispatch({
+      type: Action.UPDATE_PROJECTS_CURRENT_FISCAL_LOOKUP,
+      projects: projects,
+    });
+  });
 }
 
 export function getProject(projectId) {
@@ -1625,7 +1475,7 @@ export function getProject(projectId) {
 }
 
 export function addProject(project) {
-  return new ApiRequest("/projects").post(project).then((response) => {
+  return new ApiRequest('/projects').post(project).then((response) => {
     var project = response.data;
 
     // Add display fields
@@ -1640,25 +1490,23 @@ export function addProject(project) {
 export function updateProject(project) {
   const projectData = _.omit(
     project,
-    "notes",
-    "contacts",
-    "historyEntity",
-    "primaryContact",
-    "rentalAgreements",
-    "rentalRequests"
+    'notes',
+    'contacts',
+    'historyEntity',
+    'primaryContact',
+    'rentalAgreements',
+    'rentalRequests'
   );
   projectData.projectId = project.id;
 
-  return new ApiRequest(`/projects/${project.id}`)
-    .put(projectData)
-    .then((response) => {
-      var project = response.data;
+  return new ApiRequest(`/projects/${project.id}`).put(projectData).then((response) => {
+    var project = response.data;
 
-      // Add display fields
-      parseProject(project);
+    // Add display fields
+    parseProject(project);
 
-      store.dispatch({ type: Action.UPDATE_PROJECT, project: project });
-    });
+    store.dispatch({ type: Action.UPDATE_PROJECT, project: project });
+  });
 }
 
 // XXX: Looks like this is unused
@@ -1702,85 +1550,77 @@ export function saveProjectContact(project, contact) {
     });
   }
 
-  return new ApiRequest(`/projects/${project.id}/contacts/${contact.isPrimary}`)
-    .post(contact)
-    .then((response) => {
-      var updatedContact = response.data;
+  return new ApiRequest(`/projects/${project.id}/contacts/${contact.isPrimary}`).post(contact).then((response) => {
+    var updatedContact = response.data;
 
-      // Add display fields
-      parseContact(updatedContact, project); // project's primary contact could be outdated
-      updatedContact.isPrimary = contact.isPrimary;
+    // Add display fields
+    parseContact(updatedContact, project); // project's primary contact could be outdated
+    updatedContact.isPrimary = contact.isPrimary;
 
-      if (isNew) {
-        // add newly created contact to Redux store's contacts
-        store.dispatch({
-          type: Action.ADD_PROJECT_CONTACT,
-          projectId: project.id,
-          contact: updatedContact,
-        });
-      } else {
-        // Update Redux store's data with the server's data
-        store.dispatch({
-          type: Action.UPDATE_PROJECT_CONTACT,
-          projectId: project.id,
-          contact: updatedContact,
-        });
-      }
+    if (isNew) {
+      // add newly created contact to Redux store's contacts
+      store.dispatch({
+        type: Action.ADD_PROJECT_CONTACT,
+        projectId: project.id,
+        contact: updatedContact,
+      });
+    } else {
+      // Update Redux store's data with the server's data
+      store.dispatch({
+        type: Action.UPDATE_PROJECT_CONTACT,
+        projectId: project.id,
+        contact: updatedContact,
+      });
+    }
 
-      return updatedContact;
-    });
+    return updatedContact;
+  });
 }
 
 export function addProjectHistory(projectId, history) {
-  return new ApiRequest(`/projects/${projectId}/history`)
-    .post(history)
-    .then((response) => {
-      var history = normalize(response.data);
-      // Add display fields
-      _.map(history, (history) => {
-        parseHistory(history);
-      });
-
-      store.dispatch({
-        type: Action.UPDATE_PROJECT_HISTORY,
-        history,
-        id: projectId,
-      });
+  return new ApiRequest(`/projects/${projectId}/history`).post(history).then((response) => {
+    var history = normalize(response.data);
+    // Add display fields
+    _.map(history, (history) => {
+      parseHistory(history);
     });
+
+    store.dispatch({
+      type: Action.UPDATE_PROJECT_HISTORY,
+      history,
+      id: projectId,
+    });
+  });
 }
 
 export function getProjectHistory(projectId, params) {
-  return new ApiRequest(`/projects/${projectId}/history`)
-    .get(params)
-    .then((response) => {
-      var history = normalize(response.data);
+  return new ApiRequest(`/projects/${projectId}/history`).get(params).then((response) => {
+    var history = normalize(response.data);
 
-      // Add display fields
-      _.map(history, (history) => {
-        parseHistory(history);
-      });
-
-      store.dispatch({
-        type: Action.UPDATE_PROJECT_HISTORY,
-        history,
-        id: projectId,
-      });
+    // Add display fields
+    _.map(history, (history) => {
+      parseHistory(history);
     });
+
+    store.dispatch({
+      type: Action.UPDATE_PROJECT_HISTORY,
+      history,
+      id: projectId,
+    });
+  });
 }
 
 export function getProjectDocuments(projectId) {
-  return new ApiRequest(`/projects/${projectId}/attachments`)
-    .get()
-    .then((response) => {
-      var documents = normalize(response.data);
+  return new ApiRequest(`/projects/${projectId}/attachments`).get().then((response) => {
+    var documents = normalize(response.data);
 
-      // Add display fields
-      _.map(documents, (document) => {
-        parseDocument(document);
-      });
-
-      store.dispatch({ type: Action.UPDATE_DOCUMENTS, documents: documents });
+    // Add display fields
+    _.map(documents, (document) => {
+      parseDocument(document);
     });
+
+    store.dispatch({ type: Action.UPDATE_DOCUMENTS, documents: documents });
+  });
 }
 
 // XXX: Looks like this is unused
@@ -1789,16 +1629,14 @@ export function getProjectDocuments(projectId) {
 // }
 
 export function getProjectNotes(projectId) {
-  return new ApiRequest(`/projects/${projectId}/notes`)
-    .get()
-    .then((response) => {
-      store.dispatch({
-        type: Action.UPDATE_PROJECT_NOTES,
-        projectId,
-        notes: response.data,
-      });
-      return response.data;
+  return new ApiRequest(`/projects/${projectId}/notes`).get().then((response) => {
+    store.dispatch({
+      type: Action.UPDATE_PROJECT_NOTES,
+      projectId,
+      notes: response.data,
     });
+    return response.data;
+  });
 }
 
 export function addProjectNote(projectId, note) {
@@ -1807,31 +1645,27 @@ export function addProjectNote(projectId, note) {
 }
 
 export function getProjectRentalAgreements(projectId) {
-  return new ApiRequest(`/projects/${projectId}/rentalAgreements`)
-    .get()
-    .then((response) => {
-      var rentalAgreements = normalize(response.data);
-      store.dispatch({
-        type: Action.UPDATE_PROJECT_RENTAL_AGREEMENTS,
-        rentalAgreements: rentalAgreements,
-      });
-      return rentalAgreements;
+  return new ApiRequest(`/projects/${projectId}/rentalAgreements`).get().then((response) => {
+    var rentalAgreements = normalize(response.data);
+    store.dispatch({
+      type: Action.UPDATE_PROJECT_RENTAL_AGREEMENTS,
+      rentalAgreements: rentalAgreements,
     });
+    return rentalAgreements;
+  });
 }
 
 export function cloneProjectRentalAgreement(data) {
-  return new ApiRequest(`/projects/${data.projectId}/rentalAgreementClone`)
-    .post(data)
-    .then((response) => {
-      var agreement = response.data;
-      // Add display fields
-      parseRentalAgreement(agreement);
-      store.dispatch({
-        type: Action.UPDATE_RENTAL_AGREEMENT,
-        rentalAgreement: agreement,
-      });
-      return response;
+  return new ApiRequest(`/projects/${data.projectId}/rentalAgreementClone`).post(data).then((response) => {
+    var agreement = response.data;
+    // Add display fields
+    parseRentalAgreement(agreement);
+    store.dispatch({
+      type: Action.UPDATE_RENTAL_AGREEMENT,
+      rentalAgreement: agreement,
     });
+    return response;
+  });
 }
 
 ////////////////////
@@ -1840,25 +1674,25 @@ export function cloneProjectRentalAgreement(data) {
 
 function parseRentalRequest(rentalRequest) {
   if (!rentalRequest.localArea) {
-    rentalRequest.localArea = { id: 0, name: "" };
+    rentalRequest.localArea = { id: 0, name: '' };
   }
   if (!rentalRequest.localArea.serviceArea) {
-    rentalRequest.localArea.serviceArea = { id: 0, name: "" };
+    rentalRequest.localArea.serviceArea = { id: 0, name: '' };
   }
   if (!rentalRequest.localArea.serviceArea.district) {
-    rentalRequest.localArea.serviceArea.district = { id: 0, name: "" };
+    rentalRequest.localArea.serviceArea.district = { id: 0, name: '' };
   }
   if (!rentalRequest.localArea.serviceArea.district.region) {
-    rentalRequest.localArea.serviceArea.district.region = { id: 0, name: "" };
+    rentalRequest.localArea.serviceArea.district.region = { id: 0, name: '' };
   }
   if (!rentalRequest.project) {
-    rentalRequest.project = { id: 0, name: "" };
+    rentalRequest.project = { id: 0, name: '' };
   }
   if (!rentalRequest.districtEquipmentType) {
-    rentalRequest.districtEquipmentType = { id: 0, districtEquipmentName: "" };
+    rentalRequest.districtEquipmentType = { id: 0, districtEquipmentName: '' };
   }
   if (!rentalRequest.primaryContact) {
-    rentalRequest.primaryContact = { id: 0, givenName: "", surname: "" };
+    rentalRequest.primaryContact = { id: 0, givenName: '', surname: '' };
   }
   if (!rentalRequest.rentalRequestAttachments) {
     rentalRequest.rentalRequestAttachments = [];
@@ -1875,82 +1709,56 @@ function parseRentalRequest(rentalRequest) {
     parseRentalRequestRotationList(listItem, rentalRequest);
   });
 
-  rentalRequest.status =
-    rentalRequest.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS;
+  rentalRequest.status = rentalRequest.status || Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS;
   rentalRequest.equipmentCount = rentalRequest.equipmentCount || 0;
   rentalRequest.expectedHours = rentalRequest.expectedHours || 0;
-  rentalRequest.expectedStartDate = rentalRequest.expectedStartDate || "";
-  rentalRequest.expectedEndDate = rentalRequest.expectedEndDate || "";
+  rentalRequest.expectedStartDate = rentalRequest.expectedStartDate || '';
+  rentalRequest.expectedEndDate = rentalRequest.expectedEndDate || '';
 
   rentalRequest.projectId = rentalRequest.projectId || rentalRequest.project.id;
-  rentalRequest.projectName =
-    rentalRequest.projectName || rentalRequest.project.name;
-  rentalRequest.projectPath = rentalRequest.projectId
-    ? `/projects/${rentalRequest.projectId}`
-    : "";
+  rentalRequest.projectName = rentalRequest.projectName || rentalRequest.project.name;
+  rentalRequest.projectPath = rentalRequest.projectId ? `/projects/${rentalRequest.projectId}` : '';
 
   // UI display fields
-  rentalRequest.isActive =
-    rentalRequest.status === Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS;
-  rentalRequest.isCompleted =
-    rentalRequest.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
-  rentalRequest.isCancelled =
-    rentalRequest.status === Constant.RENTAL_REQUEST_STATUS_CODE_CANCELLED;
-  rentalRequest.localAreaName =
-    rentalRequest.localAreaName || rentalRequest.localArea.name;
+  rentalRequest.isActive = rentalRequest.status === Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS;
+  rentalRequest.isCompleted = rentalRequest.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
+  rentalRequest.isCancelled = rentalRequest.status === Constant.RENTAL_REQUEST_STATUS_CODE_CANCELLED;
+  rentalRequest.localAreaName = rentalRequest.localAreaName || rentalRequest.localArea.name;
   rentalRequest.equipmentTypeName =
-    rentalRequest.equipmentTypeName ||
-    rentalRequest.districtEquipmentType.districtEquipmentName;
+    rentalRequest.equipmentTypeName || rentalRequest.districtEquipmentType.districtEquipmentName;
 
   // Primary contact for the rental request/project
   rentalRequest.primaryContactName = rentalRequest.primaryContact
-    ? firstLastName(
-        rentalRequest.primaryContact.givenName,
-        rentalRequest.primaryContact.surname
-      )
-    : "";
-  rentalRequest.primaryContactEmail = rentalRequest.primaryContact
-    ? rentalRequest.primaryContact.emailAddress
-    : "";
-  rentalRequest.primaryContactRole = rentalRequest.primaryContact
-    ? rentalRequest.primaryContact.role
-    : "";
+    ? firstLastName(rentalRequest.primaryContact.givenName, rentalRequest.primaryContact.surname)
+    : '';
+  rentalRequest.primaryContactEmail = rentalRequest.primaryContact ? rentalRequest.primaryContact.emailAddress : '';
+  rentalRequest.primaryContactRole = rentalRequest.primaryContact ? rentalRequest.primaryContact.role : '';
   rentalRequest.primaryContactPhone = rentalRequest.primaryContact
-    ? rentalRequest.primaryContact.workPhoneNumber ||
-      rentalRequest.primaryContact.mobilePhoneNumber ||
-      ""
-    : "";
+    ? rentalRequest.primaryContact.workPhoneNumber || rentalRequest.primaryContact.mobilePhoneNumber || ''
+    : '';
 
   rentalRequest.projectPrimaryContactName = rentalRequest.project.primaryContact
-    ? firstLastName(
-        rentalRequest.project.primaryContact.givenName,
-        rentalRequest.project.primaryContact.surname
-      )
-    : "";
-  rentalRequest.projectPrimaryContactEmail = rentalRequest.project
-    .primaryContact
+    ? firstLastName(rentalRequest.project.primaryContact.givenName, rentalRequest.project.primaryContact.surname)
+    : '';
+  rentalRequest.projectPrimaryContactEmail = rentalRequest.project.primaryContact
     ? rentalRequest.project.primaryContact.emailAddress
-    : "";
+    : '';
   rentalRequest.projectPrimaryContactRole = rentalRequest.project.primaryContact
     ? rentalRequest.project.primaryContact.role
-    : "";
-  rentalRequest.projectPrimaryContactPhone = rentalRequest.project
-    .primaryContact
+    : '';
+  rentalRequest.projectPrimaryContactPhone = rentalRequest.project.primaryContact
     ? rentalRequest.project.primaryContact.workPhoneNumber ||
       rentalRequest.project.primaryContact.mobilePhoneNumber ||
-      ""
-    : "";
+      ''
+    : '';
   // Flag element as a rental request.
   // Rental requests and rentals are merged and shown in a single list on Project Details screen
   rentalRequest.isRentalRequest = true;
 
   rentalRequest.path = `${Constant.RENTAL_REQUESTS_PATHNAME}/${rentalRequest.id}`;
-  rentalRequest.url = `#/${rentalRequest.path}`;
-  rentalRequest.name = "TBD";
-  rentalRequest.historyEntity = History.makeHistoryEntity(
-    Constant.HISTORY_REQUEST,
-    rentalRequest
-  );
+  rentalRequest.url = `${rentalRequest.path}`;
+  rentalRequest.name = 'TBD';
+  rentalRequest.historyEntity = History.makeHistoryEntity(Constant.HISTORY_REQUEST, rentalRequest);
   rentalRequest.documentAdded = Log.rentalRequestDocumentAdded;
   rentalRequest.documentsAdded = Log.rentalRequestDocumentsAdded;
   rentalRequest.documentDeleted = Log.rentalRequestDocumentDeleted;
@@ -1961,27 +1769,24 @@ function parseRentalRequest(rentalRequest) {
   rentalRequest.canView = true;
   rentalRequest.canEdit = true;
   // HETS-894: view-only requests and requests that have yet to be acted on can be deleted
-  rentalRequest.canDelete =
-    rentalRequest.projectId === 0 || rentalRequest.yesCount === 0;
+  rentalRequest.canDelete = rentalRequest.projectId === 0 || rentalRequest.yesCount === 0;
 }
 
 export function searchRentalRequests(params) {
   store.dispatch({ type: Action.RENTAL_REQUESTS_REQUEST });
-  return new ApiRequest("/rentalrequests/search")
-    .get(params)
-    .then((response) => {
-      var rentalRequests = normalize(response.data);
+  return new ApiRequest('/rentalrequests/search').get(params).then((response) => {
+    var rentalRequests = normalize(response.data);
 
-      // Add display fields
-      _.map(rentalRequests, (req) => {
-        parseRentalRequest(req);
-      });
-
-      store.dispatch({
-        type: Action.UPDATE_RENTAL_REQUESTS,
-        rentalRequests: rentalRequests,
-      });
+    // Add display fields
+    _.map(rentalRequests, (req) => {
+      parseRentalRequest(req);
     });
+
+    store.dispatch({
+      type: Action.UPDATE_RENTAL_REQUESTS,
+      rentalRequests: rentalRequests,
+    });
+  });
 }
 
 export function getRentalRequest(id) {
@@ -2001,7 +1806,7 @@ export function getRentalRequest(id) {
 }
 
 export function addRentalRequest(rentalRequest, viewOnly) {
-  var path = viewOnly ? "/rentalrequests/viewOnly" : "/rentalrequests";
+  var path = viewOnly ? 'rentalrequests/viewOnly' : 'rentalrequests';
 
   return new ApiRequest(path).post(rentalRequest).then((response) => {
     var rentalRequest = response.data;
@@ -2029,7 +1834,7 @@ export function updateRentalRequest(rentalRequest) {
   });
 
   return new ApiRequest(`/rentalrequests/${rentalRequest.id}`)
-    .put(_.omit(rentalRequest, "primaryContact"))
+    .put(_.omit(rentalRequest, 'primaryContact'))
     .then((response) => {
       var rentalRequest = response.data;
       // Add display fields
@@ -2044,55 +1849,49 @@ export function updateRentalRequest(rentalRequest) {
 }
 
 export function addRentalRequestHistory(requestId, history) {
-  return new ApiRequest(`/rentalrequests/${requestId}/history`)
-    .post(history)
-    .then((response) => {
-      var history = normalize(response.data);
-      // Add display fields
-      _.map(history, (history) => {
-        parseHistory(history);
-      });
-
-      store.dispatch({
-        type: Action.UPDATE_RENTAL_REQUEST_HISTORY,
-        history,
-        id: requestId,
-      });
+  return new ApiRequest(`/rentalrequests/${requestId}/history`).post(history).then((response) => {
+    var history = normalize(response.data);
+    // Add display fields
+    _.map(history, (history) => {
+      parseHistory(history);
     });
+
+    store.dispatch({
+      type: Action.UPDATE_RENTAL_REQUEST_HISTORY,
+      history,
+      id: requestId,
+    });
+  });
 }
 
 export function getRentalRequestHistory(requestId, params) {
-  return new ApiRequest(`/rentalrequests/${requestId}/history`)
-    .get(params)
-    .then((response) => {
-      var history = normalize(response.data);
+  return new ApiRequest(`/rentalrequests/${requestId}/history`).get(params).then((response) => {
+    var history = normalize(response.data);
 
-      // Add display fields
-      _.map(history, (history) => {
-        parseHistory(history);
-      });
-
-      store.dispatch({
-        type: Action.UPDATE_RENTAL_REQUEST_HISTORY,
-        history,
-        id: requestId,
-      });
+    // Add display fields
+    _.map(history, (history) => {
+      parseHistory(history);
     });
+
+    store.dispatch({
+      type: Action.UPDATE_RENTAL_REQUEST_HISTORY,
+      history,
+      id: requestId,
+    });
+  });
 }
 
 export function getRentalRequestDocuments(rentalRequestId) {
-  return new ApiRequest(`/rentalrequests/${rentalRequestId}/attachments`)
-    .get()
-    .then((response) => {
-      var documents = normalize(response.data);
+  return new ApiRequest(`/rentalrequests/${rentalRequestId}/attachments`).get().then((response) => {
+    var documents = normalize(response.data);
 
-      // Add display fields
-      _.map(documents, (document) => {
-        parseDocument(document);
-      });
-
-      store.dispatch({ type: Action.UPDATE_DOCUMENTS, documents: documents });
+    // Add display fields
+    _.map(documents, (document) => {
+      parseDocument(document);
     });
+
+    store.dispatch({ type: Action.UPDATE_DOCUMENTS, documents: documents });
+  });
 }
 
 // XXX: Looks like this is unused
@@ -2101,49 +1900,38 @@ export function getRentalRequestDocuments(rentalRequestId) {
 // }
 
 export function getRentalRequestNotes(rentalRequestId) {
-  return new ApiRequest(`/rentalrequests/${rentalRequestId}/notes`)
-    .get()
-    .then((response) => {
-      store.dispatch({
-        type: Action.UPDATE_RENTAL_REQUEST_NOTES,
-        notes: response.data,
-        rentalRequestId,
-      });
-      return response.data;
+  return new ApiRequest(`/rentalrequests/${rentalRequestId}/notes`).get().then((response) => {
+    store.dispatch({
+      type: Action.UPDATE_RENTAL_REQUEST_NOTES,
+      notes: response.data,
+      rentalRequestId,
     });
+    return response.data;
+  });
 }
 
 export function addRentalRequestNote(rentalRequestId, note) {
-  return new ApiRequest(`/rentalRequests/${rentalRequestId}/note`)
-    .post(note)
-    .then((response) => {
-      store.dispatch({
-        type: Action.UPDATE_RENTAL_REQUEST_NOTES,
-        notes: response.data,
-        rentalRequestId,
-      });
-      return response.data;
+  return new ApiRequest(`/rentalRequests/${rentalRequestId}/note`).post(note).then((response) => {
+    store.dispatch({
+      type: Action.UPDATE_RENTAL_REQUEST_NOTES,
+      notes: response.data,
+      rentalRequestId,
     });
+    return response.data;
+  });
 }
 
 export function cancelRentalRequest(rentalRequestId) {
-  return new ApiRequest(`rentalrequests/${rentalRequestId}/cancel`)
-    .get()
-    .then(() => {
-      getEquipmentHires();
-    });
+  return new ApiRequest(`/rentalrequests/${rentalRequestId}/cancel`).get().then(() => {
+    getEquipmentHires();
+  });
 }
 
 ////////////////////
 // Rental Request Rotation List
 ////////////////////
 
-function getSeniorityDisplayName(
-  blockNumber,
-  numberOfBlocks,
-  seniority,
-  numberInBlock
-) {
+function getSeniorityDisplayName(blockNumber, numberOfBlocks, seniority, numberInBlock) {
   if (blockNumber === numberOfBlocks) {
     return `Open-${seniority && seniority.toFixed(3)} (${numberInBlock})`;
   } else if (blockNumber === 1) {
@@ -2156,22 +1944,19 @@ function getSeniorityDisplayName(
 
 function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
   if (!rotationListItem.rentalRequest) {
-    rotationListItem.rentalRequest = _.extend(
-      { id: 0 },
-      _.pick(rentalRequest, "id")
-    );
+    rotationListItem.rentalRequest = _.extend({ id: 0 }, _.pick(rentalRequest, 'id'));
   }
   if (!rotationListItem.equipment) {
-    rotationListItem.equipment = { id: 0, equipmentCode: "" };
+    rotationListItem.equipment = { id: 0, equipmentCode: '' };
   }
   if (!rotationListItem.equipment.districtEquipmentType) {
     rotationListItem.equipment.districtEquipmentType = {
       id: 0,
-      districtEquipmentName: "",
+      districtEquipmentName: '',
     };
   }
   if (!rotationListItem.equipment.owner) {
-    rotationListItem.equipment.owner = { id: 0, organizationName: "" };
+    rotationListItem.equipment.owner = { id: 0, organizationName: '' };
   }
 
   // The rental agreement (if any) created for an accepted hire offer.
@@ -2179,19 +1964,16 @@ function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
 
   // The sort order of the piece of equipment on the rotaton list at the time the request was created.
   // This is the order the equipment will be offered the available work.
-  rotationListItem.rotationListSortOrder =
-    rotationListItem.rotationListSortOrder || 0;
+  rotationListItem.rotationListSortOrder = rotationListItem.rotationListSortOrder || 0;
 
   rotationListItem.isForceHire = rotationListItem.isForceHire || false;
   rotationListItem.wasAsked = rotationListItem.wasAsked || false;
-  rotationListItem.askedDateTime = rotationListItem.askedDateTime || "";
-  rotationListItem.offerResponseDatetime =
-    rotationListItem.offerResponseDatetime || "";
-  rotationListItem.offerResponse = rotationListItem.offerResponse || "";
-  rotationListItem.offerRefusalReason =
-    rotationListItem.offerRefusalReason || "";
-  rotationListItem.offerResponseNote = rotationListItem.offerResponseNote || "";
-  rotationListItem.note = rotationListItem.note || "";
+  rotationListItem.askedDateTime = rotationListItem.askedDateTime || '';
+  rotationListItem.offerResponseDatetime = rotationListItem.offerResponseDatetime || '';
+  rotationListItem.offerResponse = rotationListItem.offerResponse || '';
+  rotationListItem.offerRefusalReason = rotationListItem.offerRefusalReason || '';
+  rotationListItem.offerResponseNote = rotationListItem.offerResponseNote || '';
+  rotationListItem.note = rotationListItem.note || '';
 
   var equipment = rotationListItem.equipment;
 
@@ -2203,49 +1985,29 @@ function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
     equipment.seniority,
     equipment.numberInBlock
   );
-  rotationListItem.serviceHoursThisYear =
-    rotationListItem.serviceHoursThisYear ||
-    equipment.serviceHoursThisYear ||
-    0; // TODO calculated field from the server
+  rotationListItem.serviceHoursThisYear = rotationListItem.serviceHoursThisYear || equipment.serviceHoursThisYear || 0; // TODO calculated field from the server
   rotationListItem.equipmentId = equipment.id;
   rotationListItem.equipmentCode = equipment.equipmentCode;
 
   // String format: "{year} {make}/{model}/{serialNumber}/{size}" - e.g. "1991 Bobcat/KOM450/442K00547/Medium"
   rotationListItem.equipmentDetails = concat(
     equipment.year,
-    concat(
-      equipment.make,
-      concat(
-        equipment.model,
-        concat(equipment.serialNumber, equipment.size, "/"),
-        "/"
-      ),
-      "/"
-    ),
-    " "
+    concat(equipment.make, concat(equipment.model, concat(equipment.serialNumber, equipment.size, '/'), '/'), '/'),
+    ' '
   );
 
   // Primary contact for the owner of the piece of equipment
-  rotationListItem.contact =
-    rotationListItem.contact ||
-    (equipment.owner ? equipment.owner.primaryContact : null);
+  rotationListItem.contact = rotationListItem.contact || (equipment.owner ? equipment.owner.primaryContact : null);
   rotationListItem.contactName = rotationListItem.contact
-    ? firstLastName(
-        rotationListItem.contact.givenName,
-        rotationListItem.contact.surname
-      )
-    : "";
-  rotationListItem.contactEmail = rotationListItem.contact
-    ? rotationListItem.contact.emailAddress
-    : "";
+    ? firstLastName(rotationListItem.contact.givenName, rotationListItem.contact.surname)
+    : '';
+  rotationListItem.contactEmail = rotationListItem.contact ? rotationListItem.contact.emailAddress : '';
   rotationListItem.contactPhone = rotationListItem.contact
-    ? rotationListItem.contact.workPhoneNumber ||
-      rotationListItem.contact.mobilePhoneNumber ||
-      ""
-    : "";
+    ? rotationListItem.contact.workPhoneNumber || rotationListItem.contact.mobilePhoneNumber || ''
+    : '';
 
   // TODO Status TBD
-  rotationListItem.status = "N/A";
+  rotationListItem.status = 'N/A';
 }
 
 function parseRotationListItem(item, numberOfBlocks) {
@@ -2256,7 +2018,7 @@ function parseRotationListItem(item, numberOfBlocks) {
       ...item.equipment,
       name: item.equipment.equipmentCode,
       path: `${Constant.EQUIPMENT_PATHNAME}/${item.equipment.id}`,
-      url: `#/${Constant.EQUIPMENT_PATHNAME}/${item.equipment.id}`,
+      url: `${Constant.EQUIPMENT_PATHNAME}/${item.equipment.id}`,
     }),
   };
 
@@ -2265,14 +2027,10 @@ function parseRotationListItem(item, numberOfBlocks) {
     item.equipment.year,
     concat(
       item.equipment.make,
-      concat(
-        item.equipment.model,
-        concat(item.equipment.serialNumber, item.equipment.size, "/"),
-        "/"
-      ),
-      "/"
+      concat(item.equipment.model, concat(item.equipment.serialNumber, item.equipment.size, '/'), '/'),
+      '/'
     ),
-    " "
+    ' '
   );
   item.displayFields.seniority = getSeniorityDisplayName(
     item.equipment.blockNumber,
@@ -2281,47 +2039,35 @@ function parseRotationListItem(item, numberOfBlocks) {
     item.equipment.numberInBlock
   );
 
-  var primaryContact =
-    item.equipment.owner && item.equipment.owner.primaryContact;
+  var primaryContact = item.equipment.owner && item.equipment.owner.primaryContact;
   item.displayFields.primaryContactName = primaryContact
     ? firstLastName(primaryContact.givenName, primaryContact.surname)
-    : "";
+    : '';
 }
 
 export function getRentalRequestRotationList(id) {
-  return new ApiRequest(`/rentalrequests/${id}/rotationList`)
-    .get()
-    .then((response) => {
-      const rentalRequest = response.data;
-      const rotationList = rentalRequest.rentalRequestRotationList;
+  return new ApiRequest(`/rentalrequests/${id}/rotationList`).get().then((response) => {
+    const rentalRequest = response.data;
+    const rotationList = rentalRequest.rentalRequestRotationList;
 
-      rotationList.map((item) =>
-        parseRotationListItem(item, rentalRequest.numberOfBlocks)
-      );
+    rotationList.map((item) => parseRotationListItem(item, rentalRequest.numberOfBlocks));
 
-      store.dispatch({
-        type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST,
-        rotationList,
-        rentalRequestId: id,
-      });
+    store.dispatch({
+      type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST,
+      rotationList,
+      rentalRequestId: id,
     });
+  });
 }
 
-export function updateRentalRequestRotationList(
-  rentalRequestRotationList,
-  rentalRequest
-) {
+export function updateRentalRequestRotationList(rentalRequestRotationList, rentalRequest) {
   const rentalRequestId = rentalRequest.id;
-  return new ApiRequest(
-    `/rentalrequests/${rentalRequestId}/rentalRequestRotationList`
-  )
+  return new ApiRequest(`/rentalrequests/${rentalRequestId}/rentalRequestRotationList`)
     .put(rentalRequestRotationList)
     .then((response) => {
       var rotationList = response.data.rentalRequestRotationList;
 
-      rotationList.map((item) =>
-        parseRotationListItem(item, rentalRequest.numberOfBlocks)
-      );
+      rotationList.map((item) => parseRotationListItem(item, rentalRequest.numberOfBlocks));
 
       store.dispatch({
         type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST,
@@ -2340,40 +2086,40 @@ export function updateRentalRequestRotationList(
 
 function parseRentalAgreement(agreement) {
   if (!agreement.district) {
-    agreement.district = { id: 0, name: "" };
+    agreement.district = { id: 0, name: '' };
   }
   if (!agreement.equipment) {
-    agreement.equipment = { id: 0, equipmentCode: "" };
+    agreement.equipment = { id: 0, equipmentCode: '' };
   }
   if (!agreement.equipment.owner) {
-    agreement.equipment.owner = { id: 0, organizationName: "" };
+    agreement.equipment.owner = { id: 0, organizationName: '' };
   }
   if (!agreement.equipment.districtEquipmentType) {
     agreement.equipment.districtEquipmentType = {
       id: 0,
-      districtEquipmentName: "",
+      districtEquipmentName: '',
     };
   }
   if (!agreement.equipment.equipmentAttachments) {
     agreement.equipment.equipmentAttachments = [];
   }
   if (!agreement.equipment.localArea) {
-    agreement.equipment.localArea = { id: 0, name: "" };
+    agreement.equipment.localArea = { id: 0, name: '' };
   }
   if (!agreement.equipment.localArea.serviceArea) {
-    agreement.equipment.localArea.serviceArea = { id: 0, name: "" };
+    agreement.equipment.localArea.serviceArea = { id: 0, name: '' };
   }
   if (!agreement.equipment.localArea.serviceArea.district) {
-    agreement.equipment.localArea.serviceArea.district = { id: 0, name: "" };
+    agreement.equipment.localArea.serviceArea.district = { id: 0, name: '' };
   }
   if (!agreement.equipment.localArea.serviceArea.district.region) {
     agreement.equipment.localArea.serviceArea.district.region = {
       id: 0,
-      name: "",
+      name: '',
     };
   }
   if (!agreement.project) {
-    agreement.project = { id: 0, name: "" };
+    agreement.project = { id: 0, name: '' };
   }
   if (!agreement.rentalAgreementRates) {
     agreement.rentalAgreementRates = [];
@@ -2386,24 +2132,20 @@ function parseRentalAgreement(agreement) {
   }
 
   agreement.path = `${Constant.RENTAL_AGREEMENTS_PATHNAME}/${agreement.id}`;
-  agreement.url = `#/${agreement.path}`;
+  agreement.url = `${agreement.path}`;
 
-  agreement.number = agreement.number || "";
-  agreement.note = agreement.note || "";
+  agreement.number = agreement.number || '';
+  agreement.note = agreement.note || '';
   agreement.datedOn = agreement.datedOn || today();
   agreement.equipmentRate = agreement.equipmentRate || 0.0;
-  agreement.ratePeriod = agreement.ratePeriod || ""; // e.g. hourly, daily, etc.
-  agreement.rateComment = agreement.rateComment || "";
+  agreement.ratePeriod = agreement.ratePeriod || ''; // e.g. hourly, daily, etc.
+  agreement.rateComment = agreement.rateComment || '';
 
-  agreement.estimateStartWork = agreement.estimateStartWork || "";
+  agreement.estimateStartWork = agreement.estimateStartWork || '';
   agreement.estimateHours = agreement.estimateHours || 0;
 
-  agreement.rentalAgreementRates.forEach((obj) =>
-    parseRentalRate(obj, agreement)
-  );
-  agreement.rentalAgreementConditions.forEach((obj) =>
-    parseRentalCondition(obj, agreement)
-  );
+  agreement.rentalAgreementRates.forEach((obj) => parseRentalRate(obj, agreement));
+  agreement.rentalAgreementConditions.forEach((obj) => parseRentalCondition(obj, agreement));
 
   agreement.equipment = {
     ...agreement.equipment,
@@ -2411,39 +2153,30 @@ function parseRentalAgreement(agreement) {
       ...agreement.equipment,
       name: agreement.equipment.equipmentCode,
       path: `${Constant.EQUIPMENT_PATHNAME}/${agreement.equipment.id}`,
-      url: `#/${Constant.EQUIPMENT_PATHNAME}/${agreement.equipment.id}`,
+      url: `${Constant.EQUIPMENT_PATHNAME}/${agreement.equipment.id}`,
     }),
   };
 
   // UI display fields
-  agreement.status =
-    agreement.status || Constant.RENTAL_AGREEMENT_STATUS_CODE_ACTIVE; // TODO
-  agreement.isActive =
-    agreement.status === Constant.RENTAL_AGREEMENT_STATUS_CODE_ACTIVE;
-  agreement.isCompleted =
-    agreement.status === Constant.RENTAL_AGREEMENT_STATUS_CODE_COMPLETED;
+  agreement.status = agreement.status || Constant.RENTAL_AGREEMENT_STATUS_CODE_ACTIVE; // TODO
+  agreement.isActive = agreement.status === Constant.RENTAL_AGREEMENT_STATUS_CODE_ACTIVE;
+  agreement.isCompleted = agreement.status === Constant.RENTAL_AGREEMENT_STATUS_CODE_COMPLETED;
   agreement.equipmentId = agreement.equipment.id;
   agreement.equipmentCode = agreement.equipment.equipmentCode;
   agreement.equipmentMake = agreement.equipment.make;
   agreement.equipmentModel = agreement.equipment.model;
   agreement.equipmentSize = agreement.equipment.size;
-  agreement.equipmentTypeName =
-    agreement.equipment.districtEquipmentType.districtEquipmentName;
+  agreement.equipmentTypeName = agreement.equipment.districtEquipmentType.districtEquipmentName;
   agreement.ownerId = agreement.equipment.owner.id || 0;
-  agreement.ownerName = agreement.equipment.owner.organizationName || "";
-  agreement.workSafeBCPolicyNumber =
-    agreement.equipment.owner.workSafeBCPolicyNumber || "";
-  agreement.pointOfHire = agreement.equipment.localArea.name || "";
+  agreement.ownerName = agreement.equipment.owner.organizationName || '';
+  agreement.workSafeBCPolicyNumber = agreement.equipment.owner.workSafeBCPolicyNumber || '';
+  agreement.pointOfHire = agreement.equipment.localArea.name || '';
 
   agreement.projectId = agreement.projectId || agreement.project.id;
   agreement.projectName = agreement.projectName || agreement.project.name;
 
-  agreement.projectPath = agreement.projectId
-    ? `${Constant.PROJECTS_PATHNAME}/${agreement.projectId}`
-    : "";
-  agreement.projectUrl = agreement.projectPath
-    ? `#/${agreement.projectPath}`
-    : "";
+  agreement.projectPath = agreement.projectId ? `${Constant.PROJECTS_PATHNAME}/${agreement.projectId}` : '';
+  agreement.projectUrl = agreement.projectPath ? `${agreement.projectPath}` : '';
 
   agreement.canEdit = true;
 
@@ -2452,7 +2185,7 @@ function parseRentalAgreement(agreement) {
   agreement.isRentalAgreement = true;
 
   // TODO HETS-115 Server needs to send this
-  agreement.lastTimeRecord = agreement.lastTimeRecord || "";
+  agreement.lastTimeRecord = agreement.lastTimeRecord || '';
 }
 
 // reverse the transformations applied by the parse function
@@ -2468,16 +2201,14 @@ function convertRentalAgreement(agreement) {
 }
 
 export function getRentalAgreementSummaryLite() {
-  return new ApiRequest("/rentalagreements/summaryLite")
-    .get()
-    .then((response) => {
-      var agreements = response.data;
+  return new ApiRequest('/rentalagreements/summaryLite').get().then((response) => {
+    var agreements = response.data;
 
-      store.dispatch({
-        type: Action.UPDATE_AGREEMENT_SUMMARY_LITE_LOOKUP,
-        agreements,
-      });
+    store.dispatch({
+      type: Action.UPDATE_AGREEMENT_SUMMARY_LITE_LOOKUP,
+      agreements,
     });
+  });
 }
 
 export function getRentalAgreement(id) {
@@ -2495,18 +2226,16 @@ export function getRentalAgreement(id) {
 }
 
 export function getLatestRentalAgreement(equipmentId, projectId) {
-  return new ApiRequest(`/rentalagreements/latest/${projectId}/${equipmentId}`)
-    .get()
-    .then((response) => {
-      var agreement = response.data;
+  return new ApiRequest(`/rentalagreements/latest/${projectId}/${equipmentId}`).get().then((response) => {
+    var agreement = response.data;
 
-      store.dispatch({
-        type: Action.UPDATE_RENTAL_AGREEMENT,
-        rentalAgreement: agreement,
-      });
-
-      return agreement;
+    store.dispatch({
+      type: Action.UPDATE_RENTAL_AGREEMENT,
+      rentalAgreement: agreement,
     });
+
+    return agreement;
+  });
 }
 
 // XXX: Looks like this is unused
@@ -2529,37 +2258,33 @@ export function updateRentalAgreement(agreement) {
     rentalAgreement: preparedAgreement,
   });
 
-  return new ApiRequest(`/rentalagreements/${agreement.id}`)
-    .put(preparedAgreement)
-    .then((response) => {
-      var agreement = response.data;
+  return new ApiRequest(`/rentalagreements/${agreement.id}`).put(preparedAgreement).then((response) => {
+    var agreement = response.data;
 
-      // Add display fields
-      parseRentalAgreement(agreement);
+    // Add display fields
+    parseRentalAgreement(agreement);
 
-      store.dispatch({
-        type: Action.UPDATE_RENTAL_AGREEMENT,
-        rentalAgreement: agreement,
-      });
+    store.dispatch({
+      type: Action.UPDATE_RENTAL_AGREEMENT,
+      rentalAgreement: agreement,
     });
+  });
 }
 
 export function getRentalAgreementTimeRecords(rentalAgreementId) {
-  return new ApiRequest(`rentalagreements/${rentalAgreementId}/timeRecords`)
-    .get()
-    .then((response) => {
-      var rentalAgreementTimeRecords = response.data;
+  return new ApiRequest(`/rentalagreements/${rentalAgreementId}/timeRecords`).get().then((response) => {
+    var rentalAgreementTimeRecords = response.data;
 
-      store.dispatch({
-        type: Action.RENTAL_AGREEMENT_TIME_RECORDS,
-        rentalAgreementTimeRecords: rentalAgreementTimeRecords,
-      });
+    store.dispatch({
+      type: Action.RENTAL_AGREEMENT_TIME_RECORDS,
+      rentalAgreementTimeRecords: rentalAgreementTimeRecords,
     });
+  });
 }
 
 export function addRentalAgreementTimeRecords(rentalRequestId, timeRecords) {
   let formattedTimeRecords = formatTimeRecords(timeRecords, rentalRequestId);
-  return new ApiRequest(`rentalagreements/${rentalRequestId}/timeRecords`)
+  return new ApiRequest(`/rentalagreements/${rentalRequestId}/timeRecords`)
     .post(formattedTimeRecords)
     .then((response) => {
       var rentalAgreementTimeRecords = normalize(response.data.timeRecords);
@@ -2573,30 +2298,26 @@ export function addRentalAgreementTimeRecords(rentalRequestId, timeRecords) {
 }
 
 export function releaseRentalAgreement(rentalAgreementId) {
-  return new ApiRequest(`rentalagreements/${rentalAgreementId}/release`)
-    .post()
-    .then((response) => {
-      return response;
-    });
+  return new ApiRequest(`/rentalagreements/${rentalAgreementId}/release`).post().then((response) => {
+    return response;
+  });
 }
 
 export function generateRentalAgreementDocument(rentalAgreementId) {
-  return new ApiRequest(`rentalagreements/${rentalAgreementId}/doc`).get(null, {
+  return new ApiRequest(`/rentalagreements/${rentalAgreementId}/doc`).get(null, {
     ignoreResponse: true,
   });
 }
 
 export function searchAitReport(params) {
   store.dispatch({ type: Action.AIT_REPORT_REQUEST });
-  return new ApiRequest("/rentalAgreements/aitReport")
-    .get(params)
-    .then((response) => {
-      var aitResponses = normalize(response.data);
-      store.dispatch({
-        type: Action.UPDATE_AIT_REPORT,
-        aitResponses: aitResponses,
-      });
+  return new ApiRequest('/rentalAgreements/aitReport').get(params).then((response) => {
+    var aitResponses = normalize(response.data);
+    store.dispatch({
+      type: Action.UPDATE_AIT_REPORT,
+      aitResponses: aitResponses,
     });
+  });
 }
 
 ////////////////////
@@ -2608,7 +2329,7 @@ function parseRentalRate(rentalRate, parent = {}) {
   if (!rentalRate.rentalAgreement) {
     rentalRate.rentalAgreement = _.extend(
       { id: 0, equipmentRate: 0 },
-      _.pick(parent, "id", "number", "path", "equipmentRate")
+      _.pick(parent, 'id', 'number', 'path', 'equipmentRate')
     );
   }
   if (!rentalRate.timeRecords) {
@@ -2618,13 +2339,12 @@ function parseRentalRate(rentalRate, parent = {}) {
   rentalRate.path = rentalRate.rentalAgreement.path
     ? `${rentalRate.rentalAgreement.path}/${Constant.RENTAL_RATES_PATHNAME}/${rentalRate.id}`
     : null;
-  rentalRate.url = rentalRate.path ? `#/${rentalRate.path}` : null;
+  rentalRate.url = rentalRate.path ? `${rentalRate.path}` : null;
 
   rentalRate.rate = rentalRate.rate || 0.0;
   rentalRate.percentOfEquipmentRate = rentalRate.percentOfEquipmentRate || 0;
-  rentalRate.ratePeriod =
-    rentalRate.ratePeriod || rentalRate.ratePeriodType.ratePeriodTypeCode;
-  rentalRate.comment = rentalRate.comment || "";
+  rentalRate.ratePeriod = rentalRate.ratePeriod || rentalRate?.ratePeriodType?.ratePeriodTypeCode;
+  rentalRate.comment = rentalRate.comment || '';
 
   // UI display fields
   rentalRate.rentalAgreementId = rentalRate.rentalAgreement.id;
@@ -2664,25 +2384,21 @@ export function addRentalRates(rentalAgreementId, rentalRates) {
     rentalAgreementId,
   });
 
-  return new ApiRequest(`rentalagreements/${rentalAgreementId}/rateRecords`)
-    .post(rentalRates)
-    .then((response) => {
-      const data = _.find(response.data, { rentalAgreementId });
-      var rentalRates = data.rentalAgreement.rentalAgreementRates;
+  return new ApiRequest(`/rentalagreements/${rentalAgreementId}/rateRecords`).post(rentalRates).then((response) => {
+    const data = _.find(response.data, { rentalAgreementId });
+    var rentalRates = data.rentalAgreement.rentalAgreementRates;
 
-      // Add display fields
-      rentalRates.forEach((rentalRate) =>
-        parseRentalRate(rentalRate, data.rentalAgreement)
-      );
+    // Add display fields
+    rentalRates.forEach((rentalRate) => parseRentalRate(rentalRate, data.rentalAgreement));
 
-      store.dispatch({
-        type: Action.UPDATE_RENTAL_RATES,
-        rentalRates,
-        rentalAgreementId,
-      });
-
-      return rentalRates;
+    store.dispatch({
+      type: Action.UPDATE_RENTAL_RATES,
+      rentalRates,
+      rentalAgreementId,
     });
+
+    return rentalRates;
+  });
 }
 
 export function updateRentalRate(rentalRate) {
@@ -2693,22 +2409,20 @@ export function updateRentalRate(rentalRate) {
     rentalAgreementId,
   });
 
-  return new ApiRequest(`/rentalagreementrates/${rentalRate.id}`)
-    .put(rentalRate)
-    .then((response) => {
-      var rentalRate = response.data;
+  return new ApiRequest(`/rentalagreementrates/${rentalRate.id}`).put(rentalRate).then((response) => {
+    var rentalRate = response.data;
 
-      // Add display fields
-      parseRentalRate(rentalRate);
+    // Add display fields
+    parseRentalRate(rentalRate);
 
-      store.dispatch({
-        type: Action.UPDATE_RENTAL_RATES,
-        rentalRates: [rentalRate],
-        rentalAgreementId,
-      });
-
-      return rentalRate;
+    store.dispatch({
+      type: Action.UPDATE_RENTAL_RATES,
+      rentalRates: [rentalRate],
+      rentalAgreementId,
     });
+
+    return rentalRate;
+  });
 }
 
 export function deleteRentalRate(rentalRate) {
@@ -2719,22 +2433,20 @@ export function deleteRentalRate(rentalRate) {
     rentalAgreementId,
   });
 
-  return new ApiRequest(`/rentalagreementrates/${rentalRate.id}/delete`)
-    .post()
-    .then((response) => {
-      const rentalRate = response.data;
+  return new ApiRequest(`/rentalagreementrates/${rentalRate.id}/delete`).post().then((response) => {
+    const rentalRate = response.data;
 
-      // Add display fields
-      parseRentalRate(rentalRate);
+    // Add display fields
+    parseRentalRate(rentalRate);
 
-      store.dispatch({
-        type: Action.DELETE_RENTAL_RATE,
-        rentalRate,
-        rentalAgreementId,
-      });
-
-      return rentalRate;
+    store.dispatch({
+      type: Action.DELETE_RENTAL_RATE,
+      rentalRate,
+      rentalAgreementId,
     });
+
+    return rentalRate;
+  });
 }
 
 ////////////////////
@@ -2744,25 +2456,19 @@ export function deleteRentalRate(rentalRate) {
 function parseRentalCondition(rentalCondition, parent = {}) {
   // Pick only the properties that we need
   if (!rentalCondition.rentalAgreement) {
-    rentalCondition.rentalAgreement = _.extend(
-      { id: 0 },
-      _.pick(parent, "id", "number", "path")
-    );
+    rentalCondition.rentalAgreement = _.extend({ id: 0 }, _.pick(parent, 'id', 'number', 'path'));
   }
 
-  rentalCondition.conditionName = rentalCondition.conditionName || "";
-  rentalCondition.comment = rentalCondition.comment || "";
+  rentalCondition.conditionName = rentalCondition.conditionName || '';
+  rentalCondition.comment = rentalCondition.comment || '';
 
   // UI display fields
   rentalCondition.rentalAgreementId = rentalCondition.rentalAgreement.id;
-  rentalCondition.rentalAgreementNumber =
-    rentalCondition.rentalAgreement.number;
+  rentalCondition.rentalAgreementNumber = rentalCondition.rentalAgreement.number;
   rentalCondition.path = rentalCondition.rentalAgreement.path
     ? `${rentalCondition.rentalAgreement.path}/${Constant.RENTAL_CONDITIONS_PATHNAME}/${rentalCondition.id}`
     : null;
-  rentalCondition.url = rentalCondition.path
-    ? `#/${rentalCondition.path}`
-    : null;
+  rentalCondition.url = rentalCondition.path ? `${rentalCondition.path}` : null;
 
   rentalCondition.canEdit = true;
   rentalCondition.canDelete = true;
@@ -2799,18 +2505,14 @@ export function addRentalConditions(rentalAgreementId, rentalConditions) {
     rentalAgreementId,
   });
 
-  return new ApiRequest(
-    `rentalagreements/${rentalAgreementId}/conditionRecords`
-  )
+  return new ApiRequest(`/rentalagreements/${rentalAgreementId}/conditionRecords`)
     .post(rentalConditions)
     .then((response) => {
       const data = _.find(response.data, { rentalAgreementId });
       var rentalConditions = data.rentalAgreement.rentalAgreementConditions;
 
       // Add display fields
-      rentalConditions.forEach((rentalCondition) =>
-        parseRentalCondition(rentalCondition, data.rentalAgreement)
-      );
+      rentalConditions.forEach((rentalCondition) => parseRentalCondition(rentalCondition, data.rentalAgreement));
 
       store.dispatch({
         type: Action.UPDATE_RENTAL_CONDITIONS,
@@ -2830,22 +2532,20 @@ export function updateRentalCondition(rentalCondition) {
     rentalAgreementId,
   });
 
-  return new ApiRequest(`/rentalagreementconditions/${rentalCondition.id}`)
-    .put(rentalCondition)
-    .then((response) => {
-      var rentalCondition = response.data;
+  return new ApiRequest(`/rentalagreementconditions/${rentalCondition.id}`).put(rentalCondition).then((response) => {
+    var rentalCondition = response.data;
 
-      // Add display fields
-      parseRentalCondition(rentalCondition);
+    // Add display fields
+    parseRentalCondition(rentalCondition);
 
-      store.dispatch({
-        type: Action.UPDATE_RENTAL_CONDITIONS,
-        rentalConditions: [rentalCondition],
-        rentalAgreementId,
-      });
-
-      return rentalCondition;
+    store.dispatch({
+      type: Action.UPDATE_RENTAL_CONDITIONS,
+      rentalConditions: [rentalCondition],
+      rentalAgreementId,
     });
+
+    return rentalCondition;
+  });
 }
 
 export function deleteRentalCondition(rentalCondition) {
@@ -2856,46 +2556,38 @@ export function deleteRentalCondition(rentalCondition) {
     rentalAgreementId,
   });
 
-  return new ApiRequest(
-    `/rentalagreementconditions/${rentalCondition.id}/delete`
-  )
-    .post()
-    .then((response) => {
-      var rentalCondition = response.data;
+  return new ApiRequest(`/rentalagreementconditions/${rentalCondition.id}/delete`).post().then((response) => {
+    var rentalCondition = response.data;
 
-      // Add display fields
-      parseRentalCondition(rentalCondition);
+    // Add display fields
+    parseRentalCondition(rentalCondition);
 
-      store.dispatch({
-        type: Action.DELETE_RENTAL_CONDITION,
-        rentalCondition,
-        rentalAgreementId,
-      });
-
-      return rentalCondition;
+    store.dispatch({
+      type: Action.DELETE_RENTAL_CONDITION,
+      rentalCondition,
+      rentalAgreementId,
     });
+
+    return rentalCondition;
+  });
 }
 
 export function deleteCondition(id) {
-  return new ApiRequest(`/conditiontypes/${id}/delete`)
-    .post()
-    .then((response) => {
-      return response;
-    });
+  return new ApiRequest(`/conditiontypes/${id}/delete`).post().then((response) => {
+    return response;
+  });
 }
 
 export function addCondition(condition) {
-  return new ApiRequest("conditiontypes/0").post(condition).then((response) => {
+  return new ApiRequest('/conditiontypes/0').post(condition).then((response) => {
     return response;
   });
 }
 
 export function updateCondition(condition) {
-  return new ApiRequest(`conditiontypes/${condition.id}`)
-    .post(condition)
-    .then((response) => {
-      return response;
-    });
+  return new ApiRequest(`/conditiontypes/${condition.id}`).post(condition).then((response) => {
+    return response;
+  });
 }
 
 ////////////////////
@@ -2903,7 +2595,7 @@ export function updateCondition(condition) {
 ////////////////////
 
 export function getBusiness() {
-  return new ApiRequest("/business").get().then((response) => {
+  return new ApiRequest('/business').get().then((response) => {
     var business = response.data;
 
     if (!_.isObject(business)) {
@@ -2927,7 +2619,7 @@ export function getOwnerForBusiness(ownerId) {
 }
 
 export function validateOwner(secretKey, postalCode) {
-  return new ApiRequest("/business/validateOwner")
+  return new ApiRequest('/business/validateOwner')
     .get({ sharedKey: secretKey, postalCode: postalCode })
     .then((response) => {
       var business = response.data;
@@ -2942,50 +2634,42 @@ export function validateOwner(secretKey, postalCode) {
 
 function parseRolloverStatus(status) {
   status.rolloverActive =
-    status.progressPercentage != null &&
-    status.progressPercentage >= 0 &&
-    status.progressPercentage < 100;
+    status.progressPercentage != null && status.progressPercentage >= 0 && status.progressPercentage < 100;
   status.rolloverComplete = status.progressPercentage === 100;
 }
 
 export function getRolloverStatus(districtId) {
-  return new ApiRequest(`/districts/${districtId}/rolloverStatus`)
-    .get(null, { silent: true })
-    .then((response) => {
-      console.log(response);
-      var status = response.data;
-      parseRolloverStatus(status);
-      store.dispatch({
-        type: Action.UPDATE_ROLLOVER_STATUS_LOOKUP,
-        status: status,
-      });
+  return new ApiRequest(`/districts/${districtId}/rolloverStatus`).get(null, { silent: true }).then((response) => {
+    console.log(response);
+    var status = response.data;
+    parseRolloverStatus(status);
+    store.dispatch({
+      type: Action.UPDATE_ROLLOVER_STATUS_LOOKUP,
+      status: status,
     });
+  });
 }
 
 export function initiateRollover(districtId) {
-  return new ApiRequest(`/districts/${districtId}/annualRollover`)
-    .get()
-    .then((response) => {
-      var status = response;
-      parseRolloverStatus(status);
-      store.dispatch({
-        type: Action.UPDATE_ROLLOVER_STATUS_LOOKUP,
-        status: status,
-      });
+  return new ApiRequest(`/districts/${districtId}/annualRollover`).get().then((response) => {
+    var status = response;
+    parseRolloverStatus(status);
+    store.dispatch({
+      type: Action.UPDATE_ROLLOVER_STATUS_LOOKUP,
+      status: status,
     });
+  });
 }
 
 export function dismissRolloverMessage(districtId) {
-  return new ApiRequest(`/districts/${districtId}/dismissRolloverMessage`)
-    .post()
-    .then((response) => {
-      var status = response.data;
-      parseRolloverStatus(status);
-      store.dispatch({
-        type: Action.UPDATE_ROLLOVER_STATUS_LOOKUP,
-        status: status,
-      });
+  return new ApiRequest(`/districts/${districtId}/dismissRolloverMessage`).post().then((response) => {
+    var status = response.data;
+    parseRolloverStatus(status);
+    store.dispatch({
+      type: Action.UPDATE_ROLLOVER_STATUS_LOOKUP,
+      status: status,
     });
+  });
 }
 
 ////////////////////
@@ -3002,7 +2686,7 @@ export function dismissRolloverMessage(districtId) {
 // }
 
 export function getDistricts() {
-  return new ApiRequest("/districts").get().then((response) => {
+  return new ApiRequest('/districts').get().then((response) => {
     var districts = normalize(response.data);
 
     store.dispatch({
@@ -3013,7 +2697,7 @@ export function getDistricts() {
 }
 
 export function getRegions() {
-  return new ApiRequest("/regions").get().then((response) => {
+  return new ApiRequest('/regions').get().then((response) => {
     var regions = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_REGIONS_LOOKUP, regions: regions });
@@ -3021,24 +2705,19 @@ export function getRegions() {
 }
 
 export function getLocalAreas(id) {
-  return new ApiRequest(`/districts/${id}/localAreas`)
-    .get()
-    .then((response) => {
-      var localAreas = normalize(response.data);
-      _.map(
-        localAreas,
-        (area) => (area.name = `${area.serviceAreaId} - ${area.name}`)
-      );
+  return new ApiRequest(`/districts/${id}/localAreas`).get().then((response) => {
+    var localAreas = normalize(response.data);
+    _.map(localAreas, (area) => (area.name = `${area.serviceAreaId} - ${area.name}`));
 
-      store.dispatch({
-        type: Action.UPDATE_LOCAL_AREAS_LOOKUP,
-        localAreas: localAreas,
-      });
+    store.dispatch({
+      type: Action.UPDATE_LOCAL_AREAS_LOOKUP,
+      localAreas: localAreas,
     });
+  });
 }
 
 export function getServiceAreas() {
-  return new ApiRequest("/serviceareas").get().then((response) => {
+  return new ApiRequest('/serviceareas').get().then((response) => {
     var serviceAreas = normalize(response.data);
 
     store.dispatch({
@@ -3050,64 +2729,55 @@ export function getServiceAreas() {
 
 export function getEquipmentTypes() {
   const silent = store.getState().lookups.equipmentTypes.loaded;
-  return new ApiRequest("/equipmenttypes", { silent })
-    .get()
-    .then((response) => {
-      var equipmentTypes = _.mapValues(normalize(response.data), (x) => {
-        x.blueBookSectionAndName = `${x.blueBookSection} - ${x.name}`;
-        return x;
-      });
-
-      store.dispatch({
-        type: Action.UPDATE_EQUIPMENT_TYPES_LOOKUP,
-        equipmentTypes,
-      });
+  return new ApiRequest('/equipmenttypes', { silent }).get().then((response) => {
+    var equipmentTypes = _.mapValues(normalize(response.data), (x) => {
+      x.blueBookSectionAndName = `${x.blueBookSection} - ${x.name}`;
+      return x;
     });
+
+    store.dispatch({
+      type: Action.UPDATE_EQUIPMENT_TYPES_LOOKUP,
+      equipmentTypes,
+    });
+  });
 }
 
 export function getDistrictEquipmentTypes() {
   const silent = store.getState().lookups.districtEquipmentTypes.loaded;
-  return new ApiRequest("/districtequipmenttypes", { silent })
-    .get()
-    .then((response) => {
-      var districtEquipmentTypes = normalize(response.data);
+  return new ApiRequest('/districtequipmenttypes', { silent }).get().then((response) => {
+    var districtEquipmentTypes = normalize(response.data);
 
-      store.dispatch({
-        type: Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_LOOKUP,
-        districtEquipmentTypes: districtEquipmentTypes,
-      });
+    store.dispatch({
+      type: Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_LOOKUP,
+      districtEquipmentTypes: districtEquipmentTypes,
     });
+  });
 }
 
 export function getDistrictEquipmentTypesAgreementSummary() {
-  const silent =
-    store.getState().lookups.districtEquipmentTypesAgreementSummary.loaded;
-  return new ApiRequest("/districtequipmenttypes/agreementSummary", { silent })
-    .get()
-    .then((response) => {
-      var districtEquipmentTypes = normalize(response.data);
+  const silent = store.getState().lookups.districtEquipmentTypesAgreementSummary.loaded;
+  return new ApiRequest('/districtequipmenttypes/agreementSummary', { silent }).get().then((response) => {
+    var districtEquipmentTypes = normalize(response.data);
 
-      store.dispatch({
-        type: Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_AGREEMENT_SUMMARY_LOOKUP,
-        districtEquipmentTypes,
-      });
+    store.dispatch({
+      type: Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_AGREEMENT_SUMMARY_LOOKUP,
+      districtEquipmentTypes,
     });
+  });
 }
 
 export function getFiscalYears(districtId) {
-  return new ApiRequest(`/districts/${districtId}/fiscalYears`)
-    .get()
-    .then((response) => {
-      store.dispatch({
-        type: Action.UPDATE_FISCAL_YEARS_LOOKUP,
-        fiscalYears: response.data,
-      });
+  return new ApiRequest(`/districts/${districtId}/fiscalYears`).get().then((response) => {
+    store.dispatch({
+      type: Action.UPDATE_FISCAL_YEARS_LOOKUP,
+      fiscalYears: response.data,
     });
+  });
 }
 
 export function getOwnersLite() {
   const silent = store.getState().lookups.owners.lite.loaded;
-  return new ApiRequest("/owners/lite", { silent }).get().then((response) => {
+  return new ApiRequest('/owners/lite', { silent }).get().then((response) => {
     var owners = normalize(response.data);
     store.dispatch({ type: Action.UPDATE_OWNERS_LITE_LOOKUP, owners: owners });
   });
@@ -3115,20 +2785,18 @@ export function getOwnersLite() {
 
 export function getOwnersLiteHires() {
   const silent = store.getState().lookups.owners.hires.loaded;
-  return new ApiRequest("/owners/liteHires", { silent })
-    .get()
-    .then((response) => {
-      var owners = normalize(response.data);
-      store.dispatch({
-        type: Action.UPDATE_OWNERS_LITE_HIRES_LOOKUP,
-        owners: owners,
-      });
+  return new ApiRequest('/owners/liteHires', { silent }).get().then((response) => {
+    var owners = normalize(response.data);
+    store.dispatch({
+      type: Action.UPDATE_OWNERS_LITE_HIRES_LOOKUP,
+      owners: owners,
     });
+  });
 }
 
 export function getOwnersLiteTs() {
   const silent = store.getState().lookups.owners.ts.loaded;
-  return new ApiRequest("/owners/liteTs", { silent }).get().then((response) => {
+  return new ApiRequest('/owners/liteTs', { silent }).get().then((response) => {
     var owners = normalize(response.data);
 
     store.dispatch({
@@ -3139,31 +2807,25 @@ export function getOwnersLiteTs() {
 }
 
 export function addDistrictEquipmentType(equipment) {
-  return new ApiRequest(`/districtequipmenttypes/${equipment.id}`)
-    .post(equipment)
-    .then((response) => {
-      return response;
-    });
+  return new ApiRequest(`/districtequipmenttypes/${equipment.id}`).post(equipment).then((response) => {
+    return response;
+  });
 }
 
 export function updateDistrictEquipmentType(equipment) {
-  return new ApiRequest(`/districtequipmenttypes/${equipment.id}`)
-    .post(equipment)
-    .then((response) => {
-      return response;
-    });
+  return new ApiRequest(`/districtequipmenttypes/${equipment.id}`).post(equipment).then((response) => {
+    return response;
+  });
 }
 
 export function deleteDistrictEquipmentType(equipment) {
-  return new ApiRequest(`/districtequipmenttypes/${equipment.id}/delete`)
-    .post()
-    .then((response) => {
-      return response;
-    });
+  return new ApiRequest(`/districtequipmenttypes/${equipment.id}/delete`).post().then((response) => {
+    return response;
+  });
 }
 
 export function getRoles() {
-  return new ApiRequest("/roles").get().then((response) => {
+  return new ApiRequest('/roles').get().then((response) => {
     var roles = normalize(response.data);
 
     store.dispatch({ type: Action.UPDATE_ROLES_LOOKUP, roles: roles });
@@ -3171,7 +2833,7 @@ export function getRoles() {
 }
 
 export function getPermissions() {
-  return new ApiRequest("/permissions").get().then((response) => {
+  return new ApiRequest('/permissions').get().then((response) => {
     var permissions = normalize(response.data);
 
     store.dispatch({
@@ -3201,27 +2863,23 @@ export function getPermissions() {
 // }
 
 export function getOvertimeRateTypes() {
-  return new ApiRequest("/provincialratetypes/overtime")
-    .get()
-    .then((response) => {
-      store.dispatch({
-        type: Action.UPDATE_OVERTIME_RATE_TYPES_LOOKUP,
-        overtimeRateTypes: response.data,
-      });
+  return new ApiRequest('/provincialratetypes/overtime').get().then((response) => {
+    store.dispatch({
+      type: Action.UPDATE_OVERTIME_RATE_TYPES_LOOKUP,
+      overtimeRateTypes: response.data,
     });
+  });
 }
 
 export function updateOvertimeRateType(rate) {
-  return new ApiRequest(`/provincialratetypes/${rate.id}`)
-    .put(rate)
-    .then((response) => {
-      return response;
-    });
+  return new ApiRequest(`/provincialratetypes/${rate.id}`).put(rate).then((response) => {
+    return response;
+  });
 }
 
 export function getRentalConditions() {
   store.dispatch({ type: Action.RENTAL_CONDITIONS_LOOKUP_REQUEST });
-  return new ApiRequest("/conditiontypes").get().then((response) => {
+  return new ApiRequest('/conditiontypes').get().then((response) => {
     var rentalConditions = response.data;
 
     store.dispatch({
@@ -3236,7 +2894,7 @@ export function getRentalConditions() {
 ////////////////////
 
 export function getVersion() {
-  return new ApiRequest("/version").get().then((response) => {
+  return new ApiRequest('/version').get().then((response) => {
     store.dispatch({ type: Action.UPDATE_VERSION, version: response });
   });
 }
@@ -3263,11 +2921,9 @@ export function updateNote(note) {
 ////////////////////
 
 export function setDevUser(user) {
-  return new ApiRequest(`/authentication/dev/token/${user}`)
-    .get()
-    .then((response) => {
-      return response;
-    });
+  return new ApiRequest(`/authentication/dev/token/${user}`).get().then((response) => {
+    return response;
+  });
 }
 
 ////////////////////
@@ -3275,12 +2931,10 @@ export function setDevUser(user) {
 ////////////////////
 
 export function deleteTimeRecord(timeRecordId) {
-  return new ApiRequest(`/timerecords/${timeRecordId}/delete`)
-    .post()
-    .then((response) => {
-      store.dispatch({
-        type: Action.DELETE_TIME_RECORD,
-        timeRecord: response.data,
-      });
+  return new ApiRequest(`/timerecords/${timeRecordId}/delete`).post().then((response) => {
+    store.dispatch({
+      type: Action.DELETE_TIME_RECORD,
+      timeRecord: response.data,
     });
+  });
 }

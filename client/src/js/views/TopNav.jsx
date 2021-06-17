@@ -1,7 +1,8 @@
-import PropTypes from "prop-types";
-import React from "react";
-import { connect } from "react-redux";
-import _ from "lodash";
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import _ from 'lodash';
 import {
   Navbar,
   Nav,
@@ -15,17 +16,17 @@ import {
   Glyphicon,
   ControlLabel,
   FormGroup,
-} from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap";
+} from 'react-bootstrap';
+import NavLinkWrapper from '../components/ui/NavLinkWrapper';
 
-import * as Constant from "../constants";
-import * as Api from "../api";
+import * as Constant from '../constants';
+import * as Api from '../api';
+import { logout } from '../Keycloak';
 
-import Spinner from "../components/Spinner.jsx";
-import DropdownControl from "../components/DropdownControl.jsx";
+import Spinner from '../components/Spinner.jsx';
+import DropdownControl from '../components/DropdownControl.jsx';
 
-import { formatDateTimeUTCToLocal } from "../utils/date";
-import { currentPathStartsWith } from "../utils/routes";
+import { formatDateTimeUTCToLocal } from '../utils/date';
 
 class TopNav extends React.Component {
   static propTypes = {
@@ -34,6 +35,7 @@ class TopNav extends React.Component {
     showNav: PropTypes.bool,
     currentUserDistricts: PropTypes.object,
     rolloverStatus: PropTypes.object,
+    history: PropTypes.object, //from react-router-dom
   };
 
   static defaultProps = {
@@ -45,16 +47,8 @@ class TopNav extends React.Component {
       return district.district.id === state.districtId;
     });
     Api.switchUserDistrict(district.id).then(() => {
+      this.props.history.push(Constant.HOME_PATHNAME);
       window.location.reload();
-      this.context.router.push({ pathname: Constant.HOME_PATHNAME });
-    });
-  };
-
-  logout = () => {
-    Api.logoffUser().then((logoffUrl) => {
-      if (logoffUrl) {
-        window.location.href = logoffUrl;
-      }
     });
   };
 
@@ -62,29 +56,30 @@ class TopNav extends React.Component {
     Api.dismissRolloverMessage(this.props.currentUser.district.id);
   };
 
+  pathMatch = (path) => {
+    return this.props.location.pathname === path;
+  };
+
   render() {
-    var userDistricts = _.map(
-      this.props.currentUserDistricts.data,
-      (district) => {
-        return {
-          ...district,
-          districtName: district.district.name,
-          id: district.district.id,
-        };
-      }
-    );
+    var userDistricts = _.map(this.props.currentUserDistricts.data, (district) => {
+      return {
+        ...district,
+        districtName: district.district.name,
+        id: district.district.id,
+      };
+    });
 
     var navigationDisabled = this.props.rolloverStatus.rolloverActive;
 
-    var environmentClass = "";
-    if (this.props.currentUser.environment === "Development") {
-      environmentClass = "env-dev";
-    } else if (this.props.currentUser.environment === "Test") {
-      environmentClass = "env-test";
-    } else if (this.props.currentUser.environment === "Training") {
-      environmentClass = "env-trn";
-    } else if (this.props.currentUser.environment === "UAT") {
-      environmentClass = "env-uat";
+    var environmentClass = '';
+    if (this.props.currentUser.environment === 'Development') {
+      environmentClass = 'env-dev';
+    } else if (this.props.currentUser.environment === 'Test') {
+      environmentClass = 'env-test';
+    } else if (this.props.currentUser.environment === 'Training') {
+      environmentClass = 'env-trn';
+    } else if (this.props.currentUser.environment === 'UAT') {
+      environmentClass = 'env-uat';
     }
 
     return (
@@ -93,207 +88,173 @@ class TopNav extends React.Component {
           <div className="container">
             <div id="logo">
               <a href="http://www2.gov.bc.ca/gov/content/home">
-                <img
-                  title="Government of B.C."
-                  alt="Government of B.C."
-                  src="images/gov/gov3_bc_logo.png"
-                />
+                <img title="Government of B.C." alt="Government of B.C." src="images/gov/gov3_bc_logo.png" />
               </a>
             </div>
             <h1 id="banner">MOTI Hired Equipment Tracking System</h1>
-            <div
-              id="working-indicator"
-              hidden={!this.props.showWorkingIndicator}
-            >
+            <div id="working-indicator" hidden={!this.props.showWorkingIndicator}>
               Working <Spinner />
             </div>
           </div>
           <Navbar id="top-nav" className={environmentClass}>
             {this.props.showNav && (
               <Nav>
-                <LinkContainer
-                  to={{ pathname: `/${Constant.HOME_PATHNAME}` }}
+                <NavLinkWrapper
+                  tag={NavItem}
+                  to={Constant.HOME_PATHNAME}
                   disabled={navigationDisabled}
-                  active={currentPathStartsWith(Constant.HOME_PATHNAME)}
+                  active={this.pathMatch(Constant.HOME_PATHNAME)}
                 >
-                  <NavItem>Home</NavItem>
-                </LinkContainer>
-                <LinkContainer
-                  to={{ pathname: `/${Constant.OWNERS_PATHNAME}` }}
+                  Home
+                </NavLinkWrapper>
+                <NavLinkWrapper
+                  tag={NavItem}
+                  to={Constant.OWNERS_PATHNAME}
                   disabled={navigationDisabled}
-                  active={currentPathStartsWith(Constant.OWNERS_PATHNAME)}
+                  active={this.pathMatch(Constant.OWNERS_PATHNAME)}
                 >
-                  <NavItem>Owners</NavItem>
-                </LinkContainer>
-                <LinkContainer
-                  to={{ pathname: `/${Constant.EQUIPMENT_PATHNAME}` }}
+                  Owners
+                </NavLinkWrapper>
+                <NavLinkWrapper
+                  tag={NavItem}
+                  to={Constant.EQUIPMENT_PATHNAME}
                   disabled={navigationDisabled}
-                  active={currentPathStartsWith(Constant.EQUIPMENT_PATHNAME)}
+                  active={this.pathMatch(Constant.EQUIPMENT_PATHNAME)}
                 >
-                  <NavItem>Equipment</NavItem>
-                </LinkContainer>
-                <LinkContainer
-                  to={{ pathname: `/${Constant.PROJECTS_PATHNAME}` }}
+                  Equipment
+                </NavLinkWrapper>
+                <NavLinkWrapper
+                  tag={NavItem}
+                  to={Constant.PROJECTS_PATHNAME}
                   disabled={navigationDisabled}
-                  active={currentPathStartsWith(Constant.PROJECTS_PATHNAME)}
+                  active={this.pathMatch(Constant.PROJECTS_PATHNAME)}
                 >
-                  <NavItem>Projects</NavItem>
-                </LinkContainer>
-                <LinkContainer
-                  to={{ pathname: `/${Constant.RENTAL_REQUESTS_PATHNAME}` }}
+                  Projects
+                </NavLinkWrapper>
+                <NavLinkWrapper
+                  tag={NavItem}
+                  to={Constant.RENTAL_REQUESTS_PATHNAME}
                   disabled={navigationDisabled}
-                  active={currentPathStartsWith(
-                    Constant.RENTAL_REQUESTS_PATHNAME
-                  )}
+                  active={this.pathMatch(Constant.RENTAL_REQUESTS_PATHNAME)}
                 >
-                  <NavItem>Requests</NavItem>
-                </LinkContainer>
-                <LinkContainer
-                  to={{ pathname: `/${Constant.TIME_ENTRY_PATHNAME}` }}
+                  Requests
+                </NavLinkWrapper>
+                <NavLinkWrapper
+                  tag={NavItem}
+                  to={Constant.TIME_ENTRY_PATHNAME}
                   disabled={navigationDisabled}
-                  active={currentPathStartsWith(Constant.TIME_ENTRY_PATHNAME)}
+                  active={this.pathMatch(Constant.TIME_ENTRY_PATHNAME)}
                 >
-                  <NavItem>Time Entry</NavItem>
-                </LinkContainer>
-                <NavDropdown
-                  id="reports-dropdown"
-                  title="Reports"
-                  disabled={navigationDisabled}
-                >
-                  <LinkContainer
-                    to={{ pathname: `/${Constant.AIT_REPORT_PATHNAME}` }}
-                    active={currentPathStartsWith(Constant.AIT_REPORT_PATHNAME)}
+                  Time Entry
+                </NavLinkWrapper>
+
+                <NavDropdown id="reports-dropdown" title="Reports" disabled={navigationDisabled}>
+                  <NavLinkWrapper
+                    tag={MenuItem}
+                    to={Constant.AIT_REPORT_PATHNAME}
+                    disabled={navigationDisabled}
+                    active={this.pathMatch(Constant.AIT_REPORT_PATHNAME)} //active prop needed so NavDropdown will highlight if one of chidlren is active
                   >
-                    <MenuItem>Rental Agreement Summary</MenuItem>
-                  </LinkContainer>
-                  <LinkContainer
-                    to={{ pathname: `/${Constant.SENIORITY_LIST_PATHNAME}` }}
-                    active={currentPathStartsWith(
-                      Constant.SENIORITY_LIST_PATHNAME
-                    )}
+                    Rental Agreement Summary
+                  </NavLinkWrapper>
+                  <NavLinkWrapper
+                    tag={MenuItem}
+                    to={Constant.SENIORITY_LIST_PATHNAME}
+                    disabled={navigationDisabled}
+                    active={this.pathMatch(Constant.SENIORITY_LIST_PATHNAME)}
                   >
-                    <MenuItem>Seniority List</MenuItem>
-                  </LinkContainer>
-                  <LinkContainer
-                    to={{
-                      pathname: `/${Constant.STATUS_LETTERS_REPORT_PATHNAME}`,
-                    }}
-                    active={currentPathStartsWith(
-                      Constant.STATUS_LETTERS_REPORT_PATHNAME
-                    )}
+                    Seniority List
+                  </NavLinkWrapper>
+                  <NavLinkWrapper
+                    tag={MenuItem}
+                    to={Constant.STATUS_LETTERS_REPORT_PATHNAME}
+                    disabled={navigationDisabled}
+                    active={this.pathMatch(Constant.STATUS_LETTERS_REPORT_PATHNAME)}
                   >
-                    <MenuItem>Status Letters / Mailing Labels</MenuItem>
-                  </LinkContainer>
-                  <LinkContainer
-                    to={{ pathname: `/${Constant.HIRING_REPORT_PATHNAME}` }}
-                    active={currentPathStartsWith(
-                      Constant.HIRING_REPORT_PATHNAME
-                    )}
+                    Status Letters / Mailing Labels
+                  </NavLinkWrapper>
+                  <NavLinkWrapper
+                    tag={MenuItem}
+                    to={Constant.HIRING_REPORT_PATHNAME}
+                    disabled={navigationDisabled}
+                    active={this.pathMatch(Constant.HIRING_REPORT_PATHNAME)}
                   >
-                    <MenuItem>Hiring Report - Not Hired / Force Hire</MenuItem>
-                  </LinkContainer>
-                  <LinkContainer
-                    to={{ pathname: `/${Constant.OWNERS_COVERAGE_PATHNAME}` }}
-                    active={currentPathStartsWith(
-                      Constant.OWNERS_COVERAGE_PATHNAME
-                    )}
+                    Hiring Report - Not Hired / Force Hire
+                  </NavLinkWrapper>
+                  <NavLinkWrapper
+                    tag={MenuItem}
+                    to={Constant.OWNERS_COVERAGE_PATHNAME}
+                    disabled={navigationDisabled}
+                    active={this.pathMatch(Constant.OWNERS_COVERAGE_PATHNAME)}
                   >
-                    <MenuItem>WCB / CGL Coverage</MenuItem>
-                  </LinkContainer>
+                    WCB / CGL Coverage
+                  </NavLinkWrapper>
                 </NavDropdown>
-                {this.props.currentUser.hasPermission(
-                  Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT
-                ) && (
-                  <LinkContainer
-                    to={{ pathname: `/${Constant.DISTRICT_ADMIN_PATHNAME}` }}
+                {this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) && (
+                  <NavLinkWrapper
+                    tag={NavItem}
+                    to={Constant.DISTRICT_ADMIN_PATHNAME}
                     disabled={navigationDisabled}
-                    active={currentPathStartsWith(
-                      Constant.DISTRICT_ADMIN_PATHNAME
-                    )}
+                    active={this.pathMatch(Constant.DISTRICT_ADMIN_PATHNAME)}
                   >
-                    <NavItem>District Admin</NavItem>
-                  </LinkContainer>
+                    District Admin
+                  </NavLinkWrapper>
                 )}
-                {(this.props.currentUser.hasPermission(
-                  Constant.PERMISSION_ADMIN
-                ) ||
-                  this.props.currentUser.hasPermission(
-                    Constant.PERMISSION_USER_MANAGEMENT
-                  ) ||
-                  this.props.currentUser.hasPermission(
-                    Constant.PERMISSION_ROLES_AND_PERMISSIONS
-                  ) ||
-                  this.props.currentUser.hasPermission(
-                    Constant.PERMISSION_DISTRICT_ROLLOVER
-                  ) ||
-                  this.props.currentUser.hasPermission(
-                    Constant.PERMISSION_VERSION
-                  )) && (
-                  <NavDropdown
-                    id="admin-dropdown"
-                    title="Administration"
-                    disabled={navigationDisabled}
-                  >
-                    {this.props.currentUser.hasPermission(
-                      Constant.PERMISSION_ADMIN
-                    ) && (
-                      <LinkContainer
-                        to={{
-                          pathname: `/${Constant.OVERTIME_RATES_PATHNAME}`,
-                        }}
-                        active={currentPathStartsWith(
-                          Constant.OVERTIME_RATES_PATHNAME
-                        )}
-                      >
-                        <MenuItem>Manage OT Rates</MenuItem>
-                      </LinkContainer>
-                    )}
-                    {this.props.currentUser.hasPermission(
-                      Constant.PERMISSION_USER_MANAGEMENT
-                    ) && (
-                      <LinkContainer
-                        to={{ pathname: `/${Constant.USERS_PATHNAME}` }}
-                        active={currentPathStartsWith(Constant.USERS_PATHNAME)}
-                      >
-                        <MenuItem>User Management</MenuItem>
-                      </LinkContainer>
-                    )}
-                    {this.props.currentUser.hasPermission(
-                      Constant.PERMISSION_ROLES_AND_PERMISSIONS
-                    ) && (
-                      <LinkContainer
-                        to={{ pathname: `/${Constant.ROLES_PATHNAME}` }}
+                {(this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN) ||
+                  this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) ||
+                  this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) ||
+                  this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_ROLLOVER) ||
+                  this.props.currentUser.hasPermission(Constant.PERMISSION_VERSION)) && (
+                  <NavDropdown id="admin-dropdown" title="Administration" disabled={navigationDisabled}>
+                    {this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN) && (
+                      <NavLinkWrapper
+                        tag={MenuItem}
+                        to={Constant.OVERTIME_RATES_PATHNAME}
                         disabled={navigationDisabled}
-                        active={currentPathStartsWith(Constant.ROLES_PATHNAME)}
+                        active={this.pathMatch(Constant.OVERTIME_RATES_PATHNAME)}
                       >
-                        <MenuItem>Roles and Permissions</MenuItem>
-                      </LinkContainer>
+                        Manage OT Rates
+                      </NavLinkWrapper>
                     )}
-                    {this.props.currentUser.hasPermission(
-                      Constant.PERMISSION_DISTRICT_ROLLOVER
-                    ) && (
-                      <LinkContainer
-                        to={{ pathname: `/${Constant.ROLLOVER_PATHNAME}` }}
+                    {this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) && (
+                      <NavLinkWrapper
+                        tag={MenuItem}
+                        to={Constant.USERS_PATHNAME}
                         disabled={navigationDisabled}
-                        active={currentPathStartsWith(
-                          Constant.ROLLOVER_PATHNAME
-                        )}
+                        active={this.pathMatch(Constant.USERS_PATHNAME)}
                       >
-                        <MenuItem>Roll Over</MenuItem>
-                      </LinkContainer>
+                        User Management
+                      </NavLinkWrapper>
                     )}
-                    {this.props.currentUser.hasPermission(
-                      Constant.PERMISSION_VERSION
-                    ) && (
-                      <LinkContainer
-                        to={{ pathname: `/${Constant.VERSION_PATHNAME}` }}
+                    {this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) && (
+                      <NavLinkWrapper
+                        tag={MenuItem}
+                        to={Constant.ROLES_PATHNAME}
                         disabled={navigationDisabled}
-                        active={currentPathStartsWith(
-                          Constant.VERSION_PATHNAME
-                        )}
+                        active={this.pathMatch(Constant.ROLES_PATHNAME)}
                       >
-                        <MenuItem>Version Info</MenuItem>
-                      </LinkContainer>
+                        Roles and Permissions
+                      </NavLinkWrapper>
+                    )}
+                    {this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_ROLLOVER) && (
+                      <NavLinkWrapper
+                        tag={MenuItem}
+                        to={Constant.ROLLOVER_PATHNAME}
+                        disabled={navigationDisabled}
+                        active={this.pathMatch(Constant.ROLLOVER_PATHNAME)}
+                      >
+                        Roll Over
+                      </NavLinkWrapper>
+                    )}
+                    {this.props.currentUser.hasPermission(Constant.PERMISSION_VERSION) && (
+                      <NavLinkWrapper
+                        tag={MenuItem}
+                        to={Constant.VERSION_PATHNAME}
+                        disabled={navigationDisabled}
+                        active={this.pathMatch(Constant.VERSION_PATHNAME)}
+                      >
+                        Version Info
+                      </NavLinkWrapper>
                     )}
                   </NavDropdown>
                 )}
@@ -301,50 +262,37 @@ class TopNav extends React.Component {
             )}
             {this.props.showNav && (
               <div id="navbar-right" className="pull-right">
-                {this.props.rolloverStatus.displayRolloverMessage &&
-                  this.props.rolloverStatus.rolloverComplete && (
-                    <OverlayTrigger
-                      trigger="click"
-                      placement="bottom"
-                      rootClose
-                      overlay={
-                        <Popover
-                          id="rollover-notice"
-                          title="Roll Over Complete"
-                        >
-                          <p>
-                            The hired equipment roll over has been completed on{" "}
-                            {formatDateTimeUTCToLocal(
-                              this.props.rolloverStatus.rolloverEndDate,
-                              Constant.DATE_TIME_READABLE
-                            )}
-                            .
-                          </p>
-                          <p>
-                            <strong>Note: </strong>Please save/print out the new
-                            seniority lists for all equipments corresponding to
-                            each local area.
-                          </p>
-                          <Button
-                            onClick={this.dismissRolloverNotice}
-                            bsStyle="primary"
-                          >
-                            Dismiss
-                          </Button>
-                        </Popover>
-                      }
-                    >
-                      <Button
-                        id="rollover-notice-button"
-                        className="mr-5"
-                        bsStyle="info"
-                        bsSize="xsmall"
-                      >
-                        Roll Over Complete
-                        <Glyphicon glyph="exclamation-sign" />
-                      </Button>
-                    </OverlayTrigger>
-                  )}
+                {this.props.rolloverStatus.displayRolloverMessage && this.props.rolloverStatus.rolloverComplete && (
+                  <OverlayTrigger
+                    trigger="click"
+                    placement="bottom"
+                    rootClose
+                    overlay={
+                      <Popover id="rollover-notice" title="Roll Over Complete">
+                        <p>
+                          The hired equipment roll over has been completed on{' '}
+                          {formatDateTimeUTCToLocal(
+                            this.props.rolloverStatus.rolloverEndDate,
+                            Constant.DATE_TIME_READABLE
+                          )}
+                          .
+                        </p>
+                        <p>
+                          <strong>Note: </strong>Please save/print out the new seniority lists for all equipments
+                          corresponding to each local area.
+                        </p>
+                        <Button onClick={this.dismissRolloverNotice} bsStyle="primary">
+                          Dismiss
+                        </Button>
+                      </Popover>
+                    }
+                  >
+                    <Button id="rollover-notice-button" className="mr-5" bsStyle="info" bsSize="xsmall">
+                      Roll Over Complete
+                      <Glyphicon glyph="exclamation-sign" />
+                    </Button>
+                  </OverlayTrigger>
+                )}
                 <Dropdown id="profile-menu">
                   <Dropdown.Toggle>
                     <Glyphicon glyph="user" />
@@ -361,7 +309,7 @@ class TopNav extends React.Component {
                         items={userDistricts}
                       />
                     </FormGroup>
-                    <Button onClick={this.logout} bsStyle="primary">
+                    <Button onClick={() => logout()} bsStyle="primary">
                       Logout
                     </Button>
                   </Dropdown.Menu>
@@ -375,10 +323,6 @@ class TopNav extends React.Component {
   }
 }
 
-TopNav.contextTypes = {
-  router: PropTypes.object.isRequired,
-};
-
 function mapStateToProps(state) {
   return {
     currentUser: state.user,
@@ -388,4 +332,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, null, null, { pure: false })(TopNav);
+export default connect(mapStateToProps, null, null, { pure: false })(withRouter(TopNav));

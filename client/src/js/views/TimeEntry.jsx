@@ -1,37 +1,28 @@
-import PropTypes from "prop-types";
-import React from "react";
-import { connect } from "react-redux";
-import { Link } from "react-router";
-import {
-  Alert,
-  Row,
-  Col,
-  ButtonToolbar,
-  Button,
-  ButtonGroup,
-  Glyphicon,
-  Form,
-} from "react-bootstrap";
-import _ from "lodash";
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form } from 'react-bootstrap';
+import _ from 'lodash';
 
-import TimeEntryDialog from "./dialogs/TimeEntryDialog.jsx";
+import TimeEntryDialog from './dialogs/TimeEntryDialog.jsx';
 
-import * as Action from "../actionTypes";
-import * as Api from "../api";
-import * as Constant from "../constants";
-import store from "../store";
+import * as Action from '../actionTypes';
+import * as Api from '../api';
+import * as Constant from '../constants';
+import store from '../store';
 
-import AddButtonContainer from "../components/ui/AddButtonContainer.jsx";
-import PageHeader from "../components/ui/PageHeader.jsx";
-import SearchBar from "../components/ui/SearchBar.jsx";
-import Favourites from "../components/Favourites.jsx";
-import MultiDropdown from "../components/MultiDropdown.jsx";
-import SortTable from "../components/SortTable.jsx";
-import Spinner from "../components/Spinner.jsx";
-import PrintButton from "../components/PrintButton.jsx";
-import Authorize from "../components/Authorize.jsx";
+import AddButtonContainer from '../components/ui/AddButtonContainer.jsx';
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SearchBar from '../components/ui/SearchBar.jsx';
+import Favourites from '../components/Favourites.jsx';
+import MultiDropdown from '../components/MultiDropdown.jsx';
+import SortTable from '../components/SortTable.jsx';
+import Spinner from '../components/Spinner.jsx';
+import PrintButton from '../components/PrintButton.jsx';
+import Authorize from '../components/Authorize.jsx';
 
-import { formatDateTime } from "../utils/date";
+import { formatDateTime } from '../utils/date';
 
 class TimeEntry extends React.Component {
   static propTypes = {
@@ -61,7 +52,7 @@ class TimeEntry extends React.Component {
         equipmentIds: props.search.equipmentIds || [],
       },
       ui: {
-        sortField: props.ui.sortField || "localAreaLabel",
+        sortField: props.ui.sortField || 'localAreaLabel',
         sortDesc: props.ui.sortDesc === true,
       },
     };
@@ -130,18 +121,15 @@ class TimeEntry extends React.Component {
   };
 
   updateSearchState = (state, callback) => {
-    this.setState(
-      { search: { ...this.state.search, ...state, ...{ loaded: true } } },
-      () => {
-        store.dispatch({
-          type: Action.UPDATE_TIME_ENTRIES_SEARCH,
-          timeEntries: this.state.search,
-        });
-        if (callback) {
-          callback();
-        }
+    this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } } }, () => {
+      store.dispatch({
+        type: Action.UPDATE_TIME_ENTRIES_SEARCH,
+        timeEntries: this.state.search,
+      });
+      if (callback) {
+        callback();
       }
-    );
+    });
   };
 
   updateUIState = (state, callback) => {
@@ -178,14 +166,12 @@ class TimeEntry extends React.Component {
 
   renderResults = (addTimeEntryButton) => {
     if (Object.keys(this.props.timeEntries.data).length === 0) {
-      return (
-        <Alert bsStyle="success">No time entries {addTimeEntryButton}</Alert>
-      );
+      return <Alert bsStyle="success">No time entries {addTimeEntryButton}</Alert>;
     }
 
     var timeEntries = _.sortBy(this.props.timeEntries.data, (timeEntry) => {
       var sortValue = timeEntry[this.state.ui.sortField];
-      if (typeof sortValue === "string") {
+      if (typeof sortValue === 'string') {
         return sortValue.toLowerCase();
       }
       return sortValue;
@@ -201,19 +187,19 @@ class TimeEntry extends React.Component {
         sortDesc={this.state.ui.sortDesc}
         onSort={this.updateUIState}
         headers={[
-          { field: "localAreaLabel", title: "Local Area" },
-          { field: "ownerCode", title: "Owner Code" },
-          { field: "ownerName", title: "Company Name" },
-          { field: "sortableEquipmentCode", title: "Equip. ID" },
-          { field: "equipmentDetails", title: "Make/Model/Size/Year" },
-          { field: "provincialProjectNumber", title: "Project #" },
-          { field: "hours", title: "Hours" },
-          { field: "workedDate", title: "Date Worked" },
-          { field: "enteredDate", title: "Date Entered" },
+          { field: 'localAreaLabel', title: 'Local Area' },
+          { field: 'ownerCode', title: 'Owner Code' },
+          { field: 'ownerName', title: 'Company Name' },
+          { field: 'sortableEquipmentCode', title: 'Equip. ID' },
+          { field: 'equipmentDetails', title: 'Make/Model/Size/Year' },
+          { field: 'provincialProjectNumber', title: 'Project #' },
+          { field: 'hours', title: 'Hours' },
+          { field: 'workedDate', title: 'Date Worked' },
+          { field: 'enteredDate', title: 'Date Entered' },
           {
-            field: "addTime",
-            title: "Add Time Entry",
-            style: { textAlign: "right" },
+            field: 'addTime',
+            title: 'Add Time Entry',
+            style: { textAlign: 'right' },
             node: addTimeEntryButton,
           },
         ]}
@@ -224,35 +210,23 @@ class TimeEntry extends React.Component {
               <td>{entry.localAreaLabel}</td>
               <td>{entry.ownerCode}</td>
               <td>
-                <Link to={`${Constant.OWNERS_PATHNAME}/${entry.ownerId}`}>
-                  {entry.ownerName}
-                </Link>
+                <Link to={`${Constant.OWNERS_PATHNAME}/${entry.ownerId}`}>{entry.ownerName}</Link>
               </td>
               <td>
-                <Link
-                  to={`${Constant.EQUIPMENT_PATHNAME}/${entry.equipmentId}`}
-                >
-                  {entry.equipmentCode}
-                </Link>
+                <Link to={`${Constant.EQUIPMENT_PATHNAME}/${entry.equipmentId}`}>{entry.equipmentCode}</Link>
               </td>
               <td>{entry.equipmentDetails}</td>
               <td>
                 <Link to={`${Constant.PROJECTS_PATHNAME}/${entry.projectId}`}>
-                  {entry.provincialProjectNumber
-                    ? entry.provincialProjectNumber
-                    : "N/A"}
+                  {entry.provincialProjectNumber ? entry.provincialProjectNumber : 'N/A'}
                 </Link>
               </td>
               <td>{entry.hours}</td>
-              <td>{formatDateTime(entry.workedDate, "YYYY-MMM-DD")}</td>
-              <td>{formatDateTime(entry.enteredDate, "YYYY-MMM-DD")}</td>
-              <td style={{ textAlign: "right" }}>
+              <td>{formatDateTime(entry.workedDate, 'YYYY-MMM-DD')}</td>
+              <td>{formatDateTime(entry.enteredDate, 'YYYY-MMM-DD')}</td>
+              <td style={{ textAlign: 'right' }}>
                 <ButtonGroup>
-                  <Button
-                    title="Edit Time"
-                    bsSize="xsmall"
-                    onClick={this.openTimeEntryDialog.bind(this, entry)}
-                  >
+                  <Button title="Edit Time" bsSize="xsmall" onClick={this.openTimeEntryDialog.bind(this, entry)}>
                     <Glyphicon glyph="edit" />
                   </Button>
                 </ButtonGroup>
@@ -301,34 +275,21 @@ class TimeEntry extends React.Component {
   };
 
   filterSelectedOwners = () => {
-    var acceptableOwnerIds = _.map(this.getFilteredOwners(), "id");
-    var ownerIds = _.intersection(
-      this.state.search.ownerIds,
-      acceptableOwnerIds
-    );
-    this.updateSearchState(
-      { ownerIds: ownerIds },
-      this.filterSelectedEquipment
-    );
+    var acceptableOwnerIds = _.map(this.getFilteredOwners(), 'id');
+    var ownerIds = _.intersection(this.state.search.ownerIds, acceptableOwnerIds);
+    this.updateSearchState({ ownerIds: ownerIds }, this.filterSelectedEquipment);
   };
 
   filterSelectedEquipment = () => {
-    var acceptableEquipmentIds = _.map(this.getFilteredEquipment(), "id");
-    var equipmentIds = _.intersection(
-      this.state.search.equipmentIds,
-      acceptableEquipmentIds
-    );
+    var acceptableEquipmentIds = _.map(this.getFilteredEquipment(), 'id');
+    var equipmentIds = _.intersection(this.state.search.equipmentIds, acceptableEquipmentIds);
     this.updateSearchState({ equipmentIds: equipmentIds });
   };
 
   getFilteredOwners = () => {
     return _.chain(this.props.owners.data)
-      .filter(
-        (x) =>
-          this.matchesProjectFilter(x.projectIds) &&
-          this.matchesLocalAreaFilter(x.localAreaId)
-      )
-      .sortBy("organizationName")
+      .filter((x) => this.matchesProjectFilter(x.projectIds) && this.matchesLocalAreaFilter(x.localAreaId))
+      .sortBy('organizationName')
       .value();
   };
 
@@ -340,18 +301,18 @@ class TimeEntry extends React.Component {
           this.matchesOwnerFilter(x.ownerId) &&
           this.matchesLocalAreaFilter(x.localAreaId)
       )
-      .sortBy("equipmentCode")
+      .sortBy('equipmentCode')
       .value();
   };
 
   render() {
-    var resultCount = "";
+    var resultCount = '';
     if (this.props.timeEntries.loaded) {
-      resultCount = "(" + Object.keys(this.props.timeEntries.data).length + ")";
+      resultCount = '(' + Object.keys(this.props.timeEntries.data).length + ')';
     }
 
-    var projects = _.sortBy(this.props.projects.data, "name");
-    var localAreas = _.sortBy(this.props.localAreas, "name");
+    var projects = _.sortBy(this.props.projects.data, 'name');
+    var localAreas = _.sortBy(this.props.localAreas, 'name');
     var owners = this.getFilteredOwners();
     var equipment = this.getFilteredEquipment();
 
@@ -433,7 +394,7 @@ class TimeEntry extends React.Component {
         {(() => {
           if (this.props.timeEntries.loading) {
             return (
-              <div style={{ textAlign: "center" }}>
+              <div style={{ textAlign: 'center' }}>
                 <Spinner />
               </div>
             );
@@ -441,11 +402,7 @@ class TimeEntry extends React.Component {
 
           var addTimeEntryButton = (
             <Authorize>
-              <Button
-                title="Add Time"
-                bsSize="xsmall"
-                onClick={this.openTimeEntryDialog.bind(this, null)}
-              >
+              <Button title="Add Time" bsSize="xsmall" onClick={this.openTimeEntryDialog.bind(this, null)}>
                 <Glyphicon glyph="plus" />
                 &nbsp;<strong>Add Time</strong>
               </Button>

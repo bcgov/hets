@@ -58,7 +58,7 @@ class DateControl extends React.Component {
   };
 
   render() {
-    var date = Moment.utc(this.props.date);
+    var date = this.props.date === "" ? null : Moment.utc(this.props.date);
     var format = this.props.format || "YYYY-MM-DD";
 
     var placeholder = this.props.placeholder || "yyyy-mm-dd";

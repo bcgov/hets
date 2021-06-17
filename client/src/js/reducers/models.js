@@ -1,8 +1,8 @@
-import _ from "lodash";
-import produce from "immer";
+import _ from 'lodash';
+import produce from 'immer';
 
-import * as Action from "../actionTypes";
-import { findAndUpdate } from "../utils/array";
+import * as Action from '../actionTypes';
+import { findAndUpdate } from '../utils/array';
 
 const DEFAULT_MODELS = {
   users: {
@@ -220,10 +220,7 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
         ...state,
         favourites: {
           ...state.favourites,
-          [action.favourite.type]: _.omit(
-            state.favourites[action.favourite.type],
-            [action.favourite.id]
-          ),
+          [action.favourite.type]: _.omit(state.favourites[action.favourite.type], [action.favourite.id]),
         },
       };
 
@@ -244,17 +241,13 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
         const existingOwner = draftState.owner[contact.ownerId];
         if (existingOwner) {
-          const updatedList = existingOwner.contacts.filter(
-            (contact) => contact.id !== contactId
-          );
+          const updatedList = existingOwner.contacts.filter((contact) => contact.id !== contactId);
           existingOwner.contacts = updatedList;
         }
 
         const existingProject = draftState.project[contact.projectId];
         if (existingProject) {
-          const updatedList = existingProject.contacts.filter(
-            (contact) => contact.id !== contactId
-          );
+          const updatedList = existingProject.contacts.filter((contact) => contact.id !== contactId);
           existingProject.contacts = updatedList;
         }
       });
@@ -392,10 +385,7 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
           }
         }
 
-        const pos = _.findIndex(
-          updatedContacts,
-          (contact) => contact.id === action.contact.id
-        );
+        const pos = _.findIndex(updatedContacts, (contact) => contact.id === action.contact.id);
         updatedContacts[pos] = action.contact;
 
         existingOwner.contacts = updatedContacts;
@@ -501,10 +491,7 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
           }
         }
 
-        const pos = _.findIndex(
-          updatedContacts,
-          (contact) => contact.id === action.contact.id
-        );
+        const pos = _.findIndex(updatedContacts, (contact) => contact.id === action.contact.id);
         updatedContacts[pos] = action.contact;
 
         existingProject.contacts = updatedContacts;
@@ -651,8 +638,7 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.UPDATE_RENTAL_AGREEMENT:
       return produce(state, (draftState) => {
-        draftState.rentalAgreement[action.rentalAgreement.id] =
-          action.rentalAgreement;
+        draftState.rentalAgreement[action.rentalAgreement.id] = action.rentalAgreement;
       });
 
     case Action.RENTAL_AGREEMENT_TIME_RECORDS:
@@ -664,53 +650,44 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
     // Rental Rates, Conditions
     case Action.ADD_RENTAL_RATES:
       return produce(state, (draftState) => {
-        const rentalAgreementRates =
-          draftState.rentalAgreement[action.rentalAgreementId]
-            .rentalAgreementRates;
+        const rentalAgreementRates = draftState.rentalAgreement[action.rentalAgreementId].rentalAgreementRates;
         rentalAgreementRates.push(...action.rentalRates);
       });
 
     case Action.UPDATE_RENTAL_RATES:
       return produce(state, (draftState) => {
-        const rentalAgreementRates =
-          draftState.rentalAgreement[action.rentalAgreementId]
-            .rentalAgreementRates;
+        const rentalAgreementRates = draftState.rentalAgreement[action.rentalAgreementId].rentalAgreementRates;
         action.rentalRates.forEach((rentalRate) => {
-          findAndUpdate(rentalAgreementRates, rentalRate, "id");
+          findAndUpdate(rentalAgreementRates, rentalRate, 'id');
         });
       });
 
     case Action.DELETE_RENTAL_RATE:
       return produce(state, (draftState) => {
-        const rentalAgreementRates =
-          draftState.rentalAgreement[action.rentalAgreementId]
-            .rentalAgreementRates;
+        const rentalAgreementRates = draftState.rentalAgreement[action.rentalAgreementId].rentalAgreementRates;
         _.remove(rentalAgreementRates, { id: action.rentalRate.id });
       });
 
     case Action.ADD_RENTAL_CONDITIONS:
       return produce(state, (draftState) => {
         const rentalAgreementConditions =
-          draftState.rentalAgreement[action.rentalAgreementId]
-            .rentalAgreementConditions;
+          draftState.rentalAgreement[action.rentalAgreementId].rentalAgreementConditions;
         rentalAgreementConditions.push(...action.rentalConditions);
       });
 
     case Action.UPDATE_RENTAL_CONDITIONS:
       return produce(state, (draftState) => {
         const rentalAgreementConditions =
-          draftState.rentalAgreement[action.rentalAgreementId]
-            .rentalAgreementConditions;
+          draftState.rentalAgreement[action.rentalAgreementId].rentalAgreementConditions;
         action.rentalConditions.forEach((rentalCondition) => {
-          findAndUpdate(rentalAgreementConditions, rentalCondition, "id");
+          findAndUpdate(rentalAgreementConditions, rentalCondition, 'id');
         });
       });
 
     case Action.DELETE_RENTAL_CONDITION:
       return produce(state, (draftState) => {
         const rentalAgreementConditions =
-          draftState.rentalAgreement[action.rentalAgreementId]
-            .rentalAgreementConditions;
+          draftState.rentalAgreement[action.rentalAgreementId].rentalAgreementConditions;
         _.remove(rentalAgreementConditions, { id: action.rentalCondition.id });
       });
 
@@ -779,7 +756,7 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
       let notesCollectionName = null;
 
       if (action.noteId in state.equipmentNotes) {
-        notesCollectionName = "equipmentNotes";
+        notesCollectionName = 'equipmentNotes';
       }
 
       if (notesCollectionName) {

@@ -1,32 +1,24 @@
-import PropTypes from "prop-types";
-import React from "react";
-import { connect } from "react-redux";
-import { Link } from "react-router";
-import {
-  Alert,
-  Row,
-  Col,
-  ButtonToolbar,
-  Button,
-  ButtonGroup,
-  Form,
-} from "react-bootstrap";
-import _ from "lodash";
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Form } from 'react-bootstrap';
+import _ from 'lodash';
 
-import * as Action from "../actionTypes";
-import * as Api from "../api";
-import * as Constant from "../constants";
-import store from "../store";
+import * as Action from '../actionTypes';
+import * as Api from '../api';
+import * as Constant from '../constants';
+import store from '../store';
 
-import PageHeader from "../components/ui/PageHeader.jsx";
-import SearchBar from "../components/ui/SearchBar.jsx";
-import Favourites from "../components/Favourites.jsx";
-import MultiDropdown from "../components/MultiDropdown.jsx";
-import SortTable from "../components/SortTable.jsx";
-import Spinner from "../components/Spinner.jsx";
-import PrintButton from "../components/PrintButton.jsx";
+import PageHeader from '../components/ui/PageHeader.jsx';
+import SearchBar from '../components/ui/SearchBar.jsx';
+import Favourites from '../components/Favourites.jsx';
+import MultiDropdown from '../components/MultiDropdown.jsx';
+import SortTable from '../components/SortTable.jsx';
+import Spinner from '../components/Spinner.jsx';
+import PrintButton from '../components/PrintButton.jsx';
 
-import { formatDateTime } from "../utils/date";
+import { formatDateTime } from '../utils/date';
 
 class HiringReport extends React.Component {
   static propTypes = {
@@ -52,7 +44,7 @@ class HiringReport extends React.Component {
         equipmentIds: props.search.equipmentIds || [],
       },
       ui: {
-        sortField: props.ui.sortField || "name",
+        sortField: props.ui.sortField || 'name',
         sortDesc: props.ui.sortDesc === true,
       },
     };
@@ -121,18 +113,15 @@ class HiringReport extends React.Component {
   };
 
   updateSearchState = (state, callback) => {
-    this.setState(
-      { search: { ...this.state.search, ...state, ...{ loaded: true } } },
-      () => {
-        store.dispatch({
-          type: Action.UPDATE_HIRING_RESPONSES_SEARCH,
-          hiringResponses: this.state.search,
-        });
-        if (callback) {
-          callback();
-        }
+    this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } } }, () => {
+      store.dispatch({
+        type: Action.UPDATE_HIRING_RESPONSES_SEARCH,
+        hiringResponses: this.state.search,
+      });
+      if (callback) {
+        callback();
       }
-    );
+    });
   };
 
   updateUIState = (state, callback) => {
@@ -156,16 +145,13 @@ class HiringReport extends React.Component {
       return <Alert bsStyle="success">No results</Alert>;
     }
 
-    var hiringResponses = _.sortBy(
-      this.props.hiringResponses.data,
-      (response) => {
-        var sortValue = response[this.state.ui.sortField];
-        if (typeof sortValue === "string") {
-          return sortValue.toLowerCase();
-        }
-        return sortValue;
+    var hiringResponses = _.sortBy(this.props.hiringResponses.data, (response) => {
+      var sortValue = response[this.state.ui.sortField];
+      if (typeof sortValue === 'string') {
+        return sortValue.toLowerCase();
       }
-    );
+      return sortValue;
+    });
 
     if (this.state.ui.sortDesc) {
       _.reverse(hiringResponses);
@@ -177,47 +163,38 @@ class HiringReport extends React.Component {
         sortDesc={this.state.ui.sortDesc}
         onSort={this.updateUIState}
         headers={[
-          { field: "localAreaLabel", title: "Local Area" },
-          { field: "ownerCode", title: "Owner Code" },
-          { field: "companyName", title: "Company Name" },
-          { field: "sortableEquipmentCode", title: "Equip. ID" },
-          { field: "equipmentDetails", title: "Make/Model/Size/Year" },
-          { field: "projectNumber", title: "Project #" },
-          { field: "noteDate", title: "Note Date" },
-          { field: "noteType", title: "Note Type" },
-          { field: "reason", title: "Reason" },
-          { field: "userId", title: "User ID" },
+          { field: 'localAreaLabel', title: 'Local Area' },
+          { field: 'ownerCode', title: 'Owner Code' },
+          { field: 'companyName', title: 'Company Name' },
+          { field: 'sortableEquipmentCode', title: 'Equip. ID' },
+          { field: 'equipmentDetails', title: 'Make/Model/Size/Year' },
+          { field: 'projectNumber', title: 'Project #' },
+          { field: 'noteDate', title: 'Note Date' },
+          { field: 'noteType', title: 'Note Type' },
+          { field: 'reason', title: 'Reason' },
+          { field: 'userId', title: 'User ID' },
         ]}
       >
         {_.map(hiringResponses, (entry) => {
-          var reason =
-            entry.reason === Constant.HIRING_REFUSAL_OTHER
-              ? entry.offerResponseNote
-              : entry.reason;
+          var reason = entry.reason === Constant.HIRING_REFUSAL_OTHER ? entry.offerResponseNote : entry.reason;
 
           return (
             <tr key={entry.id}>
               <td>{entry.localAreaLabel}</td>
               <td>{entry.ownerCode}</td>
               <td>
-                <Link to={`${Constant.OWNERS_PATHNAME}/${entry.ownerId}`}>
-                  {entry.companyName}
-                </Link>
+                <Link to={`${Constant.OWNERS_PATHNAME}/${entry.ownerId}`}>{entry.companyName}</Link>
               </td>
               <td>
-                <Link
-                  to={`${Constant.EQUIPMENT_PATHNAME}/${entry.equipmentId}`}
-                >
-                  {entry.equipmentCode}
-                </Link>
+                <Link to={`${Constant.EQUIPMENT_PATHNAME}/${entry.equipmentId}`}>{entry.equipmentCode}</Link>
               </td>
               <td>{entry.equipmentDetails}</td>
               <td>
                 <Link to={`${Constant.PROJECTS_PATHNAME}/${entry.projectId}`}>
-                  {entry.projectNumber ? entry.projectNumber : "N/A"}
+                  {entry.projectNumber ? entry.projectNumber : 'N/A'}
                 </Link>
               </td>
-              <td>{formatDateTime(entry.noteDate, "YYYY-MMM-DD")}</td>
+              <td>{formatDateTime(entry.noteDate, 'YYYY-MMM-DD')}</td>
               <td>{entry.noteType}</td>
               <td>{reason}</td>
               <td>
@@ -267,57 +244,39 @@ class HiringReport extends React.Component {
   };
 
   filterSelectedOwners = () => {
-    var acceptableOwnerIds = _.map(this.getFilteredOwners(), "id");
-    var ownerIds = _.intersection(
-      this.state.search.ownerIds,
-      acceptableOwnerIds
-    );
-    this.updateSearchState(
-      { ownerIds: ownerIds },
-      this.filterSelectedEquipment
-    );
+    var acceptableOwnerIds = _.map(this.getFilteredOwners(), 'id');
+    var ownerIds = _.intersection(this.state.search.ownerIds, acceptableOwnerIds);
+    this.updateSearchState({ ownerIds: ownerIds }, this.filterSelectedEquipment);
   };
 
   filterSelectedEquipment = () => {
-    var acceptableEquipmentIds = _.map(this.getFilteredEquipment(), "id");
-    var equipmentIds = _.intersection(
-      this.state.search.equipmentIds,
-      acceptableEquipmentIds
-    );
+    var acceptableEquipmentIds = _.map(this.getFilteredEquipment(), 'id');
+    var equipmentIds = _.intersection(this.state.search.equipmentIds, acceptableEquipmentIds);
     this.updateSearchState({ equipmentIds: equipmentIds });
   };
 
   getFilteredOwners = () => {
     return _.chain(this.props.owners.data)
-      .filter(
-        (x) =>
-          this.matchesProjectFilter(x.projectIds) &&
-          this.matchesLocalAreaFilter(x.localAreaId)
-      )
-      .sortBy("organizationName")
+      .filter((x) => this.matchesProjectFilter(x.projectIds) && this.matchesLocalAreaFilter(x.localAreaId))
+      .sortBy('organizationName')
       .value();
   };
 
   getFilteredEquipment = () => {
     return _.chain(this.props.equipment.data)
-      .filter(
-        (x) =>
-          this.matchesProjectFilter(x.projectIds) &&
-          this.matchesOwnerFilter(x.ownerId)
-      )
-      .sortBy("equipmentCode")
+      .filter((x) => this.matchesProjectFilter(x.projectIds) && this.matchesOwnerFilter(x.ownerId))
+      .sortBy('equipmentCode')
       .value();
   };
 
   render() {
-    var resultCount = "";
+    var resultCount = '';
     if (this.props.hiringResponses.loaded) {
-      resultCount =
-        "(" + Object.keys(this.props.hiringResponses.data).length + ")";
+      resultCount = '(' + Object.keys(this.props.hiringResponses.data).length + ')';
     }
 
-    var projects = _.sortBy(this.props.projects.data, "name");
-    var localAreas = _.sortBy(this.props.localAreas, "name");
+    var projects = _.sortBy(this.props.projects.data, 'name');
+    var localAreas = _.sortBy(this.props.localAreas, 'name');
     var owners = this.getFilteredOwners();
     var equipment = this.getFilteredEquipment();
 
@@ -399,7 +358,7 @@ class HiringReport extends React.Component {
         {(() => {
           if (this.props.hiringResponses.loading) {
             return (
-              <div style={{ textAlign: "center" }}>
+              <div style={{ textAlign: 'center' }}>
                 <Spinner />
               </div>
             );

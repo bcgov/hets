@@ -15,12 +15,11 @@ import Spinner from '../components/Spinner.jsx';
 
 import { formatDateTimeUTCToLocal } from '../utils/date';
 
-
 class Rollover extends React.Component {
   static propTypes = {
     currentUser: PropTypes.object,
     rolloverStatus: PropTypes.object,
-    router: PropTypes.object,
+    history: PropTypes.object,
   };
 
   constructor(props) {
@@ -44,7 +43,7 @@ class Rollover extends React.Component {
 
       if (!user.hasPermission(Constant.PERMISSION_DISTRICT_ROLLOVER) && !status.rolloverActive) {
         // redirect to home page
-        this.props.router.push({ pathname: '/' });
+        this.props.history.push(Constant.HOME_PATHNAME);
       }
 
       if (status.rolloverActive && this.state.refreshStatusTimerId === null) {
@@ -101,8 +100,15 @@ class Rollover extends React.Component {
       <div>
         <div>A roll over is currently in progress.</div>
         <div id="roll-over-progress" className="progress">
-          <div className="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow={ status.progressPercentage } aria-valuemin="0" aria-valuemax="100" style={ { width: `${ status.progressPercentage }%`} }>
-            <span className="sr-only">{ status.progressPercentage }% Complete</span>
+          <div
+            className="progress-bar progress-bar-info progress-bar-striped active"
+            role="progressbar"
+            aria-valuenow={status.progressPercentage}
+            aria-valuemin="0"
+            aria-valuemax="100"
+            style={{ width: `${status.progressPercentage}%` }}
+          >
+            <span className="sr-only">{status.progressPercentage}% Complete</span>
           </div>
         </div>
       </div>
@@ -112,42 +118,74 @@ class Rollover extends React.Component {
   renderContentRolloverComplete = () => {
     return (
       <div className="text-center">
-        <p>The hired equipment roll over has been completed on { formatDateTimeUTCToLocal(this.props.rolloverStatus.rolloverEndDate, Constant.DATE_TIME_READABLE) }.</p>
-        <p><strong>Note: </strong>Please save/print out the new seniority lists for all equipments corresponding to each local area.</p>
-        <Button onClick={ this.dismissRolloverNotice } bsStyle="primary">Dismiss</Button>
+        <p>
+          The hired equipment roll over has been completed on{' '}
+          {formatDateTimeUTCToLocal(this.props.rolloverStatus.rolloverEndDate, Constant.DATE_TIME_READABLE)}.
+        </p>
+        <p>
+          <strong>Note: </strong>Please save/print out the new seniority lists for all equipments corresponding to each
+          local area.
+        </p>
+        <Button onClick={this.dismissRolloverNotice} bsStyle="primary">
+          Dismiss
+        </Button>
       </div>
     );
   };
 
   renderContent = () => {
-    var rolloverButtonDisabled = !this.state.checkListStep1 || !this.state.checkListStep2 || !this.state.checkListStep3 || !this.state.checkListStep4;
+    var rolloverButtonDisabled =
+      !this.state.checkListStep1 ||
+      !this.state.checkListStep2 ||
+      !this.state.checkListStep3 ||
+      !this.state.checkListStep4;
 
     return (
       <Well>
-        <SubHeader title="Pre-Roll Over Checklist"/>
+        <SubHeader title="Pre-Roll Over Checklist" />
         <div id="checklist">
-          <CheckboxControl id="checkListStep1" checked={ this.state.checkListStep1 } updateState={ this.updateState }>
+          <CheckboxControl id="checkListStep1" checked={this.state.checkListStep1} updateState={this.updateState}>
             Verify all equipment hours have been entered in the system
           </CheckboxControl>
-          <CheckboxControl id="checkListStep2" checked={ this.state.checkListStep2 } updateState={ this.updateState }>
+          <CheckboxControl id="checkListStep2" checked={this.state.checkListStep2} updateState={this.updateState}>
             Save the seniority list (pre-roll over)
           </CheckboxControl>
-          <CheckboxControl id="checkListStep3" checked={ this.state.checkListStep3 } updateState={ this.updateState }>
+          <CheckboxControl id="checkListStep3" checked={this.state.checkListStep3} updateState={this.updateState}>
             Take note of any equipment currently hired
           </CheckboxControl>
-          <CheckboxControl id="checkListStep4" checked={ this.state.checkListStep4 } updateState={ this.updateState }>
+          <CheckboxControl id="checkListStep4" checked={this.state.checkListStep4} updateState={this.updateState}>
             Release all blocked rotation lists, as the hiring order may change after the roll over
           </CheckboxControl>
         </div>
 
         <div id="description">
           <strong>Note: </strong>
-          <span>The roll over is an important annual process that recalculates the seniority for each piece of equipment across the district at the start of a fiscal year. Once triggered, this process is not reversible. In case you have any questions, please contact the primary coordinator for the process before proceeding with the hired equipment roll over.</span>
+          <span>
+            The roll over is an important annual process that recalculates the seniority for each piece of equipment
+            across the district at the start of a fiscal year. Once triggered, this process is not reversible. In case
+            you have any questions, please contact the primary coordinator for the process before proceeding with the
+            hired equipment roll over.
+          </span>
         </div>
 
         <div className="clearfix">
-          <OverlayTrigger trigger="click" placement="top" rootClose overlay={ <Confirm onConfirm={ this.initiateRollover }><p>Please ensure all processes corresponding to the checklist are complete before rolling over.</p><p>If you are certain all tasks have been completed, click <strong>Yes</strong> to proceed with roll over. Otherwise, click <strong>No</strong>.</p></Confirm> }>
-            <Button className="pull-right" disabled={ rolloverButtonDisabled } title="Roll Over">Roll Over</Button>
+          <OverlayTrigger
+            trigger="click"
+            placement="top"
+            rootClose
+            overlay={
+              <Confirm onConfirm={this.initiateRollover}>
+                <p>Please ensure all processes corresponding to the checklist are complete before rolling over.</p>
+                <p>
+                  If you are certain all tasks have been completed, click <strong>Yes</strong> to proceed with roll
+                  over. Otherwise, click <strong>No</strong>.
+                </p>
+              </Confirm>
+            }
+          >
+            <Button className="pull-right" disabled={rolloverButtonDisabled} title="Roll Over">
+              Roll Over
+            </Button>
           </OverlayTrigger>
         </div>
       </Well>
@@ -158,23 +196,29 @@ class Rollover extends React.Component {
     var status = this.props.rolloverStatus;
     var user = this.props.currentUser;
 
-    return <div id="roll-over">
-      <PageHeader>{ user.districtName } Roll Over</PageHeader>
+    return (
+      <div id="roll-over">
+        <PageHeader>{user.districtName} Roll Over</PageHeader>
 
-      <div className="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3">
-        {(() => {
-          if (this.state.loading) {
-            return<div style={{ textAlign: 'center' }}><Spinner/></div>;
-          } else if (status.rolloverActive) {
-            return this.renderContentRolloverActive();
-          } else if (status.rolloverComplete) {
-            return this.renderContentRolloverComplete();
-          } else {
-            return this.renderContent();
-          }
-        })()}
+        <div className="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3">
+          {(() => {
+            if (this.state.loading) {
+              return (
+                <div style={{ textAlign: 'center' }}>
+                  <Spinner />
+                </div>
+              );
+            } else if (status.rolloverActive) {
+              return this.renderContentRolloverActive();
+            } else if (status.rolloverComplete) {
+              return this.renderContentRolloverComplete();
+            } else {
+              return this.renderContent();
+            }
+          })()}
+        </div>
       </div>
-    </div>;
+    );
   }
 }
 
