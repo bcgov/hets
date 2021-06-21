@@ -18,6 +18,8 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using HetsData.Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using HetsBceid;
+using Microsoft.Extensions.Hosting;
+using HetsApi.Middlewares;
 
 namespace HetsApi
 {
@@ -26,13 +28,10 @@ namespace HetsApi
     /// </summary>
     public class Startup
     {
-        private readonly IWebHostEnvironment _hostingEnv;
-
         public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration, IWebHostEnvironment env)
+        public Startup(IConfiguration configuration)
         {
-            _hostingEnv = env;
             Configuration = configuration;
         }
 
@@ -126,22 +125,10 @@ namespace HetsApi
         /// <param name="env"></param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // web site error handler  (Testing: app.UseDeveloperExceptionPage();)
-            app.UseWhen(x => !x.Request.Path.Value.StartsWith("/api"), builder =>
-            {
-                builder.UseExceptionHandler(Configuration.GetSection("Constants:ErrorUrl").Value);
-            });
-
-            // disable the back to site link
-            DashboardOptions dashboardOptions = new DashboardOptions
-            {
-                AppPath = null,
-                Authorization = new[] { new HangfireAuthorizationFilter() }
-            };
-
-            app.UseHangfireDashboard(Configuration.GetSection("Constants:HangfireUrl").Value, dashboardOptions);
-
-            //app.UseHealthChecks("/healthz", healthCheckOptions);
+            if (env.IsDevelopment())
+                app.UseDeveloperExceptionPage();
+            
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseRouting();
             app.UseAuthentication();
