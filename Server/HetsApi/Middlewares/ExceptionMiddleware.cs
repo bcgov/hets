@@ -31,7 +31,7 @@ namespace HetsApi.Middlewares
                     return;
 
                 var guid = Guid.NewGuid();
-                _logger.LogError($"CRT Exception {guid}: {ex}");
+                _logger.LogError($"HETS Exception {guid}: {ex}");
                 await HandleExceptionAsync(httpContext, guid);
             }
         }
@@ -42,11 +42,11 @@ namespace HetsApi.Middlewares
 
             var problem = new ValidationProblemDetails()
             {
-                Type = "https://crt.bc.gov.ca/exception",
+                Type = "https://hets.bc.gov.ca/exception",
                 Title = "An unexpected error occurred!",
                 Status = StatusCodes.Status500InternalServerError,
                 Detail = "The instance value should be used to identify the problem when calling customer support",
-                Instance = $"urn:crt:error:{Guid.NewGuid()}"
+                Instance = $"urn:hets:error:{Guid.NewGuid()}"
             };
 
             problem.Extensions.Add("traceId", context.TraceIdentifier);
