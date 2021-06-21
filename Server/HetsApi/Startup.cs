@@ -129,7 +129,7 @@ namespace HetsApi
                 app.UseDeveloperExceptionPage();
             
             app.UseMiddleware<ExceptionMiddleware>();
-
+            app.UseHangfireDashboard();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
