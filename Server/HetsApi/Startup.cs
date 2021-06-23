@@ -20,6 +20,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using HetsBceid;
 using Microsoft.Extensions.Hosting;
 using HetsApi.Middlewares;
+using AutoMapper;
+using HetsData.Mappings;
 
 namespace HetsApi
 {
@@ -41,6 +43,16 @@ namespace HetsApi
 
             // add http context accessor
             services.AddHttpContextAccessor();
+
+            // add auto mapper
+            var mappingConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new EntityToDtoProfile());
+                cfg.AddProfile(new DtoToEntityProfile());
+            });
+
+            var mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
 
             // add database context
             services.AddDbContext<DbAppContext>(options => options.UseNpgsql(connectionString));

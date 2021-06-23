@@ -313,7 +313,7 @@ namespace HetsApi.Controllers
             equipment.DistrictEquipmentTypeId = item.DistrictEquipmentTypeId;
 
             // save the changes
-            _context.SaveChanges();
+            //_context.SaveChanges();
 
             if (rebuildSeniority)
             {
