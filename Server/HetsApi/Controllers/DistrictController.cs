@@ -10,14 +10,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
-using HetsApi.Helpers;
 using HetsApi.Model;
-using HetsData.View;
 using HetsData.Model;
 using HetsData.Hangfire;
 using Hangfire.Storage;
-using Newtonsoft.Json;
 using Hangfire.Common;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {

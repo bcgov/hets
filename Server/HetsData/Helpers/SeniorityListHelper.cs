@@ -177,15 +177,15 @@ namespace HetsData.Helpers
             try
             {
                 // get all equipment records
-                List<HetEquipment> data = context.HetEquipment
+                var data = context.HetEquipment
                     .Include(x => x.Owner)
                     .Where(x => x.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved &&
                                 x.LocalArea.LocalAreaId == localAreaId &&
                                 x.DistrictEquipmentTypeId == districtEquipmentTypeId)
+                    .ToList() //must be done before sorting because the client version of querying entities has been changed - EFCore 5 issue?
                     .OrderByDescending(x => x.Seniority)
-                        .ThenBy(x => x.ReceivedDate)
-                        .ThenBy(x => x.EquipmentCode)
-                    .Select(x => x)
+                    .ThenBy(x => x.ReceivedDate)
+                    .ThenBy(x => x.EquipmentCode)
                     .ToList();
 
                 // total blocks only counts the "main" blocks - we need to add 1 more for the remaining records

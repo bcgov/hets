@@ -36,6 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="DotNetCore.NPOI" Version="1.2.3" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.23" />
     <PackageReference Include="HangFire.Core" Version="1.7.23" />

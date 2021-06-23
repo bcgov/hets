@@ -1,4 +1,4 @@
-﻿namespace HetsData.View
+﻿namespace HetsData.Dtos
 {
     public class RolloverProgressDto
     {
