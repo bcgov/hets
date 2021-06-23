@@ -7,7 +7,7 @@ import * as Constant from '../constants';
 
 //only renders React-Router-Dom route if user has permission.
 
-const AuthorizedRoute = ({ children, user, requires, ...rest }) => {
+const AuthorizedRoute = ({ user, requires, ...rest }) => {
   if (user.permissions.includes(requires)) {
     return <Route {...rest} />;
   }
@@ -16,7 +16,7 @@ const AuthorizedRoute = ({ children, user, requires, ...rest }) => {
 
 AuthorizedRoute.propTypes = {
   requires: PropTypes.string.isRequired,
-  component: PropTypes.element,
+  component: PropTypes.func,
 };
 
 const mapStateToProps = (state) => {
