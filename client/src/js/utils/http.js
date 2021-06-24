@@ -8,9 +8,6 @@ import * as Constant from '../constants';
 
 import { resetSessionTimeoutTimer } from '../App.jsx';
 
-const ROOT_API_PREFIX =
-  window.location.pathname === '/' ? '' : window.location.pathname.split('/').slice(0, -1).join('/');
-
 var numRequestsInFlight = 0;
 
 function incrementRequests() {
