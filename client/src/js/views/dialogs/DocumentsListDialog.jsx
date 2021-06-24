@@ -10,9 +10,6 @@ import _ from 'lodash';
 
 import { request, buildApiPath } from '../../utils/http';
 
-///temporary fix testing
-import { keycloak } from '../../Keycloak';
-
 import * as Action from '../../actionTypes';
 import * as Api from '../../api';
 import * as Constant from '../../constants';

@@ -11,6 +11,7 @@ import * as Action from './actionTypes';
 import store from './store';
 
 import { ProgressBar } from 'react-bootstrap';
+import ErrorBoundary from './components/ErrorBoundary';
 import Main from './views/Main.jsx';
 import Home from './views/Home.jsx';
 import BusinessPortal from './views/BusinessPortal.jsx';
@@ -311,7 +312,9 @@ const App = ({ user }) => {
   return (
     <Router>
       <Main showNav={user.hasPermission(Constant.PERMISSION_LOGIN)}>
-        <Switch>{Routes(user)}</Switch>
+        <ErrorBoundary>
+          <Switch>{Routes(user)}</Switch>
+        </ErrorBoundary>
       </Main>
     </Router>
   );
