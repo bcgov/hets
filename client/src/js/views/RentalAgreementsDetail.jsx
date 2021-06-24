@@ -631,15 +631,15 @@ class RentalAgreementsDetail extends React.Component {
 
             return (
               <ColDisplay id="overtime-rates" labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Overtime Rates:">
-                {rates.map((rate) => {
-                  if (rate.active) {
-                    return (
-                      <span key={rate.id} className="overtime-rate">
-                        {rate.comment}
-                      </span>
-                    );
-                  }
-                })}
+                {rates.flatMap((rate) =>
+                  rate.active ? (
+                    <span key={rate.id} className="overtime-rate">
+                      {rate.comment}
+                    </span>
+                  ) : (
+                    []
+                  )
+                )}
               </ColDisplay>
             );
           })()}
