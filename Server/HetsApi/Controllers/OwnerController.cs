@@ -1262,6 +1262,8 @@ namespace HetsApi.Controllers
                 }
             }
 
+            _context.SaveChanges();
+
             // return original items
             return new ObjectResult(new HetsResponse(items));
         }

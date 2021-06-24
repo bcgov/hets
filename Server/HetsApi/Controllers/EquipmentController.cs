@@ -327,6 +327,8 @@ namespace HetsApi.Controllers
                 }
             }
 
+            _context.SaveChanges();
+
             // retrieve updated equipment record to return to ui
             return new ObjectResult(new HetsResponse(EquipmentHelper.GetRecord(id, _context, _configuration)));
         }
@@ -440,14 +442,14 @@ namespace HetsApi.Controllers
             HetNote note = new HetNote { EquipmentId = equipment.EquipmentId, Text = statusNote, IsNoLongerRelevant = false };
             _context.HetNote.Add(note);
 
-            // save the changes
-            _context.SaveChanges();
-
             // recalculation seniority (if required)
             if (recalculateSeniority)
             {
                 EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration);
             }
+
+            // save the changes
+            _context.SaveChanges();
 
             // retrieve updated equipment record to return to ui
             return new ObjectResult(new HetsResponse(EquipmentHelper.GetRecord(id, _context, _configuration)));
@@ -508,7 +510,6 @@ namespace HetsApi.Controllers
 
             // save record
             _context.HetEquipment.Add(item);
-            _context.SaveChanges();
 
             int id = item.EquipmentId;
 
@@ -519,6 +520,8 @@ namespace HetsApi.Controllers
             int? localAreaId = item.LocalAreaId;
             int? districtEquipmentTypeId = item.DistrictEquipmentTypeId;
             EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration);
+
+            _context.SaveChanges();
 
             // retrieve updated equipment record to return to ui
             return new ObjectResult(new HetsResponse(EquipmentHelper.GetRecord(id, _context, _configuration)));
