@@ -190,7 +190,7 @@ namespace HetsData.Hangfire
                         int localAreaId = localArea.LocalAreaId;
                         int equipmentTypeId = equipmentType.DistrictEquipmentTypeId;
 
-                        SeniorityListHelper.AssignBlocks(localAreaId, equipmentTypeId, blockSize, totalBlocks, _dbContextMain, false);
+                        SeniorityListHelper.AssignBlocks(localAreaId, equipmentTypeId, blockSize, totalBlocks, _dbContextMain);
 
                         // increment counters and update status
                         equipmentCompleteCount++;

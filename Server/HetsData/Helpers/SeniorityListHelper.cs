@@ -148,9 +148,7 @@ namespace HetsData.Helpers
                         }
 
                         // put equipment into the correct blocks
-                        AssignBlocks(localAreaId, districtEquipmentTypeId, blockSize, totalBlocks, context, false);
-
-                        context.SaveChanges();
+                        AssignBlocks(localAreaId, districtEquipmentTypeId, blockSize, totalBlocks, context);
                     }
                 }
             }
@@ -171,8 +169,7 @@ namespace HetsData.Helpers
         /// <param name="totalBlocks"></param>
         /// <param name="context"></param>
         /// <param name="saveChanges"></param>
-        public static void AssignBlocks(int localAreaId, int districtEquipmentTypeId,
-            int blockSize, int totalBlocks, DbAppContext context, bool saveChanges = true)
+        public static void AssignBlocks(int localAreaId, int districtEquipmentTypeId, int blockSize, int totalBlocks, DbAppContext context)
         {
             try
             {
@@ -199,7 +196,7 @@ namespace HetsData.Helpers
                     // iterate the blocks and add the record
                     for (int i = 0; i < totalBlocks; i++)
                     {
-                        if (AddedToBlock(i, totalBlocks, blockSize, blocks, equipment, context, saveChanges))
+                        if (AddedToBlock(i, totalBlocks, blockSize, blocks, equipment))
                         {
                             break; // move to next record
                         }
@@ -214,8 +211,7 @@ namespace HetsData.Helpers
             }
         }
 
-        private static bool AddedToBlock(int currentBlock, int totalBlocks, int blockSize,
-            List<int>[] blocks, HetEquipment equipment, DbAppContext context, bool saveChanges = true)
+        private static bool AddedToBlock(int currentBlock, int totalBlocks, int blockSize, List<int>[] blocks, HetEquipment equipment)
         {
             try
             {
@@ -256,11 +252,6 @@ namespace HetsData.Helpers
                 // update the equipment record
                 equipment.BlockNumber = currentBlock + 1;
                 equipment.NumberInBlock = blocks[currentBlock].Count;
-
-                if (saveChanges)
-                {
-                    context.SaveChanges();
-                }
 
                 // record added to the block
                 return true;

@@ -51,6 +51,8 @@ namespace HetsData.Hangfire
                 WriteLog($"Processed {count} / {equipments.Count}");
             }
 
+            _dbContext.SaveChanges();
+
             WriteLog("Recalculation Finished");
         }
 
