@@ -107,7 +107,7 @@ class HistoryComponent extends React.Component {
             );
           }
 
-          if (Object.keys(this.props.history).length === 0) {
+          if (!this.props.history || Object.keys(this.props.history).length === 0) {
             return <Alert bsStyle="success">No history</Alert>;
           }
 
