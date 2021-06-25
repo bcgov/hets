@@ -2,7 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Alert, Dropdown, ButtonToolbar, Button } from 'react-bootstrap';
 import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
-import { Col, Glyphicon } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
 import * as Api from '../api';
@@ -216,7 +217,7 @@ class Favourites extends React.Component {
                   {_.map(this.props.favourites, (favourite) => {
                     return (
                       <li key={favourite.id}>
-                        <Col md={1}>{favourite.isDefault ? <Glyphicon glyph="star" /> : ''}</Col>
+                        <Col md={1}>{favourite.isDefault ? <FontAwesomeIcon icon="star" /> : ''}</Col>
                         <Col md={8}>
                           <span className="favourite__item" onClick={this.selectFavourite.bind(this, favourite)}>
                             {favourite.name}

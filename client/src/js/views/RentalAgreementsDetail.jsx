@@ -2,7 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Well, Row, Col, Table, Alert, Button, Glyphicon, Label, ButtonGroup } from 'react-bootstrap';
+import { Well, Row, Col, Table, Alert, Button, Label, ButtonGroup } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
 import EquipmentRentalRatesEditDialog from './dialogs/EquipmentRentalRatesEditDialog.jsx';
@@ -191,7 +192,7 @@ class RentalAgreementsDetail extends React.Component {
           </Button>
         </Authorize>
         <Button title="Print PDF" onClick={this.generateRentalAgreementDocument}>
-          <Glyphicon glyph="print" />
+          <FontAwesomeIcon icon="print" />
         </Button>
         <ReturnButton />
       </div>
@@ -380,7 +381,7 @@ class RentalAgreementsDetail extends React.Component {
                   onClick={this.addRentalRate.bind(this, true)}
                   enabledTooltip="These rates will be added to the total, along with the equipment pay rate."
                 >
-                  <Glyphicon glyph="plus" className="mr-5" />
+                  <FontAwesomeIcon icon="plus" className="mr-5" />
                   <span>Add Included Rates and Attachments</span>
                 </TooltipButton>
               </Authorize>
@@ -469,7 +470,7 @@ class RentalAgreementsDetail extends React.Component {
                   onClick={this.addRentalRate.bind(this, false)}
                   enabledTooltip="These rates will NOT be added to the total."
                 >
-                  <Glyphicon glyph="plus" className="mr-5" />
+                  <FontAwesomeIcon icon="plus" className="mr-5" />
                   <span>Add Other Rates and Attachments</span>
                 </TooltipButton>
               </Authorize>
@@ -553,7 +554,7 @@ class RentalAgreementsDetail extends React.Component {
             var button = (
               <Authorize>
                 <Button title="Add Rental Condition" bsSize="small" className="no-margin" onClick={this.addCondition}>
-                  <Glyphicon glyph="plus" className="mr-5" />
+                  <FontAwesomeIcon icon="plus" className="mr-5" />
                   <span>Add</span>
                 </Button>
               </Authorize>

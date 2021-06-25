@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
+import { Well, Row, Col, Alert, Button, ButtonGroup, Label } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -515,7 +516,7 @@ class OwnersDetail extends React.Component {
                   var addContactButton = (
                     <Authorize>
                       <Button title="Add Contact" onClick={this.openContactDialog.bind(this, 0)} bsSize="xsmall">
-                        <Glyphicon glyph="plus" />
+                        <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add</strong>
                       </Button>
                     </Authorize>
@@ -555,7 +556,7 @@ class OwnersDetail extends React.Component {
                         return (
                           <tr key={contact.id}>
                             <td>
-                              {contact.isPrimary && <Glyphicon glyph="star" />}
+                              {contact.isPrimary && <FontAwesomeIcon icon="star" />}
                               {firstLastName(contact.givenName, contact.surname)}
                             </td>
                             <td>{contact.phone}</td>
@@ -616,7 +617,7 @@ class OwnersDetail extends React.Component {
                       bsSize="small"
                       onClick={this.openEquipmentDialog}
                     >
-                      <Glyphicon glyph="plus" />
+                      <FontAwesomeIcon icon="plus" />
                     </TooltipButton>
                   </Authorize>
                 </SubHeader>
@@ -704,7 +705,7 @@ class OwnersDetail extends React.Component {
                                   bsSize="xsmall"
                                   onClick={this.equipmentVerify.bind(this, equipment)}
                                 >
-                                  <Glyphicon glyph="ok" /> OK
+                                  <FontAwesomeIcon icon="check" /> OK
                                 </TooltipButton>
                               </td>
                             </Authorize>

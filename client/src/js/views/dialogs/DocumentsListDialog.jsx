@@ -4,7 +4,8 @@ import { saveAs } from 'file-saver';
 
 import { connect } from 'react-redux';
 
-import { Alert, Button, ButtonGroup, Glyphicon, ProgressBar, HelpBlock } from 'react-bootstrap';
+import { Alert, Button, ButtonGroup, ProgressBar, HelpBlock } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import _ from 'lodash';
 
@@ -243,7 +244,7 @@ class DocumentsListDialog extends React.Component {
                               onClick={this.downloadDocument.bind(this, document)}
                               bsSize="xsmall"
                             >
-                              <Glyphicon glyph="download-alt" />
+                              <FontAwesomeIcon icon="download" />
                             </Button>
                             <Authorize>
                               <DeleteButton

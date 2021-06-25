@@ -3,7 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Well, Row, Col } from 'react-bootstrap';
-import { Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
+import { Alert, Button, ButtonGroup, Label } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import Promise from 'bluebird';
 
@@ -466,7 +467,7 @@ class EquipmentDetail extends React.Component {
                                   bsSize="xsmall"
                                   onClick={this.openPhysicalAttachmentEditDialog.bind(this, attachment)}
                                 >
-                                  <Glyphicon glyph="pencil" />
+                                  <FontAwesomeIcon icon="pencil-alt" />
                                 </Button>
                                 <Authorize>
                                   <OverlayTrigger
@@ -478,7 +479,7 @@ class EquipmentDetail extends React.Component {
                                     }
                                   >
                                     <Button title="Delete Attachment" bsSize="xsmall">
-                                      <Glyphicon glyph="trash" />
+                                      <FontAwesomeIcon icon="trash" />
                                     </Button>
                                   </OverlayTrigger>
                                 </Authorize>

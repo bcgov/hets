@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormLabel, InputGroup, Button, Glyphicon } from 'react-bootstrap';
+import { FormLabel, InputGroup, Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import Moment from 'moment';
 import DateTime from 'react-datetime';
@@ -91,7 +92,7 @@ class DateControl extends React.Component {
           />
           <InputGroup.Button>
             <Button disabled={disabled} onClick={this.clicked}>
-              <Glyphicon glyph="calendar" title={this.props.title} />
+              <FontAwesomeIcon icon="calendar-alt" title={this.props.title} />
             </Button>
           </InputGroup.Button>
         </InputGroup>

@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 
@@ -134,7 +135,7 @@ class Roles extends React.Component {
             <Link to={`${Constant.ROLES_PATHNAME}/0`}>
               <Authorize>
                 <Button title="Add Role" bsSize="xsmall">
-                  <Glyphicon glyph="plus" />
+                  <FontAwesomeIcon icon="plus" />
                   &nbsp;<strong>Add Role</strong>
                 </Button>
               </Authorize>
@@ -191,12 +192,12 @@ class Roles extends React.Component {
                           overlay={<Confirm onConfirm={this.delete.bind(this, role)} />}
                         >
                           <Button className={role.canDelete ? '' : 'hidden'} title="Delete Role" bsSize="xsmall">
-                            <Glyphicon glyph="trash" />
+                            <FontAwesomeIcon icon="trash" />
                           </Button>
                         </OverlayTrigger>
                         <Link to={`${Constant.ROLES_PATHNAME}/${role.id}`}>
                           <Button className={role.canEdit ? '' : 'hidden'} title="Edit Role" bsSize="xsmall">
-                            <Glyphicon glyph="pencil" />
+                            <FontAwesomeIcon icon="pencil-alt" />
                           </Button>
                         </Link>
                       </ButtonGroup>

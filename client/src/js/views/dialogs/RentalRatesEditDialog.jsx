@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
-import { FormGroup, HelpBlock, FormLabel, Button, Glyphicon } from 'react-bootstrap';
+import { FormGroup, HelpBlock, FormLabel, Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
 import * as Constant from '../../constants';
@@ -260,13 +261,13 @@ class RentalRatesEditDialog extends React.Component {
         <div className="align-right">
           {this.state.isNew && this.state.forms.length > 1 && (
             <Button bsSize="xsmall" className="remove-btn" onClick={this.removeInput}>
-              <Glyphicon glyph="minus" />
+              <FontAwesomeIcon icon="minus" />
               &nbsp;<strong>Remove</strong>
             </Button>
           )}
           {this.state.isNew && this.state.forms.length < 10 && (
             <Button bsSize="xsmall" onClick={this.addInput}>
-              <Glyphicon glyph="plus" />
+              <FontAwesomeIcon icon="plus" />
               &nbsp;<strong>Add</strong>
             </Button>
           )}

@@ -1,19 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  Well,
-  Row,
-  Col,
-  Alert,
-  Label,
-  Button,
-  Glyphicon,
-  Popover,
-  FormGroup,
-  HelpBlock,
-  ButtonGroup,
-} from 'react-bootstrap';
+import { Well, Row, Col, Alert, Label, Button, Popover, FormGroup, HelpBlock, ButtonGroup } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import Promise from 'bluebird';
 
@@ -297,7 +286,7 @@ class UsersDetail extends React.Component {
                   var addDistrictButton = (
                     <Authorize>
                       <Button title="Add District" bsSize="small" onClick={this.addUserDistrict}>
-                        <Glyphicon glyph="plus" />
+                        <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add District</strong>
                       </Button>
                     </Authorize>
@@ -338,7 +327,7 @@ class UsersDetail extends React.Component {
                         return (
                           <tr key={district.id}>
                             <td>
-                              {district.isPrimary && <Glyphicon glyph="star" />}
+                              {district.isPrimary && <FontAwesomeIcon icon="star" />}
                               {district.district.name}
                             </td>
                             <td style={{ textAlign: 'right' }}>
@@ -352,7 +341,7 @@ class UsersDetail extends React.Component {
                                       overlay={<Confirm onConfirm={this.deleteDistrict.bind(this, district)} />}
                                     >
                                       <Button title="Delete District" bsSize="xsmall">
-                                        <Glyphicon glyph="trash" />
+                                        <FontAwesomeIcon icon="trash" />
                                       </Button>
                                     </OverlayTrigger>
                                   </Authorize>
@@ -361,7 +350,7 @@ class UsersDetail extends React.Component {
                                     bsSize="xsmall"
                                     onClick={this.editUserDistrict.bind(this, district)}
                                   >
-                                    <Glyphicon glyph="edit" />
+                                    <FontAwesomeIcon icon="edit" />
                                   </Button>
                                 </ButtonGroup>
                               )}
@@ -401,7 +390,7 @@ class UsersDetail extends React.Component {
                   var addUserRoleButton = (
                     <Authorize>
                       <Button title="Add User Role" onClick={this.openUserRoleDialog} bsSize="xsmall">
-                        <Glyphicon glyph="plus" />
+                        <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add Role</strong>
                       </Button>
                     </Authorize>
@@ -450,7 +439,7 @@ class UsersDetail extends React.Component {
                             <td>{formatDateTime(userRole.effectiveDate, Constant.DATE_FULL_MONTH_DAY_YEAR)}</td>
                             <td>
                               {formatDateTime(userRole.expiryDate, Constant.DATE_FULL_MONTH_DAY_YEAR)}
-                              &nbsp;{daysFromToday(userRole.expiryDate) < 0 ? <Glyphicon glyph="asterisk" /> : ''}
+                              &nbsp;{daysFromToday(userRole.expiryDate) < 0 ? <FontAwesomeIcon icon="asterisk" /> : ''}
                             </td>
                             <td style={{ textAlign: 'right' }}>
                               {userRole.expiryDate ? null : (
@@ -462,7 +451,7 @@ class UsersDetail extends React.Component {
                                     overlay={<ExpireOverlay userRole={userRole} onSave={this.updateUserRole} />}
                                   >
                                     <Button title="Expire User Role" bsSize="xsmall">
-                                      <Glyphicon glyph="pencil" />
+                                      <FontAwesomeIcon icon="pencil-alt" />
                                       &nbsp;Expire
                                     </Button>
                                   </OverlayTrigger>

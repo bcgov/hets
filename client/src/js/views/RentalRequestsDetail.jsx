@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
+import { Well, Row, Col, Alert, Button, ButtonGroup, Label } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -365,7 +366,7 @@ class RentalRequestsDetail extends React.Component {
               disabled={loading}
               disabledTooltip="Please wait for the request information to finish loading."
             >
-              <Glyphicon glyph="print" title="Print Seniority List" className="mr-5" />
+              <FontAwesomeIcon icon="print" title="Print Seniority List" className="mr-5" />
               <span>Seniority List</span>
             </TooltipButton>
             <CheckboxControl id="showAttachments" inline updateState={this.updateState}>

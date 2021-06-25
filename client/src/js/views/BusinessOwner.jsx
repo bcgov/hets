@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col, Alert, Glyphicon, Label } from 'react-bootstrap';
+import { Well, Row, Col, Alert, Label } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
 import * as Action from '../actionTypes';
@@ -265,7 +266,7 @@ class BusinessOwner extends React.Component {
                     return (
                       <tr key={contact.id}>
                         <td>
-                          {contact.isPrimary && <Glyphicon glyph="star" />} {contact.name}
+                          {contact.isPrimary && <FontAwesomeIcon icon="star" />} {contact.name}
                         </td>
                         <td>{contact.phone}</td>
                         <td>{contact.mobilePhoneNumber}</td>

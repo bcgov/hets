@@ -13,10 +13,10 @@ import {
   Dropdown,
   Popover,
   Button,
-  Glyphicon,
   FormLabel,
   FormGroup,
 } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import NavLinkWrapper from '../components/ui/NavLinkWrapper';
 
 import * as Constant from '../constants';
@@ -289,13 +289,13 @@ class TopNav extends React.Component {
                   >
                     <Button id="rollover-notice-button" className="mr-5" bsStyle="info" bsSize="xsmall">
                       Roll Over Complete
-                      <Glyphicon glyph="exclamation-sign" />
+                      <FontAwesomeIcon icon="exclamation-circle" />
                     </Button>
                   </OverlayTrigger>
                 )}
                 <Dropdown id="profile-menu">
                   <Dropdown.Toggle>
-                    <Glyphicon glyph="user" />
+                    <FontAwesomeIcon icon="user" />
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     <div>{this.props.currentUser.fullName}</div>

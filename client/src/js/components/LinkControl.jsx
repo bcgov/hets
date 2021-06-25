@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormControl, InputGroup, FormLabel, Button, Glyphicon } from 'react-bootstrap';
+import { FormControl, InputGroup, FormLabel, Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
 class LinkControl extends React.Component {
@@ -61,7 +62,7 @@ class LinkControl extends React.Component {
           <FormControl {...props} type="text" onChange={this.changed} />
           <InputGroup.Button>
             <Button target="_blank" href={this.state.url}>
-              <Glyphicon glyph="link" title={this.props.title} />
+              <FontAwesomeIcon icon="link" title={this.props.title} />
             </Button>
           </InputGroup.Button>
         </InputGroup>
