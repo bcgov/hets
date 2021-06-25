@@ -155,7 +155,6 @@ class HireOfferEditDialog extends React.Component {
   };
 
   formSubmitted = () => {
-    debugger;
     if (this.isValid()) {
       if (this.didChange()) {
         this.setState({ isSaving: true });

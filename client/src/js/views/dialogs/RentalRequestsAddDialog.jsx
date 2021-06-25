@@ -222,7 +222,6 @@ class RentalRequestsAddDialog extends React.Component {
   };
 
   getFilteredEquipmentTypes = (localAreaId) => {
-    debugger;
     return _.chain(this.props.districtEquipmentTypes.data)
       .filter(
         (type) =>
