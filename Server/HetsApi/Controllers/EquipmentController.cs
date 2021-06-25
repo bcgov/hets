@@ -508,10 +508,9 @@ namespace HetsApi.Controllers
 
             item.ToDate = fiscalEnd;
 
-            // save record
+            // save record in order to recalculate seniority
             _context.HetEquipment.Add(item);
-
-            int id = item.EquipmentId;
+            _context.SaveChanges();
 
             // HETS-834 - BVT - New Equipment Added default to APPROVED
             // * (already Set to approved)
@@ -521,10 +520,11 @@ namespace HetsApi.Controllers
             int? districtEquipmentTypeId = item.DistrictEquipmentTypeId;
             EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration);
 
-            _context.SaveChanges();
+            // save the result of the seniority recalculation
+            _context.SaveChanges(); 
 
             // retrieve updated equipment record to return to ui
-            return new ObjectResult(new HetsResponse(EquipmentHelper.GetRecord(id, _context, _configuration)));
+            return new ObjectResult(new HetsResponse(EquipmentHelper.GetRecord(item.EquipmentId, _context, _configuration)));
         }
 
         /// <summary>

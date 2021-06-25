@@ -118,7 +118,6 @@ namespace HetsData.Helpers
 
                         // get all equipment records
                         IQueryable<HetEquipment> data = context.HetEquipment
-                            .Include(x => x.EquipmentStatusType)
                             .Where(x => x.LocalAreaId == localAreaId &&
                                         x.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
