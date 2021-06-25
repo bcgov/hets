@@ -1,39 +1,31 @@
-import PropTypes from "prop-types";
-import React from "react";
+import PropTypes from 'prop-types';
+import React from 'react';
 
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 
-import {
-  Button,
-  Row,
-  Col,
-  FormGroup,
-  ControlLabel,
-  HelpBlock,
-  Checkbox,
-} from "react-bootstrap";
+import { Button, Row, Col, FormGroup, FormLabel, HelpBlock, FormCheck } from 'react-bootstrap';
 
-import _ from "lodash";
+import _ from 'lodash';
 
-import * as Api from "../../api";
+import * as Api from '../../api';
 
-import DropdownControl from "../../components/DropdownControl.jsx";
-import FormInputControl from "../../components/FormInputControl.jsx";
-import ModalDialog from "../../components/ModalDialog.jsx";
-import Spinner from "../../components/Spinner.jsx";
-import TableControl from "../../components/TableControl.jsx";
+import DropdownControl from '../../components/DropdownControl.jsx';
+import FormInputControl from '../../components/FormInputControl.jsx';
+import ModalDialog from '../../components/ModalDialog.jsx';
+import Spinner from '../../components/Spinner.jsx';
+import TableControl from '../../components/TableControl.jsx';
 
-import { isBlank } from "../../utils/string";
+import { isBlank } from '../../utils/string';
 
 const STAGE_SELECT_OWNER = 1;
 const STAGE_SELECT_EQUIPMENT = 2;
 const STAGE_CONFIRM = 3;
 const STAGE_COMPLETE = 4;
 
-const OPTION_EQUIPMENT_ONLY = { id: 1, name: "Transfer Equipment Only" };
+const OPTION_EQUIPMENT_ONLY = { id: 1, name: 'Transfer Equipment Only' };
 const OPTION_EQUIPMENT_AND_SENIORITY = {
   id: 2,
-  name: "Transfer Equipment and Seniority",
+  name: 'Transfer Equipment and Seniority',
 };
 
 class EquipmentTransferDialog extends React.Component {
@@ -49,16 +41,16 @@ class EquipmentTransferDialog extends React.Component {
 
     this.state = {
       stage: STAGE_SELECT_OWNER,
-      donorOwnerCode: "",
-      recipientOwnerCode: "",
+      donorOwnerCode: '',
+      recipientOwnerCode: '',
       seniorityOption: 1,
-      donorOwnerCodeError: "",
-      recipientOwnerCodeError: "",
-      seniorityOptionError: "",
+      donorOwnerCodeError: '',
+      recipientOwnerCodeError: '',
+      seniorityOptionError: '',
       selectedEquipmentIds: [],
       selectAllEquipment: false,
       waitingForResponse: false,
-      equipmentTransferError: "",
+      equipmentTransferError: '',
     };
   }
 
@@ -77,13 +69,13 @@ class EquipmentTransferDialog extends React.Component {
 
   validateOwnerCode = (code, errorState) => {
     if (isBlank(code)) {
-      this.setState({ [errorState]: "This owner code is required" });
+      this.setState({ [errorState]: 'This owner code is required' });
       return false;
     }
 
     if (this.getOwner(code) === undefined) {
       this.setState({
-        [errorState]: "This owner code is either not valid or not approved",
+        [errorState]: 'This owner code is either not valid or not approved',
       });
       return false;
     }
@@ -93,19 +85,13 @@ class EquipmentTransferDialog extends React.Component {
 
   validateSelectOwner = () => {
     this.setState({
-      donorOwnerCodeError: "",
-      recipientOwnerCodeError: "",
-      seniorityOptionError: "",
+      donorOwnerCodeError: '',
+      recipientOwnerCodeError: '',
+      seniorityOptionError: '',
     });
 
-    var valid = this.validateOwnerCode(
-      this.state.donorOwnerCode,
-      "donorOwnerCodeError"
-    );
-    valid &= this.validateOwnerCode(
-      this.state.recipientOwnerCode,
-      "recipientOwnerCodeError"
-    );
+    var valid = this.validateOwnerCode(this.state.donorOwnerCode, 'donorOwnerCodeError');
+    valid &= this.validateOwnerCode(this.state.recipientOwnerCode, 'recipientOwnerCodeError');
 
     if (!valid) {
       return false;
@@ -113,7 +99,7 @@ class EquipmentTransferDialog extends React.Component {
 
     if (this.state.donorOwnerCode === this.state.recipientOwnerCode) {
       this.setState({
-        recipientOwnerCodeError: "The owner codes must be different",
+        recipientOwnerCodeError: 'The owner codes must be different',
       });
       return false;
     }
@@ -126,8 +112,7 @@ class EquipmentTransferDialog extends React.Component {
       donor.localAreaId !== recipient.localAreaId
     ) {
       this.setState({
-        seniorityOptionError:
-          "Both Transfer From and Transfer To Owners/Companies should be from the same local area",
+        seniorityOptionError: 'Both Transfer From and Transfer To Owners/Companies should be from the same local area',
       });
       return false;
     }
@@ -136,49 +121,36 @@ class EquipmentTransferDialog extends React.Component {
   };
 
   renderSelectOwner = () => {
-    var seniorityOptions = [
-      OPTION_EQUIPMENT_ONLY,
-      OPTION_EQUIPMENT_AND_SENIORITY,
-    ];
+    var seniorityOptions = [OPTION_EQUIPMENT_ONLY, OPTION_EQUIPMENT_AND_SENIORITY];
 
     return (
       <div id="select-owner">
         <Row>
           <Col xs={4}>
-            <ControlLabel>
+            <FormLabel>
               Transfer Equipment From (Owner Code) <sup>*</sup>
-            </ControlLabel>
+            </FormLabel>
           </Col>
           <Col xs={4}>
-            <ControlLabel>
+            <FormLabel>
               Action <sup>*</sup>
-            </ControlLabel>
+            </FormLabel>
           </Col>
           <Col xs={4}>
-            <ControlLabel>
+            <FormLabel>
               Transfer Equipment To (Owner Code) <sup>*</sup>
-            </ControlLabel>
+            </FormLabel>
           </Col>
         </Row>
         <Row>
           <Col xs={4}>
-            <FormGroup
-              controlId="donorOwnerCode"
-              validationState={this.state.donorOwnerCodeError ? "error" : null}
-            >
-              <FormInputControl
-                type="text"
-                defaultValue={this.state.donorOwnerCode}
-                updateState={this.updateState}
-              />
+            <FormGroup controlId="donorOwnerCode" validationState={this.state.donorOwnerCodeError ? 'error' : null}>
+              <FormInputControl type="text" defaultValue={this.state.donorOwnerCode} updateState={this.updateState} />
               <HelpBlock>{this.state.donorOwnerCodeError}</HelpBlock>
             </FormGroup>
           </Col>
           <Col xs={4}>
-            <FormGroup
-              controlId="seniorityOption"
-              validationState={this.state.seniorityOptionError ? "error" : null}
-            >
+            <FormGroup controlId="seniorityOption" validationState={this.state.seniorityOptionError ? 'error' : null}>
               <DropdownControl
                 id="seniorityOption"
                 updateState={this.updateState}
@@ -191,9 +163,7 @@ class EquipmentTransferDialog extends React.Component {
           <Col xs={4}>
             <FormGroup
               controlId="recipientOwnerCode"
-              validationState={
-                this.state.recipientOwnerCodeError ? "error" : null
-              }
+              validationState={this.state.recipientOwnerCodeError ? 'error' : null}
             >
               <FormInputControl
                 type="text"
@@ -224,9 +194,7 @@ class EquipmentTransferDialog extends React.Component {
   handleSelectAllEquipmentCheckedChange = (e) => {
     var checked = e.target.checked;
 
-    var selectedEquipmentIds = checked
-      ? _.map(this.props.equipment.data, (x) => x.id)
-      : [];
+    var selectedEquipmentIds = checked ? _.map(this.props.equipment.data, (x) => x.id) : [];
 
     this.setState({
       selectedEquipmentIds: selectedEquipmentIds,
@@ -250,21 +218,20 @@ class EquipmentTransferDialog extends React.Component {
     var equipmentList = this.props.equipment.data;
 
     var selectAllCheckbox = (
-      <Checkbox
+      <FormCheck
         id="selectAllEquipment"
         checked={this.state.selectAllEquipment}
         onChange={this.handleSelectAllEquipmentCheckedChange}
-      >
-        Select All
-      </Checkbox>
+        label="Select All"
+      />
     );
 
     var headers = [
-      { field: "", node: selectAllCheckbox },
-      { field: "equipmentCode", title: "Equip. ID" },
-      { field: "equipmentType", title: "Equip. Type" },
-      { field: "details", title: "Make/Model/Size/Year" },
-      { field: "attachmentCount", title: "Attachments" },
+      { field: '', node: selectAllCheckbox },
+      { field: 'equipmentCode', title: 'Equip. ID' },
+      { field: 'equipmentType', title: 'Equip. Type' },
+      { field: 'details', title: 'Make/Model/Size/Year' },
+      { field: 'attachmentCount', title: 'Attachments' },
     ];
 
     return (
@@ -273,25 +240,15 @@ class EquipmentTransferDialog extends React.Component {
           return (
             <tr key={equipment.id}>
               <td>
-                <Checkbox
-                  checked={_.includes(
-                    this.state.selectedEquipmentIds,
-                    equipment.id
-                  )}
-                  onChange={(e) =>
-                    this.handleEquipmentCheckedChange(e, equipment.id)
-                  }
+                <FormCheck
+                  checked={_.includes(this.state.selectedEquipmentIds, equipment.id)}
+                  onChange={(e) => this.handleEquipmentCheckedChange(e, equipment.id)}
                 />
               </td>
               <td>{equipment.equipmentCode}</td>
               <td>{equipment.districtEquipmentType.districtEquipmentName}</td>
               <td>{equipment.details}</td>
-              <td>
-                {_.map(
-                  equipment.equipmentAttachments,
-                  (a) => a.description
-                ).join(", ")}
-              </td>
+              <td>{_.map(equipment.equipmentAttachments, (a) => a.description).join(', ')}</td>
             </tr>
           );
         })}
@@ -303,35 +260,26 @@ class EquipmentTransferDialog extends React.Component {
     return (
       <div id="confirm-transfer">
         <p>
-          This action will transfer all selected equipment from the first
-          owner/company to the second owner/company.
+          This action will transfer all selected equipment from the first owner/company to the second owner/company.
         </p>
         <ul>
-          <li>
-            The piece(s) of equipment from the first company will be archived.
-          </li>
+          <li>The piece(s) of equipment from the first company will be archived.</li>
           {this.state.seniorityOption === OPTION_EQUIPMENT_ONLY.id && (
-            <li>
-              The piece(s) of equipment will be added to the “Transfer To”
-              owner/company as new equipment.
-            </li>
+            <li>The piece(s) of equipment will be added to the “Transfer To” owner/company as new equipment.</li>
           )}
           {this.state.seniorityOption === OPTION_EQUIPMENT_ONLY.id && (
             <li>All previous seniority data will be lost.</li>
           )}
           {this.state.seniorityOption === OPTION_EQUIPMENT_AND_SENIORITY.id && (
             <li>
-              The piece(s) of equipment will be added to the “Transfer To”
-              owner/company while retaining their seniority.
+              The piece(s) of equipment will be added to the “Transfer To” owner/company while retaining their
+              seniority.
             </li>
           )}
         </ul>
         {!this.state.waitingForResponse && <p>Do you want to continue?</p>}
         {this.state.waitingForResponse && (
-          <p>
-            Please wait while the equipment is transferred. This may take some
-            time.
-          </p>
+          <p>Please wait while the equipment is transferred. This may take some time.</p>
         )}
       </div>
     );
@@ -345,25 +293,21 @@ class EquipmentTransferDialog extends React.Component {
             <HelpBlock>Error: {this.state.equipmentTransferError}</HelpBlock>
           </div>
         )}
-        {this.state.equipmentTransferError && (
-          <p>The selected equipment has not been transferred.</p>
-        )}
-        {!this.state.equipmentTransferError && (
-          <p>The selected equipment has been successfully transferred.</p>
-        )}
+        {this.state.equipmentTransferError && <p>The selected equipment has not been transferred.</p>}
+        {!this.state.equipmentTransferError && <p>The selected equipment has been successfully transferred.</p>}
       </div>
     );
   };
 
   render() {
     var content = null;
-    var transferText = "Transfer";
+    var transferText = 'Transfer';
     var transferEnabled = false;
     var transferFunc = function () {};
 
     if (!this.props.owners.loaded) {
       return (
-        <div style={{ textAlign: "center" }}>
+        <div style={{ textAlign: 'center' }}>
           <Spinner />
         </div>
       );
@@ -372,9 +316,7 @@ class EquipmentTransferDialog extends React.Component {
     switch (this.state.stage) {
       case STAGE_SELECT_OWNER:
         content = this.renderSelectOwner();
-        transferEnabled =
-          !isBlank(this.state.donorOwnerCode) &&
-          !isBlank(this.state.recipientOwnerCode);
+        transferEnabled = !isBlank(this.state.donorOwnerCode) && !isBlank(this.state.recipientOwnerCode);
         transferFunc = function () {
           if (this.validateSelectOwner()) {
             var ownerId = this.getOwner(this.state.donorOwnerCode).id;
@@ -397,35 +339,25 @@ class EquipmentTransferDialog extends React.Component {
         content = this.renderConfirm();
         transferText =
           this.state.seniorityOption === OPTION_EQUIPMENT_AND_SENIORITY.id
-            ? "Transfer Equipment and Seniority"
-            : "Transfer Equipment Only";
+            ? 'Transfer Equipment and Seniority'
+            : 'Transfer Equipment Only';
         transferEnabled = true;
         transferFunc = function () {
           this.setState({ waitingForResponse: true });
 
           var donorOwnerId = this.getOwner(this.state.donorOwnerCode).id;
-          var recipientOwnerId = this.getOwner(
-            this.state.recipientOwnerCode
-          ).id;
-          var equipment = _.filter(this.props.equipment.data, (x) =>
-            _.includes(this.state.selectedEquipmentIds, x.id)
-          );
-          var includeSeniority =
-            this.state.seniorityOption === OPTION_EQUIPMENT_AND_SENIORITY.id;
+          var recipientOwnerId = this.getOwner(this.state.recipientOwnerCode).id;
+          var equipment = _.filter(this.props.equipment.data, (x) => _.includes(this.state.selectedEquipmentIds, x.id));
+          var includeSeniority = this.state.seniorityOption === OPTION_EQUIPMENT_AND_SENIORITY.id;
 
-          Api.transferEquipment(
-            donorOwnerId,
-            recipientOwnerId,
-            equipment,
-            includeSeniority
-          )
+          Api.transferEquipment(donorOwnerId, recipientOwnerId, equipment, includeSeniority)
             .catch((error) => {
               if (
                 error.status === 400 &&
-                (error.errorCode === "HETS-31" ||
-                  error.errorCode === "HETS-32" ||
-                  error.errorCode === "HETS-33" ||
-                  error.errorCode === "HETS-34")
+                (error.errorCode === 'HETS-31' ||
+                  error.errorCode === 'HETS-32' ||
+                  error.errorCode === 'HETS-33' ||
+                  error.errorCode === 'HETS-34')
               ) {
                 this.setState({
                   equipmentTransferError: error.errorDescription,
@@ -449,14 +381,12 @@ class EquipmentTransferDialog extends React.Component {
         break;
     }
 
-    var displayTransferButton =
-      this.state.stage !== STAGE_COMPLETE &&
-      this.state.waitingForResponse !== true;
+    var displayTransferButton = this.state.stage !== STAGE_COMPLETE && this.state.waitingForResponse !== true;
 
     return (
       <ModalDialog
         backdrop="static"
-        className={"form-dialog"}
+        className={'form-dialog'}
         id="equipment-transfer"
         title="Equipment Transfer"
         bsSize="large"
@@ -466,11 +396,7 @@ class EquipmentTransferDialog extends React.Component {
           <span>
             <Button onClick={this.props.onClose}>Close</Button>
             {displayTransferButton && (
-              <Button
-                bsStyle="primary"
-                onClick={transferFunc.bind(this)}
-                disabled={!transferEnabled}
-              >
+              <Button bsStyle="primary" onClick={transferFunc.bind(this)} disabled={!transferEnabled}>
                 {transferText}
               </Button>
             )}

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Grid, Row, Col, Radio, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
+import { Grid, Row, Col, Radio, FormGroup, FormLabel, HelpBlock } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../../api';
@@ -269,7 +269,7 @@ class HireOfferEditDialog extends React.Component {
         <Grid fluid>
           <Col md={12}>
             <FormGroup validationState={this.state.offerResponseError ? 'error' : null}>
-              <ControlLabel>Response</ControlLabel>
+              <FormLabel>Response</FormLabel>
               <Row>
                 <Col md={12}>
                   <FormGroup>
@@ -301,7 +301,7 @@ class HireOfferEditDialog extends React.Component {
                   <Col md={12}>
                     <FormGroup validationState={this.state.offerRefusalReasonError ? 'error' : null}>
                       {/*TODO - use lookup list*/}
-                      <ControlLabel>Refusal Reason</ControlLabel>
+                      <FormLabel>Refusal Reason</FormLabel>
                       <DropdownControl
                         id="offerRefusalReason"
                         className="full-width"
@@ -349,7 +349,7 @@ class HireOfferEditDialog extends React.Component {
                 controlId="offerResponseNote"
                 validationState={this.state.offerResponseNoteError ? 'error' : null}
               >
-                <ControlLabel>Note</ControlLabel>
+                <FormLabel>Note</FormLabel>
                 <FormInputControl
                   componentClass="textarea"
                   defaultValue={this.state.offerResponseNote}

@@ -1,12 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Well, Dropdown, FormControl, Checkbox } from 'react-bootstrap';
+import { Well, Dropdown, FormControl, FormCheck } from 'react-bootstrap';
 import RootCloseMenu from './RootCloseMenu.jsx';
 import _ from 'lodash';
 
-
 const MAX_ITEMS_FOR_TITLE = 3;
-
 
 class MultiDropdown extends React.Component {
   static propTypes = {
@@ -72,7 +70,10 @@ class MultiDropdown extends React.Component {
     } else if (num > this.state.maxItemsForTitle) {
       return `(${num}) selected`;
     } else {
-      return _.map(_.pickBy(items, item => selectedIds.includes(item.id)), this.state.fieldName).join(', ');
+      return _.map(
+        _.pickBy(items, (item) => selectedIds.includes(item.id)),
+        this.state.fieldName
+      ).join(', ');
     }
   };
 
@@ -80,7 +81,7 @@ class MultiDropdown extends React.Component {
     var id = parseInt(e.target.value, 10);
     var selectedIds = this.state.selectedIds.slice();
 
-    if(e.target.checked) {
+    if (e.target.checked) {
       selectedIds.push(id);
     } else {
       _.pull(selectedIds, id);
@@ -108,7 +109,7 @@ class MultiDropdown extends React.Component {
   };
 
   sendSelected = (selectedIds) => {
-    var selected = this.props.items.filter(item => selectedIds.includes(item.id));
+    var selected = this.props.items.filter((item) => selectedIds.includes(item.id));
 
     // Send selected items to change listener
     if (this.props.onChange) {
@@ -147,35 +148,59 @@ class MultiDropdown extends React.Component {
     var items = this.props.items;
 
     if (this.state.filterTerm.length > 0) {
-      items = _.filter(items, item => {
+      items = _.filter(items, (item) => {
         return item[this.state.fieldName].toLowerCase().indexOf(this.state.filterTerm) !== -1;
       });
     }
 
-    return <Dropdown className={ `multi-dropdown ${this.props.className || ''}` } id={ this.props.id }
-      title={ this.state.title } open={ this.state.open } onToggle={ this.toggle } disabled={ this.props.disabled }
-    >
-      <Dropdown.Toggle title={this.state.title} />
-      <RootCloseMenu bsRole="menu">
-        <Well bsSize="small">
-          <FormControl type="text" placeholder="Search" onChange={ this.filter } inputRef={ ref => { this.input = ref; }} autoComplete="off" onKeyDown={this.keyDown}/>
-          <Checkbox className="select-all" checked={ this.state.allSelected } onChange={ this.selectAll }>Select All</Checkbox>
-        </Well>
-        { items.length > 0 &&
-          <ul>
-            {
-              _.map(items, item => {
-                return <li key={ item.id }>
-                  <Checkbox value={ item.id } checked={ this.state.selectedIds.includes(item.id) } onChange={ this.itemSelected }>
-                    { item[this.state.fieldName] }
-                  </Checkbox>
-                </li>;
-              })
-            }
-          </ul>
-        }
-      </RootCloseMenu>
-    </Dropdown>;
+    return (
+      <Dropdown
+        className={`multi-dropdown ${this.props.className || ''}`}
+        id={this.props.id}
+        title={this.state.title}
+        open={this.state.open}
+        onToggle={this.toggle}
+        disabled={this.props.disabled}
+      >
+        <Dropdown.Toggle title={this.state.title} />
+        <RootCloseMenu bsRole="menu">
+          <Well bsSize="small">
+            <FormControl
+              type="text"
+              placeholder="Search"
+              onChange={this.filter}
+              inputRef={(ref) => {
+                this.input = ref;
+              }}
+              autoComplete="off"
+              onKeyDown={this.keyDown}
+            />
+            <FormCheck
+              className="select-all"
+              checked={this.state.allSelected}
+              onChange={this.selectAll}
+              label="Select All"
+            />
+          </Well>
+          {items.length > 0 && (
+            <ul>
+              {_.map(items, (item) => {
+                return (
+                  <li key={item.id}>
+                    <FormCheck
+                      value={item.id}
+                      checked={this.state.selectedIds.includes(item.id)}
+                      onChange={this.itemSelected}
+                      label={item[this.state.fieldName]}
+                    />
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </RootCloseMenu>
+      </Dropdown>
+    );
   }
 }
 

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Well, Grid, Row, Col } from 'react-bootstrap';
-import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
 import { Table, Button } from 'react-bootstrap';
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -234,18 +234,18 @@ class RolesDetail extends React.Component {
                   <Row>
                     <Col md={3}>
                       <FormGroup controlId="name" validationState={this.state.nameError ? 'error' : null}>
-                        <ControlLabel>
+                        <FormLabel>
                           Name <sup>*</sup>
-                        </ControlLabel>
+                        </FormLabel>
                         <FormInputControl type="text" defaultValue={this.state.name} updateState={this.updateState} />
                         <HelpBlock>{this.state.nameError}</HelpBlock>
                       </FormGroup>
                     </Col>
                     <Col md={9}>
                       <FormGroup controlId="description" validationState={this.state.descriptionError ? 'error' : null}>
-                        <ControlLabel>
+                        <FormLabel>
                           Description <sup>*</sup>
-                        </ControlLabel>
+                        </FormLabel>
                         <FormInputControl
                           type="text"
                           defaultValue={this.state.description}

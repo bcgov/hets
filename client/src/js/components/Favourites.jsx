@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Alert, Dropdown, ButtonToolbar, Button } from 'react-bootstrap';
-import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
 import { Col, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
 
@@ -98,9 +98,9 @@ class EditFavouritesDialog extends React.Component {
         onSubmit={this.onSubmit}
       >
         <FormGroup controlId="name" validationState={nameError ? 'error' : null}>
-          <ControlLabel>
+          <FormLabel>
             Name <sup>*</sup>
-          </ControlLabel>
+          </FormLabel>
           <FormInputControl
             type="text"
             readOnly={isSaving}

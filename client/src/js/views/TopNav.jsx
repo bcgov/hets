@@ -14,7 +14,7 @@ import {
   Popover,
   Button,
   Glyphicon,
-  ControlLabel,
+  FormLabel,
   FormGroup,
 } from 'react-bootstrap';
 import NavLinkWrapper from '../components/ui/NavLinkWrapper';
@@ -300,7 +300,7 @@ class TopNav extends React.Component {
                   <Dropdown.Menu>
                     <div>{this.props.currentUser.fullName}</div>
                     <FormGroup controlId="districtId">
-                      <ControlLabel>District</ControlLabel>
+                      <FormLabel>District</FormLabel>
                       <DropdownControl
                         id="districtId"
                         updateState={this.updateUserDistrict}

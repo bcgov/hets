@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Grid, Row, Col, FormGroup, ControlLabel, HelpBlock, Button, Glyphicon } from 'react-bootstrap';
+import { Grid, Row, Col, FormGroup, FormLabel, HelpBlock, Button, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
 import Moment from 'moment';
 
@@ -371,9 +371,9 @@ class TimeEntryDialog extends React.Component {
           <Row>
             <Col xs={6}>
               <FormGroup controlId="equipmentId" validationState={this.state.equipmentIdError ? 'error' : null}>
-                <ControlLabel>
+                <FormLabel>
                   Equipment ID <sup>*</sup>
-                </ControlLabel>
+                </FormLabel>
                 <FilterDropdown
                   id="equipmentId"
                   fieldName="equipmentCode"
@@ -388,9 +388,9 @@ class TimeEntryDialog extends React.Component {
             </Col>
             <Col xs={6}>
               <FormGroup controlId="projectId" validationState={this.state.projectIdError ? 'error' : null}>
-                <ControlLabel>
+                <FormLabel>
                   Project <sup>*</sup>
-                </ControlLabel>
+                </FormLabel>
                 <FilterDropdown
                   id="projectId"
                   fieldName="label"
@@ -518,7 +518,7 @@ class TimeEntryDialog extends React.Component {
               <Row key={key}>
                 <Col sm={4}>
                   <FormGroup validationState={this.state.timeEntry[key].errorDate ? 'error' : null}>
-                    <ControlLabel>Week Ending</ControlLabel>
+                    <FormLabel>Week Ending</FormLabel>
                     <DateControl
                       disabled={!this.state.projectFiscalYearStartDate}
                       id={`date${key}`}
@@ -532,7 +532,7 @@ class TimeEntryDialog extends React.Component {
                 </Col>
                 <Col sm={4}>
                   <FormGroup validationState={this.state.timeEntry[key].errorHours ? 'error' : null}>
-                    <ControlLabel>Hours</ControlLabel>
+                    <FormLabel>Hours</FormLabel>
                     <FormInputControl
                       id={`hours${key}`}
                       name="hours"

@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Checkbox } from 'react-bootstrap';
+import { FormCheck } from 'react-bootstrap';
 import _ from 'lodash';
-
 
 class CheckboxControl extends React.Component {
   static propTypes = {
@@ -28,9 +27,11 @@ class CheckboxControl extends React.Component {
   render() {
     var props = _.omit(this.props, 'updateState');
 
-    return <Checkbox className="checkbox-control" { ...props } onChange={ this.changed }>
-      { this.props.children }
-    </Checkbox>;
+    return (
+      <FormCheck className="checkbox-control" {...props} onChange={this.changed}>
+        {this.props.children}
+      </FormCheck>
+    );
   }
 }
 

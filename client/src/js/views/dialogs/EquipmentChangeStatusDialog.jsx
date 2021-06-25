@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
+import { FormGroup, FormLabel, HelpBlock } from 'react-bootstrap';
 
 import * as Api from '../../api';
 import * as Constant from '../../constants';
@@ -10,7 +10,6 @@ import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { isBlank } from '../../utils/string';
-
 
 class EquipmentChangeStatusDialog extends React.Component {
   static propTypes = {
@@ -52,24 +51,26 @@ class EquipmentChangeStatusDialog extends React.Component {
 
   formSubmitted = () => {
     if (this.isValid()) {
-      this.setState({isSaving: true});
+      this.setState({ isSaving: true });
       const status = {
         id: this.props.equipment.id,
         status: this.props.status,
         statusComment: this.state.comment,
       };
 
-      Api.changeEquipmentStatus(status).then(() => {
-        this.setState({isSaving: false});
-        this.props.onStatusChanged();
-        Log.equipmentStatusModified(this.props.equipment, status.status, status.statusComment);
-      }).catch((error) => {
-        if (error.status === 400 && (error.errorCode === 'HETS-39' || error.errorCode === 'HETS-41')) {
-          this.setState({ commentError: error.errorDescription });
-        } else {
-          throw error;
-        }
-      });
+      Api.changeEquipmentStatus(status)
+        .then(() => {
+          this.setState({ isSaving: false });
+          this.props.onStatusChanged();
+          Log.equipmentStatusModified(this.props.equipment, status.status, status.statusComment);
+        })
+        .catch((error) => {
+          if (error.status === 400 && (error.errorCode === 'HETS-39' || error.errorCode === 'HETS-41')) {
+            this.setState({ commentError: error.errorDescription });
+          } else {
+            throw error;
+          }
+        });
     }
   };
 
@@ -83,12 +84,18 @@ class EquipmentChangeStatusDialog extends React.Component {
         show={this.props.show}
         isSaving={this.state.isSaving}
         onClose={this.props.onClose}
-        onSubmit={this.formSubmitted}>
+        onSubmit={this.formSubmitted}
+      >
         <FormGroup controlId="comment" validationState={this.state.commentError ? 'error' : null}>
-          <ControlLabel>Comment</ControlLabel>
-          <FormInputControl value={this.state.comment} componentClass="textarea" updateState={this.updateState} maxLength={ maxLength } />
+          <FormLabel>Comment</FormLabel>
+          <FormInputControl
+            value={this.state.comment}
+            componentClass="textarea"
+            updateState={this.updateState}
+            maxLength={maxLength}
+          />
           <HelpBlock>{this.state.commentError}</HelpBlock>
-          <p>Maximum { maxLength } characters.</p>
+          <p>Maximum {maxLength} characters.</p>
         </FormGroup>
       </FormDialog>
     );

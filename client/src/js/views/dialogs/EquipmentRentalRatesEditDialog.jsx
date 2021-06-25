@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Grid, Row, Col } from 'react-bootstrap';
-import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
 
 import * as Constant from '../../constants';
 import * as Api from '../../api';
@@ -11,7 +11,6 @@ import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { isBlank } from '../../utils/string';
-
 
 class EquipmentRentalRatesEditDialog extends React.Component {
   static propTypes = {
@@ -39,9 +38,15 @@ class EquipmentRentalRatesEditDialog extends React.Component {
   };
 
   didChange = () => {
-    if (this.state.equipmentRate !== this.props.rentalAgreement.equipmentRate) { return true; }
-    if (this.state.ratePeriod !== this.props.rentalAgreement.ratePeriod) { return true; }
-    if (this.state.rateComment !== this.props.rentalAgreement.rateComment) { return true; }
+    if (this.state.equipmentRate !== this.props.rentalAgreement.equipmentRate) {
+      return true;
+    }
+    if (this.state.ratePeriod !== this.props.rentalAgreement.ratePeriod) {
+      return true;
+    }
+    if (this.state.rateComment !== this.props.rentalAgreement.rateComment) {
+      return true;
+    }
 
     return false;
   };
@@ -54,7 +59,7 @@ class EquipmentRentalRatesEditDialog extends React.Component {
 
     var valid = true;
 
-    if (isBlank(this.state.equipmentRate) ) {
+    if (isBlank(this.state.equipmentRate)) {
       this.setState({ equipmentRateError: 'Pay rate is required' });
       valid = false;
     } else if (this.state.equipmentRate < 0) {
@@ -81,7 +86,9 @@ class EquipmentRentalRatesEditDialog extends React.Component {
         };
 
         Api.updateRentalAgreement(rentalAgreement).then(() => {
-          if (this.props.onSave) { this.props.onSave(); }
+          if (this.props.onSave) {
+            this.props.onSave();
+          }
         });
       }
 
@@ -92,7 +99,13 @@ class EquipmentRentalRatesEditDialog extends React.Component {
   render() {
     // Read-only if the user cannot edit the rental agreement
     var isReadOnly = !this.props.rentalAgreement.canEdit && this.props.rentalAgreement.id !== 0;
-    var ratePeriods = [ Constant.RENTAL_RATE_PERIOD_HOURLY, Constant.RENTAL_RATE_PERIOD_DAILY, Constant.RENTAL_RATE_PERIOD_WEEKLY, Constant.RENTAL_RATE_PERIOD_MONTHLY, Constant.RENTAL_RATE_PERIOD_NEGOTIATED ];
+    var ratePeriods = [
+      Constant.RENTAL_RATE_PERIOD_HOURLY,
+      Constant.RENTAL_RATE_PERIOD_DAILY,
+      Constant.RENTAL_RATE_PERIOD_WEEKLY,
+      Constant.RENTAL_RATE_PERIOD_MONTHLY,
+      Constant.RENTAL_RATE_PERIOD_NEGOTIATED,
+    ];
 
     return (
       <FormDialog
@@ -100,28 +113,49 @@ class EquipmentRentalRatesEditDialog extends React.Component {
         show={this.props.show}
         title="Rental Agreement"
         onSubmit={this.formSubmitted}
-        onClose={this.props.onClose}>
+        onClose={this.props.onClose}
+      >
         <Grid fluid>
           <Row>
             <Col md={3}>
-              <FormGroup controlId="equipmentRate" validationState={ this.state.equipmentRateError ? 'error' : null }>
-                <ControlLabel>Pay Rate <sup>*</sup></ControlLabel>
-                <FormInputControl type="float" min={ 0 } defaultValue={ (this.state.equipmentRate || 0).toFixed(2) } readOnly={ isReadOnly } updateState={ this.updateState } autoFocus/>
-                <HelpBlock>{ this.state.equipmentRateError }</HelpBlock>
+              <FormGroup controlId="equipmentRate" validationState={this.state.equipmentRateError ? 'error' : null}>
+                <FormLabel>
+                  Pay Rate <sup>*</sup>
+                </FormLabel>
+                <FormInputControl
+                  type="float"
+                  min={0}
+                  defaultValue={(this.state.equipmentRate || 0).toFixed(2)}
+                  readOnly={isReadOnly}
+                  updateState={this.updateState}
+                  autoFocus
+                />
+                <HelpBlock>{this.state.equipmentRateError}</HelpBlock>
               </FormGroup>
             </Col>
             <Col md={3}>
-              <FormGroup controlId="ratePeriod" validationState={ this.state.ratePeriodError ? 'error' : null }>
-                <ControlLabel>Period <sup>*</sup></ControlLabel>
-                <DropdownControl id="ratePeriod" disabled={ isReadOnly } title={ this.state.ratePeriod } updateState={ this.updateState }
-                  items={ ratePeriods } />
-                <HelpBlock>{ this.state.ratePeriodError }</HelpBlock>
+              <FormGroup controlId="ratePeriod" validationState={this.state.ratePeriodError ? 'error' : null}>
+                <FormLabel>
+                  Period <sup>*</sup>
+                </FormLabel>
+                <DropdownControl
+                  id="ratePeriod"
+                  disabled={isReadOnly}
+                  title={this.state.ratePeriod}
+                  updateState={this.updateState}
+                  items={ratePeriods}
+                />
+                <HelpBlock>{this.state.ratePeriodError}</HelpBlock>
               </FormGroup>
             </Col>
             <Col md={6}>
               <FormGroup controlId="rateComment">
-                <ControlLabel>Comment</ControlLabel>
-                <FormInputControl defaultValue={ this.state.rateComment } readOnly={ isReadOnly } updateState={ this.updateState } />
+                <FormLabel>Comment</FormLabel>
+                <FormInputControl
+                  defaultValue={this.state.rateComment}
+                  readOnly={isReadOnly}
+                  updateState={this.updateState}
+                />
               </FormGroup>
             </Col>
           </Row>

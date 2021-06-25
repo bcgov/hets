@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Constant from '../../constants';
@@ -13,7 +13,6 @@ import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { isBlank } from '../../utils/string';
-
 
 class UsersEditDialog extends React.Component {
   static propTypes = {
@@ -63,21 +62,40 @@ class UsersEditDialog extends React.Component {
   };
 
   updateStatus = (state, callback) => {
-    this.setState({
-      status: state.status,
-      active: state.status === Constant.USER_STATUS_ACTIVE,
-    }, callback);
+    this.setState(
+      {
+        status: state.status,
+        active: state.status === Constant.USER_STATUS_ACTIVE,
+      },
+      callback
+    );
   };
 
   didChange = () => {
-    if (this.props.isNew) { return true; }
-    if (this.state.active !== this.props.user.active) { return true; }
-    if (this.state.givenName !== this.props.user.givenName) { return true; }
-    if (this.state.surname !== this.props.user.surname) { return true; }
-    if (this.state.smUserId !== this.props.user.smUserId) { return true; }
-    if (this.state.email !== this.props.user.email) { return true; }
-    if (this.state.districtId !== this.props.user.districtId) { return true; }
-    if (this.state.agreementCity !== this.props.user.agreementCity) { return true; }
+    if (this.props.isNew) {
+      return true;
+    }
+    if (this.state.active !== this.props.user.active) {
+      return true;
+    }
+    if (this.state.givenName !== this.props.user.givenName) {
+      return true;
+    }
+    if (this.state.surname !== this.props.user.surname) {
+      return true;
+    }
+    if (this.state.smUserId !== this.props.user.smUserId) {
+      return true;
+    }
+    if (this.state.email !== this.props.user.email) {
+      return true;
+    }
+    if (this.state.districtId !== this.props.user.districtId) {
+      return true;
+    }
+    if (this.state.agreementCity !== this.props.user.agreementCity) {
+      return true;
+    }
 
     return false;
   };
@@ -140,26 +158,29 @@ class UsersEditDialog extends React.Component {
         const isNewUser = this.state.isNew;
         const addOrUpdateUser = isNewUser ? Api.addUser : Api.updateUser;
 
-        addOrUpdateUser(user).then((userResponse) => {
-          this.setState({ isSaving: false });
+        addOrUpdateUser(user).then(
+          (userResponse) => {
+            this.setState({ isSaving: false });
 
-          // Make sure we get the new user's ID
-          if (isNewUser) {
-            user.id = userResponse.id;
+            // Make sure we get the new user's ID
+            if (isNewUser) {
+              user.id = userResponse.id;
+            }
+
+            // Let the parent page component know that the user has been saved
+            this.props.onSave(user);
+          },
+          (err) => {
+            this.setState({ isSaving: false });
+
+            if (err.errorCode === 'HETS-38') {
+              this.setState({ smUserIdError: err.errorDescription });
+            } else {
+              this.props.onClose();
+              throw err;
+            }
           }
-
-          // Let the parent page component know that the user has been saved
-          this.props.onSave(user);
-        }, (err) => {
-          this.setState({ isSaving: false });
-
-          if (err.errorCode === 'HETS-38') {
-            this.setState({ smUserIdError: err.errorDescription });
-          } else {
-            this.props.onClose();
-            throw err;
-          }
-        });
+        );
       } else {
         this.props.onClose();
       }
@@ -176,42 +197,64 @@ class UsersEditDialog extends React.Component {
         title="User"
         isSaving={this.state.isSaving}
         onSubmit={this.formSubmitted}
-        onClose={this.props.onClose}>
-        <FormGroup controlId="givenName" validationState={ this.state.givenNameError ? 'error' : null }>
-          <ControlLabel>Given Name <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" defaultValue={ this.state.givenName } updateState={ this.updateState } autoFocus/>
-          <HelpBlock>{ this.state.givenNameError }</HelpBlock>
+        onClose={this.props.onClose}
+      >
+        <FormGroup controlId="givenName" validationState={this.state.givenNameError ? 'error' : null}>
+          <FormLabel>
+            Given Name <sup>*</sup>
+          </FormLabel>
+          <FormInputControl type="text" defaultValue={this.state.givenName} updateState={this.updateState} autoFocus />
+          <HelpBlock>{this.state.givenNameError}</HelpBlock>
         </FormGroup>
-        <FormGroup controlId="surname" validationState={ this.state.surnameError ? 'error' : null }>
-          <ControlLabel>Surname <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" defaultValue={ this.state.surname } updateState={ this.updateState }/>
-          <HelpBlock>{ this.state.surnameError }</HelpBlock>
+        <FormGroup controlId="surname" validationState={this.state.surnameError ? 'error' : null}>
+          <FormLabel>
+            Surname <sup>*</sup>
+          </FormLabel>
+          <FormInputControl type="text" defaultValue={this.state.surname} updateState={this.updateState} />
+          <HelpBlock>{this.state.surnameError}</HelpBlock>
         </FormGroup>
-        <FormGroup controlId="smUserId" validationState={ this.state.smUserIdError ? 'error' : null }>
-          <ControlLabel>User ID <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" defaultValue={ this.state.smUserId } updateState={ this.updateState }/>
-          <HelpBlock>{ this.state.smUserIdError }</HelpBlock>
+        <FormGroup controlId="smUserId" validationState={this.state.smUserIdError ? 'error' : null}>
+          <FormLabel>
+            User ID <sup>*</sup>
+          </FormLabel>
+          <FormInputControl type="text" defaultValue={this.state.smUserId} updateState={this.updateState} />
+          <HelpBlock>{this.state.smUserIdError}</HelpBlock>
         </FormGroup>
         <FormGroup controlId="status">
-          <ControlLabel>Status</ControlLabel>
-          <DropdownControl id="status" title={ this.state.status } updateState={ this.updateStatus }
-            items={[ Constant.USER_STATUS_ACTIVE, Constant.USER_STATUS_ARCHIVED ]} className="full-width"
+          <FormLabel>Status</FormLabel>
+          <DropdownControl
+            id="status"
+            title={this.state.status}
+            updateState={this.updateStatus}
+            items={[Constant.USER_STATUS_ACTIVE, Constant.USER_STATUS_ARCHIVED]}
+            className="full-width"
           />
         </FormGroup>
-        <FormGroup controlId="email" validationState={ this.state.emailError ? 'error' : null }>
-          <ControlLabel>E-mail <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" defaultValue={ this.state.email } updateState={ this.updateState }/>
-          <HelpBlock>{ this.state.emailError }</HelpBlock>
+        <FormGroup controlId="email" validationState={this.state.emailError ? 'error' : null}>
+          <FormLabel>
+            E-mail <sup>*</sup>
+          </FormLabel>
+          <FormInputControl type="text" defaultValue={this.state.email} updateState={this.updateState} />
+          <HelpBlock>{this.state.emailError}</HelpBlock>
         </FormGroup>
-        <FormGroup controlId="districtId" validationState={ this.state.districtIdError ? 'error' : null }>
-          <ControlLabel>District <sup>*</sup></ControlLabel>
-          <FilterDropdown id="districtId" placeholder="None" blankLine
-            items={ districts } selectedId={ this.state.districtId } updateState={ this.updateState }  className="full-width" />
-          <HelpBlock>{ this.state.districtIdError }</HelpBlock>
+        <FormGroup controlId="districtId" validationState={this.state.districtIdError ? 'error' : null}>
+          <FormLabel>
+            District <sup>*</sup>
+          </FormLabel>
+          <FilterDropdown
+            id="districtId"
+            placeholder="None"
+            blankLine
+            items={districts}
+            selectedId={this.state.districtId}
+            updateState={this.updateState}
+            className="full-width"
+          />
+          <HelpBlock>{this.state.districtIdError}</HelpBlock>
         </FormGroup>
         <FormGroup controlId="agreementCity">
-          <ControlLabel>Location</ControlLabel>
-          <FormInputControl type="text" defaultValue={ this.state.agreementCity } updateState={ this.updateState }/>
+          <FormLabel>Location</FormLabel>
+          <FormInputControl type="text" defaultValue={this.state.agreementCity} updateState={this.updateState} />
         </FormGroup>
       </FormDialog>
     );
