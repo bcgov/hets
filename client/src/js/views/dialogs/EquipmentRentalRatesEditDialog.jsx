@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Grid, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
 
 import * as Constant from '../../constants';
@@ -115,7 +115,7 @@ class EquipmentRentalRatesEditDialog extends React.Component {
         onSubmit={this.formSubmitted}
         onClose={this.props.onClose}
       >
-        <Grid fluid>
+        <Container fluid>
           <Row>
             <Col md={3}>
               <FormGroup controlId="equipmentRate" validationState={this.state.equipmentRateError ? 'error' : null}>
@@ -159,7 +159,7 @@ class EquipmentRentalRatesEditDialog extends React.Component {
               </FormGroup>
             </Col>
           </Row>
-        </Grid>
+        </Container>
       </FormDialog>
     );
   }

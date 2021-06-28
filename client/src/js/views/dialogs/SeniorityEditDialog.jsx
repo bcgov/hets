@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { Grid, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import { FormControl, FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
 
 import * as Api from '../../api';
@@ -179,7 +179,7 @@ class SeniorityEditDialog extends React.Component {
         onClose={this.props.onClose}
         onSubmit={this.formSubmitted}
       >
-        <Grid fluid cols={6}>
+        <Container fluid cols={6}>
           <Row>
             <Col>
               <FormGroup>
@@ -294,7 +294,7 @@ class SeniorityEditDialog extends React.Component {
               </FormGroup>
             </Col>
           </Row>
-        </Grid>
+        </Container>
       </FormDialog>
     );
   }

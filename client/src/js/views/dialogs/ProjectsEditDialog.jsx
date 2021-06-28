@@ -3,7 +3,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Grid, Row, Col, FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
+import { Container, Row, Col, FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -191,7 +191,7 @@ class ProjectsEditDialog extends React.Component {
         onSubmit={this.formSubmitted}
       >
         <Form>
-          <Grid fluid>
+          <Container fluid>
             <Row>
               <Col xs={12}>
                 <FormGroup controlId="name" validationState={this.state.nameError ? 'error' : null}>
@@ -309,7 +309,7 @@ class ProjectsEditDialog extends React.Component {
                 </FormGroup>
               </Col>
             </Row>
-          </Grid>
+          </Container>
         </Form>
       </FormDialog>
     );

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { FormGroup, HelpBlock, FormLabel, FormControl, Grid, Row, Col } from 'react-bootstrap';
+import { FormGroup, HelpBlock, FormLabel, FormControl, Container, Row, Col } from 'react-bootstrap';
 
 import * as Api from '../../api';
 import * as Constant from '../../constants';
@@ -167,7 +167,7 @@ class ProjectsAddDialog extends React.Component {
         onClose={this.props.onClose}
         onSubmit={this.formSubmitted}
       >
-        <Grid fluid>
+        <Container fluid>
           <Row>
             <Col xs={12}>
               <FormGroup controlId="name" validationState={this.state.nameError ? 'error' : null}>
@@ -287,7 +287,7 @@ class ProjectsAddDialog extends React.Component {
               </FormGroup>
             </Col>
           </Row>
-        </Grid>
+        </Container>
       </FormDialog>
     );
   }

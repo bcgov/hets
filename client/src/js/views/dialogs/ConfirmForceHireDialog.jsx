@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Grid, Row, Col, FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
+import { Container, Row, Col, FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
 
 import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
@@ -64,7 +64,7 @@ class ConfirmForceHireDialog extends React.Component {
         title="Force Hire"
         backdropClassName="confirm-force-hire"
       >
-        <Grid fluid>
+        <Container fluid>
           <Col md={12}>
             <p>
               <strong>Are you sure you want to do a Force Hire?</strong>
@@ -82,7 +82,7 @@ class ConfirmForceHireDialog extends React.Component {
               </FormGroup>
             </Col>
           </Row>
-        </Grid>
+        </Container>
       </FormDialog>
     );
   }

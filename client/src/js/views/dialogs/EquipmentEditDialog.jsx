@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import _ from 'lodash';
 
-import { Grid, Row, Col, FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
+import { Container, Row, Col, FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
 
 import * as Api from '../../api';
 import * as Log from '../../history';
@@ -283,7 +283,7 @@ class EquipmentEditDialog extends React.Component {
         onClose={this.props.onClose}
         onSubmit={this.formSubmitted}
       >
-        <Grid fluid>
+        <Container fluid>
           <Row>
             <Col md={12}>
               <FormGroup controlId="localAreaId" validationState={this.state.localAreaError ? 'error' : null}>
@@ -426,7 +426,7 @@ class EquipmentEditDialog extends React.Component {
               </Row>
             </div>
           )}
-        </Grid>
+        </Container>
       </FormDialog>
     );
   }

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Grid, Row, Col, FormGroup, FormLabel } from 'react-bootstrap';
+import { Container, Row, Col, FormGroup, FormLabel } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Constant from '../../constants';
@@ -82,7 +82,7 @@ class RentalAgreementOvertimeNotesDialog extends React.Component {
         onClose={this.props.onClose}
         title="Overtime Rates and Notes/Special Instructions"
       >
-        <Grid fluid>
+        <Container fluid>
           <Row>
             <Col xs={12} id="overtime-rate-edit">
               <FormLabel>Overtime Rates</FormLabel>
@@ -112,7 +112,7 @@ class RentalAgreementOvertimeNotesDialog extends React.Component {
               </FormGroup>
             </Col>
           </Row>
-        </Grid>
+        </Container>
       </FormDialog>
     );
   }

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Grid, Row, Col } from 'react-bootstrap';
+import { Well, Container, Row, Col } from 'react-bootstrap';
 import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
 import { Table, Button } from 'react-bootstrap';
 import _ from 'lodash';
@@ -230,7 +230,7 @@ class RolesDetail extends React.Component {
 
             return (
               <Form id="roles-edit" onSubmit={this.onSave}>
-                <Grid fluid>
+                <Container fluid>
                   <Row>
                     <Col md={3}>
                       <FormGroup controlId="name" validationState={this.state.nameError ? 'error' : null}>
@@ -255,7 +255,7 @@ class RolesDetail extends React.Component {
                       </FormGroup>
                     </Col>
                   </Row>
-                </Grid>
+                </Container>
               </Form>
             );
           })()}

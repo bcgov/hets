@@ -3,7 +3,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Grid, Row, Col, Button, Label } from 'react-bootstrap';
+import { Container, Row, Col, Button, Label } from 'react-bootstrap';
 import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
 
 import * as Constant from '../../constants';
@@ -217,7 +217,7 @@ class ContactsEditDialog extends React.Component {
         onSubmit={this.formSubmitted}
         title={dialogTitle}
       >
-        <Grid fluid>
+        <Container fluid>
           <Row>
             <Col md={12}>
               <FormGroup controlId="givenName" validationState={this.state.givenNameError ? 'error' : null}>
@@ -335,7 +335,7 @@ class ContactsEditDialog extends React.Component {
               </FormGroup>
             </Col>
           </Row>
-        </Grid>
+        </Container>
       </FormDialog>
     );
   }

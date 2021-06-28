@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Grid, Row, Col, FormGroup, FormLabel, HelpBlock, Button } from 'react-bootstrap';
+import { Container, Row, Col, FormGroup, FormLabel, HelpBlock, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import Moment from 'moment';
@@ -368,7 +368,7 @@ class TimeEntryDialog extends React.Component {
         onClose={this.props.onClose}
         onSubmit={this.selectAgreementFormSubmitted}
       >
-        <Grid fluid>
+        <Container fluid>
           <Row>
             <Col xs={6}>
               <FormGroup controlId="equipmentId" validationState={this.state.equipmentIdError ? 'error' : null}>
@@ -404,7 +404,7 @@ class TimeEntryDialog extends React.Component {
               </FormGroup>
             </Col>
           </Row>
-        </Grid>
+        </Container>
       </FormDialog>
     );
   };
@@ -439,7 +439,7 @@ class TimeEntryDialog extends React.Component {
         onClose={this.onClose}
         onSubmit={this.formSubmitted}
       >
-        <Grid fluid>
+        <Container fluid>
           {(() => {
             if (!this.state.loaded) {
               return (
@@ -563,7 +563,7 @@ class TimeEntryDialog extends React.Component {
               )}
             </Col>
           </Row>
-        </Grid>
+        </Container>
       </FormDialog>
     );
   };

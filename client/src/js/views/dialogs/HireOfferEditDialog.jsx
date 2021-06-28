@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Grid, Row, Col, Radio, FormGroup, FormLabel, HelpBlock } from 'react-bootstrap';
+import { Container, Row, Col, Radio, FormGroup, FormLabel, HelpBlock } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../../api';
@@ -266,7 +266,7 @@ class HireOfferEditDialog extends React.Component {
         isSaving={this.state.isSaving}
         title="Response"
       >
-        <Grid fluid>
+        <Container fluid>
           <Col md={12}>
             <FormGroup validationState={this.state.offerResponseError ? 'error' : null}>
               <FormLabel>Response</FormLabel>
@@ -373,7 +373,7 @@ class HireOfferEditDialog extends React.Component {
               </FormGroup>
             </Col>
           </Row>
-        </Grid>
+        </Container>
         {this.state.showConfirmForceHireDialog && (
           <ConfirmForceHireDialog
             show={this.state.showConfirmForceHireDialog}
