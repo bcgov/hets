@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col, Alert, Button, ButtonGroup, Badge } from 'react-bootstrap';
+import { Row, Col, Alert, Button, ButtonGroup, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
@@ -372,7 +372,7 @@ class OwnersDetail extends React.Component {
 
           <Row>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader
                   title="Owner Information"
                   editButtonTitle="Edit Owner"
@@ -450,10 +450,10 @@ class OwnersDetail extends React.Component {
                     </div>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader
                   title="Policy"
                   editButtonTitle="Edit Policy Information"
@@ -499,10 +499,10 @@ class OwnersDetail extends React.Component {
                     </Row>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader title="Contacts" />
                 {(() => {
                   if (loading) {
@@ -587,8 +587,8 @@ class OwnersDetail extends React.Component {
                     </SortTable>
                   );
                 })()}
-              </Well>
-              <Well>
+              </div>
+              <div className="well">
                 <SubHeader title={`Equipment (${loading ? ' ' : owner.numberOfEquipment})`}>
                   <CheckboxControl id="showAttachments" className="mr-5" inline updateState={this.updateState}>
                     <small>Show Attachments</small>
@@ -715,11 +715,11 @@ class OwnersDetail extends React.Component {
                     </SortTable>
                   );
                 })()}
-              </Well>
-              <Well>
+              </div>
+              <div className="well">
                 <SubHeader title="History" />
                 {owner.historyEntity && <History historyEntity={owner.historyEntity} refresh={!this.state.reloading} />}
-              </Well>
+              </div>
             </Col>
           </Row>
         </div>

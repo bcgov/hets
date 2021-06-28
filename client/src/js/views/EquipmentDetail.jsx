@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Well, Row, Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import { Alert, Button, ButtonGroup, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
@@ -333,7 +333,7 @@ class EquipmentDetail extends React.Component {
 
           <Row>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader
                   title="Equipment Information"
                   editButtonTitle="Edit Equipment"
@@ -417,10 +417,10 @@ class EquipmentDetail extends React.Component {
                     </Row>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <Authorize>
                   <SubHeader
                     title="Attachments"
@@ -491,12 +491,12 @@ class EquipmentDetail extends React.Component {
                     </SortTable>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
           </Row>
           <Row>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader
                   title="Seniority"
                   editButtonTitle="Edit Seniority"
@@ -580,15 +580,15 @@ class EquipmentDetail extends React.Component {
                     </Row>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader title="History" />
                 {equipment.historyEntity && (
                   <History historyEntity={equipment.historyEntity} refresh={!this.state.reloading} />
                 )}
-              </Well>
+              </div>
             </Col>
           </Row>
         </div>

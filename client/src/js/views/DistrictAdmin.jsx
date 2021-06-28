@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Button, ButtonGroup, Well, Alert, Row, Col } from 'react-bootstrap';
+import { Button, ButtonGroup, Alert, Row, Col } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
@@ -156,7 +156,7 @@ class DistrictAdmin extends React.Component {
       <div id="district-admin">
         <PageHeader>District Admin</PageHeader>
 
-        <Well>
+        <div className="well">
           <SubHeader title="Manage District Equipment Types" />
           {(() => {
             if (!this.props.districtEquipmentTypes.loaded) {
@@ -244,9 +244,9 @@ class DistrictAdmin extends React.Component {
               </SortTable>
             );
           })()}
-        </Well>
+        </div>
 
-        <Well>
+        <div className="well">
           <SubHeader title="Manage Conditions" />
           {(() => {
             if (this.props.rentalConditions.loading) {
@@ -315,9 +315,9 @@ class DistrictAdmin extends React.Component {
               </TableControl>
             );
           })()}
-        </Well>
+        </div>
         <Authorize>
-          <Well className="clearfix">
+          <div className="clearfix well">
             <SubHeader title="Equipment Transfer (Bulk)" />
             <Row>
               <Col xs={9}>
@@ -330,7 +330,7 @@ class DistrictAdmin extends React.Component {
                 </span>
               </Col>
             </Row>
-          </Well>
+          </div>
         </Authorize>
         {this.state.showEquipmentTransferDialog && (
           <EquipmentTransferDialog

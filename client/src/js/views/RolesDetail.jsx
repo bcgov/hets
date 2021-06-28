@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 import { Table, Button } from 'react-bootstrap';
 import _ from 'lodash';
@@ -218,7 +218,7 @@ class RolesDetail extends React.Component {
             </div>
           );
         })()}
-        <Well>
+        <div className="well">
           {(() => {
             if (this.state.loading) {
               return (
@@ -259,8 +259,8 @@ class RolesDetail extends React.Component {
               </Form>
             );
           })()}
-        </Well>
-        <Well id="roles-permissions">
+        </div>
+        <div className="well" id="roles-permissions">
           <SubHeader title="Permissions" />
           {(() => {
             if (this.state.loading) {
@@ -301,7 +301,7 @@ class RolesDetail extends React.Component {
               </Table>
             );
           })()}
-        </Well>
+        </div>
         <Button bsStyle="primary" onClick={this.onSave}>
           Save
         </Button>

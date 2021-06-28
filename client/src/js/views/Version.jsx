@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import * as Api from '../api';
@@ -108,7 +108,7 @@ class Version extends React.Component {
 
           return (
             <div id="version-details">
-              <Well>
+              <div className="well">
                 <h3>Client</h3>
                 <div className="clearfix">
                   <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="Name">
@@ -121,8 +121,8 @@ class Version extends React.Component {
                     {navigator.userAgent}
                   </ColDisplay>
                 </div>
-              </Well>
-              <Well>
+              </div>
+              <div className="well">
                 <h3>Application</h3>
                 <div className="clearfix">
                   <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="Name">
@@ -144,8 +144,8 @@ class Version extends React.Component {
                     {applicationVersion.environment}
                   </ColDisplay>
                 </div>
-              </Well>
-              <Well>
+              </div>
+              <div className="well">
                 <h3>Database</h3>
                 <div className="clearfix">
                   <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="Name">
@@ -164,14 +164,14 @@ class Version extends React.Component {
                     {databaseVersion.environment}
                   </ColDisplay>
                 </div>
-              </Well>
+              </div>
               <Button onClick={this.showRaw}>Show Raw Versions</Button>
-              <Well
+              <div
                 style={{ marginTop: '20px', wordWrap: 'break-word' }}
-                className={this.state.showRawSection ? '' : 'hide'}
+                className={this.state.showRawSection ? 'well' : 'well hide'}
               >
                 <div>{JSON.stringify(this.props.version)}</div>
-              </Well>
+              </div>
             </div>
           );
         })()}

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col, Alert, Badge } from 'react-bootstrap';
+import { Row, Col, Alert, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
@@ -140,7 +140,7 @@ class BusinessOwner extends React.Component {
 
           <PageHeader id="owners-header" title="Company" subTitle={owner.organizationName} />
 
-          <Well>
+          <div className="well">
             <SubHeader title="Owner Information" />
             <div id="owners-data">
               <Row className="equal-height">
@@ -201,8 +201,8 @@ class BusinessOwner extends React.Component {
                 </Col>
               </Row>
             </div>
-          </Well>
-          <Well>
+          </div>
+          <div className="well">
             <SubHeader title="Policy" />
             <Row id="owners-policy" className="equal-height">
               <Col lg={4} md={6} sm={12} xs={12}>
@@ -231,8 +231,8 @@ class BusinessOwner extends React.Component {
                 </ColDisplay>
               </Col>
             </Row>
-          </Well>
-          <Well>
+          </div>
+          <div className="well">
             <SubHeader title="Contacts" />
             {(() => {
               if (!owner.contacts || Object.keys(owner.contacts).length === 0) {
@@ -283,8 +283,8 @@ class BusinessOwner extends React.Component {
                 </SortTable>
               );
             })()}
-          </Well>
-          <Well>
+          </div>
+          <div className="well">
             <SubHeader title={`Equipment (${owner.numberOfEquipment})`} />
             {(() => {
               if (!owner.equipmentList || owner.equipmentList.length === 0) {
@@ -333,7 +333,7 @@ class BusinessOwner extends React.Component {
                 </SortTable>
               );
             })()}
-          </Well>
+          </div>
         </div>
       </div>
     );

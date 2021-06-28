@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Well, Row, Col, Table, Alert, Button, Badge, ButtonGroup } from 'react-bootstrap';
+import { Row, Col, Table, Alert, Button, Badge, ButtonGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
@@ -211,7 +211,7 @@ class RentalAgreementsDetail extends React.Component {
           <Col xs={10}>{buttons}</Col>
         </Row>
 
-        <Well id="rental-agreement-header">
+        <div className="well" id="rental-agreement-header">
           {(() => {
             if (loading) {
               return (
@@ -286,9 +286,9 @@ class RentalAgreementsDetail extends React.Component {
               </div>
             );
           })()}
-        </Well>
+        </div>
 
-        <Well style={{ minHeight: 120 }}>
+        <div className="well" style={{ minHeight: 120 }}>
           <SubHeader
             title="Details"
             editButtonDisabled={loading}
@@ -329,9 +329,9 @@ class RentalAgreementsDetail extends React.Component {
               </Row>
             );
           })()}
-        </Well>
+        </div>
 
-        <Well>
+        <div className="well">
           <SubHeader title="Equipment Rate and Included Rates and Attachments" />
           {(() => {
             if (loading) {
@@ -442,9 +442,9 @@ class RentalAgreementsDetail extends React.Component {
               </div>
             );
           })()}
-        </Well>
+        </div>
 
-        <Well>
+        <div className="well">
           <SubHeader title="As-Needed Rates and Attachments" />
           {(() => {
             if (loading) {
@@ -531,9 +531,9 @@ class RentalAgreementsDetail extends React.Component {
               </div>
             );
           })()}
-        </Well>
+        </div>
 
-        <Well>
+        <div className="well">
           <SubHeader title="Conditions" />
           {(() => {
             if (loading) {
@@ -610,9 +610,9 @@ class RentalAgreementsDetail extends React.Component {
               </div>
             );
           })()}
-        </Well>
+        </div>
 
-        <Well>
+        <div className="well">
           <SubHeader
             title="Overtime Rates and Notes/Special Instructions"
             editButtonDisabled={loading}
@@ -653,7 +653,7 @@ class RentalAgreementsDetail extends React.Component {
           >
             {rentalAgreement && rentalAgreement.note}
           </ColDisplay>
-        </Well>
+        </div>
 
         <Row id="rental-agreements-footer">{buttons}</Row>
         {this.state.showEditDialog && (

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Well, Dropdown, FormControl, FormCheck } from 'react-bootstrap';
+import { Dropdown, FormControl, FormCheck } from 'react-bootstrap';
 import RootCloseMenu from './RootCloseMenu.jsx';
 import _ from 'lodash';
 
@@ -164,7 +164,7 @@ class MultiDropdown extends React.Component {
       >
         <Dropdown.Toggle title={this.state.title} />
         <RootCloseMenu bsRole="menu">
-          <Well bsSize="small">
+          <div className="well well-sm">
             <FormControl
               type="text"
               placeholder="Search"
@@ -181,7 +181,7 @@ class MultiDropdown extends React.Component {
               onChange={this.selectAll}
               label="Select All"
             />
-          </Well>
+          </div>
           {items.length > 0 && (
             <ul>
               {_.map(items, (item) => {

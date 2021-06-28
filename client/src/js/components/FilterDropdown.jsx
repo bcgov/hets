@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import { Well, Dropdown, FormControl, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Dropdown, FormControl, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import _ from 'lodash';
 
 import RootCloseMenu from './RootCloseMenu.jsx';
@@ -150,7 +150,7 @@ class FilterDropdown extends React.Component {
       >
         <Dropdown.Toggle title={this.state.title} />
         <RootCloseMenu bsRole="menu">
-          <Well bsSize="small">
+          <div className="well well-sm">
             <FormControl
               type="text"
               placeholder="Search"
@@ -160,7 +160,7 @@ class FilterDropdown extends React.Component {
               }}
               onKeyDown={this.keyDown}
             />
-          </Well>
+          </div>
           {items.length > 0 && (
             <ul>
               {blankLine && this.state.filterTerm.length === 0 && (

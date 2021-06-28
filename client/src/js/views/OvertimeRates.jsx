@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Button, ButtonGroup, Well } from 'react-bootstrap';
+import { Button, ButtonGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
@@ -62,7 +62,7 @@ class OvertimeRates extends React.Component {
       <div id="overtime-rates">
         <PageHeader>Manage Rental Agreement Overtime Rates</PageHeader>
 
-        <Well>
+        <div className="well">
           {(() => {
             if (this.props.overtimeRateTypes.length === 0) {
               return (
@@ -104,7 +104,7 @@ class OvertimeRates extends React.Component {
               </TableControl>
             );
           })()}
-        </Well>
+        </div>
 
         {this.state.showOvertimeRateEditDialog && (
           <OvertimeRateEditDialog

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col, Alert, Button, ButtonGroup, Badge } from 'react-bootstrap';
+import { Row, Col, Alert, Button, ButtonGroup, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
@@ -269,7 +269,7 @@ class RentalRequestsDetail extends React.Component {
           </Col>
         </Row>
 
-        <Well className="request-information">
+        <div className="well request-information">
           <SubHeader
             title="Request Information"
             className="hidden-print"
@@ -350,9 +350,9 @@ class RentalRequestsDetail extends React.Component {
               </Row>
             );
           })()}
-        </Well>
+        </div>
 
-        <Well>
+        <div className="well">
           <SubHeader title="Hire Rotation List" className="hidden-print">
             <PrintButton
               title="Print Hire Rotation List"
@@ -549,14 +549,14 @@ class RentalRequestsDetail extends React.Component {
               </TableControl>
             );
           })()}
-        </Well>
+        </div>
 
-        <Well className="history">
+        <div className="well history">
           <SubHeader title="History" />
           {rentalRequest.historyEntity && (
             <History historyEntity={rentalRequest.historyEntity} refresh={!this.state.reloading} />
           )}
-        </Well>
+        </div>
         {this.state.showEditDialog && (
           <RentalRequestsEditDialog
             show={this.state.showEditDialog}

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col, Alert, Badge, Button, Popover, FormGroup, FormText, ButtonGroup } from 'react-bootstrap';
+import { Row, Col, Alert, Badge, Button, Popover, FormGroup, FormText, ButtonGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -224,7 +224,7 @@ class UsersDetail extends React.Component {
 
           <Row>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader
                   title="General"
                   editButtonTitle="Edit User"
@@ -275,12 +275,12 @@ class UsersDetail extends React.Component {
                     </Row>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
           </Row>
           <Row>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader title="Districts" />
                 {(() => {
                   var addDistrictButton = (
@@ -361,12 +361,12 @@ class UsersDetail extends React.Component {
                     </TableControl>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
           </Row>
           <Row>
             <Col md={12}>
-              <Well id="users-access">
+              <div className="well" id="users-access">
                 <h3>
                   Access
                   <CheckboxControl
@@ -464,7 +464,7 @@ class UsersDetail extends React.Component {
                     </SortTable>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
           </Row>
         </div>

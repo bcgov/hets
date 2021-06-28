@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import { Alert, Button, ButtonGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
@@ -394,7 +394,7 @@ class ProjectsDetail extends React.Component {
 
           <Row>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader
                   title="Project Information"
                   editButtonTitle="Edit Project"
@@ -477,8 +477,8 @@ class ProjectsDetail extends React.Component {
                     </Row>
                   );
                 })()}
-              </Well>
-              <Well>
+              </div>
+              <div className="well">
                 <SubHeader title="Hired Equipment / Requests">
                   <CheckboxControl
                     id="includeCompletedRequests"
@@ -537,10 +537,10 @@ class ProjectsDetail extends React.Component {
                     </TableControl>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader title="Contacts" />
                 {(() => {
                   if (loading) {
@@ -628,13 +628,13 @@ class ProjectsDetail extends React.Component {
                     </SortTable>
                   );
                 })()}
-              </Well>
-              <Well>
+              </div>
+              <div className="well">
                 <SubHeader title="History" />
                 {project.historyEntity && (
                   <History historyEntity={project.historyEntity} refresh={!this.state.reloading} />
                 )}
-              </Well>
+              </div>
             </Col>
           </Row>
         </div>
