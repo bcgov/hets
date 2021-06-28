@@ -111,16 +111,16 @@ class Home extends React.Component {
           <SubHeader title="Summary" />
           <Row>
             <Col md={12} className="btn-container">
-              <Button onClick={this.goToUnapprovedOwners}>
+              <Button variant="secondary" onClick={this.goToUnapprovedOwners}>
                 Unapproved owners {!_.isEmpty(counts) && `(${counts.unapprovedOwners})`}
               </Button>
-              <Button onClick={this.goToUnapprovedEquipment}>
+              <Button variant="secondary" onClick={this.goToUnapprovedEquipment}>
                 Unapproved equipment {!_.isEmpty(counts) && `(${counts.unapprovedEquipment})`}
               </Button>
-              <Button onClick={this.goToHiredEquipment}>
+              <Button variant="secondary" onClick={this.goToHiredEquipment}>
                 Currently hired equipment {!_.isEmpty(counts) && `(${counts.hiredEquipment})`}
               </Button>
-              <Button onClick={this.goToBlockedRotationLists}>
+              <Button variant="secondary" onClick={this.goToBlockedRotationLists}>
                 Blocked rotation lists {!_.isEmpty(counts) && `(${counts.inProgressRentalRequests})`}
               </Button>
             </Col>
