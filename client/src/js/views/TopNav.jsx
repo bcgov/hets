@@ -8,7 +8,6 @@ import {
   Nav,
   NavItem,
   NavDropdown,
-  MenuItem,
   OverlayTrigger,
   Dropdown,
   Popover,
@@ -150,7 +149,7 @@ class TopNav extends React.Component {
 
                 <NavDropdown id="reports-dropdown" title="Reports" disabled={navigationDisabled}>
                   <NavLinkWrapper
-                    tag={MenuItem}
+                    tag={Dropdown.Item}
                     to={Constant.AIT_REPORT_PATHNAME}
                     disabled={navigationDisabled}
                     active={this.pathMatch(Constant.AIT_REPORT_PATHNAME)} //active prop needed so NavDropdown will highlight if one of chidlren is active
@@ -158,7 +157,7 @@ class TopNav extends React.Component {
                     Rental Agreement Summary
                   </NavLinkWrapper>
                   <NavLinkWrapper
-                    tag={MenuItem}
+                    tag={Dropdown.Item}
                     to={Constant.SENIORITY_LIST_PATHNAME}
                     disabled={navigationDisabled}
                     active={this.pathMatch(Constant.SENIORITY_LIST_PATHNAME)}
@@ -166,7 +165,7 @@ class TopNav extends React.Component {
                     Seniority List
                   </NavLinkWrapper>
                   <NavLinkWrapper
-                    tag={MenuItem}
+                    tag={Dropdown.Item}
                     to={Constant.STATUS_LETTERS_REPORT_PATHNAME}
                     disabled={navigationDisabled}
                     active={this.pathMatch(Constant.STATUS_LETTERS_REPORT_PATHNAME)}
@@ -174,7 +173,7 @@ class TopNav extends React.Component {
                     Status Letters / Mailing Labels
                   </NavLinkWrapper>
                   <NavLinkWrapper
-                    tag={MenuItem}
+                    tag={Dropdown.Item}
                     to={Constant.HIRING_REPORT_PATHNAME}
                     disabled={navigationDisabled}
                     active={this.pathMatch(Constant.HIRING_REPORT_PATHNAME)}
@@ -182,7 +181,7 @@ class TopNav extends React.Component {
                     Hiring Report - Not Hired / Force Hire
                   </NavLinkWrapper>
                   <NavLinkWrapper
-                    tag={MenuItem}
+                    tag={Dropdown.Item}
                     to={Constant.OWNERS_COVERAGE_PATHNAME}
                     disabled={navigationDisabled}
                     active={this.pathMatch(Constant.OWNERS_COVERAGE_PATHNAME)}
@@ -208,7 +207,7 @@ class TopNav extends React.Component {
                   <NavDropdown id="admin-dropdown" title="Administration" disabled={navigationDisabled}>
                     {this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN) && (
                       <NavLinkWrapper
-                        tag={MenuItem}
+                        tag={Dropdown.Item}
                         to={Constant.OVERTIME_RATES_PATHNAME}
                         disabled={navigationDisabled}
                         active={this.pathMatch(Constant.OVERTIME_RATES_PATHNAME)}
@@ -218,7 +217,7 @@ class TopNav extends React.Component {
                     )}
                     {this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) && (
                       <NavLinkWrapper
-                        tag={MenuItem}
+                        tag={Dropdown.Item}
                         to={Constant.USERS_PATHNAME}
                         disabled={navigationDisabled}
                         active={this.pathMatch(Constant.USERS_PATHNAME)}
@@ -228,7 +227,7 @@ class TopNav extends React.Component {
                     )}
                     {this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) && (
                       <NavLinkWrapper
-                        tag={MenuItem}
+                        tag={Dropdown.Item}
                         to={Constant.ROLES_PATHNAME}
                         disabled={navigationDisabled}
                         active={this.pathMatch(Constant.ROLES_PATHNAME)}
@@ -238,7 +237,7 @@ class TopNav extends React.Component {
                     )}
                     {this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_ROLLOVER) && (
                       <NavLinkWrapper
-                        tag={MenuItem}
+                        tag={Dropdown.Item}
                         to={Constant.ROLLOVER_PATHNAME}
                         disabled={navigationDisabled}
                         active={this.pathMatch(Constant.ROLLOVER_PATHNAME)}
@@ -248,7 +247,7 @@ class TopNav extends React.Component {
                     )}
                     {this.props.currentUser.hasPermission(Constant.PERMISSION_VERSION) && (
                       <NavLinkWrapper
-                        tag={MenuItem}
+                        tag={Dropdown.Item}
                         to={Constant.VERSION_PATHNAME}
                         disabled={navigationDisabled}
                         active={this.pathMatch(Constant.VERSION_PATHNAME)}
