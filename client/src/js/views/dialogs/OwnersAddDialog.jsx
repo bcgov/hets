@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Constant from '../../constants';
@@ -321,7 +321,7 @@ class OwnersAddDialog extends React.Component {
             Company Name <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" value={this.state.name} updateState={this.updateState} autoFocus />
-          <HelpBlock>{this.state.nameError}</HelpBlock>
+          <FormText>{this.state.nameError}</FormText>
         </FormGroup>
         <FormGroup controlId="doingBusinessAs">
           <FormLabel>Doing Business As</FormLabel>
@@ -332,21 +332,21 @@ class OwnersAddDialog extends React.Component {
             Owner First Name <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" value={this.state.givenName} updateState={this.updateState} />
-          <HelpBlock>{this.state.ownerGivenNameError}</HelpBlock>
+          <FormText>{this.state.ownerGivenNameError}</FormText>
         </FormGroup>
         <FormGroup controlId="surname" validationState={this.state.ownerSurameError ? 'error' : null}>
           <FormLabel>
             Owner Last Name <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" value={this.state.surname} updateState={this.updateState} />
-          <HelpBlock>{this.state.ownerSurameError}</HelpBlock>
+          <FormText>{this.state.ownerSurameError}</FormText>
         </FormGroup>
         <FormGroup controlId="address1" validationState={this.state.address1Error ? 'error' : null}>
           <FormLabel>
             Address Line 1 <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" value={this.state.address1} updateState={this.updateState} />
-          <HelpBlock>{this.state.address1Error}</HelpBlock>
+          <FormText>{this.state.address1Error}</FormText>
         </FormGroup>
         <FormGroup controlId="address2">
           <FormLabel>Address Line 2</FormLabel>
@@ -357,28 +357,28 @@ class OwnersAddDialog extends React.Component {
             City <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" value={this.state.city} updateState={this.updateState} />
-          <HelpBlock>{this.state.cityError}</HelpBlock>
+          <FormText>{this.state.cityError}</FormText>
         </FormGroup>
         <FormGroup controlId="province" validationState={this.state.provinceError ? 'error' : null}>
           <FormLabel>
             Province <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" value={this.state.province} updateState={this.updateState} />
-          <HelpBlock>{this.state.provinceError}</HelpBlock>
+          <FormText>{this.state.provinceError}</FormText>
         </FormGroup>
         <FormGroup controlId="postalCode" validationState={this.state.postalCodeError ? 'error' : null}>
           <FormLabel>
             Postal Code <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" value={this.state.postalCode} updateState={this.updateState} />
-          <HelpBlock>{this.state.postalCodeError}</HelpBlock>
+          <FormText>{this.state.postalCodeError}</FormText>
         </FormGroup>
         <FormGroup controlId="ownerCode" validationState={this.state.ownerCodeError ? 'error' : null}>
           <FormLabel>
             Owner Code <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" value={this.state.ownerCode} updateState={this.updateState} />
-          <HelpBlock>{this.state.ownerCodeError || HELP_TEXT.prefix}</HelpBlock>
+          <FormText>{this.state.ownerCodeError || HELP_TEXT.prefix}</FormText>
         </FormGroup>
         <FormGroup controlId="localAreaId" validationState={this.state.localAreaError ? 'error' : null}>
           <FormLabel>
@@ -391,7 +391,7 @@ class OwnersAddDialog extends React.Component {
             updateState={this.updateState}
             className="full-width"
           />
-          <HelpBlock>{this.state.localAreaError}</HelpBlock>
+          <FormText>{this.state.localAreaError}</FormText>
         </FormGroup>
         <FormGroup
           controlId="workSafeBCPolicyNumber"
@@ -401,7 +401,7 @@ class OwnersAddDialog extends React.Component {
             WCB Number <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" value={this.state.workSafeBCPolicyNumber} updateState={this.updateState} />
-          <HelpBlock>{this.state.workSafeBCPolicyNumberError}</HelpBlock>
+          <FormText>{this.state.workSafeBCPolicyNumberError}</FormText>
         </FormGroup>
         <FormGroup
           controlId="primaryContactGivenName"
@@ -411,7 +411,7 @@ class OwnersAddDialog extends React.Component {
             Primary Contact First Name <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" value={this.state.primaryContactGivenName} updateState={this.updateState} />
-          <HelpBlock>{this.state.primaryContactGivenNameError}</HelpBlock>
+          <FormText>{this.state.primaryContactGivenNameError}</FormText>
         </FormGroup>
         <FormGroup controlId="primaryContactSurname">
           <FormLabel>Primary Contact Last Name</FormLabel>
@@ -430,7 +430,7 @@ class OwnersAddDialog extends React.Component {
             placeholder="250-555-1212x123"
             updateState={this.updateState}
           />
-          <HelpBlock>{this.state.primaryContactPhoneError}</HelpBlock>
+          <FormText>{this.state.primaryContactPhoneError}</FormText>
         </FormGroup>
         <FormGroup controlId="primaryContactRole">
           <FormLabel>Primary Contact Role</FormLabel>
@@ -467,7 +467,7 @@ class OwnersAddDialog extends React.Component {
           <CheckboxControl id="meetsResidency" checked={this.state.meetsResidency} updateState={this.updateState}>
             Meets Residency
           </CheckboxControl>
-          <HelpBlock>{this.state.residencyError}</HelpBlock>
+          <FormText>{this.state.residencyError}</FormText>
         </FormGroup>
       </FormDialog>
     );

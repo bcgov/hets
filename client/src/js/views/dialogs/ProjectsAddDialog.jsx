@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { FormGroup, HelpBlock, FormLabel, FormControl, Container, Row, Col } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel, FormControl, Container, Row, Col } from 'react-bootstrap';
 
 import * as Api from '../../api';
 import * as Constant from '../../constants';
@@ -181,7 +181,7 @@ class ProjectsAddDialog extends React.Component {
                   autoFocus
                   maxLength="60"
                 />
-                <HelpBlock>{this.state.nameError}</HelpBlock>
+                <FormText>{this.state.nameError}</FormText>
               </FormGroup>
             </Col>
           </Row>
@@ -203,7 +203,7 @@ class ProjectsAddDialog extends React.Component {
                   updateState={this.updateState}
                   items={_.takeRight(this.props.fiscalYears, 2)}
                 />
-                <HelpBlock>{this.state.fiscalYearError}</HelpBlock>
+                <FormText>{this.state.fiscalYearError}</FormText>
               </FormGroup>
             </Col>
           </Row>
@@ -221,7 +221,7 @@ class ProjectsAddDialog extends React.Component {
                   value={this.state.provincialProjectNumber}
                   updateState={this.updateState}
                 />
-                <HelpBlock>{this.state.provincialProjectNumberError}</HelpBlock>
+                <FormText>{this.state.provincialProjectNumberError}</FormText>
               </FormGroup>
             </Col>
             <Col xs={6}>

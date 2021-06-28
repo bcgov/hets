@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 
 import * as Constant from '../../constants';
 import * as Api from '../../api';
@@ -130,7 +130,7 @@ class EquipmentRentalRatesEditDialog extends React.Component {
                   updateState={this.updateState}
                   autoFocus
                 />
-                <HelpBlock>{this.state.equipmentRateError}</HelpBlock>
+                <FormText>{this.state.equipmentRateError}</FormText>
               </FormGroup>
             </Col>
             <Col md={3}>
@@ -145,7 +145,7 @@ class EquipmentRentalRatesEditDialog extends React.Component {
                   updateState={this.updateState}
                   items={ratePeriods}
                 />
-                <HelpBlock>{this.state.ratePeriodError}</HelpBlock>
+                <FormText>{this.state.ratePeriodError}</FormText>
               </FormGroup>
             </Col>
             <Col md={6}>

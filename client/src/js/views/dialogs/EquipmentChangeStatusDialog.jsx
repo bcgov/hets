@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormGroup, FormLabel, HelpBlock } from 'react-bootstrap';
+import { FormGroup, FormLabel, FormText } from 'react-bootstrap';
 
 import * as Api from '../../api';
 import * as Constant from '../../constants';
@@ -94,7 +94,7 @@ class EquipmentChangeStatusDialog extends React.Component {
             updateState={this.updateState}
             maxLength={maxLength}
           />
-          <HelpBlock>{this.state.commentError}</HelpBlock>
+          <FormText>{this.state.commentError}</FormText>
           <p>Maximum {maxLength} characters.</p>
         </FormGroup>
       </FormDialog>

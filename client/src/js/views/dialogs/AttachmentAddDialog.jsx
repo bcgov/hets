@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { FormGroup, HelpBlock, FormLabel, Button } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import * as Api from '../../api';
@@ -131,7 +131,7 @@ class AttachmentAddDialog extends React.Component {
             <FormGroup key={i} controlId="typeName" validationState={form.attachmentError ? 'error' : null}>
               <FormLabel>Attachment</FormLabel>
               <FormInputControl type="text" updateState={(state) => this.updateState(state, i)} />
-              <HelpBlock>{form.attachmentError}</HelpBlock>
+              <FormText>{form.attachmentError}</FormText>
             </FormGroup>
           ))}
         </div>

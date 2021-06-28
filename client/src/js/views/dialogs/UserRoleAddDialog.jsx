@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Container, Row, Col } from 'react-bootstrap';
-import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../../api';
@@ -164,7 +164,7 @@ class UserRoleAddDialog extends React.Component {
                       selectedId={this.state.roleId}
                       updateState={this.updateState}
                     />
-                    <HelpBlock>{this.state.roleIdError}</HelpBlock>
+                    <FormText>{this.state.roleIdError}</FormText>
                   </FormGroup>
                 </Col>
                 <Col md={4}>
@@ -178,7 +178,7 @@ class UserRoleAddDialog extends React.Component {
                       updateState={this.updateState}
                       title="effective date"
                     />
-                    <HelpBlock>{this.state.effectiveDateError}</HelpBlock>
+                    <FormText>{this.state.effectiveDateError}</FormText>
                   </FormGroup>
                 </Col>
                 <Col md={4}>
@@ -190,7 +190,7 @@ class UserRoleAddDialog extends React.Component {
                       updateState={this.updateState}
                       title="expiry date"
                     />
-                    <HelpBlock>{this.state.expiryDateError}</HelpBlock>
+                    <FormText>{this.state.expiryDateError}</FormText>
                   </FormGroup>
                 </Col>
               </Row>

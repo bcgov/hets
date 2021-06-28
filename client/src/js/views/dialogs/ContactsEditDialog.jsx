@@ -4,7 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Container, Row, Col, Button, Label } from 'react-bootstrap';
-import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 
 import * as Constant from '../../constants';
 
@@ -231,7 +231,7 @@ class ContactsEditDialog extends React.Component {
                   updateState={this.updateState}
                   autoFocus
                 />
-                <HelpBlock>{this.state.givenNameError}</HelpBlock>
+                <FormText>{this.state.givenNameError}</FormText>
               </FormGroup>
             </Col>
           </Row>
@@ -272,7 +272,7 @@ class ContactsEditDialog extends React.Component {
                   readOnly={isReadOnly}
                   updateState={this.updateState}
                 />
-                <HelpBlock>{this.state.workPhoneNumberError}</HelpBlock>
+                <FormText>{this.state.workPhoneNumberError}</FormText>
               </FormGroup>
             </Col>
           </Row>
@@ -290,7 +290,7 @@ class ContactsEditDialog extends React.Component {
                   readOnly={isReadOnly}
                   updateState={this.updateState}
                 />
-                <HelpBlock>{this.state.mobilePhoneNumberError}</HelpBlock>
+                <FormText>{this.state.mobilePhoneNumberError}</FormText>
               </FormGroup>
             </Col>
           </Row>
@@ -305,7 +305,7 @@ class ContactsEditDialog extends React.Component {
                   readOnly={isReadOnly}
                   updateState={this.updateState}
                 />
-                <HelpBlock>{this.state.faxPhoneNumberError}</HelpBlock>
+                <FormText>{this.state.faxPhoneNumberError}</FormText>
               </FormGroup>
             </Col>
           </Row>
@@ -319,7 +319,7 @@ class ContactsEditDialog extends React.Component {
                   readOnly={isReadOnly}
                   updateState={this.updateState}
                 />
-                <HelpBlock>{this.state.emailAddressError}</HelpBlock>
+                <FormText>{this.state.emailAddressError}</FormText>
               </FormGroup>
             </Col>
           </Row>

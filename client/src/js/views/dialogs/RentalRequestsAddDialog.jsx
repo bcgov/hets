@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormGroup, HelpBlock, FormLabel, Alert } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel, Alert } from 'react-bootstrap';
 import _ from 'lodash';
 import Moment from 'moment';
 
@@ -267,7 +267,7 @@ class RentalRequestsAddDialog extends React.Component {
           ) : (
             <div>{project ? project.name : 'Request - View Only'}</div>
           )}
-          <HelpBlock>{this.state.projectError}</HelpBlock>
+          <FormText>{this.state.projectError}</FormText>
         </FormGroup>
         <FormGroup controlId="localAreaId" validationState={this.state.localAreaError ? 'error' : null}>
           <FormLabel>
@@ -281,7 +281,7 @@ class RentalRequestsAddDialog extends React.Component {
             items={localAreas}
             className="full-width"
           />
-          <HelpBlock>{this.state.localAreaError}</HelpBlock>
+          <FormText>{this.state.localAreaError}</FormText>
         </FormGroup>
         <FormGroup controlId="equipmentTypeId" validationState={this.state.equipmentTypeError ? 'error' : null}>
           <FormLabel>
@@ -297,7 +297,7 @@ class RentalRequestsAddDialog extends React.Component {
             updateState={this.updateEquipmentTypeState}
             items={districtEquipmentTypes}
           />
-          <HelpBlock>{this.state.equipmentTypeError}</HelpBlock>
+          <FormText>{this.state.equipmentTypeError}</FormText>
         </FormGroup>
         {!this.props.viewOnly && (
           <FormGroup controlId="count" validationState={this.state.countError ? 'error' : null}>
@@ -305,7 +305,7 @@ class RentalRequestsAddDialog extends React.Component {
               Quantity <sup>*</sup>
             </FormLabel>
             <FormInputControl type="number" min="0" value={this.state.count} updateState={this.updateState} />
-            <HelpBlock>{this.state.countError}</HelpBlock>
+            <FormText>{this.state.countError}</FormText>
           </FormGroup>
         )}
         {!this.props.viewOnly && (
@@ -331,7 +331,7 @@ class RentalRequestsAddDialog extends React.Component {
               value={this.state.expectedHours}
               updateState={this.updateState}
             />
-            <HelpBlock>{this.state.expectedHoursError}</HelpBlock>
+            <FormText>{this.state.expectedHoursError}</FormText>
           </FormGroup>
         )}
         {!this.props.viewOnly && (
@@ -345,7 +345,7 @@ class RentalRequestsAddDialog extends React.Component {
               updateState={this.updateState}
               title="Dated At"
             />
-            <HelpBlock>{this.state.expectedStartDateError}</HelpBlock>
+            <FormText>{this.state.expectedStartDateError}</FormText>
           </FormGroup>
         )}
         {!this.props.viewOnly && (
@@ -357,7 +357,7 @@ class RentalRequestsAddDialog extends React.Component {
               updateState={this.updateState}
               title="Dated At"
             />
-            <HelpBlock>{this.state.expectedEndDateError}</HelpBlock>
+            <FormText>{this.state.expectedEndDateError}</FormText>
           </FormGroup>
         )}
         {this.state.savingError && <Alert bsStyle="danger">{this.state.savingError}</Alert>}

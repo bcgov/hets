@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 
 import * as Api from '../../api';
 
@@ -130,14 +130,14 @@ class ConditionAddEditDialog extends React.Component {
             Type Code <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" value={this.state.typeCode} updateState={this.updateState} />
-          <HelpBlock>{this.state.typeCodeError}</HelpBlock>
+          <FormText>{this.state.typeCodeError}</FormText>
         </FormGroup>
         <FormGroup controlId="description" validationState={this.state.descriptionError ? 'error' : null}>
           <FormLabel>
             Description <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" value={this.state.description} updateState={this.updateState} />
-          <HelpBlock>{this.state.descriptionError}</HelpBlock>
+          <FormText>{this.state.descriptionError}</FormText>
         </FormGroup>
       </FormDialog>
     );

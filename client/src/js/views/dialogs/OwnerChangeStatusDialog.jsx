@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormGroup, FormLabel, HelpBlock } from 'react-bootstrap';
+import { FormGroup, FormLabel, FormText } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../../api';
@@ -153,19 +153,19 @@ class ChangeStatusDialog extends React.Component {
             updateState={this.updateState}
             maxLength={maxLength}
           />
-          <HelpBlock>{this.state.commentError}</HelpBlock>
+          <FormText>{this.state.commentError}</FormText>
           <p>Maximum {maxLength} characters.</p>
-          <HelpBlock>
+          <FormText>
             {this.state.statusError && statusErrorText}
             <ul>
               {_.map(this.state.statusError, (error) => {
                 return <li>{error}</li>;
               })}
             </ul>
-          </HelpBlock>
+          </FormText>
           {archiving && (
             <div className="has-error">
-              <HelpBlock>{this.state.archiveWarning}</HelpBlock>
+              <FormText>{this.state.archiveWarning}</FormText>
             </div>
           )}
         </FormGroup>

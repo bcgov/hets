@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../../api';
@@ -266,7 +266,7 @@ class EquipmentAddDialog extends React.Component {
             items={localAreas}
             className="full-width"
           />
-          <HelpBlock>{this.state.localAreaError}</HelpBlock>
+          <FormText>{this.state.localAreaError}</FormText>
         </FormGroup>
         <FormGroup controlId="equipmentTypeId" validationState={this.state.equipmentTypeError ? 'error' : null}>
           <FormLabel>
@@ -281,28 +281,28 @@ class EquipmentAddDialog extends React.Component {
             updateState={this.updateState}
             items={districtEquipmentTypes}
           />
-          <HelpBlock>{this.state.equipmentTypeError}</HelpBlock>
+          <FormText>{this.state.equipmentTypeError}</FormText>
         </FormGroup>
         <FormGroup controlId="make" validationState={this.state.makeError ? 'error' : null}>
           <FormLabel>
             Make <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" defaultValue={this.state.make} updateState={this.updateState} autoFocus />
-          <HelpBlock>{this.state.makeError}</HelpBlock>
+          <FormText>{this.state.makeError}</FormText>
         </FormGroup>
         <FormGroup controlId="model" validationState={this.state.modelError ? 'error' : null}>
           <FormLabel>
             Model <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" defaultValue={this.state.model} updateState={this.updateState} />
-          <HelpBlock>{this.state.modelError}</HelpBlock>
+          <FormText>{this.state.modelError}</FormText>
         </FormGroup>
         <FormGroup controlId="year" validationState={this.state.yearError ? 'error' : null}>
           <FormLabel>
             Year <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" defaultValue={this.state.year} updateState={this.updateState} />
-          <HelpBlock>{this.state.yearError}</HelpBlock>
+          <FormText>{this.state.yearError}</FormText>
         </FormGroup>
         <FormGroup controlId="size">
           <FormLabel>Size</FormLabel>
@@ -321,7 +321,7 @@ class EquipmentAddDialog extends React.Component {
             Serial Number <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" defaultValue={this.state.serialNumber} updateState={this.updateState} />
-          <HelpBlock>{this.state.serialNumberError}</HelpBlock>
+          <FormText>{this.state.serialNumberError}</FormText>
         </FormGroup>
         {isDumpTruck && (
           <div>

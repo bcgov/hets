@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { Container, Row, Col } from 'react-bootstrap';
-import { FormControl, FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
+import { FormControl, FormGroup, FormText, FormLabel } from 'react-bootstrap';
 
 import * as Api from '../../api';
 import * as Log from '../../history';
@@ -204,7 +204,7 @@ class SeniorityEditDialog extends React.Component {
                   updateState={this.updateState}
                   autoFocus
                 />
-                <HelpBlock>{this.state.serviceHoursLastYearError}</HelpBlock>
+                <FormText>{this.state.serviceHoursLastYearError}</FormText>
               </FormGroup>
             </Col>
           </Row>
@@ -223,7 +223,7 @@ class SeniorityEditDialog extends React.Component {
                   onChange={this.seniorityOverrriden}
                   updateState={this.updateState}
                 />
-                <HelpBlock>{this.state.serviceHoursTwoYearsAgoError}</HelpBlock>
+                <FormText>{this.state.serviceHoursTwoYearsAgoError}</FormText>
               </FormGroup>
             </Col>
           </Row>
@@ -242,7 +242,7 @@ class SeniorityEditDialog extends React.Component {
                   onChange={this.seniorityOverrriden}
                   updateState={this.updateState}
                 />
-                <HelpBlock>{this.state.serviceHoursThreeYearsAgoError}</HelpBlock>
+                <FormText>{this.state.serviceHoursThreeYearsAgoError}</FormText>
               </FormGroup>
             </Col>
           </Row>
@@ -258,7 +258,7 @@ class SeniorityEditDialog extends React.Component {
                   updateState={this.updateState}
                   title="registered date"
                 />
-                <HelpBlock>{this.state.approvedDateError}</HelpBlock>
+                <FormText>{this.state.approvedDateError}</FormText>
               </FormGroup>
             </Col>
           </Row>
@@ -272,7 +272,7 @@ class SeniorityEditDialog extends React.Component {
                   onChange={this.seniorityOverrriden}
                   updateState={this.updateState}
                 />
-                <HelpBlock>{this.state.yearsRegisteredError}</HelpBlock>
+                <FormText>{this.state.yearsRegisteredError}</FormText>
               </FormGroup>
             </Col>
           </Row>
@@ -290,7 +290,7 @@ class SeniorityEditDialog extends React.Component {
                   value={this.state.seniorityOverrideReason}
                   updateState={this.updateState}
                 />
-                <HelpBlock>{this.state.overrideReasonError}</HelpBlock>
+                <FormText>{this.state.overrideReasonError}</FormText>
               </FormGroup>
             </Col>
           </Row>

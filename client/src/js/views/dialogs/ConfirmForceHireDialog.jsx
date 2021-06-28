@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Container, Row, Col, FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
+import { Container, Row, Col, FormGroup, FormText, FormLabel } from 'react-bootstrap';
 
 import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
@@ -78,7 +78,7 @@ class ConfirmForceHireDialog extends React.Component {
               >
                 <FormLabel>Reason for Force Hire</FormLabel>
                 <FormInputControl componentClass="textarea" updateState={this.updateState} />
-                <HelpBlock>{this.state.reasonForForceHireError}</HelpBlock>
+                <FormText>{this.state.reasonForForceHireError}</FormText>
               </FormGroup>
             </Col>
           </Row>

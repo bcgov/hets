@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormGroup, FormLabel, HelpBlock, Row, Col } from 'react-bootstrap';
+import { FormGroup, FormLabel, FormText, Row, Col } from 'react-bootstrap';
 
 import * as Constant from '../../constants';
 import * as Api from '../../api';
@@ -138,7 +138,7 @@ class OwnersPolicyEditDialog extends React.Component {
                 updateState={this.updateState}
                 autoFocus
               />
-              <HelpBlock>{this.state.workSafeBCPolicyNumberError}</HelpBlock>
+              <FormText>{this.state.workSafeBCPolicyNumberError}</FormText>
             </FormGroup>
           </Col>
           <Col xs={6}>
@@ -152,7 +152,7 @@ class OwnersPolicyEditDialog extends React.Component {
                 date={this.state.workSafeBCExpiryDate}
                 updateState={this.updateState}
               />
-              <HelpBlock>{this.state.workSafeBCExpiryDateError}</HelpBlock>
+              <FormText>{this.state.workSafeBCExpiryDateError}</FormText>
             </FormGroup>
           </Col>
         </Row>
@@ -180,7 +180,7 @@ class OwnersPolicyEditDialog extends React.Component {
             <FormGroup controlId="cglEndDate" validationState={this.state.cglEndDateError ? 'error' : null}>
               <FormLabel>CGL Policy End Date</FormLabel>
               <DateControl id="cglEndDate" date={this.state.cglEndDate} updateState={this.updateState} />
-              <HelpBlock>{this.state.cglEndDateError}</HelpBlock>
+              <FormText>{this.state.cglEndDateError}</FormText>
             </FormGroup>
           </Col>
         </Row>

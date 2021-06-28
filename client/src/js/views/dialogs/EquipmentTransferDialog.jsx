@@ -3,7 +3,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Button, Row, Col, FormGroup, FormLabel, HelpBlock, FormCheck } from 'react-bootstrap';
+import { Button, Row, Col, FormGroup, FormLabel, FormText, FormCheck } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -146,7 +146,7 @@ class EquipmentTransferDialog extends React.Component {
           <Col xs={4}>
             <FormGroup controlId="donorOwnerCode" validationState={this.state.donorOwnerCodeError ? 'error' : null}>
               <FormInputControl type="text" defaultValue={this.state.donorOwnerCode} updateState={this.updateState} />
-              <HelpBlock>{this.state.donorOwnerCodeError}</HelpBlock>
+              <FormText>{this.state.donorOwnerCodeError}</FormText>
             </FormGroup>
           </Col>
           <Col xs={4}>
@@ -157,7 +157,7 @@ class EquipmentTransferDialog extends React.Component {
                 selectedId={this.state.seniorityOption}
                 items={seniorityOptions}
               />
-              <HelpBlock>{this.state.seniorityOptionError}</HelpBlock>
+              <FormText>{this.state.seniorityOptionError}</FormText>
             </FormGroup>
           </Col>
           <Col xs={4}>
@@ -170,7 +170,7 @@ class EquipmentTransferDialog extends React.Component {
                 defaultValue={this.state.recipientOwnerCode}
                 updateState={this.updateState}
               />
-              <HelpBlock>{this.state.recipientOwnerCodeError}</HelpBlock>
+              <FormText>{this.state.recipientOwnerCodeError}</FormText>
             </FormGroup>
           </Col>
         </Row>
@@ -290,7 +290,7 @@ class EquipmentTransferDialog extends React.Component {
       <div id="transfer-complete">
         {this.state.equipmentTransferError && (
           <div className="has-error">
-            <HelpBlock>Error: {this.state.equipmentTransferError}</HelpBlock>
+            <FormText>Error: {this.state.equipmentTransferError}</FormText>
           </div>
         )}
         {this.state.equipmentTransferError && <p>The selected equipment has not been transferred.</p>}

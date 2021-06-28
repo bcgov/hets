@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col, Alert, Label, Button, Popover, FormGroup, HelpBlock, ButtonGroup } from 'react-bootstrap';
+import { Well, Row, Col, Alert, Label, Button, Popover, FormGroup, FormText, ButtonGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -546,7 +546,7 @@ class ExpireOverlay extends React.Component {
               updateState={this.updateState}
               title="Expiry Date"
             />
-            <HelpBlock>{this.state.expiryDateError}</HelpBlock>
+            <FormText>{this.state.expiryDateError}</FormText>
           </FormGroup>
           <Button bsStyle="primary" onClick={this.saveUserRole} className="pull-right">
             Save

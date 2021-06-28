@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import _ from 'lodash';
 
-import { Container, Row, Col, FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
+import { Container, Row, Col, FormGroup, FormText, FormLabel } from 'react-bootstrap';
 
 import * as Api from '../../api';
 import * as Log from '../../history';
@@ -295,7 +295,7 @@ class EquipmentEditDialog extends React.Component {
                   items={localAreas}
                   className="full-width"
                 />
-                <HelpBlock>{this.state.localAreaError}</HelpBlock>
+                <FormText>{this.state.localAreaError}</FormText>
               </FormGroup>
             </Col>
           </Row>
@@ -314,7 +314,7 @@ class EquipmentEditDialog extends React.Component {
                   selectedId={this.state.equipmentTypeId}
                   updateState={(state) => this.updateState(state, this.onEquipmentTypeChanged)}
                 />
-                <HelpBlock>{this.state.equipmentTypeError}</HelpBlock>
+                <FormText>{this.state.equipmentTypeError}</FormText>
               </FormGroup>
             </Col>
           </Row>
@@ -325,7 +325,7 @@ class EquipmentEditDialog extends React.Component {
                   Make <sup>*</sup>
                 </FormLabel>
                 <FormInputControl type="text" defaultValue={this.state.make} updateState={this.updateState} autoFocus />
-                <HelpBlock>{this.state.makeError}</HelpBlock>
+                <FormText>{this.state.makeError}</FormText>
               </FormGroup>
             </Col>
           </Row>
@@ -336,7 +336,7 @@ class EquipmentEditDialog extends React.Component {
                   Model <sup>*</sup>
                 </FormLabel>
                 <FormInputControl type="text" defaultValue={this.state.model} updateState={this.updateState} />
-                <HelpBlock>{this.state.modelError}</HelpBlock>
+                <FormText>{this.state.modelError}</FormText>
               </FormGroup>
             </Col>
           </Row>
@@ -347,7 +347,7 @@ class EquipmentEditDialog extends React.Component {
                   Year <sup>*</sup>
                 </FormLabel>
                 <FormInputControl type="text" defaultValue={this.state.year} updateState={this.updateState} />
-                <HelpBlock>{this.state.yearError}</HelpBlock>
+                <FormText>{this.state.yearError}</FormText>
               </FormGroup>
             </Col>
           </Row>
@@ -382,7 +382,7 @@ class EquipmentEditDialog extends React.Component {
                   Serial Number <sup>*</sup>
                 </FormLabel>
                 <FormInputControl type="text" defaultValue={this.state.serialNumber} updateState={this.updateState} />
-                <HelpBlock>{this.state.serialNumberError}</HelpBlock>
+                <FormText>{this.state.serialNumberError}</FormText>
               </FormGroup>
             </Col>
           </Row>

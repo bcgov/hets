@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormGroup, HelpBlock, FormLabel, FormControl } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel, FormControl } from 'react-bootstrap';
 import Moment from 'moment';
 
 import * as Api from '../../api';
@@ -185,7 +185,7 @@ class RentalRequestsEditDialog extends React.Component {
             updateState={this.updateState}
             autoFocus
           />
-          <HelpBlock>{this.state.equipmentCountError}</HelpBlock>
+          <FormText>{this.state.equipmentCountError}</FormText>
         </FormGroup>
         <FormGroup controlId="expectedHours" validationState={this.state.expectedHoursError ? 'error' : null}>
           <FormLabel>
@@ -198,7 +198,7 @@ class RentalRequestsEditDialog extends React.Component {
             readOnly={isReadOnly}
             updateState={this.updateState}
           />
-          <HelpBlock>{this.state.expectedHoursError}</HelpBlock>
+          <FormText>{this.state.expectedHoursError}</FormText>
         </FormGroup>
         <FormGroup controlId="expectedStartDate" validationState={this.state.expectedStartDateError ? 'error' : null}>
           <FormLabel>
@@ -211,7 +211,7 @@ class RentalRequestsEditDialog extends React.Component {
             updateState={this.updateState}
             title="Dated At"
           />
-          <HelpBlock>{this.state.expectedStartDateError}</HelpBlock>
+          <FormText>{this.state.expectedStartDateError}</FormText>
         </FormGroup>
         <FormGroup controlId="expectedEndDate" validationState={this.state.expectedEndDateError ? 'error' : null}>
           <FormLabel>
@@ -224,7 +224,7 @@ class RentalRequestsEditDialog extends React.Component {
             updateState={this.updateState}
             title="Dated At"
           />
-          <HelpBlock>{this.state.expectedEndDateError}</HelpBlock>
+          <FormText>{this.state.expectedEndDateError}</FormText>
         </FormGroup>
       </FormDialog>
     );

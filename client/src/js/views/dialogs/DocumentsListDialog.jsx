@@ -4,7 +4,7 @@ import { saveAs } from 'file-saver';
 
 import { connect } from 'react-redux';
 
-import { Alert, Button, ButtonGroup, ProgressBar, HelpBlock } from 'react-bootstrap';
+import { Alert, Button, ButtonGroup, ProgressBar, FormText } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import _ from 'lodash';
@@ -184,10 +184,10 @@ class DocumentsListDialog extends React.Component {
               <div className="file-picker-container">
                 <FilePicker onFilesSelected={this.uploadFiles} />
                 <div>Select one or more files{parent.name ? ` to attach to ${parent.name}` : null}</div>
-                <HelpBlock>The maximum size of each file is {Constant.MAX_ATTACHMENT_FILE_SIZE_READABLE}.</HelpBlock>
+                <FormText>The maximum size of each file is {Constant.MAX_ATTACHMENT_FILE_SIZE_READABLE}.</FormText>
                 {this.state.uploadError && (
                   <div className="has-error">
-                    <HelpBlock>{this.state.uploadError}</HelpBlock>
+                    <FormText>{this.state.uploadError}</FormText>
                   </div>
                 )}
               </div>

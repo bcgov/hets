@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { FormGroup, HelpBlock, FormLabel, Row, Col } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel, Row, Col } from 'react-bootstrap';
 
 import * as Api from '../../api';
 import * as Constant from '../../constants';
@@ -124,7 +124,7 @@ class OvertimeRateEditDialog extends React.Component {
                 Description <sup>*</sup>
               </FormLabel>
               <FormInputControl type="text" value={this.state.description} updateState={this.updateState} />
-              <HelpBlock>{this.state.descriptionError}</HelpBlock>
+              <FormText>{this.state.descriptionError}</FormText>
             </FormGroup>
           </Col>
           <Col xs={6}>
@@ -142,7 +142,7 @@ class OvertimeRateEditDialog extends React.Component {
                 />
                 <FormLabel>per hour</FormLabel>
               </div>
-              <HelpBlock>{this.state.valueError}</HelpBlock>
+              <FormText>{this.state.valueError}</FormText>
             </FormGroup>
           </Col>
         </Row>

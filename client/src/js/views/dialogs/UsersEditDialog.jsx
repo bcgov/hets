@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Constant from '../../constants';
@@ -204,21 +204,21 @@ class UsersEditDialog extends React.Component {
             Given Name <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" defaultValue={this.state.givenName} updateState={this.updateState} autoFocus />
-          <HelpBlock>{this.state.givenNameError}</HelpBlock>
+          <FormText>{this.state.givenNameError}</FormText>
         </FormGroup>
         <FormGroup controlId="surname" validationState={this.state.surnameError ? 'error' : null}>
           <FormLabel>
             Surname <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" defaultValue={this.state.surname} updateState={this.updateState} />
-          <HelpBlock>{this.state.surnameError}</HelpBlock>
+          <FormText>{this.state.surnameError}</FormText>
         </FormGroup>
         <FormGroup controlId="smUserId" validationState={this.state.smUserIdError ? 'error' : null}>
           <FormLabel>
             User ID <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" defaultValue={this.state.smUserId} updateState={this.updateState} />
-          <HelpBlock>{this.state.smUserIdError}</HelpBlock>
+          <FormText>{this.state.smUserIdError}</FormText>
         </FormGroup>
         <FormGroup controlId="status">
           <FormLabel>Status</FormLabel>
@@ -235,7 +235,7 @@ class UsersEditDialog extends React.Component {
             E-mail <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" defaultValue={this.state.email} updateState={this.updateState} />
-          <HelpBlock>{this.state.emailError}</HelpBlock>
+          <FormText>{this.state.emailError}</FormText>
         </FormGroup>
         <FormGroup controlId="districtId" validationState={this.state.districtIdError ? 'error' : null}>
           <FormLabel>
@@ -250,7 +250,7 @@ class UsersEditDialog extends React.Component {
             updateState={this.updateState}
             className="full-width"
           />
-          <HelpBlock>{this.state.districtIdError}</HelpBlock>
+          <FormText>{this.state.districtIdError}</FormText>
         </FormGroup>
         <FormGroup controlId="agreementCity">
           <FormLabel>Location</FormLabel>

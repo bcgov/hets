@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
-import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 
 import * as Api from '../../api';
 
@@ -135,7 +135,7 @@ class RentalAgreementsEditDialog extends React.Component {
                 updateState={this.updateState}
                 title="Estimated Commencement"
               />
-              <HelpBlock>{this.state.estimateStartWorkError}</HelpBlock>
+              <FormText>{this.state.estimateStartWorkError}</FormText>
             </FormGroup>
           </Col>
           <Col md={6}>
@@ -150,7 +150,7 @@ class RentalAgreementsEditDialog extends React.Component {
                 readOnly={isReadOnly}
                 updateState={this.updateState}
               />
-              <HelpBlock>{this.state.estimateHoursError}</HelpBlock>
+              <FormText>{this.state.estimateHoursError}</FormText>
             </FormGroup>
           </Col>
         </Row>
@@ -165,7 +165,7 @@ class RentalAgreementsEditDialog extends React.Component {
                 updateState={this.updateState}
                 title="Dated On"
               />
-              <HelpBlock>{this.state.datedOnError}</HelpBlock>
+              <FormText>{this.state.datedOnError}</FormText>
             </FormGroup>
           </Col>
           <Col md={6}>

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../../api';
@@ -151,7 +151,7 @@ class DistrictEquipmentTypeAddEditDialog extends React.Component {
             items={equipmentTypes}
             updateState={this.updateState}
           />
-          <HelpBlock>{this.state.equipmentTypeIdError}</HelpBlock>
+          <FormText>{this.state.equipmentTypeIdError}</FormText>
         </FormGroup>
         <FormGroup
           controlId="districtEquipmentName"
@@ -161,7 +161,7 @@ class DistrictEquipmentTypeAddEditDialog extends React.Component {
             Equipment Type/Description <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" value={this.state.districtEquipmentName} updateState={this.updateState} />
-          <HelpBlock>{this.state.districtEquipmentNameError}</HelpBlock>
+          <FormText>{this.state.districtEquipmentNameError}</FormText>
         </FormGroup>
       </FormDialog>
     );

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Alert, Dropdown, ButtonToolbar, Button } from 'react-bootstrap';
-import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 import { Col } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
@@ -109,7 +109,7 @@ class EditFavouritesDialog extends React.Component {
             updateState={this.updateState}
             autoFocus
           />
-          <HelpBlock>{nameError}</HelpBlock>
+          <FormText>{nameError}</FormText>
         </FormGroup>
         <CheckboxControl id="isDefault" checked={isDefault} updateState={this.updateState}>
           Default

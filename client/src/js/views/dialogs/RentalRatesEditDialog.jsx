@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
-import { FormGroup, HelpBlock, FormLabel, Button } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
@@ -228,7 +228,7 @@ class RentalRatesEditDialog extends React.Component {
                 updateState={this.updateState}
                 autoFocus
               />
-              <HelpBlock>{form.rateError}</HelpBlock>
+              <FormText>{form.rateError}</FormText>
             </FormGroup>
           </Col>
           <Col md={3}>{ratePeriodElement}</Col>
@@ -238,7 +238,7 @@ class RentalRatesEditDialog extends React.Component {
                 Comment <sup>*</sup>
               </FormLabel>
               <FormInputControl defaultValue={form.comment} readOnly={isReadOnly} updateState={this.updateState} />
-              <HelpBlock>{form.commentError}</HelpBlock>
+              <FormText>{form.commentError}</FormText>
             </FormGroup>
           </Col>
         </Row>

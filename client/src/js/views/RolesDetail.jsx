@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Well, Container, Row, Col } from 'react-bootstrap';
-import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 import { Table, Button } from 'react-bootstrap';
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -238,7 +238,7 @@ class RolesDetail extends React.Component {
                           Name <sup>*</sup>
                         </FormLabel>
                         <FormInputControl type="text" defaultValue={this.state.name} updateState={this.updateState} />
-                        <HelpBlock>{this.state.nameError}</HelpBlock>
+                        <FormText>{this.state.nameError}</FormText>
                       </FormGroup>
                     </Col>
                     <Col md={9}>
@@ -251,7 +251,7 @@ class RolesDetail extends React.Component {
                           defaultValue={this.state.description}
                           updateState={this.updateState}
                         />
-                        <HelpBlock>{this.state.descriptionError}</HelpBlock>
+                        <FormText>{this.state.descriptionError}</FormText>
                       </FormGroup>
                     </Col>
                   </Row>

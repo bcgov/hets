@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Container, Row, Col, Radio, FormGroup, FormLabel, HelpBlock } from 'react-bootstrap';
+import { Container, Row, Col, Radio, FormGroup, FormLabel, FormText } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../../api';
@@ -310,7 +310,7 @@ class HireOfferEditDialog extends React.Component {
                         updateState={this.updateState}
                         items={refusalReasons}
                       />
-                      <HelpBlock>{this.state.offerRefusalReasonError}</HelpBlock>
+                      <FormText>{this.state.offerRefusalReasonError}</FormText>
                     </FormGroup>
                   </Col>
                 </Row>
@@ -340,7 +340,7 @@ class HireOfferEditDialog extends React.Component {
                   </FormGroup>
                 </Col>
               </Row>
-              <HelpBlock>{this.state.offerResponseError}</HelpBlock>
+              <FormText>{this.state.offerResponseError}</FormText>
             </FormGroup>
           </Col>
           <Row>
@@ -356,7 +356,7 @@ class HireOfferEditDialog extends React.Component {
                   readOnly={isReadOnly}
                   updateState={this.updateState}
                 />
-                <HelpBlock>{this.state.offerResponseNoteError}</HelpBlock>
+                <FormText>{this.state.offerResponseNoteError}</FormText>
               </FormGroup>
             </Col>
           </Row>

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Constant from '../../constants';
@@ -230,7 +230,7 @@ class OwnersEditDialog extends React.Component {
             Company Name <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" value={this.state.organizationName} updateState={this.updateState} autoFocus />
-          <HelpBlock>{this.state.organizationNameError}</HelpBlock>
+          <FormText>{this.state.organizationNameError}</FormText>
         </FormGroup>
         <FormGroup controlId="doingBusinessAs">
           <FormLabel>Doing Business As</FormLabel>
@@ -249,7 +249,7 @@ class OwnersEditDialog extends React.Component {
             Address Line 1 <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" value={this.state.address1} updateState={this.updateState} />
-          <HelpBlock>{this.state.address1Error}</HelpBlock>
+          <FormText>{this.state.address1Error}</FormText>
         </FormGroup>
         <FormGroup controlId="address2">
           <FormLabel>Address Line 2</FormLabel>
@@ -260,21 +260,21 @@ class OwnersEditDialog extends React.Component {
             City <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" value={this.state.city} updateState={this.updateState} />
-          <HelpBlock>{this.state.cityError}</HelpBlock>
+          <FormText>{this.state.cityError}</FormText>
         </FormGroup>
         <FormGroup controlId="province" validationState={this.state.provinceError ? 'error' : null}>
           <FormLabel>
             Province <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" value={this.state.province} updateState={this.updateState} />
-          <HelpBlock>{this.state.provinceError}</HelpBlock>
+          <FormText>{this.state.provinceError}</FormText>
         </FormGroup>
         <FormGroup controlId="postalCode" validationState={this.state.postalCodeError ? 'error' : null}>
           <FormLabel>
             Postal Code <sup>*</sup>
           </FormLabel>
           <FormInputControl type="text" value={this.state.postalCode} updateState={this.updateState} />
-          <HelpBlock>{this.state.postalCodeError}</HelpBlock>
+          <FormText>{this.state.postalCodeError}</FormText>
         </FormGroup>
         <FormGroup controlId="localAreaId" validationState={this.state.localAreaError ? 'error' : null}>
           <FormLabel>
@@ -287,7 +287,7 @@ class OwnersEditDialog extends React.Component {
             updateState={(state) => this.updateState(state, this.onLocalAreaChanged)}
             className="full-width"
           />
-          <HelpBlock>{this.state.localAreaError}</HelpBlock>
+          <FormText>{this.state.localAreaError}</FormText>
         </FormGroup>
         <FormGroup controlId="registeredCompanyNumber">
           <FormLabel>Registered BC Company Number</FormLabel>

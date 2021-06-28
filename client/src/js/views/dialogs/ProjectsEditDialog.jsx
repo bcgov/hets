@@ -3,7 +3,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Container, Row, Col, FormGroup, HelpBlock, FormLabel } from 'react-bootstrap';
+import { Container, Row, Col, FormGroup, FormText, FormLabel } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -205,7 +205,7 @@ class ProjectsEditDialog extends React.Component {
                     autoFocus
                     maxLength="60"
                   />
-                  <HelpBlock>{this.state.nameError}</HelpBlock>
+                  <FormText>{this.state.nameError}</FormText>
                 </FormGroup>
               </Col>
             </Row>
@@ -221,7 +221,7 @@ class ProjectsEditDialog extends React.Component {
                     updateState={this.updateState}
                     items={_.takeRight(this.props.fiscalYears, 2)}
                   />
-                  <HelpBlock>{this.state.fiscalYearError}</HelpBlock>
+                  <FormText>{this.state.fiscalYearError}</FormText>
                 </FormGroup>
               </Col>
               <Col xs={6}>
@@ -237,7 +237,7 @@ class ProjectsEditDialog extends React.Component {
                     value={this.state.provincialProjectNumber}
                     updateState={this.updateState}
                   />
-                  <HelpBlock>{this.state.provincialProjectNumberError}</HelpBlock>
+                  <FormText>{this.state.provincialProjectNumberError}</FormText>
                 </FormGroup>
               </Col>
             </Row>

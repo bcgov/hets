@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { FormGroup, FormLabel, HelpBlock } from 'react-bootstrap';
+import { FormGroup, FormLabel, FormText } from 'react-bootstrap';
 
 import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
@@ -103,7 +103,7 @@ class NotesAddDialog extends React.Component {
             updateState={this.updateState}
             maxLength={maxLength}
           />
-          <HelpBlock>{this.state.noteError}</HelpBlock>
+          <FormText>{this.state.noteError}</FormText>
           <p>Maximum {maxLength} characters.</p>
         </FormGroup>
       </FormDialog>

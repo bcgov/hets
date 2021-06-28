@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Container, Row, Col, FormGroup, FormLabel, HelpBlock, Button } from 'react-bootstrap';
+import { Container, Row, Col, FormGroup, FormLabel, FormText, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import Moment from 'moment';
@@ -384,7 +384,7 @@ class TimeEntryDialog extends React.Component {
                   updateState={this.updateState}
                   items={equipment}
                 />
-                <HelpBlock>{this.state.equipmentIdError}</HelpBlock>
+                <FormText>{this.state.equipmentIdError}</FormText>
               </FormGroup>
             </Col>
             <Col xs={6}>
@@ -400,7 +400,7 @@ class TimeEntryDialog extends React.Component {
                   updateState={this.updateState}
                   items={projects}
                 />
-                <HelpBlock>{this.state.projectIdError}</HelpBlock>
+                <FormText>{this.state.projectIdError}</FormText>
               </FormGroup>
             </Col>
           </Row>
@@ -528,7 +528,7 @@ class TimeEntryDialog extends React.Component {
                       date={this.state.timeEntry[key].date}
                       updateState={this.updateTimeEntryState}
                     />
-                    <HelpBlock>{this.state.timeEntry[key].errorDate}</HelpBlock>
+                    <FormText>{this.state.timeEntry[key].errorDate}</FormText>
                   </FormGroup>
                 </Col>
                 <Col sm={4}>
@@ -541,7 +541,7 @@ class TimeEntryDialog extends React.Component {
                       value={this.state.timeEntry[key].hours}
                       updateState={this.updateTimeEntryState}
                     />
-                    <HelpBlock>{this.state.timeEntry[key].errorHours}</HelpBlock>
+                    <FormText>{this.state.timeEntry[key].errorHours}</FormText>
                   </FormGroup>
                 </Col>
               </Row>

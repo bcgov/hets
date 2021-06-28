@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormGroup, HelpBlock, FormLabel, Button } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
@@ -177,7 +177,7 @@ class RentalConditionsEditDialog extends React.Component {
                     title={form.conditionName}
                     className="full-width"
                   />
-                  <HelpBlock>{form.conditionNameError}</HelpBlock>
+                  <FormText>{form.conditionNameError}</FormText>
                 </FormGroup>
               </div>
               {form.conditionName === NON_STANDARD_CONDITION && (
@@ -192,7 +192,7 @@ class RentalConditionsEditDialog extends React.Component {
                       readOnly={isReadOnly}
                       updateState={this.updateState}
                     />
-                    <HelpBlock>{form.commentError}</HelpBlock>
+                    <FormText>{form.commentError}</FormText>
                   </FormGroup>
                 </div>
               )}
