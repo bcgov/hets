@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col, Alert, Label, Button, Popover, FormGroup, FormText, ButtonGroup } from 'react-bootstrap';
+import { Well, Row, Col, Alert, Badge, Button, Popover, FormGroup, FormText, ButtonGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -203,9 +203,9 @@ class UsersDetail extends React.Component {
           <Row id="users-top">
             <Col sm={8}>
               {!loading && (
-                <Label bsStyle={user.active ? 'success' : 'danger'}>
+                <Badge bsStyle={user.active ? 'success' : 'danger'}>
                   {user.active ? 'Verified Active' : 'Inactive'}
-                </Label>
+                </Badge>
               )}
             </Col>
             <Col sm={4}>

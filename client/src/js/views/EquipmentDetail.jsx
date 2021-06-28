@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Well, Row, Col } from 'react-bootstrap';
-import { Alert, Button, ButtonGroup, Label } from 'react-bootstrap';
+import { Alert, Button, ButtonGroup, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -303,13 +303,13 @@ class EquipmentDetail extends React.Component {
                   </Col>
                 </Row>
                 <Row id="equipment-bottom">
-                  <Label className={equipment.isMaintenanceContractor ? '' : 'hide'}>Maintenance Contractor</Label>
-                  <Label bsStyle={equipment.isHired ? 'success' : 'default'}>
+                  <Badge className={equipment.isMaintenanceContractor ? '' : 'hide'}>Maintenance Contractor</Badge>
+                  <Badge bsStyle={equipment.isHired ? 'success' : 'default'}>
                     {equipment.isHired ? 'Hired' : 'Not Hired'}
-                  </Label>
-                  <Label bsStyle={lastVerifiedStyle}>
+                  </Badge>
+                  <Badge bsStyle={lastVerifiedStyle}>
                     Last Verified: {formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY)}
-                  </Label>
+                  </Badge>
                 </Row>
                 <div className="equipment-header">
                   <PageHeader title="Equipment Id" subTitle={`${equipment.equipmentCode} (${equipment.typeName})`} />

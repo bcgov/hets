@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col, Alert, Button, ButtonGroup, Label } from 'react-bootstrap';
+import { Well, Row, Col, Alert, Button, ButtonGroup, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
@@ -358,7 +358,7 @@ class OwnersDetail extends React.Component {
               <Button id="owner-documents-button" title="Documents" disabled={loading} onClick={this.showDocuments}>
                 Documents ({loadingDocuments ? ' ' : Object.keys(this.props.documents).length})
               </Button>
-              <Label className={owner.isMaintenanceContractor ? 'ml-5' : 'hide'}>Maintenance Contractor</Label>
+              <Badge className={owner.isMaintenanceContractor ? 'ml-5' : 'hide'}>Maintenance Contractor</Badge>
             </Col>
             <Col sm={3}>
               <div className="pull-right">

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col, Alert, Label } from 'react-bootstrap';
+import { Well, Row, Col, Alert, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
@@ -127,8 +127,8 @@ class BusinessOwner extends React.Component {
         <div>
           <Row id="owners-top">
             <Col sm={9}>
-              <Label className="ml-5">{owner?.status}</Label>
-              <Label className={owner?.isMaintenanceContractor ? 'ml-5' : 'hide'}>Maintenance Contractor</Label>
+              <Badge className="ml-5">{owner?.status}</Badge>
+              <Badge className={owner?.isMaintenanceContractor ? 'ml-5' : 'hide'}>Maintenance Contractor</Badge>
             </Col>
             <Col sm={3}>
               <div className="pull-right">

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Well, Row, Col, Table, Alert, Button, Label, ButtonGroup } from 'react-bootstrap';
+import { Well, Row, Col, Table, Alert, Button, Badge, ButtonGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
@@ -204,7 +204,7 @@ class RentalAgreementsDetail extends React.Component {
           <Col xs={2}>
             <div style={{ marginTop: 6 }}>
               {!loading && (
-                <Label bsStyle={rentalAgreement.isActive ? 'success' : 'danger'}>{rentalAgreement.status}</Label>
+                <Badge bsStyle={rentalAgreement.isActive ? 'success' : 'danger'}>{rentalAgreement.status}</Badge>
               )}
             </div>
           </Col>

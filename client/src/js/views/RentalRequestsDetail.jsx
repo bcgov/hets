@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col, Alert, Button, ButtonGroup, Label } from 'react-bootstrap';
+import { Well, Row, Col, Alert, Button, ButtonGroup, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
@@ -251,9 +251,9 @@ class RentalRequestsDetail extends React.Component {
         <Row id="rental-requests-top" className="hidden-print">
           <Col sm={9}>
             <div id="rental-request-status">
-              <Label bsStyle={rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default'}>
+              <Badge bsStyle={rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default'}>
                 {rentalRequest.status}
-              </Label>
+              </Badge>
             </div>
             <Button title="Notes" disabled={loading} onClick={this.showNotes}>
               Notes ({loading ? ' ' : rentalRequest.notes?.length})

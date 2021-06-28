@@ -3,7 +3,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Container, Row, Col, Button, Label } from 'react-bootstrap';
+import { Container, Row, Col, Button, Badge } from 'react-bootstrap';
 import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 
 import * as Constant from '../../constants';
@@ -199,7 +199,7 @@ class ContactsEditDialog extends React.Component {
       <span>
         Contact
         {this.state.isPrimary ? (
-          <Label bsStyle="success">Primary</Label>
+          <Badge bsStyle="success">Primary</Badge>
         ) : (
           <Button title="Make Primary Contact" onClick={this.makePrimary}>
             Make Primary

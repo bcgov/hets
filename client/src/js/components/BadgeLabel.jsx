@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Label } from 'react-bootstrap';
-
+import { Badge } from 'react-bootstrap';
 
 class BadgeLabel extends React.Component {
   static propTypes = {
@@ -12,11 +11,17 @@ class BadgeLabel extends React.Component {
   };
 
   render() {
-    return <Label bsClass={ this.props.bsClass } bsStyle={ this.props.bsStyle } className={ `badge-label ${this.props.className || ''}` }>
-      { this.props.children }
-    </Label>;
+    return (
+      //temporary fix when migrating from Label -> Badge. Will need to change bsStyle and bsClass
+      <Badge
+        bsClass={this.props.bsClass}
+        bsStyle={this.props.bsStyle}
+        className={`badge-label ${this.props.className || ''}`}
+      >
+        {this.props.children}
+      </Badge>
+    );
   }
 }
-
 
 export default BadgeLabel;
