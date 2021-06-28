@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import Promise from 'bluebird';
 
-import { Row, Col, Radio, Alert, FormGroup, FormLabel } from 'react-bootstrap';
+import { Row, Col, FormCheck, Alert, FormGroup, FormLabel } from 'react-bootstrap';
 
 import * as Api from '../../api';
 import * as Constant from '../../constants';
@@ -190,7 +190,12 @@ class CloneDialog extends React.Component {
                     return (
                       <tr key={rentalAgreement.id}>
                         <td>
-                          <Radio name="rentalAgreementId" value={rentalAgreement.id} onChange={this.updateState} />
+                          <FormCheck
+                            type="radio"
+                            name="rentalAgreementId"
+                            value={rentalAgreement.id}
+                            onChange={this.updateState}
+                          />
                         </td>
                         <td>{rentalAgreement.equipment.equipmentCode}</td>
                         <td>{rentalAgreement.equipment.districtEquipmentType.districtEquipmentName}</td>

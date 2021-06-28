@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Container, Row, Col, Radio, FormGroup, FormLabel, FormText } from 'react-bootstrap';
+import { Container, Row, Col, FormCheck, FormGroup, FormLabel, FormText } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../../api';
@@ -273,26 +273,28 @@ class HireOfferEditDialog extends React.Component {
               <Row>
                 <Col md={12}>
                   <FormGroup>
-                    <Radio
+                    <FormCheck
+                      type="radio"
                       onChange={() => this.offerStatusChanged(STATUS_YES)}
                       checked={this.state.offerStatus === STATUS_YES}
                       disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
                     >
                       Yes
-                    </Radio>
+                    </FormCheck>
                   </FormGroup>
                 </Col>
               </Row>
               <Row>
                 <Col md={12}>
                   <FormGroup>
-                    <Radio
+                    <FormCheck
+                      type="radio"
                       onChange={() => this.offerStatusChanged(STATUS_NO)}
                       checked={this.state.offerStatus === STATUS_NO}
                       disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
                     >
                       No
-                    </Radio>
+                    </FormCheck>
                   </FormGroup>
                 </Col>
               </Row>
@@ -318,25 +320,27 @@ class HireOfferEditDialog extends React.Component {
               <Row>
                 <Col md={12}>
                   <FormGroup>
-                    <Radio
+                    <FormCheck
+                      type="radio"
                       onChange={() => this.offerStatusChanged(STATUS_FORCE_HIRE)}
                       checked={this.state.offerStatus === STATUS_FORCE_HIRE}
                     >
                       Force Hire
-                    </Radio>
+                    </FormCheck>
                   </FormGroup>
                 </Col>
               </Row>
               <Row>
                 <Col md={12}>
                   <FormGroup>
-                    <Radio
+                    <FormCheck
+                      type="radio"
                       onChange={() => this.offerStatusChanged(STATUS_ASKED)}
                       checked={this.state.offerStatus === STATUS_ASKED}
                       disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
                     >
                       Asked
-                    </Radio>
+                    </FormCheck>
                   </FormGroup>
                 </Col>
               </Row>
