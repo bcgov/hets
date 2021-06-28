@@ -179,7 +179,7 @@ class DistrictAdmin extends React.Component {
             var equipmentTypes = this.props.districtEquipmentTypes.data;
 
             if (Object.keys(equipmentTypes).length === 0) {
-              return <Alert bsStyle="success">No equipment types {addDistrictEquipmentButton}</Alert>;
+              return <Alert variant="success">No equipment types {addDistrictEquipmentButton}</Alert>;
             }
 
             var sortedEquipmentTypes = sort(
@@ -267,7 +267,7 @@ class DistrictAdmin extends React.Component {
             );
 
             if (Object.keys(this.props.rentalConditions.data).length === 0) {
-              return <Alert bsStyle="success">No users {addConditionButton}</Alert>;
+              return <Alert variant="success">No users {addConditionButton}</Alert>;
             }
 
             return (

@@ -102,7 +102,7 @@ class RentalAgreementOvertimeNotesDialog extends React.Component {
                 <FormLabel>Notes/Special Instructions</FormLabel>
                 <FormInputControl
                   type="text"
-                  componentClass="textarea"
+                  as="textarea"
                   rows="3"
                   value={this.state.note}
                   updateState={this.updateState}

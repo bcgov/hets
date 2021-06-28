@@ -225,7 +225,7 @@ class RentalRequests extends React.Component {
 
   renderResults = (addRequestButtons) => {
     if (Object.keys(this.props.rentalRequests.data).length === 0) {
-      return <Alert bsStyle="success">No Rental Requests {addRequestButtons}</Alert>;
+      return <Alert variant="success">No Rental Requests {addRequestButtons}</Alert>;
     }
 
     var rentalRequests = _.sortBy(this.props.rentalRequests.data, (rentalRequest) => {
@@ -373,7 +373,7 @@ class RentalRequests extends React.Component {
                         CUSTOM,
                       ]}
                     />
-                    <Button id="search-button" bsStyle="primary" type="submit">
+                    <Button id="search-button" variant="primary" type="submit">
                       Search
                     </Button>
                     <Button id="clear-search-button" onClick={this.clearSearch}>

@@ -125,7 +125,7 @@ class NotesDialog extends React.Component {
           })}
         </TableControl>
         {showNoNotesMessage && (
-          <Alert bsStyle="success" style={{ marginTop: 10 }}>
+          <Alert variant="success" style={{ marginTop: 10 }}>
             No notes
           </Alert>
         )}

@@ -199,7 +199,7 @@ class ContactsEditDialog extends React.Component {
       <span>
         Contact
         {this.state.isPrimary ? (
-          <Badge bsStyle="success">Primary</Badge>
+          <Badge variant="success">Primary</Badge>
         ) : (
           <Button title="Make Primary Contact" onClick={this.makePrimary}>
             Make Primary
@@ -327,11 +327,7 @@ class ContactsEditDialog extends React.Component {
             <Col md={12}>
               <FormGroup controlId="notes">
                 <FormLabel>Notes</FormLabel>
-                <FormInputControl
-                  componentClass="textarea"
-                  defaultValue={this.state.notes}
-                  updateState={this.updateState}
-                />
+                <FormInputControl as="textarea" defaultValue={this.state.notes} updateState={this.updateState} />
               </FormGroup>
             </Col>
           </Row>

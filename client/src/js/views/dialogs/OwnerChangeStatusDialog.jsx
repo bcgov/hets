@@ -149,7 +149,7 @@ class ChangeStatusDialog extends React.Component {
           <FormLabel>Comment</FormLabel>
           <FormInputControl
             value={this.state.comment}
-            componentClass="textarea"
+            as="textarea"
             updateState={this.updateState}
             maxLength={maxLength}
           />

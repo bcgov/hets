@@ -509,7 +509,7 @@ class ProjectsDetail extends React.Component {
                   }
 
                   if (Object.keys(combinedList).length === 0) {
-                    return <Alert bsStyle="success">No equipment</Alert>;
+                    return <Alert variant="success">No equipment</Alert>;
                   }
 
                   var headers = [
@@ -561,7 +561,7 @@ class ProjectsDetail extends React.Component {
                   );
 
                   if (!project.contacts || project.contacts.length === 0) {
-                    return <Alert bsStyle="success">No contacts {addContactButton}</Alert>;
+                    return <Alert variant="success">No contacts {addContactButton}</Alert>;
                   }
 
                   var contacts = sort(

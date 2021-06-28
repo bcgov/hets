@@ -77,7 +77,7 @@ class ConfirmForceHireDialog extends React.Component {
                 validationState={this.state.reasonForForceHireError ? 'error' : null}
               >
                 <FormLabel>Reason for Force Hire</FormLabel>
-                <FormInputControl componentClass="textarea" updateState={this.updateState} />
+                <FormInputControl as="textarea" updateState={this.updateState} />
                 <FormText>{this.state.reasonForForceHireError}</FormText>
               </FormGroup>
             </Col>

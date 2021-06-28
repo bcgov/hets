@@ -142,7 +142,7 @@ class HiringReport extends React.Component {
 
   renderResults = () => {
     if (Object.keys(this.props.hiringResponses.data).length === 0) {
-      return <Alert bsStyle="success">No results</Alert>;
+      return <Alert variant="success">No results</Alert>;
     }
 
     var hiringResponses = _.sortBy(this.props.hiringResponses.data, (response) => {
@@ -331,7 +331,7 @@ class HiringReport extends React.Component {
                     updateState={this.updateSearchState}
                     showMaxItems={2}
                   />
-                  <Button id="search-button" bsStyle="primary" type="submit">
+                  <Button id="search-button" variant="primary" type="submit">
                     Search
                   </Button>
                   <Button id="clear-search-button" onClick={this.clearSearch}>

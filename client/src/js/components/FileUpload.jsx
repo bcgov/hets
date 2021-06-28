@@ -92,7 +92,7 @@ class FileUpload extends React.Component {
               className="file-upload-button"
               onClick={this.uploadFiles}
               disabled={notReady}
-              bsStyle={notReady ? 'default' : 'success'}
+              variant={notReady ? 'default' : 'success'}
             >
               <FontAwesomeIcon icon="file-upload" />
               {` ${uploadText}`}

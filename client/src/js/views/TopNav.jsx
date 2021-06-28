@@ -280,13 +280,13 @@ class TopNav extends React.Component {
                           <strong>Note: </strong>Please save/print out the new seniority lists for all equipments
                           corresponding to each local area.
                         </p>
-                        <Button onClick={this.dismissRolloverNotice} bsStyle="primary">
+                        <Button onClick={this.dismissRolloverNotice} variant="primary">
                           Dismiss
                         </Button>
                       </Popover>
                     }
                   >
-                    <Button id="rollover-notice-button" className="mr-5" bsStyle="info" bsSize="xsmall">
+                    <Button id="rollover-notice-button" className="mr-5" variant="info" bsSize="xsmall">
                       Roll Over Complete
                       <FontAwesomeIcon icon="exclamation-circle" />
                     </Button>
@@ -308,7 +308,7 @@ class TopNav extends React.Component {
                         items={userDistricts}
                       />
                     </FormGroup>
-                    <Button onClick={() => logout()} bsStyle="primary">
+                    <Button onClick={() => logout()} variant="primary">
                       Logout
                     </Button>
                   </Dropdown.Menu>

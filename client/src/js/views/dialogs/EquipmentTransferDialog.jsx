@@ -396,7 +396,7 @@ class EquipmentTransferDialog extends React.Component {
           <span>
             <Button onClick={this.props.onClose}>Close</Button>
             {displayTransferButton && (
-              <Button bsStyle="primary" onClick={transferFunc.bind(this)} disabled={!transferEnabled}>
+              <Button variant="primary" onClick={transferFunc.bind(this)} disabled={!transferEnabled}>
                 {transferText}
               </Button>
             )}

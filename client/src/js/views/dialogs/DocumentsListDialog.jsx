@@ -206,7 +206,7 @@ class DocumentsListDialog extends React.Component {
               var numDocuments = Object.keys(this.state.documents).length;
 
               if (numDocuments === 0) {
-                return <Alert bsStyle="success">No documents</Alert>;
+                return <Alert variant="success">No documents</Alert>;
               }
 
               var documents = _.sortBy(this.state.documents, this.state.ui.sortField);

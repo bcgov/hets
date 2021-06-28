@@ -206,7 +206,7 @@ class Favourites extends React.Component {
             {(() => {
               if (Object.keys(this.props.favourites).length === 0) {
                 return (
-                  <Alert bsStyle="success" style={{ margin: '5px' }}>
+                  <Alert variant="success" style={{ margin: '5px' }}>
                     No favourites
                   </Alert>
                 );

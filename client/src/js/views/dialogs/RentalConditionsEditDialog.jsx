@@ -187,7 +187,7 @@ class RentalConditionsEditDialog extends React.Component {
                       Comment <sup>*</sup>
                     </FormLabel>
                     <FormInputControl
-                      componentClass="textarea"
+                      as="textarea"
                       defaultValue={form.comment}
                       readOnly={isReadOnly}
                       updateState={this.updateState}

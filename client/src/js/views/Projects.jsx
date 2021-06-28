@@ -145,7 +145,7 @@ class Projects extends React.Component {
 
   renderResults = (addProjectButton) => {
     if (Object.keys(this.props.projects.data).length === 0) {
-      return <Alert bsStyle="success">No Projects {addProjectButton}</Alert>;
+      return <Alert variant="success">No Projects {addProjectButton}</Alert>;
     }
 
     var projects = _.sortBy(this.props.projects.data, (project) => {
@@ -254,7 +254,7 @@ class Projects extends React.Component {
                     updateState={this.updateSearchState}
                     items={this.props.fiscalYears}
                   />
-                  <Button id="search-button" bsStyle="primary" type="submit">
+                  <Button id="search-button" variant="primary" type="submit">
                     Search
                   </Button>
                   <Button id="clear-search-button" onClick={this.clearSearch}>

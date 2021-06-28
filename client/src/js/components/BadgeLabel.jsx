@@ -4,18 +4,17 @@ import { Badge } from 'react-bootstrap';
 
 class BadgeLabel extends React.Component {
   static propTypes = {
-    bsClass: PropTypes.string,
-    bsStyle: PropTypes.string,
+    bsPrefix: PropTypes.string,
+    variant: PropTypes.string,
     className: PropTypes.string,
     children: PropTypes.node,
   };
 
   render() {
     return (
-      //temporary fix when migrating from Label -> Badge. Will need to change bsStyle and bsClass
       <Badge
-        bsClass={this.props.bsClass}
-        bsStyle={this.props.bsStyle}
+        bsPrefix={this.props.bsPrefix}
+        variant={this.props.variant}
         className={`badge-label ${this.props.className || ''}`}
       >
         {this.props.children}

@@ -204,7 +204,7 @@ class RentalAgreementsDetail extends React.Component {
           <Col xs={2}>
             <div style={{ marginTop: 6 }}>
               {!loading && (
-                <Badge bsStyle={rentalAgreement.isActive ? 'success' : 'danger'}>{rentalAgreement.status}</Badge>
+                <Badge variant={rentalAgreement.isActive ? 'success' : 'danger'}>{rentalAgreement.status}</Badge>
               )}
             </div>
           </Col>
@@ -390,7 +390,7 @@ class RentalAgreementsDetail extends React.Component {
             if (Object.keys(includedRates || []).length === 0) {
               return (
                 <div>
-                  <Alert bsStyle="success">No included rates or attachments</Alert>
+                  <Alert variant="success">No included rates or attachments</Alert>
                   {button}
                 </div>
               );
@@ -479,7 +479,7 @@ class RentalAgreementsDetail extends React.Component {
             if (Object.keys(asNeededRates || []).length === 0) {
               return (
                 <div>
-                  <Alert bsStyle="success">No as-needed rates or attachments</Alert>
+                  <Alert variant="success">No as-needed rates or attachments</Alert>
                   {button}
                 </div>
               );
@@ -563,7 +563,7 @@ class RentalAgreementsDetail extends React.Component {
             if (Object.keys(rentalConditions || []).length === 0) {
               return (
                 <div>
-                  <Alert bsStyle="success">No rental conditions</Alert>
+                  <Alert variant="success">No rental conditions</Alert>
                   {button}
                 </div>
               );

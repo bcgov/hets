@@ -126,7 +126,7 @@ class Rollover extends React.Component {
           <strong>Note: </strong>Please save/print out the new seniority lists for all equipments corresponding to each
           local area.
         </p>
-        <Button onClick={this.dismissRolloverNotice} bsStyle="primary">
+        <Button onClick={this.dismissRolloverNotice} variant="primary">
           Dismiss
         </Button>
       </div>

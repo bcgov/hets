@@ -302,7 +302,7 @@ class RolesDetail extends React.Component {
             );
           })()}
         </div>
-        <Button bsStyle="primary" onClick={this.onSave}>
+        <Button variant="primary" onClick={this.onSave}>
           Save
         </Button>
       </div>

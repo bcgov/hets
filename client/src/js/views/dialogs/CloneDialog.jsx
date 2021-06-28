@@ -178,7 +178,7 @@ class CloneDialog extends React.Component {
 
               if (!rentalAgreements || Object.keys(rentalAgreements).length === 0) {
                 return (
-                  <Alert bsStyle="success" style={{ marginTop: 10 }}>
+                  <Alert variant="success" style={{ marginTop: 10 }}>
                     No rental agreements.
                   </Alert>
                 );
@@ -210,7 +210,7 @@ class CloneDialog extends React.Component {
               );
             })()}
             {this.state.cloneRentalAgreementError && (
-              <Alert bsStyle="danger">{this.state.cloneRentalAgreementError}</Alert>
+              <Alert variant="danger">{this.state.cloneRentalAgreementError}</Alert>
             )}
           </Col>
         </Row>

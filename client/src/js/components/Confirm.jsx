@@ -33,7 +33,7 @@ class Confirm extends React.Component {
         {this.props.children}
         <div style={{ textAlign: 'center', marginTop: '6px' }}>
           <ButtonGroup>
-            <Button bsStyle="primary" onClick={this.confirmed}>
+            <Button variant="primary" onClick={this.confirmed}>
               <FontAwesomeIcon icon={['far', 'check-circle']} /> Yes
             </Button>
             <Button onClick={this.canceled}>

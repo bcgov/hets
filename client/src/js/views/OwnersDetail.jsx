@@ -523,7 +523,7 @@ class OwnersDetail extends React.Component {
                   );
 
                   if (!owner.contacts || owner.contacts.length === 0) {
-                    return <Alert bsStyle="success">No contacts {addContactButton}</Alert>;
+                    return <Alert variant="success">No contacts {addContactButton}</Alert>;
                   }
 
                   var contacts = sort(owner.contacts, this.state.uiContacts.sortField, this.state.uiContacts.sortDesc);
@@ -631,7 +631,7 @@ class OwnersDetail extends React.Component {
                   }
 
                   if (!owner.equipmentList || owner.equipmentList.length === 0) {
-                    return <Alert bsStyle="success">No equipment</Alert>;
+                    return <Alert variant="success">No equipment</Alert>;
                   }
 
                   var equipmentList = _.orderBy(

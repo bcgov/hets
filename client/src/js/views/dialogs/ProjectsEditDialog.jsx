@@ -301,7 +301,7 @@ class ProjectsEditDialog extends React.Component {
                   <FormLabel>Project Information</FormLabel>
                   <FormInputControl
                     type="text"
-                    componentClass="textarea"
+                    as="textarea"
                     rows="5"
                     value={this.state.projectInformation}
                     updateState={this.updateState}

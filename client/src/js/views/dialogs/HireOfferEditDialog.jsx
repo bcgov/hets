@@ -355,7 +355,7 @@ class HireOfferEditDialog extends React.Component {
               >
                 <FormLabel>Note</FormLabel>
                 <FormInputControl
-                  componentClass="textarea"
+                  as="textarea"
                   defaultValue={this.state.offerResponseNote}
                   readOnly={isReadOnly}
                   updateState={this.updateState}

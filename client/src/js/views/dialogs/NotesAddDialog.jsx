@@ -99,7 +99,7 @@ class NotesAddDialog extends React.Component {
           <FormLabel>Note</FormLabel>
           <FormInputControl
             value={this.state.note}
-            componentClass="textarea"
+            as="textarea"
             updateState={this.updateState}
             maxLength={maxLength}
           />

@@ -236,7 +236,7 @@ class BusinessOwner extends React.Component {
             <SubHeader title="Contacts" />
             {(() => {
               if (!owner.contacts || Object.keys(owner.contacts).length === 0) {
-                return <Alert bsStyle="success">No contacts</Alert>;
+                return <Alert variant="success">No contacts</Alert>;
               }
 
               var contacts = _.orderBy(
@@ -288,7 +288,7 @@ class BusinessOwner extends React.Component {
             <SubHeader title={`Equipment (${owner.numberOfEquipment})`} />
             {(() => {
               if (!owner.equipmentList || owner.equipmentList.length === 0) {
-                return <Alert bsStyle="success">No equipment</Alert>;
+                return <Alert variant="success">No equipment</Alert>;
               }
 
               var equipmentList = _.orderBy(

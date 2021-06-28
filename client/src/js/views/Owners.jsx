@@ -149,7 +149,7 @@ class Owners extends React.Component {
 
   renderResults = (ownerList, addOwnerButton) => {
     if (Object.keys(this.props.ownerList.data).length === 0) {
-      return <Alert bsStyle="success">No owners {addOwnerButton}</Alert>;
+      return <Alert variant="success">No owners {addOwnerButton}</Alert>;
     }
 
     return (
@@ -255,7 +255,7 @@ class Owners extends React.Component {
                     value={this.state.search.ownerName}
                     updateState={this.updateSearchState}
                   />
-                  <Button id="search-button" bsStyle="primary" type="submit">
+                  <Button id="search-button" variant="primary" type="submit">
                     Search
                   </Button>
                   <Button id="clear-search-button" onClick={this.clearSearch}>

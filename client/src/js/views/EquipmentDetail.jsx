@@ -304,10 +304,10 @@ class EquipmentDetail extends React.Component {
                 </Row>
                 <Row id="equipment-bottom">
                   <Badge className={equipment.isMaintenanceContractor ? '' : 'hide'}>Maintenance Contractor</Badge>
-                  <Badge bsStyle={equipment.isHired ? 'success' : 'default'}>
+                  <Badge variant={equipment.isHired ? 'success' : 'default'}>
                     {equipment.isHired ? 'Hired' : 'Not Hired'}
                   </Badge>
-                  <Badge bsStyle={lastVerifiedStyle}>
+                  <Badge variant={lastVerifiedStyle}>
                     Last Verified: {formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY)}
                   </Badge>
                 </Row>
@@ -404,7 +404,7 @@ class EquipmentDetail extends React.Component {
                       <Col lg={4} md={6} sm={12} xs={12}>
                         <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Serial Number">
                           {equipment.serialNumber}
-                          {equipment.hasDuplicates ? <BadgeLabel bsStyle="danger">!</BadgeLabel> : null}
+                          {equipment.hasDuplicates ? <BadgeLabel variant="danger">!</BadgeLabel> : null}
                         </ColDisplay>
                       </Col>
                       {equipment.isDumpTruck && (
@@ -438,7 +438,7 @@ class EquipmentDetail extends React.Component {
                     );
                   }
                   if (!equipment.equipmentAttachments || Object.keys(equipment.equipmentAttachments).length === 0) {
-                    return <Alert bsStyle="success">No Attachments</Alert>;
+                    return <Alert variant="success">No Attachments</Alert>;
                   }
 
                   var physicalAttachments = _.sortBy(equipment.equipmentAttachments, this.state.ui.sortField);

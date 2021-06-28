@@ -251,7 +251,7 @@ class RentalRequestsDetail extends React.Component {
         <Row id="rental-requests-top" className="hidden-print">
           <Col sm={9}>
             <div id="rental-request-status">
-              <Badge bsStyle={rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default'}>
+              <Badge variant={rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default'}>
                 {rentalRequest.status}
               </Badge>
             </div>
@@ -385,7 +385,7 @@ class RentalRequestsDetail extends React.Component {
             var rotationList = this.props.rentalRequest?.rotationList;
 
             if (Object.keys(rotationList || []).length === 0) {
-              return <Alert bsStyle="success">No equipment</Alert>;
+              return <Alert variant="success">No equipment</Alert>;
             }
 
             // Sort in rotation list order
@@ -517,7 +517,7 @@ class RentalRequestsDetail extends React.Component {
                             if (listItem.maximumHours) {
                               return (
                                 <OverlayTrigger trigger="click" placement="top" rootClose overlay={confirm}>
-                                  <Button bsStyle="link" bsSize="xsmall">
+                                  <Button variant="link" bsSize="xsmall">
                                     Max. hours reached
                                   </Button>
                                 </OverlayTrigger>
@@ -530,7 +530,7 @@ class RentalRequestsDetail extends React.Component {
                             ) {
                               return (
                                 <Button
-                                  bsStyle="link"
+                                  variant="link"
                                   title="Show Offer"
                                   onClick={() => this.openHireOfferDialog(listItem, showAllResponseFields)}
                                 >

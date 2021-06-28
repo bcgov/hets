@@ -129,10 +129,10 @@ class SeniorityList extends React.Component {
                   updateState={this.updateState}
                   showMaxItems={2}
                 />
-                <Button onClick={() => this.getRotationList(false)} bsStyle="primary">
+                <Button onClick={() => this.getRotationList(false)} variant="primary">
                   Seniority List
                 </Button>
-                <Button onClick={() => this.getRotationList(true)} bsStyle="primary">
+                <Button onClick={() => this.getRotationList(true)} variant="primary">
                   Seniority List (Counter Copy)
                 </Button>
               </ButtonToolbar>

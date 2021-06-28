@@ -17,7 +17,7 @@ class StatusDropdown extends React.Component {
     onSelect: PropTypes.func.isRequired,
   };
 
-  computeBsStyle = () => {
+  computeVariant = () => {
     switch (this.props.status) {
       case Constant.EQUIPMENT_STATUS_CODE_APPROVED:
       case Constant.OWNER_STATUS_CODE_APPROVED:
@@ -35,12 +35,12 @@ class StatusDropdown extends React.Component {
   render() {
     const { id, className, status, statuses, disabled, disabledTooltip } = this.props;
 
-    const bsStyle = this.computeBsStyle();
+    const variant = this.computeVariant();
     const title = status || '';
 
     if (disabled) {
       return (
-        <TooltipButton disabled={disabled} disabledTooltip={disabledTooltip} className={className} bsStyle={bsStyle}>
+        <TooltipButton disabled={disabled} disabledTooltip={disabledTooltip} className={className} variant={variant}>
           {title}
         </TooltipButton>
       );
@@ -49,7 +49,7 @@ class StatusDropdown extends React.Component {
         <DropdownButton
           id={id}
           className={className}
-          bsStyle={bsStyle}
+          variant={variant}
           title={status || ''}
           onSelect={this.props.onSelect}
         >

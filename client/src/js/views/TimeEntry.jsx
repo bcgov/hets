@@ -167,7 +167,7 @@ class TimeEntry extends React.Component {
 
   renderResults = (addTimeEntryButton) => {
     if (Object.keys(this.props.timeEntries.data).length === 0) {
-      return <Alert bsStyle="success">No time entries {addTimeEntryButton}</Alert>;
+      return <Alert variant="success">No time entries {addTimeEntryButton}</Alert>;
     }
 
     var timeEntries = _.sortBy(this.props.timeEntries.data, (timeEntry) => {
@@ -368,7 +368,7 @@ class TimeEntry extends React.Component {
                     updateState={this.updateSearchState}
                     showMaxItems={2}
                   />
-                  <Button id="search-button" bsStyle="primary" type="submit">
+                  <Button id="search-button" variant="primary" type="submit">
                     Search
                   </Button>
                   <Button id="clear-search-button" onClick={this.clearSearch}>

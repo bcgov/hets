@@ -141,7 +141,7 @@ class BusinessPortal extends React.Component {
           <SubHeader title="HETS District Owners Associated With Your BCeID" />
           {(() => {
             if (_.isEmpty(this.props.business.owners)) {
-              return <Alert bsStyle="success">No district owners associated</Alert>;
+              return <Alert variant="success">No district owners associated</Alert>;
             }
 
             var owners = _.sortBy(this.props.business.owners, this.state.uiOwners.sortField);

@@ -203,7 +203,7 @@ class UsersDetail extends React.Component {
           <Row id="users-top">
             <Col sm={8}>
               {!loading && (
-                <Badge bsStyle={user.active ? 'success' : 'danger'}>
+                <Badge variant={user.active ? 'success' : 'danger'}>
                   {user.active ? 'Verified Active' : 'Inactive'}
                 </Badge>
               )}
@@ -301,7 +301,7 @@ class UsersDetail extends React.Component {
                   }
 
                   if (this.props.userDistricts.data.length === 0) {
-                    return <Alert bsStyle="success">No Districts {addDistrictButton}</Alert>;
+                    return <Alert variant="success">No Districts {addDistrictButton}</Alert>;
                   }
 
                   const userDistricts = sort(
@@ -404,7 +404,7 @@ class UsersDetail extends React.Component {
                     return include;
                   });
                   if (userRoles.length === 0) {
-                    return <Alert bsStyle="success">No roles {addUserRoleButton}</Alert>;
+                    return <Alert variant="success">No roles {addUserRoleButton}</Alert>;
                   }
 
                   userRoles = _.sortBy(userRoles, this.state.ui.sortField);
@@ -548,7 +548,7 @@ class ExpireOverlay extends React.Component {
             />
             <FormText>{this.state.expiryDateError}</FormText>
           </FormGroup>
-          <Button bsStyle="primary" onClick={this.saveUserRole} className="pull-right">
+          <Button variant="primary" onClick={this.saveUserRole} className="pull-right">
             Save
           </Button>
         </Form>

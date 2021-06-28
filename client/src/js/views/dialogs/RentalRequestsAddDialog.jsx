@@ -360,7 +360,7 @@ class RentalRequestsAddDialog extends React.Component {
             <FormText>{this.state.expectedEndDateError}</FormText>
           </FormGroup>
         )}
-        {this.state.savingError && <Alert bsStyle="danger">{this.state.savingError}</Alert>}
+        {this.state.savingError && <Alert variant="danger">{this.state.savingError}</Alert>}
       </div>
     );
   };

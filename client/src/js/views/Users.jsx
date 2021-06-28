@@ -146,7 +146,7 @@ class Users extends React.Component {
 
   renderResults = (addUserButton) => {
     if (Object.keys(this.props.users.data).length === 0) {
-      return <Alert bsStyle="success">No users {addUserButton}</Alert>;
+      return <Alert variant="success">No users {addUserButton}</Alert>;
     }
 
     var users = _.sortBy(this.props.users.data, this.state.ui.sortField);
@@ -255,7 +255,7 @@ class Users extends React.Component {
                   >
                     Hide Inactive
                   </CheckboxControl>
-                  <Button id="search-button" bsStyle="primary" type="submit">
+                  <Button id="search-button" variant="primary" type="submit">
                     Search
                   </Button>
                   <Button id="clear-search-button" onClick={this.clearSearch}>
