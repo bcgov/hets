@@ -163,7 +163,7 @@ class MultiDropdown extends React.Component {
         disabled={this.props.disabled}
       >
         <Dropdown.Toggle title={this.state.title} />
-        <RootCloseMenu bsRole="menu">
+        <RootCloseMenu>
           <div className="well well-sm">
             <FormControl
               type="text"
