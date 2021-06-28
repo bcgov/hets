@@ -149,7 +149,7 @@ class FilterDropdown extends React.Component {
         onToggle={this.toggle}
       >
         <Dropdown.Toggle title={this.state.title} />
-        <RootCloseMenu bsRole="menu">
+        <RootCloseMenu>
           <div className="well well-sm">
             <FormControl
               type="text"

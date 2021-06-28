@@ -199,7 +199,7 @@ class Favourites extends React.Component {
       <Authorize>
         <Dropdown id={this.props.id} className={className} title={title} open={this.state.open} onToggle={this.toggle}>
           <Dropdown.Toggle>{title}</Dropdown.Toggle>
-          <RootCloseMenu bsRole="menu">
+          <RootCloseMenu>
             <div className="favourites-button-bar">
               <Button onClick={this.addFavourite}>Favourite Current Selection</Button>
             </div>
