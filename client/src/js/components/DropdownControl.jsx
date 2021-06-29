@@ -56,20 +56,20 @@ class DropdownControl extends React.Component {
     }
   }
 
-  componentDidUpdate(nextProps) {
-    if (!_.isEqual(nextProps.items, this.props.items)) {
-      var items = nextProps.items || [];
+  componentDidUpdate(prevProps) {
+    if (!_.isEqual(this.props.items, prevProps.items)) {
+      var items = this.props.items || [];
       this.setState({
         items: items,
         title: this.buildTitle(this.state.simple ? this.state.title : this.state.selectedId, items),
       });
-    } else if (nextProps.selectedId !== this.props.selectedId) {
+    } else if (this.props.selectedId !== prevProps.selectedId) {
       this.setState({
-        selectedId: nextProps.selectedId,
-        title: this.buildTitle(nextProps.selectedId, this.props.items),
+        selectedId: this.props.selectedId,
+        title: this.buildTitle(this.props.selectedId, this.props.items),
       });
-    } else if (!_.isEqual(nextProps.title, this.props.title)) {
-      this.setState({ title: this.buildTitle(nextProps.title) });
+    } else if (!_.isEqual(this.props.title, prevProps.title)) {
+      this.setState({ title: this.buildTitle(this.props.title) });
     }
   }
 

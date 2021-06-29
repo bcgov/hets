@@ -220,14 +220,14 @@ class Owners extends React.Component {
             <Row>
               <Col xs={9} sm={10} id="filters">
                 <ButtonToolbar>
-                  <MultiDropdown
+                  {/* <MultiDropdown
                     id="selectedLocalAreasIds"
                     placeholder="Local Areas"
                     items={localAreas}
                     selectedIds={this.state.search.selectedLocalAreasIds}
                     updateState={this.updateSearchState}
                     showMaxItems={2}
-                  />
+                  /> */}
                   <DropdownControl
                     id="statusCode"
                     title={this.state.search.statusCode}
@@ -263,7 +263,7 @@ class Owners extends React.Component {
                 </ButtonToolbar>
               </Col>
               <Col xs={3} sm={2} id="search-buttons">
-                <Row>
+                {/* <Row>
                   <Favourites
                     id="faves-dropdown"
                     type="owner"
@@ -272,7 +272,7 @@ class Owners extends React.Component {
                     onSelect={this.loadFavourite}
                     pullRight
                   />
-                </Row>
+                </Row> */}
               </Col>
             </Row>
           </Form>
