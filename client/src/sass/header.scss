@@ -1,4 +1,4 @@
-@import "./mixins.scss";
+@import './mixins.scss';
 
 $nav-background-color: #38598a;
 $nav-background-color-test: #448a38;
@@ -98,16 +98,17 @@ $nav-active-background-color-uat: #db976d;
   .navbar-nav > li > a:focus {
     color: #fff;
   }
+
   .navbar-nav > li > .dropdown-menu {
     color: #fff;
     background-color: $nav-background-color;
     font-size: 13px;
   }
-  .navbar-nav > li > .dropdown-menu > li > a {
+  .navbar-nav > li > .dropdown-menu > a {
     color: #fff;
   }
-  .navbar-nav > li > .dropdown-menu > li > a:hover,
-  .navbar-nav > li > .dropdown-menu > li > a:focus {
+  .navbar-nav > li > .dropdown-menu > a:hover,
+  .navbar-nav > li > .dropdown-menu > a:focus {
     color: #fff;
     background-color: $nav-active-background-color;
     text-decoration: underline;
