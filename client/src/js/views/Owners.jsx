@@ -220,14 +220,14 @@ class Owners extends React.Component {
             <Row>
               <Col xs={9} sm={10} id="filters">
                 <ButtonToolbar>
-                  {/* <MultiDropdown
+                  <MultiDropdown
                     id="selectedLocalAreasIds"
                     placeholder="Local Areas"
                     items={localAreas}
                     selectedIds={this.state.search.selectedLocalAreasIds}
                     updateState={this.updateSearchState}
                     showMaxItems={2}
-                  /> */}
+                  />
                   <DropdownControl
                     id="statusCode"
                     title={this.state.search.statusCode}
