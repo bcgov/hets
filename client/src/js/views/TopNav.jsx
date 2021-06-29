@@ -44,7 +44,7 @@ class TopNav extends React.Component {
 
   updateUserDistrict = (state) => {
     var district = _.find(this.props.currentUserDistricts.data, (district) => {
-      return district.district.id === state.districtId;
+      return district.district.id === parseInt(state.districtId);
     });
     Api.switchUserDistrict(district.id).then(() => {
       this.props.history.push(Constant.HOME_PATHNAME);
@@ -87,9 +87,7 @@ class TopNav extends React.Component {
         <Navbar id="header-main">
           <Navbar.Brand href="http://www2.gov.bc.ca/gov/content/home">
             <div id="logo">
-              <a href="http://www2.gov.bc.ca/gov/content/home">
-                <img title="Government of B.C." alt="Government of B.C." src="images/gov/gov3_bc_logo.png" />
-              </a>
+              <img title="Government of B.C." alt="Government of B.C." src="images/gov/gov3_bc_logo.png" />
             </div>
           </Navbar.Brand>
           <h1 id="banner">MOTI Hired Equipment Tracking System</h1>
@@ -309,7 +307,7 @@ class TopNav extends React.Component {
                 </OverlayTrigger>
               )}
               <Dropdown id="profile-menu">
-                <Dropdown.Toggle>
+                <Dropdown.Toggle variant="secondary">
                   <FontAwesomeIcon icon="user" />
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
