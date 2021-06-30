@@ -328,10 +328,8 @@ namespace HetsApi.Controllers
             _context.HetRentalRequest.Add(rentalRequest);
             _context.SaveChanges();
 
-            int id = rentalRequest.RentalRequestId;
-
             // retrieve updated rental request to return to ui
-            return new ObjectResult(new HetsResponse(RentalRequestHelper.GetRecord(id, _context)));
+            return new ObjectResult(new HetsResponse(RentalRequestHelper.GetRecord(rentalRequest.RentalRequestId, _context)));
         }
 
         /// <summary>
