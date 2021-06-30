@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Alert, Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Alert, Button, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Action from '../actionTypes';
@@ -109,7 +108,7 @@ class HistoryComponent extends React.Component {
           }
 
           if (!this.props.history || Object.keys(this.props.history).length === 0) {
-            return <Alert variant="success">No history</Alert>;
+            return <Alert bsStyle="success">No history</Alert>;
           }
 
           var history = _.orderBy(this.props.history, [this.state.ui.sortField], sortDir(this.state.ui.sortDesc));
@@ -126,7 +125,7 @@ class HistoryComponent extends React.Component {
                 <Spinner />
               ) : (
                 <Button bsSize="xsmall" onClick={this.showMore} className={this.state.canShowMore ? '' : 'hidden'}>
-                  <FontAwesomeIcon icon="sync-alt" title="Show More" />
+                  <Glyphicon glyph="refresh" title="Show More" />
                 </Button>
               ),
             },

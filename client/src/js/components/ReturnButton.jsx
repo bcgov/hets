@@ -2,8 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import { useHistory } from 'react-router-dom';
-import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Glyphicon } from 'react-bootstrap';
 
 function ReturnButton({ id, className, title }) {
   const history = useHistory();
@@ -14,7 +13,7 @@ function ReturnButton({ id, className, title }) {
       title={title}
       onClick={history.goBack}
     >
-      <FontAwesomeIcon icon="arrow-left" /> Return
+      <Glyphicon glyph="arrow-left" /> Return
     </Button>
   );
 }

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
+import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../../api';
@@ -10,7 +10,9 @@ import FormDialog from '../../components/FormDialog.jsx';
 import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
-const PROHIBITED_SECTIONS = [1.2, 1.8, 2.3, 2.6, 3.3, 6.3, 7.4, 8.2, 9.3, 11.2, 12.2, 13.5, 13.6, 16.3];
+
+const PROHIBITED_SECTIONS = [ 1.2, 1.8, 2.3, 2.6, 3.3, 6.3, 7.4, 8.2, 9.3, 11.2, 12.2, 13.5, 13.6, 16.3 ];
+
 
 class DistrictEquipmentTypeAddEditDialog extends React.Component {
   static propTypes = {
@@ -30,9 +32,7 @@ class DistrictEquipmentTypeAddEditDialog extends React.Component {
       isNew: props.districtEquipmentType.id === 0,
 
       id: props.districtEquipmentType.id || 0,
-      equipmentTypeId: props.districtEquipmentType.equipmentType
-        ? props.districtEquipmentType.equipmentType.id
-        : undefined,
+      equipmentTypeId: props.districtEquipmentType.equipmentType ? props.districtEquipmentType.equipmentType.id : undefined,
       districtEquipmentName: props.districtEquipmentType.districtEquipmentName || '',
       concurrencyControlNumber: props.districtEquipmentType.concurrencyControlNumber || 0,
       equipmentTypeIdError: '',
@@ -49,21 +49,10 @@ class DistrictEquipmentTypeAddEditDialog extends React.Component {
   };
 
   didChange = () => {
-    if (this.state.isNew && this.state.equipmentTypeId !== undefined) {
-      return true;
-    }
-    if (this.state.isNew && this.state.districtEquipmentName !== '') {
-      return true;
-    }
-    if (!this.state.isNew && this.state.equipmentTypeId !== this.props.districtEquipmentType.equipmentType.id) {
-      return true;
-    }
-    if (
-      !this.state.isNew &&
-      this.state.districtEquipmentName !== this.props.districtEquipmentType.districtEquipmentName
-    ) {
-      return true;
-    }
+    if (this.state.isNew && this.state.equipmentTypeId !== undefined) { return true; }
+    if (this.state.isNew && this.state.districtEquipmentName !== '') { return true; }
+    if (!this.state.isNew && this.state.equipmentTypeId !== this.props.districtEquipmentType.equipmentType.id) { return true; }
+    if (!this.state.isNew && this.state.districtEquipmentName !== this.props.districtEquipmentType.districtEquipmentName) { return true; }
 
     return false;
   };
@@ -108,16 +97,11 @@ class DistrictEquipmentTypeAddEditDialog extends React.Component {
           district: { id: this.props.currentUser.district.id },
         };
 
-        const promise =
-          equipmentType.id !== 0
-            ? Api.updateDistrictEquipmentType(equipmentType)
-            : Api.addDistrictEquipmentType(equipmentType);
+        const promise = equipmentType.id !== 0 ? Api.updateDistrictEquipmentType(equipmentType) : Api.addDistrictEquipmentType(equipmentType);
 
         promise.then(() => {
           this.setState({ isSaving: false });
-          if (this.props.onSave) {
-            this.props.onSave();
-          }
+          if (this.props.onSave) { this.props.onSave(); }
           this.props.onClose();
         });
       } else {
@@ -132,16 +116,13 @@ class DistrictEquipmentTypeAddEditDialog extends React.Component {
     return (
       <FormDialog
         id="district-equipment-add"
-        show={this.props.show}
-        title={this.state.isNew ? 'Add District Equipment Type' : 'Edit District Equipment Type'}
+        show={ this.props.show }
+        title={ this.state.isNew ? 'Add District Equipment Type' : 'Edit District Equipment Type' }
         isSaving={this.state.isSaving}
-        onClose={this.props.onClose}
-        onSubmit={this.formSubmitted}
-      >
-        <FormGroup controlId="equipmentTypeId" validationState={this.state.equipmentTypeIdError ? 'error' : null}>
-          <FormLabel>
-            Blue Book Section <sup>*</sup>
-          </FormLabel>
+        onClose={ this.props.onClose }
+        onSubmit={ this.formSubmitted }>
+        <FormGroup controlId="equipmentTypeId" validationState={ this.state.equipmentTypeIdError ? 'error' : null }>
+          <ControlLabel>Blue Book Section <sup>*</sup></ControlLabel>
           <FilterDropdown
             id="equipmentTypeId"
             className="full-width"
@@ -151,17 +132,12 @@ class DistrictEquipmentTypeAddEditDialog extends React.Component {
             items={equipmentTypes}
             updateState={this.updateState}
           />
-          <FormText>{this.state.equipmentTypeIdError}</FormText>
+          <HelpBlock>{ this.state.equipmentTypeIdError }</HelpBlock>
         </FormGroup>
-        <FormGroup
-          controlId="districtEquipmentName"
-          validationState={this.state.districtEquipmentNameError ? 'error' : null}
-        >
-          <FormLabel>
-            Equipment Type/Description <sup>*</sup>
-          </FormLabel>
-          <FormInputControl type="text" value={this.state.districtEquipmentName} updateState={this.updateState} />
-          <FormText>{this.state.districtEquipmentNameError}</FormText>
+        <FormGroup controlId="districtEquipmentName" validationState={ this.state.districtEquipmentNameError ? 'error' : null }>
+          <ControlLabel>Equipment Type/Description <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" value={ this.state.districtEquipmentName } updateState={ this.updateState }/>
+          <HelpBlock>{ this.state.districtEquipmentNameError }</HelpBlock>
         </FormGroup>
       </FormDialog>
     );

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Container, Row, Col, FormCheck, FormGroup, FormLabel, FormText } from 'react-bootstrap';
+import { Grid, Row, Col, Radio, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../../api';
@@ -266,35 +266,33 @@ class HireOfferEditDialog extends React.Component {
         isSaving={this.state.isSaving}
         title="Response"
       >
-        <Container fluid>
+        <Grid fluid>
           <Col md={12}>
             <FormGroup validationState={this.state.offerResponseError ? 'error' : null}>
-              <FormLabel>Response</FormLabel>
+              <ControlLabel>Response</ControlLabel>
               <Row>
                 <Col md={12}>
                   <FormGroup>
-                    <FormCheck
-                      type="radio"
+                    <Radio
                       onChange={() => this.offerStatusChanged(STATUS_YES)}
                       checked={this.state.offerStatus === STATUS_YES}
                       disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
                     >
                       Yes
-                    </FormCheck>
+                    </Radio>
                   </FormGroup>
                 </Col>
               </Row>
               <Row>
                 <Col md={12}>
                   <FormGroup>
-                    <FormCheck
-                      type="radio"
+                    <Radio
                       onChange={() => this.offerStatusChanged(STATUS_NO)}
                       checked={this.state.offerStatus === STATUS_NO}
                       disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
                     >
                       No
-                    </FormCheck>
+                    </Radio>
                   </FormGroup>
                 </Col>
               </Row>
@@ -303,7 +301,7 @@ class HireOfferEditDialog extends React.Component {
                   <Col md={12}>
                     <FormGroup validationState={this.state.offerRefusalReasonError ? 'error' : null}>
                       {/*TODO - use lookup list*/}
-                      <FormLabel>Refusal Reason</FormLabel>
+                      <ControlLabel>Refusal Reason</ControlLabel>
                       <DropdownControl
                         id="offerRefusalReason"
                         className="full-width"
@@ -312,7 +310,7 @@ class HireOfferEditDialog extends React.Component {
                         updateState={this.updateState}
                         items={refusalReasons}
                       />
-                      <FormText>{this.state.offerRefusalReasonError}</FormText>
+                      <HelpBlock>{this.state.offerRefusalReasonError}</HelpBlock>
                     </FormGroup>
                   </Col>
                 </Row>
@@ -320,31 +318,29 @@ class HireOfferEditDialog extends React.Component {
               <Row>
                 <Col md={12}>
                   <FormGroup>
-                    <FormCheck
-                      type="radio"
+                    <Radio
                       onChange={() => this.offerStatusChanged(STATUS_FORCE_HIRE)}
                       checked={this.state.offerStatus === STATUS_FORCE_HIRE}
                     >
                       Force Hire
-                    </FormCheck>
+                    </Radio>
                   </FormGroup>
                 </Col>
               </Row>
               <Row>
                 <Col md={12}>
                   <FormGroup>
-                    <FormCheck
-                      type="radio"
+                    <Radio
                       onChange={() => this.offerStatusChanged(STATUS_ASKED)}
                       checked={this.state.offerStatus === STATUS_ASKED}
                       disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
                     >
                       Asked
-                    </FormCheck>
+                    </Radio>
                   </FormGroup>
                 </Col>
               </Row>
-              <FormText>{this.state.offerResponseError}</FormText>
+              <HelpBlock>{this.state.offerResponseError}</HelpBlock>
             </FormGroup>
           </Col>
           <Row>
@@ -353,14 +349,14 @@ class HireOfferEditDialog extends React.Component {
                 controlId="offerResponseNote"
                 validationState={this.state.offerResponseNoteError ? 'error' : null}
               >
-                <FormLabel>Note</FormLabel>
+                <ControlLabel>Note</ControlLabel>
                 <FormInputControl
-                  as="textarea"
+                  componentClass="textarea"
                   defaultValue={this.state.offerResponseNote}
                   readOnly={isReadOnly}
                   updateState={this.updateState}
                 />
-                <FormText>{this.state.offerResponseNoteError}</FormText>
+                <HelpBlock>{this.state.offerResponseNoteError}</HelpBlock>
               </FormGroup>
             </Col>
           </Row>
@@ -377,7 +373,7 @@ class HireOfferEditDialog extends React.Component {
               </FormGroup>
             </Col>
           </Row>
-        </Container>
+        </Grid>
         {this.state.showConfirmForceHireDialog && (
           <ConfirmForceHireDialog
             show={this.state.showConfirmForceHireDialog}

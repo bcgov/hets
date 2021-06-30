@@ -4,8 +4,7 @@ import { saveAs } from 'file-saver';
 
 import { connect } from 'react-redux';
 
-import { Alert, Button, ButtonGroup, ProgressBar, FormText } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Alert, Button, ButtonGroup, Glyphicon, ProgressBar, HelpBlock } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -184,10 +183,10 @@ class DocumentsListDialog extends React.Component {
               <div className="file-picker-container">
                 <FilePicker onFilesSelected={this.uploadFiles} />
                 <div>Select one or more files{parent.name ? ` to attach to ${parent.name}` : null}</div>
-                <FormText>The maximum size of each file is {Constant.MAX_ATTACHMENT_FILE_SIZE_READABLE}.</FormText>
+                <HelpBlock>The maximum size of each file is {Constant.MAX_ATTACHMENT_FILE_SIZE_READABLE}.</HelpBlock>
                 {this.state.uploadError && (
                   <div className="has-error">
-                    <FormText>{this.state.uploadError}</FormText>
+                    <HelpBlock>{this.state.uploadError}</HelpBlock>
                   </div>
                 )}
               </div>
@@ -206,7 +205,7 @@ class DocumentsListDialog extends React.Component {
               var numDocuments = Object.keys(this.state.documents).length;
 
               if (numDocuments === 0) {
-                return <Alert variant="success">No documents</Alert>;
+                return <Alert bsStyle="success">No documents</Alert>;
               }
 
               var documents = _.sortBy(this.state.documents, this.state.ui.sortField);
@@ -244,7 +243,7 @@ class DocumentsListDialog extends React.Component {
                               onClick={this.downloadDocument.bind(this, document)}
                               bsSize="xsmall"
                             >
-                              <FontAwesomeIcon icon="download" />
+                              <Glyphicon glyph="download-alt" />
                             </Button>
                             <Authorize>
                               <DeleteButton

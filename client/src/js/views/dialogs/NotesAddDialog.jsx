@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { FormGroup, FormLabel, FormText } from 'react-bootstrap';
+import { FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
 
 import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
@@ -36,9 +36,7 @@ class NotesAddDialog extends React.Component {
   };
 
   didChange = () => {
-    if (this.props.note.text !== this.state.note) {
-      return true;
-    }
+    if (this.props.note.text !== this.state.note) { return true; }
 
     return false;
   };
@@ -90,21 +88,15 @@ class NotesAddDialog extends React.Component {
     return (
       <FormDialog
         id="notes"
-        title={noteId ? 'Edit Note' : 'Add Note'}
-        show={this.props.show}
-        onClose={this.props.onClose}
-        onSubmit={this.onFormSubmitted}
-      >
-        <FormGroup controlId="note" validationState={this.state.noteError ? 'error' : null}>
-          <FormLabel>Note</FormLabel>
-          <FormInputControl
-            value={this.state.note}
-            as="textarea"
-            updateState={this.updateState}
-            maxLength={maxLength}
-          />
-          <FormText>{this.state.noteError}</FormText>
-          <p>Maximum {maxLength} characters.</p>
+        title={ noteId ? 'Edit Note' : 'Add Note' }
+        show={ this.props.show }
+        onClose={ this.props.onClose }
+        onSubmit={ this.onFormSubmitted }>
+        <FormGroup controlId="note" validationState={ this.state.noteError ? 'error' : null }>
+          <ControlLabel>Note</ControlLabel>
+          <FormInputControl value={ this.state.note } componentClass="textarea" updateState={ this.updateState } maxLength={ maxLength } />
+          <HelpBlock>{ this.state.noteError }</HelpBlock>
+          <p>Maximum { maxLength } characters.</p>
         </FormGroup>
       </FormDialog>
     );

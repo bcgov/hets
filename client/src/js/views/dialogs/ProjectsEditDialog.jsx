@@ -3,7 +3,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { Container, Row, Col, FormGroup, FormText, FormLabel } from 'react-bootstrap';
+import { Grid, Row, Col, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import _ from 'lodash';
 
@@ -34,7 +34,7 @@ class ProjectsEditDialog extends React.Component {
 
     this.state = {
       name: props.project.name || '',
-      fiscalYear: props.project.fiscalYear || _.first(_.takeRight(props.fiscalYears, 2)),
+      fiscalYear: props.project.fiscalYear || _.first( _.takeRight(props.fiscalYears, 2)),
       provincialProjectNumber: props.project.provincialProjectNumber || '',
       responsibilityCentre: props.project.responsibilityCentre || '',
       serviceLine: props.project.serviceLine || '',
@@ -62,39 +62,17 @@ class ProjectsEditDialog extends React.Component {
   didChange = () => {
     var project = this.props.project;
 
-    if (this.state.name !== project.name) {
-      return true;
-    }
-    if (this.state.fiscalYear !== project.fiscalYear) {
-      return true;
-    }
-    if (this.state.provincialProjectNumber !== project.provincialProjectNumber) {
-      return true;
-    }
-    if (this.state.responsibilityCentre !== project.responsibilityCentre) {
-      return true;
-    }
-    if (this.state.serviceLine !== project.serviceLine) {
-      return true;
-    }
-    if (this.state.stob !== project.stob) {
-      return true;
-    }
-    if (this.state.product !== project.product) {
-      return true;
-    }
-    if (this.state.businessFunction !== project.businessFunction) {
-      return true;
-    }
-    if (this.state.workActivity !== project.workActivity) {
-      return true;
-    }
-    if (this.state.costType !== project.costType) {
-      return true;
-    }
-    if (this.state.projectInformation !== project.information) {
-      return true;
-    }
+    if (this.state.name !== project.name) { return true; }
+    if (this.state.fiscalYear !== project.fiscalYear) { return true; }
+    if (this.state.provincialProjectNumber !== project.provincialProjectNumber) { return true; }
+    if (this.state.responsibilityCentre !== project.responsibilityCentre) { return true; }
+    if (this.state.serviceLine !== project.serviceLine) { return true; }
+    if (this.state.stob !== project.stob) { return true; }
+    if (this.state.product !== project.product) { return true; }
+    if (this.state.businessFunction !== project.businessFunction) { return true; }
+    if (this.state.workActivity !== project.workActivity) { return true; }
+    if (this.state.costType !== project.costType) { return true; }
+    if (this.state.projectInformation !== project.information) { return true; }
 
     return false;
   };
@@ -129,19 +107,15 @@ class ProjectsEditDialog extends React.Component {
       return false;
     }
 
-    const duplicateProject = _.find(this.props.projects.data, (project) => {
-      return (
-        project.id !== this.props.project.id &&
-        project.name.toLowerCase().trim() === name.toLowerCase().trim() &&
-        project.fiscalYear.toLowerCase().trim() === fiscalYear.toLowerCase().trim() &&
-        project.provincialProjectNumber.toLowerCase().trim() === provincialProjectNumber.toLowerCase().trim()
-      );
+    const duplicateProject = _.find(this.props.projects.data, project => {
+      return project.id !== this.props.project.id &&
+             project.name.toLowerCase().trim() === name.toLowerCase().trim() &&
+             project.fiscalYear.toLowerCase().trim() === fiscalYear.toLowerCase().trim() &&
+             project.provincialProjectNumber.toLowerCase().trim() === provincialProjectNumber.toLowerCase().trim();
     });
 
     if (duplicateProject) {
-      this.setState({
-        nameError: 'A project with the same name and project number exists for the selected fiscal year.',
-      });
+      this.setState({ nameError: 'A project with the same name and project number exists for the selected fiscal year.'});
       valid = false;
     }
 
@@ -185,131 +159,98 @@ class ProjectsEditDialog extends React.Component {
     return (
       <FormDialog
         id="projects-edit"
-        show={this.props.show}
+        show={ this.props.show }
         title="Projects"
-        onClose={this.props.onClose}
-        onSubmit={this.formSubmitted}
-      >
+        onClose={ this.props.onClose}
+        onSubmit={ this.formSubmitted }>
         <Form>
-          <Container fluid>
+          <Grid fluid>
             <Row>
               <Col xs={12}>
-                <FormGroup controlId="name" validationState={this.state.nameError ? 'error' : null}>
-                  <FormLabel>
-                    Project Name <sup>*</sup>
-                  </FormLabel>
-                  <FormInputControl
-                    type="text"
-                    value={this.state.name}
-                    updateState={this.updateState}
-                    autoFocus
-                    maxLength="60"
-                  />
-                  <FormText>{this.state.nameError}</FormText>
+                <FormGroup controlId="name" validationState={ this.state.nameError ? 'error' : null}>
+                  <ControlLabel>Project Name <sup>*</sup></ControlLabel>
+                  <FormInputControl type="text" value={ this.state.name } updateState={ this.updateState} autoFocus maxLength="60"/>
+                  <HelpBlock>{ this.state.nameError }</HelpBlock>
                 </FormGroup>
               </Col>
             </Row>
             <Row>
               <Col xs={6}>
-                <FormGroup controlId="fiscalYear" validationState={this.state.fiscalYearError ? 'error' : null}>
-                  <FormLabel>
-                    Fiscal Year <sup>*</sup>
-                  </FormLabel>
-                  <DropdownControl
-                    id="fiscalYear"
-                    title={this.state.fiscalYear}
-                    updateState={this.updateState}
-                    items={_.takeRight(this.props.fiscalYears, 2)}
+                <FormGroup controlId="fiscalYear" validationState={ this.state.fiscalYearError ? 'error' : null }>
+                  <ControlLabel>Fiscal Year <sup>*</sup></ControlLabel>
+                  <DropdownControl id="fiscalYear" title={ this.state.fiscalYear } updateState={ this.updateState }
+                    items={ _.takeRight(this.props.fiscalYears, 2) }
                   />
-                  <FormText>{this.state.fiscalYearError}</FormText>
+                  <HelpBlock>{ this.state.fiscalYearError }</HelpBlock>
                 </FormGroup>
               </Col>
               <Col xs={6}>
-                <FormGroup
-                  controlId="provincialProjectNumber"
-                  validationState={this.state.provincialProjectNumberError ? 'error' : null}
-                >
-                  <FormLabel>
-                    Provincial Project Number <sup>*</sup>
-                  </FormLabel>
-                  <FormInputControl
-                    type="text"
-                    value={this.state.provincialProjectNumber}
-                    updateState={this.updateState}
-                  />
-                  <FormText>{this.state.provincialProjectNumberError}</FormText>
+                <FormGroup controlId="provincialProjectNumber" validationState={ this.state.provincialProjectNumberError ? 'error' : null }>
+                  <ControlLabel>Provincial Project Number <sup>*</sup></ControlLabel>
+                  <FormInputControl type="text" value={ this.state.provincialProjectNumber } updateState={ this.updateState } />
+                  <HelpBlock>{ this.state.provincialProjectNumberError }</HelpBlock>
                 </FormGroup>
               </Col>
             </Row>
             <Row>
               <Col xs={12}>
                 <FormGroup controlId="responsibilityCentre">
-                  <FormLabel>Responsibility Centre</FormLabel>
-                  <FormInputControl
-                    type="text"
-                    value={this.state.responsibilityCentre}
-                    updateState={this.updateState}
-                  />
+                  <ControlLabel>Responsibility Centre</ControlLabel>
+                  <FormInputControl type="text" value={ this.state.responsibilityCentre } updateState={ this.updateState } />
                 </FormGroup>
               </Col>
             </Row>
             <Row>
               <Col xs={6}>
                 <FormGroup controlId="serviceLine">
-                  <FormLabel>Service Line</FormLabel>
-                  <FormInputControl type="text" value={this.state.serviceLine} updateState={this.updateState} />
+                  <ControlLabel>Service Line</ControlLabel>
+                  <FormInputControl type="text" value={ this.state.serviceLine } updateState={ this.updateState } />
                 </FormGroup>
               </Col>
               <Col xs={6}>
                 <FormGroup controlId="stob">
-                  <FormLabel>STOB</FormLabel>
-                  <FormInputControl type="text" value={this.state.stob} updateState={this.updateState} />
+                  <ControlLabel>STOB</ControlLabel>
+                  <FormInputControl type="text" value={ this.state.stob } updateState={ this.updateState } />
                 </FormGroup>
               </Col>
             </Row>
             <Row>
               <Col xs={6}>
                 <FormGroup controlId="product">
-                  <FormLabel>Product</FormLabel>
-                  <FormInputControl type="text" value={this.state.product} updateState={this.updateState} />
+                  <ControlLabel>Product</ControlLabel>
+                  <FormInputControl type="text" value={ this.state.product } updateState={ this.updateState } />
                 </FormGroup>
               </Col>
               <Col xs={6}>
                 <FormGroup controlId="businessFunction">
-                  <FormLabel>Business Function</FormLabel>
-                  <FormInputControl type="text" value={this.state.businessFunction} updateState={this.updateState} />
+                  <ControlLabel>Business Function</ControlLabel>
+                  <FormInputControl type="text" value={ this.state.businessFunction } updateState={ this.updateState } />
                 </FormGroup>
               </Col>
             </Row>
             <Row>
               <Col xs={6}>
                 <FormGroup controlId="workActivity">
-                  <FormLabel>Work Activity</FormLabel>
-                  <FormInputControl type="text" value={this.state.workActivity} updateState={this.updateState} />
+                  <ControlLabel>Work Activity</ControlLabel>
+                  <FormInputControl type="text" value={ this.state.workActivity } updateState={ this.updateState } />
                 </FormGroup>
               </Col>
               <Col xs={6}>
                 <FormGroup controlId="costType">
-                  <FormLabel>Cost Type</FormLabel>
-                  <FormInputControl type="text" value={this.state.costType} updateState={this.updateState} />
+                  <ControlLabel>Cost Type</ControlLabel>
+                  <FormInputControl type="text" value={ this.state.costType } updateState={ this.updateState } />
                 </FormGroup>
               </Col>
             </Row>
             <Row>
               <Col xs={12}>
                 <FormGroup controlId="projectInformation">
-                  <FormLabel>Project Information</FormLabel>
-                  <FormInputControl
-                    type="text"
-                    as="textarea"
-                    rows="5"
-                    value={this.state.projectInformation}
-                    updateState={this.updateState}
-                  />
+                  <ControlLabel>Project Information</ControlLabel>
+                  <FormInputControl type="text" componentClass="textarea" rows="5" value={ this.state.projectInformation } updateState={ this.updateState } />
                 </FormGroup>
               </Col>
             </Row>
-          </Container>
+          </Grid>
         </Form>
       </FormDialog>
     );

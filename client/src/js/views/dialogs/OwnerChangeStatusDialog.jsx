@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormGroup, FormLabel, FormText } from 'react-bootstrap';
+import { FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../../api';
@@ -13,8 +13,7 @@ import FormInputControl from '../../components/FormInputControl.jsx';
 import { isBlank } from '../../utils/string';
 import { OWNER_STATUS_CODE_APPROVED } from '../../constants';
 
-const ARCHIVE_WARNING_MESSAGE =
-  'This action will archive the owner and all their equipment and remove them from the seniority list.';
+const ARCHIVE_WARNING_MESSAGE = 'This action will archive the owner and all their equipment and remove them from the seniority list.';
 
 class ChangeStatusDialog extends React.Component {
   static propTypes = {
@@ -57,7 +56,7 @@ class ChangeStatusDialog extends React.Component {
       valid = false;
     }
 
-    if (this.props.owner && this.props.status === OWNER_STATUS_CODE_APPROVED && this.statusRequirements().length > 0) {
+    if (this.props.owner && this.props.status === OWNER_STATUS_CODE_APPROVED && (this.statusRequirements()).length > 0) {
       this.setState({ statusError: this.statusRequirements() });
       valid = false;
     }
@@ -87,7 +86,7 @@ class ChangeStatusDialog extends React.Component {
 
   formSubmitted = () => {
     if (this.isValid()) {
-      this.setState({ isSaving: true });
+      this.setState({isSaving: true});
       const status = {
         id: this.props.owner.id,
         status: this.props.status,
@@ -96,41 +95,34 @@ class ChangeStatusDialog extends React.Component {
       var currentStatus = this.props.owner.status;
       var equipmentList = { ...this.props.owner.equipmentList };
 
-      return Api.changeOwnerStatus(status)
-        .then(() => {
-          this.setState({ isSaving: false });
-          this.props.onStatusChanged(status);
-          Log.ownerModifiedStatus(this.props.owner, status.status, status.statusComment);
-          // If owner status goes from approved to unapproved/archived or unapproved to archived
-          // this will change all it's equipment statuses. This should be reflected in the equipment history.
-          if (
-            (currentStatus === Constant.OWNER_STATUS_CODE_APPROVED ||
-              currentStatus === Constant.OWNER_STATUS_CODE_PENDING) &&
-            (status.status === Constant.OWNER_STATUS_CODE_PENDING ||
-              status.status === Constant.OWNER_STATUS_CODE_ARCHIVED)
-          ) {
-            _.map(equipmentList, (equipment) => {
-              if (equipment.status !== status.status) {
-                Log.equipmentStatusModified(equipment, status.status, status.statusComment);
-              }
-            });
-          }
-        })
-        .catch((error) => {
-          if (error.status === 400 && error.errorCode === 'HETS-40') {
-            this.setState({ commentError: error.errorDescription });
-          } else {
-            throw error;
-          }
-        });
+      return Api.changeOwnerStatus(status).then(() => {
+        this.setState({isSaving: false});
+        this.props.onStatusChanged(status);
+        Log.ownerModifiedStatus(this.props.owner, status.status, status.statusComment);
+        // If owner status goes from approved to unapproved/archived or unapproved to archived
+        // this will change all it's equipment statuses. This should be reflected in the equipment history.
+        if (
+          (currentStatus === Constant.OWNER_STATUS_CODE_APPROVED || currentStatus === Constant.OWNER_STATUS_CODE_PENDING)
+          && (status.status === Constant.OWNER_STATUS_CODE_PENDING || status.status === Constant.OWNER_STATUS_CODE_ARCHIVED)
+        ) {
+          _.map(equipmentList, equipment => {
+            if (equipment.status !== status.status) {
+              Log.equipmentStatusModified(equipment, status.status, status.statusComment);
+            }
+          });
+        }
+      }).catch((error) => {
+        if (error.status === 400 && error.errorCode === 'HETS-40') {
+          this.setState({ commentError: error.errorDescription });
+        } else {
+          throw error;
+        }
+      });
     }
   };
 
   render() {
-    var statusErrorText =
-      this.state.statusError && this.state.statusError.length <= 1
-        ? 'The following is also required:'
-        : 'The following are also required:';
+    var statusErrorText = this.state.statusError && this.state.statusError.length <= 1 ? 'The following is also required:' : 'The following are also required:';
     var maxLength = Constant.MAX_LENGTH_STATUS_COMMENT;
 
     const archiving = this.props.status === Constant.OWNER_STATUS_CODE_ARCHIVED;
@@ -139,35 +131,26 @@ class ChangeStatusDialog extends React.Component {
       <FormDialog
         id="notes"
         title="Reason for Status Change"
-        saveButtonLabel={archiving ? 'Proceed Anyways' : 'Save'}
+        saveButtonLabel={ archiving ? 'Proceed Anyways' : 'Save' }
         show={this.props.show}
         isSaving={this.state.isSaving}
         onClose={this.props.onClose}
-        onSubmit={this.formSubmitted}
-      >
+        onSubmit={this.formSubmitted}>
         <FormGroup controlId="comment" validationState={this.state.commentError ? 'error' : null}>
-          <FormLabel>Comment</FormLabel>
-          <FormInputControl
-            value={this.state.comment}
-            as="textarea"
-            updateState={this.updateState}
-            maxLength={maxLength}
-          />
-          <FormText>{this.state.commentError}</FormText>
-          <p>Maximum {maxLength} characters.</p>
-          <FormText>
-            {this.state.statusError && statusErrorText}
+          <ControlLabel>Comment</ControlLabel>
+          <FormInputControl value={this.state.comment} componentClass="textarea" updateState={this.updateState} maxLength={ maxLength } />
+          <HelpBlock>{this.state.commentError}</HelpBlock>
+          <p>Maximum { maxLength } characters.</p>
+          <HelpBlock>{this.state.statusError && statusErrorText}
             <ul>
-              {_.map(this.state.statusError, (error) => {
-                return <li>{error}</li>;
-              })}
+              {
+                _.map(this.state.statusError, (error) => {
+                  return <li>{error}</li>;
+                })
+              }
             </ul>
-          </FormText>
-          {archiving && (
-            <div className="has-error">
-              <FormText>{this.state.archiveWarning}</FormText>
-            </div>
-          )}
+          </HelpBlock>
+          { archiving && <div className="has-error"><HelpBlock>{ this.state.archiveWarning }</HelpBlock></div> }
         </FormGroup>
       </FormDialog>
     );

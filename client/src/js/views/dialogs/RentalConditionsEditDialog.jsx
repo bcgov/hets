@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormGroup, FormText, FormLabel, Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../../api';
@@ -13,6 +12,7 @@ import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { isBlank } from '../../utils/string';
 import { NON_STANDARD_CONDITION } from '../../constants';
+
 
 class RentalConditionsEditDialog extends React.Component {
   static propTypes = {
@@ -30,15 +30,13 @@ class RentalConditionsEditDialog extends React.Component {
     this.state = {
       isNew: props.rentalCondition.id === 0,
 
-      forms: [
-        {
-          conditionName: props.rentalCondition.conditionName || '',
-          comment: props.rentalCondition.comment || '',
+      forms: [{
+        conditionName: props.rentalCondition.conditionName || '',
+        comment: props.rentalCondition.comment || '',
 
-          conditionNameError: '',
-          commentError: '',
-        },
-      ],
+        conditionNameError: '',
+        commentError: '',
+      }],
       concurrencyControlNumber: props.rentalCondition.concurrencyControlNumber || 0,
     };
   }
@@ -52,9 +50,9 @@ class RentalConditionsEditDialog extends React.Component {
     let stateValue = _.values(value)[0];
     let number = property.match(/\d+/g)[0];
     let stateName = property.match(/[a-zA-Z]+/g)[0];
-    let state = { [stateName]: stateValue };
+    let state = { [stateName]:  stateValue };
     const updatedForms = this.state.forms.slice();
-    updatedForms.splice(number, 1, { ...updatedForms[number], ...state });
+    updatedForms.splice(number, 1, { ...updatedForms[number], ...state});
     this.setState({ forms: updatedForms });
   };
 
@@ -109,13 +107,8 @@ class RentalConditionsEditDialog extends React.Component {
           };
         });
 
-        (this.state.isNew
-          ? Api.addRentalConditions(rentalAgreementId, conditions)
-          : Api.updateRentalCondition(_.first(conditions))
-        ).then(() => {
-          if (onSave) {
-            onSave();
-          }
+        (this.state.isNew ? Api.addRentalConditions(rentalAgreementId, conditions) : Api.updateRentalCondition(_.first(conditions))).then(() => {
+          if (onSave) { onSave(); }
         });
       }
       onClose();
@@ -147,10 +140,7 @@ class RentalConditionsEditDialog extends React.Component {
   render() {
     // Read-only if the user cannot edit the rental agreement
     var isReadOnly = !this.props.rentalCondition.canEdit && this.props.rentalCondition.id !== 0;
-    var conditions = _.map(
-      [...this.props.rentalConditions.data, { description: NON_STANDARD_CONDITION }],
-      'description'
-    );
+    var conditions = _.map([ ...this.props.rentalConditions.data, { description: NON_STANDARD_CONDITION } ], 'description');
 
     return (
       <FormDialog
@@ -158,16 +148,13 @@ class RentalConditionsEditDialog extends React.Component {
         show={this.props.show}
         onClose={this.props.onClose}
         onSubmit={this.formSubmitted}
-        title="Rental Agreement – Conditions"
-      >
+        title="Rental Agreement – Conditions">
         <div className="forms-container">
-          {this.state.forms.map((form, i) => (
+          { this.state.forms.map((form, i) => (
             <div className="form-item" key={i}>
               <div>
-                <FormGroup controlId={`conditionName${i}`} validationState={form.conditionNameError ? 'error' : null}>
-                  <FormLabel>
-                    Conditions <sup>*</sup>
-                  </FormLabel>
+                <FormGroup controlId={`conditionName${i}`} validationState={ form.conditionNameError ? 'error' : null }>
+                  <ControlLabel>Conditions <sup>*</sup></ControlLabel>
                   {/*TODO - use lookup list*/}
                   <DropdownControl
                     id={`conditionName${i}`}
@@ -175,24 +162,16 @@ class RentalConditionsEditDialog extends React.Component {
                     updateState={this.updateState}
                     items={conditions}
                     title={form.conditionName}
-                    className="full-width"
-                  />
-                  <FormText>{form.conditionNameError}</FormText>
+                    className="full-width" />
+                  <HelpBlock>{ form.conditionNameError }</HelpBlock>
                 </FormGroup>
               </div>
-              {form.conditionName === NON_STANDARD_CONDITION && (
+              { form.conditionName === NON_STANDARD_CONDITION && (
                 <div>
-                  <FormGroup controlId={`comment${i}`} validationState={form.commentError ? 'error' : null}>
-                    <FormLabel>
-                      Comment <sup>*</sup>
-                    </FormLabel>
-                    <FormInputControl
-                      as="textarea"
-                      defaultValue={form.comment}
-                      readOnly={isReadOnly}
-                      updateState={this.updateState}
-                    />
-                    <FormText>{form.commentError}</FormText>
+                  <FormGroup controlId={`comment${i}`} validationState={ form.commentError ? 'error' : null }>
+                    <ControlLabel>Comment <sup>*</sup></ControlLabel>
+                    <FormInputControl componentClass="textarea" defaultValue={ form.comment } readOnly={ isReadOnly } updateState={ this.updateState } />
+                    <HelpBlock>{ form.commentError }</HelpBlock>
                   </FormGroup>
                 </div>
               )}
@@ -200,16 +179,19 @@ class RentalConditionsEditDialog extends React.Component {
           ))}
         </div>
         <div className="align-right">
-          {this.state.isNew && this.state.forms.length > 1 && (
-            <Button bsSize="xsmall" className="remove-btn" onClick={this.removeInput}>
-              <FontAwesomeIcon icon="minus" />
-              &nbsp;<strong>Remove</strong>
+          { this.state.isNew && this.state.forms.length > 1 && (
+            <Button
+              bsSize="xsmall"
+              className="remove-btn"
+              onClick={ this.removeInput }>
+              <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
             </Button>
           )}
-          {this.state.isNew && this.state.forms.length < 10 && (
-            <Button bsSize="xsmall" onClick={this.addInput}>
-              <FontAwesomeIcon icon="plus" />
-              &nbsp;<strong>Add</strong>
+          { this.state.isNew && this.state.forms.length < 10 && (
+            <Button
+              bsSize="xsmall"
+              onClick={ this.addInput }>
+              <Glyphicon glyph="plus" />&nbsp;<strong>Add</strong>
             </Button>
           )}
         </div>
@@ -217,6 +199,7 @@ class RentalConditionsEditDialog extends React.Component {
     );
   }
 }
+
 
 function mapStateToProps(state) {
   return {

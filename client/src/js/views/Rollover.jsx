@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Button } from 'react-bootstrap';
+import { Button, Well } from 'react-bootstrap';
 
 import * as Api from '../api';
 import * as Constant from '../constants';
@@ -126,7 +126,7 @@ class Rollover extends React.Component {
           <strong>Note: </strong>Please save/print out the new seniority lists for all equipments corresponding to each
           local area.
         </p>
-        <Button onClick={this.dismissRolloverNotice} variant="primary">
+        <Button onClick={this.dismissRolloverNotice} bsStyle="primary">
           Dismiss
         </Button>
       </div>
@@ -141,7 +141,7 @@ class Rollover extends React.Component {
       !this.state.checkListStep4;
 
     return (
-      <div className="well">
+      <Well>
         <SubHeader title="Pre-Roll Over Checklist" />
         <div id="checklist">
           <CheckboxControl id="checkListStep1" checked={this.state.checkListStep1} updateState={this.updateState}>
@@ -188,7 +188,7 @@ class Rollover extends React.Component {
             </Button>
           </OverlayTrigger>
         </div>
-      </div>
+      </Well>
     );
   };
 

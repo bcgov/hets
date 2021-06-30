@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 
@@ -135,14 +134,14 @@ class Roles extends React.Component {
             <Link to={`${Constant.ROLES_PATHNAME}/0`}>
               <Authorize>
                 <Button title="Add Role" bsSize="xsmall">
-                  <FontAwesomeIcon icon="plus" />
+                  <Glyphicon glyph="plus" />
                   &nbsp;<strong>Add Role</strong>
                 </Button>
               </Authorize>
             </Link>
           );
           if (Object.keys(this.props.roles).length === 0) {
-            return <Alert variant="success">No roles {addRoleButton}</Alert>;
+            return <Alert bsStyle="success">No roles {addRoleButton}</Alert>;
           }
 
           var roles = _.sortBy(
@@ -192,12 +191,12 @@ class Roles extends React.Component {
                           overlay={<Confirm onConfirm={this.delete.bind(this, role)} />}
                         >
                           <Button className={role.canDelete ? '' : 'hidden'} title="Delete Role" bsSize="xsmall">
-                            <FontAwesomeIcon icon="trash" />
+                            <Glyphicon glyph="trash" />
                           </Button>
                         </OverlayTrigger>
                         <Link to={`${Constant.ROLES_PATHNAME}/${role.id}`}>
                           <Button className={role.canEdit ? '' : 'hidden'} title="Edit Role" bsSize="xsmall">
-                            <FontAwesomeIcon icon="pencil-alt" />
+                            <Glyphicon glyph="pencil" />
                           </Button>
                         </Link>
                       </ButtonGroup>

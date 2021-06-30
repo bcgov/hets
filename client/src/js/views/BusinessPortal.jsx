@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Row, Col, FormGroup, Alert, Button } from 'react-bootstrap';
+import { Well, Row, Col, FormGroup, Alert, Button } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Action from '../actionTypes';
@@ -122,7 +122,7 @@ class BusinessPortal extends React.Component {
 
     return (
       <div>
-        <div className="well" id="business-info">
+        <Well id="business-info">
           <SubHeader title="Business Information" />
           <Row>
             <Col lg={6} md={6} sm={12} xs={12}>
@@ -136,12 +136,12 @@ class BusinessPortal extends React.Component {
               </ColDisplay>
             </Col>
           </Row>
-        </div>
-        <div className="well" id="owners">
+        </Well>
+        <Well id="owners">
           <SubHeader title="HETS District Owners Associated With Your BCeID" />
           {(() => {
             if (_.isEmpty(this.props.business.owners)) {
-              return <Alert variant="success">No district owners associated</Alert>;
+              return <Alert bsStyle="success">No district owners associated</Alert>;
             }
 
             var owners = _.sortBy(this.props.business.owners, this.state.uiOwners.sortField);
@@ -179,8 +179,8 @@ class BusinessPortal extends React.Component {
               </SortTable>
             );
           })()}
-        </div>
-        <div className="well" id="associate-owner">
+        </Well>
+        <Well id="associate-owner">
           <SubHeader title="Associate HETS District Owner" />
           <div id="overview">
             <Row>
@@ -246,7 +246,7 @@ class BusinessPortal extends React.Component {
             </Button>
           </Form>
           {hasErrors && <div className="validation-error">Secret key validation failed.</div>}
-        </div>
+        </Well>
       </div>
     );
   };

@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { Well } from 'react-bootstrap';
+
 
 class SearchBar extends React.Component {
   static propTypes = {
@@ -9,11 +11,12 @@ class SearchBar extends React.Component {
 
   render() {
     return (
-      <div className="search-bar clearfix well well-sm" id={this.props.id}>
-        {this.props.children}
-      </div>
+      <Well className="search-bar clearfix" id={ this.props.id } bsSize="small">
+        { this.props.children }
+      </Well>
     );
   }
 }
+
 
 export default SearchBar;

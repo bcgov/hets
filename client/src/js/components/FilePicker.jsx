@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Glyphicon } from 'react-bootstrap';
+
 
 class FilePicker extends React.Component {
   static propTypes = {
@@ -16,23 +17,20 @@ class FilePicker extends React.Component {
   };
 
   render() {
-    var classNames = ['file-picker'];
+    var classNames = [ 'file-picker' ];
 
-    if (this.props.className) {
+    if(this.props.className) {
       classNames.push(this.props.className);
     }
 
-    return (
-      <span id={this.props.id} className={classNames.join(' ')}>
-        <label>
-          <span className="btn btn-default" title="Pick files to upload">
-            <FontAwesomeIcon icon="folder-open" />
-            {this.props.label ? ` ${this.props.label}` : null}
-          </span>
-          <input type="file" multiple onChange={this.filesPicked} />
-        </label>
-      </span>
-    );
+    return <span id={ this.props.id } className={ classNames.join(' ') }>
+      <label>
+        <span className="btn btn-default" title="Pick files to upload">
+          <Glyphicon glyph="folder-open" />{ this.props.label ? ` ${ this.props.label }` : null }
+        </span>
+        <input type="file" multiple onChange={ this.filesPicked }/>
+      </label>
+    </span>;
   }
 }
 

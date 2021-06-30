@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Container, Row, Col, FormGroup, FormLabel } from 'react-bootstrap';
+import { Grid, Row, Col, FormGroup, ControlLabel } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Constant from '../../constants';
@@ -9,6 +9,7 @@ import * as Api from '../../api';
 import CheckboxControl from '../../components/CheckboxControl.jsx';
 import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+
 
 class RentalAgreementOvertimeNotesDialog extends React.Component {
   static propTypes = {
@@ -52,9 +53,7 @@ class RentalAgreementOvertimeNotesDialog extends React.Component {
         };
 
         Api.updateRentalAgreement(rentalAgreement).then(() => {
-          if (onSave) {
-            onSave();
-          }
+          if (onSave) { onSave(); }
         });
       }
 
@@ -65,7 +64,7 @@ class RentalAgreementOvertimeNotesDialog extends React.Component {
   overtimeCheckboxChanged = (e) => {
     var active = e.target.checked;
 
-    var overtimeRates = _.map(this.state.overtimeRates, (rate) => ({ ...rate, active: active }));
+    var overtimeRates = _.map(this.state.overtimeRates, rate => ({ ...rate, active: active }));
 
     this.setState({ overtimeRates: overtimeRates });
   };
@@ -80,39 +79,28 @@ class RentalAgreementOvertimeNotesDialog extends React.Component {
         show={this.props.show}
         onSubmit={this.formSubmitted}
         onClose={this.props.onClose}
-        title="Overtime Rates and Notes/Special Instructions"
-      >
-        <Container fluid>
+        title="Overtime Rates and Notes/Special Instructions">
+        <Grid fluid>
           <Row>
             <Col xs={12} id="overtime-rate-edit">
-              <FormLabel>Overtime Rates</FormLabel>
+              <ControlLabel>Overtime Rates</ControlLabel>
               <div>
-                <CheckboxControl
-                  id="overtime"
-                  checked={this.state.overtime}
-                  updateState={this.updateState}
-                  onChange={this.overtimeCheckboxChanged}
-                >
-                  {_.map(rates, (rate) => rate.comment).join(', ')}
+                <CheckboxControl id="overtime" checked={ this.state.overtime } updateState={ this.updateState } onChange={ this.overtimeCheckboxChanged }>
+                  {
+                    _.map(rates, rate => rate.comment).join(', ')
+                  }
                 </CheckboxControl>
               </div>
             </Col>
             <Col xs={12} id="note-edit">
               <FormGroup controlId="note">
-                <FormLabel>Notes/Special Instructions</FormLabel>
-                <FormInputControl
-                  type="text"
-                  as="textarea"
-                  rows="3"
-                  value={this.state.note}
-                  updateState={this.updateState}
-                  maxLength={maxNoteLength}
-                />
-                <p>Maximum {maxNoteLength} characters.</p>
+                <ControlLabel>Notes/Special Instructions</ControlLabel>
+                <FormInputControl type="text" componentClass="textarea" rows="3" value={ this.state.note } updateState={ this.updateState } maxLength={ maxNoteLength } />
+                <p>Maximum { maxNoteLength } characters.</p>
               </FormGroup>
             </Col>
           </Row>
-        </Container>
+        </Grid>
       </FormDialog>
     );
   }

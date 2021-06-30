@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
-import { FormGroup, FormText, FormLabel, Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Constant from '../../constants';
@@ -194,14 +193,14 @@ class RentalRatesEditDialog extends React.Component {
 
     const ratePeriodElement = this.props.rentalRate.isIncludedInTotal ? (
       <>
-        <FormLabel>Period</FormLabel>
+        <ControlLabel>Period</ControlLabel>
         <div style={{ marginTop: '10px', marginBottom: '10px' }}>{form.uiRatePeriod}</div>
       </>
     ) : (
       <FormGroup controlId={`uiRatePeriod${i}`}>
-        <FormLabel>
+        <ControlLabel>
           Period <sup>*</sup>
-        </FormLabel>
+        </ControlLabel>
         <DropdownControl
           id={`uiRatePeriod${i}`}
           disabled={isReadOnly}
@@ -217,9 +216,9 @@ class RentalRatesEditDialog extends React.Component {
         <Row>
           <Col md={2}>
             <FormGroup controlId={`rate${i}`} validationState={form.rateError ? 'error' : null}>
-              <FormLabel>
+              <ControlLabel>
                 Rate <sup>*</sup>
-              </FormLabel>
+              </ControlLabel>
               <FormInputControl
                 type="float"
                 min={0}
@@ -228,17 +227,17 @@ class RentalRatesEditDialog extends React.Component {
                 updateState={this.updateState}
                 autoFocus
               />
-              <FormText>{form.rateError}</FormText>
+              <HelpBlock>{form.rateError}</HelpBlock>
             </FormGroup>
           </Col>
           <Col md={3}>{ratePeriodElement}</Col>
           <Col md={7}>
             <FormGroup controlId={`comment${i}`} validationState={form.commentError ? 'error' : null}>
-              <FormLabel>
+              <ControlLabel>
                 Comment <sup>*</sup>
-              </FormLabel>
+              </ControlLabel>
               <FormInputControl defaultValue={form.comment} readOnly={isReadOnly} updateState={this.updateState} />
-              <FormText>{form.commentError}</FormText>
+              <HelpBlock>{form.commentError}</HelpBlock>
             </FormGroup>
           </Col>
         </Row>
@@ -261,13 +260,13 @@ class RentalRatesEditDialog extends React.Component {
         <div className="align-right">
           {this.state.isNew && this.state.forms.length > 1 && (
             <Button bsSize="xsmall" className="remove-btn" onClick={this.removeInput}>
-              <FontAwesomeIcon icon="minus" />
+              <Glyphicon glyph="minus" />
               &nbsp;<strong>Remove</strong>
             </Button>
           )}
           {this.state.isNew && this.state.forms.length < 10 && (
             <Button bsSize="xsmall" onClick={this.addInput}>
-              <FontAwesomeIcon icon="plus" />
+              <Glyphicon glyph="plus" />
               &nbsp;<strong>Add</strong>
             </Button>
           )}

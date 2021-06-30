@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Form } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form } from 'react-bootstrap';
 import _ from 'lodash';
 
 import ProjectsAddDialog from './dialogs/ProjectsAddDialog.jsx';
@@ -145,7 +144,7 @@ class Projects extends React.Component {
 
   renderResults = (addProjectButton) => {
     if (Object.keys(this.props.projects.data).length === 0) {
-      return <Alert variant="success">No Projects {addProjectButton}</Alert>;
+      return <Alert bsStyle="success">No Projects {addProjectButton}</Alert>;
     }
 
     var projects = _.sortBy(this.props.projects.data, (project) => {
@@ -254,7 +253,7 @@ class Projects extends React.Component {
                     updateState={this.updateSearchState}
                     items={this.props.fiscalYears}
                   />
-                  <Button id="search-button" variant="primary" type="submit">
+                  <Button id="search-button" bsStyle="primary" type="submit">
                     Search
                   </Button>
                   <Button id="clear-search-button" onClick={this.clearSearch}>
@@ -290,7 +289,7 @@ class Projects extends React.Component {
           var addProjectButton = (
             <Authorize>
               <Button title="Add Project" bsSize="xsmall" onClick={this.openAddDialog}>
-                <FontAwesomeIcon icon="plus" />
+                <Glyphicon glyph="plus" />
                 &nbsp;<strong>Add Project</strong>
               </Button>
             </Authorize>
