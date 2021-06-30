@@ -38,7 +38,7 @@ class SubHeader extends React.Component {
           title={editButtonTitle}
           disabled={editButtonDisabled}
           disabledTooltip={editButtonDisabledTooltip}
-          bsSize="small"
+          size="sm"
           onClick={onEditClicked}
         >
           <FontAwesomeIcon icon={editIcon} />

@@ -389,7 +389,7 @@ class EquipmentTransferDialog extends React.Component {
         className={'form-dialog'}
         id="equipment-transfer"
         title="Equipment Transfer"
-        bsSize="large"
+        size="lg"
         onClose={this.props.onClose}
         show={this.props.show}
         footer={

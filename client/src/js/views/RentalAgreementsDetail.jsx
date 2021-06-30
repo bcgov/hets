@@ -376,7 +376,7 @@ class RentalAgreementsDetail extends React.Component {
               <Authorize>
                 <TooltipButton
                   title="Add Included Rates and Attachments"
-                  bsSize="small"
+                  size="sm"
                   className="no-margin"
                   onClick={this.addRentalRate.bind(this, true)}
                   enabledTooltip="These rates will be added to the total, along with the equipment pay rate."
@@ -401,7 +401,7 @@ class RentalAgreementsDetail extends React.Component {
 
             return (
               <div id="included-rates">
-                <Table striped condensed hover bordered>
+                <Table striped hover bordered>
                   <thead>
                     <tr>
                       <th>Rate</th>
@@ -465,7 +465,7 @@ class RentalAgreementsDetail extends React.Component {
               <Authorize>
                 <TooltipButton
                   title="Add Other Rates and Attachments"
-                  bsSize="small"
+                  size="sm"
                   className="no-margin"
                   onClick={this.addRentalRate.bind(this, false)}
                   enabledTooltip="These rates will NOT be added to the total."
@@ -490,7 +490,7 @@ class RentalAgreementsDetail extends React.Component {
 
             return (
               <div id="as-needed-rates">
-                <Table striped condensed hover bordered>
+                <Table striped hover bordered>
                   <thead>
                     <tr>
                       <th>Rate</th>
@@ -553,7 +553,7 @@ class RentalAgreementsDetail extends React.Component {
 
             var button = (
               <Authorize>
-                <Button title="Add Rental Condition" bsSize="small" className="no-margin" onClick={this.addCondition}>
+                <Button title="Add Rental Condition" size="sm" className="no-margin" onClick={this.addCondition}>
                   <FontAwesomeIcon icon="plus" className="mr-5" />
                   <span>Add</span>
                 </Button>
@@ -571,7 +571,7 @@ class RentalAgreementsDetail extends React.Component {
 
             return (
               <div id="rental-conditions">
-                <Table striped condensed hover bordered>
+                <Table striped hover bordered>
                   <thead>
                     <tr>
                       <th>Condition</th>

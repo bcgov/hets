@@ -436,7 +436,7 @@ class RentalRequests extends React.Component {
               <Button
                 title="Add Rental Request (View Only)"
                 className="hidden-print"
-                bsSize="xsmall"
+                size="sm"
                 onClick={() => this.openAddDialog(true)}
               >
                 <FontAwesomeIcon icon="plus" />
@@ -450,7 +450,7 @@ class RentalRequests extends React.Component {
               <Button
                 title="Add Rental Request"
                 className="hidden-print"
-                bsSize="xsmall"
+                size="sm"
                 onClick={() => this.openAddDialog(false)}
               >
                 <FontAwesomeIcon icon="plus" />

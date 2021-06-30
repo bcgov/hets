@@ -137,13 +137,13 @@ class AttachmentAddDialog extends React.Component {
         </div>
         <div className="clearfix">
           {forms.length > 1 && (
-            <Button bsSize="xsmall" className="remove-btn" onClick={this.removeInput}>
+            <Button size="sm" className="remove-btn" onClick={this.removeInput}>
               <FontAwesomeIcon icon="minus" />
               &nbsp;<strong>Remove</strong>
             </Button>
           )}
           {forms.length < 10 && (
-            <Button bsSize="xsmall" className="pull-right" onClick={this.addInput}>
+            <Button size="sm" className="pull-right" onClick={this.addInput}>
               <FontAwesomeIcon icon="plus" />
               &nbsp;<strong>Add</strong>
             </Button>

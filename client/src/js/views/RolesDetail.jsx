@@ -274,7 +274,7 @@ class RolesDetail extends React.Component {
             var permissions = _.sortBy(this.props.permissions, 'name');
 
             return (
-              <Table striped condensed hover bordered>
+              <Table striped hover bordered>
                 <thead>
                   <tr>
                     <th>Name</th>

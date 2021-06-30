@@ -153,7 +153,7 @@ class DocumentsListDialog extends React.Component {
       <ModalDialog
         id="documents-dialog"
         backdrop="static"
-        bsSize="lg"
+        size="lg"
         show={this.props.show}
         onClose={this.props.onClose}
         title={<strong>Documents for {parent.name}</strong>}
@@ -229,7 +229,7 @@ class DocumentsListDialog extends React.Component {
                             <Button
                               title="Download Document"
                               onClick={this.downloadDocument.bind(this, document)}
-                              bsSize="xsmall"
+                              size="sm"
                             >
                               <FontAwesomeIcon icon="download" />
                             </Button>

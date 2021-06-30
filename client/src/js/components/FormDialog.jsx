@@ -13,7 +13,7 @@ class FormDialog extends React.Component {
     title: PropTypes.node,
     id: PropTypes.string,
     className: PropTypes.string,
-    bsSize: PropTypes.string,
+    size: PropTypes.string,
     isReadOnly: PropTypes.bool,
     isSaving: PropTypes.bool,
     onClose: PropTypes.func.isRequired,
@@ -57,13 +57,13 @@ class FormDialog extends React.Component {
   };
 
   render() {
-    const { id, className, title, show, bsSize } = this.props;
+    const { id, className, title, show, size } = this.props;
 
     return (
       <Modal
         backdrop="static"
         id={id}
-        bsSize={bsSize}
+        size={size}
         className={classNames('form-dialog', className)}
         show={show}
         onHide={this.closeDialog}

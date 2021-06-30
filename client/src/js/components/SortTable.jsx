@@ -79,7 +79,7 @@ class SortTable extends React.Component {
             <Spinner />
           </div>
         )}
-        <Table condensed striped hover>
+        <Table striped hover>
           <thead>
             <tr>{this.renderTableHeader()}</tr>
           </thead>

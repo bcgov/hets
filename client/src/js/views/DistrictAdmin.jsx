@@ -169,7 +169,7 @@ class DistrictAdmin extends React.Component {
 
             var addDistrictEquipmentButton = (
               <Authorize>
-                <Button title="Add District Equipment" bsSize="xsmall" onClick={this.addDistrictEquipmentType}>
+                <Button title="Add District Equipment" size="xsmall" onClick={this.addDistrictEquipmentType}>
                   <FontAwesomeIcon icon="plus" />
                   &nbsp;<strong>Add District Equipment Type</strong>
                 </Button>
@@ -224,14 +224,14 @@ class DistrictAdmin extends React.Component {
                               rootClose
                               overlay={<Confirm onConfirm={this.deleteDistrictEquipmentType.bind(this, equipment)} />}
                             >
-                              <Button title="Delete District Equipment Type" bsSize="xsmall">
+                              <Button title="Delete District Equipment Type" size="sm">
                                 <FontAwesomeIcon icon="trash-alt" />
                               </Button>
                             </OverlayTrigger>
                           </Authorize>
                           <Button
                             title="Edit District Equipment Type"
-                            bsSize="xsmall"
+                            size="sm"
                             onClick={this.editDistrictEquipmentType.bind(this, equipment)}
                           >
                             <FontAwesomeIcon icon="edit" />
@@ -259,7 +259,7 @@ class DistrictAdmin extends React.Component {
 
             var addConditionButton = (
               <Authorize>
-                <Button title="Add Condition" bsSize="xsmall" onClick={this.addCondition}>
+                <Button title="Add Condition" size="sm" onClick={this.addCondition}>
                   <FontAwesomeIcon icon="plus" />
                   &nbsp;<strong>Add Condition</strong>
                 </Button>
@@ -296,15 +296,11 @@ class DistrictAdmin extends React.Component {
                             rootClose
                             overlay={<Confirm onConfirm={this.deleteCondition.bind(this, condition)} />}
                           >
-                            <Button title="Delete User" bsSize="xsmall">
+                            <Button title="Delete User" size="sm">
                               <FontAwesomeIcon icon="trash-alt" />
                             </Button>
                           </OverlayTrigger>
-                          <Button
-                            title="Edit Condition"
-                            bsSize="xsmall"
-                            onClick={this.editCondition.bind(this, condition)}
-                          >
+                          <Button title="Edit Condition" size="sm" onClick={this.editCondition.bind(this, condition)}>
                             <FontAwesomeIcon icon="edit" />
                           </Button>
                         </ButtonGroup>

@@ -299,7 +299,7 @@ class TopNav extends React.Component {
                     </Popover>
                   }
                 >
-                  <Button id="rollover-notice-button" className="mr-5" variant="info" bsSize="xsmall">
+                  <Button id="rollover-notice-button" className="mr-5" variant="info" size="sm">
                     Roll Over Complete
                     <FontAwesomeIcon icon="exclamation-circle" />
                   </Button>

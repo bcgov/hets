@@ -285,7 +285,7 @@ class UsersDetail extends React.Component {
                 {(() => {
                   var addDistrictButton = (
                     <Authorize>
-                      <Button title="Add District" bsSize="small" onClick={this.addUserDistrict}>
+                      <Button title="Add District" size="sm" onClick={this.addUserDistrict}>
                         <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add District</strong>
                       </Button>
@@ -340,14 +340,14 @@ class UsersDetail extends React.Component {
                                       rootClose
                                       overlay={<Confirm onConfirm={this.deleteDistrict.bind(this, district)} />}
                                     >
-                                      <Button title="Delete District" bsSize="xsmall">
+                                      <Button title="Delete District" size="sm">
                                         <FontAwesomeIcon icon="trash" />
                                       </Button>
                                     </OverlayTrigger>
                                   </Authorize>
                                   <Button
                                     title="Edit District"
-                                    bsSize="xsmall"
+                                    size="sm"
                                     onClick={this.editUserDistrict.bind(this, district)}
                                   >
                                     <FontAwesomeIcon icon="edit" />
@@ -389,7 +389,7 @@ class UsersDetail extends React.Component {
 
                   var addUserRoleButton = (
                     <Authorize>
-                      <Button title="Add User Role" onClick={this.openUserRoleDialog} bsSize="xsmall">
+                      <Button title="Add User Role" onClick={this.openUserRoleDialog} size="sm">
                         <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add Role</strong>
                       </Button>
@@ -450,7 +450,7 @@ class UsersDetail extends React.Component {
                                     rootClose
                                     overlay={<ExpireOverlay userRole={userRole} onSave={this.updateUserRole} />}
                                   >
-                                    <Button title="Expire User Role" bsSize="xsmall">
+                                    <Button title="Expire User Role" size="sm">
                                       <FontAwesomeIcon icon="pencil-alt" />
                                       &nbsp;Expire
                                     </Button>

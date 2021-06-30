@@ -149,7 +149,7 @@ class CloneDialog extends React.Component {
         show={this.props.show}
         title="Clone Rental Agreement"
         saveButtonLabel="Clone"
-        bsSize="large"
+        size="lg"
         isSaving={this.state.isSaving}
         onClose={this.onClose}
         onSubmit={this.formSubmitted}

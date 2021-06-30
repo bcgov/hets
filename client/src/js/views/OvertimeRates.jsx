@@ -89,11 +89,7 @@ class OvertimeRates extends React.Component {
                       <td>{`$${overtimeRateType.rate.toFixed(2)}/Hr`}</td>
                       <td style={{ textAlign: 'right' }}>
                         <ButtonGroup>
-                          <Button
-                            title="Edit Rate"
-                            bsSize="xsmall"
-                            onClick={this.editRate.bind(this, overtimeRateType)}
-                          >
+                          <Button title="Edit Rate" size="sm" onClick={this.editRate.bind(this, overtimeRateType)}>
                             <FontAwesomeIcon icon="edit" />
                           </Button>
                         </ButtonGroup>

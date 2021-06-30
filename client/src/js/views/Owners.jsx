@@ -290,7 +290,7 @@ class Owners extends React.Component {
 
           var addOwnerButton = (
             <Authorize>
-              <Button title="Add Owner" bsSize="xsmall" onClick={this.openAddDialog}>
+              <Button title="Add Owner" size="sm" onClick={this.openAddDialog}>
                 <FontAwesomeIcon icon="plus" />
                 &nbsp;<strong>Add Owner</strong>
               </Button>

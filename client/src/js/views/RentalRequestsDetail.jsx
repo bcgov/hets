@@ -517,7 +517,7 @@ class RentalRequestsDetail extends React.Component {
                             if (listItem.maximumHours) {
                               return (
                                 <OverlayTrigger trigger="click" placement="top" rootClose overlay={confirm}>
-                                  <Button variant="link" bsSize="xsmall">
+                                  <Button variant="link" size="sm">
                                     Max. hours reached
                                   </Button>
                                 </OverlayTrigger>

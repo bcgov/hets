@@ -183,13 +183,13 @@ class Users extends React.Component {
                       rootClose
                       overlay={<Confirm onConfirm={this.delete.bind(this, user)} />}
                     >
-                      <Button className={user.canDelete ? '' : 'hidden'} title="Delete User" bsSize="xsmall">
+                      <Button className={user.canDelete ? '' : 'hidden'} title="Delete User" size="sm">
                         <FontAwesomeIcon icon="trash" />
                       </Button>
                     </OverlayTrigger>
                   </Authorize>
                   <Link to={`${Constant.USERS_PATHNAME}/${user.id}`}>
-                    <Button className={user.canEdit ? '' : 'hidden'} title="View User" bsSize="xsmall">
+                    <Button className={user.canEdit ? '' : 'hidden'} title="View User" size="sm">
                       <FontAwesomeIcon icon="edit" />
                     </Button>
                   </Link>
@@ -290,7 +290,7 @@ class Users extends React.Component {
 
           var addUserButton = (
             <Authorize>
-              <Button title="Add User" bsSize="xsmall" onClick={this.openUsersEditDialog}>
+              <Button title="Add User" size="sm" onClick={this.openUsersEditDialog}>
                 <FontAwesomeIcon icon="plus" />
                 &nbsp;<strong>Add User</strong>
               </Button>

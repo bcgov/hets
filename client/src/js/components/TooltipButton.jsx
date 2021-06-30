@@ -12,7 +12,7 @@ class TooltipButton extends React.Component {
     onClick: PropTypes.func,
     className: PropTypes.string,
     style: PropTypes.object,
-    bsSize: PropTypes.string,
+    size: PropTypes.string,
     variant: PropTypes.string,
   };
 
@@ -28,7 +28,7 @@ class TooltipButton extends React.Component {
         style={buttonStyle}
         className={this.props.className}
         variant={this.props.variant}
-        bsSize={this.props.bsSize}
+        size={this.props.size}
         disabled={this.props.disabled}
         onClick={this.props.onClick}
       >

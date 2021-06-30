@@ -464,7 +464,7 @@ class EquipmentDetail extends React.Component {
                               <ButtonGroup>
                                 <Button
                                   title="Edit Attachment"
-                                  bsSize="xsmall"
+                                  size="sm"
                                   onClick={this.openPhysicalAttachmentEditDialog.bind(this, attachment)}
                                 >
                                   <FontAwesomeIcon icon="pencil-alt" />
@@ -478,7 +478,7 @@ class EquipmentDetail extends React.Component {
                                       <Confirm onConfirm={this.deletePhysicalAttachment.bind(this, attachment.id)} />
                                     }
                                   >
-                                    <Button title="Delete Attachment" bsSize="xsmall">
+                                    <Button title="Delete Attachment" size="sm">
                                       <FontAwesomeIcon icon="trash" />
                                     </Button>
                                   </OverlayTrigger>

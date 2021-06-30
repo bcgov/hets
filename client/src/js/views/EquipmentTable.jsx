@@ -74,7 +74,7 @@ class EquipmentTable extends React.Component {
               <td>{formatDateTime(equip.lastVerifiedDate, 'YYYY-MMM-DD')}</td>
               <td style={{ textAlign: 'right' }}>
                 <Link to={`${Constant.EQUIPMENT_PATHNAME}/${equip.id}`}>
-                  <Button title="View Equipment" bsSize="xsmall">
+                  <Button title="View Equipment" size="sm">
                     <FontAwesomeIcon icon="edit" />
                   </Button>
                 </Link>

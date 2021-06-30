@@ -260,13 +260,13 @@ class RentalRatesEditDialog extends React.Component {
         <div className="forms-container">{this.state.forms.map((form, i) => this.renderForm(form, i))}</div>
         <div className="align-right">
           {this.state.isNew && this.state.forms.length > 1 && (
-            <Button bsSize="xsmall" className="remove-btn" onClick={this.removeInput}>
+            <Button size="sm" className="remove-btn" onClick={this.removeInput}>
               <FontAwesomeIcon icon="minus" />
               &nbsp;<strong>Remove</strong>
             </Button>
           )}
           {this.state.isNew && this.state.forms.length < 10 && (
-            <Button bsSize="xsmall" onClick={this.addInput}>
+            <Button size="sm" onClick={this.addInput}>
               <FontAwesomeIcon icon="plus" />
               &nbsp;<strong>Add</strong>
             </Button>

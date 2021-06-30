@@ -550,13 +550,13 @@ class TimeEntryDialog extends React.Component {
           <Row>
             <Col xs={12}>
               {this.state.numberOfInputs < 10 && (
-                <Button bsSize="xsmall" onClick={this.addTimeEntryInput}>
+                <Button size="sm" onClick={this.addTimeEntryInput}>
                   <FontAwesomeIcon icon="plus" />
                   &nbsp;<strong>Add</strong>
                 </Button>
               )}
               {this.state.numberOfInputs > 1 && (
-                <Button bsSize="xsmall" className="remove-btn" onClick={this.removeTimeEntryInput}>
+                <Button size="sm" className="remove-btn" onClick={this.removeTimeEntryInput}>
                   <FontAwesomeIcon icon="minus" />
                   &nbsp;<strong>Remove</strong>
                 </Button>

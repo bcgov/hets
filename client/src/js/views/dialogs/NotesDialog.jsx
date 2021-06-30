@@ -130,7 +130,7 @@ class NotesDialog extends React.Component {
           </Alert>
         )}
         <Authorize>
-          <Button title="Add Note" bsSize="small" onClick={this.openNotesAddDialog}>
+          <Button title="Add Note" size="sm" onClick={this.openNotesAddDialog}>
             <FontAwesomeIcon icon="plus" />
             &nbsp;<strong>Add Note</strong>
           </Button>

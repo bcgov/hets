@@ -515,7 +515,7 @@ class OwnersDetail extends React.Component {
 
                   var addContactButton = (
                     <Authorize>
-                      <Button title="Add Contact" onClick={this.openContactDialog.bind(this, 0)} bsSize="xsmall">
+                      <Button title="Add Contact" onClick={this.openContactDialog.bind(this, 0)} size="sm">
                         <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add</strong>
                       </Button>
@@ -605,7 +605,7 @@ class OwnersDetail extends React.Component {
                         disabledTooltip={restrictEquipmentVerifyTooltip}
                         className="mr-5"
                         title="Verify All Equipment"
-                        bsSize="small"
+                        size="sm"
                       >
                         Verify All
                       </TooltipButton>
@@ -614,7 +614,7 @@ class OwnersDetail extends React.Component {
                       disabled={!isApproved}
                       disabledTooltip={restrictEquipmentAddTooltip}
                       title="Add Equipment"
-                      bsSize="small"
+                      size="sm"
                       onClick={this.openEquipmentDialog}
                     >
                       <FontAwesomeIcon icon="plus" />
@@ -702,7 +702,7 @@ class OwnersDetail extends React.Component {
                                   disabled={!isApproved}
                                   disabledTooltip={restrictEquipmentVerifyTooltip}
                                   title="Verify Equipment"
-                                  bsSize="xsmall"
+                                  size="sm"
                                   onClick={this.equipmentVerify.bind(this, equipment)}
                                 >
                                   <FontAwesomeIcon icon="check" /> OK

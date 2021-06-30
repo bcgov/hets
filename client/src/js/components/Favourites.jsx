@@ -90,7 +90,7 @@ class EditFavouritesDialog extends React.Component {
       <FormDialog
         id="edit-favourite"
         title="Favourite"
-        bsSize="small"
+        size="sm"
         show={show}
         isSaving={isSaving}
         onClose={onClose}

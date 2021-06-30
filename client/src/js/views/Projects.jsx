@@ -289,7 +289,7 @@ class Projects extends React.Component {
 
           var addProjectButton = (
             <Authorize>
-              <Button title="Add Project" bsSize="xsmall" onClick={this.openAddDialog}>
+              <Button title="Add Project" size="sm" onClick={this.openAddDialog}>
                 <FontAwesomeIcon icon="plus" />
                 &nbsp;<strong>Add Project</strong>
               </Button>

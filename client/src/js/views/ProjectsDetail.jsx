@@ -310,7 +310,7 @@ class ProjectsDetail extends React.Component {
                 rootClose
                 overlay={<Confirm onConfirm={this.confirmEndHire.bind(this, item)} />}
               >
-                <Button bsSize="xsmall">
+                <Button size="sm">
                   <FontAwesomeIcon icon={['far', 'check-square']} />
                 </Button>
               </OverlayTrigger>
@@ -489,12 +489,7 @@ class ProjectsDetail extends React.Component {
                     <small>Show Completed</small>
                   </CheckboxControl>
                   <Authorize>
-                    <Button
-                      id="add-request-button"
-                      title="Add Request"
-                      bsSize="small"
-                      onClick={this.openAddRequestDialog}
-                    >
+                    <Button id="add-request-button" title="Add Request" size="sm" onClick={this.openAddRequestDialog}>
                       <FontAwesomeIcon icon="plus" /> Add
                     </Button>
                   </Authorize>
@@ -553,7 +548,7 @@ class ProjectsDetail extends React.Component {
 
                   var addContactButton = (
                     <Authorize>
-                      <Button title="Add Contact" onClick={this.openContactDialog.bind(this, 0)} bsSize="small">
+                      <Button title="Add Contact" onClick={this.openContactDialog.bind(this, 0)} size="sm">
                         <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add</strong>
                       </Button>

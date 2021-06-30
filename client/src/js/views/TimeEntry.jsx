@@ -227,7 +227,7 @@ class TimeEntry extends React.Component {
               <td>{formatDateTime(entry.enteredDate, 'YYYY-MMM-DD')}</td>
               <td style={{ textAlign: 'right' }}>
                 <ButtonGroup>
-                  <Button title="Edit Time" bsSize="xsmall" onClick={this.openTimeEntryDialog.bind(this, entry)}>
+                  <Button title="Edit Time" size="sm" onClick={this.openTimeEntryDialog.bind(this, entry)}>
                     <FontAwesomeIcon icon="edit" />
                   </Button>
                 </ButtonGroup>
@@ -403,7 +403,7 @@ class TimeEntry extends React.Component {
 
           var addTimeEntryButton = (
             <Authorize>
-              <Button title="Add Time" bsSize="xsmall" onClick={this.openTimeEntryDialog.bind(this, null)}>
+              <Button title="Add Time" size="sm" onClick={this.openTimeEntryDialog.bind(this, null)}>
                 <FontAwesomeIcon icon="plus" />
                 &nbsp;<strong>Add Time</strong>
               </Button>

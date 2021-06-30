@@ -119,7 +119,7 @@ class DistrictEditDialog extends React.Component {
         id="equipment-add"
         show={this.props.show}
         title={this.state.isNew ? 'Add District' : 'Edit District'}
-        bsSize="small"
+        size="sm"
         isSaving={this.state.isSaving}
         onClose={this.props.onClose}
         onSubmit={this.formSubmitted}
