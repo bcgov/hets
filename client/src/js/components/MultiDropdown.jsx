@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Dropdown, FormControl, FormCheck } from 'react-bootstrap';
+import { Dropdown, FormControl, FormCheck, Form } from 'react-bootstrap';
 import RootCloseMenu from './RootCloseMenu.jsx';
 import _ from 'lodash';
 
@@ -162,43 +162,46 @@ class MultiDropdown extends React.Component {
         onToggle={this.toggle}
         disabled={this.props.disabled}
       >
-        <Dropdown.Toggle title={this.state.title} />
-        <RootCloseMenu>
+        <Dropdown.Toggle title={this.state.title}> {this.state.title} </Dropdown.Toggle>
+        <Dropdown.Menu>
           <div className="well well-sm">
             <FormControl
               type="text"
               placeholder="Search"
               onChange={this.filter}
-              inputRef={(ref) => {
+              ref={(ref) => {
                 this.input = ref;
               }}
               autoComplete="off"
               onKeyDown={this.keyDown}
             />
-            <FormCheck
-              className="select-all"
-              checked={this.state.allSelected}
-              onChange={this.selectAll}
-              label="Select All"
-            />
+
+            <Form.Group controlId="formSelectAllCheckbox">
+              <FormCheck
+                className="select-all"
+                checked={this.state.allSelected}
+                onChange={this.selectAll}
+                label="Select All"
+              />
+            </Form.Group>
           </div>
           {items.length > 0 && (
             <ul>
               {_.map(items, (item) => {
                 return (
-                  <li key={item.id}>
+                  <Form.Group key={item.id} controlId={`formCheckboxLabel${item.id}`} as="li">
                     <FormCheck
                       value={item.id}
                       checked={this.state.selectedIds.includes(item.id)}
                       onChange={this.itemSelected}
                       label={item[this.state.fieldName]}
                     />
-                  </li>
+                  </Form.Group>
                 );
               })}
             </ul>
           )}
-        </RootCloseMenu>
+        </Dropdown.Menu>
       </Dropdown>
     );
   }

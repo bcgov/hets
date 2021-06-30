@@ -19,7 +19,7 @@ class EditButton extends React.Component {
     var button = (
       <Button
         title={`${this.props.view ? 'View' : 'Edit'} ${this.props.name}`}
-        bsSize="xsmall"
+        size="sm"
         className={this.props.hide ? 'hidden' : ''}
         {...props}
       >

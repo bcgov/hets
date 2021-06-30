@@ -7,21 +7,19 @@ class Confirm extends React.Component {
   static propTypes = {
     onConfirm: PropTypes.func.isRequired,
     onCancel: PropTypes.func,
-    hide: PropTypes.func,
+
     children: PropTypes.node,
     title: PropTypes.string,
   };
 
   confirmed = () => {
     this.props.onConfirm();
-    this.props.hide();
   };
 
   canceled = () => {
     if (this.props.onCancel) {
       this.props.onCancel();
     }
-    this.props.hide();
   };
 
   render() {
@@ -29,6 +27,7 @@ class Confirm extends React.Component {
 
     return (
       <Popover id="confirm" title={this.props.title ? this.props.title : 'Are you sure?'} {...props}>
+        {this.props.title ? this.props.title : 'Are you sure?'}
         {this.props.children}
         <div style={{ textAlign: 'center', marginTop: '6px' }}>
           <ButtonGroup>

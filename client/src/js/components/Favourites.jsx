@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Alert, Dropdown, ButtonToolbar, Button } from 'react-bootstrap';
+import { Alert, Dropdown, ButtonGroup, Button } from 'react-bootstrap';
 import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
-import { Col } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
@@ -14,8 +14,6 @@ import EditButton from '../components/EditButton.jsx';
 import FormDialog from '../components/FormDialog.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 import Authorize from '../components/Authorize.jsx';
-
-import RootCloseMenu from './RootCloseMenu.jsx';
 
 import { isBlank } from '../utils/string';
 
@@ -111,9 +109,7 @@ class EditFavouritesDialog extends React.Component {
           />
           <HelpBlock>{nameError}</HelpBlock>
         </FormGroup>
-        <CheckboxControl id="isDefault" checked={isDefault} updateState={this.updateState}>
-          Default
-        </CheckboxControl>
+        <CheckboxControl id="isDefault" checked={isDefault} updateState={this.updateState} label="Default" />
       </FormDialog>
     );
   }
@@ -199,7 +195,8 @@ class Favourites extends React.Component {
       <Authorize>
         <Dropdown id={this.props.id} className={className} title={title} open={this.state.open} onToggle={this.toggle}>
           <Dropdown.Toggle>{title}</Dropdown.Toggle>
-          <RootCloseMenu>
+
+          <Dropdown.Menu>
             <div className="favourites-button-bar">
               <Button onClick={this.addFavourite}>Favourite Current Selection</Button>
             </div>
@@ -217,25 +214,28 @@ class Favourites extends React.Component {
                   {_.map(this.props.favourites, (favourite) => {
                     return (
                       <li key={favourite.id}>
-                        <Col md={1}>{favourite.isDefault ? <FontAwesomeIcon icon="star" /> : ''}</Col>
-                        <Col md={8}>
-                          <span className="favourite__item" onClick={this.selectFavourite.bind(this, favourite)}>
-                            {favourite.name}
-                          </span>
-                        </Col>
-                        <Col md={3}>
-                          <ButtonToolbar>
-                            <DeleteButton name="Favourite" onConfirm={this.deleteFavourite.bind(this, favourite)} />
-                            <EditButton name="Favourite" onClick={this.editFavourite.bind(this, favourite)} />
-                          </ButtonToolbar>
-                        </Col>
+                        <Row>
+                          <Col md={1}>{favourite.isDefault ? <FontAwesomeIcon icon="star" /> : ''}</Col>
+                          <Col md={8}>
+                            <span className="favourite__item" onClick={this.selectFavourite.bind(this, favourite)}>
+                              {favourite.name}
+                            </span>
+                          </Col>
+                          <Col md={3}>
+                            <ButtonGroup>
+                              <DeleteButton name="Favourite" onConfirm={this.deleteFavourite.bind(this, favourite)} />
+                              <EditButton name="Favourite" onClick={this.editFavourite.bind(this, favourite)} />
+                            </ButtonGroup>
+                          </Col>
+                        </Row>
                       </li>
                     );
                   })}
                 </ul>
               );
             })()}
-          </RootCloseMenu>
+          </Dropdown.Menu>
+
           {this.state.showEditDialog ? (
             <EditFavouritesDialog
               show={this.state.showEditDialog}
