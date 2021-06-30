@@ -56,20 +56,20 @@ class DropdownControl extends React.Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
-    if (!_.isEqual(this.props.items, prevProps.items)) {
-      var items = this.props.items || [];
+  componentWillReceiveProps(nextProps) {
+    if (!_.isEqual(nextProps.items, this.props.items)) {
+      var items = nextProps.items || [];
       this.setState({
         items: items,
         title: this.buildTitle(this.state.simple ? this.state.title : this.state.selectedId, items),
       });
-    } else if (this.props.selectedId !== prevProps.selectedId) {
+    } else if (nextProps.selectedId !== this.props.selectedId) {
       this.setState({
-        selectedId: this.props.selectedId,
-        title: this.buildTitle(this.props.selectedId, this.props.items),
+        selectedId: nextProps.selectedId,
+        title: this.buildTitle(nextProps.selectedId, this.props.items),
       });
-    } else if (!_.isEqual(this.props.title, prevProps.title)) {
-      this.setState({ title: this.buildTitle(this.props.title) });
+    } else if (!_.isEqual(nextProps.title, this.props.title)) {
+      this.setState({ title: this.buildTitle(nextProps.title) });
     }
   }
 
@@ -137,7 +137,7 @@ class DropdownControl extends React.Component {
         open={this.state.open}
         onToggle={this.toggle}
       >
-        <Dropdown.Toggle> {this.state.title}</Dropdown.Toggle>
+        <Dropdown.Toggle title={this.state.title} />
         <Dropdown.Menu>
           {this.props.items.length > 0 && (
             <ul>

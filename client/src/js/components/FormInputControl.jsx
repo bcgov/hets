@@ -3,6 +3,7 @@ import React from 'react';
 import { FormControl } from 'react-bootstrap';
 import _ from 'lodash';
 
+
 class FormInputControl extends React.Component {
   static propTypes = {
     type: PropTypes.string,
@@ -24,20 +25,18 @@ class FormInputControl extends React.Component {
     const { type, updateState, onChange } = this.props;
 
     // On change listener
-    if (onChange) {
-      onChange(e);
-    }
+    if (onChange) { onChange(e); }
 
     if (updateState && e.target.id) {
       // Use e.target.id insted of this.props.id because it comes from the controlId.
       var value = e.target.value;
-      if (type === 'number') {
+      if (type === 'number' ) {
         value = parseInt(value, 10);
         if (_.isNaN(value)) {
           value = '';
         }
       }
-      if (type === 'float') {
+      if (type === 'float' ) {
         value = parseFloat(value);
         if (_.isNaN(value)) {
           value = '';
@@ -51,10 +50,8 @@ class FormInputControl extends React.Component {
 
   refChanged = (ref) => {
     this.input = ref;
-    if (this.props.inputRef) {
-      this.props.inputRef(ref);
-    }
-  };
+    if (this.props.inputRef) { this.props.inputRef(ref); }
+  }
 
   render() {
     const { type, autoComplete, children } = this.props;
@@ -68,9 +65,8 @@ class FormInputControl extends React.Component {
         type={type === 'float' ? 'number' : type}
         step={type === 'float' ? '0.01' : null}
         onChange={this.changed}
-        ref={this.refChanged}
-        autoComplete={autoComplete || 'off'}
-      >
+        inputRef={this.refChanged}
+        autoComplete={autoComplete || 'off'}>
         {children}
       </FormControl>
     );

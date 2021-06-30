@@ -89,10 +89,11 @@ class DateControl extends React.Component {
             }}
             isValidDate={this.props.isValidDate}
           />
-
-          <Button disabled={disabled} onClick={this.clicked}>
-            <FontAwesomeIcon icon="calendar-alt" title={this.props.title} />
-          </Button>
+          <InputGroup.Button>
+            <Button disabled={disabled} onClick={this.clicked}>
+              <FontAwesomeIcon icon="calendar-alt" title={this.props.title} />
+            </Button>
+          </InputGroup.Button>
         </InputGroup>
       </div>
     );
