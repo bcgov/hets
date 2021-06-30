@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { ControlLabel, InputGroup, Button, Glyphicon } from 'react-bootstrap';
+import { FormLabel, InputGroup, Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import Moment from 'moment';
 import DateTime from 'react-datetime';
@@ -69,7 +70,7 @@ class DateControl extends React.Component {
         {(() => {
           // Inline label
           if (this.props.label) {
-            return <ControlLabel>{this.props.label}</ControlLabel>;
+            return <FormLabel>{this.props.label}</FormLabel>;
           }
         })()}
         <InputGroup>

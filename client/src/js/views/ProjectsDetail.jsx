@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col } from 'react-bootstrap';
-import { Alert, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
+import { Alert, Button, ButtonGroup } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -310,7 +311,7 @@ class ProjectsDetail extends React.Component {
                 overlay={<Confirm onConfirm={this.confirmEndHire.bind(this, item)} />}
               >
                 <Button bsSize="xsmall">
-                  <Glyphicon glyph="check" />
+                  <FontAwesomeIcon icon={['far', 'check-square']} />
                 </Button>
               </OverlayTrigger>
             </Authorize>
@@ -393,7 +394,7 @@ class ProjectsDetail extends React.Component {
 
           <Row>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader
                   title="Project Information"
                   editButtonTitle="Edit Project"
@@ -476,8 +477,8 @@ class ProjectsDetail extends React.Component {
                     </Row>
                   );
                 })()}
-              </Well>
-              <Well>
+              </div>
+              <div className="well">
                 <SubHeader title="Hired Equipment / Requests">
                   <CheckboxControl
                     id="includeCompletedRequests"
@@ -494,7 +495,7 @@ class ProjectsDetail extends React.Component {
                       bsSize="small"
                       onClick={this.openAddRequestDialog}
                     >
-                      <Glyphicon glyph="plus" /> Add
+                      <FontAwesomeIcon icon="plus" /> Add
                     </Button>
                   </Authorize>
                 </SubHeader>
@@ -508,7 +509,7 @@ class ProjectsDetail extends React.Component {
                   }
 
                   if (Object.keys(combinedList).length === 0) {
-                    return <Alert bsStyle="success">No equipment</Alert>;
+                    return <Alert variant="success">No equipment</Alert>;
                   }
 
                   var headers = [
@@ -536,10 +537,10 @@ class ProjectsDetail extends React.Component {
                     </TableControl>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader title="Contacts" />
                 {(() => {
                   if (loading) {
@@ -553,14 +554,14 @@ class ProjectsDetail extends React.Component {
                   var addContactButton = (
                     <Authorize>
                       <Button title="Add Contact" onClick={this.openContactDialog.bind(this, 0)} bsSize="small">
-                        <Glyphicon glyph="plus" />
+                        <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add</strong>
                       </Button>
                     </Authorize>
                   );
 
                   if (!project.contacts || project.contacts.length === 0) {
-                    return <Alert bsStyle="success">No contacts {addContactButton}</Alert>;
+                    return <Alert variant="success">No contacts {addContactButton}</Alert>;
                   }
 
                   var contacts = sort(
@@ -598,7 +599,7 @@ class ProjectsDetail extends React.Component {
                         return (
                           <tr key={contact.id}>
                             <td>
-                              {contact.isPrimary && <Glyphicon glyph="star" />}
+                              {contact.isPrimary && <FontAwesomeIcon icon="star" />}
                               {firstLastName(contact.givenName, contact.surname)}
                             </td>
                             <td>{contact.phone}</td>
@@ -627,13 +628,13 @@ class ProjectsDetail extends React.Component {
                     </SortTable>
                   );
                 })()}
-              </Well>
-              <Well>
+              </div>
+              <div className="well">
                 <SubHeader title="History" />
                 {project.historyEntity && (
                   <History historyEntity={project.historyEntity} refresh={!this.state.reloading} />
                 )}
-              </Well>
+              </div>
             </Col>
           </Row>
         </div>

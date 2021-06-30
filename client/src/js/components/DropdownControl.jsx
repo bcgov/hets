@@ -142,23 +142,23 @@ class DropdownControl extends React.Component {
           {this.props.items.length > 0 && (
             <ul>
               {this.props.blankLine && (
-                <MenuItem
+                <Dropdown.Item
                   key={this.state.simple ? '' : 0}
                   eventKey={this.state.simple ? '' : 0}
                   onSelect={this.itemSelected}
                 >
                   {typeof this.props.blankLine === 'string' ? this.props.blankLine : ' '}
-                </MenuItem>
+                </Dropdown.Item>
               )}
               {_.map(this.props.items, (item) => {
                 var menuItem = (
-                  <MenuItem
+                  <Dropdown.Item
                     key={this.state.simple ? item : item.id}
                     eventKey={this.state.simple ? item : item.id}
                     onSelect={this.itemSelected}
                   >
                     {this.state.simple ? item : item[this.state.fieldName]}
-                  </MenuItem>
+                  </Dropdown.Item>
                 );
                 // Check for hover items
                 if (!this.state.simple && item.hoverText) {

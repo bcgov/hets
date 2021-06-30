@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col, Alert, Glyphicon, Label } from 'react-bootstrap';
+import { Row, Col, Alert, Badge } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
 import * as Action from '../actionTypes';
@@ -126,8 +127,8 @@ class BusinessOwner extends React.Component {
         <div>
           <Row id="owners-top">
             <Col sm={9}>
-              <Label className="ml-5">{owner?.status}</Label>
-              <Label className={owner?.isMaintenanceContractor ? 'ml-5' : 'hide'}>Maintenance Contractor</Label>
+              <Badge className="ml-5">{owner?.status}</Badge>
+              <Badge className={owner?.isMaintenanceContractor ? 'ml-5' : 'hide'}>Maintenance Contractor</Badge>
             </Col>
             <Col sm={3}>
               <div className="pull-right">
@@ -139,7 +140,7 @@ class BusinessOwner extends React.Component {
 
           <PageHeader id="owners-header" title="Company" subTitle={owner.organizationName} />
 
-          <Well>
+          <div className="well">
             <SubHeader title="Owner Information" />
             <div id="owners-data">
               <Row className="equal-height">
@@ -200,8 +201,8 @@ class BusinessOwner extends React.Component {
                 </Col>
               </Row>
             </div>
-          </Well>
-          <Well>
+          </div>
+          <div className="well">
             <SubHeader title="Policy" />
             <Row id="owners-policy" className="equal-height">
               <Col lg={4} md={6} sm={12} xs={12}>
@@ -230,12 +231,12 @@ class BusinessOwner extends React.Component {
                 </ColDisplay>
               </Col>
             </Row>
-          </Well>
-          <Well>
+          </div>
+          <div className="well">
             <SubHeader title="Contacts" />
             {(() => {
               if (!owner.contacts || Object.keys(owner.contacts).length === 0) {
-                return <Alert bsStyle="success">No contacts</Alert>;
+                return <Alert variant="success">No contacts</Alert>;
               }
 
               var contacts = _.orderBy(
@@ -265,7 +266,7 @@ class BusinessOwner extends React.Component {
                     return (
                       <tr key={contact.id}>
                         <td>
-                          {contact.isPrimary && <Glyphicon glyph="star" />} {contact.name}
+                          {contact.isPrimary && <FontAwesomeIcon icon="star" />} {contact.name}
                         </td>
                         <td>{contact.phone}</td>
                         <td>{contact.mobilePhoneNumber}</td>
@@ -282,12 +283,12 @@ class BusinessOwner extends React.Component {
                 </SortTable>
               );
             })()}
-          </Well>
-          <Well>
+          </div>
+          <div className="well">
             <SubHeader title={`Equipment (${owner.numberOfEquipment})`} />
             {(() => {
               if (!owner.equipmentList || owner.equipmentList.length === 0) {
-                return <Alert bsStyle="success">No equipment</Alert>;
+                return <Alert variant="success">No equipment</Alert>;
               }
 
               var equipmentList = _.orderBy(
@@ -332,7 +333,7 @@ class BusinessOwner extends React.Component {
                 </SortTable>
               );
             })()}
-          </Well>
+          </div>
         </div>
       </div>
     );

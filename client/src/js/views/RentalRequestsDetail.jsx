@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
+import { Row, Col, Alert, Button, ButtonGroup, Badge } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -250,9 +251,9 @@ class RentalRequestsDetail extends React.Component {
         <Row id="rental-requests-top" className="hidden-print">
           <Col sm={9}>
             <div id="rental-request-status">
-              <Label bsStyle={rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default'}>
+              <Badge variant={rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default'}>
                 {rentalRequest.status}
-              </Label>
+              </Badge>
             </div>
             <Button title="Notes" disabled={loading} onClick={this.showNotes}>
               Notes ({loading ? ' ' : rentalRequest.notes?.length})
@@ -268,7 +269,7 @@ class RentalRequestsDetail extends React.Component {
           </Col>
         </Row>
 
-        <Well className="request-information">
+        <div className="well request-information">
           <SubHeader
             title="Request Information"
             className="hidden-print"
@@ -349,9 +350,9 @@ class RentalRequestsDetail extends React.Component {
               </Row>
             );
           })()}
-        </Well>
+        </div>
 
-        <Well>
+        <div className="well">
           <SubHeader title="Hire Rotation List" className="hidden-print">
             <PrintButton
               title="Print Hire Rotation List"
@@ -365,7 +366,7 @@ class RentalRequestsDetail extends React.Component {
               disabled={loading}
               disabledTooltip="Please wait for the request information to finish loading."
             >
-              <Glyphicon glyph="print" title="Print Seniority List" className="mr-5" />
+              <FontAwesomeIcon icon="print" title="Print Seniority List" className="mr-5" />
               <span>Seniority List</span>
             </TooltipButton>
             <CheckboxControl id="showAttachments" inline updateState={this.updateState}>
@@ -384,7 +385,7 @@ class RentalRequestsDetail extends React.Component {
             var rotationList = this.props.rentalRequest?.rotationList;
 
             if (Object.keys(rotationList || []).length === 0) {
-              return <Alert bsStyle="success">No equipment</Alert>;
+              return <Alert variant="success">No equipment</Alert>;
             }
 
             // Sort in rotation list order
@@ -516,7 +517,7 @@ class RentalRequestsDetail extends React.Component {
                             if (listItem.maximumHours) {
                               return (
                                 <OverlayTrigger trigger="click" placement="top" rootClose overlay={confirm}>
-                                  <Button bsStyle="link" bsSize="xsmall">
+                                  <Button variant="link" bsSize="xsmall">
                                     Max. hours reached
                                   </Button>
                                 </OverlayTrigger>
@@ -529,7 +530,7 @@ class RentalRequestsDetail extends React.Component {
                             ) {
                               return (
                                 <Button
-                                  bsStyle="link"
+                                  variant="link"
                                   title="Show Offer"
                                   onClick={() => this.openHireOfferDialog(listItem, showAllResponseFields)}
                                 >
@@ -548,14 +549,14 @@ class RentalRequestsDetail extends React.Component {
               </TableControl>
             );
           })()}
-        </Well>
+        </div>
 
-        <Well className="history">
+        <div className="well history">
           <SubHeader title="History" />
           {rentalRequest.historyEntity && (
             <History historyEntity={rentalRequest.historyEntity} refresh={!this.state.reloading} />
           )}
-        </Well>
+        </div>
         {this.state.showEditDialog && (
           <RentalRequestsEditDialog
             show={this.state.showEditDialog}

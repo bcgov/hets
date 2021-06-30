@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Popover, ButtonGroup, Button, Glyphicon } from 'react-bootstrap';
+import { Popover, ButtonGroup, Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
 class Confirm extends React.Component {

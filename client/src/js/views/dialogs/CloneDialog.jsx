@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import Promise from 'bluebird';
 
-import { Row, Col, Radio, Alert, FormGroup, ControlLabel } from 'react-bootstrap';
+import { Row, Col, FormCheck, Alert, FormGroup, FormLabel } from 'react-bootstrap';
 
 import * as Api from '../../api';
 import * as Constant from '../../constants';
@@ -57,7 +57,9 @@ class CloneDialog extends React.Component {
   };
 
   didChange = () => {
-    if (this.state.rentalAgreementId !== '') { return true; }
+    if (this.state.rentalAgreementId !== '') {
+      return true;
+    }
 
     return false;
   };
@@ -78,19 +80,32 @@ class CloneDialog extends React.Component {
           equipmentId: this.props.rentalAgreement.equipmentId,
         };
 
-        const promise = this.state.type === Constant.BY_EQUIPMENT ? Api.cloneEquipmentRentalAgreement(data) : Api.cloneProjectRentalAgreement(data);
+        const promise =
+          this.state.type === Constant.BY_EQUIPMENT
+            ? Api.cloneEquipmentRentalAgreement(data)
+            : Api.cloneProjectRentalAgreement(data);
 
-        promise.then(() => {
-          this.setState({ isSaving: false });
-          if (this.props.onSave) { this.props.onSave(); }
-          this.onClose();
-        }).catch((error) => {
-          if (error.status === 400 && (error.errorCode === 'HETS-11' || error.errorCode === 'HETS-12' || error.errorCode === 'HETS-13')) {
-            this.setState({ isSaving: false, cloneRentalAgreementError: 'There was an error cloning the rental agreement.' });
-          } else {
-            throw error;
-          }
-        });
+        promise
+          .then(() => {
+            this.setState({ isSaving: false });
+            if (this.props.onSave) {
+              this.props.onSave();
+            }
+            this.onClose();
+          })
+          .catch((error) => {
+            if (
+              error.status === 400 &&
+              (error.errorCode === 'HETS-11' || error.errorCode === 'HETS-12' || error.errorCode === 'HETS-13')
+            ) {
+              this.setState({
+                isSaving: false,
+                cloneRentalAgreementError: 'There was an error cloning the rental agreement.',
+              });
+            } else {
+              throw error;
+            }
+          });
       } else {
         this.onClose();
       }
@@ -104,69 +119,99 @@ class CloneDialog extends React.Component {
 
   render() {
     var headers = [
-      { field: 'blank'                                                       },
-      { field: 'equipmentId',              title: 'Equipment ID'             },
-      { field: 'equipmentType',            title: 'Equipment Type'           },
-      { field: 'equipmentMakeModelSize',   title: 'Year Make/Model/Size'     },
-      { field: 'projectName',              title: 'Project Name'             },
-      { field: 'rentalAgreementNumber',    title: 'Rental Agreement #'       },
-      { field: 'datedOn',                  title: 'Dated On'                 },
+      { field: 'blank' },
+      { field: 'equipmentId', title: 'Equipment ID' },
+      { field: 'equipmentType', title: 'Equipment Type' },
+      { field: 'equipmentMakeModelSize', title: 'Year Make/Model/Size' },
+      { field: 'projectName', title: 'Project Name' },
+      { field: 'rentalAgreementNumber', title: 'Rental Agreement #' },
+      { field: 'datedOn', title: 'Dated On' },
     ];
 
-    var rentalAgreements = _.filter(this.state.type === Constant.BY_PROJECT ?
-      this.props.projectRentalAgreements.data : this.props.equipmentRentalAgreements.data, item => {
-      return item.id !== this.props.rentalAgreement.id;
-    });
+    var rentalAgreements = _.filter(
+      this.state.type === Constant.BY_PROJECT
+        ? this.props.projectRentalAgreements.data
+        : this.props.equipmentRentalAgreements.data,
+      (item) => {
+        return item.id !== this.props.rentalAgreement.id;
+      }
+    );
 
-    rentalAgreements = _.reverse(_.sortBy(rentalAgreements, function(rentalAgreement) {
-      return rentalAgreement.datedOn;
-    }));
+    rentalAgreements = _.reverse(
+      _.sortBy(rentalAgreements, function (rentalAgreement) {
+        return rentalAgreement.datedOn;
+      })
+    );
 
     return (
       <FormDialog
         id="clone-dialog"
-        show={ this.props.show }
+        show={this.props.show}
         title="Clone Rental Agreement"
         saveButtonLabel="Clone"
         bsSize="large"
-        isSaving={ this.state.isSaving }
-        onClose={ this.onClose }
-        onSubmit={ this.formSubmitted }>
+        isSaving={this.state.isSaving}
+        onClose={this.onClose}
+        onSubmit={this.formSubmitted}
+      >
         <Row>
           <Col md={12}>
             <FormGroup controlId="type">
-              <ControlLabel>Rental Agreements</ControlLabel>
-              <DropdownControl id="type" updateState={ this.updateDropdownState }
-                selectedId={ this.state.type } title={ this.state.type } items={[Constant.BY_PROJECT, Constant.BY_EQUIPMENT]}
+              <FormLabel>Rental Agreements</FormLabel>
+              <DropdownControl
+                id="type"
+                updateState={this.updateDropdownState}
+                selectedId={this.state.type}
+                title={this.state.type}
+                items={[Constant.BY_PROJECT, Constant.BY_EQUIPMENT]}
               />
             </FormGroup>
             <p>Select a rental agreement to clone...</p>
             {(() => {
-              if (this.state.loading) { return <div style={{ textAlign: 'center' }}><Spinner/></div>; }
+              if (this.state.loading) {
+                return (
+                  <div style={{ textAlign: 'center' }}>
+                    <Spinner />
+                  </div>
+                );
+              }
 
-              if (!rentalAgreements || Object.keys(rentalAgreements).length === 0) { return <Alert bsStyle="success" style={{ marginTop: 10 }}>No rental agreements.</Alert>; }
+              if (!rentalAgreements || Object.keys(rentalAgreements).length === 0) {
+                return (
+                  <Alert variant="success" style={{ marginTop: 10 }}>
+                    No rental agreements.
+                  </Alert>
+                );
+              }
 
               return (
-                <TableControl id="notes-list" headers={ headers }>
-                  {
-                    _.map(rentalAgreements, (rentalAgreement) => {
-                      return <tr key={ rentalAgreement.id }>
-                        <td><Radio name="rentalAgreementId" value={ rentalAgreement.id } onChange={ this.updateState } /></td>
-                        <td>{ rentalAgreement.equipment.equipmentCode }</td>
-                        <td>{ rentalAgreement.equipment.districtEquipmentType.districtEquipmentName }</td>
+                <TableControl id="notes-list" headers={headers}>
+                  {_.map(rentalAgreements, (rentalAgreement) => {
+                    return (
+                      <tr key={rentalAgreement.id}>
+                        <td>
+                          <FormCheck
+                            type="radio"
+                            name="rentalAgreementId"
+                            value={rentalAgreement.id}
+                            onChange={this.updateState}
+                          />
+                        </td>
+                        <td>{rentalAgreement.equipment.equipmentCode}</td>
+                        <td>{rentalAgreement.equipment.districtEquipmentType.districtEquipmentName}</td>
                         <td>{`${rentalAgreement.equipment.year} ${rentalAgreement.equipment.make}/${rentalAgreement.equipment.model}/${rentalAgreement.equipment.size}`}</td>
-                        <td>{ rentalAgreement.project && rentalAgreement.project.name }</td>
-                        <td>{ rentalAgreement.number }</td>
-                        <td>{ formatDateTime(rentalAgreement.datedOn, 'YYYY-MMM-DD') }</td>
-                      </tr>;
-                    })
-                  }
+                        <td>{rentalAgreement.project && rentalAgreement.project.name}</td>
+                        <td>{rentalAgreement.number}</td>
+                        <td>{formatDateTime(rentalAgreement.datedOn, 'YYYY-MMM-DD')}</td>
+                      </tr>
+                    );
+                  })}
                 </TableControl>
               );
             })()}
-            { this.state.cloneRentalAgreementError &&
-              <Alert bsStyle="danger">{ this.state.cloneRentalAgreementError }</Alert>
-            }
+            {this.state.cloneRentalAgreementError && (
+              <Alert variant="danger">{this.state.cloneRentalAgreementError}</Alert>
+            )}
           </Col>
         </Row>
       </FormDialog>

@@ -1,19 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  Well,
-  Row,
-  Col,
-  Alert,
-  Label,
-  Button,
-  Glyphicon,
-  Popover,
-  FormGroup,
-  HelpBlock,
-  ButtonGroup,
-} from 'react-bootstrap';
+import { Row, Col, Alert, Badge, Button, Popover, FormGroup, FormText, ButtonGroup } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import Promise from 'bluebird';
 
@@ -214,9 +203,9 @@ class UsersDetail extends React.Component {
           <Row id="users-top">
             <Col sm={8}>
               {!loading && (
-                <Label bsStyle={user.active ? 'success' : 'danger'}>
+                <Badge variant={user.active ? 'success' : 'danger'}>
                   {user.active ? 'Verified Active' : 'Inactive'}
-                </Label>
+                </Badge>
               )}
             </Col>
             <Col sm={4}>
@@ -235,7 +224,7 @@ class UsersDetail extends React.Component {
 
           <Row>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader
                   title="General"
                   editButtonTitle="Edit User"
@@ -286,18 +275,18 @@ class UsersDetail extends React.Component {
                     </Row>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
           </Row>
           <Row>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader title="Districts" />
                 {(() => {
                   var addDistrictButton = (
                     <Authorize>
                       <Button title="Add District" bsSize="small" onClick={this.addUserDistrict}>
-                        <Glyphicon glyph="plus" />
+                        <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add District</strong>
                       </Button>
                     </Authorize>
@@ -312,7 +301,7 @@ class UsersDetail extends React.Component {
                   }
 
                   if (this.props.userDistricts.data.length === 0) {
-                    return <Alert bsStyle="success">No Districts {addDistrictButton}</Alert>;
+                    return <Alert variant="success">No Districts {addDistrictButton}</Alert>;
                   }
 
                   const userDistricts = sort(
@@ -338,7 +327,7 @@ class UsersDetail extends React.Component {
                         return (
                           <tr key={district.id}>
                             <td>
-                              {district.isPrimary && <Glyphicon glyph="star" />}
+                              {district.isPrimary && <FontAwesomeIcon icon="star" />}
                               {district.district.name}
                             </td>
                             <td style={{ textAlign: 'right' }}>
@@ -352,7 +341,7 @@ class UsersDetail extends React.Component {
                                       overlay={<Confirm onConfirm={this.deleteDistrict.bind(this, district)} />}
                                     >
                                       <Button title="Delete District" bsSize="xsmall">
-                                        <Glyphicon glyph="trash" />
+                                        <FontAwesomeIcon icon="trash" />
                                       </Button>
                                     </OverlayTrigger>
                                   </Authorize>
@@ -361,7 +350,7 @@ class UsersDetail extends React.Component {
                                     bsSize="xsmall"
                                     onClick={this.editUserDistrict.bind(this, district)}
                                   >
-                                    <Glyphicon glyph="edit" />
+                                    <FontAwesomeIcon icon="edit" />
                                   </Button>
                                 </ButtonGroup>
                               )}
@@ -372,12 +361,12 @@ class UsersDetail extends React.Component {
                     </TableControl>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
           </Row>
           <Row>
             <Col md={12}>
-              <Well id="users-access">
+              <div className="well" id="users-access">
                 <h3>
                   Access
                   <CheckboxControl
@@ -401,7 +390,7 @@ class UsersDetail extends React.Component {
                   var addUserRoleButton = (
                     <Authorize>
                       <Button title="Add User Role" onClick={this.openUserRoleDialog} bsSize="xsmall">
-                        <Glyphicon glyph="plus" />
+                        <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add Role</strong>
                       </Button>
                     </Authorize>
@@ -415,7 +404,7 @@ class UsersDetail extends React.Component {
                     return include;
                   });
                   if (userRoles.length === 0) {
-                    return <Alert bsStyle="success">No roles {addUserRoleButton}</Alert>;
+                    return <Alert variant="success">No roles {addUserRoleButton}</Alert>;
                   }
 
                   userRoles = _.sortBy(userRoles, this.state.ui.sortField);
@@ -450,7 +439,7 @@ class UsersDetail extends React.Component {
                             <td>{formatDateTime(userRole.effectiveDate, Constant.DATE_FULL_MONTH_DAY_YEAR)}</td>
                             <td>
                               {formatDateTime(userRole.expiryDate, Constant.DATE_FULL_MONTH_DAY_YEAR)}
-                              &nbsp;{daysFromToday(userRole.expiryDate) < 0 ? <Glyphicon glyph="asterisk" /> : ''}
+                              &nbsp;{daysFromToday(userRole.expiryDate) < 0 ? <FontAwesomeIcon icon="asterisk" /> : ''}
                             </td>
                             <td style={{ textAlign: 'right' }}>
                               {userRole.expiryDate ? null : (
@@ -462,7 +451,7 @@ class UsersDetail extends React.Component {
                                     overlay={<ExpireOverlay userRole={userRole} onSave={this.updateUserRole} />}
                                   >
                                     <Button title="Expire User Role" bsSize="xsmall">
-                                      <Glyphicon glyph="pencil" />
+                                      <FontAwesomeIcon icon="pencil-alt" />
                                       &nbsp;Expire
                                     </Button>
                                   </OverlayTrigger>
@@ -475,7 +464,7 @@ class UsersDetail extends React.Component {
                     </SortTable>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
           </Row>
         </div>
@@ -557,9 +546,9 @@ class ExpireOverlay extends React.Component {
               updateState={this.updateState}
               title="Expiry Date"
             />
-            <HelpBlock>{this.state.expiryDateError}</HelpBlock>
+            <FormText>{this.state.expiryDateError}</FormText>
           </FormGroup>
-          <Button bsStyle="primary" onClick={this.saveUserRole} className="pull-right">
+          <Button variant="primary" onClick={this.saveUserRole} className="pull-right">
             Save
           </Button>
         </Form>

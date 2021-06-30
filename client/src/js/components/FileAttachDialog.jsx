@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Button, Glyphicon } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import ModalDialog from './ModalDialog.jsx';
 import FilePicker from './FilePicker.jsx';
 import FileUpload from './FileUpload.jsx';
-
 
 class FileAttachDialog extends React.Component {
   static propTypes = {
@@ -51,33 +51,50 @@ class FileAttachDialog extends React.Component {
   render() {
     var fileList;
     if (this.state.files.length > 0) {
-      fileList = <ol className="file-list"> {
-        this.state.files.map((file, i) => {
-          return <li key={`${ file.name } - ${ i }`} className="clearfix">
-            { file.name }
-            <Glyphicon glyph="remove-sign" onClick={ this.removeFile.bind(this, file) } />
-          </li>;
-        })
-      }
-      </ol>;
+      fileList = (
+        <ol className="file-list">
+          {' '}
+          {this.state.files.map((file, i) => {
+            return (
+              <li key={`${file.name} - ${i}`} className="clearfix">
+                {file.name}
+                <FontAwesomeIcon icon="times" onClick={this.removeFile.bind(this, file)} />
+              </li>
+            );
+          })}
+        </ol>
+      );
     }
 
-    var footer = <span>
-      <Button onClick={ this.props.onClose } className="pull-left">Close</Button>
-      <FileUpload files={ this.state.files } path={ this.props.uploadPath } onUploadFinished={ this.filesUploaded }/>
-    </span>;
+    var footer = (
+      <span>
+        <Button onClick={this.props.onClose} className="pull-left">
+          Close
+        </Button>
+        <FileUpload files={this.state.files} path={this.props.uploadPath} onUploadFinished={this.filesUploaded} />
+      </span>
+    );
 
-    var titleAttr = `Attach files${ this.props.parentName ? ` to ${ this.props.parentName }` : '' }`;
+    var titleAttr = `Attach files${this.props.parentName ? ` to ${this.props.parentName}` : ''}`;
 
-    return <ModalDialog backdrop="static" show={ this.props.show } id={ this.props.id } className={ `file-upload-dialog ${this.props.className || ''}` }
-      title={ <b>{ titleAttr }</b> } onClose={ this.props.onClose } footer={ footer }
-    >
-      { fileList }
-      <p className="note">
-        <FilePicker onFilesSelected={ this.filesPicked }/><br/>
-        Select one or more files{ this.props.parentName ? ` to attach to ${ this.props.parentName }` : null }
-      </p>
-    </ModalDialog>;
+    return (
+      <ModalDialog
+        backdrop="static"
+        show={this.props.show}
+        id={this.props.id}
+        className={`file-upload-dialog ${this.props.className || ''}`}
+        title={<b>{titleAttr}</b>}
+        onClose={this.props.onClose}
+        footer={footer}
+      >
+        {fileList}
+        <p className="note">
+          <FilePicker onFilesSelected={this.filesPicked} />
+          <br />
+          Select one or more files{this.props.parentName ? ` to attach to ${this.props.parentName}` : null}
+        </p>
+      </ModalDialog>
+    );
   }
 }
 

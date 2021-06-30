@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Grid, Row, Col, FormGroup, ControlLabel, HelpBlock, Button, Glyphicon } from 'react-bootstrap';
+import { Container, Row, Col, FormGroup, FormLabel, FormText, Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import Moment from 'moment';
 
@@ -367,13 +368,13 @@ class TimeEntryDialog extends React.Component {
         onClose={this.props.onClose}
         onSubmit={this.selectAgreementFormSubmitted}
       >
-        <Grid fluid>
+        <Container fluid>
           <Row>
             <Col xs={6}>
               <FormGroup controlId="equipmentId" validationState={this.state.equipmentIdError ? 'error' : null}>
-                <ControlLabel>
+                <FormLabel>
                   Equipment ID <sup>*</sup>
-                </ControlLabel>
+                </FormLabel>
                 <FilterDropdown
                   id="equipmentId"
                   fieldName="equipmentCode"
@@ -383,14 +384,14 @@ class TimeEntryDialog extends React.Component {
                   updateState={this.updateState}
                   items={equipment}
                 />
-                <HelpBlock>{this.state.equipmentIdError}</HelpBlock>
+                <FormText>{this.state.equipmentIdError}</FormText>
               </FormGroup>
             </Col>
             <Col xs={6}>
               <FormGroup controlId="projectId" validationState={this.state.projectIdError ? 'error' : null}>
-                <ControlLabel>
+                <FormLabel>
                   Project <sup>*</sup>
-                </ControlLabel>
+                </FormLabel>
                 <FilterDropdown
                   id="projectId"
                   fieldName="label"
@@ -399,11 +400,11 @@ class TimeEntryDialog extends React.Component {
                   updateState={this.updateState}
                   items={projects}
                 />
-                <HelpBlock>{this.state.projectIdError}</HelpBlock>
+                <FormText>{this.state.projectIdError}</FormText>
               </FormGroup>
             </Col>
           </Row>
-        </Grid>
+        </Container>
       </FormDialog>
     );
   };
@@ -438,7 +439,7 @@ class TimeEntryDialog extends React.Component {
         onClose={this.onClose}
         onSubmit={this.formSubmitted}
       >
-        <Grid fluid>
+        <Container fluid>
           {(() => {
             if (!this.state.loaded) {
               return (
@@ -518,7 +519,7 @@ class TimeEntryDialog extends React.Component {
               <Row key={key}>
                 <Col sm={4}>
                   <FormGroup validationState={this.state.timeEntry[key].errorDate ? 'error' : null}>
-                    <ControlLabel>Week Ending</ControlLabel>
+                    <FormLabel>Week Ending</FormLabel>
                     <DateControl
                       disabled={!this.state.projectFiscalYearStartDate}
                       id={`date${key}`}
@@ -527,12 +528,12 @@ class TimeEntryDialog extends React.Component {
                       date={this.state.timeEntry[key].date}
                       updateState={this.updateTimeEntryState}
                     />
-                    <HelpBlock>{this.state.timeEntry[key].errorDate}</HelpBlock>
+                    <FormText>{this.state.timeEntry[key].errorDate}</FormText>
                   </FormGroup>
                 </Col>
                 <Col sm={4}>
                   <FormGroup validationState={this.state.timeEntry[key].errorHours ? 'error' : null}>
-                    <ControlLabel>Hours</ControlLabel>
+                    <FormLabel>Hours</FormLabel>
                     <FormInputControl
                       id={`hours${key}`}
                       name="hours"
@@ -540,7 +541,7 @@ class TimeEntryDialog extends React.Component {
                       value={this.state.timeEntry[key].hours}
                       updateState={this.updateTimeEntryState}
                     />
-                    <HelpBlock>{this.state.timeEntry[key].errorHours}</HelpBlock>
+                    <FormText>{this.state.timeEntry[key].errorHours}</FormText>
                   </FormGroup>
                 </Col>
               </Row>
@@ -550,19 +551,19 @@ class TimeEntryDialog extends React.Component {
             <Col xs={12}>
               {this.state.numberOfInputs < 10 && (
                 <Button bsSize="xsmall" onClick={this.addTimeEntryInput}>
-                  <Glyphicon glyph="plus" />
+                  <FontAwesomeIcon icon="plus" />
                   &nbsp;<strong>Add</strong>
                 </Button>
               )}
               {this.state.numberOfInputs > 1 && (
                 <Button bsSize="xsmall" className="remove-btn" onClick={this.removeTimeEntryInput}>
-                  <Glyphicon glyph="minus" />
+                  <FontAwesomeIcon icon="minus" />
                   &nbsp;<strong>Remove</strong>
                 </Button>
               )}
             </Col>
           </Row>
-        </Grid>
+        </Container>
       </FormDialog>
     );
   };

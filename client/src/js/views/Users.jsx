@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, InputGroup, Form } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, InputGroup, Form } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 
@@ -145,7 +146,7 @@ class Users extends React.Component {
 
   renderResults = (addUserButton) => {
     if (Object.keys(this.props.users.data).length === 0) {
-      return <Alert bsStyle="success">No users {addUserButton}</Alert>;
+      return <Alert variant="success">No users {addUserButton}</Alert>;
     }
 
     var users = _.sortBy(this.props.users.data, this.state.ui.sortField);
@@ -183,13 +184,13 @@ class Users extends React.Component {
                       overlay={<Confirm onConfirm={this.delete.bind(this, user)} />}
                     >
                       <Button className={user.canDelete ? '' : 'hidden'} title="Delete User" bsSize="xsmall">
-                        <Glyphicon glyph="trash" />
+                        <FontAwesomeIcon icon="trash" />
                       </Button>
                     </OverlayTrigger>
                   </Authorize>
                   <Link to={`${Constant.USERS_PATHNAME}/${user.id}`}>
                     <Button className={user.canEdit ? '' : 'hidden'} title="View User" bsSize="xsmall">
-                      <Glyphicon glyph="edit" />
+                      <FontAwesomeIcon icon="edit" />
                     </Button>
                   </Link>
                 </ButtonGroup>
@@ -254,7 +255,7 @@ class Users extends React.Component {
                   >
                     Hide Inactive
                   </CheckboxControl>
-                  <Button id="search-button" bsStyle="primary" type="submit">
+                  <Button id="search-button" variant="primary" type="submit">
                     Search
                   </Button>
                   <Button id="clear-search-button" onClick={this.clearSearch}>
@@ -290,7 +291,7 @@ class Users extends React.Component {
           var addUserButton = (
             <Authorize>
               <Button title="Add User" bsSize="xsmall" onClick={this.openUsersEditDialog}>
-                <Glyphicon glyph="plus" />
+                <FontAwesomeIcon icon="plus" />
                 &nbsp;<strong>Add User</strong>
               </Button>
             </Authorize>

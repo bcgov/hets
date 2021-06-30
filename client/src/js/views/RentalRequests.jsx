@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Form } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import Moment from 'moment';
@@ -224,7 +225,7 @@ class RentalRequests extends React.Component {
 
   renderResults = (addRequestButtons) => {
     if (Object.keys(this.props.rentalRequests.data).length === 0) {
-      return <Alert bsStyle="success">No Rental Requests {addRequestButtons}</Alert>;
+      return <Alert variant="success">No Rental Requests {addRequestButtons}</Alert>;
     }
 
     var rentalRequests = _.sortBy(this.props.rentalRequests.data, (rentalRequest) => {
@@ -372,7 +373,7 @@ class RentalRequests extends React.Component {
                         CUSTOM,
                       ]}
                     />
-                    <Button id="search-button" bsStyle="primary" type="submit">
+                    <Button id="search-button" variant="primary" type="submit">
                       Search
                     </Button>
                     <Button id="clear-search-button" onClick={this.clearSearch}>
@@ -438,7 +439,7 @@ class RentalRequests extends React.Component {
                 bsSize="xsmall"
                 onClick={() => this.openAddDialog(true)}
               >
-                <Glyphicon glyph="plus" />
+                <FontAwesomeIcon icon="plus" />
                 &nbsp;<strong>Request (View Only)</strong>
               </Button>
             </Authorize>
@@ -452,7 +453,7 @@ class RentalRequests extends React.Component {
                 bsSize="xsmall"
                 onClick={() => this.openAddDialog(false)}
               >
-                <Glyphicon glyph="plus" />
+                <FontAwesomeIcon icon="plus" />
                 &nbsp;<strong>Add Rental Request</strong>
               </Button>
             </Authorize>

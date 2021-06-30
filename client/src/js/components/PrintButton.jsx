@@ -1,10 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import { Glyphicon } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import TooltipButton from './TooltipButton.jsx';
-
 
 class PrintButton extends React.Component {
   static propTypes = {
@@ -29,8 +28,9 @@ class PrintButton extends React.Component {
         className={classNames('print-button', 'hidden-print', className)}
         onClick={this.print}
         disabled={disabled}
-        disabledTooltip={disabledTooltip}>
-        <Glyphicon glyph="print" title="Print" />
+        disabledTooltip={disabledTooltip}
+      >
+        <FontAwesomeIcon icon="print" title="Print" />
         <span>{children}</span>
       </TooltipButton>
     );
@@ -40,6 +40,5 @@ class PrintButton extends React.Component {
 PrintButton.defaultProps = {
   disabledTooltip: 'Please perform a search to print',
 };
-
 
 export default PrintButton;

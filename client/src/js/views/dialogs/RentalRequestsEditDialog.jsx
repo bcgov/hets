@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormGroup, HelpBlock, ControlLabel, FormControl } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel, FormControl } from 'react-bootstrap';
 import Moment from 'moment';
 
 import * as Api from '../../api';
@@ -12,7 +12,6 @@ import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { isValidDate } from '../../utils/date';
 import { isBlank } from '../../utils/string';
-
 
 class RentalRequestsEditDialog extends React.Component {
   static propTypes = {
@@ -32,8 +31,14 @@ class RentalRequestsEditDialog extends React.Component {
       expectedHours: rentalRequest.expectedHours || 0,
       expectedStartDate: rentalRequest.expectedStartDate || '',
       expectedEndDate: rentalRequest.expectedEndDate || '',
-      rentalRequestAttachments: rentalRequest.rentalRequestAttachments && rentalRequest.rentalRequestAttachments[0] ? rentalRequest.rentalRequestAttachments[0].attachment : '',
-      rentalRequestAttachmentId: rentalRequest.rentalRequestAttachments && rentalRequest.rentalRequestAttachments[0] ? rentalRequest.rentalRequestAttachments[0].id : undefined,
+      rentalRequestAttachments:
+        rentalRequest.rentalRequestAttachments && rentalRequest.rentalRequestAttachments[0]
+          ? rentalRequest.rentalRequestAttachments[0].attachment
+          : '',
+      rentalRequestAttachmentId:
+        rentalRequest.rentalRequestAttachments && rentalRequest.rentalRequestAttachments[0]
+          ? rentalRequest.rentalRequestAttachments[0].id
+          : undefined,
 
       equipmentCountError: '',
       expectedHoursError: '',
@@ -47,11 +52,21 @@ class RentalRequestsEditDialog extends React.Component {
   };
 
   didChange = () => {
-    if (this.state.equipmentCount !== this.props.rentalRequest.equipmentCount) { return true; }
-    if (this.state.expectedHours !== this.props.rentalRequest.expectedHours) { return true; }
-    if (this.state.expectedStartDate !== this.props.rentalRequest.expectedStartDate) { return true; }
-    if (this.state.expectedEndDate !== this.props.rentalRequest.expectedEndDate) { return true; }
-    if (this.state.rentalRequestAttachments !== this.props.rentalRequest.rentalRequestAttachments) { return true; }
+    if (this.state.equipmentCount !== this.props.rentalRequest.equipmentCount) {
+      return true;
+    }
+    if (this.state.expectedHours !== this.props.rentalRequest.expectedHours) {
+      return true;
+    }
+    if (this.state.expectedStartDate !== this.props.rentalRequest.expectedStartDate) {
+      return true;
+    }
+    if (this.state.expectedEndDate !== this.props.rentalRequest.expectedEndDate) {
+      return true;
+    }
+    if (this.state.rentalRequestAttachments !== this.props.rentalRequest.rentalRequestAttachments) {
+      return true;
+    }
 
     return false;
   };
@@ -110,15 +125,19 @@ class RentalRequestsEditDialog extends React.Component {
           expectedHours: this.state.expectedHours,
           expectedStartDate: this.state.expectedStartDate,
           expectedEndDate: this.state.expectedEndDate,
-          rentalRequestAttachments: [{
-            id: this.state.rentalRequestAttachmentId,
-            attachment: this.state.rentalRequestAttachments,
-          }],
+          rentalRequestAttachments: [
+            {
+              id: this.state.rentalRequestAttachmentId,
+              attachment: this.state.rentalRequestAttachments,
+            },
+          ],
         };
 
         Api.updateRentalRequest(rentalRequest).then(() => {
           Log.rentalRequestModified(this.props.rentalRequest);
-          if (this.props.onSave) { this.props.onSave(); }
+          if (this.props.onSave) {
+            this.props.onSave();
+          }
         });
       }
 
@@ -138,34 +157,74 @@ class RentalRequestsEditDialog extends React.Component {
         show={this.props.show}
         onClose={this.props.onClose}
         onSubmit={this.formSubmitted}
-        title="Rental Request">
+        title="Rental Request"
+      >
         <FormGroup>
-          <ControlLabel>Equipment Type</ControlLabel>
-          <FormControl.Static>{ this.props.rentalRequest.equipmentTypeName }</FormControl.Static>
+          <FormLabel>Equipment Type</FormLabel>
+          <FormControl.Static>{this.props.rentalRequest.equipmentTypeName}</FormControl.Static>
         </FormGroup>
         <FormGroup>
-          <ControlLabel>Attachment(s)</ControlLabel>
-          <FormInputControl id="rentalRequestAttachments" type="text" defaultValue={ this.state.rentalRequestAttachments } readOnly={ isReadOnly } updateState={ this.updateState } />
+          <FormLabel>Attachment(s)</FormLabel>
+          <FormInputControl
+            id="rentalRequestAttachments"
+            type="text"
+            defaultValue={this.state.rentalRequestAttachments}
+            readOnly={isReadOnly}
+            updateState={this.updateState}
+          />
         </FormGroup>
-        <FormGroup controlId="equipmentCount" validationState={ this.state.equipmentCountError ? 'error' : null }>
-          <ControlLabel>Quantity <sup>*</sup></ControlLabel>
-          <FormInputControl type="number" min={0} defaultValue={ this.state.equipmentCount } readOnly={ isReadOnly } updateState={ this.updateState } autoFocus/>
-          <HelpBlock>{ this.state.equipmentCountError }</HelpBlock>
+        <FormGroup controlId="equipmentCount" validationState={this.state.equipmentCountError ? 'error' : null}>
+          <FormLabel>
+            Quantity <sup>*</sup>
+          </FormLabel>
+          <FormInputControl
+            type="number"
+            min={0}
+            defaultValue={this.state.equipmentCount}
+            readOnly={isReadOnly}
+            updateState={this.updateState}
+            autoFocus
+          />
+          <FormText>{this.state.equipmentCountError}</FormText>
         </FormGroup>
-        <FormGroup controlId="expectedHours" validationState={ this.state.expectedHoursError ? 'error' : null }>
-          <ControlLabel>Expected Hours <sup>*</sup></ControlLabel>
-          <FormInputControl type="number" min={0} defaultValue={ this.state.expectedHours } readOnly={ isReadOnly } updateState={ this.updateState }/>
-          <HelpBlock>{ this.state.expectedHoursError }</HelpBlock>
+        <FormGroup controlId="expectedHours" validationState={this.state.expectedHoursError ? 'error' : null}>
+          <FormLabel>
+            Expected Hours <sup>*</sup>
+          </FormLabel>
+          <FormInputControl
+            type="number"
+            min={0}
+            defaultValue={this.state.expectedHours}
+            readOnly={isReadOnly}
+            updateState={this.updateState}
+          />
+          <FormText>{this.state.expectedHoursError}</FormText>
         </FormGroup>
-        <FormGroup controlId="expectedStartDate" validationState={ this.state.expectedStartDateError ? 'error' : null }>
-          <ControlLabel>Start Date <sup>*</sup></ControlLabel>
-          <DateControl id="expectedStartDate" disabled={ isReadOnly } date={ this.state.expectedStartDate } updateState={ this.updateState } title="Dated At" />
-          <HelpBlock>{ this.state.expectedStartDateError }</HelpBlock>
+        <FormGroup controlId="expectedStartDate" validationState={this.state.expectedStartDateError ? 'error' : null}>
+          <FormLabel>
+            Start Date <sup>*</sup>
+          </FormLabel>
+          <DateControl
+            id="expectedStartDate"
+            disabled={isReadOnly}
+            date={this.state.expectedStartDate}
+            updateState={this.updateState}
+            title="Dated At"
+          />
+          <FormText>{this.state.expectedStartDateError}</FormText>
         </FormGroup>
-        <FormGroup controlId="expectedEndDate" validationState={ this.state.expectedEndDateError ? 'error' : null }>
-          <ControlLabel>End Date <sup>*</sup></ControlLabel>
-          <DateControl id="expectedEndDate" disabled={ isReadOnly } date={ this.state.expectedEndDate } updateState={ this.updateState } title="Dated At" />
-          <HelpBlock>{ this.state.expectedEndDateError }</HelpBlock>
+        <FormGroup controlId="expectedEndDate" validationState={this.state.expectedEndDateError ? 'error' : null}>
+          <FormLabel>
+            End Date <sup>*</sup>
+          </FormLabel>
+          <DateControl
+            id="expectedEndDate"
+            disabled={isReadOnly}
+            date={this.state.expectedEndDate}
+            updateState={this.updateState}
+            title="Dated At"
+          />
+          <FormText>{this.state.expectedEndDateError}</FormText>
         </FormGroup>
       </FormDialog>
     );

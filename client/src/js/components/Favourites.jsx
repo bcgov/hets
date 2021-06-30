@@ -97,9 +97,9 @@ class EditFavouritesDialog extends React.Component {
         onSubmit={this.onSubmit}
       >
         <FormGroup controlId="name" validationState={nameError ? 'error' : null}>
-          <ControlLabel>
+          <FormLabel>
             Name <sup>*</sup>
-          </ControlLabel>
+          </FormLabel>
           <FormInputControl
             type="text"
             readOnly={isSaving}
@@ -107,7 +107,7 @@ class EditFavouritesDialog extends React.Component {
             updateState={this.updateState}
             autoFocus
           />
-          <HelpBlock>{nameError}</HelpBlock>
+          <FormText>{nameError}</FormText>
         </FormGroup>
         <CheckboxControl id="isDefault" checked={isDefault} updateState={this.updateState} label="Default" />
       </FormDialog>
@@ -203,7 +203,7 @@ class Favourites extends React.Component {
             {(() => {
               if (Object.keys(this.props.favourites).length === 0) {
                 return (
-                  <Alert bsStyle="success" style={{ margin: '5px' }}>
+                  <Alert variant="success" style={{ margin: '5px' }}>
                     No favourites
                   </Alert>
                 );

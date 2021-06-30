@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import { Well, Dropdown, FormControl, MenuItem, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Dropdown, FormControl, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import _ from 'lodash';
 
 import RootCloseMenu from './RootCloseMenu.jsx';
-
 
 class FilterDropdown extends React.Component {
   static propTypes = {
@@ -97,15 +96,18 @@ class FilterDropdown extends React.Component {
   };
 
   toggle = (open) => {
-    this.setState({
-      open: open,
-      filterTerm: '',
-    }, () => {
-      if (open) {
-        this.input.focus();
-        this.input.value = '';
+    this.setState(
+      {
+        open: open,
+        filterTerm: '',
+      },
+      () => {
+        if (open) {
+          this.input.focus();
+          this.input.value = '';
+        }
       }
-    });
+    );
   };
 
   filter = (e) => {
@@ -124,7 +126,7 @@ class FilterDropdown extends React.Component {
     const { items } = this.props;
 
     if (this.state.filterTerm.length > 0) {
-      return _.filter(items, item => {
+      return _.filter(items, (item) => {
         return item[this.state.fieldName].toLowerCase().indexOf(this.state.filterTerm) !== -1;
       });
     }
@@ -142,28 +144,37 @@ class FilterDropdown extends React.Component {
         className={classNames('filter-dropdown', className)}
         id={id}
         title={disabled ? null : this.state.title}
-        disabled={ disabled }
-        open={ this.state.open }
-        onToggle={ this.toggle }>
-        <Dropdown.Toggle title={ this.state.title } />
-        <RootCloseMenu bsRole="menu">
-          <Well bsSize="small">
-            <FormControl type="text" placeholder="Search" onChange={ this.filter } inputRef={ ref => { this.input = ref; }} onKeyDown={this.keyDown}/>
-          </Well>
-          { items.length > 0 && (
+        disabled={disabled}
+        open={this.state.open}
+        onToggle={this.toggle}
+      >
+        <Dropdown.Toggle title={this.state.title} />
+        <RootCloseMenu>
+          <div className="well well-sm">
+            <FormControl
+              type="text"
+              placeholder="Search"
+              onChange={this.filter}
+              inputRef={(ref) => {
+                this.input = ref;
+              }}
+              onKeyDown={this.keyDown}
+            />
+          </div>
+          {items.length > 0 && (
             <ul>
-              { blankLine && this.state.filterTerm.length === 0 &&
-                <MenuItem key={ 0 } eventKey={ 0 } onSelect={ this.itemSelected }>
-                  { typeof blankLine === 'string' ? blankLine : ' ' }
-                </MenuItem>
-              }
-              {
-                _.map(items, item => {
-                  return <MenuItem key={ item.id } eventKey={ item.id } onSelect={ this.itemSelected }>
-                    { item[this.state.fieldName] }
-                  </MenuItem>;
-                })
-              }
+              {blankLine && this.state.filterTerm.length === 0 && (
+                <Dropdown.Item key={0} eventKey={0} onSelect={this.itemSelected}>
+                  {typeof blankLine === 'string' ? blankLine : ' '}
+                </Dropdown.Item>
+              )}
+              {_.map(items, (item) => {
+                return (
+                  <Dropdown.Item key={item.id} eventKey={item.id} onSelect={this.itemSelected}>
+                    {item[this.state.fieldName]}
+                  </Dropdown.Item>
+                );
+              })}
             </ul>
           )}
         </RootCloseMenu>
@@ -171,7 +182,7 @@ class FilterDropdown extends React.Component {
     );
 
     if (disabled && disabledTooltip) {
-      const tooltip = <Tooltip id="button-tooltip">{ disabledTooltip }</Tooltip>;
+      const tooltip = <Tooltip id="button-tooltip">{disabledTooltip}</Tooltip>;
 
       return (
         <OverlayTrigger placement="bottom" rootClose overlay={tooltip}>

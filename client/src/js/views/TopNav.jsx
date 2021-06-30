@@ -8,15 +8,14 @@ import {
   Nav,
   NavItem,
   NavDropdown,
-  MenuItem,
   OverlayTrigger,
   Dropdown,
   Popover,
   Button,
-  Glyphicon,
-  ControlLabel,
+  FormLabel,
   FormGroup,
 } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import NavLinkWrapper from '../components/ui/NavLinkWrapper';
 
 import * as Constant from '../constants';

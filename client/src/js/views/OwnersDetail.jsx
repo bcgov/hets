@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
+import { Row, Col, Alert, Button, ButtonGroup, Badge } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -357,7 +358,7 @@ class OwnersDetail extends React.Component {
               <Button id="owner-documents-button" title="Documents" disabled={loading} onClick={this.showDocuments}>
                 Documents ({loadingDocuments ? ' ' : Object.keys(this.props.documents).length})
               </Button>
-              <Label className={owner.isMaintenanceContractor ? 'ml-5' : 'hide'}>Maintenance Contractor</Label>
+              <Badge className={owner.isMaintenanceContractor ? 'ml-5' : 'hide'}>Maintenance Contractor</Badge>
             </Col>
             <Col sm={3}>
               <div className="pull-right">
@@ -371,7 +372,7 @@ class OwnersDetail extends React.Component {
 
           <Row>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader
                   title="Owner Information"
                   editButtonTitle="Edit Owner"
@@ -449,10 +450,10 @@ class OwnersDetail extends React.Component {
                     </div>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader
                   title="Policy"
                   editButtonTitle="Edit Policy Information"
@@ -498,10 +499,10 @@ class OwnersDetail extends React.Component {
                     </Row>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader title="Contacts" />
                 {(() => {
                   if (loading) {
@@ -515,14 +516,14 @@ class OwnersDetail extends React.Component {
                   var addContactButton = (
                     <Authorize>
                       <Button title="Add Contact" onClick={this.openContactDialog.bind(this, 0)} bsSize="xsmall">
-                        <Glyphicon glyph="plus" />
+                        <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add</strong>
                       </Button>
                     </Authorize>
                   );
 
                   if (!owner.contacts || owner.contacts.length === 0) {
-                    return <Alert bsStyle="success">No contacts {addContactButton}</Alert>;
+                    return <Alert variant="success">No contacts {addContactButton}</Alert>;
                   }
 
                   var contacts = sort(owner.contacts, this.state.uiContacts.sortField, this.state.uiContacts.sortDesc);
@@ -555,7 +556,7 @@ class OwnersDetail extends React.Component {
                         return (
                           <tr key={contact.id}>
                             <td>
-                              {contact.isPrimary && <Glyphicon glyph="star" />}
+                              {contact.isPrimary && <FontAwesomeIcon icon="star" />}
                               {firstLastName(contact.givenName, contact.surname)}
                             </td>
                             <td>{contact.phone}</td>
@@ -586,8 +587,8 @@ class OwnersDetail extends React.Component {
                     </SortTable>
                   );
                 })()}
-              </Well>
-              <Well>
+              </div>
+              <div className="well">
                 <SubHeader title={`Equipment (${loading ? ' ' : owner.numberOfEquipment})`}>
                   <CheckboxControl id="showAttachments" className="mr-5" inline updateState={this.updateState}>
                     <small>Show Attachments</small>
@@ -616,7 +617,7 @@ class OwnersDetail extends React.Component {
                       bsSize="small"
                       onClick={this.openEquipmentDialog}
                     >
-                      <Glyphicon glyph="plus" />
+                      <FontAwesomeIcon icon="plus" />
                     </TooltipButton>
                   </Authorize>
                 </SubHeader>
@@ -630,7 +631,7 @@ class OwnersDetail extends React.Component {
                   }
 
                   if (!owner.equipmentList || owner.equipmentList.length === 0) {
-                    return <Alert bsStyle="success">No equipment</Alert>;
+                    return <Alert variant="success">No equipment</Alert>;
                   }
 
                   var equipmentList = _.orderBy(
@@ -704,7 +705,7 @@ class OwnersDetail extends React.Component {
                                   bsSize="xsmall"
                                   onClick={this.equipmentVerify.bind(this, equipment)}
                                 >
-                                  <Glyphicon glyph="ok" /> OK
+                                  <FontAwesomeIcon icon="check" /> OK
                                 </TooltipButton>
                               </td>
                             </Authorize>
@@ -714,11 +715,11 @@ class OwnersDetail extends React.Component {
                     </SortTable>
                   );
                 })()}
-              </Well>
-              <Well>
+              </div>
+              <div className="well">
                 <SubHeader title="History" />
                 {owner.historyEntity && <History historyEntity={owner.historyEntity} refresh={!this.state.reloading} />}
-              </Well>
+              </div>
             </Col>
           </Row>
         </div>

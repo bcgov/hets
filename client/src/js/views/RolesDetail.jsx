@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Grid, Row, Col } from 'react-bootstrap';
-import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 import { Table, Button } from 'react-bootstrap';
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -218,7 +218,7 @@ class RolesDetail extends React.Component {
             </div>
           );
         })()}
-        <Well>
+        <div className="well">
           {(() => {
             if (this.state.loading) {
               return (
@@ -230,37 +230,37 @@ class RolesDetail extends React.Component {
 
             return (
               <Form id="roles-edit" onSubmit={this.onSave}>
-                <Grid fluid>
+                <Container fluid>
                   <Row>
                     <Col md={3}>
                       <FormGroup controlId="name" validationState={this.state.nameError ? 'error' : null}>
-                        <ControlLabel>
+                        <FormLabel>
                           Name <sup>*</sup>
-                        </ControlLabel>
+                        </FormLabel>
                         <FormInputControl type="text" defaultValue={this.state.name} updateState={this.updateState} />
-                        <HelpBlock>{this.state.nameError}</HelpBlock>
+                        <FormText>{this.state.nameError}</FormText>
                       </FormGroup>
                     </Col>
                     <Col md={9}>
                       <FormGroup controlId="description" validationState={this.state.descriptionError ? 'error' : null}>
-                        <ControlLabel>
+                        <FormLabel>
                           Description <sup>*</sup>
-                        </ControlLabel>
+                        </FormLabel>
                         <FormInputControl
                           type="text"
                           defaultValue={this.state.description}
                           updateState={this.updateState}
                         />
-                        <HelpBlock>{this.state.descriptionError}</HelpBlock>
+                        <FormText>{this.state.descriptionError}</FormText>
                       </FormGroup>
                     </Col>
                   </Row>
-                </Grid>
+                </Container>
               </Form>
             );
           })()}
-        </Well>
-        <Well id="roles-permissions">
+        </div>
+        <div className="well" id="roles-permissions">
           <SubHeader title="Permissions" />
           {(() => {
             if (this.state.loading) {
@@ -301,8 +301,8 @@ class RolesDetail extends React.Component {
               </Table>
             );
           })()}
-        </Well>
-        <Button bsStyle="primary" onClick={this.onSave}>
+        </div>
+        <Button variant="primary" onClick={this.onSave}>
           Save
         </Button>
       </div>

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { ButtonGroup, Button, Glyphicon, Alert } from 'react-bootstrap';
+import { ButtonGroup, Button, Alert } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
 import * as Constant from '../../constants';
@@ -14,7 +15,6 @@ import EditButton from '../../components/EditButton.jsx';
 import Authorize from '../../components/Authorize.jsx';
 
 import { formatDateTimeUTCToLocal } from '../../utils/date';
-
 
 class NotesDialog extends React.Component {
   static propTypes = {
@@ -44,7 +44,7 @@ class NotesDialog extends React.Component {
   }
 
   openNotesAddDialog = () => {
-    this.setState({ showNotesAddDialog : true });
+    this.setState({ showNotesAddDialog: true });
   };
 
   closeNotesAddDialog = () => {
@@ -65,7 +65,7 @@ class NotesDialog extends React.Component {
   onNoteUpdated = (note) => {
     const noteId = note.id;
     const updatedNotes = this.state.notes.map((_note) => {
-      return _note.id === noteId ? {..._note, ...note} : _note;
+      return _note.id === noteId ? { ..._note, ...note } : _note;
     });
 
     this.setState({ notes: updatedNotes });
@@ -100,53 +100,49 @@ class NotesDialog extends React.Component {
 
   render() {
     const notes = _.orderBy(this.state.notes, ['createDate'], ['desc']);
-    var headers = [
-      { field: 'date',            title: 'Date'  },
-      { field: 'note',            title: 'Note'  },
-      { field: 'blank'                           },
-    ];
+    var headers = [{ field: 'date', title: 'Date' }, { field: 'note', title: 'Note' }, { field: 'blank' }];
 
     const showNoNotesMessage = !notes || notes.length === 0;
 
     return (
-      <ModalDialog
-        id="notes"
-        show={ this.props.show }
-        onClose={ this.onClose }
-        title={<strong>Notes</strong>}>
-        <TableControl id="notes-list" headers={ headers }>
-          {
-            notes.map((note) => {
-              return (
-                <tr key={ note.id }>
-                  <td className="nowrap">{ formatDateTimeUTCToLocal(note.createDate, Constant.DATE_YEAR_SHORT_MONTH_DAY) }</td>
-                  <td width="100%">{ note.text }</td>
-                  <td style={{ textAlign: 'right', minWidth: '60px' }}>
-                    <ButtonGroup>
-                      <EditButton name="editNote" disabled={!note.id} onClick={ this.editNote.bind(this, note) }/>
-                      <DeleteButton name="note" disabled={!note.id} onConfirm={ this.deleteNote.bind(this, note) }/>
-                    </ButtonGroup>
-                  </td>
-                </tr>
-              );
-            })
-          }
+      <ModalDialog id="notes" show={this.props.show} onClose={this.onClose} title={<strong>Notes</strong>}>
+        <TableControl id="notes-list" headers={headers}>
+          {notes.map((note) => {
+            return (
+              <tr key={note.id}>
+                <td className="nowrap">
+                  {formatDateTimeUTCToLocal(note.createDate, Constant.DATE_YEAR_SHORT_MONTH_DAY)}
+                </td>
+                <td width="100%">{note.text}</td>
+                <td style={{ textAlign: 'right', minWidth: '60px' }}>
+                  <ButtonGroup>
+                    <EditButton name="editNote" disabled={!note.id} onClick={this.editNote.bind(this, note)} />
+                    <DeleteButton name="note" disabled={!note.id} onConfirm={this.deleteNote.bind(this, note)} />
+                  </ButtonGroup>
+                </td>
+              </tr>
+            );
+          })}
         </TableControl>
         {showNoNotesMessage && (
-          <Alert bsStyle="success" style={{ marginTop: 10 }}>No notes</Alert>
+          <Alert variant="success" style={{ marginTop: 10 }}>
+            No notes
+          </Alert>
         )}
         <Authorize>
-          <Button title="Add Note" bsSize="small" onClick={ this.openNotesAddDialog }>
-            <Glyphicon glyph="plus" />&nbsp;<strong>Add Note</strong>
+          <Button title="Add Note" bsSize="small" onClick={this.openNotesAddDialog}>
+            <FontAwesomeIcon icon="plus" />
+            &nbsp;<strong>Add Note</strong>
           </Button>
         </Authorize>
-        { this.state.showNotesAddDialog && (
+        {this.state.showNotesAddDialog && (
           <NotesAddDialog
             show={this.state.showNotesAddDialog}
             note={this.state.note}
             onSave={this.onNoteAdded}
             onUpdate={this.onNoteUpdated}
-            onClose={this.closeNotesAddDialog}/>
+            onClose={this.closeNotesAddDialog}
+          />
         )}
       </ModalDialog>
     );

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Constant from '../../constants';
@@ -13,7 +13,6 @@ import FilterDropdown from '../../components/FilterDropdown.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { isBlank } from '../../utils/string';
-
 
 class OwnersEditDialog extends React.Component {
   static propTypes = {
@@ -66,18 +65,42 @@ class OwnersEditDialog extends React.Component {
   didChange = () => {
     var owner = this.props.owner;
 
-    if (this.state.organizationName !== owner.organizationName) { return true; }
-    if (this.state.givenName !== owner.givenName) { return true; }
-    if (this.state.surname !== owner.surname) { return true; }
-    if (this.state.address1 !== owner.address1) { return true; }
-    if (this.state.address2 !== owner.address2) { return true; }
-    if (this.state.city !== owner.city) { return true; }
-    if (this.state.province !== owner.province) { return true; }
-    if (this.state.postalCode !== owner.postalCode) { return true; }
-    if (this.state.localAreaId !== owner.localArea.id) { return true; }
-    if (this.state.doingBusinessAs !== owner.doingBusinessAs) { return true; }
-    if (this.state.registeredCompanyNumber !== owner.registeredCompanyNumber) { return true; }
-    if (this.state.isMaintenanceContractor !== owner.isMaintenanceContractor) { return true; }
+    if (this.state.organizationName !== owner.organizationName) {
+      return true;
+    }
+    if (this.state.givenName !== owner.givenName) {
+      return true;
+    }
+    if (this.state.surname !== owner.surname) {
+      return true;
+    }
+    if (this.state.address1 !== owner.address1) {
+      return true;
+    }
+    if (this.state.address2 !== owner.address2) {
+      return true;
+    }
+    if (this.state.city !== owner.city) {
+      return true;
+    }
+    if (this.state.province !== owner.province) {
+      return true;
+    }
+    if (this.state.postalCode !== owner.postalCode) {
+      return true;
+    }
+    if (this.state.localAreaId !== owner.localArea.id) {
+      return true;
+    }
+    if (this.state.doingBusinessAs !== owner.doingBusinessAs) {
+      return true;
+    }
+    if (this.state.registeredCompanyNumber !== owner.registeredCompanyNumber) {
+      return true;
+    }
+    if (this.state.isMaintenanceContractor !== owner.isMaintenanceContractor) {
+      return true;
+    }
 
     return false;
   };
@@ -100,7 +123,7 @@ class OwnersEditDialog extends React.Component {
       // Does the name already exist?
       var nameIgnoreCase = orgName.toLowerCase().trim();
       var otherOwners = _.reject(this.props.owners.data, { id: owner.id });
-      var other = _.find(otherOwners, other => other.organizationName.toLowerCase().trim() === nameIgnoreCase);
+      var other = _.find(otherOwners, (other) => other.organizationName.toLowerCase().trim() === nameIgnoreCase);
       if (other) {
         this.setState({ organizationNameError: 'This company name already exists in the system' });
         valid = false;
@@ -159,7 +182,9 @@ class OwnersEditDialog extends React.Component {
         };
 
         Api.updateOwner(owner).then(() => {
-          if (this.props.onSave) { this.props.onSave(); }
+          if (this.props.onSave) {
+            this.props.onSave();
+          }
         });
       }
 
@@ -192,65 +217,90 @@ class OwnersEditDialog extends React.Component {
         id="owners-edit"
         show={this.props.show}
         title="Owner"
-        saveButtonLabel={ saveWarning ? 'Proceed Anyways' : 'Save' }
+        saveButtonLabel={saveWarning ? 'Proceed Anyways' : 'Save'}
         onClose={this.props.onClose}
-        onSubmit={this.formSubmitted}>
+        onSubmit={this.formSubmitted}
+      >
         <FormGroup controlId="ownerCode">
-          <ControlLabel>Owner Code</ControlLabel>
-          <h4>{ owner.ownerCode }</h4>
+          <FormLabel>Owner Code</FormLabel>
+          <h4>{owner.ownerCode}</h4>
         </FormGroup>
-        <FormGroup controlId="organizationName" validationState={ this.state.organizationNameError ? 'error' : null }>
-          <ControlLabel>Company Name <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" value={ this.state.organizationName } updateState={ this.updateState } autoFocus />
-          <HelpBlock>{ this.state.organizationNameError }</HelpBlock>
+        <FormGroup controlId="organizationName" validationState={this.state.organizationNameError ? 'error' : null}>
+          <FormLabel>
+            Company Name <sup>*</sup>
+          </FormLabel>
+          <FormInputControl type="text" value={this.state.organizationName} updateState={this.updateState} autoFocus />
+          <FormText>{this.state.organizationNameError}</FormText>
         </FormGroup>
         <FormGroup controlId="doingBusinessAs">
-          <ControlLabel>Doing Business As</ControlLabel>
-          <FormInputControl type="text" value={ this.state.doingBusinessAs } updateState={ this.updateState } />
+          <FormLabel>Doing Business As</FormLabel>
+          <FormInputControl type="text" value={this.state.doingBusinessAs} updateState={this.updateState} />
         </FormGroup>
         <FormGroup controlId="givenName">
-          <ControlLabel>Owner First Name</ControlLabel>
-          <FormInputControl type="text" value={ this.state.givenName } updateState={ this.updateState } />
+          <FormLabel>Owner First Name</FormLabel>
+          <FormInputControl type="text" value={this.state.givenName} updateState={this.updateState} />
         </FormGroup>
         <FormGroup controlId="surname">
-          <ControlLabel>Owner Last Name</ControlLabel>
-          <FormInputControl type="text" value={ this.state.surname } updateState={ this.updateState } />
+          <FormLabel>Owner Last Name</FormLabel>
+          <FormInputControl type="text" value={this.state.surname} updateState={this.updateState} />
         </FormGroup>
-        <FormGroup controlId="address1" validationState={ this.state.address1Error ? 'error' : null }>
-          <ControlLabel>Address Line 1 <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" value={ this.state.address1 } updateState={ this.updateState } />
-          <HelpBlock>{ this.state.address1Error }</HelpBlock>
+        <FormGroup controlId="address1" validationState={this.state.address1Error ? 'error' : null}>
+          <FormLabel>
+            Address Line 1 <sup>*</sup>
+          </FormLabel>
+          <FormInputControl type="text" value={this.state.address1} updateState={this.updateState} />
+          <FormText>{this.state.address1Error}</FormText>
         </FormGroup>
         <FormGroup controlId="address2">
-          <ControlLabel>Address Line 2</ControlLabel>
-          <FormInputControl type="text" value={ this.state.address2 } updateState={ this.updateState } />
+          <FormLabel>Address Line 2</FormLabel>
+          <FormInputControl type="text" value={this.state.address2} updateState={this.updateState} />
         </FormGroup>
-        <FormGroup controlId="city" validationState={ this.state.cityError ? 'error' : null }>
-          <ControlLabel>City <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" value={ this.state.city } updateState={ this.updateState } />
-          <HelpBlock>{ this.state.cityError }</HelpBlock>
+        <FormGroup controlId="city" validationState={this.state.cityError ? 'error' : null}>
+          <FormLabel>
+            City <sup>*</sup>
+          </FormLabel>
+          <FormInputControl type="text" value={this.state.city} updateState={this.updateState} />
+          <FormText>{this.state.cityError}</FormText>
         </FormGroup>
-        <FormGroup controlId="province" validationState={ this.state.provinceError ? 'error' : null }>
-          <ControlLabel>Province <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" value={ this.state.province } updateState={ this.updateState } />
-          <HelpBlock>{ this.state.provinceError }</HelpBlock>
+        <FormGroup controlId="province" validationState={this.state.provinceError ? 'error' : null}>
+          <FormLabel>
+            Province <sup>*</sup>
+          </FormLabel>
+          <FormInputControl type="text" value={this.state.province} updateState={this.updateState} />
+          <FormText>{this.state.provinceError}</FormText>
         </FormGroup>
-        <FormGroup controlId="postalCode" validationState={ this.state.postalCodeError ? 'error' : null }>
-          <ControlLabel>Postal Code <sup>*</sup></ControlLabel>
-          <FormInputControl type="text" value={ this.state.postalCode } updateState={ this.updateState } />
-          <HelpBlock>{ this.state.postalCodeError }</HelpBlock>
+        <FormGroup controlId="postalCode" validationState={this.state.postalCodeError ? 'error' : null}>
+          <FormLabel>
+            Postal Code <sup>*</sup>
+          </FormLabel>
+          <FormInputControl type="text" value={this.state.postalCode} updateState={this.updateState} />
+          <FormText>{this.state.postalCodeError}</FormText>
         </FormGroup>
-        <FormGroup controlId="localAreaId" validationState={ this.state.localAreaError ? 'error' : null }>
-          <ControlLabel>Service Area - Local Area <sup>*</sup></ControlLabel>
-          <FilterDropdown id="localAreaId" items={ localAreas } selectedId={ this.state.localAreaId } updateState={ (state) => this.updateState(state, this.onLocalAreaChanged) } className="full-width" />
-          <HelpBlock>{ this.state.localAreaError }</HelpBlock>
+        <FormGroup controlId="localAreaId" validationState={this.state.localAreaError ? 'error' : null}>
+          <FormLabel>
+            Service Area - Local Area <sup>*</sup>
+          </FormLabel>
+          <FilterDropdown
+            id="localAreaId"
+            items={localAreas}
+            selectedId={this.state.localAreaId}
+            updateState={(state) => this.updateState(state, this.onLocalAreaChanged)}
+            className="full-width"
+          />
+          <FormText>{this.state.localAreaError}</FormText>
         </FormGroup>
         <FormGroup controlId="registeredCompanyNumber">
-          <ControlLabel>Registered BC Company Number</ControlLabel>
-          <FormInputControl type="text" value={ this.state.registeredCompanyNumber } updateState={ this.updateState } />
+          <FormLabel>Registered BC Company Number</FormLabel>
+          <FormInputControl type="text" value={this.state.registeredCompanyNumber} updateState={this.updateState} />
         </FormGroup>
         <FormGroup controlId="isMaintenanceContractor">
-          <CheckboxControl id="isMaintenanceContractor" checked={ this.state.isMaintenanceContractor } updateState={ this.updateState }>Maintenance Contractor</CheckboxControl>
+          <CheckboxControl
+            id="isMaintenanceContractor"
+            checked={this.state.isMaintenanceContractor}
+            updateState={this.updateState}
+          >
+            Maintenance Contractor
+          </CheckboxControl>
         </FormGroup>
       </FormDialog>
     );
