@@ -1,16 +1,16 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { Row, Col, Button } from 'react-bootstrap';
-import _ from 'lodash';
+import PropTypes from "prop-types";
+import React from "react";
+import { connect } from "react-redux";
+import { Well, Row, Col, Button } from "react-bootstrap";
+import _ from "lodash";
 
-import * as Action from '../actionTypes';
-import * as Api from '../api';
-import * as Constant from '../constants';
-import store from '../store';
+import * as Action from "../actionTypes";
+import * as Api from "../api";
+import * as Constant from "../constants";
+import store from "../store";
 
-import PageHeader from '../components/ui/PageHeader.jsx';
-import SubHeader from '../components/ui/SubHeader.jsx';
+import PageHeader from "../components/ui/PageHeader.jsx";
+import SubHeader from "../components/ui/SubHeader.jsx";
 
 class Home extends React.Component {
   static propTypes = {
@@ -107,25 +107,29 @@ class Home extends React.Component {
           <br />
           {this.props.currentUser.districtName} District
         </PageHeader>
-        <div className="well">
+        <Well>
           <SubHeader title="Summary" />
           <Row>
             <Col md={12} className="btn-container">
-              <Button variant="secondary" onClick={this.goToUnapprovedOwners}>
-                Unapproved owners {!_.isEmpty(counts) && `(${counts.unapprovedOwners})`}
+              <Button onClick={this.goToUnapprovedOwners}>
+                Unapproved owners{" "}
+                {!_.isEmpty(counts) && `(${counts.unapprovedOwners})`}
               </Button>
-              <Button variant="secondary" onClick={this.goToUnapprovedEquipment}>
-                Unapproved equipment {!_.isEmpty(counts) && `(${counts.unapprovedEquipment})`}
+              <Button onClick={this.goToUnapprovedEquipment}>
+                Unapproved equipment{" "}
+                {!_.isEmpty(counts) && `(${counts.unapprovedEquipment})`}
               </Button>
-              <Button variant="secondary" onClick={this.goToHiredEquipment}>
-                Currently hired equipment {!_.isEmpty(counts) && `(${counts.hiredEquipment})`}
+              <Button onClick={this.goToHiredEquipment}>
+                Currently hired equipment{" "}
+                {!_.isEmpty(counts) && `(${counts.hiredEquipment})`}
               </Button>
-              <Button variant="secondary" onClick={this.goToBlockedRotationLists}>
-                Blocked rotation lists {!_.isEmpty(counts) && `(${counts.inProgressRentalRequests})`}
+              <Button onClick={this.goToBlockedRotationLists}>
+                Blocked rotation lists{" "}
+                {!_.isEmpty(counts) && `(${counts.inProgressRentalRequests})`}
               </Button>
             </Col>
           </Row>
-        </div>
+        </Well>
       </div>
     );
   }

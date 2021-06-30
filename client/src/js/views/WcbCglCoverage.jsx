@@ -144,7 +144,7 @@ class WcbCglCoverage extends React.Component {
 
   renderResults = () => {
     if (Object.keys(this.props.ownersCoverage.data).length === 0) {
-      return <Alert variant="success">No results</Alert>;
+      return <Alert bsStyle="success">No results</Alert>;
     }
 
     var ownersCoverage = _.sortBy(this.props.ownersCoverage.data, (entry) => {
@@ -276,7 +276,7 @@ class WcbCglCoverage extends React.Component {
                     label="CGL Exp Before:"
                     title="CGL Expiry Before"
                   />
-                  <Button id="search-button" variant="primary" type="submit">
+                  <Button id="search-button" bsStyle="primary" type="submit">
                     Search
                   </Button>
                   <Button id="clear-search-button" onClick={this.clearSearch}>

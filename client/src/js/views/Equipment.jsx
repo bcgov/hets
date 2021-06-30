@@ -1,29 +1,38 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import _ from 'lodash';
-import Moment from 'moment';
+import PropTypes from "prop-types";
+import React from "react";
+import { connect } from "react-redux";
+import {
+  Alert,
+  Row,
+  Col,
+  ButtonToolbar,
+  Button,
+  ButtonGroup,
+  OverlayTrigger,
+  Tooltip,
+} from "react-bootstrap";
+import _ from "lodash";
+import Moment from "moment";
 
-import * as Action from '../actionTypes';
-import * as Api from '../api';
-import * as Constant from '../constants';
-import store from '../store';
+import * as Action from "../actionTypes";
+import * as Api from "../api";
+import * as Constant from "../constants";
+import store from "../store";
 
-import PageHeader from '../components/ui/PageHeader.jsx';
-import SearchBar from '../components/ui/SearchBar.jsx';
-import CheckboxControl from '../components/CheckboxControl.jsx';
-import DateControl from '../components/DateControl.jsx';
-import DropdownControl from '../components/DropdownControl.jsx';
-import Favourites from '../components/Favourites.jsx';
-import FormInputControl from '../components/FormInputControl.jsx';
-import MultiDropdown from '../components/MultiDropdown.jsx';
-import Spinner from '../components/Spinner.jsx';
-import Form from '../components/Form.jsx';
-import EquipmentTable from './EquipmentTable.jsx';
-import PrintButton from '../components/PrintButton.jsx';
+import PageHeader from "../components/ui/PageHeader.jsx";
+import SearchBar from "../components/ui/SearchBar.jsx";
+import CheckboxControl from "../components/CheckboxControl.jsx";
+import DateControl from "../components/DateControl.jsx";
+import DropdownControl from "../components/DropdownControl.jsx";
+import Favourites from "../components/Favourites.jsx";
+import FormInputControl from "../components/FormInputControl.jsx";
+import MultiDropdown from "../components/MultiDropdown.jsx";
+import Spinner from "../components/Spinner.jsx";
+import Form from "../components/Form.jsx";
+import EquipmentTable from "./EquipmentTable.jsx";
+import PrintButton from "../components/PrintButton.jsx";
 
-import { toZuluTime } from '../utils/date';
+import { toZuluTime } from "../utils/date";
 
 class Equipment extends React.Component {
   static propTypes = {
@@ -45,17 +54,18 @@ class Equipment extends React.Component {
       search: {
         selectedLocalAreasIds: props.search.selectedLocalAreasIds || [],
         selectedEquipmentTypesIds: props.search.selectedEquipmentTypesIds || [],
-        equipmentAttachment: props.search.equipmentAttachment || '',
-        ownerName: props.search.ownerName || '',
-        lastVerifiedDate: props.search.lastVerifiedDate || '',
+        equipmentAttachment: props.search.equipmentAttachment || "",
+        ownerName: props.search.ownerName || "",
+        lastVerifiedDate: props.search.lastVerifiedDate || "",
         hired: props.search.hired || false,
         twentyYears: props.search.twentyYears || false,
-        statusCode: props.search.statusCode || Constant.EQUIPMENT_STATUS_CODE_APPROVED,
-        equipmentId: props.search.equipmentId || '',
-        projectName: props.search.projectName || '',
+        statusCode:
+          props.search.statusCode || Constant.EQUIPMENT_STATUS_CODE_APPROVED,
+        equipmentId: props.search.equipmentId || "",
+        projectName: props.search.projectName || "",
       },
       ui: {
-        sortField: props.ui.sortField || 'seniorityText',
+        sortField: props.ui.sortField || "seniorityText",
         sortDesc: props.ui.sortDesc === true,
       },
     };
@@ -102,7 +112,9 @@ class Equipment extends React.Component {
 
     var notVerifiedSinceDate = Moment(this.state.search.lastVerifiedDate);
     if (notVerifiedSinceDate && notVerifiedSinceDate.isValid()) {
-      searchParams.notverifiedsincedate = toZuluTime(notVerifiedSinceDate.startOf('day'));
+      searchParams.notverifiedsincedate = toZuluTime(
+        notVerifiedSinceDate.startOf("day")
+      );
     }
 
     return searchParams;
@@ -133,14 +145,14 @@ class Equipment extends React.Component {
     var defaultSearchParameters = {
       selectedLocalAreasIds: [],
       selectedEquipmentTypesIds: [],
-      equipmentAttachment: '',
-      ownerName: '',
-      lastVerifiedDate: '',
+      equipmentAttachment: "",
+      ownerName: "",
+      lastVerifiedDate: "",
       hired: false,
       twentyYears: false,
       statusCode: Constant.EQUIPMENT_STATUS_CODE_APPROVED,
-      equipmentId: '',
-      projectName: '',
+      equipmentId: "",
+      projectName: "",
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
@@ -182,7 +194,7 @@ class Equipment extends React.Component {
 
   renderResults = () => {
     if (Object.keys(this.props.equipmentList.data).length === 0) {
-      return <Alert variant="success">No equipment</Alert>;
+      return <Alert bsStyle="success">No equipment</Alert>;
     }
 
     return (
@@ -196,16 +208,17 @@ class Equipment extends React.Component {
 
   render() {
     // Constrain the local area drop downs to those in the District of the current logged in user
-    var localAreas = _.chain(this.props.localAreas).sortBy('name').value();
+    var localAreas = _.chain(this.props.localAreas).sortBy("name").value();
 
     var districtEquipmentTypes = _.chain(this.props.districtEquipmentTypes.data)
       .filter((type) => type.district.id === this.props.currentUser.district.id)
-      .sortBy('districtEquipmentName')
+      .sortBy("districtEquipmentName")
       .value();
 
-    var resultCount = '';
+    var resultCount = "";
     if (this.props.equipmentList.loaded) {
-      resultCount = '(' + Object.keys(this.props.equipmentList.data).length + ')';
+      resultCount =
+        "(" + Object.keys(this.props.equipmentList.data).length + ")";
     }
 
     return (
@@ -270,7 +283,11 @@ class Equipment extends React.Component {
                     <OverlayTrigger
                       placement="top"
                       rootClose
-                      overlay={<Tooltip id="old-equipment-tooltip">Equipment 20 years or older</Tooltip>}
+                      overlay={
+                        <Tooltip id="old-equipment-tooltip">
+                          Equipment 20 years or older
+                        </Tooltip>
+                      }
                     >
                       <CheckboxControl
                         inline
@@ -328,12 +345,21 @@ class Equipment extends React.Component {
                   />
                 </Row>
                 <Row>
-                  <Button id="search-button" className="pull-right" variant="primary" type="submit">
+                  <Button
+                    id="search-button"
+                    className="pull-right"
+                    bsStyle="primary"
+                    type="submit"
+                  >
                     Search
                   </Button>
                 </Row>
                 <Row>
-                  <Button id="clear-search-button" className="pull-right" onClick={this.clearSearch}>
+                  <Button
+                    id="clear-search-button"
+                    className="pull-right"
+                    onClick={this.clearSearch}
+                  >
                     Clear
                   </Button>
                 </Row>
@@ -345,7 +371,7 @@ class Equipment extends React.Component {
         {(() => {
           if (this.props.equipmentList.loading) {
             return (
-              <div style={{ textAlign: 'center' }}>
+              <div style={{ textAlign: "center" }}>
                 <Spinner />
               </div>
             );

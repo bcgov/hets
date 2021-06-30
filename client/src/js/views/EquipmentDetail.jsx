@@ -2,9 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Row, Col } from 'react-bootstrap';
-import { Alert, Button, ButtonGroup, Badge } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Well, Row, Col } from 'react-bootstrap';
+import { Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
 import _ from 'lodash';
 import Promise from 'bluebird';
 
@@ -303,13 +302,13 @@ class EquipmentDetail extends React.Component {
                   </Col>
                 </Row>
                 <Row id="equipment-bottom">
-                  <Badge className={equipment.isMaintenanceContractor ? '' : 'hide'}>Maintenance Contractor</Badge>
-                  <Badge variant={equipment.isHired ? 'success' : 'default'}>
+                  <Label className={equipment.isMaintenanceContractor ? '' : 'hide'}>Maintenance Contractor</Label>
+                  <Label bsStyle={equipment.isHired ? 'success' : 'default'}>
                     {equipment.isHired ? 'Hired' : 'Not Hired'}
-                  </Badge>
-                  <Badge variant={lastVerifiedStyle}>
+                  </Label>
+                  <Label bsStyle={lastVerifiedStyle}>
                     Last Verified: {formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY)}
-                  </Badge>
+                  </Label>
                 </Row>
                 <div className="equipment-header">
                   <PageHeader title="Equipment Id" subTitle={`${equipment.equipmentCode} (${equipment.typeName})`} />
@@ -333,7 +332,7 @@ class EquipmentDetail extends React.Component {
 
           <Row>
             <Col md={12}>
-              <div className="well">
+              <Well>
                 <SubHeader
                   title="Equipment Information"
                   editButtonTitle="Edit Equipment"
@@ -404,7 +403,7 @@ class EquipmentDetail extends React.Component {
                       <Col lg={4} md={6} sm={12} xs={12}>
                         <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Serial Number">
                           {equipment.serialNumber}
-                          {equipment.hasDuplicates ? <BadgeLabel variant="danger">!</BadgeLabel> : null}
+                          {equipment.hasDuplicates ? <BadgeLabel bsStyle="danger">!</BadgeLabel> : null}
                         </ColDisplay>
                       </Col>
                       {equipment.isDumpTruck && (
@@ -417,10 +416,10 @@ class EquipmentDetail extends React.Component {
                     </Row>
                   );
                 })()}
-              </div>
+              </Well>
             </Col>
             <Col md={12}>
-              <div className="well">
+              <Well>
                 <Authorize>
                   <SubHeader
                     title="Attachments"
@@ -438,7 +437,7 @@ class EquipmentDetail extends React.Component {
                     );
                   }
                   if (!equipment.equipmentAttachments || Object.keys(equipment.equipmentAttachments).length === 0) {
-                    return <Alert variant="success">No Attachments</Alert>;
+                    return <Alert bsStyle="success">No Attachments</Alert>;
                   }
 
                   var physicalAttachments = _.sortBy(equipment.equipmentAttachments, this.state.ui.sortField);
@@ -467,7 +466,7 @@ class EquipmentDetail extends React.Component {
                                   bsSize="xsmall"
                                   onClick={this.openPhysicalAttachmentEditDialog.bind(this, attachment)}
                                 >
-                                  <FontAwesomeIcon icon="pencil-alt" />
+                                  <Glyphicon glyph="pencil" />
                                 </Button>
                                 <Authorize>
                                   <OverlayTrigger
@@ -479,7 +478,7 @@ class EquipmentDetail extends React.Component {
                                     }
                                   >
                                     <Button title="Delete Attachment" bsSize="xsmall">
-                                      <FontAwesomeIcon icon="trash" />
+                                      <Glyphicon glyph="trash" />
                                     </Button>
                                   </OverlayTrigger>
                                 </Authorize>
@@ -491,12 +490,12 @@ class EquipmentDetail extends React.Component {
                     </SortTable>
                   );
                 })()}
-              </div>
+              </Well>
             </Col>
           </Row>
           <Row>
             <Col md={12}>
-              <div className="well">
+              <Well>
                 <SubHeader
                   title="Seniority"
                   editButtonTitle="Edit Seniority"
@@ -580,15 +579,15 @@ class EquipmentDetail extends React.Component {
                     </Row>
                   );
                 })()}
-              </div>
+              </Well>
             </Col>
             <Col md={12}>
-              <div className="well">
+              <Well>
                 <SubHeader title="History" />
                 {equipment.historyEntity && (
                   <History historyEntity={equipment.historyEntity} refresh={!this.state.reloading} />
                 )}
-              </div>
+              </Well>
             </Col>
           </Row>
         </div>

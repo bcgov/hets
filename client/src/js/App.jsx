@@ -41,8 +41,6 @@ import AitReport from './views/AitReport.jsx';
 import Version from './views/Version.jsx';
 import FourOhFour from './views/404.jsx';
 
-import addIconsToLibrary from './fontAwesome';
-
 function keepAlive() {
   Api.keepAlive();
 }
@@ -258,8 +256,6 @@ const App = ({ user }) => {
   const [loadProgress, setLoadProgress] = useState(5);
 
   useEffect(() => {
-    addIconsToLibrary();
-
     Api.getCurrentUser()
       .then((user) => {
         setLoadProgress(33);

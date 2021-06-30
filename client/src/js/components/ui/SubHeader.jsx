@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Glyphicon } from 'react-bootstrap';
 
 import TooltipButton from '../TooltipButton.jsx';
+
 
 class SubHeader extends React.Component {
   static propTypes = {
@@ -39,9 +40,8 @@ class SubHeader extends React.Component {
           disabled={editButtonDisabled}
           disabledTooltip={editButtonDisabledTooltip}
           bsSize="small"
-          onClick={onEditClicked}
-        >
-          <FontAwesomeIcon icon={editIcon} />
+          onClick={onEditClicked}>
+          <Glyphicon glyph={editIcon} />
         </TooltipButton>
       );
     }
@@ -49,14 +49,18 @@ class SubHeader extends React.Component {
     return (
       <h3 id={id} className={classNames('clearfix', 'ui-subheader', className)}>
         {title}
-        <span className="pull-right">{editButton}</span>
+        <span className="pull-right">
+          {editButton}
+        </span>
       </h3>
     );
   }
 }
 
+
 SubHeader.defaultProps = {
-  editIcon: 'pencil-alt',
+  editIcon: 'pencil',
 };
+
 
 export default SubHeader;

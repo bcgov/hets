@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { FormGroup, FormText, FormLabel, Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FormGroup, HelpBlock, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
 
 import * as Api from '../../api';
 import * as Log from '../../history';
@@ -25,12 +24,10 @@ class AttachmentAddDialog extends React.Component {
 
     this.state = {
       isSaving: false,
-      forms: [
-        {
-          typeName: '',
-          attachmentError: '',
-        },
-      ],
+      forms: [{
+        typeName: '',
+        attachmentError: '',
+      }],
     };
   }
 
@@ -39,13 +36,11 @@ class AttachmentAddDialog extends React.Component {
 
     forms[index].typeName = state.typeName;
 
-    this.setState({ forms });
+    this.setState({forms});
   };
 
   didChange = () => {
-    if (this.state.typeName !== '') {
-      return true;
-    }
+    if (this.state.typeName !== '') { return true; }
 
     return false;
   };
@@ -63,7 +58,7 @@ class AttachmentAddDialog extends React.Component {
       valid = formIsValid;
     });
 
-    this.setState({ forms });
+    this.setState({forms});
 
     return valid;
   };
@@ -77,7 +72,7 @@ class AttachmentAddDialog extends React.Component {
         attachmentError: '',
       });
 
-      this.setState({ forms });
+      this.setState({forms});
     }
   };
 
@@ -85,7 +80,7 @@ class AttachmentAddDialog extends React.Component {
     if (this.state.forms.length > 1) {
       let forms = this.state.forms.slice();
       forms.splice(forms.length - 1, 1);
-      this.setState({ forms });
+      this.setState({forms});
     }
   };
 
@@ -103,9 +98,7 @@ class AttachmentAddDialog extends React.Component {
             Log.equipmentAttachmentAdded(this.props.equipment, typeName);
           });
           this.setState({ isSaving: false });
-          if (this.props.onSave) {
-            this.props.onSave();
-          }
+          if (this.props.onSave) { this.props.onSave(); }
           this.props.onClose();
         });
       } else {
@@ -120,32 +113,35 @@ class AttachmentAddDialog extends React.Component {
     return (
       <FormDialog
         id="attachment-add"
-        show={this.props.show}
+        show={ this.props.show }
         title="Add Attachment"
-        isSaving={this.state.isSaving}
-        onClose={this.props.onClose}
-        onSubmit={this.formSubmitted}
-      >
+        isSaving={ this.state.isSaving }
+        onClose={ this.props.onClose }
+        onSubmit={ this.formSubmitted }>
         <div className="forms-container">
-          {forms.map((form, i) => (
-            <FormGroup key={i} controlId="typeName" validationState={form.attachmentError ? 'error' : null}>
-              <FormLabel>Attachment</FormLabel>
-              <FormInputControl type="text" updateState={(state) => this.updateState(state, i)} />
-              <FormText>{form.attachmentError}</FormText>
+          { forms.map((form, i) => (
+            <FormGroup key={i} controlId="typeName" validationState={ form.attachmentError ? 'error' : null }>
+              <ControlLabel>Attachment</ControlLabel>
+              <FormInputControl type="text" updateState={ (state) => this.updateState(state, i) }/>
+              <HelpBlock>{ form.attachmentError }</HelpBlock>
             </FormGroup>
           ))}
         </div>
         <div className="clearfix">
-          {forms.length > 1 && (
-            <Button bsSize="xsmall" className="remove-btn" onClick={this.removeInput}>
-              <FontAwesomeIcon icon="minus" />
-              &nbsp;<strong>Remove</strong>
+          { forms.length > 1 && (
+            <Button
+              bsSize="xsmall"
+              className="remove-btn"
+              onClick={ this.removeInput }>
+              <Glyphicon glyph="minus" />&nbsp;<strong>Remove</strong>
             </Button>
           )}
-          {forms.length < 10 && (
-            <Button bsSize="xsmall" className="pull-right" onClick={this.addInput}>
-              <FontAwesomeIcon icon="plus" />
-              &nbsp;<strong>Add</strong>
+          { forms.length < 10 && (
+            <Button
+              bsSize="xsmall"
+              className="pull-right"
+              onClick={ this.addInput }>
+              <Glyphicon glyph="plus" />&nbsp;<strong>Add</strong>
             </Button>
           )}
         </div>

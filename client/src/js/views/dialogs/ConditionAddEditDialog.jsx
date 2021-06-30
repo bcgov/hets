@@ -2,12 +2,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
+import {  FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
 
 import * as Api from '../../api';
 
 import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
+
 
 class ConditionAddEditDialog extends React.Component {
   static propTypes = {
@@ -39,18 +40,10 @@ class ConditionAddEditDialog extends React.Component {
   };
 
   didChange = () => {
-    if (this.state.isNew && this.state.typeCode !== '') {
-      return true;
-    }
-    if (this.state.isNew && this.state.description !== '') {
-      return true;
-    }
-    if (!this.state.isNew && this.state.typeCode !== this.props.condition.conditionTypeCode) {
-      return true;
-    }
-    if (!this.state.isNew && this.state.description !== this.props.condition.description) {
-      return true;
-    }
+    if (this.state.isNew && this.state.typeCode !== '') { return true; }
+    if (this.state.isNew && this.state.description !== '') { return true; }
+    if (!this.state.isNew && this.state.typeCode !== this.props.condition.conditionTypeCode) { return true; }
+    if (!this.state.isNew && this.state.description !== this.props.condition.description) { return true; }
 
     return false;
   };
@@ -104,9 +97,7 @@ class ConditionAddEditDialog extends React.Component {
 
         promise.then(() => {
           this.setState({ isSaving: false });
-          if (this.props.onSave) {
-            this.props.onSave();
-          }
+          if (this.props.onSave) { this.props.onSave(); }
           this.props.onClose();
         });
       } else {
@@ -119,25 +110,20 @@ class ConditionAddEditDialog extends React.Component {
     return (
       <FormDialog
         id="equipment-add"
-        show={this.props.show}
-        title={this.state.isNew ? 'Add Condition' : 'Edit Condition'}
-        isSaving={this.state.isSaving}
-        onClose={this.props.onClose}
-        onSubmit={this.formSubmitted}
-      >
-        <FormGroup controlId="typeCode" validationState={this.state.typeCodeError ? 'error' : null}>
-          <FormLabel>
-            Type Code <sup>*</sup>
-          </FormLabel>
-          <FormInputControl type="text" value={this.state.typeCode} updateState={this.updateState} />
-          <FormText>{this.state.typeCodeError}</FormText>
+        show={ this.props.show }
+        title={ this.state.isNew ? 'Add Condition' : 'Edit Condition' }
+        isSaving={ this.state.isSaving }
+        onClose={ this.props.onClose }
+        onSubmit={ this.formSubmitted }>
+        <FormGroup controlId="typeCode" validationState={ this.state.typeCodeError ? 'error' : null }>
+          <ControlLabel>Type Code <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" value={ this.state.typeCode } updateState={ this.updateState }/>
+          <HelpBlock>{ this.state.typeCodeError }</HelpBlock>
         </FormGroup>
-        <FormGroup controlId="description" validationState={this.state.descriptionError ? 'error' : null}>
-          <FormLabel>
-            Description <sup>*</sup>
-          </FormLabel>
-          <FormInputControl type="text" value={this.state.description} updateState={this.updateState} />
-          <FormText>{this.state.descriptionError}</FormText>
+        <FormGroup controlId="description" validationState={ this.state.descriptionError ? 'error' : null }>
+          <ControlLabel>Description <sup>*</sup></ControlLabel>
+          <FormInputControl type="text" value={ this.state.description } updateState={ this.updateState }/>
+          <HelpBlock>{ this.state.descriptionError }</HelpBlock>
         </FormGroup>
       </FormDialog>
     );

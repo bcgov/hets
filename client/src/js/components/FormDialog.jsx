@@ -7,6 +7,7 @@ import Form from './Form.jsx';
 import Spinner from './Spinner.jsx';
 import Authorize from './Authorize.jsx';
 
+
 class FormDialog extends React.Component {
   static propTypes = {
     show: PropTypes.bool.isRequired,
@@ -40,14 +41,16 @@ class FormDialog extends React.Component {
 
     return (
       <Form onSubmit={this.formSubmitted}>
-        <Modal.Body>{children}</Modal.Body>
+        <Modal.Body>
+          {children}
+        </Modal.Body>
         <Modal.Footer>
           <Button onClick={this.closeDialog}>{closeButtonLabel || 'Close'}</Button>
           {!isReadOnly && (
             <Authorize>
-              <Button variant="primary" type="submit" disabled={isSaving}>
+              <Button bsStyle="primary" type="submit" disabled={isSaving}>
                 {saveButtonLabel || 'Save'}
-                {isSaving && <Spinner />}
+                {isSaving && <Spinner/>}
               </Button>
             </Authorize>
           )}
@@ -66,9 +69,12 @@ class FormDialog extends React.Component {
         bsSize={bsSize}
         className={classNames('form-dialog', className)}
         show={show}
-        onHide={this.closeDialog}
-      >
-        <Modal.Header closeButton>{title && <Modal.Title>{title}</Modal.Title>}</Modal.Header>
+        onHide={this.closeDialog}>
+        <Modal.Header closeButton>
+          {title && (
+            <Modal.Title>{title}</Modal.Title>
+          )}
+        </Modal.Header>
         {show && this.renderBody()}
       </Modal>
     );

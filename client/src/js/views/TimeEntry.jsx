@@ -2,8 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Form } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form } from 'react-bootstrap';
 import _ from 'lodash';
 
 import TimeEntryDialog from './dialogs/TimeEntryDialog.jsx';
@@ -167,7 +166,7 @@ class TimeEntry extends React.Component {
 
   renderResults = (addTimeEntryButton) => {
     if (Object.keys(this.props.timeEntries.data).length === 0) {
-      return <Alert variant="success">No time entries {addTimeEntryButton}</Alert>;
+      return <Alert bsStyle="success">No time entries {addTimeEntryButton}</Alert>;
     }
 
     var timeEntries = _.sortBy(this.props.timeEntries.data, (timeEntry) => {
@@ -228,7 +227,7 @@ class TimeEntry extends React.Component {
               <td style={{ textAlign: 'right' }}>
                 <ButtonGroup>
                   <Button title="Edit Time" bsSize="xsmall" onClick={this.openTimeEntryDialog.bind(this, entry)}>
-                    <FontAwesomeIcon icon="edit" />
+                    <Glyphicon glyph="edit" />
                   </Button>
                 </ButtonGroup>
               </td>
@@ -368,7 +367,7 @@ class TimeEntry extends React.Component {
                     updateState={this.updateSearchState}
                     showMaxItems={2}
                   />
-                  <Button id="search-button" variant="primary" type="submit">
+                  <Button id="search-button" bsStyle="primary" type="submit">
                     Search
                   </Button>
                   <Button id="clear-search-button" onClick={this.clearSearch}>
@@ -404,7 +403,7 @@ class TimeEntry extends React.Component {
           var addTimeEntryButton = (
             <Authorize>
               <Button title="Add Time" bsSize="xsmall" onClick={this.openTimeEntryDialog.bind(this, null)}>
-                <FontAwesomeIcon icon="plus" />
+                <Glyphicon glyph="plus" />
                 &nbsp;<strong>Add Time</strong>
               </Button>
             </Authorize>

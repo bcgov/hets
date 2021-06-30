@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormControl, InputGroup, FormLabel, Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FormControl, InputGroup, ControlLabel, Button, Glyphicon } from 'react-bootstrap';
 import _ from 'lodash';
+
 
 class LinkControl extends React.Component {
   static propTypes = {
@@ -50,24 +50,18 @@ class LinkControl extends React.Component {
   render() {
     var props = _.omit(this.props, 'updateState', 'url', 'id');
 
-    return (
-      <div className={`link-control ${this.props.className || ''}`} id={this.props.id}>
-        {(() => {
-          // Inline label
-          if (this.props.label) {
-            return <FormLabel>{this.props.label}</FormLabel>;
-          }
-        })()}
-        <InputGroup>
-          <FormControl {...props} type="text" onChange={this.changed} />
-          <InputGroup.Button>
-            <Button target="_blank" href={this.state.url}>
-              <FontAwesomeIcon icon="link" title={this.props.title} />
-            </Button>
-          </InputGroup.Button>
-        </InputGroup>
-      </div>
-    );
+    return <div className={ `link-control ${this.props.className || ''}` } id={ this.props.id }>
+      {(() => {
+        // Inline label
+        if (this.props.label) { return <ControlLabel>{ this.props.label }</ControlLabel>; }
+      })()}
+      <InputGroup>
+        <FormControl { ...props } type="text" onChange={ this.changed }/>
+        <InputGroup.Button>
+          <Button target="_blank" href={ this.state.url }><Glyphicon glyph="link" title={ this.props.title }/></Button>
+        </InputGroup.Button>
+      </InputGroup>
+    </div>;
   }
 }
 

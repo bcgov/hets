@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FormGroup, FormLabel, FormText, Row, Col } from 'react-bootstrap';
+import { FormGroup, ControlLabel, HelpBlock, Row, Col } from 'react-bootstrap';
 
 import * as Constant from '../../constants';
 import * as Api from '../../api';
@@ -11,6 +11,7 @@ import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { isValidDate, toZuluTime } from '../../utils/date';
 import { notBlank, isBlank } from '../../utils/string';
+
 
 class OwnersPolicyEditDialog extends React.Component {
   static propTypes = {
@@ -45,21 +46,11 @@ class OwnersPolicyEditDialog extends React.Component {
   didChange = () => {
     var owner = this.props.owner;
 
-    if (this.state.workSafeBCPolicyNumber !== owner.workSafeBCPolicyNumber) {
-      return true;
-    }
-    if (this.state.workSafeBCExpiryDate !== owner.workSafeBCExpiryDate) {
-      return true;
-    }
-    if (this.state.cglCompanyName !== owner.cglCompanyName) {
-      return true;
-    }
-    if (this.state.cglPolicyNumber !== owner.cglPolicyNumber) {
-      return true;
-    }
-    if (this.state.cglEndDate !== owner.cglEndDate) {
-      return true;
-    }
+    if (this.state.workSafeBCPolicyNumber !== owner.workSafeBCPolicyNumber) { return true; }
+    if (this.state.workSafeBCExpiryDate !== owner.workSafeBCExpiryDate) { return true; }
+    if (this.state.cglCompanyName !== owner.cglCompanyName) { return true; }
+    if (this.state.cglPolicyNumber !== owner.cglPolicyNumber) { return true; }
+    if (this.state.cglEndDate !== owner.cglEndDate) { return true; }
 
     return false;
   };
@@ -104,9 +95,7 @@ class OwnersPolicyEditDialog extends React.Component {
         };
 
         Api.updateOwner(owner).then(() => {
-          if (this.props.onSave) {
-            this.props.onSave();
-          }
+          if (this.props.onSave) { this.props.onSave(); }
         });
       }
 
@@ -121,66 +110,43 @@ class OwnersPolicyEditDialog extends React.Component {
         show={this.props.show}
         title="Owner Insurance"
         onClose={this.props.onClose}
-        onSubmit={this.formSubmitted}
-      >
+        onSubmit={this.formSubmitted}>
         <Row>
           <Col xs={6}>
-            <FormGroup
-              controlId="workSafeBCPolicyNumber"
-              validationState={this.state.workSafeBCPolicyNumberError ? 'error' : null}
-            >
-              <FormLabel>
-                WCB Number <sup>*</sup>
-              </FormLabel>
-              <FormInputControl
-                type="text"
-                value={this.state.workSafeBCPolicyNumber}
-                updateState={this.updateState}
-                autoFocus
-              />
-              <FormText>{this.state.workSafeBCPolicyNumberError}</FormText>
+            <FormGroup controlId="workSafeBCPolicyNumber" validationState={ this.state.workSafeBCPolicyNumberError ? 'error' : null }>
+              <ControlLabel>WCB Number <sup>*</sup></ControlLabel>
+              <FormInputControl type="text" value={ this.state.workSafeBCPolicyNumber } updateState={ this.updateState } autoFocus />
+              <HelpBlock>{ this.state.workSafeBCPolicyNumberError }</HelpBlock>
             </FormGroup>
           </Col>
           <Col xs={6}>
-            <FormGroup
-              controlId="workSafeBCExpiryDate"
-              validationState={this.state.workSafeBCExpiryDateError ? 'error' : null}
-            >
-              <FormLabel>WCB Expiry Date</FormLabel>
-              <DateControl
-                id="workSafeBCExpiryDate"
-                date={this.state.workSafeBCExpiryDate}
-                updateState={this.updateState}
-              />
-              <FormText>{this.state.workSafeBCExpiryDateError}</FormText>
+            <FormGroup controlId="workSafeBCExpiryDate" validationState={ this.state.workSafeBCExpiryDateError ? 'error' : null }>
+              <ControlLabel>WCB Expiry Date</ControlLabel>
+              <DateControl id="workSafeBCExpiryDate" date={ this.state.workSafeBCExpiryDate } updateState={ this.updateState } />
+              <HelpBlock>{ this.state.workSafeBCExpiryDateError }</HelpBlock>
             </FormGroup>
           </Col>
         </Row>
         <Row>
           <Col xs={12}>
             <FormGroup controlId="cglCompanyName">
-              <FormLabel>CGL Insurance Company</FormLabel>
-              <FormInputControl
-                type="text"
-                value={this.state.cglCompanyName}
-                updateState={this.updateState}
-                maxLength={Constant.MAX_LENGTH_CGL_COMPANY_NAME}
-              />
+              <ControlLabel>CGL Insurance Company</ControlLabel>
+              <FormInputControl type="text" value={ this.state.cglCompanyName } updateState={ this.updateState } maxLength={ Constant.MAX_LENGTH_CGL_COMPANY_NAME } />
             </FormGroup>
           </Col>
         </Row>
         <Row>
           <Col xs={6}>
             <FormGroup controlId="cglPolicyNumber">
-              <FormLabel>CGL Policy Number</FormLabel>
-              <FormInputControl type="text" value={this.state.cglPolicyNumber} updateState={this.updateState} />
+              <ControlLabel>CGL Policy Number</ControlLabel>
+              <FormInputControl type="text" value={ this.state.cglPolicyNumber } updateState={ this.updateState } />
             </FormGroup>
           </Col>
           <Col xs={6}>
-            <FormGroup controlId="cglEndDate" validationState={this.state.cglEndDateError ? 'error' : null}>
-              <FormLabel>CGL Policy End Date</FormLabel>
-              <DateControl id="cglEndDate" date={this.state.cglEndDate} updateState={this.updateState} />
-              <FormText>{this.state.cglEndDateError}</FormText>
+            <FormGroup controlId="cglEndDate" validationState={ this.state.cglEndDateError ? 'error' : null }>
+              <ControlLabel>CGL Policy End Date</ControlLabel>
+              <DateControl id="cglEndDate" date={ this.state.cglEndDate } updateState={ this.updateState } />
+              <HelpBlock>{ this.state.cglEndDateError }</HelpBlock>
             </FormGroup>
           </Col>
         </Row>

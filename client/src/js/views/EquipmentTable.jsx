@@ -2,8 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
-import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Glyphicon } from 'react-bootstrap';
 
 import * as Constant from '../constants';
 
@@ -75,7 +74,7 @@ class EquipmentTable extends React.Component {
               <td style={{ textAlign: 'right' }}>
                 <Link to={`${Constant.EQUIPMENT_PATHNAME}/${equip.id}`}>
                   <Button title="View Equipment" bsSize="xsmall">
-                    <FontAwesomeIcon icon="edit" />
+                    <Glyphicon glyph="edit" />
                   </Button>
                 </Link>
               </td>
