@@ -189,7 +189,7 @@ class MultiDropdown extends React.Component {
             <ul>
               {_.map(items, (item) => {
                 return (
-                  <Form.Group controlId={`formCheckboxLabel${item.id}`} as="li">
+                  <Form.Group key={item.id} controlId={`formCheckboxLabel${item.id}`} as="li">
                     <FormCheck
                       value={item.id}
                       checked={this.state.selectedIds.includes(item.id)}

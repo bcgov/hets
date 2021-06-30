@@ -263,7 +263,7 @@ class Owners extends React.Component {
                 </ButtonToolbar>
               </Col>
               <Col xs={3} sm={2} id="search-buttons">
-                {/* <Row>
+                <Row>
                   <Favourites
                     id="faves-dropdown"
                     type="owner"
@@ -272,7 +272,7 @@ class Owners extends React.Component {
                     onSelect={this.loadFavourite}
                     pullRight
                   />
-                </Row> */}
+                </Row>
               </Col>
             </Row>
           </Form>

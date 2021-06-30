@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Checkbox } from 'react-bootstrap';
+import { FormCheck, FormGroup } from 'react-bootstrap';
 import _ from 'lodash';
-
 
 class CheckboxControl extends React.Component {
   static propTypes = {
     type: PropTypes.string,
+    label: PropTypes.string,
     updateState: PropTypes.func,
     onChange: PropTypes.func,
     children: PropTypes.node,
@@ -28,9 +28,11 @@ class CheckboxControl extends React.Component {
   render() {
     var props = _.omit(this.props, 'updateState');
 
-    return <Checkbox className="checkbox-control" { ...props } onChange={ this.changed }>
-      { this.props.children }
-    </Checkbox>;
+    return (
+      <FormGroup controlId={`checkboxControl-${this.props?.label}`}>
+        <FormCheck type="checkbox" className="checkbox-control" {...props} onChange={this.changed} />
+      </FormGroup>
+    );
   }
 }
 
