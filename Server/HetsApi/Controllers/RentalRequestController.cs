@@ -712,10 +712,7 @@ namespace HetsApi.Controllers
                 request.FirstOnRotationList = null;
             }
 
-            // 1. get the number of blocks for this equipment type
-            // 2. set which rotation list record is currently "active"
-            int numberOfBlocks = EquipmentHelper.GetNumberOfBlocks(item.Equipment, _configuration);
-            RentalRequestHelper.UpdateRotationList(request, numberOfBlocks, _context);
+            RentalRequestHelper.UpdateRotationList(request);
 
             // save the changes
             _context.SaveChanges();

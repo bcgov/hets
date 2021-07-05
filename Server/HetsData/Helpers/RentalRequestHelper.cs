@@ -600,36 +600,6 @@ namespace HetsData.Helpers
             return null;
         }
 
-        private static HetLocalAreaRotationList UpdateNextRecordToAsk(HetEquipment equipment, HetLocalAreaRotationList rotationList)
-        {
-            if (equipment.BlockNumber == 1)
-            {
-                rotationList.AskNextBlock1Id = equipment.EquipmentId;
-                rotationList.AskNextBlock1Seniority = equipment.Seniority;
-                rotationList.AskNextBlock2Id = null;
-                rotationList.AskNextBlock2Seniority = null;
-                rotationList.AskNextBlockOpenId = null;
-            }
-            else if (equipment.BlockNumber == 2)
-            {
-                rotationList.AskNextBlock1Id = null;
-                rotationList.AskNextBlock1Seniority = null;
-                rotationList.AskNextBlock2Id = equipment.EquipmentId;
-                rotationList.AskNextBlock2Seniority = equipment.Seniority;
-                rotationList.AskNextBlockOpenId = null;
-            }
-            else
-            {
-                rotationList.AskNextBlock1Id = null;
-                rotationList.AskNextBlock1Seniority = null;
-                rotationList.AskNextBlock2Id = null;
-                rotationList.AskNextBlock2Seniority = null;
-                rotationList.AskNextBlockOpenId = equipment.EquipmentId;
-            }
-
-            return rotationList;
-        }
-
         /// <summary>
         /// New Rotation List
         /// * Find Record Number 1
@@ -660,29 +630,6 @@ namespace HetsData.Helpers
 
             int? disEquipmentTypeId = rentalRequest.DistrictEquipmentTypeId;
             int? localAreaId = rentalRequest.LocalAreaId;
-
-            // check if we have a localAreaRotationList.askNextBlock"N" for the given local area
-            bool localAreaRotationListExists = context.HetLocalAreaRotationList
-                .Any(a => a.LocalArea.LocalAreaId == localAreaId);
-
-            HetLocalAreaRotationList newAreaRotationList;
-
-            if (localAreaRotationListExists)
-            {
-                newAreaRotationList = context.HetLocalAreaRotationList
-                    .First(a => a.LocalArea.LocalAreaId == localAreaId);
-            }
-            else
-            {
-                // setup our new "local area rotation list"
-                newAreaRotationList = new HetLocalAreaRotationList
-                {
-                    LocalAreaId = localAreaId,
-                    DistrictEquipmentTypeId = disEquipmentTypeId
-                };
-
-                context.HetLocalAreaRotationList.Add(newAreaRotationList);
-            }
 
             // determine current fiscal year - check for existing rotation lists this year
             // HETS-1195: Adjust seniority list and rotation list for lists hired between Apr1 and roll over
@@ -718,7 +665,6 @@ namespace HetsData.Helpers
             {
                 var firstOnList = hetRentalRequestRotationList[0];
                 rentalRequest.FirstOnRotationListId = firstOnList.EquipmentId;
-                newAreaRotationList = UpdateNextRecordToAsk(firstOnList.Equipment, newAreaRotationList);
 
                 return rentalRequest; //done!
             }
@@ -801,9 +747,6 @@ namespace HetsData.Helpers
             var startEquip = startEquipInBlock[startBlockIndex].equipment;
             rentalRequest.FirstOnRotationListId = startEquip.EquipmentId;
 
-            // update local area rotation list
-            newAreaRotationList = UpdateNextRecordToAsk(startEquip, newAreaRotationList);
-
             // *****************************************************************
             // Reset the rotation list sort order
             //    ** starting @ nextRecordToAskIndex
@@ -880,154 +823,14 @@ namespace HetsData.Helpers
         /// <param name="request"></param>
         /// <param name="numberOfBlocks"></param>
         /// <param name="context"></param>
-        public static void UpdateRotationList(HetRentalRequest request, int numberOfBlocks, DbAppContext context)
+        public static void UpdateRotationList(HetRentalRequest request)
         {
-            // first get the localAreaRotationList.askNextBlock"N" for the given local area
-            bool exists = context.HetLocalAreaRotationList.Any(a => a.LocalArea.LocalAreaId == request.LocalArea.LocalAreaId);
-
-            HetLocalAreaRotationList localAreaRotationList;
-
-            if (exists)
-            {
-                localAreaRotationList = context.HetLocalAreaRotationList
-                    .Include(x => x.LocalArea)
-                    .Include(x => x.AskNextBlock1)
-                    .Include(x => x.AskNextBlock2)
-                    .Include(x => x.AskNextBlockOpen)
-                    .FirstOrDefault(x => x.LocalArea.LocalAreaId == request.LocalArea.LocalAreaId &&
-                                         x.DistrictEquipmentTypeId == request.DistrictEquipmentTypeId);
-            }
-            else
-            {
-                localAreaRotationList = new HetLocalAreaRotationList
-                {
-                    LocalAreaId = request.LocalAreaId,
-                    DistrictEquipmentTypeId = request.DistrictEquipmentTypeId
-                };
-            }
-
-            // determine what the next id is
-            int? nextId = null;
-
-            if (localAreaRotationList != null && localAreaRotationList.LocalAreaRotationListId > 0)
-            {
-                if (localAreaRotationList.AskNextBlock1Id != null)
-                {
-                    nextId = localAreaRotationList.AskNextBlock1Id;
-                }
-                else if (localAreaRotationList.AskNextBlock2Id != null)
-                {
-                    nextId = localAreaRotationList.AskNextBlock2Id;
-                }
-                else
-                {
-                    nextId = localAreaRotationList.AskNextBlockOpenId;
-                }
-            }
-
-            // populate:
-            // 1. the "next on the list" table for the Local Area  (HET_LOCAL_AREA_ROTATION_LIST)
-            // 2. the first on the list id for the Rental Request  (HET_RENTAL_REQUEST.FIRST_ON_ROTATION_LIST_ID)
             if (request.HetRentalRequestRotationList.Count > 0)
             {
                 request.HetRentalRequestRotationList = request.HetRentalRequestRotationList
                     .OrderBy(x => x.RotationListSortOrder).ToList();
 
                 request.FirstOnRotationListId = request.HetRentalRequestRotationList.ElementAt(0).Equipment.EquipmentId;
-
-                // find our next record
-                int nextRecordToAskIndex = 0;
-                bool foundCurrentRecord = false;
-
-                if (nextId != null)
-                {
-                    for (int i = 0; i < request.HetRentalRequestRotationList.Count; i++)
-                    {
-                        bool forcedHire;
-                        bool asked;
-
-                        if (foundCurrentRecord &&
-                            request.HetRentalRequestRotationList.ElementAt(i).IsForceHire != null &&
-                            request.HetRentalRequestRotationList.ElementAt(i).IsForceHire == false)
-                        {
-                            forcedHire = false;
-                        }
-                        else if (foundCurrentRecord && request.HetRentalRequestRotationList.ElementAt(i).IsForceHire == null)
-                        {
-                            forcedHire = false;
-                        }
-                        else
-                        {
-                            forcedHire = true;
-                        }
-
-                        if (foundCurrentRecord &&
-                            request.HetRentalRequestRotationList.ElementAt(i).OfferResponse != null &&
-                            !request.HetRentalRequestRotationList.ElementAt(i).OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase) &&
-                            !request.HetRentalRequestRotationList.ElementAt(i).OfferResponse.Equals("No", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            asked = false;
-                        }
-                        else if (foundCurrentRecord && request.HetRentalRequestRotationList.ElementAt(i).OfferResponse == null)
-                        {
-                            asked = false;
-                        }
-                        else
-                        {
-                            asked = true;
-                        }
-
-                        if (foundCurrentRecord && !forcedHire && !asked)
-                        {
-                            // we've found our next record - exit and update the lists
-                            nextRecordToAskIndex = i;
-                            break;
-                        }
-
-                        if (!foundCurrentRecord &&
-                            request.HetRentalRequestRotationList.ElementAt(i).EquipmentId == nextId)
-                        {
-                            foundCurrentRecord = true;
-                        }
-                    }
-                }
-
-                if (request.HetRentalRequestRotationList.ElementAt(nextRecordToAskIndex).Equipment.BlockNumber == 1 &&
-                    request.HetRentalRequestRotationList.ElementAt(nextRecordToAskIndex).Equipment.BlockNumber <= numberOfBlocks &&
-                    localAreaRotationList != null)
-                {
-                    localAreaRotationList.AskNextBlock1Id = request.HetRentalRequestRotationList.ElementAt(nextRecordToAskIndex).Equipment.EquipmentId;
-                    localAreaRotationList.AskNextBlock1Seniority = request.HetRentalRequestRotationList.ElementAt(nextRecordToAskIndex).Equipment.Seniority;
-                    localAreaRotationList.AskNextBlock2Id = null;
-                    localAreaRotationList.AskNextBlock2Seniority = null;
-                    localAreaRotationList.AskNextBlockOpen = null;
-                    localAreaRotationList.AskNextBlockOpenId = null;
-                }
-                else if (request.HetRentalRequestRotationList.ElementAt(nextRecordToAskIndex).Equipment.BlockNumber == 2 &&
-                         request.HetRentalRequestRotationList.ElementAt(nextRecordToAskIndex).Equipment.BlockNumber <= numberOfBlocks &&
-                         localAreaRotationList != null)
-                {
-                    localAreaRotationList.AskNextBlock2Id = request.HetRentalRequestRotationList.ElementAt(nextRecordToAskIndex).Equipment.EquipmentId;
-                    localAreaRotationList.AskNextBlock2Seniority = request.HetRentalRequestRotationList.ElementAt(nextRecordToAskIndex).Equipment.Seniority;
-                    localAreaRotationList.AskNextBlock1Id = null;
-                    localAreaRotationList.AskNextBlock1Seniority = null;
-                    localAreaRotationList.AskNextBlockOpen = null;
-                    localAreaRotationList.AskNextBlockOpenId = null;
-                }
-                else if (localAreaRotationList != null)
-                {
-                    localAreaRotationList.AskNextBlockOpenId = request.HetRentalRequestRotationList.ElementAt(nextRecordToAskIndex).Equipment.EquipmentId;
-                    localAreaRotationList.AskNextBlock1Id = null;
-                    localAreaRotationList.AskNextBlock1Seniority = null;
-                    localAreaRotationList.AskNextBlock2Id = null;
-                    localAreaRotationList.AskNextBlock2Seniority = null;
-                }
-
-                // save the list - Done!
-                if (!exists)
-                {
-                    context.HetLocalAreaRotationList.Add(localAreaRotationList);
-                }
             }
         }
 
