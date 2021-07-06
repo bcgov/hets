@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Linq;
 using HetsApi.Helpers;
+using AutoMapper;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -15,15 +17,17 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/attachments")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class AttachmentController : Controller
+    public class AttachmentController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public AttachmentController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public AttachmentController(DbAppContext context, IConfiguration configuration, IMapper mapper)
         {
             _context = context;
             _configuration = configuration;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -43,13 +47,10 @@ namespace HetsApi.Controllers
 
             HetDigitalFile item = _context.HetDigitalFile.First(a => a.DigitalFileId == id);
 
-            if (item != null)
-            {
-                _context.HetDigitalFile.Remove(item);
-                _context.SaveChanges();
-            }
+            _context.HetDigitalFile.Remove(item);
+            _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(item));
+            return new ObjectResult(new HetsResponse(_mapper.Map<DigitalFileDto>(item)));
         }
 
         /// <summary>
