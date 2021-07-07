@@ -6,7 +6,6 @@ namespace HetsData.Dtos
     {
         [JsonProperty("Id")]
         public int OwnerStatusTypeId { get; set; }
-
         public string OwnerStatusTypeCode { get; set; }
         public string Description { get; set; }
         public string ScreenLabel { get; set; }

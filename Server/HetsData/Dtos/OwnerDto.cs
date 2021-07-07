@@ -8,6 +8,7 @@ namespace HetsData.Dtos
     {
         public OwnerDto()
         {
+            Contacts = new List<ContactDto>();
             Equipment = new List<EquipmentDto>();
         }
 

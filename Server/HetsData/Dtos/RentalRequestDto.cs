@@ -25,8 +25,6 @@ namespace HetsData.Dtos
         public int? ProjectId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
         public DistrictEquipmentTypeDto DistrictEquipmentType { get; set; }
-        [JsonIgnore]
-        public EquipmentDto FirstOnRotationList { get; set; }
         public LocalAreaDto LocalArea { get; set; }
         public ProjectDto Project { get; set; }
         public List<RentalRequestAttachmentDto> RentalRequestAttachments { get; set; }

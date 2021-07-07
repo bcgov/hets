@@ -7,7 +7,6 @@ namespace HetsData.Dtos
     {
         [JsonProperty("Id")]
         public int RegionId { get; set; }
-
         public string Name { get; set; }
         public int? RegionNumber { get; set; }
         public int MinistryRegionId { get; set; }

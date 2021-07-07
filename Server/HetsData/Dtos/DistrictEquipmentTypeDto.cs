@@ -5,15 +5,14 @@ namespace HetsData.Dtos
     public class DistrictEquipmentTypeDto
     {
         [JsonProperty("Id")]
-        public int EquipmentTypeId { get; set; }
-        public string Name { get; set; }
-        public float? BlueBookRateNumber { get; set; }
-        public float? BlueBookSection { get; set; }
-        public bool IsDumpTruck { get; set; }
-        public int NumberOfBlocks { get; set; }
-        public float? ExtendHours { get; set; }
-        public float? MaximumHours { get; set; }
-        public float? MaxHoursSub { get; set; }
+        public int DistrictEquipmentTypeId { get; set; }
+        public string DistrictEquipmentName { get; set; }
+        public int? DistrictId { get; set; }
+        public int? ServiceAreaId { get; set; }
+        public int? EquipmentTypeId { get; set; }
+        public bool Deleted { get; set; }
         public int ConcurrencyControlNumber { get; set; }
+        public DistrictDto District { get; set; }
+        public EquipmentTypeDto EquipmentType { get; set; }
     }
 }

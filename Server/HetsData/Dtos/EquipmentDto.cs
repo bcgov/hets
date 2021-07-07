@@ -13,7 +13,6 @@ namespace HetsData.Dtos
 
         [JsonProperty("Id")]
         public int EquipmentId { get; set; }
-
         public string Type { get; set; }
         public string EquipmentCode { get; set; }
         public string Make { get; set; }

@@ -6,6 +6,11 @@ namespace HetsData.Dtos
 {
     public class RentalRequestRotationListDto
     {
+        public RentalRequestRotationListDto()
+        {
+            RentalAgreements = new List<RentalAgreementDto>();
+        }
+
         [JsonProperty("Id")]
         public int RentalRequestRotationListId { get; set; }
         public int RotationListSortOrder { get; set; }

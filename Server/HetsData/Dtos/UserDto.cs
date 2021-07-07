@@ -8,6 +8,7 @@ namespace HetsData.Dtos
         public UserDto()
         {
             UserDistricts = new List<UserDistrictDto>();
+            UserFavourites = new List<UserFavouriteDto>();
             UserRoles = new List<UserRoleDto>();
         }
 
@@ -26,6 +27,7 @@ namespace HetsData.Dtos
         public int ConcurrencyControlNumber { get; set; }
         public DistrictDto District { get; set; }
         public List<UserDistrictDto> UserDistricts { get; set; }
+        public List<UserFavouriteDto> UserFavourites { get; set; }
         public List<UserRoleDto> UserRoles { get; set; }
     }
 }

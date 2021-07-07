@@ -6,7 +6,6 @@ namespace HetsData.Dtos
     {
         [JsonProperty("Id")]
         public int ContactId { get; set; }
-
         public string Surname { get; set; }
         public string GivenName { get; set; }
         public string Role { get; set; }
@@ -22,5 +21,6 @@ namespace HetsData.Dtos
         public string Province { get; set; }
         public int? OwnerId { get; set; }
         public int? ProjectId { get; set; }
+        public int ConcurrencyControlNumber { get; set; }
     }
 }

@@ -25,6 +25,7 @@ namespace HetsData.Dtos
         public string BceidTelephone { get; set; }
         public int? BusinessId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
+        public BusinessDto Business { get; set; }
         public List<BusinessUserRoleDto> UserRoles { get; set; }
     }
 }

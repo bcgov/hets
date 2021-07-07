@@ -6,7 +6,6 @@ namespace HetsData.Dtos
     {
         [JsonProperty("Id")]
         public int NoteId { get; set; }
-
         public string Text { get; set; }
         public bool? IsNoLongerRelevant { get; set; }
         public int? EquipmentId { get; set; }

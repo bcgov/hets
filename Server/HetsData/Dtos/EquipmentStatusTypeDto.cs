@@ -1,9 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HetsData.Dtos
 {
@@ -16,5 +11,6 @@ namespace HetsData.Dtos
         public string ScreenLabel { get; set; }
         public int? DisplayOrder { get; set; }
         public bool? IsActive { get; set; }
+        public int ConcurrencyControlNumber { get; set; }
     }
 }

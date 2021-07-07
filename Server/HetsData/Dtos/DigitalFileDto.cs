@@ -6,7 +6,6 @@ namespace HetsData.Dtos
     {
         [JsonProperty("Id")]
         public int DigitalFileId { get; set; }
-
         public string Description { get; set; }
         public string FileName { get; set; }
         public string Type { get; set; }
@@ -18,6 +17,5 @@ namespace HetsData.Dtos
         public int? RentalRequestId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
         public MimeTypeDto MimeType { get; set; }
-
     }
 }

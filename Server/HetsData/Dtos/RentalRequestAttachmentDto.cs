@@ -9,5 +9,6 @@ namespace HetsData.Dtos
         public string Attachment { get; set; }
         public int? RentalRequestId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
+        public RentalRequestDto RentalRequest { get; set; }
     }
 }

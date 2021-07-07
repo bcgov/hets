@@ -6,7 +6,6 @@ namespace HetsData.Dtos
     {
         [JsonProperty("Id")]
         public int ConditionTypeId { get; set; }
-
         public int? DistrictId { get; set; }
         public string ConditionTypeCode { get; set; }
         public string Description { get; set; }
