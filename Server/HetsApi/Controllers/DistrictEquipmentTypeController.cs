@@ -14,6 +14,8 @@ using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
 using HetsData.Hangfire;
+using AutoMapper;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -24,15 +26,15 @@ namespace HetsApi.Controllers
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class DistrictEquipmentTypeController : Controller
     {
-        private readonly Object _thisLock = new Object();
-
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public DistrictEquipmentTypeController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public DistrictEquipmentTypeController(DbAppContext context, IConfiguration configuration, IMapper mapper)
         {
             _context = context;
             _configuration = configuration;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -40,10 +42,8 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("")]
-        [SwaggerOperation("DistrictEquipmentTypesGet")]
-        [SwaggerResponse(200, type: typeof(List<HetDistrictEquipmentType>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult DistrictEquipmentTypesGet()
+        public virtual ActionResult<List<DistrictEquipmentTypeDto>> DistrictEquipmentTypesGet()
         {
             // get current users district id
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, HttpContext);
@@ -73,12 +73,12 @@ namespace HetsApi.Controllers
 
                 foreach(HetEquipment equipment in hetEquipments)
                 {
-                    LocalAreaEquipment localAreaEquipment = equipmentType.LocalAreas
+                    var localAreaEquipment = equipmentType.LocalAreas
                         .FirstOrDefault(x => x.Id == equipment.LocalAreaId);
 
                     if (localAreaEquipment == null)
                     {
-                        localAreaEquipment = new LocalAreaEquipment
+                        localAreaEquipment = new LocalAreaEquipmentDto
                         {
                             Id = equipment.LocalArea.LocalAreaId,
                             Name = equipment.LocalArea.Name,
@@ -92,12 +92,9 @@ namespace HetsApi.Controllers
                         localAreaEquipment.EquipmentCount = localAreaEquipment.EquipmentCount + 1;
                     }
                 }
-
-                // remove unnecessary data
-                equipmentType.HetEquipment = null;
             }
 
-            return new ObjectResult(new HetsResponse(equipmentTypes));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<DistrictEquipmentTypeDto>>(equipmentTypes)));
         }
 
         /// <summary>

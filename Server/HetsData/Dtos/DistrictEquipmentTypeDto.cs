@@ -22,11 +22,4 @@ namespace HetsData.Dtos
         public int EquipmentCount { get; set; }
         public List<LocalAreaEquipmentDto> LocalAreas { get; set; }
     }
-
-    public class LocalAreaEquipmentDto
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int EquipmentCount { get; set; }
-    }
 }
