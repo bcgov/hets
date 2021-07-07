@@ -99,6 +99,7 @@ namespace HetsApi
 
             // repository
             services.AddScoped<IRentalAgreementRepository, RentalAgreementRepository>();
+            services.AddScoped<IOwnerRepository, OwnerRepository>();
 
             // allow for large files to be uploaded
             services.Configure<FormOptions>(options =>

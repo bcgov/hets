@@ -15,7 +15,8 @@ namespace HetsData.Dtos
         public bool Complete { get; set; }
         public int DistrictId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
-
         public DistrictDto District { get; set; }
+        public string Status { get => Complete ? "Complete" : "In Progress"; }
+
     }
 }

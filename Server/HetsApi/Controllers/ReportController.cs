@@ -10,19 +10,11 @@ using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
 using Microsoft.EntityFrameworkCore;
+using HetsData.Dtos;
+using AutoMapper;
 
 namespace HetsApi.Controllers
 {
-    #region Batch Repor Model
-
-    public class ReportModel : HetBatchReport
-    {
-        public int Id { get; set; }
-        public string Status { get; set; }
-    }
-
-    #endregion
-
     /// <summary>
     /// Contact Controller
     /// </summary>
@@ -33,12 +25,15 @@ namespace HetsApi.Controllers
         private readonly DbAppContext _context;
         private readonly HttpContext _httpContext;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public ReportController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public ReportController(DbAppContext context, IConfiguration configuration, 
+            IHttpContextAccessor httpContextAccessor, IMapper mapper)
         {
             _context = context;
             _httpContext = httpContextAccessor.HttpContext;
             _configuration = configuration;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -46,29 +41,25 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("")]
-        [SwaggerOperation("BatchReportGet")]
-        [SwaggerResponse(200, type: typeof(List<ReportModel>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult BatchReportGet()
+        public virtual ActionResult<List<BatchReportDto>> BatchReportGet()
         {
             // get users district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
 
-            IEnumerable<HetBatchReport> reports = _context.HetBatchReport.AsNoTracking()
+            var reports = _context.HetBatchReport.AsNoTracking()
                 .Where(x => x.DistrictId == districtId)
                 .OrderByDescending(x => x.StartDate)
-                .Select(x => new ReportModel
+                .Select(x => new BatchReportDto
                 {
-                    Id = x.ReportId,
                     ReportId = x.ReportId,
                     DistrictId = x.DistrictId,
                     StartDate = x.StartDate,
                     EndDate = x.EndDate,
-                    Complete = x.Complete,
-                    Status = x.Complete ? "Complete" : "In Progress"
+                    Complete = x.Complete
                 });
 
-            return new ObjectResult(new HetsResponse(reports));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<BatchReportDto>>(reports)));
         }
 
         /// <summary>
@@ -77,10 +68,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Report to delete</param>
         [HttpPost]
         [Route("{id}/delete")]
-        [SwaggerOperation("BatchReportIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(HetBatchReport))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult BatchReportIdDeletePost([FromRoute]int id)
+        public virtual ActionResult<BatchReportDto> BatchReportIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetBatchReport.Any(a => a.ReportId == id);
 
@@ -100,7 +89,7 @@ namespace HetsApi.Controllers
                 _context.SaveChanges();
             }
 
-            return new ObjectResult(new HetsResponse(report));
+            return new ObjectResult(new HetsResponse(_mapper.Map<BatchReportDto>(report)));
         }
 
         /// <summary>
@@ -109,7 +98,6 @@ namespace HetsApi.Controllers
         /// <param name="id">Report Id</param>
         [HttpGet]
         [Route("{id}/download")]
-        [SwaggerOperation("BatchReportIdDownloadGet")]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult BatchReportIdDownloadGet([FromRoute]int id)
         {

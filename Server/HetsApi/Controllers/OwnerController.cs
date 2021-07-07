@@ -20,6 +20,8 @@ using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
 using HetsReport;
+using HetsData.Repositories;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -52,13 +54,17 @@ namespace HetsApi.Controllers
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
         private readonly HttpContext _httpContext;
+        private readonly IOwnerRepository _ownerRepo;
         private readonly ILogger _logger;
 
-        public OwnerController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory)
+        public OwnerController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, 
+            IOwnerRepository ownerRepo,
+            ILoggerFactory loggerFactory)
         {
             _context = context;
             _configuration = configuration;
             _httpContext = httpContextAccessor.HttpContext;
+            _ownerRepo = ownerRepo;
             _logger = loggerFactory.CreateLogger<OwnerController>();
         }
 
@@ -68,12 +74,10 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Owner to fetch</param>
         [HttpGet]
         [Route("{id}")]
-        [SwaggerOperation("OwnersIdGet")]
-        [SwaggerResponse(200, type: typeof(HetOwner))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult OwnersIdGet([FromRoute]int id)
+        public virtual ActionResult<OwnerDto> OwnersIdGet([FromRoute]int id)
         {
-            return new ObjectResult(new HetsResponse(OwnerHelper.GetRecord(id, _context, _configuration)));
+            return new ObjectResult(new HetsResponse(_ownerRepo.GetRecord(id)));
         }
 
         /// <summary>
@@ -205,10 +209,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPut]
         [Route("{id}")]
-        [SwaggerOperation("OwnersIdPut")]
-        [SwaggerResponse(200, type: typeof(HetOwner))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult OwnersIdPut([FromRoute]int id, [FromBody]HetOwner item)
+        public virtual ActionResult<OwnerDto> OwnersIdPut([FromRoute]int id, [FromBody]HetOwner item)
         {
             if (item == null || id != item.OwnerId)
             {
@@ -228,8 +230,7 @@ namespace HetsApi.Controllers
             bool? oldIsMaintenanceContractor = owner.IsMaintenanceContractor;
 
             // HETS-1115 - Do not allow changing seniority affecting entities if an active request exists
-            if (OwnerHelper.RentalRequestStatus(id, _context) &&
-                oldLocalArea != item.LocalArea.LocalAreaId)
+            if (_ownerRepo.RentalRequestStatus(id) && oldLocalArea != item.LocalArea.LocalAreaId)
             {
                 return new BadRequestObjectResult(new HetsResponse("HETS-40", ErrorViewModel.GetDescription("HETS-40", _configuration)));
             }
@@ -319,7 +320,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // retrieve updated owner record to return to ui
-            return new ObjectResult(new HetsResponse(OwnerHelper.GetRecord(id, _context, _configuration)));
+            return new ObjectResult(new HetsResponse(_ownerRepo.GetRecord(id)));
         }
 
         /// <summary>
@@ -329,10 +330,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPut]
         [Route("{id}/status")]
-        [SwaggerOperation("OwnersIdStatusPut")]
-        [SwaggerResponse(200, type: typeof(HetEquipment))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult OwnersIdStatusPut([FromRoute]int id, [FromBody]OwnerStatus item)
+        public virtual ActionResult<OwnerDto> OwnersIdStatusPut([FromRoute]int id, [FromBody]OwnerStatus item)
         {
             // not found
             if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -343,7 +342,7 @@ namespace HetsApi.Controllers
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // HETS-1115 - Do not allow changing seniority affecting entities if an active request exists
-            if (OwnerHelper.RentalRequestStatus(id, _context))
+            if (_ownerRepo.RentalRequestStatus(id))
             {
                 return new BadRequestObjectResult(new HetsResponse("HETS-40", ErrorViewModel.GetDescription("HETS-40", _configuration)));
             }
@@ -436,7 +435,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // retrieve updated owner record to return to ui
-            return new ObjectResult(new HetsResponse(OwnerHelper.GetRecord(id, _context, _configuration)));
+            return new ObjectResult(new HetsResponse(_ownerRepo.GetRecord(id)));
         }
 
         /// <summary>
@@ -445,10 +444,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPost]
         [Route("")]
-        [SwaggerOperation("OwnersPost")]
-        [SwaggerResponse(200, type: typeof(HetOwner))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult OwnersPost([FromBody]HetOwner item)
+        public virtual ActionResult<OwnerDto> OwnersPost([FromBody]HetOwner item)
         {
             // not found
             if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -536,7 +533,7 @@ namespace HetsApi.Controllers
             }
 
             // retrieve updated owner record to return to ui
-            return new ObjectResult(new HetsResponse(OwnerHelper.GetRecord(id, _context, _configuration)));
+            return new ObjectResult(new HetsResponse(_ownerRepo.GetRecord(id)));
         }
 
         #region Owner Search
@@ -554,10 +551,8 @@ namespace HetsApi.Controllers
         /// <param name="ownerCode"></param>
         [HttpGet]
         [Route("search")]
-        [SwaggerOperation("OwnersSearchGet")]
-        [SwaggerResponse(200, type: typeof(List<OwnerLite>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult OwnersSearchGet([FromQuery]string localAreas,
+        public virtual ActionResult<OwnerLite> OwnersSearchGet([FromQuery]string localAreas,
             [FromQuery]string status, [FromQuery]string ownerName = null, [FromQuery]string ownerCode = null)
         {
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
@@ -1512,17 +1507,15 @@ namespace HetsApi.Controllers
         /// <param name="limit">limits the number of records returned</param>
         [HttpGet]
         [Route("{id}/history")]
-        [SwaggerOperation("OwnersIdHistoryGet")]
-        [SwaggerResponse(200, type: typeof(List<HetHistory>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult OwnersIdHistoryGet([FromRoute]int id, [FromQuery]int? offset, [FromQuery]int? limit)
+        public virtual ActionResult<List<History>> OwnersIdHistoryGet([FromRoute]int id, [FromQuery]int? offset, [FromQuery]int? limit)
         {
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            return new ObjectResult(new HetsResponse(OwnerHelper.GetHistoryRecords(id, offset, limit, _context)));
+            return new ObjectResult(new HetsResponse(_ownerRepo.GetHistoryRecords(id, offset, limit)));
         }
 
         /// <summary>
@@ -1533,9 +1526,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPost]
         [Route("{id}/history")]
-        [SwaggerOperation("OwnersIdHistoryPost")]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult OwnersIdHistoryPost([FromRoute]int id, [FromBody]HetHistory item)
+        public virtual ActionResult<List<History>> OwnersIdHistoryPost([FromRoute]int id, [FromBody]HetHistory item)
         {
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
@@ -1553,7 +1545,7 @@ namespace HetsApi.Controllers
                 _context.SaveChanges();
             }
 
-            return new ObjectResult(new HetsResponse(OwnerHelper.GetHistoryRecords(id, null, null, _context)));
+            return new ObjectResult(new HetsResponse(_ownerRepo.GetHistoryRecords(id, null, null)));
         }
 
         #endregion
@@ -1778,9 +1770,8 @@ namespace HetsApi.Controllers
         /// <param name="cglExpiry">Find owners whose CGL policy expires before this date</param>
         [HttpGet]
         [Route("wcbCglReport")]
-        [SwaggerOperation("OwnerWcbCglGet")]
-        [SwaggerResponse(200, type: typeof(List<OwnerWcbCgl>))]
-        public virtual IActionResult OwnerWcbCglGet([FromQuery]string localAreas, [FromQuery]string owners,
+        [RequiresPermission(HetPermission.Login)]
+        public virtual ActionResult<List<OwnerWcbCgl>> OwnerWcbCglGet([FromQuery]string localAreas, [FromQuery]string owners,
             [FromQuery]DateTime? wcbExpiry, [FromQuery]DateTime? cglExpiry)
         {
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
