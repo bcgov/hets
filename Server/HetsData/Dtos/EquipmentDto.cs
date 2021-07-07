@@ -57,5 +57,22 @@ namespace HetsData.Dtos
         public LocalAreaDto LocalArea { get; set; }
         public OwnerDto Owner { get; set; }
         public List<EquipmentAttachmentDto> EquipmentAttachments { get; set; }
+
+        public bool ActiveRentalRequest { get; set; }
+        public int EquipmentNumber { get; set; }
+        public string Status { get; set; }
+        public int SenioritySortOrder { get; set; }
+        public bool IsHired { get; set; }
+        public float? HoursYtd { get; set; }
+        public int NumberOfBlocks { get; set; }
+        public int MaximumHours { get; set; }
+        public string SeniorityString { get; set; }
+        public string OwnerName { get; set; }
+        public string EquipmentType { get; set; }
+        public int AttachmentCount { get; set; }
+        public string YearMinus1 { get; set; }
+        public string YearMinus2 { get; set; }
+        public string YearMinus3 { get; set; }
+        public string EquipmentDetails { get; set; }
     }
 }

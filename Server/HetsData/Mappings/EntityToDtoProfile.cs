@@ -42,6 +42,7 @@ namespace HetsData.Mappings
                 .ForMember(x => x.Contacts, opt => opt.MapFrom(x => x.HetContact))
                 .ForMember(x => x.RentalAgreements, opt => opt.MapFrom(x => x.HetRentalAgreement))
                 .ForMember(x => x.RentalRequests, opt => opt.MapFrom(x => x.HetRentalRequest));
+            CreateMap<HetProvincialRateType, ProvincialRateTypeDto>();
             CreateMap<HetRatePeriodType, RatePeriodTypeDto>();
             CreateMap<HetRegion, RegionDto>();
             CreateMap<HetRentalAgreementCondition, RentalAgreementConditionDto>();

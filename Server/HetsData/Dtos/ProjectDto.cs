@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace HetsData.Dtos
@@ -34,5 +35,10 @@ namespace HetsData.Dtos
         public List<ContactDto> Contacts { get; set; }
         public List<RentalAgreementDto> RentalAgreements { get; set; }
         public List<RentalRequestDto> RentalRequests { get; set; }
+
+        public bool CanEditStatus { get; set; }
+        public string Status { get; set; }
+        public DateTime FiscalYearStartDate { get; set; }
+
     }
 }

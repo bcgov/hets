@@ -558,11 +558,9 @@ namespace HetsApi.Controllers
         [SwaggerResponse(200, type: typeof(List<OwnerLite>))]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult OwnersSearchGet([FromQuery]string localAreas,
-            [FromQuery]string equipmentTypes, [FromQuery]int? owner, [FromQuery]string status,
-            [FromQuery]bool? hired, [FromQuery]string ownerName = null, [FromQuery]string ownerCode = null)
+            [FromQuery]string status, [FromQuery]string ownerName = null, [FromQuery]string ownerCode = null)
         {
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
-            int?[] equipmentTypesArray = ArrayHelper.ParseIntArray(equipmentTypes);
 
             // get initial results - must be limited to user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
@@ -590,42 +588,6 @@ namespace HetsApi.Controllers
                 {
                     data = data.Where(x => x.OwnerStatusTypeId == statusId);
                 }
-            }
-
-            if (hired == true)
-            {
-                IQueryable<int?> hiredOwnersQuery = _context.HetRentalAgreement
-                                    .Where(agreement => agreement.Status == "Active")
-                                    .Join(
-                                        _context.HetEquipment,
-                                        agreement => agreement.EquipmentId,
-                                        equipment => equipment.EquipmentId,
-                                        (agreement, equipment) => new
-                                        {
-                                            tempAgreement = agreement,
-                                            tempEqiupment = equipment
-                                        }
-                                    )
-                                    .Where(projection => projection.tempEqiupment.OwnerId != null)
-                                    .Select(projection => projection.tempEqiupment.OwnerId)
-                                    .Distinct();
-
-                data = data.Where(o => hiredOwnersQuery.Contains(o.OwnerId));
-            }
-
-            if (equipmentTypesArray != null)
-            {
-                IQueryable<int?> equipmentTypeQuery = _context.HetEquipment
-                    .Where(x => equipmentTypesArray.Contains(x.DistrictEquipmentTypeId))
-                    .Select(x => x.OwnerId)
-                    .Distinct();
-
-                data = data.Where(x => equipmentTypeQuery.Contains(x.OwnerId));
-            }
-
-            if (owner != null)
-            {
-                data = data.Where(x => x.OwnerId == owner);
             }
 
             if (ownerName != null)

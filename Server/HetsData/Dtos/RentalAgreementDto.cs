@@ -41,5 +41,10 @@ namespace HetsData.Dtos
         public List<RentalAgreementConditionDto> RentalAgreementConditions { get; set; }
         public List<RentalAgreementRateDto> RentalAgreementRates { get; set; }
         public List<TimeRecordDto> TimeRecords { get; set; }
+
+        public string Status { get; set; }
+        public string RatePeriod { get; set; }
+        public string LocalAreaName { get; set; }
+        public List<RentalAgreementRateDto> OvertimeRates { get; set; }
     }
 }

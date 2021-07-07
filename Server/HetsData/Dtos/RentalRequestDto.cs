@@ -29,5 +29,10 @@ namespace HetsData.Dtos
         public ProjectDto Project { get; set; }
         public List<RentalRequestAttachmentDto> RentalRequestAttachments { get; set; }
         public List<RentalRequestRotationListDto> RentalRequestRotationList { get; set; }
+
+        public int YesCount { get; set; }
+        public int NumberOfBlocks { get; set; }
+        public string Status { get; set; }
+        public string LocalAreaName { get; set; }
     }
 }

@@ -20,6 +20,6 @@ namespace HetsData.Dtos
         public int ConcurrencyControlNumber { get; set; }
         public List<OwnerDto> Owners { get; set; }
         public List<BusinessUserDto> BusinessUsers { get; set; }
-
+        public OwnerDto LinkedOwner { get; set; }
     }
 }

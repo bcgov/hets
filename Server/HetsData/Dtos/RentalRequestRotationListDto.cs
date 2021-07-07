@@ -30,5 +30,9 @@ namespace HetsData.Dtos
         public RentalAgreementDto RentalAgreement { get; set; }
         public RentalRequestDto RentalRequest { get; set; }
         public List<RentalAgreementDto> RentalAgreements { get; set; }
+
+        public float? SeniorityFloat { get; set; }
+        public int? BlockNumber { get; set; }
+
     }
 }

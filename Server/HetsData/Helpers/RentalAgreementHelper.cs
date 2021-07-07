@@ -56,50 +56,50 @@ namespace HetsData.Helpers
     {
         #region Get a Rental Agreement record (plus associated records)
 
-        /// <summary>
-        /// Get a Rental Agreement record
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public static HetRentalAgreement GetRecord(int id, DbAppContext context)
-        {
-            HetRentalAgreement agreement = context.HetRentalAgreement.AsNoTracking()
-                .Include(x => x.RentalAgreementStatusType)
-                .Include(x => x.RatePeriodType)
-                .Include(x => x.District)
-                .Include(x => x.Equipment)
-                    .ThenInclude(y => y.Owner)
-                .Include(x => x.Equipment)
-                    .ThenInclude(y => y.DistrictEquipmentType)
-                        .ThenInclude(d => d.EquipmentType)
-                .Include(x => x.Equipment)
-                    .ThenInclude(y => y.HetEquipmentAttachment)
-                .Include(x => x.Equipment)
-                    .ThenInclude(y => y.EquipmentStatusType)
-                .Include(x => x.Equipment)
-                    .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
-                .Include(x => x.Project)
-                    .ThenInclude(p => p.District.Region)
-                .Include(x => x.Project)
-                    .ThenInclude(p => p.ProjectStatusType)
-                .Include(x => x.HetRentalAgreementCondition)
-                .Include(x => x.HetRentalAgreementRate)
-                    .ThenInclude(x => x.RatePeriodType)
-                .Include(x => x.HetTimeRecord)
-                .FirstOrDefault(a => a.RentalAgreementId == id);
+        ///// <summary>
+        ///// Get a Rental Agreement record
+        ///// </summary>
+        ///// <param name="id"></param>
+        ///// <param name="context"></param>
+        ///// <returns></returns>
+        //public static HetRentalAgreement GetRecord(int id, DbAppContext context)
+        //{
+        //    HetRentalAgreement agreement = context.HetRentalAgreement.AsNoTracking()
+        //        .Include(x => x.RentalAgreementStatusType)
+        //        .Include(x => x.RatePeriodType)
+        //        .Include(x => x.District)
+        //        .Include(x => x.Equipment)
+        //            .ThenInclude(y => y.Owner)
+        //        .Include(x => x.Equipment)
+        //            .ThenInclude(y => y.DistrictEquipmentType)
+        //                .ThenInclude(d => d.EquipmentType)
+        //        .Include(x => x.Equipment)
+        //            .ThenInclude(y => y.HetEquipmentAttachment)
+        //        .Include(x => x.Equipment)
+        //            .ThenInclude(y => y.EquipmentStatusType)
+        //        .Include(x => x.Equipment)
+        //            .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
+        //        .Include(x => x.Project)
+        //            .ThenInclude(p => p.District.Region)
+        //        .Include(x => x.Project)
+        //            .ThenInclude(p => p.ProjectStatusType)
+        //        .Include(x => x.HetRentalAgreementCondition)
+        //        .Include(x => x.HetRentalAgreementRate)
+        //            .ThenInclude(x => x.RatePeriodType)
+        //        .Include(x => x.HetTimeRecord)
+        //        .FirstOrDefault(a => a.RentalAgreementId == id);
 
-            if (agreement != null)
-            {
-                agreement.Status = agreement.RentalAgreementStatusType.RentalAgreementStatusTypeCode;
-                agreement.RatePeriod = agreement.RatePeriodType.RatePeriodTypeCode;
+        //    if (agreement != null)
+        //    {
+        //        agreement.Status = agreement.RentalAgreementStatusType.RentalAgreementStatusTypeCode;
+        //        agreement.RatePeriod = agreement.RatePeriodType.RatePeriodTypeCode;
 
-                agreement.HetRentalAgreementOvertimeRate = agreement.HetRentalAgreementRate.Where(x => x.Overtime).ToList();
-                agreement.HetRentalAgreementRate = agreement.HetRentalAgreementRate.Where(x => !x.Overtime).ToList();
-            }
+        //        agreement.HetRentalAgreementOvertimeRate = agreement.HetRentalAgreementRate.Where(x => x.Overtime).ToList();
+        //        agreement.HetRentalAgreementRate = agreement.HetRentalAgreementRate.Where(x => !x.Overtime).ToList();
+        //    }
 
-            return agreement;
-        }
+        //    return agreement;
+        //}
 
         #endregion
 
@@ -417,15 +417,13 @@ namespace HetsData.Helpers
         /// <param name="equipment"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static string GetRentalAgreementNumber(HetEquipment equipment, DbAppContext context)
+        public static string GetRentalAgreementNumber(int? localAreaId, DbAppContext context)
         {
             string result = "";
 
             // validate item.
-            if (equipment?.LocalArea != null)
+            if (localAreaId != null)
             {
-                int localAreaId = equipment.LocalArea.LocalAreaId;
-
                 // get the district
                 HetLocalArea localArea = context.HetLocalArea.AsNoTracking()
                     .Include(x => x.ServiceArea)

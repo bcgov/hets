@@ -12,6 +12,8 @@ using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
+using HetsData.Repositories;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -25,12 +27,15 @@ namespace HetsApi.Controllers
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
         private readonly HttpContext _httpContext;
+        private readonly IRentalAgreementRepository _rentalAgreementRepo;
 
-        public ProjectController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public ProjectController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor,
+            IRentalAgreementRepository rentalAgreementRepo)
         {
             _context = context;
             _configuration = configuration;
             _httpContext = httpContextAccessor.HttpContext;
+            _rentalAgreementRepo = rentalAgreementRepo;
         }
 
         /// <summary>
@@ -361,7 +366,7 @@ namespace HetsApi.Controllers
         [SwaggerOperation("ProjectsRentalAgreementClonePost")]
         [SwaggerResponse(200, type: typeof(HetRentalAgreement))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult ProjectsRentalAgreementClonePost([FromRoute]int id, [FromBody]ProjectRentalAgreementClone item)
+        public virtual ActionResult<RentalAgreementDto> ProjectsRentalAgreementClonePost([FromRoute]int id, [FromBody]ProjectRentalAgreementClone item)
         {
             // not found
             if (item == null || id != item.ProjectId) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -543,7 +548,7 @@ namespace HetsApi.Controllers
             // ******************************************************************
             // return update rental agreement to update the screen
             // ******************************************************************
-            return new ObjectResult(new HetsResponse(RentalAgreementHelper.GetRecord(item.RentalAgreementId, _context)));
+            return new ObjectResult(new HetsResponse(_rentalAgreementRepo.GetRecord(item.RentalAgreementId)));
         }
 
         #endregion

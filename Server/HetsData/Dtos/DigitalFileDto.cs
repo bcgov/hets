@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace HetsData.Dtos
 {
@@ -17,5 +18,8 @@ namespace HetsData.Dtos
         public int? RentalRequestId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
         public MimeTypeDto MimeType { get; set; }
+        public int? FileSize { get; set; }
+        public string LastUpdateUserid { get; set; }
+        public DateTime? LastUpdateTimestamp { get; set; }
     }
 }

@@ -48,5 +48,25 @@ namespace HetsData.Dtos
         public BusinessDto Business { get; set; }
         public List<ContactDto> Contacts { get; set; }
         public List<EquipmentDto> Equipment { get; set; }
+
+        public bool ActiveRentalRequest { get; set; }
+        public string Status { get; set; }
+        public string ReportDate { get; set; }
+        public string Classification { get; set; }
+        public string Title { get; set; }
+        public int DistrictId { get; set; }
+        public int MinistryDistrictId { get; set; }
+        public string DistrictName { get; set; }
+        public string DistrictAddress { get; set; }
+        public string DistrictContact { get; set; }
+        public string LocalAreaName { get; set; }
+        public string PrimaryContactRole { get; set; }
+        public string PrimaryContactGivenName { get; set; }
+        public string PrimaryContactSurname { get; set; }
+        public string PrimaryContactPhone { get; set; }
+        public string PrimaryContactNameBusiness { get; set; }
+        public string LocalAreaNameBusiness { get; set; }
+        public string DistrictNameBusiness { get; set; }
+        public string SharedKeyHeader { get; set; }
     }
 }

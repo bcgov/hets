@@ -615,7 +615,7 @@ namespace HetsApi.Controllers
                 if (rentalAgreement == null)
                 {
                     // generate the rental agreement number
-                    string agreementNumber = RentalAgreementHelper.GetRentalAgreementNumber(item.Equipment, _context);
+                    string agreementNumber = RentalAgreementHelper.GetRentalAgreementNumber(item.Equipment?.LocalAreaId, _context);
 
                     // get user info - agreement city
                     User user = UserAccountHelper.GetUser(_context, _httpContext);

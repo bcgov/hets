@@ -14,5 +14,7 @@ namespace HetsData.Dtos
         public int? RentalAgreementRateId { get; set; }
         public int? RentalAgreementId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
+
+        public string TimePeriod { get; set; }
     }
 }

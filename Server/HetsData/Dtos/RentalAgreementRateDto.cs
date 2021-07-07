@@ -18,5 +18,8 @@ namespace HetsData.Dtos
         public int ConcurrencyControlNumber { get; set; }
         public RentalAgreementDto RentalAgreement { get; set; }
         public RatePeriodTypeDto RatePeriodType { get; set; }
+        
+        public string RatePeriod { get; set; }
+        public string RateString { get; set; }
     }
 }
