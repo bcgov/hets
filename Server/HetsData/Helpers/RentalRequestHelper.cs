@@ -602,16 +602,16 @@ namespace HetsData.Helpers
 
         /// <summary>
         /// New Rotation List
-        /// * Find Record Number 1
-        /// * Then update the Local Area Rotation List
+        /// * Find Record Number #1
         ///
         /// Business rules
-        /// * is this the first request of the new fiscal year -> Yes: start from #1
-        /// * get the "next equipment to be asked" from "LOCAL_AREA_ROTATION_LIST"
-        ///   -> if this is Block 1 -> temporarily becomes #1 on the list
-        ///   -> if not block 1 -> #1 i block 1 temporarily becomes #1 on the list
-        /// * check all records before temporary #1
-        ///   -> if a record was Force Hired -> make them #1
+        /// * start from seniority list
+        /// * remove hired equipments from the seniority list
+        /// * if this is the first request of the new fiscal year -> Yes: start from #1
+        /// * get the starting equipment (next equipment to be asked) for each block
+        /// * sort the equipment for each block (considering rotation of the equipments in the block)
+        ///    - first, starting equipment (next equipment to be asked) to the last equipment in the block
+        ///    - then, starting the first equipment in the list to the one just before the next equipment to be asked
         /// </summary>
         /// <param name="rentalRequest"></param>
         /// <param name="numberOfBlocks"></param>

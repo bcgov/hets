@@ -22,6 +22,7 @@ using Microsoft.Extensions.Hosting;
 using HetsApi.Middlewares;
 using AutoMapper;
 using HetsData.Mappings;
+using HetsData.Repositories;
 
 namespace HetsApi
 {
@@ -95,6 +96,10 @@ namespace HetsApi
             services.AddAuthorization();
             services.RegisterPermissionHandler();
             services.AddScoped<HetsJwtBearerEvents>();
+
+            // repository
+            services.AddScoped<IRentalAgreementRepository, RentalAgreementRepository>();
+            services.AddScoped<IOwnerRepository, OwnerRepository>();
 
             // allow for large files to be uploaded
             services.Configure<FormOptions>(options =>

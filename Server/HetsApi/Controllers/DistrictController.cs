@@ -16,6 +16,7 @@ using HetsData.Hangfire;
 using Hangfire.Storage;
 using Hangfire.Common;
 using HetsData.Dtos;
+using AutoMapper;
 
 namespace HetsApi.Controllers
 {
@@ -24,18 +25,19 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/districts")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class DistrictController : Controller
+    public class DistrictController : ControllerBase
     {
-        private readonly Object _thisLock = new Object();
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
         private readonly IAnnualRollover _annualRollover;
         private IMonitoringApi _monitoringApi;
 
-        public DistrictController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IAnnualRollover annualRollover)
+        public DistrictController(DbAppContext context, IConfiguration configuration, IMapper mapper, IAnnualRollover annualRollover)
         {
             _context = context;
             _configuration = configuration;
+            _mapper = mapper;
             _annualRollover = annualRollover;
             _monitoringApi = JobStorage.Current.GetMonitoringApi();
         }
@@ -45,16 +47,14 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("")]
-        [SwaggerOperation("DistrictsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetDistrict>))]
         [AllowAnonymous]
-        public virtual IActionResult DistrictsGet()
+        public virtual ActionResult<List<DistrictDto>> DistrictsGet()
         {
             List<HetDistrict> districts = _context.HetDistrict.AsNoTracking()
                 .Include(x => x.Region)
                 .ToList();
 
-            return new ObjectResult(new HetsResponse(districts));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<DistrictDto>>(districts)));
         }
 
         #region Owners by District
@@ -79,7 +79,7 @@ namespace HetsApi.Controllers
                 .OrderBy(x => x.OrganizationName)
                 .ToList();
 
-            return new ObjectResult(new HetsResponse(owners));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<OwnerDto>>(owners)));
         }
 
         #endregion

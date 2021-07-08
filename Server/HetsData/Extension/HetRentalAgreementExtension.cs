@@ -20,9 +20,5 @@ namespace HetsData.Model
 
         [NotMapped]
         public string LocalAreaName { get; set; }
-
-        [NotMapped]
-        [JsonProperty("OvertimeRates")]
-        public ICollection<HetRentalAgreementRate> HetRentalAgreementOvertimeRate { get; set; }
     }
 }
