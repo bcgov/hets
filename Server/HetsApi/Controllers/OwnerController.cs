@@ -22,6 +22,7 @@ using HetsData.Model;
 using HetsReport;
 using HetsData.Repositories;
 using HetsData.Dtos;
+using AutoMapper;
 
 namespace HetsApi.Controllers
 {
@@ -55,16 +56,19 @@ namespace HetsApi.Controllers
         private readonly IConfiguration _configuration;
         private readonly HttpContext _httpContext;
         private readonly IOwnerRepository _ownerRepo;
+        private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
         public OwnerController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, 
             IOwnerRepository ownerRepo,
+            IMapper mapper,
             ILoggerFactory loggerFactory)
         {
             _context = context;
             _configuration = configuration;
             _httpContext = httpContextAccessor.HttpContext;
             _ownerRepo = ownerRepo;
+            _mapper = mapper;
             _logger = loggerFactory.CreateLogger<OwnerController>();
         }
 
@@ -85,10 +89,8 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("lite")]
-        [SwaggerOperation("OwnersGetLite")]
-        [SwaggerResponse(200, type: typeof(List<OwnerLiteProjects>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult OwnersGetLite()
+        public virtual ActionResult<List<OwnerLiteProjects>> OwnersGetLite()
         {
             // get users district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
@@ -120,10 +122,8 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("liteHires")]
-        [SwaggerOperation("OwnersGetLiteHires")]
-        [SwaggerResponse(200, type: typeof(List<OwnerLiteProjects>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult OwnersGetLiteHires()
+        public virtual ActionResult<List<OwnerLiteProjects>> OwnersGetLiteHires()
         {
             // get users district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
@@ -159,10 +159,8 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("liteTs")]
-        [SwaggerOperation("OwnersGetLiteTs")]
-        [SwaggerResponse(200, type: typeof(List<OwnerLiteProjects>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult OwnersGetLiteTs()
+        public virtual ActionResult<List<OwnerLiteProjects>> OwnersGetLiteTs()
         {
             // get users district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
@@ -210,7 +208,7 @@ namespace HetsApi.Controllers
         [HttpPut]
         [Route("{id}")]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual ActionResult<OwnerDto> OwnersIdPut([FromRoute]int id, [FromBody]HetOwner item)
+        public virtual ActionResult<OwnerDto> OwnersIdPut([FromRoute]int id, [FromBody]OwnerDto item)
         {
             if (item == null || id != item.OwnerId)
             {
@@ -445,7 +443,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("")]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual ActionResult<OwnerDto> OwnersPost([FromBody]HetOwner item)
+        public virtual ActionResult<OwnerDto> OwnersPost([FromBody]OwnerDto item)
         {
             // not found
             if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -618,7 +616,6 @@ namespace HetsApi.Controllers
         /// <param name="parameters">Array of local area and owner id numbers to generate notices for</param>
         [HttpPost]
         [Route("verificationDoc")]
-        [SwaggerOperation("OwnersIdVerificationPost")]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult OwnersIdVerificationPost([FromBody]ReportParameters parameters)
         {
@@ -663,7 +660,6 @@ namespace HetsApi.Controllers
         /// <param name="parameters">Array of local area and owner ids to generate labels for</param>
         [HttpPost]
         [Route("mailingLabelsPdf")]
-        [SwaggerOperation("OwnersIdMailingLabelsPdfPost")]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult OwnersIdMailingLabelsPdfPost([FromBody]ReportParameters parameters)
         {
@@ -832,7 +828,6 @@ namespace HetsApi.Controllers
 
         [HttpPost]
         [Route("mailingLabelsDoc")]
-        [SwaggerOperation("OwnersIdMailingLabelsDocPost")]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult OwnersIdMailingLabelsDocPost([FromBody]ReportParameters parameters)
         {
@@ -890,10 +885,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Owner to fetch Equipment for</param>
         [HttpGet]
         [Route("{id}/equipment")]
-        [SwaggerOperation("OwnersIdEquipmentGet")]
-        [SwaggerResponse(200, type: typeof(List<HetEquipment>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult OwnersIdEquipmentGet([FromRoute]int id)
+        public virtual ActionResult<List<EquipmentDto>> OwnersIdEquipmentGet([FromRoute]int id)
         {
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
@@ -910,8 +903,6 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetEquipment)
                     .ThenInclude(x => x.DistrictEquipmentType)
                 .Include(x => x.HetEquipment)
-                    .ThenInclude(x => x.Owner)
-                .Include(x => x.HetEquipment)
                     .ThenInclude(x => x.HetEquipmentAttachment)
                 .Include(x => x.HetEquipment)
                     .ThenInclude(x => x.HetNote)
@@ -923,7 +914,7 @@ namespace HetsApi.Controllers
 
             // HETS-701: Archived pieces of equipment should not show up on the Owner's
             //           equipment list on the Owner edit screen
-            List<HetEquipment> equipments = owner.HetEquipment.Where(x => x.EquipmentStatusTypeId != statusId).ToList();
+            var equipments = _mapper.Map<List<EquipmentDto>>(owner.HetEquipment.Where(x => x.EquipmentStatusTypeId != statusId).ToList());
 
             return new ObjectResult(new HetsResponse(equipments));
         }
@@ -936,10 +927,8 @@ namespace HetsApi.Controllers
         /// <param name="items">equipment to verify</param>
         [HttpPut]
         [Route("{id}/equipment")]
-        [SwaggerOperation("OwnersIdEquipmentPut")]
-        [SwaggerResponse(200, type: typeof(List<HetEquipment>))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult OwnersIdEquipmentPut([FromRoute]int id, [FromBody]HetEquipment[] items)
+        public virtual ActionResult<List<EquipmentDto>> OwnersIdEquipmentPut([FromRoute]int id, [FromBody]HetEquipment[] items)
         {
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
@@ -973,7 +962,7 @@ namespace HetsApi.Controllers
 
             _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(items));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<EquipmentDto>>(items)));
         }
 
         #endregion
@@ -990,11 +979,9 @@ namespace HetsApi.Controllers
         /// <param name="items">equipment to transfer</param>
         [HttpPost]
         [Route("{id}/equipmentTransfer/{targetOwnerId}/{includeSeniority}")]
-        [SwaggerOperation("OwnersIdEquipmentTransferPost")]
-        [SwaggerResponse(200, type: typeof(List<HetEquipment>))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult OwnersIdEquipmentTransferPost([FromRoute]int id, [FromRoute]int targetOwnerId,
-            [FromRoute]bool includeSeniority, [FromBody]HetEquipment[] items)
+        public virtual ActionResult<List<EquipmentDto>> OwnersIdEquipmentTransferPost([FromRoute]int id, [FromRoute]int targetOwnerId,
+            [FromRoute]bool includeSeniority, [FromBody]EquipmentDto[] items)
         {
             bool ownerExists = _context.HetOwner.Any(a => a.OwnerId == id);
             bool targetOwnerExists = _context.HetOwner.Any(a => a.OwnerId == targetOwnerId);
@@ -1063,13 +1050,22 @@ namespace HetsApi.Controllers
                 return new BadRequestObjectResult(new HetsResponse("HETS-32", ErrorViewModel.GetDescription("HETS-32", _configuration)));
             }
 
+            var equipmentsToTransfer = new List<HetEquipment>();
+
             // check all pieces of equipment in the provided list belong to this owner
-            foreach (HetEquipment equipmentToTransfer in items)
+            foreach (var item in items)
             {
-                if (equipmentToTransfer.OwnerId != currentOwner.OwnerId)
+                // get full equipment record
+                HetEquipment equipmentToTransfer = _context.HetEquipment
+                    .Include(x => x.HetEquipmentAttachment)
+                    .FirstOrDefault(x => x.EquipmentId == item.EquipmentId);
+
+                if (equipmentToTransfer == null || equipmentToTransfer.OwnerId != currentOwner.OwnerId)
                 {
                     return new BadRequestObjectResult(new HetsResponse("HETS-33", ErrorViewModel.GetDescription("HETS-33", _configuration)));
                 }
+
+                equipmentsToTransfer.Add(equipmentToTransfer);
             }
 
             //***************************************************************
@@ -1086,13 +1082,12 @@ namespace HetsApi.Controllers
             //***************************************************************
             // process each piece of equipment in the provided list
             //***************************************************************
-            foreach (HetEquipment item in items)
-            {
-                // get full equipment record
-                HetEquipment equipmentToTransfer = _context.HetEquipment
-                    .Include(x => x.HetEquipmentAttachment)
-                    .First(x => x.EquipmentId == item.EquipmentId);
 
+            // need to start transaction so that old equipments can be replaced by new equipments in agreements
+            using var transaction = _context.Database.BeginTransaction();
+
+            foreach (var equipmentToTransfer in equipmentsToTransfer)
+            {
                 // get new owner code
                 string newEquipmentCode = EquipmentHelper.GetEquipmentCode(targetOwner.OwnerId, _context);
 
@@ -1158,42 +1153,33 @@ namespace HetsApi.Controllers
                     newEquipment.ApprovedDate = equipmentToTransfer.ApprovedDate;
                 }
 
-                using (IDbContextTransaction transaction = _context.Database.BeginTransaction())
+                _context.HetEquipment.Add(newEquipment);
+
+                // update original equipment record
+                equipmentToTransfer.EquipmentStatusTypeId = (int)equipmentArchiveStatusId;
+                equipmentToTransfer.ArchiveCode = "Y";
+                equipmentToTransfer.ArchiveDate = DateTime.UtcNow;
+                equipmentToTransfer.ArchiveReason = "Bulk transfer to " + targetOwner.OwnerCode;
+
+                _context.SaveChanges(); //this ensures newEquipment.EquimentId is assigned.
+
+                if (includeSeniority)
                 {
+                    int newEquipmentId = newEquipment.EquipmentId;
 
-                    // update new record
-                    _context.HetEquipment.Add(newEquipment);
-                    _context.SaveChanges();
+                    // we also need to update all of the associated rental agreements
+                    // (for this fiscal year)
+                    IQueryable<HetRentalAgreement> agreements = _context.HetRentalAgreement
+                        .Where(x => x.EquipmentId == equipmentToTransfer.EquipmentId &&
+                                    x.DatedOn >= fiscalStart);
 
-                    if (includeSeniority)
+                    foreach (HetRentalAgreement agreement in agreements)
                     {
-                        int newEquipmentId = newEquipment.EquipmentId;
-
-                        // we also need to update all of the associated rental agreements
-                        // (for this fiscal year)
-                        IQueryable<HetRentalAgreement> agreements = _context.HetRentalAgreement
-                            .Where(x => x.EquipmentId == item.EquipmentId &&
-                                        x.DatedOn >= fiscalStart);
-
-                        foreach (HetRentalAgreement agreement in agreements)
-                        {
-                            agreement.EquipmentId = newEquipmentId;
-                            _context.HetRentalAgreement.Update(agreement);
-                        }
+                        agreement.EquipmentId = newEquipmentId;
                     }
-
-                    // update original equipment record
-                    equipmentToTransfer.EquipmentStatusTypeId = (int) equipmentArchiveStatusId;
-                    equipmentToTransfer.ArchiveCode = "Y";
-                    equipmentToTransfer.ArchiveDate = DateTime.UtcNow;
-                    equipmentToTransfer.ArchiveReason = "Bulk transfer to " + targetOwner.OwnerCode;
-
-                    // save archived equipment record
-                    _context.HetEquipment.Update(equipmentToTransfer);
-                    _context.SaveChanges();
-
-                    transaction.Commit();
                 }
+
+                _context.SaveChanges();
             }
 
             //***************************************************************
@@ -1202,7 +1188,7 @@ namespace HetsApi.Controllers
             //***************************************************************
             List<int> districtEquipmentTypes = new List<int>();
 
-            foreach (HetEquipment equipmentToTransfer in items)
+            foreach (var equipmentToTransfer in equipmentsToTransfer)
             {
                 if (equipmentToTransfer.LocalAreaId != null &&
                     equipmentToTransfer.DistrictEquipmentTypeId != null)
@@ -1211,7 +1197,9 @@ namespace HetsApi.Controllers
                     int districtEquipmentTypeId = (int)equipmentToTransfer.DistrictEquipmentTypeId;
 
                     // check whether we've processed this district already
-                    if (districtEquipmentTypes.Contains(districtEquipmentTypeId)) continue;
+                    if (districtEquipmentTypes.Contains(districtEquipmentTypeId))
+                        continue;
+
                     districtEquipmentTypes.Add(districtEquipmentTypeId);
 
                     // recalculate seniority
@@ -1221,8 +1209,10 @@ namespace HetsApi.Controllers
 
             _context.SaveChanges();
 
+            transaction.Commit();
+
             // return original items
-            return new ObjectResult(new HetsResponse(items));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<EquipmentDto>>(equipmentsToTransfer)));
         }
 
         #endregion
@@ -1236,10 +1226,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Owner to fetch attachments for</param>
         [HttpGet]
         [Route("{id}/attachments")]
-        [SwaggerOperation("OwnersIdAttachmentsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult OwnersIdAttachmentsGet([FromRoute]int id)
+        public virtual ActionResult<List<DigitalFileDto>> OwnersIdAttachmentsGet([FromRoute]int id)
         {
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
@@ -1265,7 +1253,7 @@ namespace HetsApi.Controllers
                 }
             }
 
-            return new ObjectResult(new HetsResponse(attachments));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<DigitalFileDto>>(attachments)));
         }
 
         #endregion
@@ -1279,10 +1267,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Owner to fetch Contacts for</param>
         [HttpGet]
         [Route("{id}/contacts")]
-        [SwaggerOperation("OwnersIdContactsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetContact>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult OwnersIdContactsGet([FromRoute]int id)
+        public virtual ActionResult<List<ContactDto>> OwnersIdContactsGet([FromRoute]int id)
         {
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
@@ -1293,7 +1279,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetContact)
                 .First(a => a.OwnerId == id);
 
-            return new ObjectResult(new HetsResponse(owner.HetContact.ToList()));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<ContactDto>>(owner.HetContact.ToList())));
         }
 
         /// <summary>
@@ -1305,10 +1291,8 @@ namespace HetsApi.Controllers
         /// <param name="item">Adds to Owner Contact</param>
         [HttpPost]
         [Route("{id}/contacts/{primary}")]
-        [SwaggerOperation("OwnersIdContactsPost")]
-        [SwaggerResponse(200, type: typeof(HetContact))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult OwnersIdContactsPost([FromRoute]int id, [FromRoute]bool primary, [FromBody]HetContact item)
+        public virtual ActionResult<ContactDto> OwnersIdContactsPost([FromRoute]int id, [FromRoute]bool primary, [FromBody]ContactDto item)
         {
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
@@ -1321,6 +1305,8 @@ namespace HetsApi.Controllers
             HetOwner owner = _context.HetOwner
                 .Include(x => x.HetContact)
                 .First(a => a.OwnerId == id);
+
+            using var transaction = _context.Database.BeginTransaction();
 
             // add or update contact
             if (item.ContactId > 0)
@@ -1362,7 +1348,7 @@ namespace HetsApi.Controllers
                     City = item.City,
                     EmailAddress = item.EmailAddress,
                     WorkPhoneNumber = item.WorkPhoneNumber,
-                FaxPhoneNumber = item.FaxPhoneNumber,
+                    FaxPhoneNumber = item.FaxPhoneNumber,
                     GivenName = item.GivenName,
                     MobilePhoneNumber = item.MobilePhoneNumber,
                     PostalCode = item.PostalCode,
@@ -1384,6 +1370,7 @@ namespace HetsApi.Controllers
             }
 
             _context.SaveChanges();
+            transaction.Commit();
 
             // get updated contact record
             HetOwner updatedOwner = _context.HetOwner.AsNoTracking()
@@ -1393,7 +1380,7 @@ namespace HetsApi.Controllers
             HetContact updatedContact = updatedOwner.HetContact
                 .FirstOrDefault(a => a.ContactId == contactId);
 
-            return new ObjectResult(new HetsResponse(updatedContact));
+            return new ObjectResult(new HetsResponse(_mapper.Map<ContactDto>(updatedContact)));
         }
 
         /// <summary>
@@ -1404,10 +1391,8 @@ namespace HetsApi.Controllers
         /// <param name="items">Replacement Owner contacts</param>
         [HttpPut]
         [Route("{id}/contacts")]
-        [SwaggerOperation("OwnersIdContactsPut")]
-        [SwaggerResponse(200, type: typeof(List<HetContact>))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult OwnersIdContactsPut([FromRoute]int id, [FromBody]HetContact[] items)
+        public virtual ActionResult<List<ContactDto>> OwnersIdContactsPut([FromRoute]int id, [FromBody]ContactDto[] items)
         {
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
@@ -1419,65 +1404,67 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetContact)
                 .First(a => a.OwnerId == id);
 
+            var contactIds = new List<int>();
+
             // adjust the incoming list
             for (int i = 0; i < items.Length; i++)
             {
-                HetContact item = items[i];
+                var item = items[i];
 
-                if (item != null)
+                if (item == null)
+                    continue;
+
+                bool contactExists = _context.HetContact.Any(x => x.ContactId == item.ContactId);
+
+                if (contactExists)
                 {
-                    bool contactExists = _context.HetContact.Any(x => x.ContactId == item.ContactId);
+                    HetContact temp = _context.HetContact.First(x => x.ContactId == item.ContactId);
 
-                    if (contactExists)
+                    temp.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
+                    temp.OwnerId = id;
+                    temp.Notes = item.Notes;
+                    temp.Address1 = item.Address1;
+                    temp.Address2 = item.Address2;
+                    temp.City = item.City;
+                    temp.EmailAddress = item.EmailAddress;
+                    temp.FaxPhoneNumber = item.FaxPhoneNumber;
+                    temp.GivenName = item.GivenName;
+                    temp.MobilePhoneNumber = item.MobilePhoneNumber;
+                    temp.PostalCode = item.PostalCode;
+                    temp.Province = item.Province;
+                    temp.Surname = item.Surname;
+                    temp.Role = item.Role;
+
+                    contactIds.Add(temp.ContactId);
+                }
+                else
+                {
+                    HetContact temp = new HetContact
                     {
-                        HetContact temp = _context.HetContact.First(x => x.ContactId == item.ContactId);
+                        OwnerId = id,
+                        Notes = item.Notes,
+                        Address1 = item.Address1,
+                        Address2 = item.Address2,
+                        City = item.City,
+                        EmailAddress = item.EmailAddress,
+                        FaxPhoneNumber = item.FaxPhoneNumber,
+                        GivenName = item.GivenName,
+                        MobilePhoneNumber = item.MobilePhoneNumber,
+                        PostalCode = item.PostalCode,
+                        Province = item.Province,
+                        Surname = item.Surname,
+                        Role = item.Role
+                    };
 
-                        temp.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
-                        temp.OwnerId = id;
-                        temp.Notes = item.Notes;
-                        temp.Address1 = item.Address1;
-                        temp.Address2 = item.Address2;
-                        temp.City = item.City;
-                        temp.EmailAddress = item.EmailAddress;
-                        temp.FaxPhoneNumber = item.FaxPhoneNumber;
-                        temp.GivenName = item.GivenName;
-                        temp.MobilePhoneNumber = item.MobilePhoneNumber;
-                        temp.PostalCode = item.PostalCode;
-                        temp.Province = item.Province;
-                        temp.Surname = item.Surname;
-                        temp.Role = item.Role;
-
-                        items[i] = temp;
-                    }
-                    else
-                    {
-                        HetContact temp = new HetContact
-                        {
-                            OwnerId = id,
-                            Notes = item.Notes,
-                            Address1 = item.Address1,
-                            Address2 = item.Address2,
-                            City = item.City,
-                            EmailAddress = item.EmailAddress,
-                            FaxPhoneNumber = item.FaxPhoneNumber,
-                            GivenName = item.GivenName,
-                            MobilePhoneNumber = item.MobilePhoneNumber,
-                            PostalCode = item.PostalCode,
-                            Province = item.Province,
-                            Surname = item.Surname,
-                            Role = item.Role
-                        };
-
-                        owner.HetContact.Add(temp);
-                        items[i] = temp;
-                    }
+                    owner.HetContact.Add(temp);
+                    contactIds.Add(temp.ContactId);
                 }
             }
 
             // remove contacts that are no longer attached.
             foreach (HetContact contact in owner.HetContact)
             {
-                if (contact != null && items.All(x => x.ContactId != contact.ContactId))
+                if (contact != null && contactIds.All(x => x != contact.ContactId))
                 {
                     _context.HetContact.Remove(contact);
                 }
@@ -1491,7 +1478,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetContact)
                 .First(a => a.OwnerId == id);
 
-            return new ObjectResult(new HetsResponse(updatedOwner.HetContact.ToList()));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<ContactDto>>(updatedOwner.HetContact.ToList())));
         }
 
         #endregion
@@ -1558,10 +1545,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Owner to fetch Notes for</param>
         [HttpGet]
         [Route("{id}/notes")]
-        [SwaggerOperation("OwnersIdNotesGet")]
-        [SwaggerResponse(200, type: typeof(List<HetNote>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult OwnersIdNotesGet([FromRoute]int id)
+        public virtual ActionResult<List<NoteDto>> OwnersIdNotesGet([FromRoute]int id)
         {
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
@@ -1582,7 +1567,7 @@ namespace HetsApi.Controllers
                 }
             }
 
-            return new ObjectResult(new HetsResponse(notes));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<NoteDto>>(notes)));
         }
 
         /// <summary>
@@ -1593,10 +1578,8 @@ namespace HetsApi.Controllers
         /// <param name="item">Owner Note</param>
         [HttpPost]
         [Route("{id}/note")]
-        [SwaggerOperation("OwnersIdNotePost")]
-        [SwaggerResponse(200, type: typeof(HetNote))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult OwnersIdNotePost([FromRoute]int id, [FromBody]HetNote item)
+        public virtual ActionResult<List<NoteDto>> OwnersIdNotePost([FromRoute]int id, [FromBody]NoteDto item)
         {
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
 
@@ -1645,7 +1628,7 @@ namespace HetsApi.Controllers
                 }
             }
 
-            return new ObjectResult(new HetsResponse(notes));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<NoteDto>>(notes)));
         }
 
         #endregion
@@ -1658,7 +1641,6 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpPost]
         [Route("GenerateKeys")]
-        [SwaggerOperation("OwnersGenerateKeysPost")]
         [RequiresPermission(HetPermission.Admin, HetPermission.WriteAccess)]
         public virtual IActionResult OwnersGenerateKeysPost()
         {
@@ -1706,7 +1688,6 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpPost]
         [Route("GenerateKeysApi")]
-        [SwaggerOperation("GenerateKeysApiPost")]
         [RequiresPermission(HetPermission.Admin, HetPermission.WriteAccess)]
         public virtual IActionResult GenerateKeysApiPost()
         {
