@@ -81,7 +81,7 @@ namespace HetsApi.Helpers
             else
             {
                 HetBusinessUser tmpUser = context.HetBusinessUser.AsNoTracking()
-                    .FirstOrDefault(x => x.BceidUserId.ToLower() == userId);
+                    .FirstOrDefault(x => x.BceidUserId.ToUpper() == userId);
 
                 if (tmpUser != null)
                 {
@@ -294,7 +294,7 @@ namespace HetsApi.Helpers
             // ok - now find the user
             HetBusinessUser user = context.HetBusinessUser
                 .FirstOrDefault(x => x.BusinessId == business.BusinessId &&
-                                     x.BceidUserId == userId);
+                                     x.BceidUserId.ToUpper() == userId);
 
             if (user == null)
             {
@@ -371,7 +371,7 @@ namespace HetsApi.Helpers
             // get complete user record (with roles) and return
             user = context.HetBusinessUser.AsNoTracking()
                 .Where(x => x.BusinessId == business.BusinessId &&
-                            x.BceidUserId == userId)
+                            x.BceidUserId.ToUpper() == userId)
                 .Include(u => u.HetBusinessUserRole)
                     .ThenInclude(r => r.Role)
                         .ThenInclude(rp => rp.HetRolePermission)

@@ -59,7 +59,7 @@ namespace HetsApi.Controllers
             // get favourites
             IEnumerable<HetUserFavourite> favourites = _context.HetUserFavourite.AsNoTracking()
                 .Include(x => x.User)
-                .Where(x => x.User.SmUserId == userId &&
+                .Where(x => x.User.SmUserId.ToUpper() == userId &&
                             x.DistrictId == districtId);
 
             if (favouriteType != null)
