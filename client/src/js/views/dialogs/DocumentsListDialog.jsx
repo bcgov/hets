@@ -54,21 +54,9 @@ class DocumentsListDialog extends React.Component {
 
   componentDidMount() {
     this.setState({ loading: true });
-    Api.getUsers()
-      .then(() => {
-        return this.formatDocuments();
-      })
-      .finally(() => {
-        this.setState({ loading: false });
-      });
+    this.formatDocuments();
+    this.setState({ loading: false });
   }
-
-  getUserName = (smUserId) => {
-    var user = _.find(this.props.users, (user) => {
-      return user.smUserId === smUserId;
-    });
-    return user ? user.name : smUserId;
-  };
 
   updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
@@ -95,7 +83,6 @@ class DocumentsListDialog extends React.Component {
     var documents = _.map(this.props.documents, (document) => {
       return {
         ...document,
-        userName: this.getUserName(document.lastUpdateUserid),
         formattedTimestamp: formatDateTime(document.lastUpdateTimestamp, Constant.DATE_TIME_LOG),
       };
     });

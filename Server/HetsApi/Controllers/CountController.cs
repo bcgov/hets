@@ -9,6 +9,7 @@ using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace HetsApi.Controllers
 {
@@ -29,30 +30,26 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/counts")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class CountController : Controller
+    public class CountController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
-        private readonly HttpContext _httpContext;
 
-        public CountController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public CountController(DbAppContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
-            _httpContext = httpContextAccessor.HttpContext;
         }
 
         [HttpGet]
         [Route("")]
-        [SwaggerOperation("CountsGet")]
-        [SwaggerResponse(200, type: typeof(CountModel))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult CountsGet()
+        public virtual ActionResult<CountModel> CountsGet()
         {
             CountModel result = new CountModel();
 
             // limited to user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // Count 1: Unapproved Owners
             int? pendingStatusId = StatusHelper.GetStatusId(HetOwner.StatusPending, "ownerStatus", _context);
@@ -104,6 +101,5 @@ namespace HetsApi.Controllers
             // return to the client
             return new ObjectResult(new HetsResponse(result));
         }
-
     }
 }

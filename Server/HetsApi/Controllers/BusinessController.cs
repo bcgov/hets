@@ -23,7 +23,7 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/business")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class BusinessController : Controller
+    public class BusinessController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
@@ -216,10 +216,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Owner to fetch Equipment for</param>
         [HttpGet]
         [Route("owner/{id}/equipment")]
-        [SwaggerOperation("BceidOwnerEquipmentGet")]
-        [SwaggerResponse(200, type: typeof(List<HetEquipment>))]
         [RequiresPermission(HetPermission.BusinessLogin)]
-        public virtual IActionResult BceidOwnerEquipmentGet([FromRoute]int id)
+        public virtual ActionResult<List<EquipmentDto>> BceidOwnerEquipmentGet([FromRoute]int id)
         {
             // get business
             string businessGuid = _context.SmBusinessGuid;
@@ -239,8 +237,6 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetEquipment)
                     .ThenInclude(x => x.DistrictEquipmentType)
                 .Include(x => x.HetEquipment)
-                    .ThenInclude(x => x.Owner)
-                .Include(x => x.HetEquipment)
                     .ThenInclude(x => x.HetEquipmentAttachment)
                 .Include(x => x.HetEquipment)
                     .ThenInclude(x => x.HetNote)
@@ -250,7 +246,7 @@ namespace HetsApi.Controllers
                     .ThenInclude(x => x.HetHistory)
                 .First(a => a.OwnerId == id);
 
-            return new ObjectResult(new HetsResponse(owner.HetEquipment));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<EquipmentDto>>(owner.HetEquipment)));
         }
 
         #endregion

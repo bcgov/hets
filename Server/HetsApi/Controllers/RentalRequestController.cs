@@ -63,7 +63,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult NoProjectsGet()
         {
             // get current district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             int? statusIdInProgress = StatusHelper.GetStatusId(HetRentalRequest.StatusInProgress, "rentalRequestStatus", _context);
             if (statusIdInProgress == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
@@ -461,7 +461,7 @@ namespace HetsApi.Controllers
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
 
             // get initial results - must be limited to user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             IQueryable<HetRentalRequest> data = _context.HetRentalRequest.AsNoTracking()
                 .Include(x => x.LocalArea.ServiceArea.District.Region)
@@ -758,7 +758,7 @@ namespace HetsApi.Controllers
                     attachment.FileSize = attachment.FileContents.Length;
                     attachment.LastUpdateTimestamp = attachment.AppLastUpdateTimestamp;
                     attachment.LastUpdateUserid = attachment.AppLastUpdateUserid;
-
+                    attachment.UserName = UserHelper.GetUserName(attachment.LastUpdateUserid, _context);
                     attachments.Add(attachment);
                 }
             }
@@ -948,7 +948,7 @@ namespace HetsApi.Controllers
             int?[] equipmentArray = ArrayHelper.ParseIntArray(equipment);
 
             // get initial results - must be limited to user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get fiscal year
             HetDistrictStatus district = _context.HetDistrictStatus.AsNoTracking()

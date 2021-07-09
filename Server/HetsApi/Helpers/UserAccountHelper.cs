@@ -38,9 +38,8 @@ namespace HetsApi.Helpers
         /// Get user's district id
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="httpContext"></param>
         /// <returns></returns>
-        public static int? GetUsersDistrictId(DbAppContext context, HttpContext httpContext)
+        public static int? GetUsersDistrictId(DbAppContext context)
         {
             string userId = context.SmUserId;
             int? districtId = context.HetUser.FirstOrDefault(x => x.SmUserId.ToUpper() == userId)?.DistrictId;

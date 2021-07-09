@@ -11,6 +11,8 @@ using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
+using HetsData.Dtos;
+using AutoMapper;
 
 namespace HetsApi.Controllers
 {
@@ -19,13 +21,15 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class AttachmentUploadController : Controller
+    public class AttachmentUploadController : ControllerBase
     {
         private readonly DbAppContext _context;
+        private readonly IMapper _mapper;
 
-        public AttachmentUploadController(DbAppContext context, IHttpContextAccessor httpContextAccessor)
+        public AttachmentUploadController(DbAppContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -35,10 +39,8 @@ namespace HetsApi.Controllers
         /// <param name="files"></param>
         [HttpPost]
         [Route("equipment/{id}/attachments")]
-        [SwaggerOperation("EquipmentIdAttachmentsPost")]
-        [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult EquipmentIdAttachmentsPost([FromRoute] int id, [FromForm]IList<IFormFile> files)
+        public virtual ActionResult<List<DigitalFileDto>> EquipmentIdAttachmentsPost([FromRoute] int id, [FromForm]IList<IFormFile> files)
         {
             // validate the id
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
@@ -83,7 +85,7 @@ namespace HetsApi.Controllers
 
             _context.SaveChanges();
 
-            return new ObjectResult(equipment.HetDigitalFile);
+            return new ObjectResult(_mapper.Map<List<DigitalFileDto>>(equipment.HetDigitalFile));
         }
 
         /// <summary>
@@ -105,10 +107,8 @@ namespace HetsApi.Controllers
         /// <param name="files"></param>
         [HttpPost]
         [Route("projects/{id}/attachments")]
-        [SwaggerOperation("ProjectIdAttachmentsPost")]
-        [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult ProjectIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
+        public virtual ActionResult<List<DigitalFileDto>> ProjectIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
             // validate the id
             bool exists = _context.HetProject.Any(a => a.ProjectId == id);
@@ -153,7 +153,7 @@ namespace HetsApi.Controllers
 
             _context.SaveChanges();
 
-            return new ObjectResult(project.HetDigitalFile);
+            return new ObjectResult(_mapper.Map<List<DigitalFileDto>>(project.HetDigitalFile));
         }
 
         /// <summary>
@@ -176,10 +176,8 @@ namespace HetsApi.Controllers
         /// <param name="files"></param>
         [HttpPost]
         [Route("owners/{id}/attachments")]
-        [SwaggerOperation("OwnerIdAttachmentsPost")]
-        [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult OwnerIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
+        public virtual ActionResult<List<DigitalFileDto>> OwnerIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
             // validate the id
             bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
@@ -224,7 +222,7 @@ namespace HetsApi.Controllers
 
             _context.SaveChanges();
 
-            return new ObjectResult(owner.HetDigitalFile);
+            return new ObjectResult(_mapper.Map<List<DigitalFileDto>>(owner.HetDigitalFile));
         }
 
         /// <summary>
@@ -247,10 +245,8 @@ namespace HetsApi.Controllers
         /// <param name="files"></param>
         [HttpPost]
         [Route("rentalRequests/{id}/attachments")]
-        [SwaggerOperation("RentalRequestIdAttachmentsPost")]
-        [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult RentalRequestIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
+        public virtual ActionResult<List<DigitalFileDto>> RentalRequestIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
             // validate the id
             bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);
@@ -295,7 +291,7 @@ namespace HetsApi.Controllers
 
             _context.SaveChanges();
 
-            return new ObjectResult(rentalRequest.HetDigitalFile);
+            return new ObjectResult(_mapper.Map<List<DigitalFileDto>>(rentalRequest.HetDigitalFile));
         }
 
         /// <summary>

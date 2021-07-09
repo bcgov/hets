@@ -7,12 +7,13 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 
 namespace HetsData.Hangfire
 {
     public interface IAnnualRollover
     {
-        public HetDistrictStatus GetRecord(int id);
+        public DistrictStatusDto GetRecord(int id);
         public void AnnualRolloverJob(int districtId, string seniorityScoringRules);
         public RolloverProgressDto KickoffProgress(int districtId);
     }
@@ -22,12 +23,14 @@ namespace HetsData.Hangfire
         private DbAppContext _dbContextMain;
         private DbAppMonitorContext _dbContextMonitor;
         private string _jobId;
+        private IMapper _mapper;
 
-        public AnnualRollover(DbAppContext dbContextMain, DbAppMonitorContext dbContextMonitor)
+        public AnnualRollover(DbAppContext dbContextMain, DbAppMonitorContext dbContextMonitor, IMapper mapper)
         {
             _dbContextMain = dbContextMain;
             _dbContextMonitor = dbContextMonitor;
             _jobId = Guid.NewGuid().ToString();
+            _mapper = mapper;
         }
 
         #region Get a District Status record
@@ -38,18 +41,17 @@ namespace HetsData.Hangfire
         /// <param name="id"></param>
         /// <param name="_context"></param>
         /// <returns></returns>
-        public HetDistrictStatus GetRecord(int id)
+        public DistrictStatusDto GetRecord(int id)
         {
             HetDistrictStatus status = _dbContextMain.HetDistrictStatus
                 .Include(a => a.District)
                 .FirstOrDefault(a => a.DistrictId == id);
 
-            // if there isn't a status - we'll add one now
             if (status == null)
             {
                 var rolloverYear = FiscalHelper.GetCurrentFiscalStartYear();
 
-                status = new HetDistrictStatus
+                return new DistrictStatusDto
                 {
                     DistrictId = id,
                     CurrentFiscalYear = rolloverYear - 1,
@@ -57,8 +59,10 @@ namespace HetsData.Hangfire
                     DisplayRolloverMessage = false
                 };
             }
-
-            return status;
+            else
+            {
+                return _mapper.Map<DistrictStatusDto>(status);
+            }
         }
 
         #endregion

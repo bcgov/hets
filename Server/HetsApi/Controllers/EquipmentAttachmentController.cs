@@ -6,9 +6,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
-using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Model;
+using AutoMapper;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -17,15 +18,17 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/equipmentAttachments")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class EquipmentAttachmentController : Controller
+    public class EquipmentAttachmentController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public EquipmentAttachmentController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public EquipmentAttachmentController(DbAppContext context, IConfiguration configuration, IMapper mapper)
         {
             _context = context;
             _configuration = configuration;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -34,10 +37,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of EquipmentAttachment to delete</param>
         [HttpPost]
         [Route("{id}/delete")]
-        [SwaggerOperation("EquipmentAttachmentsIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(HetEquipmentAttachment))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult EquipmentAttachmentsIdDeletePost([FromRoute]int id)
+        public virtual ActionResult<EquipmentAttachmentDto> EquipmentAttachmentsIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetEquipmentAttachment.Any(a => a.EquipmentAttachmentId == id);
 
@@ -53,7 +54,7 @@ namespace HetsApi.Controllers
             // save the changes
             _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(item));
+            return new ObjectResult(new HetsResponse(_mapper.Map<EquipmentAttachmentDto>(item)));
         }
 
         /// <summary>
@@ -63,10 +64,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPut]
         [Route("{id}")]
-        [SwaggerOperation("EquipmentAttachmentsIdPut")]
-        [SwaggerResponse(200, type: typeof(HetEquipmentAttachment))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult EquipmentAttachmentsIdPut([FromRoute]int id, [FromBody]HetEquipmentAttachment item)
+        public virtual ActionResult<EquipmentAttachmentDto> EquipmentAttachmentsIdPut([FromRoute]int id, [FromBody]EquipmentAttachmentDto item)
         {
             if (id != item.EquipmentAttachmentId)
             {
@@ -91,8 +90,6 @@ namespace HetsApi.Controllers
             equipmentAttachment.TypeName = item.TypeName;
             equipmentAttachment.EquipmentId = item.Equipment.EquipmentId;
 
-            _context.HetEquipmentAttachment.Update(equipmentAttachment);
-
             // save the changes
             _context.SaveChanges();
 
@@ -101,7 +98,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.Equipment)
                 .FirstOrDefault(a => a.EquipmentAttachmentId == id);
 
-            return new ObjectResult(new HetsResponse(updEquipmentAttachment));
+            return new ObjectResult(new HetsResponse(_mapper.Map<EquipmentAttachmentDto>(updEquipmentAttachment)));
         }
 
         /// <summary>
@@ -110,10 +107,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPost]
         [Route("")]
-        [SwaggerOperation("EquipmentAttachmentsPost")]
-        [SwaggerResponse(200, type: typeof(HetEquipmentAttachment))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult EquipmentAttachmentsPost([FromBody]HetEquipmentAttachment item)
+        public virtual ActionResult<EquipmentAttachmentDto> EquipmentAttachmentsPost([FromBody]EquipmentAttachmentDto item)
         {
             // not found
             if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -139,7 +134,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.Equipment)
                 .FirstOrDefault(a => a.EquipmentAttachmentId == id);
 
-            return new ObjectResult(new HetsResponse(updEquipmentAttachment));
+            return new ObjectResult(new HetsResponse(_mapper.Map<EquipmentAttachmentDto>(updEquipmentAttachment)));
         }
 
         /// <summary>
@@ -148,16 +143,14 @@ namespace HetsApi.Controllers
         /// <param name="items"></param>
         [HttpPost]
         [Route("bulk")]
-        [SwaggerOperation("EquipmentAttachmentsBulkPost")]
-        [SwaggerResponse(200, type: typeof(List<HetEquipmentAttachment>))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult EquipmentAttachmentsBulkPost([FromBody]HetEquipmentAttachment[] items)
+        public virtual ActionResult<List<EquipmentAttachmentDto>> EquipmentAttachmentsBulkPost([FromBody]EquipmentAttachmentDto[] items)
         {
             // not found
             if (items == null || items.Length < 1) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // process each attachment records
-            foreach (HetEquipmentAttachment item in items)
+            foreach (var item in items)
             {
                 HetEquipmentAttachment equipmentAttachment = new HetEquipmentAttachment
                 {
@@ -179,7 +172,7 @@ namespace HetsApi.Controllers
             List<HetEquipmentAttachment> attachments = _context.HetEquipmentAttachment.AsNoTracking()
                 .Where(x => x.EquipmentId == id).ToList();
 
-            return new ObjectResult(new HetsResponse(attachments));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<EquipmentAttachmentDto>>(attachments)));
         }
     }
 }

@@ -3,10 +3,8 @@ using HetsApi.Model;
 using HetsData.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Http;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Linq;
-using HetsApi.Helpers;
 using AutoMapper;
 using HetsData.Dtos;
 
@@ -36,10 +34,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Attachment to delete</param>
         [HttpPost]
         [Route("{id}/delete")]
-        [SwaggerOperation("AttachmentsIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(HetDigitalFile))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult AttachmentsIdDeletePost([FromRoute]int id)
+        public virtual ActionResult<DigitalFileDto> AttachmentsIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetDigitalFile.Any(a => a.DigitalFileId == id);
 
@@ -59,9 +55,8 @@ namespace HetsApi.Controllers
         /// <param name="id">Attachment Id</param>
         [HttpGet]
         [Route("{id}/download")]
-        [SwaggerOperation("AttachmentsIdDownloadGet")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult AttachmentsIdDownloadGet([FromRoute]int id)
+        public virtual ActionResult<FileContentResult> AttachmentsIdDownloadGet([FromRoute]int id)
         {
             bool exists = _context.HetDigitalFile.Any(a => a.DigitalFileId == id);
 

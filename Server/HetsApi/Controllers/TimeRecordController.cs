@@ -84,7 +84,7 @@ namespace HetsApi.Controllers
             int?[] equipmentArray = ArrayHelper.ParseIntArray(equipment);
 
             // get initial results - must be limited to user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get fiscal year
             HetDistrictStatus district = _context.HetDistrictStatus.AsNoTracking()

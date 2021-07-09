@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
@@ -24,7 +22,7 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/districtEquipmentTypes")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class DistrictEquipmentTypeController : Controller
+    public class DistrictEquipmentTypeController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
@@ -46,10 +44,10 @@ namespace HetsApi.Controllers
         public virtual ActionResult<List<DistrictEquipmentTypeDto>> DistrictEquipmentTypesGet()
         {
             // get current users district id
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, HttpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // not found
-            if (districtId == null) return new ObjectResult(new List<HetDistrictEquipmentType>());
+            if (districtId == null) return new ObjectResult(new List<DistrictEquipmentTypeDto>());
 
             List<HetDistrictEquipmentType> equipmentTypes = _context.HetDistrictEquipmentType.AsNoTracking()
                 .Include(x => x.District)
@@ -102,15 +100,13 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("agreementSummary")]
-        [SwaggerOperation("DistrictEquipmentTypesGetAgreementSummary")]
-        [SwaggerResponse(200, type: typeof(List<DistrictEquipmentTypeAgreementSummary>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult DistrictEquipmentTypesGetAgreementSummary()
+        public virtual ActionResult<DistrictEquipmentTypeAgreementSummary> DistrictEquipmentTypesGetAgreementSummary()
         {
             // get user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, HttpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
-            var equipmentTypes = _context.HetRentalAgreement.AsNoTracking()
+            var summary = _context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.Equipment.DistrictEquipmentType)
                 .Where(x => x.DistrictId == districtId &&
                             !x.Number.StartsWith("BCBid"))
@@ -124,7 +120,7 @@ namespace HetsApi.Controllers
                 })
                 .ToList();
 
-            return new ObjectResult(new HetsResponse(equipmentTypes));
+            return new ObjectResult(new HetsResponse(summary));
         }
 
         /// <summary>
@@ -133,10 +129,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of DistrictEquipmentType to delete</param>
         [HttpPost]
         [Route("{id}/delete")]
-        [SwaggerOperation("DistrictEquipmentTypesIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(HetDistrictEquipmentType))]
         [RequiresPermission(HetPermission.DistrictCodeTableManagement, HetPermission.WriteAccess)]
-        public virtual IActionResult DistrictEquipmentTypesIdDeletePost([FromRoute]int id)
+        public virtual ActionResult<DistrictEquipmentTypeDto> DistrictEquipmentTypesIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetDistrictEquipmentType.Any(a => a.DistrictEquipmentTypeId == id);
 
@@ -194,7 +188,7 @@ namespace HetsApi.Controllers
 
             _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(item));
+            return new ObjectResult(new HetsResponse(_mapper.Map<DistrictEquipmentTypeDto>(item)));
         }
 
         /// <summary>
@@ -203,10 +197,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of DistrictEquipmentType to fetch</param>
         [HttpGet]
         [Route("{id}")]
-        [SwaggerOperation("DistrictEquipmentTypesIdGet")]
-        [SwaggerResponse(200, type: typeof(HetDistrictEquipmentType))]
         [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
-        public virtual IActionResult DistrictEquipmentTypesIdGet([FromRoute]int id)
+        public virtual ActionResult<DistrictEquipmentTypeDto> DistrictEquipmentTypesIdGet([FromRoute]int id)
         {
             HetDistrictEquipmentType equipmentType = _context.HetDistrictEquipmentType.AsNoTracking()
                 .Include(x => x.District)
@@ -214,7 +206,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.EquipmentType)
                 .FirstOrDefault(a => a.DistrictEquipmentTypeId == id);
 
-            return new ObjectResult(new HetsResponse(equipmentType));
+            return new ObjectResult(new HetsResponse(_mapper.Map<DistrictEquipmentTypeDto>(equipmentType)));
         }
 
         /// <summary>
@@ -224,10 +216,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPost]
         [Route("{id}")]
-        [SwaggerOperation("DistrictEquipmentTypesIdPost")]
-        [SwaggerResponse(200, type: typeof(HetDistrictEquipmentType))]
         [RequiresPermission(HetPermission.DistrictCodeTableManagement, HetPermission.WriteAccess)]
-        public virtual IActionResult DistrictEquipmentTypesIdPost([FromRoute]int id, [FromBody]HetDistrictEquipmentType item)
+        public virtual ActionResult<DistrictEquipmentTypeDto> DistrictEquipmentTypesIdPost([FromRoute]int id, [FromBody]DistrictEquipmentTypeDto item)
         {
             if (id != item.DistrictEquipmentTypeId)
             {
@@ -316,7 +306,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.EquipmentType)
                 .FirstOrDefault(a => a.DistrictEquipmentTypeId == id);
 
-            return new ObjectResult(new HetsResponse(equipmentType));
+            return new ObjectResult(new HetsResponse(_mapper.Map<DistrictEquipmentTypeDto>(equipmentType)));
         }
 
         /// <summary>
@@ -326,7 +316,6 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpPost]
         [Route("merge")]
-        [SwaggerOperation("MergeDistrictEquipmentTypesPost")]
         [RequiresPermission(HetPermission.DistrictCodeTableManagement, HetPermission.WriteAccess)]
         public virtual IActionResult MergeDistrictEquipmentTypesPost()
         {
