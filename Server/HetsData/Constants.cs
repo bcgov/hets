@@ -8,5 +8,9 @@
         public const string InactiveDbUserIdError = "HETS database UserId is inactive";
         public const string InvalidPermissions = "HETS UserId does not have valid permissions";
         public const string MissingBusinessIdError = "Invalid Business Record";
+        public const string InvalidDirectory = "Invalid Directory";
+
+        public const string IDIR = "IDIR";
+        public const string BCEIDBIZ = "BCEID-BUSINESS";
     }
 }
