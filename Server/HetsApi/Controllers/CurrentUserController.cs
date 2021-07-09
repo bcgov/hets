@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
@@ -15,6 +13,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
+using AutoMapper;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -23,21 +23,21 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/users/current")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class CurrentUserController : Controller
+    public class CurrentUserController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
         private readonly IWebHostEnvironment _env;
-        private readonly HttpContext _httpContext;
+        private readonly IMapper _mapper;
 
-        public CurrentUserController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory, IWebHostEnvironment env)
+        public CurrentUserController(DbAppContext context, IConfiguration configuration, IMapper mapper, ILoggerFactory loggerFactory, IWebHostEnvironment env)
         {
             _context = context;
             _configuration = configuration;
             _logger = loggerFactory.CreateLogger(typeof(CurrentUserController));
             _env = env;
-            _httpContext = httpContextAccessor.HttpContext;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -47,16 +47,14 @@ namespace HetsApi.Controllers
         /// <param name="favouriteType">type of favourite to return</param>
         [HttpGet]
         [Route("favourites/{favouriteType?}")]
-        [SwaggerOperation("UsersCurrentFavouritesFavouriteTypeGet")]
-        [SwaggerResponse(200, type: typeof(List<HetUserFavourite>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult UsersCurrentFavouritesFavouriteTypeGet([FromRoute]string favouriteType)
+        public virtual ActionResult<List<UserFavouriteDto>> UsersCurrentFavouritesFavouriteTypeGet([FromRoute]string favouriteType)
         {
             // get the current user id
             string userId = _context.SmUserId;
 
             // get initial results - must be limited to user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get favourites
             IEnumerable<HetUserFavourite> favourites = _context.HetUserFavourite.AsNoTracking()
@@ -69,7 +67,7 @@ namespace HetsApi.Controllers
                 favourites = favourites.Where(x => x.Type == favouriteType);
             }
 
-            return new ObjectResult(new HetsResponse(favourites));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<UserFavouriteDto>>(favourites)));
         }
 
         /// <summary>
@@ -79,10 +77,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Favourite to delete</param>
         [HttpPost]
         [Route("favourites/{id}/delete")]
-        [SwaggerOperation("UsersCurrentFavouritesIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(HetUserFavourite))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult UsersCurrentFavouritesIdDeletePost([FromRoute]int id)
+        public virtual ActionResult<UserFavouriteDto> UsersCurrentFavouritesIdDeletePost([FromRoute]int id)
         {
             // get the current user id
             string userId = _context.SmUserId;
@@ -105,7 +101,7 @@ namespace HetsApi.Controllers
             // save the changes
             _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(item));
+            return new ObjectResult(new HetsResponse(_mapper.Map<UserFavouriteDto>(item)));
         }
 
         /// <summary>
@@ -115,10 +111,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPost]
         [Route("favourites")]
-        [SwaggerOperation("UsersCurrentFavouritesPost")]
-        [SwaggerResponse(200, type: typeof(HetUserFavourite))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult UsersCurrentFavouritesPost([FromBody]HetUserFavourite item)
+        public virtual ActionResult<UserFavouriteDto> UsersCurrentFavouritesPost([FromBody]UserFavouriteDto item)
         {
             return UpdateFavourite(item);
         }
@@ -130,10 +124,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPut]
         [Route("favourites")]
-        [SwaggerOperation("UsersCurrentFavouritesPut")]
-        [SwaggerResponse(200, type: typeof(HetUserFavourite))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult UsersCurrentFavouritesPut([FromBody]HetUserFavourite item)
+        public virtual ActionResult<UserFavouriteDto> UsersCurrentFavouritesPut([FromBody]UserFavouriteDto item)
         {
             return UpdateFavourite(item);
         }
@@ -144,10 +136,8 @@ namespace HetsApi.Controllers
         /// <remarks>Get the currently logged in user</remarks>
         [HttpGet]
         [Route("")]
-        [SwaggerOperation("UsersCurrentGet")]
-        [SwaggerResponse(200, type: typeof(User))]
         [AllowAnonymous]
-        public virtual IActionResult UsersCurrentGet()
+        public virtual ActionResult<User> UsersCurrentGet()
         {
             _logger.LogDebug("Get Current User");
 
@@ -274,10 +264,8 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("logoff")]
-        [SwaggerOperation("UserDistrictsIdLogoffPost")]
-        [SwaggerResponse(200, type: typeof(LogoffModel))]
         [AllowAnonymous]
-        public virtual IActionResult UsersCurrentLogoffPost()
+        public virtual ActionResult<LogoffModel> UsersCurrentLogoffPost()
         {
             // get the current user id
             string userId = _context.SmUserId;
@@ -336,10 +324,8 @@ namespace HetsApi.Controllers
 
         #region Update Favourite
 
-        private IActionResult UpdateFavourite(HetUserFavourite item)
+        private ActionResult<UserFavouriteDto> UpdateFavourite(UserFavouriteDto item)
         {
-            item.User = null;
-
             // get the current user id
             string userId = _context.SmUserId;
 
@@ -347,7 +333,7 @@ namespace HetsApi.Controllers
             if (userId == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get initial results - must be limited to user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get user record
             bool userExists = _context.HetUser.Any(a => a.SmUserId.ToUpper() == userId);
@@ -371,8 +357,6 @@ namespace HetsApi.Controllers
                 favourite.Value = item.Value;
                 favourite.Name = item.Name;
                 favourite.IsDefault = item.IsDefault;
-
-                _context.HetUserFavourite.Update(favourite);
             }
             else
             {
@@ -398,7 +382,7 @@ namespace HetsApi.Controllers
             favourite = _context.HetUserFavourite.AsNoTracking()
                 .First(x => x.UserFavouriteId == favouriteId);
 
-            return new ObjectResult(new HetsResponse(favourite));
+            return new ObjectResult(new HetsResponse(_mapper.Map<UserFavouriteDto>(favourite)));
         }
 
         #endregion

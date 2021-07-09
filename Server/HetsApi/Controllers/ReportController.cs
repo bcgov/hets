@@ -45,7 +45,7 @@ namespace HetsApi.Controllers
         public virtual ActionResult<List<BatchReportDto>> BatchReportGet()
         {
             // get users district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             var reports = _context.HetBatchReport.AsNoTracking()
                 .Where(x => x.DistrictId == districtId)

@@ -84,5 +84,15 @@ namespace HetsData.Helpers
         }
 
         #endregion
+
+        public static string GetUserName(string smUserId, DbAppContext context)
+        {
+            var user = context.HetUser.AsNoTracking().FirstOrDefault(x => x.SmUserId == smUserId);
+
+            if (user == null)
+                return smUserId;
+
+            return $"{user.Surname}, {user.GivenName}";
+        }
     }
 }

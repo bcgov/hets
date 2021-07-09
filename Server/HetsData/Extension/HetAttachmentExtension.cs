@@ -16,6 +16,9 @@ namespace HetsData.Model
         }
 
         [NotMapped]
+        public string UserName { get; set; }
+
+        [NotMapped]
         public DateTime? LastUpdateTimestamp
         {
             get => AppLastUpdateTimestamp;

@@ -50,7 +50,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult ProjectsIdGet([FromRoute]int id)
         {
             // get current district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             return new ObjectResult(new HetsResponse(ProjectHelper.GetRecord(id, _context, districtId)));
         }
@@ -190,7 +190,7 @@ namespace HetsApi.Controllers
             int?[] districtTokens = ArrayHelper.ParseIntArray(districts);
 
             // get initial results - must be limited to user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             IQueryable<HetProject> data = _context.HetProject.AsNoTracking()
                 .Include(x => x.ProjectStatusType)
@@ -258,7 +258,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult ProjectsGet([FromQuery]bool currentFiscal = true)
         {
             // get initial results - must be limited to user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get fiscal year
             HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
@@ -299,7 +299,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult ProjectsGetAgreementSummary()
         {
             // get user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             var result = _context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.Project)
@@ -572,7 +572,7 @@ namespace HetsApi.Controllers
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get current district and fiscal year
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get fiscal year
             HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
@@ -878,7 +878,7 @@ namespace HetsApi.Controllers
                     attachment.FileSize = attachment.FileContents.Length;
                     attachment.LastUpdateTimestamp = attachment.AppLastUpdateTimestamp;
                     attachment.LastUpdateUserid = attachment.AppLastUpdateUserid;
-
+                    attachment.UserName = UserHelper.GetUserName(attachment.LastUpdateUserid, _context);
                     attachments.Add(attachment);
                 }
             }
@@ -1288,7 +1288,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult ProjectsGetByName([FromBody]string name)
         {
             // get current users district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             HetDistrict district = _context.HetDistrict.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId.Equals(districtId));

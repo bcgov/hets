@@ -415,7 +415,7 @@ namespace HetsApi.Controllers
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get current district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // return time records
             return new ObjectResult(new HetsResponse(RentalAgreementHelper.GetTimeRecords(id, districtId, _context, _configuration)));
@@ -444,7 +444,7 @@ namespace HetsApi.Controllers
             if (timePeriodTypeId == null) throw new DataException("Time Period Id cannot be null");
 
             // get current district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // add or update time record
             if (item.TimeRecordId > 0)
@@ -502,7 +502,7 @@ namespace HetsApi.Controllers
             if (!exists || items == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get current district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // process each time record
             foreach (HetTimeRecord item in items)
@@ -856,7 +856,7 @@ namespace HetsApi.Controllers
         public virtual ActionResult<RentalAgreementDto> BlankRentalAgreementPost()
         {
             // get current users district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             HetDistrict district = _context.HetDistrict.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId.Equals(districtId));
@@ -950,7 +950,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult BlankRentalAgreementsGet()
         {
             // get the current district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get active status id
             int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
@@ -983,7 +983,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult BlankRentalAgreementLookupGet([FromRoute]int projectId, [FromRoute]int equipmentId)
         {
             // get the current district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get agreement status
             int? statusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
@@ -1022,7 +1022,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult DeleteBlankRentalAgreementPost([FromRoute]int id)
         {
             // get current users district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             HetDistrict district = _context.HetDistrict.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId.Equals(districtId));
@@ -1092,7 +1092,7 @@ namespace HetsApi.Controllers
             if (id != agreement.RentalAgreementId) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get current users district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             HetDistrict district = _context.HetDistrict.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId.Equals(districtId));
@@ -1243,7 +1243,7 @@ namespace HetsApi.Controllers
             if (agreement == null) return new NotFoundObjectResult(new HetsResponse("HETS-35", ErrorViewModel.GetDescription("HETS-35", _configuration)));
 
             // get user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get fiscal year
             HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
@@ -1278,7 +1278,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult RentalAgreementsGetSummaryLite()
         {
             // get user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             IQueryable<HetRentalAgreement> agreements = _context.HetRentalAgreement.AsNoTracking()
                 .Where(x => x.DistrictId.Equals(districtId) &&
@@ -1330,7 +1330,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.Project);
 
             // limit to user's current district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
             agreements = agreements.Where(x => x.DistrictId == districtId);
 
             // HET-1137 do not show placeholder rental agreements created to imported from BCBid, (ones with agreement# BCBid-XX-XXXX)

@@ -93,7 +93,7 @@ namespace HetsApi.Controllers
         public virtual ActionResult<List<OwnerLiteProjects>> OwnersGetLite()
         {
             // get users district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get active status
             int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
@@ -126,7 +126,7 @@ namespace HetsApi.Controllers
         public virtual ActionResult<List<OwnerLiteProjects>> OwnersGetLiteHires()
         {
             // get users district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get active status
             int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
@@ -163,7 +163,7 @@ namespace HetsApi.Controllers
         public virtual ActionResult<List<OwnerLiteProjects>> OwnersGetLiteTs()
         {
             // get users district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get active status
             int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
@@ -556,7 +556,7 @@ namespace HetsApi.Controllers
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
 
             // get initial results - must be limited to user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             IQueryable<HetOwner> data = _context.HetOwner.AsNoTracking()
                 .Include(x => x.LocalArea)
@@ -620,7 +620,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult OwnersIdVerificationPost([FromBody]ReportParameters parameters)
         {
             // get initial results - must be limited to user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get equipment status
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
@@ -1248,7 +1248,7 @@ namespace HetsApi.Controllers
                     attachment.FileSize = attachment.FileContents.Length;
                     attachment.LastUpdateTimestamp = attachment.AppLastUpdateTimestamp;
                     attachment.LastUpdateUserid = attachment.AppLastUpdateUserid;
-
+                    attachment.UserName = UserHelper.GetUserName(attachment.LastUpdateUserid, _context);
                     attachments.Add(attachment);
                 }
             }
@@ -1763,7 +1763,7 @@ namespace HetsApi.Controllers
             if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get initial results - must be limited to user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             IQueryable<HetOwner> data = _context.HetOwner.AsNoTracking()
                 .Include(y => y.LocalArea.ServiceArea)

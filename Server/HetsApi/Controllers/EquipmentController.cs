@@ -70,7 +70,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult EquipmentGetLite()
         {
             // get user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get approved status
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
@@ -101,7 +101,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult EquipmentGetLiteTs()
         {
             // get users district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get active status
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
@@ -149,7 +149,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult EquipmentGetAgreementSummary()
         {
             // get user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             var equipments = _context.HetRentalAgreement.AsNoTracking()
                 .Include(x => x.Equipment)
@@ -179,7 +179,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult EquipmentGetLiteHires()
         {
             // get users district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             var equipments = _context.HetRentalRequestRotationList.AsNoTracking()
                 .Include(x => x.RentalRequest)
@@ -637,7 +637,7 @@ namespace HetsApi.Controllers
             if (agreementStatusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get initial results - must be limited to user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             IQueryable<HetEquipment> data = _context.HetEquipment.AsNoTracking()
                 .Include(x => x.LocalArea)
@@ -1137,7 +1137,7 @@ namespace HetsApi.Controllers
 
                     // don't send the file content
                     attachment.FileContents = null;
-
+                    attachment.UserName = UserHelper.GetUserName(attachment.LastUpdateUserid, _context);
                     attachments.Add(attachment);
                 }
             }
@@ -1323,7 +1323,7 @@ namespace HetsApi.Controllers
             int?[] typesArray = ArrayHelper.ParseIntArray(types);
 
             // get users district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get fiscal year
             HetDistrictStatus district = _context.HetDistrictStatus.AsNoTracking()

@@ -64,10 +64,8 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}/owners")]
-        [SwaggerOperation("DistrictOwnersGet")]
-        [SwaggerResponse(200, type: typeof(List<HetOwner>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult DistrictOwnersGet([FromRoute]int id)
+        public virtual ActionResult<List<OwnerDto>> DistrictOwnersGet([FromRoute]int id)
         {
             bool exists = _context.HetDistrict.Any(a => a.DistrictId == id);
 
@@ -91,22 +89,15 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}/localAreas")]
-        [SwaggerOperation("DistrictLocalAreasGet")]
-        [SwaggerResponse(200, type: typeof(List<HetLocalArea>))]
         [AllowAnonymous]
-        public virtual IActionResult DistrictLocalAreasGet([FromRoute]int id)
+        public virtual ActionResult<List<LocalAreaDto>> DistrictLocalAreasGet([FromRoute]int id)
         {
-            bool exists = _context.HetDistrict.Any(a => a.DistrictId == id);
-
-            // not found
-            if (!exists) return new ObjectResult(new HetsResponse(new List<HetLocalArea>()));
-
             List<HetLocalArea> localAreas = _context.HetLocalArea.AsNoTracking()
                 .Where(x => x.ServiceArea.District.DistrictId == id)
                 .OrderBy(x => x.Name)
                 .ToList();
 
-            return new ObjectResult(new HetsResponse(localAreas));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<LocalAreaDto>>(localAreas)));
         }
 
         #endregion
@@ -118,10 +109,8 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}/rolloverStatus")]
-        [SwaggerOperation("RolloverStatusGet")]
-        [SwaggerResponse(200, type: typeof(HetDistrictStatus))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult RolloverStatusGet([FromRoute]int id)
+        public virtual ActionResult<DistrictStatusDto> RolloverStatusGet([FromRoute]int id)
         {
             var typeFullName = "HetsData.Hangfire.AnnualRollover";
             var methodName = "AnnualRolloverJob";
@@ -141,7 +130,7 @@ namespace HetsApi.Controllers
 
             if (!jobExists)
             {
-                return new ObjectResult(new HetsResponse(new RolloverProgressDto { DistrictId = id, ProgressPercentage = status.ProgressPercentage }));
+                return new ObjectResult(new HetsResponse(status));
             }
 
             // get status of current district
@@ -166,10 +155,8 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpPost]
         [Route("{id}/dismissRolloverMessage")]
-        [SwaggerOperation("DismissRolloverMessagePost")]
-        [SwaggerResponse(200, type: typeof(HetDistrictStatus))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult DismissRolloverMessagePost([FromRoute]int id)
+        public virtual ActionResult<DistrictStatusDto> DismissRolloverMessagePost([FromRoute]int id)
         {
             bool exists = _context.HetDistrictStatus.Any(a => a.DistrictId == id);
 
@@ -205,9 +192,8 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}/annualRollover")]
-        [SwaggerOperation("AnnualRolloverGet")]
         [RequiresPermission(HetPermission.DistrictRollover)]
-        public virtual IActionResult AnnualRolloverGet([FromRoute]int id)
+        public virtual ActionResult<DistrictStatusDto> AnnualRolloverGet([FromRoute]int id)
         {
             bool exists = _context.HetDistrict.Any(a => a.DistrictId == id);
 
@@ -227,7 +213,7 @@ namespace HetsApi.Controllers
             }
 
             // get record and ensure it isn't already processing
-            HetDistrictStatus status = _annualRollover.GetRecord(id);
+            var status = _annualRollover.GetRecord(id);
 
             if (status == null)
             {
@@ -315,10 +301,8 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}/fiscalYears")]
-        [SwaggerOperation("DistrictFiscalYearsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetOwner>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult DistrictFiscalYearsGet([FromRoute]int id)
+        public virtual ActionResult<List<string>> DistrictFiscalYearsGet([FromRoute]int id)
         {
             bool exists = _context.HetDistrict.Any(a => a.DistrictId == id);
 

@@ -21,5 +21,6 @@ namespace HetsData.Dtos
         public int? FileSize { get; set; }
         public string LastUpdateUserid { get; set; }
         public DateTime? LastUpdateTimestamp { get; set; }
+        public string UserName { get; set; }
     }
 }

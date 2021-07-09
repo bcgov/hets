@@ -7,6 +7,8 @@ using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Model;
+using AutoMapper;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -15,15 +17,17 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/contacts")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class ContactController : Controller
+    public class ContactController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public ContactController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public ContactController(DbAppContext context, IConfiguration configuration, IMapper mapper)
         {
             _context = context;
             _configuration = configuration;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -32,10 +36,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Contact to delete</param>
         [HttpPost]
         [Route("{id}/delete")]
-        [SwaggerOperation("ContactsIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(HetContact))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult ContactsIdDeletePost([FromRoute]int id)
+        public virtual ActionResult<ContactDto> ContactsIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetContact.Any(a => a.ContactId == id);
 
@@ -55,7 +57,6 @@ namespace HetsApi.Controllers
                 if (project != null && project.PrimaryContactId == id)
                 {
                     project.PrimaryContactId = null;
-                    _context.HetProject.Update(project);
                 }
             }
 
@@ -64,7 +65,7 @@ namespace HetsApi.Controllers
             // save the changes
             _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(item));
+            return new ObjectResult(new HetsResponse(_mapper.Map<ContactDto>(item)));
         }
     }
 }
