@@ -90,6 +90,10 @@ namespace HetsApi
                 options.RequireHttpsMetadata = false;
                 options.IncludeErrorDetails = true;
                 options.EventsType = typeof(HetsJwtBearerEvents);
+                //options.TokenValidationParameters = new TokenValidationParameters()
+                //{
+                //    ValidateAudience = false
+                //};
             });
 
             // setup authorization

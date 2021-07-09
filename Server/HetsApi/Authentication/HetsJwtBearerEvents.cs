@@ -56,11 +56,11 @@ namespace HetsApi.Authentication
 
             var (username, userGuid, directory) = context.Principal.GetUserInfo();
 
-            if (directory != "IDIR")
+            if (directory == Constants.BCEIDBIZ)
             {
                 await AuthenticateBusinessUser(context, username, userGuid, userSettings);
             }
-            else
+            else if (directory == Constants.IDIR)
             {
                 var idirUserResult = AuthenticateIdirUser(context, username, userGuid, userSettings);
                 if (!idirUserResult.success)
@@ -68,6 +68,11 @@ namespace HetsApi.Authentication
                     context.Fail(idirUserResult.message);
                     return;
                 }
+            }
+            else
+            {
+                context.Fail(Constants.InvalidDirectory);
+                return;
             }
 
             var addClaimResult = AddClaimsFromUserInfo(context.Principal, userSettings);
