@@ -87,7 +87,7 @@ namespace HetsData.Helpers
 
         public static string GetUserName(string smUserId, DbAppContext context)
         {
-            var user = context.HetUser.AsNoTracking().FirstOrDefault(x => x.SmUserId == smUserId);
+            var user = context.HetUser.AsNoTracking().FirstOrDefault(x => x.SmUserId.ToUpper() == smUserId);
 
             if (user == null)
                 return smUserId;
