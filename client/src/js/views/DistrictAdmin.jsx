@@ -1,14 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Button, ButtonGroup, Alert, Row, Col } from 'react-bootstrap';
+import { Button, ButtonGroup, Alert, Row, Col, OverlayTrigger } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
 import * as Api from '../api';
 import * as Constant from '../constants';
 import * as Action from '../actionTypes';
-// import store from '../store';
 
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
@@ -16,7 +15,6 @@ import ModalDialog from '../components/ModalDialog.jsx';
 import SortTable from '../components/SortTable.jsx';
 import TableControl from '../components/TableControl.jsx';
 import Spinner from '../components/Spinner.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import Confirm from '../components/Confirm.jsx';
 import Authorize from '../components/Authorize.jsx';
 
@@ -219,7 +217,7 @@ class DistrictAdmin extends React.Component {
                         <ButtonGroup>
                           <Authorize>
                             <OverlayTrigger
-                              trigger="click"
+                              trigger="focus"
                               placement="top"
                               rootClose
                               overlay={<Confirm onConfirm={this.deleteDistrictEquipmentType.bind(this, equipment)} />}
@@ -291,7 +289,7 @@ class DistrictAdmin extends React.Component {
                       <td style={{ textAlign: 'right' }}>
                         <ButtonGroup>
                           <OverlayTrigger
-                            trigger="click"
+                            trigger="focus"
                             placement="top"
                             rootClose
                             overlay={<Confirm onConfirm={this.deleteCondition.bind(this, condition)} />}

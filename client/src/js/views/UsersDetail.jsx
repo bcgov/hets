@@ -1,7 +1,18 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, Alert, Badge, Button, Popover, FormGroup, FormText, ButtonGroup } from 'react-bootstrap';
+import {
+  Row,
+  Col,
+  Alert,
+  Badge,
+  Button,
+  Popover,
+  FormGroup,
+  FormText,
+  ButtonGroup,
+  OverlayTrigger,
+} from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import Promise from 'bluebird';
@@ -18,7 +29,6 @@ import store from '../store';
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
 import DateControl from '../components/DateControl.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import Confirm from '../components/Confirm.jsx';
@@ -335,7 +345,7 @@ class UsersDetail extends React.Component {
                                 <ButtonGroup>
                                   <Authorize>
                                     <OverlayTrigger
-                                      trigger="click"
+                                      trigger="focus"
                                       placement="top"
                                       rootClose
                                       overlay={<Confirm onConfirm={this.deleteDistrict.bind(this, district)} />}
@@ -445,7 +455,7 @@ class UsersDetail extends React.Component {
                               {userRole.expiryDate ? null : (
                                 <Authorize>
                                   <OverlayTrigger
-                                    trigger="click"
+                                    trigger="focus"
                                     placement="left"
                                     rootClose
                                     overlay={<ExpireOverlay userRole={userRole} onSave={this.updateUserRole} />}

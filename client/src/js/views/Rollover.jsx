@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Button } from 'react-bootstrap';
+import { Button, OverlayTrigger } from 'react-bootstrap';
 
 import * as Api from '../api';
 import * as Constant from '../constants';
@@ -9,7 +9,6 @@ import * as Constant from '../constants';
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
 import CheckboxControl from '../components/CheckboxControl.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import Confirm from '../components/Confirm.jsx';
 import Spinner from '../components/Spinner.jsx';
 
@@ -170,7 +169,7 @@ class Rollover extends React.Component {
 
         <div className="clearfix">
           <OverlayTrigger
-            trigger="click"
+            trigger="focus"
             placement="top"
             rootClose
             overlay={

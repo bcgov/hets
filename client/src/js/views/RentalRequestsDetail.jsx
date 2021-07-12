@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, Alert, Button, ButtonGroup, Badge } from 'react-bootstrap';
+import { Row, Col, Alert, Button, ButtonGroup, Badge, OverlayTrigger } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
@@ -26,7 +26,6 @@ import Spinner from '../components/Spinner.jsx';
 import TableControl from '../components/TableControl.jsx';
 import Confirm from '../components/Confirm.jsx';
 import History from '../components/History.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
 import ReturnButton from '../components/ReturnButton.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
@@ -516,7 +515,7 @@ class RentalRequestsDetail extends React.Component {
 
                             if (listItem.maximumHours) {
                               return (
-                                <OverlayTrigger trigger="click" placement="top" rootClose overlay={confirm}>
+                                <OverlayTrigger trigger="focus" placement="top" rootClose overlay={confirm}>
                                   <Button variant="link" size="sm">
                                     Max. hours reached
                                   </Button>

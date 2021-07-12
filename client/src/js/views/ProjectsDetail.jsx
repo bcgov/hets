@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-bootstrap';
-import { Alert, Button, ButtonGroup } from 'react-bootstrap';
+import { Alert, Button, ButtonGroup, OverlayTrigger } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
@@ -27,7 +27,6 @@ import Confirm from '../components/Confirm.jsx';
 import DeleteButton from '../components/DeleteButton.jsx';
 import EditButton from '../components/EditButton.jsx';
 import History from '../components/History.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import StatusDropdown from '../components/StatusDropdown.jsx';
@@ -305,7 +304,7 @@ class ProjectsDetail extends React.Component {
           ) : (
             <Authorize>
               <OverlayTrigger
-                trigger="click"
+                trigger="focus"
                 placement="top"
                 rootClose
                 overlay={<Confirm onConfirm={this.confirmEndHire.bind(this, item)} />}

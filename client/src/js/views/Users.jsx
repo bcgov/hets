@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, InputGroup, Form } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, InputGroup, Form, OverlayTrigger } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
@@ -21,7 +21,6 @@ import Confirm from '../components/Confirm.jsx';
 import Favourites from '../components/Favourites.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import PrintButton from '../components/PrintButton.jsx';
@@ -178,7 +177,7 @@ class Users extends React.Component {
                 <ButtonGroup>
                   <Authorize>
                     <OverlayTrigger
-                      trigger="click"
+                      trigger="focus"
                       placement="top"
                       rootClose
                       overlay={<Confirm onConfirm={this.delete.bind(this, user)} />}

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, OverlayTrigger } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
@@ -14,7 +14,6 @@ import store from '../store';
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SearchBar from '../components/ui/SearchBar.jsx';
 import Confirm from '../components/Confirm.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SearchControl from '../components/SearchControl.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
@@ -186,7 +185,7 @@ class Roles extends React.Component {
                     <td style={{ textAlign: 'right' }}>
                       <ButtonGroup>
                         <OverlayTrigger
-                          trigger="click"
+                          trigger="focus"
                           placement="top"
                           rootClose
                           overlay={<Confirm onConfirm={this.delete.bind(this, role)} />}

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, Alert, Button, ButtonGroup, Badge } from 'react-bootstrap';
+import { Row, Col, Alert, Button, ButtonGroup, Badge, OverlayTrigger } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
@@ -31,7 +31,6 @@ import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
 import Confirm from '../components/Confirm.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import ReturnButton from '../components/ReturnButton.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
@@ -595,7 +594,7 @@ class OwnersDetail extends React.Component {
                   </CheckboxControl>
                   <Authorize>
                     <OverlayTrigger
-                      trigger="click"
+                      trigger="focus"
                       placement="top"
                       rootClose
                       overlay={<Confirm onConfirm={this.equipmentVerifyAll}></Confirm>}
