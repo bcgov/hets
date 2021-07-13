@@ -251,9 +251,9 @@ class Users extends React.Component {
                     id="hideInactive"
                     checked={this.state.search.hideInactive}
                     updateState={this.updateSearchState}
-                  >
-                    Hide Inactive
-                  </CheckboxControl>
+                    label="Hide Inactive"
+                  />
+
                   <Button id="search-button" variant="primary" type="submit">
                     Search
                   </Button>

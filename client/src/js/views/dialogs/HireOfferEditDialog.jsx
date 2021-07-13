@@ -371,9 +371,8 @@ class HireOfferEditDialog extends React.Component {
                   id="equipmentVerifiedActive"
                   checked={this.state.equipmentVerifiedActive}
                   updateState={this.updateState}
-                >
-                  Verified Active
-                </CheckboxControl>
+                  label="Verified Active"
+                />
               </FormGroup>
             </Col>
           </Row>

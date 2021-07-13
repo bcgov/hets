@@ -298,9 +298,8 @@ class OwnersEditDialog extends React.Component {
             id="isMaintenanceContractor"
             checked={this.state.isMaintenanceContractor}
             updateState={this.updateState}
-          >
-            Maintenance Contractor
-          </CheckboxControl>
+            label="Maintenance Contractor"
+          />
         </FormGroup>
       </FormDialog>
     );

@@ -264,9 +264,9 @@ class Equipment extends React.Component {
                       id="hired"
                       checked={this.state.search.hired}
                       updateState={this.updateSearchState}
-                    >
-                      Hired
-                    </CheckboxControl>
+                      label="Hired"
+                    />
+
                     <OverlayTrigger
                       placement="top"
                       rootClose
@@ -277,9 +277,8 @@ class Equipment extends React.Component {
                         id="twentyYears"
                         checked={this.state.search.twentyYears}
                         updateState={this.updateSearchState}
-                      >
-                        20+ Years
-                      </CheckboxControl>
+                        label="20+ Years"
+                      />
                     </OverlayTrigger>
                   </ButtonToolbar>
                 </Row>

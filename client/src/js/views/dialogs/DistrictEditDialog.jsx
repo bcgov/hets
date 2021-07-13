@@ -135,9 +135,12 @@ class DistrictEditDialog extends React.Component {
           />
           <FormText>{this.state.districtIdError}</FormText>
         </FormGroup>
-        <CheckboxControl id="isPrimary" checked={this.state.isPrimary} updateState={this.updateState}>
-          Primary District
-        </CheckboxControl>
+        <CheckboxControl
+          id="isPrimary"
+          checked={this.state.isPrimary}
+          updateState={this.updateState}
+          label="Primary District"
+        />
       </FormDialog>
     );
   }

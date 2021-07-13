@@ -384,9 +384,8 @@ class UsersDetail extends React.Component {
                     id="showExpiredOnly"
                     checked={this.state.ui.showExpiredOnly}
                     updateState={this.updateUIState}
-                  >
-                    Show Expired Only
-                  </CheckboxControl>
+                    label="Show Expired Only"
+                  />
                 </h3>
                 {(() => {
                   if (loading) {

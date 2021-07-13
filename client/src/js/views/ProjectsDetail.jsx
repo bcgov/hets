@@ -484,9 +484,9 @@ class ProjectsDetail extends React.Component {
                     inline
                     checked={this.state.includeCompletedRequests}
                     updateState={this.updateState}
-                  >
-                    <small>Show Completed</small>
-                  </CheckboxControl>
+                    label={<small>Show Completed</small>}
+                  />
+
                   <Authorize>
                     <Button id="add-request-button" title="Add Request" size="sm" onClick={this.openAddRequestDialog}>
                       <FontAwesomeIcon icon="plus" /> Add

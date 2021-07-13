@@ -143,18 +143,33 @@ class Rollover extends React.Component {
       <div className="well">
         <SubHeader title="Pre-Roll Over Checklist" />
         <div id="checklist">
-          <CheckboxControl id="checkListStep1" checked={this.state.checkListStep1} updateState={this.updateState}>
-            Verify all equipment hours have been entered in the system
-          </CheckboxControl>
-          <CheckboxControl id="checkListStep2" checked={this.state.checkListStep2} updateState={this.updateState}>
-            Save the seniority list (pre-roll over)
-          </CheckboxControl>
-          <CheckboxControl id="checkListStep3" checked={this.state.checkListStep3} updateState={this.updateState}>
-            Take note of any equipment currently hired
-          </CheckboxControl>
-          <CheckboxControl id="checkListStep4" checked={this.state.checkListStep4} updateState={this.updateState}>
-            Release all blocked rotation lists, as the hiring order may change after the roll over
-          </CheckboxControl>
+          <CheckboxControl
+            id="checkListStep1"
+            checked={this.state.checkListStep1}
+            updateState={this.updateState}
+            label="Verify all equipment hours have been entered in the system"
+          />
+
+          <CheckboxControl
+            id="checkListStep2"
+            checked={this.state.checkListStep2}
+            updateState={this.updateState}
+            label="Save the seniority list (pre-roll over)"
+          />
+
+          <CheckboxControl
+            id="checkListStep3"
+            checked={this.state.checkListStep3}
+            updateState={this.updateState}
+            label="Take note of any equipment currently hired"
+          />
+
+          <CheckboxControl
+            id="checkListStep4"
+            checked={this.state.checkListStep4}
+            updateState={this.updateState}
+            label="Release all blocked rotation lists, as the hiring order may change after the roll over"
+          />
         </div>
 
         <div id="description">

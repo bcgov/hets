@@ -368,9 +368,12 @@ class RentalRequestsDetail extends React.Component {
               <FontAwesomeIcon icon="print" title="Print Seniority List" className="mr-5" />
               <span>Seniority List</span>
             </TooltipButton>
-            <CheckboxControl id="showAttachments" inline updateState={this.updateState}>
-              <small>Show Attachments</small>
-            </CheckboxControl>
+            <CheckboxControl
+              id="showAttachments"
+              inline
+              updateState={this.updateState}
+              label={<small>Show Attachments</small>}
+            />
           </SubHeader>
           {(() => {
             if (loading) {

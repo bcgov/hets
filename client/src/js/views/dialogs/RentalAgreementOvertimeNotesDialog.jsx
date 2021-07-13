@@ -92,8 +92,10 @@ class RentalAgreementOvertimeNotesDialog extends React.Component {
                   checked={this.state.overtime}
                   updateState={this.updateState}
                   onChange={this.overtimeCheckboxChanged}
+                  label={_.map(rates, (rate) => rate.comment).join(', ')}
                 >
-                  {_.map(rates, (rate) => rate.comment).join(', ')}
+                  {/* temporary fix check with regular DEV website to see if this works. Seems odd... */}
+                  {/* {_.map(rates, (rate) => rate.comment).join(', ')} */}
                 </CheckboxControl>
               </div>
             </Col>

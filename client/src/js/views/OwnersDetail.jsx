@@ -589,9 +589,14 @@ class OwnersDetail extends React.Component {
               </div>
               <div className="well">
                 <SubHeader title={`Equipment (${loading ? ' ' : owner.numberOfEquipment})`}>
-                  <CheckboxControl id="showAttachments" className="mr-5" inline updateState={this.updateState}>
-                    <small>Show Attachments</small>
-                  </CheckboxControl>
+                  <CheckboxControl
+                    id="showAttachments"
+                    className="mr-5"
+                    inline
+                    updateState={this.updateState}
+                    label={<small>Show Attachments</small>}
+                  />
+
                   <Authorize>
                     <OverlayTrigger
                       trigger="focus"

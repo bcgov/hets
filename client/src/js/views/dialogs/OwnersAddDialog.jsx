@@ -459,14 +459,17 @@ class OwnersAddDialog extends React.Component {
             id="isMaintenanceContractor"
             checked={this.state.isMaintenanceContractor}
             updateState={this.updateState}
-          >
-            Maintenance Contractor
-          </CheckboxControl>
+            label="Maintenance Contractor"
+          />
         </FormGroup>
         <FormGroup controlId="meetsResidency" validationState={this.state.residencyError ? 'error' : null}>
-          <CheckboxControl id="meetsResidency" checked={this.state.meetsResidency} updateState={this.updateState}>
-            Meets Residency
-          </CheckboxControl>
+          <CheckboxControl
+            id="meetsResidency"
+            checked={this.state.meetsResidency}
+            updateState={this.updateState}
+            label="Meets Residency"
+          />
+
           <FormText>{this.state.residencyError}</FormText>
         </FormGroup>
       </FormDialog>
