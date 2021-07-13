@@ -24,15 +24,7 @@ objects:
       replicas: 1
       selector:
         deploymentconfig: ${NAME}${SUFFIX}
-      strategy:
-        activeDeadlineSeconds: 21600
-        rollingParams:
-          intervalSeconds: 1
-          maxSurge: 1
-          maxUnavailable: 1
-          timeoutSeconds: 600
-          updatePeriodSeconds: 1
-        type: Rolling
+      strategy: {}
       template:
         metadata:
           labels:
@@ -52,10 +44,8 @@ objects:
                   cpu: ${CPU}
                   memory: ${MEMORY}
               env:
-                - name: API_SERVER
-                  value: "${PROJECT_NAME}-api${SUFFIX}:8080"
-                - name: ASPNETCORE_ENVIRONMENT
-                  value: "${ASPNETCORE_ENVIRONMENT}"
+                - name: HETS_DEPLOY_SUFFIX
+                  value: ${SUFFIX}
       test: false
       triggers:
         - imageChangeParams:
@@ -130,11 +120,6 @@ parameters:
     name: HOST
     required: true
     value: ""
-  - name: ASPNETCORE_ENVIRONMENT
-    displayName: AspNetCore Environment
-    description: The ASP Net Core deployment environment setting.
-    required: true
-    value: Development
   - description: CPU
     displayName: CPU Request
     name: CPU
