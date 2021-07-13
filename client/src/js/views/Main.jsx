@@ -30,17 +30,17 @@ class Main extends React.Component {
     closeSessionTimeoutDialog: PropTypes.func,
   };
 
-  constructor(props) {
-    super(props);
+  // constructor(props) {
+  //   super(props);
 
-    this.state = {
-      headerHeight: 0,
-    };
-  }
+  //   this.state = {
+  //     headerHeight: 10,
+  //   };
+  // }
 
   componentDidMount() {
-    const height = document.getElementById('header-main').clientHeight;
-    this.setState({ headerHeight: height + 10 });
+    // const height = document.getElementById('header').clientHeight;
+    // this.setState({ headerHeight: height + 10 });
 
     window.addEventListener('unhandledrejection', this.unhandledRejection);
 
@@ -114,7 +114,7 @@ class Main extends React.Component {
     return (
       <div id="main">
         <TopNav showNav={this.props.showNav} />
-        <div id="screen" className="template container" style={{ paddingTop: this.state.headerHeight }}>
+        <div id="screen" className="template container" style={{ paddingTop: 10 }}>
           {this.props.children}
         </div>
         <Footer />
