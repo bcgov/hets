@@ -148,14 +148,14 @@ class FilterDropdown extends React.Component {
         open={this.state.open}
         onToggle={this.toggle}
       >
-        <Dropdown.Toggle title={this.state.title} />
-        <RootCloseMenu>
+        <Dropdown.Toggle> {this.state.title}</Dropdown.Toggle>
+        <Dropdown.Menu>
           <div className="well well-sm">
             <FormControl
               type="text"
               placeholder="Search"
               onChange={this.filter}
-              inputRef={(ref) => {
+              ref={(ref) => {
                 this.input = ref;
               }}
               onKeyDown={this.keyDown}
@@ -164,20 +164,24 @@ class FilterDropdown extends React.Component {
           {items.length > 0 && (
             <ul>
               {blankLine && this.state.filterTerm.length === 0 && (
-                <Dropdown.Item key={0} eventKey={0} onSelect={this.itemSelected}>
+                <Dropdown.Item key={0} eventKey={0} onSelect={() => this.itemSelected(0)}>
                   {typeof blankLine === 'string' ? blankLine : ' '}
                 </Dropdown.Item>
               )}
               {_.map(items, (item) => {
                 return (
-                  <Dropdown.Item key={item.id} eventKey={item.id} onSelect={this.itemSelected}>
+                  //() => itemSelected(item.id) is required rather than this.itemSelected since react-bootstrap always returns eventKey as a string. version v1.6.1
+                  //This breaks the _.find function to update title. Since the id's are as Number. Number !== String.
+                  //git issue: https://github.com/react-bootstrap/react-bootstrap/issues/3957
+                  //source code: https://github.com/react-bootstrap/react-bootstrap/blob/master/src/DropdownItem.tsx refer to makeEventKey function that returns String()
+                  <Dropdown.Item key={item.id} eventKey={item.id} onSelect={() => this.itemSelected(item.id)}>
                     {item[this.state.fieldName]}
                   </Dropdown.Item>
                 );
               })}
             </ul>
           )}
-        </RootCloseMenu>
+        </Dropdown.Menu>
       </Dropdown>
     );
 
