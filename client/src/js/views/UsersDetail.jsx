@@ -351,7 +351,7 @@ class UsersDetail extends React.Component {
                                       overlay={<Confirm onConfirm={this.deleteDistrict.bind(this, district)} />}
                                     >
                                       <Button title="Delete District" size="sm">
-                                        <FontAwesomeIcon icon="trash" />
+                                        <FontAwesomeIcon icon="trash-alt" />
                                       </Button>
                                     </OverlayTrigger>
                                   </Authorize>

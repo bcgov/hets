@@ -183,7 +183,7 @@ class Users extends React.Component {
                       overlay={<Confirm onConfirm={this.delete.bind(this, user)} />}
                     >
                       <Button className={user.canDelete ? '' : 'hidden'} title="Delete User" size="sm">
-                        <FontAwesomeIcon icon="trash" />
+                        <FontAwesomeIcon icon="trash-alt" />
                       </Button>
                     </OverlayTrigger>
                   </Authorize>
@@ -238,7 +238,9 @@ class Users extends React.Component {
                     showMaxItems={2}
                   />
                   <InputGroup>
-                    <InputGroup.Addon>Surname</InputGroup.Addon>
+                    <InputGroup.Prepend>
+                      <InputGroup.Text>Surname</InputGroup.Text>
+                    </InputGroup.Prepend>
                     <FormInputControl
                       id="surname"
                       type="text"
