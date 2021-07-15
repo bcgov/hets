@@ -109,7 +109,11 @@ class DocumentsListDialog extends React.Component {
         fName = res.getResponseHeader('content-disposition').match(/(?<=filename=)(.*)(?=; filename)/)[0];
         saveAs(res.response, fName);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error);
+        let message = error.message.split(`"`)[0].replace('"', ''); //extracts error message without HTML text.Odd issue where I can't detect \ so need to rely on "
+        this.setState({ uploadError: message });
+      });
   };
 
   uploadFiles = (files) => {
