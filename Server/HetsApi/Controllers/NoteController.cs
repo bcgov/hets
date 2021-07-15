@@ -1,12 +1,11 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
-using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Model;
+using AutoMapper;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -18,11 +17,13 @@ namespace HetsApi.Controllers
     public class NoteController : Controller
     {
         private readonly DbAppContext _context;
+        private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
 
-        public NoteController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public NoteController(DbAppContext context, IConfiguration configuration, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
             _configuration = configuration;
         }
 
@@ -32,10 +33,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Note to delete</param>
         [HttpPost]
         [Route("{id}/delete")]
-        [SwaggerOperation("NotesIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(HetNote))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult NotesIdDeletePost([FromRoute]int id)
+        public virtual ActionResult<NoteDto> NotesIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetNote.Any(a => a.NoteId == id);
 
@@ -52,7 +51,7 @@ namespace HetsApi.Controllers
                 _context.SaveChanges();
             }
 
-            return new ObjectResult(new HetsResponse(note));
+            return new ObjectResult(new HetsResponse(_mapper.Map<NoteDto>(note)));
         }
 
         /// <summary>
@@ -62,10 +61,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPut]
         [Route("{id}")]
-        [SwaggerOperation("NotesIdPut")]
-        [SwaggerResponse(200, type: typeof(HetNote))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult NotesIdPut([FromRoute]int id, [FromBody]HetNote item)
+        public virtual ActionResult<NoteDto> NotesIdPut([FromRoute]int id, [FromBody]NoteDto item)
         {
             bool exists = _context.HetNote.Any(a => a.NoteId == id);
 
@@ -85,7 +82,7 @@ namespace HetsApi.Controllers
             // return the updated note record
             note = _context.HetNote.First(a => a.NoteId == id);
 
-            return new ObjectResult(new HetsResponse(note));
+            return new ObjectResult(new HetsResponse(_mapper.Map<NoteDto>(note)));
         }
     }
 }

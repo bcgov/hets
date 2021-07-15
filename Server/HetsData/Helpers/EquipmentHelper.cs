@@ -34,7 +34,7 @@ namespace HetsData.Helpers
         public int DistrictEquipmentTypeId { get; set; }
     }
 
-    public class EquipmentStatus
+    public class EquipmentStatusDto
     {
         public string Status { get; set; }
         public string StatusComment { get; set; }
@@ -47,7 +47,7 @@ namespace HetsData.Helpers
         public int RentalAgreementId { get; set; }
     }
 
-    public class DuplicateEquipmentModel
+    public class DuplicateEquipmentDto
     {
         public int Id { get; set; }
         public string DistrictName { get; set; }
@@ -55,7 +55,7 @@ namespace HetsData.Helpers
         public HetEquipment DuplicateEquipment { get; set; }
     }
 
-    public class EquipmentLite
+    public class EquipmentLiteDto
     {
         public int Id { get; set; }
         public string EquipmentType { get; set; }
@@ -100,79 +100,6 @@ namespace HetsData.Helpers
 
     public static class EquipmentHelper
     {
-        #region Get an Equipment record (plus associated records)
-
-        /// <summary>
-        /// Get an Equipment record
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="context"></param>
-        /// <param name="configuration"></param>
-        /// <returns></returns>
-        public static HetEquipment GetRecord(int id, DbAppContext context, IConfiguration configuration)
-        {
-            // retrieve updated equipment record to return to ui
-            HetEquipment equipment = context.HetEquipment.AsNoTracking()
-                .Include(x => x.EquipmentStatusType)
-                .Include(x => x.LocalArea)
-                    .ThenInclude(y => y.ServiceArea)
-                        .ThenInclude(z => z.District)
-                            .ThenInclude(a => a.Region)
-                .Include(x => x.DistrictEquipmentType)
-                    .ThenInclude(d => d.EquipmentType)
-                .Include(x => x.Owner)
-                    .ThenInclude(x => x.OwnerStatusType)
-                .Include(x => x.HetEquipmentAttachment)
-                .Include(x => x.HetNote)
-                .Include(x => x.HetDigitalFile)
-                .Include(x => x.HetHistory)
-                .FirstOrDefault(a => a.EquipmentId == id);
-
-            if (equipment != null)
-            {
-                equipment.IsHired = IsHired(id, context);
-                equipment.NumberOfBlocks = GetNumberOfBlocks(equipment, configuration);
-                equipment.HoursYtd = GetYtdServiceHours(id, context);
-                equipment.Status = equipment.EquipmentStatusType.EquipmentStatusTypeCode;
-
-                if (equipment.Seniority != null && equipment.BlockNumber != null)
-                {
-                    equipment.SeniorityString = FormatSeniorityString((float)equipment.Seniority, (int)equipment.BlockNumber, equipment.NumberOfBlocks);
-                }
-
-                if (equipment.Owner != null)
-                {
-                    // populate the "Status" description
-                    equipment.Owner.Status = equipment.Owner.OwnerStatusType.OwnerStatusTypeCode;
-                }
-
-                // set fiscal year headers
-                if (equipment.LocalArea?.ServiceArea?.District != null)
-                {
-                    int districtId = equipment.LocalArea.ServiceArea.District.DistrictId;
-
-                    HetDistrictStatus district = context.HetDistrictStatus.AsNoTracking()
-                        .FirstOrDefault(x => x.DistrictId == districtId);
-
-                    if (district?.NextFiscalYear != null)
-                    {
-                        int fiscalYear = (int)district.NextFiscalYear; // status table uses the start of the tear
-
-                        equipment.YearMinus1 = $"{fiscalYear - 2}/{fiscalYear - 1}";
-                        equipment.YearMinus2 = $"{fiscalYear - 3}/{fiscalYear - 2}";
-                        equipment.YearMinus3 = $"{fiscalYear - 4}/{fiscalYear - 3}";
-                    }
-                }
-
-                // HETS-1115 - Do not allow changing seniority affecting entities if an active request exists
-                equipment.ActiveRentalRequest = RentalRequestStatus(id, context);
-            }
-
-            return equipment;
-        }
-
-        #endregion
-
         #region Returns true if the equipment is on an active rotation list
 
         /// <summary>
@@ -208,10 +135,10 @@ namespace HetsData.Helpers
         /// <param name="agreementStatusId"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static EquipmentLite ToLiteModel(HetEquipment equipment, SeniorityScoringRules scoringRules,
+        public static EquipmentLiteDto ToLiteModel(HetEquipment equipment, SeniorityScoringRules scoringRules,
             int agreementStatusId, DbAppContext context)
         {
-            EquipmentLite equipmentLite = new EquipmentLite();
+            EquipmentLiteDto equipmentLite = new EquipmentLiteDto();
 
             if (equipment != null)
             {
@@ -577,67 +504,6 @@ namespace HetsData.Helpers
         {
             string result = ownerEquipmentCodePrefix + equipmentNumber.ToString("D3");
             return result;
-        }
-
-        #endregion
-
-        #region Setup new Equipment Record
-
-        /// <summary>
-        /// Set the Equipment fields for a new record for fields that are not provided by the front end
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="context"></param>
-        public static HetEquipment SetNewRecordFields(HetEquipment item, DbAppContext context)
-        {
-            item.ReceivedDate = DateTime.UtcNow;
-            item.LastVerifiedDate = DateTime.UtcNow;
-
-            // per JIRA HETS-536
-            item.ApprovedDate = DateTime.UtcNow;
-
-            item.Seniority = 0.0F;
-            item.YearsOfService = 0.0F;
-            item.ServiceHoursLastYear = 0.0F;
-            item.ServiceHoursTwoYearsAgo = 0.0F;
-            item.ServiceHoursThreeYearsAgo = 0.0F;
-            item.ArchiveCode = "N";
-            item.IsSeniorityOverridden = false;
-
-            int tmpAreaId = item.LocalArea.LocalAreaId;
-            item.LocalAreaId = tmpAreaId;
-            item.LocalArea = null;
-
-            int tmpEquipId = item.DistrictEquipmentType.DistrictEquipmentTypeId;
-            item.DistrictEquipmentTypeId = tmpEquipId;
-            item.DistrictEquipmentType = null;
-
-            // [Original: new equipment MUST always start as unapproved - it isn't assigned to any block yet]
-            // HETS-834 - BVT - New Equipment Added default to APPROVED
-            // * Set to Approved
-            // * Update all equipment blocks, etc.
-            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", context);
-
-            if (statusId == null)
-            {
-                throw new DataException("Status Id cannot be null");
-            }
-
-            item.EquipmentStatusTypeId = (int)statusId;
-
-            // generate a new equipment code
-            if (item.Owner != null)
-            {
-                // set the equipment code
-                item.EquipmentCode = GetEquipmentCode(item.Owner.OwnerId, context);
-
-                // cleanup owner reference
-                int tmpOwnerId = item.Owner.OwnerId;
-                item.OwnerId = tmpOwnerId;
-                item.Owner = null;
-            }
-
-            return item;
         }
 
         #endregion

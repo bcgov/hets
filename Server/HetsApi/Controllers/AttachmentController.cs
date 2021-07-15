@@ -3,7 +3,6 @@ using HetsApi.Model;
 using HetsData.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Swashbuckle.AspNetCore.Annotations;
 using System.Linq;
 using AutoMapper;
 using HetsData.Dtos;

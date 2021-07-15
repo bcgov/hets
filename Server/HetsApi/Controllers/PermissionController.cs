@@ -1,14 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Swashbuckle.AspNetCore.Annotations;
-using HetsApi.Authorization;
-using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
 
 namespace HetsApi.Controllers
 {
@@ -17,13 +14,15 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/permissions")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class PermissionController : Controller
+    public class PermissionController : ControllerBase
     {
         private readonly DbAppContext _context;
+        private readonly IMapper _mapper;
 
-        public PermissionController(DbAppContext context, IHttpContextAccessor httpContextAccessor)
+        public PermissionController(DbAppContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -31,10 +30,8 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("")]
-        [SwaggerOperation("PermissionsGet")]
-        [SwaggerResponse(200, type: typeof(List<PermissionLite>))]
         [AllowAnonymous]
-        public virtual IActionResult PermissionsGet()
+        public virtual ActionResult<List<PermissionLite>> PermissionsGet()
         {
             List<HetPermission> permissions = _context.HetPermission.ToList();
 
