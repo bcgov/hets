@@ -206,6 +206,30 @@ $nav-active-background-color-uat: #db976d;
       background-color: $nav-active-background-color-trn;
     }
   }
+
+  //#nav-link styles for setting active styles on nav links
+
+  .nav-link {
+    &.active {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  .dropdown-item {
+    &.active {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  //end #nav-link styles
 }
 
 #rollover-notice {
