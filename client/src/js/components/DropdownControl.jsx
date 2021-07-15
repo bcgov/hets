@@ -137,7 +137,7 @@ class DropdownControl extends React.Component {
         open={this.state.open}
         onToggle={this.toggle}
       >
-        <Dropdown.Toggle> {this.state.title}</Dropdown.Toggle>
+        <Dropdown.Toggle className="btn-custom"> {this.state.title}</Dropdown.Toggle>
         <Dropdown.Menu>
           {this.props.items.length > 0 && (
             <ul>

@@ -131,7 +131,7 @@ class BusinessOwner extends React.Component {
               <Badge className={owner?.isMaintenanceContractor ? 'ml-5' : 'hide'}>Maintenance Contractor</Badge>
             </Col>
             <Col sm={3}>
-              <div className="pull-right">
+              <div className="float-right">
                 <PrintButton />
                 <ReturnButton />
               </div>
@@ -348,7 +348,7 @@ class BusinessOwner extends React.Component {
               <Row id="owners-top">
                 <Col sm={9}></Col>
                 <Col sm={3}>
-                  <div className="pull-right">
+                  <div className="float-right">
                     <ReturnButton />
                   </div>
                 </Col>

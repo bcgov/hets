@@ -316,23 +316,22 @@ class Equipment extends React.Component {
                 </Row>
               </Col>
               <Col xs={3} sm={2} id="search-buttons">
-                <Row>
+                <Row className="float-right">
                   <Favourites
                     id="faves-dropdown"
                     type="equipment"
                     favourites={this.props.favourites}
                     data={this.state.search}
                     onSelect={this.loadFavourite}
-                    pullRight
                   />
                 </Row>
-                <Row>
-                  <Button id="search-button" className="pull-right" variant="primary" type="submit">
+                <Row className="float-right">
+                  <Button id="search-button" variant="primary" type="submit">
                     Search
                   </Button>
                 </Row>
-                <Row>
-                  <Button id="clear-search-button" className="pull-right" onClick={this.clearSearch}>
+                <Row className="float-right">
+                  <Button id="clear-search-button" className="btn-custom" onClick={this.clearSearch}>
                     Clear
                   </Button>
                 </Row>

@@ -1,0 +1,27 @@
+// overrides react-bootstrap styles
+
+//in react-bootstrap v0.33 the button had a btn-default style. Changed in v1.6.1 to btn-primary.
+//below is needed to change style.
+.btn-custom {
+  color: #333;
+  background-color: #fff;
+  border-color: #ccc;
+
+  &:hover {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+  }
+
+  &:focus {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+  }
+
+  &:disabled {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+  }
+}

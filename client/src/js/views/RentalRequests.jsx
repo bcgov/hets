@@ -265,7 +265,7 @@ class RentalRequests extends React.Component {
           );
 
           return (
-            <tr key={request.id} className={request.isActive ? null : 'info'}>
+            <tr key={request.id} className={request.isActive ? null : 'bg-info'}>
               <td>{request.localAreaName}</td>
               <td style={{ textAlign: 'center' }}>{request.equipmentCount}</td>
               <td>{request.districtEquipmentName}</td>
@@ -376,7 +376,7 @@ class RentalRequests extends React.Component {
                     <Button id="search-button" variant="primary" type="submit">
                       Search
                     </Button>
-                    <Button id="clear-search-button" onClick={this.clearSearch}>
+                    <Button className="btn-custom" id="clear-search-button" onClick={this.clearSearch}>
                       Clear
                     </Button>
                   </ButtonToolbar>
@@ -407,14 +407,13 @@ class RentalRequests extends React.Component {
                 })()}
               </Col>
               <Col xs={3} sm={2} id="search-buttons">
-                <Row>
+                <Row className="float-right">
                   <Favourites
                     id="rental-requests-faves-dropdown"
                     type="rentalRequests"
                     favourites={this.props.favourites}
                     data={this.state.search}
                     onSelect={this.loadFavourite}
-                    pullRight
                   />
                 </Row>
               </Col>
@@ -435,7 +434,7 @@ class RentalRequests extends React.Component {
             <Authorize>
               <Button
                 title="Add Rental Request (View Only)"
-                className="hidden-print"
+                className="hidden-print btn-custom"
                 size="sm"
                 onClick={() => this.openAddDialog(true)}
               >
@@ -449,7 +448,7 @@ class RentalRequests extends React.Component {
             <Authorize>
               <Button
                 title="Add Rental Request"
-                className="hidden-print"
+                className="hidden-print btn-custom"
                 size="sm"
                 onClick={() => this.openAddDialog(false)}
               >

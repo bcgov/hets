@@ -162,7 +162,10 @@ class MultiDropdown extends React.Component {
         onToggle={this.toggle}
         disabled={this.props.disabled}
       >
-        <Dropdown.Toggle title={this.state.title}> {this.state.title} </Dropdown.Toggle>
+        <Dropdown.Toggle className="btn-custom" title={this.state.title}>
+          {' '}
+          {this.state.title}{' '}
+        </Dropdown.Toggle>
         <Dropdown.Menu>
           <div className="well well-sm">
             <FormControl

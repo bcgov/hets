@@ -254,15 +254,21 @@ class RentalRequestsDetail extends React.Component {
                 {rentalRequest.status}
               </Badge>
             </div>
-            <Button title="Notes" disabled={loading} onClick={this.showNotes}>
+            <Button className="btn-custom" title="Notes" disabled={loading} onClick={this.showNotes}>
               Notes ({loading ? ' ' : rentalRequest.notes?.length})
             </Button>
-            <Button id="project-documents-button" title="Documents" disabled={loading} onClick={this.showDocuments}>
+            <Button
+              className="btn-custom"
+              id="project-documents-button"
+              title="Documents"
+              disabled={loading}
+              onClick={this.showDocuments}
+            >
               Documents ({loadingDocuments ? ' ' : Object.keys(this.props.documents).length})
             </Button>
           </Col>
           <Col sm={3}>
-            <div className="pull-right">
+            <div className="float-right">
               <ReturnButton />
             </div>
           </Col>

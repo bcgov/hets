@@ -171,7 +171,7 @@ class Owners extends React.Component {
       >
         {_.map(ownerList, (owner) => {
           return (
-            <tr key={owner.id} className={owner.status === Constant.OWNER_STATUS_CODE_APPROVED ? null : 'info'}>
+            <tr key={owner.id} className={owner.status === Constant.OWNER_STATUS_CODE_APPROVED ? null : 'bg-info'}>
               <td>{owner.ownerCode}</td>
               <td>{owner.localAreaName}</td>
               <td>{owner.organizationName}</td>
@@ -258,20 +258,19 @@ class Owners extends React.Component {
                   <Button id="search-button" variant="primary" type="submit">
                     Search
                   </Button>
-                  <Button id="clear-search-button" onClick={this.clearSearch}>
+                  <Button className="btn-custom" id="clear-search-button" onClick={this.clearSearch}>
                     Clear
                   </Button>
                 </ButtonToolbar>
               </Col>
               <Col xs={3} sm={2} id="search-buttons">
-                <Row>
+                <Row className="float-right">
                   <Favourites
                     id="faves-dropdown"
                     type="owner"
                     favourites={this.props.favourites}
                     data={this.state.search}
                     onSelect={this.loadFavourite}
-                    pullRight
                   />
                 </Row>
               </Col>
@@ -290,7 +289,7 @@ class Owners extends React.Component {
 
           var addOwnerButton = (
             <Authorize>
-              <Button title="Add Owner" size="sm" onClick={this.openAddDialog}>
+              <Button className="btn-custom" title="Add Owner" size="sm" onClick={this.openAddDialog}>
                 <FontAwesomeIcon icon="plus" />
                 &nbsp;<strong>Add Owner</strong>
               </Button>

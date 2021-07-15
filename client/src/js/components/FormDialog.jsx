@@ -42,7 +42,9 @@ class FormDialog extends React.Component {
       <Form onSubmit={this.formSubmitted}>
         <Modal.Body>{children}</Modal.Body>
         <Modal.Footer>
-          <Button onClick={this.closeDialog}>{closeButtonLabel || 'Close'}</Button>
+          <Button className="btn-custom" onClick={this.closeDialog}>
+            {closeButtonLabel || 'Close'}
+          </Button>
           {!isReadOnly && (
             <Authorize>
               <Button variant="primary" type="submit" disabled={isSaving}>

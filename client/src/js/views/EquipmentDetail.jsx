@@ -286,24 +286,36 @@ class EquipmentDetail extends React.Component {
                           onSelect={this.updateStatusState}
                         />
                       )}
-                      <Button className="mr-5 ml-5" title="Notes" onClick={this.showNotes} disabled={loadingNotes}>
+                      <Button
+                        className="mr-1 ml-1 btn-custom"
+                        title="Notes"
+                        onClick={this.showNotes}
+                        disabled={loadingNotes}
+                      >
                         Notes {!loadingNotes && `(${this.props.notes.length})`}
                       </Button>
-                      <Button title="Documents" onClick={this.showDocuments} disabled={loadingDocuments}>
+                      <Button
+                        title="Documents"
+                        className="btn-custom"
+                        onClick={this.showDocuments}
+                        disabled={loadingDocuments}
+                      >
                         Documents {!loadingDocuments && `(${Object.keys(this.props.documents).length})`}
                       </Button>
                     </Row>
                   </Col>
                   <Col sm={3}>
-                    <div className="pull-right">
+                    <div className="float-right">
                       <PrintButton />
                       <ReturnButton />
                     </div>
                   </Col>
                 </Row>
                 <Row id="equipment-bottom">
-                  <Badge className={equipment.isMaintenanceContractor ? '' : 'hide'}>Maintenance Contractor</Badge>
-                  <Badge variant={equipment.isHired ? 'success' : 'default'}>
+                  <Badge variant="secondary" className={equipment.isMaintenanceContractor ? '' : 'hide'}>
+                    Maintenance Contractor
+                  </Badge>
+                  <Badge variant={equipment.isHired ? 'success' : 'secondary'}>
                     {equipment.isHired ? 'Hired' : 'Not Hired'}
                   </Badge>
                   <Badge variant={lastVerifiedStyle}>
@@ -462,6 +474,7 @@ class EquipmentDetail extends React.Component {
                             <td style={{ textAlign: 'right' }}>
                               <ButtonGroup>
                                 <Button
+                                  className="btn-custom"
                                   title="Edit Attachment"
                                   size="sm"
                                   onClick={this.openPhysicalAttachmentEditDialog.bind(this, attachment)}
@@ -477,7 +490,7 @@ class EquipmentDetail extends React.Component {
                                       <Confirm onConfirm={this.deletePhysicalAttachment.bind(this, attachment.id)} />
                                     }
                                   >
-                                    <Button title="Delete Attachment" size="sm">
+                                    <Button className="btn-custom" title="Delete Attachment" size="sm">
                                       <FontAwesomeIcon icon="trash-alt" />
                                     </Button>
                                   </OverlayTrigger>

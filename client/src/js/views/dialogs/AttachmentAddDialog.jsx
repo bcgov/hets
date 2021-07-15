@@ -143,7 +143,7 @@ class AttachmentAddDialog extends React.Component {
             </Button>
           )}
           {forms.length < 10 && (
-            <Button size="sm" className="pull-right" onClick={this.addInput}>
+            <Button size="sm" className="float-right" onClick={this.addInput}>
               <FontAwesomeIcon icon="plus" />
               &nbsp;<strong>Add</strong>
             </Button>

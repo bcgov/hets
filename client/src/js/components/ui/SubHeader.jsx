@@ -35,6 +35,7 @@ class SubHeader extends React.Component {
     if (onEditClicked && !children) {
       editButton = (
         <TooltipButton
+          className="btn-custom"
           title={editButtonTitle}
           disabled={editButtonDisabled}
           disabledTooltip={editButtonDisabledTooltip}
@@ -49,7 +50,7 @@ class SubHeader extends React.Component {
     return (
       <h3 id={id} className={classNames('clearfix', 'ui-subheader', className)}>
         {title}
-        <span className="pull-right">{editButton}</span>
+        <span className="float-right">{editButton}</span>
       </h3>
     );
   }

@@ -425,7 +425,7 @@ class AitReport extends React.Component {
                     <Button id="search-button" variant="primary" type="submit">
                       Search
                     </Button>
-                    <Button id="clear-search-button" onClick={this.clearSearch}>
+                    <Button className="btn-custom" id="clear-search-button" onClick={this.clearSearch}>
                       Clear
                     </Button>
                   </ButtonToolbar>
@@ -456,14 +456,13 @@ class AitReport extends React.Component {
                 })()}
               </Col>
               <Col xs={3} sm={2} id="search-buttons">
-                <Row>
+                <Row className="float-right">
                   <Favourites
                     id="faves-dropdown"
                     type="aitReport"
                     favourites={this.props.favourites}
                     data={this.state.search}
                     onSelect={this.loadFavourite}
-                    pullRight
                   />
                 </Row>
               </Col>

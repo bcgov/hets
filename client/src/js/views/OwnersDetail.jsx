@@ -343,24 +343,40 @@ class OwnersDetail extends React.Component {
         <div>
           <Row id="owners-top" className="top-container">
             <Col sm={9}>
-              <StatusDropdown
-                id="owner-status-dropdown"
-                status={loading ? 'Loading ...' : owner.status}
-                statuses={statuses}
-                disabled={owner.activeRentalRequest || loading}
-                disabledTooltip={OWNER_WITH_EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
-                onSelect={this.updateStatusState}
-              />
-              <Button id="owner-notes-button" title="Notes" disabled={loading} onClick={this.openNotesDialog}>
-                Notes ({loading ? ' ' : owner.notes?.length})
-              </Button>
-              <Button id="owner-documents-button" title="Documents" disabled={loading} onClick={this.showDocuments}>
-                Documents ({loadingDocuments ? ' ' : Object.keys(this.props.documents).length})
-              </Button>
-              <Badge className={owner.isMaintenanceContractor ? 'ml-5' : 'hide'}>Maintenance Contractor</Badge>
+              <ButtonGroup>
+                <StatusDropdown
+                  id="owner-status-dropdown"
+                  status={loading ? 'Loading ...' : owner.status}
+                  statuses={statuses}
+                  disabled={owner.activeRentalRequest || loading}
+                  disabledTooltip={OWNER_WITH_EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
+                  onSelect={this.updateStatusState}
+                />
+                <Button
+                  className="btn-custom"
+                  id="owner-notes-button"
+                  title="Notes"
+                  disabled={loading}
+                  onClick={this.openNotesDialog}
+                >
+                  Notes ({loading ? ' ' : owner.notes?.length})
+                </Button>
+                <Button
+                  className="btn-custom"
+                  id="owner-documents-button"
+                  title="Documents"
+                  disabled={loading}
+                  onClick={this.showDocuments}
+                >
+                  Documents ({loadingDocuments ? ' ' : Object.keys(this.props.documents).length})
+                </Button>
+              </ButtonGroup>
+              <Badge variant="secondary" className={owner.isMaintenanceContractor ? 'ml-5' : 'hide'} bg="secondary">
+                Maintenance Contractor
+              </Badge>
             </Col>
             <Col sm={3}>
-              <div className="pull-right">
+              <div className="float-right">
                 <PrintButton disabled={loading} />
                 <ReturnButton />
               </div>
@@ -514,7 +530,12 @@ class OwnersDetail extends React.Component {
 
                   var addContactButton = (
                     <Authorize>
-                      <Button title="Add Contact" onClick={this.openContactDialog.bind(this, 0)} size="sm">
+                      <Button
+                        title="Add Contact"
+                        className="btn-custom"
+                        onClick={this.openContactDialog.bind(this, 0)}
+                        size="sm"
+                      >
                         <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add</strong>
                       </Button>
@@ -589,41 +610,42 @@ class OwnersDetail extends React.Component {
               </div>
               <div className="well">
                 <SubHeader title={`Equipment (${loading ? ' ' : owner.numberOfEquipment})`}>
-                  <CheckboxControl
-                    id="showAttachments"
-                    className="mr-5"
-                    inline
-                    updateState={this.updateState}
-                    label={<small>Show Attachments</small>}
-                  />
+                  <div className="d-flex">
+                    <CheckboxControl
+                      id="showAttachments"
+                      className="mr-3"
+                      inline
+                      updateState={this.updateState}
+                      label={<small>Show Attachments</small>}
+                    />
 
-                  <Authorize>
-                    <OverlayTrigger
-                      trigger="focus"
-                      placement="top"
-                      rootClose
-                      overlay={<Confirm onConfirm={this.equipmentVerifyAll}></Confirm>}
-                    >
+                    <Authorize>
+                      <OverlayTrigger
+                        trigger="focus"
+                        placement="top"
+                        overlay={<Confirm onConfirm={this.equipmentVerifyAll}></Confirm>}
+                      >
+                        <TooltipButton
+                          disabled={!isApproved}
+                          disabledTooltip={restrictEquipmentVerifyTooltip}
+                          className="mr-3 btn-custom"
+                          title="Verify All Equipment"
+                          size="sm"
+                        >
+                          Verify All
+                        </TooltipButton>
+                      </OverlayTrigger>
                       <TooltipButton
                         disabled={!isApproved}
-                        disabledTooltip={restrictEquipmentVerifyTooltip}
-                        className="mr-5"
-                        title="Verify All Equipment"
+                        disabledTooltip={restrictEquipmentAddTooltip}
+                        title="Add Equipment"
                         size="sm"
+                        onClick={this.openEquipmentDialog}
                       >
-                        Verify All
+                        <FontAwesomeIcon icon="plus" />
                       </TooltipButton>
-                    </OverlayTrigger>
-                    <TooltipButton
-                      disabled={!isApproved}
-                      disabledTooltip={restrictEquipmentAddTooltip}
-                      title="Add Equipment"
-                      size="sm"
-                      onClick={this.openEquipmentDialog}
-                    >
-                      <FontAwesomeIcon icon="plus" />
-                    </TooltipButton>
-                  </Authorize>
+                    </Authorize>
+                  </div>
                 </SubHeader>
                 {(() => {
                   if (loading) {

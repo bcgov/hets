@@ -18,7 +18,12 @@ class DeleteButton extends React.Component {
 
     return (
       <OverlayTrigger placement="top" trigger={['focus']} overlay={<Confirm onConfirm={this.props.onConfirm} />}>
-        <Button title={`Delete ${this.props.name}`} size="sm" className={this.props.hide ? 'hidden' : ''} {...props}>
+        <Button
+          title={`Delete ${this.props.name}`}
+          size="sm"
+          className={this.props.hide ? 'hidden' : 'btn-custom'}
+          {...props}
+        >
           <FontAwesomeIcon icon="trash-alt" />
         </Button>
       </OverlayTrigger>

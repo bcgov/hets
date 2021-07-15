@@ -278,9 +278,8 @@ class HireOfferEditDialog extends React.Component {
                       onChange={() => this.offerStatusChanged(STATUS_YES)}
                       checked={this.state.offerStatus === STATUS_YES}
                       disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
-                    >
-                      Yes
-                    </FormCheck>
+                      label="Yes"
+                    />
                   </FormGroup>
                 </Col>
               </Row>
@@ -292,9 +291,8 @@ class HireOfferEditDialog extends React.Component {
                       onChange={() => this.offerStatusChanged(STATUS_NO)}
                       checked={this.state.offerStatus === STATUS_NO}
                       disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
-                    >
-                      No
-                    </FormCheck>
+                      label="No"
+                    />
                   </FormGroup>
                 </Col>
               </Row>
@@ -324,9 +322,8 @@ class HireOfferEditDialog extends React.Component {
                       type="radio"
                       onChange={() => this.offerStatusChanged(STATUS_FORCE_HIRE)}
                       checked={this.state.offerStatus === STATUS_FORCE_HIRE}
-                    >
-                      Force Hire
-                    </FormCheck>
+                      label="Force Hire"
+                    />
                   </FormGroup>
                 </Col>
               </Row>
@@ -338,9 +335,8 @@ class HireOfferEditDialog extends React.Component {
                       onChange={() => this.offerStatusChanged(STATUS_ASKED)}
                       checked={this.state.offerStatus === STATUS_ASKED}
                       disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
-                    >
-                      Asked
-                    </FormCheck>
+                      label="Asked"
+                    />
                   </FormGroup>
                 </Col>
               </Row>

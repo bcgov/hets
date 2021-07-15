@@ -167,7 +167,12 @@ class DistrictAdmin extends React.Component {
 
             var addDistrictEquipmentButton = (
               <Authorize>
-                <Button title="Add District Equipment" size="xsmall" onClick={this.addDistrictEquipmentType}>
+                <Button
+                  className="btn-custom"
+                  title="Add District Equipment"
+                  size="xsmall"
+                  onClick={this.addDistrictEquipmentType}
+                >
                   <FontAwesomeIcon icon="plus" />
                   &nbsp;<strong>Add District Equipment Type</strong>
                 </Button>
@@ -222,12 +227,13 @@ class DistrictAdmin extends React.Component {
                               rootClose
                               overlay={<Confirm onConfirm={this.deleteDistrictEquipmentType.bind(this, equipment)} />}
                             >
-                              <Button title="Delete District Equipment Type" size="sm">
+                              <Button className="btn-custom" title="Delete District Equipment Type" size="sm">
                                 <FontAwesomeIcon icon="trash-alt" />
                               </Button>
                             </OverlayTrigger>
                           </Authorize>
                           <Button
+                            className="btn-custom"
                             title="Edit District Equipment Type"
                             size="sm"
                             onClick={this.editDistrictEquipmentType.bind(this, equipment)}
@@ -257,7 +263,7 @@ class DistrictAdmin extends React.Component {
 
             var addConditionButton = (
               <Authorize>
-                <Button title="Add Condition" size="sm" onClick={this.addCondition}>
+                <Button className="btn-custom" title="Add Condition" size="sm" onClick={this.addCondition}>
                   <FontAwesomeIcon icon="plus" />
                   &nbsp;<strong>Add Condition</strong>
                 </Button>
@@ -294,11 +300,16 @@ class DistrictAdmin extends React.Component {
                             rootClose
                             overlay={<Confirm onConfirm={this.deleteCondition.bind(this, condition)} />}
                           >
-                            <Button title="Delete User" size="sm">
+                            <Button className="btn-custom" title="Delete User" size="sm">
                               <FontAwesomeIcon icon="trash-alt" />
                             </Button>
                           </OverlayTrigger>
-                          <Button title="Edit Condition" size="sm" onClick={this.editCondition.bind(this, condition)}>
+                          <Button
+                            className="btn-custom"
+                            title="Edit Condition"
+                            size="sm"
+                            onClick={this.editCondition.bind(this, condition)}
+                          >
                             <FontAwesomeIcon icon="edit" />
                           </Button>
                         </ButtonGroup>
@@ -319,8 +330,10 @@ class DistrictAdmin extends React.Component {
                 code.
               </Col>
               <Col xs={3}>
-                <span className="pull-right">
-                  <Button onClick={this.showEquipmentTransferDialog}>Equipment Transfer</Button>
+                <span className="float-right">
+                  <Button className="btn-custom" onClick={this.showEquipmentTransferDialog}>
+                    Equipment Transfer
+                  </Button>
                 </span>
               </Col>
             </Row>

@@ -219,7 +219,7 @@ class UsersDetail extends React.Component {
               )}
             </Col>
             <Col sm={4}>
-              <div className="pull-right">
+              <div className="float-right">
                 <PrintButton />
                 <ReturnButton />
               </div>
@@ -295,7 +295,7 @@ class UsersDetail extends React.Component {
                 {(() => {
                   var addDistrictButton = (
                     <Authorize>
-                      <Button title="Add District" size="sm" onClick={this.addUserDistrict}>
+                      <Button className="btn-custom" title="Add District" size="sm" onClick={this.addUserDistrict}>
                         <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add District</strong>
                       </Button>
@@ -350,13 +350,14 @@ class UsersDetail extends React.Component {
                                       rootClose
                                       overlay={<Confirm onConfirm={this.deleteDistrict.bind(this, district)} />}
                                     >
-                                      <Button title="Delete District" size="sm">
+                                      <Button className="btn-custom" title="Delete District" size="sm">
                                         <FontAwesomeIcon icon="trash-alt" />
                                       </Button>
                                     </OverlayTrigger>
                                   </Authorize>
                                   <Button
                                     title="Edit District"
+                                    className="btn-custom"
                                     size="sm"
                                     onClick={this.editUserDistrict.bind(this, district)}
                                   >
@@ -398,7 +399,7 @@ class UsersDetail extends React.Component {
 
                   var addUserRoleButton = (
                     <Authorize>
-                      <Button title="Add User Role" onClick={this.openUserRoleDialog} size="sm">
+                      <Button className="btn-custom" title="Add User Role" onClick={this.openUserRoleDialog} size="sm">
                         <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add Role</strong>
                       </Button>
@@ -454,12 +455,11 @@ class UsersDetail extends React.Component {
                               {userRole.expiryDate ? null : (
                                 <Authorize>
                                   <OverlayTrigger
-                                    trigger="focus"
+                                    trigger="click"
                                     placement="left"
-                                    rootClose
                                     overlay={<ExpireOverlay userRole={userRole} onSave={this.updateUserRole} />}
                                   >
-                                    <Button title="Expire User Role" size="sm">
+                                    <Button className="btn-custom" title="Expire User Role" size="sm">
                                       <FontAwesomeIcon icon="pencil-alt" />
                                       &nbsp;Expire
                                     </Button>
@@ -508,7 +508,6 @@ class ExpireOverlay extends React.Component {
   static propTypes = {
     userRole: PropTypes.object.isRequired,
     onSave: PropTypes.func.isRequired,
-    hide: PropTypes.func,
   };
 
   constructor(props) {
@@ -539,14 +538,14 @@ class ExpireOverlay extends React.Component {
           roleId: this.props.userRole.role.id,
         },
       });
-      this.props.hide();
     }
   };
 
   render() {
     var props = _.omit(this.props, 'onSave', 'hide', 'userRole');
     return (
-      <Popover id="users-role-popover" title="Set Expiry Date" {...props}>
+      <Popover id="users-role-popover" {...props}>
+        Set Expiry Date
         <Form inline onSubmit={this.saveUserRole}>
           <FormGroup controlId="expiryDate" validationState={this.state.expiryDateError ? 'error' : null}>
             <DateControl
@@ -557,7 +556,7 @@ class ExpireOverlay extends React.Component {
             />
             <FormText>{this.state.expiryDateError}</FormText>
           </FormGroup>
-          <Button variant="primary" onClick={this.saveUserRole} className="pull-right">
+          <Button variant="primary" onClick={this.saveUserRole} className="float-right">
             Save
           </Button>
         </Form>

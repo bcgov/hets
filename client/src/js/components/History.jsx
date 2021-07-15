@@ -125,7 +125,11 @@ class HistoryComponent extends React.Component {
               node: fetchingMore ? (
                 <Spinner />
               ) : (
-                <Button size="sm" onClick={this.showMore} className={this.state.canShowMore ? '' : 'hidden'}>
+                <Button
+                  size="sm"
+                  onClick={this.showMore}
+                  className={this.state.canShowMore ? 'btn-custom' : 'hidden btn-custom'}
+                >
                   <FontAwesomeIcon icon="sync-alt" title="Show More" />
                 </Button>
               ),

@@ -179,7 +179,7 @@ class Projects extends React.Component {
       >
         {_.map(projects, (project) => {
           return (
-            <tr key={project.id} className={project.isActive ? null : 'info'}>
+            <tr key={project.id} className={project.isActive ? null : 'bg-info'}>
               <td>{project.name}</td>
               <td>{project.fiscalYear}</td>
               <td>{project.provincialProjectNumber}</td>
@@ -257,20 +257,19 @@ class Projects extends React.Component {
                   <Button id="search-button" variant="primary" type="submit">
                     Search
                   </Button>
-                  <Button id="clear-search-button" onClick={this.clearSearch}>
+                  <Button className="btn-custom" id="clear-search-button" onClick={this.clearSearch}>
                     Clear
                   </Button>
                 </ButtonToolbar>
               </Col>
               <Col xs={3} sm={2} id="search-buttons">
-                <Row>
+                <Row className="float-right">
                   <Favourites
                     id="faves-dropdown"
                     type="project"
                     favourites={this.props.favourites}
                     data={this.state.search}
                     onSelect={this.loadFavourite}
-                    pullRight
                   />
                 </Row>
               </Col>
@@ -289,7 +288,7 @@ class Projects extends React.Component {
 
           var addProjectButton = (
             <Authorize>
-              <Button title="Add Project" size="sm" onClick={this.openAddDialog}>
+              <Button className="btn-custom" title="Add Project" size="sm" onClick={this.openAddDialog}>
                 <FontAwesomeIcon icon="plus" />
                 &nbsp;<strong>Add Project</strong>
               </Button>

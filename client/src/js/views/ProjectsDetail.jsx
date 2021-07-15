@@ -309,7 +309,7 @@ class ProjectsDetail extends React.Component {
                 rootClose
                 overlay={<Confirm onConfirm={this.confirmEndHire.bind(this, item)} />}
               >
-                <Button size="sm">
+                <Button className="btn-custom" size="sm">
                   <FontAwesomeIcon icon={['far', 'check-square']} />
                 </Button>
               </OverlayTrigger>
@@ -373,15 +373,21 @@ class ProjectsDetail extends React.Component {
                   disabledTooltip={STATUS_NOT_EDITABLE_MESSAGE}
                   onSelect={this.updateStatusState}
                 />
-                <Button title="Notes" className="ml-5 mr-5" disabled={loading} onClick={this.showNotes}>
+                <Button title="Notes" className="ml-1 mr-1 btn-custom" disabled={loading} onClick={this.showNotes}>
                   Notes ({loading ? ' ' : project.notes?.length})
                 </Button>
-                <Button id="project-documents-button" title="Documents" disabled={loading} onClick={this.showDocuments}>
+                <Button
+                  className="btn-custom"
+                  id="project-documents-button"
+                  title="Documents"
+                  disabled={loading}
+                  onClick={this.showDocuments}
+                >
                   Documents ({loadingDocuments ? ' ' : Object.keys(this.props.documents).length})
                 </Button>
               </Col>
               <Col sm={3}>
-                <div className="pull-right">
+                <div className="float-right">
                   <PrintButton disabled={loading} />
                   <ReturnButton />
                 </div>
@@ -479,19 +485,27 @@ class ProjectsDetail extends React.Component {
               </div>
               <div className="well">
                 <SubHeader title="Hired Equipment / Requests">
-                  <CheckboxControl
-                    id="includeCompletedRequests"
-                    inline
-                    checked={this.state.includeCompletedRequests}
-                    updateState={this.updateState}
-                    label={<small>Show Completed</small>}
-                  />
+                  <div className="d-flex align-items-baseline">
+                    <CheckboxControl
+                      id="includeCompletedRequests"
+                      inline
+                      checked={this.state.includeCompletedRequests}
+                      updateState={this.updateState}
+                      label={<small>Show Completed</small>}
+                    />
 
-                  <Authorize>
-                    <Button id="add-request-button" title="Add Request" size="sm" onClick={this.openAddRequestDialog}>
-                      <FontAwesomeIcon icon="plus" /> Add
-                    </Button>
-                  </Authorize>
+                    <Authorize>
+                      <Button
+                        className="btn-custom"
+                        id="add-request-button"
+                        title="Add Request"
+                        size="sm"
+                        onClick={this.openAddRequestDialog}
+                      >
+                        <FontAwesomeIcon icon="plus" /> Add
+                      </Button>
+                    </Authorize>
+                  </div>
                 </SubHeader>
                 {(() => {
                   if (loading) {
@@ -547,7 +561,12 @@ class ProjectsDetail extends React.Component {
 
                   var addContactButton = (
                     <Authorize>
-                      <Button title="Add Contact" onClick={this.openContactDialog.bind(this, 0)} size="sm">
+                      <Button
+                        className="btn-custom"
+                        title="Add Contact"
+                        onClick={this.openContactDialog.bind(this, 0)}
+                        size="sm"
+                      >
                         <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add</strong>
                       </Button>

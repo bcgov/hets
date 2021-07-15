@@ -99,7 +99,7 @@ class Roles extends React.Component {
       <div id="roles-list">
         <PageHeader>
           Roles ({numRoles})
-          <ButtonGroup id="roles-buttons" className="pull-right">
+          <ButtonGroup id="roles-buttons" className="float-right">
             <PrintButton />
           </ButtonGroup>
         </PageHeader>
@@ -108,6 +108,7 @@ class Roles extends React.Component {
             <Col xs={9} sm={10} id="filters">
               <ButtonToolbar>
                 <SearchControl
+                  className="d-flex"
                   id="search"
                   search={this.state.search}
                   updateState={this.updateSearchState}
@@ -133,7 +134,7 @@ class Roles extends React.Component {
           var addRoleButton = (
             <Link to={`${Constant.ROLES_PATHNAME}/0`}>
               <Authorize>
-                <Button title="Add Role" size="sm">
+                <Button className="btn-custom" title="Add Role" size="sm">
                   <FontAwesomeIcon icon="plus" />
                   &nbsp;<strong>Add Role</strong>
                 </Button>
@@ -190,12 +191,16 @@ class Roles extends React.Component {
                           rootClose
                           overlay={<Confirm onConfirm={this.delete.bind(this, role)} />}
                         >
-                          <Button className={role.canDelete ? '' : 'hidden'} title="Delete Role" size="sm">
-                            <FontAwesomeIcon icon="trash" />
+                          <Button
+                            className={role.canDelete ? 'btn-custom' : 'hidden btn-custom'}
+                            title="Delete Role"
+                            size="sm"
+                          >
+                            <FontAwesomeIcon icon="trash-alt" />
                           </Button>
                         </OverlayTrigger>
                         <Link to={`${Constant.ROLES_PATHNAME}/${role.id}`}>
-                          <Button className={role.canEdit ? '' : 'hidden'} title="Edit Role" size="sm">
+                          <Button className={role.canEdit ? 'btn-custom' : 'hidden'} title="Edit Role" size="sm">
                             <FontAwesomeIcon icon="pencil-alt" />
                           </Button>
                         </Link>

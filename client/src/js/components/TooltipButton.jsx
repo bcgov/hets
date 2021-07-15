@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import classNames from 'classnames';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 // simplifies adding tooltips for enabled and disabled buttons
@@ -26,7 +27,7 @@ class TooltipButton extends React.Component {
     var button = (
       <Button
         style={buttonStyle}
-        className={this.props.className}
+        className={classNames(this.props.className, 'btn-custom')}
         variant={this.props.variant}
         size={this.props.size}
         disabled={this.props.disabled}

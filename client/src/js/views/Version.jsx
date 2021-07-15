@@ -165,7 +165,9 @@ class Version extends React.Component {
                   </ColDisplay>
                 </div>
               </div>
-              <Button onClick={this.showRaw}>Show Raw Versions</Button>
+              <Button className="btn-custom" onClick={this.showRaw}>
+                Show Raw Versions
+              </Button>
               <div
                 style={{ marginTop: '20px', wordWrap: 'break-word' }}
                 className={this.state.showRawSection ? 'well' : 'well hide'}

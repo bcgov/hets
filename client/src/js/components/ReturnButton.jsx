@@ -10,7 +10,7 @@ function ReturnButton({ id, className, title }) {
   return (
     <Button
       id={id}
-      className={classNames('return-button', 'btn', 'btn-default', className)}
+      className={classNames('return-button', 'btn', 'btn-custom', className)}
       title={title}
       onClick={history.goBack}
     >

@@ -124,7 +124,6 @@ class Favourites extends React.Component {
     favourites: PropTypes.object.isRequired,
     data: PropTypes.object.isRequired,
     onSelect: PropTypes.func.isRequired,
-    pullRight: PropTypes.bool,
   };
 
   constructor(props) {
@@ -189,12 +188,12 @@ class Favourites extends React.Component {
 
   render() {
     var title = this.props.title || 'Favourites';
-    var className = `favourites ${this.props.className || ''} ${this.props.pullRight ? 'pull-right' : ''}`;
+    var className = `favourites ${this.props.className || ''} `;
 
     return (
       <Authorize>
         <Dropdown id={this.props.id} className={className} title={title} open={this.state.open} onToggle={this.toggle}>
-          <Dropdown.Toggle>{title}</Dropdown.Toggle>
+          <Dropdown.Toggle className="btn-custom">{title}</Dropdown.Toggle>
 
           <Dropdown.Menu>
             <div className="favourites-button-bar">

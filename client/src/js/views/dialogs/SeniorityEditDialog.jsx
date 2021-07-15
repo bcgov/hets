@@ -184,7 +184,7 @@ class SeniorityEditDialog extends React.Component {
             <Col>
               <FormGroup>
                 <FormLabel>Hours YTD</FormLabel>
-                <FormControl.Static>{formatHours(this.state.hoursYtd)}</FormControl.Static>
+                <FormControl plaintext readOnly defaultValue={formatHours(this.state.hoursYtd)} />
               </FormGroup>
             </Col>
           </Row>

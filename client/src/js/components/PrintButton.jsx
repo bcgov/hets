@@ -25,7 +25,7 @@ class PrintButton extends React.Component {
     return (
       <TooltipButton
         id={id}
-        className={classNames('print-button', 'hidden-print', className)}
+        className={classNames('print-button', 'hidden-print', 'btn-custom', className)}
         onClick={this.print}
         disabled={disabled}
         disabledTooltip={disabledTooltip}

@@ -184,7 +184,7 @@ class Rollover extends React.Component {
 
         <div className="clearfix">
           <OverlayTrigger
-            trigger="focus"
+            trigger="click"
             placement="top"
             rootClose
             overlay={
@@ -197,7 +197,7 @@ class Rollover extends React.Component {
               </Confirm>
             }
           >
-            <Button className="pull-right" disabled={rolloverButtonDisabled} title="Roll Over">
+            <Button className="float-right" disabled={rolloverButtonDisabled} title="Roll Over">
               Roll Over
             </Button>
           </OverlayTrigger>
@@ -214,7 +214,7 @@ class Rollover extends React.Component {
       <div id="roll-over">
         <PageHeader>{user.districtName} Roll Over</PageHeader>
 
-        <div className="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3">
+        <div className="col-xs-10 offset-xs-1 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3">
           {(() => {
             if (this.state.loading) {
               return (

@@ -21,7 +21,7 @@ class EditButton extends React.Component {
       <Button
         title={`${this.props.view ? 'View' : 'Edit'} ${this.props.name}`}
         size="sm"
-        className={this.props.hide ? 'hidden' : ''}
+        className={this.props.hide ? 'hidden' : 'btn-custom'}
         {...props}
       >
         <FontAwesomeIcon icon={this.props.view ? 'edit' : 'pencil-alt'} />

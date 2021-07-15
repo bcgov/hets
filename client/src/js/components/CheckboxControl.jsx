@@ -6,7 +6,7 @@ import _ from 'lodash';
 class CheckboxControl extends React.Component {
   static propTypes = {
     type: PropTypes.string,
-    label: PropTypes.string,
+    label: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
     updateState: PropTypes.func,
     onChange: PropTypes.func,
     children: PropTypes.node,

@@ -168,7 +168,7 @@ class Users extends React.Component {
       >
         {_.map(users, (user) => {
           return (
-            <tr key={user.id} className={user.active ? null : 'info'}>
+            <tr key={user.id} className={user.active ? null : 'bg-info'}>
               <td>{user.surname}</td>
               <td>{user.givenName}</td>
               <td>{user.smUserId}</td>
@@ -182,13 +182,13 @@ class Users extends React.Component {
                       rootClose
                       overlay={<Confirm onConfirm={this.delete.bind(this, user)} />}
                     >
-                      <Button className={user.canDelete ? '' : 'hidden'} title="Delete User" size="sm">
+                      <Button className={user.canDelete ? 'btn-custom' : 'hidden'} title="Delete User" size="sm">
                         <FontAwesomeIcon icon="trash-alt" />
                       </Button>
                     </OverlayTrigger>
                   </Authorize>
                   <Link to={`${Constant.USERS_PATHNAME}/${user.id}`}>
-                    <Button className={user.canEdit ? '' : 'hidden'} title="View User" size="sm">
+                    <Button className={user.canEdit ? 'btn-custom' : 'hidden'} title="View User" size="sm">
                       <FontAwesomeIcon icon="edit" />
                     </Button>
                   </Link>
@@ -259,20 +259,19 @@ class Users extends React.Component {
                   <Button id="search-button" variant="primary" type="submit">
                     Search
                   </Button>
-                  <Button id="clear-search-button" onClick={this.clearSearch}>
+                  <Button className="btn-custom" id="clear-search-button" onClick={this.clearSearch}>
                     Clear
                   </Button>
                 </ButtonToolbar>
               </Col>
               <Col sm={2} id="search-buttons">
-                <Row>
+                <Row className="float-right">
                   <Favourites
                     id="users-faves-dropdown"
                     type="user"
                     favourites={this.props.favourites}
                     data={this.state.search}
                     onSelect={this.loadFavourite}
-                    pullRight
                   />
                 </Row>
               </Col>
@@ -291,7 +290,7 @@ class Users extends React.Component {
 
           var addUserButton = (
             <Authorize>
-              <Button title="Add User" size="sm" onClick={this.openUsersEditDialog}>
+              <Button className="btn-custom" title="Add User" size="sm" onClick={this.openUsersEditDialog}>
                 <FontAwesomeIcon icon="plus" />
                 &nbsp;<strong>Add User</strong>
               </Button>

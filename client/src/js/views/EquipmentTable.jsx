@@ -58,7 +58,7 @@ class EquipmentTable extends React.Component {
       >
         {_.map(equipmentList, (equip) => {
           return (
-            <tr key={equip.id} className={equip.status === Constant.EQUIPMENT_STATUS_CODE_APPROVED ? null : 'info'}>
+            <tr key={equip.id} className={equip.status === Constant.EQUIPMENT_STATUS_CODE_APPROVED ? null : 'bg-info'}>
               <td>{equip.equipmentCode}</td>
               <td>{equip.localArea}</td>
               <td>
@@ -74,7 +74,7 @@ class EquipmentTable extends React.Component {
               <td>{formatDateTime(equip.lastVerifiedDate, 'YYYY-MMM-DD')}</td>
               <td style={{ textAlign: 'right' }}>
                 <Link to={`${Constant.EQUIPMENT_PATHNAME}/${equip.id}`}>
-                  <Button title="View Equipment" size="sm">
+                  <Button className="btn-custom" title="View Equipment" size="sm">
                     <FontAwesomeIcon icon="edit" />
                   </Button>
                 </Link>

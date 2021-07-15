@@ -227,7 +227,12 @@ class TimeEntry extends React.Component {
               <td>{formatDateTime(entry.enteredDate, 'YYYY-MMM-DD')}</td>
               <td style={{ textAlign: 'right' }}>
                 <ButtonGroup>
-                  <Button title="Edit Time" size="sm" onClick={this.openTimeEntryDialog.bind(this, entry)}>
+                  <Button
+                    className="btn-custom"
+                    title="Edit Time"
+                    size="sm"
+                    onClick={this.openTimeEntryDialog.bind(this, entry)}
+                  >
                     <FontAwesomeIcon icon="edit" />
                   </Button>
                 </ButtonGroup>
@@ -371,20 +376,19 @@ class TimeEntry extends React.Component {
                   <Button id="search-button" variant="primary" type="submit">
                     Search
                   </Button>
-                  <Button id="clear-search-button" onClick={this.clearSearch}>
+                  <Button className="btn-custom" id="clear-search-button" onClick={this.clearSearch}>
                     Clear
                   </Button>
                 </ButtonToolbar>
               </Col>
               <Col xs={3} sm={2} id="search-buttons">
-                <Row>
+                <Row className="float-right">
                   <Favourites
                     id="time-entry-faves-dropdown"
                     type="timeEntry"
                     favourites={this.props.favourites}
                     data={this.state.search}
                     onSelect={this.loadFavourite}
-                    pullRight
                   />
                 </Row>
               </Col>
@@ -403,7 +407,12 @@ class TimeEntry extends React.Component {
 
           var addTimeEntryButton = (
             <Authorize>
-              <Button title="Add Time" size="sm" onClick={this.openTimeEntryDialog.bind(this, null)}>
+              <Button
+                className="btn-custom"
+                title="Add Time"
+                size="sm"
+                onClick={this.openTimeEntryDialog.bind(this, null)}
+              >
                 <FontAwesomeIcon icon="plus" />
                 &nbsp;<strong>Add Time</strong>
               </Button>
