@@ -30,8 +30,7 @@ import Authorize from '../components/Authorize.jsx';
 
 import { activeRentalAgreementSelector, activeRentalAgreementIdSelector } from '../selectors/ui-selectors';
 
-import { buildApiPath } from '../utils/http.js';
-import { formatDateTime } from '../utils/date';
+import { formatDateTime, formatDateTimeUTCToLocal } from '../utils/date';
 import { formatCurrency } from '../utils/string';
 
 class RentalAgreementsDetail extends React.Component {
@@ -168,14 +167,11 @@ class RentalAgreementsDetail extends React.Component {
   };
 
   generateRentalAgreementDocument = () => {
-    // Api.generateRentalAgreementDocument(this.props.match.params.rentalAgreementId).then(() => {
-    //   window.open(buildApiPath(`/rentalagreements/${this.props.match.params.rentalAgreementId}/doc`));
-    // });
-
-    //temporary fix still working on finding a solution to download the document.
     let request = Api.generateRentalAgreementDocument(this.props.match.params.rentalAgreementId);
+    let fname = `rental-agreement-${formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME)}`;
+
     request.getBlob().then((res) => {
-      console.log(res);
+      saveAs(res.response, fname);
     });
   };
 
@@ -198,7 +194,7 @@ class RentalAgreementsDetail extends React.Component {
             Copy Other Rental Agreement
           </Button>
         </Authorize>
-        <Button title="Print PDF" onClick={this.generateRentalAgreementDocument}>
+        <Button className="btn-custom" title="Print PDF" onClick={this.generateRentalAgreementDocument}>
           <FontAwesomeIcon icon="print" />
         </Button>
         <ReturnButton />

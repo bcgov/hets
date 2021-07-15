@@ -2304,11 +2304,6 @@ export function releaseRentalAgreement(rentalAgreementId) {
 }
 
 export function generateRentalAgreementDocument(rentalAgreementId) {
-  // return new ApiRequest(`/rentalagreements/${rentalAgreementId}/doc`).get(null, {
-  //   ignoreResponse: true,
-  // });
-
-  //temporary fix still trying to find a solution to this.
   return new ApiRequest(`/rentalagreements/${rentalAgreementId}/doc`);
 }
 
