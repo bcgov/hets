@@ -9,11 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
@@ -50,7 +48,7 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/owners")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class OwnerController : Controller
+    public class OwnerController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;

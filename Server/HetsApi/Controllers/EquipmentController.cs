@@ -2,11 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
@@ -18,6 +16,7 @@ using System.Text;
 using HetsData.Hangfire;
 using HetsData.Repositories;
 using HetsData.Dtos;
+using AutoMapper;
 
 namespace HetsApi.Controllers
 {
@@ -26,22 +25,24 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/equipment")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class EquipmentController : Controller
+    public class EquipmentController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
-        private readonly HttpContext _httpContext;
+        private readonly IMapper _mapper;
         private readonly IRentalAgreementRepository _rentalAgreementRepo;
+        private readonly IEquipmentRepository _equipmentRepo;
         private readonly ILogger _logger;
 
         public EquipmentController(DbAppContext context, IConfiguration configuration,
-             IRentalAgreementRepository rentalAgreementRepo,
-             IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory)
+             IRentalAgreementRepository rentalAgreementRepo, IEquipmentRepository equipmentRepo,
+             IMapper mapper, ILoggerFactory loggerFactory)
         {
             _context = context;
             _configuration = configuration;
-            _httpContext = httpContextAccessor.HttpContext;
+            _mapper = mapper;
             _rentalAgreementRepo = rentalAgreementRepo;
+            _equipmentRepo = equipmentRepo;
             _logger = loggerFactory.CreateLogger<EquipmentController>();
         }
 
@@ -51,12 +52,10 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Equipment to fetch</param>
         [HttpGet]
         [Route("{id}")]
-        [SwaggerOperation("EquipmentIdGet")]
-        [SwaggerResponse(200, type: typeof(HetEquipment))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentIdGet([FromRoute]int id)
+        public virtual ActionResult<EquipmentDto> EquipmentIdGet([FromRoute]int id)
         {
-            return new ObjectResult(new HetsResponse(EquipmentHelper.GetRecord(id, _context, _configuration)));
+            return new ObjectResult(new HetsResponse(_equipmentRepo.GetEquipment(id)));
         }
 
         /// <summary>
@@ -64,10 +63,8 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("lite")]
-        [SwaggerOperation("EquipmentGetLite")]
-        [SwaggerResponse(200, type: typeof(List<EquipmentExtraLite>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentGetLite()
+        public virtual ActionResult<List<EquipmentExtraLite>> EquipmentGetLite()
         {
             // get user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
@@ -95,10 +92,8 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("liteTs")]
-        [SwaggerOperation("EquipmentGetLiteTs")]
-        [SwaggerResponse(200, type: typeof(List<EquipmentLiteList>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentGetLiteTs()
+        public virtual ActionResult<List<EquipmentLiteList>> EquipmentGetLiteTs()
         {
             // get users district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
@@ -143,10 +138,8 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("agreementSummary")]
-        [SwaggerOperation("EquipmentGetAgreementSummary")]
-        [SwaggerResponse(200, type: typeof(List<EquipmentAgreementSummary>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentGetAgreementSummary()
+        public virtual ActionResult<List<EquipmentAgreementSummary>> EquipmentGetAgreementSummary()
         {
             // get user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
@@ -173,10 +166,8 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("liteHires")]
-        [SwaggerOperation("EquipmentGetLiteHires")]
-        [SwaggerResponse(200, type: typeof(List<EquipmentLiteList>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentGetLiteHires()
+        public virtual ActionResult<List<EquipmentLiteList>> EquipmentGetLiteHires()
         {
             // get users district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
@@ -209,10 +200,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPut]
         [Route("{id}")]
-        [SwaggerOperation("EquipmentIdPut")]
-        [SwaggerResponse(200, type: typeof(HetEquipment))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult EquipmentIdPut([FromRoute]int id, [FromBody]HetEquipment item)
+        public virtual ActionResult<EquipmentDto> EquipmentIdPut([FromRoute]int id, [FromBody]EquipmentDto item)
         {
             if (item == null || id != item.EquipmentId)
             {
@@ -245,7 +234,7 @@ namespace HetsApi.Controllers
 
             bool rebuildOldSeniority = false;
 
-            if (originalLocalAreaId != item.LocalArea.LocalAreaId)
+            if (originalLocalAreaId != item.LocalAreaId)
             {
                 rebuildSeniority = true;
                 rebuildOldSeniority = true;
@@ -318,13 +307,10 @@ namespace HetsApi.Controllers
             equipment.LocalAreaId = item.LocalArea.LocalAreaId;
             equipment.DistrictEquipmentTypeId = item.DistrictEquipmentTypeId;
 
-            // save the changes
-            //_context.SaveChanges();
-
             if (rebuildSeniority)
             {
                 // update new area
-                EquipmentHelper.RecalculateSeniority(item.LocalArea.LocalAreaId, item.DistrictEquipmentTypeId, _context, _configuration);
+                EquipmentHelper.RecalculateSeniority(item.LocalAreaId, item.DistrictEquipmentTypeId, _context, _configuration);
 
                 // update old area
                 if (rebuildOldSeniority)
@@ -336,7 +322,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // retrieve updated equipment record to return to ui
-            return new ObjectResult(new HetsResponse(EquipmentHelper.GetRecord(id, _context, _configuration)));
+            return new ObjectResult(new HetsResponse(_equipmentRepo.GetEquipment(id)));
         }
 
         /// <summary>
@@ -346,10 +332,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPut]
         [Route("{id}/status")]
-        [SwaggerOperation("EquipmentIdStatusPut")]
-        [SwaggerResponse(200, type: typeof(HetEquipment))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult EquipmentIdStatusPut([FromRoute]int id, [FromBody]EquipmentStatus item)
+        public virtual ActionResult<EquipmentDto> EquipmentIdStatusPut([FromRoute]int id, [FromBody]EquipmentStatusDto item)
         {
             // not found
             if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -458,7 +442,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // retrieve updated equipment record to return to ui
-            return new ObjectResult(new HetsResponse(EquipmentHelper.GetRecord(id, _context, _configuration)));
+            return new ObjectResult(new HetsResponse(_equipmentRepo.GetEquipment(id)));
         }
 
         /// <summary>
@@ -467,17 +451,15 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPost]
         [Route("")]
-        [SwaggerOperation("EquipmentPost")]
-        [SwaggerResponse(200, type: typeof(HetEquipment))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult EquipmentPost([FromBody]HetEquipment item)
+        public virtual ActionResult<EquipmentDto> EquipmentPost([FromBody]EquipmentDto item)
         {
             // not found
             if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // set default values for new piece of Equipment
             // certain fields are set on new record - set defaults (including status = "Inactive")
-            item = EquipmentHelper.SetNewRecordFields(item, _context);
+            var equipment = _equipmentRepo.CreateNewEquipment(item);
 
             // ***********************************************************************************
             // Calculate Years of Service for new record
@@ -505,32 +487,37 @@ namespace HetsApi.Controllers
             // is this a leap year?
             if (DateTime.IsLeapYear(fiscalEnd.Year))
             {
-                item.YearsOfService = (float)Math.Round((fiscalEnd - DateTime.UtcNow).TotalDays / 366, 3);
+                equipment.YearsOfService = (float)Math.Round((fiscalEnd - DateTime.UtcNow).TotalDays / 366, 3);
             }
             else
             {
-                item.YearsOfService = (float)Math.Round((fiscalEnd - DateTime.UtcNow).TotalDays / 365, 3);
+                equipment.YearsOfService = (float)Math.Round((fiscalEnd - DateTime.UtcNow).TotalDays / 365, 3);
             }
 
-            item.ToDate = fiscalEnd;
+            equipment.ToDate = fiscalEnd;
 
             // save record in order to recalculate seniority
-            _context.HetEquipment.Add(item);
+            _context.HetEquipment.Add(equipment);
+
+            using var transaction = _context.Database.BeginTransaction();
+
             _context.SaveChanges();
 
             // HETS-834 - BVT - New Equipment Added default to APPROVED
             // * (already Set to approved)
             // * Update all equipment blocks, etc.
             // recalculation seniority (if required)
-            int? localAreaId = item.LocalAreaId;
-            int? districtEquipmentTypeId = item.DistrictEquipmentTypeId;
+            int? localAreaId = equipment.LocalAreaId;
+            int? districtEquipmentTypeId = equipment.DistrictEquipmentTypeId;
             EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration);
 
             // save the result of the seniority recalculation
-            _context.SaveChanges(); 
+            _context.SaveChanges();
+
+            transaction.Commit();
 
             // retrieve updated equipment record to return to ui
-            return new ObjectResult(new HetsResponse(EquipmentHelper.GetRecord(item.EquipmentId, _context, _configuration)));
+            return new ObjectResult(new HetsResponse(_equipmentRepo.GetEquipment(equipment.EquipmentId)));
         }
 
         /// <summary>
@@ -539,7 +526,6 @@ namespace HetsApi.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("recalculatesenioritylist")]
-        [SwaggerOperation("RecalculateSeniorityListPost")]
         [RequiresPermission(HetPermission.DistrictCodeTableManagement, HetPermission.WriteAccess)]
         public virtual IActionResult RecalculateSeniorityListPost()
         {
@@ -620,10 +606,8 @@ namespace HetsApi.Controllers
         /// <param name="twentyYears"></param>
         [HttpGet]
         [Route("search")]
-        [SwaggerOperation("EquipmentSearchGet")]
-        [SwaggerResponse(200, type: typeof(List<EquipmentLite>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentSearchGet([FromQuery]string localAreas, [FromQuery]string types,
+        public virtual ActionResult<EquipmentLiteDto> EquipmentSearchGet([FromQuery]string localAreas, [FromQuery]string types,
             [FromQuery]string equipmentAttachment, [FromQuery]int? owner, [FromQuery]string status,
             [FromQuery]bool? hired, [FromQuery]DateTime? notVerifiedSinceDate,
             [FromQuery]string equipmentId = null, [FromQuery]string ownerName = null,
@@ -733,7 +717,7 @@ namespace HetsApi.Controllers
 
             // convert Equipment Model to the "EquipmentLite" Model
             SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
-            List<EquipmentLite> result = new List<EquipmentLite>();
+            List<EquipmentLiteDto> result = new List<EquipmentLiteDto>();
 
             var dataList = data.ToList();
 
@@ -757,10 +741,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Equipment to fetch agreements for</param>
         [HttpGet]
         [Route("{id}/rentalAgreements")]
-        [SwaggerOperation("EquipmentIdRentalAgreementsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetRentalAgreement>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentIdRentalAgreementsGet([FromRoute]int id)
+        public virtual ActionResult<List<RentalAgreementDto>> EquipmentIdRentalAgreementsGet([FromRoute]int id)
         {
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
 
@@ -782,7 +764,7 @@ namespace HetsApi.Controllers
                 agreement.Project.HetRentalAgreement = null;
             }
 
-            return new ObjectResult(new HetsResponse(agreements));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<RentalAgreementDto>>(agreements)));
         }
 
         /// <summary>
@@ -990,10 +972,8 @@ namespace HetsApi.Controllers
         /// <param name="typeId">District Equipment Type Id</param>
         [HttpGet]
         [Route("{id}/duplicates/{serialNumber}/{typeId?}")]
-        [SwaggerOperation("EquipmentIdEquipmentDuplicatesGet")]
-        [SwaggerResponse(200, type: typeof(List<DuplicateEquipmentModel>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentIdEquipmentDuplicatesGet([FromRoute]int id, [FromRoute]string serialNumber, [FromRoute]int? typeId)
+        public virtual ActionResult<List<DuplicateEquipmentDto>> EquipmentIdEquipmentDuplicatesGet([FromRoute]int id, [FromRoute]string serialNumber, [FromRoute]int? typeId)
         {
             bool exists = _context.HetEquipment.Any(x => x.EquipmentId == id);
 
@@ -1043,14 +1023,14 @@ namespace HetsApi.Controllers
                     .ToList();
             }
 
-            List<DuplicateEquipmentModel> duplicates = new List<DuplicateEquipmentModel>();
+            List<DuplicateEquipmentDto> duplicates = new List<DuplicateEquipmentDto>();
             int idCount = -1;
 
             foreach (HetEquipment equipment in equipmentDuplicates)
             {
                 idCount++;
 
-                DuplicateEquipmentModel duplicate = new DuplicateEquipmentModel
+                DuplicateEquipmentDto duplicate = new DuplicateEquipmentDto
                 {
                     Id = idCount,
                     SerialNumber = serialNumber,
@@ -1081,10 +1061,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Equipment to fetch EquipmentAttachments for</param>
         [HttpGet]
         [Route("{id}/equipmentAttachments")]
-        [SwaggerOperation("EquipmentIdEquipmentAttachmentsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetEquipmentAttachment>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentIdEquipmentAttachmentsGet([FromRoute]int id)
+        public virtual ActionResult<List<EquipmentAttachmentDto>> EquipmentIdEquipmentAttachmentsGet([FromRoute]int id)
         {
             bool exists = _context.HetEquipment.Any(x => x.EquipmentId == id);
 
@@ -1096,7 +1074,7 @@ namespace HetsApi.Controllers
                 .Where(x => x.Equipment.EquipmentId == id)
                 .ToList();
 
-            return new ObjectResult(new HetsResponse(attachments));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<EquipmentAttachmentDto>>( attachments)));
         }
 
         #endregion
@@ -1110,10 +1088,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Equipment to fetch attachments for</param>
         [HttpGet]
         [Route("{id}/attachments")]
-        [SwaggerOperation("EquipmentIdAttachmentsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentIdAttachmentsGet([FromRoute]int id)
+        public virtual ActionResult<List<HetDigitalFile>> EquipmentIdAttachmentsGet([FromRoute]int id)
         {
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
 
@@ -1141,8 +1117,8 @@ namespace HetsApi.Controllers
                     attachments.Add(attachment);
                 }
             }
-
-            return new ObjectResult(new HetsResponse(attachments));
+            
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<HetDigitalFile>>(attachments)));
         }
 
         #endregion
@@ -1158,10 +1134,8 @@ namespace HetsApi.Controllers
         /// <param name="limit">limits the number of records returned.</param>
         [HttpGet]
         [Route("{id}/history")]
-        [SwaggerOperation("EquipmentIdHistoryGet")]
-        [SwaggerResponse(200, type: typeof(List<History>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentIdHistoryGet([FromRoute]int id, [FromQuery]int? offset, [FromQuery]int? limit)
+        public virtual ActionResult<List<History>> EquipmentIdHistoryGet([FromRoute]int id, [FromQuery]int? offset, [FromQuery]int? limit)
         {
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
 
@@ -1179,9 +1153,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPost]
         [Route("{id}/history")]
-        [SwaggerOperation("EquipmentIdHistoryPost")]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult EquipmentIdHistoryPost([FromRoute]int id, [FromBody]HetHistory item)
+        public virtual ActionResult<List<History>> EquipmentIdHistoryPost([FromRoute]int id, [FromBody]HetHistory item)
         {
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
 
@@ -1212,10 +1185,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Equipment to fetch Notes for</param>
         [HttpGet]
         [Route("{id}/notes")]
-        [SwaggerOperation("EquipmentsIdNotesGet")]
-        [SwaggerResponse(200, type: typeof(List<HetNote>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentIdNotesGet([FromRoute]int id)
+        public virtual ActionResult<List<NoteDto>> EquipmentIdNotesGet([FromRoute]int id)
         {
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
 
@@ -1236,7 +1207,7 @@ namespace HetsApi.Controllers
                 }
             }
 
-            return new ObjectResult(new HetsResponse(notes));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<NoteDto>>(notes)));
         }
 
         /// <summary>
@@ -1247,10 +1218,8 @@ namespace HetsApi.Controllers
         /// <param name="item">Equipment Note</param>
         [HttpPost]
         [Route("{id}/note")]
-        [SwaggerOperation("EquipmentIdNotePost")]
-        [SwaggerResponse(200, type: typeof(HetNote))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult EquipmentIdNotePost([FromRoute]int id, [FromBody]HetNote item)
+        public virtual ActionResult<List<NoteDto>> EquipmentIdNotePost([FromRoute]int id, [FromBody]NoteDto item)
         {
             bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
 
@@ -1299,7 +1268,7 @@ namespace HetsApi.Controllers
                 }
             }
 
-            return new ObjectResult(new HetsResponse(notes));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<NoteDto>>(notes)));
         }
 
         #endregion
@@ -1315,7 +1284,6 @@ namespace HetsApi.Controllers
         /// <param name="counterCopy">If true, use the Counter Copy template</param>
         [HttpGet]
         [Route("seniorityListDoc")]
-        [SwaggerOperation("EquipmentSeniorityListDocGet")]
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult EquipmentSeniorityListDocGet([FromQuery]string localAreas, [FromQuery]string types, [FromQuery]bool counterCopy = false)
         {
