@@ -50,8 +50,8 @@ class HistoryComponent extends React.Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.refresh && !this.props.refresh) {
+  componentDidUpdate(prevProps) {
+    if (this.props.refresh && !prevProps.refresh) {
       this.fetch(true);
     }
   }
