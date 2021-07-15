@@ -335,10 +335,8 @@ namespace HetsApi.Controllers
             _context.HetRentalRequest.Add(rentalRequest);
             _context.SaveChanges();
 
-            int id = rentalRequest.RentalRequestId;
-
             // retrieve updated rental request to return to ui
-            return new ObjectResult(new HetsResponse(RentalRequestHelper.GetRecord(id, _context)));
+            return new ObjectResult(new HetsResponse(RentalRequestHelper.GetRecord(rentalRequest.RentalRequestId, _context)));
         }
 
         /// <summary>
@@ -561,7 +559,7 @@ namespace HetsApi.Controllers
         [SwaggerOperation("RentalRequestRotationListIdPut")]
         [SwaggerResponse(200, type: typeof(HetRentalRequestRotationList))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult RentalRequestIdRotationListIdPut([FromRoute]int id, [FromBody]HetRentalRequestRotationList item)
+        public virtual IActionResult RentalRequestIdRotationListIdPut([FromRoute] int id, [FromBody] HetRentalRequestRotationList item)
         {
             // not found
             if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -721,10 +719,7 @@ namespace HetsApi.Controllers
                 request.FirstOnRotationList = null;
             }
 
-            // 1. get the number of blocks for this equipment type
-            // 2. set which rotation list record is currently "active"
-            int numberOfBlocks = EquipmentHelper.GetNumberOfBlocks(item.Equipment, _configuration);
-            RentalRequestHelper.UpdateRotationList(request, numberOfBlocks, _context);
+            RentalRequestHelper.UpdateRotationList(request);
 
             // save the changes
             _context.SaveChanges();

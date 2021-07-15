@@ -109,7 +109,6 @@ module.exports = (settings) => {
           VERSION: phases[phase].tag,
           ENV: phases[phase].phase,
           HOST: phases[phase].host,
-          ASPNETCORE_ENVIRONMENT: phases[phase].dotnet_env,
           CPU: phases[phase].client_cpu,
           MEMORY: phases[phase].client_memory,
         },
