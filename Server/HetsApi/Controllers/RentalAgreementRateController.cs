@@ -1,14 +1,13 @@
 using System.Data;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
-using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
+using AutoMapper;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -21,11 +20,13 @@ namespace HetsApi.Controllers
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public RentalAgreementRateController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public RentalAgreementRateController(DbAppContext context, IConfiguration configuration, IMapper mapper)
         {
             _context = context;
             _configuration = configuration;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -34,10 +35,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of RentalAgreementRate to delete</param>
         [HttpPost]
         [Route("{id}/delete")]
-        [SwaggerOperation("RentalAgreementRatesIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(HetRentalAgreementRate))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult RentalAgreementRatesIdDeletePost([FromRoute]int id)
+        public virtual ActionResult<RentalAgreementRateDto> RentalAgreementRatesIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetRentalAgreementRate.Any(a => a.RentalAgreementRateId == id);
 
@@ -52,7 +51,7 @@ namespace HetsApi.Controllers
             // save the changes
             _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(rate));
+            return new ObjectResult(new HetsResponse(_mapper.Map<RentalAgreementRateDto>(rate)));
         }
 
         /// <summary>
@@ -62,10 +61,9 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPut]
         [Route("{id}")]
-        [SwaggerOperation("RentalAgreementRatesIdPut")]
-        [SwaggerResponse(200, type: typeof(HetRentalAgreementRate))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult RentalAgreementRatesIdPut([FromRoute]int id, [FromBody]HetRentalAgreementRate item)
+        public virtual ActionResult<RentalAgreementRateDto> RentalAgreementRatesIdPut([FromRoute]int id, 
+            [FromBody]RentalAgreementRateDto item)
         {
             bool exists = _context.HetRentalAgreementRate.Any(a => a.RentalAgreementRateId == id);
 
@@ -92,7 +90,7 @@ namespace HetsApi.Controllers
             // save the changes
             _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(rate));
+            return new ObjectResult(new HetsResponse(_mapper.Map<RentalAgreementRateDto>(rate)));
         }
     }
 }
