@@ -39,7 +39,7 @@ namespace HetsApi.Controllers
         public virtual ActionResult<List<RoleDto>> RolesGet()
         {
             // get all roles
-            List<HetRole> roles = _context.HetRole.AsNoTracking().ToList();
+            List<HetRole> roles = _context.HetRoles.AsNoTracking().ToList();
 
             return new ObjectResult(new HetsResponse(_mapper.Map<List<RoleDto>>(roles)));
         }
@@ -53,13 +53,13 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.RolesAndPermissions, HetPermission.WriteAccess)]
         public virtual ActionResult<RoleDto> RolesIdDeletePost([FromRoute]int id)
         {
-            bool exists = _context.HetRole.Any(x => x.RoleId == id);
+            bool exists = _context.HetRoles.Any(x => x.RoleId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetRole role = _context.HetRole.First(x => x.RoleId == id);
+            HetRole role = _context.HetRoles.First(x => x.RoleId == id);
 
             // remove associated role permission records
             List<HetRolePermission> itemsToRemove = _context.HetRolePermission
@@ -72,7 +72,7 @@ namespace HetsApi.Controllers
             }
 
             // remove role and save
-            _context.HetRole.Remove(role);
+            _context.HetRoles.Remove(role);
             _context.SaveChanges();
 
             return new ObjectResult(new HetsResponse(_mapper.Map<RoleDto>(role)));
@@ -87,13 +87,13 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.RolesAndPermissions)]
         public virtual ActionResult<RoleDto> RolesIdGet([FromRoute]int id)
         {
-            bool exists = _context.HetRole.Any(x => x.RoleId == id);
+            bool exists = _context.HetRoles.Any(x => x.RoleId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetRole role = _context.HetRole.AsNoTracking().First(x => x.RoleId == id);
+            HetRole role = _context.HetRoles.AsNoTracking().First(x => x.RoleId == id);
 
             return new ObjectResult(new HetsResponse(_mapper.Map<RoleDto>(role)));
         }
@@ -108,7 +108,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.RolesAndPermissions)]
         public virtual ActionResult<List<RolePermissionDto>> RolesIdPermissionsGet([FromRoute]int id)
         {
-            HetRole role = _context.HetRole.AsNoTracking()
+            HetRole role = _context.HetRoles.AsNoTracking()
                 .Where(x => x.RoleId == id)
                 .Include(x => x.HetRolePermission)
                     .ThenInclude(rp => rp.Permission)
@@ -132,7 +132,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.RolesAndPermissions, HetPermission.WriteAccess)]
         public virtual ActionResult<List<RolePermissionDto>> RolesIdPermissionsPost([FromRoute]int id, [FromBody]PermissionDto item)
         {
-            HetRole role = _context.HetRole.AsNoTracking()
+            HetRole role = _context.HetRoles.AsNoTracking()
                 .Where(x => x.RoleId == id)
                 .Include(x => x.HetRolePermission)
                     .ThenInclude(rolePerm => rolePerm.Permission)
@@ -141,7 +141,7 @@ namespace HetsApi.Controllers
             // not found
             if (role == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            List<HetPermission> allPermissions = _context.HetPermission.ToList();
+            List<HetPermission> allPermissions = _context.HetPermissions.ToList();
             List<string> existingPermissionCodes = role.HetRolePermission.Select(x => x.Permission.Code).ToList();
 
             if (!existingPermissionCodes.Contains(item.Code))
@@ -164,7 +164,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // get updated permissions
-            role = _context.HetRole.AsNoTracking()
+            role = _context.HetRoles.AsNoTracking()
                 .Where(x => x.RoleId == id)
                 .Include(x => x.HetRolePermission)
                     .ThenInclude(rp => rp.Permission)
@@ -185,7 +185,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.RolesAndPermissions, HetPermission.WriteAccess)]
         public virtual ActionResult<List<RolePermissionDto>> RolesIdPermissionsPut([FromRoute]int id, [FromBody]PermissionDto[] items)
         {
-            HetRole role = _context.HetRole.AsNoTracking()
+            HetRole role = _context.HetRoles.AsNoTracking()
                 .Where(x => x.RoleId == id)
                 .Include(x => x.HetRolePermission)
                     .ThenInclude(rolePerm => rolePerm.Permission)
@@ -195,7 +195,7 @@ namespace HetsApi.Controllers
             if (role == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get permissions
-            List<HetPermission> allPermissions = _context.HetPermission.AsNoTracking().ToList();
+            List<HetPermission> allPermissions = _context.HetPermissions.AsNoTracking().ToList();
 
             List<int> permissionIds = items.Select(x => x.PermissionId).ToList();
             List<int> existingPermissionIds = role.HetRolePermission.Select(x => x.Permission.PermissionId).ToList();
@@ -233,7 +233,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // get updated permissions
-            role = _context.HetRole.AsNoTracking()
+            role = _context.HetRoles.AsNoTracking()
                 .Where(x => x.RoleId == id)
                 .Include(x => x.HetRolePermission)
                     .ThenInclude(rp => rp.Permission)
@@ -253,13 +253,13 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.RolesAndPermissions, HetPermission.WriteAccess)]
         public virtual ActionResult<RoleDto> RolesIdPut([FromRoute]int id, [FromBody]RoleDto item)
         {
-            bool exists = _context.HetRole.Any(x => x.RoleId == id);
+            bool exists = _context.HetRoles.Any(x => x.RoleId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetRole role = _context.HetRole.First(x => x.RoleId == id);
+            HetRole role = _context.HetRoles.First(x => x.RoleId == id);
 
             role.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             role.Name = item.Name;
@@ -269,7 +269,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // get updated role
-            role = _context.HetRole.AsNoTracking()
+            role = _context.HetRoles.AsNoTracking()
                 .First(x => x.RoleId == id);
 
             // return role permissions
@@ -293,13 +293,13 @@ namespace HetsApi.Controllers
             };
 
             // save changes
-            _context.HetRole.Add(role);
+            _context.HetRoles.Add(role);
             _context.SaveChanges();
 
             int id = role.RoleId;
 
             // get updated role
-            role = _context.HetRole.AsNoTracking()
+            role = _context.HetRoles.AsNoTracking()
                 .First(x => x.RoleId == id);
 
             // return role permissions

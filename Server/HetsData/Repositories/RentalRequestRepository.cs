@@ -78,16 +78,16 @@ namespace HetsData.Repositories
         /// <param name="_dbContext"></param>
         public RentalRequestDto GetRecord(int id)
         {
-            HetRentalRequest request = _dbContext.HetRentalRequest.AsNoTracking()
+            HetRentalRequest request = _dbContext.HetRentalRequests.AsNoTracking()
                 .Include(x => x.RentalRequestStatusType)
                 .Include(x => x.LocalArea.ServiceArea.District.Region)
                 .Include(x => x.Project)
                     .ThenInclude(c => c.PrimaryContact)
                 .Include(x => x.Project)
                     .ThenInclude(c => c.ProjectStatusType)
-                .Include(x => x.HetRentalRequestAttachment)
+                .Include(x => x.HetRentalRequestAttachments)
                 .Include(x => x.DistrictEquipmentType)
-                .Include(x => x.HetRentalRequestRotationList)
+                .Include(x => x.HetRentalRequestRotationLists)
                     .ThenInclude(y => y.Equipment)
                         .ThenInclude(z => z.EquipmentStatusType)
                 .FirstOrDefault(a => a.RentalRequestId == id);
@@ -100,9 +100,9 @@ namespace HetsData.Repositories
                 request.YesCount = CalculateYesCount(request);
 
                 // calculate YTD hours for the equipment records
-                if (request.HetRentalRequestRotationList != null)
+                if (request.HetRentalRequestRotationLists != null)
                 {
-                    foreach (HetRentalRequestRotationList rotationList in request.HetRentalRequestRotationList)
+                    foreach (HetRentalRequestRotationList rotationList in request.HetRentalRequestRotationLists)
                     {
                         if (rotationList.Equipment != null)
                         {
@@ -124,23 +124,23 @@ namespace HetsData.Repositories
         public RentalRequestDto GetRecordWithRotationList(int id, SeniorityScoringRules scoringRules)
         {
             //load up the rental request with the equipment decoupled
-            HetRentalRequest request = _dbContext.HetRentalRequest.AsNoTracking()
+            HetRentalRequest request = _dbContext.HetRentalRequests.AsNoTracking()
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(y => y.EquipmentType)
                 .Include(x => x.FirstOnRotationList)
-                .Include(x => x.HetRentalRequestAttachment)
-                .Include(x => x.HetRentalRequestRotationList)
+                .Include(x => x.HetRentalRequestAttachments)
+                .Include(x => x.HetRentalRequestRotationLists)
                 .FirstOrDefault(a => a.RentalRequestId == id);
 
             //determine if the request is complete or not
-            HetRentalRequestStatusType status = _dbContext.HetRentalRequestStatusType.AsNoTracking()
+            HetRentalRequestStatusType status = _dbContext.HetRentalRequestStatusTypes.AsNoTracking()
                 .Where(x => x.RentalRequestStatusTypeCode == "Complete").FirstOrDefault();
             bool isCompletedRequest = (request.RentalRequestStatusTypeId == status.RentalRequestStatusTypeId) ? true : false;
 
             //pull out the date that request was last updated
             var requestDate = request.AppLastUpdateTimestamp;
 
-            foreach (var rrrl in request.HetRentalRequestRotationList)
+            foreach (var rrrl in request.HetRentalRequestRotationLists)
             {
                 //get the equipment id from the rental request rotation list item (mouthful!)
                 var equipmentId = rrrl.EquipmentId;
@@ -151,7 +151,7 @@ namespace HetsData.Repositories
                 if (isCompletedRequest)
                 {
                     //get the equipment history records that are prior to the request last update
-                    var equipmentHist = _dbContext.HetEquipmentHist.AsNoTracking()
+                    var equipmentHist = _dbContext.HetEquipmentHists.AsNoTracking()
                         .Where(x => x.EquipmentId == equipmentId && x.AppLastUpdateTimestamp <= requestDate)
                         .OrderByDescending(x => x.AppLastUpdateTimestamp);
 
@@ -166,7 +166,7 @@ namespace HetsData.Repositories
                 else
                 {
                     // it's in progress or being created so pull current equipment data
-                    equipment = _dbContext.HetEquipment.AsNoTracking()
+                    equipment = _dbContext.HetEquipments.AsNoTracking()
                         .Where(x => x.EquipmentId == equipmentId)
                         .FirstOrDefault();
                 }
@@ -178,17 +178,17 @@ namespace HetsData.Repositories
                     rrrl.Equipment = equipment;
 
                     //some queries to pull the rest of the data related to equipment.. not historical (is that a potential issue?)
-                    rrrl.Equipment.HetEquipmentAttachment = _dbContext.HetEquipmentAttachment.AsNoTracking()
+                    rrrl.Equipment.HetEquipmentAttachments = _dbContext.HetEquipmentAttachments.AsNoTracking()
                         .Where(x => x.EquipmentId == equipmentId).ToList();
 
-                    rrrl.Equipment.LocalArea = _dbContext.HetLocalArea.AsNoTracking()
+                    rrrl.Equipment.LocalArea = _dbContext.HetLocalAreas.AsNoTracking()
                         .Where(x => x.LocalAreaId == rrrl.Equipment.LocalAreaId).FirstOrDefault();
 
-                    rrrl.Equipment.DistrictEquipmentType = _dbContext.HetDistrictEquipmentType.AsNoTracking()
+                    rrrl.Equipment.DistrictEquipmentType = _dbContext.HetDistrictEquipmentTypes.AsNoTracking()
                         .Where(x => x.DistrictEquipmentTypeId == rrrl.Equipment.DistrictEquipmentTypeId)
                         .Include(y => y.EquipmentType).FirstOrDefault();
 
-                    rrrl.Equipment.Owner = _dbContext.HetOwner.AsNoTracking()
+                    rrrl.Equipment.Owner = _dbContext.HetOwners.AsNoTracking()
                         .Where(x => x.OwnerId == rrrl.Equipment.OwnerId)
                         .Include(y => y.PrimaryContact).FirstOrDefault();
                 }
@@ -197,7 +197,7 @@ namespace HetsData.Repositories
             if (request != null)
             {
                 // re-sort list using: LocalArea / District Equipment Type and SenioritySortOrder (desc)
-                request.HetRentalRequestRotationList = request.HetRentalRequestRotationList
+                request.HetRentalRequestRotationLists = request.HetRentalRequestRotationLists
                     .OrderBy(e => e.RotationListSortOrder)
                     .ToList();
 
@@ -205,9 +205,9 @@ namespace HetsData.Repositories
                 request.YesCount = CalculateYesCount(request);
 
                 // calculate YTD hours for the equipment records
-                if (request.HetRentalRequestRotationList != null)
+                if (request.HetRentalRequestRotationLists != null)
                 {
-                    foreach (HetRentalRequestRotationList rotationList in request.HetRentalRequestRotationList)
+                    foreach (HetRentalRequestRotationList rotationList in request.HetRentalRequestRotationLists)
                     {
                         if (rotationList.Equipment != null)
                         {
@@ -260,9 +260,9 @@ namespace HetsData.Repositories
         {
             int temp = 0;
 
-            if (rentalRequest.HetRentalRequestRotationList != null)
+            if (rentalRequest.HetRentalRequestRotationLists != null)
             {
-                foreach (HetRentalRequestRotationList equipment in rentalRequest.HetRentalRequestRotationList)
+                foreach (HetRentalRequestRotationList equipment in rentalRequest.HetRentalRequestRotationLists)
                 {
                     if (equipment.OfferResponse != null &&
                         equipment.OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))

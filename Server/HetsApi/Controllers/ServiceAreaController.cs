@@ -34,7 +34,7 @@ namespace HetsApi.Controllers
         [AllowAnonymous]
         public virtual ActionResult<List<ServiceAreaDto>> ServiceAreasGet()
         {
-            List<HetServiceArea> serviceAreas = _context.HetServiceArea
+            List<HetServiceArea> serviceAreas = _context.HetServiceAreas
                 .Include(x => x.District.Region)
                 .ToList();
 

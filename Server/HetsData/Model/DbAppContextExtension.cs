@@ -185,7 +185,7 @@ namespace HetsData.Model
             {
                 foreach (HetSeniorityAudit seniorityAudit in seniorityAudits)
                 {
-                    HetSeniorityAudit.Add(seniorityAudit);
+                    HetSeniorityAudits.Add(seniorityAudit);
                 }
             }
 
@@ -210,7 +210,7 @@ namespace HetsData.Model
                 return;
             }
 
-            HetEquipment original = HetEquipment.AsNoTracking()
+            HetEquipment original = HetEquipments.AsNoTracking()
                 .Include(x => x.LocalArea)
                 .Include(x => x.Owner)
                 .FirstOrDefault(a => a.EquipmentId == tempChangedId);

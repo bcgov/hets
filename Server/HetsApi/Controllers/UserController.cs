@@ -54,7 +54,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.UserManagement)]
         public virtual ActionResult<UserDto> UsersIdGet([FromRoute]int id)
         {
-            bool exists = _context.HetUser.Any(x => x.UserId == id);
+            bool exists = _context.HetUsers.Any(x => x.UserId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -72,13 +72,13 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
         public virtual ActionResult<UserDto> UsersIdDeletePost([FromRoute]int id)
         {
-            bool exists = _context.HetUser.Any(x => x.UserId == id);
+            bool exists = _context.HetUsers.Any(x => x.UserId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetUser user = _context.HetUser.AsNoTracking()
+            HetUser user = _context.HetUsers.AsNoTracking()
                 .Include(x => x.HetUserRole)
                 .Include(x => x.HetUserDistrict)
                 .First(x => x.UserId == id);
@@ -96,7 +96,7 @@ namespace HetsApi.Controllers
             }
 
             // delete user
-            _context.HetUser.Remove(user);
+            _context.HetUsers.Remove(user);
             _context.SaveChanges();
 
             return new ObjectResult(new HetsResponse(_mapper.Map<UserDto>(user)));
@@ -118,7 +118,7 @@ namespace HetsApi.Controllers
             // HETS-1033 - Post Live: Add validation on User ID while adding a new user
             item.SmUserId = item.SmUserId?.Trim().ToUpper();
 
-            HetUser existingUser = _context.HetUser.AsNoTracking()
+            HetUser existingUser = _context.HetUsers.AsNoTracking()
                 .FirstOrDefault(x => x.SmUserId.ToUpper() == item.SmUserId);
 
             if (existingUser != null) return new BadRequestObjectResult(new HetsResponse("HETS-38", ErrorViewModel.GetDescription("HETS-38", _configuration)));
@@ -143,7 +143,7 @@ namespace HetsApi.Controllers
 
             user.HetUserDistrict.Add(newUserDistrict);
 
-            _context.HetUser.Add(user);
+            _context.HetUsers.Add(user);
             _context.SaveChanges();
 
             int id = user.UserId;
@@ -168,7 +168,7 @@ namespace HetsApi.Controllers
                 return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
-            bool exists = _context.HetUser.Any(x => x.UserId == id);
+            bool exists = _context.HetUsers.Any(x => x.UserId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -183,7 +183,7 @@ namespace HetsApi.Controllers
             // HETS-1033 - Post Live: Add validation on User ID while editing a user
             string smUserId = item.SmUserId?.Trim().ToUpper();
 
-            HetUser existingUser = _context.HetUser.AsNoTracking()
+            HetUser existingUser = _context.HetUsers.AsNoTracking()
                 .FirstOrDefault(x => x.SmUserId.ToUpper() == smUserId && x.UserId != user.UserId);
 
             if (existingUser != null) return new BadRequestObjectResult(new HetsResponse("HETS-38", ErrorViewModel.GetDescription("HETS-38", _configuration)));
@@ -299,7 +299,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.UserManagement)]
         public virtual ActionResult<List<UserFavouriteDto>> UsersIdFavouritesGet([FromRoute]int id)
         {
-            bool exists = _context.HetUser.Any(x => x.UserId == id);
+            bool exists = _context.HetUsers.Any(x => x.UserId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -326,7 +326,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.UserManagement)]
         public virtual ActionResult<List<PermissionDto>> UsersIdPermissionsGet([FromRoute]int id)
         {
-            bool exists = _context.HetUser.Any(x => x.UserId == id);
+            bool exists = _context.HetUsers.Any(x => x.UserId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -364,7 +364,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.UserManagement)]
         public virtual ActionResult<List<UserRoleDto>> UsersIdRolesGet([FromRoute]int id)
         {
-            bool exists = _context.HetUser.Any(x => x.UserId == id);
+            bool exists = _context.HetUsers.Any(x => x.UserId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -387,13 +387,13 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
         public virtual ActionResult<List<UserRoleDto>> UsersIdRolesPost([FromRoute]int id, [FromBody]UserRoleDto item)
         {
-            bool exists = _context.HetUser.Any(x => x.UserId == id);
+            bool exists = _context.HetUsers.Any(x => x.UserId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // check the role id
-            bool roleExists = _context.HetRole.Any(x => x.RoleId == item.RoleId);
+            bool roleExists = _context.HetRoles.Any(x => x.RoleId == item.RoleId);
 
             // record not found
             if (!roleExists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -437,7 +437,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
         public virtual ActionResult<List<UserRoleDto>> UsersIdRolesPut([FromRoute]int id, [FromBody]UserRoleDto[] items)
         {
-            bool exists = _context.HetUser.Any(x => x.UserId == id);
+            bool exists = _context.HetUsers.Any(x => x.UserId == id);
 
             // not found
             if (!exists || items == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));

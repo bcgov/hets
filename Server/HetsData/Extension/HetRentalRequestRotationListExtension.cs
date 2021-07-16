@@ -5,7 +5,7 @@ namespace HetsData.Model
     /// <summary>
     /// Rental Request Rotation List Database Model Extension
     /// </summary>
-    public sealed partial class HetRentalRequestRotationList
+    public partial class HetRentalRequestRotationList
     {
         [NotMapped]
         public float? SeniorityFloat { get; set; }

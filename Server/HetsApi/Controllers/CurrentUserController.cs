@@ -57,7 +57,7 @@ namespace HetsApi.Controllers
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get favourites
-            IEnumerable<HetUserFavourite> favourites = _context.HetUserFavourite.AsNoTracking()
+            IEnumerable<HetUserFavourite> favourites = _context.HetUserFavourites.AsNoTracking()
                 .Include(x => x.User)
                 .Where(x => x.User.SmUserId.ToUpper() == userId &&
                             x.DistrictId == districtId);
@@ -86,7 +86,7 @@ namespace HetsApi.Controllers
             // not found
             if (userId == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            bool exists = _context.HetUserFavourite
+            bool exists = _context.HetUserFavourites
                 .Where(x => x.User.SmUserId.ToUpper() == userId)
                 .Any(a => a.UserFavouriteId == id);
 
@@ -94,9 +94,9 @@ namespace HetsApi.Controllers
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // delete favourite
-            HetUserFavourite item = _context.HetUserFavourite.First(a => a.UserFavouriteId == id);
+            HetUserFavourite item = _context.HetUserFavourites.First(a => a.UserFavouriteId == id);
 
-            _context.HetUserFavourite.Remove(item);
+            _context.HetUserFavourites.Remove(item);
 
             // save the changes
             _context.SaveChanges();
@@ -155,22 +155,22 @@ namespace HetsApi.Controllers
 
             if (string.IsNullOrEmpty(businessGuid))
             {
-                HetUser currentUser = _context.HetUser
+                HetUser currentUser = _context.HetUsers
                     .Include(x => x.District)
-                    .Include(x => x.HetUserRole)
+                    .Include(x => x.HetUserRoles)
                         .ThenInclude(y => y.Role)
                             .ThenInclude(z => z.HetRolePermission)
                                 .ThenInclude(z => z.Permission)
                     .First(x => x.SmUserId.ToUpper() == userId);
 
                 // remove inactive roles
-                for (int i = currentUser.HetUserRole.Count - 1; i >= 0; i--)
+                for (int i = currentUser.HetUserRoles.Count - 1; i >= 0; i--)
                 {
-                    if (currentUser.HetUserRole.ElementAt(i).EffectiveDate > DateTime.UtcNow ||
-                        (currentUser.HetUserRole.ElementAt(i).ExpiryDate != null &&
-                         currentUser.HetUserRole.ElementAt(i).ExpiryDate < DateTime.UtcNow))
+                    if (currentUser.HetUserRoles.ElementAt(i).EffectiveDate > DateTime.UtcNow ||
+                        (currentUser.HetUserRoles.ElementAt(i).ExpiryDate != null &&
+                         currentUser.HetUserRoles.ElementAt(i).ExpiryDate < DateTime.UtcNow))
                     {
-                        currentUser.HetUserRole.Remove(currentUser.HetUserRole.ElementAt(i));
+                        currentUser.HetUserRoles.Remove(currentUser.HetUserRoles.ElementAt(i));
                     }
                 }
 
@@ -182,8 +182,8 @@ namespace HetsApi.Controllers
                 user.UserGuid = currentUser.Guid;
                 user.BusinessUser = false;
                 user.District = currentUser.District;
-                user.HetUserDistrict = currentUser.HetUserDistrict;
-                user.HetUserRole = currentUser.HetUserRole;
+                user.HetUserDistrict = currentUser.HetUserDistricts;
+                user.HetUserRole = currentUser.HetUserRoles;
                 user.SmAuthorizationDirectory = currentUser.SmAuthorizationDirectory;
 
                 // set environment
@@ -208,17 +208,17 @@ namespace HetsApi.Controllers
             }
             else
             {
-                HetBusinessUser tmpUser = _context.HetBusinessUser.AsNoTracking()
-                    .Include(x => x.HetBusinessUserRole)
+                HetBusinessUser tmpUser = _context.HetBusinessUsers.AsNoTracking()
+                    .Include(x => x.HetBusinessUserRoles)
                         .ThenInclude(y => y.Role)
-                            .ThenInclude(z => z.HetRolePermission)
+                            .ThenInclude(z => z.HetRolePermissions)
                                 .ThenInclude(z => z.Permission)
                     .FirstOrDefault(x => x.BceidUserId.ToUpper() == userId);
 
                 if (tmpUser != null)
                 {
                     // get business
-                    HetBusiness business = _context.HetBusiness.AsNoTracking()
+                    HetBusiness business = _context.HetBusinesses.AsNoTracking()
                         .First(x => x.BusinessId == tmpUser.BusinessId);
 
                     user.Id = tmpUser.BusinessUserId;
@@ -234,7 +234,7 @@ namespace HetsApi.Controllers
 
                     int id = 0;
 
-                    foreach (HetBusinessUserRole role in tmpUser.HetBusinessUserRole)
+                    foreach (HetBusinessUserRole role in tmpUser.HetBusinessUserRoles)
                     {
                         id++;
 
@@ -274,7 +274,7 @@ namespace HetsApi.Controllers
             if (userId == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get user district
-            HetUserDistrict userDistrict = _context.HetUserDistrict.AsNoTracking()
+            HetUserDistrict userDistrict = _context.HetUserDistricts.AsNoTracking()
                 .Include(x => x.User)
                 .Include(x => x.District)
                 .FirstOrDefault(x => x.User.SmUserId.ToUpper() == userId &&
@@ -283,7 +283,7 @@ namespace HetsApi.Controllers
             // if we don't find a primary - look for the first one in the list
             if (userDistrict == null)
             {
-                userDistrict = _context.HetUserDistrict.AsNoTracking()
+                userDistrict = _context.HetUserDistricts.AsNoTracking()
                     .Include(x => x.User)
                     .Include(x => x.District)
                     .FirstOrDefault(x => x.User.SmUserId.ToUpper() == userId);
@@ -292,7 +292,7 @@ namespace HetsApi.Controllers
             // update the current district for the user
             if (userDistrict != null)
             {
-                HetUser user = _context.HetUser.First(a => a.SmUserId.ToUpper() == userId);
+                HetUser user = _context.HetUsers.First(a => a.SmUserId.ToUpper() == userId);
                 user.DistrictId = userDistrict.District.DistrictId;
 
                 _context.SaveChanges();
@@ -336,11 +336,11 @@ namespace HetsApi.Controllers
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get user record
-            bool userExists = _context.HetUser.Any(a => a.SmUserId.ToUpper() == userId);
+            bool userExists = _context.HetUsers.Any(a => a.SmUserId.ToUpper() == userId);
 
             if (!userExists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetUser user = _context.HetUser.AsNoTracking()
+            HetUser user = _context.HetUsers.AsNoTracking()
                 .First(a => a.SmUserId.ToUpper() == userId);
 
             // get favourites

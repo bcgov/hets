@@ -76,13 +76,13 @@ namespace HetsApi.Controllers
                 return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetProject project = _context.HetProject.First(a => a.ProjectId == id);
+            HetProject project = _context.HetProjects.First(a => a.ProjectId == id);
 
             int? statusId = StatusHelper.GetStatusId(item.Status, "projectStatus", _context);
             if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
@@ -154,7 +154,7 @@ namespace HetsApi.Controllers
                 CostType = item.CostType
             };
 
-            _context.HetProject.Add(project);
+            _context.HetProjects.Add(project);
 
             // save record
             _context.SaveChanges();
@@ -191,7 +191,7 @@ namespace HetsApi.Controllers
             // get initial results - must be limited to user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
-            IQueryable<HetProject> data = _context.HetProject.AsNoTracking()
+            IQueryable<HetProject> data = _context.HetProjects.AsNoTracking()
                 .Include(x => x.ProjectStatusType)
                 .Include(x => x.District.Region)
                 .Include(x => x.PrimaryContact)
@@ -258,7 +258,7 @@ namespace HetsApi.Controllers
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get fiscal year
-            HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
+            HetDistrictStatus status = _context.HetDistrictStatuses.AsNoTracking()
                 .First(x => x.DistrictId == districtId);
 
             int? fiscalYear = status.CurrentFiscalYear;
@@ -269,7 +269,7 @@ namespace HetsApi.Controllers
             // HETS-1005 - Time entry tab search issues
             // * we need retrieve all projects that have been created this year
             //   since users can add time records to closed projects
-            IQueryable<HetProject> projects = _context.HetProject.AsNoTracking()
+            IQueryable<HetProject> projects = _context.HetProjects.AsNoTracking()
                 .Where(x => x.DistrictId.Equals(districtId) &&
                             (!currentFiscal || x.FiscalYear.Equals(fiscalYearStr)));
 
@@ -296,7 +296,7 @@ namespace HetsApi.Controllers
             // get user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
-            var result = _context.HetRentalAgreement.AsNoTracking()
+            var result = _context.HetRentalAgreements.AsNoTracking()
                 .Include(x => x.Project)
                 .Where(x => x.DistrictId.Equals(districtId) &&
                             !x.Number.StartsWith("BCBid"))
@@ -327,12 +327,12 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual ActionResult<List<RentalAgreementDto>> ProjectsIdRentalAgreementsGet([FromRoute] int id)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            List<HetRentalAgreement> agreements = _context.HetProject.AsNoTracking()
+            List<HetRentalAgreement> agreements = _context.HetProjects.AsNoTracking()
                 .Include(x => x.ProjectStatusType)
                 .Include(x => x.HetRentalAgreement)
                     .ThenInclude(e => e.Equipment)
@@ -362,7 +362,7 @@ namespace HetsApi.Controllers
             // not found
             if (item == null || id != item.ProjectId) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -452,7 +452,7 @@ namespace HetsApi.Controllers
             }
 
             // update overtime rates (and add if they don't exist)
-            List<HetProvincialRateType> overtime = _context.HetProvincialRateType.AsNoTracking()
+            List<HetProvincialRateType> overtime = _context.HetProvincialRateTypes.AsNoTracking()
                 .Where(x => x.Overtime)
                 .ToList();
 
@@ -556,7 +556,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual ActionResult<List<TimeRecordDto>> HetProjectIdTimeRecordsGet([FromRoute] int id)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
@@ -564,7 +564,7 @@ namespace HetsApi.Controllers
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get fiscal year
-            HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
+            HetDistrictStatus status = _context.HetDistrictStatuses.AsNoTracking()
                 .First(x => x.DistrictId == districtId);
 
             int? fiscalYear = status.CurrentFiscalYear;
@@ -573,7 +573,7 @@ namespace HetsApi.Controllers
             // fiscal year in the status table stores the "start" of the year
             DateTime fiscalYearStart = new DateTime((int)fiscalYear, 4, 1);
 
-            HetProject project = _context.HetProject.AsNoTracking()
+            HetProject project = _context.HetProjects.AsNoTracking()
                 .Include(x => x.HetRentalAgreement)
                     .ThenInclude(t => t.HetTimeRecord)
                 .First(x => x.ProjectId == id);
@@ -601,13 +601,13 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual ActionResult<List<TimeRecordDto>> ProjectsIdTimeRecordsPost([FromRoute] int id, [FromBody] TimeRecordDto item)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get project record
-            HetProject project = _context.HetProject.AsNoTracking()
+            HetProject project = _context.HetProjects.AsNoTracking()
                 .Include(x => x.HetRentalAgreement)
                     .ThenInclude(t => t.HetTimeRecord)
                 .First(x => x.ProjectId == id);
@@ -677,7 +677,7 @@ namespace HetsApi.Controllers
             // *************************************************************
             // return updated time records
             // *************************************************************
-            project = _context.HetProject.AsNoTracking()
+            project = _context.HetProjects.AsNoTracking()
                 .Include(x => x.HetRentalAgreement)
                     .ThenInclude(t => t.HetTimeRecord)
                 .First(x => x.ProjectId == id);
@@ -707,11 +707,11 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual ActionResult<List<RentalAgreementDto>> ProjectsIdEquipmentGet([FromRoute] int id)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetProject project = _context.HetProject.AsNoTracking()
+            HetProject project = _context.HetProjects.AsNoTracking()
                 .Include(x => x.HetRentalAgreement)
                     .ThenInclude(e => e.Equipment)
                         .ThenInclude(o => o.Owner)
@@ -735,12 +735,12 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual ActionResult<List<DigitalFileDto>> ProjectsIdAttachmentsGet([FromRoute] int id)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetProject project = _context.HetProject.AsNoTracking()
+            HetProject project = _context.HetProjects.AsNoTracking()
                 .Include(x => x.HetDigitalFile)
                 .First(a => a.ProjectId == id);
 
@@ -776,12 +776,12 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual ActionResult<List<ContactDto>> ProjectsIdContactsGet([FromRoute] int id)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetProject project = _context.HetProject.AsNoTracking()
+            HetProject project = _context.HetProjects.AsNoTracking()
                 .Include(x => x.HetContact)
                 .First(a => a.ProjectId == id);
 
@@ -800,7 +800,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual ActionResult<ContactDto> ProjectsIdContactsPost([FromRoute] int id, [FromBody] ContactDto item, bool primary)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists || item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -863,7 +863,7 @@ namespace HetsApi.Controllers
                     Role = item.Role
                 };
 
-                _context.HetContact.Add(contact);
+                _context.HetContacts.Add(contact);
 
                 _context.SaveChanges();
 
@@ -878,7 +878,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // get updated contact record
-            HetProject updatedProject = _context.HetProject.AsNoTracking()
+            HetProject updatedProject = _context.HetProjects.AsNoTracking()
                 .Include(x => x.HetContact)
                 .First(a => a.ProjectId == id);
 
@@ -899,7 +899,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual ActionResult<List<ContactDto>> ProjectsIdContactsPut([FromRoute] int id, [FromBody] ContactDto[] items)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists || items == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -920,7 +920,7 @@ namespace HetsApi.Controllers
 
                     if (contactExists)
                     {
-                        HetContact contact = _context.HetContact.First(x => x.ContactId == item.ContactId);
+                        HetContact contact = _context.HetContacts.First(x => x.ContactId == item.ContactId);
 
                         contact.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                         contact.ProjectId = id;
@@ -966,7 +966,7 @@ namespace HetsApi.Controllers
             {
                 if (contact != null && items.All(x => x.ContactId != contact.ContactId))
                 {
-                    _context.HetContact.Remove(contact);
+                    _context.HetContacts.Remove(contact);
                 }
             }
 
@@ -974,7 +974,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // get updated contact records
-            HetProject updatedProject = _context.HetProject.AsNoTracking()
+            HetProject updatedProject = _context.HetProjects.AsNoTracking()
                 .Include(x => x.HetContact)
                 .First(a => a.ProjectId == id);
 
@@ -997,7 +997,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual ActionResult<List<History>> ProjectsIdHistoryGet([FromRoute] int id, [FromQuery] int? offset, [FromQuery] int? limit)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -1016,7 +1016,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual ActionResult<History> ProjectsIdHistoryPost([FromRoute] int id, [FromBody] History item)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             if (exists)
             {
@@ -1047,12 +1047,12 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult ProjectsIdNotesGet([FromRoute] int id)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetProject project = _context.HetProject.AsNoTracking()
+            HetProject project = _context.HetProjects.AsNoTracking()
                 .Include(x => x.HetNote)
                 .First(x => x.ProjectId == id);
 
@@ -1080,7 +1080,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual ActionResult<List<NoteDto>> ProjectsIdNotePost([FromRoute] int id, [FromBody] NoteDto item)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -1089,7 +1089,7 @@ namespace HetsApi.Controllers
             if (item.NoteId > 0)
             {
                 // get note
-                HetNote note = _context.HetNote.FirstOrDefault(a => a.NoteId == item.NoteId);
+                HetNote note = _context.HetNotes.FirstOrDefault(a => a.NoteId == item.NoteId);
 
                 // not found
                 if (note == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -1108,13 +1108,13 @@ namespace HetsApi.Controllers
                     IsNoLongerRelevant = item.IsNoLongerRelevant
                 };
 
-                _context.HetNote.Add(note);
+                _context.HetNotes.Add(note);
             }
 
             _context.SaveChanges();
 
             // return updated note records
-            HetProject project = _context.HetProject.AsNoTracking()
+            HetProject project = _context.HetProjects.AsNoTracking()
                 .Include(x => x.HetNote)
                 .First(x => x.ProjectId == id);
 
@@ -1156,7 +1156,7 @@ namespace HetsApi.Controllers
             if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // find agreements
-            IQueryable<HetProject> data = _context.HetProject.AsNoTracking()
+            IQueryable<HetProject> data = _context.HetProjects.AsNoTracking()
                 .Include(x => x.ProjectStatusType)
                 .Include(x => x.District.Region)
                 .Include(x => x.PrimaryContact)

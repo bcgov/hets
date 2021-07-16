@@ -36,7 +36,7 @@ namespace HetsData.Hangfire
 
             WriteLog("Recalculation Started");
 
-            var equipments = _dbContext.HetEquipment
+            var equipments = _dbContext.HetEquipments
                 .Where(x => x.EquipmentStatusTypeId == equipmentStatusId)
                 .GroupBy(x => new { x.LocalAreaId, x.DistrictEquipmentTypeId, x.Seniority, x.ReceivedDate })
                 .Where(x => x.Count() > 1)

@@ -36,16 +36,16 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual ActionResult<NoteDto> NotesIdDeletePost([FromRoute]int id)
         {
-            bool exists = _context.HetNote.Any(a => a.NoteId == id);
+            bool exists = _context.HetNotes.Any(a => a.NoteId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetNote note = _context.HetNote.First(a => a.NoteId == id);
+            HetNote note = _context.HetNotes.First(a => a.NoteId == id);
 
             if (note != null)
             {
-                _context.HetNote.Remove(note);
+                _context.HetNotes.Remove(note);
 
                 // save the changes
                 _context.SaveChanges();
@@ -64,13 +64,13 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual ActionResult<NoteDto> NotesIdPut([FromRoute]int id, [FromBody]NoteDto item)
         {
-            bool exists = _context.HetNote.Any(a => a.NoteId == id);
+            bool exists = _context.HetNotes.Any(a => a.NoteId == id);
 
             // not found
             if (!exists || id != item.NoteId) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get note
-            HetNote note = _context.HetNote.First(a => a.NoteId == id);
+            HetNote note = _context.HetNotes.First(a => a.NoteId == id);
 
             // update note
             note.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
@@ -80,7 +80,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // return the updated note record
-            note = _context.HetNote.First(a => a.NoteId == id);
+            note = _context.HetNotes.First(a => a.NoteId == id);
 
             return new ObjectResult(new HetsResponse(_mapper.Map<NoteDto>(note)));
         }

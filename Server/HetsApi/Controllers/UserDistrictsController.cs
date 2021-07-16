@@ -111,7 +111,7 @@ namespace HetsApi.Controllers
             int userId = item.User.UserId;
 
             // get record
-            List<HetUserDistrict> userDistricts = _context.HetUserDistrict
+            List<HetUserDistrict> userDistricts = _context.HetUserDistricts
                 .Include(x => x.User)
                 .Include(x => x.District)
                 .Where(x => x.User.UserId == userId)
@@ -202,7 +202,7 @@ namespace HetsApi.Controllers
                 {
                     if (item.User != null)
                     {
-                        item.User = _context.HetUser.FirstOrDefault(a => a.UserId == item.User.UserId);
+                        item.User = _context.HetUsers.FirstOrDefault(a => a.UserId == item.User.UserId);
                     }
                     else
                     {
@@ -287,7 +287,7 @@ namespace HetsApi.Controllers
 
             string userId = _context.SmUserId;
 
-            HetUser user = _context.HetUser.First(a => a.SmUserId.ToUpper() == userId);
+            HetUser user = _context.HetUsers.First(a => a.SmUserId.ToUpper() == userId);
             user.DistrictId = userDistrict.DistrictId;
 
             _context.SaveChanges();

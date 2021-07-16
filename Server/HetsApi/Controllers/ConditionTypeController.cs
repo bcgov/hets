@@ -45,7 +45,7 @@ namespace HetsApi.Controllers
             if (districtId == null) return new ObjectResult(new List<HetConditionType>());
 
             // get condition types for this district
-            List<HetConditionType> conditionTypes = _context.HetConditionType.AsNoTracking()
+            List<HetConditionType> conditionTypes = _context.HetConditionTypes.AsNoTracking()
                 .Include(x => x.District)
                 .Where(x => x.Active &&
                             x.District.DistrictId == districtId)
@@ -63,14 +63,14 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.DistrictCodeTableManagement, HetPermission.WriteAccess)]
         public virtual ActionResult<ConditionTypeDto> ConditionTypesIdDeletePost([FromRoute]int id)
         {
-            bool exists = _context.HetConditionType.Any(a => a.ConditionTypeId == id);
+            bool exists = _context.HetConditionTypes.Any(a => a.ConditionTypeId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetConditionType item = _context.HetConditionType.First(a => a.ConditionTypeId == id);
+            HetConditionType item = _context.HetConditionTypes.First(a => a.ConditionTypeId == id);
 
-            _context.HetConditionType.Remove(item);
+            _context.HetConditionTypes.Remove(item);
 
             // save changes
             _context.SaveChanges();
@@ -88,7 +88,7 @@ namespace HetsApi.Controllers
         public virtual ActionResult<ConditionTypeDto> ConditionTypesIdGet([FromRoute]int id)
         {
             // get condition type
-            HetConditionType conditionType = _context.HetConditionType.AsNoTracking()
+            HetConditionType conditionType = _context.HetConditionTypes.AsNoTracking()
                 .Include(x => x.District)
                 .FirstOrDefault(x => x.ConditionTypeId == id);
 
@@ -114,7 +114,7 @@ namespace HetsApi.Controllers
             // add or update contact
             if (item.ConditionTypeId > 0)
             {
-                bool exists = _context.HetConditionType.Any(a => a.ConditionTypeId == id);
+                bool exists = _context.HetConditionTypes.Any(a => a.ConditionTypeId == id);
 
                 if (!exists)
                 {
@@ -123,7 +123,7 @@ namespace HetsApi.Controllers
                 }
 
                 // get record
-                HetConditionType condition = _context.HetConditionType.First(x => x.ConditionTypeId == id);
+                HetConditionType condition = _context.HetConditionTypes.First(x => x.ConditionTypeId == id);
 
                 condition.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                 condition.ConditionTypeCode = item.ConditionTypeCode;
@@ -142,7 +142,7 @@ namespace HetsApi.Controllers
                     DistrictId = item.District.DistrictId
                 };
 
-                _context.HetConditionType.Add(condition);
+                _context.HetConditionTypes.Add(condition);
             }
 
             _context.SaveChanges();
@@ -151,7 +151,7 @@ namespace HetsApi.Controllers
             id = item.ConditionTypeId;
 
             // return the updated condition type record
-            HetConditionType conditionType = _context.HetConditionType.AsNoTracking()
+            HetConditionType conditionType = _context.HetConditionTypes.AsNoTracking()
                 .Include(x => x.District)
                 .FirstOrDefault(x => x.ConditionTypeId == id);
 

@@ -72,8 +72,8 @@ namespace HetsData.Model
             if (activeRoles != null)
             {
                 IEnumerable<HetRolePermission> rolePermissions = activeRoles
-                        .Where(x => x?.HetRolePermission != null)
-                        .SelectMany(x => x.HetRolePermission);
+                        .Where(x => x?.HetRolePermissions != null)
+                        .SelectMany(x => x.HetRolePermissions);
 
                 result = rolePermissions.Select(x => x.Permission).Distinct().ToList();
             }
@@ -85,12 +85,12 @@ namespace HetsData.Model
         {
             List<HetRole> roles = new List<HetRole>();
 
-            if (HetUserRole == null)
+            if (HetUserRoles == null)
             {
                 return roles;
             }
 
-            roles = HetUserRole
+            roles = HetUserRoles
                 .Where(x => x.Role != null && 
                             x.EffectiveDate <= DateTime.UtcNow && 
                             (x.ExpiryDate == null || x.ExpiryDate > DateTime.UtcNow))

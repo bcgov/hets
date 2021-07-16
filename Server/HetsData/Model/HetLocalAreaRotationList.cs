@@ -1,13 +1,13 @@
 ﻿using System;
-using Newtonsoft.Json;
+using System.Collections.Generic;
+
+#nullable disable
 
 namespace HetsData.Model
 {
     public partial class HetLocalAreaRotationList
     {
-        [JsonProperty("Id")]
         public int LocalAreaRotationListId { get; set; }
-
         public int? LocalAreaId { get; set; }
         public int? DistrictEquipmentTypeId { get; set; }
         public int? AskNextBlock1Id { get; set; }
@@ -15,24 +15,24 @@ namespace HetsData.Model
         public int? AskNextBlock2Id { get; set; }
         public float? AskNextBlock2Seniority { get; set; }
         public int? AskNextBlockOpenId { get; set; }
-        [JsonIgnore]public string AppCreateUserDirectory { get; set; }
-        [JsonIgnore]public string AppCreateUserGuid { get; set; }
-        [JsonIgnore]public string AppCreateUserid { get; set; }
-        [JsonIgnore]public DateTime AppCreateTimestamp { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserDirectory { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserGuid { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserid { get; set; }
-        [JsonIgnore]public DateTime AppLastUpdateTimestamp { get; set; }
-        [JsonIgnore]public string DbCreateUserId { get; set; }
-        [JsonIgnore]public DateTime DbCreateTimestamp { get; set; }
-        [JsonIgnore]public DateTime DbLastUpdateTimestamp { get; set; }
-        [JsonIgnore]public string DbLastUpdateUserId { get; set; }
+        public string AppCreateUserDirectory { get; set; }
+        public string AppCreateUserGuid { get; set; }
+        public string AppCreateUserid { get; set; }
+        public DateTime AppCreateTimestamp { get; set; }
+        public string AppLastUpdateUserDirectory { get; set; }
+        public string AppLastUpdateUserGuid { get; set; }
+        public string AppLastUpdateUserid { get; set; }
+        public DateTime AppLastUpdateTimestamp { get; set; }
+        public string DbCreateUserId { get; set; }
+        public DateTime DbCreateTimestamp { get; set; }
+        public DateTime DbLastUpdateTimestamp { get; set; }
+        public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
 
-        public HetEquipment AskNextBlock1 { get; set; }
-        public HetEquipment AskNextBlock2 { get; set; }
-        public HetEquipment AskNextBlockOpen { get; set; }
-        public HetDistrictEquipmentType DistrictEquipmentType { get; set; }
-        public HetLocalArea LocalArea { get; set; }
+        public virtual HetEquipment AskNextBlock1 { get; set; }
+        public virtual HetEquipment AskNextBlock2 { get; set; }
+        public virtual HetEquipment AskNextBlockOpen { get; set; }
+        public virtual HetDistrictEquipmentType DistrictEquipmentType { get; set; }
+        public virtual HetLocalArea LocalArea { get; set; }
     }
 }

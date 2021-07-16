@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+
+#nullable disable
 
 namespace HetsData.Model
 {
@@ -8,13 +9,11 @@ namespace HetsData.Model
     {
         public HetContact()
         {
-            HetOwner = new HashSet<HetOwner>();
-            HetProject = new HashSet<HetProject>();
+            HetOwners = new HashSet<HetOwner>();
+            HetProjects = new HashSet<HetProject>();
         }
 
-        [JsonProperty("Id")]
         public int ContactId { get; set; }
-
         public string Surname { get; set; }
         public string GivenName { get; set; }
         public string Role { get; set; }
@@ -30,30 +29,23 @@ namespace HetsData.Model
         public string Province { get; set; }
         public int? OwnerId { get; set; }
         public int? ProjectId { get; set; }
-        [JsonIgnore]public string AppCreateUserDirectory { get; set; }
-        [JsonIgnore]public string AppCreateUserGuid { get; set; }
-        [JsonIgnore]public string AppCreateUserid { get; set; }
-        [JsonIgnore]public DateTime AppCreateTimestamp { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserDirectory { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserGuid { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserid { get; set; }
-        [JsonIgnore]public DateTime AppLastUpdateTimestamp { get; set; }
-        [JsonIgnore]public string DbCreateUserId { get; set; }
-        [JsonIgnore]public DateTime DbCreateTimestamp { get; set; }
-        [JsonIgnore]public DateTime DbLastUpdateTimestamp { get; set; }
-        [JsonIgnore]public string DbLastUpdateUserId { get; set; }
+        public string AppCreateUserDirectory { get; set; }
+        public string AppCreateUserGuid { get; set; }
+        public string AppCreateUserid { get; set; }
+        public DateTime AppCreateTimestamp { get; set; }
+        public string AppLastUpdateUserDirectory { get; set; }
+        public string AppLastUpdateUserGuid { get; set; }
+        public string AppLastUpdateUserid { get; set; }
+        public DateTime AppLastUpdateTimestamp { get; set; }
+        public string DbCreateUserId { get; set; }
+        public DateTime DbCreateTimestamp { get; set; }
+        public DateTime DbLastUpdateTimestamp { get; set; }
+        public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
 
-        [JsonIgnore]
-        public HetOwner Owner { get; set; }
-
-        [JsonIgnore]
-        public HetProject Project { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetOwner> HetOwner { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetProject> HetProject { get; set; }
+        public virtual HetOwner Owner { get; set; }
+        public virtual HetProject Project { get; set; }
+        public virtual ICollection<HetOwner> HetOwners { get; set; }
+        public virtual ICollection<HetProject> HetProjects { get; set; }
     }
 }

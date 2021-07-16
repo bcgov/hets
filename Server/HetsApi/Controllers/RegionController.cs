@@ -33,7 +33,7 @@ namespace HetsApi.Controllers
         [AllowAnonymous]
         public virtual ActionResult<List<RegionDto>> RegionsGet()
         {
-            List<HetRegion> regions = _context.HetRegion.ToList();
+            List<HetRegion> regions = _context.HetRegions.ToList();
 
             return new ObjectResult(new HetsResponse(_mapper.Map<List<RegionDto>>(regions)));
         }

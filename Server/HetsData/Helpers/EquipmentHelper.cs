@@ -118,7 +118,7 @@ namespace HetsData.Helpers
                 throw new ArgumentException("Status Code not found");
             }
 
-            return context.HetRentalRequestRotationList.AsNoTracking()
+            return context.HetRentalRequestRotationLists.AsNoTracking()
                 .Include(x => x.RentalRequest)
                 .Any(x => x.EquipmentId == id &&
                           x.RentalRequest.RentalRequestStatusTypeId == statusIdInProgress);
@@ -223,13 +223,13 @@ namespace HetsData.Helpers
                     int.Parse(Regex.Match(temp, @"\d+").Value) :
                     0;
 
-                equipmentLite.AttachmentCount = CalculateAttachmentCount(equipment.HetEquipmentAttachment.ToList());
+                equipmentLite.AttachmentCount = CalculateAttachmentCount(equipment.HetEquipmentAttachments.ToList());
                 equipmentLite.LastVerifiedDate = equipment.LastVerifiedDate;
                 equipmentLite.Status = equipment.EquipmentStatusType.EquipmentStatusTypeCode;
                 equipmentLite.LocalArea = equipment.LocalArea.Name;
 
                 // get project
-                HetRentalAgreement agreement = context.HetRentalAgreement
+                HetRentalAgreement agreement = context.HetRentalAgreements
                     .AsNoTracking()
                     .Include(x => x.Project)
                     .Include(x => x.Equipment)
@@ -291,7 +291,7 @@ namespace HetsData.Helpers
         public static bool IsHired(int id, DbAppContext context)
         {
             // add an "IsHired" flag to indicate if this equipment is currently in use
-            IQueryable<HetRentalAgreement> agreements = context.HetRentalAgreement.AsNoTracking()
+            IQueryable<HetRentalAgreement> agreements = context.HetRentalAgreements.AsNoTracking()
                 .Where(x => x.RentalAgreementStatusType.RentalAgreementStatusTypeCode.Equals(HetRentalAgreement.StatusActive));
 
             return agreements.Any(x => x.EquipmentId == id);
@@ -343,11 +343,11 @@ namespace HetsData.Helpers
             // determine current fiscal year - check for existing rotation lists this year
             // * the rollover uses the dates from the status table (rolloverDate)
             // *******************************************************************************
-            HetEquipment equipment = context.HetEquipment.AsNoTracking()
+            HetEquipment equipment = context.HetEquipments.AsNoTracking()
                 .Include(x => x.LocalArea.ServiceArea.District)
                 .First(x => x.EquipmentId == id);
 
-            HetDistrictStatus district = context.HetDistrictStatus.AsNoTracking()
+            HetDistrictStatus district = context.HetDistrictStatuses.AsNoTracking()
                 .First(x => x.DistrictId == equipment.LocalArea.ServiceArea.DistrictId);
 
             var fiscalYear = DateTime.Today.Year;
@@ -367,7 +367,7 @@ namespace HetsData.Helpers
             // *******************************************************************************
             // get all the time data for the current fiscal year
             // *******************************************************************************
-            float? summation = context.HetTimeRecord.AsNoTracking()
+            float? summation = context.HetTimeRecords.AsNoTracking()
                 .Include(x => x.RentalAgreement.Equipment)
                 .Where(x => x.RentalAgreement.EquipmentId == id &&
                             x.WorkedDate >= fiscalStart &&
@@ -405,22 +405,22 @@ namespace HetsData.Helpers
             DbAppContext context, string seniorityScoringRules)
         {
             // check if the local area exists
-            bool exists = context.HetLocalArea.Any(a => a.LocalAreaId == localAreaId);
+            bool exists = context.HetLocalAreas.Any(a => a.LocalAreaId == localAreaId);
 
             if (!exists) throw new ArgumentException("Local Area is invalid");
 
             // check if the equipment type exists
-            exists = context.HetDistrictEquipmentType
+            exists = context.HetDistrictEquipmentTypes
                 .Any(a => a.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
             if (!exists) throw new ArgumentException("District Equipment Type is invalid");
 
             // get the local area
-            HetLocalArea localArea = context.HetLocalArea
+            HetLocalArea localArea = context.HetLocalAreas
                 .First(a => a.LocalAreaId == localAreaId);
 
             // get the equipment type
-            HetDistrictEquipmentType districtEquipmentType = context.HetDistrictEquipmentType
+            HetDistrictEquipmentType districtEquipmentType = context.HetDistrictEquipmentTypes
                 .Include(x => x.EquipmentType)
                 .First(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
@@ -501,7 +501,7 @@ namespace HetsData.Helpers
         public static string GetEquipmentCode(int ownerId, DbAppContext context)
         {
             // get equipment owner
-            HetOwner owner = context.HetOwner.AsNoTracking()
+            HetOwner owner = context.HetOwners.AsNoTracking()
                 .FirstOrDefault(x => x.OwnerId == ownerId);
 
             if (owner != null)
@@ -512,7 +512,7 @@ namespace HetsData.Helpers
                 // get the last "added" equipment record
                 // 1. convert code to numeric (extract the numeric portion)
                 List<EquipmentCodeModel> equipmentList = (
-                    from equip in context.HetEquipment
+                    from equip in context.HetEquipments
                     where equip.OwnerId == owner.OwnerId &&
                           equip.EquipmentCode.StartsWith(owner.OwnerCode)
                     select new EquipmentCodeModel
@@ -539,7 +539,7 @@ namespace HetsData.Helpers
                     equipmentList = equipmentList.OrderByDescending(x => x.EquipmentNumber).ToList();
 
                     // 3. get last equipment
-                    HetEquipment lastEquipment = context.HetEquipment.AsNoTracking()
+                    HetEquipment lastEquipment = context.HetEquipments.AsNoTracking()
                         .FirstOrDefault(x => x.EquipmentId == equipmentList[0].EquipmentId);
 
                     if (lastEquipment != null)
@@ -574,7 +574,7 @@ namespace HetsData.Helpers
                         {
                             string candidate = GenerateEquipmentCode(ownerCode, equipmentNumber);
 
-                            if ((owner.HetEquipment).Any(x => x.EquipmentCode == candidate))
+                            if ((owner.HetEquipments).Any(x => x.EquipmentCode == candidate))
                             {
                                 equipmentNumber++;
                             }
@@ -599,11 +599,11 @@ namespace HetsData.Helpers
 
         public static List<History> GetHistoryRecords(int id, int? offset, int? limit, DbAppContext context)
         {
-            HetEquipment equipment = context.HetEquipment.AsNoTracking()
-                .Include(x => x.HetHistory)
+            HetEquipment equipment = context.HetEquipments.AsNoTracking()
+                .Include(x => x.HetHistories)
                 .First(a => a.EquipmentId == id);
 
-            List<HetHistory> data = equipment.HetHistory
+            List<HetHistory> data = equipment.HetHistories
                 .OrderByDescending(y => y.AppLastUpdateTimestamp)
                 .ToList();
 

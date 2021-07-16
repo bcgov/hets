@@ -38,15 +38,15 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual ActionResult<RentalAgreementRateDto> RentalAgreementRatesIdDeletePost([FromRoute]int id)
         {
-            bool exists = _context.HetRentalAgreementRate.Any(a => a.RentalAgreementRateId == id);
+            bool exists = _context.HetRentalAgreementRates.Any(a => a.RentalAgreementRateId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetRentalAgreementRate rate = _context.HetRentalAgreementRate.First(a => a.RentalAgreementRateId == id);
+            HetRentalAgreementRate rate = _context.HetRentalAgreementRates.First(a => a.RentalAgreementRateId == id);
 
-            _context.HetRentalAgreementRate.Remove(rate);
+            _context.HetRentalAgreementRates.Remove(rate);
 
             // save the changes
             _context.SaveChanges();
@@ -65,7 +65,7 @@ namespace HetsApi.Controllers
         public virtual ActionResult<RentalAgreementRateDto> RentalAgreementRatesIdPut([FromRoute]int id, 
             [FromBody]RentalAgreementRateDto item)
         {
-            bool exists = _context.HetRentalAgreementRate.Any(a => a.RentalAgreementRateId == id);
+            bool exists = _context.HetRentalAgreementRates.Any(a => a.RentalAgreementRateId == id);
 
             // not found
             if (!exists || id != item.RentalAgreementRateId) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -74,7 +74,7 @@ namespace HetsApi.Controllers
             int ratePeriodTypeId = StatusHelper.GetRatePeriodId(item.RatePeriod, _context) ?? throw new DataException("Rate Period Id cannot be null");
 
             // get record
-            HetRentalAgreementRate rate = _context.HetRentalAgreementRate.First(a => a.RentalAgreementRateId == id);
+            HetRentalAgreementRate rate = _context.HetRentalAgreementRates.First(a => a.RentalAgreementRateId == id);
 
             rate.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
 

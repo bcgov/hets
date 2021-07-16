@@ -33,7 +33,7 @@ namespace HetsApi.Controllers
         [AllowAnonymous]
         public virtual ActionResult<List<PermissionLite>> PermissionsGet()
         {
-            List<HetPermission> permissions = _context.HetPermission.ToList();
+            List<HetPermission> permissions = _context.HetPermissions.ToList();
 
             // convert Permission Model to the "PermissionLite" Model
             List<PermissionLite> result = new List<PermissionLite>();

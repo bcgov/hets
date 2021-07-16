@@ -92,7 +92,7 @@ namespace HetsData.Helpers
             if (localAreaId != null)
             {
                 // get the district
-                HetLocalArea localArea = context.HetLocalArea.AsNoTracking()
+                HetLocalArea localArea = context.HetLocalAreas.AsNoTracking()
                     .Include(x => x.ServiceArea)
                         .ThenInclude(y => y.District)
                     .First(x => x.LocalAreaId == localAreaId);
@@ -102,7 +102,7 @@ namespace HetsData.Helpers
                 if (districtId == null) return result;
 
                 // get fiscal year
-                HetDistrictStatus status = context.HetDistrictStatus.AsNoTracking()
+                HetDistrictStatus status = context.HetDistrictStatuses.AsNoTracking()
                 .First(x => x.DistrictId == districtId);
 
                 int? fiscalYear = status.CurrentFiscalYear;
@@ -113,7 +113,7 @@ namespace HetsData.Helpers
                 fiscalYear = fiscalYear + 1;
 
                 // count the number of rental agreements in the system in this district
-                int currentCount = context.HetRentalAgreement
+                int currentCount = context.HetRentalAgreements
                     .Count(x => x.DistrictId == districtId &&
                                 x.AppCreateTimestamp >= fiscalYearStart);
 
@@ -161,7 +161,7 @@ namespace HetsData.Helpers
                 DateTime fiscalYearStart = new DateTime(fiscalYear - 1, 1, 1);
 
                 // count the number of rental agreements in the system (for this district)
-                HetRentalAgreement agreement = context.HetRentalAgreement.AsNoTracking()
+                HetRentalAgreement agreement = context.HetRentalAgreements.AsNoTracking()
                     .Include(x => x.Project.District)
                     .OrderBy(x => x.RentalAgreementId)
                     .LastOrDefault(x => x.DistrictId == districtId &&

@@ -31,19 +31,19 @@ namespace HetsData.Repositories
 
         public List<UserDto> GetRecords()
         {
-            List<HetUser> users = _dbContext.HetUser.AsNoTracking()
+            List<HetUser> users = _dbContext.HetUsers.AsNoTracking()
                 .Include(x => x.District)
-                .Include(x => x.HetUserDistrict)
-                .Include(x => x.HetUserRole)
+                .Include(x => x.HetUserDistricts)
+                .Include(x => x.HetUserRoles)
                     .ThenInclude(y => y.Role)
-                        .ThenInclude(z => z.HetRolePermission)
+                        .ThenInclude(z => z.HetRolePermissions)
                             .ThenInclude(z => z.Permission)
                 .ToList();
 
             foreach (HetUser user in users)
             {
                 // remove inactive roles
-                user.HetUserRole = user.HetUserRole
+                user.HetUserRoles = user.HetUserRoles
                     .Where(x => x.Role != null &&
                                 x.EffectiveDate <= DateTime.UtcNow &&
                                 (x.ExpiryDate == null || x.ExpiryDate > DateTime.UtcNow))
@@ -61,19 +61,19 @@ namespace HetsData.Repositories
         /// <returns></returns>
         public UserDto GetRecord(int id)
         {
-            HetUser user = _dbContext.HetUser.AsNoTracking()
+            HetUser user = _dbContext.HetUsers.AsNoTracking()
                 .Include(x => x.District)
-                .Include(x => x.HetUserDistrict)
-                .Include(x => x.HetUserRole)
+                .Include(x => x.HetUserDistricts)
+                .Include(x => x.HetUserRoles)
                     .ThenInclude(y => y.Role)
-                        .ThenInclude(z => z.HetRolePermission)
+                        .ThenInclude(z => z.HetRolePermissions)
                             .ThenInclude(z => z.Permission)
                 .FirstOrDefault(x => x.UserId == id);
 
             if (user != null)
             {
                 // remove inactive roles
-                user.HetUserRole = user.HetUserRole
+                user.HetUserRoles = user.HetUserRoles
                     .Where(x => x.Role != null &&
                                 x.EffectiveDate <= DateTime.UtcNow &&
                                 (x.ExpiryDate == null || x.ExpiryDate > DateTime.UtcNow))

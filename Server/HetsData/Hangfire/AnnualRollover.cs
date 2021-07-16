@@ -43,7 +43,7 @@ namespace HetsData.Hangfire
         /// <returns></returns>
         public DistrictStatusDto GetRecord(int id)
         {
-            HetDistrictStatus status = _dbContextMain.HetDistrictStatus
+            HetDistrictStatus status = _dbContextMain.HetDistrictStatuses
                 .Include(a => a.District)
                 .FirstOrDefault(a => a.DistrictId == id);
 
@@ -88,7 +88,7 @@ namespace HetsData.Hangfire
                 SeniorityScoringRules scoringRules = new SeniorityScoringRules(seniorityScoringRules);
 
                 // validate district id
-                HetDistrict district = _dbContextMain.HetDistrict
+                HetDistrict district = _dbContextMain.HetDistricts
                     .FirstOrDefault(x => x.DistrictId == districtId);
 
                 if (district == null)
@@ -129,12 +129,12 @@ namespace HetsData.Hangfire
                 //status.NextFiscalYear = rolloverYear + 1;
 
                 // get all district equipment types
-                List<HetDistrictEquipmentType> equipmentTypes = _dbContextMain.HetDistrictEquipmentType
+                List<HetDistrictEquipmentType> equipmentTypes = _dbContextMain.HetDistrictEquipmentTypes
                     .Include(x => x.EquipmentType)
                     .Where(x => x.DistrictId == districtId).ToList();
 
                 // get all local areas
-                List<HetLocalArea> localAreas = _dbContextMain.HetLocalArea
+                List<HetLocalArea> localAreas = _dbContextMain.HetLocalAreas
                     .Where(a => a.ServiceArea.DistrictId == districtId).ToList();
 
                 // update status - job is kicked off
@@ -167,7 +167,7 @@ namespace HetsData.Hangfire
                         int blockSize = isDumpTruck ? scoringRules.GetBlockSize("DumpTruck") : scoringRules.GetBlockSize();
                         int totalBlocks = isDumpTruck ? scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
 
-                        List<HetEquipment> data = _dbContextMain.HetEquipment
+                        List<HetEquipment> data = _dbContextMain.HetEquipments
                             .Include(x => x.LocalArea)
                             .Include(x => x.DistrictEquipmentType.EquipmentType)
                             .Where(x => x.EquipmentStatusTypeId == statusId &&
@@ -220,7 +220,7 @@ namespace HetsData.Hangfire
                 WriteLog("Generate New Secret Keys - District #" + districtId);
 
                 // get records
-                List<HetOwner> owners = _dbContextMain.HetOwner
+                List<HetOwner> owners = _dbContextMain.HetOwners
                     .Where(x => x.BusinessId == null &&
                                 x.LocalArea.ServiceArea.DistrictId == districtId)
                     .ToList();
@@ -243,7 +243,7 @@ namespace HetsData.Hangfire
                     key = temp + "-" + (rolloverYear + 1) + "-" + key;
 
                     // get owner and update
-                    HetOwner ownerRecord = _dbContextMain.HetOwner.First(x => x.OwnerId == owner.OwnerId);
+                    HetOwner ownerRecord = _dbContextMain.HetOwners.First(x => x.OwnerId == owner.OwnerId);
                     ownerRecord.SharedKey = key;
 
                     WriteLog($"Owner ({i}/{ownerCount})");
@@ -281,7 +281,7 @@ namespace HetsData.Hangfire
 
             try
             {
-                var progress = _dbContextMonitor.HetRolloverProgress.FirstOrDefault(x => x.DistrictId == districtId);
+                var progress = _dbContextMonitor.HetRolloverProgresses.FirstOrDefault(x => x.DistrictId == districtId);
                 if (progress == null)
                 {
                     progress = new HetRolloverProgress { DistrictId = districtId, ProgressPercentage = (int?)percentage };
@@ -305,12 +305,12 @@ namespace HetsData.Hangfire
         {
             try
             {
-                var progress = _dbContextMonitor.HetRolloverProgress.FirstOrDefault(x => x.DistrictId == districtId);
+                var progress = _dbContextMonitor.HetRolloverProgresses.FirstOrDefault(x => x.DistrictId == districtId);
 
                 if (progress == null)
                 {
                     progress = new HetRolloverProgress { DistrictId = districtId, ProgressPercentage = (int?)0 };
-                    _dbContextMonitor.HetRolloverProgress.Add(progress);
+                    _dbContextMonitor.HetRolloverProgresses.Add(progress);
                 }
                 else
                 {
@@ -330,7 +330,7 @@ namespace HetsData.Hangfire
 
         private HetDistrictStatus GetStatus(int id)
         {
-            HetDistrictStatus status = _dbContextMain.HetDistrictStatus
+            HetDistrictStatus status = _dbContextMain.HetDistrictStatuses
                 .Include(a => a.District)
                 .FirstOrDefault(a => a.DistrictId == id);
 
@@ -347,7 +347,7 @@ namespace HetsData.Hangfire
                     DisplayRolloverMessage = false
                 };
 
-                _dbContextMain.HetDistrictStatus.Add(status);
+                _dbContextMain.HetDistrictStatuses.Add(status);
             }
 
             return status;

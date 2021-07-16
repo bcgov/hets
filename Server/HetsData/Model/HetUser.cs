@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+
+#nullable disable
 
 namespace HetsData.Model
 {
@@ -8,14 +9,12 @@ namespace HetsData.Model
     {
         public HetUser()
         {
-            HetUserDistrict = new HashSet<HetUserDistrict>();
-            HetUserFavourite = new HashSet<HetUserFavourite>();
-            HetUserRole = new HashSet<HetUserRole>();
+            HetUserDistricts = new HashSet<HetUserDistrict>();
+            HetUserFavourites = new HashSet<HetUserFavourite>();
+            HetUserRoles = new HashSet<HetUserRole>();
         }
 
-        [JsonProperty("Id")]
         public int UserId { get; set; }
-
         public string Surname { get; set; }
         public string GivenName { get; set; }
         public string Initials { get; set; }
@@ -26,29 +25,23 @@ namespace HetsData.Model
         public string AgreementCity { get; set; }
         public bool Active { get; set; }
         public int? DistrictId { get; set; }
-        [JsonIgnore]public string AppCreateUserDirectory { get; set; }
-        [JsonIgnore]public string AppCreateUserGuid { get; set; }
-        [JsonIgnore]public string AppCreateUserid { get; set; }
-        [JsonIgnore]public DateTime AppCreateTimestamp { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserDirectory { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserGuid { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserid { get; set; }
-        [JsonIgnore]public DateTime AppLastUpdateTimestamp { get; set; }
-        [JsonIgnore]public string DbCreateUserId { get; set; }
-        [JsonIgnore]public DateTime DbCreateTimestamp { get; set; }
-        [JsonIgnore]public DateTime DbLastUpdateTimestamp { get; set; }
-        [JsonIgnore]public string DbLastUpdateUserId { get; set; }
+        public string AppCreateUserDirectory { get; set; }
+        public string AppCreateUserGuid { get; set; }
+        public string AppCreateUserid { get; set; }
+        public DateTime AppCreateTimestamp { get; set; }
+        public string AppLastUpdateUserDirectory { get; set; }
+        public string AppLastUpdateUserGuid { get; set; }
+        public string AppLastUpdateUserid { get; set; }
+        public DateTime AppLastUpdateTimestamp { get; set; }
+        public string DbCreateUserId { get; set; }
+        public DateTime DbCreateTimestamp { get; set; }
+        public DateTime DbLastUpdateTimestamp { get; set; }
+        public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
 
-        public HetDistrict District { get; set; }
-
-        [JsonProperty("UserDistricts")]
-        public ICollection<HetUserDistrict> HetUserDistrict { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetUserFavourite> HetUserFavourite { get; set; }
-
-        [JsonProperty("UserRoles")]
-        public ICollection<HetUserRole> HetUserRole { get; set; }
+        public virtual HetDistrict District { get; set; }
+        public virtual ICollection<HetUserDistrict> HetUserDistricts { get; set; }
+        public virtual ICollection<HetUserFavourite> HetUserFavourites { get; set; }
+        public virtual ICollection<HetUserRole> HetUserRoles { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+
+#nullable disable
 
 namespace HetsData.Model
 {
@@ -8,37 +9,30 @@ namespace HetsData.Model
     {
         public HetRole()
         {
-            HetRolePermission = new HashSet<HetRolePermission>();
-            HetUserRole = new HashSet<HetUserRole>();
-            HetBusinessUserRole = new HashSet<HetBusinessUserRole>();
+            HetBusinessUserRoles = new HashSet<HetBusinessUserRole>();
+            HetRolePermissions = new HashSet<HetRolePermission>();
+            HetUserRoles = new HashSet<HetUserRole>();
         }
 
-        [JsonProperty("Id")]
         public int RoleId { get; set; }
-
         public string Name { get; set; }
         public string Description { get; set; }
-        [JsonIgnore]public string AppCreateUserDirectory { get; set; }
-        [JsonIgnore]public string AppCreateUserGuid { get; set; }
-        [JsonIgnore]public string AppCreateUserid { get; set; }
-        [JsonIgnore]public DateTime AppCreateTimestamp { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserDirectory { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserGuid { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserid { get; set; }
-        [JsonIgnore]public DateTime AppLastUpdateTimestamp { get; set; }
-        [JsonIgnore]public string DbCreateUserId { get; set; }
-        [JsonIgnore]public DateTime DbCreateTimestamp { get; set; }
-        [JsonIgnore]public DateTime DbLastUpdateTimestamp { get; set; }
-        [JsonIgnore]public string DbLastUpdateUserId { get; set; }
+        public string AppCreateUserDirectory { get; set; }
+        public string AppCreateUserGuid { get; set; }
+        public string AppCreateUserid { get; set; }
+        public DateTime AppCreateTimestamp { get; set; }
+        public string AppLastUpdateUserDirectory { get; set; }
+        public string AppLastUpdateUserGuid { get; set; }
+        public string AppLastUpdateUserid { get; set; }
+        public DateTime AppLastUpdateTimestamp { get; set; }
+        public string DbCreateUserId { get; set; }
+        public DateTime DbCreateTimestamp { get; set; }
+        public DateTime DbLastUpdateTimestamp { get; set; }
+        public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
 
-        [JsonProperty("RolePermissions")]
-        public ICollection<HetRolePermission> HetRolePermission { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetUserRole> HetUserRole { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetBusinessUserRole> HetBusinessUserRole { get; set; }
+        public virtual ICollection<HetBusinessUserRole> HetBusinessUserRoles { get; set; }
+        public virtual ICollection<HetRolePermission> HetRolePermissions { get; set; }
+        public virtual ICollection<HetUserRole> HetUserRoles { get; set; }
     }
 }

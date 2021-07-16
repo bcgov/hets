@@ -124,9 +124,9 @@ namespace HetsData.Helpers
                     ownerLite.MobilePhoneNumber = owner.PrimaryContact.MobilePhoneNumber;
                 }
 
-                if (owner.HetEquipment != null)
+                if (owner.HetEquipments != null)
                 {
-                    ownerLite.EquipmentCount = CalculateEquipmentCount(owner.HetEquipment.ToList());
+                    ownerLite.EquipmentCount = CalculateEquipmentCount(owner.HetEquipments.ToList());
                 }
 
                 ownerLite.Status = owner.OwnerStatusType.Description;

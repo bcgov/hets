@@ -36,12 +36,12 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual ActionResult<ContactDto> ContactsIdDeletePost([FromRoute]int id)
         {
-            bool exists = _context.HetContact.Any(a => a.ContactId == id);
+            bool exists = _context.HetContacts.Any(a => a.ContactId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetContact item = _context.HetContact.First(a => a.ContactId == id);
+            HetContact item = _context.HetContacts.First(a => a.ContactId == id);
 
             // check if this is a project - and if this is a "primary contact"
             if (item.ProjectId != null && item.ProjectId > 0)
@@ -57,7 +57,7 @@ namespace HetsApi.Controllers
                 }
             }
 
-            _context.HetContact.Remove(item);
+            _context.HetContacts.Remove(item);
 
             // save the changes
             _context.SaveChanges();

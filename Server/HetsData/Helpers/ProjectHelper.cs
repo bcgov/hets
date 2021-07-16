@@ -56,11 +56,11 @@ namespace HetsData.Helpers
 
         public static List<History> GetHistoryRecords(int id, int? offset, int? limit, DbAppContext context)
         {
-            HetProject project = context.HetProject.AsNoTracking()
-                .Include(x => x.HetHistory)
+            HetProject project = context.HetProjects.AsNoTracking()
+                .Include(x => x.HetHistories)
                 .First(a => a.ProjectId == id);
 
-            List<HetHistory> data = project.HetHistory
+            List<HetHistory> data = project.HetHistories
                 .OrderByDescending(y => y.AppLastUpdateTimestamp)
                 .ToList();
 

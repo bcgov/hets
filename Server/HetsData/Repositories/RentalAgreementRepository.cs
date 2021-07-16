@@ -40,7 +40,7 @@ namespace HetsData.Repositories
         /// <returns></returns>
         public RentalAgreementDto GetRecord(int id)
         {
-            var entity = _dbContext.HetRentalAgreement.AsNoTracking()
+            var entity = _dbContext.HetRentalAgreements.AsNoTracking()
                 .Include(x => x.RentalAgreementStatusType)
                 .Include(x => x.RatePeriodType)
                 .Include(x => x.District)
@@ -50,7 +50,7 @@ namespace HetsData.Repositories
                     .ThenInclude(y => y.DistrictEquipmentType)
                         .ThenInclude(d => d.EquipmentType)
                 .Include(x => x.Equipment)
-                    .ThenInclude(y => y.HetEquipmentAttachment)
+                    .ThenInclude(y => y.HetEquipmentAttachments)
                 .Include(x => x.Equipment)
                     .ThenInclude(y => y.EquipmentStatusType)
                 .Include(x => x.Equipment)
@@ -59,10 +59,10 @@ namespace HetsData.Repositories
                     .ThenInclude(p => p.District.Region)
                 .Include(x => x.Project)
                     .ThenInclude(p => p.ProjectStatusType)
-                .Include(x => x.HetRentalAgreementCondition)
-                .Include(x => x.HetRentalAgreementRate)
+                .Include(x => x.HetRentalAgreementConditions)
+                .Include(x => x.HetRentalAgreementRates)
                     .ThenInclude(x => x.RatePeriodType)
-                .Include(x => x.HetTimeRecord)
+                .Include(x => x.HetTimeRecords)
                 .FirstOrDefault(a => a.RentalAgreementId == id);
 
             if (entity == null)
@@ -81,18 +81,18 @@ namespace HetsData.Repositories
         public TimeRecordLite GetTimeRecords(int id, int? districtId)
         {
             // get fiscal year
-            HetDistrictStatus status = _dbContext.HetDistrictStatus.AsNoTracking()
+            HetDistrictStatus status = _dbContext.HetDistrictStatuses.AsNoTracking()
                 .First(x => x.DistrictId == districtId);
 
             int? fiscalYear = status.CurrentFiscalYear;
 
             // get agreement and time records
-            HetRentalAgreement agreement = _dbContext.HetRentalAgreement.AsNoTracking()
+            HetRentalAgreement agreement = _dbContext.HetRentalAgreements.AsNoTracking()
                 .Include(x => x.Equipment)
                     .ThenInclude(y => y.DistrictEquipmentType)
                         .ThenInclude(z => z.EquipmentType)
                 .Include(x => x.Project)
-                .Include(x => x.HetTimeRecord)
+                .Include(x => x.HetTimeRecords)
                 .First(x => x.RentalAgreementId == id);
 
             // get the max hours for this equipment type
@@ -133,7 +133,7 @@ namespace HetsData.Repositories
 
                 timeRecord.TimeRecords = new List<TimeRecordDto>();
                 timeRecord.TimeRecords
-                    .AddRange(_mapper.Map<List<TimeRecordDto>>(agreement.HetTimeRecord.Where(x => x.WorkedDate >= fiscalYearStart)));
+                    .AddRange(_mapper.Map<List<TimeRecordDto>>(agreement.HetTimeRecords.Where(x => x.WorkedDate >= fiscalYearStart)));
             }
 
             timeRecord.EquipmentCode = equipmentCode;
@@ -147,25 +147,25 @@ namespace HetsData.Repositories
 
         public List<RentalAgreementRateDto> GetRentalRates(int id)
         {
-            HetRentalAgreement agreement = _dbContext.HetRentalAgreement.AsNoTracking()
-                .Include(x => x.HetRentalAgreementRate)
+            HetRentalAgreement agreement = _dbContext.HetRentalAgreements.AsNoTracking()
+                .Include(x => x.HetRentalAgreementRates)
                     .ThenInclude(x => x.RatePeriodType)
                 .First(x => x.RentalAgreementId == id);
 
             List<HetRentalAgreementRate> rates = new List<HetRentalAgreementRate>();
 
-            rates.AddRange(agreement.HetRentalAgreementRate);
+            rates.AddRange(agreement.HetRentalAgreementRates);
 
             return _mapper.Map<List<RentalAgreementRateDto>>(rates);
         }
 
         public List<RentalAgreementConditionDto> GetConditions(int id)
         {
-            HetRentalAgreement agreement = _dbContext.HetRentalAgreement.AsNoTracking()
-                .Include(x => x.HetRentalAgreementCondition)
+            HetRentalAgreement agreement = _dbContext.HetRentalAgreements.AsNoTracking()
+                .Include(x => x.HetRentalAgreementConditions)
                 .First(x => x.RentalAgreementId == id);
 
-            return _mapper.Map<List<RentalAgreementConditionDto>>(agreement.HetRentalAgreementCondition);
+            return _mapper.Map<List<RentalAgreementConditionDto>>(agreement.HetRentalAgreementConditions);
         }
 
         /// <summary>

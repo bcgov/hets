@@ -32,26 +32,26 @@ namespace HetsData.Repositories
         /// <returns></returns>
         public ProjectDto GetRecord(int projectId, int? districtId = 0)
         {
-            HetProject project = _dbContext.HetProject.AsNoTracking()
+            HetProject project = _dbContext.HetProjects.AsNoTracking()
                 .Include(x => x.ProjectStatusType)
                 .Include(x => x.District)
                     .ThenInclude(x => x.Region)
-                .Include(x => x.HetContact)
+                .Include(x => x.HetContacts)
                 .Include(x => x.PrimaryContact)
-                .Include(x => x.HetRentalRequest)
+                .Include(x => x.HetRentalRequests)
                     .ThenInclude(y => y.DistrictEquipmentType)
-                .Include(x => x.HetRentalRequest)
+                .Include(x => x.HetRentalRequests)
                     .ThenInclude(y => y.RentalRequestStatusType)
-                .Include(x => x.HetRentalRequest)
-                    .ThenInclude(y => y.HetRentalRequestRotationList)
-                .Include(x => x.HetRentalRequest)
+                .Include(x => x.HetRentalRequests)
+                    .ThenInclude(y => y.HetRentalRequestRotationLists)
+                .Include(x => x.HetRentalRequests)
                     .ThenInclude(y => y.LocalArea)
-                .Include(x => x.HetRentalAgreement)
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(y => y.Equipment)
                         .ThenInclude(z => z.DistrictEquipmentType)
-                .Include(x => x.HetRentalAgreement)
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(y => y.RentalAgreementStatusType)
-                .Include(x => x.HetRentalAgreement)
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(y => y.Equipment)
                         .ThenInclude(z => z.LocalArea)
                 .FirstOrDefault(a => a.ProjectId == projectId);
@@ -64,13 +64,13 @@ namespace HetsData.Repositories
                 // count active requests (In Progress)
                 int countActiveRequests = 0;
 
-                foreach (HetRentalRequest rentalRequest in project.HetRentalRequest)
+                foreach (HetRentalRequest rentalRequest in project.HetRentalRequests)
                 {
                     rentalRequest.Status = rentalRequest.RentalRequestStatusType.RentalRequestStatusTypeCode;
 
                     int temp = 0;
 
-                    foreach (HetRentalRequestRotationList equipment in rentalRequest.HetRentalRequestRotationList)
+                    foreach (HetRentalRequestRotationList equipment in rentalRequest.HetRentalRequestRotationLists)
                     {
                         if (equipment.OfferResponse != null &&
                             equipment.OfferResponse.ToLower().Equals("yes"))
@@ -86,7 +86,7 @@ namespace HetsData.Repositories
                     }
 
                     rentalRequest.YesCount = temp;
-                    rentalRequest.HetRentalRequestRotationList = null;
+                    rentalRequest.HetRentalRequestRotationLists = null;
 
                     if (rentalRequest.RentalRequestStatusType.RentalRequestStatusTypeCode == null ||
                         rentalRequest.RentalRequestStatusType.RentalRequestStatusTypeCode
@@ -99,7 +99,7 @@ namespace HetsData.Repositories
                 // count active agreements (Active)
                 int countActiveAgreements = 0;
 
-                foreach (HetRentalAgreement rentalAgreement in project.HetRentalAgreement)
+                foreach (HetRentalAgreement rentalAgreement in project.HetRentalAgreements)
                 {
                     rentalAgreement.Status = rentalAgreement.RentalAgreementStatusType.RentalAgreementStatusTypeCode;
 
@@ -123,7 +123,7 @@ namespace HetsData.Repositories
                     }
                 }
 
-                foreach (HetRentalRequest rentalRequest in project.HetRentalRequest)
+                foreach (HetRentalRequest rentalRequest in project.HetRentalRequests)
                 {
                     if (rentalRequest.LocalArea != null)
                     {
@@ -132,13 +132,13 @@ namespace HetsData.Repositories
                 }
 
                 //To make rental agreement lightweight
-                foreach (HetRentalAgreement rentalAgreement in project.HetRentalAgreement)
+                foreach (HetRentalAgreement rentalAgreement in project.HetRentalAgreements)
                 {
                     rentalAgreement.Equipment.LocalArea = null;
                 }
 
                 //To make rental request lightweight
-                foreach (HetRentalRequest rentalRequest in project.HetRentalRequest)
+                foreach (HetRentalRequest rentalRequest in project.HetRentalRequests)
                 {
                     rentalRequest.LocalArea = null;
                 }
@@ -161,7 +161,7 @@ namespace HetsData.Repositories
             // get fiscal year
             if (districtId > 0)
             {
-                HetDistrictStatus status = _dbContext.HetDistrictStatus.AsNoTracking()
+                HetDistrictStatus status = _dbContext.HetDistrictStatuses.AsNoTracking()
                     .First(x => x.DistrictId == districtId);
 
                 int? fiscalYear = status.CurrentFiscalYear;
@@ -192,8 +192,8 @@ namespace HetsData.Repositories
                 projectLite.Name = project.Name;
                 projectLite.PrimaryContact = _mapper.Map<ContactDto>(project.PrimaryContact);
                 projectLite.District = _mapper.Map<DistrictDto>(project.District);
-                projectLite.Requests = project.HetRentalRequest?.Count;
-                projectLite.Hires = project.HetRentalAgreement?.Count;
+                projectLite.Requests = project.HetRentalRequests?.Count;
+                projectLite.Hires = project.HetRentalAgreements?.Count;
                 projectLite.ProvincialProjectNumber = project.ProvincialProjectNumber;
                 projectLite.FiscalYear = project.FiscalYear;
             }

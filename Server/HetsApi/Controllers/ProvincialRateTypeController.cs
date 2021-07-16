@@ -37,7 +37,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual ActionResult<List<ProvincialRateTypeDto>> ProvincialRateTypesGet()
         {
-            List<HetProvincialRateType> rates = _context.HetProvincialRateType.AsNoTracking()
+            List<HetProvincialRateType> rates = _context.HetProvincialRateTypes.AsNoTracking()
                 .Where(x => x.Active)
                 .ToList();
 
@@ -60,7 +60,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual ActionResult<List<ProvincialRateTypeDto>> ProvincialRateTypesOvertimeGet()
         {
-            List<HetProvincialRateType> rates = _context.HetProvincialRateType.AsNoTracking()
+            List<HetProvincialRateType> rates = _context.HetProvincialRateTypes.AsNoTracking()
                 .Where(x => x.Active &&
                             x.Overtime)
                 .ToList();
@@ -86,13 +86,13 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.CodeTableManagement, HetPermission.WriteAccess)]
         public virtual ActionResult<ProvincialRateTypeDto> ProvincialRatesIdPut([FromRoute] int id, [FromBody] ProvincialRateTypeDto item)
         {
-            bool exists = _context.HetProvincialRateType.Any(a => a.RateType == item.RateType);
+            bool exists = _context.HetProvincialRateTypes.Any(a => a.RateType == item.RateType);
 
             // not found
             if (!exists || id != item.Id) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetProvincialRateType rate = _context.HetProvincialRateType.First(a => a.RateType == item.RateType);
+            HetProvincialRateType rate = _context.HetProvincialRateTypes.First(a => a.RateType == item.RateType);
 
             rate.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             rate.Description = item.Description;
@@ -107,7 +107,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // get the updated record and return
-            rate = _context.HetProvincialRateType.First(a => a.RateType == item.RateType);
+            rate = _context.HetProvincialRateTypes.First(a => a.RateType == item.RateType);
             rate.Id = id;
 
             return new ObjectResult(new HetsResponse(_mapper.Map<ProvincialRateTypeDto>(rate)));

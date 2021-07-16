@@ -51,31 +51,31 @@ namespace HetsData.Repositories
             }
 
             // get owner record
-            HetOwner owner = _dbContext.HetOwner.AsNoTracking()
+            HetOwner owner = _dbContext.HetOwners.AsNoTracking()
                 .Include(x => x.OwnerStatusType)
                 .Include(x => x.LocalArea.ServiceArea.District.Region)
-                .Include(x => x.HetEquipment)
+                .Include(x => x.HetEquipments)
                     .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
-                .Include(x => x.HetEquipment)
+                .Include(x => x.HetEquipments)
                     .ThenInclude(y => y.DistrictEquipmentType)
                         .ThenInclude(z => z.EquipmentType)
-                .Include(x => x.HetEquipment)
+                .Include(x => x.HetEquipments)
                     .ThenInclude(y => y.EquipmentStatusType)
-                .Include(x => x.HetEquipment)
-                    .ThenInclude(y => y.HetEquipmentAttachment)
-                .Include(x => x.HetContact)
+                .Include(x => x.HetEquipments)
+                    .ThenInclude(y => y.HetEquipmentAttachments)
+                .Include(x => x.HetContacts)
                 .Include(x => x.PrimaryContact)
                 .FirstOrDefault(a => a.OwnerId == id);
 
             if (owner != null)
             {
                 // remove any archived equipment
-                owner.HetEquipment = owner.HetEquipment.Where(e => e.EquipmentStatusTypeId != statusIdArchived).ToList();
+                owner.HetEquipments = owner.HetEquipments.Where(e => e.EquipmentStatusTypeId != statusIdArchived).ToList();
 
                 // populate the "Status" description
                 owner.Status = owner.OwnerStatusType.OwnerStatusTypeCode;
 
-                foreach (HetEquipment equipment in owner.HetEquipment)
+                foreach (HetEquipment equipment in owner.HetEquipments)
                 {
                     equipment.IsHired = EquipmentHelper.IsHired(id, _dbContext);
                     equipment.NumberOfBlocks = EquipmentHelper.GetNumberOfBlocks(equipment, _configuration);
@@ -114,7 +114,7 @@ namespace HetsData.Repositories
                 throw new ArgumentException("Status Code not found");
             }
 
-            return _dbContext.HetRentalRequestRotationList.AsNoTracking()
+            return _dbContext.HetRentalRequestRotationLists.AsNoTracking()
                 .Include(x => x.RentalRequest)
                 .Include(x => x.Equipment)
                 .Any(x => x.Equipment.OwnerId == id &&
@@ -126,11 +126,11 @@ namespace HetsData.Repositories
 
         public List<History> GetHistoryRecords(int id, int? offset, int? limit)
         {
-            HetOwner owner = _dbContext.HetOwner.AsNoTracking()
-                .Include(x => x.HetHistory)
+            HetOwner owner = _dbContext.HetOwners.AsNoTracking()
+                .Include(x => x.HetHistories)
                 .First(a => a.OwnerId == id);
 
-            List<HetHistory> data = owner.HetHistory
+            List<HetHistory> data = owner.HetHistories
                 .OrderByDescending(y => y.AppLastUpdateTimestamp)
                 .ToList();
 
@@ -175,14 +175,14 @@ namespace HetsData.Repositories
                 OwnerVerificationReportModel model = new OwnerVerificationReportModel();
 
                 // get owner records
-                IQueryable<HetOwner> ownerRecords = _dbContext.HetOwner.AsNoTracking()
+                IQueryable<HetOwner> ownerRecords = _dbContext.HetOwners.AsNoTracking()
                     .Include(x => x.PrimaryContact)
                     .Include(x => x.Business)
-                    .Include(x => x.HetEquipment)
-                        .ThenInclude(a => a.HetEquipmentAttachment)
-                    .Include(x => x.HetEquipment)
+                    .Include(x => x.HetEquipments)
+                        .ThenInclude(a => a.HetEquipmentAttachments)
+                    .Include(x => x.HetEquipments)
                         .ThenInclude(l => l.LocalArea)
-                    .Include(x => x.HetEquipment)
+                    .Include(x => x.HetEquipments)
                         .ThenInclude(y => y.DistrictEquipmentType)
                     .Include(x => x.LocalArea)
                         .ThenInclude(s => s.ServiceArea)
@@ -277,7 +277,7 @@ namespace HetsData.Repositories
                         }
 
                         // strip out inactive and archived equipment
-                        owner.HetEquipment = owner.HetEquipment.Where(x => x.EquipmentStatusTypeId == equipmentStatusId).ToList();
+                        owner.HetEquipments = owner.HetEquipments.Where(x => x.EquipmentStatusTypeId == equipmentStatusId).ToList();
 
                         // setup address line 2
                         string temp = owner.Address2;

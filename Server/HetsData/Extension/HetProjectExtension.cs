@@ -6,7 +6,7 @@ namespace HetsData.Model
     /// <summary>
     /// Rental Request Database Model Extension
     /// </summary>
-    public sealed partial class HetProject
+    public partial class HetProject
     {
         /// <summary>
         /// Status Codes

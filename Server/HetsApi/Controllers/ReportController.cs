@@ -42,16 +42,17 @@ namespace HetsApi.Controllers
             // get users district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
-            var reports = _context.HetBatchReport.AsNoTracking()
+            var reports = _context.HetBatchReports.AsNoTracking()
                 .Where(x => x.DistrictId == districtId)
                 .OrderByDescending(x => x.StartDate)
+                .ToList()
                 .Select(x => new BatchReportDto
                 {
                     ReportId = x.ReportId,
                     DistrictId = x.DistrictId,
                     StartDate = x.StartDate,
                     EndDate = x.EndDate,
-                    Complete = x.Complete
+                    Complete = x.Complete ?? false
                 }).ToList();
 
             return new ObjectResult(new HetsResponse(reports));
@@ -66,16 +67,16 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual ActionResult<BatchReportDto> BatchReportIdDeletePost([FromRoute]int id)
         {
-            bool exists = _context.HetBatchReport.Any(a => a.ReportId == id);
+            bool exists = _context.HetBatchReports.Any(a => a.ReportId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetBatchReport report = _context.HetBatchReport.First(a => a.ReportId == id);
+            HetBatchReport report = _context.HetBatchReports.First(a => a.ReportId == id);
 
             if (report != null)
             {
-                _context.HetBatchReport.Remove(report);
+                _context.HetBatchReports.Remove(report);
 
                 // delete file
                 FileUtility.DeleteFile(report.ReportLink);
@@ -96,12 +97,12 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual IActionResult BatchReportIdDownloadGet([FromRoute]int id)
         {
-            bool exists = _context.HetBatchReport.Any(a => a.ReportId == id);
+            bool exists = _context.HetBatchReports.Any(a => a.ReportId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetBatchReport report = _context.HetBatchReport.AsNoTracking().First(a => a.ReportId == id);
+            HetBatchReport report = _context.HetBatchReports.AsNoTracking().First(a => a.ReportId == id);
 
             // report name
             string reportName = report.ReportName + ".pdf";

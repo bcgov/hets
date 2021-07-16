@@ -36,13 +36,13 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual ActionResult<DigitalFileDto> AttachmentsIdDeletePost([FromRoute]int id)
         {
-            bool exists = _context.HetDigitalFile.Any(a => a.DigitalFileId == id);
+            bool exists = _context.HetDigitalFiles.Any(a => a.DigitalFileId == id);
 
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetDigitalFile item = _context.HetDigitalFile.First(a => a.DigitalFileId == id);
+            HetDigitalFile item = _context.HetDigitalFiles.First(a => a.DigitalFileId == id);
 
-            _context.HetDigitalFile.Remove(item);
+            _context.HetDigitalFiles.Remove(item);
             _context.SaveChanges();
 
             return new ObjectResult(new HetsResponse(_mapper.Map<DigitalFileDto>(item)));
@@ -57,12 +57,12 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual ActionResult<FileContentResult> AttachmentsIdDownloadGet([FromRoute]int id)
         {
-            bool exists = _context.HetDigitalFile.Any(a => a.DigitalFileId == id);
+            bool exists = _context.HetDigitalFiles.Any(a => a.DigitalFileId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetDigitalFile attachment = _context.HetDigitalFile.First(a => a.DigitalFileId == id);
+            HetDigitalFile attachment = _context.HetDigitalFiles.First(a => a.DigitalFileId == id);
 
             FileContentResult result = new FileContentResult(attachment.FileContents, "application/octet-stream")
             {

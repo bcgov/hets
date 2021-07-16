@@ -37,16 +37,16 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual ActionResult<RentalAgreementConditionDto> RentalAgreementConditionsIdDeletePost([FromRoute] int id)
         {
-            bool exists = _context.HetRentalAgreementCondition.Any(a => a.RentalAgreementConditionId == id);
+            bool exists = _context.HetRentalAgreementConditions.Any(a => a.RentalAgreementConditionId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetRentalAgreementCondition condition = _context.HetRentalAgreementCondition.AsNoTracking()
+            HetRentalAgreementCondition condition = _context.HetRentalAgreementConditions.AsNoTracking()
                 .First(a => a.RentalAgreementConditionId == id);
 
-            _context.HetRentalAgreementCondition.Remove(condition);
+            _context.HetRentalAgreementConditions.Remove(condition);
 
             // save changes
             _context.SaveChanges();
@@ -65,7 +65,7 @@ namespace HetsApi.Controllers
         public virtual ActionResult<RentalAgreementConditionDto> RentalAgreementConditionsIdPut([FromRoute] int id,
             [FromBody] RentalAgreementConditionDto item)
         {
-            bool exists = _context.HetRentalAgreementCondition.Any(a => a.RentalAgreementConditionId == id);
+            bool exists = _context.HetRentalAgreementConditions.Any(a => a.RentalAgreementConditionId == id);
 
             // not found
             if (!exists || id != item.RentalAgreementConditionId)
@@ -83,7 +83,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // return the updated condition record
-            condition = _context.HetRentalAgreementCondition.AsNoTracking()
+            condition = _context.HetRentalAgreementConditions.AsNoTracking()
                 .First(a => a.RentalAgreementConditionId == id);
 
             return new ObjectResult(new HetsResponse(_mapper.Map<RentalAgreementConditionDto>(condition)));

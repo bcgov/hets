@@ -38,16 +38,16 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual ActionResult<EquipmentAttachmentDto> EquipmentAttachmentsIdDeletePost([FromRoute]int id)
         {
-            bool exists = _context.HetEquipmentAttachment.Any(a => a.EquipmentAttachmentId == id);
+            bool exists = _context.HetEquipmentAttachments.Any(a => a.EquipmentAttachmentId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetEquipmentAttachment item = _context.HetEquipmentAttachment
+            HetEquipmentAttachment item = _context.HetEquipmentAttachments
                 .Include(x => x.Equipment)
                 .First(a => a.EquipmentAttachmentId == id);
 
-            _context.HetEquipmentAttachment.Remove(item);
+            _context.HetEquipmentAttachments.Remove(item);
 
             // save the changes
             _context.SaveChanges();
@@ -71,7 +71,7 @@ namespace HetsApi.Controllers
                 return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
-            bool exists = _context.HetEquipmentAttachment.Any(a => a.EquipmentAttachmentId == id);
+            bool exists = _context.HetEquipmentAttachments.Any(a => a.EquipmentAttachmentId == id);
 
             if (!exists)
             {
@@ -80,7 +80,7 @@ namespace HetsApi.Controllers
             }
 
             // get record
-            HetEquipmentAttachment equipmentAttachment = _context.HetEquipmentAttachment
+            HetEquipmentAttachment equipmentAttachment = _context.HetEquipmentAttachments
                 .First(x => x.EquipmentAttachmentId == id);
 
             equipmentAttachment.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
@@ -92,7 +92,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // return the updated condition type record
-            HetEquipmentAttachment updEquipmentAttachment = _context.HetEquipmentAttachment.AsNoTracking()
+            HetEquipmentAttachment updEquipmentAttachment = _context.HetEquipmentAttachments.AsNoTracking()
                 .Include(x => x.Equipment)
                 .FirstOrDefault(a => a.EquipmentAttachmentId == id);
 
@@ -121,14 +121,14 @@ namespace HetsApi.Controllers
             };
 
             // save the changes
-            _context.HetEquipmentAttachment.Add(equipmentAttachment);
+            _context.HetEquipmentAttachments.Add(equipmentAttachment);
             _context.SaveChanges();
 
             // get the id (in the case of new records)
             int id = equipmentAttachment.EquipmentAttachmentId;
 
             // return the updated condition type record
-            HetEquipmentAttachment updEquipmentAttachment = _context.HetEquipmentAttachment.AsNoTracking()
+            HetEquipmentAttachment updEquipmentAttachment = _context.HetEquipmentAttachments.AsNoTracking()
                 .Include(x => x.Equipment)
                 .FirstOrDefault(a => a.EquipmentAttachmentId == id);
 
@@ -159,7 +159,7 @@ namespace HetsApi.Controllers
                 };
 
                 // save the changes
-                _context.HetEquipmentAttachment.Add(equipmentAttachment);
+                _context.HetEquipmentAttachments.Add(equipmentAttachment);
             }
 
             _context.SaveChanges();
@@ -167,7 +167,7 @@ namespace HetsApi.Controllers
             // return all equipment attachments
             int id = items[0].Equipment.EquipmentId;
 
-            List<HetEquipmentAttachment> attachments = _context.HetEquipmentAttachment.AsNoTracking()
+            List<HetEquipmentAttachment> attachments = _context.HetEquipmentAttachments.AsNoTracking()
                 .Where(x => x.EquipmentId == id).ToList();
 
             return new ObjectResult(new HetsResponse(_mapper.Map<List<EquipmentAttachmentDto>>(attachments)));

@@ -51,7 +51,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual ActionResult<RentalRequestDto> RentalRequestsIdGet([FromRoute]int id)
         {
-            bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);
+            bool exists = _context.HetRentalRequests.Any(a => a.RentalRequestId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -73,7 +73,7 @@ namespace HetsApi.Controllers
             int? statusIdInProgress = StatusHelper.GetStatusId(HetRentalRequest.StatusInProgress, "rentalRequestStatus", _context);
             if (statusIdInProgress == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            List<HetRentalRequest> requests = _context.HetRentalRequest.AsNoTracking()
+            List<HetRentalRequest> requests = _context.HetRentalRequests.AsNoTracking()
                 .Include(x => x.LocalArea.ServiceArea.District)
                 .Include(x => x.DistrictEquipmentType)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId == districtId &&
@@ -100,17 +100,17 @@ namespace HetsApi.Controllers
                 return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
-            bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);
+            bool exists = _context.HetRentalRequests.Any(a => a.RentalRequestId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetRentalRequest rentalRequest = _context.HetRentalRequest
+            HetRentalRequest rentalRequest = _context.HetRentalRequests
                 .Include(x => x.LocalArea.ServiceArea.District.Region)
                 .Include(x => x.Project)
                     .ThenInclude(c => c.PrimaryContact)
-                .Include(x => x.HetRentalRequestAttachment)
+                .Include(x => x.HetRentalRequestAttachments)
                 .Include(x => x.DistrictEquipmentType)
                 .Include(x => x.HetRentalRequestRotationList)
                     .ThenInclude(y => y.Equipment)
@@ -119,7 +119,7 @@ namespace HetsApi.Controllers
             // need to check if we are going over the "count" and close this request
             int hiredCount = 0;
 
-            foreach (HetRentalRequestRotationList equipment in rentalRequest.HetRentalRequestRotationList)
+            foreach (HetRentalRequestRotationList equipment in rentalRequest.HetRentalRequestRotationLists)
             {
                 if (equipment.OfferResponse != null &&
                     equipment.OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
@@ -167,9 +167,9 @@ namespace HetsApi.Controllers
             if (item.RentalRequestAttachments != null &&
                 item.RentalRequestAttachments.Count > 0)
             {
-                if (rentalRequest.HetRentalRequestAttachment == null)
+                if (rentalRequest.HetRentalRequestAttachments == null)
                 {
-                    rentalRequest.HetRentalRequestAttachment = new List<HetRentalRequestAttachment>();
+                    rentalRequest.HetRentalRequestAttachments = new List<HetRentalRequestAttachment>();
                 }
 
                 HetRentalRequestAttachment attachment = new HetRentalRequestAttachment
@@ -177,13 +177,13 @@ namespace HetsApi.Controllers
                     Attachment = item.RentalRequestAttachments[0].Attachment
                 };
 
-                if (rentalRequest.HetRentalRequestAttachment.Count > 0)
+                if (rentalRequest.HetRentalRequestAttachments.Count > 0)
                 {
-                    rentalRequest.HetRentalRequestAttachment.ElementAt(0).Attachment = attachment.Attachment;
+                    rentalRequest.HetRentalRequestAttachments.ElementAt(0).Attachment = attachment.Attachment;
                 }
                 else
                 {
-                    rentalRequest.HetRentalRequestAttachment.Add(attachment);
+                    rentalRequest.HetRentalRequestAttachments.Add(attachment);
                 }
             }
 
@@ -321,7 +321,7 @@ namespace HetsApi.Controllers
             }
 
             // save the changes
-            _context.HetRentalRequest.Add(rentalRequest);
+            _context.HetRentalRequests.Add(rentalRequest);
             _context.SaveChanges();
 
             // retrieve updated rental request to return to ui
@@ -337,13 +337,13 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual ActionResult<RentalRequestDto> RentalRequestsIdCancelGet([FromRoute]int id)
         {
-            bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);
+            bool exists = _context.HetRentalRequests.Any(a => a.RentalRequestId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetRentalRequest rentalRequest = _context.HetRentalRequest.AsNoTracking()
+            HetRentalRequest rentalRequest = _context.HetRentalRequests.AsNoTracking()
                 .Include(x => x.HetRentalRequestRotationList)
                     .ThenInclude(y => y.RentalAgreement)
                 .Include(x => x.HetRentalRequestRotationList)
@@ -414,7 +414,7 @@ namespace HetsApi.Controllers
             {
                 foreach (HetNote note in rentalRequest.HetNote)
                 {
-                    _context.HetNote.Remove(note);
+                    _context.HetNotes.Remove(note);
                 }
             }
 
@@ -428,7 +428,7 @@ namespace HetsApi.Controllers
             }
 
             // remove (delete) request
-            _context.HetRentalRequest.Remove(rentalRequest);
+            _context.HetRentalRequests.Remove(rentalRequest);
 
             // save the changes
             _context.SaveChanges();
@@ -456,7 +456,7 @@ namespace HetsApi.Controllers
             // get initial results - must be limited to user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
-            IQueryable<HetRentalRequest> data = _context.HetRentalRequest.AsNoTracking()
+            IQueryable<HetRentalRequest> data = _context.HetRentalRequests.AsNoTracking()
                 .Include(x => x.LocalArea.ServiceArea.District.Region)
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(y => y.EquipmentType)
@@ -521,7 +521,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual ActionResult<RentalRequestDto> RentalRequestsIdRotationListIdGet([FromRoute]int id)
         {
-            bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);
+            bool exists = _context.HetRentalRequests.Any(a => a.RentalRequestId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -546,7 +546,7 @@ namespace HetsApi.Controllers
             // not found
             if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);
+            bool exists = _context.HetRentalRequests.Any(a => a.RentalRequestId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -624,7 +624,7 @@ namespace HetsApi.Controllers
                     };
 
                     // add overtime rates
-                    List<HetProvincialRateType> overtime = _context.HetProvincialRateType.AsNoTracking()
+                    List<HetProvincialRateType> overtime = _context.HetProvincialRateTypes.AsNoTracking()
                         .Where(x => x.Overtime)
                         .ToList();
 
@@ -650,7 +650,7 @@ namespace HetsApi.Controllers
                         rentalAgreement.HetRentalAgreementRate.Add(newAgreementRate);
                     }
 
-                    _context.HetRentalAgreement.Add(rentalAgreement);
+                    _context.HetRentalAgreements.Add(rentalAgreement);
                 }
 
                 int? statusIdAgreement = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
@@ -726,12 +726,12 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual ActionResult<List<DigitalFileDto>> RentalRequestsIdAttachmentsGet([FromRoute]int id)
         {
-            bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);
+            bool exists = _context.HetRentalRequests.Any(a => a.RentalRequestId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetRentalRequest equipment = _context.HetRentalRequest.AsNoTracking()
+            HetRentalRequest equipment = _context.HetRentalRequests.AsNoTracking()
                 .Include(x => x.HetDigitalFile)
                 .First(a => a.RentalRequestId == id);
 
@@ -769,7 +769,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual ActionResult<List<History>> RentalRequestsIdHistoryGet([FromRoute]int id, [FromQuery]int? offset, [FromQuery]int? limit)
         {
-            bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);
+            bool exists = _context.HetRentalRequests.Any(a => a.RentalRequestId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -788,7 +788,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual ActionResult<List<History>> RentalRequestsIdHistoryPost([FromRoute]int id, [FromBody]History item)
         {
-            bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);
+            bool exists = _context.HetRentalRequests.Any(a => a.RentalRequestId == id);
 
             if (exists)
             {
@@ -820,12 +820,12 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual ActionResult<List<NoteDto>> RentalRequestsIdNotesGet([FromRoute]int id)
         {
-            bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);
+            bool exists = _context.HetRentalRequests.Any(a => a.RentalRequestId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetRentalRequest request = _context.HetRentalRequest.AsNoTracking()
+            HetRentalRequest request = _context.HetRentalRequests.AsNoTracking()
                 .Include(x => x.HetNote)
                 .First(x => x.RentalRequestId == id);
 
@@ -853,7 +853,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual ActionResult<List<NoteDto>> RentalRequestsIdNotePost([FromRoute]int id, [FromBody]NoteDto item)
         {
-            bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);
+            bool exists = _context.HetRentalRequests.Any(a => a.RentalRequestId == id);
 
             // not found
             if (!exists || item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -862,7 +862,7 @@ namespace HetsApi.Controllers
             if (item.NoteId > 0)
             {
                 // get note
-                HetNote note = _context.HetNote.FirstOrDefault(a => a.NoteId == item.NoteId);
+                HetNote note = _context.HetNotes.FirstOrDefault(a => a.NoteId == item.NoteId);
 
                 // not found
                 if (note == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -880,13 +880,13 @@ namespace HetsApi.Controllers
                     IsNoLongerRelevant = item.IsNoLongerRelevant
                 };
 
-                _context.HetNote.Add(note);
+                _context.HetNotes.Add(note);
             }
 
             _context.SaveChanges();
 
             // return updated note records
-            HetRentalRequest request = _context.HetRentalRequest.AsNoTracking()
+            HetRentalRequest request = _context.HetRentalRequests.AsNoTracking()
                 .Include(x => x.HetNote)
                 .First(x => x.RentalRequestId == id);
 
@@ -930,7 +930,7 @@ namespace HetsApi.Controllers
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get fiscal year
-            HetDistrictStatus district = _context.HetDistrictStatus.AsNoTracking()
+            HetDistrictStatus district = _context.HetDistrictStatuses.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId == districtId);
 
             if (district?.CurrentFiscalYear == null) return new BadRequestObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
@@ -976,7 +976,7 @@ namespace HetsApi.Controllers
             var items = data.ToList();
             foreach (HetRentalRequestRotationList item in items)
             {
-                HetUser user = _context.HetUser.AsNoTracking()
+                HetUser user = _context.HetUsers.AsNoTracking()
                     .FirstOrDefault(x => x.SmUserId.ToUpper() == item.AppCreateUserid.ToUpper());
 
                 result.Add(RentalRequestHelper.ToHiresModel(item, user));

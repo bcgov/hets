@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+
+#nullable disable
 
 namespace HetsData.Model
 {
@@ -8,21 +9,34 @@ namespace HetsData.Model
     {
         public HetProject()
         {
-            HetContact = new HashSet<HetContact>();
-            HetDigitalFile = new HashSet<HetDigitalFile>();
-            HetHistory = new HashSet<HetHistory>();
-            HetNote = new HashSet<HetNote>();
-            HetRentalAgreement = new HashSet<HetRentalAgreement>();
-            HetRentalRequest = new HashSet<HetRentalRequest>();
+            HetContacts = new HashSet<HetContact>();
+            HetDigitalFiles = new HashSet<HetDigitalFile>();
+            HetHistories = new HashSet<HetHistory>();
+            HetNotes = new HashSet<HetNote>();
+            HetRentalAgreements = new HashSet<HetRentalAgreement>();
+            HetRentalRequests = new HashSet<HetRentalRequest>();
         }
 
-        [JsonProperty("Id")]
         public int ProjectId { get; set; }
-
         public string ProvincialProjectNumber { get; set; }
         public string Name { get; set; }
         public int ProjectStatusTypeId { get; set; }
         public string Information { get; set; }
+        public int? DistrictId { get; set; }
+        public int? PrimaryContactId { get; set; }
+        public string AppCreateUserDirectory { get; set; }
+        public string AppCreateUserGuid { get; set; }
+        public string AppCreateUserid { get; set; }
+        public DateTime AppCreateTimestamp { get; set; }
+        public string AppLastUpdateUserDirectory { get; set; }
+        public string AppLastUpdateUserGuid { get; set; }
+        public string AppLastUpdateUserid { get; set; }
+        public DateTime AppLastUpdateTimestamp { get; set; }
+        public string DbCreateUserId { get; set; }
+        public DateTime DbCreateTimestamp { get; set; }
+        public DateTime DbLastUpdateTimestamp { get; set; }
+        public string DbLastUpdateUserId { get; set; }
+        public int ConcurrencyControlNumber { get; set; }
         public string FiscalYear { get; set; }
         public string ResponsibilityCentre { get; set; }
         public string ServiceLine { get; set; }
@@ -31,45 +45,15 @@ namespace HetsData.Model
         public string BusinessFunction { get; set; }
         public string WorkActivity { get; set; }
         public string CostType { get; set; }
-        public int? DistrictId { get; set; }
-        public int? PrimaryContactId { get; set; }
-        [JsonIgnore]public string AppCreateUserDirectory { get; set; }
-        [JsonIgnore]public string AppCreateUserGuid { get; set; }
-        [JsonIgnore]public string AppCreateUserid { get; set; }
-        [JsonIgnore]public DateTime AppCreateTimestamp { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserDirectory { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserGuid { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserid { get; set; }
-        [JsonIgnore]public DateTime AppLastUpdateTimestamp { get; set; }
-        [JsonIgnore]public string DbCreateUserId { get; set; }
-        [JsonIgnore]public DateTime DbCreateTimestamp { get; set; }
-        [JsonIgnore]public DateTime DbLastUpdateTimestamp { get; set; }
-        [JsonIgnore]public string DbLastUpdateUserId { get; set; }
-        public int ConcurrencyControlNumber { get; set; }
 
-        public HetDistrict District { get; set; }
-
-        public HetContact PrimaryContact { get; set; }
-
-        [JsonIgnore]
-        public HetProjectStatusType ProjectStatusType { get; set; }
-
-        [JsonProperty("Contacts")]
-        public ICollection<HetContact> HetContact { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetDigitalFile> HetDigitalFile { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetHistory> HetHistory { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetNote> HetNote { get; set; }
-
-        [JsonProperty("RentalAgreements")]
-        public ICollection<HetRentalAgreement> HetRentalAgreement { get; set; }
-
-        [JsonProperty("RentalRequests")]
-        public ICollection<HetRentalRequest> HetRentalRequest { get; set; }
+        public virtual HetDistrict District { get; set; }
+        public virtual HetContact PrimaryContact { get; set; }
+        public virtual HetProjectStatusType ProjectStatusType { get; set; }
+        public virtual ICollection<HetContact> HetContacts { get; set; }
+        public virtual ICollection<HetDigitalFile> HetDigitalFiles { get; set; }
+        public virtual ICollection<HetHistory> HetHistories { get; set; }
+        public virtual ICollection<HetNote> HetNotes { get; set; }
+        public virtual ICollection<HetRentalAgreement> HetRentalAgreements { get; set; }
+        public virtual ICollection<HetRentalRequest> HetRentalRequests { get; set; }
     }
 }
