@@ -1034,7 +1034,7 @@ namespace HetsApi.Controllers
                 {
                     Id = idCount,
                     SerialNumber = serialNumber,
-                    DuplicateEquipment = equipment,
+                    DuplicateEquipment = _mapper.Map<EquipmentDto>(equipment),
                     DistrictName = ""
                 };
 

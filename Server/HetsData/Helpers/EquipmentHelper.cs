@@ -10,6 +10,7 @@ using HetsData.Model;
 using Hangfire.Server;
 using Hangfire.Console;
 using HetsApi.Helpers;
+using HetsData.Dtos;
 
 namespace HetsData.Helpers
 {
@@ -52,7 +53,7 @@ namespace HetsData.Helpers
         public int Id { get; set; }
         public string DistrictName { get; set; }
         public string SerialNumber { get; set; }
-        public HetEquipment DuplicateEquipment { get; set; }
+        public EquipmentDto DuplicateEquipment { get; set; }
     }
 
     public class EquipmentLiteDto
@@ -268,19 +269,6 @@ namespace HetsData.Helpers
         public static int CalculateSenioritySortOrder(int blockNumber = 0, int numberInBlock = 0)
         {
             return (blockNumber * 100) + numberInBlock;
-        }
-
-        /// <summary>
-        /// Function to determine if this piece of equipment is hired
-        /// </summary>
-        public static bool CheckIsHired(List<HetRentalAgreement> rentalAgreements)
-        {
-            if (rentalAgreements.Count == 0) return false;
-
-            int? count = rentalAgreements.Count(x => x.RentalAgreementStatusType.RentalAgreementStatusTypeCode
-                .Equals(HetRentalAgreement.StatusActive));
-
-            return count > 0;
         }
 
         /// <summary>

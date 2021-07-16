@@ -7,6 +7,7 @@ using System.Reflection;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using HetsData.Dtos;
 using HetsData.Helpers;
 using HetsData.Model;
 using HetsReport.Helpers;
@@ -56,7 +57,7 @@ namespace HetsReport
                         // ******************************************************
                         // merge document content
                         // ******************************************************
-                        foreach (HetOwner owner in reportModel.Owners)
+                        foreach (var owner in reportModel.Owners)
                         {
                             ownerCount++;
 
@@ -133,7 +134,7 @@ namespace HetsReport
                                 ownerDocument.MainDocumentPart.Document.Save();
 
                                 // setup table for equipment data
-                                Table equipmentTable = GenerateEquipmentTable(owner.HetEquipment);
+                                Table equipmentTable = GenerateEquipmentTable(owner.Equipment);
                                 Paragraph tableParagraph = null;
                                 found = false;
 
@@ -290,7 +291,7 @@ namespace HetsReport
             }
         }
 
-        private static Table GenerateEquipmentTable(IEnumerable<HetEquipment> equipmentList)
+        private static Table GenerateEquipmentTable(IEnumerable<EquipmentDto> equipmentList)
         {
             try
             {
@@ -368,7 +369,7 @@ namespace HetsReport
                 table.AppendChild(tableRow1);
 
                 // add rows for each equipment record
-                foreach (HetEquipment equipment in equipmentList)
+                foreach (var equipment in equipmentList)
                 {
                     TableRow tableRowEquipment = new TableRow();
 
@@ -389,7 +390,7 @@ namespace HetsReport
                     temp = "";
                     int row = 1;
 
-                    foreach (HetEquipmentAttachment attachment in equipment.HetEquipmentAttachment)
+                    foreach (var attachment in equipment.EquipmentAttachments)
                     {
                         temp = row == 1 ?
                             $"{attachment.Description}" :

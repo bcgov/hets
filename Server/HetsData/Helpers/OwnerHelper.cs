@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using HetsData.Model;
+using HetsData.Dtos;
 
 namespace HetsData.Helpers
 {
@@ -33,7 +34,7 @@ namespace HetsData.Helpers
         public string DistrictAddress { get; set; }
         public string DistrictContact { get; set; }
         public string LocalAreaName { get; set; }
-        public List<HetOwner> Owners { get; set; }
+        public List<OwnerDto> Owners { get; set; }
     }
 
     public class OwnerWcbCgl
@@ -60,19 +61,6 @@ namespace HetsData.Helpers
         public IEnumerable<int?> ProjectIds { get; set; }
     }
 
-    public class OwnerVerificationPdfViewModel
-    {
-        public string ReportDate { get; set; }
-        public string Title { get; set; }
-        public int DistrictId { get; set; }
-        public int MinistryDistrictId { get; set; }
-        public string DistrictName { get; set; }
-        public string DistrictAddress { get; set; }
-        public string DistrictContact { get; set; }
-        public string LocalAreaName { get; set; }
-        public List<HetOwner> Owners { get; set; }
-    }
-
     public class MailingLabelPdfViewModel
     {
         public string ReportDate { get; set; }
@@ -83,8 +71,8 @@ namespace HetsData.Helpers
 
     public class MailingLabelRowModel
     {
-        public HetOwner OwnerColumn1 { get; set; }
-        public HetOwner OwnerColumn2 { get; set; }
+        public OwnerDto OwnerColumn1 { get; set; }
+        public OwnerDto OwnerColumn2 { get; set; }
     }
 
     #endregion
@@ -210,159 +198,6 @@ namespace HetsData.Helpers
             }
 
             return ownerLite;
-        }
-
-        #endregion
-
-        #region Owner Verification Data
-
-        public static OwnerVerificationReportModel GetOwnerVerificationLetterData(
-            DbAppContext context, int?[] localAreas, int?[] owners,
-            int? equipmentStatusId, int? ownerStatusId, int? districtId)
-        {
-            try
-            {
-                OwnerVerificationReportModel model = new OwnerVerificationReportModel();
-
-                // get owner records
-                IQueryable<HetOwner> ownerRecords = context.HetOwner.AsNoTracking()
-                    .Include(x => x.PrimaryContact)
-                    .Include(x => x.Business)
-                    .Include(x => x.HetEquipment)
-                        .ThenInclude(a => a.HetEquipmentAttachment)
-                    .Include(x => x.HetEquipment)
-                        .ThenInclude(l => l.LocalArea)
-                    .Include(x => x.HetEquipment)
-                        .ThenInclude(y => y.DistrictEquipmentType)
-                    .Include(x => x.LocalArea)
-                        .ThenInclude(s => s.ServiceArea)
-                            .ThenInclude(d => d.District)
-                    .Where(x => x.OwnerStatusTypeId == ownerStatusId &&
-                                x.LocalArea.ServiceArea.DistrictId == districtId)
-                    .OrderBy(x => x.LocalArea.Name).ThenBy(x => x.OrganizationName);
-
-                if (owners?.Length > 0)
-                {
-                    ownerRecords = ownerRecords.Where(x => owners.Contains(x.OwnerId));
-                }
-
-                if (localAreas?.Length > 0)
-                {
-                    ownerRecords = ownerRecords.Where(x => localAreas.Contains(x.LocalAreaId));
-                }
-
-                // convert to list
-                List<HetOwner> ownerList = ownerRecords.ToList();
-
-                if (ownerList.Any())
-                {
-                    // get address and contact info
-                    string address = ownerList[0].LocalArea.ServiceArea.Address;
-
-                    if (!string.IsNullOrEmpty(address))
-                    {
-                        address = address.Replace("  ", " ");
-                        address = address.Replace("amp;", "and");
-                        address = address.Replace("|", " | ");
-                    }
-                    else
-                    {
-                        address = "";
-                    }
-
-                    string contact = $"Phone: {ownerList[0].LocalArea.ServiceArea.Phone} | Fax: {ownerList[0].LocalArea.ServiceArea.Fax}";
-
-                    // generate pdf document name [unique portion only]
-                    string fileName = "OwnerVerification";
-
-                    // setup model document generation
-                    model = new OwnerVerificationReportModel
-                    {
-                        ReportDate = DateTime.Now.ToString("yyyy-MM-dd"),
-                        Title = fileName,
-                        DistrictId = ownerList[0].LocalArea.ServiceArea.District.DistrictId,
-                        MinistryDistrictId = ownerList[0].LocalArea.ServiceArea.District.MinistryDistrictId,
-                        DistrictName = ownerList[0].LocalArea.ServiceArea.District.Name,
-                        DistrictAddress = address,
-                        DistrictContact = contact,
-                        LocalAreaName = ownerList[0].LocalArea.Name,
-                        Owners = new List<HetOwner>()
-                    };
-
-                    // add owner records - must verify district ids too
-                    foreach (HetOwner owner in ownerRecords)
-                    {
-                        if (owner.LocalArea.ServiceArea.District == null ||
-                            owner.LocalArea.ServiceArea.District.DistrictId != model.DistrictId)
-                        {
-                            // missing district - data error [HETS-16]
-                            throw new ArgumentException("Missing district id");
-                        }
-
-                        owner.ReportDate = model.ReportDate;
-                        owner.Title = model.Title;
-                        owner.DistrictId = model.DistrictId;
-                        owner.MinistryDistrictId = model.MinistryDistrictId;
-                        owner.DistrictName = model.DistrictName;
-                        owner.DistrictAddress = model.DistrictAddress;
-                        owner.DistrictContact = model.DistrictContact;
-                        owner.LocalAreaName = model.LocalAreaName;
-
-                        // classification
-                        owner.Classification = $"23010-23/{model.MinistryDistrictId.ToString()}/{owner.OwnerCode}";
-
-                        if (!string.IsNullOrEmpty(owner.SharedKey))
-                        {
-                            owner.SharedKeyHeader = "Secret Key: ";
-                        }
-                        else
-                        {
-                            //"Business Name: label and value instead"
-                            owner.SharedKeyHeader = "Business Name: ";
-
-                            if (owner.Business != null && !string.IsNullOrEmpty(owner.Business.BceidLegalName))
-                            {
-                                owner.SharedKeyHeader = "Business Name: " + owner.Business.BceidLegalName;
-                            }
-                        }
-
-                        // strip out inactive and archived equipment
-                        owner.HetEquipment = owner.HetEquipment.Where(x => x.EquipmentStatusTypeId == equipmentStatusId).ToList();
-
-                        // setup address line 2
-                        string temp = owner.Address2;
-
-                        if (string.IsNullOrEmpty(temp) && !string.IsNullOrEmpty(owner.City))
-                            temp = $"{owner.City}";
-
-                        if (!string.IsNullOrEmpty(temp) && !string.IsNullOrEmpty(owner.City) && owner.City.Trim() != temp.Trim())
-                            temp = $"{temp}, {owner.City}";
-
-                        if (string.IsNullOrEmpty(temp) && !string.IsNullOrEmpty(owner.Province))
-                            temp = $"{owner.Province}";
-
-                        if (!string.IsNullOrEmpty(temp) && !string.IsNullOrEmpty(owner.Province))
-                            temp = $"{temp}, {owner.Province}";
-
-                        if (string.IsNullOrEmpty(temp) && !string.IsNullOrEmpty(owner.PostalCode))
-                            temp = $"{owner.PostalCode}";
-
-                        if (!string.IsNullOrEmpty(temp) && !string.IsNullOrEmpty(owner.PostalCode))
-                            temp = $"{temp}  {owner.PostalCode}";
-
-                        owner.Address2 = temp;
-
-                        model.Owners.Add(owner);
-                    }
-                }
-
-                return model;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
         }
 
         #endregion

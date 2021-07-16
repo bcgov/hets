@@ -1,13 +1,12 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
-using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Model;
+using AutoMapper;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -16,15 +15,17 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("/api/rentalAgreementConditions")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class RentalAgreementConditionController : Controller
+    public class RentalAgreementConditionController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public RentalAgreementConditionController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public RentalAgreementConditionController(DbAppContext context, IConfiguration configuration, IMapper mapper)
         {
             _context = context;
             _configuration = configuration;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -33,9 +34,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of RentalAgreementCondition to delete</param>
         [HttpPost]
         [Route("{id}/delete")]
-        [SwaggerOperation("RentalAgreementConditionsIdDeletePost")]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult RentalAgreementConditionsIdDeletePost([FromRoute]int id)
+        public virtual ActionResult<RentalAgreementConditionDto> RentalAgreementConditionsIdDeletePost([FromRoute] int id)
         {
             bool exists = _context.HetRentalAgreementCondition.Any(a => a.RentalAgreementConditionId == id);
 
@@ -51,7 +51,7 @@ namespace HetsApi.Controllers
             // save changes
             _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(condition));
+            return new ObjectResult(new HetsResponse(_mapper.Map<RentalAgreementConditionDto>(condition)));
         }
 
         /// <summary>
@@ -61,15 +61,15 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPut]
         [Route("{id}")]
-        [SwaggerOperation("RentalAgreementConditionsIdPut")]
-        [SwaggerResponse(200, type: typeof(HetRentalAgreementCondition))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult RentalAgreementConditionsIdPut([FromRoute]int id, [FromBody]HetRentalAgreementCondition item)
+        public virtual ActionResult<RentalAgreementConditionDto> RentalAgreementConditionsIdPut([FromRoute] int id,
+            [FromBody] RentalAgreementConditionDto item)
         {
             bool exists = _context.HetRentalAgreementCondition.Any(a => a.RentalAgreementConditionId == id);
 
             // not found
-            if (!exists || id != item.RentalAgreementConditionId) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists || id != item.RentalAgreementConditionId)
+                return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetRentalAgreementCondition condition = _context.HetRentalAgreementCondition
@@ -86,7 +86,7 @@ namespace HetsApi.Controllers
             condition = _context.HetRentalAgreementCondition.AsNoTracking()
                 .First(a => a.RentalAgreementConditionId == id);
 
-            return new ObjectResult(new HetsResponse(condition));
+            return new ObjectResult(new HetsResponse(_mapper.Map<RentalAgreementConditionDto>(condition)));
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using HetsData.Model;
+using HetsData.Dtos;
 
 namespace HetsData.Helpers
 {
@@ -156,7 +157,7 @@ namespace HetsData.Helpers
 
             foreach (HetRentalAgreementRate rentalRate in agreement.RentalAgreementRatesWithTotal)
             {
-                if (rentalRate.Rate != null)  temp = temp + (float)rentalRate.Rate;
+                if (rentalRate.Rate != null) temp = temp + (float)rentalRate.Rate;
 
                 // format the rate / percent at the same time
                 rentalRate.RateString = FormatRateString(rentalRate, agreement, rentalRate.RatePeriodType.RatePeriodTypeCode);
@@ -515,111 +516,6 @@ namespace HetsData.Helpers
             }
 
             return result;
-        }
-
-        #endregion
-
-        #region Get Agreement Time Records
-
-        public static TimeRecordLite GetTimeRecords(int id, int? districtId, DbAppContext context, IConfiguration configuration)
-        {
-            // get fiscal year
-            HetDistrictStatus status = context.HetDistrictStatus.AsNoTracking()
-                .First(x => x.DistrictId == districtId);
-
-            int? fiscalYear = status.CurrentFiscalYear;
-
-            // get agreement and time records
-            HetRentalAgreement agreement = context.HetRentalAgreement.AsNoTracking()
-                .Include(x => x.Equipment)
-                    .ThenInclude(y => y.DistrictEquipmentType)
-                        .ThenInclude(z => z.EquipmentType)
-                .Include(x => x.Project)
-                .Include(x => x.HetTimeRecord)
-                .First(x => x.RentalAgreementId == id);
-
-            // get the max hours for this equipment type
-            float? hoursYtd = 0.0F;
-            int maxHours = 0;
-            string equipmentCode = "";
-
-            if (agreement.Equipment?.EquipmentId != null &&
-                agreement.Equipment.DistrictEquipmentType?.EquipmentType != null)
-            {
-                maxHours = Convert.ToInt32(agreement.Equipment.DistrictEquipmentType.EquipmentType.IsDumpTruck ?
-                    configuration.GetSection("MaximumHours:DumpTruck").Value :
-                    configuration.GetSection("MaximumHours:Default").Value);
-
-                int equipmentId = agreement.Equipment.EquipmentId;
-
-                hoursYtd = EquipmentHelper.GetYtdServiceHours(equipmentId, context);
-
-                equipmentCode = agreement.Equipment.EquipmentCode;
-            }
-
-            // get the project info
-            string projectName = "";
-            string projectNumber = "";
-
-            if (agreement.Project != null)
-            {
-                projectName = agreement.Project.Name;
-                projectNumber = agreement.Project.ProvincialProjectNumber;
-            }
-
-            // fiscal year in the status table stores the "start" of the year
-            TimeRecordLite timeRecord = new TimeRecordLite();
-
-            if (fiscalYear != null)
-            {
-                DateTime fiscalYearStart = new DateTime((int)fiscalYear, 4, 1);
-
-                timeRecord.TimeRecords = new List<HetTimeRecord>();
-                timeRecord.TimeRecords.AddRange(agreement.HetTimeRecord.Where(x => x.WorkedDate >= fiscalYearStart));
-            }
-
-            timeRecord.EquipmentCode = equipmentCode;
-            timeRecord.ProjectName = projectName;
-            timeRecord.ProvincialProjectNumber = projectNumber;
-            timeRecord.HoursYtd = hoursYtd;
-            timeRecord.MaximumHours = maxHours;
-
-            return timeRecord;
-        }
-
-        #endregion
-
-        #region Get Agreement Rental Rates
-
-        public static List<HetRentalAgreementRate> GetRentalRates(int id, DbAppContext context, IConfiguration configuration)
-        {
-            HetRentalAgreement agreement = context.HetRentalAgreement.AsNoTracking()
-                .Include(x => x.HetRentalAgreementRate)
-                    .ThenInclude(x => x.RatePeriodType)
-                .First(x => x.RentalAgreementId == id);
-
-            List<HetRentalAgreementRate> rates = new List<HetRentalAgreementRate>();
-
-            rates.AddRange(agreement.HetRentalAgreementRate);
-
-            return rates;
-        }
-
-        #endregion
-
-        #region Get Agreement Conditions
-
-        public static List<HetRentalAgreementCondition> GetConditions(int id, DbAppContext context, IConfiguration configuration)
-        {
-            HetRentalAgreement agreement = context.HetRentalAgreement.AsNoTracking()
-                .Include(x => x.HetRentalAgreementCondition)
-                .First(x => x.RentalAgreementId == id);
-
-            List<HetRentalAgreementCondition> conditions = new List<HetRentalAgreementCondition>();
-
-            conditions.AddRange(agreement.HetRentalAgreementCondition);
-
-            return conditions;
         }
 
         #endregion

@@ -531,8 +531,6 @@ namespace HetsData.Helpers
 
         #endregion
 
-        #region Setup Local Area Rotation Lists
-
         private static void DropHiredEquipment(List<HetRentalRequestRotationList> hetRentalRequestRotationList, DbAppContext context)
         {
             // check if any items have "Active" contracts - and drop them from the list
@@ -555,22 +553,6 @@ namespace HetsData.Helpers
                     hetRentalRequestRotationList.Remove(hetRentalRequestRotationList[i]);
                 }
             }
-        }
-
-        private static bool IsEquipmentHired(int? equipmentId, DbAppContext context)
-        {
-            if (equipmentId == null) return false;
-
-            // check if this item has an "Active" contract
-            int? statusIdRentalAgreement = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", context);
-            if (statusIdRentalAgreement == null) throw new ArgumentException("Status Id cannot be null");
-
-            bool agreementExists = context.HetRentalAgreement.AsNoTracking()
-                .Any(x => x.EquipmentId == equipmentId &&
-                          x.RentalRequestId != null &&
-                          x.RentalAgreementStatusTypeId == statusIdRentalAgreement);
-
-            return agreementExists;
         }
 
         private static HetEquipment LastAskedByBlock(int blockNumber, int? districtEquipmentTypeId,
@@ -794,10 +776,8 @@ namespace HetsData.Helpers
             return rentalRequest;
         }
 
-        #endregion
-
         /// <summary>
-        /// Update the Local Area Rotation List
+        /// Update the Rotation List
         /// </summary>
         /// <param name="request"></param>
         /// <param name="numberOfBlocks"></param>

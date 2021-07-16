@@ -630,7 +630,8 @@ namespace HetsApi.Controllers
             if (ownerStatusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get owner report data
-            OwnerVerificationReportModel reportModel = OwnerHelper.GetOwnerVerificationLetterData(_context, parameters.LocalAreas, parameters.Owners, statusId, ownerStatusId, districtId);
+            OwnerVerificationReportModel reportModel 
+                = _ownerRepo.GetOwnerVerificationLetterData(parameters.LocalAreas, parameters.Owners, statusId, ownerStatusId, districtId);
 
             // convert to open xml document
             string documentName = $"OwnerVerification-{DateTime.Now:yyyy-MM-dd}.docx";
@@ -725,10 +726,10 @@ namespace HetsApi.Controllers
                     {
                         case 1:
                             model.LabelRow.Add(new MailingLabelRowModel());
-                            model.LabelRow.Last().OwnerColumn1 = owner;
+                            model.LabelRow.Last().OwnerColumn1 = _mapper.Map<OwnerDto>(owner);
                             break;
                         default:
-                            model.LabelRow.Last().OwnerColumn2 = owner;
+                            model.LabelRow.Last().OwnerColumn2 = _mapper.Map<OwnerDto>(owner);
                             column = 0;
                             break;
                     }
