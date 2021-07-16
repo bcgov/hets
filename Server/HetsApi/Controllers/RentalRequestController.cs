@@ -724,7 +724,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("{id}/attachments")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual ActionResult<DigitalFileDto> RentalRequestsIdAttachmentsGet([FromRoute]int id)
+        public virtual ActionResult<List<DigitalFileDto>> RentalRequestsIdAttachmentsGet([FromRoute]int id)
         {
             bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);
 
@@ -750,7 +750,7 @@ namespace HetsApi.Controllers
                 }
             }
 
-            return new ObjectResult(new HetsResponse(_mapper.Map<DigitalFileDto>(attachments)));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<DigitalFileDto>>(attachments)));
         }
 
         #endregion
@@ -839,7 +839,7 @@ namespace HetsApi.Controllers
                 }
             }
 
-            return new ObjectResult(new HetsResponse(_mapper.Map<NoteDto>(notes)));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<NoteDto>>(notes)));
         }
 
         /// <summary>
@@ -900,7 +900,7 @@ namespace HetsApi.Controllers
                 }
             }
 
-            return new ObjectResult(new HetsResponse(_mapper.Map<NoteDto>(notes)));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<NoteDto>>(notes)));
         }
 
         #endregion

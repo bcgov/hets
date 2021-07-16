@@ -61,14 +61,13 @@ namespace HetsData.Mappings
             CreateMap<HetRentalRequestStatusType, RentalRequestStatusTypeDto>();
             CreateMap<HetRole, RoleDto>()
                 .ForMember(x => x.RolePermissions, opt => opt.MapFrom(x => x.HetRolePermission));
-            CreateMap<HetRolePermission, PermissionDto>();
+            CreateMap<HetRolePermission, RolePermissionDto>();
             CreateMap<HetRolloverProgress, RolloverProgressDto>();
             CreateMap<HetServiceArea, ServiceAreaDto>();
             CreateMap<HetTimeRecord, TimeRecordDto>();
             CreateMap<HetUserDistrict, UserDistrictDto>();
             CreateMap<HetUser, UserDto>()
                 .ForMember(x => x.UserDistricts, opt => opt.MapFrom(x => x.HetUserDistrict))
-                .ForMember(x => x.UserFavourites, opt => opt.MapFrom(x => x.HetUserFavourite))
                 .ForMember(x => x.UserRoles, opt => opt.MapFrom(x => x.HetUserRole));
             CreateMap<HetUserFavourite, UserFavouriteDto>();
             CreateMap<HetUserRole, UserRoleDto>();
