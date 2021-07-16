@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using HetsData.Dtos;
 using HetsData.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,7 +14,7 @@ namespace HetsData.Helpers
     public class RentalRequestLite
     {
         public int Id { get; set; }
-        public HetLocalArea LocalArea { get; set; }
+        public LocalAreaDto LocalArea { get; set; }
         public int? EquipmentCount { get; set; }
         public string EquipmentTypeName { get; set; }
         public string DistrictEquipmentName { get; set; }
@@ -262,52 +263,6 @@ namespace HetsData.Helpers
             }
 
             return request;
-        }
-
-        #endregion
-
-        #region Convert full equipment record to a "Lite" version
-
-        /// <summary>
-        /// Convert to Rental Request Lite Model
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        public static RentalRequestLite ToLiteModel(HetRentalRequest request)
-        {
-            RentalRequestLite requestLite = new RentalRequestLite();
-
-            if (request != null)
-            {
-                requestLite.YesCount = CalculateYesCount(request);
-
-                if (request.DistrictEquipmentType != null)
-                {
-                    requestLite.EquipmentTypeName = request.DistrictEquipmentType.EquipmentType.Name;
-                    requestLite.DistrictEquipmentName = request.DistrictEquipmentType.DistrictEquipmentName;
-                }
-
-                requestLite.Id = request.RentalRequestId;
-                requestLite.LocalArea = request.LocalArea;
-
-                if (request.Project != null)
-                {
-                    requestLite.PrimaryContact = request.Project.PrimaryContact;
-                    requestLite.ProjectName = request.Project.Name;
-                    requestLite.ProjectId = request.Project.ProjectId;
-                }
-                else
-                {
-                    requestLite.ProjectName = "Request - View Only";
-                }
-
-                requestLite.Status = request.RentalRequestStatusType.Description;
-                requestLite.EquipmentCount = request.EquipmentCount;
-                requestLite.ExpectedEndDate = request.ExpectedEndDate;
-                requestLite.ExpectedStartDate = request.ExpectedStartDate;
-            }
-
-            return requestLite;
         }
 
         #endregion

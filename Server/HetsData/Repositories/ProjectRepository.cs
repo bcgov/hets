@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HetsData.Dtos;
+using HetsData.Helpers;
 using HetsData.Model;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,6 +11,7 @@ namespace HetsData.Repositories
     public interface IProjectRepository
     {
         ProjectDto GetRecord(int projectId, int? districtId = 0);
+        ProjectLite ToLiteModel(HetProject project);
     }
     public class ProjectRepository : IProjectRepository
     {
@@ -173,6 +175,30 @@ namespace HetsData.Repositories
             }
 
             return _mapper.Map<ProjectDto>(project);
+        }
+
+        /// <summary>
+        /// Convert to Project Lite Model
+        /// </summary>
+        /// <param name="project"></param>
+        public ProjectLite ToLiteModel(HetProject project)
+        {
+            ProjectLite projectLite = new ProjectLite();
+
+            if (project != null)
+            {
+                projectLite.Id = project.ProjectId;
+                projectLite.Status = project.ProjectStatusType?.Description;
+                projectLite.Name = project.Name;
+                projectLite.PrimaryContact = _mapper.Map<ContactDto>(project.PrimaryContact);
+                projectLite.District = _mapper.Map<DistrictDto>(project.District);
+                projectLite.Requests = project.HetRentalRequest?.Count;
+                projectLite.Hires = project.HetRentalAgreement?.Count;
+                projectLite.ProvincialProjectNumber = project.ProvincialProjectNumber;
+                projectLite.FiscalYear = project.FiscalYear;
+            }
+
+            return projectLite;
         }
     }
 }

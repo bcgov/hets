@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using HetsData.Dtos;
 using HetsData.Model;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,9 +12,9 @@ namespace HetsData.Helpers
     public class ProjectLite
     {
         public int Id { get; set; }
-        public HetDistrict District { get; set; }
+        public DistrictDto District { get; set; }
         public string Name { get; set; }
-        public HetContact PrimaryContact { get; set; }        
+        public ContactDto PrimaryContact { get; set; }        
         public int? Hires { get; set; }
         public int? Requests { get; set; }
         public string Status { get; set; }
@@ -47,29 +48,7 @@ namespace HetsData.Helpers
     {
         #region Convert full project record to a "Lite" version
 
-        /// <summary>
-        /// Convert to Project Lite Model
-        /// </summary>
-        /// <param name="project"></param>
-        public static ProjectLite ToLiteModel(HetProject project)
-        {
-            ProjectLite projectLite = new ProjectLite();
 
-            if (project != null)
-            {
-                projectLite.Id = project.ProjectId;
-                projectLite.Status = project.ProjectStatusType?.Description;
-                projectLite.Name = project.Name;
-                projectLite.PrimaryContact = project.PrimaryContact;
-                projectLite.District = project.District;                
-                projectLite.Requests = project.HetRentalRequest?.Count;
-                projectLite.Hires = project.HetRentalAgreement?.Count;
-                projectLite.ProvincialProjectNumber = project.ProvincialProjectNumber;
-                projectLite.FiscalYear = project.FiscalYear;
-            }            
-
-            return projectLite;
-        }
 
         #endregion
 

@@ -17,7 +17,7 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("/api/rentalAgreementRates")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class RentalAgreementRateController : Controller
+    public class RentalAgreementRateController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;

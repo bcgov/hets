@@ -12,6 +12,7 @@ using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Model;
+using HetsData.Repositories;
 
 namespace HetsApi.Controllers
 {
@@ -24,12 +25,16 @@ namespace HetsApi.Controllers
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IRentalRequestRepository _rentalRequestRepo;
         private readonly HttpContext _httpContext;
 
-        public RentalRequestController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory)
+        public RentalRequestController(DbAppContext context, IConfiguration configuration, 
+            IRentalRequestRepository rentalRequestRepo,
+            IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory)
         {
             _context = context;
             _configuration = configuration;
+            _rentalRequestRepo = rentalRequestRepo;
             _httpContext = httpContextAccessor.HttpContext;
         }
 
@@ -508,7 +513,7 @@ namespace HetsApi.Controllers
 
             foreach (HetRentalRequest item in data)
             {
-                result.Add(RentalRequestHelper.ToLiteModel(item));
+                result.Add(_rentalRequestRepo.ToLiteModel(item));
             }
 
             // return to the client

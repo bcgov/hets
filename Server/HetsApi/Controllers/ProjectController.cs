@@ -29,16 +29,19 @@ namespace HetsApi.Controllers
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly IProjectRepository _projectRepo;
+        private readonly IRentalRequestRepository _rentalRequestRepo;
         private readonly IRentalAgreementRepository _rentalAgreementRepo;
 
         public ProjectController(DbAppContext context, IConfiguration configuration, IMapper mapper,
             IProjectRepository projectRepo,
+            IRentalRequestRepository rentalRequestRepo,
             IRentalAgreementRepository rentalAgreementRepo)
         {
             _context = context;
             _configuration = configuration;
             _mapper = mapper;
             _projectRepo = projectRepo;
+            _rentalRequestRepo = rentalRequestRepo;
             _rentalAgreementRepo = rentalAgreementRepo;
         }
 
@@ -232,7 +235,7 @@ namespace HetsApi.Controllers
 
             foreach (HetProject item in data)
             {
-                result.Add(ProjectHelper.ToLiteModel(item));
+                result.Add(_projectRepo.ToLiteModel(item));
             }
 
             // return to the client
@@ -275,7 +278,7 @@ namespace HetsApi.Controllers
 
             foreach (HetProject item in projects)
             {
-                result.Add(ProjectHelper.ToLiteModel(item));
+                result.Add(_projectRepo.ToLiteModel(item));
             }
 
             // return to the client
@@ -1172,7 +1175,7 @@ namespace HetsApi.Controllers
 
             foreach (HetProject item in data)
             {
-                result.Add(ProjectHelper.ToLiteModel(item));
+                result.Add(_projectRepo.ToLiteModel(item));
             }
 
             // return to the client
