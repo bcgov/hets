@@ -352,10 +352,12 @@ namespace HetsApi.Controllers
                     .ThenInclude(x => x.RatePeriodType)
                 .FirstOrDefault(a => a.RentalAgreementId == id);
 
-            if (rentalAgreement == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (rentalAgreement == null) 
+                return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // construct the view model
-            RentalAgreementDocViewModel reportModel = rentalAgreement.GetRentalAgreementReportModel(agreementCity);
+            RentalAgreementDocViewModel reportModel = _rentalAgreementRepo
+                .GetRentalAgreementReportModel(_mapper.Map<RentalAgreementDto>(rentalAgreement), agreementCity);
 
             string ownerName = rentalAgreement.Equipment?.Owner?.OrganizationName?.Trim().ToLower();
             ownerName = CleanName(ownerName);
@@ -1216,6 +1218,7 @@ namespace HetsApi.Controllers
         /// <param name="equipmentId">Equipment Id</param>
         /// <param name="projectId">Project Id</param>
         [HttpGet]
+        [RequiresPermission(HetPermission.Login)]
         [Route("latest/{projectId}/{equipmentId}")]
         public virtual ActionResult<RentalAgreementDto> GetLatestRentalAgreement([FromRoute] int projectId, [FromRoute] int equipmentId)
         {
@@ -1296,9 +1299,8 @@ namespace HetsApi.Controllers
         /// <returns>AIT report</returns>
         [HttpGet]
         [Route("aitReport")]
-        [SwaggerOperation("AitReportGet")]
-        [SwaggerResponse(200, type: typeof(List<RentalRequestHires>))]
-        public virtual IActionResult AitReportGet([FromQuery] string projects,
+        [RequiresPermission(HetPermission.Login)]
+        public virtual ActionResult<List<RentalRequestHires>> AitReportGet([FromQuery] string projects,
             [FromQuery] string districtEquipmentTypes, [FromQuery] string equipment, [FromQuery] string rentalAgreementNumber,
             [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
         {
