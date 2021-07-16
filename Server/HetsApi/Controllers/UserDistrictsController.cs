@@ -212,7 +212,7 @@ namespace HetsApi.Controllers
 
                     if (item.District != null)
                     {
-                        item.District = _context.HetDistrict.FirstOrDefault(a => a.DistrictId == item.District.DistrictId);
+                        item.District = _context.HetDistricts.FirstOrDefault(a => a.DistrictId == item.District.DistrictId);
                     }
                     else
                     {

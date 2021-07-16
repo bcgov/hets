@@ -48,7 +48,7 @@ namespace HetsApi.Controllers
             {
                 int projectId = (int)item.ProjectId;
 
-                HetProject project = _context.HetProject
+                HetProject project = _context.HetProjects
                     .FirstOrDefault(x => x.ProjectId == projectId);
 
                 if (project != null && project.PrimaryContactId == id)

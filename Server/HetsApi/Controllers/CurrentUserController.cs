@@ -159,7 +159,7 @@ namespace HetsApi.Controllers
                     .Include(x => x.District)
                     .Include(x => x.HetUserRoles)
                         .ThenInclude(y => y.Role)
-                            .ThenInclude(z => z.HetRolePermission)
+                            .ThenInclude(z => z.HetRolePermissions)
                                 .ThenInclude(z => z.Permission)
                     .First(x => x.SmUserId.ToUpper() == userId);
 
@@ -344,13 +344,13 @@ namespace HetsApi.Controllers
                 .First(a => a.SmUserId.ToUpper() == userId);
 
             // get favourites
-            bool exists = _context.HetUserFavourite.Any(a => a.UserFavouriteId == item.UserFavouriteId);
+            bool exists = _context.HetUserFavourites.Any(a => a.UserFavouriteId == item.UserFavouriteId);
 
             HetUserFavourite favourite;
 
             if (exists)
             {
-                favourite = _context.HetUserFavourite
+                favourite = _context.HetUserFavourites
                     .First(a => a.UserFavouriteId == item.UserFavouriteId);
 
                 favourite.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
@@ -370,7 +370,7 @@ namespace HetsApi.Controllers
                     IsDefault = item.IsDefault
                 };
 
-                _context.HetUserFavourite.Add(favourite);
+                _context.HetUserFavourites.Add(favourite);
             }
 
             // save the changes
@@ -379,7 +379,7 @@ namespace HetsApi.Controllers
             int favouriteId = favourite.UserFavouriteId;
 
             // get record and return
-            favourite = _context.HetUserFavourite.AsNoTracking()
+            favourite = _context.HetUserFavourites.AsNoTracking()
                 .First(x => x.UserFavouriteId == favouriteId);
 
             return new ObjectResult(new HetsResponse(_mapper.Map<UserFavouriteDto>(favourite)));

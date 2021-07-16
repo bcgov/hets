@@ -192,7 +192,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.DistrictRollover)]
         public virtual ActionResult<DistrictStatusDto> AnnualRolloverGet([FromRoute]int id)
         {
-            bool exists = _context.HetDistrict.Any(a => a.DistrictId == id);
+            bool exists = _context.HetDistricts.Any(a => a.DistrictId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -301,12 +301,12 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual ActionResult<List<string>> DistrictFiscalYearsGet([FromRoute]int id)
         {
-            bool exists = _context.HetDistrict.Any(a => a.DistrictId == id);
+            bool exists = _context.HetDistricts.Any(a => a.DistrictId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-             HetDistrictStatus status = _context.HetDistrictStatus
+             HetDistrictStatus status = _context.HetDistrictStatuses
                 .AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId == id);
 

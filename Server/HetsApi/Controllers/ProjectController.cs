@@ -195,8 +195,8 @@ namespace HetsApi.Controllers
                 .Include(x => x.ProjectStatusType)
                 .Include(x => x.District.Region)
                 .Include(x => x.PrimaryContact)
-                .Include(x => x.HetRentalAgreement)
-                .Include(x => x.HetRentalRequest)
+                .Include(x => x.HetRentalAgreements)
+                .Include(x => x.HetRentalRequests)
                 .Where(x => x.DistrictId.Equals(districtId));
 
             if (districtTokens != null && districts.Length > 0)
@@ -334,13 +334,13 @@ namespace HetsApi.Controllers
 
             List<HetRentalAgreement> agreements = _context.HetProjects.AsNoTracking()
                 .Include(x => x.ProjectStatusType)
-                .Include(x => x.HetRentalAgreement)
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(e => e.Equipment)
                         .ThenInclude(d => d.DistrictEquipmentType)
-                .Include(x => x.HetRentalAgreement)
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(e => e.Equipment)
-                        .ThenInclude(a => a.HetEquipmentAttachment)
-                .Include(x => x.HetRentalAgreement)
+                        .ThenInclude(a => a.HetEquipmentAttachments)
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(e => e.RentalAgreementStatusType)
                 .First(x => x.ProjectId == id)
                 .HetRentalAgreement
@@ -370,13 +370,13 @@ namespace HetsApi.Controllers
             // get all agreements for this project
             HetProject project = _context.HetProject
                 .Include(x => x.ProjectStatusType)
-                .Include(x => x.HetRentalAgreement)
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(y => y.HetRentalAgreementRate)
-                .Include(x => x.HetRentalAgreement)
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(y => y.HetRentalAgreementCondition)
-                .Include(x => x.HetRentalAgreement)
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(e => e.RentalAgreementStatusType)
-                .Include(x => x.HetRentalAgreement)
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(y => y.HetTimeRecord)
                 .First(a => a.ProjectId == id);
 
@@ -574,7 +574,7 @@ namespace HetsApi.Controllers
             DateTime fiscalYearStart = new DateTime((int)fiscalYear, 4, 1);
 
             HetProject project = _context.HetProjects.AsNoTracking()
-                .Include(x => x.HetRentalAgreement)
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(t => t.HetTimeRecord)
                 .First(x => x.ProjectId == id);
 
@@ -608,7 +608,7 @@ namespace HetsApi.Controllers
 
             // get project record
             HetProject project = _context.HetProjects.AsNoTracking()
-                .Include(x => x.HetRentalAgreement)
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(t => t.HetTimeRecord)
                 .First(x => x.ProjectId == id);
 
@@ -678,7 +678,7 @@ namespace HetsApi.Controllers
             // return updated time records
             // *************************************************************
             project = _context.HetProjects.AsNoTracking()
-                .Include(x => x.HetRentalAgreement)
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(t => t.HetTimeRecord)
                 .First(x => x.ProjectId == id);
 
@@ -712,7 +712,7 @@ namespace HetsApi.Controllers
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetProject project = _context.HetProjects.AsNoTracking()
-                .Include(x => x.HetRentalAgreement)
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(e => e.Equipment)
                         .ThenInclude(o => o.Owner)
                             .ThenInclude(c => c.PrimaryContact)
@@ -741,7 +741,7 @@ namespace HetsApi.Controllers
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetProject project = _context.HetProjects.AsNoTracking()
-                .Include(x => x.HetDigitalFile)
+                .Include(x => x.HetDigitalFiles)
                 .First(a => a.ProjectId == id);
 
             // extract the attachments and update properties for UI
@@ -1053,7 +1053,7 @@ namespace HetsApi.Controllers
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetProject project = _context.HetProjects.AsNoTracking()
-                .Include(x => x.HetNote)
+                .Include(x => x.HetNotes)
                 .First(x => x.ProjectId == id);
 
             List<HetNote> notes = new List<HetNote>();
@@ -1115,7 +1115,7 @@ namespace HetsApi.Controllers
 
             // return updated note records
             HetProject project = _context.HetProjects.AsNoTracking()
-                .Include(x => x.HetNote)
+                .Include(x => x.HetNotes)
                 .First(x => x.ProjectId == id);
 
             List<HetNote> notes = new List<HetNote>();
@@ -1147,7 +1147,7 @@ namespace HetsApi.Controllers
             // get current users district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
-            HetDistrict district = _context.HetDistrict.AsNoTracking()
+            HetDistrict district = _context.HetDistricts.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId.Equals(districtId));
 
             if (district == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -1160,7 +1160,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.ProjectStatusType)
                 .Include(x => x.District.Region)
                 .Include(x => x.PrimaryContact)
-                .Include(x => x.HetRentalAgreement)
+                .Include(x => x.HetRentalAgreements)
                 .Include(x => x.HetRentalRequest)
                 .Where(x => x.DistrictId.Equals(districtId));
 

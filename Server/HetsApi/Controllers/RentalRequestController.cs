@@ -349,9 +349,9 @@ namespace HetsApi.Controllers
                 .Include(x => x.HetRentalRequestRotationList)
                     .ThenInclude(y => y.Equipment)
                 .Include(x => x.HetRentalRequestAttachment)
-                .Include(x => x.HetHistory)
+                .Include(x => x.HetHistories)
                 .Include(x => x.RentalRequestStatusType)
-                .Include(x => x.HetNote)
+                .Include(x => x.HetNotes)
                 .First(a => a.RentalRequestId == id);
 
             if (rentalRequest.HetRentalRequestRotationList != null &&
@@ -732,7 +732,7 @@ namespace HetsApi.Controllers
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetRentalRequest equipment = _context.HetRentalRequests.AsNoTracking()
-                .Include(x => x.HetDigitalFile)
+                .Include(x => x.HetDigitalFiles)
                 .First(a => a.RentalRequestId == id);
 
             // extract the attachments and update properties for UI
@@ -826,7 +826,7 @@ namespace HetsApi.Controllers
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetRentalRequest request = _context.HetRentalRequests.AsNoTracking()
-                .Include(x => x.HetNote)
+                .Include(x => x.HetNotes)
                 .First(x => x.RentalRequestId == id);
 
             List<HetNote> notes = new List<HetNote>();
@@ -887,7 +887,7 @@ namespace HetsApi.Controllers
 
             // return updated note records
             HetRentalRequest request = _context.HetRentalRequests.AsNoTracking()
-                .Include(x => x.HetNote)
+                .Include(x => x.HetNotes)
                 .First(x => x.RentalRequestId == id);
 
             List<HetNote> notes = new List<HetNote>();

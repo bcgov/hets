@@ -82,8 +82,8 @@ namespace HetsApi.Controllers
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetRentalAgreement agreement = _context.HetRentalAgreement
-                .Include(a => a.HetRentalAgreementRate)
+            HetRentalAgreement agreement = _context.HetRentalAgreements
+                .Include(a => a.HetRentalAgreementRates)
                 .First(a => a.RentalAgreementId == id);
 
             int? statusId = StatusHelper.GetStatusId(item.Status, "rentalAgreementStatus", _context);
@@ -346,8 +346,8 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
                 .Include(x => x.Project)
                     .ThenInclude(p => p.District.Region)
-                .Include(x => x.HetRentalAgreementCondition)
-                .Include(x => x.HetRentalAgreementRate)
+                .Include(x => x.HetRentalAgreementConditions)
+                .Include(x => x.HetRentalAgreementRates)
                     .ThenInclude(x => x.RatePeriodType)
                 .FirstOrDefault(a => a.RentalAgreementId == id);
 
@@ -852,7 +852,7 @@ namespace HetsApi.Controllers
             // get current users district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
-            HetDistrict district = _context.HetDistrict.AsNoTracking()
+            HetDistrict district = _context.HetDistricts.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId.Equals(districtId));
 
             if (district == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -1012,7 +1012,7 @@ namespace HetsApi.Controllers
             // get current users district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
-            HetDistrict district = _context.HetDistrict.AsNoTracking()
+            HetDistrict district = _context.HetDistricts.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId.Equals(districtId));
 
             if (district == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -1082,7 +1082,7 @@ namespace HetsApi.Controllers
             // get current users district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
-            HetDistrict district = _context.HetDistrict.AsNoTracking()
+            HetDistrict district = _context.HetDistricts.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId.Equals(districtId));
 
             if (district == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));

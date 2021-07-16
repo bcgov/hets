@@ -198,7 +198,7 @@ namespace HetsApi.Controllers
 
             if (item.District != null)
             {
-                bool districtExists = _context.HetDistrict.Any(x => x.DistrictId == item.District.DistrictId);
+                bool districtExists = _context.HetDistricts.Any(x => x.DistrictId == item.District.DistrictId);
 
                 if (districtExists)
                 {
@@ -305,7 +305,7 @@ namespace HetsApi.Controllers
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get favourites records
-            List<HetUserFavourite> favourites = _context.HetUserFavourite.AsNoTracking()
+            List<HetUserFavourite> favourites = _context.HetUserFavourites.AsNoTracking()
                 .Where(x => x.User.UserId == id)
                 .ToList();
 

@@ -358,7 +358,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(d => d.EquipmentType)
                 .Include(x => x.Owner)
-                .Include(x => x.HetEquipmentAttachment)
+                .Include(x => x.HetEquipmentAttachments)
                 .First(a => a.EquipmentId == id);
 
             // HETS-1069 - Do not allow an equipment whose Equipment type has been deleted to change status
@@ -628,8 +628,8 @@ namespace HetsApi.Controllers
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(y => y.EquipmentType)
                 .Include(x => x.Owner)
-                .Include(x => x.HetEquipmentAttachment)
-                .Include(x => x.HetRentalAgreement)
+                .Include(x => x.HetEquipmentAttachments)
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(y => y.RentalAgreementStatusType)
                 .Include(x => x.EquipmentStatusType)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));
@@ -790,10 +790,10 @@ namespace HetsApi.Controllers
                 .Include(x => x.Equipment)
                 .ThenInclude(d => d.DistrictEquipmentType)
                 .Include(e => e.Equipment)
-                    .ThenInclude(a => a.HetEquipmentAttachment)
-                .Include(x => x.HetRentalAgreementRate)
-                .Include(x => x.HetRentalAgreementCondition)
-                .Include(x => x.HetTimeRecord)
+                    .ThenInclude(a => a.HetEquipmentAttachments)
+                .Include(x => x.HetRentalAgreementRates)
+                .Include(x => x.HetRentalAgreementConditions)
+                .Include(x => x.HetTimeRecords)
                 .Where(x => x.EquipmentId == id)
                 .ToList();
 

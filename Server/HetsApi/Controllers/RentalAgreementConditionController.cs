@@ -72,7 +72,7 @@ namespace HetsApi.Controllers
                 return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetRentalAgreementCondition condition = _context.HetRentalAgreementCondition
+            HetRentalAgreementCondition condition = _context.HetRentalAgreementConditions
                 .First(a => a.RentalAgreementConditionId == id);
 
             condition.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
