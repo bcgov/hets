@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
@@ -20,18 +18,15 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/reports")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class ReportController : Controller
+    public class ReportController : ControllerBase
     {
         private readonly DbAppContext _context;
-        private readonly HttpContext _httpContext;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
 
-        public ReportController(DbAppContext context, IConfiguration configuration, 
-            IHttpContextAccessor httpContextAccessor, IMapper mapper)
+        public ReportController(DbAppContext context, IConfiguration configuration, IMapper mapper)
         {
             _context = context;
-            _httpContext = httpContextAccessor.HttpContext;
             _configuration = configuration;
             _mapper = mapper;
         }
@@ -57,9 +52,9 @@ namespace HetsApi.Controllers
                     StartDate = x.StartDate,
                     EndDate = x.EndDate,
                     Complete = x.Complete
-                });
+                }).ToList();
 
-            return new ObjectResult(new HetsResponse(_mapper.Map<List<BatchReportDto>>(reports)));
+            return new ObjectResult(new HetsResponse(reports));
         }
 
         /// <summary>

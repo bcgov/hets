@@ -10,6 +10,8 @@ using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Model;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -18,17 +20,20 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/userDistricts")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class UserDistrictController : Controller
+    public class UserDistrictController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
         private readonly HttpContext _httpContext;
+        private readonly IMapper _mapper;
 
-        public UserDistrictController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public UserDistrictController(DbAppContext context, IConfiguration configuration, 
+            IHttpContextAccessor httpContextAccessor, IMapper mapper)
         {
             _context = context;
             _configuration = configuration;
             _httpContext = httpContextAccessor.HttpContext;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -36,10 +41,8 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("")]
-        [SwaggerOperation("UserDistrictsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetUserDistrict>))]
         [AllowAnonymous]
-        public virtual IActionResult UserDistrictsGet()
+        public virtual ActionResult<List<UserDistrictDto>> UserDistrictsGet()
         {
             // return for the current user only
             string userId = _context.SmUserId;
@@ -50,7 +53,7 @@ namespace HetsApi.Controllers
                 .Where(x => x.User.SmUserId.ToUpper() == userId)
                 .ToList();
 
-            return new ObjectResult(new HetsResponse(result));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<UserDistrictDto>>(result)));
         }
 
         /// <summary>
@@ -60,10 +63,8 @@ namespace HetsApi.Controllers
         /// <response code="200">OK</response>
         [HttpPost]
         [Route("{id}/delete")]
-        [SwaggerOperation("UserDistrictsIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(HetUserDistrict))]
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
-        public virtual IActionResult UserDistrictsIdDeletePost([FromRoute]int id)
+        public virtual ActionResult<List<UserDistrictDto>> UserDistrictsIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetUserDistrict.Any(a => a.UserDistrictId == id);
 
@@ -88,7 +89,7 @@ namespace HetsApi.Controllers
                 .Where(x => x.User.UserId == userId)
                 .ToList();
 
-            return new ObjectResult(new HetsResponse(result));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<UserDistrictDto>>(result)));
         }
 
         /// <summary>
@@ -98,10 +99,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPost]
         [Route("{id}")]
-        [SwaggerOperation("UserDistrictsIdPost")]
-        [SwaggerResponse(200, type: typeof(HetUserDistrict))]
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
-        public virtual IActionResult UserDistrictsIdPost([FromRoute]int id, [FromBody]HetUserDistrict item)
+        public virtual ActionResult<List<UserDistrictDto>> UserDistrictsIdPost([FromRoute]int id, [FromBody]HetUserDistrict item)
         {
             // not found
             if (id != item.UserDistrictId) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -266,7 +265,7 @@ namespace HetsApi.Controllers
                 .Where(x => x.User.UserId == userId)
                 .ToList();
 
-            return new ObjectResult(new HetsResponse(result));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<UserDistrictDto>>(result)));
         }
 
         /// <summary>
@@ -275,10 +274,8 @@ namespace HetsApi.Controllers
         /// <param name="id"></param>
         [HttpPost]
         [Route("{id}/switch")]
-        [SwaggerOperation("UserDistrictsIdSwitchPost")]
-        [SwaggerResponse(200, type: typeof(HetUserDistrict))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult UserDistrictsIdSwitchPost([FromRoute]int id)
+        public virtual ActionResult<UserDto> UserDistrictsIdSwitchPost([FromRoute]int id)
         {
             bool exists = _context.HetUserDistrict.Any(a => a.UserDistrictId == id);
 
@@ -307,7 +304,7 @@ namespace HetsApi.Controllers
                 }
             );
 
-            return new ObjectResult(new HetsResponse(user));
+            return new ObjectResult(new HetsResponse(_mapper.Map<UserDto>(user)));
         }
     }
 }

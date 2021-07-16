@@ -1,15 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
-using HetsData.Helpers;
 using HetsData.Model;
+using AutoMapper;
+using HetsData.Dtos;
+using HetsData.Repositories;
 
 namespace HetsApi.Controllers
 {
@@ -18,15 +18,19 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/users")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class UserController : Controller
+    public class UserController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
+        private readonly IUserRepository _userRepo;
 
-        public UserController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public UserController(DbAppContext context, IConfiguration configuration, IMapper mapper, IUserRepository userRepo)
         {
             _context = context;
             _configuration = configuration;
+            _mapper = mapper;
+            _userRepo = userRepo;
         }
 
         /// <summary>
@@ -34,13 +38,11 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("")]
-        [SwaggerOperation("UsersGet")]
-        [SwaggerResponse(200, type: typeof(List<HetUser>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult UsersGet()
+        public virtual ActionResult<List<UserDto>> UsersGet()
         {
             // get all user records and return to UI
-            return new ObjectResult(new HetsResponse(UserHelper.GetRecords( _context)));
+            return new ObjectResult(new HetsResponse(_userRepo.GetRecords()));
         }
 
         /// <summary>
@@ -49,10 +51,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of User to fetch</param>
         [HttpGet]
         [Route("{id}")]
-        [SwaggerOperation("UsersIdGet")]
-        [SwaggerResponse(200, type: typeof(HetUser))]
         [RequiresPermission(HetPermission.UserManagement)]
-        public virtual IActionResult UsersIdGet([FromRoute]int id)
+        public virtual ActionResult<UserDto> UsersIdGet([FromRoute]int id)
         {
             bool exists = _context.HetUser.Any(x => x.UserId == id);
 
@@ -60,7 +60,7 @@ namespace HetsApi.Controllers
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get user record and return to UI
-            return new ObjectResult(new HetsResponse(UserHelper.GetRecord(id, _context)));
+            return new ObjectResult(new HetsResponse(_userRepo.GetRecord(id)));
         }
 
         /// <summary>
@@ -69,9 +69,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of User to delete</param>
         [HttpPost]
         [Route("{id}/delete")]
-        [SwaggerOperation("UsersIdDeletePost")]
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
-        public virtual IActionResult UsersIdDeletePost([FromRoute]int id)
+        public virtual ActionResult<UserDto> UsersIdDeletePost([FromRoute]int id)
         {
             bool exists = _context.HetUser.Any(x => x.UserId == id);
 
@@ -100,7 +99,7 @@ namespace HetsApi.Controllers
             _context.HetUser.Remove(user);
             _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(user));
+            return new ObjectResult(new HetsResponse(_mapper.Map<UserDto>(user)));
         }
 
         /// <summary>
@@ -109,10 +108,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPost]
         [Route("")]
-        [SwaggerOperation("UsersPost")]
-        [SwaggerResponse(200, type: typeof(HetUser))]
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
-        public virtual IActionResult UsersPost([FromBody]HetUser item)
+        public virtual ActionResult<UserDto> UsersPost([FromBody]UserDto item)
         {
             // not found
             if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -152,7 +149,7 @@ namespace HetsApi.Controllers
             int id = user.UserId;
 
             // get updated user record and return to UI
-            return new ObjectResult(new HetsResponse(UserHelper.GetRecord(id, _context)));
+            return new ObjectResult(new HetsResponse(_userRepo.GetRecord(id)));
         }
 
         /// <summary>
@@ -162,10 +159,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPut]
         [Route("{id}")]
-        [SwaggerOperation("UsersIdPut")]
-        [SwaggerResponse(200, type: typeof(HetUser))]
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
-        public virtual IActionResult UsersIdPut([FromRoute]int id, [FromBody]HetUser item)
+        public virtual ActionResult<UserDto> UsersIdPut([FromRoute]int id, [FromBody]UserDto item)
         {
             if (item == null || id != item.UserId)
             {
@@ -249,7 +244,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // get updated user record and return to UI
-            return new ObjectResult(new HetsResponse(UserHelper.GetRecord(id, _context)));
+            return new ObjectResult(new HetsResponse(_userRepo.GetRecord(id)));
         }
 
         #region User Search
@@ -263,10 +258,8 @@ namespace HetsApi.Controllers
         /// <param name="includeInactive">True if Inactive users will be returned</param>
         [HttpGet]
         [Route("search")]
-        [SwaggerOperation("UsersSearchGet")]
-        [SwaggerResponse(200, type: typeof(List<HetUser>))]
         [RequiresPermission(HetPermission.UserManagement)]
-        public virtual IActionResult UsersSearchGet([FromQuery]string districts, [FromQuery]string surname, [FromQuery]bool? includeInactive)
+        public virtual ActionResult<List<UserDto>> UsersSearchGet([FromQuery]string districts, [FromQuery]string surname, [FromQuery]bool? includeInactive)
         {
             int?[] districtArray = ArrayHelper.ParseIntArray(districts);
 
@@ -289,7 +282,7 @@ namespace HetsApi.Controllers
                 data = data.Where(x => x.Active);
             }
 
-            return new ObjectResult(new HetsResponse(data));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<UserDto>>(data)));
         }
 
         #endregion
@@ -303,10 +296,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of User to fetch favorites for</param>
         [HttpGet]
         [Route("{id}/favourites")]
-        [SwaggerOperation("UsersIdFavouritesGet")]
-        [SwaggerResponse(200, type: typeof(List<HetUserFavourite>))]
         [RequiresPermission(HetPermission.UserManagement)]
-        public virtual IActionResult UsersIdFavouritesGet([FromRoute]int id)
+        public virtual ActionResult<List<UserFavouriteDto>> UsersIdFavouritesGet([FromRoute]int id)
         {
             bool exists = _context.HetUser.Any(x => x.UserId == id);
 
@@ -318,7 +309,7 @@ namespace HetsApi.Controllers
                 .Where(x => x.User.UserId == id)
                 .ToList();
 
-            return new ObjectResult(new HetsResponse(favourites));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<UserFavouriteDto>>(favourites)));
         }
 
         #endregion
@@ -332,10 +323,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of User to fetch</param>
         [HttpGet]
         [Route("{id}/permissions")]
-        [SwaggerOperation("UsersIdPermissionsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetPermission>))]
         [RequiresPermission(HetPermission.UserManagement)]
-        public virtual IActionResult UsersIdPermissionsGet([FromRoute]int id)
+        public virtual ActionResult<List<PermissionDto>> UsersIdPermissionsGet([FromRoute]int id)
         {
             bool exists = _context.HetUser.Any(x => x.UserId == id);
 
@@ -343,15 +332,15 @@ namespace HetsApi.Controllers
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetUser user = UserHelper.GetRecord(id, _context);
+            var user = _userRepo.GetRecord(id);
 
-            List<HetPermission> permissions = new List<HetPermission>();
+            var permissions = new List<PermissionDto>();
 
-            foreach (HetUserRole item in user.HetUserRole)
+            foreach (var item in user.UserRoles)
             {
-                if (item.Role?.HetRolePermission != null)
+                if (item.Role?.RolePermissions != null)
                 {
-                    foreach (HetRolePermission permission in item.Role.HetRolePermission)
+                    foreach (var permission in item.Role.RolePermissions)
                     {
                         permissions.Add(permission.Permission);
                     }
@@ -372,10 +361,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of User to fetch</param>
         [HttpGet]
         [Route("{id}/roles")]
-        [SwaggerOperation("UsersIdRolesGet")]
-        [SwaggerResponse(200, type: typeof(List<HetUserRole>))]
         [RequiresPermission(HetPermission.UserManagement)]
-        public virtual IActionResult UsersIdRolesGet([FromRoute]int id)
+        public virtual ActionResult<List<UserRoleDto>> UsersIdRolesGet([FromRoute]int id)
         {
             bool exists = _context.HetUser.Any(x => x.UserId == id);
 
@@ -383,10 +370,10 @@ namespace HetsApi.Controllers
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetUser user = UserHelper.GetRecord(id, _context);
+            var user = _userRepo.GetRecord(id);
 
             // return user roles
-            return new ObjectResult(new HetsResponse(user.HetUserRole));
+            return new ObjectResult(new HetsResponse(user.UserRoles));
         }
 
         /// <summary>
@@ -397,10 +384,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPost]
         [Route("{id}/roles")]
-        [SwaggerOperation("UsersIdRolesPost")]
-        [SwaggerResponse(200, type: typeof(List<HetUserRole>))]
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
-        public virtual IActionResult UsersIdRolesPost([FromRoute]int id, [FromBody]HetUserRole item)
+        public virtual ActionResult<List<UserRoleDto>> UsersIdRolesPost([FromRoute]int id, [FromBody]UserRoleDto item)
         {
             bool exists = _context.HetUser.Any(x => x.UserId == id);
 
@@ -414,11 +399,11 @@ namespace HetsApi.Controllers
             if (!roleExists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // check the user exists
-            HetUser user = UserHelper.GetRecord(id, _context);
+            var user = _userRepo.GetRecord(id);
             if (user == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // check if the user has this role - then add
-            if (user.HetUserRole.All(x => x.RoleId != item.RoleId))
+            if (user.UserRoles.All(x => x.RoleId != item.RoleId))
             {
                 // create a new UserRole record
                 HetUserRole userRole = new HetUserRole
@@ -435,10 +420,10 @@ namespace HetsApi.Controllers
             }
 
             // return updated roles
-            user = UserHelper.GetRecord(id, _context);
+            user = _userRepo.GetRecord(id);
 
             // return user roles
-            return new ObjectResult(new HetsResponse(user.HetUserRole));
+            return new ObjectResult(new HetsResponse(user.UserRoles));
         }
 
         /// <summary>
@@ -449,10 +434,8 @@ namespace HetsApi.Controllers
         /// <param name="items"></param>
         [HttpPut]
         [Route("{id}/roles")]
-        [SwaggerOperation("UsersIdRolesPut")]
-        [SwaggerResponse(200, type: typeof(List<HetUserRole>))]
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
-        public virtual IActionResult UsersIdRolesPut([FromRoute]int id, [FromBody]HetUserRole[] items)
+        public virtual ActionResult<List<UserRoleDto>> UsersIdRolesPut([FromRoute]int id, [FromBody]UserRoleDto[] items)
         {
             bool exists = _context.HetUser.Any(x => x.UserId == id);
 
@@ -460,11 +443,11 @@ namespace HetsApi.Controllers
             if (!exists || items == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetUser user = UserHelper.GetRecord(id, _context);
-            if (user.HetUserRole == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            var user = _userRepo.GetRecord(id);
+            if (user.UserRoles == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // iterate the roles and update effective date
-            foreach (HetUserRole item in items)
+            foreach (var item in items)
             {
                 // check the role id
                 bool roleExists = _context.HetUserRole.Any(x => x.RoleId == item.RoleId &&
@@ -485,10 +468,10 @@ namespace HetsApi.Controllers
             }
 
             // return updated roles
-            user = UserHelper.GetRecord(id, _context);
+            user = _userRepo.GetRecord(id);
 
             // return user roles
-            return new ObjectResult(new HetsResponse(user.HetUserRole));
+            return new ObjectResult(new HetsResponse(user.UserRoles));
         }
 
         #endregion
@@ -502,10 +485,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of User to fetch districts for</param>
         [HttpGet]
         [Route("{id}/districts")]
-        [SwaggerOperation("UsersIdDistrictsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetUserDistrict>))]
         [RequiresPermission(HetPermission.UserManagement)]
-        public virtual IActionResult UsersIdDistrictsGet([FromRoute]int id)
+        public virtual ActionResult<List<UserDistrictDto>> UsersIdDistrictsGet([FromRoute]int id)
         {
             List<HetUserDistrict> districts = _context.HetUserDistrict.AsNoTracking()
                 .Include(x => x.User)
@@ -513,7 +494,7 @@ namespace HetsApi.Controllers
                 .Where(x => x.UserId == id)
                 .ToList();
 
-            return new ObjectResult(new HetsResponse(districts));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<UserDistrictDto>>(districts)));
         }
 
         #endregion

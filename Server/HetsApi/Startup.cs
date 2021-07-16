@@ -102,8 +102,12 @@ namespace HetsApi
             services.AddScoped<HetsJwtBearerEvents>();
 
             // repository
-            services.AddScoped<IRentalAgreementRepository, RentalAgreementRepository>();
+            services.AddScoped<IEquipmentRepository, EquipmentRepository>();
             services.AddScoped<IOwnerRepository, OwnerRepository>();
+            services.AddScoped<IProjectRepository, ProjectRepository>();
+            services.AddScoped<IRentalAgreementRepository, RentalAgreementRepository>();
+            services.AddScoped<IRentalRequestRepository, RentalRequestRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             // allow for large files to be uploaded
             services.Configure<FormOptions>(options =>
