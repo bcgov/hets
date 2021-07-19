@@ -88,7 +88,7 @@ class Main extends React.Component {
   }
 
   unhandledRejection = (e) => {
-    var err = e.detail.reason;
+    var err = e.reason;
 
     if (err instanceof ApiError) {
       this.props.unhandledApiError(err);
