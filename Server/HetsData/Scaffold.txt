@@ -7,7 +7,7 @@ Remove Hangfire tables and sequences before scaffolding the db
 ********************************************
 Step 2: Generate / Update Model:
 ********************************************
-Scaffold-DbContext "Host=localhost;Username=postgres;Password=postgres;Database=hets;Port=9010" Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir Model -Force -Project "HetsData" -Verbose -Context "DbAppContext"
+Scaffold-DbContext "Host=localhost;Username=postgres;Password=postgres;Database=hets;Port=9010" Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir Model -Force -Project "HetsData" -Verbose -Context "DbAppContext" -Schema "public"
 
 
 For a specific table(s) only:
