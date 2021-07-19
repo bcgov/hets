@@ -19,8 +19,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\**\*;node_modules;bower_components" />
-    <None Update="wwwroot\**\*;Views;Areas\**\Views">
+    <Compile Remove="node_modules;bower_components" />
+    <None Update="Views;Areas\**\Views">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
     <None Update="**.user;**.vspscc">

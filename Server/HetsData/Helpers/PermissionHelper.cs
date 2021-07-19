@@ -1,4 +1,4 @@
-﻿using HetsData.Model;
+﻿using HetsData.Entities;
 
 namespace HetsData.Helpers
 {

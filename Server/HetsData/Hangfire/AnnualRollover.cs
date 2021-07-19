@@ -1,7 +1,7 @@
 ﻿using Hangfire;
 using HetsApi.Helpers;
 using HetsData.Helpers;
-using HetsData.Model;
+using HetsData.Entities;
 using HetsData.Dtos;
 using Microsoft.EntityFrameworkCore;
 using System;

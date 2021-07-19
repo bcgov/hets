@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace HetsData.Model
+namespace HetsData.Entities
 {
     [Serializable]
     public class HetsDbConcurrencyException : Exception

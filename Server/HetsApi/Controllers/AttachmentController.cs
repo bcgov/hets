@@ -1,6 +1,6 @@
 using HetsApi.Authorization;
 using HetsApi.Model;
-using HetsData.Model;
+using HetsData.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Linq;

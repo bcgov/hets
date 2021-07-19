@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using HetsData.Model;
+using HetsData.Entities;
 
 namespace HetsData.Helpers
 {

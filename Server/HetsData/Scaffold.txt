@@ -1,7 +1,7 @@
 ﻿********************************************
 Step 1: Generate / Update Model:
 ********************************************
-Scaffold-DbContext "Host=localhost;Username=postgres;Password=postgres;Database=hets;Port=9010" Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir Model -Force -Project "HetsData" -Verbose -Context "DbAppContext" -Schema "public"
+Scaffold-DbContext "Host=localhost;Username=postgres;Password=postgres;Database=hets;Port=9010" Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir Entities -Force -Project "HetsData" -Verbose -Context "DbAppContext" -Schema "public"
 
 ********************************************
 Step 2: Update Context

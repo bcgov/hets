@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using HetsData.Model;
+using HetsData.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace HetsData.Helpers

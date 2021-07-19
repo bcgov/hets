@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using HetsData.Model;
+using HetsData.Entities;
 
 namespace HetsApi.Authorization
 {

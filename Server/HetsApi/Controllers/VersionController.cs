@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using HetsCommon;
 using HetsApi.Helpers;
 using HetsApi.Model;
-using HetsData.Model;
+using HetsData.Entities;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 

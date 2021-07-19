@@ -1,5 +1,5 @@
 ﻿using HetsData.Helpers;
-using HetsData.Model;
+using HetsData.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

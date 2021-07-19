@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HetsApi.Authorization;
 using HetsApi.Model;
-using HetsData.Model;
+using HetsData.Entities;
 using Microsoft.Extensions.Configuration;
 using AutoMapper;
 using HetsData.Dtos;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using HetsData.Dtos;
-using HetsData.Model;
+using HetsData.Entities;
 
 namespace HetsData.Helpers
 {

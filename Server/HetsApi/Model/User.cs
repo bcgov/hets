@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using HetsData.Dtos;
-using HetsData.Model;
+using HetsData.Entities;
 using Newtonsoft.Json;
 
 namespace HetsApi.Model

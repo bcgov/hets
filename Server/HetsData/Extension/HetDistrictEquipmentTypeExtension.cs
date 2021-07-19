@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HetsData.Model
+namespace HetsData.Entities
 {
     public partial class HetDistrictEquipmentType
     {

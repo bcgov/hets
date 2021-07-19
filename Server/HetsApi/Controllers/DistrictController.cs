@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using HetsApi.Authorization;
 using HetsApi.Model;
-using HetsData.Model;
+using HetsData.Entities;
 using HetsData.Hangfire;
 using Hangfire.Storage;
 using Hangfire.Common;

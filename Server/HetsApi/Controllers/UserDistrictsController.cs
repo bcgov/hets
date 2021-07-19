@@ -8,7 +8,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
-using HetsData.Model;
+using HetsData.Entities;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using HetsData.Dtos;

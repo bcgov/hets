@@ -5,7 +5,7 @@ using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
-using HetsData.Model;
+using HetsData.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace HetsApi.Controllers

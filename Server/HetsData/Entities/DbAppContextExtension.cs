@@ -6,7 +6,7 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace HetsData.Model
+namespace HetsData.Entities
 {
     public partial class DbAppContext
     {

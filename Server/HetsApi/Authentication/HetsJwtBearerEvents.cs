@@ -1,6 +1,6 @@
 ﻿using HetsApi.Extensions;
 using HetsApi.Helpers;
-using HetsData.Model;
+using HetsData.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using HetsData.Model;
+using HetsData.Entities;
 using HetsData.Dtos;
 
 namespace HetsData.Helpers

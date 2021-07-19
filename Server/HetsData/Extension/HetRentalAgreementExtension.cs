@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 
-namespace HetsData.Model
+namespace HetsData.Entities
 {
     public partial class HetRentalAgreement
     {        

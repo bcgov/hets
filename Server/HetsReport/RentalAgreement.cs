@@ -7,7 +7,7 @@ using System.Reflection;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using HetsData.Helpers;
-using HetsData.Model;
+using HetsData.Entities;
 using HetsReport.Helpers;
 
 namespace HetsReport
