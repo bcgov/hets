@@ -41,17 +41,17 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual ActionResult<TimeRecordDto> TimeRecordsIdDeletePost([FromRoute]int id)
         {
-            bool exists = _context.HetTimeRecord.Any(a => a.TimeRecordId == id);
+            bool exists = _context.HetTimeRecords.Any(a => a.TimeRecordId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetTimeRecord item = _context.HetTimeRecord.First(a => a.TimeRecordId == id);
+            HetTimeRecord item = _context.HetTimeRecords.First(a => a.TimeRecordId == id);
 
             if (item != null)
             {
-                _context.HetTimeRecord.Remove(item);
+                _context.HetTimeRecords.Remove(item);
 
                 // save the changes
                 _context.SaveChanges();
@@ -92,7 +92,7 @@ namespace HetsApi.Controllers
             DateTime fiscalStart = new DateTime(fiscalYear, 3, 31); // look for all records AFTER the 31st
 
             // only return active equipment / projects and agreements
-            IQueryable<HetTimeRecord> data = _context.HetTimeRecord.AsNoTracking()
+            IQueryable<HetTimeRecord> data = _context.HetTimeRecords.AsNoTracking()
                 .Include(x => x.RentalAgreement)
                     .ThenInclude(x => x.Project)
                 .Include(x => x.RentalAgreement)

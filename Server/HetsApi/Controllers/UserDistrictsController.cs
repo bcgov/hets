@@ -47,7 +47,7 @@ namespace HetsApi.Controllers
             // return for the current user only
             string userId = _context.SmUserId;
 
-            List<HetUserDistrict> result = _context.HetUserDistrict.AsNoTracking()
+            List<HetUserDistrict> result = _context.HetUserDistricts.AsNoTracking()
                 .Include(x => x.User)
                 .Include(x => x.District)
                 .Where(x => x.User.SmUserId.ToUpper() == userId)
@@ -66,24 +66,24 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
         public virtual ActionResult<List<UserDistrictDto>> UserDistrictsIdDeletePost([FromRoute]int id)
         {
-            bool exists = _context.HetUserDistrict.Any(a => a.UserDistrictId == id);
+            bool exists = _context.HetUserDistricts.Any(a => a.UserDistrictId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetUserDistrict item = _context.HetUserDistrict
+            HetUserDistrict item = _context.HetUserDistricts
                 .Include(x => x.User)
                 .First(a => a.UserDistrictId == id);
 
             int userId = item.User.UserId;
 
             // remove record
-            _context.HetUserDistrict.Remove(item);
+            _context.HetUserDistricts.Remove(item);
             _context.SaveChanges();
 
             // return the updated user district records
-            List<HetUserDistrict> result = _context.HetUserDistrict.AsNoTracking()
+            List<HetUserDistrict> result = _context.HetUserDistricts.AsNoTracking()
                 .Include(x => x.User)
                 .Include(x => x.District)
                 .Where(x => x.User.UserId == userId)
@@ -252,14 +252,14 @@ namespace HetsApi.Controllers
                         }
                     }
 
-                    _context.HetUserDistrict.Add(item);
+                    _context.HetUserDistricts.Add(item);
                 }
             }
 
             _context.SaveChanges();
 
             // return the updated user district records
-            List<HetUserDistrict> result = _context.HetUserDistrict.AsNoTracking()
+            List<HetUserDistrict> result = _context.HetUserDistricts.AsNoTracking()
                 .Include(x => x.User)
                 .Include(x => x.District)
                 .Where(x => x.User.UserId == userId)
@@ -277,13 +277,13 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
         public virtual ActionResult<UserDto> UserDistrictsIdSwitchPost([FromRoute]int id)
         {
-            bool exists = _context.HetUserDistrict.Any(a => a.UserDistrictId == id);
+            bool exists = _context.HetUserDistricts.Any(a => a.UserDistrictId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetUserDistrict userDistrict = _context.HetUserDistrict.First(a => a.UserDistrictId == id);
+            HetUserDistrict userDistrict = _context.HetUserDistricts.First(a => a.UserDistrictId == id);
 
             string userId = _context.SmUserId;
 

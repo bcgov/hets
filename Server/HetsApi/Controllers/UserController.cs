@@ -79,20 +79,20 @@ namespace HetsApi.Controllers
 
             // get record
             HetUser user = _context.HetUsers.AsNoTracking()
-                .Include(x => x.HetUserRole)
-                .Include(x => x.HetUserDistrict)
+                .Include(x => x.HetUserRoles)
+                .Include(x => x.HetUserDistricts)
                 .First(x => x.UserId == id);
 
             // delete user roles
-            foreach (HetUserRole item in user.HetUserRole)
+            foreach (HetUserRole item in user.HetUserRoles)
             {
-                _context.HetUserRole.Remove(item);
+                _context.HetUserRoles.Remove(item);
             }
 
             // delete user districts
-            foreach (HetUserDistrict item in user.HetUserDistrict)
+            foreach (HetUserDistrict item in user.HetUserDistricts)
             {
-                _context.HetUserDistrict.Remove(item);
+                _context.HetUserDistricts.Remove(item);
             }
 
             // delete user
@@ -141,7 +141,7 @@ namespace HetsApi.Controllers
                 IsPrimary = true
             };
 
-            user.HetUserDistrict.Add(newUserDistrict);
+            user.HetUserDistricts.Add(newUserDistrict);
 
             _context.HetUsers.Add(user);
             _context.SaveChanges();
@@ -174,9 +174,9 @@ namespace HetsApi.Controllers
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetUser user = _context.HetUser
+            HetUser user = _context.HetUsers
                 .Include(x => x.District)
-                .Include(x => x.HetUserDistrict)
+                .Include(x => x.HetUserDistricts)
                 .First(x => x.UserId == id);
 
             // validate that user id is unique
@@ -202,7 +202,7 @@ namespace HetsApi.Controllers
 
                 if (districtExists)
                 {
-                    HetDistrict district = _context.HetDistrict
+                    HetDistrict district = _context.HetDistricts
                         .Include(x => x.Region)
                         .First(x => x.DistrictId == item.District.DistrictId);
 
@@ -211,7 +211,7 @@ namespace HetsApi.Controllers
                     // check if we need to add this to the User District List too
                     bool userDistrictExists = false;
 
-                    foreach (HetUserDistrict userDistrict in user.HetUserDistrict)
+                    foreach (HetUserDistrict userDistrict in user.HetUserDistricts)
                     {
                         if (userDistrict.DistrictId == item.District.DistrictId)
                         {
@@ -229,13 +229,13 @@ namespace HetsApi.Controllers
                             DistrictId = district.DistrictId
                         };
 
-                        if (user.HetUserDistrict == null)
+                        if (user.HetUserDistricts == null)
                         {
-                            user.HetUserDistrict = new List<HetUserDistrict>();
+                            user.HetUserDistricts = new List<HetUserDistrict>();
                             newUserDistrict.IsPrimary = true;
                         }
 
-                        user.HetUserDistrict.Add(newUserDistrict);
+                        user.HetUserDistricts.Add(newUserDistrict);
                     }
                 }
             }
@@ -263,7 +263,7 @@ namespace HetsApi.Controllers
         {
             int?[] districtArray = ArrayHelper.ParseIntArray(districts);
 
-            IQueryable<HetUser> data = _context.HetUser
+            IQueryable<HetUser> data = _context.HetUsers
                 .Include(x => x.District)
                 .Select(x => x);
 
@@ -414,7 +414,7 @@ namespace HetsApi.Controllers
                     ExpiryDate = item.ExpiryDate
                 };
 
-                _context.HetUserRole.Add(userRole);
+                _context.HetUserRoles.Add(userRole);
 
                 _context.SaveChanges();
             }
@@ -450,13 +450,13 @@ namespace HetsApi.Controllers
             foreach (var item in items)
             {
                 // check the role id
-                bool roleExists = _context.HetUserRole.Any(x => x.RoleId == item.RoleId &&
+                bool roleExists = _context.HetUserRoles.Any(x => x.RoleId == item.RoleId &&
                                                                 x.UserId == id);
 
                 if (roleExists)
                 {
                     // check if we need to modify the effective date
-                    HetUserRole role = _context.HetUserRole.First(x => x.RoleId == item.RoleId &&
+                    HetUserRole role = _context.HetUserRoles.First(x => x.RoleId == item.RoleId &&
                                                                        x.UserId == id);
 
                     if (role.ExpiryDate != item.ExpiryDate)
@@ -488,7 +488,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.UserManagement)]
         public virtual ActionResult<List<UserDistrictDto>> UsersIdDistrictsGet([FromRoute]int id)
         {
-            List<HetUserDistrict> districts = _context.HetUserDistrict.AsNoTracking()
+            List<HetUserDistrict> districts = _context.HetUserDistricts.AsNoTracking()
                 .Include(x => x.User)
                 .Include(x => x.District)
                 .Where(x => x.UserId == id)

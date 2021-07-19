@@ -126,7 +126,7 @@ namespace HetsApi.Controllers
             agreement.EquipmentId = item.EquipmentId;
 
             // update the rate period for all included rates and attachments
-            foreach (HetRentalAgreementRate agreementRate in agreement.HetRentalAgreementRate.Where(x => !x.Overtime && x.IsIncludedInTotal))
+            foreach (HetRentalAgreementRate agreementRate in agreement.HetRentalAgreementRates.Where(x => !(x.Overtime ?? false) && x.IsIncludedInTotal))
             {
                 agreementRate.RatePeriod = agreement.RatePeriod;
                 agreementRate.RatePeriodTypeId = agreement.RatePeriodTypeId;
@@ -139,7 +139,7 @@ namespace HetsApi.Controllers
                 {
                     bool found = false;
 
-                    foreach (HetRentalAgreementRate agreementRate in agreement.HetRentalAgreementRate)
+                    foreach (HetRentalAgreementRate agreementRate in agreement.HetRentalAgreementRates)
                     {
                         if (agreementRate.RentalAgreementRateId == rate.RentalAgreementRateId)
                         {
@@ -176,12 +176,12 @@ namespace HetsApi.Controllers
                             newAgreementRate.ComponentName = overtimeRate.RateType;
                         }
 
-                        if (agreement.HetRentalAgreementRate == null)
+                        if (agreement.HetRentalAgreementRates == null)
                         {
-                            agreement.HetRentalAgreementRate = new List<HetRentalAgreementRate>();
+                            agreement.HetRentalAgreementRates = new List<HetRentalAgreementRate>();
                         }
 
-                        agreement.HetRentalAgreementRate.Add(newAgreementRate);
+                        agreement.HetRentalAgreementRates.Add(newAgreementRate);
                     }
                 }
             }
@@ -267,12 +267,12 @@ namespace HetsApi.Controllers
                         newAgreementRate.ComponentName = overtimeRate.RateType;
                     }
 
-                    if (agreement.HetRentalAgreementRate == null)
+                    if (agreement.HetRentalAgreementRates == null)
                     {
-                        agreement.HetRentalAgreementRate = new List<HetRentalAgreementRate>();
+                        agreement.HetRentalAgreementRates = new List<HetRentalAgreementRate>();
                     }
 
-                    agreement.HetRentalAgreementRate.Add(newAgreementRate);
+                    agreement.HetRentalAgreementRates.Add(newAgreementRate);
                 }
             }
 
@@ -341,7 +341,7 @@ namespace HetsApi.Controllers
                 .Include(x => x.Equipment)
                     .ThenInclude(y => y.DistrictEquipmentType)
                 .Include(x => x.Equipment)
-                    .ThenInclude(y => y.HetEquipmentAttachment)
+                    .ThenInclude(y => y.HetEquipmentAttachments)
                 .Include(x => x.Equipment)
                     .ThenInclude(y => y.LocalArea.ServiceArea.District.Region)
                 .Include(x => x.Project)
@@ -451,7 +451,7 @@ namespace HetsApi.Controllers
             if (item.TimeRecordId > 0)
             {
                 // get record
-                HetTimeRecord time = _context.HetTimeRecord.First(a => a.TimeRecordId == item.TimeRecordId);
+                HetTimeRecord time = _context.HetTimeRecords.First(a => a.TimeRecordId == item.TimeRecordId);
 
                 // not found
                 if (time == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -475,7 +475,7 @@ namespace HetsApi.Controllers
                     WorkedDate = item.WorkedDate
                 };
 
-                _context.HetTimeRecord.Add(time);
+                _context.HetTimeRecords.Add(time);
             }
 
             _context.SaveChanges();
@@ -514,7 +514,7 @@ namespace HetsApi.Controllers
                 if (item.TimeRecordId > 0)
                 {
                     // get record
-                    HetTimeRecord time = _context.HetTimeRecord.First(a => a.TimeRecordId == item.TimeRecordId);
+                    HetTimeRecord time = _context.HetTimeRecords.First(a => a.TimeRecordId == item.TimeRecordId);
 
                     // not found
                     if (time == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -538,7 +538,7 @@ namespace HetsApi.Controllers
                         WorkedDate = item.WorkedDate
                     };
 
-                    _context.HetTimeRecord.Add(time);
+                    _context.HetTimeRecords.Add(time);
                 }
 
                 _context.SaveChanges();
@@ -752,7 +752,7 @@ namespace HetsApi.Controllers
             if (item.RentalAgreementConditionId > 0)
             {
                 // get record
-                HetRentalAgreementCondition condition = _context.HetRentalAgreementCondition
+                HetRentalAgreementCondition condition = _context.HetRentalAgreementConditions
                     .FirstOrDefault(a => a.RentalAgreementConditionId == item.RentalAgreementConditionId);
 
                 // not found
@@ -806,7 +806,7 @@ namespace HetsApi.Controllers
                 if (item.RentalAgreementConditionId > 0)
                 {
                     // get record
-                    HetRentalAgreementCondition condition = _context.HetRentalAgreementCondition
+                    HetRentalAgreementCondition condition = _context.HetRentalAgreementConditions
                         .FirstOrDefault(a => a.RentalAgreementConditionId == item.RentalAgreementConditionId);
 
                     // not found
@@ -915,12 +915,12 @@ namespace HetsApi.Controllers
                     Rate = rate.Rate
                 };
 
-                if (agreement.HetRentalAgreementRate == null)
+                if (agreement.HetRentalAgreementRates == null)
                 {
-                    agreement.HetRentalAgreementRate = new List<HetRentalAgreementRate>();
+                    agreement.HetRentalAgreementRates = new List<HetRentalAgreementRate>();
                 }
 
-                agreement.HetRentalAgreementRate.Add(newAgreementRate);
+                agreement.HetRentalAgreementRates.Add(newAgreementRate);
             }
 
             // save the changes
@@ -1026,9 +1026,9 @@ namespace HetsApi.Controllers
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get agreement and validate
-            HetRentalAgreement agreement = _context.HetRentalAgreement
-                .Include(a => a.HetRentalAgreementRate)
-                .Include(a => a.HetRentalAgreementCondition)
+            HetRentalAgreement agreement = _context.HetRentalAgreements
+                .Include(a => a.HetRentalAgreementRates)
+                .Include(a => a.HetRentalAgreementConditions)
                 .First(a => a.RentalAgreementId == id);
 
             if (agreement.RentalAgreementStatusTypeId != statusId)
@@ -1047,13 +1047,13 @@ namespace HetsApi.Controllers
             }
 
             // delete rate
-            foreach (HetRentalAgreementRate item in agreement.HetRentalAgreementRate)
+            foreach (HetRentalAgreementRate item in agreement.HetRentalAgreementRates)
             {
                 _context.HetRentalAgreementRates.Remove(item);
             }
 
             // delete conditions
-            foreach (HetRentalAgreementCondition item in agreement.HetRentalAgreementCondition)
+            foreach (HetRentalAgreementCondition item in agreement.HetRentalAgreementConditions)
             {
                 _context.HetRentalAgreementConditions.Remove(item);
             }
@@ -1099,8 +1099,8 @@ namespace HetsApi.Controllers
 
             // get agreement and clone
             HetRentalAgreement oldAgreement = _context.HetRentalAgreements.AsNoTracking()
-                .Include(a => a.HetRentalAgreementRate)
-                .Include(a => a.HetRentalAgreementCondition)
+                .Include(a => a.HetRentalAgreementRates)
+                .Include(a => a.HetRentalAgreementConditions)
                 .First(a => a.RentalAgreementId == id);
 
             // create new blank agreement as a duplicate
@@ -1119,7 +1119,7 @@ namespace HetsApi.Controllers
                 AgreementCity = oldAgreement.AgreementCity
             };
 
-            foreach (HetRentalAgreementCondition condition in oldAgreement.HetRentalAgreementCondition)
+            foreach (HetRentalAgreementCondition condition in oldAgreement.HetRentalAgreementConditions)
             {
                 HetRentalAgreementCondition newCondition = new HetRentalAgreementCondition
                 {
@@ -1128,12 +1128,12 @@ namespace HetsApi.Controllers
                     ConditionName = condition.ConditionName
                 };
 
-                newAgreement.HetRentalAgreementCondition.Add(newCondition);
+                newAgreement.HetRentalAgreementConditions.Add(newCondition);
             }
 
-            if (oldAgreement.HetRentalAgreementRate != null)
+            if (oldAgreement.HetRentalAgreementRates != null)
             {
-                foreach (HetRentalAgreementRate rate in oldAgreement.HetRentalAgreementRate)
+                foreach (HetRentalAgreementRate rate in oldAgreement.HetRentalAgreementRates)
                 {
                     HetRentalAgreementRate newRate = new HetRentalAgreementRate
                     {
@@ -1146,18 +1146,18 @@ namespace HetsApi.Controllers
                         Overtime = rate.Overtime
                     };
 
-                    newAgreement.HetRentalAgreementRate.Add(newRate);
+                    newAgreement.HetRentalAgreementRates.Add(newRate);
                 }
             }
 
             // update overtime rates (and add if they don't exist)
             foreach (HetProvincialRateType overtimeRate in overtime)
             {
-                bool found = newAgreement.HetRentalAgreementRate.Any(x => x.ComponentName == overtimeRate.RateType);
+                bool found = newAgreement.HetRentalAgreementRates.Any(x => x.ComponentName == overtimeRate.RateType);
 
                 if (found)
                 {
-                    HetRentalAgreementRate rate = newAgreement.HetRentalAgreementRate
+                    HetRentalAgreementRate rate = newAgreement.HetRentalAgreementRates
                         .First(x => x.ComponentName == overtimeRate.RateType);
 
                     rate.Rate = overtimeRate.Rate;
@@ -1175,14 +1175,14 @@ namespace HetsApi.Controllers
                         Overtime = overtimeRate.Overtime
                     };
 
-                    newAgreement.HetRentalAgreementRate.Add(newRate);
+                    newAgreement.HetRentalAgreementRates.Add(newRate);
                 }
             }
 
             // remove non-existent overtime rates
             List<string> remove =
-                (from overtimeRate in newAgreement.HetRentalAgreementRate
-                 where overtimeRate.Overtime
+                (from overtimeRate in newAgreement.HetRentalAgreementRates
+                 where overtimeRate.Overtime ?? false
                  let found = overtime.Any(x => x.RateType == overtimeRate.ComponentName)
                  where !found
                  select overtimeRate.ComponentName).ToList();
@@ -1191,8 +1191,8 @@ namespace HetsApi.Controllers
             {
                 foreach (string component in remove)
                 {
-                    newAgreement.HetRentalAgreementRate.Remove(
-                        newAgreement.HetRentalAgreementRate.First(x => x.ComponentName == component));
+                    newAgreement.HetRentalAgreementRates.Remove(
+                        newAgreement.HetRentalAgreementRates.First(x => x.ComponentName == component));
                 }
             }
 

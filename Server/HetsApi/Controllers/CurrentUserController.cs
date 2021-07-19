@@ -181,9 +181,9 @@ namespace HetsApi.Controllers
                 user.DisplayName = currentUser.GivenName + " " + currentUser.Surname;
                 user.UserGuid = currentUser.Guid;
                 user.BusinessUser = false;
-                user.District = currentUser.District;
-                user.HetUserDistrict = currentUser.HetUserDistricts;
-                user.HetUserRole = currentUser.HetUserRoles;
+                user.District = _mapper.Map<DistrictDto>(currentUser.District);
+                user.UserDistricts = _mapper.Map<List<UserDistrictDto>>(currentUser.HetUserDistricts);
+                user.UserRoles = _mapper.Map<List<UserRoleDto>>(currentUser.HetUserRoles);
                 user.SmAuthorizationDirectory = currentUser.SmAuthorizationDirectory;
 
                 // set environment
@@ -246,12 +246,12 @@ namespace HetsApi.Controllers
                             Role = role.Role
                         };
 
-                        if (user.HetUserRole == null)
+                        if (user.UserRoles == null)
                         {
-                            user.HetUserRole = new List<HetUserRole>();
+                            user.UserRoles = new List<UserRoleDto>();
                         }
 
-                        user.HetUserRole.Add(userRole);
+                        user.UserRoles.Add(_mapper.Map<UserRoleDto>(userRole));
                     }
                 }
             }

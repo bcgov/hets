@@ -112,7 +112,7 @@ namespace HetsApi.Controllers
                     .ThenInclude(c => c.PrimaryContact)
                 .Include(x => x.HetRentalRequestAttachments)
                 .Include(x => x.DistrictEquipmentType)
-                .Include(x => x.HetRentalRequestRotationList)
+                .Include(x => x.HetRentalRequestRotationLists)
                     .ThenInclude(y => y.Equipment)
                 .First(a => a.RentalRequestId == id);
 
@@ -233,7 +233,7 @@ namespace HetsApi.Controllers
             int? statusIdInProgress = StatusHelper.GetStatusId(HetRentalRequest.StatusInProgress, "rentalRequestStatus", _context);
             if (statusIdInProgress == null) return new NotFoundObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            List<HetRentalRequest> requests = _context.HetRentalRequest
+            List<HetRentalRequest> requests = _context.HetRentalRequests
                 .Where(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentType.DistrictEquipmentTypeId &&
                             x.LocalAreaId == item.LocalArea.LocalAreaId &&
                             x.RentalRequestStatusTypeId == statusIdInProgress)
@@ -245,7 +245,7 @@ namespace HetsApi.Controllers
                 int quantity = requests[0].EquipmentCount;
                 int hiredCount = 0;
 
-                foreach (HetRentalRequestRotationList equipment in requests[0].HetRentalRequestRotationList)
+                foreach (HetRentalRequestRotationList equipment in requests[0].HetRentalRequestRotationLists)
                 {
                     if (equipment.OfferResponse != null &&
                         equipment.OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
@@ -317,7 +317,7 @@ namespace HetsApi.Controllers
                     Attachment = item.RentalRequestAttachments.ElementAt(0).Attachment
                 };
 
-                rentalRequest.HetRentalRequestAttachment.Add(attachment);
+                rentalRequest.HetRentalRequestAttachments.Add(attachment);
             }
 
             // save the changes
@@ -344,22 +344,22 @@ namespace HetsApi.Controllers
 
             // get record
             HetRentalRequest rentalRequest = _context.HetRentalRequests.AsNoTracking()
-                .Include(x => x.HetRentalRequestRotationList)
+                .Include(x => x.HetRentalRequestRotationLists)
                     .ThenInclude(y => y.RentalAgreement)
-                .Include(x => x.HetRentalRequestRotationList)
+                .Include(x => x.HetRentalRequestRotationLists)
                     .ThenInclude(y => y.Equipment)
-                .Include(x => x.HetRentalRequestAttachment)
+                .Include(x => x.HetRentalRequestAttachments)
                 .Include(x => x.HetHistories)
                 .Include(x => x.RentalRequestStatusType)
                 .Include(x => x.HetNotes)
                 .First(a => a.RentalRequestId == id);
 
-            if (rentalRequest.HetRentalRequestRotationList != null &&
-                rentalRequest.HetRentalRequestRotationList.Count > 0)
+            if (rentalRequest.HetRentalRequestRotationLists != null &&
+                rentalRequest.HetRentalRequestRotationLists.Count > 0)
             {
                 bool agreementExists = false;
 
-                foreach (HetRentalRequestRotationList listItem in rentalRequest.HetRentalRequestRotationList)
+                foreach (HetRentalRequestRotationList listItem in rentalRequest.HetRentalRequestRotationLists)
                 {
                     if (listItem.RentalAgreement != null && listItem.RentalAgreement.RentalAgreementId != 0)
                     {
@@ -383,47 +383,47 @@ namespace HetsApi.Controllers
             }
 
             // remove (delete) rental request rotation list
-            if (rentalRequest.HetRentalRequestRotationList != null)
+            if (rentalRequest.HetRentalRequestRotationLists != null)
             {
-                foreach (HetRentalRequestRotationList rotationList in rentalRequest.HetRentalRequestRotationList)
+                foreach (HetRentalRequestRotationList rotationList in rentalRequest.HetRentalRequestRotationLists)
                 {
-                    _context.HetRentalRequestRotationList.Remove(rotationList);
+                    _context.HetRentalRequestRotationLists.Remove(rotationList);
                 }
             }
 
             // remove (delete) rental request attachments
-            if (rentalRequest.HetRentalRequestAttachment != null)
+            if (rentalRequest.HetRentalRequestAttachments != null)
             {
-                foreach (HetRentalRequestAttachment attachment in rentalRequest.HetRentalRequestAttachment)
+                foreach (HetRentalRequestAttachment attachment in rentalRequest.HetRentalRequestAttachments)
                 {
-                    _context.HetRentalRequestAttachment.Remove(attachment);
+                    _context.HetRentalRequestAttachments.Remove(attachment);
                 }
             }
 
             // remove (delete) rental request attachments
-            if (rentalRequest.HetDigitalFile != null)
+            if (rentalRequest.HetDigitalFiles != null)
             {
-                foreach (HetDigitalFile attachment in rentalRequest.HetDigitalFile)
+                foreach (HetDigitalFile attachment in rentalRequest.HetDigitalFiles)
                 {
-                    _context.HetDigitalFile.Remove(attachment);
+                    _context.HetDigitalFiles.Remove(attachment);
                 }
             }
 
             // remove (delete) rental request notes
-            if (rentalRequest.HetNote != null)
+            if (rentalRequest.HetNotes != null)
             {
-                foreach (HetNote note in rentalRequest.HetNote)
+                foreach (HetNote note in rentalRequest.HetNotes)
                 {
                     _context.HetNotes.Remove(note);
                 }
             }
 
             // remove (delete) rental request history
-            if (rentalRequest.HetHistory != null)
+            if (rentalRequest.HetHistories != null)
             {
-                foreach (HetHistory history in rentalRequest.HetHistory)
+                foreach (HetHistory history in rentalRequest.HetHistories)
                 {
-                    _context.HetHistory.Remove(history);
+                    _context.HetHistories.Remove(history);
                 }
             }
 
@@ -462,7 +462,7 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.EquipmentType)
                 .Include(x => x.Project.PrimaryContact)
                 .Include(x => x.RentalRequestStatusType)
-                .Include(x => x.HetRentalRequestRotationList)
+                .Include(x => x.HetRentalRequestRotationLists)
                 .OrderByDescending(x => x.AppCreateTimestamp)
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));
 
@@ -555,7 +555,7 @@ namespace HetsApi.Controllers
             if (statusId == null) return new NotFoundObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // check if we have the rental request that is In Progress
-            exists = _context.HetRentalRequest
+            exists = _context.HetRentalRequests
                 .Any(a => a.RentalRequestId == id &&
                           a.RentalRequestStatusTypeId == statusId);
 
@@ -563,16 +563,16 @@ namespace HetsApi.Controllers
             if (!exists) return new BadRequestObjectResult(new HetsResponse("HETS-06", ErrorViewModel.GetDescription("HETS-06", _configuration)));
 
             // get rental request record
-            HetRentalRequest request = _context.HetRentalRequest
+            HetRentalRequest request = _context.HetRentalRequests
                 .Include(x => x.Project)
                     .ThenInclude(x => x.District)
                 .Include(x => x.LocalArea)
-                .Include(x => x.HetRentalRequestRotationList)
+                .Include(x => x.HetRentalRequestRotationLists)
                     .ThenInclude(x => x.Equipment)
                 .First(a => a.RentalRequestId == id);
 
             // get rotation list record
-            HetRentalRequestRotationList requestRotationList = _context.HetRentalRequestRotationList
+            HetRentalRequestRotationList requestRotationList = _context.HetRentalRequestRotationLists
                 .FirstOrDefault(a => a.RentalRequestRotationListId == item.RentalRequestRotationListId);
 
             // not found
@@ -597,7 +597,7 @@ namespace HetsApi.Controllers
                 item.OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
             {
                 // get rental agreement record
-                HetRentalAgreement rentalAgreement = _context.HetRentalAgreement
+                HetRentalAgreement rentalAgreement = _context.HetRentalAgreements
                     .FirstOrDefault(a => a.RentalAgreementId == item.RentalAgreementId);
 
                 // create rental agreement if it doesn't exist
@@ -642,12 +642,12 @@ namespace HetsApi.Controllers
                             Rate = rate.Rate
                         };
 
-                        if (rentalAgreement.HetRentalAgreementRate == null)
+                        if (rentalAgreement.HetRentalAgreementRates == null)
                         {
-                            rentalAgreement.HetRentalAgreementRate = new List<HetRentalAgreementRate>();
+                            rentalAgreement.HetRentalAgreementRates = new List<HetRentalAgreementRate>();
                         }
 
-                        rentalAgreement.HetRentalAgreementRate.Add(newAgreementRate);
+                        rentalAgreement.HetRentalAgreementRates.Add(newAgreementRate);
                     }
 
                     _context.HetRentalAgreements.Add(rentalAgreement);
@@ -677,7 +677,7 @@ namespace HetsApi.Controllers
             int countOfYeses = 0;
             int equipmentRequestCount = request.EquipmentCount;
 
-            foreach (HetRentalRequestRotationList rotationList in request.HetRentalRequestRotationList)
+            foreach (HetRentalRequestRotationList rotationList in request.HetRentalRequestRotationLists)
             {
                 if (rotationList.OfferResponse != null &&
                     rotationList.OfferResponse.Equals("Yes", StringComparison.InvariantCultureIgnoreCase))
@@ -738,7 +738,7 @@ namespace HetsApi.Controllers
             // extract the attachments and update properties for UI
             List<HetDigitalFile> attachments = new List<HetDigitalFile>();
 
-            foreach (HetDigitalFile attachment in equipment.HetDigitalFile)
+            foreach (HetDigitalFile attachment in equipment.HetDigitalFiles)
             {
                 if (attachment != null)
                 {
@@ -800,7 +800,7 @@ namespace HetsApi.Controllers
                     RentalRequestId = id
                 };
 
-                _context.HetHistory.Add(history);
+                _context.HetHistories.Add(history);
                 _context.SaveChanges();
             }
 
@@ -831,7 +831,7 @@ namespace HetsApi.Controllers
 
             List<HetNote> notes = new List<HetNote>();
 
-            foreach (HetNote note in request.HetNote)
+            foreach (HetNote note in request.HetNotes)
             {
                 if (note.IsNoLongerRelevant == false)
                 {
@@ -892,7 +892,7 @@ namespace HetsApi.Controllers
 
             List<HetNote> notes = new List<HetNote>();
 
-            foreach (HetNote note in request.HetNote)
+            foreach (HetNote note in request.HetNotes)
             {
                 if (note.IsNoLongerRelevant == false)
                 {
@@ -938,7 +938,7 @@ namespace HetsApi.Controllers
             int fiscalYear = (int)district.CurrentFiscalYear; // status table uses the start of the year
             DateTime fiscalStart = new DateTime(fiscalYear, 3, 31); // look for all records AFTER the 31st
 
-            IQueryable<HetRentalRequestRotationList> data = _context.HetRentalRequestRotationList.AsNoTracking()
+            IQueryable<HetRentalRequestRotationList> data = _context.HetRentalRequestRotationLists.AsNoTracking()
                 .Include(x => x.RentalRequest)
                     .ThenInclude(y => y.LocalArea)
                         .ThenInclude(z => z.ServiceArea)

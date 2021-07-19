@@ -189,9 +189,9 @@ namespace HetsApi.Helpers
             HetUser user = context.HetUsers.AsNoTracking()
                 .Where(x => x.Guid != null &&
                             x.Guid.Equals(guid))
-                .Include(u => u.HetUserRole)
+                .Include(u => u.HetUserRoles)
                     .ThenInclude(r => r.Role)
-                        .ThenInclude(rp => rp.HetRolePermission)
+                        .ThenInclude(rp => rp.HetRolePermissions)
                             .ThenInclude(p => p.Permission)
                 .FirstOrDefault();
 
@@ -209,9 +209,9 @@ namespace HetsApi.Helpers
             HetUser user = context.HetUsers.AsNoTracking()
                 .Where(x => x.SmUserId != null &&
                             x.SmUserId.ToUpper() == smUserId)
-                .Include(u => u.HetUserRole)
+                .Include(u => u.HetUserRoles)
                     .ThenInclude(r => r.Role)
-                        .ThenInclude(rp => rp.HetRolePermission)
+                        .ThenInclude(rp => rp.HetRolePermissions)
                             .ThenInclude(p => p.Permission)
                 .FirstOrDefault();
 
@@ -292,7 +292,7 @@ namespace HetsApi.Helpers
             }
 
             // ok - now find the user
-            HetBusinessUser user = context.HetBusinessUser
+            HetBusinessUser user = context.HetBusinessUsers
                 .FirstOrDefault(x => x.BusinessId == business.BusinessId &&
                                      x.BceidUserId.ToUpper() == userId);
 
@@ -343,7 +343,7 @@ namespace HetsApi.Helpers
                     AppLastUpdateTimestamp = DateTime.UtcNow
                 };
 
-                user.HetBusinessUserRole.Add(userRole);
+                user.HetBusinessUserRoles.Add(userRole);
 
                 // save record
                 context.HetBusinessUsers.Add(user);
@@ -372,9 +372,9 @@ namespace HetsApi.Helpers
             user = context.HetBusinessUsers.AsNoTracking()
                 .Where(x => x.BusinessId == business.BusinessId &&
                             x.BceidUserId.ToUpper() == userId)
-                .Include(u => u.HetBusinessUserRole)
+                .Include(u => u.HetBusinessUserRoles)
                     .ThenInclude(r => r.Role)
-                        .ThenInclude(rp => rp.HetRolePermission)
+                        .ThenInclude(rp => rp.HetRolePermissions)
                             .ThenInclude(p => p.Permission)
                 .FirstOrDefault();
 

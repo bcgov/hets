@@ -1055,7 +1055,7 @@ namespace HetsApi.Controllers
             foreach (var item in items)
             {
                 // get full equipment record
-                HetEquipment equipmentToTransfer = _context.HetEquipment
+                HetEquipment equipmentToTransfer = _context.HetEquipments
                     .Include(x => x.HetEquipmentAttachments)
                     .FirstOrDefault(x => x.EquipmentId == item.EquipmentId);
 
@@ -1123,11 +1123,11 @@ namespace HetsApi.Controllers
                     PupLegalCapacity = equipmentToTransfer.PupLegalCapacity
                 };
 
-                foreach (HetEquipmentAttachment attachment in equipmentToTransfer.HetEquipmentAttachment)
+                foreach (HetEquipmentAttachment attachment in equipmentToTransfer.HetEquipmentAttachments)
                 {
-                    if (newEquipment.HetEquipmentAttachment == null)
+                    if (newEquipment.HetEquipmentAttachments == null)
                     {
-                        newEquipment.HetEquipmentAttachment = new List<HetEquipmentAttachment>();
+                        newEquipment.HetEquipmentAttachments = new List<HetEquipmentAttachment>();
                     }
 
                     HetEquipmentAttachment newAttachment = new HetEquipmentAttachment
@@ -1136,7 +1136,7 @@ namespace HetsApi.Controllers
                         TypeName = attachment.TypeName
                     };
 
-                    newEquipment.HetEquipmentAttachment.Add(newAttachment);
+                    newEquipment.HetEquipmentAttachments.Add(newAttachment);
                 }
 
                 // seniority information:
@@ -1168,7 +1168,7 @@ namespace HetsApi.Controllers
 
                     // we also need to update all of the associated rental agreements
                     // (for this fiscal year)
-                    IQueryable<HetRentalAgreement> agreements = _context.HetRentalAgreement
+                    IQueryable<HetRentalAgreement> agreements = _context.HetRentalAgreements
                         .Where(x => x.EquipmentId == equipmentToTransfer.EquipmentId &&
                                     x.DatedOn >= fiscalStart);
 
@@ -1240,7 +1240,7 @@ namespace HetsApi.Controllers
             // extract the attachments and update properties for UI
             List<HetDigitalFile> attachments = new List<HetDigitalFile>();
 
-            foreach (HetDigitalFile attachment in owner.HetDigitalFile)
+            foreach (HetDigitalFile attachment in owner.HetDigitalFiles)
             {
                 if (attachment != null)
                 {
@@ -1275,10 +1275,10 @@ namespace HetsApi.Controllers
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetOwner owner = _context.HetOwners.AsNoTracking()
-                .Include(x => x.HetContact)
+                .Include(x => x.HetContacts)
                 .First(a => a.OwnerId == id);
 
-            return new ObjectResult(new HetsResponse(_mapper.Map<List<ContactDto>>(owner.HetContact.ToList())));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<ContactDto>>(owner.HetContacts.ToList())));
         }
 
         /// <summary>
@@ -1301,8 +1301,8 @@ namespace HetsApi.Controllers
             int contactId;
 
             // get owner record
-            HetOwner owner = _context.HetOwner
-                .Include(x => x.HetContact)
+            HetOwner owner = _context.HetOwners
+                .Include(x => x.HetContacts)
                 .First(a => a.OwnerId == id);
 
             using var transaction = _context.Database.BeginTransaction();
@@ -1310,7 +1310,7 @@ namespace HetsApi.Controllers
             // add or update contact
             if (item.ContactId > 0)
             {
-                HetContact contact = owner.HetContact.FirstOrDefault(a => a.ContactId == item.ContactId);
+                HetContact contact = owner.HetContacts.FirstOrDefault(a => a.ContactId == item.ContactId);
 
                 // not found
                 if (contact == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -1373,10 +1373,10 @@ namespace HetsApi.Controllers
 
             // get updated contact record
             HetOwner updatedOwner = _context.HetOwners.AsNoTracking()
-                .Include(x => x.HetContact)
+                .Include(x => x.HetContacts)
                 .First(a => a.OwnerId == id);
 
-            HetContact updatedContact = updatedOwner.HetContact
+            HetContact updatedContact = updatedOwner.HetContacts
                 .FirstOrDefault(a => a.ContactId == contactId);
 
             return new ObjectResult(new HetsResponse(_mapper.Map<ContactDto>(updatedContact)));
@@ -1400,7 +1400,7 @@ namespace HetsApi.Controllers
 
             // get owner record
             HetOwner owner = _context.HetOwners.AsNoTracking()
-                .Include(x => x.HetContact)
+                .Include(x => x.HetContacts)
                 .First(a => a.OwnerId == id);
 
             var contactIds = new List<int>();
@@ -1455,13 +1455,13 @@ namespace HetsApi.Controllers
                         Role = item.Role
                     };
 
-                    owner.HetContact.Add(temp);
+                    owner.HetContacts.Add(temp);
                     contactIds.Add(temp.ContactId);
                 }
             }
 
             // remove contacts that are no longer attached.
-            foreach (HetContact contact in owner.HetContact)
+            foreach (HetContact contact in owner.HetContacts)
             {
                 if (contact != null && contactIds.All(x => x != contact.ContactId))
                 {
@@ -1474,10 +1474,10 @@ namespace HetsApi.Controllers
 
             // get updated contact records
             HetOwner updatedOwner = _context.HetOwners.AsNoTracking()
-                .Include(x => x.HetContact)
+                .Include(x => x.HetContacts)
                 .First(a => a.OwnerId == id);
 
-            return new ObjectResult(new HetsResponse(_mapper.Map<List<ContactDto>>(updatedOwner.HetContact.ToList())));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<ContactDto>>(updatedOwner.HetContacts.ToList())));
         }
 
         #endregion
@@ -1527,7 +1527,7 @@ namespace HetsApi.Controllers
                     OwnerId = id
                 };
 
-                _context.HetHistory.Add(history);
+                _context.HetHistories.Add(history);
                 _context.SaveChanges();
             }
 
@@ -1558,7 +1558,7 @@ namespace HetsApi.Controllers
 
             List<HetNote> notes = new List<HetNote>();
 
-            foreach (HetNote note in owner.HetNote)
+            foreach (HetNote note in owner.HetNotes)
             {
                 if (note.IsNoLongerRelevant == false)
                 {
@@ -1619,7 +1619,7 @@ namespace HetsApi.Controllers
 
             List<HetNote> notes = new List<HetNote>();
 
-            foreach (HetNote note in owner.HetNote)
+            foreach (HetNote note in owner.HetNotes)
             {
                 if (note.IsNoLongerRelevant == false)
                 {
