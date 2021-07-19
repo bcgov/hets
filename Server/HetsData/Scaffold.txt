@@ -9,15 +9,6 @@ Step 2: Generate / Update Model:
 ********************************************
 Scaffold-DbContext "Host=localhost;Username=postgres;Password=postgres;Database=hets;Port=9010" Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir Model -Force -Project "HetsData" -Verbose -Context "DbAppContext" -Schema "public"
 
-
-For a specific table(s) only:
-Scaffold-DbContext "Host=localhost;Username=postgres;Password=postgres;Database=hets;Port=9010" Npgsql.EntityFrameworkCore.PostgreSQL -t public.HET_ROLLOVER_PROGRESS -OutputDir Model -Force -Project "HetsData" -Verbose -Context "DbAppContext"
-
-
-Scaffold-DbContext "Host=localhost;Username=trdbhetd;Password=IhUFdcC0wGJeIMDJ;Database=hets" Npgsql.EntityFrameworkCore.PostgreSQL -t public.HET_BUSINESS -OutputDir Model -Force -Project "HetsData" -Verbose -Context "DbAppContext"
-
-Scaffold-DbContext "Host=localhost;Username=trdbhetd;Password=IhUFdcC0wGJeIMDJ;Database=hets" Npgsql.EntityFrameworkCore.PostgreSQL -t public.HET_BUSINESS_USER_ROLE -OutputDir Model -Force -Project "HetsData" -Verbose -Context "DbAppContext"
-
 ********************************************
 Step 3: Update Context
 ********************************************
