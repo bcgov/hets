@@ -9,7 +9,7 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using HetsApi.Authorization;
 using HetsApi.Authentication;
-using HetsData.Model;
+using HetsData.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc;

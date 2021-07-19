@@ -16,7 +16,7 @@ using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
-using HetsData.Model;
+using HetsData.Entities;
 using HetsReport;
 using HetsData.Repositories;
 using HetsData.Dtos;

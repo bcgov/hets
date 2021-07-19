@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using HetsData.Model;
+using HetsData.Entities;
 using Hangfire.Server;
 using Hangfire.Console;
 using HetsApi.Helpers;

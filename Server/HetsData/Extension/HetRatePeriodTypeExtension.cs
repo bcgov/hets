@@ -1,4 +1,4 @@
-﻿namespace HetsData.Model
+﻿namespace HetsData.Entities
 {
     /// <summary>
     /// Rate Period Type Database Model Extension

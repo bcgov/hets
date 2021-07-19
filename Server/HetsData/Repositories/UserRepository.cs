@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using HetsData.Dtos;
-using HetsData.Model;
+using HetsData.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;

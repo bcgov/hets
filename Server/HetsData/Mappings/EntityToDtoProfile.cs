@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using HetsData.Model;
+using HetsData.Entities;
 using HetsData.Dtos;
 
 namespace HetsData.Mappings

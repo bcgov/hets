@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using HetsApi.Authorization;
 using HetsApi.Model;
-using HetsData.Model;
+using HetsData.Entities;
 using AutoMapper;
 using HetsData.Dtos;
 

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using HetsApi.Authorization;
 using HetsApi.Model;
 using HetsData.Helpers;
-using HetsData.Model;
+using HetsData.Entities;
 using AutoMapper;
 using HetsData.Dtos;
 

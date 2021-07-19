@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace HetsData.Model
+namespace HetsData.Entities
 {
     public partial class Counter
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HetsData.Dtos;
-using HetsData.Model;
+using HetsData.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace HetsData.Helpers

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.IO.Packaging;
-using HetsData.Model;
+using HetsData.Entities;
 using HetsReport.Helpers;
 
 namespace HetsReport
