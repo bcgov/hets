@@ -32,7 +32,7 @@ namespace HetsData.Dtos
         public string ArchiveReason { get; set; }
         public int? LocalAreaId { get; set; }
         public int? PrimaryContactId { get; set; }
-        public string CglCompanyName { get; set; }
+        public string CglCompany { get; set; }
         public string CglPolicyNumber { get; set; }
         public DateTime? CglendDate { get; set; }
         public string WorkSafeBcpolicyNumber { get; set; }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using HetsData.Dtos;
 using HetsData.Model;
 using Newtonsoft.Json;
 
@@ -23,12 +24,10 @@ namespace HetsApi.Model
         /// </summary>
         public bool BusinessUser { get; set; }
 
-        public HetDistrict District { get; set; }
+        public DistrictDto District { get; set; }
 
-        [JsonProperty("UserDistricts")]
-        public ICollection<HetUserDistrict> HetUserDistrict { get; set; }
+        public List<UserDistrictDto> UserDistricts { get; set; }
 
-        [JsonProperty("UserRoles")]
-        public ICollection<HetUserRole> HetUserRole { get; set; }
+        public List<UserRoleDto> UserRoles { get; set; }
     }
 }

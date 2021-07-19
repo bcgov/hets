@@ -40,7 +40,7 @@ namespace HetsData.Repositories
         public EquipmentDto GetEquipment(int equipmentId)
         {
             // retrieve updated equipment record to return to ui
-            HetEquipment equipment = _dbContext.HetEquipment.AsNoTracking()
+            HetEquipment equipment = _dbContext.HetEquipments.AsNoTracking()
                 .Include(x => x.EquipmentStatusType)
                 .Include(x => x.LocalArea)
                     .ThenInclude(y => y.ServiceArea)
@@ -50,10 +50,10 @@ namespace HetsData.Repositories
                     .ThenInclude(d => d.EquipmentType)
                 .Include(x => x.Owner)
                     .ThenInclude(x => x.OwnerStatusType)
-                .Include(x => x.HetEquipmentAttachment)
-                .Include(x => x.HetNote)
-                .Include(x => x.HetDigitalFile)
-                .Include(x => x.HetHistory)
+                .Include(x => x.HetEquipmentAttachments)
+                .Include(x => x.HetNotes)
+                .Include(x => x.HetDigitalFiles)
+                .Include(x => x.HetHistories)
                 .FirstOrDefault(a => a.EquipmentId == equipmentId);
 
             if (equipment != null)
@@ -79,7 +79,7 @@ namespace HetsData.Repositories
                 {
                     int districtId = equipment.LocalArea.ServiceArea.District.DistrictId;
 
-                    HetDistrictStatus district = _dbContext.HetDistrictStatus.AsNoTracking()
+                    HetDistrictStatus district = _dbContext.HetDistrictStatuses.AsNoTracking()
                         .FirstOrDefault(x => x.DistrictId == districtId);
 
                     if (district?.NextFiscalYear != null)

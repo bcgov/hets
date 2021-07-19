@@ -40,12 +40,12 @@ namespace HetsApi.Controllers
         public virtual ActionResult<List<DigitalFileDto>> EquipmentIdAttachmentsPost([FromRoute] int id, [FromForm]IList<IFormFile> files)
         {
             // validate the id
-            bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
+            bool exists = _context.HetEquipments.Any(a => a.EquipmentId == id);
 
             if (!exists) return new StatusCodeResult(404);
 
-            HetEquipment equipment = _context.HetEquipment
-                .Include(x => x.HetDigitalFile)
+            HetEquipment equipment = _context.HetEquipments
+                .Include(x => x.HetDigitalFiles)
                 .First(a => a.EquipmentId == id);
 
             foreach (IFormFile file in files)
@@ -76,13 +76,13 @@ namespace HetsApi.Controllers
 
                     attachment.MimeTypeId = (int)mimeTypeId;
 
-                    equipment.HetDigitalFile.Add(attachment);
+                    equipment.HetDigitalFiles.Add(attachment);
                 }
             }
 
             _context.SaveChanges();
 
-            return new ObjectResult(_mapper.Map<List<DigitalFileDto>>(equipment.HetDigitalFile));
+            return new ObjectResult(_mapper.Map<List<DigitalFileDto>>(equipment.HetDigitalFiles));
         }
 
         /// <summary>
@@ -108,12 +108,12 @@ namespace HetsApi.Controllers
         public virtual ActionResult<List<DigitalFileDto>> ProjectIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
             // validate the id
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             if (!exists) return new StatusCodeResult(404);
 
-            HetProject project = _context.HetProject
-                .Include(x => x.HetDigitalFile)
+            HetProject project = _context.HetProjects
+                .Include(x => x.HetDigitalFiles)
                 .First(a => a.ProjectId == id);
 
             foreach (IFormFile file in files)
@@ -144,13 +144,13 @@ namespace HetsApi.Controllers
 
                     attachment.MimeTypeId = (int)mimeTypeId;
 
-                    project.HetDigitalFile.Add(attachment);
+                    project.HetDigitalFiles.Add(attachment);
                 }
             }
 
             _context.SaveChanges();
 
-            return new ObjectResult(_mapper.Map<List<DigitalFileDto>>(project.HetDigitalFile));
+            return new ObjectResult(_mapper.Map<List<DigitalFileDto>>(project.HetDigitalFiles));
         }
 
         /// <summary>
@@ -177,12 +177,12 @@ namespace HetsApi.Controllers
         public virtual ActionResult<List<DigitalFileDto>> OwnerIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
             // validate the id
-            bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
+            bool exists = _context.HetOwners.Any(a => a.OwnerId == id);
 
             if (!exists) return new StatusCodeResult(404);
 
-            HetOwner owner = _context.HetOwner
-                .Include(x => x.HetDigitalFile)
+            HetOwner owner = _context.HetOwners
+                .Include(x => x.HetDigitalFiles)
                 .First(a => a.OwnerId == id);
 
             foreach (IFormFile file in files)
@@ -213,13 +213,13 @@ namespace HetsApi.Controllers
 
                     attachment.MimeTypeId = (int)mimeTypeId;
 
-                    owner.HetDigitalFile.Add(attachment);
+                    owner.HetDigitalFiles.Add(attachment);
                 }
             }
 
             _context.SaveChanges();
 
-            return new ObjectResult(_mapper.Map<List<DigitalFileDto>>(owner.HetDigitalFile));
+            return new ObjectResult(_mapper.Map<List<DigitalFileDto>>(owner.HetDigitalFiles));
         }
 
         /// <summary>
@@ -246,12 +246,12 @@ namespace HetsApi.Controllers
         public virtual ActionResult<List<DigitalFileDto>> RentalRequestIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
             // validate the id
-            bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);
+            bool exists = _context.HetRentalRequests.Any(a => a.RentalRequestId == id);
 
             if (!exists) return new StatusCodeResult(404);
 
-            HetRentalRequest rentalRequest = _context.HetRentalRequest
-                .Include(x => x.HetDigitalFile)
+            HetRentalRequest rentalRequest = _context.HetRentalRequests
+                .Include(x => x.HetDigitalFiles)
                 .First(a => a.RentalRequestId == id);
 
             foreach (IFormFile file in files)
@@ -282,13 +282,13 @@ namespace HetsApi.Controllers
 
                     attachment.MimeTypeId = (int)mimeTypeId;
 
-                    rentalRequest.HetDigitalFile.Add(attachment);
+                    rentalRequest.HetDigitalFiles.Add(attachment);
                 }
             }
 
             _context.SaveChanges();
 
-            return new ObjectResult(_mapper.Map<List<DigitalFileDto>>(rentalRequest.HetDigitalFile));
+            return new ObjectResult(_mapper.Map<List<DigitalFileDto>>(rentalRequest.HetDigitalFiles));
         }
 
         /// <summary>

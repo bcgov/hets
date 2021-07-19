@@ -48,12 +48,12 @@ namespace HetsApi.Controllers
             // not found
             if (districtId == null) return new ObjectResult(new List<DistrictEquipmentTypeDto>());
 
-            List<HetDistrictEquipmentType> equipmentTypes = _context.HetDistrictEquipmentType.AsNoTracking()
+            List<HetDistrictEquipmentType> equipmentTypes = _context.HetDistrictEquipmentTypes.AsNoTracking()
                 .Include(x => x.District)
                 .Include(x => x.EquipmentType)
-                .Include(x => x.HetEquipment)
+                .Include(x => x.HetEquipments)
                     .ThenInclude(y => y.LocalArea)
-                .Include(x => x.HetEquipment)
+                .Include(x => x.HetEquipments)
                     .ThenInclude(x => x.EquipmentStatusType)
                 .Where(x => x.District.DistrictId == districtId &&
                             !x.Deleted)
@@ -62,7 +62,7 @@ namespace HetsApi.Controllers
 
             foreach (HetDistrictEquipmentType equipmentType in equipmentTypes)
             {
-                IEnumerable<HetEquipment> approvedEquipment = equipmentType.HetEquipment
+                IEnumerable<HetEquipment> approvedEquipment = equipmentType.HetEquipments
                     .Where(x => x.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved);
 
                 List<HetEquipment> hetEquipments = approvedEquipment.ToList();
@@ -105,7 +105,7 @@ namespace HetsApi.Controllers
             // get user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
-            var summary = _context.HetRentalAgreement.AsNoTracking()
+            var summary = _context.HetRentalAgreements.AsNoTracking()
                 .Include(x => x.Equipment.DistrictEquipmentType)
                 .Where(x => x.DistrictId == districtId &&
                             !x.Number.StartsWith("BCBid"))
@@ -131,12 +131,12 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.DistrictCodeTableManagement, HetPermission.WriteAccess)]
         public virtual ActionResult<DistrictEquipmentTypeDto> DistrictEquipmentTypesIdDeletePost([FromRoute]int id)
         {
-            bool exists = _context.HetDistrictEquipmentType.Any(a => a.DistrictEquipmentTypeId == id);
+            bool exists = _context.HetDistrictEquipmentTypes.Any(a => a.DistrictEquipmentTypeId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetDistrictEquipmentType item = _context.HetDistrictEquipmentType.First(a => a.DistrictEquipmentTypeId == id);
+            HetDistrictEquipmentType item = _context.HetDistrictEquipmentTypes.First(a => a.DistrictEquipmentTypeId == id);
 
             // HETS-978 - Give a clear error message when deleting equipment type fails
             int? archiveStatus = StatusHelper.GetStatusId(HetEquipment.StatusArchived, "equipmentStatus", _context);
@@ -145,7 +145,7 @@ namespace HetsApi.Controllers
             int? pendingStatus = StatusHelper.GetStatusId(HetEquipment.StatusPending, "equipmentStatus", _context);
             if (pendingStatus == null) return new NotFoundObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
-            HetEquipment equipment = _context.HetEquipment.AsNoTracking()
+            HetEquipment equipment = _context.HetEquipments.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentTypeId &&
                                      x.EquipmentStatusTypeId != archiveStatus);
 
@@ -157,19 +157,19 @@ namespace HetsApi.Controllers
             bool softDelete = false;
 
             // check for foreign key relationships - equipment
-            equipment = _context.HetEquipment.AsNoTracking()
+            equipment = _context.HetEquipments.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentTypeId);
 
             if (equipment != null) softDelete = true;
 
             // check for foreign key relationships - local area rotation lists
-            HetLocalAreaRotationList rotationList = _context.HetLocalAreaRotationList.AsNoTracking()
+            HetLocalAreaRotationList rotationList = _context.HetLocalAreaRotationLists.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentTypeId);
 
             if (rotationList != null) softDelete = true;
 
             // check for foreign key relationships - rental requests
-            HetRentalRequest request = _context.HetRentalRequest.AsNoTracking()
+            HetRentalRequest request = _context.HetRentalRequests.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentTypeId);
 
             if (request != null) softDelete = true;
@@ -177,7 +177,7 @@ namespace HetsApi.Controllers
             // delete the record
             if (!softDelete)
             {
-                _context.HetDistrictEquipmentType.Remove(item);
+                _context.HetDistrictEquipmentTypes.Remove(item);
             }
             else
             {
@@ -199,7 +199,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
         public virtual ActionResult<DistrictEquipmentTypeDto> DistrictEquipmentTypesIdGet([FromRoute]int id)
         {
-            HetDistrictEquipmentType equipmentType = _context.HetDistrictEquipmentType.AsNoTracking()
+            HetDistrictEquipmentType equipmentType = _context.HetDistrictEquipmentTypes.AsNoTracking()
                 .Include(x => x.District)
                     .ThenInclude(y => y.Region)
                 .Include(x => x.EquipmentType)
@@ -227,7 +227,7 @@ namespace HetsApi.Controllers
             // add or update equipment type
             if (item.DistrictEquipmentTypeId > 0)
             {
-                bool exists = _context.HetDistrictEquipmentType.Any(a => a.DistrictEquipmentTypeId == id);
+                bool exists = _context.HetDistrictEquipmentTypes.Any(a => a.DistrictEquipmentTypeId == id);
 
                 // not found
                 if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -238,7 +238,7 @@ namespace HetsApi.Controllers
                 if (equipmentStatusId == null) return new NotFoundObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
                 // get record
-                HetDistrictEquipmentType equipment = _context.HetDistrictEquipmentType
+                HetDistrictEquipmentType equipment = _context.HetDistrictEquipmentTypes
                     .Include(x => x.EquipmentType)
                     .First(x => x.DistrictEquipmentTypeId == id);
 
@@ -246,7 +246,7 @@ namespace HetsApi.Controllers
                 // for change in Blue book section number to and from
                 bool currentIsDumpTruck = equipment.EquipmentType.IsDumpTruck;
 
-                HetEquipmentType newEquipmentType = _context.HetEquipmentType.AsNoTracking()
+                HetEquipmentType newEquipmentType = _context.HetEquipmentTypes.AsNoTracking()
                     .FirstOrDefault(x => x.EquipmentTypeId == item.EquipmentType.EquipmentTypeId);
 
                 if (newEquipmentType == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -266,7 +266,7 @@ namespace HetsApi.Controllers
                     string seniorityScoringRules = GetConfigJson(scoringRules);
 
                     // update the seniority and block assignments for the master record
-                    List<HetLocalArea> localAreas = _context.HetEquipment.AsNoTracking()
+                    List<HetLocalArea> localAreas = _context.HetEquipments.AsNoTracking()
                         .Include(x => x.LocalArea)
                         .Where(x => x.EquipmentStatusTypeId == equipmentStatusId &&
                                     x.DistrictEquipmentTypeId == equipment.DistrictEquipmentTypeId)
@@ -289,7 +289,7 @@ namespace HetsApi.Controllers
                     EquipmentTypeId = item.EquipmentType.EquipmentTypeId
                 };
 
-                _context.HetDistrictEquipmentType.Add(equipment);
+                _context.HetDistrictEquipmentTypes.Add(equipment);
             }
 
             // save the changes
@@ -299,7 +299,7 @@ namespace HetsApi.Controllers
             id = item.DistrictEquipmentTypeId;
 
             // return the updated equipment type record
-            HetDistrictEquipmentType equipmentType = _context.HetDistrictEquipmentType.AsNoTracking()
+            HetDistrictEquipmentType equipmentType = _context.HetDistrictEquipmentTypes.AsNoTracking()
                 .Include(x => x.District)
                     .ThenInclude(y => y.Region)
                 .Include(x => x.EquipmentType)

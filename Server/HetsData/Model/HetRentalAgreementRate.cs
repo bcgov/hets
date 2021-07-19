@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+
+#nullable disable
 
 namespace HetsData.Model
 {
@@ -8,40 +9,35 @@ namespace HetsData.Model
     {
         public HetRentalAgreementRate()
         {
-            HetTimeRecord = new HashSet<HetTimeRecord>();
+            HetTimeRecords = new HashSet<HetTimeRecord>();
         }
 
-        [JsonProperty("Id")]
         public int RentalAgreementRateId { get; set; }
-
         public string Comment { get; set; }
-        [JsonIgnore] public string ComponentName { get; set; }
+        public string ComponentName { get; set; }
         public float? Rate { get; set; }
-        public int? RatePeriodTypeId { get; set; }
-        public bool Overtime { get; set; }
-        public bool Active { get; set; }
+        public bool? Overtime { get; set; }
+        public bool? Active { get; set; }
         public bool IsIncludedInTotal { get; set; }
-        public bool Set { get; set; }
         public int? RentalAgreementId { get; set; }
-        [JsonIgnore]public string AppCreateUserDirectory { get; set; }
-        [JsonIgnore]public string AppCreateUserGuid { get; set; }
-        [JsonIgnore]public string AppCreateUserid { get; set; }
-        [JsonIgnore]public DateTime AppCreateTimestamp { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserDirectory { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserGuid { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserid { get; set; }
-        [JsonIgnore]public DateTime AppLastUpdateTimestamp { get; set; }
-        [JsonIgnore]public string DbCreateUserId { get; set; }
-        [JsonIgnore]public DateTime DbCreateTimestamp { get; set; }
-        [JsonIgnore]public DateTime DbLastUpdateTimestamp { get; set; }
-        [JsonIgnore]public string DbLastUpdateUserId { get; set; }
+        public string AppCreateUserDirectory { get; set; }
+        public string AppCreateUserGuid { get; set; }
+        public string AppCreateUserid { get; set; }
+        public DateTime AppCreateTimestamp { get; set; }
+        public string AppLastUpdateUserDirectory { get; set; }
+        public string AppLastUpdateUserGuid { get; set; }
+        public string AppLastUpdateUserid { get; set; }
+        public DateTime AppLastUpdateTimestamp { get; set; }
+        public string DbCreateUserId { get; set; }
+        public DateTime DbCreateTimestamp { get; set; }
+        public DateTime DbLastUpdateTimestamp { get; set; }
+        public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
+        public bool? Set { get; set; }
+        public int? RatePeriodTypeId { get; set; }
 
-        public HetRentalAgreement RentalAgreement { get; set; }
-
-        public HetRatePeriodType RatePeriodType { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetTimeRecord> HetTimeRecord { get; set; }
+        public virtual HetRatePeriodType RatePeriodType { get; set; }
+        public virtual HetRentalAgreement RentalAgreement { get; set; }
+        public virtual ICollection<HetTimeRecord> HetTimeRecords { get; set; }
     }
 }

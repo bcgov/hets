@@ -17,7 +17,7 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class VersionController : Controller
+    public class VersionController : ControllerBase
     {
         private const string CommitKey = "OPENSHIFT_BUILD_COMMIT";
 
@@ -43,7 +43,7 @@ namespace HetsApi.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("version")]
-        public virtual IActionResult GetServerVersionInfo()
+        public virtual ActionResult<ProductVersionInfo> GetServerVersionInfo()
         {
             ProductVersionInfo info = new ProductVersionInfo();
             info.ApplicationVersions.Add(GetApplicationVersionInfo());
@@ -95,7 +95,7 @@ namespace HetsApi.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("server/version")]
-        public virtual IActionResult GetServerVersion()
+        public virtual ActionResult<ApplicationVersionInfo> GetServerVersion()
         {
             return Ok(GetApplicationVersionInfo());
         }
@@ -107,7 +107,7 @@ namespace HetsApi.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("database/version")]
-        public virtual IActionResult GetDatabaseVersion()
+        public virtual ActionResult<DatabaseVersionInfo> GetDatabaseVersion()
         {
             return Ok(GetDatabaseVersionInfo());
         }

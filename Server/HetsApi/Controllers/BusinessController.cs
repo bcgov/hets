@@ -52,10 +52,10 @@ namespace HetsApi.Controllers
 
             if (businessGuid == null) return new NotFoundObjectResult(new HetsResponse(""));
 
-            HetBusiness business = _context.HetBusiness.AsNoTracking()
-                .Include(x => x.HetOwner)
+            HetBusiness business = _context.HetBusinesses.AsNoTracking()
+                .Include(x => x.HetOwners)
                     .ThenInclude(y => y.PrimaryContact)
-                .Include(x => x.HetOwner)
+                .Include(x => x.HetOwners)
                     .ThenInclude(y => y.LocalArea)
                         .ThenInclude(z => z.ServiceArea.District)
                 .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
@@ -93,19 +93,19 @@ namespace HetsApi.Controllers
                 return new BadRequestObjectResult(new HetsResponse("HETS-22", ErrorViewModel.GetDescription("HETS-22", _configuration)));
             }
 
-            bool exists = _context.HetBusiness.Any(a => a.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
+            bool exists = _context.HetBusinesses.Any(a => a.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get business
-            HetBusiness business = _context.HetBusiness.AsNoTracking()
+            HetBusiness business = _context.HetBusinesses.AsNoTracking()
                 .First(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             postalCode = postalCode.Replace(" ", "").ToLower();
 
             // find owner using shred key & postal code (exact match)
-            HetOwner owner = _context.HetOwner
+            HetOwner owner = _context.HetOwners
                 .Include(a => a.Business)
                 .Where(a => a.SharedKey == sharedKey)
                 .ToList() //completes server evaluation before doing the client evaluation   
@@ -131,17 +131,17 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // get updated business record and return to the UI
-            business = _context.HetBusiness.AsNoTracking()
-                .Include(x => x.HetOwner)
+            business = _context.HetBusinesses.AsNoTracking()
+                .Include(x => x.HetOwners)
                     .ThenInclude(y => y.PrimaryContact)
-                .Include(x => x.HetOwner)
+                .Include(x => x.HetOwners)
                     .ThenInclude(y => y.LocalArea.ServiceArea.District)
                 .FirstOrDefault(a => a.BusinessId == business.BusinessId);
 
             var businessDto = _mapper.Map<BusinessDto>(business);
 
             businessDto.LinkedOwner = _mapper.Map<OwnerDto>(
-                _context.HetOwner
+                _context.HetOwners
                 .AsNoTracking()
                 .FirstOrDefault(x => x.OwnerId == ownerId)
             );
@@ -164,7 +164,7 @@ namespace HetsApi.Controllers
             // get business
             string businessGuid = _context.SmBusinessGuid;
 
-            HetBusiness business = _context.HetBusiness.AsNoTracking()
+            HetBusiness business = _context.HetBusinesses.AsNoTracking()
                 .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             if (business == null) return StatusCode(StatusCodes.Status401Unauthorized);
@@ -173,10 +173,10 @@ namespace HetsApi.Controllers
             if (!CanAccessBusiness(business.BusinessId)) return StatusCode(StatusCodes.Status401Unauthorized);
 
             // get business
-            HetBusiness businessDetail = _context.HetBusiness.AsNoTracking()
-                .Include(x => x.HetOwner)
+            HetBusiness businessDetail = _context.HetBusinesses.AsNoTracking()
+                .Include(x => x.HetOwners)
                     .ThenInclude(y => y.PrimaryContact)
-                .Include(x => x.HetOwner)
+                .Include(x => x.HetOwners)
                     .ThenInclude(y => y.LocalArea.ServiceArea.District)
                 .FirstOrDefault(a => a.BusinessId == business.BusinessId);
 
@@ -195,7 +195,7 @@ namespace HetsApi.Controllers
             // get business
             string businessGuid = _context.SmBusinessGuid;
 
-            HetBusiness business = _context.HetBusiness.AsNoTracking()
+            HetBusiness business = _context.HetBusinesses.AsNoTracking()
                 .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             if (business == null) return StatusCode(StatusCodes.Status401Unauthorized);
@@ -219,7 +219,7 @@ namespace HetsApi.Controllers
             // get business
             string businessGuid = _context.SmBusinessGuid;
 
-            HetBusiness business = _context.HetBusiness.AsNoTracking()
+            HetBusiness business = _context.HetBusinesses.AsNoTracking()
                 .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             if (business == null) return StatusCode(StatusCodes.Status401Unauthorized);
@@ -228,22 +228,22 @@ namespace HetsApi.Controllers
             if (!CanAccessOwner(business.BusinessId, id)) return StatusCode(StatusCodes.Status401Unauthorized);
 
             // retrieve the data and return
-            HetOwner owner = _context.HetOwner.AsNoTracking()
-                .Include(x => x.HetEquipment)
+            HetOwner owner = _context.HetOwners.AsNoTracking()
+                .Include(x => x.HetEquipments)
                     .ThenInclude(x => x.LocalArea.ServiceArea.District.Region)
-                .Include(x => x.HetEquipment)
+                .Include(x => x.HetEquipments)
                     .ThenInclude(x => x.DistrictEquipmentType)
-                .Include(x => x.HetEquipment)
-                    .ThenInclude(x => x.HetEquipmentAttachment)
-                .Include(x => x.HetEquipment)
-                    .ThenInclude(x => x.HetNote)
-                .Include(x => x.HetEquipment)
-                    .ThenInclude(x => x.HetDigitalFile)
-                .Include(x => x.HetEquipment)
-                    .ThenInclude(x => x.HetHistory)
+                .Include(x => x.HetEquipments)
+                    .ThenInclude(x => x.HetEquipmentAttachments)
+                .Include(x => x.HetEquipments)
+                    .ThenInclude(x => x.HetNotes)
+                .Include(x => x.HetEquipments)
+                    .ThenInclude(x => x.HetDigitalFiles)
+                .Include(x => x.HetEquipments)
+                    .ThenInclude(x => x.HetHistories)
                 .First(a => a.OwnerId == id);
 
-            return new ObjectResult(new HetsResponse(_mapper.Map<List<EquipmentDto>>(owner.HetEquipment)));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<EquipmentDto>>(owner.HetEquipments)));
         }
 
         #endregion
@@ -260,14 +260,14 @@ namespace HetsApi.Controllers
             if (string.IsNullOrEmpty(userId) || !isBusiness) return false;
 
             // get business & owner record
-            HetOwner owner = _context.HetOwner.AsNoTracking()
+            HetOwner owner = _context.HetOwners.AsNoTracking()
                 .Include(x => x.Business)
-                    .ThenInclude(x => x.HetBusinessUser)
+                    .ThenInclude(x => x.HetBusinessUsers)
                 .FirstOrDefault(x => x.BusinessId == businessId &&
                                      x.OwnerId == ownerId);
 
             // get user
-            HetBusinessUser user = owner?.Business?.HetBusinessUser
+            HetBusinessUser user = owner?.Business?.HetBusinessUsers
                 .FirstOrDefault(x => x.BceidUserId.ToUpper() == userId);
 
             // no access to business or business doesn't exist
@@ -284,12 +284,12 @@ namespace HetsApi.Controllers
             if (string.IsNullOrEmpty(userId) || !isBusiness) return false;
 
             // get business record
-            HetBusiness business = _context.HetBusiness.AsNoTracking()
-                .Include(x => x.HetBusinessUser)
+            HetBusiness business = _context.HetBusinesses.AsNoTracking()
+                .Include(x => x.HetBusinessUsers)
                 .FirstOrDefault(x => x.BusinessId == businessId);
 
             // get user
-            HetBusinessUser user = business?.HetBusinessUser
+            HetBusinessUser user = business?.HetBusinessUsers
                 .FirstOrDefault(x => x.BceidUserId.ToUpper() == userId);
 
             // no access to business or business doesn't exist

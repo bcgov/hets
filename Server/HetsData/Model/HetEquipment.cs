@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+
+#nullable disable
 
 namespace HetsData.Model
 {
@@ -8,22 +9,20 @@ namespace HetsData.Model
     {
         public HetEquipment()
         {
-            HetDigitalFile = new HashSet<HetDigitalFile>();
-            HetEquipmentAttachment = new HashSet<HetEquipmentAttachment>();
-            HetHistory = new HashSet<HetHistory>();
-            HetLocalAreaRotationListAskNextBlock1 = new HashSet<HetLocalAreaRotationList>();
-            HetLocalAreaRotationListAskNextBlock2 = new HashSet<HetLocalAreaRotationList>();
-            HetLocalAreaRotationListAskNextBlockOpen = new HashSet<HetLocalAreaRotationList>();
-            HetNote = new HashSet<HetNote>();
-            HetRentalAgreement = new HashSet<HetRentalAgreement>();
-            HetRentalRequest = new HashSet<HetRentalRequest>();
-            HetRentalRequestRotationList = new HashSet<HetRentalRequestRotationList>();
-            HetSeniorityAudit = new HashSet<HetSeniorityAudit>();
+            HetDigitalFiles = new HashSet<HetDigitalFile>();
+            HetEquipmentAttachments = new HashSet<HetEquipmentAttachment>();
+            HetHistories = new HashSet<HetHistory>();
+            HetLocalAreaRotationListAskNextBlock1s = new HashSet<HetLocalAreaRotationList>();
+            HetLocalAreaRotationListAskNextBlock2s = new HashSet<HetLocalAreaRotationList>();
+            HetLocalAreaRotationListAskNextBlockOpens = new HashSet<HetLocalAreaRotationList>();
+            HetNotes = new HashSet<HetNote>();
+            HetRentalAgreements = new HashSet<HetRentalAgreement>();
+            HetRentalRequestRotationLists = new HashSet<HetRentalRequestRotationList>();
+            HetRentalRequests = new HashSet<HetRentalRequest>();
+            HetSeniorityAudits = new HashSet<HetSeniorityAudit>();
         }
 
-        [JsonProperty("Id")]
         public int EquipmentId { get; set; }
-
         public string Type { get; set; }
         public string EquipmentCode { get; set; }
         public string Make { get; set; }
@@ -62,59 +61,34 @@ namespace HetsData.Model
         public string LegalCapacity { get; set; }
         public string LicencedGvw { get; set; }
         public string PupLegalCapacity { get; set; }
-        [JsonIgnore]public string AppCreateUserDirectory { get; set; }
-        [JsonIgnore]public string AppCreateUserGuid { get; set; }
-        [JsonIgnore]public string AppCreateUserid { get; set; }
-        [JsonIgnore]public DateTime AppCreateTimestamp { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserDirectory { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserGuid { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserid { get; set; }
-        [JsonIgnore]public DateTime AppLastUpdateTimestamp { get; set; }
-        [JsonIgnore]public string DbCreateUserId { get; set; }
-        [JsonIgnore]public DateTime DbCreateTimestamp { get; set; }
-        [JsonIgnore]public DateTime DbLastUpdateTimestamp { get; set; }
-        [JsonIgnore]public string DbLastUpdateUserId { get; set; }
+        public string AppCreateUserDirectory { get; set; }
+        public string AppCreateUserGuid { get; set; }
+        public string AppCreateUserid { get; set; }
+        public DateTime AppCreateTimestamp { get; set; }
+        public string AppLastUpdateUserDirectory { get; set; }
+        public string AppLastUpdateUserGuid { get; set; }
+        public string AppLastUpdateUserid { get; set; }
+        public DateTime AppLastUpdateTimestamp { get; set; }
+        public string DbCreateUserId { get; set; }
+        public DateTime DbCreateTimestamp { get; set; }
+        public DateTime DbLastUpdateTimestamp { get; set; }
+        public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
 
-        public HetDistrictEquipmentType DistrictEquipmentType { get; set; }
-
-        public HetEquipmentStatusType EquipmentStatusType { get; set; }
-
-        public HetLocalArea LocalArea { get; set; }
-
-        public HetOwner Owner { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetDigitalFile> HetDigitalFile { get; set; }
-
-        [JsonProperty("EquipmentAttachments")]
-        public ICollection<HetEquipmentAttachment> HetEquipmentAttachment { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetHistory> HetHistory { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetLocalAreaRotationList> HetLocalAreaRotationListAskNextBlock1 { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetLocalAreaRotationList> HetLocalAreaRotationListAskNextBlock2 { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetLocalAreaRotationList> HetLocalAreaRotationListAskNextBlockOpen { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetNote> HetNote { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetRentalAgreement> HetRentalAgreement { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetRentalRequest> HetRentalRequest { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetRentalRequestRotationList> HetRentalRequestRotationList { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetSeniorityAudit> HetSeniorityAudit { get; set; }
+        public virtual HetDistrictEquipmentType DistrictEquipmentType { get; set; }
+        public virtual HetEquipmentStatusType EquipmentStatusType { get; set; }
+        public virtual HetLocalArea LocalArea { get; set; }
+        public virtual HetOwner Owner { get; set; }
+        public virtual ICollection<HetDigitalFile> HetDigitalFiles { get; set; }
+        public virtual ICollection<HetEquipmentAttachment> HetEquipmentAttachments { get; set; }
+        public virtual ICollection<HetHistory> HetHistories { get; set; }
+        public virtual ICollection<HetLocalAreaRotationList> HetLocalAreaRotationListAskNextBlock1s { get; set; }
+        public virtual ICollection<HetLocalAreaRotationList> HetLocalAreaRotationListAskNextBlock2s { get; set; }
+        public virtual ICollection<HetLocalAreaRotationList> HetLocalAreaRotationListAskNextBlockOpens { get; set; }
+        public virtual ICollection<HetNote> HetNotes { get; set; }
+        public virtual ICollection<HetRentalAgreement> HetRentalAgreements { get; set; }
+        public virtual ICollection<HetRentalRequestRotationList> HetRentalRequestRotationLists { get; set; }
+        public virtual ICollection<HetRentalRequest> HetRentalRequests { get; set; }
+        public virtual ICollection<HetSeniorityAudit> HetSeniorityAudits { get; set; }
     }
 }

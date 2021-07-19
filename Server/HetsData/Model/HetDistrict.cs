@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+
+#nullable disable
 
 namespace HetsData.Model
 {
@@ -8,70 +9,48 @@ namespace HetsData.Model
     {
         public HetDistrict()
         {
-            HetConditionType = new HashSet<HetConditionType>();
-            HetDistrictStatus = new HashSet<HetDistrictStatus>();
-            HetDistrictEquipmentType = new HashSet<HetDistrictEquipmentType>();
-            HetProject = new HashSet<HetProject>();
-            HetServiceArea = new HashSet<HetServiceArea>();
-            HetUser = new HashSet<HetUser>();
-            HetUserDistrict = new HashSet<HetUserDistrict>();
-            HetUserFavourite = new HashSet<HetUserFavourite>();
-            HetRentalAgreement = new HashSet<HetRentalAgreement>();
+            HetBatchReports = new HashSet<HetBatchReport>();
+            HetConditionTypes = new HashSet<HetConditionType>();
+            HetDistrictEquipmentTypes = new HashSet<HetDistrictEquipmentType>();
+            HetProjects = new HashSet<HetProject>();
+            HetRentalAgreements = new HashSet<HetRentalAgreement>();
+            HetServiceAreas = new HashSet<HetServiceArea>();
+            HetUserDistricts = new HashSet<HetUserDistrict>();
+            HetUserFavourites = new HashSet<HetUserFavourite>();
+            HetUsers = new HashSet<HetUser>();
         }
 
-        [JsonProperty("Id")]
         public int DistrictId { get; set; }
-
         public int? DistrictNumber { get; set; }
         public string Name { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public int MinistryDistrictId { get; set; }
         public int? RegionId { get; set; }
-        [JsonIgnore]public string AppCreateUserDirectory { get; set; }
-        [JsonIgnore]public string AppCreateUserGuid { get; set; }
-        [JsonIgnore]public string AppCreateUserid { get; set; }
-        [JsonIgnore]public DateTime AppCreateTimestamp { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserDirectory { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserGuid { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserid { get; set; }
-        [JsonIgnore]public DateTime AppLastUpdateTimestamp { get; set; }
-        [JsonIgnore]public string DbCreateUserId { get; set; }
-        [JsonIgnore]public DateTime DbCreateTimestamp { get; set; }
-        [JsonIgnore]public DateTime DbLastUpdateTimestamp { get; set; }
-        [JsonIgnore]public string DbLastUpdateUserId { get; set; }
+        public string AppCreateUserDirectory { get; set; }
+        public string AppCreateUserGuid { get; set; }
+        public string AppCreateUserid { get; set; }
+        public DateTime AppCreateTimestamp { get; set; }
+        public string AppLastUpdateUserDirectory { get; set; }
+        public string AppLastUpdateUserGuid { get; set; }
+        public string AppLastUpdateUserid { get; set; }
+        public DateTime AppLastUpdateTimestamp { get; set; }
+        public string DbCreateUserId { get; set; }
+        public DateTime DbCreateTimestamp { get; set; }
+        public DateTime DbLastUpdateTimestamp { get; set; }
+        public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
 
-        public HetRegion Region { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetConditionType> HetConditionType { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetDistrictStatus> HetDistrictStatus { get; set; }
-
-        [JsonIgnore]
-        public HetRolloverProgress HetRolloverProgress { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetDistrictEquipmentType> HetDistrictEquipmentType { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetProject> HetProject { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetServiceArea> HetServiceArea { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetUser> HetUser { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetUserDistrict> HetUserDistrict { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetUserFavourite> HetUserFavourite { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetRentalAgreement> HetRentalAgreement { get; set; }
+        public virtual HetRegion Region { get; set; }
+        public virtual HetRolloverProgress HetRolloverProgress { get; set; }
+        public virtual ICollection<HetBatchReport> HetBatchReports { get; set; }
+        public virtual ICollection<HetConditionType> HetConditionTypes { get; set; }
+        public virtual ICollection<HetDistrictEquipmentType> HetDistrictEquipmentTypes { get; set; }
+        public virtual ICollection<HetProject> HetProjects { get; set; }
+        public virtual ICollection<HetRentalAgreement> HetRentalAgreements { get; set; }
+        public virtual ICollection<HetServiceArea> HetServiceAreas { get; set; }
+        public virtual ICollection<HetUserDistrict> HetUserDistricts { get; set; }
+        public virtual ICollection<HetUserFavourite> HetUserFavourites { get; set; }
+        public virtual ICollection<HetUser> HetUsers { get; set; }
     }
 }

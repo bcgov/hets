@@ -33,7 +33,7 @@ namespace HetsData.Hangfire
             WriteLog("Phase 1: Identify Master District Equipment Types");
 
             // get records
-            List<MergeRecord> masterList = _dbContext.HetDistrictEquipmentType
+            List<MergeRecord> masterList = _dbContext.HetDistrictEquipmentTypes
                 .Where(x => x.ServiceAreaId != null &&
                             x.Deleted == false)
                 .Select(x => new MergeRecord
@@ -130,7 +130,7 @@ namespace HetsData.Hangfire
             foreach (MergeRecord detRecord in masterRecords)
             {
                 // get det record & update name
-                HetDistrictEquipmentType det = _dbContext.HetDistrictEquipmentType
+                HetDistrictEquipmentType det = _dbContext.HetDistrictEquipmentTypes
                     .First(x => x.DistrictEquipmentTypeId == detRecord.DistrictEquipmentTypeId);
 
                 det.DistrictEquipmentName = detRecord.DistrictEquipmentName;
@@ -158,7 +158,7 @@ namespace HetsData.Hangfire
                 int? newDistrictEquipmentTypeId = detRecord.MasterDistrictEquipmentTypeId;
 
                 // get equipment & update
-                IEnumerable<HetEquipment> equipmentRecords = _dbContext.HetEquipment
+                IEnumerable<HetEquipment> equipmentRecords = _dbContext.HetEquipments
                     .Where(x => x.DistrictEquipmentTypeId == originalDistrictEquipmentTypeId);
 
                 foreach (HetEquipment equipment in equipmentRecords)
@@ -170,14 +170,14 @@ namespace HetsData.Hangfire
                 _dbContext.SaveChangesForImport();
 
                 // get det record
-                HetDistrictEquipmentType det = _dbContext.HetDistrictEquipmentType
+                HetDistrictEquipmentType det = _dbContext.HetDistrictEquipmentTypes
                     .First(x => x.DistrictEquipmentTypeId == originalDistrictEquipmentTypeId);
 
                 // delete old det record
-                HetRentalRequest request = _dbContext.HetRentalRequest
+                HetRentalRequest request = _dbContext.HetRentalRequests
                     .FirstOrDefault(x => x.DistrictEquipmentTypeId == originalDistrictEquipmentTypeId);
 
-                HetLocalAreaRotationList rotationList = _dbContext.HetLocalAreaRotationList
+                HetLocalAreaRotationList rotationList = _dbContext.HetLocalAreaRotationLists
                     .FirstOrDefault(x => x.DistrictEquipmentTypeId == originalDistrictEquipmentTypeId);
 
                 if (request != null || rotationList != null)
@@ -186,7 +186,7 @@ namespace HetsData.Hangfire
                 }
                 else
                 {
-                    _dbContext.HetDistrictEquipmentType.Remove(det);
+                    _dbContext.HetDistrictEquipmentTypes.Remove(det);
                 }
 
                 // save changes to district equipment types and associated equipment records
@@ -207,7 +207,7 @@ namespace HetsData.Hangfire
             foreach (MergeRecord detRecord in masterRecords)
             {
                 // update the seniority and block assignments for the master record
-                List<HetLocalArea> localAreas = _dbContext.HetEquipment
+                List<HetLocalArea> localAreas = _dbContext.HetEquipments
                     .Include(x => x.LocalArea)
                     .Where(x => x.EquipmentStatusTypeId == equipmentStatusId &&
                                 x.DistrictEquipmentTypeId == detRecord.DistrictEquipmentTypeId)
@@ -236,8 +236,8 @@ namespace HetsData.Hangfire
             WriteLog("Phase 5: Cleanup empty District Equipment Types");
 
             // get records
-            List<HetDistrictEquipmentType> districtEquipmentTypes = _dbContext.HetDistrictEquipmentType.AsNoTracking()
-                .Include(x => x.HetEquipment)
+            List<HetDistrictEquipmentType> districtEquipmentTypes = _dbContext.HetDistrictEquipmentTypes.AsNoTracking()
+                .Include(x => x.HetEquipments)
                 .Where(x => x.Deleted == false)
                 .Distinct()
                 .ToList();
@@ -249,17 +249,17 @@ namespace HetsData.Hangfire
                 int districtEquipmentTypeId = districtEquipmentType.DistrictEquipmentTypeId;
 
                 // does this det have any equipment records?
-                if (districtEquipmentType.HetEquipment.Count < 1)
+                if (districtEquipmentType.HetEquipments.Count < 1)
                 {
                     // get det record
-                    HetDistrictEquipmentType det = _dbContext.HetDistrictEquipmentType
+                    HetDistrictEquipmentType det = _dbContext.HetDistrictEquipmentTypes
                         .First(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
                     // delete old det record
-                    HetRentalRequest request = _dbContext.HetRentalRequest.AsNoTracking()
+                    HetRentalRequest request = _dbContext.HetRentalRequests.AsNoTracking()
                         .FirstOrDefault(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
-                    HetLocalAreaRotationList rotationList = _dbContext.HetLocalAreaRotationList.AsNoTracking()
+                    HetLocalAreaRotationList rotationList = _dbContext.HetLocalAreaRotationLists.AsNoTracking()
                         .FirstOrDefault(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
                     if (request != null || rotationList != null)
@@ -268,7 +268,7 @@ namespace HetsData.Hangfire
                     }
                     else
                     {
-                        _dbContext.HetDistrictEquipmentType.Remove(det);
+                        _dbContext.HetDistrictEquipmentTypes.Remove(det);
                     }
 
                     // save changes to district equipment types and associated equipment records

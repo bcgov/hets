@@ -90,17 +90,17 @@ namespace HetsData.Helpers
             {
                 // validate data
                 if (context != null &&
-                    context.HetLocalArea.Any(x => x.LocalAreaId == localAreaId) &&
-                    context.HetDistrictEquipmentType.Any(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId))
+                    context.HetLocalAreas.Any(x => x.LocalAreaId == localAreaId) &&
+                    context.HetDistrictEquipmentTypes.Any(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId))
                 {
                     // get processing rules
                     SeniorityScoringRules scoringRules = new SeniorityScoringRules(seniorityScoringRules);
 
                     // get the associated equipment type
-                    HetDistrictEquipmentType districtEquipmentTypeRecord = context.HetDistrictEquipmentType
+                    HetDistrictEquipmentType districtEquipmentTypeRecord = context.HetDistrictEquipmentTypes
                         .First(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
-                    HetEquipmentType equipmentTypeRecord = context.HetEquipmentType
+                    HetEquipmentType equipmentTypeRecord = context.HetEquipmentTypes
                         .FirstOrDefault(x => x.EquipmentTypeId == districtEquipmentTypeRecord.EquipmentTypeId);
 
                     if (equipmentTypeRecord != null)
@@ -117,7 +117,7 @@ namespace HetsData.Helpers
                             : scoringRules.GetTotalBlocks();
 
                         // get all equipment records
-                        IQueryable<HetEquipment> data = context.HetEquipment
+                        IQueryable<HetEquipment> data = context.HetEquipments
                             .Where(x => x.LocalAreaId == localAreaId &&
                                         x.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
@@ -173,7 +173,7 @@ namespace HetsData.Helpers
             try
             {
                 // get all equipment records
-                var data = context.HetEquipment
+                var data = context.HetEquipments
                     .Include(x => x.Owner)
                     .Where(x => x.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved &&
                                 x.LocalArea.LocalAreaId == localAreaId &&

@@ -42,7 +42,7 @@ namespace HetsApi.Helpers
         public static int? GetUsersDistrictId(DbAppContext context)
         {
             string userId = context.SmUserId;
-            int? districtId = context.HetUser.FirstOrDefault(x => x.SmUserId.ToUpper() == userId)?.DistrictId;
+            int? districtId = context.HetUsers.FirstOrDefault(x => x.SmUserId.ToUpper() == userId)?.DistrictId;
             return districtId;
         }
 
@@ -62,7 +62,7 @@ namespace HetsApi.Helpers
 
             if (!isBusinessUser)
             {
-                HetUser tmpUser = context.HetUser.AsNoTracking()
+                HetUser tmpUser = context.HetUsers.AsNoTracking()
                     .FirstOrDefault(x => x.SmUserId.ToUpper() == userId);
 
                 if (tmpUser != null)
@@ -80,13 +80,13 @@ namespace HetsApi.Helpers
             }
             else
             {
-                HetBusinessUser tmpUser = context.HetBusinessUser.AsNoTracking()
+                HetBusinessUser tmpUser = context.HetBusinessUsers.AsNoTracking()
                     .FirstOrDefault(x => x.BceidUserId.ToUpper() == userId);
 
                 if (tmpUser != null)
                 {
                     // get business
-                    HetBusiness business = context.HetBusiness.AsNoTracking()
+                    HetBusiness business = context.HetBusinesses.AsNoTracking()
                         .First(x => x.BusinessId == tmpUser.BusinessId);
 
                     user.Id = tmpUser.BusinessUserId;
@@ -141,7 +141,7 @@ namespace HetsApi.Helpers
                     // lock the table during this transaction
                     context.Database.ExecuteSqlRaw(@"LOCK TABLE ""HET_USER"" IN EXCLUSIVE MODE;");
 
-                    HetUser updUser = context.HetUser.First(x => x.UserId == updUserId);
+                    HetUser updUser = context.HetUsers.First(x => x.UserId == updUserId);
 
                     updUser.Guid = guid;
                     updUser.AppLastUpdateUserDirectory = user.SmAuthorizationDirectory;
@@ -149,7 +149,7 @@ namespace HetsApi.Helpers
                     updUser.AppLastUpdateUserid = username;
                     updUser.AppLastUpdateTimestamp = DateTime.UtcNow;
 
-                    context.HetUser.Update(updUser);
+                    context.HetUsers.Update(updUser);
 
                     // update user record
                     context.SaveChanges();
@@ -186,12 +186,12 @@ namespace HetsApi.Helpers
         /// <returns></returns>
         public static HetUser GetUserByGuid(string guid, DbAppContext context)
         {
-            HetUser user = context.HetUser.AsNoTracking()
+            HetUser user = context.HetUsers.AsNoTracking()
                 .Where(x => x.Guid != null &&
                             x.Guid.Equals(guid))
-                .Include(u => u.HetUserRole)
+                .Include(u => u.HetUserRoles)
                     .ThenInclude(r => r.Role)
-                        .ThenInclude(rp => rp.HetRolePermission)
+                        .ThenInclude(rp => rp.HetRolePermissions)
                             .ThenInclude(p => p.Permission)
                 .FirstOrDefault();
 
@@ -206,12 +206,12 @@ namespace HetsApi.Helpers
         /// <returns></returns>
         public static HetUser GetUserBySmUserId(string smUserId, DbAppContext context)
         {
-            HetUser user = context.HetUser.AsNoTracking()
+            HetUser user = context.HetUsers.AsNoTracking()
                 .Where(x => x.SmUserId != null &&
                             x.SmUserId.ToUpper() == smUserId)
-                .Include(u => u.HetUserRole)
+                .Include(u => u.HetUserRoles)
                     .ThenInclude(r => r.Role)
-                        .ThenInclude(rp => rp.HetRolePermission)
+                        .ThenInclude(rp => rp.HetRolePermissions)
                             .ThenInclude(p => p.Permission)
                 .FirstOrDefault();
 
@@ -230,7 +230,7 @@ namespace HetsApi.Helpers
         public static HetBusinessUser GetBusinessUser(DbAppContext context, BceidAccount account, string userId, string businessGuid, string guid = null)
         {
             // find the business
-            HetBusiness business = context.HetBusiness.AsNoTracking()
+            HetBusiness business = context.HetBusinesses.AsNoTracking()
                 .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             // setup the business
@@ -264,7 +264,7 @@ namespace HetsApi.Helpers
                 }
 
                 // save record
-                context.HetBusiness.Add(business);
+                context.HetBusinesses.Add(business);
                 context.SaveChanges();
             }
             else
@@ -292,7 +292,7 @@ namespace HetsApi.Helpers
             }
 
             // ok - now find the user
-            HetBusinessUser user = context.HetBusinessUser
+            HetBusinessUser user = context.HetBusinessUsers
                 .FirstOrDefault(x => x.BusinessId == business.BusinessId &&
                                      x.BceidUserId.ToUpper() == userId);
 
@@ -343,10 +343,10 @@ namespace HetsApi.Helpers
                     AppLastUpdateTimestamp = DateTime.UtcNow
                 };
 
-                user.HetBusinessUserRole.Add(userRole);
+                user.HetBusinessUserRoles.Add(userRole);
 
                 // save record
-                context.HetBusinessUser.Add(user);
+                context.HetBusinessUsers.Add(user);
                 context.SaveChanges();
             }
             else
@@ -369,12 +369,12 @@ namespace HetsApi.Helpers
             }
 
             // get complete user record (with roles) and return
-            user = context.HetBusinessUser.AsNoTracking()
+            user = context.HetBusinessUsers.AsNoTracking()
                 .Where(x => x.BusinessId == business.BusinessId &&
                             x.BceidUserId.ToUpper() == userId)
-                .Include(u => u.HetBusinessUserRole)
+                .Include(u => u.HetBusinessUserRoles)
                     .ThenInclude(r => r.Role)
-                        .ThenInclude(rp => rp.HetRolePermission)
+                        .ThenInclude(rp => rp.HetRolePermissions)
                             .ThenInclude(p => p.Permission)
                 .FirstOrDefault();
 

@@ -112,7 +112,7 @@ namespace HetsApi.Authentication
 
                 if (string.IsNullOrEmpty(tempSwitch))
                 {
-                    HetUserDistrict userDistrict = _dbContext.HetUserDistrict.AsNoTracking()
+                    HetUserDistrict userDistrict = _dbContext.HetUserDistricts.AsNoTracking()
                         .Include(x => x.User)
                         .Include(x => x.District)
                         .FirstOrDefault(x => x.User.UserId == userSettings.HetsUser.UserId &&
@@ -121,7 +121,7 @@ namespace HetsApi.Authentication
                     // if we don't find a primary - look for the first one in the list
                     if (userDistrict == null)
                     {
-                        userDistrict = _dbContext.HetUserDistrict.AsNoTracking()
+                        userDistrict = _dbContext.HetUserDistricts.AsNoTracking()
                             .Include(x => x.User)
                             .Include(x => x.District)
                             .FirstOrDefault(x => x.User.UserId == userSettings.HetsUser.UserId);
@@ -143,7 +143,7 @@ namespace HetsApi.Authentication
                             // lock the table during this transaction
                             _dbContext.Database.ExecuteSqlRaw(@"LOCK TABLE ""HET_USER"" IN EXCLUSIVE MODE;");
 
-                            HetUser user = _dbContext.HetUser.First(x => x.UserId == updUserId);
+                            HetUser user = _dbContext.HetUsers.First(x => x.UserId == updUserId);
                             user.DistrictId = districtId;
                             _dbContext.SaveChanges();
                             transaction.Commit();

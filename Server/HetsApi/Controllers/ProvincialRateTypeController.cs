@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
-using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Model;
 using Microsoft.Extensions.Configuration;
+using AutoMapper;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -17,14 +16,16 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/provincialRateTypes")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class ProvincialRateTypeController : Controller
+    public class ProvincialRateTypeController : ControllerBase
     {
         private readonly DbAppContext _context;
+        private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
 
-        public ProvincialRateTypeController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public ProvincialRateTypeController(DbAppContext context, IConfiguration configuration, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
             _configuration = configuration;
         }
 
@@ -33,12 +34,10 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("")]
-        [SwaggerOperation("ProvincialRateTypesGet")]
-        [SwaggerResponse(200, type: typeof(List<HetProvincialRateType>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult ProvincialRateTypesGet()
+        public virtual ActionResult<List<ProvincialRateTypeDto>> ProvincialRateTypesGet()
         {
-            List<HetProvincialRateType> rates = _context.HetProvincialRateType.AsNoTracking()
+            List<HetProvincialRateType> rates = _context.HetProvincialRateTypes.AsNoTracking()
                 .Where(x => x.Active)
                 .ToList();
 
@@ -50,7 +49,7 @@ namespace HetsApi.Controllers
                 rateType.Id = pseudoId;
             }
 
-            return new ObjectResult(new HetsResponse(rates));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<ProvincialRateTypeDto>>(rates)));
         }
 
         /// <summary>
@@ -58,12 +57,10 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("overtime")]
-        [SwaggerOperation("ProvincialRateTypesOvertimeGet")]
-        [SwaggerResponse(200, type: typeof(List<HetProvincialRateType>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult ProvincialRateTypesOvertimeGet()
+        public virtual ActionResult<List<ProvincialRateTypeDto>> ProvincialRateTypesOvertimeGet()
         {
-            List<HetProvincialRateType> rates = _context.HetProvincialRateType.AsNoTracking()
+            List<HetProvincialRateType> rates = _context.HetProvincialRateTypes.AsNoTracking()
                 .Where(x => x.Active &&
                             x.Overtime)
                 .ToList();
@@ -76,7 +73,7 @@ namespace HetsApi.Controllers
                 rateType.Id = pseudoId;
             }
 
-            return new ObjectResult(new HetsResponse(rates));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<ProvincialRateTypeDto>>(rates)));
         }
 
         /// <summary>
@@ -86,18 +83,16 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPut]
         [Route("{id}")]
-        [SwaggerOperation("ProvincialRatesIdPut")]
-        [SwaggerResponse(200, type: typeof(HetProvincialRateType))]
         [RequiresPermission(HetPermission.CodeTableManagement, HetPermission.WriteAccess)]
-        public virtual IActionResult ProvincialRatesIdPut([FromRoute]int id, [FromBody]HetProvincialRateType item)
+        public virtual ActionResult<ProvincialRateTypeDto> ProvincialRatesIdPut([FromRoute] int id, [FromBody] ProvincialRateTypeDto item)
         {
-            bool exists = _context.HetProvincialRateType.Any(a => a.RateType == item.RateType);
+            bool exists = _context.HetProvincialRateTypes.Any(a => a.RateType == item.RateType);
 
             // not found
             if (!exists || id != item.Id) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetProvincialRateType rate = _context.HetProvincialRateType.First(a => a.RateType == item.RateType);
+            HetProvincialRateType rate = _context.HetProvincialRateTypes.First(a => a.RateType == item.RateType);
 
             rate.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             rate.Description = item.Description;
@@ -107,16 +102,15 @@ namespace HetsApi.Controllers
             rate.IsInTotalEditable = item.IsInTotalEditable;
             rate.IsRateEditable = item.IsRateEditable;
             rate.IsPercentRate = item.IsPercentRate;
-            rate.PeriodType = item.PeriodType;
 
             // save the changes
             _context.SaveChanges();
 
             // get the updated record and return
-            rate = _context.HetProvincialRateType.First(a => a.RateType == item.RateType);
+            rate = _context.HetProvincialRateTypes.First(a => a.RateType == item.RateType);
             rate.Id = id;
 
-            return new ObjectResult(new HetsResponse(rate));
+            return new ObjectResult(new HetsResponse(_mapper.Map<ProvincialRateTypeDto>(rate)));
         }
     }
 }

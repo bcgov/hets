@@ -4,7 +4,7 @@ namespace HetsData.Model
     /// <summary>
     /// Time Period Type Database Model Extension
     /// </summary>
-    public sealed partial class HetTimePeriodType
+    public partial class HetTimePeriodType
     {
         /// <summary>
         /// Time Period Types

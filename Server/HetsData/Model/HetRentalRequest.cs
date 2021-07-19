@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+
+#nullable disable
 
 namespace HetsData.Model
 {
@@ -8,17 +9,15 @@ namespace HetsData.Model
     {
         public HetRentalRequest()
         {
-            HetDigitalFile = new HashSet<HetDigitalFile>();
-            HetHistory = new HashSet<HetHistory>();
-            HetNote = new HashSet<HetNote>();
-            HetRentalRequestAttachment = new HashSet<HetRentalRequestAttachment>();
-            HetRentalRequestRotationList = new HashSet<HetRentalRequestRotationList>();
-            HetRentalAgreement = new HashSet<HetRentalAgreement>();
+            HetDigitalFiles = new HashSet<HetDigitalFile>();
+            HetHistories = new HashSet<HetHistory>();
+            HetNotes = new HashSet<HetNote>();
+            HetRentalAgreements = new HashSet<HetRentalAgreement>();
+            HetRentalRequestAttachments = new HashSet<HetRentalRequestAttachment>();
+            HetRentalRequestRotationLists = new HashSet<HetRentalRequestRotationList>();
         }
 
-        [JsonProperty("Id")]
         public int RentalRequestId { get; set; }
-
         public int EquipmentCount { get; set; }
         public DateTime? ExpectedStartDate { get; set; }
         public DateTime? ExpectedEndDate { get; set; }
@@ -28,48 +27,30 @@ namespace HetsData.Model
         public int? DistrictEquipmentTypeId { get; set; }
         public int? LocalAreaId { get; set; }
         public int? ProjectId { get; set; }
-        [JsonIgnore]public string AppCreateUserDirectory { get; set; }
-        [JsonIgnore]public string AppCreateUserGuid { get; set; }
-        [JsonIgnore]public string AppCreateUserid { get; set; }
-        [JsonIgnore]public DateTime AppCreateTimestamp { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserDirectory { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserGuid { get; set; }
-        [JsonIgnore]public string AppLastUpdateUserid { get; set; }
-        [JsonIgnore]public DateTime AppLastUpdateTimestamp { get; set; }
-        [JsonIgnore]public string DbCreateUserId { get; set; }
-        [JsonIgnore]public DateTime DbCreateTimestamp { get; set; }
-        [JsonIgnore]public DateTime DbLastUpdateTimestamp { get; set; }
-        [JsonIgnore]public string DbLastUpdateUserId { get; set; }
+        public string AppCreateUserDirectory { get; set; }
+        public string AppCreateUserGuid { get; set; }
+        public string AppCreateUserid { get; set; }
+        public DateTime AppCreateTimestamp { get; set; }
+        public string AppLastUpdateUserDirectory { get; set; }
+        public string AppLastUpdateUserGuid { get; set; }
+        public string AppLastUpdateUserid { get; set; }
+        public DateTime AppLastUpdateTimestamp { get; set; }
+        public string DbCreateUserId { get; set; }
+        public DateTime DbCreateTimestamp { get; set; }
+        public DateTime DbLastUpdateTimestamp { get; set; }
+        public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
 
-        public HetDistrictEquipmentType DistrictEquipmentType { get; set; }
-
-        [JsonIgnore]
-        public HetEquipment FirstOnRotationList { get; set; }
-
-        public HetLocalArea LocalArea { get; set; }
-
-        public HetProject Project { get; set; }
-
-        [JsonIgnore]
-        public HetRentalRequestStatusType RentalRequestStatusType { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetDigitalFile> HetDigitalFile { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetHistory> HetHistory { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetNote> HetNote { get; set; }
-
-        [JsonProperty("RentalRequestAttachments")]
-        public ICollection<HetRentalRequestAttachment> HetRentalRequestAttachment { get; set; }
-        
-        [JsonProperty("RentalRequestRotationList")]
-        public ICollection<HetRentalRequestRotationList> HetRentalRequestRotationList { get; set; }
-
-        [JsonIgnore]
-        public ICollection<HetRentalAgreement> HetRentalAgreement { get; set; }
+        public virtual HetDistrictEquipmentType DistrictEquipmentType { get; set; }
+        public virtual HetEquipment FirstOnRotationList { get; set; }
+        public virtual HetLocalArea LocalArea { get; set; }
+        public virtual HetProject Project { get; set; }
+        public virtual HetRentalRequestStatusType RentalRequestStatusType { get; set; }
+        public virtual ICollection<HetDigitalFile> HetDigitalFiles { get; set; }
+        public virtual ICollection<HetHistory> HetHistories { get; set; }
+        public virtual ICollection<HetNote> HetNotes { get; set; }
+        public virtual ICollection<HetRentalAgreement> HetRentalAgreements { get; set; }
+        public virtual ICollection<HetRentalRequestAttachment> HetRentalRequestAttachments { get; set; }
+        public virtual ICollection<HetRentalRequestRotationList> HetRentalRequestRotationLists { get; set; }
     }
 }

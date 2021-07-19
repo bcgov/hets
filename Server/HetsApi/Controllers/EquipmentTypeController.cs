@@ -33,7 +33,7 @@ namespace HetsApi.Controllers
         [RequiresPermission(HetPermission.Login)]
         public virtual ActionResult<List<EquipmentTypeDto>> EquipmentTypesGet()
         {
-            List<HetEquipmentType> equipmentTypes = _context.HetEquipmentType.ToList();
+            List<HetEquipmentType> equipmentTypes = _context.HetEquipmentTypes.ToList();
 
             return new ObjectResult(new HetsResponse(_mapper.Map<List<EquipmentTypeDto>>(equipmentTypes)));
         }
