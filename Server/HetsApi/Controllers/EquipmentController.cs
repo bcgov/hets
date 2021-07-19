@@ -1089,7 +1089,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("{id}/attachments")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual ActionResult<List<HetDigitalFile>> EquipmentIdAttachmentsGet([FromRoute]int id)
+        public virtual ActionResult<List<DigitalFileDto>> EquipmentIdAttachmentsGet([FromRoute]int id)
         {
             bool exists = _context.HetEquipments.Any(a => a.EquipmentId == id);
 
@@ -1118,7 +1118,7 @@ namespace HetsApi.Controllers
                 }
             }
             
-            return new ObjectResult(new HetsResponse(_mapper.Map<List<HetDigitalFile>>(attachments)));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<DigitalFileDto>>(attachments)));
         }
 
         #endregion

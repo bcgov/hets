@@ -55,7 +55,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("{id}/download")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual ActionResult<FileContentResult> AttachmentsIdDownloadGet([FromRoute]int id)
+        public virtual IActionResult AttachmentsIdDownloadGet([FromRoute]int id)
         {
             bool exists = _context.HetDigitalFiles.Any(a => a.DigitalFileId == id);
 
