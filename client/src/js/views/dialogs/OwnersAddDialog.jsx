@@ -61,7 +61,7 @@ class OwnersAddDialog extends React.Component {
 
       nameError: '',
       ownerGivenNameError: '',
-      ownerSurameError: '',
+      ownerSurnameError: '',
       address1Error: '',
       cityError: '',
       provinceError: '',
@@ -183,7 +183,7 @@ class OwnersAddDialog extends React.Component {
     }
 
     if (isBlank(this.state.surname)) {
-      this.setState({ ownerSurameError: 'Owner last name is required' });
+      this.setState({ ownerSurnameError: 'Owner last name is required' });
       valid = false;
     }
 
@@ -316,71 +316,112 @@ class OwnersAddDialog extends React.Component {
         onClose={this.props.onClose}
         onSubmit={this.formSubmitted}
       >
-        <FormGroup controlId="name" validationState={this.state.nameError ? 'error' : null}>
+        <FormGroup controlId="name">
           <FormLabel>
             Company Name <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" value={this.state.name} updateState={this.updateState} autoFocus />
+          <FormInputControl
+            type="text"
+            value={this.state.name}
+            updateState={this.updateState}
+            autoFocus
+            isInvalid={this.state.nameError}
+          />
           <FormText>{this.state.nameError}</FormText>
         </FormGroup>
         <FormGroup controlId="doingBusinessAs">
           <FormLabel>Doing Business As</FormLabel>
           <FormInputControl type="text" value={this.state.doingBusinessAs} updateState={this.updateState} />
         </FormGroup>
-        <FormGroup controlId="givenName" validationState={this.state.ownerGivenNameError ? 'error' : null}>
+        <FormGroup controlId="givenName">
           <FormLabel>
             Owner First Name <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" value={this.state.givenName} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            value={this.state.givenName}
+            updateState={this.updateState}
+            isInvalid={this.state.ownerGivenNameError}
+          />
           <FormText>{this.state.ownerGivenNameError}</FormText>
         </FormGroup>
-        <FormGroup controlId="surname" validationState={this.state.ownerSurameError ? 'error' : null}>
+        <FormGroup controlId="surname">
           <FormLabel>
             Owner Last Name <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" value={this.state.surname} updateState={this.updateState} />
-          <FormText>{this.state.ownerSurameError}</FormText>
+          <FormInputControl
+            type="text"
+            value={this.state.surname}
+            updateState={this.updateState}
+            isInvalid={this.state.ownerSurnameError}
+          />
+          <FormText>{this.state.ownerSurnameError}</FormText>
         </FormGroup>
-        <FormGroup controlId="address1" validationState={this.state.address1Error ? 'error' : null}>
+        <FormGroup controlId="address1">
           <FormLabel>
             Address Line 1 <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" value={this.state.address1} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            value={this.state.address1}
+            updateState={this.updateState}
+            isInvalid={this.state.address1Error}
+          />
           <FormText>{this.state.address1Error}</FormText>
         </FormGroup>
         <FormGroup controlId="address2">
           <FormLabel>Address Line 2</FormLabel>
           <FormInputControl type="text" value={this.state.address2} updateState={this.updateState} />
         </FormGroup>
-        <FormGroup controlId="city" validationState={this.state.cityError ? 'error' : null}>
+        <FormGroup controlId="city">
           <FormLabel>
             City <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" value={this.state.city} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            value={this.state.city}
+            updateState={this.updateState}
+            isInvalid={this.state.cityError}
+          />
           <FormText>{this.state.cityError}</FormText>
         </FormGroup>
-        <FormGroup controlId="province" validationState={this.state.provinceError ? 'error' : null}>
+        <FormGroup controlId="province">
           <FormLabel>
             Province <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" value={this.state.province} updateState={this.updateState} />
-          <FormText>{this.state.provinceError}</FormText>
+          <FormInputControl
+            type="text"
+            value={this.state.province}
+            updateState={this.updateState}
+            isInvalid={this.state.provinceError}
+          />
+          <FormText type="invalid">{this.state.provinceError}</FormText>
         </FormGroup>
-        <FormGroup controlId="postalCode" validationState={this.state.postalCodeError ? 'error' : null}>
+        <FormGroup controlId="postalCode">
           <FormLabel>
             Postal Code <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" value={this.state.postalCode} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            value={this.state.postalCode}
+            updateState={this.updateState}
+            isInvalid={this.state.postalCodeError}
+          />
           <FormText>{this.state.postalCodeError}</FormText>
         </FormGroup>
-        <FormGroup controlId="ownerCode" validationState={this.state.ownerCodeError ? 'error' : null}>
+        <FormGroup controlId="ownerCode">
           <FormLabel>
             Owner Code <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" value={this.state.ownerCode} updateState={this.updateState} />
-          <FormText>{this.state.ownerCodeError || HELP_TEXT.prefix}</FormText>
+          <FormInputControl
+            type="text"
+            value={this.state.ownerCode}
+            updateState={this.updateState}
+            isInvalid={this.state.ownerCodeError}
+          />
+          <FormText>{this.state.ownerCodeError}</FormText>
         </FormGroup>
-        <FormGroup controlId="localAreaId" validationState={this.state.localAreaError ? 'error' : null}>
+        <FormGroup controlId="localAreaId">
           <FormLabel>
             Service Area - Local Area <sup>*</sup>
           </FormLabel>
@@ -390,37 +431,39 @@ class OwnersAddDialog extends React.Component {
             selectedId={this.state.localAreaId}
             updateState={this.updateState}
             className="full-width"
+            isInvalid={this.state.localAreaError}
           />
           <FormText>{this.state.localAreaError}</FormText>
         </FormGroup>
-        <FormGroup
-          controlId="workSafeBCPolicyNumber"
-          validationState={this.state.workSafeBCPolicyNumberError ? 'error' : null}
-        >
+        <FormGroup controlId="workSafeBCPolicyNumber">
           <FormLabel>
             WCB Number <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" value={this.state.workSafeBCPolicyNumber} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            value={this.state.workSafeBCPolicyNumber}
+            updateState={this.updateState}
+            isInvalid={this.state.workSafeBCPolicyNumberError}
+          />
           <FormText>{this.state.workSafeBCPolicyNumberError}</FormText>
         </FormGroup>
-        <FormGroup
-          controlId="primaryContactGivenName"
-          validationState={this.state.primaryContactGivenNameError ? 'error' : null}
-        >
+        <FormGroup controlId="primaryContactGivenName">
           <FormLabel>
             Primary Contact First Name <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" value={this.state.primaryContactGivenName} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            value={this.state.primaryContactGivenName}
+            updateState={this.updateState}
+            isInvalid={this.state.primaryContactGivenNameError}
+          />
           <FormText>{this.state.primaryContactGivenNameError}</FormText>
         </FormGroup>
         <FormGroup controlId="primaryContactSurname">
           <FormLabel>Primary Contact Last Name</FormLabel>
           <FormInputControl type="text" value={this.state.primaryContactSurname} updateState={this.updateState} />
         </FormGroup>
-        <FormGroup
-          controlId="primaryContactPhone"
-          validationState={this.state.primaryContactPhoneError ? 'error' : null}
-        >
+        <FormGroup controlId="primaryContactPhone">
           <FormLabel>
             Primary Contact Phone <sup>*</sup>
           </FormLabel>
@@ -429,6 +472,7 @@ class OwnersAddDialog extends React.Component {
             defaultValue={this.state.primaryContactPhone}
             placeholder="250-555-1212x123"
             updateState={this.updateState}
+            isInvalid={this.state.primaryContactPhoneError}
           />
           <FormText>{this.state.primaryContactPhoneError}</FormText>
         </FormGroup>
@@ -436,7 +480,7 @@ class OwnersAddDialog extends React.Component {
           <FormLabel>Primary Contact Role</FormLabel>
           <FormInputControl type="text" value={this.state.primaryContactRole} updateState={this.updateState} />
         </FormGroup>
-        <FormGroup controlId="status" validationState={this.state.projectStatusCodeError ? 'error' : null}>
+        <FormGroup controlId="status">
           <FormLabel>Status</FormLabel>
           <DropdownControl
             id="status"
@@ -462,12 +506,13 @@ class OwnersAddDialog extends React.Component {
             label="Maintenance Contractor"
           />
         </FormGroup>
-        <FormGroup controlId="meetsResidency" validationState={this.state.residencyError ? 'error' : null}>
+        <FormGroup controlId="meetsResidency">
           <CheckboxControl
             id="meetsResidency"
             checked={this.state.meetsResidency}
             updateState={this.updateState}
             label="Meets Residency"
+            isInvalid={this.state.residencyError}
           />
 
           <FormText>{this.state.residencyError}</FormText>

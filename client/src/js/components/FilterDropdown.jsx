@@ -4,8 +4,6 @@ import classNames from 'classnames';
 import { Dropdown, FormControl, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import _ from 'lodash';
 
-import RootCloseMenu from './RootCloseMenu.jsx';
-
 class FilterDropdown extends React.Component {
   static propTypes = {
     id: PropTypes.string.isRequired,
@@ -22,6 +20,7 @@ class FilterDropdown extends React.Component {
     disabledTooltip: PropTypes.node,
     onSelect: PropTypes.func,
     updateState: PropTypes.func,
+    isInvalid: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]), //if field is invalid show invalid styles.
   };
 
   constructor(props) {
@@ -148,7 +147,10 @@ class FilterDropdown extends React.Component {
         open={this.state.open}
         onToggle={this.toggle}
       >
-        <Dropdown.Toggle> {this.state.title}</Dropdown.Toggle>
+        <Dropdown.Toggle className={classNames('btn-custom', { 'form-control is-invalid': this.props.isInvalid })}>
+          {' '}
+          {this.state.title}
+        </Dropdown.Toggle>
         <Dropdown.Menu>
           <div className="well well-sm">
             <FormControl

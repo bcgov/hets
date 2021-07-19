@@ -25,3 +25,11 @@
     border-color: #adadad;
   }
 }
+
+//used to make error messages show up as red in .form-text for form dialogs
+.form-text {
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 80%;
+  color: #dc3545;
+}

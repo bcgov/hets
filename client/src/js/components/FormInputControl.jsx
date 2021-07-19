@@ -7,7 +7,8 @@ class FormInputControl extends React.Component {
   static propTypes = {
     type: PropTypes.string,
     updateState: PropTypes.func,
-    inputRef: PropTypes.func,
+    //temporary fix. Not sure if we still need this.
+    // inputRef: PropTypes.func,
     autoFocus: PropTypes.bool,
     autoComplete: PropTypes.string,
     onChange: PropTypes.func,
@@ -15,8 +16,11 @@ class FormInputControl extends React.Component {
   };
 
   componentDidMount() {
+    //timeout needed to set focus. Otherwise the focus is called before input is rendered.
     if (this.props.autoFocus) {
-      this.input.focus();
+      setTimeout(() => {
+        this.input.focus();
+      }, 200);
     }
   }
 
@@ -51,8 +55,8 @@ class FormInputControl extends React.Component {
 
   refChanged = (ref) => {
     this.input = ref;
-    if (this.props.inputRef) {
-      this.props.inputRef(ref);
+    if (this.props.ref) {
+      this.props.ref(ref);
     }
   };
 
@@ -70,6 +74,7 @@ class FormInputControl extends React.Component {
         onChange={this.changed}
         ref={this.refChanged}
         autoComplete={autoComplete || 'off'}
+        autofocus={this.props.autoFocus}
       >
         {children}
       </FormControl>

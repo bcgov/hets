@@ -225,11 +225,17 @@ class OwnersEditDialog extends React.Component {
           <FormLabel>Owner Code</FormLabel>
           <h4>{owner.ownerCode}</h4>
         </FormGroup>
-        <FormGroup controlId="organizationName" validationState={this.state.organizationNameError ? 'error' : null}>
+        <FormGroup controlId="organizationName">
           <FormLabel>
             Company Name <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" value={this.state.organizationName} updateState={this.updateState} autoFocus />
+          <FormInputControl
+            type="text"
+            value={this.state.organizationName}
+            updateState={this.updateState}
+            autoFocus
+            isInvalid={this.state.organizationNameError}
+          />
           <FormText>{this.state.organizationNameError}</FormText>
         </FormGroup>
         <FormGroup controlId="doingBusinessAs">
@@ -244,39 +250,59 @@ class OwnersEditDialog extends React.Component {
           <FormLabel>Owner Last Name</FormLabel>
           <FormInputControl type="text" value={this.state.surname} updateState={this.updateState} />
         </FormGroup>
-        <FormGroup controlId="address1" validationState={this.state.address1Error ? 'error' : null}>
+        <FormGroup controlId="address1">
           <FormLabel>
             Address Line 1 <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" value={this.state.address1} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            value={this.state.address1}
+            updateState={this.updateState}
+            isInvalid={this.state.address1Error}
+          />
           <FormText>{this.state.address1Error}</FormText>
         </FormGroup>
         <FormGroup controlId="address2">
           <FormLabel>Address Line 2</FormLabel>
           <FormInputControl type="text" value={this.state.address2} updateState={this.updateState} />
         </FormGroup>
-        <FormGroup controlId="city" validationState={this.state.cityError ? 'error' : null}>
+        <FormGroup controlId="city">
           <FormLabel>
             City <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" value={this.state.city} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            value={this.state.city}
+            updateState={this.updateState}
+            isInvalid={this.state.cityError}
+          />
           <FormText>{this.state.cityError}</FormText>
         </FormGroup>
-        <FormGroup controlId="province" validationState={this.state.provinceError ? 'error' : null}>
+        <FormGroup controlId="province">
           <FormLabel>
             Province <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" value={this.state.province} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            value={this.state.province}
+            updateState={this.updateState}
+            isInvalid={this.state.provinceError}
+          />
           <FormText>{this.state.provinceError}</FormText>
         </FormGroup>
-        <FormGroup controlId="postalCode" validationState={this.state.postalCodeError ? 'error' : null}>
+        <FormGroup controlId="postalCode">
           <FormLabel>
             Postal Code <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" value={this.state.postalCode} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            value={this.state.postalCode}
+            updateState={this.updateState}
+            isInvalid={this.state.postalCodeError}
+          />
           <FormText>{this.state.postalCodeError}</FormText>
         </FormGroup>
-        <FormGroup controlId="localAreaId" validationState={this.state.localAreaError ? 'error' : null}>
+        <FormGroup controlId="localAreaId">
           <FormLabel>
             Service Area - Local Area <sup>*</sup>
           </FormLabel>
@@ -286,6 +312,7 @@ class OwnersEditDialog extends React.Component {
             selectedId={this.state.localAreaId}
             updateState={(state) => this.updateState(state, this.onLocalAreaChanged)}
             className="full-width"
+            isInvalid={!!this.state.localAreaError}
           />
           <FormText>{this.state.localAreaError}</FormText>
         </FormGroup>
