@@ -12,9 +12,6 @@ namespace HetsData.Entities
             HetDigitalFiles = new HashSet<HetDigitalFile>();
             HetEquipmentAttachments = new HashSet<HetEquipmentAttachment>();
             HetHistories = new HashSet<HetHistory>();
-            HetLocalAreaRotationListAskNextBlock1s = new HashSet<HetLocalAreaRotationList>();
-            HetLocalAreaRotationListAskNextBlock2s = new HashSet<HetLocalAreaRotationList>();
-            HetLocalAreaRotationListAskNextBlockOpens = new HashSet<HetLocalAreaRotationList>();
             HetNotes = new HashSet<HetNote>();
             HetRentalAgreements = new HashSet<HetRentalAgreement>();
             HetRentalRequestRotationLists = new HashSet<HetRentalRequestRotationList>();
@@ -82,9 +79,6 @@ namespace HetsData.Entities
         public virtual ICollection<HetDigitalFile> HetDigitalFiles { get; set; }
         public virtual ICollection<HetEquipmentAttachment> HetEquipmentAttachments { get; set; }
         public virtual ICollection<HetHistory> HetHistories { get; set; }
-        public virtual ICollection<HetLocalAreaRotationList> HetLocalAreaRotationListAskNextBlock1s { get; set; }
-        public virtual ICollection<HetLocalAreaRotationList> HetLocalAreaRotationListAskNextBlock2s { get; set; }
-        public virtual ICollection<HetLocalAreaRotationList> HetLocalAreaRotationListAskNextBlockOpens { get; set; }
         public virtual ICollection<HetNote> HetNotes { get; set; }
         public virtual ICollection<HetRentalAgreement> HetRentalAgreements { get; set; }
         public virtual ICollection<HetRentalRequestRotationList> HetRentalRequestRotationLists { get; set; }

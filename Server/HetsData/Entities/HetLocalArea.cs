@@ -10,7 +10,6 @@ namespace HetsData.Entities
         public HetLocalArea()
         {
             HetEquipments = new HashSet<HetEquipment>();
-            HetLocalAreaRotationLists = new HashSet<HetLocalAreaRotationList>();
             HetOwners = new HashSet<HetOwner>();
             HetRentalRequests = new HashSet<HetRentalRequest>();
             HetSeniorityAudits = new HashSet<HetSeniorityAudit>();
@@ -38,7 +37,6 @@ namespace HetsData.Entities
 
         public virtual HetServiceArea ServiceArea { get; set; }
         public virtual ICollection<HetEquipment> HetEquipments { get; set; }
-        public virtual ICollection<HetLocalAreaRotationList> HetLocalAreaRotationLists { get; set; }
         public virtual ICollection<HetOwner> HetOwners { get; set; }
         public virtual ICollection<HetRentalRequest> HetRentalRequests { get; set; }
         public virtual ICollection<HetSeniorityAudit> HetSeniorityAudits { get; set; }

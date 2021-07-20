@@ -10,7 +10,6 @@ namespace HetsData.Entities
         public HetDistrictEquipmentType()
         {
             HetEquipments = new HashSet<HetEquipment>();
-            HetLocalAreaRotationLists = new HashSet<HetLocalAreaRotationList>();
             HetRentalRequests = new HashSet<HetRentalRequest>();
         }
 
@@ -37,7 +36,6 @@ namespace HetsData.Entities
         public virtual HetDistrict District { get; set; }
         public virtual HetEquipmentType EquipmentType { get; set; }
         public virtual ICollection<HetEquipment> HetEquipments { get; set; }
-        public virtual ICollection<HetLocalAreaRotationList> HetLocalAreaRotationLists { get; set; }
         public virtual ICollection<HetRentalRequest> HetRentalRequests { get; set; }
     }
 }

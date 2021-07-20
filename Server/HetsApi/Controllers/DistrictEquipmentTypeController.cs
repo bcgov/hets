@@ -162,12 +162,6 @@ namespace HetsApi.Controllers
 
             if (equipment != null) softDelete = true;
 
-            // check for foreign key relationships - local area rotation lists
-            HetLocalAreaRotationList rotationList = _context.HetLocalAreaRotationLists.AsNoTracking()
-                .FirstOrDefault(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentTypeId);
-
-            if (rotationList != null) softDelete = true;
-
             // check for foreign key relationships - rental requests
             HetRentalRequest request = _context.HetRentalRequests.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentTypeId);
