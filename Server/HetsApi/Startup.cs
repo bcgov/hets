@@ -23,6 +23,8 @@ using HetsApi.Middlewares;
 using AutoMapper;
 using HetsData.Mappings;
 using HetsData.Repositories;
+using Serilog.Ui.Web;
+using Serilog.Ui.PostgreSqlProvider.Extensions;
 
 namespace HetsApi
 {
@@ -54,6 +56,8 @@ namespace HetsApi
 
             var mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+
+            services.AddSerilogUi(options => options.UseNpgSql(connectionString, "het_log"));
 
             // add database context
             services.AddDbContext<DbAppContext>(options => options.UseNpgsql(connectionString));
@@ -158,6 +162,9 @@ namespace HetsApi
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseSerilogUi();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
