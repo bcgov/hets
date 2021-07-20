@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 
 namespace HetsData.Hangfire
 {
@@ -24,13 +25,15 @@ namespace HetsData.Hangfire
         private DbAppMonitorContext _dbContextMonitor;
         private string _jobId;
         private IMapper _mapper;
+        private ILogger<AnnualRollover> _logger;
 
-        public AnnualRollover(DbAppContext dbContextMain, DbAppMonitorContext dbContextMonitor, IMapper mapper)
+        public AnnualRollover(DbAppContext dbContextMain, DbAppMonitorContext dbContextMonitor, ILogger<AnnualRollover> logger, IMapper mapper)
         {
             _dbContextMain = dbContextMain;
             _dbContextMonitor = dbContextMonitor;
             _jobId = Guid.NewGuid().ToString();
             _mapper = mapper;
+            _logger = logger;
         }
 
         #region Get a District Status record
@@ -355,7 +358,7 @@ namespace HetsData.Hangfire
 
         private void WriteLog(string message)
         {
-            Console.WriteLine($"Annual Rollover[{_jobId}] {message}");
+            _logger.LogInformation($"Annual Rollover[{_jobId}] {message}");
         }
 
         #endregion

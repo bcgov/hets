@@ -4,6 +4,7 @@ using HetsData.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace HetsData.Hangfire
 {
@@ -11,11 +12,13 @@ namespace HetsData.Hangfire
     {
         private DbAppContext _dbContext;
         private string _jobId;
+        private ILogger<SeniorityCalculator> _logger;
 
-        public SeniorityCalculator(DbAppContext dbContext)
+        public SeniorityCalculator(DbAppContext dbContext, ILogger<SeniorityCalculator> logger)
         {
             _dbContext = dbContext;
             _jobId = Guid.NewGuid().ToString();
+            _logger = logger;
         }
         /// <summary>
         /// Recalculates seniority with the new sorting rule (sorting by equipment code) for the district equipment types that have the same seniority and received date
@@ -58,7 +61,7 @@ namespace HetsData.Hangfire
 
         private void WriteLog(string message)
         {
-            Console.WriteLine($"Seniority Calculator[{_jobId}] {message}");
+            _logger.LogInformation($"Seniority Calculator[{_jobId}] {message}");
         }
     }
 }
