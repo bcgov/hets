@@ -268,7 +268,7 @@ class HireOfferEditDialog extends React.Component {
       >
         <Container fluid>
           <Col md={12}>
-            <FormGroup validationState={this.state.offerResponseError ? 'error' : null}>
+            <FormGroup>
               <FormLabel>Response</FormLabel>
               <Row>
                 <Col md={12}>
@@ -279,6 +279,7 @@ class HireOfferEditDialog extends React.Component {
                       checked={this.state.offerStatus === STATUS_YES}
                       disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
                       label="Yes"
+                      isInvalid={this.state.offerResponseError}
                     />
                   </FormGroup>
                 </Col>
@@ -292,6 +293,7 @@ class HireOfferEditDialog extends React.Component {
                       checked={this.state.offerStatus === STATUS_NO}
                       disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
                       label="No"
+                      isInvalid={this.state.offerResponseError}
                     />
                   </FormGroup>
                 </Col>
@@ -299,7 +301,7 @@ class HireOfferEditDialog extends React.Component {
               {this.state.offerStatus === STATUS_NO && (
                 <Row>
                   <Col md={12}>
-                    <FormGroup validationState={this.state.offerRefusalReasonError ? 'error' : null}>
+                    <FormGroup>
                       {/*TODO - use lookup list*/}
                       <FormLabel>Refusal Reason</FormLabel>
                       <DropdownControl
@@ -309,6 +311,7 @@ class HireOfferEditDialog extends React.Component {
                         title={this.state.offerRefusalReason}
                         updateState={this.updateState}
                         items={refusalReasons}
+                        isInvalid={this.state.offerRefusalReasonError}
                       />
                       <FormText>{this.state.offerRefusalReasonError}</FormText>
                     </FormGroup>
@@ -323,6 +326,7 @@ class HireOfferEditDialog extends React.Component {
                       onChange={() => this.offerStatusChanged(STATUS_FORCE_HIRE)}
                       checked={this.state.offerStatus === STATUS_FORCE_HIRE}
                       label="Force Hire"
+                      isInvalid={this.state.offerResponseError}
                     />
                   </FormGroup>
                 </Col>
@@ -336,6 +340,7 @@ class HireOfferEditDialog extends React.Component {
                       checked={this.state.offerStatus === STATUS_ASKED}
                       disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
                       label="Asked"
+                      isInvalid={this.state.offerResponseError}
                     />
                   </FormGroup>
                 </Col>
@@ -345,16 +350,14 @@ class HireOfferEditDialog extends React.Component {
           </Col>
           <Row>
             <Col md={12}>
-              <FormGroup
-                controlId="offerResponseNote"
-                validationState={this.state.offerResponseNoteError ? 'error' : null}
-              >
+              <FormGroup controlId="offerResponseNote">
                 <FormLabel>Note</FormLabel>
                 <FormInputControl
                   as="textarea"
                   defaultValue={this.state.offerResponseNote}
                   readOnly={isReadOnly}
                   updateState={this.updateState}
+                  isInvalid={this.state.offerResponseNoteError}
                 />
                 <FormText>{this.state.offerResponseNoteError}</FormText>
               </FormGroup>

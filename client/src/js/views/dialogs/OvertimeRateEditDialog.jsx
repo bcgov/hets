@@ -119,16 +119,21 @@ class OvertimeRateEditDialog extends React.Component {
       >
         <Row>
           <Col xs={6}>
-            <FormGroup controlId="description" validationState={this.state.descriptionError ? 'error' : null}>
+            <FormGroup controlId="description">
               <FormLabel>
                 Description <sup>*</sup>
               </FormLabel>
-              <FormInputControl type="text" value={this.state.description} updateState={this.updateState} />
+              <FormInputControl
+                type="text"
+                value={this.state.description}
+                updateState={this.updateState}
+                isInvalid={this.state.descriptionError}
+              />
               <FormText>{this.state.descriptionError}</FormText>
             </FormGroup>
           </Col>
           <Col xs={6}>
-            <FormGroup controlId="value" validationState={this.state.valueError ? 'error' : null}>
+            <FormGroup controlId="value">
               <FormLabel>
                 Value <sup>*</sup>
               </FormLabel>
@@ -138,6 +143,7 @@ class OvertimeRateEditDialog extends React.Component {
                   type="float"
                   value={this.state.value}
                   updateState={this.updateState}
+                  isInvalid={this.state.valueError}
                   style={{ display: 'inline-block', width: '100px', margin: '0 5px' }}
                 />
                 <FormLabel>per hour</FormLabel>

@@ -95,13 +95,14 @@ class NotesAddDialog extends React.Component {
         onClose={this.props.onClose}
         onSubmit={this.onFormSubmitted}
       >
-        <FormGroup controlId="note" validationState={this.state.noteError ? 'error' : null}>
+        <FormGroup controlId="note">
           <FormLabel>Note</FormLabel>
           <FormInputControl
             value={this.state.note}
             as="textarea"
             updateState={this.updateState}
             maxLength={maxLength}
+            isInvalid={this.state.noteError}
           />
           <FormText>{this.state.noteError}</FormText>
           <p>Maximum {maxLength} characters.</p>

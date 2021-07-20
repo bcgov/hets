@@ -72,12 +72,13 @@ class ConfirmForceHireDialog extends React.Component {
           </Col>
           <Row>
             <Col md={12}>
-              <FormGroup
-                controlId="reasonForForceHire"
-                validationState={this.state.reasonForForceHireError ? 'error' : null}
-              >
+              <FormGroup controlId="reasonForForceHire">
                 <FormLabel>Reason for Force Hire</FormLabel>
-                <FormInputControl as="textarea" updateState={this.updateState} />
+                <FormInputControl
+                  as="textarea"
+                  updateState={this.updateState}
+                  isInvalid={this.state.reasonForForceHireError}
+                />
                 <FormText>{this.state.reasonForForceHireError}</FormText>
               </FormGroup>
             </Col>

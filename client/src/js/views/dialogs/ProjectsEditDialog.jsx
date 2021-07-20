@@ -190,127 +190,121 @@ class ProjectsEditDialog extends React.Component {
         onClose={this.props.onClose}
         onSubmit={this.formSubmitted}
       >
-        <Form>
-          <Container fluid>
-            <Row>
-              <Col xs={12}>
-                <FormGroup controlId="name" validationState={this.state.nameError ? 'error' : null}>
-                  <FormLabel>
-                    Project Name <sup>*</sup>
-                  </FormLabel>
-                  <FormInputControl
-                    type="text"
-                    value={this.state.name}
-                    updateState={this.updateState}
-                    autoFocus
-                    maxLength="60"
-                  />
-                  <FormText>{this.state.nameError}</FormText>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col xs={6}>
-                <FormGroup controlId="fiscalYear" validationState={this.state.fiscalYearError ? 'error' : null}>
-                  <FormLabel>
-                    Fiscal Year <sup>*</sup>
-                  </FormLabel>
-                  <DropdownControl
-                    id="fiscalYear"
-                    title={this.state.fiscalYear}
-                    updateState={this.updateState}
-                    items={_.takeRight(this.props.fiscalYears, 2)}
-                  />
-                  <FormText>{this.state.fiscalYearError}</FormText>
-                </FormGroup>
-              </Col>
-              <Col xs={6}>
-                <FormGroup
-                  controlId="provincialProjectNumber"
-                  validationState={this.state.provincialProjectNumberError ? 'error' : null}
-                >
-                  <FormLabel>
-                    Provincial Project Number <sup>*</sup>
-                  </FormLabel>
-                  <FormInputControl
-                    type="text"
-                    value={this.state.provincialProjectNumber}
-                    updateState={this.updateState}
-                  />
-                  <FormText>{this.state.provincialProjectNumberError}</FormText>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col xs={12}>
-                <FormGroup controlId="responsibilityCentre">
-                  <FormLabel>Responsibility Centre</FormLabel>
-                  <FormInputControl
-                    type="text"
-                    value={this.state.responsibilityCentre}
-                    updateState={this.updateState}
-                  />
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col xs={6}>
-                <FormGroup controlId="serviceLine">
-                  <FormLabel>Service Line</FormLabel>
-                  <FormInputControl type="text" value={this.state.serviceLine} updateState={this.updateState} />
-                </FormGroup>
-              </Col>
-              <Col xs={6}>
-                <FormGroup controlId="stob">
-                  <FormLabel>STOB</FormLabel>
-                  <FormInputControl type="text" value={this.state.stob} updateState={this.updateState} />
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col xs={6}>
-                <FormGroup controlId="product">
-                  <FormLabel>Product</FormLabel>
-                  <FormInputControl type="text" value={this.state.product} updateState={this.updateState} />
-                </FormGroup>
-              </Col>
-              <Col xs={6}>
-                <FormGroup controlId="businessFunction">
-                  <FormLabel>Business Function</FormLabel>
-                  <FormInputControl type="text" value={this.state.businessFunction} updateState={this.updateState} />
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col xs={6}>
-                <FormGroup controlId="workActivity">
-                  <FormLabel>Work Activity</FormLabel>
-                  <FormInputControl type="text" value={this.state.workActivity} updateState={this.updateState} />
-                </FormGroup>
-              </Col>
-              <Col xs={6}>
-                <FormGroup controlId="costType">
-                  <FormLabel>Cost Type</FormLabel>
-                  <FormInputControl type="text" value={this.state.costType} updateState={this.updateState} />
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col xs={12}>
-                <FormGroup controlId="projectInformation">
-                  <FormLabel>Project Information</FormLabel>
-                  <FormInputControl
-                    type="text"
-                    as="textarea"
-                    rows="5"
-                    value={this.state.projectInformation}
-                    updateState={this.updateState}
-                  />
-                </FormGroup>
-              </Col>
-            </Row>
-          </Container>
-        </Form>
+        <Container fluid>
+          <Row>
+            <Col xs={12}>
+              <FormGroup controlId="name">
+                <FormLabel>
+                  Project Name <sup>*</sup>
+                </FormLabel>
+                <FormInputControl
+                  type="text"
+                  value={this.state.name}
+                  updateState={this.updateState}
+                  autoFocus
+                  maxLength="60"
+                  isInvalid={this.state.nameError}
+                />
+                <FormText>{this.state.nameError}</FormText>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={6}>
+              <FormGroup controlId="fiscalYear">
+                <FormLabel>
+                  Fiscal Year <sup>*</sup>
+                </FormLabel>
+                <DropdownControl
+                  id="fiscalYear"
+                  title={this.state.fiscalYear}
+                  updateState={this.updateState}
+                  items={_.takeRight(this.props.fiscalYears, 2)}
+                  isInvalid={this.state.fiscalYearError}
+                />
+                <FormText>{this.state.fiscalYearError}</FormText>
+              </FormGroup>
+            </Col>
+            <Col xs={6}>
+              <FormGroup controlId="provincialProjectNumber">
+                <FormLabel>
+                  Provincial Project Number <sup>*</sup>
+                </FormLabel>
+                <FormInputControl
+                  type="text"
+                  value={this.state.provincialProjectNumber}
+                  updateState={this.updateState}
+                  isInvalid={this.state.provincialProjectNumberError}
+                />
+                <FormText>{this.state.provincialProjectNumberError}</FormText>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={12}>
+              <FormGroup controlId="responsibilityCentre">
+                <FormLabel>Responsibility Centre</FormLabel>
+                <FormInputControl type="text" value={this.state.responsibilityCentre} updateState={this.updateState} />
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={6}>
+              <FormGroup controlId="serviceLine">
+                <FormLabel>Service Line</FormLabel>
+                <FormInputControl type="text" value={this.state.serviceLine} updateState={this.updateState} />
+              </FormGroup>
+            </Col>
+            <Col xs={6}>
+              <FormGroup controlId="stob">
+                <FormLabel>STOB</FormLabel>
+                <FormInputControl type="text" value={this.state.stob} updateState={this.updateState} />
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={6}>
+              <FormGroup controlId="product">
+                <FormLabel>Product</FormLabel>
+                <FormInputControl type="text" value={this.state.product} updateState={this.updateState} />
+              </FormGroup>
+            </Col>
+            <Col xs={6}>
+              <FormGroup controlId="businessFunction">
+                <FormLabel>Business Function</FormLabel>
+                <FormInputControl type="text" value={this.state.businessFunction} updateState={this.updateState} />
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={6}>
+              <FormGroup controlId="workActivity">
+                <FormLabel>Work Activity</FormLabel>
+                <FormInputControl type="text" value={this.state.workActivity} updateState={this.updateState} />
+              </FormGroup>
+            </Col>
+            <Col xs={6}>
+              <FormGroup controlId="costType">
+                <FormLabel>Cost Type</FormLabel>
+                <FormInputControl type="text" value={this.state.costType} updateState={this.updateState} />
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={12}>
+              <FormGroup controlId="projectInformation">
+                <FormLabel>Project Information</FormLabel>
+                <FormInputControl
+                  type="text"
+                  as="textarea"
+                  rows="5"
+                  value={this.state.projectInformation}
+                  updateState={this.updateState}
+                />
+              </FormGroup>
+            </Col>
+          </Row>
+        </Container>
       </FormDialog>
     );
   }

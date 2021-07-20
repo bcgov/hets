@@ -144,31 +144,35 @@ class EquipmentTransferDialog extends React.Component {
         </Row>
         <Row>
           <Col xs={4}>
-            <FormGroup controlId="donorOwnerCode" validationState={this.state.donorOwnerCodeError ? 'error' : null}>
-              <FormInputControl type="text" defaultValue={this.state.donorOwnerCode} updateState={this.updateState} />
+            <FormGroup controlId="donorOwnerCode">
+              <FormInputControl
+                type="text"
+                defaultValue={this.state.donorOwnerCode}
+                updateState={this.updateState}
+                isInvalid={this.state.donorOwnerCodeError}
+              />
               <FormText>{this.state.donorOwnerCodeError}</FormText>
             </FormGroup>
           </Col>
           <Col xs={4}>
-            <FormGroup controlId="seniorityOption" validationState={this.state.seniorityOptionError ? 'error' : null}>
+            <FormGroup controlId="seniorityOption">
               <DropdownControl
                 id="seniorityOption"
                 updateState={this.updateState}
                 selectedId={this.state.seniorityOption}
                 items={seniorityOptions}
+                isInvalid={this.state.seniorityOptionError}
               />
               <FormText>{this.state.seniorityOptionError}</FormText>
             </FormGroup>
           </Col>
           <Col xs={4}>
-            <FormGroup
-              controlId="recipientOwnerCode"
-              validationState={this.state.recipientOwnerCodeError ? 'error' : null}
-            >
+            <FormGroup controlId="recipientOwnerCode">
               <FormInputControl
                 type="text"
                 defaultValue={this.state.recipientOwnerCode}
                 updateState={this.updateState}
+                isInvalid={this.state.recipientOwnerCodeError}
               />
               <FormText>{this.state.recipientOwnerCodeError}</FormText>
             </FormGroup>

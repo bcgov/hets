@@ -124,7 +124,7 @@ class DistrictEditDialog extends React.Component {
         onClose={this.props.onClose}
         onSubmit={this.formSubmitted}
       >
-        <FormGroup controlId="districtId" validationState={this.state.districtIdError ? 'error' : null}>
+        <FormGroup controlId="districtId">
           <FilterDropdown
             id="districtId"
             placeholder="Choose District"
@@ -132,6 +132,7 @@ class DistrictEditDialog extends React.Component {
             items={districts}
             selectedId={this.state.districtId}
             updateState={this.updateState}
+            isInvalid={this.state.districtIdError}
           />
           <FormText>{this.state.districtIdError}</FormText>
         </FormGroup>

@@ -151,8 +151,8 @@ class UserRoleAddDialog extends React.Component {
           return (
             <Container fluid>
               <Row>
-                <Col md={4}>
-                  <FormGroup controlId="roleId" validationState={this.state.roleIdError ? 'error' : null}>
+                <Col md={3}>
+                  <FormGroup controlId="roleId">
                     <FormLabel>
                       Role <sup>*</sup>
                     </FormLabel>
@@ -163,12 +163,13 @@ class UserRoleAddDialog extends React.Component {
                       items={roles}
                       selectedId={this.state.roleId}
                       updateState={this.updateState}
+                      isInvalid={this.state.roleIdError}
                     />
                     <FormText>{this.state.roleIdError}</FormText>
                   </FormGroup>
                 </Col>
-                <Col md={4}>
-                  <FormGroup controlId="effectiveDate" validationState={this.state.effectiveDateError ? 'error' : null}>
+                <Col md={5}>
+                  <FormGroup controlId="effectiveDate">
                     <FormLabel>
                       Effective Date <sup>*</sup>
                     </FormLabel>
@@ -177,18 +178,20 @@ class UserRoleAddDialog extends React.Component {
                       date={this.state.effectiveDate}
                       updateState={this.updateState}
                       title="effective date"
+                      isInvalid={this.state.effectiveDateError}
                     />
                     <FormText>{this.state.effectiveDateError}</FormText>
                   </FormGroup>
                 </Col>
                 <Col md={4}>
-                  <FormGroup controlId="expiryDate" validationState={this.state.expiryDateError ? 'error' : null}>
+                  <FormGroup controlId="expiryDate">
                     <FormLabel>Expiry Date</FormLabel>
                     <DateControl
                       id="expiryDate"
                       date={this.state.expiryDate}
                       updateState={this.updateState}
                       title="expiry date"
+                      isInvalid={this.state.expiryDateError}
                     />
                     <FormText>{this.state.expiryDateError}</FormText>
                   </FormGroup>

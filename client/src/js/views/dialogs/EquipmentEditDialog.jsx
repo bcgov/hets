@@ -286,7 +286,7 @@ class EquipmentEditDialog extends React.Component {
         <Container fluid>
           <Row>
             <Col md={12}>
-              <FormGroup controlId="localAreaId" validationState={this.state.localAreaError ? 'error' : null}>
+              <FormGroup controlId="localAreaId">
                 <FormLabel>Service Area - Local Area</FormLabel>
                 <FilterDropdown
                   id="localAreaId"
@@ -294,6 +294,7 @@ class EquipmentEditDialog extends React.Component {
                   updateState={(state) => this.updateState(state, this.onLocalAreaChanged)}
                   items={localAreas}
                   className="full-width"
+                  isInvalid={this.state.localAreaError}
                 />
                 <FormText>{this.state.localAreaError}</FormText>
               </FormGroup>
@@ -301,7 +302,7 @@ class EquipmentEditDialog extends React.Component {
           </Row>
           <Row>
             <Col md={12}>
-              <FormGroup controlId="equipmentTypeId" validationState={this.state.equipmentTypeError ? 'error' : null}>
+              <FormGroup controlId="equipmentTypeId">
                 <FormLabel>
                   Equipment Type <sup>*</sup>
                 </FormLabel>
@@ -313,6 +314,7 @@ class EquipmentEditDialog extends React.Component {
                   items={districtEquipmentTypes}
                   selectedId={this.state.equipmentTypeId}
                   updateState={(state) => this.updateState(state, this.onEquipmentTypeChanged)}
+                  isInvalid={this.state.equipmentTypeError}
                 />
                 <FormText>{this.state.equipmentTypeError}</FormText>
               </FormGroup>
@@ -320,33 +322,49 @@ class EquipmentEditDialog extends React.Component {
           </Row>
           <Row>
             <Col md={12}>
-              <FormGroup controlId="make" validationState={this.state.makeError ? 'error' : null}>
+              <FormGroup controlId="make">
                 <FormLabel>
                   Make <sup>*</sup>
                 </FormLabel>
-                <FormInputControl type="text" defaultValue={this.state.make} updateState={this.updateState} autoFocus />
+                <FormInputControl
+                  type="text"
+                  defaultValue={this.state.make}
+                  updateState={this.updateState}
+                  autoFocus
+                  isInvalid={this.state.makeError}
+                />
                 <FormText>{this.state.makeError}</FormText>
               </FormGroup>
             </Col>
           </Row>
           <Row>
             <Col md={12}>
-              <FormGroup controlId="model" validationState={this.state.modelError ? 'error' : null}>
+              <FormGroup controlId="model">
                 <FormLabel>
                   Model <sup>*</sup>
                 </FormLabel>
-                <FormInputControl type="text" defaultValue={this.state.model} updateState={this.updateState} />
+                <FormInputControl
+                  type="text"
+                  defaultValue={this.state.model}
+                  updateState={this.updateState}
+                  isInvalid={this.state.modelError}
+                />
                 <FormText>{this.state.modelError}</FormText>
               </FormGroup>
             </Col>
           </Row>
           <Row>
             <Col md={12}>
-              <FormGroup controlId="year" validationState={this.state.yearError ? 'error' : null}>
+              <FormGroup controlId="year">
                 <FormLabel>
                   Year <sup>*</sup>
                 </FormLabel>
-                <FormInputControl type="text" defaultValue={this.state.year} updateState={this.updateState} />
+                <FormInputControl
+                  type="text"
+                  defaultValue={this.state.year}
+                  updateState={this.updateState}
+                  isInvalid={this.state.yearError}
+                />
                 <FormText>{this.state.yearError}</FormText>
               </FormGroup>
             </Col>
@@ -377,11 +395,16 @@ class EquipmentEditDialog extends React.Component {
           </Row>
           <Row>
             <Col md={12}>
-              <FormGroup controlId="serialNumber" validationState={this.state.serialNumberError ? 'error' : null}>
+              <FormGroup controlId="serialNumber">
                 <FormLabel>
                   Serial Number <sup>*</sup>
                 </FormLabel>
-                <FormInputControl type="text" defaultValue={this.state.serialNumber} updateState={this.updateState} />
+                <FormInputControl
+                  type="text"
+                  defaultValue={this.state.serialNumber}
+                  updateState={this.updateState}
+                  isInvalid={this.state.serialNumberError}
+                />
                 <FormText>{this.state.serialNumberError}</FormText>
               </FormGroup>
             </Col>

@@ -547,12 +547,13 @@ class ExpireOverlay extends React.Component {
       <Popover id="users-role-popover" {...props}>
         Set Expiry Date
         <Form inline onSubmit={this.saveUserRole}>
-          <FormGroup controlId="expiryDate" validationState={this.state.expiryDateError ? 'error' : null}>
+          <FormGroup controlId="expiryDate">
             <DateControl
               id="expiryDate"
               date={this.state.expiryDate}
               updateState={this.updateState}
               title="Expiry Date"
+              isInvalid={this.state.expiryDateError}
             />
             <FormText>{this.state.expiryDateError}</FormText>
           </FormGroup>

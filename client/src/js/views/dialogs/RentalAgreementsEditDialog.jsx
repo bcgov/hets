@@ -123,10 +123,7 @@ class RentalAgreementsEditDialog extends React.Component {
       >
         <Row>
           <Col md={6}>
-            <FormGroup
-              controlId="estimateStartWork"
-              validationState={this.state.estimateStartWorkError ? 'error' : null}
-            >
+            <FormGroup controlId="estimateStartWork">
               <FormLabel>Estimated Commencement</FormLabel>
               <DateControl
                 id="estimateStartWork"
@@ -134,12 +131,13 @@ class RentalAgreementsEditDialog extends React.Component {
                 date={this.state.estimateStartWork}
                 updateState={this.updateState}
                 title="Estimated Commencement"
+                isInvalid={this.state.estimateStartWorkError}
               />
               <FormText>{this.state.estimateStartWorkError}</FormText>
             </FormGroup>
           </Col>
           <Col md={6}>
-            <FormGroup controlId="estimateHours" validationState={this.state.estimateHoursError ? 'error' : null}>
+            <FormGroup controlId="estimateHours">
               <FormLabel>
                 Estimated Period Hours <sup>*</sup>
               </FormLabel>
@@ -149,6 +147,7 @@ class RentalAgreementsEditDialog extends React.Component {
                 defaultValue={this.state.estimateHours}
                 readOnly={isReadOnly}
                 updateState={this.updateState}
+                isInvalid={this.state.estimateHoursError}
               />
               <FormText>{this.state.estimateHoursError}</FormText>
             </FormGroup>
@@ -156,7 +155,7 @@ class RentalAgreementsEditDialog extends React.Component {
         </Row>
         <Row>
           <Col md={6}>
-            <FormGroup controlId="datedOn" validationState={this.state.datedOnError ? 'error' : null}>
+            <FormGroup controlId="datedOn">
               <FormLabel>Dated On</FormLabel>
               <DateControl
                 id="datedOn"
@@ -164,6 +163,7 @@ class RentalAgreementsEditDialog extends React.Component {
                 date={this.state.datedOn}
                 updateState={this.updateState}
                 title="Dated On"
+                isInvalid={this.state.datedOnError}
               />
               <FormText>{this.state.datedOnError}</FormText>
             </FormGroup>

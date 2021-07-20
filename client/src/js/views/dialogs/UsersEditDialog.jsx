@@ -199,25 +199,41 @@ class UsersEditDialog extends React.Component {
         onSubmit={this.formSubmitted}
         onClose={this.props.onClose}
       >
-        <FormGroup controlId="givenName" validationState={this.state.givenNameError ? 'error' : null}>
+        <FormGroup controlId="givenName">
           <FormLabel>
             Given Name <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" defaultValue={this.state.givenName} updateState={this.updateState} autoFocus />
+          <FormInputControl
+            type="text"
+            defaultValue={this.state.givenName}
+            updateState={this.updateState}
+            autoFocus
+            isInvalid={this.state.givenNameError}
+          />
           <FormText>{this.state.givenNameError}</FormText>
         </FormGroup>
-        <FormGroup controlId="surname" validationState={this.state.surnameError ? 'error' : null}>
+        <FormGroup controlId="surname">
           <FormLabel>
             Surname <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" defaultValue={this.state.surname} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            defaultValue={this.state.surname}
+            updateState={this.updateState}
+            isInvalid={this.state.smUserIdError}
+          />
           <FormText>{this.state.surnameError}</FormText>
         </FormGroup>
-        <FormGroup controlId="smUserId" validationState={this.state.smUserIdError ? 'error' : null}>
+        <FormGroup controlId="smUserId">
           <FormLabel>
             User ID <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" defaultValue={this.state.smUserId} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            defaultValue={this.state.smUserId}
+            updateState={this.updateState}
+            isInvalid={this.state.smUserIdError}
+          />
           <FormText>{this.state.smUserIdError}</FormText>
         </FormGroup>
         <FormGroup controlId="status">
@@ -230,14 +246,19 @@ class UsersEditDialog extends React.Component {
             className="full-width"
           />
         </FormGroup>
-        <FormGroup controlId="email" validationState={this.state.emailError ? 'error' : null}>
+        <FormGroup controlId="email">
           <FormLabel>
             E-mail <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" defaultValue={this.state.email} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            defaultValue={this.state.email}
+            updateState={this.updateState}
+            isInvalid={this.state.emailError}
+          />
           <FormText>{this.state.emailError}</FormText>
         </FormGroup>
-        <FormGroup controlId="districtId" validationState={this.state.districtIdError ? 'error' : null}>
+        <FormGroup controlId="districtId">
           <FormLabel>
             District <sup>*</sup>
           </FormLabel>
@@ -249,6 +270,7 @@ class UsersEditDialog extends React.Component {
             selectedId={this.state.districtId}
             updateState={this.updateState}
             className="full-width"
+            isInvalid={this.state.districtIdError}
           />
           <FormText>{this.state.districtIdError}</FormText>
         </FormGroup>

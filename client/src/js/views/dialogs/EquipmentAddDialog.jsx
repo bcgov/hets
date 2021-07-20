@@ -255,7 +255,7 @@ class EquipmentAddDialog extends React.Component {
           <FormLabel>Owner</FormLabel>
           <h4>{owner.organizationName}</h4>
         </FormGroup>
-        <FormGroup controlId="localAreaId" validationState={this.state.localAreaError ? 'error' : null}>
+        <FormGroup controlId="localAreaId">
           <FormLabel>
             Service Area - Local Area <sup>*</sup>
           </FormLabel>
@@ -265,10 +265,11 @@ class EquipmentAddDialog extends React.Component {
             updateState={this.updateState}
             items={localAreas}
             className="full-width"
+            isInvalid={this.state.localAreaError}
           />
           <FormText>{this.state.localAreaError}</FormText>
         </FormGroup>
-        <FormGroup controlId="equipmentTypeId" validationState={this.state.equipmentTypeError ? 'error' : null}>
+        <FormGroup controlId="equipmentTypeId">
           <FormLabel>
             Equipment Type <sup>*</sup>
           </FormLabel>
@@ -280,28 +281,45 @@ class EquipmentAddDialog extends React.Component {
             selectedId={this.state.equipmentTypeId}
             updateState={this.updateState}
             items={districtEquipmentTypes}
+            isInvalid={this.state.equipmentTypeError}
           />
           <FormText>{this.state.equipmentTypeError}</FormText>
         </FormGroup>
-        <FormGroup controlId="make" validationState={this.state.makeError ? 'error' : null}>
+        <FormGroup controlId="make">
           <FormLabel>
             Make <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" defaultValue={this.state.make} updateState={this.updateState} autoFocus />
+          <FormInputControl
+            type="text"
+            defaultValue={this.state.make}
+            updateState={this.updateState}
+            autoFocus
+            isInvalid={this.state.makeError}
+          />
           <FormText>{this.state.makeError}</FormText>
         </FormGroup>
-        <FormGroup controlId="model" validationState={this.state.modelError ? 'error' : null}>
+        <FormGroup controlId="model">
           <FormLabel>
             Model <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" defaultValue={this.state.model} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            defaultValue={this.state.model}
+            updateState={this.updateState}
+            isInvalid={this.state.modelError}
+          />
           <FormText>{this.state.modelError}</FormText>
         </FormGroup>
-        <FormGroup controlId="year" validationState={this.state.yearError ? 'error' : null}>
+        <FormGroup controlId="year">
           <FormLabel>
             Year <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" defaultValue={this.state.year} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            defaultValue={this.state.year}
+            updateState={this.updateState}
+            isInvalid={this.state.yearError}
+          />
           <FormText>{this.state.yearError}</FormText>
         </FormGroup>
         <FormGroup controlId="size">
@@ -316,11 +334,16 @@ class EquipmentAddDialog extends React.Component {
           <FormLabel>Licence Number</FormLabel>
           <FormInputControl type="text" defaultValue={this.state.licencePlate} updateState={this.updateState} />
         </FormGroup>
-        <FormGroup controlId="serialNumber" validationState={this.state.serialNumberError ? 'error' : null}>
+        <FormGroup controlId="serialNumber">
           <FormLabel>
             Serial Number <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" defaultValue={this.state.serialNumber} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            defaultValue={this.state.serialNumber}
+            updateState={this.updateState}
+            isInvalid={this.state.serialNumberError}
+          />
           <FormText>{this.state.serialNumberError}</FormText>
         </FormGroup>
         {isDumpTruck && (

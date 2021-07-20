@@ -170,7 +170,7 @@ class ProjectsAddDialog extends React.Component {
         <Container fluid>
           <Row>
             <Col xs={12}>
-              <FormGroup controlId="name" validationState={this.state.nameError ? 'error' : null}>
+              <FormGroup controlId="name">
                 <FormLabel>
                   Project Name <sup>*</sup>
                 </FormLabel>
@@ -180,6 +180,7 @@ class ProjectsAddDialog extends React.Component {
                   updateState={this.updateState}
                   autoFocus
                   maxLength="60"
+                  isInvalid={this.state.nameError}
                 />
                 <FormText>{this.state.nameError}</FormText>
               </FormGroup>
@@ -189,11 +190,11 @@ class ProjectsAddDialog extends React.Component {
             <Col xs={6}>
               <FormGroup controlId="districtId">
                 <FormLabel>District</FormLabel>
-                <FormControl.Static>{this.props.currentUser.district.name}</FormControl.Static>
+                <FormControl placeholder={this.props.currentUser.district.name} readOnly />
               </FormGroup>
             </Col>
             <Col xs={6}>
-              <FormGroup controlId="fiscalYear" validationState={this.state.fiscalYearError ? 'error' : null}>
+              <FormGroup controlId="fiscalYear">
                 <FormLabel>
                   Fiscal Year <sup>*</sup>
                 </FormLabel>
@@ -202,6 +203,7 @@ class ProjectsAddDialog extends React.Component {
                   title={this.state.fiscalYear}
                   updateState={this.updateState}
                   items={_.takeRight(this.props.fiscalYears, 2)}
+                  isInvalid={this.state.fiscalYearError}
                 />
                 <FormText>{this.state.fiscalYearError}</FormText>
               </FormGroup>
@@ -209,10 +211,7 @@ class ProjectsAddDialog extends React.Component {
           </Row>
           <Row>
             <Col xs={6}>
-              <FormGroup
-                controlId="provincialProjectNumber"
-                validationState={this.state.provincialProjectNumberError ? 'error' : null}
-              >
+              <FormGroup controlId="provincialProjectNumber">
                 <FormLabel>
                   Provincial Project Number <sup>*</sup>
                 </FormLabel>
@@ -220,6 +219,7 @@ class ProjectsAddDialog extends React.Component {
                   type="text"
                   value={this.state.provincialProjectNumber}
                   updateState={this.updateState}
+                  isInvalid={this.state.provincialProjectNumberError}
                 />
                 <FormText>{this.state.provincialProjectNumberError}</FormText>
               </FormGroup>

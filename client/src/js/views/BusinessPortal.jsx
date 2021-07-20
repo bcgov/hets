@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Row, Col, FormGroup, Alert, Button } from 'react-bootstrap';
+import { Row, Col, FormGroup, Alert, Button, FormText } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Action from '../actionTypes';
@@ -219,7 +219,7 @@ class BusinessPortal extends React.Component {
             <p>For RETURNING equipment owners, select your company above to view your account.</p>
           </div>
           <Form inline onSubmit={this.validateOwner}>
-            <FormGroup controlId="secretKey" validationState={this.state.errors.secretKey ? 'error' : null}>
+            <FormGroup controlId="secretKey">
               <FormInputControl
                 type="text"
                 placeholder="Please enter your secret key here"
@@ -228,9 +228,11 @@ class BusinessPortal extends React.Component {
                 defaultValue={this.state.secretKey}
                 updateState={this.updateState}
                 inputRef={(input) => (this.inputSecretKey = input)}
+                isInvalid={this.state.errors.secretKey}
               />
+              <FormText>{this.state.errors.secretKey}</FormText>
             </FormGroup>
-            <FormGroup controlId="postalCode" validationState={this.state.errors.postalCode ? 'error' : null}>
+            <FormGroup controlId="postalCode">
               <FormInputControl
                 type="text"
                 placeholder="Postal code"
@@ -239,7 +241,9 @@ class BusinessPortal extends React.Component {
                 defaultValue={this.state.postalCode}
                 updateState={this.updateState}
                 inputRef={(input) => (this.inputPostalCode = input)}
+                isInvalid={this.state.errors.postalCode}
               />
+              <FormText>{this.state.errors.postalCode}</FormText>
             </FormGroup>
             <Button type="submit" disabled={this.state.validating}>
               Validate {this.state.validating && <Spinner />}

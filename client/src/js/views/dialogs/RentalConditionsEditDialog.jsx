@@ -164,7 +164,7 @@ class RentalConditionsEditDialog extends React.Component {
           {this.state.forms.map((form, i) => (
             <div className="form-item" key={i}>
               <div>
-                <FormGroup controlId={`conditionName${i}`} validationState={form.conditionNameError ? 'error' : null}>
+                <FormGroup controlId={`conditionName${i}`}>
                   <FormLabel>
                     Conditions <sup>*</sup>
                   </FormLabel>
@@ -176,13 +176,14 @@ class RentalConditionsEditDialog extends React.Component {
                     items={conditions}
                     title={form.conditionName}
                     className="full-width"
+                    isInvalid={this.state.conditionNameError}
                   />
                   <FormText>{form.conditionNameError}</FormText>
                 </FormGroup>
               </div>
               {form.conditionName === NON_STANDARD_CONDITION && (
                 <div>
-                  <FormGroup controlId={`comment${i}`} validationState={form.commentError ? 'error' : null}>
+                  <FormGroup controlId={`comment${i}`}>
                     <FormLabel>
                       Comment <sup>*</sup>
                     </FormLabel>
@@ -191,6 +192,7 @@ class RentalConditionsEditDialog extends React.Component {
                       defaultValue={form.comment}
                       readOnly={isReadOnly}
                       updateState={this.updateState}
+                      isInvalid={this.state.commentError}
                     />
                     <FormText>{form.commentError}</FormText>
                   </FormGroup>

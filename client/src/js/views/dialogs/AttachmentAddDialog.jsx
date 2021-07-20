@@ -128,9 +128,13 @@ class AttachmentAddDialog extends React.Component {
       >
         <div className="forms-container">
           {forms.map((form, i) => (
-            <FormGroup key={i} controlId="typeName" validationState={form.attachmentError ? 'error' : null}>
+            <FormGroup key={i} controlId="typeName">
               <FormLabel>Attachment</FormLabel>
-              <FormInputControl type="text" updateState={(state) => this.updateState(state, i)} />
+              <FormInputControl
+                type="text"
+                updateState={(state) => this.updateState(state, i)}
+                isInvalid={form.attachmentError}
+              />
               <FormText>{form.attachmentError}</FormText>
             </FormGroup>
           ))}

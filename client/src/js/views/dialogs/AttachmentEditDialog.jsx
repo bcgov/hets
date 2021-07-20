@@ -94,9 +94,14 @@ class AttachmentEditDialog extends React.Component {
         onClose={this.props.onClose}
         onSubmit={this.formSubmitted}
       >
-        <FormGroup controlId="typeName" validationState={this.state.attachmentError ? 'error' : null}>
+        <FormGroup controlId="typeName">
           <FormLabel>Attachment</FormLabel>
-          <FormInputControl type="text" defaultValue={this.state.typeName} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            defaultValue={this.state.typeName}
+            updateState={this.updateState}
+            isInvalid={this.state.attachmentError}
+          />
           <FormText>{this.state.attachmentError}</FormText>
         </FormGroup>
       </FormDialog>

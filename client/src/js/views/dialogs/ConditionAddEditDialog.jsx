@@ -125,18 +125,28 @@ class ConditionAddEditDialog extends React.Component {
         onClose={this.props.onClose}
         onSubmit={this.formSubmitted}
       >
-        <FormGroup controlId="typeCode" validationState={this.state.typeCodeError ? 'error' : null}>
+        <FormGroup controlId="typeCode">
           <FormLabel>
             Type Code <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" value={this.state.typeCode} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            value={this.state.typeCode}
+            updateState={this.updateState}
+            isInvalid={this.state.typeCodeError}
+          />
           <FormText>{this.state.typeCodeError}</FormText>
         </FormGroup>
-        <FormGroup controlId="description" validationState={this.state.descriptionError ? 'error' : null}>
+        <FormGroup controlId="description">
           <FormLabel>
             Description <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" value={this.state.description} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            value={this.state.description}
+            updateState={this.updateState}
+            isInvalid={this.state.descriptionError}
+          />
           <FormText>{this.state.descriptionError}</FormText>
         </FormGroup>
       </FormDialog>

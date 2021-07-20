@@ -161,6 +161,7 @@ class FilterDropdown extends React.Component {
                 this.input = ref;
               }}
               onKeyDown={this.keyDown}
+              autocomplete="off"
             />
           </div>
           {items.length > 0 && (

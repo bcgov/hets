@@ -190,10 +190,7 @@ class SeniorityEditDialog extends React.Component {
           </Row>
           <Row>
             <Col>
-              <FormGroup
-                controlId="serviceHoursLastYear"
-                validationState={this.state.serviceHoursLastYearError ? 'error' : null}
-              >
+              <FormGroup controlId="serviceHoursLastYear">
                 <FormLabel>
                   Hours {this.props.equipment.yearMinus1} <sup>*</sup>
                 </FormLabel>
@@ -203,6 +200,7 @@ class SeniorityEditDialog extends React.Component {
                   onChange={this.seniorityOverrriden}
                   updateState={this.updateState}
                   autoFocus
+                  isInvalid={this.state.serviceHoursLastYearError}
                 />
                 <FormText>{this.state.serviceHoursLastYearError}</FormText>
               </FormGroup>
@@ -210,10 +208,7 @@ class SeniorityEditDialog extends React.Component {
           </Row>
           <Row>
             <Col>
-              <FormGroup
-                controlId="serviceHoursTwoYearsAgo"
-                validationState={this.state.serviceHoursTwoYearsAgoError ? 'error' : null}
-              >
+              <FormGroup controlId="serviceHoursTwoYearsAgo">
                 <FormLabel>
                   Hours {this.props.equipment.yearMinus2} <sup>*</sup>
                 </FormLabel>
@@ -222,6 +217,7 @@ class SeniorityEditDialog extends React.Component {
                   value={this.state.serviceHoursTwoYearsAgo}
                   onChange={this.seniorityOverrriden}
                   updateState={this.updateState}
+                  isInvalid={this.state.serviceHoursTwoYearsAgoError}
                 />
                 <FormText>{this.state.serviceHoursTwoYearsAgoError}</FormText>
               </FormGroup>
@@ -229,10 +225,7 @@ class SeniorityEditDialog extends React.Component {
           </Row>
           <Row>
             <Col>
-              <FormGroup
-                controlId="serviceHoursThreeYearsAgo"
-                validationState={this.state.serviceHoursThreeYearsAgoError ? 'error' : null}
-              >
+              <FormGroup controlId="serviceHoursThreeYearsAgo">
                 <FormLabel>
                   Hours {this.props.equipment.yearMinus3} <sup>*</sup>
                 </FormLabel>
@@ -241,6 +234,7 @@ class SeniorityEditDialog extends React.Component {
                   value={this.state.serviceHoursThreeYearsAgo}
                   onChange={this.seniorityOverrriden}
                   updateState={this.updateState}
+                  isInvalid={this.state.serviceHoursThreeYearsAgoError}
                 />
                 <FormText>{this.state.serviceHoursThreeYearsAgoError}</FormText>
               </FormGroup>
@@ -248,7 +242,7 @@ class SeniorityEditDialog extends React.Component {
           </Row>
           <Row>
             <Col>
-              <FormGroup validationState={this.state.approvedDateError ? 'error' : null}>
+              <FormGroup>
                 <FormLabel>
                   Registered Date <sup>*</sup>
                 </FormLabel>
@@ -257,6 +251,7 @@ class SeniorityEditDialog extends React.Component {
                   date={this.state.approvedDate}
                   updateState={this.updateState}
                   title="registered date"
+                  isInvalid={this.state.approvedDateError}
                 />
                 <FormText>{this.state.approvedDateError}</FormText>
               </FormGroup>
@@ -264,13 +259,14 @@ class SeniorityEditDialog extends React.Component {
           </Row>
           <Row>
             <Col>
-              <FormGroup controlId="yearsRegistered" validationState={this.state.yearsRegisteredError ? 'error' : null}>
+              <FormGroup controlId="yearsRegistered">
                 <FormLabel>Years Registered</FormLabel>
                 <FormInputControl
                   type="float"
                   value={this.state.yearsRegistered}
                   onChange={this.seniorityOverrriden}
                   updateState={this.updateState}
+                  isInvalid={this.state.yearsRegisteredError}
                 />
                 <FormText>{this.state.yearsRegisteredError}</FormText>
               </FormGroup>
@@ -278,10 +274,7 @@ class SeniorityEditDialog extends React.Component {
           </Row>
           <Row>
             <Col>
-              <FormGroup
-                controlId="seniorityOverrideReason"
-                validationState={this.state.overrideReasonError ? 'error' : null}
-              >
+              <FormGroup controlId="seniorityOverrideReason">
                 <FormLabel>
                   Override Reason <sup>*</sup>
                 </FormLabel>
@@ -289,6 +282,7 @@ class SeniorityEditDialog extends React.Component {
                   type="text"
                   value={this.state.seniorityOverrideReason}
                   updateState={this.updateState}
+                  isInvalid={this.state.overrideReasonError}
                 />
                 <FormText>{this.state.overrideReasonError}</FormText>
               </FormGroup>

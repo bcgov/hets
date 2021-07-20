@@ -96,7 +96,7 @@ class EditFavouritesDialog extends React.Component {
         onClose={onClose}
         onSubmit={this.onSubmit}
       >
-        <FormGroup controlId="name" validationState={nameError ? 'error' : null}>
+        <FormGroup controlId="name">
           <FormLabel>
             Name <sup>*</sup>
           </FormLabel>
@@ -106,6 +106,7 @@ class EditFavouritesDialog extends React.Component {
             defaultValue={name}
             updateState={this.updateState}
             autoFocus
+            isInvalid={nameError}
           />
           <FormText>{nameError}</FormText>
         </FormGroup>

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Dropdown, MenuItem, Popover, OverlayTrigger } from 'react-bootstrap';
+import classNames from 'classnames';
+import { Dropdown, Popover, OverlayTrigger } from 'react-bootstrap';
 import _ from 'lodash';
 
 class DropdownControl extends React.Component {
@@ -32,6 +33,7 @@ class DropdownControl extends React.Component {
     onSelect: PropTypes.func,
     updateState: PropTypes.func,
     staticTitle: PropTypes.bool,
+    isInvalid: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]), //if field is invalid show invalid styles.
   };
 
   constructor(props) {
@@ -126,7 +128,8 @@ class DropdownControl extends React.Component {
       'blankLine',
       'fieldName',
       'placeholder',
-      'staticTitle'
+      'staticTitle',
+      'isInvalid'
     );
 
     return (
@@ -137,7 +140,10 @@ class DropdownControl extends React.Component {
         open={this.state.open}
         onToggle={this.toggle}
       >
-        <Dropdown.Toggle className="btn-custom"> {this.state.title}</Dropdown.Toggle>
+        <Dropdown.Toggle className={classNames('btn-custom', { 'form-control is-invalid': this.props.isInvalid })}>
+          {' '}
+          {this.state.title}
+        </Dropdown.Toggle>
         <Dropdown.Menu>
           {this.props.items.length > 0 && (
             <ul>
@@ -145,17 +151,21 @@ class DropdownControl extends React.Component {
                 <Dropdown.Item
                   key={this.state.simple ? '' : 0}
                   eventKey={this.state.simple ? '' : 0}
-                  onSelect={this.itemSelected}
+                  onSelect={() => this.itemSelected(0)}
                 >
                   {typeof this.props.blankLine === 'string' ? this.props.blankLine : ' '}
                 </Dropdown.Item>
               )}
               {_.map(this.props.items, (item) => {
                 var menuItem = (
+                  //() => itemSelected(item.id) is required rather than this.itemSelected since react-bootstrap always returns eventKey as a string. version v1.6.1
+                  //This breaks the _.find function to update title. Since the id's are as Number. Number !== String.
+                  //git issue: https://github.com/react-bootstrap/react-bootstrap/issues/3957
+                  //source code: https://github.com/react-bootstrap/react-bootstrap/blob/master/src/DropdownItem.tsx refer to makeEventKey function that returns String()
                   <Dropdown.Item
                     key={this.state.simple ? item : item.id}
                     eventKey={this.state.simple ? item : item.id}
-                    onSelect={this.itemSelected}
+                    onSelect={() => this.itemSelected(item?.id || item)}
                   >
                     {this.state.simple ? item : item[this.state.fieldName]}
                   </Dropdown.Item>

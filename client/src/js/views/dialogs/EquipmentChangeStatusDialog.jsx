@@ -86,13 +86,14 @@ class EquipmentChangeStatusDialog extends React.Component {
         onClose={this.props.onClose}
         onSubmit={this.formSubmitted}
       >
-        <FormGroup controlId="comment" validationState={this.state.commentError ? 'error' : null}>
+        <FormGroup controlId="comment">
           <FormLabel>Comment</FormLabel>
           <FormInputControl
             value={this.state.comment}
             as="textarea"
             updateState={this.updateState}
             maxLength={maxLength}
+            isInvalid={this.state.commentError}
           />
           <FormText>{this.state.commentError}</FormText>
           <p>Maximum {maxLength} characters.</p>

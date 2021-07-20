@@ -371,7 +371,7 @@ class TimeEntryDialog extends React.Component {
         <Container fluid>
           <Row>
             <Col xs={6}>
-              <FormGroup controlId="equipmentId" validationState={this.state.equipmentIdError ? 'error' : null}>
+              <FormGroup controlId="equipmentId">
                 <FormLabel>
                   Equipment ID <sup>*</sup>
                 </FormLabel>
@@ -383,12 +383,13 @@ class TimeEntryDialog extends React.Component {
                   onSelect={this.onEquipmentSelected}
                   updateState={this.updateState}
                   items={equipment}
+                  isInvalid={this.state.equipmentIdError}
                 />
                 <FormText>{this.state.equipmentIdError}</FormText>
               </FormGroup>
             </Col>
             <Col xs={6}>
-              <FormGroup controlId="projectId" validationState={this.state.projectIdError ? 'error' : null}>
+              <FormGroup controlId="projectId">
                 <FormLabel>
                   Project <sup>*</sup>
                 </FormLabel>
@@ -399,6 +400,7 @@ class TimeEntryDialog extends React.Component {
                   selectedId={this.state.projectId}
                   updateState={this.updateState}
                   items={projects}
+                  isInvalid={this.state.projectIdError}
                 />
                 <FormText>{this.state.projectIdError}</FormText>
               </FormGroup>
@@ -518,7 +520,7 @@ class TimeEntryDialog extends React.Component {
             return (
               <Row key={key}>
                 <Col sm={4}>
-                  <FormGroup validationState={this.state.timeEntry[key].errorDate ? 'error' : null}>
+                  <FormGroup>
                     <FormLabel>Week Ending</FormLabel>
                     <DateControl
                       disabled={!this.state.projectFiscalYearStartDate}
@@ -527,12 +529,13 @@ class TimeEntryDialog extends React.Component {
                       isValidDate={this.isValidDate}
                       date={this.state.timeEntry[key].date}
                       updateState={this.updateTimeEntryState}
+                      isInvalid={this.state.timeEntry[key].errorDate}
                     />
                     <FormText>{this.state.timeEntry[key].errorDate}</FormText>
                   </FormGroup>
                 </Col>
                 <Col sm={4}>
-                  <FormGroup validationState={this.state.timeEntry[key].errorHours ? 'error' : null}>
+                  <FormGroup>
                     <FormLabel>Hours</FormLabel>
                     <FormInputControl
                       id={`hours${key}`}
@@ -540,6 +543,7 @@ class TimeEntryDialog extends React.Component {
                       type="float"
                       value={this.state.timeEntry[key].hours}
                       updateState={this.updateTimeEntryState}
+                      isInvalid={this.state.timeEntry[key].errorHours}
                     />
                     <FormText>{this.state.timeEntry[key].errorHours}</FormText>
                   </FormGroup>

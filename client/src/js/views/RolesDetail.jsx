@@ -233,16 +233,21 @@ class RolesDetail extends React.Component {
                 <Container fluid>
                   <Row>
                     <Col md={3}>
-                      <FormGroup controlId="name" validationState={this.state.nameError ? 'error' : null}>
+                      <FormGroup controlId="name">
                         <FormLabel>
                           Name <sup>*</sup>
                         </FormLabel>
-                        <FormInputControl type="text" defaultValue={this.state.name} updateState={this.updateState} />
+                        <FormInputControl
+                          type="text"
+                          defaultValue={this.state.name}
+                          updateState={this.updateState}
+                          isInvalid={this.state.nameError}
+                        />
                         <FormText>{this.state.nameError}</FormText>
                       </FormGroup>
                     </Col>
                     <Col md={9}>
-                      <FormGroup controlId="description" validationState={this.state.descriptionError ? 'error' : null}>
+                      <FormGroup controlId="description">
                         <FormLabel>
                           Description <sup>*</sup>
                         </FormLabel>
@@ -250,6 +255,7 @@ class RolesDetail extends React.Component {
                           type="text"
                           defaultValue={this.state.description}
                           updateState={this.updateState}
+                          isInvalid={this.state.descriptionError}
                         />
                         <FormText>{this.state.descriptionError}</FormText>
                       </FormGroup>

@@ -118,7 +118,7 @@ class EquipmentRentalRatesEditDialog extends React.Component {
         <Container fluid>
           <Row>
             <Col md={3}>
-              <FormGroup controlId="equipmentRate" validationState={this.state.equipmentRateError ? 'error' : null}>
+              <FormGroup controlId="equipmentRate">
                 <FormLabel>
                   Pay Rate <sup>*</sup>
                 </FormLabel>
@@ -129,12 +129,13 @@ class EquipmentRentalRatesEditDialog extends React.Component {
                   readOnly={isReadOnly}
                   updateState={this.updateState}
                   autoFocus
+                  isInvalid={this.state.equipmentRateError}
                 />
                 <FormText>{this.state.equipmentRateError}</FormText>
               </FormGroup>
             </Col>
             <Col md={3}>
-              <FormGroup controlId="ratePeriod" validationState={this.state.ratePeriodError ? 'error' : null}>
+              <FormGroup controlId="ratePeriod">
                 <FormLabel>
                   Period <sup>*</sup>
                 </FormLabel>
@@ -144,6 +145,7 @@ class EquipmentRentalRatesEditDialog extends React.Component {
                   title={this.state.ratePeriod}
                   updateState={this.updateState}
                   items={ratePeriods}
+                  isInvalid={this.state.ratePeriodError}
                 />
                 <FormText>{this.state.ratePeriodError}</FormText>
               </FormGroup>

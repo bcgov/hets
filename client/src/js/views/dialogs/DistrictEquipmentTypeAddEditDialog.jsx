@@ -138,7 +138,7 @@ class DistrictEquipmentTypeAddEditDialog extends React.Component {
         onClose={this.props.onClose}
         onSubmit={this.formSubmitted}
       >
-        <FormGroup controlId="equipmentTypeId" validationState={this.state.equipmentTypeIdError ? 'error' : null}>
+        <FormGroup controlId="equipmentTypeId">
           <FormLabel>
             Blue Book Section <sup>*</sup>
           </FormLabel>
@@ -150,17 +150,20 @@ class DistrictEquipmentTypeAddEditDialog extends React.Component {
             selectedId={this.state.equipmentTypeId}
             items={equipmentTypes}
             updateState={this.updateState}
+            isInvalid={this.state.equipmentTypeIdError}
           />
           <FormText>{this.state.equipmentTypeIdError}</FormText>
         </FormGroup>
-        <FormGroup
-          controlId="districtEquipmentName"
-          validationState={this.state.districtEquipmentNameError ? 'error' : null}
-        >
+        <FormGroup controlId="districtEquipmentName">
           <FormLabel>
             Equipment Type/Description <sup>*</sup>
           </FormLabel>
-          <FormInputControl type="text" value={this.state.districtEquipmentName} updateState={this.updateState} />
+          <FormInputControl
+            type="text"
+            value={this.state.districtEquipmentName}
+            updateState={this.updateState}
+            isInvalid={this.state.districtEquipmentNameError}
+          />
           <FormText>{this.state.districtEquipmentNameError}</FormText>
         </FormGroup>
       </FormDialog>

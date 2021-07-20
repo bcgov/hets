@@ -125,10 +125,7 @@ class OwnersPolicyEditDialog extends React.Component {
       >
         <Row>
           <Col xs={6}>
-            <FormGroup
-              controlId="workSafeBCPolicyNumber"
-              validationState={this.state.workSafeBCPolicyNumberError ? 'error' : null}
-            >
+            <FormGroup controlId="workSafeBCPolicyNumber">
               <FormLabel>
                 WCB Number <sup>*</sup>
               </FormLabel>
@@ -136,21 +133,20 @@ class OwnersPolicyEditDialog extends React.Component {
                 type="text"
                 value={this.state.workSafeBCPolicyNumber}
                 updateState={this.updateState}
+                isInvalid={this.state.workSafeBCPolicyNumberError}
                 autoFocus
               />
               <FormText>{this.state.workSafeBCPolicyNumberError}</FormText>
             </FormGroup>
           </Col>
           <Col xs={6}>
-            <FormGroup
-              controlId="workSafeBCExpiryDate"
-              validationState={this.state.workSafeBCExpiryDateError ? 'error' : null}
-            >
+            <FormGroup controlId="workSafeBCExpiryDate">
               <FormLabel>WCB Expiry Date</FormLabel>
               <DateControl
                 id="workSafeBCExpiryDate"
                 date={this.state.workSafeBCExpiryDate}
                 updateState={this.updateState}
+                isInvalid={this.state.workSafeBCExpiryDateError}
               />
               <FormText>{this.state.workSafeBCExpiryDateError}</FormText>
             </FormGroup>
@@ -177,9 +173,14 @@ class OwnersPolicyEditDialog extends React.Component {
             </FormGroup>
           </Col>
           <Col xs={6}>
-            <FormGroup controlId="cglEndDate" validationState={this.state.cglEndDateError ? 'error' : null}>
+            <FormGroup controlId="cglEndDate">
               <FormLabel>CGL Policy End Date</FormLabel>
-              <DateControl id="cglEndDate" date={this.state.cglEndDate} updateState={this.updateState} />
+              <DateControl
+                id="cglEndDate"
+                date={this.state.cglEndDate}
+                updateState={this.updateState}
+                isInvalid={this.state.cglEndDateError}
+              />
               <FormText>{this.state.cglEndDateError}</FormText>
             </FormGroup>
           </Col>

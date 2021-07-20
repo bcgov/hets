@@ -220,7 +220,7 @@ class ContactsEditDialog extends React.Component {
         <Container fluid>
           <Row>
             <Col md={12}>
-              <FormGroup controlId="givenName" validationState={this.state.givenNameError ? 'error' : null}>
+              <FormGroup controlId="givenName">
                 <FormLabel>
                   Given Name <sup>*</sup>
                 </FormLabel>
@@ -230,6 +230,7 @@ class ContactsEditDialog extends React.Component {
                   readOnly={isReadOnly}
                   updateState={this.updateState}
                   autoFocus
+                  isInvalid={this.state.givenNameError}
                 />
                 <FormText>{this.state.givenNameError}</FormText>
               </FormGroup>
@@ -263,7 +264,7 @@ class ContactsEditDialog extends React.Component {
           </Row>
           <Row>
             <Col md={12}>
-              <FormGroup controlId="workPhoneNumber" validationState={this.state.workPhoneNumberError ? 'error' : null}>
+              <FormGroup controlId="workPhoneNumber">
                 <FormLabel>Phone {this.state.isPrimary && <sup>*</sup>}</FormLabel>
                 <FormInputControl
                   type="text"
@@ -271,6 +272,7 @@ class ContactsEditDialog extends React.Component {
                   placeholder="250-555-1212x123"
                   readOnly={isReadOnly}
                   updateState={this.updateState}
+                  isInvalid={this.state.workPhoneNumberError}
                 />
                 <FormText>{this.state.workPhoneNumberError}</FormText>
               </FormGroup>
@@ -278,10 +280,7 @@ class ContactsEditDialog extends React.Component {
           </Row>
           <Row>
             <Col md={12}>
-              <FormGroup
-                controlId="mobilePhoneNumber"
-                validationState={this.state.mobilePhoneNumberError ? 'error' : null}
-              >
+              <FormGroup controlId="mobilePhoneNumber">
                 <FormLabel>Cell Phone {this.state.isPrimary && <sup>*</sup>}</FormLabel>
                 <FormInputControl
                   type="text"
@@ -289,6 +288,7 @@ class ContactsEditDialog extends React.Component {
                   placeholder="250-555-1212"
                   readOnly={isReadOnly}
                   updateState={this.updateState}
+                  isInvalid={this.state.mobilePhoneNumberError}
                 />
                 <FormText>{this.state.mobilePhoneNumberError}</FormText>
               </FormGroup>
@@ -296,7 +296,7 @@ class ContactsEditDialog extends React.Component {
           </Row>
           <Row>
             <Col md={12}>
-              <FormGroup controlId="faxPhoneNumber" validationState={this.state.faxPhoneNumberError ? 'error' : null}>
+              <FormGroup controlId="faxPhoneNumber">
                 <FormLabel>Fax</FormLabel>
                 <FormInputControl
                   type="text"
@@ -304,6 +304,7 @@ class ContactsEditDialog extends React.Component {
                   placeholder="250-555-1212"
                   readOnly={isReadOnly}
                   updateState={this.updateState}
+                  isInvalid={this.state.faxPhoneNumberError}
                 />
                 <FormText>{this.state.faxPhoneNumberError}</FormText>
               </FormGroup>
@@ -311,13 +312,14 @@ class ContactsEditDialog extends React.Component {
           </Row>
           <Row>
             <Col md={12}>
-              <FormGroup controlId="emailAddress" validationState={this.state.emailAddressError ? 'error' : null}>
+              <FormGroup controlId="emailAddress">
                 <FormLabel>Email {this.state.isPrimary && <sup>*</sup>}</FormLabel>
                 <FormInputControl
                   type="text"
                   defaultValue={this.state.emailAddress}
                   readOnly={isReadOnly}
                   updateState={this.updateState}
+                  isInvalid={this.state.emailAddressError}
                 />
                 <FormText>{this.state.emailAddressError}</FormText>
               </FormGroup>

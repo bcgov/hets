@@ -161,7 +161,7 @@ class RentalRequestsEditDialog extends React.Component {
       >
         <FormGroup>
           <FormLabel>Equipment Type</FormLabel>
-          <FormControl.Static>{this.props.rentalRequest.equipmentTypeName}</FormControl.Static>
+          <FormControl placeholder={this.props.rentalRequest.equipmentTypeName} readOnly />
         </FormGroup>
         <FormGroup>
           <FormLabel>Attachment(s)</FormLabel>
@@ -173,7 +173,7 @@ class RentalRequestsEditDialog extends React.Component {
             updateState={this.updateState}
           />
         </FormGroup>
-        <FormGroup controlId="equipmentCount" validationState={this.state.equipmentCountError ? 'error' : null}>
+        <FormGroup controlId="equipmentCount">
           <FormLabel>
             Quantity <sup>*</sup>
           </FormLabel>
@@ -183,11 +183,12 @@ class RentalRequestsEditDialog extends React.Component {
             defaultValue={this.state.equipmentCount}
             readOnly={isReadOnly}
             updateState={this.updateState}
+            isInvalid={this.state.equipmentCountError}
             autoFocus
           />
           <FormText>{this.state.equipmentCountError}</FormText>
         </FormGroup>
-        <FormGroup controlId="expectedHours" validationState={this.state.expectedHoursError ? 'error' : null}>
+        <FormGroup controlId="expectedHours">
           <FormLabel>
             Expected Hours <sup>*</sup>
           </FormLabel>
@@ -197,10 +198,11 @@ class RentalRequestsEditDialog extends React.Component {
             defaultValue={this.state.expectedHours}
             readOnly={isReadOnly}
             updateState={this.updateState}
+            isInvalid={this.state.expectedHoursError}
           />
           <FormText>{this.state.expectedHoursError}</FormText>
         </FormGroup>
-        <FormGroup controlId="expectedStartDate" validationState={this.state.expectedStartDateError ? 'error' : null}>
+        <FormGroup controlId="expectedStartDate">
           <FormLabel>
             Start Date <sup>*</sup>
           </FormLabel>
@@ -210,10 +212,11 @@ class RentalRequestsEditDialog extends React.Component {
             date={this.state.expectedStartDate}
             updateState={this.updateState}
             title="Dated At"
+            isInvalid={this.state.expectedStartDateError}
           />
           <FormText>{this.state.expectedStartDateError}</FormText>
         </FormGroup>
-        <FormGroup controlId="expectedEndDate" validationState={this.state.expectedEndDateError ? 'error' : null}>
+        <FormGroup controlId="expectedEndDate">
           <FormLabel>
             End Date <sup>*</sup>
           </FormLabel>
@@ -223,6 +226,7 @@ class RentalRequestsEditDialog extends React.Component {
             date={this.state.expectedEndDate}
             updateState={this.updateState}
             title="Dated At"
+            isInvalid={this.state.expectedEndDateError}
           />
           <FormText>{this.state.expectedEndDateError}</FormText>
         </FormGroup>

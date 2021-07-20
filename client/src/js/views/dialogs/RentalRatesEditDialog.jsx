@@ -216,7 +216,7 @@ class RentalRatesEditDialog extends React.Component {
       <div className="form-item" key={i}>
         <Row>
           <Col md={2}>
-            <FormGroup controlId={`rate${i}`} validationState={form.rateError ? 'error' : null}>
+            <FormGroup controlId={`rate${i}`}>
               <FormLabel>
                 Rate <sup>*</sup>
               </FormLabel>
@@ -227,17 +227,23 @@ class RentalRatesEditDialog extends React.Component {
                 readOnly={isReadOnly}
                 updateState={this.updateState}
                 autoFocus
+                isInvalid={form.rateError}
               />
               <FormText>{form.rateError}</FormText>
             </FormGroup>
           </Col>
           <Col md={3}>{ratePeriodElement}</Col>
           <Col md={7}>
-            <FormGroup controlId={`comment${i}`} validationState={form.commentError ? 'error' : null}>
+            <FormGroup controlId={`comment${i}`}>
               <FormLabel>
                 Comment <sup>*</sup>
               </FormLabel>
-              <FormInputControl defaultValue={form.comment} readOnly={isReadOnly} updateState={this.updateState} />
+              <FormInputControl
+                defaultValue={form.comment}
+                readOnly={isReadOnly}
+                updateState={this.updateState}
+                isInvalid={form.commentError}
+              />
               <FormText>{form.commentError}</FormText>
             </FormGroup>
           </Col>

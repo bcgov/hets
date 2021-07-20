@@ -359,27 +359,29 @@ class RentalRequestsDetail extends React.Component {
 
         <div className="well">
           <SubHeader title="Hire Rotation List" className="hidden-print">
-            <PrintButton
-              title="Print Hire Rotation List"
-              disabled={loading}
-              disabledTooltip="Please wait for the request information to finish loading."
-            >
-              Hire Rotation List
-            </PrintButton>
-            <TooltipButton
-              onClick={this.printSeniorityList}
-              disabled={loading}
-              disabledTooltip="Please wait for the request information to finish loading."
-            >
-              <FontAwesomeIcon icon="print" title="Print Seniority List" className="mr-5" />
-              <span>Seniority List</span>
-            </TooltipButton>
-            <CheckboxControl
-              id="showAttachments"
-              inline
-              updateState={this.updateState}
-              label={<small>Show Attachments</small>}
-            />
+            <div className="d-flex align-items-baseline">
+              <PrintButton
+                title="Print Hire Rotation List"
+                disabled={loading}
+                disabledTooltip="Please wait for the request information to finish loading."
+              >
+                Hire Rotation List
+              </PrintButton>
+              <TooltipButton
+                onClick={this.printSeniorityList}
+                disabled={loading}
+                disabledTooltip="Please wait for the request information to finish loading."
+              >
+                <FontAwesomeIcon icon="print" title="Print Seniority List" className="mr-1" />
+                <span>Seniority List</span>
+              </TooltipButton>
+              <CheckboxControl
+                id="showAttachments"
+                inline
+                updateState={this.updateState}
+                label={<small>Show Attachments</small>}
+              />
+            </div>
           </SubHeader>
           {(() => {
             if (loading) {
