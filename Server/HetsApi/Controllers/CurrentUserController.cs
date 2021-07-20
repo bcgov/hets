@@ -27,15 +27,15 @@ namespace HetsApi.Controllers
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
-        private readonly ILogger _logger;
+        private readonly ILogger<CurrentUserController> _logger;
         private readonly IWebHostEnvironment _env;
         private readonly IMapper _mapper;
 
-        public CurrentUserController(DbAppContext context, IConfiguration configuration, IMapper mapper, ILoggerFactory loggerFactory, IWebHostEnvironment env)
+        public CurrentUserController(DbAppContext context, IConfiguration configuration, IMapper mapper, ILogger<CurrentUserController> logger, IWebHostEnvironment env)
         {
             _context = context;
             _configuration = configuration;
-            _logger = loggerFactory.CreateLogger(typeof(CurrentUserController));
+            _logger = logger;
             _env = env;
             _mapper = mapper;
         }
@@ -137,7 +137,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("")]
         [AllowAnonymous]
-        public virtual ActionResult<User> UsersCurrentGet()
+        public virtual ActionResult<CurrentUserDto> UsersCurrentGet()
         {
             _logger.LogDebug("Get Current User");
 
@@ -151,7 +151,7 @@ namespace HetsApi.Controllers
             // not found - return an HTTP 401 error response
             if (string.IsNullOrEmpty(userId)) return StatusCode(401);
 
-            User user = new User();
+            CurrentUserDto user = new CurrentUserDto();
 
             if (string.IsNullOrEmpty(businessGuid))
             {

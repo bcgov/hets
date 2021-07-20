@@ -52,9 +52,9 @@ namespace HetsApi.Helpers
         /// <param name="context"></param>
         /// <param name="httpContext"></param>
         /// <returns></returns>
-        public static User GetUser(DbAppContext context, HttpContext httpContext)
+        public static CurrentUserDto GetUser(DbAppContext context, HttpContext httpContext)
         {
-            User user = new User();
+            CurrentUserDto user = new CurrentUserDto();
 
             // is this a business?
             bool isBusinessUser = IsBusiness(httpContext);

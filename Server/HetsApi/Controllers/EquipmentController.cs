@@ -32,18 +32,18 @@ namespace HetsApi.Controllers
         private readonly IMapper _mapper;
         private readonly IRentalAgreementRepository _rentalAgreementRepo;
         private readonly IEquipmentRepository _equipmentRepo;
-        private readonly ILogger _logger;
+        private readonly ILogger<EquipmentController> _logger;
 
         public EquipmentController(DbAppContext context, IConfiguration configuration,
              IRentalAgreementRepository rentalAgreementRepo, IEquipmentRepository equipmentRepo,
-             IMapper mapper, ILoggerFactory loggerFactory)
+             IMapper mapper, ILogger<EquipmentController> logger)
         {
             _context = context;
             _configuration = configuration;
             _mapper = mapper;
             _rentalAgreementRepo = rentalAgreementRepo;
             _equipmentRepo = equipmentRepo;
-            _logger = loggerFactory.CreateLogger<EquipmentController>();
+            _logger = logger;
         }
 
         /// <summary>
