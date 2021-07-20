@@ -33,6 +33,7 @@
     <ProjectReference Include="..\HetsCommon\HetsCommon.csproj" />
     <ProjectReference Include="..\HetsData\HetsData.csproj" />
     <ProjectReference Include="..\HetsReport\HetsReport.csproj" />
+    <ProjectReference Include="..\Serilog.Sinks.HetsPostgreSql\Serilog.Sinks.HetsPostgreSql.csproj" />
   </ItemGroup>
 
   <ItemGroup>
