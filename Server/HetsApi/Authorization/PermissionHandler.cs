@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
 using HetsData.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace HetsApi.Authorization
 {
@@ -25,10 +25,10 @@ namespace HetsApi.Authorization
 
     public class PermissionHandler : AuthorizationHandler<PermissionRequirement>
     {
-        private ILogger _logger;
+        private ILogger<PermissionHandler> _logger;
         private IHttpContextAccessor _httpContextAccessor;
 
-        public PermissionHandler(ILogger logger, IHttpContextAccessor httpContextAccessor)
+        public PermissionHandler(ILogger<PermissionHandler> logger, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
@@ -47,7 +47,7 @@ namespace HetsApi.Authorization
             {
                 if (!user.HasClaim(HetUser.PermissionClaim, permission))
                 {
-                    _logger.Information("RequiresPermission - {user} - {url} - {permission}", user.Identity.Name, _httpContextAccessor.HttpContext.Request.Path, permission);
+                    _logger.LogInformation("RequiresPermission - {user} - {url} - {permission}", user.Identity.Name, _httpContextAccessor.HttpContext.Request.Path, permission);
 
                     context.Fail();
                     return Task.CompletedTask;

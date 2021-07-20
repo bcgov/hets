@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using HetsData.Dtos;
-using HetsData.Entities;
-using Newtonsoft.Json;
 
 namespace HetsApi.Model
 {
-    public class User
+    public class CurrentUserDto
     {
         public int Id { get; set; }
         public string SmUserId { get; set; }

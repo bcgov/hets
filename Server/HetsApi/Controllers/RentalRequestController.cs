@@ -29,17 +29,19 @@ namespace HetsApi.Controllers
         private readonly IRentalRequestRepository _rentalRequestRepo;
         private readonly IMapper _mapper;
         private readonly HttpContext _httpContext;
+        private readonly ILogger<RentalRequestController> _logger;
 
         public RentalRequestController(DbAppContext context, IConfiguration configuration, 
             IRentalRequestRepository rentalRequestRepo,
             IMapper mapper,
-            IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory)
+            IHttpContextAccessor httpContextAccessor, ILogger<RentalRequestController> logger)
         {
             _context = context;
             _configuration = configuration;
             _rentalRequestRepo = rentalRequestRepo;
             _mapper = mapper;
             _httpContext = httpContextAccessor.HttpContext;
+            _logger = logger;
         }
 
         /// <summary>
@@ -607,7 +609,7 @@ namespace HetsApi.Controllers
                     string agreementNumber = RentalAgreementHelper.GetRentalAgreementNumber(item.Equipment?.LocalAreaId, _context);
 
                     // get user info - agreement city
-                    User user = UserAccountHelper.GetUser(_context, _httpContext);
+                    CurrentUserDto user = UserAccountHelper.GetUser(_context, _httpContext);
                     string agreementCity = user.AgreementCity;
 
                     int? rateTypeId = StatusHelper.GetRatePeriodId(HetRatePeriodType.PeriodHourly, _context);

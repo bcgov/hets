@@ -32,20 +32,20 @@ namespace HetsApi.Controllers
         private readonly HttpContext _httpContext;
         private readonly IRentalAgreementRepository _rentalAgreementRepo;
         private readonly IMapper _mapper;
-        private readonly ILogger _logger;
+        private readonly ILogger<RentalAgreementController> _logger;
 
         public RentalAgreementController(DbAppContext context, IConfiguration configuration,
             IHttpContextAccessor httpContextAccessor,
             IRentalAgreementRepository rentalAgreementRepo,
             IMapper mapper,
-            ILoggerFactory loggerFactory)
+            ILogger<RentalAgreementController> logger)
         {
             _context = context;
             _configuration = configuration;
             _httpContext = httpContextAccessor.HttpContext;
             _rentalAgreementRepo = rentalAgreementRepo;
             _mapper = mapper;
-            _logger = loggerFactory.CreateLogger<RentalAgreementController>();
+            _logger = logger;
         }
 
         /// <summary>
@@ -223,7 +223,7 @@ namespace HetsApi.Controllers
             if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get user info - agreement city
-            User user = UserAccountHelper.GetUser(_context, _httpContext);
+            CurrentUserDto user = UserAccountHelper.GetUser(_context, _httpContext);
             string agreementCity = user.AgreementCity;
 
             // create agreement
@@ -329,7 +329,7 @@ namespace HetsApi.Controllers
         public virtual IActionResult RentalAgreementsIdDocGet([FromRoute] int id)
         {
             // get user info - agreement city
-            User user = UserAccountHelper.GetUser(_context, _httpContext);
+            CurrentUserDto user = UserAccountHelper.GetUser(_context, _httpContext);
             string agreementCity = user.AgreementCity;
 
             HetRentalAgreement rentalAgreement = _context.HetRentalAgreements.AsNoTracking()

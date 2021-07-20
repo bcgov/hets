@@ -55,19 +55,19 @@ namespace HetsApi.Controllers
         private readonly HttpContext _httpContext;
         private readonly IOwnerRepository _ownerRepo;
         private readonly IMapper _mapper;
-        private readonly ILogger _logger;
+        private readonly ILogger<OwnerController> _logger;
 
         public OwnerController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, 
             IOwnerRepository ownerRepo,
             IMapper mapper,
-            ILoggerFactory loggerFactory)
+            ILogger<OwnerController> logger)
         {
             _context = context;
             _configuration = configuration;
             _httpContext = httpContextAccessor.HttpContext;
             _ownerRepo = ownerRepo;
             _mapper = mapper;
-            _logger = loggerFactory.CreateLogger<OwnerController>();
+            _logger = logger;
         }
 
         /// <summary>
