@@ -34,16 +34,13 @@ namespace HetsData.Entities
         public virtual DbSet<HetEquipmentStatusType> HetEquipmentStatusTypes { get; set; }
         public virtual DbSet<HetEquipmentType> HetEquipmentTypes { get; set; }
         public virtual DbSet<HetHistory> HetHistories { get; set; }
-        public virtual DbSet<HetImportMap> HetImportMaps { get; set; }
         public virtual DbSet<HetLocalArea> HetLocalAreas { get; set; }
-        public virtual DbSet<HetLocalAreaRotationList> HetLocalAreaRotationLists { get; set; }
         public virtual DbSet<HetMimeType> HetMimeTypes { get; set; }
         public virtual DbSet<HetNote> HetNotes { get; set; }
         public virtual DbSet<HetNoteHist> HetNoteHists { get; set; }
         public virtual DbSet<HetOwner> HetOwners { get; set; }
         public virtual DbSet<HetOwnerStatusType> HetOwnerStatusTypes { get; set; }
         public virtual DbSet<HetPermission> HetPermissions { get; set; }
-        public virtual DbSet<HetPerson> HetPeople { get; set; }
         public virtual DbSet<HetProject> HetProjects { get; set; }
         public virtual DbSet<HetProjectStatusType> HetProjectStatusTypes { get; set; }
         public virtual DbSet<HetProvincialRateType> HetProvincialRateTypes { get; set; }
@@ -1821,77 +1818,6 @@ namespace HetsData.Entities
                     .HasConstraintName("FK_HET_HISTORY_RENTAL_REQUEST_ID");
             });
 
-            modelBuilder.Entity<HetImportMap>(entity =>
-            {
-                entity.HasKey(e => e.ImportMapId);
-
-                entity.ToTable("HET_IMPORT_MAP");
-
-                entity.Property(e => e.ImportMapId)
-                    .HasColumnName("IMPORT_MAP_ID")
-                    .HasDefaultValueSql("nextval('\"HET_IMPORT_MAP_ID_seq\"'::regclass)");
-
-                entity.Property(e => e.AppCreateTimestamp)
-                    .HasColumnName("APP_CREATE_TIMESTAMP")
-                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
-
-                entity.Property(e => e.AppCreateUserDirectory)
-                    .HasMaxLength(50)
-                    .HasColumnName("APP_CREATE_USER_DIRECTORY");
-
-                entity.Property(e => e.AppCreateUserGuid)
-                    .HasMaxLength(255)
-                    .HasColumnName("APP_CREATE_USER_GUID");
-
-                entity.Property(e => e.AppCreateUserid)
-                    .HasMaxLength(255)
-                    .HasColumnName("APP_CREATE_USERID");
-
-                entity.Property(e => e.AppLastUpdateTimestamp)
-                    .HasColumnName("APP_LAST_UPDATE_TIMESTAMP")
-                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
-
-                entity.Property(e => e.AppLastUpdateUserDirectory)
-                    .HasMaxLength(50)
-                    .HasColumnName("APP_LAST_UPDATE_USER_DIRECTORY");
-
-                entity.Property(e => e.AppLastUpdateUserGuid)
-                    .HasMaxLength(255)
-                    .HasColumnName("APP_LAST_UPDATE_USER_GUID");
-
-                entity.Property(e => e.AppLastUpdateUserid)
-                    .HasMaxLength(255)
-                    .HasColumnName("APP_LAST_UPDATE_USERID");
-
-                entity.Property(e => e.ConcurrencyControlNumber).HasColumnName("CONCURRENCY_CONTROL_NUMBER");
-
-                entity.Property(e => e.DbCreateTimestamp)
-                    .HasColumnName("DB_CREATE_TIMESTAMP")
-                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
-
-                entity.Property(e => e.DbCreateUserId)
-                    .HasMaxLength(63)
-                    .HasColumnName("DB_CREATE_USER_ID");
-
-                entity.Property(e => e.DbLastUpdateTimestamp)
-                    .HasColumnName("DB_LAST_UPDATE_TIMESTAMP")
-                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
-
-                entity.Property(e => e.DbLastUpdateUserId)
-                    .HasMaxLength(63)
-                    .HasColumnName("DB_LAST_UPDATE_USER_ID");
-
-                entity.Property(e => e.NewKey).HasColumnName("NEW_KEY");
-
-                entity.Property(e => e.NewTable).HasColumnName("NEW_TABLE");
-
-                entity.Property(e => e.OldKey)
-                    .HasMaxLength(250)
-                    .HasColumnName("OLD_KEY");
-
-                entity.Property(e => e.OldTable).HasColumnName("OLD_TABLE");
-            });
-
             modelBuilder.Entity<HetLocalArea>(entity =>
             {
                 entity.HasKey(e => e.LocalAreaId);
@@ -1975,116 +1901,6 @@ namespace HetsData.Entities
                     .WithMany(p => p.HetLocalAreas)
                     .HasForeignKey(d => d.ServiceAreaId)
                     .HasConstraintName("FK_HET_LOCAL_AREA_SERVICE_AREA_ID");
-            });
-
-            modelBuilder.Entity<HetLocalAreaRotationList>(entity =>
-            {
-                entity.HasKey(e => e.LocalAreaRotationListId);
-
-                entity.ToTable("HET_LOCAL_AREA_ROTATION_LIST");
-
-                entity.HasIndex(e => e.AskNextBlock1Id, "IX_HET_LOCAL_AREA_ROTATION_LIST_ASK_NEXT_BLOCK1_ID");
-
-                entity.HasIndex(e => e.AskNextBlock2Id, "IX_HET_LOCAL_AREA_ROTATION_LIST_ASK_NEXT_BLOCK2_ID");
-
-                entity.HasIndex(e => e.AskNextBlockOpenId, "IX_HET_LOCAL_AREA_ROTATION_LIST_ASK_NEXT_BLOCK_OPEN_ID");
-
-                entity.HasIndex(e => e.DistrictEquipmentTypeId, "IX_HET_LOCAL_AREA_ROTATION_LIST_DISTRICT_EQUIPMENT_TYPE_ID");
-
-                entity.HasIndex(e => e.LocalAreaId, "IX_HET_LOCAL_AREA_ROTATION_LIST_LOCAL_AREA_ID");
-
-                entity.Property(e => e.LocalAreaRotationListId)
-                    .HasColumnName("LOCAL_AREA_ROTATION_LIST_ID")
-                    .HasDefaultValueSql("nextval('\"HET_LOCAL_AREA_ROTATION_LIST_ID_seq\"'::regclass)");
-
-                entity.Property(e => e.AppCreateTimestamp)
-                    .HasColumnName("APP_CREATE_TIMESTAMP")
-                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
-
-                entity.Property(e => e.AppCreateUserDirectory)
-                    .HasMaxLength(50)
-                    .HasColumnName("APP_CREATE_USER_DIRECTORY");
-
-                entity.Property(e => e.AppCreateUserGuid)
-                    .HasMaxLength(255)
-                    .HasColumnName("APP_CREATE_USER_GUID");
-
-                entity.Property(e => e.AppCreateUserid)
-                    .HasMaxLength(255)
-                    .HasColumnName("APP_CREATE_USERID");
-
-                entity.Property(e => e.AppLastUpdateTimestamp)
-                    .HasColumnName("APP_LAST_UPDATE_TIMESTAMP")
-                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
-
-                entity.Property(e => e.AppLastUpdateUserDirectory)
-                    .HasMaxLength(50)
-                    .HasColumnName("APP_LAST_UPDATE_USER_DIRECTORY");
-
-                entity.Property(e => e.AppLastUpdateUserGuid)
-                    .HasMaxLength(255)
-                    .HasColumnName("APP_LAST_UPDATE_USER_GUID");
-
-                entity.Property(e => e.AppLastUpdateUserid)
-                    .HasMaxLength(255)
-                    .HasColumnName("APP_LAST_UPDATE_USERID");
-
-                entity.Property(e => e.AskNextBlock1Id).HasColumnName("ASK_NEXT_BLOCK1_ID");
-
-                entity.Property(e => e.AskNextBlock1Seniority).HasColumnName("ASK_NEXT_BLOCK1_SENIORITY");
-
-                entity.Property(e => e.AskNextBlock2Id).HasColumnName("ASK_NEXT_BLOCK2_ID");
-
-                entity.Property(e => e.AskNextBlock2Seniority).HasColumnName("ASK_NEXT_BLOCK2_SENIORITY");
-
-                entity.Property(e => e.AskNextBlockOpenId).HasColumnName("ASK_NEXT_BLOCK_OPEN_ID");
-
-                entity.Property(e => e.ConcurrencyControlNumber).HasColumnName("CONCURRENCY_CONTROL_NUMBER");
-
-                entity.Property(e => e.DbCreateTimestamp)
-                    .HasColumnName("DB_CREATE_TIMESTAMP")
-                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
-
-                entity.Property(e => e.DbCreateUserId)
-                    .HasMaxLength(63)
-                    .HasColumnName("DB_CREATE_USER_ID");
-
-                entity.Property(e => e.DbLastUpdateTimestamp)
-                    .HasColumnName("DB_LAST_UPDATE_TIMESTAMP")
-                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
-
-                entity.Property(e => e.DbLastUpdateUserId)
-                    .HasMaxLength(63)
-                    .HasColumnName("DB_LAST_UPDATE_USER_ID");
-
-                entity.Property(e => e.DistrictEquipmentTypeId).HasColumnName("DISTRICT_EQUIPMENT_TYPE_ID");
-
-                entity.Property(e => e.LocalAreaId).HasColumnName("LOCAL_AREA_ID");
-
-                entity.HasOne(d => d.AskNextBlock1)
-                    .WithMany(p => p.HetLocalAreaRotationListAskNextBlock1s)
-                    .HasForeignKey(d => d.AskNextBlock1Id)
-                    .HasConstraintName("FK_HET_LOCAL_AREA_ROTATION_LIST_ASK_NEXT_BLOCK1_ID");
-
-                entity.HasOne(d => d.AskNextBlock2)
-                    .WithMany(p => p.HetLocalAreaRotationListAskNextBlock2s)
-                    .HasForeignKey(d => d.AskNextBlock2Id)
-                    .HasConstraintName("FK_HET_LOCAL_AREA_ROTATION_LIST_ASK_NEXT_BLOCK2_ID");
-
-                entity.HasOne(d => d.AskNextBlockOpen)
-                    .WithMany(p => p.HetLocalAreaRotationListAskNextBlockOpens)
-                    .HasForeignKey(d => d.AskNextBlockOpenId)
-                    .HasConstraintName("FK_HET_LOCAL_AREA_ROTATION_LIST_ASK_NEXT_BLOCK_OPEN_ID");
-
-                entity.HasOne(d => d.DistrictEquipmentType)
-                    .WithMany(p => p.HetLocalAreaRotationLists)
-                    .HasForeignKey(d => d.DistrictEquipmentTypeId)
-                    .HasConstraintName("FK_HET_LOCAL_AREA_ROTATION_LIST_DISTRICT_EQUIPMENT_TYPE_ID");
-
-                entity.HasOne(d => d.LocalArea)
-                    .WithMany(p => p.HetLocalAreaRotationLists)
-                    .HasForeignKey(d => d.LocalAreaId)
-                    .HasConstraintName("FK_HET_LOCAL_AREA_ROTATION_LIST_LOCAL_AREA_ID");
             });
 
             modelBuilder.Entity<HetMimeType>(entity =>
@@ -2699,89 +2515,6 @@ namespace HetsData.Entities
                 entity.Property(e => e.Name)
                     .HasMaxLength(150)
                     .HasColumnName("NAME");
-            });
-
-            modelBuilder.Entity<HetPerson>(entity =>
-            {
-                entity.HasKey(e => e.PersonId);
-
-                entity.ToTable("HET_PERSON");
-
-                entity.Property(e => e.PersonId)
-                    .HasColumnName("PERSON_ID")
-                    .HasDefaultValueSql("nextval('\"HET_PERSON_ID_seq\"'::regclass)");
-
-                entity.Property(e => e.AppCreateTimestamp)
-                    .HasColumnName("APP_CREATE_TIMESTAMP")
-                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
-
-                entity.Property(e => e.AppCreateUserDirectory)
-                    .HasMaxLength(50)
-                    .HasColumnName("APP_CREATE_USER_DIRECTORY");
-
-                entity.Property(e => e.AppCreateUserGuid)
-                    .HasMaxLength(255)
-                    .HasColumnName("APP_CREATE_USER_GUID");
-
-                entity.Property(e => e.AppCreateUserid)
-                    .HasMaxLength(255)
-                    .HasColumnName("APP_CREATE_USERID");
-
-                entity.Property(e => e.AppLastUpdateTimestamp)
-                    .HasColumnName("APP_LAST_UPDATE_TIMESTAMP")
-                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
-
-                entity.Property(e => e.AppLastUpdateUserDirectory)
-                    .HasMaxLength(50)
-                    .HasColumnName("APP_LAST_UPDATE_USER_DIRECTORY");
-
-                entity.Property(e => e.AppLastUpdateUserGuid)
-                    .HasMaxLength(255)
-                    .HasColumnName("APP_LAST_UPDATE_USER_GUID");
-
-                entity.Property(e => e.AppLastUpdateUserid)
-                    .HasMaxLength(255)
-                    .HasColumnName("APP_LAST_UPDATE_USERID");
-
-                entity.Property(e => e.ConcurrencyControlNumber).HasColumnName("CONCURRENCY_CONTROL_NUMBER");
-
-                entity.Property(e => e.DbCreateTimestamp)
-                    .HasColumnName("DB_CREATE_TIMESTAMP")
-                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
-
-                entity.Property(e => e.DbCreateUserId)
-                    .HasMaxLength(63)
-                    .HasColumnName("DB_CREATE_USER_ID");
-
-                entity.Property(e => e.DbLastUpdateTimestamp)
-                    .HasColumnName("DB_LAST_UPDATE_TIMESTAMP")
-                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
-
-                entity.Property(e => e.DbLastUpdateUserId)
-                    .HasMaxLength(63)
-                    .HasColumnName("DB_LAST_UPDATE_USER_ID");
-
-                entity.Property(e => e.FirstName)
-                    .HasMaxLength(50)
-                    .HasColumnName("FIRST_NAME");
-
-                entity.Property(e => e.IsActive)
-                    .IsRequired()
-                    .HasColumnName("IS_ACTIVE")
-                    .HasDefaultValueSql("true");
-
-                entity.Property(e => e.MiddleNames)
-                    .HasMaxLength(200)
-                    .HasColumnName("MIDDLE_NAMES");
-
-                entity.Property(e => e.NameSuffix)
-                    .HasMaxLength(50)
-                    .HasColumnName("NAME_SUFFIX");
-
-                entity.Property(e => e.Surname)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnName("SURNAME");
             });
 
             modelBuilder.Entity<HetProject>(entity =>

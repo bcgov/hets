@@ -177,10 +177,7 @@ namespace HetsData.Hangfire
                 HetRentalRequest request = _dbContext.HetRentalRequests
                     .FirstOrDefault(x => x.DistrictEquipmentTypeId == originalDistrictEquipmentTypeId);
 
-                HetLocalAreaRotationList rotationList = _dbContext.HetLocalAreaRotationLists
-                    .FirstOrDefault(x => x.DistrictEquipmentTypeId == originalDistrictEquipmentTypeId);
-
-                if (request != null || rotationList != null)
+                if (request != null)
                 {
                     det.Deleted = true;
                 }
@@ -259,10 +256,7 @@ namespace HetsData.Hangfire
                     HetRentalRequest request = _dbContext.HetRentalRequests.AsNoTracking()
                         .FirstOrDefault(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
-                    HetLocalAreaRotationList rotationList = _dbContext.HetLocalAreaRotationLists.AsNoTracking()
-                        .FirstOrDefault(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId);
-
-                    if (request != null || rotationList != null)
+                    if (request != null)
                     {
                         det.Deleted = true;
                     }
