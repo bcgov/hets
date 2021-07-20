@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using HetsCommon;
 using HetsApi.Helpers;
 using HetsApi.Model;
-using HetsData.Model;
+using HetsData.Entities;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace HetsApi.Controllers
 {
@@ -16,26 +17,19 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class VersionController : Controller
+    public class VersionController : ControllerBase
     {
         private const string CommitKey = "OPENSHIFT_BUILD_COMMIT";
 
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
-        private readonly IHostingEnvironment _env;
+        private readonly IWebHostEnvironment _env;
 
-        public VersionController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IHostingEnvironment env)
+        public VersionController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment env)
         {
             _context = context;
             _configuration = configuration;
             _env = env;
-
-            // set context data
-            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
-            _context.SmUserId = user.SmUserId;
-            _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.UserGuid;
-            _context.SmBusinessGuid = user.BusinessGuid;
         }
 
         /// <summary>
@@ -49,7 +43,7 @@ namespace HetsApi.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("version")]
-        public virtual IActionResult GetServerVersionInfo()
+        public virtual ActionResult<ProductVersionInfo> GetServerVersionInfo()
         {
             ProductVersionInfo info = new ProductVersionInfo();
             info.ApplicationVersions.Add(GetApplicationVersionInfo());
@@ -101,7 +95,7 @@ namespace HetsApi.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("server/version")]
-        public virtual IActionResult GetServerVersion()
+        public virtual ActionResult<ApplicationVersionInfo> GetServerVersion()
         {
             return Ok(GetApplicationVersionInfo());
         }
@@ -113,7 +107,7 @@ namespace HetsApi.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("database/version")]
-        public virtual IActionResult GetDatabaseVersion()
+        public virtual ActionResult<DatabaseVersionInfo> GetDatabaseVersion()
         {
             return Ok(GetDatabaseVersionInfo());
         }

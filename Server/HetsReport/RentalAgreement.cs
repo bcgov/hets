@@ -7,7 +7,7 @@ using System.Reflection;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using HetsData.Helpers;
-using HetsData.Model;
+using HetsData.Entities;
 using HetsReport.Helpers;
 
 namespace HetsReport
@@ -95,7 +95,7 @@ namespace HetsReport
                             string comment1 = "";
                             if (reportModel.RentalAgreementRatesWithTotal != null)
                             {
-                                foreach (HetRentalAgreementRate rate in reportModel.RentalAgreementRatesWithTotal)
+                                foreach (var rate in reportModel.RentalAgreementRatesWithTotal)
                                 {
                                     if (!string.IsNullOrEmpty(rateString1))
                                     {
@@ -115,7 +115,7 @@ namespace HetsReport
                             string comment2 = "";
                             if (reportModel.RentalAgreementRatesWithoutTotal != null)
                             {
-                                foreach (HetRentalAgreementRate rate in reportModel.RentalAgreementRatesWithoutTotal)
+                                foreach (var rate in reportModel.RentalAgreementRatesWithoutTotal)
                                 {
                                     if (!string.IsNullOrEmpty(rateString2))
                                     {
@@ -134,7 +134,7 @@ namespace HetsReport
                             string comment3 = "";
                             if (reportModel.RentalAgreementConditions != null)
                             {
-                                foreach (HetRentalAgreementCondition cond in reportModel.RentalAgreementConditions)
+                                foreach (var cond in reportModel.RentalAgreementConditions)
                                 {
                                     var conditionComment = string.IsNullOrEmpty(cond.Comment) ? cond.ConditionName : cond.Comment;
 
@@ -154,7 +154,7 @@ namespace HetsReport
                             string overtimeComment = "";
                             if (reportModel.RentalAgreementRatesOvertime != null)
                             {
-                                foreach (HetRentalAgreementRate rate in reportModel.RentalAgreementRatesOvertime.OrderByDescending(x => x.Comment))
+                                foreach (var rate in reportModel.RentalAgreementRatesOvertime.OrderByDescending(x => x.Comment))
                                 {
                                     if (!string.IsNullOrEmpty(overtimeRate))
                                     {

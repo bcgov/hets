@@ -1,78 +1,17 @@
-﻿
+﻿********************************************
+Step 1: Generate / Update Model:
 ********************************************
-Step 1: Drop batch tables
-********************************************
-Remove Hangfire tables and sequences before scaffolding the db
-
-********************************************
-Step 2: Generate / Update Model:
-********************************************
-Scaffold-DbContext "Host=localhost;Username=trdbhetd;Password=IhUFdcC0wGJeIMDJ;Database=hets" Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir Model -Force -Project "HetsData" -Verbose -Context "DbAppContext"
-
-
-For a specific table(s) only:
-Scaffold-DbContext "Host=localhost;Username=trdbhetd;Password=IhUFdcC0wGJeIMDJ;Database=hets" Npgsql.EntityFrameworkCore.PostgreSQL -t public.HET_BUSINESS -OutputDir Model -Force -Project "HetsData" -Verbose -Context "DbAppContext"
-
-Scaffold-DbContext "Host=localhost;Username=trdbhetd;Password=IhUFdcC0wGJeIMDJ;Database=hets" Npgsql.EntityFrameworkCore.PostgreSQL -t public.HET_BUSINESS_USER_ROLE -OutputDir Model -Force -Project "HetsData" -Verbose -Context "DbAppContext"
+Scaffold-DbContext "Host=localhost;Username=postgres;Password=postgres;Database=hets;Port=9010" Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir Entities -Force -Project "HetsData" -Context "DbAppContext" -Schema "public"
 
 ********************************************
-Step 3: Update Context
+Step 2: Update Context
 ********************************************
-After generating the model need to update the DbAppContext class to manage the connection string.
-
-Add new constructor:
-
-private readonly string _connectionString;
-
-public DbAppContext(string connectionString)
-{
-    _connectionString = connectionString;
-}
+Remove the OnConfiguring override method.
 
 protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 {
     if (!optionsBuilder.IsConfigured)
     {
-        optionsBuilder.UseNpgsql(_connectionString);
+        optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=aspnet-crt");
     }
 }
-
-********************************************
-Step 4: Fix Collection Attributes:
-********************************************
-Tag all collections with the following (replace Name as required):
-[JsonProperty("Id")]
-[JsonProperty("Name")]
-
-
-Collections (e.g.):
-[JsonProperty("Attachments")]
-public ICollection<HetAttachment> HetAttachment { get; set; }
-
-[JsonProperty("EquipmentAttachments")]
-public ICollection<HetEquipmentAttachment> HetEquipmentAttachment { get; set; }
-
-[JsonProperty("History")]
-public ICollection<HetHistory> HetHistory { get; set; }
-
-********************************************
-Step 5: Fix Invalid Collections (created by FK):
-********************************************
-Tag collections with the following:
-
-[JsonIgnore]
-
-
-[JsonIgnore]public string AppCreateUserDirectory { get; set; }
-[JsonIgnore]public string AppCreateUserGuid { get; set; }
-[JsonIgnore]public string AppCreateUserid { get; set; }
-[JsonIgnore]public DateTime AppCreateTimestamp { get; set; }
-[JsonIgnore]public string AppLastUpdateUserDirectory { get; set; }
-[JsonIgnore]public string AppLastUpdateUserGuid { get; set; }
-[JsonIgnore]public string AppLastUpdateUserid { get; set; }
-[JsonIgnore]public DateTime AppLastUpdateTimestamp { get; set; }
-[JsonIgnore]public string DbCreateUserId { get; set; }
-[JsonIgnore]public DateTime DbCreateTimestamp { get; set; }
-[JsonIgnore]public DateTime DbLastUpdateTimestamp { get; set; }
-[JsonIgnore]public string DbLastUpdateUserId { get; set; }
-

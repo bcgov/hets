@@ -1,12 +1,11 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
-using HetsApi.Helpers;
 using HetsApi.Model;
-using HetsData.Model;
+using HetsData.Entities;
+using AutoMapper;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -15,22 +14,17 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/contacts")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class ContactController : Controller
+    public class ContactController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public ContactController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public ContactController(DbAppContext context, IConfiguration configuration, IMapper mapper)
         {
             _context = context;
             _configuration = configuration;
-
-            // set context data
-            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
-            _context.SmUserId = user.SmUserId;
-            _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.UserGuid;
-            _context.SmBusinessGuid = user.BusinessGuid;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -39,39 +33,36 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Contact to delete</param>
         [HttpPost]
         [Route("{id}/delete")]
-        [SwaggerOperation("ContactsIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(HetContact))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult ContactsIdDeletePost([FromRoute]int id)
+        public virtual ActionResult<ContactDto> ContactsIdDeletePost([FromRoute]int id)
         {
-            bool exists = _context.HetContact.Any(a => a.ContactId == id);
+            bool exists = _context.HetContacts.Any(a => a.ContactId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetContact item = _context.HetContact.First(a => a.ContactId == id);
+            HetContact item = _context.HetContacts.First(a => a.ContactId == id);
 
             // check if this is a project - and if this is a "primary contact"
             if (item.ProjectId != null && item.ProjectId > 0)
             {
                 int projectId = (int)item.ProjectId;
 
-                HetProject project = _context.HetProject
+                HetProject project = _context.HetProjects
                     .FirstOrDefault(x => x.ProjectId == projectId);
 
                 if (project != null && project.PrimaryContactId == id)
                 {
                     project.PrimaryContactId = null;
-                    _context.HetProject.Update(project);
                 }
             }
 
-            _context.HetContact.Remove(item);
+            _context.HetContacts.Remove(item);
 
             // save the changes
             _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(item));
+            return new ObjectResult(new HetsResponse(_mapper.Map<ContactDto>(item)));
         }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HetsData.Model
+namespace HetsData.Entities
 {
     /// <summary>
     /// Rental Request Rotation List Database Model Extension
     /// </summary>
-    public sealed partial class HetRentalRequestRotationList
+    public partial class HetRentalRequestRotationList
     {
         [NotMapped]
         public float? SeniorityFloat { get; set; }

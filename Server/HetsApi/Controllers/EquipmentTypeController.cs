@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
-using HetsApi.Helpers;
 using HetsApi.Model;
-using HetsData.Model;
+using HetsData.Entities;
+using AutoMapper;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -15,20 +14,15 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/equipmentTypes")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class EquipmentTypeController : Controller
+    public class EquipmentTypeController : ControllerBase
     {
         private readonly DbAppContext _context;
+        private readonly IMapper _mapper;
 
-        public EquipmentTypeController(DbAppContext context, IHttpContextAccessor httpContextAccessor)
+        public EquipmentTypeController(DbAppContext context, IMapper mapper)
         {
             _context = context;
-
-            // set context data
-            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
-            _context.SmUserId = user.SmUserId;
-            _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.UserGuid;
-            _context.SmBusinessGuid = user.BusinessGuid;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -36,14 +30,12 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("")]
-        [SwaggerOperation("EquipmentTypesGet")]
-        [SwaggerResponse(200, type: typeof(List<HetEquipmentType>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentTypesGet()
+        public virtual ActionResult<List<EquipmentTypeDto>> EquipmentTypesGet()
         {
-            List<HetEquipmentType> equipmentTypes = _context.HetEquipmentType.ToList();
+            List<HetEquipmentType> equipmentTypes = _context.HetEquipmentTypes.ToList();
 
-            return new ObjectResult(new HetsResponse(equipmentTypes));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<EquipmentTypeDto>>(equipmentTypes)));
         }
     }
 }

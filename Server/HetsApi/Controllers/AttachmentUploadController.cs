@@ -5,12 +5,11 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
-using HetsApi.Helpers;
-using HetsApi.Model;
 using HetsData.Helpers;
-using HetsData.Model;
+using HetsData.Entities;
+using HetsData.Dtos;
+using AutoMapper;
 
 namespace HetsApi.Controllers
 {
@@ -19,20 +18,15 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class AttachmentUploadController : Controller
+    public class AttachmentUploadController : ControllerBase
     {
         private readonly DbAppContext _context;
+        private readonly IMapper _mapper;
 
-        public AttachmentUploadController(DbAppContext context, IHttpContextAccessor httpContextAccessor)
+        public AttachmentUploadController(DbAppContext context, IMapper mapper)
         {
             _context = context;
-
-            // set context data
-            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
-            _context.SmUserId = user.SmUserId;
-            _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.UserGuid;
-            _context.SmBusinessGuid = user.BusinessGuid;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -42,18 +36,16 @@ namespace HetsApi.Controllers
         /// <param name="files"></param>
         [HttpPost]
         [Route("equipment/{id}/attachments")]
-        [SwaggerOperation("EquipmentIdAttachmentsPost")]
-        [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult EquipmentIdAttachmentsPost([FromRoute] int id, [FromForm]IList<IFormFile> files)
+        public virtual ActionResult<List<DigitalFileDto>> EquipmentIdAttachmentsPost([FromRoute] int id, [FromForm]IList<IFormFile> files)
         {
             // validate the id
-            bool exists = _context.HetEquipment.Any(a => a.EquipmentId == id);
+            bool exists = _context.HetEquipments.Any(a => a.EquipmentId == id);
 
             if (!exists) return new StatusCodeResult(404);
 
-            HetEquipment equipment = _context.HetEquipment
-                .Include(x => x.HetDigitalFile)
+            HetEquipment equipment = _context.HetEquipments
+                .Include(x => x.HetDigitalFiles)
                 .First(a => a.EquipmentId == id);
 
             foreach (IFormFile file in files)
@@ -84,13 +76,13 @@ namespace HetsApi.Controllers
 
                     attachment.MimeTypeId = (int)mimeTypeId;
 
-                    equipment.HetDigitalFile.Add(attachment);
+                    equipment.HetDigitalFiles.Add(attachment);
                 }
             }
 
             _context.SaveChanges();
 
-            return new ObjectResult(equipment.HetDigitalFile);
+            return new ObjectResult(_mapper.Map<List<DigitalFileDto>>(equipment.HetDigitalFiles));
         }
 
         /// <summary>
@@ -112,18 +104,16 @@ namespace HetsApi.Controllers
         /// <param name="files"></param>
         [HttpPost]
         [Route("projects/{id}/attachments")]
-        [SwaggerOperation("ProjectIdAttachmentsPost")]
-        [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult ProjectIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
+        public virtual ActionResult<List<DigitalFileDto>> ProjectIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
             // validate the id
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             if (!exists) return new StatusCodeResult(404);
 
-            HetProject project = _context.HetProject
-                .Include(x => x.HetDigitalFile)
+            HetProject project = _context.HetProjects
+                .Include(x => x.HetDigitalFiles)
                 .First(a => a.ProjectId == id);
 
             foreach (IFormFile file in files)
@@ -154,13 +144,13 @@ namespace HetsApi.Controllers
 
                     attachment.MimeTypeId = (int)mimeTypeId;
 
-                    project.HetDigitalFile.Add(attachment);
+                    project.HetDigitalFiles.Add(attachment);
                 }
             }
 
             _context.SaveChanges();
 
-            return new ObjectResult(project.HetDigitalFile);
+            return new ObjectResult(_mapper.Map<List<DigitalFileDto>>(project.HetDigitalFiles));
         }
 
         /// <summary>
@@ -183,18 +173,16 @@ namespace HetsApi.Controllers
         /// <param name="files"></param>
         [HttpPost]
         [Route("owners/{id}/attachments")]
-        [SwaggerOperation("OwnerIdAttachmentsPost")]
-        [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult OwnerIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
+        public virtual ActionResult<List<DigitalFileDto>> OwnerIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
             // validate the id
-            bool exists = _context.HetOwner.Any(a => a.OwnerId == id);
+            bool exists = _context.HetOwners.Any(a => a.OwnerId == id);
 
             if (!exists) return new StatusCodeResult(404);
 
-            HetOwner owner = _context.HetOwner
-                .Include(x => x.HetDigitalFile)
+            HetOwner owner = _context.HetOwners
+                .Include(x => x.HetDigitalFiles)
                 .First(a => a.OwnerId == id);
 
             foreach (IFormFile file in files)
@@ -225,13 +213,13 @@ namespace HetsApi.Controllers
 
                     attachment.MimeTypeId = (int)mimeTypeId;
 
-                    owner.HetDigitalFile.Add(attachment);
+                    owner.HetDigitalFiles.Add(attachment);
                 }
             }
 
             _context.SaveChanges();
 
-            return new ObjectResult(owner.HetDigitalFile);
+            return new ObjectResult(_mapper.Map<List<DigitalFileDto>>(owner.HetDigitalFiles));
         }
 
         /// <summary>
@@ -254,18 +242,16 @@ namespace HetsApi.Controllers
         /// <param name="files"></param>
         [HttpPost]
         [Route("rentalRequests/{id}/attachments")]
-        [SwaggerOperation("RentalRequestIdAttachmentsPost")]
-        [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult RentalRequestIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
+        public virtual ActionResult<List<DigitalFileDto>> RentalRequestIdAttachmentsPost([FromRoute] int id, [FromForm] IList<IFormFile> files)
         {
             // validate the id
-            bool exists = _context.HetRentalRequest.Any(a => a.RentalRequestId == id);
+            bool exists = _context.HetRentalRequests.Any(a => a.RentalRequestId == id);
 
             if (!exists) return new StatusCodeResult(404);
 
-            HetRentalRequest rentalRequest = _context.HetRentalRequest
-                .Include(x => x.HetDigitalFile)
+            HetRentalRequest rentalRequest = _context.HetRentalRequests
+                .Include(x => x.HetDigitalFiles)
                 .First(a => a.RentalRequestId == id);
 
             foreach (IFormFile file in files)
@@ -296,13 +282,13 @@ namespace HetsApi.Controllers
 
                     attachment.MimeTypeId = (int)mimeTypeId;
 
-                    rentalRequest.HetDigitalFile.Add(attachment);
+                    rentalRequest.HetDigitalFiles.Add(attachment);
                 }
             }
 
             _context.SaveChanges();
 
-            return new ObjectResult(rentalRequest.HetDigitalFile);
+            return new ObjectResult(_mapper.Map<List<DigitalFileDto>>(rentalRequest.HetDigitalFiles));
         }
 
         /// <summary>

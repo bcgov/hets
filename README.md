@@ -12,7 +12,7 @@ The application is being developed as an open source solution.
 
 ## Repository Map
 
-- **Client**: The javascript source for the user interface
+- **client**: The javascript source for the user interface
 - **Common**: A library of common methods used by various components
 - **FrontEnd**: The Front End server that hosts static content and proxies the API
 - **Server**: The API Server
@@ -44,7 +44,7 @@ Refer to [this document](openshift/README.md) for OpenShift Deployment and Pipel
 **Client Code**
 The client code is tested using a Node.js application. Node.js is also used to build the client code into the deployable JavaScript application.
 
-Run npm install from the Client directory to configure the Client build environment
+Run npm install from the client directory to configure the client build environment
 
 The frameworks used for this application are React/Redux.
 

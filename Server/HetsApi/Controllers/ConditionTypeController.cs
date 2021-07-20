@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
-using HetsData.Model;
+using HetsData.Entities;
+using AutoMapper;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -17,22 +17,17 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/conditionTypes")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class ConditionTypeController : Controller
+    public class ConditionTypeController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public ConditionTypeController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public ConditionTypeController(DbAppContext context, IConfiguration configuration, IMapper mapper)
         {
             _context = context;
             _configuration = configuration;
-
-            // set context data
-            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
-            _context.SmUserId = user.SmUserId;
-            _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.UserGuid;
-            _context.SmBusinessGuid = user.BusinessGuid;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -40,25 +35,23 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("")]
-        [SwaggerOperation("ConditionTypesGet")]
-        [SwaggerResponse(200, type: typeof(List<HetConditionType>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult ConditionTypesGet()
+        public virtual ActionResult<List<ConditionTypeDto>> ConditionTypesGet()
         {
             // get current users district id
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, HttpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // not found
             if (districtId == null) return new ObjectResult(new List<HetConditionType>());
 
             // get condition types for this district
-            List<HetConditionType> conditionTypes = _context.HetConditionType.AsNoTracking()
+            List<HetConditionType> conditionTypes = _context.HetConditionTypes.AsNoTracking()
                 .Include(x => x.District)
                 .Where(x => x.Active &&
                             x.District.DistrictId == districtId)
                 .ToList();
 
-            return new ObjectResult(new HetsResponse(conditionTypes));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<ConditionTypeDto>>(conditionTypes)));
         }
 
         /// <summary>
@@ -67,24 +60,22 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Condition Type to delete</param>
         [HttpPost]
         [Route("{id}/delete")]
-        [SwaggerOperation("ConditionTypesIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(HetConditionType))]
         [RequiresPermission(HetPermission.DistrictCodeTableManagement, HetPermission.WriteAccess)]
-        public virtual IActionResult ConditionTypesIdDeletePost([FromRoute]int id)
+        public virtual ActionResult<ConditionTypeDto> ConditionTypesIdDeletePost([FromRoute]int id)
         {
-            bool exists = _context.HetConditionType.Any(a => a.ConditionTypeId == id);
+            bool exists = _context.HetConditionTypes.Any(a => a.ConditionTypeId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetConditionType item = _context.HetConditionType.First(a => a.ConditionTypeId == id);
+            HetConditionType item = _context.HetConditionTypes.First(a => a.ConditionTypeId == id);
 
-            _context.HetConditionType.Remove(item);
+            _context.HetConditionTypes.Remove(item);
 
             // save changes
             _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(item));
+            return new ObjectResult(new HetsResponse(_mapper.Map<ConditionTypeDto>(item)));
         }
 
         /// <summary>
@@ -93,17 +84,15 @@ namespace HetsApi.Controllers
         /// <param name="id"></param>
         [HttpGet]
         [Route("{id}")]
-        [SwaggerOperation("ConditionTypesIdGet")]
-        [SwaggerResponse(200, type: typeof(HetConditionType))]
         [RequiresPermission(HetPermission.DistrictCodeTableManagement)]
-        public virtual IActionResult ConditionTypesIdGet([FromRoute]int id)
+        public virtual ActionResult<ConditionTypeDto> ConditionTypesIdGet([FromRoute]int id)
         {
             // get condition type
-            HetConditionType conditionType = _context.HetConditionType.AsNoTracking()
+            HetConditionType conditionType = _context.HetConditionTypes.AsNoTracking()
                 .Include(x => x.District)
                 .FirstOrDefault(x => x.ConditionTypeId == id);
 
-            return new ObjectResult(new HetsResponse(conditionType));
+            return new ObjectResult(new HetsResponse(_mapper.Map<ConditionTypeDto>(conditionType)));
         }
 
         /// <summary>
@@ -113,10 +102,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPost]
         [Route("{id}")]
-        [SwaggerOperation("ConditionTypesIdPost")]
-        [SwaggerResponse(200, type: typeof(HetConditionType))]
         [RequiresPermission(HetPermission.DistrictCodeTableManagement, HetPermission.WriteAccess)]
-        public virtual IActionResult ConditionTypesIdPost([FromRoute]int id, [FromBody]HetConditionType item)
+        public virtual ActionResult<ConditionTypeDto> ConditionTypesIdPost([FromRoute]int id, [FromBody]ConditionTypeDto item)
         {
             if (id != item.ConditionTypeId)
             {
@@ -127,7 +114,7 @@ namespace HetsApi.Controllers
             // add or update contact
             if (item.ConditionTypeId > 0)
             {
-                bool exists = _context.HetConditionType.Any(a => a.ConditionTypeId == id);
+                bool exists = _context.HetConditionTypes.Any(a => a.ConditionTypeId == id);
 
                 if (!exists)
                 {
@@ -136,7 +123,7 @@ namespace HetsApi.Controllers
                 }
 
                 // get record
-                HetConditionType condition = _context.HetConditionType.First(x => x.ConditionTypeId == id);
+                HetConditionType condition = _context.HetConditionTypes.First(x => x.ConditionTypeId == id);
 
                 condition.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                 condition.ConditionTypeCode = item.ConditionTypeCode;
@@ -155,7 +142,7 @@ namespace HetsApi.Controllers
                     DistrictId = item.District.DistrictId
                 };
 
-                _context.HetConditionType.Add(condition);
+                _context.HetConditionTypes.Add(condition);
             }
 
             _context.SaveChanges();
@@ -164,11 +151,11 @@ namespace HetsApi.Controllers
             id = item.ConditionTypeId;
 
             // return the updated condition type record
-            HetConditionType conditionType = _context.HetConditionType.AsNoTracking()
+            HetConditionType conditionType = _context.HetConditionTypes.AsNoTracking()
                 .Include(x => x.District)
                 .FirstOrDefault(x => x.ConditionTypeId == id);
 
-            return new ObjectResult(new HetsResponse(conditionType));
+            return new ObjectResult(new HetsResponse(_mapper.Map<ConditionTypeDto>(conditionType)));
         }
     }
 }

@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
-using HetsApi.Helpers;
 using HetsApi.Model;
-using HetsData.Model;
+using HetsData.Entities;
+using AutoMapper;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -18,22 +17,17 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/roles")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class RoleController : Controller
+    public class RoleController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public RoleController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public RoleController(DbAppContext context, IConfiguration configuration, IMapper mapper)
         {
             _context = context;
             _configuration = configuration;
-
-            // set context data
-            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
-            _context.SmUserId = user.SmUserId;
-            _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.UserGuid;
-            _context.SmBusinessGuid = user.BusinessGuid;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -41,15 +35,13 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("")]
-        [SwaggerOperation("RolesGet")]
-        [SwaggerResponse(200, type: typeof(List<HetRole>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult RolesGet()
+        public virtual ActionResult<List<RoleDto>> RolesGet()
         {
             // get all roles
-            List<HetRole> roles = _context.HetRole.AsNoTracking().ToList();
+            List<HetRole> roles = _context.HetRoles.AsNoTracking().ToList();
 
-            return new ObjectResult(new HetsResponse(roles));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<RoleDto>>(roles)));
         }
 
         /// <summary>
@@ -58,34 +50,32 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Role to delete</param>
         [HttpPost]
         [Route("{id}/delete")]
-        [SwaggerOperation("RolesIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(HetRole))]
         [RequiresPermission(HetPermission.RolesAndPermissions, HetPermission.WriteAccess)]
-        public virtual IActionResult RolesIdDeletePost([FromRoute]int id)
+        public virtual ActionResult<RoleDto> RolesIdDeletePost([FromRoute]int id)
         {
-            bool exists = _context.HetRole.Any(x => x.RoleId == id);
+            bool exists = _context.HetRoles.Any(x => x.RoleId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetRole role = _context.HetRole.First(x => x.RoleId == id);
+            HetRole role = _context.HetRoles.First(x => x.RoleId == id);
 
             // remove associated role permission records
-            List<HetRolePermission> itemsToRemove = _context.HetRolePermission
+            List<HetRolePermission> itemsToRemove = _context.HetRolePermissions
                 .Where(x => x.Role.RoleId == role.RoleId)
                 .ToList();
 
             foreach (HetRolePermission item in itemsToRemove)
             {
-                _context.HetRolePermission.Remove(item);
+                _context.HetRolePermissions.Remove(item);
             }
 
             // remove role and save
-            _context.HetRole.Remove(role);
+            _context.HetRoles.Remove(role);
             _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(role));
+            return new ObjectResult(new HetsResponse(_mapper.Map<RoleDto>(role)));
         }
 
         /// <summary>
@@ -94,20 +84,18 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Role to fetch</param>
         [HttpGet]
         [Route("{id}")]
-        [SwaggerOperation("RolesIdGet")]
-        [SwaggerResponse(200, type: typeof(HetRole))]
         [RequiresPermission(HetPermission.RolesAndPermissions)]
-        public virtual IActionResult RolesIdGet([FromRoute]int id)
+        public virtual ActionResult<RoleDto> RolesIdGet([FromRoute]int id)
         {
-            bool exists = _context.HetRole.Any(x => x.RoleId == id);
+            bool exists = _context.HetRoles.Any(x => x.RoleId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetRole role = _context.HetRole.AsNoTracking().First(x => x.RoleId == id);
+            HetRole role = _context.HetRoles.AsNoTracking().First(x => x.RoleId == id);
 
-            return new ObjectResult(new HetsResponse(role));
+            return new ObjectResult(new HetsResponse(_mapper.Map<RoleDto>(role)));
         }
 
         /// <summary>
@@ -117,14 +105,12 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Role to fetch</param>
         [HttpGet]
         [Route("{id}/permissions")]
-        [SwaggerOperation("RolesIdPermissionsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetPermission>))]
         [RequiresPermission(HetPermission.RolesAndPermissions)]
-        public virtual IActionResult RolesIdPermissionsGet([FromRoute]int id)
+        public virtual ActionResult<List<RolePermissionDto>> RolesIdPermissionsGet([FromRoute]int id)
         {
-            HetRole role = _context.HetRole.AsNoTracking()
+            HetRole role = _context.HetRoles.AsNoTracking()
                 .Where(x => x.RoleId == id)
-                .Include(x => x.HetRolePermission)
+                .Include(x => x.HetRolePermissions)
                     .ThenInclude(rp => rp.Permission)
                 .FirstOrDefault();
 
@@ -132,7 +118,7 @@ namespace HetsApi.Controllers
             if (role == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // return role permissions
-            return new ObjectResult(new HetsResponse(role.HetRolePermission.ToList()));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<RolePermissionDto>>(role.HetRolePermissions.ToList())));
         }
 
         /// <summary>
@@ -143,22 +129,20 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPost]
         [Route("{id}/permissions")]
-        [SwaggerOperation("RolesIdPermissionsPost")]
-        [SwaggerResponse(200, type: typeof(List<HetPermission>))]
         [RequiresPermission(HetPermission.RolesAndPermissions, HetPermission.WriteAccess)]
-        public virtual IActionResult RolesIdPermissionsPost([FromRoute]int id, [FromBody]HetPermission item)
+        public virtual ActionResult<List<RolePermissionDto>> RolesIdPermissionsPost([FromRoute]int id, [FromBody]PermissionDto item)
         {
-            HetRole role = _context.HetRole.AsNoTracking()
+            HetRole role = _context.HetRoles.AsNoTracking()
                 .Where(x => x.RoleId == id)
-                .Include(x => x.HetRolePermission)
+                .Include(x => x.HetRolePermissions)
                     .ThenInclude(rolePerm => rolePerm.Permission)
                 .FirstOrDefault();
 
             // not found
             if (role == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            List<HetPermission> allPermissions = _context.HetPermission.ToList();
-            List<string> existingPermissionCodes = role.HetRolePermission.Select(x => x.Permission.Code).ToList();
+            List<HetPermission> allPermissions = _context.HetPermissions.ToList();
+            List<string> existingPermissionCodes = role.HetRolePermissions.Select(x => x.Permission.Code).ToList();
 
             if (!existingPermissionCodes.Contains(item.Code))
             {
@@ -174,20 +158,20 @@ namespace HetsApi.Controllers
                     Role = role
                 };
 
-                _context.HetRolePermission.Add(rolePermission);
+                _context.HetRolePermissions.Add(rolePermission);
             }
 
             _context.SaveChanges();
 
             // get updated permissions
-            role = _context.HetRole.AsNoTracking()
+            role = _context.HetRoles.AsNoTracking()
                 .Where(x => x.RoleId == id)
-                .Include(x => x.HetRolePermission)
+                .Include(x => x.HetRolePermissions)
                     .ThenInclude(rp => rp.Permission)
                 .First();
 
             // return role permissions
-            return new ObjectResult(new HetsResponse(role.HetRolePermission.ToList()));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<RolePermissionDto>>(role.HetRolePermissions.ToList())));
         }
 
         /// <summary>
@@ -198,14 +182,12 @@ namespace HetsApi.Controllers
         /// <param name="items"></param>
         [HttpPut]
         [Route("{id}/permissions")]
-        [SwaggerOperation("RolesIdPermissionsPut")]
-        [SwaggerResponse(200, type: typeof(List<HetPermission>))]
         [RequiresPermission(HetPermission.RolesAndPermissions, HetPermission.WriteAccess)]
-        public virtual IActionResult RolesIdPermissionsPut([FromRoute]int id, [FromBody]HetPermission[] items)
+        public virtual ActionResult<List<RolePermissionDto>> RolesIdPermissionsPut([FromRoute]int id, [FromBody]PermissionDto[] items)
         {
-            HetRole role = _context.HetRole.AsNoTracking()
+            HetRole role = _context.HetRoles.AsNoTracking()
                 .Where(x => x.RoleId == id)
-                .Include(x => x.HetRolePermission)
+                .Include(x => x.HetRolePermissions)
                     .ThenInclude(rolePerm => rolePerm.Permission)
                 .FirstOrDefault();
 
@@ -213,10 +195,10 @@ namespace HetsApi.Controllers
             if (role == null) return new ObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get permissions
-            List<HetPermission> allPermissions = _context.HetPermission.AsNoTracking().ToList();
+            List<HetPermission> allPermissions = _context.HetPermissions.AsNoTracking().ToList();
 
             List<int> permissionIds = items.Select(x => x.PermissionId).ToList();
-            List<int> existingPermissionIds = role.HetRolePermission.Select(x => x.Permission.PermissionId).ToList();
+            List<int> existingPermissionIds = role.HetRolePermissions.Select(x => x.Permission.PermissionId).ToList();
             List<int> permissionIdsToAdd = permissionIds.Where(x => !existingPermissionIds.Contains(x)).ToList();
 
             // permissions to add
@@ -235,30 +217,30 @@ namespace HetsApi.Controllers
                     RoleId = role.RoleId
                 };
 
-                _context.HetRolePermission.Add(rolePermission);
+                _context.HetRolePermissions.Add(rolePermission);
             }
 
             // permissions to remove
-            List<HetRolePermission> permissionsToRemove = role.HetRolePermission
+            List<HetRolePermission> permissionsToRemove = role.HetRolePermissions
                 .Where(x => x.Permission != null &&
                             !permissionIds.Contains(x.Permission.PermissionId)).ToList();
 
             foreach (HetRolePermission perm in permissionsToRemove)
             {
-                _context.HetRolePermission.Remove(perm);
+                _context.HetRolePermissions.Remove(perm);
             }
 
             _context.SaveChanges();
 
             // get updated permissions
-            role = _context.HetRole.AsNoTracking()
+            role = _context.HetRoles.AsNoTracking()
                 .Where(x => x.RoleId == id)
-                .Include(x => x.HetRolePermission)
+                .Include(x => x.HetRolePermissions)
                     .ThenInclude(rp => rp.Permission)
                 .First();
 
             // return role permissions
-            return new ObjectResult(new HetsResponse(role.HetRolePermission.ToList()));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<RolePermissionDto>>(role.HetRolePermissions.ToList())));
         }
 
         /// <summary>
@@ -268,18 +250,16 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPut]
         [Route("{id}")]
-        [SwaggerOperation("RolesIdPut")]
-        [SwaggerResponse(200, type: typeof(HetRole))]
         [RequiresPermission(HetPermission.RolesAndPermissions, HetPermission.WriteAccess)]
-        public virtual IActionResult RolesIdPut([FromRoute]int id, [FromBody]HetRole item)
+        public virtual ActionResult<RoleDto> RolesIdPut([FromRoute]int id, [FromBody]RoleDto item)
         {
-            bool exists = _context.HetRole.Any(x => x.RoleId == id);
+            bool exists = _context.HetRoles.Any(x => x.RoleId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetRole role = _context.HetRole.First(x => x.RoleId == id);
+            HetRole role = _context.HetRoles.First(x => x.RoleId == id);
 
             role.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             role.Name = item.Name;
@@ -289,11 +269,11 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // get updated role
-            role = _context.HetRole.AsNoTracking()
+            role = _context.HetRoles.AsNoTracking()
                 .First(x => x.RoleId == id);
 
             // return role permissions
-            return new ObjectResult(new HetsResponse(role));
+            return new ObjectResult(new HetsResponse(_mapper.Map<RoleDto>(role)));
         }
 
         /// <summary>
@@ -303,10 +283,8 @@ namespace HetsApi.Controllers
         /// <response code="200">Role created</response>
         [HttpPost]
         [Route("")]
-        [SwaggerOperation("RolesPost")]
-        [SwaggerResponse(200, type: typeof(HetRole))]
         [RequiresPermission(HetPermission.RolesAndPermissions, HetPermission.WriteAccess)]
-        public virtual IActionResult RolesPost([FromBody]HetRole item)
+        public virtual ActionResult<RoleDto> RolesPost([FromBody]RoleDto item)
         {
             HetRole role = new HetRole
             {
@@ -315,17 +293,17 @@ namespace HetsApi.Controllers
             };
 
             // save changes
-            _context.HetRole.Add(role);
+            _context.HetRoles.Add(role);
             _context.SaveChanges();
 
             int id = role.RoleId;
 
             // get updated role
-            role = _context.HetRole.AsNoTracking()
+            role = _context.HetRoles.AsNoTracking()
                 .First(x => x.RoleId == id);
 
             // return role permissions
-            return new ObjectResult(new HetsResponse(role));
+            return new ObjectResult(new HetsResponse(_mapper.Map<RoleDto>(role)));
         }
     }
 }

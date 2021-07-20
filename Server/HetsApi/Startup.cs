@@ -2,17 +2,29 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.Features;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.Swagger;
 using Hangfire;
 using Hangfire.PostgreSql;
-using Hangfire.Console;
 using HetsApi.Authorization;
 using HetsApi.Authentication;
-using HetsData.Model;
+using HetsData.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerUI;
+using HetsData.Hangfire;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using HetsBceid;
+using Microsoft.Extensions.Hosting;
+using HetsApi.Middlewares;
+using AutoMapper;
+using HetsData.Mappings;
+using HetsData.Repositories;
+using Serilog.Ui.Web;
+using Serilog.Ui.PostgreSqlProvider.Extensions;
 
 namespace HetsApi
 {
@@ -21,21 +33,11 @@ namespace HetsApi
     /// </summary>
     public class Startup
     {
-        private readonly IHostingEnvironment _hostingEnv;
+        public IConfiguration Configuration { get; }
 
-        public IConfigurationRoot Configuration { get; }
-
-        public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration)
         {
-            _hostingEnv = env;
-
-            IConfigurationBuilder builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -45,22 +47,71 @@ namespace HetsApi
             // add http context accessor
             services.AddHttpContextAccessor();
 
+            // add auto mapper
+            var mappingConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new EntityToDtoProfile());
+                cfg.AddProfile(new DtoToEntityProfile());
+            });
+
+            var mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
+            services.AddSerilogUi(options => options.UseNpgSql(connectionString, "het_log"));
+
             // add database context
             services.AddDbContext<DbAppContext>(options => options.UseNpgsql(connectionString));
+            services.AddDbContext<DbAppMonitorContext>(options => options.UseNpgsql(connectionString));
+            services.AddScoped<IAnnualRollover, AnnualRollover>();
 
-            // setup SiteMinder authentication (core 2.0+)
+            services
+                .AddControllers(options =>
+                {
+                    var policy = new AuthorizationPolicyBuilder()
+                        .RequireAuthenticatedUser()
+                        .Build();
+                    options.Filters.Add(new AuthorizeFilter(policy));
+                })
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
+                    options.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.IsoDateFormat;
+                    options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
             services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = SiteMinderAuthOptions.AuthenticationSchemeName;
-                options.DefaultChallengeScheme = SiteMinderAuthOptions.AuthenticationSchemeName;
-            }).AddSiteMinderAuth(options =>
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
             {
-
+                options.Authority = Configuration.GetValue<string>("JWT:Authority");
+                options.Audience = Configuration.GetValue<string>("JWT:Audience");
+                options.RequireHttpsMetadata = false;
+                options.IncludeErrorDetails = true;
+                options.EventsType = typeof(HetsJwtBearerEvents);
+                //options.TokenValidationParameters = new TokenValidationParameters()
+                //{
+                //    ValidateAudience = false
+                //};
             });
 
             // setup authorization
             services.AddAuthorization();
             services.RegisterPermissionHandler();
+            services.AddScoped<HetsJwtBearerEvents>();
+
+            // repository
+            services.AddScoped<IEquipmentRepository, EquipmentRepository>();
+            services.AddScoped<IOwnerRepository, OwnerRepository>();
+            services.AddScoped<IProjectRepository, ProjectRepository>();
+            services.AddScoped<IRentalAgreementRepository, RentalAgreementRepository>();
+            services.AddScoped<IRentalRequestRepository, RentalRequestRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             // allow for large files to be uploaded
             services.Configure<FormOptions>(options =>
@@ -68,47 +119,32 @@ namespace HetsApi
                 options.MultipartBodyLengthLimit = 1073741824; // 1 GB
             });
 
-            services.AddMvc(options => options.AddDefaultAuthorizationPolicyFilter())
-                .AddJsonOptions(
-                    opts => {
-                        opts.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                        opts.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
-                        opts.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.IsoDateFormat;
-                        opts.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
+            //enable Hangfire
+            services.AddHangfire(configuration =>
+                configuration
+                .UseSerilogLogProvider()
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UsePostgreSqlStorage(connectionString)
+            );
 
-                        // ReferenceLoopHandling is set to Ignore to prevent JSON parser issues with the user / roles model.
-                        opts.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                    });
-
-            // enable Hangfire
-            PostgreSqlStorageOptions postgreSqlStorageOptions = new PostgreSqlStorageOptions {
-                SchemaName = "public"
-            };
-            if (connectionString != null)
+            services.AddHangfireServer(options =>
             {
-                PostgreSqlStorage storage = new PostgreSqlStorage(connectionString, postgreSqlStorageOptions);
-                services.AddHangfire(config =>
-                {
-                    config.UseStorage(storage);
-                    config.UseConsole();
-                });
-            }
+                options.WorkerCount = 1;
+            });
 
-            // Configure Swagger - only required in the Development Environment
-            if (_hostingEnv.IsDevelopment())
+            services.AddSwaggerGen(options =>
             {
-                services.AddSwaggerGen(options =>
+                options.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    options.SwaggerDoc("v1", new Info
-                    {
-                        Version = "v1",
-                        Title = "HETS REST API",
-                        Description = "Hired Equipment Tracking System"
-                    });
-
-                    options.DescribeAllEnumsAsStrings();
+                    Version = "v1",
+                    Title = "HETS REST API",
+                    Description = "Hired Equipment Tracking System"
                 });
-            }
+            });
+
+            services.AddBceidSoapClient(Configuration);
         }
 
         /// <summary>
@@ -116,57 +152,31 @@ namespace HetsApi
         /// </summary>
         /// <param name="app"></param>
         /// <param name="env"></param>
-        /// <param name="loggerFactory"></param>
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
-            // web site error handler  (Testing: app.UseDeveloperExceptionPage();)
-            app.UseWhen(x => !x.Request.Path.Value.StartsWith("/api"), builder =>
-            {
-                builder.UseExceptionHandler(Configuration.GetSection("Constants:ErrorUrl").Value);
-            });
-
-            // authenticate users
+            if (env.IsDevelopment())
+                app.UseDeveloperExceptionPage();
+            
+            app.UseMiddleware<ExceptionMiddleware>();
+            app.UseHangfireDashboard();
+            app.UseRouting();
             app.UseAuthentication();
+            app.UseAuthorization();
 
-            // enable Hangfire
-            BackgroundJobServerOptions jsOptions = new BackgroundJobServerOptions
+            app.UseSerilogUi();
+
+            app.UseEndpoints(endpoints =>
             {
-                WorkerCount = 1                
-            };
-
-            app.UseHangfireServer(jsOptions);
-
-            // disable the back to site link
-            DashboardOptions dashboardOptions = new DashboardOptions
-            {
-                AppPath = null,
-                Authorization = new[] { new HangfireAuthorizationFilter() }
-            };
-
-            // enable the hangfire dashboard
-            app.UseHangfireDashboard(Configuration.GetSection("Constants:HangfireUrl").Value, dashboardOptions);
-
-            // setup mvc routes
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}");
+                endpoints.MapControllers();
             });
 
-            if (_hostingEnv.IsDevelopment())
+            app.UseSwagger();
+            string swaggerApi = Configuration.GetSection("Constants:SwaggerApiUrl").Value;
+            app.UseSwaggerUI(options =>
             {
-                string swaggerApi = Configuration.GetSection("Constants:SwaggerApiUrl").Value;
-                app.UseSwagger();
-                app.UseSwaggerUI(options =>
-                {
-                    options.SwaggerEndpoint(swaggerApi, "HETS REST API v1");
-                    options.DocExpansion(DocExpansion.None);
-                });
-            }
+                options.SwaggerEndpoint(swaggerApi, "HETS REST API v1");
+                options.DocExpansion(DocExpansion.None);
+            });
         }
 
         /// <summary>
@@ -189,8 +199,10 @@ namespace HetsApi
             else
             {
                 // environment variables override all other settings (OpenShift)
-                connectionString = $"Host={host};Username={username};Password={password};Database={database};";
+                connectionString = $"Host={host};Username={username};Password={password};Database={database}";
             }
+
+            connectionString += ";Timeout=600;CommandTimeout=0;";
 
             return connectionString;
         }

@@ -1,28 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
 	<Description>Common data code for the HETS application</Description>
     <Copyright>Copyright© 2017, Province of British Columbia</Copyright>
     <AssemblyTitle>Hets Data</AssemblyTitle>
     <AssemblyName>HetsData</AssemblyName>	
     <PackageId>HetsData</PackageId>	
-    <Version>1.9.2.0</Version>
+    <Version>1.9.3.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="Hangfire.Console" Version="1.4.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.8" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HetsCommon\HetsCommon.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Hangfire.Core">
       <HintPath>..\..\..\..\..\Users\paulm\.nuget\packages\hangfire.core\1.6.20\lib\netstandard1.3\Hangfire.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AspNetCore.Mvc.Core">
-      <HintPath>..\..\..\..\..\Users\paulm\.nuget\packages\microsoft.aspnetcore.mvc.core\1.0.4\lib\netstandard1.6\Microsoft.AspNetCore.Mvc.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
 

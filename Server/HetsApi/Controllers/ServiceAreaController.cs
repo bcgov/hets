@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Swashbuckle.AspNetCore.Annotations;
-using HetsApi.Helpers;
 using HetsApi.Model;
-using HetsData.Model;
+using HetsData.Entities;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -16,20 +15,15 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/serviceAreas")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class ServiceAreaController : Controller
+    public class ServiceAreaController : ControllerBase
     {
         private readonly DbAppContext _context;
+        private readonly IMapper _mapper;
 
-        public ServiceAreaController(DbAppContext context, IHttpContextAccessor httpContextAccessor)
+        public ServiceAreaController(DbAppContext context, IMapper mapper)
         {
             _context = context;
-
-            // set context data
-            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
-            _context.SmUserId = user.SmUserId;
-            _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.UserGuid;
-            _context.SmBusinessGuid = user.BusinessGuid;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -37,16 +31,14 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("")]
-        [SwaggerOperation("ServiceAreasGet")]
-        [SwaggerResponse(200, type: typeof(List<HetServiceArea>))]
         [AllowAnonymous]
-        public virtual IActionResult ServiceAreasGet()
+        public virtual ActionResult<List<ServiceAreaDto>> ServiceAreasGet()
         {
-            List<HetServiceArea> serviceAreas = _context.HetServiceArea
+            List<HetServiceArea> serviceAreas = _context.HetServiceAreas
                 .Include(x => x.District.Region)
                 .ToList();
 
-            return new ObjectResult(new HetsResponse(serviceAreas));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<ServiceAreaDto>>(serviceAreas)));
         }
     }
 }

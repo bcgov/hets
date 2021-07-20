@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 
-namespace HetsData.Model
+namespace HetsData.Entities
 {
     public partial class HetRentalAgreement
     {        
@@ -20,9 +20,5 @@ namespace HetsData.Model
 
         [NotMapped]
         public string LocalAreaName { get; set; }
-
-        [NotMapped]
-        [JsonProperty("OvertimeRates")]
-        public ICollection<HetRentalAgreementRate> HetRentalAgreementOvertimeRate { get; set; }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using HetsData.Model;
+using HetsData.Entities;
 
 namespace HetsData.Helpers
 {
@@ -90,17 +90,17 @@ namespace HetsData.Helpers
             {
                 // validate data
                 if (context != null &&
-                    context.HetLocalArea.Any(x => x.LocalAreaId == localAreaId) &&
-                    context.HetDistrictEquipmentType.Any(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId))
+                    context.HetLocalAreas.Any(x => x.LocalAreaId == localAreaId) &&
+                    context.HetDistrictEquipmentTypes.Any(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId))
                 {
                     // get processing rules
                     SeniorityScoringRules scoringRules = new SeniorityScoringRules(seniorityScoringRules);
 
                     // get the associated equipment type
-                    HetDistrictEquipmentType districtEquipmentTypeRecord = context.HetDistrictEquipmentType
+                    HetDistrictEquipmentType districtEquipmentTypeRecord = context.HetDistrictEquipmentTypes
                         .First(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
-                    HetEquipmentType equipmentTypeRecord = context.HetEquipmentType
+                    HetEquipmentType equipmentTypeRecord = context.HetEquipmentTypes
                         .FirstOrDefault(x => x.EquipmentTypeId == districtEquipmentTypeRecord.EquipmentTypeId);
 
                     if (equipmentTypeRecord != null)
@@ -117,8 +117,7 @@ namespace HetsData.Helpers
                             : scoringRules.GetTotalBlocks();
 
                         // get all equipment records
-                        IQueryable<HetEquipment> data = context.HetEquipment
-                            .Include(x => x.EquipmentStatusType)
+                        IQueryable<HetEquipment> data = context.HetEquipments
                             .Where(x => x.LocalAreaId == localAreaId &&
                                         x.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
@@ -145,11 +144,7 @@ namespace HetsData.Helpers
                                 equipment.CalculateSeniority(seniorityScoring);
                                 equipment.SeniorityEffectiveDate = DateTime.UtcNow;
                             }
-
-                            context.HetEquipment.Update(equipment);
                         }
-
-                        context.SaveChanges();
 
                         // put equipment into the correct blocks
                         AssignBlocks(localAreaId, districtEquipmentTypeId, blockSize, totalBlocks, context);
@@ -173,21 +168,20 @@ namespace HetsData.Helpers
         /// <param name="totalBlocks"></param>
         /// <param name="context"></param>
         /// <param name="saveChanges"></param>
-        public static void AssignBlocks(int localAreaId, int districtEquipmentTypeId,
-            int blockSize, int totalBlocks, DbAppContext context, bool saveChanges = true)
+        public static void AssignBlocks(int localAreaId, int districtEquipmentTypeId, int blockSize, int totalBlocks, DbAppContext context)
         {
             try
             {
                 // get all equipment records
-                List<HetEquipment> data = context.HetEquipment
+                var data = context.HetEquipments
                     .Include(x => x.Owner)
                     .Where(x => x.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved &&
                                 x.LocalArea.LocalAreaId == localAreaId &&
                                 x.DistrictEquipmentTypeId == districtEquipmentTypeId)
+                    .ToList() //must be done before sorting because the client version of querying entities has been changed - EFCore 5 issue?
                     .OrderByDescending(x => x.Seniority)
-                        .ThenBy(x => x.ReceivedDate)
-                        .ThenBy(x => x.EquipmentCode)
-                    .Select(x => x)
+                    .ThenBy(x => x.ReceivedDate)
+                    .ThenBy(x => x.EquipmentCode)
                     .ToList();
 
                 // total blocks only counts the "main" blocks - we need to add 1 more for the remaining records
@@ -201,7 +195,7 @@ namespace HetsData.Helpers
                     // iterate the blocks and add the record
                     for (int i = 0; i < totalBlocks; i++)
                     {
-                        if (AddedToBlock(i, totalBlocks, blockSize, blocks, equipment, context, saveChanges))
+                        if (AddedToBlock(i, totalBlocks, blockSize, blocks, equipment))
                         {
                             break; // move to next record
                         }
@@ -216,8 +210,7 @@ namespace HetsData.Helpers
             }
         }
 
-        private static bool AddedToBlock(int currentBlock, int totalBlocks, int blockSize,
-            List<int>[] blocks, HetEquipment equipment, DbAppContext context, bool saveChanges = true)
+        private static bool AddedToBlock(int currentBlock, int totalBlocks, int blockSize, List<int>[] blocks, HetEquipment equipment)
         {
             try
             {
@@ -258,13 +251,6 @@ namespace HetsData.Helpers
                 // update the equipment record
                 equipment.BlockNumber = currentBlock + 1;
                 equipment.NumberInBlock = blocks[currentBlock].Count;
-
-                context.HetEquipment.Update(equipment);
-
-                if (saveChanges)
-                {
-                    context.SaveChanges();
-                }
 
                 // record added to the block
                 return true;

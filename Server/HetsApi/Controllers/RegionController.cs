@@ -1,13 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Swashbuckle.AspNetCore.Annotations;
-using HetsApi.Authorization;
-using HetsApi.Helpers;
 using HetsApi.Model;
-using HetsData.Model;
+using HetsData.Entities;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -16,20 +14,15 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/regions")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class RegionController : Controller
+    public class RegionController : ControllerBase
     {
         private readonly DbAppContext _context;
+        private readonly IMapper _mapper;
 
-        public RegionController(DbAppContext context, IHttpContextAccessor httpContextAccessor)
+        public RegionController(DbAppContext context, IMapper mapper)
         {
             _context = context;
-
-            // set context data
-            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
-            _context.SmUserId = user.SmUserId;
-            _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.UserGuid;
-            _context.SmBusinessGuid = user.BusinessGuid;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -37,14 +30,12 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("")]
-        [SwaggerOperation("RegionsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetRegion>))]
         [AllowAnonymous]
-        public virtual IActionResult RegionsGet()
+        public virtual ActionResult<List<RegionDto>> RegionsGet()
         {
-            List<HetRegion> regions = _context.HetRegion.ToList();
+            List<HetRegion> regions = _context.HetRegions.ToList();
 
-            return new ObjectResult(new HetsResponse(regions));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<RegionDto>>(regions)));
         }
     }
 }
