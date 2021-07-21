@@ -603,7 +603,7 @@ class OwnersDetail extends React.Component {
               </div>
               <div className="well">
                 <SubHeader title={`Equipment (${loading ? ' ' : owner.numberOfEquipment})`}>
-                  <div className="d-flex">
+                  <div className="d-flex align-items-baseline">
                     <CheckboxControl
                       id="showAttachments"
                       className="mr-3"
@@ -618,15 +618,17 @@ class OwnersDetail extends React.Component {
                         placement="top"
                         overlay={<Confirm onConfirm={this.equipmentVerifyAll}></Confirm>}
                       >
-                        <TooltipButton
-                          disabled={!isApproved}
-                          disabledTooltip={restrictEquipmentVerifyTooltip}
-                          className="mr-3 btn-custom"
-                          title="Verify All Equipment"
-                          size="sm"
-                        >
-                          Verify All
-                        </TooltipButton>
+                        <div>
+                          <TooltipButton
+                            disabled={!isApproved}
+                            disabledTooltip={restrictEquipmentVerifyTooltip}
+                            className="mr-3 btn-custom"
+                            title="Verify All Equipment"
+                            size="sm"
+                          >
+                            Verify All
+                          </TooltipButton>
+                        </div>
                       </OverlayTrigger>
                       <TooltipButton
                         disabled={!isApproved}
@@ -724,7 +726,10 @@ class OwnersDetail extends React.Component {
                                   size="sm"
                                   onClick={this.equipmentVerify.bind(this, equipment)}
                                 >
-                                  <FontAwesomeIcon icon="check" /> OK
+                                  <span className="d-flex align-items-center">
+                                    <FontAwesomeIcon icon="check" />
+                                    &nbsp;OK
+                                  </span>
                                 </TooltipButton>
                               </td>
                             </Authorize>

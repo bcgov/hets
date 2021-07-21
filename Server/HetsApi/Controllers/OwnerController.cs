@@ -953,9 +953,9 @@ namespace HetsApi.Controllers
                         var equipment = _context.HetEquipments
                             .First(x => x.EquipmentId == item.EquipmentId);
 
-                        if (items[i].LastVerifiedDate != lastVerifiedDate)
+                        if (equipment.LastVerifiedDate != lastVerifiedDate)
                         {
-                            items[i].LastVerifiedDate = lastVerifiedDate;
+                            equipment.LastVerifiedDate = lastVerifiedDate;
                         }
 
                         entities.Add(equipment);
