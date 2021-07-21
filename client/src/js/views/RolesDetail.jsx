@@ -5,7 +5,6 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 import { Table, Button } from 'react-bootstrap';
 import _ from 'lodash';
-import Promise from 'bluebird';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';

@@ -5,7 +5,6 @@ import { Row, Col, Alert, Button, ButtonGroup, Badge, OverlayTrigger } from 'rea
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
-import Promise from 'bluebird';
 
 import ContactsEditDialog from './dialogs/ContactsEditDialog.jsx';
 import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';

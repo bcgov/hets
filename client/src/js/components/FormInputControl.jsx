@@ -74,7 +74,7 @@ class FormInputControl extends React.Component {
         onChange={this.changed}
         ref={this.refChanged}
         autoComplete={autoComplete || 'off'}
-        autofocus={this.props.autoFocus}
+        autoFocus={this.props.autoFocus}
       >
         {children}
       </FormControl>

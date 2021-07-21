@@ -15,7 +15,6 @@ import {
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
-import Promise from 'bluebird';
 
 import UserRoleAddDialog from './dialogs/UserRoleAddDialog.jsx';
 import UsersEditDialog from './dialogs/UsersEditDialog.jsx';
