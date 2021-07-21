@@ -545,22 +545,24 @@ class ExpireOverlay extends React.Component {
     var props = _.omit(this.props, 'onSave', 'hide', 'userRole');
     return (
       <Popover id="users-role-popover" {...props}>
-        Set Expiry Date
-        <Form inline onSubmit={this.saveUserRole}>
-          <FormGroup controlId="expiryDate">
-            <DateControl
-              id="expiryDate"
-              date={this.state.expiryDate}
-              updateState={this.updateState}
-              title="Expiry Date"
-              isInvalid={this.state.expiryDateError}
-            />
-            <FormText>{this.state.expiryDateError}</FormText>
-          </FormGroup>
-          <Button variant="primary" onClick={this.saveUserRole} className="float-right">
-            Save
-          </Button>
-        </Form>
+        <Popover.Title>Set Expiry Date</Popover.Title>
+        <Popover.Content>
+          <Form inline onSubmit={this.saveUserRole}>
+            <FormGroup controlId="expiryDate">
+              <DateControl
+                id="expiryDate"
+                date={this.state.expiryDate}
+                updateState={this.updateState}
+                title="Expiry Date"
+                isInvalid={this.state.expiryDateError}
+              />
+              <FormText>{this.state.expiryDateError}</FormText>
+            </FormGroup>
+            <Button variant="primary" onClick={this.saveUserRole} className="float-right">
+              Save
+            </Button>
+          </Form>
+        </Popover.Content>
       </Popover>
     );
   }

@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import Moment from 'moment';
 import DateTime from 'react-datetime';
+import classNames from 'classnames';
 
 class DateControl extends React.Component {
   static propTypes = {
@@ -19,6 +20,7 @@ class DateControl extends React.Component {
     title: PropTypes.string,
     disabled: PropTypes.bool,
     isValidDate: PropTypes.func,
+    isInvalid: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]), //changes styling for input to match react-bootstrap if error occurs
   };
 
   clicked = () => {
@@ -84,6 +86,7 @@ class DateControl extends React.Component {
             inputProps={{
               placeholder: placeholder,
               disabled: disabled,
+              className: classNames('form-control', { 'is-invalid': this.props.isInvalid }),
               ref: (input) => {
                 this.input = input;
               },
