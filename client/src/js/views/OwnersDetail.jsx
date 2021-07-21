@@ -267,6 +267,10 @@ class OwnersDetail extends React.Component {
     });
 
     Api.updateOwnerEquipment(owner, equipmentList).then(() => {
+      //thought about using response data to log, however the server response doesn't contain equipment.History entity which breaks logging
+      equipmentList.forEach((updatedEquipment) => {
+        Log.ownerEquipmentVerified(this.props.owner, updatedEquipment);
+      });
       this.fetch();
     });
   };

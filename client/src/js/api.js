@@ -1053,7 +1053,7 @@ export function getOwnerEquipment(ownerId) {
 }
 
 export function updateOwnerEquipment(owner, equipmentArray) {
-  return new ApiRequest(`/owners/${owner.id}/equipment`).put(equipmentArray).then(() => {});
+  return new ApiRequest(`/owners/${owner.id}/equipment`).put(equipmentArray);
 }
 
 export function getOwnerNotes(ownerId) {
