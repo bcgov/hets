@@ -227,7 +227,7 @@ class BusinessPortal extends React.Component {
                 disabled={this.state.validating}
                 defaultValue={this.state.secretKey}
                 updateState={this.updateState}
-                inputRef={(input) => (this.inputSecretKey = input)}
+                ref={(input) => (this.inputSecretKey = input)}
                 isInvalid={this.state.errors.secretKey}
               />
               <FormText>{this.state.errors.secretKey}</FormText>
@@ -240,7 +240,7 @@ class BusinessPortal extends React.Component {
                 disabled={this.state.validating}
                 defaultValue={this.state.postalCode}
                 updateState={this.updateState}
-                inputRef={(input) => (this.inputPostalCode = input)}
+                ref={(input) => (this.inputPostalCode = input)}
                 isInvalid={this.state.errors.postalCode}
               />
               <FormText>{this.state.errors.postalCode}</FormText>

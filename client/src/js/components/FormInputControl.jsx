@@ -7,8 +7,6 @@ class FormInputControl extends React.Component {
   static propTypes = {
     type: PropTypes.string,
     updateState: PropTypes.func,
-    //temporary fix. Not sure if we still need this.
-    // inputRef: PropTypes.func,
     autoFocus: PropTypes.bool,
     autoComplete: PropTypes.string,
     onChange: PropTypes.func,
