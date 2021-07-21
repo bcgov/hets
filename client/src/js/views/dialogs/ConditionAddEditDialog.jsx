@@ -133,6 +133,7 @@ class ConditionAddEditDialog extends React.Component {
             type="text"
             value={this.state.typeCode}
             updateState={this.updateState}
+            autoFocus
             isInvalid={this.state.typeCodeError}
           />
           <FormText>{this.state.typeCodeError}</FormText>

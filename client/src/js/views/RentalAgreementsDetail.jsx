@@ -69,11 +69,6 @@ class RentalAgreementsDetail extends React.Component {
 
     const { rentalAgreement } = this.props;
 
-    // Only show loading spinner if there is no existing rental agreement in the store
-    if (rentalAgreement) {
-      this.setState({ loading: false });
-    }
-
     // Re-fetch rental agreement every time
     Promise.all([this.fetch(rentalAgreement)]).then(() => {
       this.setState({ loading: false });

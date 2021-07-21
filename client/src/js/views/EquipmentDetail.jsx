@@ -97,13 +97,6 @@ class EquipmentDetail extends React.Component {
 
     let equipmentId = this.props.match.params.equipmentId;
 
-    const { equipment } = this.props;
-
-    // Only show loading spinner if there is no existing equipment in the store
-    if (equipment) {
-      this.setState({ loading: false });
-    }
-
     // Notes and documents need be fetched every time as they are not equipment-specific in the store ATM
     Api.getEquipmentNotes(equipmentId).then(() => this.setState({ loadingNotes: false }));
     Api.getEquipmentDocuments(equipmentId).then(() => this.setState({ loadingDocuments: false }));

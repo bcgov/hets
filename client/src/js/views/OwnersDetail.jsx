@@ -109,15 +109,9 @@ class OwnersDetail extends React.Component {
       ownerId: this.props.match.params.ownerId,
     });
     const ownerId = this.props.match.params.ownerId;
-    const { owner } = this.props;
 
     /* Documents need be fetched every time as they are not project specific in the store ATM */
     Api.getOwnerDocuments(ownerId).then(() => this.setState({ loadingDocuments: false }));
-
-    // Only show loading spinner if there is no existing project in the store
-    if (owner) {
-      this.setState({ loading: false });
-    }
 
     // Re-fetch project and notes every time
     Promise.all([this.fetch(), Api.getOwnerNotes(ownerId)]).then(() => {

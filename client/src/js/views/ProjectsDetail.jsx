@@ -306,7 +306,6 @@ class ProjectsDetail extends React.Component {
               <OverlayTrigger
                 trigger="focus"
                 placement="top"
-                rootClose
                 overlay={<Confirm onConfirm={this.confirmEndHire.bind(this, item)} />}
               >
                 <Button className="btn-custom" size="sm">

@@ -195,29 +195,32 @@ class TopNav extends React.Component {
               </Nav>
             )}
             {this.props.showNav && (
-              <div id="navbar-right" className="float-right">
+              <div id="navbar-right" className="float-right d-flex">
                 {this.props.rolloverStatus.displayRolloverMessage && this.props.rolloverStatus.rolloverComplete && (
                   <OverlayTrigger
                     trigger="click"
                     placement="bottom"
                     rootClose
                     overlay={
-                      <Popover id="rollover-notice" title="Roll Over Complete">
-                        <p>
-                          The hired equipment roll over has been completed on{' '}
-                          {formatDateTimeUTCToLocal(
-                            this.props.rolloverStatus.rolloverEndDate,
-                            Constant.DATE_TIME_READABLE
-                          )}
-                          .
-                        </p>
-                        <p>
-                          <strong>Note: </strong>Please save/print out the new seniority lists for all equipments
-                          corresponding to each local area.
-                        </p>
-                        <Button onClick={this.dismissRolloverNotice} variant="primary">
-                          Dismiss
-                        </Button>
+                      <Popover id="rollover-notice">
+                        <Popover.Title>Roll Over Complete</Popover.Title>
+                        <Popover.Content>
+                          <p>
+                            The hired equipment roll over has been completed on{' '}
+                            {formatDateTimeUTCToLocal(
+                              this.props.rolloverStatus.rolloverEndDate,
+                              Constant.DATE_TIME_READABLE
+                            )}
+                            .
+                          </p>
+                          <p>
+                            <strong>Note: </strong>Please save/print out the new seniority lists for all equipments
+                            corresponding to each local area.
+                          </p>
+                          <Button onClick={this.dismissRolloverNotice} variant="primary">
+                            Dismiss
+                          </Button>
+                        </Popover.Content>
                       </Popover>
                     }
                   >
@@ -232,20 +235,22 @@ class TopNav extends React.Component {
                     <FontAwesomeIcon icon="user" />
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
-                    <div>{this.props.currentUser.fullName}</div>
-                    <FormGroup controlId="districtId">
-                      <FormLabel>District</FormLabel>
-                      <DropdownControl
-                        id="districtId"
-                        updateState={this.updateUserDistrict}
-                        selectedId={this.props.currentUser.district.id}
-                        fieldName="districtName"
-                        items={userDistricts}
-                      />
-                    </FormGroup>
-                    <Button onClick={() => logout()} variant="primary">
-                      Logout
-                    </Button>
+                    <Container>
+                      <strong>{this.props.currentUser.fullName}</strong>
+                      <FormGroup controlId="districtId">
+                        <FormLabel>District</FormLabel>
+                        <DropdownControl
+                          id="districtId"
+                          updateState={this.updateUserDistrict}
+                          selectedId={this.props.currentUser.district.id}
+                          fieldName="districtName"
+                          items={userDistricts}
+                        />
+                      </FormGroup>
+                      <Button onClick={() => logout()} variant="primary">
+                        Logout
+                      </Button>
+                    </Container>
                   </Dropdown.Menu>
                 </Dropdown>
               </div>

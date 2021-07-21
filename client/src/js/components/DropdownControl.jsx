@@ -158,8 +158,8 @@ class DropdownControl extends React.Component {
               )}
               {_.map(this.props.items, (item) => {
                 var menuItem = (
-                  //() => itemSelected(item.id) is required rather than this.itemSelected since react-bootstrap always returns eventKey as a string. version v1.6.1
-                  //This breaks the _.find function to update title. Since the id's are as Number. Number !== String.
+                  //() => itemSelected(item.id) is required rather than this.itemSelected since react-bootstrap v1.6.1 always returns eventKey as a string.
+                  //This breaks the _.find function to update title. Since the id's are Number. Number !== String.
                   //git issue: https://github.com/react-bootstrap/react-bootstrap/issues/3957
                   //source code: https://github.com/react-bootstrap/react-bootstrap/blob/master/src/DropdownItem.tsx refer to makeEventKey function that returns String()
                   <Dropdown.Item
@@ -178,8 +178,9 @@ class DropdownControl extends React.Component {
                       placement="right"
                       rootClose
                       overlay={
-                        <Popover id={`popover-${item.id}`} title={item[this.state.fieldName]}>
-                          {item.hoverText}
+                        <Popover id={`popover-${item.id}`}>
+                          <Popover.Title>{item[this.state.fieldName]}</Popover.Title>
+                          <Popover.Content>{item.hoverText}</Popover.Content>
                         </Popover>
                       }
                     >

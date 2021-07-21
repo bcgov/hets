@@ -27,19 +27,21 @@ class Confirm extends React.Component {
     var props = _.omit(this.props, 'onConfirm', 'onCancel', 'hide', 'children');
 
     return (
-      <Popover id="confirm" title={this.props.title ? this.props.title : 'Are you sure?'} {...props}>
-        {this.props.title ? this.props.title : 'Are you sure?'}
-        {this.props.children}
-        <div style={{ textAlign: 'center', marginTop: '6px' }}>
-          <ButtonGroup>
-            <Button variant="primary" onClick={this.confirmed}>
-              <FontAwesomeIcon icon={['far', 'check-circle']} /> Yes
-            </Button>
-            <Button onClick={this.canceled}>
-              <FontAwesomeIcon icon={['far', 'times-circle']} /> No
-            </Button>
-          </ButtonGroup>
-        </div>
+      <Popover id="confirm" {...props}>
+        <Popover.Title>{this.props.title ? this.props.title : 'Are you sure?'}</Popover.Title>
+        <Popover.Content>
+          {this.props.children}
+          <div style={{ textAlign: 'center', marginTop: '6px' }}>
+            <ButtonGroup>
+              <Button onClick={this.confirmed}>
+                <FontAwesomeIcon icon={['far', 'check-circle']} /> Yes
+              </Button>
+              <Button className="btn-custom" onClick={this.canceled}>
+                <FontAwesomeIcon icon={['far', 'times-circle']} /> No
+              </Button>
+            </ButtonGroup>
+          </div>
+        </Popover.Content>
       </Popover>
     );
   }
