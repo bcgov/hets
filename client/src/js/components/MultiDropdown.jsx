@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Dropdown, FormControl, FormCheck, Form } from 'react-bootstrap';
-import RootCloseMenu from './RootCloseMenu.jsx';
 import _ from 'lodash';
 
 const MAX_ITEMS_FOR_TITLE = 3;
@@ -44,18 +43,18 @@ class MultiDropdown extends React.Component {
     this.setState({ title: title });
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!_.isEqual(nextProps.items, this.props.items)) {
-      var items = nextProps.items || [];
+  componentDidUpdate(prevProps) {
+    if (!_.isEqual(prevProps.items, this.props.items)) {
+      var items = this.props.items || [];
       this.setState({
         items: items,
         title: this.buildTitle(items, this.state.selectedIds),
       });
     }
-    if (!_.isEqual(nextProps.selectedIds, this.props.selectedIds)) {
+    if (!_.isEqual(prevProps.selectedIds, this.props.selectedIds)) {
       this.setState({
-        selectedIds: nextProps.selectedIds,
-        title: this.buildTitle(this.props.items, nextProps.selectedIds),
+        selectedIds: this.props.selectedIds,
+        title: this.buildTitle(this.props.items, this.props.selectedIds),
       });
     }
   }

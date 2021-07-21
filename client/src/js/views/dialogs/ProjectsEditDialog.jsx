@@ -15,7 +15,6 @@ import store from '../../store';
 import DropdownControl from '../../components/DropdownControl.jsx';
 import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
-import Form from '../../components/Form.jsx';
 
 import { isBlank } from '../../utils/string';
 

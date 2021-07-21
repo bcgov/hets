@@ -17,7 +17,6 @@ import {
   Container,
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import NavLinkWrapper from '../components/ui/NavLinkWrapper';
 
 import * as Constant from '../constants';
 import * as Api from '../api';
