@@ -927,41 +927,45 @@ namespace HetsApi.Controllers
         [HttpPut]
         [Route("{id}/equipment")]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual ActionResult<List<EquipmentDto>> OwnersIdEquipmentPut([FromRoute]int id, [FromBody]HetEquipment[] items)
+        public virtual ActionResult<List<EquipmentDto>> OwnersIdEquipmentPut([FromRoute]int id, [FromBody]EquipmentDto[] items)
         {
             bool exists = _context.HetOwners.Any(a => a.OwnerId == id);
 
             // not found
             if (!exists || items == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
+            var entities = new List<HetEquipment>();
+
             // adjust the incoming list
             for (int i = 0; i < items.Length; i++)
             {
-                HetEquipment item = items[i];
+                var item = items[i];
 
                 if (item != null)
                 {
                     DateTime lastVerifiedDate = item.LastVerifiedDate;
 
-                    bool equipmentExists = _context.HetEquipments.Any(x => x.EquipmentId == item.EquipmentId);
+                    bool equipmentExists = _context.HetEquipments
+                        .Any(x => x.EquipmentId == item.EquipmentId && item.OwnerId == id);
 
                     if (equipmentExists)
                     {
-                        items[i] = _context.HetEquipments
+                        var equipment = _context.HetEquipments
                             .First(x => x.EquipmentId == item.EquipmentId);
 
                         if (items[i].LastVerifiedDate != lastVerifiedDate)
                         {
                             items[i].LastVerifiedDate = lastVerifiedDate;
-                            _context.HetEquipments.Update(items[i]);
                         }
+
+                        entities.Add(equipment);
                     }
                 }
             }
 
             _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(_mapper.Map<List<EquipmentDto>>(items)));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<EquipmentDto>>(entities)));
         }
 
         #endregion
@@ -1513,7 +1517,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/history")]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual ActionResult<List<History>> OwnersIdHistoryPost([FromRoute]int id, [FromBody]HetHistory item)
+        public virtual ActionResult<List<History>> OwnersIdHistoryPost([FromRoute]int id, [FromBody]History item)
         {
             bool exists = _context.HetOwners.Any(a => a.OwnerId == id);
 
@@ -1523,7 +1527,7 @@ namespace HetsApi.Controllers
                 {
                     HistoryId = 0,
                     HistoryText = item.HistoryText,
-                    CreatedDate = item.CreatedDate,
+                    CreatedDate = DateTime.UtcNow,
                     OwnerId = id
                 };
 

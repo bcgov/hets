@@ -1154,7 +1154,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/history")]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual ActionResult<List<History>> EquipmentIdHistoryPost([FromRoute]int id, [FromBody]HetHistory item)
+        public virtual ActionResult<List<History>> EquipmentIdHistoryPost([FromRoute]int id, [FromBody]History item)
         {
             bool exists = _context.HetEquipments.Any(a => a.EquipmentId == id);
 
@@ -1164,7 +1164,7 @@ namespace HetsApi.Controllers
                 {
                     HistoryId = 0,
                     HistoryText = item.HistoryText,
-                    CreatedDate = item.CreatedDate,
+                    CreatedDate = DateTime.UtcNow,
                     EquipmentId = id
                 };
 

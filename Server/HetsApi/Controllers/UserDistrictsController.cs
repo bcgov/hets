@@ -100,7 +100,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}")]
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
-        public virtual ActionResult<List<UserDistrictDto>> UserDistrictsIdPost([FromRoute]int id, [FromBody]HetUserDistrict item)
+        public virtual ActionResult<List<UserDistrictDto>> UserDistrictsIdPost([FromRoute]int id, [FromBody]UserDistrictDto item)
         {
             // not found
             if (id != item.UserDistrictId) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -202,7 +202,7 @@ namespace HetsApi.Controllers
                 {
                     if (item.User != null)
                     {
-                        item.User = _context.HetUsers.FirstOrDefault(a => a.UserId == item.User.UserId);
+                        var user = _context.HetUsers.FirstOrDefault(a => a.UserId == item.User.UserId);
                     }
                     else
                     {
@@ -212,7 +212,7 @@ namespace HetsApi.Controllers
 
                     if (item.District != null)
                     {
-                        item.District = _context.HetDistricts.FirstOrDefault(a => a.DistrictId == item.District.DistrictId);
+                        var district = _context.HetDistricts.FirstOrDefault(a => a.DistrictId == item.District.DistrictId);
                     }
                     else
                     {
@@ -252,7 +252,7 @@ namespace HetsApi.Controllers
                         }
                     }
 
-                    _context.HetUserDistricts.Add(item);
+                    _context.HetUserDistricts.Add(_mapper.Map<HetUserDistrict>(item));
                 }
             }
 
