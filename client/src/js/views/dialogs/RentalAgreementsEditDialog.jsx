@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
-import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 
 import * as Api from '../../api';
 
@@ -11,7 +11,6 @@ import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { isValidDate } from '../../utils/date';
 import { isBlank, notBlank } from '../../utils/string';
-
 
 class RentalAgreementsEditDialog extends React.Component {
   static propTypes = {
@@ -42,10 +41,18 @@ class RentalAgreementsEditDialog extends React.Component {
   };
 
   didChange = () => {
-    if (this.state.estimateStartWork !== this.props.rentalAgreement.estimateStartWork) { return true; }
-    if (this.state.estimateHours !== this.props.rentalAgreement.estimateHours) { return true; }
-    if (this.state.datedOn !== this.props.rentalAgreement.datedOn) { return true; }
-    if (this.state.note !== this.props.rentalAgreement.note) { return true; }
+    if (this.state.estimateStartWork !== this.props.rentalAgreement.estimateStartWork) {
+      return true;
+    }
+    if (this.state.estimateHours !== this.props.rentalAgreement.estimateHours) {
+      return true;
+    }
+    if (this.state.datedOn !== this.props.rentalAgreement.datedOn) {
+      return true;
+    }
+    if (this.state.note !== this.props.rentalAgreement.note) {
+      return true;
+    }
 
     return false;
   };
@@ -92,7 +99,9 @@ class RentalAgreementsEditDialog extends React.Component {
         };
 
         Api.updateRentalAgreement(rentalAgreement).then(() => {
-          if (this.props.onSave) { this.props.onSave(); }
+          if (this.props.onSave) {
+            this.props.onSave();
+          }
         });
       }
 
@@ -110,35 +119,59 @@ class RentalAgreementsEditDialog extends React.Component {
         show={this.props.show}
         title="Rental Agreement Details"
         onSubmit={this.formSubmitted}
-        onClose={this.props.onClose}>
+        onClose={this.props.onClose}
+      >
         <Row>
           <Col md={6}>
-            <FormGroup controlId="estimateStartWork" validationState={ this.state.estimateStartWorkError ? 'error' : null }>
-              <ControlLabel>Estimated Commencement</ControlLabel>
-              <DateControl id="estimateStartWork" disabled={ isReadOnly } date={ this.state.estimateStartWork } updateState={ this.updateState } title="Estimated Commencement" />
-              <HelpBlock>{ this.state.estimateStartWorkError }</HelpBlock>
+            <FormGroup controlId="estimateStartWork">
+              <FormLabel>Estimated Commencement</FormLabel>
+              <DateControl
+                id="estimateStartWork"
+                disabled={isReadOnly}
+                date={this.state.estimateStartWork}
+                updateState={this.updateState}
+                title="Estimated Commencement"
+                isInvalid={this.state.estimateStartWorkError}
+              />
+              <FormText>{this.state.estimateStartWorkError}</FormText>
             </FormGroup>
           </Col>
           <Col md={6}>
-            <FormGroup controlId="estimateHours" validationState={ this.state.estimateHoursError ? 'error' : null }>
-              <ControlLabel>Estimated Period Hours <sup>*</sup></ControlLabel>
-              <FormInputControl type="number" min={0} defaultValue={ this.state.estimateHours } readOnly={ isReadOnly } updateState={ this.updateState }/>
-              <HelpBlock>{ this.state.estimateHoursError }</HelpBlock>
+            <FormGroup controlId="estimateHours">
+              <FormLabel>
+                Estimated Period Hours <sup>*</sup>
+              </FormLabel>
+              <FormInputControl
+                type="number"
+                min={0}
+                defaultValue={this.state.estimateHours}
+                readOnly={isReadOnly}
+                updateState={this.updateState}
+                isInvalid={this.state.estimateHoursError}
+              />
+              <FormText>{this.state.estimateHoursError}</FormText>
             </FormGroup>
           </Col>
         </Row>
         <Row>
           <Col md={6}>
-            <FormGroup controlId="datedOn" validationState={ this.state.datedOnError ? 'error' : null }>
-              <ControlLabel>Dated On</ControlLabel>
-              <DateControl id="datedOn" disabled={ isReadOnly } date={ this.state.datedOn } updateState={ this.updateState } title="Dated On" />
-              <HelpBlock>{ this.state.datedOnError }</HelpBlock>
+            <FormGroup controlId="datedOn">
+              <FormLabel>Dated On</FormLabel>
+              <DateControl
+                id="datedOn"
+                disabled={isReadOnly}
+                date={this.state.datedOn}
+                updateState={this.updateState}
+                title="Dated On"
+                isInvalid={this.state.datedOnError}
+              />
+              <FormText>{this.state.datedOnError}</FormText>
             </FormGroup>
           </Col>
           <Col md={6}>
             <FormGroup controlId="agreementCity">
-              <ControlLabel>Dated At</ControlLabel>
-              <FormInputControl type="text" value={ this.state.agreementCity } updateState={ this.updateState } />
+              <FormLabel>Dated At</FormLabel>
+              <FormInputControl type="text" value={this.state.agreementCity} updateState={this.updateState} />
             </FormGroup>
           </Col>
         </Row>

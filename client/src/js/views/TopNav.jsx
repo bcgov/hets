@@ -1,23 +1,22 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, NavLink } from 'react-router-dom';
 import _ from 'lodash';
 import {
   Navbar,
   Nav,
   NavItem,
   NavDropdown,
-  MenuItem,
   OverlayTrigger,
   Dropdown,
   Popover,
   Button,
-  Glyphicon,
-  ControlLabel,
+  FormLabel,
   FormGroup,
+  Container,
 } from 'react-bootstrap';
-import NavLinkWrapper from '../components/ui/NavLinkWrapper';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import * as Constant from '../constants';
 import * as Api from '../api';
@@ -44,7 +43,7 @@ class TopNav extends React.Component {
 
   updateUserDistrict = (state) => {
     var district = _.find(this.props.currentUserDistricts.data, (district) => {
-      return district.district.id === state.districtId;
+      return district.district.id === parseInt(state.districtId);
     });
     Api.switchUserDistrict(district.id).then(() => {
       this.props.history.push(Constant.HOME_PATHNAME);
@@ -54,10 +53,6 @@ class TopNav extends React.Component {
 
   dismissRolloverNotice = () => {
     Api.dismissRolloverMessage(this.props.currentUser.district.id);
-  };
-
-  pathMatch = (path) => {
-    return this.props.location.pathname === path;
   };
 
   render() {
@@ -83,241 +78,184 @@ class TopNav extends React.Component {
     }
 
     return (
-      <div id="header">
-        <nav id="header-main" className="navbar navbar-fixed-top">
-          <div className="container">
-            <div id="logo">
-              <a href="http://www2.gov.bc.ca/gov/content/home">
+      <div id="header" className="sticky-top">
+        <Navbar id="header-main">
+          <Container className={'justify-content-start'}>
+            <Navbar.Brand href="http://www2.gov.bc.ca/gov/content/home">
+              <div id="logo">
                 <img title="Government of B.C." alt="Government of B.C." src="images/gov/gov3_bc_logo.png" />
-              </a>
-            </div>
+              </div>
+            </Navbar.Brand>
             <h1 id="banner">MOTI Hired Equipment Tracking System</h1>
             <div id="working-indicator" hidden={!this.props.showWorkingIndicator}>
               Working <Spinner />
             </div>
-          </div>
-          <Navbar id="top-nav" className={environmentClass}>
+          </Container>
+        </Navbar>
+        <Navbar id="top-nav" className={environmentClass}>
+          <Container>
             {this.props.showNav && (
-              <Nav>
-                <NavLinkWrapper
-                  tag={NavItem}
-                  to={Constant.HOME_PATHNAME}
-                  disabled={navigationDisabled}
-                  active={this.pathMatch(Constant.HOME_PATHNAME)}
-                >
-                  Home
-                </NavLinkWrapper>
-                <NavLinkWrapper
-                  tag={NavItem}
-                  to={Constant.OWNERS_PATHNAME}
-                  disabled={navigationDisabled}
-                  active={this.pathMatch(Constant.OWNERS_PATHNAME)}
-                >
-                  Owners
-                </NavLinkWrapper>
-                <NavLinkWrapper
-                  tag={NavItem}
-                  to={Constant.EQUIPMENT_PATHNAME}
-                  disabled={navigationDisabled}
-                  active={this.pathMatch(Constant.EQUIPMENT_PATHNAME)}
-                >
-                  Equipment
-                </NavLinkWrapper>
-                <NavLinkWrapper
-                  tag={NavItem}
-                  to={Constant.PROJECTS_PATHNAME}
-                  disabled={navigationDisabled}
-                  active={this.pathMatch(Constant.PROJECTS_PATHNAME)}
-                >
-                  Projects
-                </NavLinkWrapper>
-                <NavLinkWrapper
-                  tag={NavItem}
-                  to={Constant.RENTAL_REQUESTS_PATHNAME}
-                  disabled={navigationDisabled}
-                  active={this.pathMatch(Constant.RENTAL_REQUESTS_PATHNAME)}
-                >
-                  Requests
-                </NavLinkWrapper>
-                <NavLinkWrapper
-                  tag={NavItem}
-                  to={Constant.TIME_ENTRY_PATHNAME}
-                  disabled={navigationDisabled}
-                  active={this.pathMatch(Constant.TIME_ENTRY_PATHNAME)}
-                >
-                  Time Entry
-                </NavLinkWrapper>
-
-                <NavDropdown id="reports-dropdown" title="Reports" disabled={navigationDisabled}>
-                  <NavLinkWrapper
-                    tag={MenuItem}
-                    to={Constant.AIT_REPORT_PATHNAME}
-                    disabled={navigationDisabled}
-                    active={this.pathMatch(Constant.AIT_REPORT_PATHNAME)} //active prop needed so NavDropdown will highlight if one of chidlren is active
-                  >
+              <Nav as="ul">
+                <Nav.Item as="li">
+                  <Nav.Link as={NavLink} to={Constant.HOME_PATHNAME} disabled={navigationDisabled}>
+                    Home
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item as="li">
+                  <Nav.Link as={NavLink} tag={NavItem} to={Constant.OWNERS_PATHNAME} disabled={navigationDisabled}>
+                    Owners
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item as="li">
+                  <Nav.Link as={NavLink} to={Constant.EQUIPMENT_PATHNAME} disabled={navigationDisabled}>
+                    Equipment
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item as="li">
+                  <Nav.Link as={NavLink} to={Constant.PROJECTS_PATHNAME} disabled={navigationDisabled}>
+                    Projects
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item as="li">
+                  <Nav.Link as={NavLink} to={Constant.RENTAL_REQUESTS_PATHNAME} disabled={navigationDisabled}>
+                    Requests
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item as="li">
+                  <Nav.Link as={NavLink} to={Constant.TIME_ENTRY_PATHNAME} disabled={navigationDisabled}>
+                    Time Entry
+                  </Nav.Link>
+                </Nav.Item>
+                <NavDropdown id="reports-dropdown" title="Reports" disabled={navigationDisabled} as="li">
+                  <NavDropdown.Item as={NavLink} to={Constant.AIT_REPORT_PATHNAME} disabled={navigationDisabled}>
                     Rental Agreement Summary
-                  </NavLinkWrapper>
-                  <NavLinkWrapper
-                    tag={MenuItem}
-                    to={Constant.SENIORITY_LIST_PATHNAME}
-                    disabled={navigationDisabled}
-                    active={this.pathMatch(Constant.SENIORITY_LIST_PATHNAME)}
-                  >
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={NavLink} to={Constant.SENIORITY_LIST_PATHNAME} disabled={navigationDisabled}>
                     Seniority List
-                  </NavLinkWrapper>
-                  <NavLinkWrapper
-                    tag={MenuItem}
+                  </NavDropdown.Item>
+                  <NavDropdown.Item
+                    as={NavLink}
                     to={Constant.STATUS_LETTERS_REPORT_PATHNAME}
                     disabled={navigationDisabled}
-                    active={this.pathMatch(Constant.STATUS_LETTERS_REPORT_PATHNAME)}
                   >
                     Status Letters / Mailing Labels
-                  </NavLinkWrapper>
-                  <NavLinkWrapper
-                    tag={MenuItem}
-                    to={Constant.HIRING_REPORT_PATHNAME}
-                    disabled={navigationDisabled}
-                    active={this.pathMatch(Constant.HIRING_REPORT_PATHNAME)}
-                  >
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={NavLink} to={Constant.HIRING_REPORT_PATHNAME} disabled={navigationDisabled}>
                     Hiring Report - Not Hired / Force Hire
-                  </NavLinkWrapper>
-                  <NavLinkWrapper
-                    tag={MenuItem}
-                    to={Constant.OWNERS_COVERAGE_PATHNAME}
-                    disabled={navigationDisabled}
-                    active={this.pathMatch(Constant.OWNERS_COVERAGE_PATHNAME)}
-                  >
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={NavLink} to={Constant.OWNERS_COVERAGE_PATHNAME} disabled={navigationDisabled}>
                     WCB / CGL Coverage
-                  </NavLinkWrapper>
+                  </NavDropdown.Item>
                 </NavDropdown>
                 {this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) && (
-                  <NavLinkWrapper
-                    tag={NavItem}
-                    to={Constant.DISTRICT_ADMIN_PATHNAME}
-                    disabled={navigationDisabled}
-                    active={this.pathMatch(Constant.DISTRICT_ADMIN_PATHNAME)}
-                  >
-                    District Admin
-                  </NavLinkWrapper>
+                  <Nav.Item as="li">
+                    <Nav.Link as={NavLink} to={Constant.DISTRICT_ADMIN_PATHNAME} disabled={navigationDisabled}>
+                      District Admin
+                    </Nav.Link>
+                  </Nav.Item>
                 )}
                 {(this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN) ||
                   this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) ||
                   this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) ||
                   this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_ROLLOVER) ||
                   this.props.currentUser.hasPermission(Constant.PERMISSION_VERSION)) && (
-                  <NavDropdown id="admin-dropdown" title="Administration" disabled={navigationDisabled}>
+                  <NavDropdown id="admin-dropdown" title="Administration" disabled={navigationDisabled} as="li">
                     {this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN) && (
-                      <NavLinkWrapper
-                        tag={MenuItem}
+                      <NavDropdown.Item
+                        as={NavLink}
                         to={Constant.OVERTIME_RATES_PATHNAME}
                         disabled={navigationDisabled}
-                        active={this.pathMatch(Constant.OVERTIME_RATES_PATHNAME)}
                       >
                         Manage OT Rates
-                      </NavLinkWrapper>
+                      </NavDropdown.Item>
                     )}
                     {this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) && (
-                      <NavLinkWrapper
-                        tag={MenuItem}
-                        to={Constant.USERS_PATHNAME}
-                        disabled={navigationDisabled}
-                        active={this.pathMatch(Constant.USERS_PATHNAME)}
-                      >
+                      <NavDropdown.Item as={NavLink} to={Constant.USERS_PATHNAME} disabled={navigationDisabled}>
                         User Management
-                      </NavLinkWrapper>
+                      </NavDropdown.Item>
                     )}
                     {this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) && (
-                      <NavLinkWrapper
-                        tag={MenuItem}
-                        to={Constant.ROLES_PATHNAME}
-                        disabled={navigationDisabled}
-                        active={this.pathMatch(Constant.ROLES_PATHNAME)}
-                      >
+                      <NavDropdown.Item as={NavLink} to={Constant.ROLES_PATHNAME} disabled={navigationDisabled}>
                         Roles and Permissions
-                      </NavLinkWrapper>
+                      </NavDropdown.Item>
                     )}
                     {this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_ROLLOVER) && (
-                      <NavLinkWrapper
-                        tag={MenuItem}
-                        to={Constant.ROLLOVER_PATHNAME}
-                        disabled={navigationDisabled}
-                        active={this.pathMatch(Constant.ROLLOVER_PATHNAME)}
-                      >
+                      <NavDropdown.Item as={NavLink} to={Constant.ROLLOVER_PATHNAME} disabled={navigationDisabled}>
                         Roll Over
-                      </NavLinkWrapper>
+                      </NavDropdown.Item>
                     )}
                     {this.props.currentUser.hasPermission(Constant.PERMISSION_VERSION) && (
-                      <NavLinkWrapper
-                        tag={MenuItem}
-                        to={Constant.VERSION_PATHNAME}
-                        disabled={navigationDisabled}
-                        active={this.pathMatch(Constant.VERSION_PATHNAME)}
-                      >
+                      <NavDropdown.Item as={NavLink} to={Constant.VERSION_PATHNAME} disabled={navigationDisabled}>
                         Version Info
-                      </NavLinkWrapper>
+                      </NavDropdown.Item>
                     )}
                   </NavDropdown>
                 )}
               </Nav>
             )}
             {this.props.showNav && (
-              <div id="navbar-right" className="pull-right">
+              <div id="navbar-right" className="float-right d-flex">
                 {this.props.rolloverStatus.displayRolloverMessage && this.props.rolloverStatus.rolloverComplete && (
                   <OverlayTrigger
                     trigger="click"
                     placement="bottom"
                     rootClose
                     overlay={
-                      <Popover id="rollover-notice" title="Roll Over Complete">
-                        <p>
-                          The hired equipment roll over has been completed on{' '}
-                          {formatDateTimeUTCToLocal(
-                            this.props.rolloverStatus.rolloverEndDate,
-                            Constant.DATE_TIME_READABLE
-                          )}
-                          .
-                        </p>
-                        <p>
-                          <strong>Note: </strong>Please save/print out the new seniority lists for all equipments
-                          corresponding to each local area.
-                        </p>
-                        <Button onClick={this.dismissRolloverNotice} bsStyle="primary">
-                          Dismiss
-                        </Button>
+                      <Popover id="rollover-notice">
+                        <Popover.Title>Roll Over Complete</Popover.Title>
+                        <Popover.Content>
+                          <p>
+                            The hired equipment roll over has been completed on{' '}
+                            {formatDateTimeUTCToLocal(
+                              this.props.rolloverStatus.rolloverEndDate,
+                              Constant.DATE_TIME_READABLE
+                            )}
+                            .
+                          </p>
+                          <p>
+                            <strong>Note: </strong>Please save/print out the new seniority lists for all equipments
+                            corresponding to each local area.
+                          </p>
+                          <Button onClick={this.dismissRolloverNotice} variant="primary">
+                            Dismiss
+                          </Button>
+                        </Popover.Content>
                       </Popover>
                     }
                   >
-                    <Button id="rollover-notice-button" className="mr-5" bsStyle="info" bsSize="xsmall">
+                    <Button id="rollover-notice-button" className="mr-5" variant="info" size="sm">
                       Roll Over Complete
-                      <Glyphicon glyph="exclamation-sign" />
+                      <FontAwesomeIcon icon="exclamation-circle" />
                     </Button>
                   </OverlayTrigger>
                 )}
                 <Dropdown id="profile-menu">
-                  <Dropdown.Toggle>
-                    <Glyphicon glyph="user" />
+                  <Dropdown.Toggle variant="primary" className="btn-custom">
+                    <FontAwesomeIcon icon="user" />
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
-                    <div>{this.props.currentUser.fullName}</div>
-                    <FormGroup controlId="districtId">
-                      <ControlLabel>District</ControlLabel>
-                      <DropdownControl
-                        id="districtId"
-                        updateState={this.updateUserDistrict}
-                        selectedId={this.props.currentUser.district.id}
-                        fieldName="districtName"
-                        items={userDistricts}
-                      />
-                    </FormGroup>
-                    <Button onClick={() => logout()} bsStyle="primary">
-                      Logout
-                    </Button>
+                    <Container>
+                      <strong>{this.props.currentUser.fullName}</strong>
+                      <FormGroup controlId="districtId">
+                        <FormLabel>District</FormLabel>
+                        <DropdownControl
+                          id="districtId"
+                          updateState={this.updateUserDistrict}
+                          selectedId={this.props.currentUser.district.id}
+                          fieldName="districtName"
+                          items={userDistricts}
+                        />
+                      </FormGroup>
+                      <Button onClick={() => logout()} variant="primary">
+                        Logout
+                      </Button>
+                    </Container>
                   </Dropdown.Menu>
                 </Dropdown>
               </div>
             )}
-          </Navbar>
-        </nav>
+          </Container>
+        </Navbar>
       </div>
     );
   }

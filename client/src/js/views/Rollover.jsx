@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Button, Well } from 'react-bootstrap';
+import { Button, OverlayTrigger } from 'react-bootstrap';
 
 import * as Api from '../api';
 import * as Constant from '../constants';
@@ -9,7 +9,6 @@ import * as Constant from '../constants';
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
 import CheckboxControl from '../components/CheckboxControl.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import Confirm from '../components/Confirm.jsx';
 import Spinner from '../components/Spinner.jsx';
 
@@ -126,7 +125,7 @@ class Rollover extends React.Component {
           <strong>Note: </strong>Please save/print out the new seniority lists for all equipments corresponding to each
           local area.
         </p>
-        <Button onClick={this.dismissRolloverNotice} bsStyle="primary">
+        <Button onClick={this.dismissRolloverNotice} variant="primary">
           Dismiss
         </Button>
       </div>
@@ -141,21 +140,36 @@ class Rollover extends React.Component {
       !this.state.checkListStep4;
 
     return (
-      <Well>
+      <div className="well">
         <SubHeader title="Pre-Roll Over Checklist" />
         <div id="checklist">
-          <CheckboxControl id="checkListStep1" checked={this.state.checkListStep1} updateState={this.updateState}>
-            Verify all equipment hours have been entered in the system
-          </CheckboxControl>
-          <CheckboxControl id="checkListStep2" checked={this.state.checkListStep2} updateState={this.updateState}>
-            Save the seniority list (pre-roll over)
-          </CheckboxControl>
-          <CheckboxControl id="checkListStep3" checked={this.state.checkListStep3} updateState={this.updateState}>
-            Take note of any equipment currently hired
-          </CheckboxControl>
-          <CheckboxControl id="checkListStep4" checked={this.state.checkListStep4} updateState={this.updateState}>
-            Release all blocked rotation lists, as the hiring order may change after the roll over
-          </CheckboxControl>
+          <CheckboxControl
+            id="checkListStep1"
+            checked={this.state.checkListStep1}
+            updateState={this.updateState}
+            label="Verify all equipment hours have been entered in the system"
+          />
+
+          <CheckboxControl
+            id="checkListStep2"
+            checked={this.state.checkListStep2}
+            updateState={this.updateState}
+            label="Save the seniority list (pre-roll over)"
+          />
+
+          <CheckboxControl
+            id="checkListStep3"
+            checked={this.state.checkListStep3}
+            updateState={this.updateState}
+            label="Take note of any equipment currently hired"
+          />
+
+          <CheckboxControl
+            id="checkListStep4"
+            checked={this.state.checkListStep4}
+            updateState={this.updateState}
+            label="Release all blocked rotation lists, as the hiring order may change after the roll over"
+          />
         </div>
 
         <div id="description">
@@ -183,12 +197,12 @@ class Rollover extends React.Component {
               </Confirm>
             }
           >
-            <Button className="pull-right" disabled={rolloverButtonDisabled} title="Roll Over">
+            <Button className="float-right" disabled={rolloverButtonDisabled} title="Roll Over">
               Roll Over
             </Button>
           </OverlayTrigger>
         </div>
-      </Well>
+      </div>
     );
   };
 
@@ -200,7 +214,7 @@ class Rollover extends React.Component {
       <div id="roll-over">
         <PageHeader>{user.districtName} Roll Over</PageHeader>
 
-        <div className="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3">
+        <div className="col-xs-10 offset-xs-1 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3">
           {(() => {
             if (this.state.loading) {
               return (

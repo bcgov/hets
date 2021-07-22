@@ -1,7 +1,8 @@
-import PropTypes from "prop-types";
-import React from "react";
-import { Dropdown, MenuItem, Popover, OverlayTrigger } from "react-bootstrap";
-import _ from "lodash";
+import PropTypes from 'prop-types';
+import React from 'react';
+import classNames from 'classnames';
+import { Dropdown, Popover, OverlayTrigger } from 'react-bootstrap';
+import _ from 'lodash';
 
 class DropdownControl extends React.Component {
   static propTypes = {
@@ -32,17 +33,18 @@ class DropdownControl extends React.Component {
     onSelect: PropTypes.func,
     updateState: PropTypes.func,
     staticTitle: PropTypes.bool,
+    isInvalid: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]), //if field is invalid show invalid styles.
   };
 
   constructor(props) {
     super(props);
 
     this.state = {
-      simple: _.has(props, "title"),
+      simple: _.has(props, 'title'),
 
-      selectedId: props.selectedId || "",
+      selectedId: props.selectedId || '',
       title: this.buildTitle(props.title),
-      fieldName: props.fieldName || "name",
+      fieldName: props.fieldName || 'name',
       open: false,
     };
   }
@@ -56,23 +58,20 @@ class DropdownControl extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!_.isEqual(nextProps.items, this.props.items)) {
-      var items = nextProps.items || [];
+  componentDidUpdate(prevProps) {
+    if (!_.isEqual(this.props.items, prevProps.items)) {
+      var items = this.props.items || [];
       this.setState({
         items: items,
-        title: this.buildTitle(
-          this.state.simple ? this.state.title : this.state.selectedId,
-          items
-        ),
+        title: this.buildTitle(this.state.simple ? this.state.title : this.state.selectedId, items),
       });
-    } else if (nextProps.selectedId !== this.props.selectedId) {
+    } else if (this.props.selectedId !== prevProps.selectedId) {
       this.setState({
-        selectedId: nextProps.selectedId,
-        title: this.buildTitle(nextProps.selectedId, this.props.items),
+        selectedId: this.props.selectedId,
+        title: this.buildTitle(this.props.selectedId, this.props.items),
       });
-    } else if (!_.isEqual(nextProps.title, this.props.title)) {
-      this.setState({ title: this.buildTitle(nextProps.title) });
+    } else if (!_.isEqual(this.props.title, prevProps.title)) {
+      this.setState({ title: this.buildTitle(this.props.title) });
     }
   }
 
@@ -87,7 +86,7 @@ class DropdownControl extends React.Component {
         }
       }
     }
-    return this.props.placeholder || "Select item";
+    return this.props.placeholder || 'Select item';
   };
 
   itemSelected = (keyEvent) => {
@@ -95,14 +94,12 @@ class DropdownControl extends React.Component {
 
     if (!this.props.staticTitle) {
       this.setState({
-        selectedId: keyEvent || "",
+        selectedId: keyEvent || '',
         title: this.buildTitle(keyEvent, this.props.items),
       });
     }
 
-    var selected = this.state.simple
-      ? keyEvent
-      : _.find(this.props.items, { id: keyEvent });
+    var selected = this.state.simple ? keyEvent : _.find(this.props.items, { id: keyEvent });
 
     // Send selected item to change listener
     if (this.props.onSelect) {
@@ -124,48 +121,54 @@ class DropdownControl extends React.Component {
   render() {
     var props = _.omit(
       this.props,
-      "updateState",
-      "onSelect",
-      "items",
-      "selectedId",
-      "blankLine",
-      "fieldName",
-      "placeholder",
-      "staticTitle"
+      'updateState',
+      'onSelect',
+      'items',
+      'selectedId',
+      'blankLine',
+      'fieldName',
+      'placeholder',
+      'staticTitle',
+      'isInvalid'
     );
 
     return (
       <Dropdown
         {...props}
-        className={`dropdown-control ${this.props.className || ""}`}
+        className={`dropdown-control ${this.props.className || ''}`}
         title={this.state.title}
         open={this.state.open}
         onToggle={this.toggle}
       >
-        <Dropdown.Toggle title={this.state.title} />
-        <Dropdown.Menu bsRole="menu">
+        <Dropdown.Toggle className={classNames('btn-custom', { 'form-control is-invalid': this.props.isInvalid })}>
+          {' '}
+          {this.state.title}
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
           {this.props.items.length > 0 && (
             <ul>
               {this.props.blankLine && (
-                <MenuItem
-                  key={this.state.simple ? "" : 0}
-                  eventKey={this.state.simple ? "" : 0}
-                  onSelect={this.itemSelected}
+                <Dropdown.Item
+                  key={this.state.simple ? '' : 0}
+                  eventKey={this.state.simple ? '' : 0}
+                  onSelect={() => this.itemSelected(0)}
                 >
-                  {typeof this.props.blankLine === "string"
-                    ? this.props.blankLine
-                    : " "}
-                </MenuItem>
+                  {typeof this.props.blankLine === 'string' ? this.props.blankLine : ' '}
+                </Dropdown.Item>
               )}
               {_.map(this.props.items, (item) => {
                 var menuItem = (
-                  <MenuItem
+                  //() => itemSelected(item.id) is required rather than this.itemSelected since react-bootstrap v1.6.1 always returns eventKey as a string.
+                  //This breaks the _.find function to update title. Since the id's are Number. Number !== String.
+                  //git issue: https://github.com/react-bootstrap/react-bootstrap/issues/3957
+                  //source code: https://github.com/react-bootstrap/react-bootstrap/blob/master/src/DropdownItem.tsx refer to makeEventKey function that returns String()
+                  <Dropdown.Item
                     key={this.state.simple ? item : item.id}
                     eventKey={this.state.simple ? item : item.id}
-                    onSelect={this.itemSelected}
+                    onSelect={() => this.itemSelected(item?.id || item)}
                   >
                     {this.state.simple ? item : item[this.state.fieldName]}
-                  </MenuItem>
+                  </Dropdown.Item>
                 );
                 // Check for hover items
                 if (!this.state.simple && item.hoverText) {
@@ -175,11 +178,9 @@ class DropdownControl extends React.Component {
                       placement="right"
                       rootClose
                       overlay={
-                        <Popover
-                          id={`popover-${item.id}`}
-                          title={item[this.state.fieldName]}
-                        >
-                          {item.hoverText}
+                        <Popover id={`popover-${item.id}`}>
+                          <Popover.Title>{item[this.state.fieldName]}</Popover.Title>
+                          <Popover.Content>{item.hoverText}</Popover.Content>
                         </Popover>
                       }
                     >

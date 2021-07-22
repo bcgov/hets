@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 
 import * as Api from '../../api';
 import * as Log from '../../history';
@@ -34,7 +34,9 @@ class AttachmentEditDialog extends React.Component {
   };
 
   didChange = () => {
-    if (this.state.typeName !== '') { return true; }
+    if (this.state.typeName !== '') {
+      return true;
+    }
 
     return false;
   };
@@ -71,7 +73,9 @@ class AttachmentEditDialog extends React.Component {
         promise.then(() => {
           Log.equipmentAttachmentUpdated(this.props.equipment, attachment.typeName);
           this.setState({ isSaving: false });
-          if (this.props.onSave) { this.props.onSave(); }
+          if (this.props.onSave) {
+            this.props.onSave();
+          }
           this.props.onClose();
         });
       } else {
@@ -84,15 +88,21 @@ class AttachmentEditDialog extends React.Component {
     return (
       <FormDialog
         id="attachment-edit"
-        show={ this.props.show }
+        show={this.props.show}
         title="Edit Attachment"
-        isSaving={ this.state.isSaving }
-        onClose={ this.props.onClose }
-        onSubmit={ this.formSubmitted }>
-        <FormGroup controlId="typeName" validationState={ this.state.attachmentError ? 'error' : null }>
-          <ControlLabel>Attachment</ControlLabel>
-          <FormInputControl type="text" defaultValue={ this.state.typeName } updateState={ this.updateState }/>
-          <HelpBlock>{ this.state.attachmentError }</HelpBlock>
+        isSaving={this.state.isSaving}
+        onClose={this.props.onClose}
+        onSubmit={this.formSubmitted}
+      >
+        <FormGroup controlId="typeName">
+          <FormLabel>Attachment</FormLabel>
+          <FormInputControl
+            type="text"
+            defaultValue={this.state.typeName}
+            updateState={this.updateState}
+            isInvalid={this.state.attachmentError}
+          />
+          <FormText>{this.state.attachmentError}</FormText>
         </FormGroup>
       </FormDialog>
     );

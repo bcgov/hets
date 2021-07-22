@@ -2,8 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Well, Row, Col, Table, Alert, Button, Glyphicon, Label, ButtonGroup } from 'react-bootstrap';
+import { Row, Col, Table, Alert, Button, Badge, ButtonGroup } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
+import { saveAs } from 'file-saver';
 
 import EquipmentRentalRatesEditDialog from './dialogs/EquipmentRentalRatesEditDialog.jsx';
 import RentalAgreementsEditDialog from './dialogs/RentalAgreementsEditDialog.jsx';
@@ -28,8 +30,7 @@ import Authorize from '../components/Authorize.jsx';
 
 import { activeRentalAgreementSelector, activeRentalAgreementIdSelector } from '../selectors/ui-selectors';
 
-import { buildApiPath } from '../utils/http.js';
-import { formatDateTime } from '../utils/date';
+import { formatDateTime, formatDateTimeUTCToLocal } from '../utils/date';
 import { formatCurrency } from '../utils/string';
 
 class RentalAgreementsDetail extends React.Component {
@@ -67,11 +68,6 @@ class RentalAgreementsDetail extends React.Component {
     });
 
     const { rentalAgreement } = this.props;
-
-    // Only show loading spinner if there is no existing rental agreement in the store
-    if (rentalAgreement) {
-      this.setState({ loading: false });
-    }
 
     // Re-fetch rental agreement every time
     Promise.all([this.fetch(rentalAgreement)]).then(() => {
@@ -166,8 +162,11 @@ class RentalAgreementsDetail extends React.Component {
   };
 
   generateRentalAgreementDocument = () => {
-    Api.generateRentalAgreementDocument(this.props.match.params.rentalAgreementId).then(() => {
-      window.open(buildApiPath(`/rentalagreements/${this.props.match.params.rentalAgreementId}/doc`));
+    let request = Api.generateRentalAgreementDocument(this.props.match.params.rentalAgreementId);
+    let fname = `rental-agreement-${formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME)}`;
+
+    request.getBlob().then((res) => {
+      saveAs(res.response, fname);
     });
   };
 
@@ -184,14 +183,14 @@ class RentalAgreementsDetail extends React.Component {
     const rentalAgreement = this.props.rentalAgreement || {};
 
     var buttons = (
-      <div className="pull-right">
+      <div className="float-right">
         <Authorize>
-          <Button disabled={!rentalAgreement.isActive} onClick={this.openCloneDialog}>
+          <Button className="btn-custom" disabled={!rentalAgreement.isActive} onClick={this.openCloneDialog}>
             Copy Other Rental Agreement
           </Button>
         </Authorize>
-        <Button title="Print PDF" onClick={this.generateRentalAgreementDocument}>
-          <Glyphicon glyph="print" />
+        <Button className="btn-custom" title="Print PDF" onClick={this.generateRentalAgreementDocument}>
+          <FontAwesomeIcon icon="print" />
         </Button>
         <ReturnButton />
       </div>
@@ -203,14 +202,14 @@ class RentalAgreementsDetail extends React.Component {
           <Col xs={2}>
             <div style={{ marginTop: 6 }}>
               {!loading && (
-                <Label bsStyle={rentalAgreement.isActive ? 'success' : 'danger'}>{rentalAgreement.status}</Label>
+                <Badge variant={rentalAgreement.isActive ? 'success' : 'danger'}>{rentalAgreement.status}</Badge>
               )}
             </div>
           </Col>
           <Col xs={10}>{buttons}</Col>
         </Row>
 
-        <Well id="rental-agreement-header">
+        <div className="well" id="rental-agreement-header">
           {(() => {
             if (loading) {
               return (
@@ -285,9 +284,9 @@ class RentalAgreementsDetail extends React.Component {
               </div>
             );
           })()}
-        </Well>
+        </div>
 
-        <Well style={{ minHeight: 120 }}>
+        <div className="well" style={{ minHeight: 120 }}>
           <SubHeader
             title="Details"
             editButtonDisabled={loading}
@@ -328,9 +327,9 @@ class RentalAgreementsDetail extends React.Component {
               </Row>
             );
           })()}
-        </Well>
+        </div>
 
-        <Well>
+        <div className="well">
           <SubHeader title="Equipment Rate and Included Rates and Attachments" />
           {(() => {
             if (loading) {
@@ -355,7 +354,11 @@ class RentalAgreementsDetail extends React.Component {
                   <strong>Comment: </strong>
                   {rentalAgreement.rateComment}
                 </Col>
-                <EditButton name="Equipment Rate" className="edit-rate-btn" onClick={this.openEquipmentRateDialog} />
+                <EditButton
+                  name="Equipment Rate"
+                  className="edit-rate-btn btn-custom"
+                  onClick={this.openEquipmentRateDialog}
+                />
               </Row>
             );
           })()}
@@ -375,12 +378,12 @@ class RentalAgreementsDetail extends React.Component {
               <Authorize>
                 <TooltipButton
                   title="Add Included Rates and Attachments"
-                  bsSize="small"
+                  size="sm"
                   className="no-margin"
                   onClick={this.addRentalRate.bind(this, true)}
                   enabledTooltip="These rates will be added to the total, along with the equipment pay rate."
                 >
-                  <Glyphicon glyph="plus" className="mr-5" />
+                  <FontAwesomeIcon icon="plus" className="mr-1" />
                   <span>Add Included Rates and Attachments</span>
                 </TooltipButton>
               </Authorize>
@@ -389,7 +392,7 @@ class RentalAgreementsDetail extends React.Component {
             if (Object.keys(includedRates || []).length === 0) {
               return (
                 <div>
-                  <Alert bsStyle="success">No included rates or attachments</Alert>
+                  <Alert variant="success">No included rates or attachments</Alert>
                   {button}
                 </div>
               );
@@ -400,7 +403,7 @@ class RentalAgreementsDetail extends React.Component {
 
             return (
               <div id="included-rates">
-                <Table striped condensed hover bordered>
+                <Table striped hover bordered>
                   <thead>
                     <tr>
                       <th>Rate</th>
@@ -441,9 +444,9 @@ class RentalAgreementsDetail extends React.Component {
               </div>
             );
           })()}
-        </Well>
+        </div>
 
-        <Well>
+        <div className="well">
           <SubHeader title="As-Needed Rates and Attachments" />
           {(() => {
             if (loading) {
@@ -464,12 +467,12 @@ class RentalAgreementsDetail extends React.Component {
               <Authorize>
                 <TooltipButton
                   title="Add Other Rates and Attachments"
-                  bsSize="small"
+                  size="sm"
                   className="no-margin"
                   onClick={this.addRentalRate.bind(this, false)}
                   enabledTooltip="These rates will NOT be added to the total."
                 >
-                  <Glyphicon glyph="plus" className="mr-5" />
+                  <FontAwesomeIcon icon="plus" className="mr-1" />
                   <span>Add Other Rates and Attachments</span>
                 </TooltipButton>
               </Authorize>
@@ -478,7 +481,7 @@ class RentalAgreementsDetail extends React.Component {
             if (Object.keys(asNeededRates || []).length === 0) {
               return (
                 <div>
-                  <Alert bsStyle="success">No as-needed rates or attachments</Alert>
+                  <Alert variant="success">No as-needed rates or attachments</Alert>
                   {button}
                 </div>
               );
@@ -489,7 +492,7 @@ class RentalAgreementsDetail extends React.Component {
 
             return (
               <div id="as-needed-rates">
-                <Table striped condensed hover bordered>
+                <Table striped hover bordered>
                   <thead>
                     <tr>
                       <th>Rate</th>
@@ -530,9 +533,9 @@ class RentalAgreementsDetail extends React.Component {
               </div>
             );
           })()}
-        </Well>
+        </div>
 
-        <Well>
+        <div className="well">
           <SubHeader title="Conditions" />
           {(() => {
             if (loading) {
@@ -552,8 +555,13 @@ class RentalAgreementsDetail extends React.Component {
 
             var button = (
               <Authorize>
-                <Button title="Add Rental Condition" bsSize="small" className="no-margin" onClick={this.addCondition}>
-                  <Glyphicon glyph="plus" className="mr-5" />
+                <Button
+                  title="Add Rental Condition"
+                  size="sm"
+                  className="no-margin btn-custom"
+                  onClick={this.addCondition}
+                >
+                  <FontAwesomeIcon icon="plus" className="mr-1" />
                   <span>Add</span>
                 </Button>
               </Authorize>
@@ -562,7 +570,7 @@ class RentalAgreementsDetail extends React.Component {
             if (Object.keys(rentalConditions || []).length === 0) {
               return (
                 <div>
-                  <Alert bsStyle="success">No rental conditions</Alert>
+                  <Alert variant="success">No rental conditions</Alert>
                   {button}
                 </div>
               );
@@ -570,7 +578,7 @@ class RentalAgreementsDetail extends React.Component {
 
             return (
               <div id="rental-conditions">
-                <Table striped condensed hover bordered>
+                <Table striped hover bordered>
                   <thead>
                     <tr>
                       <th>Condition</th>
@@ -609,9 +617,9 @@ class RentalAgreementsDetail extends React.Component {
               </div>
             );
           })()}
-        </Well>
+        </div>
 
-        <Well>
+        <div className="well">
           <SubHeader
             title="Overtime Rates and Notes/Special Instructions"
             editButtonDisabled={loading}
@@ -652,9 +660,11 @@ class RentalAgreementsDetail extends React.Component {
           >
             {rentalAgreement && rentalAgreement.note}
           </ColDisplay>
-        </Well>
+        </div>
 
-        <Row id="rental-agreements-footer">{buttons}</Row>
+        <Row id="rental-agreements-footer" className="d-flex justify-content-end">
+          {buttons}
+        </Row>
         {this.state.showEditDialog && (
           <RentalAgreementsEditDialog
             show={this.state.showEditDialog}

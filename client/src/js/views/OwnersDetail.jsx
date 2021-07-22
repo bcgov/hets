@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
+import { Row, Col, Alert, Button, ButtonGroup, Badge, OverlayTrigger } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
-import Promise from 'bluebird';
 
 import ContactsEditDialog from './dialogs/ContactsEditDialog.jsx';
 import DocumentsListDialog from './dialogs/DocumentsListDialog.jsx';
@@ -30,7 +30,6 @@ import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
 import Confirm from '../components/Confirm.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import ReturnButton from '../components/ReturnButton.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
@@ -109,15 +108,9 @@ class OwnersDetail extends React.Component {
       ownerId: this.props.match.params.ownerId,
     });
     const ownerId = this.props.match.params.ownerId;
-    const { owner } = this.props;
 
     /* Documents need be fetched every time as they are not project specific in the store ATM */
     Api.getOwnerDocuments(ownerId).then(() => this.setState({ loadingDocuments: false }));
-
-    // Only show loading spinner if there is no existing project in the store
-    if (owner) {
-      this.setState({ loading: false });
-    }
 
     // Re-fetch project and notes every time
     Promise.all([this.fetch(), Api.getOwnerNotes(ownerId)]).then(() => {
@@ -274,6 +267,10 @@ class OwnersDetail extends React.Component {
     });
 
     Api.updateOwnerEquipment(owner, equipmentList).then(() => {
+      //thought about using response data to log, however the server response doesn't contain equipment.History entity which breaks logging
+      equipmentList.forEach((updatedEquipment) => {
+        Log.ownerEquipmentVerified(this.props.owner, updatedEquipment);
+      });
       this.fetch();
     });
   };
@@ -343,24 +340,40 @@ class OwnersDetail extends React.Component {
         <div>
           <Row id="owners-top" className="top-container">
             <Col sm={9}>
-              <StatusDropdown
-                id="owner-status-dropdown"
-                status={loading ? 'Loading ...' : owner.status}
-                statuses={statuses}
-                disabled={owner.activeRentalRequest || loading}
-                disabledTooltip={OWNER_WITH_EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
-                onSelect={this.updateStatusState}
-              />
-              <Button id="owner-notes-button" title="Notes" disabled={loading} onClick={this.openNotesDialog}>
-                Notes ({loading ? ' ' : owner.notes?.length})
-              </Button>
-              <Button id="owner-documents-button" title="Documents" disabled={loading} onClick={this.showDocuments}>
-                Documents ({loadingDocuments ? ' ' : Object.keys(this.props.documents).length})
-              </Button>
-              <Label className={owner.isMaintenanceContractor ? 'ml-5' : 'hide'}>Maintenance Contractor</Label>
+              <ButtonGroup>
+                <StatusDropdown
+                  id="owner-status-dropdown"
+                  status={loading ? 'Loading ...' : owner.status}
+                  statuses={statuses}
+                  disabled={owner.activeRentalRequest || loading}
+                  disabledTooltip={OWNER_WITH_EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE}
+                  onSelect={this.updateStatusState}
+                />
+                <Button
+                  className="btn-custom"
+                  id="owner-notes-button"
+                  title="Notes"
+                  disabled={loading}
+                  onClick={this.openNotesDialog}
+                >
+                  Notes ({loading ? ' ' : owner.notes?.length})
+                </Button>
+                <Button
+                  className="btn-custom"
+                  id="owner-documents-button"
+                  title="Documents"
+                  disabled={loading}
+                  onClick={this.showDocuments}
+                >
+                  Documents ({loadingDocuments ? ' ' : Object.keys(this.props.documents).length})
+                </Button>
+              </ButtonGroup>
+              <Badge variant="secondary" className={owner.isMaintenanceContractor ? 'ml-5' : 'hide'} bg="secondary">
+                Maintenance Contractor
+              </Badge>
             </Col>
             <Col sm={3}>
-              <div className="pull-right">
+              <div className="float-right">
                 <PrintButton disabled={loading} />
                 <ReturnButton />
               </div>
@@ -371,7 +384,7 @@ class OwnersDetail extends React.Component {
 
           <Row>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader
                   title="Owner Information"
                   editButtonTitle="Edit Owner"
@@ -449,10 +462,10 @@ class OwnersDetail extends React.Component {
                     </div>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader
                   title="Policy"
                   editButtonTitle="Edit Policy Information"
@@ -498,10 +511,10 @@ class OwnersDetail extends React.Component {
                     </Row>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader title="Contacts" />
                 {(() => {
                   if (loading) {
@@ -514,15 +527,20 @@ class OwnersDetail extends React.Component {
 
                   var addContactButton = (
                     <Authorize>
-                      <Button title="Add Contact" onClick={this.openContactDialog.bind(this, 0)} bsSize="xsmall">
-                        <Glyphicon glyph="plus" />
+                      <Button
+                        title="Add Contact"
+                        className="btn-custom"
+                        onClick={this.openContactDialog.bind(this, 0)}
+                        size="sm"
+                      >
+                        <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add</strong>
                       </Button>
                     </Authorize>
                   );
 
                   if (!owner.contacts || owner.contacts.length === 0) {
-                    return <Alert bsStyle="success">No contacts {addContactButton}</Alert>;
+                    return <Alert variant="success">No contacts {addContactButton}</Alert>;
                   }
 
                   var contacts = sort(owner.contacts, this.state.uiContacts.sortField, this.state.uiContacts.sortDesc);
@@ -555,7 +573,7 @@ class OwnersDetail extends React.Component {
                         return (
                           <tr key={contact.id}>
                             <td>
-                              {contact.isPrimary && <Glyphicon glyph="star" />}
+                              {contact.isPrimary && <FontAwesomeIcon icon="star" />}
                               {firstLastName(contact.givenName, contact.surname)}
                             </td>
                             <td>{contact.phone}</td>
@@ -586,39 +604,47 @@ class OwnersDetail extends React.Component {
                     </SortTable>
                   );
                 })()}
-              </Well>
-              <Well>
+              </div>
+              <div className="well">
                 <SubHeader title={`Equipment (${loading ? ' ' : owner.numberOfEquipment})`}>
-                  <CheckboxControl id="showAttachments" className="mr-5" inline updateState={this.updateState}>
-                    <small>Show Attachments</small>
-                  </CheckboxControl>
-                  <Authorize>
-                    <OverlayTrigger
-                      trigger="click"
-                      placement="top"
-                      rootClose
-                      overlay={<Confirm onConfirm={this.equipmentVerifyAll}></Confirm>}
-                    >
+                  <div className="d-flex align-items-baseline">
+                    <CheckboxControl
+                      id="showAttachments"
+                      className="mr-3"
+                      inline
+                      updateState={this.updateState}
+                      label={<small>Show Attachments</small>}
+                    />
+
+                    <Authorize>
+                      <OverlayTrigger
+                        trigger="focus"
+                        placement="top"
+                        overlay={<Confirm onConfirm={this.equipmentVerifyAll}></Confirm>}
+                      >
+                        <div>
+                          <TooltipButton
+                            disabled={!isApproved}
+                            disabledTooltip={restrictEquipmentVerifyTooltip}
+                            className="mr-3 btn-custom"
+                            title="Verify All Equipment"
+                            size="sm"
+                          >
+                            Verify All
+                          </TooltipButton>
+                        </div>
+                      </OverlayTrigger>
                       <TooltipButton
                         disabled={!isApproved}
-                        disabledTooltip={restrictEquipmentVerifyTooltip}
-                        className="mr-5"
-                        title="Verify All Equipment"
-                        bsSize="small"
+                        disabledTooltip={restrictEquipmentAddTooltip}
+                        title="Add Equipment"
+                        size="sm"
+                        onClick={this.openEquipmentDialog}
                       >
-                        Verify All
+                        <FontAwesomeIcon icon="plus" />
                       </TooltipButton>
-                    </OverlayTrigger>
-                    <TooltipButton
-                      disabled={!isApproved}
-                      disabledTooltip={restrictEquipmentAddTooltip}
-                      title="Add Equipment"
-                      bsSize="small"
-                      onClick={this.openEquipmentDialog}
-                    >
-                      <Glyphicon glyph="plus" />
-                    </TooltipButton>
-                  </Authorize>
+                    </Authorize>
+                  </div>
                 </SubHeader>
                 {(() => {
                   if (loading) {
@@ -630,7 +656,7 @@ class OwnersDetail extends React.Component {
                   }
 
                   if (!owner.equipmentList || owner.equipmentList.length === 0) {
-                    return <Alert bsStyle="success">No equipment</Alert>;
+                    return <Alert variant="success">No equipment</Alert>;
                   }
 
                   var equipmentList = _.orderBy(
@@ -701,10 +727,13 @@ class OwnersDetail extends React.Component {
                                   disabled={!isApproved}
                                   disabledTooltip={restrictEquipmentVerifyTooltip}
                                   title="Verify Equipment"
-                                  bsSize="xsmall"
+                                  size="sm"
                                   onClick={this.equipmentVerify.bind(this, equipment)}
                                 >
-                                  <Glyphicon glyph="ok" /> OK
+                                  <span className="d-flex align-items-center">
+                                    <FontAwesomeIcon icon="check" />
+                                    &nbsp;OK
+                                  </span>
                                 </TooltipButton>
                               </td>
                             </Authorize>
@@ -714,11 +743,11 @@ class OwnersDetail extends React.Component {
                     </SortTable>
                   );
                 })()}
-              </Well>
-              <Well>
+              </div>
+              <div className="well">
                 <SubHeader title="History" />
                 {owner.historyEntity && <History historyEntity={owner.historyEntity} refresh={!this.state.reloading} />}
-              </Well>
+              </div>
             </Col>
           </Row>
         </div>

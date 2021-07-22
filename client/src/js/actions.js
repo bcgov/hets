@@ -1,6 +1,5 @@
 import { SHOW_ERROR_DIALOG, CLOSE_ERROR_DIALOG, REQUESTS_ERROR, CLOSE_SESSION_TIMEOUT_DIALOG } from './actionTypes';
 
-
 export function showErrorDialog(exception) {
   return {
     type: SHOW_ERROR_DIALOG,
@@ -16,9 +15,10 @@ export function closeErrorDialog() {
 
 export function unhandledApiError(err) {
   var errorMessage = err.message || String(err);
-  if (err.json) {
-    errorMessage = err.json.error.description;
-  }
+  //temporary fix check if error messages pop up correctly for all instances.
+  // if (err.json) {
+  //   errorMessage = err.json.error.description;
+  // }
 
   return {
     type: REQUESTS_ERROR,

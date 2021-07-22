@@ -182,7 +182,7 @@ class AitReport extends React.Component {
 
   renderResults = () => {
     if (Object.keys(this.props.aitResponses.data).length === 0) {
-      return <Alert bsStyle="success">No results</Alert>;
+      return <Alert variant="success">No results</Alert>;
     }
 
     var aitResponses = _.sortBy(this.props.aitResponses.data, (response) => {
@@ -422,10 +422,10 @@ class AitReport extends React.Component {
                       placeholder="Dated On"
                       items={[THIS_FISCAL, LAST_FISCAL, CUSTOM]}
                     />
-                    <Button id="search-button" bsStyle="primary" type="submit">
+                    <Button id="search-button" variant="primary" type="submit">
                       Search
                     </Button>
-                    <Button id="clear-search-button" onClick={this.clearSearch}>
+                    <Button className="btn-custom" id="clear-search-button" onClick={this.clearSearch}>
                       Clear
                     </Button>
                   </ButtonToolbar>
@@ -456,14 +456,13 @@ class AitReport extends React.Component {
                 })()}
               </Col>
               <Col xs={3} sm={2} id="search-buttons">
-                <Row>
+                <Row className="float-right">
                   <Favourites
                     id="faves-dropdown"
                     type="aitReport"
                     favourites={this.props.favourites}
                     data={this.state.search}
                     onSelect={this.loadFavourite}
-                    pullRight
                   />
                 </Row>
               </Col>

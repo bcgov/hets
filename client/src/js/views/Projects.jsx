@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Form } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
 import ProjectsAddDialog from './dialogs/ProjectsAddDialog.jsx';
@@ -144,7 +145,7 @@ class Projects extends React.Component {
 
   renderResults = (addProjectButton) => {
     if (Object.keys(this.props.projects.data).length === 0) {
-      return <Alert bsStyle="success">No Projects {addProjectButton}</Alert>;
+      return <Alert variant="success">No Projects {addProjectButton}</Alert>;
     }
 
     var projects = _.sortBy(this.props.projects.data, (project) => {
@@ -178,7 +179,7 @@ class Projects extends React.Component {
       >
         {_.map(projects, (project) => {
           return (
-            <tr key={project.id} className={project.isActive ? null : 'info'}>
+            <tr key={project.id} className={project.isActive ? null : 'bg-info'}>
               <td>{project.name}</td>
               <td>{project.fiscalYear}</td>
               <td>{project.provincialProjectNumber}</td>
@@ -253,23 +254,22 @@ class Projects extends React.Component {
                     updateState={this.updateSearchState}
                     items={this.props.fiscalYears}
                   />
-                  <Button id="search-button" bsStyle="primary" type="submit">
+                  <Button id="search-button" variant="primary" type="submit">
                     Search
                   </Button>
-                  <Button id="clear-search-button" onClick={this.clearSearch}>
+                  <Button className="btn-custom" id="clear-search-button" onClick={this.clearSearch}>
                     Clear
                   </Button>
                 </ButtonToolbar>
               </Col>
               <Col xs={3} sm={2} id="search-buttons">
-                <Row>
+                <Row className="float-right">
                   <Favourites
                     id="faves-dropdown"
                     type="project"
                     favourites={this.props.favourites}
                     data={this.state.search}
                     onSelect={this.loadFavourite}
-                    pullRight
                   />
                 </Row>
               </Col>
@@ -288,8 +288,8 @@ class Projects extends React.Component {
 
           var addProjectButton = (
             <Authorize>
-              <Button title="Add Project" bsSize="xsmall" onClick={this.openAddDialog}>
-                <Glyphicon glyph="plus" />
+              <Button className="btn-custom" title="Add Project" size="sm" onClick={this.openAddDialog}>
+                <FontAwesomeIcon icon="plus" />
                 &nbsp;<strong>Add Project</strong>
               </Button>
             </Authorize>

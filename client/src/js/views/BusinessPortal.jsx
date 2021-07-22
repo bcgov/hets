@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Well, Row, Col, FormGroup, Alert, Button } from 'react-bootstrap';
+import { Row, Col, FormGroup, Alert, Button, FormText } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Action from '../actionTypes';
@@ -122,7 +122,7 @@ class BusinessPortal extends React.Component {
 
     return (
       <div>
-        <Well id="business-info">
+        <div className="well" id="business-info">
           <SubHeader title="Business Information" />
           <Row>
             <Col lg={6} md={6} sm={12} xs={12}>
@@ -136,12 +136,12 @@ class BusinessPortal extends React.Component {
               </ColDisplay>
             </Col>
           </Row>
-        </Well>
-        <Well id="owners">
+        </div>
+        <div className="well" id="owners">
           <SubHeader title="HETS District Owners Associated With Your BCeID" />
           {(() => {
             if (_.isEmpty(this.props.business.owners)) {
-              return <Alert bsStyle="success">No district owners associated</Alert>;
+              return <Alert variant="success">No district owners associated</Alert>;
             }
 
             var owners = _.sortBy(this.props.business.owners, this.state.uiOwners.sortField);
@@ -179,8 +179,8 @@ class BusinessPortal extends React.Component {
               </SortTable>
             );
           })()}
-        </Well>
-        <Well id="associate-owner">
+        </div>
+        <div className="well" id="associate-owner">
           <SubHeader title="Associate HETS District Owner" />
           <div id="overview">
             <Row>
@@ -219,7 +219,7 @@ class BusinessPortal extends React.Component {
             <p>For RETURNING equipment owners, select your company above to view your account.</p>
           </div>
           <Form inline onSubmit={this.validateOwner}>
-            <FormGroup controlId="secretKey" validationState={this.state.errors.secretKey ? 'error' : null}>
+            <FormGroup controlId="secretKey">
               <FormInputControl
                 type="text"
                 placeholder="Please enter your secret key here"
@@ -227,10 +227,12 @@ class BusinessPortal extends React.Component {
                 disabled={this.state.validating}
                 defaultValue={this.state.secretKey}
                 updateState={this.updateState}
-                inputRef={(input) => (this.inputSecretKey = input)}
+                ref={(input) => (this.inputSecretKey = input)}
+                isInvalid={this.state.errors.secretKey}
               />
+              <FormText>{this.state.errors.secretKey}</FormText>
             </FormGroup>
-            <FormGroup controlId="postalCode" validationState={this.state.errors.postalCode ? 'error' : null}>
+            <FormGroup controlId="postalCode">
               <FormInputControl
                 type="text"
                 placeholder="Postal code"
@@ -238,15 +240,17 @@ class BusinessPortal extends React.Component {
                 disabled={this.state.validating}
                 defaultValue={this.state.postalCode}
                 updateState={this.updateState}
-                inputRef={(input) => (this.inputPostalCode = input)}
+                ref={(input) => (this.inputPostalCode = input)}
+                isInvalid={this.state.errors.postalCode}
               />
+              <FormText>{this.state.errors.postalCode}</FormText>
             </FormGroup>
             <Button type="submit" disabled={this.state.validating}>
               Validate {this.state.validating && <Spinner />}
             </Button>
           </Form>
           {hasErrors && <div className="validation-error">Secret key validation failed.</div>}
-        </Well>
+        </div>
       </div>
     );
   };

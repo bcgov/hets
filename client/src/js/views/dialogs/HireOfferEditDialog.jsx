@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Grid, Row, Col, Radio, FormGroup, ControlLabel, HelpBlock } from 'react-bootstrap';
+import { Container, Row, Col, FormCheck, FormGroup, FormLabel, FormText } from 'react-bootstrap';
 import _ from 'lodash';
 
 import * as Api from '../../api';
@@ -266,42 +266,44 @@ class HireOfferEditDialog extends React.Component {
         isSaving={this.state.isSaving}
         title="Response"
       >
-        <Grid fluid>
+        <Container fluid>
           <Col md={12}>
-            <FormGroup validationState={this.state.offerResponseError ? 'error' : null}>
-              <ControlLabel>Response</ControlLabel>
+            <FormGroup>
+              <FormLabel>Response</FormLabel>
               <Row>
                 <Col md={12}>
                   <FormGroup>
-                    <Radio
+                    <FormCheck
+                      type="radio"
                       onChange={() => this.offerStatusChanged(STATUS_YES)}
                       checked={this.state.offerStatus === STATUS_YES}
                       disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
-                    >
-                      Yes
-                    </Radio>
+                      label="Yes"
+                      isInvalid={this.state.offerResponseError}
+                    />
                   </FormGroup>
                 </Col>
               </Row>
               <Row>
                 <Col md={12}>
                   <FormGroup>
-                    <Radio
+                    <FormCheck
+                      type="radio"
                       onChange={() => this.offerStatusChanged(STATUS_NO)}
                       checked={this.state.offerStatus === STATUS_NO}
                       disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
-                    >
-                      No
-                    </Radio>
+                      label="No"
+                      isInvalid={this.state.offerResponseError}
+                    />
                   </FormGroup>
                 </Col>
               </Row>
               {this.state.offerStatus === STATUS_NO && (
                 <Row>
                   <Col md={12}>
-                    <FormGroup validationState={this.state.offerRefusalReasonError ? 'error' : null}>
+                    <FormGroup>
                       {/*TODO - use lookup list*/}
-                      <ControlLabel>Refusal Reason</ControlLabel>
+                      <FormLabel>Refusal Reason</FormLabel>
                       <DropdownControl
                         id="offerRefusalReason"
                         className="full-width"
@@ -309,8 +311,9 @@ class HireOfferEditDialog extends React.Component {
                         title={this.state.offerRefusalReason}
                         updateState={this.updateState}
                         items={refusalReasons}
+                        isInvalid={this.state.offerRefusalReasonError}
                       />
-                      <HelpBlock>{this.state.offerRefusalReasonError}</HelpBlock>
+                      <FormText>{this.state.offerRefusalReasonError}</FormText>
                     </FormGroup>
                   </Col>
                 </Row>
@@ -318,45 +321,45 @@ class HireOfferEditDialog extends React.Component {
               <Row>
                 <Col md={12}>
                   <FormGroup>
-                    <Radio
+                    <FormCheck
+                      type="radio"
                       onChange={() => this.offerStatusChanged(STATUS_FORCE_HIRE)}
                       checked={this.state.offerStatus === STATUS_FORCE_HIRE}
-                    >
-                      Force Hire
-                    </Radio>
+                      label="Force Hire"
+                      isInvalid={this.state.offerResponseError}
+                    />
                   </FormGroup>
                 </Col>
               </Row>
               <Row>
                 <Col md={12}>
                   <FormGroup>
-                    <Radio
+                    <FormCheck
+                      type="radio"
                       onChange={() => this.offerStatusChanged(STATUS_ASKED)}
                       checked={this.state.offerStatus === STATUS_ASKED}
                       disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
-                    >
-                      Asked
-                    </Radio>
+                      label="Asked"
+                      isInvalid={this.state.offerResponseError}
+                    />
                   </FormGroup>
                 </Col>
               </Row>
-              <HelpBlock>{this.state.offerResponseError}</HelpBlock>
+              <FormText>{this.state.offerResponseError}</FormText>
             </FormGroup>
           </Col>
           <Row>
             <Col md={12}>
-              <FormGroup
-                controlId="offerResponseNote"
-                validationState={this.state.offerResponseNoteError ? 'error' : null}
-              >
-                <ControlLabel>Note</ControlLabel>
+              <FormGroup controlId="offerResponseNote">
+                <FormLabel>Note</FormLabel>
                 <FormInputControl
-                  componentClass="textarea"
+                  as="textarea"
                   defaultValue={this.state.offerResponseNote}
                   readOnly={isReadOnly}
                   updateState={this.updateState}
+                  isInvalid={this.state.offerResponseNoteError}
                 />
-                <HelpBlock>{this.state.offerResponseNoteError}</HelpBlock>
+                <FormText>{this.state.offerResponseNoteError}</FormText>
               </FormGroup>
             </Col>
           </Row>
@@ -367,13 +370,12 @@ class HireOfferEditDialog extends React.Component {
                   id="equipmentVerifiedActive"
                   checked={this.state.equipmentVerifiedActive}
                   updateState={this.updateState}
-                >
-                  Verified Active
-                </CheckboxControl>
+                  label="Verified Active"
+                />
               </FormGroup>
             </Col>
           </Row>
-        </Grid>
+        </Container>
         {this.state.showConfirmForceHireDialog && (
           <ConfirmForceHireDialog
             show={this.state.showConfirmForceHireDialog}

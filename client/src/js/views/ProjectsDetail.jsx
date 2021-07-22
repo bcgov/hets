@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col } from 'react-bootstrap';
-import { Alert, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
+import { Alert, Button, ButtonGroup, OverlayTrigger } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
-import Promise from 'bluebird';
 
 import ProjectsEditDialog from './dialogs/ProjectsEditDialog.jsx';
 import ContactsEditDialog from './dialogs/ContactsEditDialog.jsx';
@@ -26,7 +26,6 @@ import Confirm from '../components/Confirm.jsx';
 import DeleteButton from '../components/DeleteButton.jsx';
 import EditButton from '../components/EditButton.jsx';
 import History from '../components/History.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import StatusDropdown from '../components/StatusDropdown.jsx';
@@ -304,13 +303,12 @@ class ProjectsDetail extends React.Component {
           ) : (
             <Authorize>
               <OverlayTrigger
-                trigger="click"
+                trigger="focus"
                 placement="top"
-                rootClose
                 overlay={<Confirm onConfirm={this.confirmEndHire.bind(this, item)} />}
               >
-                <Button bsSize="xsmall">
-                  <Glyphicon glyph="check" />
+                <Button className="btn-custom" size="sm">
+                  <FontAwesomeIcon icon={['far', 'check-square']} />
                 </Button>
               </OverlayTrigger>
             </Authorize>
@@ -373,15 +371,21 @@ class ProjectsDetail extends React.Component {
                   disabledTooltip={STATUS_NOT_EDITABLE_MESSAGE}
                   onSelect={this.updateStatusState}
                 />
-                <Button title="Notes" className="ml-5 mr-5" disabled={loading} onClick={this.showNotes}>
+                <Button title="Notes" className="ml-1 mr-1 btn-custom" disabled={loading} onClick={this.showNotes}>
                   Notes ({loading ? ' ' : project.notes?.length})
                 </Button>
-                <Button id="project-documents-button" title="Documents" disabled={loading} onClick={this.showDocuments}>
+                <Button
+                  className="btn-custom"
+                  id="project-documents-button"
+                  title="Documents"
+                  disabled={loading}
+                  onClick={this.showDocuments}
+                >
                   Documents ({loadingDocuments ? ' ' : Object.keys(this.props.documents).length})
                 </Button>
               </Col>
               <Col sm={3}>
-                <div className="pull-right">
+                <div className="float-right">
                   <PrintButton disabled={loading} />
                   <ReturnButton />
                 </div>
@@ -393,7 +397,7 @@ class ProjectsDetail extends React.Component {
 
           <Row>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader
                   title="Project Information"
                   editButtonTitle="Edit Project"
@@ -476,27 +480,30 @@ class ProjectsDetail extends React.Component {
                     </Row>
                   );
                 })()}
-              </Well>
-              <Well>
+              </div>
+              <div className="well">
                 <SubHeader title="Hired Equipment / Requests">
-                  <CheckboxControl
-                    id="includeCompletedRequests"
-                    inline
-                    checked={this.state.includeCompletedRequests}
-                    updateState={this.updateState}
-                  >
-                    <small>Show Completed</small>
-                  </CheckboxControl>
-                  <Authorize>
-                    <Button
-                      id="add-request-button"
-                      title="Add Request"
-                      bsSize="small"
-                      onClick={this.openAddRequestDialog}
-                    >
-                      <Glyphicon glyph="plus" /> Add
-                    </Button>
-                  </Authorize>
+                  <div className="d-flex align-items-baseline">
+                    <CheckboxControl
+                      id="includeCompletedRequests"
+                      inline
+                      checked={this.state.includeCompletedRequests}
+                      updateState={this.updateState}
+                      label={<small>Show Completed</small>}
+                    />
+
+                    <Authorize>
+                      <Button
+                        className="btn-custom"
+                        id="add-request-button"
+                        title="Add Request"
+                        size="sm"
+                        onClick={this.openAddRequestDialog}
+                      >
+                        <FontAwesomeIcon icon="plus" /> Add
+                      </Button>
+                    </Authorize>
+                  </div>
                 </SubHeader>
                 {(() => {
                   if (loading) {
@@ -508,7 +515,7 @@ class ProjectsDetail extends React.Component {
                   }
 
                   if (Object.keys(combinedList).length === 0) {
-                    return <Alert bsStyle="success">No equipment</Alert>;
+                    return <Alert variant="success">No equipment</Alert>;
                   }
 
                   var headers = [
@@ -536,10 +543,10 @@ class ProjectsDetail extends React.Component {
                     </TableControl>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader title="Contacts" />
                 {(() => {
                   if (loading) {
@@ -552,15 +559,20 @@ class ProjectsDetail extends React.Component {
 
                   var addContactButton = (
                     <Authorize>
-                      <Button title="Add Contact" onClick={this.openContactDialog.bind(this, 0)} bsSize="small">
-                        <Glyphicon glyph="plus" />
+                      <Button
+                        className="btn-custom"
+                        title="Add Contact"
+                        onClick={this.openContactDialog.bind(this, 0)}
+                        size="sm"
+                      >
+                        <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add</strong>
                       </Button>
                     </Authorize>
                   );
 
                   if (!project.contacts || project.contacts.length === 0) {
-                    return <Alert bsStyle="success">No contacts {addContactButton}</Alert>;
+                    return <Alert variant="success">No contacts {addContactButton}</Alert>;
                   }
 
                   var contacts = sort(
@@ -598,7 +610,7 @@ class ProjectsDetail extends React.Component {
                         return (
                           <tr key={contact.id}>
                             <td>
-                              {contact.isPrimary && <Glyphicon glyph="star" />}
+                              {contact.isPrimary && <FontAwesomeIcon icon="star" />}
                               {firstLastName(contact.givenName, contact.surname)}
                             </td>
                             <td>{contact.phone}</td>
@@ -627,13 +639,13 @@ class ProjectsDetail extends React.Component {
                     </SortTable>
                   );
                 })()}
-              </Well>
-              <Well>
+              </div>
+              <div className="well">
                 <SubHeader title="History" />
                 {project.historyEntity && (
                   <History historyEntity={project.historyEntity} refresh={!this.state.reloading} />
                 )}
-              </Well>
+              </div>
             </Col>
           </Row>
         </div>

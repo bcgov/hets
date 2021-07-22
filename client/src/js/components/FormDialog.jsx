@@ -7,14 +7,13 @@ import Form from './Form.jsx';
 import Spinner from './Spinner.jsx';
 import Authorize from './Authorize.jsx';
 
-
 class FormDialog extends React.Component {
   static propTypes = {
     show: PropTypes.bool.isRequired,
     title: PropTypes.node,
     id: PropTypes.string,
     className: PropTypes.string,
-    bsSize: PropTypes.string,
+    size: PropTypes.string,
     isReadOnly: PropTypes.bool,
     isSaving: PropTypes.bool,
     onClose: PropTypes.func.isRequired,
@@ -41,16 +40,16 @@ class FormDialog extends React.Component {
 
     return (
       <Form onSubmit={this.formSubmitted}>
-        <Modal.Body>
-          {children}
-        </Modal.Body>
+        <Modal.Body>{children}</Modal.Body>
         <Modal.Footer>
-          <Button onClick={this.closeDialog}>{closeButtonLabel || 'Close'}</Button>
+          <Button className="btn-custom" onClick={this.closeDialog}>
+            {closeButtonLabel || 'Close'}
+          </Button>
           {!isReadOnly && (
             <Authorize>
-              <Button bsStyle="primary" type="submit" disabled={isSaving}>
+              <Button variant="primary" type="submit" disabled={isSaving}>
                 {saveButtonLabel || 'Save'}
-                {isSaving && <Spinner/>}
+                {isSaving && <Spinner />}
               </Button>
             </Authorize>
           )}
@@ -60,21 +59,18 @@ class FormDialog extends React.Component {
   };
 
   render() {
-    const { id, className, title, show, bsSize } = this.props;
+    const { id, className, title, show, size } = this.props;
 
     return (
       <Modal
         backdrop="static"
         id={id}
-        bsSize={bsSize}
+        size={size}
         className={classNames('form-dialog', className)}
         show={show}
-        onHide={this.closeDialog}>
-        <Modal.Header closeButton>
-          {title && (
-            <Modal.Title>{title}</Modal.Title>
-          )}
-        </Modal.Header>
+        onHide={this.closeDialog}
+      >
+        <Modal.Header closeButton>{title && <Modal.Title>{title}</Modal.Title>}</Modal.Header>
         {show && this.renderBody()}
       </Modal>
     );

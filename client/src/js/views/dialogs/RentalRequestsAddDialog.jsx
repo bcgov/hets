@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { FormGroup, HelpBlock, ControlLabel, Alert } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel, Alert } from 'react-bootstrap';
 import _ from 'lodash';
 import Moment from 'moment';
 
@@ -251,8 +251,8 @@ class RentalRequestsAddDialog extends React.Component {
 
     return (
       <div>
-        <FormGroup controlId="projectId" validationState={this.state.projectError ? 'error' : null}>
-          <ControlLabel>Project {!project && !this.props.viewOnly && <sup>*</sup>}</ControlLabel>
+        <FormGroup controlId="projectId">
+          <FormLabel>Project {!project && !this.props.viewOnly && <sup>*</sup>}</FormLabel>
           {this.canChangeProject() ? (
             <FilterDropdown
               id="projectId"
@@ -263,16 +263,17 @@ class RentalRequestsAddDialog extends React.Component {
               onSelect={this.onProjectSelected}
               updateState={this.updateState}
               items={projects}
+              isInvalid={this.state.projectError}
             />
           ) : (
             <div>{project ? project.name : 'Request - View Only'}</div>
           )}
-          <HelpBlock>{this.state.projectError}</HelpBlock>
+          <FormText>{this.state.projectError}</FormText>
         </FormGroup>
-        <FormGroup controlId="localAreaId" validationState={this.state.localAreaError ? 'error' : null}>
-          <ControlLabel>
+        <FormGroup controlId="localAreaId">
+          <FormLabel>
             Local Area <sup>*</sup>
-          </ControlLabel>
+          </FormLabel>
           <FilterDropdown
             id="localAreaId"
             selectedId={this.state.localAreaId}
@@ -280,13 +281,14 @@ class RentalRequestsAddDialog extends React.Component {
             updateState={this.updateState}
             items={localAreas}
             className="full-width"
+            isInvalid={this.state.localAreaError}
           />
-          <HelpBlock>{this.state.localAreaError}</HelpBlock>
+          <FormText>{this.state.localAreaError}</FormText>
         </FormGroup>
-        <FormGroup controlId="equipmentTypeId" validationState={this.state.equipmentTypeError ? 'error' : null}>
-          <ControlLabel>
+        <FormGroup controlId="equipmentTypeId">
+          <FormLabel>
             Equipment Type <sup>*</sup>
-          </ControlLabel>
+          </FormLabel>
           <FilterDropdown
             id="equipmentTypeId"
             className="full-width"
@@ -296,21 +298,28 @@ class RentalRequestsAddDialog extends React.Component {
             selectedId={this.state.equipmentTypeId}
             updateState={this.updateEquipmentTypeState}
             items={districtEquipmentTypes}
+            isInvalid={this.state.equipmentTypeError}
           />
-          <HelpBlock>{this.state.equipmentTypeError}</HelpBlock>
+          <FormText>{this.state.equipmentTypeError}</FormText>
         </FormGroup>
         {!this.props.viewOnly && (
-          <FormGroup controlId="count" validationState={this.state.countError ? 'error' : null}>
-            <ControlLabel>
+          <FormGroup controlId="count">
+            <FormLabel>
               Quantity <sup>*</sup>
-            </ControlLabel>
-            <FormInputControl type="number" min="0" value={this.state.count} updateState={this.updateState} />
-            <HelpBlock>{this.state.countError}</HelpBlock>
+            </FormLabel>
+            <FormInputControl
+              type="number"
+              min="0"
+              value={this.state.count}
+              updateState={this.updateState}
+              isInvalid={this.state.countError}
+            />
+            <FormText>{this.state.countError}</FormText>
           </FormGroup>
         )}
         {!this.props.viewOnly && (
           <FormGroup>
-            <ControlLabel>Attachment(s)</ControlLabel>
+            <FormLabel>Attachment(s)</FormLabel>
             <FormInputControl
               id="rentalRequestAttachments"
               type="text"
@@ -320,47 +329,50 @@ class RentalRequestsAddDialog extends React.Component {
           </FormGroup>
         )}
         {!this.props.viewOnly && (
-          <FormGroup controlId="expectedHours" validationState={this.state.expectedHoursError ? 'error' : null}>
-            <ControlLabel>
+          <FormGroup controlId="expectedHours">
+            <FormLabel>
               Expected Hours <sup>*</sup>
-            </ControlLabel>
+            </FormLabel>
             <FormInputControl
               type="number"
               className="full-width"
               min={0}
               value={this.state.expectedHours}
               updateState={this.updateState}
+              isInvalid={this.state.expectedHoursError}
             />
-            <HelpBlock>{this.state.expectedHoursError}</HelpBlock>
+            <FormText>{this.state.expectedHoursError}</FormText>
           </FormGroup>
         )}
         {!this.props.viewOnly && (
-          <FormGroup controlId="expectedStartDate" validationState={this.state.expectedStartDateError ? 'error' : null}>
-            <ControlLabel>
+          <FormGroup controlId="expectedStartDate">
+            <FormLabel>
               Start Date <sup>*</sup>
-            </ControlLabel>
+            </FormLabel>
             <DateControl
               id="expectedStartDate"
               date={this.state.expectedStartDate}
               updateState={this.updateState}
               title="Dated At"
+              isInvalid={this.state.expectedStartDateError}
             />
-            <HelpBlock>{this.state.expectedStartDateError}</HelpBlock>
+            <FormText>{this.state.expectedStartDateError}</FormText>
           </FormGroup>
         )}
         {!this.props.viewOnly && (
-          <FormGroup controlId="expectedEndDate" validationState={this.state.expectedEndDateError ? 'error' : null}>
-            <ControlLabel>End Date</ControlLabel>
+          <FormGroup controlId="expectedEndDate">
+            <FormLabel>End Date</FormLabel>
             <DateControl
               id="expectedEndDate"
               date={this.state.expectedEndDate}
               updateState={this.updateState}
               title="Dated At"
+              isInvalid={this.state.expectedEndDateError}
             />
-            <HelpBlock>{this.state.expectedEndDateError}</HelpBlock>
+            <FormText>{this.state.expectedEndDateError}</FormText>
           </FormGroup>
         )}
-        {this.state.savingError && <Alert bsStyle="danger">{this.state.savingError}</Alert>}
+        {this.state.savingError && <Alert variant="danger">{this.state.savingError}</Alert>}
       </div>
     );
   };

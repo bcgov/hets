@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon, Form } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Form } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import Moment from 'moment';
@@ -224,7 +225,7 @@ class RentalRequests extends React.Component {
 
   renderResults = (addRequestButtons) => {
     if (Object.keys(this.props.rentalRequests.data).length === 0) {
-      return <Alert bsStyle="success">No Rental Requests {addRequestButtons}</Alert>;
+      return <Alert variant="success">No Rental Requests {addRequestButtons}</Alert>;
     }
 
     var rentalRequests = _.sortBy(this.props.rentalRequests.data, (rentalRequest) => {
@@ -264,7 +265,7 @@ class RentalRequests extends React.Component {
           );
 
           return (
-            <tr key={request.id} className={request.isActive ? null : 'info'}>
+            <tr key={request.id} className={request.isActive ? null : 'bg-info'}>
               <td>{request.localAreaName}</td>
               <td style={{ textAlign: 'center' }}>{request.equipmentCount}</td>
               <td>{request.districtEquipmentName}</td>
@@ -372,10 +373,10 @@ class RentalRequests extends React.Component {
                         CUSTOM,
                       ]}
                     />
-                    <Button id="search-button" bsStyle="primary" type="submit">
+                    <Button id="search-button" variant="primary" type="submit">
                       Search
                     </Button>
-                    <Button id="clear-search-button" onClick={this.clearSearch}>
+                    <Button className="btn-custom" id="clear-search-button" onClick={this.clearSearch}>
                       Clear
                     </Button>
                   </ButtonToolbar>
@@ -406,14 +407,13 @@ class RentalRequests extends React.Component {
                 })()}
               </Col>
               <Col xs={3} sm={2} id="search-buttons">
-                <Row>
+                <Row className="float-right">
                   <Favourites
                     id="rental-requests-faves-dropdown"
                     type="rentalRequests"
                     favourites={this.props.favourites}
                     data={this.state.search}
                     onSelect={this.loadFavourite}
-                    pullRight
                   />
                 </Row>
               </Col>
@@ -434,11 +434,11 @@ class RentalRequests extends React.Component {
             <Authorize>
               <Button
                 title="Add Rental Request (View Only)"
-                className="hidden-print"
-                bsSize="xsmall"
+                className="hidden-print btn-custom"
+                size="sm"
                 onClick={() => this.openAddDialog(true)}
               >
-                <Glyphicon glyph="plus" />
+                <FontAwesomeIcon icon="plus" />
                 &nbsp;<strong>Request (View Only)</strong>
               </Button>
             </Authorize>
@@ -448,11 +448,11 @@ class RentalRequests extends React.Component {
             <Authorize>
               <Button
                 title="Add Rental Request"
-                className="hidden-print"
-                bsSize="xsmall"
+                className="hidden-print btn-custom"
+                size="sm"
                 onClick={() => this.openAddDialog(false)}
               >
-                <Glyphicon glyph="plus" />
+                <FontAwesomeIcon icon="plus" />
                 &nbsp;<strong>Add Rental Request</strong>
               </Button>
             </Authorize>

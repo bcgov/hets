@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import AuthorizedRoute from './components/AuthorizedRoute';
+import { keycloak } from './Keycloak';
 
 import * as Api from './api';
 import { ApiError } from './utils/http';
@@ -41,8 +42,14 @@ import AitReport from './views/AitReport.jsx';
 import Version from './views/Version.jsx';
 import FourOhFour from './views/404.jsx';
 
-function keepAlive() {
-  Api.keepAlive();
+import addIconsToLibrary from './fontAwesome';
+
+export async function keepAlive() {
+  try {
+    await keycloak.updateToken(70);
+  } catch {
+    console.log('Failed to refresh the token, or the session has expired');
+  }
 }
 
 window.setInterval(keepAlive, Constant.SESSION_KEEP_ALIVE_INTERVAL);
@@ -256,6 +263,8 @@ const App = ({ user }) => {
   const [loadProgress, setLoadProgress] = useState(5);
 
   useEffect(() => {
+    addIconsToLibrary();
+
     Api.getCurrentUser()
       .then((user) => {
         setLoadProgress(33);

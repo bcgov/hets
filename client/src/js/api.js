@@ -71,11 +71,6 @@ export function getCurrentUser() {
   });
 }
 
-export function keepAlive() {
-  // endpoint to keep session active
-  return new ApiRequest('/users/current').get(null, { keepAlive: true });
-}
-
 export function searchUsers(params) {
   store.dispatch({ type: Action.USERS_REQUEST });
   return new ApiRequest('/users/search').get(params).then((response) => {
@@ -1053,7 +1048,7 @@ export function getOwnerEquipment(ownerId) {
 }
 
 export function updateOwnerEquipment(owner, equipmentArray) {
-  return new ApiRequest(`/owners/${owner.id}/equipment`).put(equipmentArray).then(() => {});
+  return new ApiRequest(`/owners/${owner.id}/equipment`).put(equipmentArray);
 }
 
 export function getOwnerNotes(ownerId) {
@@ -2304,9 +2299,7 @@ export function releaseRentalAgreement(rentalAgreementId) {
 }
 
 export function generateRentalAgreementDocument(rentalAgreementId) {
-  return new ApiRequest(`/rentalagreements/${rentalAgreementId}/doc`).get(null, {
-    ignoreResponse: true,
-  });
+  return new ApiRequest(`/rentalagreements/${rentalAgreementId}/doc`);
 }
 
 export function searchAitReport(params) {

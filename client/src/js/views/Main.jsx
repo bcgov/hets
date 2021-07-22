@@ -13,7 +13,7 @@ import ConfirmDialog from './dialogs/ConfirmDialog.jsx';
 import ErrorDialog from './dialogs/ErrorDialog.jsx';
 import Countdown from '../components/Countdown.jsx';
 
-import { resetSessionTimeoutTimer } from '../App.jsx';
+import { resetSessionTimeoutTimer, keepAlive } from '../App.jsx';
 import { ApiError } from '../utils/http';
 import { bindActionCreators } from 'redux';
 
@@ -30,18 +30,7 @@ class Main extends React.Component {
     closeSessionTimeoutDialog: PropTypes.func,
   };
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      headerHeight: 0,
-    };
-  }
-
   componentDidMount() {
-    const height = document.getElementById('header-main').clientHeight;
-    this.setState({ headerHeight: height + 10 });
-
     window.addEventListener('unhandledrejection', this.unhandledRejection);
 
     if (this.props.user.hasPermission(Constant.PERMISSION_LOGIN)) {
@@ -88,17 +77,21 @@ class Main extends React.Component {
   }
 
   unhandledRejection = (e) => {
-    var err = e.detail.reason;
+    var err = e.reason;
 
     if (err instanceof ApiError) {
       this.props.unhandledApiError(err);
     }
   };
 
-  onCloseSessionTimeoutDialog = () => {
-    Api.keepAlive();
-    resetSessionTimeoutTimer();
-    this.props.closeSessionTimeoutDialog();
+  onCloseSessionTimeoutDialog = async () => {
+    try {
+      keepAlive(); //function from App.js to keep session alive
+      resetSessionTimeoutTimer();
+      this.props.closeSessionTimeoutDialog();
+    } catch {
+      console.log('Failed to refresh the token, or the session has expired');
+    }
   };
 
   onEndSession = () => {
@@ -114,7 +107,7 @@ class Main extends React.Component {
     return (
       <div id="main">
         <TopNav showNav={this.props.showNav} />
-        <div id="screen" className="template container" style={{ paddingTop: this.state.headerHeight }}>
+        <div id="screen" className="template container" style={{ paddingTop: 10 }}>
           {this.props.children}
         </div>
         <Footer />

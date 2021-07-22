@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Glyphicon } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, OverlayTrigger } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 
@@ -13,7 +14,6 @@ import store from '../store';
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SearchBar from '../components/ui/SearchBar.jsx';
 import Confirm from '../components/Confirm.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SearchControl from '../components/SearchControl.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
@@ -99,7 +99,7 @@ class Roles extends React.Component {
       <div id="roles-list">
         <PageHeader>
           Roles ({numRoles})
-          <ButtonGroup id="roles-buttons" className="pull-right">
+          <ButtonGroup id="roles-buttons" className="float-right">
             <PrintButton />
           </ButtonGroup>
         </PageHeader>
@@ -108,6 +108,7 @@ class Roles extends React.Component {
             <Col xs={9} sm={10} id="filters">
               <ButtonToolbar>
                 <SearchControl
+                  className="d-flex"
                   id="search"
                   search={this.state.search}
                   updateState={this.updateSearchState}
@@ -133,15 +134,15 @@ class Roles extends React.Component {
           var addRoleButton = (
             <Link to={`${Constant.ROLES_PATHNAME}/0`}>
               <Authorize>
-                <Button title="Add Role" bsSize="xsmall">
-                  <Glyphicon glyph="plus" />
+                <Button className="btn-custom" title="Add Role" size="sm">
+                  <FontAwesomeIcon icon="plus" />
                   &nbsp;<strong>Add Role</strong>
                 </Button>
               </Authorize>
             </Link>
           );
           if (Object.keys(this.props.roles).length === 0) {
-            return <Alert bsStyle="success">No roles {addRoleButton}</Alert>;
+            return <Alert variant="success">No roles {addRoleButton}</Alert>;
           }
 
           var roles = _.sortBy(
@@ -185,18 +186,22 @@ class Roles extends React.Component {
                     <td style={{ textAlign: 'right' }}>
                       <ButtonGroup>
                         <OverlayTrigger
-                          trigger="click"
+                          trigger="focus"
                           placement="top"
                           rootClose
                           overlay={<Confirm onConfirm={this.delete.bind(this, role)} />}
                         >
-                          <Button className={role.canDelete ? '' : 'hidden'} title="Delete Role" bsSize="xsmall">
-                            <Glyphicon glyph="trash" />
+                          <Button
+                            className={role.canDelete ? 'btn-custom' : 'hidden btn-custom'}
+                            title="Delete Role"
+                            size="sm"
+                          >
+                            <FontAwesomeIcon icon="trash-alt" />
                           </Button>
                         </OverlayTrigger>
                         <Link to={`${Constant.ROLES_PATHNAME}/${role.id}`}>
-                          <Button className={role.canEdit ? '' : 'hidden'} title="Edit Role" bsSize="xsmall">
-                            <Glyphicon glyph="pencil" />
+                          <Button className={role.canEdit ? 'btn-custom' : 'hidden'} title="Edit Role" size="sm">
+                            <FontAwesomeIcon icon="pencil-alt" />
                           </Button>
                         </Link>
                       </ButtonGroup>

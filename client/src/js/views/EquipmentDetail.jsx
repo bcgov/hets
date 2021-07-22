@@ -2,10 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Well, Row, Col } from 'react-bootstrap';
-import { Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
+import { Alert, Button, ButtonGroup, Badge, OverlayTrigger } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
-import Promise from 'bluebird';
 
 import EquipmentEditDialog from './dialogs/EquipmentEditDialog.jsx';
 import SeniorityEditDialog from './dialogs/SeniorityEditDialog.jsx';
@@ -24,7 +24,6 @@ import store from '../store';
 import BadgeLabel from '../components/BadgeLabel.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
 import Confirm from '../components/Confirm.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import History from '../components/History.jsx';
@@ -96,13 +95,6 @@ class EquipmentDetail extends React.Component {
     });
 
     let equipmentId = this.props.match.params.equipmentId;
-
-    const { equipment } = this.props;
-
-    // Only show loading spinner if there is no existing equipment in the store
-    if (equipment) {
-      this.setState({ loading: false });
-    }
 
     // Notes and documents need be fetched every time as they are not equipment-specific in the store ATM
     Api.getEquipmentNotes(equipmentId).then(() => this.setState({ loadingNotes: false }));
@@ -286,29 +278,41 @@ class EquipmentDetail extends React.Component {
                           onSelect={this.updateStatusState}
                         />
                       )}
-                      <Button className="mr-5 ml-5" title="Notes" onClick={this.showNotes} disabled={loadingNotes}>
+                      <Button
+                        className="mr-1 ml-1 btn-custom"
+                        title="Notes"
+                        onClick={this.showNotes}
+                        disabled={loadingNotes}
+                      >
                         Notes {!loadingNotes && `(${this.props.notes.length})`}
                       </Button>
-                      <Button title="Documents" onClick={this.showDocuments} disabled={loadingDocuments}>
+                      <Button
+                        title="Documents"
+                        className="btn-custom"
+                        onClick={this.showDocuments}
+                        disabled={loadingDocuments}
+                      >
                         Documents {!loadingDocuments && `(${Object.keys(this.props.documents).length})`}
                       </Button>
                     </Row>
                   </Col>
                   <Col sm={3}>
-                    <div className="pull-right">
+                    <div className="float-right">
                       <PrintButton />
                       <ReturnButton />
                     </div>
                   </Col>
                 </Row>
                 <Row id="equipment-bottom">
-                  <Label className={equipment.isMaintenanceContractor ? '' : 'hide'}>Maintenance Contractor</Label>
-                  <Label bsStyle={equipment.isHired ? 'success' : 'default'}>
+                  <Badge variant="secondary" className={equipment.isMaintenanceContractor ? '' : 'hide'}>
+                    Maintenance Contractor
+                  </Badge>
+                  <Badge variant={equipment.isHired ? 'success' : 'secondary'}>
                     {equipment.isHired ? 'Hired' : 'Not Hired'}
-                  </Label>
-                  <Label bsStyle={lastVerifiedStyle}>
+                  </Badge>
+                  <Badge variant={lastVerifiedStyle}>
                     Last Verified: {formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY)}
-                  </Label>
+                  </Badge>
                 </Row>
                 <div className="equipment-header">
                   <PageHeader title="Equipment Id" subTitle={`${equipment.equipmentCode} (${equipment.typeName})`} />
@@ -332,7 +336,7 @@ class EquipmentDetail extends React.Component {
 
           <Row>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader
                   title="Equipment Information"
                   editButtonTitle="Edit Equipment"
@@ -403,7 +407,7 @@ class EquipmentDetail extends React.Component {
                       <Col lg={4} md={6} sm={12} xs={12}>
                         <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Serial Number">
                           {equipment.serialNumber}
-                          {equipment.hasDuplicates ? <BadgeLabel bsStyle="danger">!</BadgeLabel> : null}
+                          {equipment.hasDuplicates ? <BadgeLabel variant="danger">!</BadgeLabel> : null}
                         </ColDisplay>
                       </Col>
                       {equipment.isDumpTruck && (
@@ -416,10 +420,10 @@ class EquipmentDetail extends React.Component {
                     </Row>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <Authorize>
                   <SubHeader
                     title="Attachments"
@@ -437,7 +441,7 @@ class EquipmentDetail extends React.Component {
                     );
                   }
                   if (!equipment.equipmentAttachments || Object.keys(equipment.equipmentAttachments).length === 0) {
-                    return <Alert bsStyle="success">No Attachments</Alert>;
+                    return <Alert variant="success">No Attachments</Alert>;
                   }
 
                   var physicalAttachments = _.sortBy(equipment.equipmentAttachments, this.state.ui.sortField);
@@ -462,23 +466,24 @@ class EquipmentDetail extends React.Component {
                             <td style={{ textAlign: 'right' }}>
                               <ButtonGroup>
                                 <Button
+                                  className="btn-custom"
                                   title="Edit Attachment"
-                                  bsSize="xsmall"
+                                  size="sm"
                                   onClick={this.openPhysicalAttachmentEditDialog.bind(this, attachment)}
                                 >
-                                  <Glyphicon glyph="pencil" />
+                                  <FontAwesomeIcon icon="pencil-alt" />
                                 </Button>
                                 <Authorize>
                                   <OverlayTrigger
-                                    trigger="click"
+                                    trigger="focus"
                                     placement="top"
                                     rootClose
                                     overlay={
                                       <Confirm onConfirm={this.deletePhysicalAttachment.bind(this, attachment.id)} />
                                     }
                                   >
-                                    <Button title="Delete Attachment" bsSize="xsmall">
-                                      <Glyphicon glyph="trash" />
+                                    <Button className="btn-custom" title="Delete Attachment" size="sm">
+                                      <FontAwesomeIcon icon="trash-alt" />
                                     </Button>
                                   </OverlayTrigger>
                                 </Authorize>
@@ -490,12 +495,12 @@ class EquipmentDetail extends React.Component {
                     </SortTable>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
           </Row>
           <Row>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader
                   title="Seniority"
                   editButtonTitle="Edit Seniority"
@@ -579,15 +584,15 @@ class EquipmentDetail extends React.Component {
                     </Row>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader title="History" />
                 {equipment.historyEntity && (
                   <History historyEntity={equipment.historyEntity} refresh={!this.state.reloading} />
                 )}
-              </Well>
+              </div>
             </Col>
           </Row>
         </div>

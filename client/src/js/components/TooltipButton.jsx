@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import classNames from 'classnames';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
-
 
 // simplifies adding tooltips for enabled and disabled buttons
 class TooltipButton extends React.Component {
@@ -13,8 +13,8 @@ class TooltipButton extends React.Component {
     onClick: PropTypes.func,
     className: PropTypes.string,
     style: PropTypes.object,
-    bsSize: PropTypes.string,
-    bsStyle: PropTypes.string,
+    size: PropTypes.string,
+    variant: PropTypes.string,
   };
 
   static defaultProps = {
@@ -22,21 +22,29 @@ class TooltipButton extends React.Component {
   };
 
   render() {
-    var buttonStyle = this.props.disabled ? {...this.props.style, pointerEvents : 'none' } : this.props.style;
+    var buttonStyle = this.props.disabled ? { ...this.props.style, pointerEvents: 'none' } : this.props.style;
 
     var button = (
-      <Button style={ buttonStyle } className={ this.props.className } bsStyle={this.props.bsStyle} bsSize={ this.props.bsSize } disabled={ this.props.disabled } onClick={ this.props.onClick }>
-        { this.props.children }
+      <Button
+        style={buttonStyle}
+        className={classNames(this.props.className, 'btn-custom')}
+        variant={this.props.variant}
+        size={this.props.size}
+        disabled={this.props.disabled}
+        onClick={this.props.onClick}
+      >
+        {this.props.children}
       </Button>
     );
-
     var tooltipContent = this.props.disabled ? this.props.disabledTooltip : this.props.enabledTooltip;
     if (tooltipContent) {
       return (
-        <OverlayTrigger placement="bottom" rootClose overlay={ <Tooltip id="button-tooltip">{ tooltipContent }</Tooltip> }>
-          <div style={{display: 'inline-block', cursor: 'not-allowed'}}>
-            { button }
-          </div>
+        <OverlayTrigger placement="bottom" rootClose overlay={<Tooltip id="button-tooltip">{tooltipContent}</Tooltip>}>
+          {(props) => (
+            <div style={{ display: 'inline-block', cursor: 'not-allowed' }} {...props}>
+              {button}
+            </div>
+          )}
         </OverlayTrigger>
       );
     } else {
@@ -44,6 +52,5 @@ class TooltipButton extends React.Component {
     }
   }
 }
-
 
 export default TooltipButton;

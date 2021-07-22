@@ -2,7 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
-import { Button, Glyphicon } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import * as Constant from '../constants';
 
@@ -57,7 +58,7 @@ class EquipmentTable extends React.Component {
       >
         {_.map(equipmentList, (equip) => {
           return (
-            <tr key={equip.id} className={equip.status === Constant.EQUIPMENT_STATUS_CODE_APPROVED ? null : 'info'}>
+            <tr key={equip.id} className={equip.status === Constant.EQUIPMENT_STATUS_CODE_APPROVED ? null : 'bg-info'}>
               <td>{equip.equipmentCode}</td>
               <td>{equip.localArea}</td>
               <td>
@@ -73,8 +74,8 @@ class EquipmentTable extends React.Component {
               <td>{formatDateTime(equip.lastVerifiedDate, 'YYYY-MMM-DD')}</td>
               <td style={{ textAlign: 'right' }}>
                 <Link to={`${Constant.EQUIPMENT_PATHNAME}/${equip.id}`}>
-                  <Button title="View Equipment" bsSize="xsmall">
-                    <Glyphicon glyph="edit" />
+                  <Button className="btn-custom" title="View Equipment" size="sm">
+                    <FontAwesomeIcon icon="edit" />
                   </Button>
                 </Link>
               </td>

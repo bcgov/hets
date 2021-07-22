@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {DropdownButton, MenuItem } from 'react-bootstrap';
+import { DropdownButton, Dropdown } from 'react-bootstrap';
 
 import * as Constant from '../constants';
 
 import TooltipButton from './TooltipButton.jsx';
-
 
 class StatusDropdown extends React.Component {
   static propTypes = {
@@ -18,8 +17,8 @@ class StatusDropdown extends React.Component {
     onSelect: PropTypes.func.isRequired,
   };
 
-  computeBsStyle = () => {
-    switch(this.props.status) {
+  computeVariant = () => {
+    switch (this.props.status) {
       case Constant.EQUIPMENT_STATUS_CODE_APPROVED:
       case Constant.OWNER_STATUS_CODE_APPROVED:
       case Constant.PROJECT_STATUS_CODE_ACTIVE:
@@ -34,25 +33,14 @@ class StatusDropdown extends React.Component {
   };
 
   render() {
-    const {
-      id,
-      className,
-      status,
-      statuses,
-      disabled,
-      disabledTooltip,
-    } = this.props;
+    const { id, className, status, statuses, disabled, disabledTooltip } = this.props;
 
-    const bsStyle = this.computeBsStyle();
+    const variant = this.computeVariant();
     const title = status || '';
 
     if (disabled) {
       return (
-        <TooltipButton
-          disabled={disabled}
-          disabledTooltip={disabledTooltip}
-          className={className}
-          bsStyle={bsStyle}>
+        <TooltipButton disabled={disabled} disabledTooltip={disabledTooltip} className={className} variant={variant}>
           {title}
         </TooltipButton>
       );
@@ -61,17 +49,21 @@ class StatusDropdown extends React.Component {
         <DropdownButton
           id={id}
           className={className}
-          bsStyle={bsStyle}
+          variant={variant}
           title={status || ''}
-          onSelect={this.props.onSelect}>
+          onSelect={this.props.onSelect}
+        >
           {statuses.map((item) => {
-            return <MenuItem key={item} eventKey={item}>{item}</MenuItem>;
+            return (
+              <Dropdown.Item key={item} eventKey={item}>
+                {item}
+              </Dropdown.Item>
+            );
           })}
         </DropdownButton>
       );
     }
   }
 }
-
 
 export default StatusDropdown;

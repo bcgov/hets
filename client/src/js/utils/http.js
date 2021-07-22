@@ -5,8 +5,7 @@ import store from '../store';
 import { keycloak } from '../Keycloak';
 
 import * as Constant from '../constants';
-
-import { resetSessionTimeoutTimer } from '../App.jsx';
+import { resetSessionTimeoutTimer } from '../App';
 
 var numRequestsInFlight = 0;
 
@@ -67,7 +66,10 @@ Resource404.prototype = Object.create(Error.prototype, {
 
 export async function request(path, options) {
   try {
-    await keycloak.updateToken(10);
+    if (await keycloak.updateToken(70)) {
+      //if token expires within 70 seconds it gets updated will return true to trigger resetSessionTimeoutTimer refresh.
+      resetSessionTimeoutTimer();
+    }
   } catch {
     console.log('Failed to refresh the token, or the session has expired');
   }
@@ -180,10 +182,6 @@ export async function request(path, options) {
 }
 
 export function jsonRequest(path, options) {
-  if (!options.keepAlive) {
-    resetSessionTimeoutTimer();
-  }
-
   var jsonHeaders = {
     Accept: 'application/json',
   };

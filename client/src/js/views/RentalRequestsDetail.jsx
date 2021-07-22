@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Well, Row, Col, Alert, Button, ButtonGroup, Glyphicon, Label } from 'react-bootstrap';
+import { Row, Col, Alert, Button, ButtonGroup, Badge, OverlayTrigger } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
-import Promise from 'bluebird';
 import Moment from 'moment';
 
 import HireOfferEditDialog from './dialogs/HireOfferEditDialog.jsx';
@@ -25,7 +25,6 @@ import Spinner from '../components/Spinner.jsx';
 import TableControl from '../components/TableControl.jsx';
 import Confirm from '../components/Confirm.jsx';
 import History from '../components/History.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import TooltipButton from '../components/TooltipButton.jsx';
 import ReturnButton from '../components/ReturnButton.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
@@ -84,16 +83,10 @@ class RentalRequestsDetail extends React.Component {
       rentalRequestId: this.props.match.params.rentalRequestId,
     });
 
-    const { rentalRequest } = this.props;
     const rentalRequestId = this.props.match.params.rentalRequestId;
 
     /* Documents need be fetched every time as they are not rentalRequest specific in the store ATM */
     Api.getRentalRequestDocuments(rentalRequestId).then(() => this.setState({ loadingDocuments: false }));
-
-    // Only show loading spinner if there is no existing rental request in the store
-    if (rentalRequest) {
-      this.setState({ loading: false });
-    }
 
     // Re-fetch rental request, rotationlist, and notes every time
     Promise.all([
@@ -250,25 +243,31 @@ class RentalRequestsDetail extends React.Component {
         <Row id="rental-requests-top" className="hidden-print">
           <Col sm={9}>
             <div id="rental-request-status">
-              <Label bsStyle={rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default'}>
+              <Badge variant={rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default'}>
                 {rentalRequest.status}
-              </Label>
+              </Badge>
             </div>
-            <Button title="Notes" disabled={loading} onClick={this.showNotes}>
+            <Button className="btn-custom" title="Notes" disabled={loading} onClick={this.showNotes}>
               Notes ({loading ? ' ' : rentalRequest.notes?.length})
             </Button>
-            <Button id="project-documents-button" title="Documents" disabled={loading} onClick={this.showDocuments}>
+            <Button
+              className="btn-custom"
+              id="project-documents-button"
+              title="Documents"
+              disabled={loading}
+              onClick={this.showDocuments}
+            >
               Documents ({loadingDocuments ? ' ' : Object.keys(this.props.documents).length})
             </Button>
           </Col>
           <Col sm={3}>
-            <div className="pull-right">
+            <div className="float-right">
               <ReturnButton />
             </div>
           </Col>
         </Row>
 
-        <Well className="request-information">
+        <div className="well request-information">
           <SubHeader
             title="Request Information"
             className="hidden-print"
@@ -349,28 +348,33 @@ class RentalRequestsDetail extends React.Component {
               </Row>
             );
           })()}
-        </Well>
+        </div>
 
-        <Well>
+        <div className="well">
           <SubHeader title="Hire Rotation List" className="hidden-print">
-            <PrintButton
-              title="Print Hire Rotation List"
-              disabled={loading}
-              disabledTooltip="Please wait for the request information to finish loading."
-            >
-              Hire Rotation List
-            </PrintButton>
-            <TooltipButton
-              onClick={this.printSeniorityList}
-              disabled={loading}
-              disabledTooltip="Please wait for the request information to finish loading."
-            >
-              <Glyphicon glyph="print" title="Print Seniority List" className="mr-5" />
-              <span>Seniority List</span>
-            </TooltipButton>
-            <CheckboxControl id="showAttachments" inline updateState={this.updateState}>
-              <small>Show Attachments</small>
-            </CheckboxControl>
+            <div className="d-flex align-items-baseline">
+              <PrintButton
+                title="Print Hire Rotation List"
+                disabled={loading}
+                disabledTooltip="Please wait for the request information to finish loading."
+              >
+                Hire Rotation List
+              </PrintButton>
+              <TooltipButton
+                onClick={this.printSeniorityList}
+                disabled={loading}
+                disabledTooltip="Please wait for the request information to finish loading."
+              >
+                <FontAwesomeIcon icon="print" title="Print Seniority List" className="mr-1" />
+                <span>Seniority List</span>
+              </TooltipButton>
+              <CheckboxControl
+                id="showAttachments"
+                inline
+                updateState={this.updateState}
+                label={<small>Show Attachments</small>}
+              />
+            </div>
           </SubHeader>
           {(() => {
             if (loading) {
@@ -384,7 +388,7 @@ class RentalRequestsDetail extends React.Component {
             var rotationList = this.props.rentalRequest?.rotationList;
 
             if (Object.keys(rotationList || []).length === 0) {
-              return <Alert bsStyle="success">No equipment</Alert>;
+              return <Alert variant="success">No equipment</Alert>;
             }
 
             // Sort in rotation list order
@@ -515,8 +519,8 @@ class RentalRequestsDetail extends React.Component {
 
                             if (listItem.maximumHours) {
                               return (
-                                <OverlayTrigger trigger="click" placement="top" rootClose overlay={confirm}>
-                                  <Button bsStyle="link" bsSize="xsmall">
+                                <OverlayTrigger trigger="focus" placement="top" rootClose overlay={confirm}>
+                                  <Button variant="link" size="sm">
                                     Max. hours reached
                                   </Button>
                                 </OverlayTrigger>
@@ -529,7 +533,7 @@ class RentalRequestsDetail extends React.Component {
                             ) {
                               return (
                                 <Button
-                                  bsStyle="link"
+                                  variant="link"
                                   title="Show Offer"
                                   onClick={() => this.openHireOfferDialog(listItem, showAllResponseFields)}
                                 >
@@ -548,14 +552,14 @@ class RentalRequestsDetail extends React.Component {
               </TableControl>
             );
           })()}
-        </Well>
+        </div>
 
-        <Well className="history">
+        <div className="well history">
           <SubHeader title="History" />
           {rentalRequest.historyEntity && (
             <History historyEntity={rentalRequest.historyEntity} refresh={!this.state.reloading} />
           )}
-        </Well>
+        </div>
         {this.state.showEditDialog && (
           <RentalRequestsEditDialog
             show={this.state.showEditDialog}

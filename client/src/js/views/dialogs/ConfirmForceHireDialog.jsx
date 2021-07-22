@@ -1,13 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Grid, Row, Col, FormGroup, HelpBlock, ControlLabel } from 'react-bootstrap';
+import { Container, Row, Col, FormGroup, FormText, FormLabel } from 'react-bootstrap';
 
 import FormDialog from '../../components/FormDialog.jsx';
 import FormInputControl from '../../components/FormInputControl.jsx';
 
 import { isBlank } from '../../utils/string';
-
 
 class ConfirmForceHireDialog extends React.Component {
   static propTypes = {
@@ -43,7 +42,7 @@ class ConfirmForceHireDialog extends React.Component {
 
     var valid = true;
 
-    if (isBlank(this.state.reasonForForceHire) ) {
+    if (isBlank(this.state.reasonForForceHire)) {
       this.setState({ reasonForForceHireError: 'Reason is required' });
       valid = false;
     }
@@ -63,21 +62,28 @@ class ConfirmForceHireDialog extends React.Component {
         onSubmit={this.formSubmitted}
         onClose={this.props.onClose}
         title="Force Hire"
-        backdropClassName="confirm-force-hire">
-        <Grid fluid>
+        backdropClassName="confirm-force-hire"
+      >
+        <Container fluid>
           <Col md={12}>
-            <p><strong>Are you sure you want to do a Force Hire?</strong></p>
+            <p>
+              <strong>Are you sure you want to do a Force Hire?</strong>
+            </p>
           </Col>
           <Row>
             <Col md={12}>
-              <FormGroup controlId="reasonForForceHire" validationState={ this.state.reasonForForceHireError ? 'error' : null }>
-                <ControlLabel>Reason for Force Hire</ControlLabel>
-                <FormInputControl componentClass="textarea" updateState={ this.updateState } />
-                <HelpBlock>{ this.state.reasonForForceHireError }</HelpBlock>
+              <FormGroup controlId="reasonForForceHire">
+                <FormLabel>Reason for Force Hire</FormLabel>
+                <FormInputControl
+                  as="textarea"
+                  updateState={this.updateState}
+                  isInvalid={this.state.reasonForForceHireError}
+                />
+                <FormText>{this.state.reasonForForceHireError}</FormText>
               </FormGroup>
             </Col>
           </Row>
-        </Grid>
+        </Container>
       </FormDialog>
     );
   }

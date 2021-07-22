@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Button, Glyphicon } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 
@@ -19,11 +20,11 @@ class EditButton extends React.Component {
     var button = (
       <Button
         title={`${this.props.view ? 'View' : 'Edit'} ${this.props.name}`}
-        bsSize="xsmall"
-        className={this.props.hide ? 'hidden' : ''}
+        size="sm"
+        className={this.props.hide ? 'hidden' : 'btn-custom'}
         {...props}
       >
-        <Glyphicon glyph={this.props.view ? 'edit' : 'pencil'} />
+        <FontAwesomeIcon icon={this.props.view ? 'edit' : 'pencil-alt'} />
       </Button>
     );
 

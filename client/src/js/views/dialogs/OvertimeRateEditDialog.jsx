@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { FormGroup, HelpBlock, ControlLabel, Row, Col } from 'react-bootstrap';
+import { FormGroup, FormText, FormLabel, Row, Col } from 'react-bootstrap';
 
 import * as Api from '../../api';
 import * as Constant from '../../constants';
@@ -39,8 +39,12 @@ class OvertimeRateEditDialog extends React.Component {
   };
 
   didChange = () => {
-    if (this.state.description !== this.props.overtimeRateType.description) { return true; }
-    if (this.state.value !== this.props.overtimeRateType.value) { return true; }
+    if (this.state.description !== this.props.overtimeRateType.description) {
+      return true;
+    }
+    if (this.state.value !== this.props.overtimeRateType.value) {
+      return true;
+    }
 
     return false;
   };
@@ -92,7 +96,9 @@ class OvertimeRateEditDialog extends React.Component {
 
         promise.then(() => {
           this.setState({ isSaving: false });
-          if (this.props.onSave) { this.props.onSave(); }
+          if (this.props.onSave) {
+            this.props.onSave();
+          }
           this.props.onClose();
         });
       } else {
@@ -105,28 +111,44 @@ class OvertimeRateEditDialog extends React.Component {
     return (
       <FormDialog
         id="overtime-rate-edit"
-        show={ this.props.show }
+        show={this.props.show}
         title="Edit Overtime Rate"
-        isSaving={ this.state.isSaving }
-        onClose={ this.props.onClose }
-        onSubmit={ this.formSubmitted }>
+        isSaving={this.state.isSaving}
+        onClose={this.props.onClose}
+        onSubmit={this.formSubmitted}
+      >
         <Row>
           <Col xs={6}>
-            <FormGroup controlId="description" validationState={ this.state.descriptionError ? 'error' : null }>
-              <ControlLabel>Description <sup>*</sup></ControlLabel>
-              <FormInputControl type="text" value={ this.state.description } updateState={ this.updateState }/>
-              <HelpBlock>{ this.state.descriptionError }</HelpBlock>
+            <FormGroup controlId="description">
+              <FormLabel>
+                Description <sup>*</sup>
+              </FormLabel>
+              <FormInputControl
+                type="text"
+                value={this.state.description}
+                updateState={this.updateState}
+                isInvalid={this.state.descriptionError}
+              />
+              <FormText>{this.state.descriptionError}</FormText>
             </FormGroup>
           </Col>
           <Col xs={6}>
-            <FormGroup controlId="value" validationState={ this.state.valueError ? 'error' : null }>
-              <ControlLabel>Value <sup>*</sup></ControlLabel>
+            <FormGroup controlId="value">
+              <FormLabel>
+                Value <sup>*</sup>
+              </FormLabel>
               <div>
-                <ControlLabel>$</ControlLabel>
-                <FormInputControl type="float" value={ this.state.value } updateState={ this.updateState } style={ { display: 'inline-block', width: '100px', margin: '0 5px' } } />
-                <ControlLabel>per hour</ControlLabel>
+                <FormLabel>$</FormLabel>
+                <FormInputControl
+                  type="float"
+                  value={this.state.value}
+                  updateState={this.updateState}
+                  isInvalid={this.state.valueError}
+                  style={{ display: 'inline-block', width: '100px', margin: '0 5px' }}
+                />
+                <FormLabel>per hour</FormLabel>
               </div>
-              <HelpBlock>{ this.state.valueError }</HelpBlock>
+              <FormText>{this.state.valueError}</FormText>
             </FormGroup>
           </Col>
         </Row>

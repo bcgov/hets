@@ -2,20 +2,19 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  Well,
   Row,
   Col,
   Alert,
-  Label,
+  Badge,
   Button,
-  Glyphicon,
   Popover,
   FormGroup,
-  HelpBlock,
+  FormText,
   ButtonGroup,
+  OverlayTrigger,
 } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
-import Promise from 'bluebird';
 
 import UserRoleAddDialog from './dialogs/UserRoleAddDialog.jsx';
 import UsersEditDialog from './dialogs/UsersEditDialog.jsx';
@@ -29,7 +28,6 @@ import store from '../store';
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
 import DateControl from '../components/DateControl.jsx';
-import OverlayTrigger from '../components/OverlayTrigger.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import Confirm from '../components/Confirm.jsx';
@@ -214,13 +212,13 @@ class UsersDetail extends React.Component {
           <Row id="users-top">
             <Col sm={8}>
               {!loading && (
-                <Label bsStyle={user.active ? 'success' : 'danger'}>
+                <Badge variant={user.active ? 'success' : 'danger'}>
                   {user.active ? 'Verified Active' : 'Inactive'}
-                </Label>
+                </Badge>
               )}
             </Col>
             <Col sm={4}>
-              <div className="pull-right">
+              <div className="float-right">
                 <PrintButton />
                 <ReturnButton />
               </div>
@@ -235,7 +233,7 @@ class UsersDetail extends React.Component {
 
           <Row>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader
                   title="General"
                   editButtonTitle="Edit User"
@@ -286,18 +284,18 @@ class UsersDetail extends React.Component {
                     </Row>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
           </Row>
           <Row>
             <Col md={12}>
-              <Well>
+              <div className="well">
                 <SubHeader title="Districts" />
                 {(() => {
                   var addDistrictButton = (
                     <Authorize>
-                      <Button title="Add District" bsSize="small" onClick={this.addUserDistrict}>
-                        <Glyphicon glyph="plus" />
+                      <Button className="btn-custom" title="Add District" size="sm" onClick={this.addUserDistrict}>
+                        <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add District</strong>
                       </Button>
                     </Authorize>
@@ -312,7 +310,7 @@ class UsersDetail extends React.Component {
                   }
 
                   if (this.props.userDistricts.data.length === 0) {
-                    return <Alert bsStyle="success">No Districts {addDistrictButton}</Alert>;
+                    return <Alert variant="success">No Districts {addDistrictButton}</Alert>;
                   }
 
                   const userDistricts = sort(
@@ -338,7 +336,7 @@ class UsersDetail extends React.Component {
                         return (
                           <tr key={district.id}>
                             <td>
-                              {district.isPrimary && <Glyphicon glyph="star" />}
+                              {district.isPrimary && <FontAwesomeIcon icon="star" />}
                               {district.district.name}
                             </td>
                             <td style={{ textAlign: 'right' }}>
@@ -346,22 +344,23 @@ class UsersDetail extends React.Component {
                                 <ButtonGroup>
                                   <Authorize>
                                     <OverlayTrigger
-                                      trigger="click"
+                                      trigger="focus"
                                       placement="top"
                                       rootClose
                                       overlay={<Confirm onConfirm={this.deleteDistrict.bind(this, district)} />}
                                     >
-                                      <Button title="Delete District" bsSize="xsmall">
-                                        <Glyphicon glyph="trash" />
+                                      <Button className="btn-custom" title="Delete District" size="sm">
+                                        <FontAwesomeIcon icon="trash-alt" />
                                       </Button>
                                     </OverlayTrigger>
                                   </Authorize>
                                   <Button
                                     title="Edit District"
-                                    bsSize="xsmall"
+                                    className="btn-custom"
+                                    size="sm"
                                     onClick={this.editUserDistrict.bind(this, district)}
                                   >
-                                    <Glyphicon glyph="edit" />
+                                    <FontAwesomeIcon icon="edit" />
                                   </Button>
                                 </ButtonGroup>
                               )}
@@ -372,12 +371,12 @@ class UsersDetail extends React.Component {
                     </TableControl>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
           </Row>
           <Row>
             <Col md={12}>
-              <Well id="users-access">
+              <div className="well" id="users-access">
                 <h3>
                   Access
                   <CheckboxControl
@@ -385,9 +384,8 @@ class UsersDetail extends React.Component {
                     id="showExpiredOnly"
                     checked={this.state.ui.showExpiredOnly}
                     updateState={this.updateUIState}
-                  >
-                    Show Expired Only
-                  </CheckboxControl>
+                    label="Show Expired Only"
+                  />
                 </h3>
                 {(() => {
                   if (loading) {
@@ -400,8 +398,8 @@ class UsersDetail extends React.Component {
 
                   var addUserRoleButton = (
                     <Authorize>
-                      <Button title="Add User Role" onClick={this.openUserRoleDialog} bsSize="xsmall">
-                        <Glyphicon glyph="plus" />
+                      <Button className="btn-custom" title="Add User Role" onClick={this.openUserRoleDialog} size="sm">
+                        <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add Role</strong>
                       </Button>
                     </Authorize>
@@ -415,7 +413,7 @@ class UsersDetail extends React.Component {
                     return include;
                   });
                   if (userRoles.length === 0) {
-                    return <Alert bsStyle="success">No roles {addUserRoleButton}</Alert>;
+                    return <Alert variant="success">No roles {addUserRoleButton}</Alert>;
                   }
 
                   userRoles = _.sortBy(userRoles, this.state.ui.sortField);
@@ -450,7 +448,7 @@ class UsersDetail extends React.Component {
                             <td>{formatDateTime(userRole.effectiveDate, Constant.DATE_FULL_MONTH_DAY_YEAR)}</td>
                             <td>
                               {formatDateTime(userRole.expiryDate, Constant.DATE_FULL_MONTH_DAY_YEAR)}
-                              &nbsp;{daysFromToday(userRole.expiryDate) < 0 ? <Glyphicon glyph="asterisk" /> : ''}
+                              &nbsp;{daysFromToday(userRole.expiryDate) < 0 ? <FontAwesomeIcon icon="asterisk" /> : ''}
                             </td>
                             <td style={{ textAlign: 'right' }}>
                               {userRole.expiryDate ? null : (
@@ -458,11 +456,10 @@ class UsersDetail extends React.Component {
                                   <OverlayTrigger
                                     trigger="click"
                                     placement="left"
-                                    rootClose
                                     overlay={<ExpireOverlay userRole={userRole} onSave={this.updateUserRole} />}
                                   >
-                                    <Button title="Expire User Role" bsSize="xsmall">
-                                      <Glyphicon glyph="pencil" />
+                                    <Button className="btn-custom" title="Expire User Role" size="sm">
+                                      <FontAwesomeIcon icon="pencil-alt" />
                                       &nbsp;Expire
                                     </Button>
                                   </OverlayTrigger>
@@ -475,7 +472,7 @@ class UsersDetail extends React.Component {
                     </SortTable>
                   );
                 })()}
-              </Well>
+              </div>
             </Col>
           </Row>
         </div>
@@ -510,7 +507,6 @@ class ExpireOverlay extends React.Component {
   static propTypes = {
     userRole: PropTypes.object.isRequired,
     onSave: PropTypes.func.isRequired,
-    hide: PropTypes.func,
   };
 
   constructor(props) {
@@ -541,28 +537,31 @@ class ExpireOverlay extends React.Component {
           roleId: this.props.userRole.role.id,
         },
       });
-      this.props.hide();
     }
   };
 
   render() {
     var props = _.omit(this.props, 'onSave', 'hide', 'userRole');
     return (
-      <Popover id="users-role-popover" title="Set Expiry Date" {...props}>
-        <Form inline onSubmit={this.saveUserRole}>
-          <FormGroup controlId="expiryDate" validationState={this.state.expiryDateError ? 'error' : null}>
-            <DateControl
-              id="expiryDate"
-              date={this.state.expiryDate}
-              updateState={this.updateState}
-              title="Expiry Date"
-            />
-            <HelpBlock>{this.state.expiryDateError}</HelpBlock>
-          </FormGroup>
-          <Button bsStyle="primary" onClick={this.saveUserRole} className="pull-right">
-            Save
-          </Button>
-        </Form>
+      <Popover id="users-role-popover" {...props}>
+        <Popover.Title>Set Expiry Date</Popover.Title>
+        <Popover.Content>
+          <Form inline onSubmit={this.saveUserRole}>
+            <FormGroup controlId="expiryDate">
+              <DateControl
+                id="expiryDate"
+                date={this.state.expiryDate}
+                updateState={this.updateState}
+                title="Expiry Date"
+                isInvalid={this.state.expiryDateError}
+              />
+              <FormText>{this.state.expiryDateError}</FormText>
+            </FormGroup>
+            <Button variant="primary" onClick={this.saveUserRole} className="float-right">
+              Save
+            </Button>
+          </Form>
+        </Popover.Content>
       </Popover>
     );
   }

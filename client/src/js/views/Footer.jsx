@@ -40,7 +40,7 @@ class Footer extends React.Component {
                     <a href="http://www2.gov.bc.ca/gov/content/home/contact-us">Contact Us</a>
                   </li>
                   {this.props.currentUser.hasPermission(PERMISSION_VERSION) && (
-                    <li className="pull-right" style={{ border: 0 }}>
+                    <li className="float-right" style={{ border: 0 }}>
                       <Link to={VERSION_PATHNAME}>Version</Link>
                     </li>
                   )}

@@ -1,22 +1,26 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Label } from 'react-bootstrap';
-
+import { Badge } from 'react-bootstrap';
 
 class BadgeLabel extends React.Component {
   static propTypes = {
-    bsClass: PropTypes.string,
-    bsStyle: PropTypes.string,
+    bsPrefix: PropTypes.string,
+    variant: PropTypes.string,
     className: PropTypes.string,
     children: PropTypes.node,
   };
 
   render() {
-    return <Label bsClass={ this.props.bsClass } bsStyle={ this.props.bsStyle } className={ `badge-label ${this.props.className || ''}` }>
-      { this.props.children }
-    </Label>;
+    return (
+      <Badge
+        bsPrefix={this.props.bsPrefix}
+        variant={this.props.variant}
+        className={`badge-label ${this.props.className || ''}`}
+      >
+        {this.props.children}
+      </Badge>
+    );
   }
 }
-
 
 export default BadgeLabel;
