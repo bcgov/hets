@@ -25,6 +25,7 @@ using HetsData.Mappings;
 using HetsData.Repositories;
 using Serilog.Ui.Web;
 using Serilog.Ui.PostgreSqlProvider.Extensions;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace HetsApi
 {
@@ -60,8 +61,18 @@ namespace HetsApi
             services.AddSerilogUi(options => options.UseNpgSql(connectionString, "het_log"));
 
             // add database context
-            services.AddDbContext<DbAppContext>(options => options.UseNpgsql(connectionString));
-            services.AddDbContext<DbAppMonitorContext>(options => options.UseNpgsql(connectionString));
+            services.AddDbContext<DbAppContext>(options =>
+            {
+                options.UseNpgsql(connectionString, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
+                options.ConfigureWarnings(o => o.Ignore(CoreEventId.RowLimitingOperationWithoutOrderByWarning));
+            });
+            
+            services.AddDbContext<DbAppMonitorContext>(options =>
+            {
+                options.UseNpgsql(connectionString, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
+                options.ConfigureWarnings(o => o.Ignore(CoreEventId.RowLimitingOperationWithoutOrderByWarning));
+            });
+
             services.AddScoped<IAnnualRollover, AnnualRollover>();
 
             services
