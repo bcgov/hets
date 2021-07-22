@@ -34,7 +34,7 @@ class BusinessOwner extends React.Component {
     super(props);
 
     this.state = {
-      loading: false,
+      loading: true,
 
       success: false,
 
@@ -61,8 +61,6 @@ class BusinessOwner extends React.Component {
       type: Action.SET_ACTIVE_OWNER_ID_UI,
       ownerId: this.props.match.params.ownerId,
     });
-    const ownerLoaded = Boolean(this.props.owner);
-    this.setState({ loading: !ownerLoaded, success: ownerLoaded });
 
     this.fetch().then(() => {
       this.setState({ loading: false });
@@ -127,8 +125,10 @@ class BusinessOwner extends React.Component {
         <div>
           <Row id="owners-top">
             <Col sm={9}>
-              <Badge className="ml-5">{owner?.status}</Badge>
-              <Badge className={owner?.isMaintenanceContractor ? 'ml-5' : 'hide'}>Maintenance Contractor</Badge>
+              <Badge variant="success">{owner?.status}</Badge>
+              <Badge className={owner?.isMaintenanceContractor ? 'ml-5' : 'hide'} variant="secondary">
+                Maintenance Contractor
+              </Badge>
             </Col>
             <Col sm={3}>
               <div className="float-right">

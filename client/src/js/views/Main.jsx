@@ -30,18 +30,7 @@ class Main extends React.Component {
     closeSessionTimeoutDialog: PropTypes.func,
   };
 
-  // constructor(props) {
-  //   super(props);
-
-  //   this.state = {
-  //     headerHeight: 10,
-  //   };
-  // }
-
   componentDidMount() {
-    // const height = document.getElementById('header').clientHeight;
-    // this.setState({ headerHeight: height + 10 });
-
     window.addEventListener('unhandledrejection', this.unhandledRejection);
 
     if (this.props.user.hasPermission(Constant.PERMISSION_LOGIN)) {
