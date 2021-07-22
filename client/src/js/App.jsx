@@ -264,15 +264,13 @@ const App = ({ user }) => {
 
   useEffect(() => {
     addIconsToLibrary();
-
+    setLoadProgress(33);
     Api.getCurrentUser()
       .then((user) => {
-        setLoadProgress(33);
-
+        setLoadProgress(75);
         return getLookups(user);
       })
       .then(() => {
-        setLoadProgress(75);
         setLoading(false);
       })
       .catch((error) => {
@@ -289,29 +287,24 @@ const App = ({ user }) => {
       <div id="initialization">
         <p id="init-message">Loading HETS&hellip;</p>
 
-        <div id="init-process" className="progress">
-          <ProgressBar
-            variant={apiError === null ? 'info' : 'danger'}
-            striped
-            className={apiError === null ? 'active' : 'progress-bar-danger'}
-            now={loadProgress}
-            min={0}
-            max={100}
-            label={`${loadProgress}% Complete`}
-            srOnly
-          ></ProgressBar>
-        </div>
+        <ProgressBar
+          variant={apiError === null ? 'info' : 'danger'}
+          striped
+          animated
+          now={loadProgress}
+          min={0}
+          max={100}
+          label={`${loadProgress}% Complete`}
+        ></ProgressBar>
 
         <div id="init-error">
           {apiError != null && (
             <div id="loading-error-message">
               <h4>Error loading application</h4>
-              <p>
-                {apiError}
-                <a href="mailto:tranit@gov.bc.ca" target="_top">
-                  TRANIT
-                </a>
-              </p>
+              <p>{apiError}</p>
+              <a href="mailto:tranit@gov.bc.ca" target="_top">
+                Email TRANIT
+              </a>
             </div>
           )}
         </div>
