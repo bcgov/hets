@@ -133,7 +133,7 @@ export const HISTORY_DOCUMENT = 'Document';
 
 // Session
 export const SESSION_TIMEOUT = 7200000; // 120 minutes
-export const SESSION_KEEP_ALIVE_INTERVAL = 600000; // 10 minutes
+export const SESSION_KEEP_ALIVE_INTERVAL = 240000; // 4 minutes
 
 // Max Field Lengths
 export const MAX_LENGTH_CGL_COMPANY_NAME = 150;

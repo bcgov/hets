@@ -46,7 +46,7 @@ import addIconsToLibrary from './fontAwesome';
 
 export async function keepAlive() {
   try {
-    await keycloak.updateToken(10);
+    await keycloak.updateToken(70);
   } catch {
     console.log('Failed to refresh the token, or the session has expired');
   }
