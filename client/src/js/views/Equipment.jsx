@@ -269,6 +269,7 @@ class Equipment extends React.Component {
 
                     <OverlayTrigger
                       placement="top"
+                      trigger={['hover', 'focus']}
                       rootClose
                       overlay={<Tooltip id="old-equipment-tooltip">Equipment 20 years or older</Tooltip>}
                     >

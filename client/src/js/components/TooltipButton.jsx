@@ -36,12 +36,15 @@ class TooltipButton extends React.Component {
         {this.props.children}
       </Button>
     );
-
     var tooltipContent = this.props.disabled ? this.props.disabledTooltip : this.props.enabledTooltip;
     if (tooltipContent) {
       return (
         <OverlayTrigger placement="bottom" rootClose overlay={<Tooltip id="button-tooltip">{tooltipContent}</Tooltip>}>
-          <div style={{ display: 'inline-block', cursor: 'not-allowed' }}>{button}</div>
+          {(props) => (
+            <div style={{ display: 'inline-block', cursor: 'not-allowed' }} {...props}>
+              {button}
+            </div>
+          )}
         </OverlayTrigger>
       );
     } else {
