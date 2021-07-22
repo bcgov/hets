@@ -13,7 +13,7 @@ import ConfirmDialog from './dialogs/ConfirmDialog.jsx';
 import ErrorDialog from './dialogs/ErrorDialog.jsx';
 import Countdown from '../components/Countdown.jsx';
 
-import { resetSessionTimeoutTimer } from '../App.jsx';
+import { resetSessionTimeoutTimer, keepAlive } from '../App.jsx';
 import { ApiError } from '../utils/http';
 import { bindActionCreators } from 'redux';
 
@@ -84,10 +84,14 @@ class Main extends React.Component {
     }
   };
 
-  onCloseSessionTimeoutDialog = () => {
-    Api.keepAlive();
-    resetSessionTimeoutTimer();
-    this.props.closeSessionTimeoutDialog();
+  onCloseSessionTimeoutDialog = async () => {
+    try {
+      keepAlive(); //function from App.js to keep session alive
+      resetSessionTimeoutTimer();
+      this.props.closeSessionTimeoutDialog();
+    } catch {
+      console.log('Failed to refresh the token, or the session has expired');
+    }
   };
 
   onEndSession = () => {

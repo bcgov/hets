@@ -71,11 +71,6 @@ export function getCurrentUser() {
   });
 }
 
-export function keepAlive() {
-  // endpoint to keep session active
-  return new ApiRequest('/users/current').get(null, { keepAlive: true });
-}
-
 export function searchUsers(params) {
   store.dispatch({ type: Action.USERS_REQUEST });
   return new ApiRequest('/users/search').get(params).then((response) => {
