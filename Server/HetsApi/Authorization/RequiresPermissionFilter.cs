@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using HetsApi.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -25,16 +26,18 @@ namespace HetsApi.Authorization
 
             if (!result.Succeeded)
             {
-                var problem = new ValidationProblemDetails()
-                {
-                    Type = "https://hets.bc.gov.ca/exception",
-                    Title = "Access denied",
-                    Status = StatusCodes.Status401Unauthorized,
-                    Detail = "Insufficient permission.",
-                    Instance = context.HttpContext.Request.Path
-                };
+                var problem = new HetsResponse("Access Denied", "Authorization failed.");
 
-                problem.Extensions.Add("traceId", context.HttpContext.TraceIdentifier);
+                //var problem = new ValidationProblemDetails()
+                //{
+                //    Type = "https://hets.bc.gov.ca/exception",
+                //    Title = "Access denied",
+                //    Status = StatusCodes.Status401Unauthorized,
+                //    Detail = "Insufficient permission.",
+                //    Instance = context.HttpContext.Request.Path
+                //};
+
+                //problem.Extensions.Add("traceId", context.HttpContext.TraceIdentifier);
 
                 context.Result = new UnauthorizedObjectResult(problem);
             }
