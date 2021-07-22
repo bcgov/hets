@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using HetsBceid;
+using HetsApi.Model;
 
 namespace HetsApi.Authentication
 {
@@ -36,16 +37,18 @@ namespace HetsApi.Authentication
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
 
-            var problem = new ValidationProblemDetails()
-            {
-                Type = "https://Hets.bc.gov.ca/exception",
-                Title = "Access denied",
-                Status = StatusCodes.Status401Unauthorized,
-                Detail = "Authentication failed.",
-                Instance = context.Request.Path
-            };
+            var problem = new HetsResponse("Access Denied", "Authentication failed.");
 
-            problem.Extensions.Add("traceId", context.HttpContext.TraceIdentifier);
+            //var problem = new ValidationProblemDetails()
+            //{
+            //    Type = "https://Hets.bc.gov.ca/exception",
+            //    Title = "Access denied",
+            //    Status = StatusCodes.Status401Unauthorized,
+            //    Detail = "Authentication failed.",
+            //    Instance = context.Request.Path
+            //};
+
+            //problem.Extensions.Add("traceId", context.HttpContext.TraceIdentifier);
 
             await context.Response.WriteJsonAsync(problem, "application/problem+json");
         }

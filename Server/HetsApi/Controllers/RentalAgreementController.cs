@@ -1323,7 +1323,7 @@ namespace HetsApi.Controllers
 
             if (!string.IsNullOrWhiteSpace(rentalAgreementNumber))
             {
-                agreements = agreements.Where(x => x.Number.Contains(rentalAgreementNumber.Trim(), StringComparison.InvariantCultureIgnoreCase));
+                agreements = agreements.Where(x => x.Number.ToUpper().Contains(rentalAgreementNumber.Trim().ToUpper()));
             }
 
             if (projectArray != null && projectArray.Length > 0)
