@@ -2633,7 +2633,6 @@ function parseRolloverStatus(status) {
 
 export function getRolloverStatus(districtId) {
   return new ApiRequest(`/districts/${districtId}/rolloverStatus`).get(null, { silent: true }).then((response) => {
-    console.log(response);
     var status = response.data;
     parseRolloverStatus(status);
     store.dispatch({

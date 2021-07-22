@@ -11,11 +11,13 @@ const keycloakConfig = {
 export const keycloak = Keycloak(keycloakConfig);
 
 export const init = (onSuccess) => {
-  keycloak.init({ onLoad: 'login-required', promiseType: 'native', pkceMethod: 'S256' }).then((authenticated) => {
-    if (authenticated && onSuccess) {
-      onSuccess();
-    }
-  });
+  keycloak
+    .init({ onLoad: 'login-required', promiseType: 'native', pkceMethod: 'S256', checkLoginIframe: false })
+    .then((authenticated) => {
+      if (authenticated && onSuccess) {
+        onSuccess();
+      }
+    });
 
   keycloak.onAuthLogout = () => {
     window.location.reload();
