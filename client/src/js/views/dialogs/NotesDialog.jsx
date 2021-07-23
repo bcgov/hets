@@ -124,11 +124,7 @@ class NotesDialog extends React.Component {
             );
           })}
         </TableControl>
-        {showNoNotesMessage && (
-          <Alert variant="success" style={{ marginTop: 10 }}>
-            No notes
-          </Alert>
-        )}
+        {showNoNotesMessage && <Alert variant="success">No notes</Alert>}
         <Authorize>
           <Button title="Add Note" size="sm" onClick={this.openNotesAddDialog}>
             <FontAwesomeIcon icon="plus" />

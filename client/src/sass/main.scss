@@ -80,7 +80,7 @@ a.light {
 .alert-success {
   @include flex;
   align-items: center;
-  margin-top: 30px;
+  margin-top: 10px;
 
   &:before {
     content: '';
