@@ -5,6 +5,12 @@
 
   @media print {
     overflow-y: visible !important;
+
+    & th,
+    td {
+      overflow: visible;
+      word-wrap: break-word;
+    }
   }
 
   #sort-table-refreshing-overlay {
@@ -14,8 +20,8 @@
     left: 0;
     right: 0;
     border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    background-color: rgba(0,0,0,0.1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.1);
     z-index: 1000;
     pointer-events: none;
 
@@ -25,6 +31,22 @@
       left: 50%;
       margin-top: -12px;
       margin-left: -12px;
+    }
+  }
+
+  .table {
+    table-layout: fixed;
+
+    & th,
+    td {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    & th:hover,
+    td:hover {
+      overflow: visible;
+      word-wrap: break-word;
     }
   }
 }
