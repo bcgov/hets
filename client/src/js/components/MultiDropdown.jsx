@@ -124,11 +124,7 @@ class MultiDropdown extends React.Component {
   };
 
   toggle = (open) => {
-    this.setState({ open: open }, () => {
-      if (open) {
-        this.input.focus();
-      }
-    });
+    this.setState({ open: open });
   };
 
   filter = (e) => {
@@ -172,7 +168,10 @@ class MultiDropdown extends React.Component {
               placeholder="Search"
               onChange={this.filter}
               ref={(ref) => {
-                this.input = ref;
+                if (ref) {
+                  //without a delay focus will not shift to input box when using keyboard shortcuts. I think the focus is called before input is rendered.
+                  setTimeout(() => ref.focus(), 100);
+                }
               }}
               autoComplete="off"
               onKeyDown={this.keyDown}
