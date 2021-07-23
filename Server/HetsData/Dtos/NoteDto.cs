@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace HetsData.Dtos
 {
@@ -14,6 +15,6 @@ namespace HetsData.Dtos
         public int? RentalRequestId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
         [JsonProperty("createDate")]
-        public string DbCreateTimeStamp { get; set; }
+        public DateTime DbCreateTimeStamp { get; set; }
     }
 }
