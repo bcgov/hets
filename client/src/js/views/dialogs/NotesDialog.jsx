@@ -37,12 +37,6 @@ class NotesDialog extends React.Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!_.isEqual(this.props.notes, nextProps.notes)) {
-      this.setState({ notes: nextProps.notes });
-    }
-  }
-
   openNotesAddDialog = () => {
     this.setState({ showNotesAddDialog: true });
   };
