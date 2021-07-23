@@ -42,6 +42,7 @@ namespace HetsData.Entities
         public int ConcurrencyControlNumber { get; set; }
 
         public virtual HetRegion Region { get; set; }
+        public virtual HetDistrictStatus HetDistrictStatus { get; set; }
         public virtual HetRolloverProgress HetRolloverProgress { get; set; }
         public virtual ICollection<HetBatchReport> HetBatchReports { get; set; }
         public virtual ICollection<HetConditionType> HetConditionTypes { get; set; }

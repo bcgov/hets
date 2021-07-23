@@ -930,11 +930,15 @@ namespace HetsData.Entities
 
             modelBuilder.Entity<HetDistrictStatus>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.DistrictId);
 
                 entity.ToTable("HET_DISTRICT_STATUS");
 
                 entity.HasIndex(e => e.DistrictId, "IX_HET_DISTRICT_STATUS_DISTRICT_ID");
+
+                entity.Property(e => e.DistrictId)
+                    .ValueGeneratedNever()
+                    .HasColumnName("DISTRICT_ID");
 
                 entity.Property(e => e.AppCreateTimestamp)
                     .HasColumnName("APP_CREATE_TIMESTAMP")
@@ -994,8 +998,6 @@ namespace HetsData.Entities
 
                 entity.Property(e => e.DistrictEquipmentTypeCount).HasColumnName("DISTRICT_EQUIPMENT_TYPE_COUNT");
 
-                entity.Property(e => e.DistrictId).HasColumnName("DISTRICT_ID");
-
                 entity.Property(e => e.LocalAreaCompleteCount).HasColumnName("LOCAL_AREA_COMPLETE_COUNT");
 
                 entity.Property(e => e.LocalAreaCount).HasColumnName("LOCAL_AREA_COUNT");
@@ -1009,8 +1011,9 @@ namespace HetsData.Entities
                 entity.Property(e => e.RolloverStartDate).HasColumnName("ROLLOVER_START_DATE");
 
                 entity.HasOne(d => d.District)
-                    .WithMany()
-                    .HasForeignKey(d => d.DistrictId)
+                    .WithOne(p => p.HetDistrictStatus)
+                    .HasForeignKey<HetDistrictStatus>(d => d.DistrictId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_HET_DISTRICT_STATUS_DISTRICT_ID");
             });
 

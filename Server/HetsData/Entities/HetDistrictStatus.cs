@@ -7,7 +7,7 @@ namespace HetsData.Entities
 {
     public partial class HetDistrictStatus
     {
-        public int? DistrictId { get; set; }
+        public int DistrictId { get; set; }
         public int? CurrentFiscalYear { get; set; }
         public int? NextFiscalYear { get; set; }
         public DateTime? RolloverStartDate { get; set; }

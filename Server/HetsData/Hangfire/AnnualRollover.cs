@@ -333,7 +333,8 @@ namespace HetsData.Hangfire
 
         private HetDistrictStatus GetStatus(int id)
         {
-            HetDistrictStatus status = _dbContextMain.HetDistrictStatuses
+            HetDistrictStatus status = _dbContextMain
+                .HetDistrictStatuses
                 .Include(a => a.District)
                 .FirstOrDefault(a => a.DistrictId == id);
 

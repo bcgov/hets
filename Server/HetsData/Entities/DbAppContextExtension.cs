@@ -114,9 +114,10 @@ namespace HetsData.Entities
         public override int SaveChanges()
         {
             // get all of the modified records
-            IEnumerable<EntityEntry> modifiedEntries = ChangeTracker.Entries()
+            List<EntityEntry> modifiedEntries = ChangeTracker.Entries()
                     .Where(e => e.State == EntityState.Added ||
-                                e.State == EntityState.Modified);
+                                e.State == EntityState.Modified)
+                    .ToList();
 
             // manage the audit columns and the concurrency column
             DateTime currentTime = DateTime.UtcNow;
