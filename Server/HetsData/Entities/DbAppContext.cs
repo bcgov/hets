@@ -35,6 +35,7 @@ namespace HetsData.Entities
         public virtual DbSet<HetEquipmentType> HetEquipmentTypes { get; set; }
         public virtual DbSet<HetHistory> HetHistories { get; set; }
         public virtual DbSet<HetLocalArea> HetLocalAreas { get; set; }
+        public virtual DbSet<HetLog> HetLogs { get; set; }
         public virtual DbSet<HetMimeType> HetMimeTypes { get; set; }
         public virtual DbSet<HetNote> HetNotes { get; set; }
         public virtual DbSet<HetNoteHist> HetNoteHists { get; set; }
@@ -1901,6 +1902,33 @@ namespace HetsData.Entities
                     .WithMany(p => p.HetLocalAreas)
                     .HasForeignKey(d => d.ServiceAreaId)
                     .HasConstraintName("FK_HET_LOCAL_AREA_SERVICE_AREA_ID");
+            });
+
+            modelBuilder.Entity<HetLog>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("het_log");
+
+                entity.Property(e => e.Exception).HasColumnName("exception");
+
+                entity.Property(e => e.Level).HasColumnName("level");
+
+                entity.Property(e => e.LogEvent)
+                    .HasColumnType("jsonb")
+                    .HasColumnName("log_event");
+
+                entity.Property(e => e.MachineName).HasColumnName("machine_name");
+
+                entity.Property(e => e.Message).HasColumnName("message");
+
+                entity.Property(e => e.MessageTemplate).HasColumnName("message_template");
+
+                entity.Property(e => e.PropsTest)
+                    .HasColumnType("json")
+                    .HasColumnName("props_test");
+
+                entity.Property(e => e.Timestamp).HasColumnName("timestamp");
             });
 
             modelBuilder.Entity<HetMimeType>(entity =>
