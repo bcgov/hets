@@ -71,6 +71,13 @@ objects:
                 limits:
                   cpu: ${CPU}
                   memory: ${MEMORY}
+              livenessProbe:
+                httpGet:
+                  path: /healthz
+                  port: 8080
+                initialDelaySeconds: 15
+                timeoutSeconds: 5
+                periodSeconds: 10
               env:
                 - name: ConnectionStrings__HETS
                   valueFrom:

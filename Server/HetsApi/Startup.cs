@@ -26,6 +26,12 @@ using HetsData.Repositories;
 using Serilog.Ui.Web;
 using Serilog.Ui.PostgreSqlProvider.Extensions;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using System.Net.Mime;
+using System.Text.Json;
+using System.Linq;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace HetsApi
 {
@@ -156,6 +162,8 @@ namespace HetsApi
             });
 
             services.AddBceidSoapClient(Configuration);
+            services.AddHealthChecks()
+                .AddNpgSql(connectionString, name: "HETS-DB-Check", failureStatus: HealthStatus.Degraded, tags: new string[] { "postgresql", "db" });
         }
 
         /// <summary>
@@ -169,6 +177,30 @@ namespace HetsApi
                 app.UseDeveloperExceptionPage();
             
             app.UseMiddleware<ExceptionMiddleware>();
+
+            var healthCheckOptions = new HealthCheckOptions
+            {
+                ResponseWriter = async (c, r) =>
+                {
+                    c.Response.ContentType = MediaTypeNames.Application.Json;
+                    var result = JsonSerializer.Serialize(
+                       new
+                       {
+                           checks = r.Entries.Select(e =>
+                              new {
+                                  description = e.Key,
+                                  status = e.Value.Status.ToString(),
+                                  tags = e.Value.Tags,
+                                  responseTime = e.Value.Duration.TotalMilliseconds
+                              }),
+                           totalResponseTime = r.TotalDuration.TotalMilliseconds
+                       });
+                    await c.Response.WriteAsync(result);
+                }
+            };
+
+            app.UseHealthChecks("/healthz", healthCheckOptions);
+
             app.UseHangfireDashboard();
             app.UseRouting();
             app.UseAuthentication();
