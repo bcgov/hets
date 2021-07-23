@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, InputGroup, Form, OverlayTrigger } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, InputGroup, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
@@ -176,8 +176,8 @@ class Users extends React.Component {
               <td style={{ textAlign: 'right' }}>
                 <ButtonGroup>
                   <Authorize>
-                    <DeleteButton onConfirm={this.delete.bind(this, user)} />
-                    <EditButton pathname={`${Constant.USERS_PATHNAME}/${user.id}`} />
+                    <DeleteButton onConfirm={this.delete.bind(this, user)} name="User" />
+                    <EditButton pathname={`${Constant.USERS_PATHNAME}/${user.id}`} name="User" />
                   </Authorize>
                 </ButtonGroup>
               </td>
