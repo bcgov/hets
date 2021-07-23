@@ -66,7 +66,7 @@ Resource404.prototype = Object.create(Error.prototype, {
 
 export async function request(path, options) {
   try {
-    if (await keycloak.updateToken(70)) {
+    if (await keycloak.updateToken(5)) {
       //if token expires within 70 seconds it gets updated will return true to trigger resetSessionTimeoutTimer refresh.
       resetSessionTimeoutTimer();
     }
