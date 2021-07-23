@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, InputGroup, Form, OverlayTrigger } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, InputGroup, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link } from 'react-router-dom';
 import _ from 'lodash';
 
 import UsersEditDialog from './dialogs/UsersEditDialog.jsx';
@@ -17,7 +16,8 @@ import AddButtonContainer from '../components/ui/AddButtonContainer.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SearchBar from '../components/ui/SearchBar.jsx';
 import CheckboxControl from '../components/CheckboxControl.jsx';
-import Confirm from '../components/Confirm.jsx';
+import EditButton from '../components/EditButton';
+import DeleteButton from '../components/DeleteButton.jsx';
 import Favourites from '../components/Favourites.jsx';
 import FormInputControl from '../components/FormInputControl.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
@@ -176,22 +176,9 @@ class Users extends React.Component {
               <td style={{ textAlign: 'right' }}>
                 <ButtonGroup>
                   <Authorize>
-                    <OverlayTrigger
-                      trigger="focus"
-                      placement="top"
-                      rootClose
-                      overlay={<Confirm onConfirm={this.delete.bind(this, user)} />}
-                    >
-                      <Button className={user.canDelete ? 'btn-custom' : 'hidden'} title="Delete User" size="sm">
-                        <FontAwesomeIcon icon="trash-alt" />
-                      </Button>
-                    </OverlayTrigger>
+                    <DeleteButton onConfirm={this.delete.bind(this, user)} name="User" />
+                    <EditButton pathname={`${Constant.USERS_PATHNAME}/${user.id}`} name="User" />
                   </Authorize>
-                  <Link to={`${Constant.USERS_PATHNAME}/${user.id}`}>
-                    <Button className={user.canEdit ? 'btn-custom' : 'hidden'} title="View User" size="sm">
-                      <FontAwesomeIcon icon="edit" />
-                    </Button>
-                  </Link>
                 </ButtonGroup>
               </td>
             </tr>

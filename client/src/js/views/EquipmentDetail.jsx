@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Row, Col } from 'react-bootstrap';
-import { Alert, Button, ButtonGroup, Badge, OverlayTrigger } from 'react-bootstrap';
+import { Alert, Button, ButtonGroup, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
@@ -23,7 +23,7 @@ import store from '../store';
 
 import BadgeLabel from '../components/BadgeLabel.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
-import Confirm from '../components/Confirm.jsx';
+import DeleteButton from '../components/DeleteButton.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import History from '../components/History.jsx';
@@ -474,18 +474,10 @@ class EquipmentDetail extends React.Component {
                                   <FontAwesomeIcon icon="pencil-alt" />
                                 </Button>
                                 <Authorize>
-                                  <OverlayTrigger
-                                    trigger="focus"
-                                    placement="top"
-                                    rootClose
-                                    overlay={
-                                      <Confirm onConfirm={this.deletePhysicalAttachment.bind(this, attachment.id)} />
-                                    }
-                                  >
-                                    <Button className="btn-custom" title="Delete Attachment" size="sm">
-                                      <FontAwesomeIcon icon="trash-alt" />
-                                    </Button>
-                                  </OverlayTrigger>
+                                  <DeleteButton
+                                    onConfirm={this.deletePhysicalAttachment.bind(this, attachment.id)}
+                                    name="Attachment"
+                                  />
                                 </Authorize>
                               </ButtonGroup>
                             </td>

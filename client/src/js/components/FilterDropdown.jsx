@@ -95,18 +95,10 @@ class FilterDropdown extends React.Component {
   };
 
   toggle = (open) => {
-    this.setState(
-      {
-        open: open,
-        filterTerm: '',
-      },
-      () => {
-        if (open) {
-          this.input.focus();
-          this.input.value = '';
-        }
-      }
-    );
+    this.setState({
+      open: open,
+      filterTerm: '',
+    });
   };
 
   filter = (e) => {
@@ -158,10 +150,13 @@ class FilterDropdown extends React.Component {
               placeholder="Search"
               onChange={this.filter}
               ref={(ref) => {
-                this.input = ref;
+                if (ref) {
+                  //without a delay focus will not shift to input box when using keyboard shortcuts. I think the focus is called before input is rendered.
+                  setTimeout(() => ref.focus(), 100);
+                }
               }}
               onKeyDown={this.keyDown}
-              autocomplete="off"
+              autoComplete="off"
             />
           </div>
           {items.length > 0 && (

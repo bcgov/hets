@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, OverlayTrigger } from 'react-bootstrap';
+import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
@@ -13,7 +13,8 @@ import store from '../store';
 
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SearchBar from '../components/ui/SearchBar.jsx';
-import Confirm from '../components/Confirm.jsx';
+import DeleteButton from '../components/DeleteButton';
+import EditButton from '../components/EditButton';
 import SearchControl from '../components/SearchControl.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
@@ -185,25 +186,8 @@ class Roles extends React.Component {
                     <td>{role.description}</td>
                     <td style={{ textAlign: 'right' }}>
                       <ButtonGroup>
-                        <OverlayTrigger
-                          trigger="focus"
-                          placement="top"
-                          rootClose
-                          overlay={<Confirm onConfirm={this.delete.bind(this, role)} />}
-                        >
-                          <Button
-                            className={role.canDelete ? 'btn-custom' : 'hidden btn-custom'}
-                            title="Delete Role"
-                            size="sm"
-                          >
-                            <FontAwesomeIcon icon="trash-alt" />
-                          </Button>
-                        </OverlayTrigger>
-                        <Link to={`${Constant.ROLES_PATHNAME}/${role.id}`}>
-                          <Button className={role.canEdit ? 'btn-custom' : 'hidden'} title="Edit Role" size="sm">
-                            <FontAwesomeIcon icon="pencil-alt" />
-                          </Button>
-                        </Link>
+                        <DeleteButton onConfirm={this.delete.bind(this, role)} name="Role" />
+                        <EditButton pathname={`${Constant.ROLES_PATHNAME}/${role.id}`} name="Role" />
                       </ButtonGroup>
                     </td>
                   </tr>
