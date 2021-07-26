@@ -413,7 +413,7 @@ class TimeEntryDialog extends React.Component {
 
   renderTimeRecordItem = (timeRecord) => {
     return (
-      <Row>
+      <Row key={timeRecord.id}>
         <Col xs={3}>
           <div>{formatDateTime(timeRecord.workedDate, 'YYYY-MMM-DD')}</div>
         </Col>
@@ -491,24 +491,26 @@ class TimeEntryDialog extends React.Component {
                     </Row>
                   )}
 
-                  {sortedTimeRecords.length > 0 && !this.state.showAllTimeRecords ? (
-                    <Row>{this.renderTimeRecordItem(sortedTimeRecords[0])}</Row>
-                  ) : (
-                    <Row>
-                      <Col xs={12}>
-                        <ul className="time-records-list">
-                          {_.map(sortedTimeRecords, (timeRecord) => (
-                            <li key={timeRecord.id} className="list-item">
-                              {this.renderTimeRecordItem(timeRecord)}
-                            </li>
-                          ))}
-                        </ul>
-                      </Col>
-                    </Row>
-                  )}
+                  {
+                    sortedTimeRecords.length > 0 && !this.state.showAllTimeRecords
+                      ? this.renderTimeRecordItem(sortedTimeRecords[0])
+                      : _.map(sortedTimeRecords, (timeRecord, index) => this.renderTimeRecordItem(timeRecord))
+
+                    // <Row>
+                    //   <Col xs={12}>
+                    //     <ul className="time-records-list">
+                    //       {_.map(sortedTimeRecords, (timeRecord) => (
+                    //         <li key={timeRecord.id} className="list-item">
+                    //           {this.renderTimeRecordItem(timeRecord)}
+                    //         </li>
+                    //       ))}
+                    //     </ul>
+                    //   </Col>
+                    // </Row>
+                  }
                 </div>
                 {sortedTimeRecords.length > 1 && (
-                  <Button onClick={this.showAllTimeRecords}>
+                  <Button className="btn-custom" onClick={this.showAllTimeRecords}>
                     {this.state.showAllTimeRecords ? 'Hide' : 'Show All'}
                   </Button>
                 )}
@@ -554,13 +556,13 @@ class TimeEntryDialog extends React.Component {
           <Row>
             <Col xs={12}>
               {this.state.numberOfInputs < 10 && (
-                <Button size="sm" onClick={this.addTimeEntryInput}>
+                <Button className="btn-custom" size="sm" onClick={this.addTimeEntryInput}>
                   <FontAwesomeIcon icon="plus" />
                   &nbsp;<strong>Add</strong>
                 </Button>
               )}
               {this.state.numberOfInputs > 1 && (
-                <Button size="sm" className="remove-btn" onClick={this.removeTimeEntryInput}>
+                <Button size="sm" className="btn-custom ml-3" onClick={this.removeTimeEntryInput}>
                   <FontAwesomeIcon icon="minus" />
                   &nbsp;<strong>Remove</strong>
                 </Button>

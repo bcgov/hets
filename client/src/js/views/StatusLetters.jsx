@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col, ButtonToolbar, Button } from 'react-bootstrap';
 import _ from 'lodash';
+import { saveAs } from 'file-saver';
 
 import * as Api from '../api';
 import * as Constant from '../constants';
@@ -40,51 +41,32 @@ class StatusLetters extends React.Component {
     });
   };
 
-  downloadFile = (promise, filename, mimeType) => {
-    promise.then((response) => {
-      var blob;
-      if (window.navigator.msSaveBlob) {
-        blob = window.navigator.msSaveBlob(response, filename);
-      } else {
-        blob = new Blob([response], { type: mimeType });
-      }
-      //Create a link element, hide it, direct
-      //it towards the blob, and then 'click' it programatically
-      let a = document.createElement('a');
-      a.style.cssText = 'display: none';
-      document.body.appendChild(a);
-      //Create a DOMString representing the blob
-      //and point the link element towards it
-      let url = window.URL.createObjectURL(blob);
-      a.href = url;
-      a.download = filename;
-      //programatically click the link to trigger the download
-      a.click();
-      //release the reference to the file by revoking the Object URL
-      window.URL.revokeObjectURL(url);
-    });
-  };
-
   getStatusLetters = () => {
-    const promise = Api.getStatusLettersDoc({
+    const filename = 'StatusLetters-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';
+    Api.getStatusLettersDoc({
       localAreas: this.state.localAreaIds,
       owners: this.state.ownerIds,
-    });
-    const filename = 'StatusLetters-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';
-    const mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-
-    this.downloadFile(promise, filename, mimeType);
+    })
+      .then((res) => {
+        saveAs(res, filename);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   getMailingLabel = () => {
-    const promise = Api.getMailingLabelsDoc({
+    const filename = 'MailingLabels-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';
+    Api.getMailingLabelsDoc({
       localAreas: this.state.localAreaIds,
       owners: this.state.ownerIds,
-    });
-    const filename = 'MailingLabels-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';
-    const mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-
-    this.downloadFile(promise, filename, mimeType);
+    })
+      .then((res) => {
+        saveAs(res, filename);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   matchesLocalAreaFilter = (localAreaId) => {

@@ -203,13 +203,13 @@ class RentalConditionsEditDialog extends React.Component {
         </div>
         <div className="align-right">
           {this.state.isNew && this.state.forms.length > 1 && (
-            <Button size="sm" className="remove-btn" onClick={this.removeInput}>
+            <Button size="sm" className="btn-custom mr-2" onClick={this.removeInput}>
               <FontAwesomeIcon icon="minus" />
               &nbsp;<strong>Remove</strong>
             </Button>
           )}
           {this.state.isNew && this.state.forms.length < 10 && (
-            <Button size="sm" onClick={this.addInput}>
+            <Button size="sm" className="btn-custom" onClick={this.addInput}>
               <FontAwesomeIcon icon="plus" />
               &nbsp;<strong>Add</strong>
             </Button>

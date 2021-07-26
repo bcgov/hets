@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import Moment from 'moment';
+import { saveAs } from 'file-saver';
 
 import HireOfferEditDialog from './dialogs/HireOfferEditDialog.jsx';
 import RentalRequestsEditDialog from './dialogs/RentalRequestsEditDialog.jsx';
@@ -178,39 +179,17 @@ class RentalRequestsDetail extends React.Component {
     }
   };
 
-  downloadDoc = (promise, filename) => {
-    promise.then((response) => {
-      var blob;
-      if (window.navigator.msSaveBlob) {
-        blob = window.navigator.msSaveBlob(response, filename);
-      } else {
-        blob = new Blob([response], {
-          type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        });
-      }
-      //Create a link element, hide it, direct
-      //it towards the blob, and then 'click' it programatically
-      let a = document.createElement('a');
-      a.style.cssText = 'display: none';
-      document.body.appendChild(a);
-      //Create a DOMString representing the blob
-      //and point the link element towards it
-      let url = window.URL.createObjectURL(blob);
-      a.href = url;
-      a.download = filename;
-      //programatically click the link to trigger the download
-      a.click();
-      //release the reference to the file by revoking the Object URL
-      window.URL.revokeObjectURL(url);
-    });
-  };
-
   printSeniorityList = () => {
-    var localAreaIds = [this.props.rentalRequest.localAreaId];
-    var districtEquipmentTypeIds = [this.props.rentalRequest.districtEquipmentTypeId];
-    var promise = Api.equipmentSeniorityListDoc(localAreaIds, districtEquipmentTypeIds);
-    var filename = 'SeniorityList-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';
-    this.downloadDoc(promise, filename);
+    let localAreaIds = [this.props.rentalRequest.localAreaId];
+    let districtEquipmentTypeIds = [this.props.rentalRequest.districtEquipmentTypeId];
+    let filename = 'SeniorityList-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';
+    Api.equipmentSeniorityListDoc(localAreaIds, districtEquipmentTypeIds)
+      .then((res) => {
+        saveAs(res, filename);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   addRequest = () => {};

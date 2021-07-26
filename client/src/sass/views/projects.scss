@@ -39,7 +39,8 @@
     margin: 0;
   }
 
-  th, td {
+  th,
+  td {
     max-width: 125px;
     white-space: nowrap;
     overflow: hidden;
@@ -49,7 +50,6 @@
   .btn {
     margin-left: 0;
   }
-
 }
 
 #projects-edit {
@@ -59,10 +59,6 @@
 }
 
 #time-entry {
-  .remove-btn {
-    margin-left: 5px;
-  }
-
   .column-title {
     margin-bottom: 5px;
     font-weight: bold;
