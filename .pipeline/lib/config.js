@@ -41,7 +41,7 @@ const phases = {
     client_memory: "100Mi",
   },
   test: {
-    namespace: "e0cee6-dev",
+    namespace: "e0cee6-test",
     name: `${name}`,
     phase: "test",
     changeId: changeId,
