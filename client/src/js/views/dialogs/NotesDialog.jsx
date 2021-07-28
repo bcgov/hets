@@ -119,7 +119,7 @@ class NotesDialog extends React.Component {
           })}
         </TableControl>
         {showNoNotesMessage && <Alert variant="success">No notes</Alert>}
-        <Authorize>
+        <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
           <Button title="Add Note" size="sm" onClick={this.openNotesAddDialog}>
             <FontAwesomeIcon icon="plus" />
             &nbsp;<strong>Add Note</strong>

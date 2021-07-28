@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import * as Constant from '../constants';
 
 class Authorize extends React.Component {
   static propTypes = {
     currentUser: PropTypes.object,
     children: PropTypes.node,
+    requires: PropTypes.string,
   };
 
   render() {
-    var authorized = this.props.currentUser.hasPermission(Constant.PERMISSION_WRITE_ACCESS);
+    var authorized = this.props.currentUser.hasPermission(this.props.requires);
 
     if (!authorized) {
       return <></>;

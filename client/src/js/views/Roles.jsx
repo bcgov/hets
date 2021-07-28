@@ -134,7 +134,7 @@ class Roles extends React.Component {
 
           var addRoleButton = (
             <Link to={`${Constant.ROLES_PATHNAME}/0`}>
-              <Authorize>
+              <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                 <Button className="btn-custom" title="Add Role" size="sm">
                   <FontAwesomeIcon icon="plus" />
                   &nbsp;<strong>Add Role</strong>

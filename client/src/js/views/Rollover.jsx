@@ -29,6 +29,7 @@ class Rollover extends React.Component {
       checkListStep1: false,
       checkListStep2: false,
       checkListStep3: false,
+      checkListStep4: false,
       refreshStatusTimerId: null,
     };
   }

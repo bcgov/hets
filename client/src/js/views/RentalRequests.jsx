@@ -287,7 +287,7 @@ class RentalRequests extends React.Component {
               <td style={{ textAlign: 'right' }}>
                 <ButtonGroup>
                   {request.canDelete && (
-                    <Authorize>
+                    <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                       <DeleteButton name="Rental Request" onConfirm={this.deleteRequest.bind(this, request)} />
                     </Authorize>
                   )}
@@ -431,7 +431,7 @@ class RentalRequests extends React.Component {
           }
 
           var addViewOnlyRequestButton = (
-            <Authorize>
+            <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
               <Button
                 title="Add Rental Request (View Only)"
                 className="hidden-print btn-custom"
@@ -445,7 +445,7 @@ class RentalRequests extends React.Component {
           );
 
           var addRentalRequestButton = (
-            <Authorize>
+            <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
               <Button
                 title="Add Rental Request"
                 className="hidden-print btn-custom"

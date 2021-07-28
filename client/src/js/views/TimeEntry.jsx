@@ -406,7 +406,7 @@ class TimeEntry extends React.Component {
           }
 
           var addTimeEntryButton = (
-            <Authorize>
+            <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
               <Button
                 className="btn-custom"
                 title="Add Time"

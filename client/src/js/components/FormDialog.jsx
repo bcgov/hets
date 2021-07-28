@@ -7,6 +7,8 @@ import Form from './Form.jsx';
 import Spinner from './Spinner.jsx';
 import Authorize from './Authorize.jsx';
 
+import * as Constant from '../constants';
+
 class FormDialog extends React.Component {
   static propTypes = {
     show: PropTypes.bool.isRequired,
@@ -46,7 +48,7 @@ class FormDialog extends React.Component {
             {closeButtonLabel || 'Close'}
           </Button>
           {!isReadOnly && (
-            <Authorize>
+            <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
               <Button variant="primary" type="submit" disabled={isSaving}>
                 {saveButtonLabel || 'Save'}
                 {isSaving && <Spinner />}

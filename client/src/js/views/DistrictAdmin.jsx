@@ -166,7 +166,7 @@ class DistrictAdmin extends React.Component {
             }
 
             var addDistrictEquipmentButton = (
-              <Authorize>
+              <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                 <Button
                   className="btn-custom"
                   title="Add District Equipment"
@@ -220,7 +220,7 @@ class DistrictAdmin extends React.Component {
                       <td>{equipment.equipmentType.name}</td>
                       <td style={{ textAlign: 'right' }}>
                         <ButtonGroup>
-                          <Authorize>
+                          <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                             <OverlayTrigger
                               trigger="focus"
                               placement="top"
@@ -262,7 +262,7 @@ class DistrictAdmin extends React.Component {
             }
 
             var addConditionButton = (
-              <Authorize>
+              <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                 <Button className="btn-custom" title="Add Condition" size="sm" onClick={this.addCondition}>
                   <FontAwesomeIcon icon="plus" />
                   &nbsp;<strong>Add Condition</strong>
@@ -321,7 +321,7 @@ class DistrictAdmin extends React.Component {
             );
           })()}
         </div>
-        <Authorize>
+        <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
           <div className="clearfix well">
             <SubHeader title="Equipment Transfer (Bulk)" />
             <Row>
