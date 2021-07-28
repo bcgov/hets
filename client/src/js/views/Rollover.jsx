@@ -184,9 +184,8 @@ class Rollover extends React.Component {
 
         <div className="clearfix">
           <OverlayTrigger
-            trigger="click"
+            trigger="focus"
             placement="top"
-            rootClose
             overlay={
               <Confirm onConfirm={this.initiateRollover}>
                 <p>Please ensure all processes corresponding to the checklist are complete before rolling over.</p>
