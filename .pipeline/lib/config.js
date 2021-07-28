@@ -71,7 +71,7 @@ const phases = {
     suffix: `-uat`,
     instance: `${name}-uat`,
     version: `${version}`,
-    tag: `test-${version}`,
+    tag: `uat-${version}`,
     host: `hets-e0cee6-uat.apps.silver.devops.gov.bc.ca`,
     dbUser: "trdbhett",
     dbSize: "1Gi",
