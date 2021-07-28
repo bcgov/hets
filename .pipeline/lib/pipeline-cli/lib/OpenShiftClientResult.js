@@ -20,6 +20,7 @@
 
 // const OpenShiftClient = require('./OpenShiftClient');
 const isEmpty = require('lodash.isempty');
+const deploy = require('../../deploy');
 
 module.exports = class OpenShiftClientResult {
   constructor(client) {
@@ -100,6 +101,9 @@ module.exports = class OpenShiftClientResult {
       }
 
       const deployData = OpenShiftClientResult.parseGetObjectValues(stdOut);
+
+      console.log(deployData);
+      
       deployData.forEach((d, index) => {
         // eslint-disable-next-line no-underscore-dangle
         deployment[deployment._keys[index]] = d;
