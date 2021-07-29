@@ -184,7 +184,7 @@ class RentalAgreementsDetail extends React.Component {
 
     var buttons = (
       <div className="float-right">
-        <Authorize>
+        <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
           <Button className="btn-custom" disabled={!rentalAgreement.isActive} onClick={this.openCloneDialog}>
             Copy Other Rental Agreement
           </Button>
@@ -375,7 +375,7 @@ class RentalAgreementsDetail extends React.Component {
             });
 
             var button = (
-              <Authorize>
+              <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                 <TooltipButton
                   title="Add Included Rates and Attachments"
                   size="sm"
@@ -421,7 +421,7 @@ class RentalAgreementsDetail extends React.Component {
                           <td>{obj.comment}</td>
                           <td style={{ textAlign: 'right' }}>
                             <ButtonGroup>
-                              <Authorize>
+                              <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                                 <DeleteButton
                                   name="Rate or Attachment"
                                   disabled={!obj.id}
@@ -464,7 +464,7 @@ class RentalAgreementsDetail extends React.Component {
             });
 
             var button = (
-              <Authorize>
+              <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                 <TooltipButton
                   title="Add Other Rates and Attachments"
                   size="sm"
@@ -510,7 +510,7 @@ class RentalAgreementsDetail extends React.Component {
                           <td>{obj.comment}</td>
                           <td style={{ textAlign: 'right' }}>
                             <ButtonGroup>
-                              <Authorize>
+                              <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                                 <DeleteButton
                                   name="Rate or Attachment"
                                   disabled={!obj.id}
@@ -554,7 +554,7 @@ class RentalAgreementsDetail extends React.Component {
             );
 
             var button = (
-              <Authorize>
+              <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                 <Button
                   title="Add Rental Condition"
                   size="sm"
@@ -594,7 +594,7 @@ class RentalAgreementsDetail extends React.Component {
                           <td>{obj.comment}</td>
                           <td style={{ textAlign: 'right' }}>
                             <ButtonGroup>
-                              <Authorize>
+                              <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                                 <DeleteButton
                                   name="Rental Condition"
                                   disabled={!obj.id}

@@ -293,7 +293,7 @@ class UsersDetail extends React.Component {
                 <SubHeader title="Districts" />
                 {(() => {
                   var addDistrictButton = (
-                    <Authorize>
+                    <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                       <Button className="btn-custom" title="Add District" size="sm" onClick={this.addUserDistrict}>
                         <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add District</strong>
@@ -342,7 +342,7 @@ class UsersDetail extends React.Component {
                             <td style={{ textAlign: 'right' }}>
                               {!district.isPrimary && (
                                 <ButtonGroup>
-                                  <Authorize>
+                                  <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                                     <OverlayTrigger
                                       trigger="focus"
                                       placement="top"
@@ -397,7 +397,7 @@ class UsersDetail extends React.Component {
                   }
 
                   var addUserRoleButton = (
-                    <Authorize>
+                    <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                       <Button className="btn-custom" title="Add User Role" onClick={this.openUserRoleDialog} size="sm">
                         <FontAwesomeIcon icon="plus" />
                         &nbsp;<strong>Add Role</strong>
@@ -452,7 +452,7 @@ class UsersDetail extends React.Component {
                             </td>
                             <td style={{ textAlign: 'right' }}>
                               {userRole.expiryDate ? null : (
-                                <Authorize>
+                                <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                                   <OverlayTrigger
                                     trigger="click"
                                     placement="left"

@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
 import * as Api from '../api';
+import * as Constant from '../constants';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import DeleteButton from '../components/DeleteButton.jsx';
@@ -192,7 +193,7 @@ class Favourites extends React.Component {
     var className = `favourites ${this.props.className || ''} `;
 
     return (
-      <Authorize>
+      <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
         <Dropdown id={this.props.id} className={className} title={title} open={this.state.open} onToggle={this.toggle}>
           <Dropdown.Toggle className="btn-custom">{title}</Dropdown.Toggle>
 

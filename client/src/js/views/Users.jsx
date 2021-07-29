@@ -175,7 +175,7 @@ class Users extends React.Component {
               <td>{user.districtName}</td>
               <td style={{ textAlign: 'right' }}>
                 <ButtonGroup>
-                  <Authorize>
+                  <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                     <DeleteButton onConfirm={this.delete.bind(this, user)} name="User" />
                     <EditButton pathname={`${Constant.USERS_PATHNAME}/${user.id}`} name="User" />
                   </Authorize>
@@ -276,7 +276,7 @@ class Users extends React.Component {
           }
 
           var addUserButton = (
-            <Authorize>
+            <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
               <Button className="btn-custom" title="Add User" size="sm" onClick={this.openUsersEditDialog}>
                 <FontAwesomeIcon icon="plus" />
                 &nbsp;<strong>Add User</strong>

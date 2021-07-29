@@ -301,7 +301,7 @@ class ProjectsDetail extends React.Component {
           {item.status === Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED ? (
             <div>Released</div>
           ) : (
-            <Authorize>
+            <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
               <OverlayTrigger
                 trigger="focus"
                 placement="top"
@@ -492,7 +492,7 @@ class ProjectsDetail extends React.Component {
                       label={<small>Show Completed</small>}
                     />
 
-                    <Authorize>
+                    <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                       <Button
                         className="btn-custom"
                         id="add-request-button"
@@ -558,7 +558,7 @@ class ProjectsDetail extends React.Component {
                   }
 
                   var addContactButton = (
-                    <Authorize>
+                    <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                       <Button
                         className="btn-custom"
                         title="Add Contact"

@@ -288,7 +288,7 @@ class Owners extends React.Component {
           }
 
           var addOwnerButton = (
-            <Authorize>
+            <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
               <Button className="btn-custom" title="Add Owner" size="sm" onClick={this.openAddDialog}>
                 <FontAwesomeIcon icon="plus" />
                 &nbsp;<strong>Add Owner</strong>

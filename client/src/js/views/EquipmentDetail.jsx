@@ -424,7 +424,7 @@ class EquipmentDetail extends React.Component {
             </Col>
             <Col md={12}>
               <div className="well">
-                <Authorize>
+                <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                   <SubHeader
                     title="Attachments"
                     editButtonTitle="Add Attachment"
@@ -473,7 +473,7 @@ class EquipmentDetail extends React.Component {
                                 >
                                   <FontAwesomeIcon icon="pencil-alt" />
                                 </Button>
-                                <Authorize>
+                                <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                                   <DeleteButton
                                     onConfirm={this.deletePhysicalAttachment.bind(this, attachment.id)}
                                     name="Attachment"

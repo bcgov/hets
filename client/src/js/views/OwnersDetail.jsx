@@ -368,7 +368,7 @@ class OwnersDetail extends React.Component {
                   Documents ({loadingDocuments ? ' ' : Object.keys(this.props.documents).length})
                 </Button>
               </ButtonGroup>
-              <Badge variant="secondary" className={owner.isMaintenanceContractor ? 'ml-5' : 'hide'} bg="secondary">
+              <Badge variant="secondary" className={owner.isMaintenanceContractor ? '' : 'd-none'} bg="secondary">
                 Maintenance Contractor
               </Badge>
             </Col>
@@ -526,7 +526,7 @@ class OwnersDetail extends React.Component {
                   }
 
                   var addContactButton = (
-                    <Authorize>
+                    <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                       <Button
                         title="Add Contact"
                         className="btn-custom"
@@ -589,7 +589,7 @@ class OwnersDetail extends React.Component {
                             <td style={{ textAlign: 'right' }}>
                               <ButtonGroup>
                                 {contact.canDelete && !contact.isPrimary && (
-                                  <Authorize>
+                                  <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                                     <DeleteButton name="Contact" onConfirm={this.deleteContact.bind(this, contact)} />
                                   </Authorize>
                                 )}
@@ -616,7 +616,7 @@ class OwnersDetail extends React.Component {
                       label={<small>Show Attachments</small>}
                     />
 
-                    <Authorize>
+                    <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                       <OverlayTrigger
                         trigger="focus"
                         placement="top"
@@ -721,7 +721,7 @@ class OwnersDetail extends React.Component {
                                   )
                                 : 'Not Approved'}
                             </td>
-                            <Authorize>
+                            <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                               <td style={{ textAlign: 'right' }}>
                                 <TooltipButton
                                   disabled={!isApproved}

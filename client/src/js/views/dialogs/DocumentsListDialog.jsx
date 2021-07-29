@@ -171,7 +171,7 @@ class DocumentsListDialog extends React.Component {
           {this.state.uploadInProgress ? (
             <ProgressBar active now={this.state.percentUploaded} min={5} />
           ) : (
-            <Authorize>
+            <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
               <div className="file-picker-container">
                 <FilePicker onFilesSelected={this.uploadFiles} />
                 <div>Select one or more files{parent.name ? ` to attach to ${parent.name}` : null}</div>
@@ -237,7 +237,7 @@ class DocumentsListDialog extends React.Component {
                             >
                               <FontAwesomeIcon icon="download" />
                             </Button>
-                            <Authorize>
+                            <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                               <DeleteButton
                                 name="Document"
                                 hide={!document.canDelete}
