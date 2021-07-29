@@ -14,6 +14,7 @@ import OwnersPolicyEditDialog from './dialogs/OwnersPolicyEditDialog.jsx';
 import NotesDialog from './dialogs/NotesDialog.jsx';
 import OwnerChangeStatusDialog from './dialogs/OwnerChangeStatusDialog.jsx';
 import StatusDropdown from '../components/StatusDropdown.jsx';
+import PromptDialog from './dialogs/PromptDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -81,6 +82,8 @@ class OwnersDetail extends React.Component {
       showDocumentsDialog: false,
       showNotesDialog: false,
       showChangeStatusDialog: false,
+      //temporary fix implement when needed for HETS-1315
+      //showPromptDialog: false,
 
       showAttachments: false,
 
@@ -321,6 +324,11 @@ class OwnersDetail extends React.Component {
   closeNotesDialog = () => {
     this.setState({ showNotesDialog: false });
   };
+
+  //temporary fix implement when needed for HETS-1315
+  // toggleEquipmentPromptDialog = () => {
+  //   this.setState({ showPromptDialog: !this.state.showPromptDialog });
+  // };
 
   render() {
     const { loading, loadingDocuments } = this.state;
@@ -640,6 +648,8 @@ class OwnersDetail extends React.Component {
                         title="Add Equipment"
                         size="sm"
                         onClick={this.openEquipmentDialog}
+                        //temporary fix activate when needed for ticket HETS-1315
+                        // onClick={this.toggleEquipmentPromptDialog}
                       >
                         <FontAwesomeIcon icon="plus" />
                       </TooltipButton>
@@ -812,6 +822,17 @@ class OwnersDetail extends React.Component {
             onClose={this.closeContactDialog}
           />
         )}
+        {/*         temporary fix promptDialog doesn't need to be implemented yet HETS-1315
+        <PromptDialog
+          show={this.state.showPromptDialog}
+          toggle={this.toggleEquipmentPromptDialog}
+          onConfirm={this.openEquipmentDialog}
+          size="sm"
+          autofocus
+        >
+          <strong>You are creating a new piece of equipment</strong>
+          <div>This does not create new attachments</div>
+        </PromptDialog> */}
       </div>
     );
   }
