@@ -34,7 +34,7 @@ import Watermark from '../components/Watermark.jsx';
 import { formatDateTime, formatDateTimeUTCToLocal } from '../utils/date';
 import { concat } from '../utils/string';
 import PrintButton from '../components/PrintButton.jsx';
-import { activeRentalRequestSelector, activeRentalRequestIdSelector } from '../selectors/ui-selectors.js';
+import { activeRentalRequestSelector } from '../selectors/ui-selectors.js';
 
 /*
 
@@ -50,7 +50,6 @@ const STATUS_IN_PROGRESS = 'In Progress';
 
 class RentalRequestsDetail extends React.Component {
   static propTypes = {
-    rentalRequestId: PropTypes.number,
     rentalRequest: PropTypes.object,
     documents: PropTypes.object,
     ui: PropTypes.object,
@@ -74,7 +73,7 @@ class RentalRequestsDetail extends React.Component {
       rotationListHireOffer: {},
       showAllResponseFields: false,
 
-      isNew: props.rentalRequestId === 0,
+      isNew: props.match.params.rentalRequestId === 0,
     };
   }
 
@@ -582,7 +581,6 @@ class RentalRequestsDetail extends React.Component {
 function mapStateToProps(state) {
   return {
     rentalRequest: activeRentalRequestSelector(state),
-    rentalRequestId: activeRentalRequestIdSelector(state),
     documents: state.models.documents,
   };
 }

@@ -28,7 +28,7 @@ import SubHeader from '../components/ui/SubHeader.jsx';
 import ReturnButton from '../components/ReturnButton.jsx';
 import Authorize from '../components/Authorize.jsx';
 
-import { activeRentalAgreementSelector, activeRentalAgreementIdSelector } from '../selectors/ui-selectors';
+import { activeRentalAgreementSelector } from '../selectors/ui-selectors';
 
 import { formatDateTime, formatDateTimeUTCToLocal } from '../utils/date';
 import { formatCurrency } from '../utils/string';
@@ -36,7 +36,6 @@ import { formatCurrency } from '../utils/string';
 class RentalAgreementsDetail extends React.Component {
   static propTypes = {
     rentalAgreement: PropTypes.object,
-    rentalAgreementId: PropTypes.number,
     rentalConditions: PropTypes.array,
     ui: PropTypes.object,
     location: PropTypes.object,
@@ -722,7 +721,6 @@ class RentalAgreementsDetail extends React.Component {
 function mapStateToProps(state) {
   return {
     rentalAgreement: activeRentalAgreementSelector(state),
-    rentalAgreementId: activeRentalAgreementIdSelector(state),
   };
 }
 

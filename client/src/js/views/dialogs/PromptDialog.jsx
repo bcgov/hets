@@ -38,7 +38,11 @@ const PromptDialog = ({ show, toggle, onConfirm, children, ...props }) => {
   );
 };
 
-PromptDialog.propTypes = {};
+PromptDialog.propTypes = {
+  show: PropTypes.bool.isRequired,
+  toggle: PropTypes.func.isRequired,
+  onConfirm: PropTypes.func.isRequired, //should be function to open up next modal if users clicks to continue.
+};
 
 PromptDialog.defaultProps = {
   size: 'md',

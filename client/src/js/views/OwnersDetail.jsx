@@ -37,7 +37,7 @@ import SubHeader from '../components/ui/SubHeader.jsx';
 import PrintButton from '../components/PrintButton.jsx';
 import Authorize from '../components/Authorize.jsx';
 
-import { activeOwnerSelector, activeOwnerIdSelector } from '../selectors/ui-selectors.js';
+import { activeOwnerSelector } from '../selectors/ui-selectors.js';
 
 import { formatDateTime, formatDateTimeUTCToLocal, today, toZuluTime } from '../utils/date';
 import { sortDir, sort } from '../utils/array.js';
@@ -58,7 +58,6 @@ const OWNER_WITH_EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE =
 
 class OwnersDetail extends React.Component {
   static propTypes = {
-    ownerId: PropTypes.number.isRequired,
     owner: PropTypes.object,
     documents: PropTypes.object,
     uiContacts: PropTypes.object,
@@ -841,7 +840,6 @@ class OwnersDetail extends React.Component {
 function mapStateToProps(state) {
   return {
     owner: activeOwnerSelector(state),
-    ownerId: activeOwnerIdSelector(state), //TODO: check if ownerID is still needed as a redux prop. Could be removed?
     documents: state.models.documents,
     uiContacts: state.ui.ownerContacts,
     uiEquipment: state.ui.ownerEquipment,

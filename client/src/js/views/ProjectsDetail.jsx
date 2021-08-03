@@ -34,7 +34,7 @@ import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
 import Authorize from '../components/Authorize.jsx';
 
-import { activeProjectSelector, activeProjectIdSelector } from '../selectors/ui-selectors.js';
+import { activeProjectSelector } from '../selectors/ui-selectors.js';
 
 import { formatDateTime } from '../utils/date';
 import { sort, caseInsensitiveSort } from '../utils/array.js';
@@ -49,7 +49,6 @@ const STATUS_NOT_EDITABLE_MESSAGE =
 
 class ProjectsDetail extends React.Component {
   static propTypes = {
-    projectId: PropTypes.number,
     project: PropTypes.object,
     documents: PropTypes.object,
     uiContacts: PropTypes.object,
@@ -704,7 +703,6 @@ class ProjectsDetail extends React.Component {
 function mapStateToProps(state) {
   return {
     project: activeProjectSelector(state),
-    projectId: activeProjectIdSelector(state), //TODO: see if this is still required. Seems to work fine without it.
     documents: state.models.documents,
     uiContacts: state.ui.projectContacts,
   };

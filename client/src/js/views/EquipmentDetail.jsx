@@ -34,7 +34,7 @@ import ReturnButton from '../components/ReturnButton.jsx';
 import PrintButton from '../components/PrintButton.jsx';
 import Authorize from '../components/Authorize.jsx';
 
-import { activeEquipmentSelector, activeEquipmentIdSelector } from '../selectors/ui-selectors';
+import { activeEquipmentSelector } from '../selectors/ui-selectors';
 
 import { formatDateTime } from '../utils/date';
 import { formatHours } from '../utils/string';
@@ -53,7 +53,6 @@ const EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE =
 class EquipmentDetail extends React.Component {
   static propTypes = {
     equipment: PropTypes.object,
-    equipmentId: PropTypes.number,
     notes: PropTypes.array,
     attachments: PropTypes.object,
     documents: PropTypes.object,
@@ -649,7 +648,6 @@ class EquipmentDetail extends React.Component {
 function mapStateToProps(state) {
   return {
     equipment: activeEquipmentSelector(state),
-    equipmentId: activeEquipmentIdSelector(state), //TODO: check if this is still needed. Seems to work when commented out.
     notes: state.models.equipmentNotes,
     attachments: state.models.equipmentAttachments,
     documents: state.models.documents,
