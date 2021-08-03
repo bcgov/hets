@@ -251,7 +251,8 @@ class Owners extends React.Component {
                   <FormInputControl
                     id="ownerName"
                     type="text"
-                    placeholder="Company Name"
+                    placeholder="Company Name or dba"
+                    title="Searches company name and doing business as fields."
                     value={this.state.search.ownerName}
                     updateState={this.updateSearchState}
                   />
