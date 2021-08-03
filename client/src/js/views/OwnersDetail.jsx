@@ -14,6 +14,7 @@ import OwnersPolicyEditDialog from './dialogs/OwnersPolicyEditDialog.jsx';
 import NotesDialog from './dialogs/NotesDialog.jsx';
 import OwnerChangeStatusDialog from './dialogs/OwnerChangeStatusDialog.jsx';
 import StatusDropdown from '../components/StatusDropdown.jsx';
+import PromptDialog from './dialogs/PromptDialog.jsx';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -36,7 +37,7 @@ import SubHeader from '../components/ui/SubHeader.jsx';
 import PrintButton from '../components/PrintButton.jsx';
 import Authorize from '../components/Authorize.jsx';
 
-import { activeOwnerSelector, activeOwnerIdSelector } from '../selectors/ui-selectors.js';
+import { activeOwnerSelector } from '../selectors/ui-selectors.js';
 
 import { formatDateTime, formatDateTimeUTCToLocal, today, toZuluTime } from '../utils/date';
 import { sortDir, sort } from '../utils/array.js';
@@ -57,7 +58,6 @@ const OWNER_WITH_EQUIPMENT_IN_ACTIVE_RENTAL_REQUEST_WARNING_MESSAGE =
 
 class OwnersDetail extends React.Component {
   static propTypes = {
-    ownerId: PropTypes.number.isRequired,
     owner: PropTypes.object,
     documents: PropTypes.object,
     uiContacts: PropTypes.object,
@@ -81,6 +81,8 @@ class OwnersDetail extends React.Component {
       showDocumentsDialog: false,
       showNotesDialog: false,
       showChangeStatusDialog: false,
+      //temporary fix implement when needed for HETS-1315
+      //showPromptDialog: false,
 
       showAttachments: false,
 
@@ -321,6 +323,11 @@ class OwnersDetail extends React.Component {
   closeNotesDialog = () => {
     this.setState({ showNotesDialog: false });
   };
+
+  //temporary fix implement when needed for HETS-1315
+  // toggleEquipmentPromptDialog = () => {
+  //   this.setState({ showPromptDialog: !this.state.showPromptDialog });
+  // };
 
   render() {
     const { loading, loadingDocuments } = this.state;
@@ -640,6 +647,8 @@ class OwnersDetail extends React.Component {
                         title="Add Equipment"
                         size="sm"
                         onClick={this.openEquipmentDialog}
+                        //temporary fix activate when needed for ticket HETS-1315
+                        // onClick={this.toggleEquipmentPromptDialog}
                       >
                         <FontAwesomeIcon icon="plus" />
                       </TooltipButton>
@@ -812,6 +821,17 @@ class OwnersDetail extends React.Component {
             onClose={this.closeContactDialog}
           />
         )}
+        {/*         temporary fix promptDialog doesn't need to be implemented yet HETS-1315
+        <PromptDialog
+          show={this.state.showPromptDialog}
+          toggle={this.toggleEquipmentPromptDialog}
+          onConfirm={this.openEquipmentDialog}
+          size="sm"
+          autofocus
+        >
+          <strong>You are creating a new piece of equipment</strong>
+          <div>This does not create new attachments</div>
+        </PromptDialog> */}
       </div>
     );
   }
@@ -820,7 +840,6 @@ class OwnersDetail extends React.Component {
 function mapStateToProps(state) {
   return {
     owner: activeOwnerSelector(state),
-    ownerId: activeOwnerIdSelector(state), //TODO: check if ownerID is still needed as a redux prop. Could be removed?
     documents: state.models.documents,
     uiContacts: state.ui.ownerContacts,
     uiEquipment: state.ui.ownerEquipment,

@@ -16,7 +16,7 @@ namespace HetsReport
     {
         private const string ResourceName = "HetsReport.Templates.SeniorityList-Template.docx";
 
-        public static byte[] GetSeniorityList(SeniorityListReportViewModel reportModel, string name)
+        public static byte[] GetSeniorityList(SeniorityListReportViewModel reportModel, string name, bool counterCopy)
         {
             try
             {
@@ -76,7 +76,7 @@ namespace HetsReport
                                 listDocument.MainDocumentPart.Document.Save();
 
                                 // setup table for seniority list
-                                Table seniorityTable = GenerateSeniorityTable(seniorityList.SeniorityList, seniorityList);
+                                Table seniorityTable = GenerateSeniorityTable(seniorityList.SeniorityList, seniorityList, counterCopy);
 
                                 // find our paragraph
                                 Paragraph tableParagraph = null;
@@ -220,7 +220,7 @@ namespace HetsReport
             }
         }
 
-        private static Table GenerateSeniorityTable(IEnumerable<SeniorityViewModel> seniorityList, SeniorityListRecord seniorityRecord)
+        private static Table GenerateSeniorityTable(IEnumerable<SeniorityViewModel> seniorityList, SeniorityListRecord seniorityRecord, bool counterCopy)
         {
             try
             {
@@ -261,16 +261,21 @@ namespace HetsReport
                 // add columns
                 tableRow1.AppendChild(SetupHeaderCell("Block", "800", true));
                 tableRow1.AppendChild(SetupHeaderCell("Equip ID", "1000"));
-                tableRow1.AppendChild(SetupHeaderCell("Working Now", "850", true));
-                tableRow1.AppendChild(SetupHeaderCell("Last Called", "850", true));
+
+                if (!counterCopy)
+                {
+                    tableRow1.AppendChild(SetupHeaderCell("Working Now", "850", true));
+                    tableRow1.AppendChild(SetupHeaderCell("Last Called", "850", true));
+                }
+
                 tableRow1.AppendChild(SetupHeaderCell("Company Name", "3000"));
                 tableRow1.AppendChild(SetupHeaderCell("Year/Make/Model/Size", "3000"));
+                tableRow1.AppendChild(SetupHeaderCell("Seniority", "1000", true));
+                tableRow1.AppendChild(SetupHeaderCell("Yrs Reg", "1000", true));
+                tableRow1.AppendChild(SetupHeaderCell("YTD", "1000", true));
                 tableRow1.AppendChild(SetupHeaderCell(seniorityRecord.YearMinus1, "1000", true));
                 tableRow1.AppendChild(SetupHeaderCell(seniorityRecord.YearMinus2, "1000", true));
                 tableRow1.AppendChild(SetupHeaderCell(seniorityRecord.YearMinus3, "1000", true));
-                tableRow1.AppendChild(SetupHeaderCell("YTD", "1000", true));
-                tableRow1.AppendChild(SetupHeaderCell("Seniority", "1000", true));
-                tableRow1.AppendChild(SetupHeaderCell("Yrs Reg", "1000", true));
 
                 table.AppendChild(tableRow1);
 
@@ -286,8 +291,13 @@ namespace HetsReport
                     // add equipment data
                     tableRowEquipment.AppendChild(SetupCell(seniority.Block, true));
                     tableRowEquipment.AppendChild(SetupCell(seniority.EquipmentCode));
-                    tableRowEquipment.AppendChild(SetupCell(seniority.IsHired, true));
-                    tableRowEquipment.AppendChild(SetupCell(seniority.LastCalled, true));
+                    
+                    if (!counterCopy)
+                    {
+                        tableRowEquipment.AppendChild(SetupCell(seniority.IsHired, true));
+                        tableRowEquipment.AppendChild(SetupCell(seniority.LastCalled, true));
+                    }
+
                     tableRowEquipment.AppendChild(SetupCell(seniority.OwnerName));
                     tableRowEquipment.AppendChild(SetupCell(seniority.YearMakeModelSize));
                     tableRowEquipment.AppendChild(SetupCell(seniority.HoursYearMinus1, true));

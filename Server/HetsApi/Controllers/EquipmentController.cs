@@ -1434,8 +1434,8 @@ namespace HetsApi.Controllers
             seniorityList.PrintedOn = $"{DateTime.Now.AddHours(-8):dd-MM-yyyy H:mm:ss}";
 
             // convert to open xml document
-            string documentName = $"SeniorityList-{DateTime.Now:yyyy-MM-dd}.docx";
-            byte[] document = SeniorityList.GetSeniorityList(seniorityList, documentName);
+            string documentName = $"SeniorityList-{DateTime.Now:yyyy-MM-dd}{(counterCopy ? "-(CounterCopy)" : "")}.docx";
+            byte[] document = SeniorityList.GetSeniorityList(seniorityList, documentName, counterCopy);
 
             // return document
             FileContentResult result = new FileContentResult(document, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")

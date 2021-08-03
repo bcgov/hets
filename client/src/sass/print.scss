@@ -12,9 +12,9 @@
     font-size: 72px;
     font-weight: bold;
     color: hsl(0, 0, 90%) !important;
+    opacity: 35%;
     -webkit-print-color-adjust: exact !important;
     color-adjust: exact !important;
-    z-index: -1;
   }
 
   .search-bar,
@@ -23,8 +23,8 @@
   .btn,
   .checkbox,
   .checkbox-control {
-     display: none;
-   }
+    display: none;
+  }
 
   h1 {
     font-size: 18px;
@@ -102,7 +102,8 @@
     }
 
     /* override bootstrap's white background so watermark can be seen clearly */
-    td, th {
+    td,
+    th {
       background: transparent !important;
     }
   }
@@ -116,7 +117,8 @@
   }
 
   #rotation-list {
-    th, td {
+    th,
+    td {
       padding: 2px;
     }
 
@@ -128,15 +130,22 @@
       word-break: break-all;
     }
 
-    th:first-child, td:first-child, th:nth-child(10), td:nth-child(10) {
+    th:first-child,
+    td:first-child,
+    th:nth-child(10),
+    td:nth-child(10) {
       display: none;
     }
 
-    th:nth-child(2), td:nth-child(2), th:last-child, td:last-child {
+    th:nth-child(2),
+    td:nth-child(2),
+    th:last-child,
+    td:last-child {
       display: table-cell !important;
     }
 
-    th:last-child, td:last-child {
+    th:last-child,
+    td:last-child {
       min-width: 150px;
     }
   }

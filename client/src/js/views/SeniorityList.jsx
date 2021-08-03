@@ -61,7 +61,11 @@ class SeniorityList extends React.Component {
   };
 
   getRotationList = (counterCopy) => {
-    const filename = 'SeniorityList-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';
+    const filename =
+      'SeniorityList-' +
+      formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) +
+      (counterCopy ? '-(CounterCopy)' : '') +
+      '.docx';
 
     Api.equipmentSeniorityListDoc(this.state.selectedLocalAreaIds, this.state.selectedEquipmentTypeIds, counterCopy)
       .then((res) => {
