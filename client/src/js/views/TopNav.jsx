@@ -24,6 +24,7 @@ import { logout } from '../Keycloak';
 
 import Spinner from '../components/Spinner.jsx';
 import DropdownControl from '../components/DropdownControl.jsx';
+import Authorize, { any } from '../components/Authorize';
 
 import { formatDateTimeUTCToLocal } from '../utils/date';
 
@@ -147,20 +148,24 @@ class TopNav extends React.Component {
                     WCB / CGL Coverage
                   </NavDropdown.Item>
                 </NavDropdown>
-                {this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT) && (
+                <Authorize requires={Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT}>
                   <Nav.Item as="li">
                     <Nav.Link as={NavLink} to={Constant.DISTRICT_ADMIN_PATHNAME} disabled={navigationDisabled}>
                       District Admin
                     </Nav.Link>
                   </Nav.Item>
-                )}
-                {(this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN) ||
-                  this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) ||
-                  this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) ||
-                  this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_ROLLOVER) ||
-                  this.props.currentUser.hasPermission(Constant.PERMISSION_VERSION)) && (
+                </Authorize>
+                <Authorize
+                  condition={any(
+                    Constant.PERMISSION_ADMIN,
+                    Constant.PERMISSION_USER_MANAGEMENT,
+                    Constant.PERMISSION_ROLES_AND_PERMISSIONS,
+                    Constant.PERMISSION_DISTRICT_ROLLOVER,
+                    Constant.PERMISSION_VERSION
+                  )}
+                >
                   <NavDropdown id="admin-dropdown" title="Administration" disabled={navigationDisabled} as="li">
-                    {this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN) && (
+                    <Authorize requires={Constant.PERMISSION_ADMIN}>
                       <NavDropdown.Item
                         as={NavLink}
                         to={Constant.OVERTIME_RATES_PATHNAME}
@@ -168,29 +173,29 @@ class TopNav extends React.Component {
                       >
                         Manage OT Rates
                       </NavDropdown.Item>
-                    )}
-                    {this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) && (
+                    </Authorize>
+                    <Authorize requires={Constant.PERMISSION_USER_MANAGEMENT}>
                       <NavDropdown.Item as={NavLink} to={Constant.USERS_PATHNAME} disabled={navigationDisabled}>
                         User Management
                       </NavDropdown.Item>
-                    )}
-                    {this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) && (
+                    </Authorize>
+                    <Authorize requires={Constant.PERMISSION_ROLES_AND_PERMISSIONS}>
                       <NavDropdown.Item as={NavLink} to={Constant.ROLES_PATHNAME} disabled={navigationDisabled}>
                         Roles and Permissions
                       </NavDropdown.Item>
-                    )}
-                    {this.props.currentUser.hasPermission(Constant.PERMISSION_DISTRICT_ROLLOVER) && (
+                    </Authorize>
+                    <Authorize requires={Constant.PERMISSION_DISTRICT_ROLLOVER}>
                       <NavDropdown.Item as={NavLink} to={Constant.ROLLOVER_PATHNAME} disabled={navigationDisabled}>
                         Roll Over
                       </NavDropdown.Item>
-                    )}
-                    {this.props.currentUser.hasPermission(Constant.PERMISSION_VERSION) && (
+                    </Authorize>
+                    <Authorize requires={Constant.PERMISSION_VERSION}>
                       <NavDropdown.Item as={NavLink} to={Constant.VERSION_PATHNAME} disabled={navigationDisabled}>
                         Version Info
                       </NavDropdown.Item>
-                    )}
+                    </Authorize>
                   </NavDropdown>
-                )}
+                </Authorize>
               </Nav>
             )}
             {this.props.showNav && (
