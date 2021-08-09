@@ -5,6 +5,8 @@ import { Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { VERSION_PATHNAME, PERMISSION_VERSION } from '../constants';
 
+import Authorize from '../components/Authorize';
+
 class Footer extends React.Component {
   static propTypes = {
     currentUser: PropTypes.object,
@@ -39,11 +41,11 @@ class Footer extends React.Component {
                   <li>
                     <a href="http://www2.gov.bc.ca/gov/content/home/contact-us">Contact Us</a>
                   </li>
-                  {this.props.currentUser.hasPermission(PERMISSION_VERSION) && (
+                  <Authorize requires={PERMISSION_VERSION}>
                     <li className="float-right" style={{ border: 0 }}>
                       <Link to={VERSION_PATHNAME}>Version</Link>
                     </li>
-                  )}
+                  </Authorize>
                 </ul>
               </Row>
             </div>
