@@ -28,7 +28,7 @@ class DeleteButton extends React.Component {
           <Button
             title={`Delete ${this.props.name}`}
             size="sm"
-            className={this.props.hide ? 'hidden' : 'btn-custom'}
+            className={this.props.hide ? 'd-none' : 'btn-custom'}
             {...props}
             {...overlayProps}
           >

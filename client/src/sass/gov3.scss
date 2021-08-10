@@ -1339,9 +1339,6 @@ img.back-to-top:hover {
   #header {
     z-index: 2;
   }
-  #header .container {
-    padding: 0;
-  }
   #header .qa-banner .container .qa-banner-text {
     font-size: 13px;
   }
@@ -1350,10 +1347,6 @@ img.back-to-top:hover {
     border-bottom: none;
     margin-bottom: 0;
     border-bottom: 2px solid #fcba19;
-  }
-  #header #logo img {
-    width: 95%;
-    height: 95%;
   }
 
   #header-links > ul li {

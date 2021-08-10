@@ -234,11 +234,6 @@ class ProjectsDetail extends React.Component {
   };
 
   cancelRequest = (request) => {
-    store.dispatch({
-      type: Action.DELETE_PROJECT_RENTAL_REQUEST,
-      projectId: this.props.match.params.projectId,
-      requestId: request.id,
-    });
     Api.cancelRentalRequest(request.id).then(() => {
       this.fetch();
     });
