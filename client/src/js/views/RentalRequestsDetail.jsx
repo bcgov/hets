@@ -218,7 +218,7 @@ class RentalRequestsDetail extends React.Component {
       <div id="rental-requests-detail">
         <Watermark enable={viewOnly} />
         <PageOrientation type="landscape" />
-        <Row id="rental-requests-top" className="hidden-print">
+        <Row id="rental-requests-top" className="d-print-none">
           <Col sm={9}>
             <div id="rental-request-status">
               <Badge variant={rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default'}>
@@ -248,7 +248,7 @@ class RentalRequestsDetail extends React.Component {
         <div className="well request-information">
           <SubHeader
             title="Request Information"
-            className="hidden-print"
+            className="d-print-none"
             editButtonTitle="Edit Rental Request"
             onEditClicked={canEditRequest ? this.openEditDialog : null}
           />
@@ -329,7 +329,7 @@ class RentalRequestsDetail extends React.Component {
         </div>
 
         <div className="well">
-          <SubHeader title="Hire Rotation List" className="hidden-print">
+          <SubHeader title="Hire Rotation List" className="d-print-none">
             <div className="d-flex align-items-baseline">
               <PrintButton
                 title="Print Hire Rotation List"

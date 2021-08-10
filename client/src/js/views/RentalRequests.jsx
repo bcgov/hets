@@ -434,7 +434,7 @@ class RentalRequests extends React.Component {
             <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
               <Button
                 title="Add Rental Request (View Only)"
-                className="hidden-print btn-custom"
+                className="d-print-none btn-custom"
                 size="sm"
                 onClick={() => this.openAddDialog(true)}
               >
@@ -448,7 +448,7 @@ class RentalRequests extends React.Component {
             <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
               <Button
                 title="Add Rental Request"
-                className="hidden-print btn-custom"
+                className="d-print-none btn-custom"
                 size="sm"
                 onClick={() => this.openAddDialog(false)}
               >
