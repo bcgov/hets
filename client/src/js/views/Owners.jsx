@@ -252,7 +252,7 @@ class Owners extends React.Component {
                     id="ownerName"
                     type="text"
                     placeholder="Company Name or dba"
-                    title="Searches company name and doing business as fields."
+                    title="Searches Company Name And Doing Business As Fields."
                     value={this.state.search.ownerName}
                     updateState={this.updateSearchState}
                   />

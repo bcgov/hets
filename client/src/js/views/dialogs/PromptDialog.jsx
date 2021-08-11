@@ -5,7 +5,7 @@ import { Modal, Button } from 'react-bootstrap';
 
 //Purpose to serve as a message prompt for users to confirm before proceeding to the next dialog.
 
-const PromptDialog = ({ show, toggle, onConfirm, children, ...props }) => {
+const PromptDialog = ({ show, toggle, onConfirm, title, children, ...props }) => {
   const ref = useRef();
 
   const focus = () => {
@@ -23,7 +23,7 @@ const PromptDialog = ({ show, toggle, onConfirm, children, ...props }) => {
   return (
     <Modal show={show} onHide={dialogToggle} onEntered={focus} {...props}>
       <Modal.Header closeButton>
-        <Modal.Title>Please confirm</Modal.Title>
+        <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
       <Modal.Body>{children}</Modal.Body>
       <Modal.Footer>
@@ -41,11 +41,13 @@ const PromptDialog = ({ show, toggle, onConfirm, children, ...props }) => {
 PromptDialog.propTypes = {
   show: PropTypes.bool.isRequired,
   toggle: PropTypes.func.isRequired,
-  onConfirm: PropTypes.func.isRequired, //should be function to open up next modal if users clicks to continue.
+  onConfirm: PropTypes.func.isRequired, //should be function to open up next modal if users clicks to continue
+  title: PropTypes.string,
 };
 
 PromptDialog.defaultProps = {
   size: 'md',
+  title: 'Please Confirm',
 };
 
 export default PromptDialog;
