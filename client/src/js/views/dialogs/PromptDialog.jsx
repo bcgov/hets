@@ -40,7 +40,7 @@ const PromptDialog = ({ show, toggle, onConfirm, title, children, ...props }) =>
 
 PromptDialog.propTypes = {
   show: PropTypes.bool.isRequired,
-  toggle: PropTypes.func.isRequired,
+  toggle: PropTypes.func.isRequired, // should be function to toggle this dialog in component.
   onConfirm: PropTypes.func.isRequired, //should be function to open up next modal if users clicks to continue
   title: PropTypes.string,
 };
