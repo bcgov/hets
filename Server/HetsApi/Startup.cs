@@ -59,6 +59,7 @@ namespace HetsApi
             {
                 cfg.AddProfile(new EntityToDtoProfile());
                 cfg.AddProfile(new DtoToEntityProfile());
+                cfg.AddProfile(new EntityToEntityProfile());
             });
 
             var mapper = mappingConfig.CreateMapper();

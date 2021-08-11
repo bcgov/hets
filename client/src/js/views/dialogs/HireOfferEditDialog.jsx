@@ -159,7 +159,7 @@ class HireOfferEditDialog extends React.Component {
       if (this.didChange()) {
         this.setState({ isSaving: true });
 
-        var isDumpTruck = this.props.hireOffer.equipment.districtEquipmentType.equipmentType.isDumpTruck;
+        var isDumpTruck = this.props.hireOffer.districtEquipmentType.equipmentType.isDumpTruck;
         var hoursYtd = this.props.hireOffer.equipment.hoursYtd;
 
         if (this.state.offerStatus !== STATUS_NO && !isDumpTruck && hoursYtd >= 300) {

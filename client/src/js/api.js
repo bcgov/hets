@@ -2005,7 +2005,8 @@ function parseRentalRequestRotationList(rotationListItem, rentalRequest = {}) {
   rotationListItem.status = 'N/A';
 }
 
-function parseRotationListItem(item, numberOfBlocks) {
+function parseRotationListItem(item, numberOfBlocks, districtEquipmentType) {
+  item.districtEquipmentType = districtEquipmentType;
   item.equipment = item.equipment || {};
   item.equipment = {
     ...item.equipment,
@@ -2045,7 +2046,9 @@ export function getRentalRequestRotationList(id) {
     const rentalRequest = response.data;
     const rotationList = rentalRequest.rentalRequestRotationList;
 
-    rotationList.map((item) => parseRotationListItem(item, rentalRequest.numberOfBlocks));
+    rotationList.map((item) =>
+      parseRotationListItem(item, rentalRequest.numberOfBlocks, rentalRequest.districtEquipmentType)
+    );
 
     store.dispatch({
       type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST,
@@ -2062,7 +2065,9 @@ export function updateRentalRequestRotationList(rentalRequestRotationList, renta
     .then((response) => {
       var rotationList = response.data.rentalRequestRotationList;
 
-      rotationList.map((item) => parseRotationListItem(item, rentalRequest.numberOfBlocks));
+      rotationList.map((item) =>
+        parseRotationListItem(item, rentalRequest.numberOfBlocks, rentalRequest.districtEquipmentType)
+      );
 
       store.dispatch({
         type: Action.UPDATE_RENTAL_REQUEST_ROTATION_LIST,

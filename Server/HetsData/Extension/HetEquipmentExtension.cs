@@ -204,52 +204,5 @@ namespace HetsData.Entities
 
             return false;
         }
-
-        public static explicit operator HetEquipment(HetEquipmentHist v)
-        {
-            return new HetEquipment()
-            {
-                EquipmentId = v.EquipmentId,
-                Type = v.Type,
-                EquipmentCode = v.EquipmentCode,
-                Make = v.Make,
-                Model = v.Model,
-                Year = v.Year,
-                ReceivedDate = v.ReceivedDate,
-                YearsOfService = v.YearsOfService,
-                LicencePlate = v.LicencePlate,
-                SerialNumber = v.SerialNumber,
-                Size = v.Size,
-                Seniority = v.Seniority,
-                SeniorityEffectiveDate = v.SeniorityEffectiveDate,
-                ToDate = v.ToDate,
-                NumberInBlock = v.NumberInBlock,
-                BlockNumber = v.BlockNumber,
-                ServiceHoursLastYear = v.ServiceHoursLastYear,
-                ServiceHoursThreeYearsAgo = v.ServiceHoursThreeYearsAgo,
-                ServiceHoursTwoYearsAgo = v.ServiceHoursTwoYearsAgo,
-                IsSeniorityOverridden = v.IsSeniorityOverridden,
-                SeniorityOverrideReason = v.SeniorityOverrideReason,
-                ApprovedDate = v.ApprovedDate,
-                EquipmentStatusTypeId = v.EquipmentStatusTypeId,
-                StatusComment = v.StatusComment,
-                ArchiveDate = v.ArchiveDate,
-                ArchiveCode = v.ArchiveCode,
-                ArchiveReason = v.ArchiveReason,
-                LastVerifiedDate = v.LastVerifiedDate,
-                InformationUpdateNeededReason = v.InformationUpdateNeededReason,
-                IsInformationUpdateNeeded = v.IsInformationUpdateNeeded,
-                DistrictEquipmentTypeId = v.DistrictEquipmentTypeId,
-                LocalAreaId = v.LocalAreaId,
-                Operator = v.Operator,
-                OwnerId = v.OwnerId,
-                PayRate = v.PayRate,
-                RefuseRate = v.RefuseRate,
-                LegalCapacity = v.LegalCapacity,
-                LicencedGvw = v.LicencedGvw,
-                PupLegalCapacity = v.PupLegalCapacity
-            };
-
-        }
     }
 }

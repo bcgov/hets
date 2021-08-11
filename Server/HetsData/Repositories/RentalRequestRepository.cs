@@ -123,19 +123,19 @@ namespace HetsData.Repositories
         /// <param name="_dbContext"></param>
         public RentalRequestDto GetRecordWithRotationList(int id, SeniorityScoringRules scoringRules)
         {
+            #region replace
             //load up the rental request with the equipment decoupled
             HetRentalRequest request = _dbContext.HetRentalRequests.AsNoTracking()
+                .Include(x => x.HetRentalRequestSeniorityLists)
+                    .ThenInclude(x => x.Owner)
+                .Include(x => x.HetRentalRequestSeniorityLists)
+                    .ThenInclude(x => x.LocalArea)
                 .Include(x => x.DistrictEquipmentType)
                     .ThenInclude(y => y.EquipmentType)
                 .Include(x => x.FirstOnRotationList)
                 .Include(x => x.HetRentalRequestAttachments)
                 .Include(x => x.HetRentalRequestRotationLists)
                 .FirstOrDefault(a => a.RentalRequestId == id);
-
-            //determine if the request is complete or not
-            HetRentalRequestStatusType status = _dbContext.HetRentalRequestStatusTypes.AsNoTracking()
-                .Where(x => x.RentalRequestStatusTypeCode == "Complete").FirstOrDefault();
-            bool isCompletedRequest = (request.RentalRequestStatusTypeId == status.RentalRequestStatusTypeId) ? true : false;
 
             //pull out the date that request was last updated
             var requestDate = request.AppLastUpdateTimestamp;
@@ -145,54 +145,22 @@ namespace HetsData.Repositories
                 //get the equipment id from the rental request rotation list item (mouthful!)
                 var equipmentId = rrrl.EquipmentId;
 
-                HetEquipment equipment = null;
-                //the request is completed so lets dig thru the equipment history to pull out the 
-                // data as it was when the rental request was made
-                if (isCompletedRequest)
-                {
-                    //get the equipment history records that are prior to the request last update
-                    var equipmentHist = _dbContext.HetEquipmentHists.AsNoTracking()
-                        .Where(x => x.EquipmentId == equipmentId && x.AppLastUpdateTimestamp <= requestDate)
-                        .OrderByDescending(x => x.AppLastUpdateTimestamp);
-
-                    //get the max id list, this ensures we get the oldest record in case there are many records with the same time
-                    var foundHistItem = equipmentHist
-                        .Where(x => x.EquipmentHistId == equipmentHist.Max(m => m.EquipmentHistId))
-                        .FirstOrDefault();
-
-                    // there is an explicit operator conversion in the HetsData.Extension.HetEquipmentExtension class
-                    equipment = (HetEquipment)foundHistItem;
-                }
-                else
-                {
-                    // it's in progress or being created so pull current equipment data
-                    equipment = _dbContext.HetEquipments.AsNoTracking()
-                        .Where(x => x.EquipmentId == equipmentId)
-                        .FirstOrDefault();
-                }
+                var equipment = request.HetRentalRequestSeniorityLists
+                    .Where(x => x.EquipmentId == equipmentId)
+                    .FirstOrDefault();
 
                 //lets make sure we actually have an equipment object
                 if (equipment != null)
                 {
                     //assign the equipment data into the rotation hire list
-                    rrrl.Equipment = equipment;
+                    rrrl.Equipment = _mapper.Map<HetEquipment>(equipment);
 
                     //some queries to pull the rest of the data related to equipment.. not historical (is that a potential issue?)
                     rrrl.Equipment.HetEquipmentAttachments = _dbContext.HetEquipmentAttachments.AsNoTracking()
                         .Where(x => x.EquipmentId == equipmentId).ToList();
-
-                    rrrl.Equipment.LocalArea = _dbContext.HetLocalAreas.AsNoTracking()
-                        .Where(x => x.LocalAreaId == rrrl.Equipment.LocalAreaId).FirstOrDefault();
-
-                    rrrl.Equipment.DistrictEquipmentType = _dbContext.HetDistrictEquipmentTypes.AsNoTracking()
-                        .Where(x => x.DistrictEquipmentTypeId == rrrl.Equipment.DistrictEquipmentTypeId)
-                        .Include(y => y.EquipmentType).FirstOrDefault();
-
-                    rrrl.Equipment.Owner = _dbContext.HetOwners.AsNoTracking()
-                        .Where(x => x.OwnerId == rrrl.Equipment.OwnerId)
-                        .Include(y => y.PrimaryContact).FirstOrDefault();
                 }
             }
+            #endregion
 
             if (request != null)
             {
@@ -204,6 +172,10 @@ namespace HetsData.Repositories
                 // calculate the Yes Count based on the RentalRequestList
                 request.YesCount = CalculateYesCount(request);
 
+                var numberOfBlocks = request.DistrictEquipmentType.EquipmentType.IsDumpTruck
+                                    ? scoringRules.GetTotalBlocks("DumpTruck") + 1
+                                    : scoringRules.GetTotalBlocks() + 1;
+
                 // calculate YTD hours for the equipment records
                 if (request.HetRentalRequestRotationLists != null)
                 {
@@ -211,16 +183,6 @@ namespace HetsData.Repositories
                     {
                         if (rotationList.Equipment != null)
                         {
-                            int numberOfBlocks = 0;
-
-                            // get number of blocks for this equipment type
-                            if (rotationList.Equipment.DistrictEquipmentType != null)
-                            {
-                                numberOfBlocks = rotationList.Equipment.DistrictEquipmentType.EquipmentType.IsDumpTruck
-                                    ? scoringRules.GetTotalBlocks("DumpTruck") + 1
-                                    : scoringRules.GetTotalBlocks() + 1;
-                            }
-
                             // get equipment seniority
                             float seniority = 0F;
                             if (rotationList.Equipment.Seniority != null)
