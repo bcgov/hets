@@ -288,7 +288,7 @@ namespace HetsApi.Controllers
             // build new list
             try
             {
-                rentalRequest = RentalRequestHelper.CreateRotationList(rentalRequest, _context, _configuration);
+                rentalRequest = RentalRequestHelper.CreateRotationList(rentalRequest, _context, _configuration, _mapper);
             }
             catch (Exception e)
             {
@@ -350,6 +350,7 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.RentalAgreement)
                 .Include(x => x.HetRentalRequestRotationLists)
                     .ThenInclude(y => y.Equipment)
+                .Include(x => x.HetRentalRequestSeniorityLists)
                 .Include(x => x.HetRentalRequestAttachments)
                 .Include(x => x.HetHistories)
                 .Include(x => x.RentalRequestStatusType)
@@ -426,6 +427,14 @@ namespace HetsApi.Controllers
                 foreach (HetHistory history in rentalRequest.HetHistories)
                 {
                     _context.HetHistories.Remove(history);
+                }
+            }
+
+            if (rentalRequest.HetRentalRequestSeniorityLists != null)
+            {
+                foreach(var list in rentalRequest.HetRentalRequestSeniorityLists)
+                {
+                    _context.HetRentalRequestSeniorityLists.Remove(list);
                 }
             }
 

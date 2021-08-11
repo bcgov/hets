@@ -27,6 +27,7 @@ namespace HetsData.Mappings
             CreateMap<HetEquipmentAttachment, EquipmentAttachmentDto>();
             CreateMap<HetEquipment, EquipmentDto>()
                 .ForMember(x => x.EquipmentAttachments, opt => opt.MapFrom(x => x.HetEquipmentAttachments));
+            CreateMap<HetEquipment, RentalRequestSeniorityListDto>();
             CreateMap<HetEquipmentStatusType, EquipmentStatusTypeDto>();
             CreateMap<HetEquipmentType, EquipmentTypeDto>();
             CreateMap<HetHistory, HistoryDto>();
@@ -58,6 +59,7 @@ namespace HetsData.Mappings
                 .ForMember(x => x.RentalRequestRotationList, opt => opt.MapFrom(x => x.HetRentalRequestRotationLists));
             CreateMap<HetRentalRequestRotationList, RentalRequestRotationListDto>()
                 .ForMember(x => x.RentalAgreements, opt => opt.MapFrom(x => x.HetRentalAgreements));
+            CreateMap<HetRentalRequestSeniorityList, RentalRequestSeniorityListDto>();
             CreateMap<HetRentalRequestStatusType, RentalRequestStatusTypeDto>();
             CreateMap<HetRole, RoleDto>()
                 .ForMember(x => x.RolePermissions, opt => opt.MapFrom(x => x.HetRolePermissions));

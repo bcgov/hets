@@ -14,6 +14,7 @@ namespace HetsData.Entities
             HetEquipments = new HashSet<HetEquipment>();
             HetHistories = new HashSet<HetHistory>();
             HetNotes = new HashSet<HetNote>();
+            HetRentalRequestSeniorityLists = new HashSet<HetRentalRequestSeniorityList>();
             HetSeniorityAudits = new HashSet<HetSeniorityAudit>();
         }
 
@@ -68,6 +69,7 @@ namespace HetsData.Entities
         public virtual ICollection<HetEquipment> HetEquipments { get; set; }
         public virtual ICollection<HetHistory> HetHistories { get; set; }
         public virtual ICollection<HetNote> HetNotes { get; set; }
+        public virtual ICollection<HetRentalRequestSeniorityList> HetRentalRequestSeniorityLists { get; set; }
         public virtual ICollection<HetSeniorityAudit> HetSeniorityAudits { get; set; }
     }
 }

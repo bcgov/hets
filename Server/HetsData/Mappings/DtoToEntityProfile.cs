@@ -42,6 +42,7 @@ namespace HetsData.Mappings
             CreateMap<RentalRequestAttachmentDto, HetRentalRequestAttachment>();
             CreateMap<RentalRequestDto, HetRentalRequest>();
             CreateMap<RentalRequestRotationListDto, HetRentalRequestRotationList>();
+            CreateMap<RentalRequestSeniorityListDto, HetRentalRequestSeniorityList>();
             CreateMap<RentalRequestStatusTypeDto, HetRentalRequestStatusType>();
             CreateMap<RoleDto, HetRole>();
             CreateMap<PermissionDto, HetRolePermission>();

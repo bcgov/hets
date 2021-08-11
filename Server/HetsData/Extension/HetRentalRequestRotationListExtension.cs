@@ -9,8 +9,5 @@ namespace HetsData.Entities
     {
         [NotMapped]
         public float? SeniorityFloat { get; set; }
-
-        [NotMapped]
-        public int? BlockNumber { get; set; }
     }
 }

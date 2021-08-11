@@ -10,6 +10,7 @@ namespace HetsData.Entities
         public HetEquipmentStatusType()
         {
             HetEquipments = new HashSet<HetEquipment>();
+            HetRentalRequestSeniorityLists = new HashSet<HetRentalRequestSeniorityList>();
         }
 
         public int EquipmentStatusTypeId { get; set; }
@@ -33,5 +34,6 @@ namespace HetsData.Entities
         public int ConcurrencyControlNumber { get; set; }
 
         public virtual ICollection<HetEquipment> HetEquipments { get; set; }
+        public virtual ICollection<HetRentalRequestSeniorityList> HetRentalRequestSeniorityLists { get; set; }
     }
 }
