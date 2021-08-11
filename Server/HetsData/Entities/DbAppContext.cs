@@ -58,6 +58,7 @@ namespace HetsData.Entities
         public virtual DbSet<HetRentalRequestAttachment> HetRentalRequestAttachments { get; set; }
         public virtual DbSet<HetRentalRequestRotationList> HetRentalRequestRotationLists { get; set; }
         public virtual DbSet<HetRentalRequestRotationListHist> HetRentalRequestRotationListHists { get; set; }
+        public virtual DbSet<HetRentalRequestSeniorityList> HetRentalRequestSeniorityLists { get; set; }
         public virtual DbSet<HetRentalRequestStatusType> HetRentalRequestStatusTypes { get; set; }
         public virtual DbSet<HetRole> HetRoles { get; set; }
         public virtual DbSet<HetRolePermission> HetRolePermissions { get; set; }
@@ -3937,6 +3938,8 @@ namespace HetsData.Entities
 
                 entity.Property(e => e.AskedDateTime).HasColumnName("ASKED_DATE_TIME");
 
+                entity.Property(e => e.BlockNumber).HasColumnName("BLOCK_NUMBER");
+
                 entity.Property(e => e.ConcurrencyControlNumber).HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                 entity.Property(e => e.DbCreateTimestamp)
@@ -4044,6 +4047,8 @@ namespace HetsData.Entities
 
                 entity.Property(e => e.AskedDateTime).HasColumnName("ASKED_DATE_TIME");
 
+                entity.Property(e => e.BlockNumber).HasColumnName("BLOCK_NUMBER");
+
                 entity.Property(e => e.ConcurrencyControlNumber).HasColumnName("CONCURRENCY_CONTROL_NUMBER");
 
                 entity.Property(e => e.DbCreateTimestamp)
@@ -4095,6 +4100,218 @@ namespace HetsData.Entities
                 entity.Property(e => e.RotationListSortOrder).HasColumnName("ROTATION_LIST_SORT_ORDER");
 
                 entity.Property(e => e.WasAsked).HasColumnName("WAS_ASKED");
+            });
+
+            modelBuilder.Entity<HetRentalRequestSeniorityList>(entity =>
+            {
+                entity.HasKey(e => e.RentalRequestSeniorityListId);
+
+                entity.ToTable("HET_RENTAL_REQUEST_SENIORITY_LIST");
+
+                entity.HasIndex(e => e.EquipmentId, "IX_HET_RENTAL_REQUEST_SENIORITY_LIST_EQUIPMENT_ID");
+
+                entity.HasIndex(e => e.RentalRequestId, "IX_HET_RENTAL_REQUEST_SENIORITY_LIST_RENTAL_REQUEST_ID");
+
+                entity.Property(e => e.RentalRequestSeniorityListId)
+                    .HasColumnName("RENTAL_REQUEST_SENIORITY_LIST_ID")
+                    .HasDefaultValueSql("nextval('\"HET_RENTAL_REQUEST_SENIORITY_LIST_ID_seq\"'::regclass)");
+
+                entity.Property(e => e.AppCreateTimestamp)
+                    .HasColumnName("APP_CREATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.AppCreateUserDirectory)
+                    .HasMaxLength(50)
+                    .HasColumnName("APP_CREATE_USER_DIRECTORY");
+
+                entity.Property(e => e.AppCreateUserGuid)
+                    .HasMaxLength(255)
+                    .HasColumnName("APP_CREATE_USER_GUID");
+
+                entity.Property(e => e.AppCreateUserid)
+                    .HasMaxLength(255)
+                    .HasColumnName("APP_CREATE_USERID");
+
+                entity.Property(e => e.AppLastUpdateTimestamp)
+                    .HasColumnName("APP_LAST_UPDATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.AppLastUpdateUserDirectory)
+                    .HasMaxLength(50)
+                    .HasColumnName("APP_LAST_UPDATE_USER_DIRECTORY");
+
+                entity.Property(e => e.AppLastUpdateUserGuid)
+                    .HasMaxLength(255)
+                    .HasColumnName("APP_LAST_UPDATE_USER_GUID");
+
+                entity.Property(e => e.AppLastUpdateUserid)
+                    .HasMaxLength(255)
+                    .HasColumnName("APP_LAST_UPDATE_USERID");
+
+                entity.Property(e => e.ApprovedDate).HasColumnName("APPROVED_DATE");
+
+                entity.Property(e => e.ArchiveCode)
+                    .HasMaxLength(50)
+                    .HasColumnName("ARCHIVE_CODE");
+
+                entity.Property(e => e.ArchiveDate).HasColumnName("ARCHIVE_DATE");
+
+                entity.Property(e => e.ArchiveReason)
+                    .HasMaxLength(2048)
+                    .HasColumnName("ARCHIVE_REASON");
+
+                entity.Property(e => e.BlockNumber).HasColumnName("BLOCK_NUMBER");
+
+                entity.Property(e => e.ConcurrencyControlNumber).HasColumnName("CONCURRENCY_CONTROL_NUMBER");
+
+                entity.Property(e => e.DbCreateTimestamp)
+                    .HasColumnName("DB_CREATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.DbCreateUserId)
+                    .HasMaxLength(63)
+                    .HasColumnName("DB_CREATE_USER_ID");
+
+                entity.Property(e => e.DbLastUpdateTimestamp)
+                    .HasColumnName("DB_LAST_UPDATE_TIMESTAMP")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'::timestamp without time zone");
+
+                entity.Property(e => e.DbLastUpdateUserId)
+                    .HasMaxLength(63)
+                    .HasColumnName("DB_LAST_UPDATE_USER_ID");
+
+                entity.Property(e => e.DistrictEquipmentTypeId).HasColumnName("DISTRICT_EQUIPMENT_TYPE_ID");
+
+                entity.Property(e => e.EquipmentCode)
+                    .HasMaxLength(25)
+                    .HasColumnName("EQUIPMENT_CODE");
+
+                entity.Property(e => e.EquipmentId).HasColumnName("EQUIPMENT_ID");
+
+                entity.Property(e => e.EquipmentStatusTypeId).HasColumnName("EQUIPMENT_STATUS_TYPE_ID");
+
+                entity.Property(e => e.InformationUpdateNeededReason)
+                    .HasMaxLength(2048)
+                    .HasColumnName("INFORMATION_UPDATE_NEEDED_REASON");
+
+                entity.Property(e => e.IsInformationUpdateNeeded).HasColumnName("IS_INFORMATION_UPDATE_NEEDED");
+
+                entity.Property(e => e.IsSeniorityOverridden).HasColumnName("IS_SENIORITY_OVERRIDDEN");
+
+                entity.Property(e => e.LastVerifiedDate).HasColumnName("LAST_VERIFIED_DATE");
+
+                entity.Property(e => e.LegalCapacity)
+                    .HasMaxLength(150)
+                    .HasColumnName("LEGAL_CAPACITY");
+
+                entity.Property(e => e.LicencePlate)
+                    .HasMaxLength(20)
+                    .HasColumnName("LICENCE_PLATE");
+
+                entity.Property(e => e.LicencedGvw)
+                    .HasMaxLength(150)
+                    .HasColumnName("LICENCED_GVW");
+
+                entity.Property(e => e.LocalAreaId).HasColumnName("LOCAL_AREA_ID");
+
+                entity.Property(e => e.Make)
+                    .HasMaxLength(50)
+                    .HasColumnName("MAKE");
+
+                entity.Property(e => e.Model)
+                    .HasMaxLength(50)
+                    .HasColumnName("MODEL");
+
+                entity.Property(e => e.NumberInBlock).HasColumnName("NUMBER_IN_BLOCK");
+
+                entity.Property(e => e.Operator)
+                    .HasMaxLength(255)
+                    .HasColumnName("OPERATOR");
+
+                entity.Property(e => e.OwnerId).HasColumnName("OWNER_ID");
+
+                entity.Property(e => e.PayRate).HasColumnName("PAY_RATE");
+
+                entity.Property(e => e.PupLegalCapacity)
+                    .HasMaxLength(150)
+                    .HasColumnName("PUP_LEGAL_CAPACITY");
+
+                entity.Property(e => e.ReceivedDate).HasColumnName("RECEIVED_DATE");
+
+                entity.Property(e => e.RefuseRate)
+                    .HasMaxLength(255)
+                    .HasColumnName("REFUSE_RATE");
+
+                entity.Property(e => e.RentalRequestId).HasColumnName("RENTAL_REQUEST_ID");
+
+                entity.Property(e => e.Seniority).HasColumnName("SENIORITY");
+
+                entity.Property(e => e.SeniorityEffectiveDate).HasColumnName("SENIORITY_EFFECTIVE_DATE");
+
+                entity.Property(e => e.SeniorityOverrideReason)
+                    .HasMaxLength(2048)
+                    .HasColumnName("SENIORITY_OVERRIDE_REASON");
+
+                entity.Property(e => e.SerialNumber)
+                    .HasMaxLength(100)
+                    .HasColumnName("SERIAL_NUMBER");
+
+                entity.Property(e => e.ServiceHoursLastYear).HasColumnName("SERVICE_HOURS_LAST_YEAR");
+
+                entity.Property(e => e.ServiceHoursThreeYearsAgo).HasColumnName("SERVICE_HOURS_THREE_YEARS_AGO");
+
+                entity.Property(e => e.ServiceHoursTwoYearsAgo).HasColumnName("SERVICE_HOURS_TWO_YEARS_AGO");
+
+                entity.Property(e => e.Size)
+                    .HasMaxLength(128)
+                    .HasColumnName("SIZE");
+
+                entity.Property(e => e.StatusComment)
+                    .HasMaxLength(255)
+                    .HasColumnName("STATUS_COMMENT");
+
+                entity.Property(e => e.ToDate).HasColumnName("TO_DATE");
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(50)
+                    .HasColumnName("TYPE");
+
+                entity.Property(e => e.Year)
+                    .HasMaxLength(15)
+                    .HasColumnName("YEAR");
+
+                entity.Property(e => e.YearsOfService).HasColumnName("YEARS_OF_SERVICE");
+
+                entity.HasOne(d => d.DistrictEquipmentType)
+                    .WithMany(p => p.HetRentalRequestSeniorityLists)
+                    .HasForeignKey(d => d.DistrictEquipmentTypeId)
+                    .HasConstraintName("FK_HET_RENTAL_REQUEST_SENIORITY_LIST_DISTRICT_EQUIPMENT_TYPE_ID");
+
+                entity.HasOne(d => d.Equipment)
+                    .WithMany(p => p.HetRentalRequestSeniorityLists)
+                    .HasForeignKey(d => d.EquipmentId)
+                    .HasConstraintName("FK_HET_RENTAL_REQUEST_SENIORITY_LIST_EQUIPMENT_ID");
+
+                entity.HasOne(d => d.EquipmentStatusType)
+                    .WithMany(p => p.HetRentalRequestSeniorityLists)
+                    .HasForeignKey(d => d.EquipmentStatusTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_HET_RENTAL_REQUEST_SENIORITY_LIST_STATUS_TYPE_ID");
+
+                entity.HasOne(d => d.LocalArea)
+                    .WithMany(p => p.HetRentalRequestSeniorityLists)
+                    .HasForeignKey(d => d.LocalAreaId)
+                    .HasConstraintName("FK_HET_RENTAL_REQUEST_SENIORITY_LIST_LOCAL_AREA_ID");
+
+                entity.HasOne(d => d.Owner)
+                    .WithMany(p => p.HetRentalRequestSeniorityLists)
+                    .HasForeignKey(d => d.OwnerId)
+                    .HasConstraintName("FK_HET_RENTAL_REQUEST_SENIORITY_LIST_OWNER_ID");
+
+                entity.HasOne(d => d.RentalRequest)
+                    .WithMany(p => p.HetRentalRequestSeniorityLists)
+                    .HasForeignKey(d => d.RentalRequestId)
+                    .HasConstraintName("FK_HET_RENTAL_REQUEST_SENIORITY_LIST_RENTAL_REQUEST_ID");
             });
 
             modelBuilder.Entity<HetRentalRequestStatusType>(entity =>
@@ -5271,6 +5488,8 @@ namespace HetsData.Entities
             modelBuilder.HasSequence("HET_RENTAL_REQUEST_ROTATION_LIST_HIST_ID_seq");
 
             modelBuilder.HasSequence("HET_RENTAL_REQUEST_ROTATION_LIST_ID_seq");
+
+            modelBuilder.HasSequence("HET_RENTAL_REQUEST_SENIORITY_LIST_ID_seq");
 
             modelBuilder.HasSequence("HET_RENTAL_REQUEST_STATUS_TYPE_ID_seq");
 

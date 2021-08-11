@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using AutoMapper;
 using HetsData.Dtos;
 using HetsData.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -182,7 +183,7 @@ namespace HetsData.Helpers
         /// <param name="request"></param>
         /// <param name="context"></param>
         /// <param name="configuration"></param>
-        public static HetRentalRequest CreateRotationList(HetRentalRequest request, DbAppContext context, IConfiguration configuration)
+        public static HetRentalRequest CreateRotationList(HetRentalRequest request, DbAppContext context, IConfiguration configuration, IMapper mapper)
         {
             var hetRentalRequestRotationList = new List<HetRentalRequestRotationList>();
 
@@ -229,6 +230,9 @@ namespace HetsData.Helpers
                     };
 
                     hetRentalRequestRotationList.Add(rentalRequestRotationList);
+
+                    var seniorityListDto = mapper.Map<RentalRequestSeniorityListDto>(blockEquipment[i]);
+                    request.HetRentalRequestSeniorityLists.Add(mapper.Map<HetRentalRequestSeniorityList>(seniorityListDto));
 
                     currentSortOrder++;
                 }
@@ -285,7 +289,7 @@ namespace HetsData.Helpers
                 .Where(x => x.RentalRequest.DistrictEquipmentTypeId == districtEquipmentTypeId &&
                             x.RentalRequest.LocalAreaId == localAreaId &&
                             x.RentalRequest.AppCreateTimestamp >= fiscalStart &&
-                            x.Equipment.BlockNumber == blockNumber &&
+                            x.BlockNumber == blockNumber && //use historical block number of the equipment
                             x.WasAsked == true &&
                             x.IsForceHire != true)
                 .OrderByDescending(x => x.RentalRequestId)

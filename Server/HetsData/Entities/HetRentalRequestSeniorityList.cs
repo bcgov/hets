@@ -5,22 +5,11 @@ using System.Collections.Generic;
 
 namespace HetsData.Entities
 {
-    public partial class HetEquipment
+    public partial class HetRentalRequestSeniorityList
     {
-        public HetEquipment()
-        {
-            HetDigitalFiles = new HashSet<HetDigitalFile>();
-            HetEquipmentAttachments = new HashSet<HetEquipmentAttachment>();
-            HetHistories = new HashSet<HetHistory>();
-            HetNotes = new HashSet<HetNote>();
-            HetRentalAgreements = new HashSet<HetRentalAgreement>();
-            HetRentalRequestRotationLists = new HashSet<HetRentalRequestRotationList>();
-            HetRentalRequestSeniorityLists = new HashSet<HetRentalRequestSeniorityList>();
-            HetRentalRequests = new HashSet<HetRentalRequest>();
-            HetSeniorityAudits = new HashSet<HetSeniorityAudit>();
-        }
-
-        public int EquipmentId { get; set; }
+        public int RentalRequestSeniorityListId { get; set; }
+        public int? RentalRequestId { get; set; }
+        public int? EquipmentId { get; set; }
         public string Type { get; set; }
         public string EquipmentCode { get; set; }
         public string Make { get; set; }
@@ -74,17 +63,10 @@ namespace HetsData.Entities
         public int ConcurrencyControlNumber { get; set; }
 
         public virtual HetDistrictEquipmentType DistrictEquipmentType { get; set; }
+        public virtual HetEquipment Equipment { get; set; }
         public virtual HetEquipmentStatusType EquipmentStatusType { get; set; }
         public virtual HetLocalArea LocalArea { get; set; }
         public virtual HetOwner Owner { get; set; }
-        public virtual ICollection<HetDigitalFile> HetDigitalFiles { get; set; }
-        public virtual ICollection<HetEquipmentAttachment> HetEquipmentAttachments { get; set; }
-        public virtual ICollection<HetHistory> HetHistories { get; set; }
-        public virtual ICollection<HetNote> HetNotes { get; set; }
-        public virtual ICollection<HetRentalAgreement> HetRentalAgreements { get; set; }
-        public virtual ICollection<HetRentalRequestRotationList> HetRentalRequestRotationLists { get; set; }
-        public virtual ICollection<HetRentalRequestSeniorityList> HetRentalRequestSeniorityLists { get; set; }
-        public virtual ICollection<HetRentalRequest> HetRentalRequests { get; set; }
-        public virtual ICollection<HetSeniorityAudit> HetSeniorityAudits { get; set; }
+        public virtual HetRentalRequest RentalRequest { get; set; }
     }
 }

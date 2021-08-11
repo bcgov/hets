@@ -15,6 +15,7 @@ namespace HetsData.Entities
             HetRentalAgreements = new HashSet<HetRentalAgreement>();
             HetRentalRequestAttachments = new HashSet<HetRentalRequestAttachment>();
             HetRentalRequestRotationLists = new HashSet<HetRentalRequestRotationList>();
+            HetRentalRequestSeniorityLists = new HashSet<HetRentalRequestSeniorityList>();
         }
 
         public int RentalRequestId { get; set; }
@@ -52,5 +53,6 @@ namespace HetsData.Entities
         public virtual ICollection<HetRentalAgreement> HetRentalAgreements { get; set; }
         public virtual ICollection<HetRentalRequestAttachment> HetRentalRequestAttachments { get; set; }
         public virtual ICollection<HetRentalRequestRotationList> HetRentalRequestRotationLists { get; set; }
+        public virtual ICollection<HetRentalRequestSeniorityList> HetRentalRequestSeniorityLists { get; set; }
     }
 }
