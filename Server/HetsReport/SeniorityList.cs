@@ -270,12 +270,12 @@ namespace HetsReport
 
                 tableRow1.AppendChild(SetupHeaderCell("Company Name", "3000"));
                 tableRow1.AppendChild(SetupHeaderCell("Year/Make/Model/Size", "3000"));
-                tableRow1.AppendChild(SetupHeaderCell("Seniority", "1000", true));
-                tableRow1.AppendChild(SetupHeaderCell("Yrs Reg", "1000", true));
                 tableRow1.AppendChild(SetupHeaderCell("YTD", "1000", true));
                 tableRow1.AppendChild(SetupHeaderCell(seniorityRecord.YearMinus1, "1000", true));
                 tableRow1.AppendChild(SetupHeaderCell(seniorityRecord.YearMinus2, "1000", true));
                 tableRow1.AppendChild(SetupHeaderCell(seniorityRecord.YearMinus3, "1000", true));
+                tableRow1.AppendChild(SetupHeaderCell("Yrs Reg", "1000", true));
+                tableRow1.AppendChild(SetupHeaderCell("Seniority", "1000", true));
 
                 table.AppendChild(tableRow1);
 
@@ -300,12 +300,12 @@ namespace HetsReport
 
                     tableRowEquipment.AppendChild(SetupCell(seniority.OwnerName));
                     tableRowEquipment.AppendChild(SetupCell(seniority.YearMakeModelSize));
+                    tableRowEquipment.AppendChild(SetupCell(seniority.YtdHours, true));
                     tableRowEquipment.AppendChild(SetupCell(seniority.HoursYearMinus1, true));
                     tableRowEquipment.AppendChild(SetupCell(seniority.HoursYearMinus2, true));
                     tableRowEquipment.AppendChild(SetupCell(seniority.HoursYearMinus3, true));
-                    tableRowEquipment.AppendChild(SetupCell(seniority.YtdHours, true));
-                    tableRowEquipment.AppendChild(SetupCell(seniority.Seniority, true));
                     tableRowEquipment.AppendChild(SetupCell(seniority.YearsRegistered, true));
+                    tableRowEquipment.AppendChild(SetupCell(seniority.Seniority, true));
 
                     table.AppendChild(tableRowEquipment);
                 }

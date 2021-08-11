@@ -80,7 +80,7 @@ class Version extends React.Component {
           Version
           <div id="version-buttons" style={{ float: 'right' }}>
             <Unimplemented>
-              <Button className="mr-5" onClick={this.email}>
+              <Button className="mr-2 btn-custom" onClick={this.email}>
                 <FontAwesomeIcon icon="envelope" title="E-mail" />
               </Button>
             </Unimplemented>
@@ -170,7 +170,7 @@ class Version extends React.Component {
               </Button>
               <div
                 style={{ marginTop: '20px', wordWrap: 'break-word' }}
-                className={this.state.showRawSection ? 'well' : 'well hide'}
+                className={this.state.showRawSection ? 'well' : 'd-none'}
               >
                 <div>{JSON.stringify(this.props.version)}</div>
               </div>

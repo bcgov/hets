@@ -81,8 +81,7 @@ class OwnersDetail extends React.Component {
       showDocumentsDialog: false,
       showNotesDialog: false,
       showChangeStatusDialog: false,
-      //temporary fix implement when needed for HETS-1315
-      //showPromptDialog: false,
+      showPromptDialog: false,
 
       showAttachments: false,
 
@@ -324,10 +323,9 @@ class OwnersDetail extends React.Component {
     this.setState({ showNotesDialog: false });
   };
 
-  //temporary fix implement when needed for HETS-1315
-  // toggleEquipmentPromptDialog = () => {
-  //   this.setState({ showPromptDialog: !this.state.showPromptDialog });
-  // };
+  toggleEquipmentPromptDialog = () => {
+    this.setState({ showPromptDialog: !this.state.showPromptDialog });
+  };
 
   render() {
     const { loading, loadingDocuments } = this.state;
@@ -646,9 +644,7 @@ class OwnersDetail extends React.Component {
                         disabledTooltip={restrictEquipmentAddTooltip}
                         title="Add Equipment"
                         size="sm"
-                        onClick={this.openEquipmentDialog}
-                        //temporary fix activate when needed for ticket HETS-1315
-                        // onClick={this.toggleEquipmentPromptDialog}
+                        onClick={this.toggleEquipmentPromptDialog}
                       >
                         <FontAwesomeIcon icon="plus" />
                       </TooltipButton>
@@ -821,7 +817,6 @@ class OwnersDetail extends React.Component {
             onClose={this.closeContactDialog}
           />
         )}
-        {/*         temporary fix promptDialog doesn't need to be implemented yet HETS-1315
         <PromptDialog
           show={this.state.showPromptDialog}
           toggle={this.toggleEquipmentPromptDialog}
@@ -831,7 +826,7 @@ class OwnersDetail extends React.Component {
         >
           <strong>You are creating a new piece of equipment</strong>
           <div>This does not create new attachments</div>
-        </PromptDialog> */}
+        </PromptDialog>
       </div>
     );
   }
