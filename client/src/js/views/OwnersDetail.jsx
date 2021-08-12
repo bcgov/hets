@@ -822,10 +822,10 @@ class OwnersDetail extends React.Component {
           toggle={this.toggleEquipmentPromptDialog}
           onConfirm={this.openEquipmentDialog}
           size="sm"
-          autofocus
+          autoFocus
         >
-          <strong>You are creating a new piece of equipment</strong>
-          <div>This does not create new attachments</div>
+          <p>Ensure the equipment being added is not an attachment.</p>
+          <p>Do not register trailers on their own</p>
         </PromptDialog>
       </div>
     );
