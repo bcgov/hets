@@ -595,6 +595,21 @@ export function updateEquipment(equipment) {
   });
 }
 
+export function verifyEquipmentActive(id) {
+  return new ApiRequest(`/equipment/${id}/verifyactive`).put(id).then((response) => {
+    var equipment = response.data;
+
+    // Add display fields
+    parseEquipment(equipment);
+
+    store.dispatch({ type: Action.UPDATE_EQUIPMENT, equipment: equipment });
+
+    getEquipmentLite();
+    getEquipmentTs();
+    getEquipmentHires();
+  });
+}
+
 export function addEquipmentHistory(equipmentId, history) {
   return new ApiRequest(`/equipment/${equipmentId}/history`).post(history).then((response) => {
     var history = normalize(response.data);
