@@ -16,7 +16,7 @@ namespace HetsReport.Helpers
             try
             {
                 // password protect document
-                string password = Environment.GetEnvironmentVariable("MsWord:Password") ?? DevPassword; //workaround for accessing Configuration from static class :(
+                string password = Environment.GetEnvironmentVariable("MsWord__Password") ?? DevPassword; //workaround for accessing Configuration from static class :(
 
                 // generate the salt
                 byte[] arrSalt = new byte[16];
