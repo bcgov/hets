@@ -104,6 +104,11 @@ objects:
                     secretKeyRef:
                       name: service-account
                       key: SERVICE_PASSWORD
+                - name: MsWord__Password
+                  valueFrom:
+                    secretKeyRef:
+                      name: ms-word
+                      key: password
                 - name: BCEID__OSID
                   valueFrom:
                     secretKeyRef:
