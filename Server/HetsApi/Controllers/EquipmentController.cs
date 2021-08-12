@@ -325,6 +325,24 @@ namespace HetsApi.Controllers
             return new ObjectResult(new HetsResponse(_equipmentRepo.GetEquipment(id)));
         }
 
+        [HttpPut]
+        [Route("{id}/verifyactive")]
+        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
+        public virtual ActionResult<EquipmentDto> VerifyActive([FromRoute]int id)
+        {
+            var equipment = _context.HetEquipments.FirstOrDefault(a => a.EquipmentId == id);
+
+            // not found
+            if (equipment == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            equipment.LastVerifiedDate = DateTime.UtcNow;
+
+            _context.SaveChanges();
+
+            return new ObjectResult(new HetsResponse(_equipmentRepo.GetEquipment(id)));
+        }
+
+
         /// <summary>
         /// Update equipment status
         /// </summary>

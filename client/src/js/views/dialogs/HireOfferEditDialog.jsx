@@ -202,12 +202,7 @@ class HireOfferEditDialog extends React.Component {
 
     if (this.state.equipmentVerifiedActive) {
       // Update Equipment's last verified date
-      const equipment = {
-        ...this.props.hireOffer.equipment,
-        lastVerifiedDate: toZuluTime(today()),
-      };
-
-      promise = Api.updateEquipment(equipment);
+      promise = Api.verifyEquipmentActive(this.props.hireOffer.equipment.id);
     }
 
     promise.then(() => {
