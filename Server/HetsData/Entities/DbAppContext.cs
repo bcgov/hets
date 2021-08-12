@@ -4198,6 +4198,8 @@ namespace HetsData.Entities
 
                 entity.Property(e => e.IsSeniorityOverridden).HasColumnName("IS_SENIORITY_OVERRIDDEN");
 
+                entity.Property(e => e.LastCalled).HasColumnName("LAST_CALLED");
+
                 entity.Property(e => e.LastVerifiedDate).HasColumnName("LAST_VERIFIED_DATE");
 
                 entity.Property(e => e.LegalCapacity)
@@ -4275,6 +4277,8 @@ namespace HetsData.Entities
                 entity.Property(e => e.Type)
                     .HasMaxLength(50)
                     .HasColumnName("TYPE");
+
+                entity.Property(e => e.WorkingNow).HasColumnName("WORKING_NOW");
 
                 entity.Property(e => e.Year)
                     .HasMaxLength(15)

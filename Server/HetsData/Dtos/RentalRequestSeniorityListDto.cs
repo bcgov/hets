@@ -45,5 +45,7 @@ namespace HetsData.Dtos
         public string LegalCapacity { get; set; }
         public string LicencedGvw { get; set; }
         public string PupLegalCapacity { get; set; }
+        public bool WorkingNow { get; set; }
+        public bool LastCalled { get; set; }
     }
 }

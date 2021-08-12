@@ -277,7 +277,7 @@ namespace HetsData.Helpers
             }
         }
 
-        private static HetEquipment LastAskedByBlock(int blockNumber, int? districtEquipmentTypeId,
+        private static HetEquipment LastAskedByBlockInRotationList(int blockNumber, int? districtEquipmentTypeId,
             int? localAreaId, DateTime fiscalStart, DbAppContext context, List<HetRentalRequestRotationList> hetRentalRequestRotationList)
         {
             if (districtEquipmentTypeId == null || localAreaId == null) return null;
@@ -304,6 +304,33 @@ namespace HetsData.Helpers
             return null;
         }
 
+        private static HetEquipment LastAskedByBlockInSeniorityList(int blockNumber, int? districtEquipmentTypeId,
+            int? localAreaId, DateTime fiscalStart, DbAppContext context, List<HetRentalRequestSeniorityList> hetRentalRequestSeniorityList)
+        {
+            if (districtEquipmentTypeId == null || localAreaId == null) return null;
+
+            // if this is not block 1 - check that we have "asked" anyone in the previous list
+            var rotationListquery = context.HetRentalRequestRotationLists.AsNoTracking()
+                .Include(x => x.RentalRequest)
+                .Include(x => x.Equipment)
+                .Where(x => x.RentalRequest.DistrictEquipmentTypeId == districtEquipmentTypeId &&
+                            x.RentalRequest.LocalAreaId == localAreaId &&
+                            x.RentalRequest.AppCreateTimestamp >= fiscalStart &&
+                            x.BlockNumber == blockNumber && //use historical block number of the equipment
+                            x.WasAsked == true &&
+                            x.IsForceHire != true)
+                .OrderByDescending(x => x.RentalRequestId)
+                .ThenByDescending(x => x.RotationListSortOrder);
+
+            foreach (var equipment in rotationListquery)
+            {
+                if (hetRentalRequestSeniorityList.Any(x => x.BlockNumber == blockNumber && x.EquipmentId == equipment.EquipmentId))
+                    return equipment.Equipment;
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// New Rotation List
         /// * Find Record Number #1
@@ -324,6 +351,15 @@ namespace HetsData.Helpers
         {
             // remove hired equipment from the list
             DropHiredEquipment((List<HetRentalRequestRotationList>)rentalRequest.HetRentalRequestRotationLists, context);
+
+            // set working now - if an equipment is dropped, it's working now.
+            foreach(var equipment in rentalRequest.HetRentalRequestSeniorityLists)
+            {
+                if (!rentalRequest.HetRentalRequestRotationLists.Any(x => x.EquipmentId == equipment.EquipmentId))
+                {
+                    equipment.WorkingNow = true;
+                }
+            }
 
             // nothing to do!
             if (rentalRequest.HetRentalRequestRotationLists.Count <= 0) return rentalRequest;
@@ -389,11 +425,21 @@ namespace HetsData.Helpers
                 startEquipInBlock[blockIndex].position = -1;
 
                 // get the last asked equipment id for this "block". This method ensures that the returned equipment exists in our list.
-                var lastEquipment = LastAskedByBlock(blockNumber, rentalRequest.DistrictEquipmentTypeId, rentalRequest.LocalAreaId,
+                var lastEquipmentInRotationList = LastAskedByBlockInRotationList(blockNumber, rentalRequest.DistrictEquipmentTypeId, rentalRequest.LocalAreaId,
                     fiscalStart, context, hetRentalRequestRotationList);
 
+                var lastEquipmentInSeniorityList = LastAskedByBlockInSeniorityList(blockNumber, rentalRequest.DistrictEquipmentTypeId, rentalRequest.LocalAreaId,
+                    fiscalStart, context, rentalRequest.HetRentalRequestSeniorityLists.ToList());
+
+                if (lastEquipmentInSeniorityList != null)
+                {
+                    rentalRequest.HetRentalRequestSeniorityLists
+                        .First(x => x.EquipmentId == lastEquipmentInSeniorityList.EquipmentId)
+                        .LastCalled = true;
+                }
+
                 // nothing found for this block - start at 0
-                if (lastEquipment == null && hetRentalRequestRotationList.Count > 0)
+                if (lastEquipmentInRotationList == null && hetRentalRequestRotationList.Count > 0)
                 {
                     for (int i = 0; i < hetRentalRequestRotationList.Count; i++)
                     {
@@ -407,7 +453,7 @@ namespace HetsData.Helpers
                 else
                 {
                     //we know the equipment exists in the list
-                    var foundIndex = hetRentalRequestRotationList.FindIndex(x => x.EquipmentId == lastEquipment.EquipmentId);
+                    var foundIndex = hetRentalRequestRotationList.FindIndex(x => x.EquipmentId == lastEquipmentInRotationList.EquipmentId);
 
                     //find the next record which has the same block
                     for (int i = foundIndex + 1; i < hetRentalRequestRotationList.Count; i++)
