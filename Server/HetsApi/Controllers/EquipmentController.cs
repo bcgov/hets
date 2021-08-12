@@ -653,7 +653,10 @@ namespace HetsApi.Controllers
 
             if (ownerName != null)
             {
-                data = data.Where(x => x.Owner.OrganizationName.ToLower().Contains(ownerName.ToLower()));
+                data = data.Where(x => 
+                  x.Owner.OrganizationName.ToLower().Contains(ownerName.ToLower()) || 
+                  x.Owner.DoingBusinessAs.ToLower().Contains(ownerName.ToLower())
+                );
             }
 
             if (status != null)
