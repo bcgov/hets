@@ -3781,6 +3781,8 @@ namespace HetsData.Entities
 
                 entity.Property(e => e.FirstOnRotationListId).HasColumnName("FIRST_ON_ROTATION_LIST_ID");
 
+                entity.Property(e => e.FiscalYear).HasColumnName("FISCAL_YEAR");
+
                 entity.Property(e => e.LocalAreaId).HasColumnName("LOCAL_AREA_ID");
 
                 entity.Property(e => e.ProjectId).HasColumnName("PROJECT_ID");

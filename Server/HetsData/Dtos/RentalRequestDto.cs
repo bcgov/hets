@@ -23,6 +23,7 @@ namespace HetsData.Dtos
         public int? DistrictEquipmentTypeId { get; set; }
         public int? LocalAreaId { get; set; }
         public int? ProjectId { get; set; }
+        public int FiscalYear { get; set; }
         public int ConcurrencyControlNumber { get; set; }
         public DistrictEquipmentTypeDto DistrictEquipmentType { get; set; }
         public LocalAreaDto LocalArea { get; set; }

@@ -383,10 +383,11 @@ namespace HetsData.Helpers
                 .First(x => x.DistrictId == localArea.ServiceArea.DistrictId);
 
             DateTime fiscalStart = districtStatus.RolloverEndDate ?? new DateTime(0001, 01, 01, 00, 00, 00);
+            int fiscalYear = Convert.ToInt32(districtStatus.NextFiscalYear); // status table uses the start of the year
+            rentalRequest.FiscalYear = fiscalYear;
 
             if (fiscalStart == new DateTime(0001, 01, 01, 00, 00, 00))
-            {
-                int fiscalYear = Convert.ToInt32(districtStatus.NextFiscalYear); // status table uses the start of the year
+            {                
                 fiscalStart = new DateTime(fiscalYear - 1, 4, 1);
             }
 
