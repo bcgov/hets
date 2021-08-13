@@ -274,3 +274,5 @@ set "CONCURRENCY_CONTROL_NUMBER" = "CONCURRENCY_CONTROL_NUMBER" + 1,
 	"WORKING_NOW" = not exists (select 1 from "HET_RENTAL_REQUEST_ROTATION_LIST" b where a."RENTAL_REQUEST_ID" = b."RENTAL_REQUEST_ID" and a."EQUIPMENT_ID" = b."EQUIPMENT_ID");
 	
 alter table public."HET_RENTAL_REQUEST" add column "FISCAL_YEAR" int4 not NULL default 0;
+
+update "HET_RENTAL_REQUEST" set "CONCURRENCY_CONTROL_NUMBER" = "CONCURRENCY_CONTROL_NUMBER"  + 1, "FISCAL_YEAR" = case when to_char("APP_CREATE_TIMESTAMP", 'MM') <= '03' then cast(to_char("APP_CREATE_TIMESTAMP", 'YYYY') as integer) else cast(to_char("APP_CREATE_TIMESTAMP", 'YYYY') as integer) + 1 end;
