@@ -41,6 +41,7 @@ namespace HetsData.Entities
         public DateTime DbLastUpdateTimestamp { get; set; }
         public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
+        public int FiscalYear { get; set; }
 
         public virtual HetDistrictEquipmentType DistrictEquipmentType { get; set; }
         public virtual HetEquipment FirstOnRotationList { get; set; }
