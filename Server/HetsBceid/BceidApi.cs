@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using BceidService;
+using Microsoft.Extensions.Logging;
 
 namespace HetsBceid
 {
@@ -16,13 +17,15 @@ namespace HetsBceid
     public class BceidApi : IBceidApi
     {
         private readonly BCeIDServiceSoapClient _client;
+        private readonly ILogger<BceidApi> _logger;
         private readonly Dictionary<string, BceidAccount> _accountCache; //no need for ConcurrentDictionary
         private readonly System.Timers.Timer _timer;
         private static SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
-        public BceidApi(BCeIDServiceSoapClient client)
+        public BceidApi(BCeIDServiceSoapClient client, ILogger<BceidApi> logger)
         {
             _client = client;
+            _logger = logger;
             _accountCache = new Dictionary<string, BceidAccount>();
             _timer = new System.Timers.Timer();
             _timer.Elapsed += new ElapsedEventHandler(RefreshCache);
@@ -61,6 +64,11 @@ namespace HetsBceid
                 if (account != null && string.IsNullOrEmpty(account.Username)) account.Username = username;
 
                 return (error, account);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                throw;
             }
             finally
             {
