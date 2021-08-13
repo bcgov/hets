@@ -1315,20 +1315,29 @@ namespace HetsApi.Controllers
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get fiscal year
-            HetDistrictStatus district = _context.HetDistrictStatuses.AsNoTracking()
+            HetDistrictStatus districtStatus = _context.HetDistrictStatuses.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId == districtId);
 
-            if (district?.NextFiscalYear == null) return new BadRequestObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
+            if (districtStatus?.NextFiscalYear == null) return new BadRequestObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
 
-            // HETS-1195: Adjust seniority list and rotation list for lists hired between Apr1 and roll over
-            // ** Need to use the "rollover date" to ensure we don't include records created
-            //    after April 1 (but before rollover)
-            DateTime fiscalEnd = district.RolloverEndDate ?? new DateTime(0001, 01, 01, 00, 00, 00);
-            int fiscalYear = Convert.ToInt32(district.NextFiscalYear); // status table uses the start of the year
+            //// HETS-1195: Adjust seniority list and rotation list for lists hired between Apr1 and roll over
+            //// ** Need to use the "rollover date" to ensure we don't include records created
+            ////    after April 1 (but before rollover)
+            //DateTime fiscalEnd = district.RolloverEndDate ?? new DateTime(0001, 01, 01, 00, 00, 00);
+            //int fiscalYear = Convert.ToInt32(district.NextFiscalYear); // status table uses the start of the year
 
-            fiscalEnd = fiscalEnd == new DateTime(0001, 01, 01, 00, 00, 00) ?
-                new DateTime(fiscalYear, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 23, 59, 59) :
-                new DateTime(fiscalYear, fiscalEnd.Month, fiscalEnd.Day, 23, 59, 59);
+            //fiscalEnd = fiscalEnd == new DateTime(0001, 01, 01, 00, 00, 00) ?
+            //    new DateTime(fiscalYear, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 23, 59, 59) :
+            //    new DateTime(fiscalYear, fiscalEnd.Month, fiscalEnd.Day, 23, 59, 59);
+
+            DateTime fiscalStart = districtStatus.RolloverEndDate ?? new DateTime(0001, 01, 01, 00, 00, 00);
+            int fiscalYear = Convert.ToInt32(districtStatus.NextFiscalYear);
+
+            if (fiscalStart == new DateTime(0001, 01, 01, 00, 00, 00))
+            {
+                fiscalYear = Convert.ToInt32(districtStatus.NextFiscalYear); // status table uses the start of the year
+                fiscalStart = new DateTime(fiscalYear - 1, 4, 1);
+            }
 
             // get status id
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
@@ -1376,7 +1385,7 @@ namespace HetsApi.Controllers
             SeniorityListRecord listRecord = new SeniorityListRecord();
 
             // manage the rotation list data
-            HetRentalRequestRotationList rotation = null;
+            int lastCalledEquipmentId = 0;
             int currentBlock = -1;
             var items = data.ToList();
 
@@ -1413,21 +1422,21 @@ namespace HetsApi.Controllers
                     // get the rotation info for the first block
                     if (item.BlockNumber != null) currentBlock = (int) item.BlockNumber;
 
-                    rotation = GetRotationList(item.LocalArea.LocalAreaId,
+                    lastCalledEquipmentId = GetLastCalledEquipmentId(item.LocalArea.LocalAreaId,
                         item.DistrictEquipmentType.DistrictEquipmentTypeId,
-                        currentBlock, fiscalEnd);
+                        currentBlock, fiscalStart);
                 }
                 else if (item.BlockNumber != null && currentBlock != item.BlockNumber)
                 {
                     // get the rotation info for the next block
                     currentBlock = (int)item.BlockNumber;
 
-                    rotation = GetRotationList(item.LocalArea.LocalAreaId,
+                    lastCalledEquipmentId = GetLastCalledEquipmentId(item.LocalArea.LocalAreaId,
                         item.DistrictEquipmentType.DistrictEquipmentTypeId,
-                        currentBlock, fiscalEnd);
+                        currentBlock, fiscalStart);
                 }
 
-                listRecord.SeniorityList.Add(SeniorityListHelper.ToSeniorityViewModel(item, scoringRules, rotation, _context));
+                listRecord.SeniorityList.Add(SeniorityListHelper.ToSeniorityViewModel(item, scoringRules, lastCalledEquipmentId, _context));
             }
 
             // add last record
@@ -1469,7 +1478,7 @@ namespace HetsApi.Controllers
             return result;
         }
 
-        private HetRentalRequestRotationList GetRotationList(int localAreaId, int districtEquipmentTypeId, int currentBlock, DateTime fiscalEnd)
+        private int GetLastCalledEquipmentId(int localAreaId, int districtEquipmentTypeId, int currentBlock, DateTime fiscalStart)
         {
             try
             {
@@ -1482,20 +1491,15 @@ namespace HetsApi.Controllers
                 HetRentalRequestRotationList blockRotation = _context.HetRentalRequestRotationLists.AsNoTracking()
                     .Include(x => x.Equipment)
                     .Include(x => x.RentalRequest)
-                        .ThenInclude(x => x.LocalArea)
-                    .Include(x => x.RentalRequest)
-                        .ThenInclude(x => x.DistrictEquipmentType)
                     .OrderByDescending(x => x.RentalRequestId).ThenByDescending(x => x.RotationListSortOrder)
-                    .FirstOrDefault(x => x.RentalRequest.LocalArea.LocalAreaId == localAreaId &&
-                                         x.RentalRequest.DistrictEquipmentType.DistrictEquipmentTypeId == districtEquipmentTypeId &&
-                                         x.IsForceHire == false &&
-                                         x.WasAsked == true &&
+                    .FirstOrDefault(x => x.RentalRequest.DistrictEquipmentTypeId == districtEquipmentTypeId &&
+                                         x.RentalRequest.LocalAreaId == localAreaId &&
+                                         x.RentalRequest.AppCreateTimestamp >= fiscalStart &&
                                          x.Equipment.BlockNumber == currentBlock &&
-                                         (x.OfferResponse == "Yes" || x.OfferResponse == "No") &&
-                                         x.AskedDateTime >= fiscalEnd.AddYears(-1).AddDays(1) &&
-                                         x.AskedDateTime <= fiscalEnd);
+                                         x.WasAsked == true &&
+                                         x.IsForceHire != true);
 
-                return blockRotation;
+                return blockRotation == null ? 0 : (int)blockRotation.EquipmentId;
             }
             catch (Exception e)
             {

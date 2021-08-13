@@ -276,7 +276,7 @@ namespace HetsData.Helpers
         /// <param name="context"></param>
         /// <returns></returns>
         public static SeniorityViewModel ToSeniorityViewModel(HetEquipment model, SeniorityScoringRules scoringRules,
-            HetRentalRequestRotationList rotationList, DbAppContext context)
+            int lastCalledEquipmentId, DbAppContext context)
         {
             SeniorityViewModel seniorityViewModel = new SeniorityViewModel();
 
@@ -309,7 +309,7 @@ namespace HetsData.Helpers
             // *************************************************************
             // check if this record/owner was called last
             // *************************************************************
-            bool callLast = rotationList != null && rotationList.EquipmentId == model.EquipmentId;
+            bool callLast = lastCalledEquipmentId == model.EquipmentId;
             seniorityViewModel.LastCalled = callLast ? "Y" : " ";
 
             // *************************************************************
