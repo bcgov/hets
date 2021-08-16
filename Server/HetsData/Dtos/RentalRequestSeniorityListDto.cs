@@ -5,8 +5,8 @@ namespace HetsData.Dtos
     public class RentalRequestSeniorityListDto
     {
         public int RentalRequestSeniorityListId { get; set; }
-        public int? RentalRequestId { get; set; }
-        public int? EquipmentId { get; set; }
+        public int RentalRequestId { get; set; }
+        public int EquipmentId { get; set; }
         public string Type { get; set; }
         public string EquipmentCode { get; set; }
         public string Make { get; set; }
@@ -47,5 +47,6 @@ namespace HetsData.Dtos
         public string PupLegalCapacity { get; set; }
         public bool WorkingNow { get; set; }
         public bool LastCalled { get; set; }
+        public float YtdHours { get; set; }
     }
 }

@@ -4288,6 +4288,8 @@ namespace HetsData.Entities
 
                 entity.Property(e => e.YearsOfService).HasColumnName("YEARS_OF_SERVICE");
 
+                entity.Property(e => e.YtdHours).HasColumnName("YTD_HOURS");
+
                 entity.HasOne(d => d.DistrictEquipmentType)
                     .WithMany(p => p.HetRentalRequestSeniorityLists)
                     .HasForeignKey(d => d.DistrictEquipmentTypeId)
@@ -4296,6 +4298,7 @@ namespace HetsData.Entities
                 entity.HasOne(d => d.Equipment)
                     .WithMany(p => p.HetRentalRequestSeniorityLists)
                     .HasForeignKey(d => d.EquipmentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_HET_RENTAL_REQUEST_SENIORITY_LIST_EQUIPMENT_ID");
 
                 entity.HasOne(d => d.EquipmentStatusType)
@@ -4317,6 +4320,7 @@ namespace HetsData.Entities
                 entity.HasOne(d => d.RentalRequest)
                     .WithMany(p => p.HetRentalRequestSeniorityLists)
                     .HasForeignKey(d => d.RentalRequestId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_HET_RENTAL_REQUEST_SENIORITY_LIST_RENTAL_REQUEST_ID");
             });
 

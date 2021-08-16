@@ -231,7 +231,9 @@ namespace HetsData.Helpers
 
                     hetRentalRequestRotationList.Add(rentalRequestRotationList);
 
+                    //Rental Request Seniority List (Snapshot)
                     var seniorityListDto = mapper.Map<RentalRequestSeniorityListDto>(blockEquipment[i]);
+                    seniorityListDto.YtdHours = EquipmentHelper.GetYtdServiceHours(seniorityListDto.EquipmentId, context);
                     request.HetRentalRequestSeniorityLists.Add(mapper.Map<HetRentalRequestSeniorityList>(seniorityListDto));
 
                     currentSortOrder++;
