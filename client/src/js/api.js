@@ -1937,6 +1937,19 @@ export function cancelRentalRequest(rentalRequestId) {
   });
 }
 
+export function rentalRequestSeniorityList(rentalRequestId, counterCopy) {
+  var params = {};
+  if (counterCopy) {
+    params.counterCopy = counterCopy;
+  }
+
+  return new ApiRequest(`/rentalrequests/${rentalRequestId}/senioritylist`)
+    .get(params, { responseType: Constant.RESPONSE_TYPE_BLOB })
+    .then((response) => {
+      return response;
+    });
+}
+
 ////////////////////
 // Rental Request Rotation List
 ////////////////////
