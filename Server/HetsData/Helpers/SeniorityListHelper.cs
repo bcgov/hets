@@ -61,6 +61,11 @@ namespace HetsData.Helpers
 
         public List<SeniorityListRecord> SeniorityListRecords { get; set; }
 
+        public SeniorityListReportViewModel()
+        {
+            SeniorityListRecords = new List<SeniorityListRecord>();
+        }
+
         public string ToJson()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
@@ -360,6 +365,48 @@ namespace HetsData.Helpers
         }
 
         #endregion
+
+        public static SeniorityViewModel ToSeniorityViewModel(HetRentalRequestSeniorityList equipment, SeniorityScoringRules scoringRules)
+        {
+            var seniorityViewModel = new SeniorityViewModel();
+
+            if (equipment == null) return seniorityViewModel;
+
+            var numberOfBlocks = equipment.DistrictEquipmentType.EquipmentType.IsDumpTruck
+                    ? scoringRules.GetTotalBlocks("DumpTruck") + 1
+                    : scoringRules.GetTotalBlocks() + 1;
+
+            var blockNumber = (int)equipment.BlockNumber;
+            var numberInBlock = (int)equipment.NumberInBlock;
+
+            // *************************************************************
+            // map data to view model
+            // *************************************************************
+            seniorityViewModel.Id = equipment.EquipmentId;
+            seniorityViewModel.EquipmentType = equipment.DistrictEquipmentType?.DistrictEquipmentName;
+            seniorityViewModel.OwnerName = equipment.Owner?.OrganizationName;
+            seniorityViewModel.OwnerId = equipment.OwnerId;
+            seniorityViewModel.Seniority = $"{equipment.Seniority:0.###}";
+            seniorityViewModel.YearMakeModelSize = $"{equipment.Year}/{equipment.Make}/{equipment.Model}/{equipment.Size}";
+            seniorityViewModel.EquipmentCode = equipment.EquipmentCode;
+            seniorityViewModel.YearsRegistered = equipment.YearsOfService.ToString();
+            seniorityViewModel.IsHired = equipment.WorkingNow ? "Y" : "N";
+            seniorityViewModel.LastCalled = equipment.LastCalled ? "Y" : " ";
+            seniorityViewModel.YtdHours = $"{equipment.YtdHours:0.###}";
+
+            // replacing Open with 3 (HETS-968 Rotation list -Wrong Block number for Open block)
+            seniorityViewModel.Block = blockNumber == numberOfBlocks ? "3" : blockNumber.ToString();
+
+            // format the hours
+            seniorityViewModel.HoursYearMinus1 = $"{equipment.ServiceHoursLastYear:0.###}";
+            seniorityViewModel.HoursYearMinus2 = $"{equipment.ServiceHoursTwoYearsAgo:0.###}";
+            seniorityViewModel.HoursYearMinus3 = $"{equipment.ServiceHoursThreeYearsAgo:0.###}";
+
+            // add the correct sorting order (numeric)
+            seniorityViewModel.SenioritySortOrder = EquipmentHelper.CalculateSenioritySortOrder(blockNumber, numberInBlock);
+
+            return seniorityViewModel;
+        }
     }
 
     #region Seniority Scoring Rules Class

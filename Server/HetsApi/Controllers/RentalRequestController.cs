@@ -14,6 +14,8 @@ using HetsData.Entities;
 using HetsData.Repositories;
 using AutoMapper;
 using HetsData.Dtos;
+using HetsReport;
+using HetsCommon;
 
 namespace HetsApi.Controllers
 {
@@ -998,5 +1000,71 @@ namespace HetsApi.Controllers
         }
 
         #endregion
+
+        [HttpGet]
+        [Route("{id}/senioritylist")]
+        [RequiresPermission(HetPermission.Login)]
+        public virtual IActionResult GetSeniorityList(int id, bool counterCopy = false)
+        {
+            var request = _context.HetRentalRequests
+                .AsNoTracking()
+                .Include(x => x.LocalArea)
+                .Include(x => x.DistrictEquipmentType)
+                    .ThenInclude(x => x.EquipmentType)
+                .FirstOrDefault(a => a.RentalRequestId == id);
+
+            if (request == null) 
+                return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            var fiscalYear = request.FiscalYear;
+            var fiscalStart = new DateTime(fiscalYear - 1, 4, 1);
+
+            var yearMinus1 = $"{fiscalYear - 2}/{fiscalYear - 1}";
+            var yearMinus2 = $"{fiscalYear - 3}/{fiscalYear - 2}";
+            var yearMinus3 = $"{fiscalYear - 4}/{fiscalYear - 3}";
+
+            var seniorityList = new SeniorityListReportViewModel();
+            seniorityList.Classification = $"23010-22/{(fiscalYear - 1).ToString().Substring(2, 2)}-{fiscalYear.ToString().Substring(2, 2)}";
+            seniorityList.PrintedOn = $"{DateUtils.ConvertUtcToPacificTime(DateTime.Now):dd-MM-yyyy H:mm:ss}";
+
+            var scoringRules = new SeniorityScoringRules(_configuration);
+
+            var listRecord = new SeniorityListRecord
+            {
+                LocalAreaName = request.LocalArea.Name,
+                DistrictEquipmentTypeName = request.DistrictEquipmentType.DistrictEquipmentName,
+                YearMinus1 = yearMinus1,
+                YearMinus2 = yearMinus2,
+                YearMinus3 = yearMinus3,
+                SeniorityList = new List<SeniorityViewModel>()
+            };
+
+            seniorityList.SeniorityListRecords.Add(listRecord);
+
+            var equipments = _context.HetRentalRequestSeniorityLists
+                .AsNoTracking()
+                .Include(x => x.Owner)
+                .Where(x => x.RentalRequestId == id)
+                .OrderBy(x => x.BlockNumber)
+                .ThenBy(x => x.NumberInBlock);
+
+            foreach (var equipment in equipments)
+            {
+                listRecord.SeniorityList.Add(SeniorityListHelper.ToSeniorityViewModel(equipment, scoringRules));
+            }
+
+            string documentName = $"SeniorityList-{DateTime.Now:yyyy-MM-dd}{(counterCopy ? "-(CounterCopy)" : "")}.docx";
+            byte[] document = SeniorityList.GetSeniorityList(seniorityList, documentName, counterCopy);
+
+            // return document
+            FileContentResult result = new FileContentResult(document, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            {
+                FileDownloadName = documentName
+            };
+
+            Response.Headers.Add("Content-Disposition", "inline; filename=" + documentName);
+
+            return result;
+        }
     }
 }
