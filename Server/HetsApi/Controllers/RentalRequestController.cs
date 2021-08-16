@@ -1025,9 +1025,12 @@ namespace HetsApi.Controllers
 
             var seniorityList = new SeniorityListReportViewModel();
             seniorityList.Classification = $"23010-22/{(fiscalYear - 1).ToString().Substring(2, 2)}-{fiscalYear.ToString().Substring(2, 2)}";
-            seniorityList.PrintedOn = $"{DateUtils.ConvertUtcToPacificTime(DateTime.Now):dd-MM-yyyy H:mm:ss}";
+            seniorityList.PrintedOn = $"{DateUtils.ConvertUtcToPacificTime(DateTime.UtcNow):dd-MM-yyyy H:mm:ss}";
 
             var scoringRules = new SeniorityScoringRules(_configuration);
+            var numberOfBlocks = request.DistrictEquipmentType.EquipmentType.IsDumpTruck
+                ? scoringRules.GetTotalBlocks("DumpTruck") + 1
+                : scoringRules.GetTotalBlocks() + 1;
 
             var listRecord = new SeniorityListRecord
             {
@@ -1050,7 +1053,7 @@ namespace HetsApi.Controllers
 
             foreach (var equipment in equipments)
             {
-                listRecord.SeniorityList.Add(SeniorityListHelper.ToSeniorityViewModel(equipment, scoringRules));
+                listRecord.SeniorityList.Add(SeniorityListHelper.ToSeniorityViewModel(equipment, numberOfBlocks));
             }
 
             string documentName = $"SeniorityList-{DateTime.Now:yyyy-MM-dd}{(counterCopy ? "-(CounterCopy)" : "")}.docx";

@@ -366,15 +366,11 @@ namespace HetsData.Helpers
 
         #endregion
 
-        public static SeniorityViewModel ToSeniorityViewModel(HetRentalRequestSeniorityList equipment, SeniorityScoringRules scoringRules)
+        public static SeniorityViewModel ToSeniorityViewModel(HetRentalRequestSeniorityList equipment, int numberOfBlocks)
         {
             var seniorityViewModel = new SeniorityViewModel();
 
             if (equipment == null) return seniorityViewModel;
-
-            var numberOfBlocks = equipment.DistrictEquipmentType.EquipmentType.IsDumpTruck
-                    ? scoringRules.GetTotalBlocks("DumpTruck") + 1
-                    : scoringRules.GetTotalBlocks() + 1;
 
             var blockNumber = (int)equipment.BlockNumber;
             var numberInBlock = (int)equipment.NumberInBlock;
