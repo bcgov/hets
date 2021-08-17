@@ -179,10 +179,8 @@ class RentalRequestsDetail extends React.Component {
   };
 
   printSeniorityList = () => {
-    let localAreaIds = [this.props.rentalRequest.localAreaId];
-    let districtEquipmentTypeIds = [this.props.rentalRequest.districtEquipmentTypeId];
     let filename = 'SeniorityList-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';
-    Api.equipmentSeniorityListDoc(localAreaIds, districtEquipmentTypeIds)
+    Api.rentalRequestSeniorityList(this.props.rentalRequest.id)
       .then((res) => {
         saveAs(res, filename);
       })

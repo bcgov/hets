@@ -26,7 +26,6 @@ namespace HetsData.Helpers
     public class SeniorityViewModel
     {
         public int Id { get; set; }
-        public string EquipmentType { get; set; }
         public string OwnerName { get; set; }
         public int? OwnerId { get; set; }
         public string Block { get; set; }
@@ -322,11 +321,6 @@ namespace HetsData.Helpers
             // *************************************************************
             seniorityViewModel.Id = model.EquipmentId;
 
-            if (model.DistrictEquipmentType != null)
-            {
-                seniorityViewModel.EquipmentType = model.DistrictEquipmentType.DistrictEquipmentName;
-            }
-
             if (model.Owner != null)
             {
                 seniorityViewModel.OwnerName = model.Owner.OrganizationName;
@@ -379,7 +373,6 @@ namespace HetsData.Helpers
             // map data to view model
             // *************************************************************
             seniorityViewModel.Id = equipment.EquipmentId;
-            seniorityViewModel.EquipmentType = equipment.DistrictEquipmentType?.DistrictEquipmentName;
             seniorityViewModel.OwnerName = equipment.Owner?.OrganizationName;
             seniorityViewModel.OwnerId = equipment.OwnerId;
             seniorityViewModel.Seniority = $"{equipment.Seniority:0.###}";

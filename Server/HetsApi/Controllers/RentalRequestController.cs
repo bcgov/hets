@@ -1025,7 +1025,7 @@ namespace HetsApi.Controllers
 
             var seniorityList = new SeniorityListReportViewModel();
             seniorityList.Classification = $"23010-22/{(fiscalYear - 1).ToString().Substring(2, 2)}-{fiscalYear.ToString().Substring(2, 2)}";
-            seniorityList.PrintedOn = $"{DateUtils.ConvertUtcToPacificTime(DateTime.UtcNow):dd-MM-yyyy H:mm:ss}";
+            seniorityList.PrintedOn = $"{DateUtils.ConvertUtcToPacificTime(request.AppCreateTimestamp):dd-MM-yyyy H:mm:ss}";
 
             var scoringRules = new SeniorityScoringRules(_configuration);
             var numberOfBlocks = request.DistrictEquipmentType.EquipmentType.IsDumpTruck
