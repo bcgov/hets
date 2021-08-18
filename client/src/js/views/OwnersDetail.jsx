@@ -825,7 +825,7 @@ class OwnersDetail extends React.Component {
           autoFocus
         >
           <p>Ensure the equipment being added is not an attachment.</p>
-          <p>Do not register trailers on their own</p>
+          <p>Do not register trailers on their own.</p>
         </PromptDialog>
       </div>
     );

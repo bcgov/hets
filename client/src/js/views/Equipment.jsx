@@ -255,7 +255,7 @@ class Equipment extends React.Component {
                     <FormInputControl
                       id="ownerName"
                       type="text"
-                      placeholder="Company Name or dba"
+                      placeholder="Company Name or DBA"
                       title="Searches Company Name And Doing Business As Fields."
                       value={this.state.search.ownerName}
                       updateState={this.updateSearchState}
