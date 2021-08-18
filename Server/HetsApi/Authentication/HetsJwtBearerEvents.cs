@@ -13,7 +13,6 @@ using HetsData;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using HetsBceid;
 using HetsApi.Model;
 
 namespace HetsApi.Authentication
@@ -21,14 +20,11 @@ namespace HetsApi.Authentication
     public class HetsJwtBearerEvents : JwtBearerEvents
     {
         private DbAppContext _dbContext;
-        private IBceidApi _bceid;
         private ILogger<HetsJwtBearerEvents> _logger;
 
-        public HetsJwtBearerEvents(DbAppContext dbContext, IBceidApi bceid,
-            ILogger<HetsJwtBearerEvents> logger) : base()
+        public HetsJwtBearerEvents(DbAppContext dbContext, ILogger<HetsJwtBearerEvents> logger) : base()
         {
             _dbContext = dbContext;
-            _bceid = bceid;
             _logger = logger;
         }
 
@@ -55,13 +51,15 @@ namespace HetsApi.Authentication
 
         public override async Task TokenValidated(TokenValidatedContext context)
         {
+            await Task.CompletedTask;
+
             var userSettings = new UserSettings();
 
-            var (username, userGuid, directory) = context.Principal.GetUserInfo();
+            var (username, userGuid, directory, bizGuid, bizName, email) = context.Principal.GetUserInfo();
 
             if (directory == Constants.BCEIDBIZ)
             {
-                await AuthenticateBusinessUser(context, username, userGuid, userSettings);
+                AuthenticateBusinessUser(username, userGuid, bizGuid, bizName, email, userSettings);
             }
             else if (directory == Constants.IDIR)
             {
@@ -167,23 +165,11 @@ namespace HetsApi.Authentication
             }
         }
 
-        private async Task AuthenticateBusinessUser(TokenValidatedContext context, string username, string userGuid, UserSettings userSettings)
+        private void AuthenticateBusinessUser(string username, string userGuid, string bizGuid, string bizName, string email, UserSettings userSettings)
         {
-            var guid = new Guid(userGuid);
-            var userType = "BUSINESS";
+            userSettings.HetsBusinessUser = UserAccountHelper.GetBusinessUser(_dbContext, username, bizGuid, bizName, email, userGuid);
 
-            var (error, account) = await _bceid.GetBceidAccountCachedAsync(guid, username, userType, guid, userType);
-
-            if (error.IsNotEmpty())
-            {
-                throw new Exception($"Unable to retrieve User [{guid.ToString("N")} ({userType})] from BCeID Service.");
-            }
-
-            var businessGuid = ((Guid)account.BusinessGuid).ToString("N");
-
-            userSettings.HetsBusinessUser = UserAccountHelper.GetBusinessUser(_dbContext, account, username, businessGuid, userGuid);
-
-            userSettings.SiteMinderBusinessGuid = ((Guid)account.BusinessGuid).ToString("N");
+            userSettings.SiteMinderBusinessGuid = bizGuid;
             userSettings.SiteMinderGuid = userGuid;
             userSettings.UserAuthenticated = true;
             userSettings.BusinessUser = true;

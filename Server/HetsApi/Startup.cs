@@ -17,7 +17,6 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using HetsData.Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using HetsBceid;
 using Microsoft.Extensions.Hosting;
 using HetsApi.Middlewares;
 using AutoMapper;
@@ -162,7 +161,6 @@ namespace HetsApi
                 });
             });
 
-            services.AddBceidSoapClient(Configuration);
             services.AddHealthChecks()
                 .AddNpgSql(connectionString, name: "HETS-DB-Check", failureStatus: HealthStatus.Degraded, tags: new string[] { "postgresql", "db" });
         }
