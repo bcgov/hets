@@ -6,10 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using HetsApi.Model;
 using HetsData.Helpers;
 using HetsData.Entities;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Hosting;
-using HetsBceid;
 
 namespace HetsApi.Helpers
 {
@@ -224,21 +221,21 @@ namespace HetsApi.Helpers
         /// <param name="context"></param>
         /// <param name="account"></param>
         /// <param name="userId"></param>
-        /// <param name="businessGuid"></param>
+        /// <param name="bizGuid"></param>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public static HetBusinessUser GetBusinessUser(DbAppContext context, BceidAccount account, string userId, string businessGuid, string guid = null)
+        public static HetBusinessUser GetBusinessUser(DbAppContext context, string userId, string bizGuid, string bizName, string email, string guid)
         {
             // find the business
             HetBusiness business = context.HetBusinesses.AsNoTracking()
-                .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
+                .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == bizGuid.ToLower().Trim());
 
             // setup the business
             if (business == null)
             {
                 business = new HetBusiness
                 {
-                    BceidBusinessGuid = businessGuid.ToLower().Trim(),
+                    BceidBusinessGuid = bizGuid.ToLower().Trim(),
                     AppCreateUserDirectory = "BCeID",
                     AppCreateUserGuid = guid,
                     AppCreateUserid = userId,
@@ -250,17 +247,11 @@ namespace HetsApi.Helpers
                 };
 
                 // get additional business data
-                string legalName = account.BusinessLegalName;
-                string businessNumber = account.BusinessNumber.ToString();
+                string legalName = bizName;
 
                 if (!string.IsNullOrEmpty(legalName))
                 {
                     business.BceidLegalName = legalName;
-                }
-
-                if (!string.IsNullOrEmpty(businessNumber))
-                {
-                    business.BceidBusinessNumber = businessNumber;
                 }
 
                 // save record
@@ -270,17 +261,11 @@ namespace HetsApi.Helpers
             else
             {
                 // update business information
-                string legalName = account.BusinessLegalName;
-                string businessNumber = account.BusinessNumber.ToString();
+                string legalName = bizName;
 
                 if (!string.IsNullOrEmpty(legalName))
                 {
                     business.BceidLegalName = legalName;
-                }
-
-                if (!string.IsNullOrEmpty(businessNumber))
-                {
-                    business.BceidBusinessNumber = businessNumber;
                 }
 
                 business.AppLastUpdateUserDirectory = "BCeID";
@@ -314,15 +299,6 @@ namespace HetsApi.Helpers
                     AppLastUpdateTimestamp = DateTime.UtcNow
                 };
 
-                // get additional user data
-                string displayName = account.DisplayName;
-                string email = account.Email;
-
-                if (!string.IsNullOrEmpty(displayName))
-                {
-                    user.BceidDisplayName = displayName;
-                }
-
                 if (!string.IsNullOrEmpty(email))
                 {
                     user.BceidEmail = email;
@@ -351,15 +327,6 @@ namespace HetsApi.Helpers
             }
             else
             {
-                // update the user
-                string displayName = account.DisplayName;
-                string email = account.Email;
-
-                if (!string.IsNullOrEmpty(displayName))
-                {
-                    user.BceidDisplayName = displayName;
-                }
-
                 if (!string.IsNullOrEmpty(email))
                 {
                     user.BceidEmail = email;

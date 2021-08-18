@@ -10,8 +10,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsApi", "HetsApi\HetsApi.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsReport", "HetsReport\HetsReport.csproj", "{7DFA1859-E5B0-4460-A5A5-5E5288A4AC94}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsBceid", "HetsBceid\HetsBceid.csproj", "{7E21ACC0-6FAF-42F3-8DFF-B281D0183D31}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,10 +32,6 @@ Global
 		{7DFA1859-E5B0-4460-A5A5-5E5288A4AC94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DFA1859-E5B0-4460-A5A5-5E5288A4AC94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DFA1859-E5B0-4460-A5A5-5E5288A4AC94}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7E21ACC0-6FAF-42F3-8DFF-B281D0183D31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7E21ACC0-6FAF-42F3-8DFF-B281D0183D31}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7E21ACC0-6FAF-42F3-8DFF-B281D0183D31}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7E21ACC0-6FAF-42F3-8DFF-B281D0183D31}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
