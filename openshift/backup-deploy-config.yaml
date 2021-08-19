@@ -136,9 +136,14 @@ objects:
                       name: "${FTP_SECRET_KEY}"
                       key: ftp-password
                 - name: WEBHOOK_URL
-                  value: "https://chat.developer.gov.bc.ca/hooks/${ROCKETCHAT_WEBHOOK_TOKEN}"
+                  valueFrom:
+                    secretKeyRef:
+                      name: "${WEBHOOK_URL}"
+                      key: webhook-url
+                - name: WEBHOOK_URL
+                  value: "${WEBHOOK_URL}"
                 - name: ENVIRONMENT_FRIENDLY_NAME
-                  value: "${ENVIRONMENT_FRIENDLY_NAME}"
+                  value: "${NAME}-${ENV}"
                 - name: ENVIRONMENT_NAME
                   value: "${NAME}-${ENV}"
               resources:
