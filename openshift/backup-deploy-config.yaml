@@ -136,11 +136,11 @@ objects:
                       name: "${FTP_SECRET_KEY}"
                       key: ftp-password
                 - name: WEBHOOK_URL
-                  value: ""
+                  value: "https://chat.developer.gov.bc.ca/hooks/${ROCKETCHAT_WEBHOOK_TOKEN}"
                 - name: ENVIRONMENT_FRIENDLY_NAME
                   value: "${ENVIRONMENT_FRIENDLY_NAME}"
                 - name: ENVIRONMENT_NAME
-                  value: "${ENVIRONMENT_NAME}"
+                  value: "${NAME}-${ENV}"
               resources:
                 requests:
                   cpu: "${CPU_REQUEST}"
