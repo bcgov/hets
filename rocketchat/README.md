@@ -12,7 +12,7 @@ Notifications and alerts from backup-containers.
 
 Channel:
 
-- hets-backups
+- moti-db-backups
 
 Integration Script:
 
