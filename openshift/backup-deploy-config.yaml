@@ -167,7 +167,7 @@ parameters:
     displayName: PROJECT_NAME
     name: PROJECT_NAME
     required: true
-    value: "e0cee6-dev"
+    value: "hets"
   - name: NAME
     displayName: Name
     description:
