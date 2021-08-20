@@ -138,10 +138,11 @@ objects:
                 - name: WEBHOOK_URL
                   valueFrom:
                     secretKeyRef:
-                      name: "${WEBHOOK_URL}"
+                      name: webhook-url
                       key: webhook-url
-                - name: WEBHOOK_URL
-                  value: "${WEBHOOK_URL}"
+                # temporary fix. Is this needed?
+                # - name: WEBHOOK_URL
+                #   value: "${WEBHOOK_URL}"
                 - name: ENVIRONMENT_FRIENDLY_NAME
                   value: "${NAME}-${ENV}"
                 - name: ENVIRONMENT_NAME
