@@ -111,15 +111,12 @@ objects:
                 - name: TABLE_SCHEMA
                   value: "${TABLE_SCHEMA}"
                 - name: DATABASE_USER
-                  valueFrom:
-                    secretKeyRef:
-                      name: "${PROJECT_NAME}-${DB_NAME}-${ENV}"
-                      key: "database-user"
+                  value: "postgres"
                 - name: DATABASE_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       name: "${PROJECT_NAME}-${DB_NAME}-${ENV}"
-                      key: "database-password"
+                      key: "admin-password"
                 - name: FTP_URL
                   valueFrom:
                     secretKeyRef:
