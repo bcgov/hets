@@ -111,15 +111,12 @@ objects:
                 - name: TABLE_SCHEMA
                   value: "${TABLE_SCHEMA}"
                 - name: DATABASE_USER
-                  valueFrom:
-                    secretKeyRef:
-                      name: "${PROJECT_NAME}-${DB_NAME}-${ENV}"
-                      key: "database-user"
+                  value: "${DB_ADMIN_USER}"
                 - name: DATABASE_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       name: "${PROJECT_NAME}-${DB_NAME}-${ENV}"
-                      key: "database-password"
+                      key: "admin-password"
                 - name: FTP_URL
                   valueFrom:
                     secretKeyRef:
@@ -230,6 +227,11 @@ parameters:
       'backup.conf' configuration.  The name of the database.
     required: false
     value: "hets"
+  - name: DB_ADMIN_USER
+    displayName: DB Admin User
+    description: Database admin account name to be used when backing up database.
+    required: false
+    value: "postgres"
   - name: MONGODB_AUTHENTICATION_DATABASE
     displayName: MongoDB Authentication Database
     description:
