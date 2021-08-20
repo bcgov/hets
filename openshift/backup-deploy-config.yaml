@@ -139,14 +139,11 @@ objects:
                   valueFrom:
                     secretKeyRef:
                       name: webhook-url
-                      key: webhook-url
-                # temporary fix. Is this needed?
-                # - name: WEBHOOK_URL
-                #   value: "${WEBHOOK_URL}"
+                      key: rocketchat-webhook-url
                 - name: ENVIRONMENT_FRIENDLY_NAME
                   value: "${NAME}-${ENV}"
                 - name: ENVIRONMENT_NAME
-                  value: "${NAME}-${ENV}"
+                  value: "${NAME_SPACE}-${ENV}"
               resources:
                 requests:
                   cpu: "${CPU_REQUEST}"
@@ -175,6 +172,11 @@ parameters:
       depending on your database provider
     required: true
     value: backup
+  - description: Name space of the project (HETS)
+    displayName: NAME_SPACE
+    name: NAME_SPACE
+    required: false
+    value: "e0cee6"
   - description: A name suffix used for all objects
     displayName: Suffix
     name: SUFFIX
