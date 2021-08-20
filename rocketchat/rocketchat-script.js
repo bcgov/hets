@@ -1,5 +1,5 @@
 /**
- * Place this script into rocketchat Income WebHook Integration.
+ * Place this script into rocketchat Incoming WebHook Integration.
  * Source: https://github.com/BCDevOps/backup-container/blob/master/scripts/ocp4/rocket.chat.integration.js
  */
 
