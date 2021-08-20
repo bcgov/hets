@@ -111,7 +111,7 @@ objects:
                 - name: TABLE_SCHEMA
                   value: "${TABLE_SCHEMA}"
                 - name: DATABASE_USER
-                  value: "postgres"
+                  value: "${DB_ADMIN_USER}"
                 - name: DATABASE_PASSWORD
                   valueFrom:
                     secretKeyRef:
@@ -227,6 +227,11 @@ parameters:
       'backup.conf' configuration.  The name of the database.
     required: false
     value: "hets"
+  - name: DB_ADMIN_USER
+    displayName: DB Admin User
+    description: Database admin account name to be used when backing up database.
+    required: false
+    value: "postgres"
   - name: MONGODB_AUTHENTICATION_DATABASE
     displayName: MongoDB Authentication Database
     description:
