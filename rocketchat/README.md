@@ -24,7 +24,7 @@ Environments:
 - [Hired Equipment Tracking System (test)](https://console.apps.silver.devops.gov.bc.ca/k8s/cluster/projects/e0cee6-test)
 - [Hired Equipment Tracking System (prod)](https://console.apps.silver.devops.gov.bc.ca/k8s/cluster/projects/e0cee6-prod)
 
-### Implmentation (As of 20 Aug 2021)
+### Implementation (As of 20 Aug 2021)
 
 - Works with [BCDevOps Backup Container](https://github.com/BCDevOps/backup-container)
 - Create channel in Rocketchat
