@@ -108,7 +108,7 @@ parameters:
     displayName: SOURCE_REPOSITORY_URL
     name: SOURCE_REPOSITORY_URL
     required: false
-    value: "https://github.com/bcgov/hets.git"
+    value: ""
   - description: SOURCE_REPOSITORY_REF
     displayName: SOURCE_REPOSITORY_REF
     name: SOURCE_REPOSITORY_REF
