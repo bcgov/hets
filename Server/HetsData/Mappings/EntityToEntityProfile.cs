@@ -10,7 +10,8 @@ namespace HetsData.Mappings
             SourceMemberNamingConvention = new PascalCaseNamingConvention();
             DestinationMemberNamingConvention = new PascalCaseNamingConvention();
 
-            CreateMap<HetRentalRequestSeniorityList, HetEquipment>();
+            CreateMap<HetRentalRequestSeniorityList, HetEquipment>()
+                .ForMember(x => x.HoursYtd, opt => opt.MapFrom(x => x.YtdHours));
         }
     }
 }
