@@ -4,7 +4,7 @@ HETS (Hired Equipment Tracking System) makes use of BCDK and pipline-cli to mana
 
 This document will not go into the details of how to use BCDK and pipeline-cli. For documentation on those, you can refer to the following links
 
-- [BCDK](https://github.com/BCDevOps/bcdk)
+- [BCDK](https://github.com/BCDevOps/bcdk) ==> GitHub Actions
 - [pipeline-cli](https://github.com/BCDevOps/pipeline-cli)
 
 HETS is using the official BCDevOps Backup Container for backing up DB. Below is README file from [BCDevOps backup-container](https://github.com/BCDevOps/backup-container)
