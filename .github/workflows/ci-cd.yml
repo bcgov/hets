@@ -3,8 +3,10 @@ name: CI-CD
 # Controls when the action will run. 
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
-  workflow_dispatch:
-  
+  pull_request:
+    branches: 
+      - 'master' 
+
 defaults:
   run:
     working-directory: .
@@ -25,7 +27,7 @@ jobs:
           oc version
           oc login --token=${{ secrets.OPENSHIFT_TOKEN}} --server=${{ secrets.OPENSHIFT_SERVER_URL }}
           npm ci
-          DEBUG=* npm run build -- --pr=1958
+          DEBUG=* npm run build -- --pr=${{ github.event.pull_request.number }} --git.branch.name=${{github.head_ref}} --git.ref=${{github.head_ref}}
         env:
           CI: "true"
 
