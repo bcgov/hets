@@ -87,30 +87,9 @@ namespace HetsData.Repositories
                     .ThenInclude(c => c.ProjectStatusType)
                 .Include(x => x.HetRentalRequestAttachments)
                 .Include(x => x.DistrictEquipmentType)
-                .Include(x => x.HetRentalRequestRotationLists)
-                    .ThenInclude(y => y.Equipment)
-                        .ThenInclude(z => z.EquipmentStatusType)
                 .FirstOrDefault(a => a.RentalRequestId == id);
 
-            if (request != null)
-            {
-                request.Status = request.RentalRequestStatusType.RentalRequestStatusTypeCode;
-
-                // calculate the Yes Count based on the RentalRequestList
-                request.YesCount = CalculateYesCount(request);
-
-                // calculate YTD hours for the equipment records
-                if (request.HetRentalRequestRotationLists != null)
-                {
-                    foreach (HetRentalRequestRotationList rotationList in request.HetRentalRequestRotationLists)
-                    {
-                        if (rotationList.Equipment != null)
-                        {
-                            rotationList.Equipment.HoursYtd = EquipmentHelper.GetYtdServiceHours(rotationList.Equipment.EquipmentId, _dbContext);
-                        }
-                    }
-                }
-            }
+            request.Status = request.RentalRequestStatusType.RentalRequestStatusTypeCode;
 
             return _mapper.Map<RentalRequestDto>(request);
         }
@@ -204,7 +183,6 @@ namespace HetsData.Repositories
                                 }
                             }
 
-                            rotationList.Equipment.HoursYtd = EquipmentHelper.GetYtdServiceHours(rotationList.Equipment.EquipmentId, _dbContext);
                             rotationList.Equipment.SeniorityString = EquipmentHelper.FormatSeniorityString(seniority, blockNumber, numberOfBlocks);
                         }
                     }
