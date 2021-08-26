@@ -10,14 +10,12 @@ on:
 defaults:
   run:
     working-directory: .
-    shell: bash
 
 jobs:
   build:
     runs-on: ubuntu-20.04
     defaults:
       run:
-        shell: bash
         working-directory: ./.pipeline
     steps:
       - uses: actions/checkout@v1
@@ -25,21 +23,17 @@ jobs:
         with:
           node-version: "12"
       - name: Build
-        shell: bash
         run: |
           oc version
           oc login --token=${{ secrets.OPENSHIFT_TOKEN}} --server=${{ secrets.OPENSHIFT_SERVER_URL }}
           npm ci
           DEBUG=* npm run build -- --pr=${{ github.event.pull_request.number }} --git.branch.name=${{github.head_ref}} --git.ref=${{github.head_ref}}
-        env:
-          CI: "true"
 
   deploy-to-dev:
     runs-on: ubuntu-20.04
     needs: [build]
     defaults:
       run:
-        shell: bash
         working-directory: ./.pipeline
     steps:
       - uses: actions/checkout@v1
@@ -47,7 +41,6 @@ jobs:
         with:
           node-version: "12"
       - name: Deploy the image
-        shell: bash
         run: |
           oc version
           oc login --token=${{ secrets.OPENSHIFT_TOKEN}} --server=${{ secrets.OPENSHIFT_SERVER_URL }}
@@ -61,16 +54,13 @@ jobs:
     runs-on: ubuntu-20.04
     defaults:
       run:
-        shell: bash
         working-directory: ./.pipeline
     steps:
-
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:
           node-version: "12"
       - name: Deploy the image
-        shell: bash
         run: |
           oc version
           oc login --token=${{ secrets.OPENSHIFT_TOKEN}} --server=${{ secrets.OPENSHIFT_SERVER_URL }}
@@ -84,7 +74,6 @@ jobs:
     runs-on: ubuntu-20.04
     defaults:
       run:
-        shell: bash
         working-directory: ./.pipeline
     steps:
 
@@ -93,7 +82,6 @@ jobs:
         with:
           node-version: "12"
       - name: Deploy the image
-        shell: bash
         run: |
           oc version
           oc login --token=${{ secrets.OPENSHIFT_TOKEN}} --server=${{ secrets.OPENSHIFT_SERVER_URL }}
@@ -107,16 +95,13 @@ jobs:
     runs-on: ubuntu-20.04
     defaults:
       run:
-        shell: bash
         working-directory: ./.pipeline
     steps:
-
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:
           node-version: "12"
       - name: Deploy the image
-        shell: bash
         run: |
           oc version
           oc login --token=${{ secrets.OPENSHIFT_TOKEN}} --server=${{ secrets.OPENSHIFT_SERVER_URL }}
