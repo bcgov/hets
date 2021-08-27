@@ -342,8 +342,8 @@ namespace HetsReport
 
                 GridColumn gc1 = new GridColumn { Width = col1Width };
                 tableRow1.AppendChild(gc1);
-                tableRow1.AppendChild(SetupHeaderCell("Still own/ Re-register?", col1Width, true));
-
+                tableRow1.AppendChild(SetupHeaderCell(new string[] { "Still own /", "Re-register?" }, col1Width, true));
+                
                 GridColumn gc2 = new GridColumn { Width = col2Width };
                 tableRow1.AppendChild(gc2);
                 tableRow1.AppendChild(SetupHeaderCell("Local Area", col2Width, true));
@@ -419,6 +419,11 @@ namespace HetsReport
 
         private static TableCell SetupHeaderCell(string text, string width, bool center = false)
         {
+            return SetupHeaderCell(new string[] { text }, width, center);
+        }
+
+        private static TableCell SetupHeaderCell(string[] texts, string width, bool center = false)
+        {
             try
             {
                 TableCell tableCell = new TableCell();
@@ -455,28 +460,12 @@ namespace HetsReport
 
                 tableCell.AppendChild(tableCellProperties);
 
-                // add text (with specific formatting)
-                Paragraph paragraph = new Paragraph() { RsidParagraphAddition = "00607D74", RsidRunAdditionDefault = "00607D74", ParagraphId = "6ED85602", TextId = "77777777" };
-
-                ParagraphProperties paragraphProperties = new ParagraphProperties();
-                ParagraphMarkRunProperties paragraphMarkRunProperties = new ParagraphMarkRunProperties();
-
-                paragraphMarkRunProperties.AppendChild(new Color { Val = "000000" });
-                paragraphMarkRunProperties.AppendChild(new RunFonts { Ascii = "Arial" });
-                paragraphMarkRunProperties.AppendChild(new FontSize() { Val = "7pt" });
-                paragraphMarkRunProperties.AppendChild(new Bold());
-
-                Justification justification = new Justification() { Val = JustificationValues.Left };
-                if (center) justification.Val = JustificationValues.Center;
-
-                paragraphProperties.AppendChild(paragraphMarkRunProperties);
-                paragraphProperties.AppendChild(justification);
-                paragraph.AppendChild(paragraphProperties);
-
-                paragraph.AppendChild(new Text(text));
-
-                // add to table cell
-                tableCell.AppendChild(paragraph);
+                foreach(var text in texts)
+                {
+                    var paragraph = CreateParagraph(text, center);
+                    // add to table cell
+                    tableCell.AppendChild(paragraph);
+                }
 
                 return tableCell;
             }
@@ -485,6 +474,30 @@ namespace HetsReport
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        private static Paragraph CreateParagraph(string text, bool center)
+        {
+            Paragraph paragraph = new Paragraph() { RsidParagraphAddition = "00607D74", RsidRunAdditionDefault = "00607D74", ParagraphId = "6ED85602", TextId = "77777777" };
+
+            ParagraphProperties paragraphProperties = new ParagraphProperties();
+            ParagraphMarkRunProperties paragraphMarkRunProperties = new ParagraphMarkRunProperties();
+
+            paragraphMarkRunProperties.AppendChild(new Color { Val = "000000" });
+            paragraphMarkRunProperties.AppendChild(new RunFonts { Ascii = "Arial" });
+            paragraphMarkRunProperties.AppendChild(new FontSize() { Val = "7pt" });
+            paragraphMarkRunProperties.AppendChild(new Bold());
+
+            Justification justification = new Justification() { Val = JustificationValues.Left };
+            if (center) justification.Val = JustificationValues.Center;
+
+            paragraphProperties.AppendChild(paragraphMarkRunProperties);
+            paragraphProperties.AppendChild(justification);
+            paragraph.AppendChild(paragraphProperties);
+
+            paragraph.AppendChild(new Text(text));
+
+            return paragraph;
         }
 
         private static TableCell SetupCell(string text, string width, bool center = false)
