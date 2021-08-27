@@ -326,7 +326,8 @@ class HireOfferEditDialog extends React.Component {
                   </FormGroup>
                 </Col>
               </Row>
-              <Row>
+              {/* HETS-1327 Remove Asked */}
+              {/* <Row>
                 <Col md={12}>
                   <FormGroup>
                     <FormCheck
@@ -339,7 +340,7 @@ class HireOfferEditDialog extends React.Component {
                     />
                   </FormGroup>
                 </Col>
-              </Row>
+              </Row> */}
               <FormText>{this.state.offerResponseError}</FormText>
             </FormGroup>
           </Col>
