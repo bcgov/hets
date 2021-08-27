@@ -91,7 +91,9 @@ namespace HetsApi.Controllers
         public virtual ActionResult<List<LocalAreaDto>> DistrictLocalAreasGet([FromRoute]int id)
         {
             List<HetLocalArea> localAreas = _context.HetLocalAreas.AsNoTracking()
-                .Where(x => x.ServiceArea.District.DistrictId == id)
+                .Where(x => x.ServiceArea.District.DistrictId == id && 
+                        x.StartDate <= DateTime.UtcNow.Date && 
+                        (x.EndDate > DateTime.UtcNow.Date || x.EndDate == null))
                 .OrderBy(x => x.Name)
                 .ToList();
 
