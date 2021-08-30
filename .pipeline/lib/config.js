@@ -4,6 +4,7 @@ const changeId = options.pr; //aka pull-request
 const version = "1.0.0";
 const name = "hets";
 
+Object.assign(options.git, { owner: "ychung-mot", repository: "hets" });
 const phases = {
   build: {
     namespace: "e0cee6-tools",
