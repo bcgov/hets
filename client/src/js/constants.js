@@ -1,3 +1,5 @@
+export const RUNTIME_OPENSHIFT_BUILD_COMMIT = window.RUNTIME_OPENSHIFT_BUILD_COMMIT ?? '';
+
 // Paths
 export const HOME_PATHNAME = '/home';
 export const OWNERS_PATHNAME = '/owners';
