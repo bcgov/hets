@@ -26,8 +26,6 @@ jobs:
         run: |
           oc version
           oc login --token=${{ secrets.OPENSHIFT_TOKEN}} --server=${{ secrets.OPENSHIFT_SERVER_URL }}
-          oc adm prune builds --keep-complete=0 --namespace=e0cee6-tools --confirm
-          oc adm prune builds --keep-failed=0 --namespace=e0cee6-tools --confirm
           npm ci
           DEBUG=* npm run build -- --pr=${{ github.event.pull_request.number }} --git.branch.name=${{github.head_ref}} --git.ref=${{github.head_ref}}
 
@@ -46,10 +44,6 @@ jobs:
         run: |
           oc version
           oc login --token=${{ secrets.OPENSHIFT_TOKEN}} --server=${{ secrets.OPENSHIFT_SERVER_URL }}
-          oc adm prune deployments --keep-failed=0 --namespace=e0cee6-dev --confirm
-          oc adm prune deployments --keep-complete=0 --namespace=e0cee6-dev --confirm
-          oc project e0cee6-dev
-          oc delete pod --field-selector=status.phase==Succeeded
           npm ci
           DEBUG=* npm run deploy -- --pr=${{ github.event.pull_request.number }} --env=dev --git.branch.name=${{github.head_ref}} --git.ref=${{github.head_ref}}
 
@@ -70,10 +64,6 @@ jobs:
         run: |
           oc version
           oc login --token=${{ secrets.OPENSHIFT_TOKEN}} --server=${{ secrets.OPENSHIFT_SERVER_URL }}
-          oc adm prune deployments --keep-failed=0 --namespace=e0cee6-test --confirm
-          oc adm prune deployments --keep-complete=0 --namespace=e0cee6-test --confirm
-          oc project e0cee6-test
-          oc delete pod --field-selector=status.phase==Succeeded
           npm ci
           DEBUG=* npm run deploy -- --pr=${{ github.event.pull_request.number }} --env=test --git.branch.name=${{github.head_ref}} --git.ref=${{github.head_ref}}
 
@@ -135,9 +125,5 @@ jobs:
         run: |
           oc version
           oc login --token=${{ secrets.OPENSHIFT_TOKEN}} --server=${{ secrets.OPENSHIFT_SERVER_URL }}
-          oc adm prune deployments --keep-failed=0 --namespace=e0cee6-prod --confirm
-          oc adm prune deployments --keep-complete=0 --namespace=e0cee6-prod --confirm
-          oc project e0cee6-prod
-          oc delete pod --field-selector=status.phase==Succeeded
           npm ci
           DEBUG=* npm run deploy -- --pr=${{ github.event.pull_request.number }} --env=prod --git.branch.name=${{github.head_ref}} --git.ref=${{github.head_ref}}

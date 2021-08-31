@@ -117,6 +117,9 @@ class Version extends React.Component {
                   <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="Build Time">
                     {formatDateTime(this.state.buildTime, Constant.DATE_TIME_READABLE)}
                   </ColDisplay>
+                  <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="Git Commit">
+                    {Constant.RUNTIME_OPENSHIFT_BUILD_COMMIT}
+                  </ColDisplay>
                   <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="User Agent">
                     {navigator.userAgent}
                   </ColDisplay>
@@ -130,6 +133,9 @@ class Version extends React.Component {
                   </ColDisplay>
                   <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="Build Time">
                     {formatDateTime(applicationVersion.fileCreationTime, Constant.DATE_TIME_READABLE)}
+                  </ColDisplay>
+                  <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="Git Commit">
+                    {applicationVersion.commit}
                   </ColDisplay>
                   <ColDisplay labelProps={{ xs: 2 }} fieldProps={{ xs: 10 }} label="Version">
                     {applicationVersion.informationalVersion}
