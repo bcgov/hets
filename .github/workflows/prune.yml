@@ -1,4 +1,4 @@
-name: clean
+name: prune
 
 on: [workflow_dispatch]
 
