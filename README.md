@@ -36,9 +36,9 @@ Refer to [this document](openshift/README.md) for OpenShift Deployment and Pipel
 ## Development
 
 **Client Code**
-Run npm install from the client directory to configure the client build environment
 
-The frameworks used for this application are React/Redux.
+- Run npm install from the client directory to configure the client build environment
+- The frameworks used for this application are React/Redux.
 
 **API Services**
 
