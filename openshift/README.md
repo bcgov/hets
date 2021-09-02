@@ -32,19 +32,19 @@ The `.pipeline` directory contain the scripts to use pipeline-cli against your O
 
 You will need to configure the scripts in the `.pipeline` directory to work with your OpenShift namespaces:
 
-#### Update Manually
+The pipeline scripts to configure are as follows
 
-This is to adapt the pipeline scripts to your namespaces. The scripts need to be updated are
-
+- [.pipeline/lib/build.js](/.pipeline/lib/build.js)
+- [.pipeline/lib/clean.js](/.pipeline/lib/clean.js)
 - [.pipeline/lib/config.js](/.pipeline/lib/config.js)
-
-The values to modify are the `namespace` and `host` values. Update them to match your OpenShift namespaces.
+- [.pipeline/lib/deploy.js](/.pipeline/lib/deploy.js)
+- [.pipeline/lib/utils.js](/.pipeline/lib/utils.js)
 
 ## Pull Request Build and Deploy
 
-Once Github Actions workflow (/.github/workflows/hets-build-deploy.yml) is properly configured and deployed, it is ready to monitor pull requests.
+Once Github Actions workflow (/.github/workflows/hets-build-deploy.yml) is properly configured, it is ready to monitor pull requests.
 
-Every pull request made to your repository will trigger a new build and create a standalone deployment in the `dev` namespace. This allows you to test new features independantly of other features.
+Every pull request made to master will trigger a new build and create a standalone deployment in the `dev` namespace. This allows you to test new features independantly of other features.
 
 The Github Actions workflow (/.github/workflows/clean.yml) will also automatically clean up the environments when a pull request is closed.
 
