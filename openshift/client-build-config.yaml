@@ -17,7 +17,7 @@ objects:
         - annotations: null
           from:
             kind: DockerImage
-            name: registry.redhat.io/rhel8/nodejs-12
+            name: docker.io/node:13.7-alpine3.11
           name: "1"
           referencePolicy:
             type: Local
