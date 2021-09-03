@@ -5,9 +5,9 @@ COPY . ./src
 
 RUN cd ./src && \
   apk add --no-cache --virtual .gyp \
-  python3 \
+  python \
   make \
-  g++ \
+  g++ && \
   npm ci && \
   npm run build
 
