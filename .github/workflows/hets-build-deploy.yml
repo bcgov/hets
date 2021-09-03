@@ -101,7 +101,7 @@ jobs:
   deploy-to-train:
     needs: [build, deploy-to-uat]
     environment:
-      name: uat
+      name: train
     runs-on: ubuntu-16.04
     defaults:
       run:
