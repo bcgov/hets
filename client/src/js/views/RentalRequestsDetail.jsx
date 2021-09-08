@@ -219,7 +219,7 @@ class RentalRequestsDetail extends React.Component {
         <Row id="rental-requests-top" className="d-print-none">
           <Col sm={9}>
             <div id="rental-request-status">
-              <Badge variant={rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'default'}>
+              <Badge variant={rentalRequest.isActive ? 'success' : rentalRequest.isCancelled ? 'danger' : 'primary'}>
                 {rentalRequest.status}
               </Badge>
             </div>
