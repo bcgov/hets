@@ -25,7 +25,7 @@ class FilePicker extends React.Component {
     return (
       <span id={this.props.id} className={classNames.join(' ')}>
         <label>
-          <span className="btn btn-default" title="Pick files to upload">
+          <span className="btn btn-custom" title="Pick files to upload">
             <FontAwesomeIcon icon="folder-open" />
             {this.props.label ? ` ${this.props.label}` : null}
           </span>

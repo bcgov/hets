@@ -87,6 +87,7 @@ namespace HetsData.Repositories
                     .ThenInclude(c => c.ProjectStatusType)
                 .Include(x => x.HetRentalRequestAttachments)
                 .Include(x => x.DistrictEquipmentType)
+                    .ThenInclude(c => c.EquipmentType)
                 .FirstOrDefault(a => a.RentalRequestId == id);
 
             request.Status = request.RentalRequestStatusType.RentalRequestStatusTypeCode;
