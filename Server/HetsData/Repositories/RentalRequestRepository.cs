@@ -107,6 +107,7 @@ namespace HetsData.Repositories
             HetRentalRequest request = _dbContext.HetRentalRequests.AsNoTracking()
                 .Include(x => x.HetRentalRequestSeniorityLists)
                     .ThenInclude(x => x.Owner)
+                        .ThenInclude(x => x.PrimaryContact)
                 .Include(x => x.HetRentalRequestSeniorityLists)
                     .ThenInclude(x => x.LocalArea)
                 .Include(x => x.DistrictEquipmentType)
