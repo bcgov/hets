@@ -129,7 +129,7 @@ objects:
     subjects:
       - kind: ServiceAccount
         name: ${NAME}
-        namespace: e0cee6-tools
+        namespace: ${PROJECT}-tools
     roleRef:
       kind: Role
       name: ${NAME}
@@ -147,4 +147,8 @@ parameters:
       The namespace where all of components of the
       credentials are stored.
     name: NAMESPACE
+    required: true
+  - displayName: Project
+    decription: Project
+    name: PROJECT
     required: true

@@ -48,7 +48,7 @@ Every pull request made to master will trigger a new build and create a standalo
 
 The Github Actions workflow (/.github/workflows/clean.yml) will also automatically clean up the environments when a pull request is closed.
 
-## Manually Build and Deploy
+## Manual Build and Deploy
 
 Use the following steps to manually build and deploy. This assumes you have already logged in.
 
