@@ -728,20 +728,20 @@ namespace HetsApi.Controllers
                 data = data.Where(x => x.EquipmentCode.ToLower().Contains(equipmentId.ToLower()));
             }
 
-            // HETS-942 - Search for Equipment > 20 yrs
-            // ** only return equipment that are 20 years and older (using the equipment Year)
-            if (twentyYears)
-            {
-                int twentyYearsInt = DateTime.Now.Year - 20;
-                data = data.Where(x => string.IsNullOrWhiteSpace(x.Year) ||
-                                       int.Parse(x.Year) <= twentyYearsInt);
-            }
-
             // convert Equipment Model to the "EquipmentLite" Model
             SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
             List<EquipmentLiteDto> result = new List<EquipmentLiteDto>();
 
             var dataList = data.ToList();
+
+            // HETS-942 - Search for Equipment > 20 yrs
+            // ** only return equipment that are 20 years and older (using the equipment Year)
+            if (twentyYears)
+            {
+                var twentyYearsInt = DateTime.Now.Year - 20;
+                dataList = dataList.Where(x => string.IsNullOrWhiteSpace(x.Year) || int.Parse(x.Year) <= twentyYearsInt)
+                    .ToList();
+            }
 
             foreach (HetEquipment item in dataList)
             {
