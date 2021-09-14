@@ -178,6 +178,12 @@ namespace HetsApi.Controllers
 
             var progress = _context.HetRolloverProgresses.FirstOrDefault(a => a.DistrictId == id);
 
+            if (progress == null)
+            {
+                progress = new HetRolloverProgress { DistrictId = id, ProgressPercentage = null };
+                _context.HetRolloverProgresses.Add(progress);
+            }
+
             progress.ProgressPercentage = null;
 
             _context.SaveChanges();
