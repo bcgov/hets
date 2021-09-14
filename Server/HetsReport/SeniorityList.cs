@@ -65,6 +65,7 @@ namespace HetsReport
                                 {
                                     {"classification", reportModel.Classification},
                                     {"generatedOn", reportModel.GeneratedOn},
+                                    {"seniorityListType", reportModel.SeniorityListType },
                                     {"districtName", seniorityList.DistrictName},
                                     {"localAreaName", seniorityList.LocalAreaName},
                                     {"districtEquipmentTypeName", seniorityList.DistrictEquipmentTypeName}

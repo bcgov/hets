@@ -57,6 +57,7 @@ namespace HetsData.Helpers
     {
         public string Classification { get; set; }
         public string GeneratedOn { get; set; }
+        public string SeniorityListType { get; set; }
 
         public List<SeniorityListRecord> SeniorityListRecords { get; set; }
 
@@ -300,14 +301,14 @@ namespace HetsData.Helpers
             int blockNumber = 0;
             if (model.BlockNumber != null)
             {
-                blockNumber = (int) model.BlockNumber;
+                blockNumber = (int)model.BlockNumber;
             }
 
             // get equipment block number
             int numberInBlock = 0;
             if (model.NumberInBlock != null)
             {
-                numberInBlock = (int) model.NumberInBlock;
+                numberInBlock = (int)model.NumberInBlock;
             }
 
             // *************************************************************
