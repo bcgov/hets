@@ -450,7 +450,10 @@ class RentalRequestsDetail extends React.Component {
                       <td>{listItem.equipment.blockNumber}</td>
                       <td>{listItem.equipment.hoursYtd}</td>
                       <td>
-                        <Link to={`${Constant.EQUIPMENT_PATHNAME}/${listItem.equipment.id}`}>
+                        <Link
+                          className="print-color-black"
+                          to={`${Constant.EQUIPMENT_PATHNAME}/${listItem.equipment.id}`}
+                        >
                           {listItem.equipment.equipmentCode}
                         </Link>
                       </td>
