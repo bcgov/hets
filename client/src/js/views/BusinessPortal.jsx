@@ -233,7 +233,6 @@ class BusinessPortal extends React.Component {
                 updateState={this.updateState}
                 isInvalid={this.state.errors.secretKey}
               />
-              <FormText>{this.state.errors.secretKey}</FormText>
             </FormGroup>
             <FormGroup controlId="postalCode">
               <FormInputControl
@@ -245,13 +244,13 @@ class BusinessPortal extends React.Component {
                 updateState={this.updateState}
                 isInvalid={this.state.errors.postalCode}
               />
-              <FormText>{this.state.errors.postalCode}</FormText>
             </FormGroup>
             <Button type="submit" disabled={this.state.validating}>
               Validate {this.state.validating && <Spinner />}
             </Button>
           </Form>
-          {hasErrors && <div className="validation-error">Secret key validation failed.</div>}
+          <FormText>{this.state.errors.secretKey}</FormText>
+          {hasErrors && <FormText className="validation-error">Secret key validation failed.</FormText>}
         </div>
       </div>
     );
