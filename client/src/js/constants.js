@@ -23,7 +23,7 @@ export const BUSINESS_PORTAL_PATHNAME = '/business';
 export const BUSINESS_DETAILS_PATHNAME = '/business/details';
 export const AIT_REPORT_PATHNAME = '/reports/rental-agreement-summary';
 export const UNAUTHORIZED_PATHNAME = '/unauthorized';
-//temporary fix to fix import error RENTAL_CONDITIONS_PATHNAME and RENTAL_RATES_PATHNAME.
+//temporary fix to fix import error RENTAL_CONDITIONS_PATHNAME and RENTAL_RATES_PATHNAME. Two pathnames below are used in the API.
 export const RENTAL_CONDITIONS_PATHNAME = 'temporaryfix';
 export const RENTAL_RATES_PATHNAME = 'temporaryfix';
 

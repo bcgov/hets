@@ -15,10 +15,6 @@ export function closeErrorDialog() {
 
 export function unhandledApiError(err) {
   var errorMessage = err.message || String(err);
-  //temporary fix check if error messages pop up correctly for all instances.
-  // if (err.json) {
-  //   errorMessage = err.json.error.description;
-  // }
 
   return {
     type: REQUESTS_ERROR,
