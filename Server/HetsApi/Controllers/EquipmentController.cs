@@ -1460,9 +1460,10 @@ namespace HetsApi.Controllers
                 }
             }
 
-            // classification and print date
+            // classification, print date, type (counterCopy or Year to Date)
             seniorityList.Classification = $"23010-22/{(fiscalYear - 1).ToString().Substring(2, 2)}-{fiscalYear.ToString().Substring(2, 2)}";
             seniorityList.GeneratedOn = $"{DateUtils.ConvertUtcToPacificTime(DateTime.UtcNow):dd-MM-yyyy H:mm:ss}";
+            seniorityList.SeniorityListType = counterCopy ? "Counter-Copy" : "Year-to-Date";
 
             // convert to open xml document
             string documentName = $"SeniorityList-{DateTime.Now:yyyy-MM-dd}{(counterCopy ? "-(CounterCopy)" : "")}.docx";

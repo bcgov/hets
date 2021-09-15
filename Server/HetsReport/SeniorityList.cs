@@ -65,6 +65,7 @@ namespace HetsReport
                                 {
                                     {"classification", reportModel.Classification},
                                     {"generatedOn", reportModel.GeneratedOn},
+                                    {"seniorityListType", reportModel.SeniorityListType },
                                     {"districtName", seniorityList.DistrictName},
                                     {"localAreaName", seniorityList.LocalAreaName},
                                     {"districtEquipmentTypeName", seniorityList.DistrictEquipmentTypeName}
@@ -279,35 +280,19 @@ namespace HetsReport
 
                 table.AppendChild(tableRow1);
 
+                string prevBlock = "1";
+
                 // add rows for each record
                 foreach (SeniorityViewModel seniority in seniorityList)
                 {
-                    TableRow tableRowEquipment = new TableRow();
-
-                    TableRowProperties equipmentRowProperties = new TableRowProperties();
-                    equipmentRowProperties.AppendChild(new TableRowHeight() { Val = 200, HeightType = HeightRuleValues.AtLeast });
-                    tableRowEquipment.AppendChild(equipmentRowProperties);
-
-                    // add equipment data
-                    tableRowEquipment.AppendChild(SetupCell(seniority.Block, true));
-                    tableRowEquipment.AppendChild(SetupCell(seniority.EquipmentCode));
-                    
-                    if (!counterCopy)
+                    //if block changes add an empty row first
+                    if (!prevBlock.Equals(seniority.Block))
                     {
-                        tableRowEquipment.AppendChild(SetupCell(seniority.IsHired, true));
-                        tableRowEquipment.AppendChild(SetupCell(seniority.LastCalled, true));
+                        table.AppendChild(createTableRow(new SeniorityViewModel(), counterCopy));
+                        prevBlock = seniority.Block;
                     }
 
-                    tableRowEquipment.AppendChild(SetupCell(seniority.OwnerName));
-                    tableRowEquipment.AppendChild(SetupCell(seniority.YearMakeModelSize));
-                    tableRowEquipment.AppendChild(SetupCell(seniority.YtdHours, true));
-                    tableRowEquipment.AppendChild(SetupCell(seniority.HoursYearMinus1, true));
-                    tableRowEquipment.AppendChild(SetupCell(seniority.HoursYearMinus2, true));
-                    tableRowEquipment.AppendChild(SetupCell(seniority.HoursYearMinus3, true));
-                    tableRowEquipment.AppendChild(SetupCell(seniority.YearsRegistered, true));
-                    tableRowEquipment.AppendChild(SetupCell(seniority.Seniority, true));
-
-                    table.AppendChild(tableRowEquipment);
+                    table.AppendChild(createTableRow(seniority, counterCopy));
                 }
 
                 return table;
@@ -317,6 +302,37 @@ namespace HetsReport
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        private static TableRow createTableRow(SeniorityViewModel seniority, bool counterCopy)
+        {
+            //Tip: To create an empty row pass in "new SeniorityViewModel()" as an argument
+            TableRow tableRowEquipment = new TableRow();
+
+            TableRowProperties equipmentRowProperties = new TableRowProperties();
+            equipmentRowProperties.AppendChild(new TableRowHeight() { Val = 200, HeightType = HeightRuleValues.AtLeast });
+            tableRowEquipment.AppendChild(equipmentRowProperties);
+
+            // add equipment data
+            tableRowEquipment.AppendChild(SetupCell(seniority.Block, true));
+            tableRowEquipment.AppendChild(SetupCell(seniority.EquipmentCode));
+
+            if (!counterCopy)
+            {
+                tableRowEquipment.AppendChild(SetupCell(seniority.IsHired, true));
+                tableRowEquipment.AppendChild(SetupCell(seniority.LastCalled, true));
+            }
+
+            tableRowEquipment.AppendChild(SetupCell(seniority.OwnerName));
+            tableRowEquipment.AppendChild(SetupCell(seniority.YearMakeModelSize));
+            tableRowEquipment.AppendChild(SetupCell(seniority.YtdHours, true));
+            tableRowEquipment.AppendChild(SetupCell(seniority.HoursYearMinus1, true));
+            tableRowEquipment.AppendChild(SetupCell(seniority.HoursYearMinus2, true));
+            tableRowEquipment.AppendChild(SetupCell(seniority.HoursYearMinus3, true));
+            tableRowEquipment.AppendChild(SetupCell(seniority.YearsRegistered, true));
+            tableRowEquipment.AppendChild(SetupCell(seniority.Seniority, true));
+
+            return tableRowEquipment;
         }
 
         private static TableCell SetupHeaderCell(string text, string width, bool center = false)
