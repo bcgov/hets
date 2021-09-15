@@ -75,14 +75,18 @@ class BusinessPortal extends React.Component {
 
   validateOwner = (e) => {
     e.preventDefault();
+    //for React versions below v.17 this is needed as the e.target becomes null due to event pooling. Causing a crash when trying to clear input fields.
+    //source: https://reactjs.org/docs/events.html
+    //https://stackoverflow.com/questions/44708518/event-target-is-null-inside-functional-setstate
+    e.persist();
 
     this.setState({ validating: true, errors: {} });
-
     Api.validateOwner(this.state.secretKey, this.state.postalCode)
       .then(() => {
+        debugger;
         // clear input fields
-        this.inputPostalCode.value = '';
-        this.inputSecretKey.value = '';
+        e.target.postalCode.value = '';
+        e.target.secretKey.value = '';
       })
       .catch((error) => {
         if (
@@ -227,10 +231,8 @@ class BusinessPortal extends React.Component {
                 disabled={this.state.validating}
                 defaultValue={this.state.secretKey}
                 updateState={this.updateState}
-                ref={(input) => (this.inputSecretKey = input)}
                 isInvalid={this.state.errors.secretKey}
               />
-              <FormText>{this.state.errors.secretKey}</FormText>
             </FormGroup>
             <FormGroup controlId="postalCode">
               <FormInputControl
@@ -240,16 +242,15 @@ class BusinessPortal extends React.Component {
                 disabled={this.state.validating}
                 defaultValue={this.state.postalCode}
                 updateState={this.updateState}
-                ref={(input) => (this.inputPostalCode = input)}
                 isInvalid={this.state.errors.postalCode}
               />
-              <FormText>{this.state.errors.postalCode}</FormText>
             </FormGroup>
             <Button type="submit" disabled={this.state.validating}>
               Validate {this.state.validating && <Spinner />}
             </Button>
           </Form>
-          {hasErrors && <div className="validation-error">Secret key validation failed.</div>}
+          <FormText>{this.state.errors.secretKey}</FormText>
+          {hasErrors && <FormText className="validation-error">Secret key validation failed.</FormText>}
         </div>
       </div>
     );

@@ -113,12 +113,20 @@
       padding: 2px;
     }
 
+    th {
+      vertical-align: middle;
+    }
+
     th span {
       display: block;
     }
 
     td {
       word-break: break-all;
+    }
+
+    .print-color-black {
+      color: black;
     }
 
     th:first-child,
