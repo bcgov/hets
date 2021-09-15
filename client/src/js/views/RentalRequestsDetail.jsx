@@ -386,7 +386,7 @@ class RentalRequestsDetail extends React.Component {
                 field: 'equipmentCode',
                 node: (
                   <div>
-                    <span>Equip.</span> <span>ID</span>
+                    <span>Equip. ID</span>
                   </div>
                 ),
               },
@@ -394,7 +394,7 @@ class RentalRequestsDetail extends React.Component {
                 field: 'equipmentDetails',
                 node: (
                   <div>
-                    <span>Equip.</span> <span>Details</span>
+                    <span>Equip. Details</span>
                   </div>
                 ),
               },
@@ -412,7 +412,7 @@ class RentalRequestsDetail extends React.Component {
                 field: 'primaryContactCellPhone',
                 node: (
                   <div>
-                    <span>Cell</span> <span>Phone</span>
+                    <span>Cell Phone</span>
                   </div>
                 ),
               },
