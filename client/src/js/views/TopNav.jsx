@@ -84,7 +84,11 @@ class TopNav extends React.Component {
           <Container className={'justify-content-start'}>
             <Navbar.Brand href="http://www2.gov.bc.ca/gov/content/home">
               <div id="logo">
-                <img title="Government of B.C." alt="Government of B.C." src="images/gov/gov3_bc_logo.png" />
+                <img
+                  title="Government of B.C."
+                  alt="Government of B.C."
+                  src={`${process.env.PUBLIC_URL}/images/gov/gov3_bc_logo.png`}
+                />
               </div>
             </Navbar.Brand>
             <h1 id="banner">MOTI Hired Equipment Tracking System</h1>
