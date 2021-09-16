@@ -265,16 +265,6 @@ namespace HetsData.Repositories
                         {
                             owner.SharedKeyHeader = "Secret Key: ";
                         }
-                        else
-                        {
-                            //"Business Name: label and value instead"
-                            owner.SharedKeyHeader = "Business Name: ";
-
-                            if (owner.Business != null && !string.IsNullOrEmpty(owner.Business.BceidLegalName))
-                            {
-                                owner.SharedKeyHeader = "Business Name: " + owner.Business.BceidLegalName;
-                            }
-                        }
 
                         // strip out inactive and archived equipment
                         owner.HetEquipments = owner.HetEquipments.Where(x => x.EquipmentStatusTypeId == equipmentStatusId).ToList();

@@ -1,16 +1,18 @@
 @import './mixins.scss';
 
 $nav-background-color: #38598a;
-$nav-background-color-test: #448a38;
-$nav-background-color-dev: #8a3844;
+$nav-background-color-test: #f9a825;
+$nav-background-color-dev: #448a38;
+//temporary fix remove trn color when environment is removed
 $nav-background-color-trn: #744e91;
-$nav-background-color-uat: #d98747;
+$nav-background-color-uat: #744e91;
 
-$nav-active-background-color: #5475a7;
-$nav-active-background-color-test: #60a654;
-$nav-active-background-color-dev: #a65460;
-$nav-active-background-color-trn: #9b5ab5;
-$nav-active-background-color-uat: #db976d;
+$nav-active-background-color: lighten($nav-background-color, 10%);
+$nav-active-background-color-test: lighten($nav-background-color-test, 10%);
+$nav-active-background-color-dev: lighten($nav-background-color-dev, 10%);
+//temporary fix remove trn color when environment is removed
+$nav-active-background-color-trn: lighten($nav-background-color-trn, 10%);
+$nav-active-background-color-uat: lighten($nav-background-color-uat, 10%);
 
 #header {
   #working-indicator {
