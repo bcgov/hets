@@ -178,7 +178,7 @@ class MultiDropdown extends React.Component {
               onKeyDown={this.keyDown}
             />
 
-            <Form.Group controlId="formSelectAllCheckbox">
+            <Form.Group controlId={`formSelectAllCheckbox-${this.state.fieldName}`}>
               <FormCheck
                 className="select-all"
                 checked={this.state.allSelected}
