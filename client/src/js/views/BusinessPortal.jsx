@@ -192,7 +192,7 @@ class BusinessPortal extends React.Component {
                 id="hets-logo"
                 title="Hired Equipment Tracking System"
                 alt="Hired Equipment Tracking System"
-                src="images/gov/hets.jpg"
+                src={`${process.env.PUBLIC_URL}/images/gov/hets.jpg`}
               />
               <p>
                 The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or other
