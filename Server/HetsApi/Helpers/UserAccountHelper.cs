@@ -336,8 +336,7 @@ namespace HetsApi.Helpers
 
             // get complete user record (with roles) and return
             user = context.HetBusinessUsers.AsNoTracking()
-                .Where(x => x.BusinessId == business.BusinessId &&
-                            x.BceidUserId.ToUpper() == username)
+                .Where(x => x.BceidGuid.ToLower() == guid.ToLower())
                 .Include(u => u.HetBusinessUserRoles)
                     .ThenInclude(r => r.Role)
                         .ThenInclude(rp => rp.HetRolePermissions)
