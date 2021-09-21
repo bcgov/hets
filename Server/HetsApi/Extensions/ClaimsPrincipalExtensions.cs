@@ -19,7 +19,7 @@ namespace HetsApi.Extensions
             var bizGuid = directory == Constants.IDIR ? "" : principal.FindFirstValue("bceid_business_guid");
             var bizName = directory == Constants.IDIR ? "" : principal.FindFirstValue("bceid_business_name");
 
-            var email = principal.FindFirstValue("email");
+            var email = principal.FindFirstValue(ClaimTypes.Email);
 
             return (username, userGuid, directory, bizGuid, bizName, email);
         }
