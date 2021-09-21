@@ -279,7 +279,7 @@ namespace HetsApi.Helpers
             // ok - now find the user
             HetBusinessUser user = context.HetBusinessUsers
                 .FirstOrDefault(x => x.BusinessId == business.BusinessId &&
-                                     x.BceidUserId.ToUpper() == userId);
+                                     x.BceidUserId.ToLower() == userId);
 
             if (user == null)
             {
