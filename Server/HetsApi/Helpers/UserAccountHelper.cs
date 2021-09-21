@@ -220,11 +220,11 @@ namespace HetsApi.Helpers
         /// </summary>
         /// <param name="context"></param>
         /// <param name="account"></param>
-        /// <param name="userId"></param>
+        /// <param name="username"></param>
         /// <param name="bizGuid"></param>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public static HetBusinessUser GetBusinessUser(DbAppContext context, string userId, string bizGuid, string bizName, string email, string guid)
+        public static HetBusinessUser GetBusinessUser(DbAppContext context, string username, string bizGuid, string bizName, string email, string guid)
         {
             // find the business
             HetBusiness business = context.HetBusinesses.AsNoTracking()
@@ -238,11 +238,11 @@ namespace HetsApi.Helpers
                     BceidBusinessGuid = bizGuid.ToLower().Trim(),
                     AppCreateUserDirectory = "BCeID",
                     AppCreateUserGuid = guid,
-                    AppCreateUserid = userId,
+                    AppCreateUserid = username,
                     AppCreateTimestamp = DateTime.UtcNow,
                     AppLastUpdateUserDirectory = "BCeID",
                     AppLastUpdateUserGuid = guid,
-                    AppLastUpdateUserid = userId,
+                    AppLastUpdateUserid = username,
                     AppLastUpdateTimestamp = DateTime.UtcNow
                 };
 
@@ -270,7 +270,7 @@ namespace HetsApi.Helpers
 
                 business.AppLastUpdateUserDirectory = "BCeID";
                 business.AppLastUpdateUserGuid = guid;
-                business.AppLastUpdateUserid = userId;
+                business.AppLastUpdateUserid = username;
                 business.AppLastUpdateTimestamp = DateTime.UtcNow;
 
                 context.SaveChanges();
@@ -278,24 +278,23 @@ namespace HetsApi.Helpers
 
             // ok - now find the user
             HetBusinessUser user = context.HetBusinessUsers
-                .FirstOrDefault(x => x.BusinessId == business.BusinessId &&
-                                     x.BceidUserId.ToLower() == userId);
+                .FirstOrDefault(x => x.BceidGuid.ToLower() == guid.ToLower());
 
             if (user == null)
             {
                 // auto register the user
                 user = new HetBusinessUser
                 {
-                    BceidUserId = userId,
+                    BceidUserId = username,
                     BceidGuid = guid,
                     BusinessId = business.BusinessId,
                     AppCreateUserDirectory = "BCeID",
                     AppCreateUserGuid = guid,
-                    AppCreateUserid = userId,
+                    AppCreateUserid = username,
                     AppCreateTimestamp = DateTime.UtcNow,
                     AppLastUpdateUserDirectory = "BCeID",
                     AppLastUpdateUserGuid = guid,
-                    AppLastUpdateUserid = userId,
+                    AppLastUpdateUserid = username,
                     AppLastUpdateTimestamp = DateTime.UtcNow
                 };
 
@@ -311,11 +310,11 @@ namespace HetsApi.Helpers
                     EffectiveDate = DateTime.UtcNow.AddMinutes(-10),
                     AppCreateUserDirectory = "BCeID",
                     AppCreateUserGuid = guid,
-                    AppCreateUserid = userId,
+                    AppCreateUserid = username,
                     AppCreateTimestamp = DateTime.UtcNow,
                     AppLastUpdateUserDirectory = "BCeID",
                     AppLastUpdateUserGuid = guid,
-                    AppLastUpdateUserid = userId,
+                    AppLastUpdateUserid = username,
                     AppLastUpdateTimestamp = DateTime.UtcNow
                 };
 
@@ -338,7 +337,7 @@ namespace HetsApi.Helpers
             // get complete user record (with roles) and return
             user = context.HetBusinessUsers.AsNoTracking()
                 .Where(x => x.BusinessId == business.BusinessId &&
-                            x.BceidUserId.ToUpper() == userId)
+                            x.BceidUserId.ToUpper() == username)
                 .Include(u => u.HetBusinessUserRoles)
                     .ThenInclude(r => r.Role)
                         .ThenInclude(rp => rp.HetRolePermissions)
