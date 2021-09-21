@@ -49,9 +49,9 @@ class NotesDialog extends React.Component {
   };
 
   onNoteAdded = (note) => {
-    this.setState({ notes: this.state.notes.concat([note]) });
-    this.props.saveNote(this.props.id, note).then(() => {
+    this.props.saveNote(this.props.id, note).then((response) => {
       this.props.getNotes(this.props.id);
+      this.setState({ notes: response });
     });
     this.closeNotesAddDialog();
   };
@@ -110,8 +110,8 @@ class NotesDialog extends React.Component {
                 <td width="100%">{note.text}</td>
                 <td style={{ textAlign: 'right', minWidth: '60px' }}>
                   <ButtonGroup>
-                    <EditButton name="editNote" disabled={!note.id} onClick={this.editNote.bind(this, note)} />
-                    <DeleteButton name="note" disabled={!note.id} onConfirm={this.deleteNote.bind(this, note)} />
+                    <EditButton name="Note" onClick={this.editNote.bind(this, note)} />
+                    <DeleteButton name="Note" onConfirm={this.deleteNote.bind(this, note)} />
                   </ButtonGroup>
                 </td>
               </tr>
