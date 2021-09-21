@@ -106,7 +106,7 @@ class DocumentsListDialog extends React.Component {
       .then((res) => {
         //use Header content-disposition for the file name
         //looks like ""attachment; filename=adobe.pdf; filename*=UTF-8''adobe.pdf""
-        fName = res.getResponseHeader('content-disposition').match(/(?<=filename=)(.*)(?=; filename)/)[0];
+        fName = res.getResponseHeader('content-disposition').match(/(?<=filename=")(.*)(?="; filename)/)[0];
         saveAs(res.response, fName);
       })
       .catch((error) => {
