@@ -46,6 +46,11 @@ namespace HetsApi.Authentication
 
             //problem.Extensions.Add("traceId", context.HttpContext.TraceIdentifier);
 
+            if (context.Exception != null)
+            {
+                _logger.LogError(context.Exception.ToString());
+            }
+
             await context.Response.WriteJsonAsync(problem, "application/problem+json");
         }
 
