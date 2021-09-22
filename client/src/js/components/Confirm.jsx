@@ -1,50 +1,51 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { Popover, ButtonGroup, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import _ from 'lodash';
 
-class Confirm extends React.Component {
-  static propTypes = {
-    onConfirm: PropTypes.func.isRequired,
-    onCancel: PropTypes.func,
-
-    children: PropTypes.node,
-    title: PropTypes.string,
+const Confirm = forwardRef(({ onConfirm, onCancel, hide, children, title, ...rest }, ref) => {
+  const confirmed = () => {
+    onConfirm();
   };
 
-  confirmed = () => {
-    this.props.onConfirm();
-  };
-
-  canceled = () => {
-    if (this.props.onCancel) {
-      this.props.onCancel();
+  const canceled = () => {
+    if (onCancel) {
+      onCancel();
     }
+    //used to close popover on Cancel. Overlaytrigger must be set with trigger="click"
+    document.body.click();
   };
 
-  render() {
-    var props = _.omit(this.props, 'onConfirm', 'onCancel', 'hide', 'children');
+  return (
+    <Popover id="confirm" ref={ref} {...rest}>
+      <Popover.Title>{title}</Popover.Title>
+      <Popover.Content>
+        {children}
+        <div style={{ textAlign: 'center', marginTop: '6px' }}>
+          <ButtonGroup>
+            <Button onClick={confirmed}>
+              <FontAwesomeIcon icon={['far', 'check-circle']} /> Yes
+            </Button>
+            <Button className="btn-custom" onClick={canceled}>
+              <FontAwesomeIcon icon={['far', 'times-circle']} /> No
+            </Button>
+          </ButtonGroup>
+        </div>
+      </Popover.Content>
+    </Popover>
+  );
+});
 
-    return (
-      <Popover id="confirm" {...props}>
-        <Popover.Title>{this.props.title ? this.props.title : 'Are you sure?'}</Popover.Title>
-        <Popover.Content>
-          {this.props.children}
-          <div style={{ textAlign: 'center', marginTop: '6px' }}>
-            <ButtonGroup>
-              <Button onClick={this.confirmed}>
-                <FontAwesomeIcon icon={['far', 'check-circle']} /> Yes
-              </Button>
-              <Button className="btn-custom" onClick={this.canceled}>
-                <FontAwesomeIcon icon={['far', 'times-circle']} /> No
-              </Button>
-            </ButtonGroup>
-          </div>
-        </Popover.Content>
-      </Popover>
-    );
-  }
-}
+Confirm.propTypes = {
+  onConfirm: PropTypes.func.isRequired,
+  onCancel: PropTypes.func,
+
+  children: PropTypes.node,
+  title: PropTypes.string,
+};
+
+Confirm.defaultProps = {
+  title: 'Are you sure?',
+};
 
 export default Confirm;

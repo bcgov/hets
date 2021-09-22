@@ -344,7 +344,7 @@ class UsersDetail extends React.Component {
                                 <ButtonGroup>
                                   <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                                     <OverlayTrigger
-                                      trigger="focus"
+                                      trigger="click"
                                       placement="top"
                                       rootClose
                                       overlay={<Confirm onConfirm={this.deleteDistrict.bind(this, district)} />}
@@ -377,16 +377,15 @@ class UsersDetail extends React.Component {
           <Row>
             <Col md={12}>
               <div className="well" id="users-access">
-                <h3>
-                  Access
+                <SubHeader title="Access">
                   <CheckboxControl
                     inline
                     id="showExpiredOnly"
                     checked={this.state.ui.showExpiredOnly}
                     updateState={this.updateUIState}
                     label="Show Expired Only"
-                  />
-                </h3>
+                  />{' '}
+                </SubHeader>
                 {(() => {
                   if (loading) {
                     return (
@@ -412,6 +411,7 @@ class UsersDetail extends React.Component {
                     }
                     return include;
                   });
+
                   if (userRoles.length === 0) {
                     return <Alert variant="success">No roles {addUserRoleButton}</Alert>;
                   }
@@ -457,6 +457,7 @@ class UsersDetail extends React.Component {
                                     trigger="click"
                                     placement="left"
                                     overlay={<ExpireOverlay userRole={userRole} onSave={this.updateUserRole} />}
+                                    rootClose
                                   >
                                     <Button className="btn-custom" title="Expire User Role" size="sm">
                                       <FontAwesomeIcon icon="pencil-alt" />
@@ -537,6 +538,7 @@ class ExpireOverlay extends React.Component {
           roleId: this.props.userRole.role.id,
         },
       });
+      document.body.click(); //used to close popover after saving. Overlaytrigger must be set with trigger="click" Otherwise popover stays open after expiry
     }
   };
 
