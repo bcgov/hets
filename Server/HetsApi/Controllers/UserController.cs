@@ -52,7 +52,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("{id}")]
         [RequiresPermission(HetPermission.UserManagement)]
-        public virtual ActionResult<UserDto> UsersIdGet([FromRoute]int id)
+        public virtual ActionResult<UserDto> UsersIdGet([FromRoute] int id)
         {
             bool exists = _context.HetUsers.Any(x => x.UserId == id);
 
@@ -70,7 +70,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/delete")]
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
-        public virtual ActionResult<UserDto> UsersIdDeletePost([FromRoute]int id)
+        public virtual ActionResult<UserDto> UsersIdDeletePost([FromRoute] int id)
         {
             bool exists = _context.HetUsers.Any(x => x.UserId == id);
 
@@ -109,7 +109,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("")]
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
-        public virtual ActionResult<UserDto> UsersPost([FromBody]UserDto item)
+        public virtual ActionResult<UserDto> UsersPost([FromBody] UserDto item)
         {
             // not found
             if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -160,7 +160,7 @@ namespace HetsApi.Controllers
         [HttpPut]
         [Route("{id}")]
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
-        public virtual ActionResult<UserDto> UsersIdPut([FromRoute]int id, [FromBody]UserDto item)
+        public virtual ActionResult<UserDto> UsersIdPut([FromRoute] int id, [FromBody] UserDto item)
         {
             if (item == null || id != item.UserId)
             {
@@ -259,7 +259,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("search")]
         [RequiresPermission(HetPermission.UserManagement)]
-        public virtual ActionResult<List<UserDto>> UsersSearchGet([FromQuery]string districts, [FromQuery]string surname, [FromQuery]bool? includeInactive)
+        public virtual ActionResult<List<UserDto>> UsersSearchGet([FromQuery] string districts, [FromQuery] string surname, [FromQuery] bool? includeInactive)
         {
             int?[] districtArray = ArrayHelper.ParseIntArray(districts);
 
@@ -297,7 +297,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("{id}/favourites")]
         [RequiresPermission(HetPermission.UserManagement)]
-        public virtual ActionResult<List<UserFavouriteDto>> UsersIdFavouritesGet([FromRoute]int id)
+        public virtual ActionResult<List<UserFavouriteDto>> UsersIdFavouritesGet([FromRoute] int id)
         {
             bool exists = _context.HetUsers.Any(x => x.UserId == id);
 
@@ -324,7 +324,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("{id}/permissions")]
         [RequiresPermission(HetPermission.UserManagement)]
-        public virtual ActionResult<List<PermissionDto>> UsersIdPermissionsGet([FromRoute]int id)
+        public virtual ActionResult<List<PermissionDto>> UsersIdPermissionsGet([FromRoute] int id)
         {
             bool exists = _context.HetUsers.Any(x => x.UserId == id);
 
@@ -362,7 +362,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("{id}/roles")]
         [RequiresPermission(HetPermission.UserManagement)]
-        public virtual ActionResult<List<UserRoleDto>> UsersIdRolesGet([FromRoute]int id)
+        public virtual ActionResult<List<UserRoleDto>> UsersIdRolesGet([FromRoute] int id)
         {
             bool exists = _context.HetUsers.Any(x => x.UserId == id);
 
@@ -385,39 +385,37 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/roles")]
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
-        public virtual ActionResult<List<UserRoleDto>> UsersIdRolesPost([FromRoute]int id, [FromBody]UserRoleDto item)
+        public virtual ActionResult<List<UserRoleDto>> UsersIdRolesPost([FromRoute] int id, [FromBody] UserRoleDto item)
         {
+            //check for user
             bool exists = _context.HetUsers.Any(x => x.UserId == id);
-
-            // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // check the role id
             bool roleExists = _context.HetRoles.Any(x => x.RoleId == item.RoleId);
-
-            // record not found
             if (!roleExists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            // check the user exists
-            var user = _userRepo.GetRecord(id);
+            // check the user exists and return only active roles
+            var user = _userRepo.GetRecord(id, excludeInactiveRoles: true);
             if (user == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            // check if the user has this role - then add
-            if (user.UserRoles.All(x => x.RoleId != item.RoleId))
+            //check if user already has the same role active
+            bool activeRoleExists = user.UserRoles.Any(x => x.RoleId == item.RoleId);
+            if (activeRoleExists) return new NotFoundObjectResult(new HetsResponse("HETS-45", ErrorViewModel.GetDescription("HETS-45", _configuration)));
+
+
+            // create a new UserRole record
+            HetUserRole userRole = new HetUserRole
             {
-                // create a new UserRole record
-                HetUserRole userRole = new HetUserRole
-                {
-                    RoleId = item.RoleId,
-                    UserId = id,
-                    EffectiveDate = item.EffectiveDate,
-                    ExpiryDate = item.ExpiryDate
-                };
+                RoleId = item.RoleId,
+                UserId = id,
+                EffectiveDate = item.EffectiveDate,
+                ExpiryDate = item.ExpiryDate
+            };
 
-                _context.HetUserRoles.Add(userRole);
+            _context.HetUserRoles.Add(userRole);
 
-                _context.SaveChanges();
-            }
+            _context.SaveChanges();
 
             // return updated roles
             user = _userRepo.GetRecord(id);
@@ -435,12 +433,20 @@ namespace HetsApi.Controllers
         [HttpPut]
         [Route("{id}/roles")]
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
-        public virtual ActionResult<List<UserRoleDto>> UsersIdRolesPut([FromRoute]int id, [FromBody]UserRoleDto[] items)
+        public virtual ActionResult<List<UserRoleDto>> UsersIdRolesPut([FromRoute] int id, [FromBody] UserRoleDto[] items)
         {
-            bool exists = _context.HetUsers.Any(x => x.UserId == id);
 
-            // not found
-            if (!exists || items == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            //confirm user exists
+            bool userExists = _context.HetUsers.Any(x => x.UserId == id);
+            if (!userExists || items == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            //confirm all items belong to the user, using UserRoleId
+            //confirm all items exist in database
+            foreach (var item in items)
+            {
+                var result = _context.HetUserRoles.FirstOrDefault(x => x.UserRoleId == item.UserRoleId && x.UserId == id);
+                if (result == null) return new NotFoundObjectResult(new HetsResponse("HETS-44", ErrorViewModel.GetDescription("HETS-44", _configuration)));
+            }
 
             // get record
             var user = _userRepo.GetRecord(id);
@@ -449,24 +455,14 @@ namespace HetsApi.Controllers
             // iterate the roles and update effective date
             foreach (var item in items)
             {
-                // check the role id
-                bool roleExists = _context.HetUserRoles.Any(x => x.RoleId == item.RoleId &&
-                                                                x.UserId == id);
+                HetUserRole role = _context.HetUserRoles.First(x => x.UserRoleId == item.UserRoleId);
 
-                if (roleExists)
+                if (role.ExpiryDate != item.ExpiryDate)
                 {
-                    // check if we need to modify the effective date
-                    HetUserRole role = _context.HetUserRoles.First(x => x.RoleId == item.RoleId &&
-                                                                       x.UserId == id);
-
-                    if (role.ExpiryDate != item.ExpiryDate)
-                    {
-                        role.ExpiryDate = item.ExpiryDate;
-                        _context.SaveChanges();
-                    }
+                    role.ExpiryDate = item.ExpiryDate;
                 }
             }
-
+            _context.SaveChanges();
             // return updated roles
             user = _userRepo.GetRecord(id);
 
@@ -486,7 +482,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("{id}/districts")]
         [RequiresPermission(HetPermission.UserManagement)]
-        public virtual ActionResult<List<UserDistrictDto>> UsersIdDistrictsGet([FromRoute]int id)
+        public virtual ActionResult<List<UserDistrictDto>> UsersIdDistrictsGet([FromRoute] int id)
         {
             List<HetUserDistrict> districts = _context.HetUserDistricts.AsNoTracking()
                 .Include(x => x.User)

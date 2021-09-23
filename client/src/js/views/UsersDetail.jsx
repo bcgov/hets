@@ -39,7 +39,7 @@ import SubHeader from '../components/ui/SubHeader.jsx';
 import Authorize from '../components/Authorize.jsx';
 
 import { daysFromToday, formatDateTime, today, isValidDate, toZuluTime } from '../utils/date';
-import { isBlank, notBlank } from '../utils/string';
+import { isBlank } from '../utils/string';
 import { sort, caseInsensitiveSort } from '../utils/array.js';
 
 class UsersDetail extends React.Component {
@@ -152,8 +152,7 @@ class UsersDetail extends React.Component {
     // been expired.
     var userRoles = this.props.user.userRoles.map((ur) => {
       return {
-        roleId: ur.roleId,
-        effectiveDate: ur.effectiveDate,
+        ...ur,
         expiryDate: userRole.id === ur.id ? userRole.expiryDate : ur.expiryDate,
       };
     });
@@ -383,7 +382,7 @@ class UsersDetail extends React.Component {
                     id="showExpiredOnly"
                     checked={this.state.ui.showExpiredOnly}
                     updateState={this.updateUIState}
-                    label="Show Expired Only"
+                    label="Include Expired Roles"
                   />{' '}
                 </SubHeader>
                 {(() => {
@@ -405,10 +404,12 @@ class UsersDetail extends React.Component {
                   );
 
                   var userRoles = _.filter(user.userRoles, (userRole) => {
-                    var include = notBlank(userRole.roleName);
-                    if (this.state.ui.showExpiredOnly) {
-                      include = include && userRole.expiryDate && daysFromToday(userRole.expiryDate) < 0;
+                    let include = true;
+
+                    if (!this.state.ui.showExpiredOnly) {
+                      include = daysFromToday(userRole.expiryDate) >= 0 || userRole.expiryDate === null;
                     }
+
                     return include;
                   });
 

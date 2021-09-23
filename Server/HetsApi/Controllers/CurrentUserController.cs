@@ -48,7 +48,7 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("favourites/{favouriteType?}")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual ActionResult<List<UserFavouriteDto>> UsersCurrentFavouritesFavouriteTypeGet([FromRoute]string favouriteType)
+        public virtual ActionResult<List<UserFavouriteDto>> UsersCurrentFavouritesFavouriteTypeGet([FromRoute] string favouriteType)
         {
             // get the current user id
             string userId = _context.SmUserId;
@@ -78,7 +78,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("favourites/{id}/delete")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual ActionResult<UserFavouriteDto> UsersCurrentFavouritesIdDeletePost([FromRoute]int id)
+        public virtual ActionResult<UserFavouriteDto> UsersCurrentFavouritesIdDeletePost([FromRoute] int id)
         {
             // get the current user id
             string userId = _context.SmUserId;
@@ -112,7 +112,7 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("favourites")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual ActionResult<UserFavouriteDto> UsersCurrentFavouritesPost([FromBody]UserFavouriteDto item)
+        public virtual ActionResult<UserFavouriteDto> UsersCurrentFavouritesPost([FromBody] UserFavouriteDto item)
         {
             return UpdateFavourite(item);
         }
@@ -125,7 +125,7 @@ namespace HetsApi.Controllers
         [HttpPut]
         [Route("favourites")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual ActionResult<UserFavouriteDto> UsersCurrentFavouritesPut([FromBody]UserFavouriteDto item)
+        public virtual ActionResult<UserFavouriteDto> UsersCurrentFavouritesPut([FromBody] UserFavouriteDto item)
         {
             return UpdateFavourite(item);
         }
@@ -308,7 +308,8 @@ namespace HetsApi.Controllers
             else if (_env.IsStaging())
             {
                 logoffUrl = _configuration.GetSection("Constants:LogoffUrl-Test").Value;
-            }else if (_env.IsEnvironment("Training"))
+            }
+            else if (_env.IsEnvironment("Training"))
             {
                 logoffUrl = _configuration.GetSection("Constants:LogoffUrl-Training").Value;
             }
@@ -317,7 +318,7 @@ namespace HetsApi.Controllers
                 logoffUrl = _configuration.GetSection("Constants:LogoffUrl-UAT").Value;
             }
 
-            LogoffModel response = new LogoffModel {LogoffUrl = logoffUrl};
+            LogoffModel response = new LogoffModel { LogoffUrl = logoffUrl };
 
             return new ObjectResult(new HetsResponse(response));
         }

@@ -14,7 +14,7 @@ namespace HetsData.Repositories
     public interface IUserRepository
     {
         List<UserDto> GetRecords();
-        UserDto GetRecord(int id);
+        UserDto GetRecord(int id, bool excludeInactiveRoles = false);
     }
     public class UserRepository : IUserRepository
     {
@@ -59,7 +59,7 @@ namespace HetsData.Repositories
         /// <param name="id"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public UserDto GetRecord(int id)
+        public UserDto GetRecord(int id, bool excludeInactiveRoles = false)
         {
             HetUser user = _dbContext.HetUsers.AsNoTracking()
                 .Include(x => x.District)
@@ -70,7 +70,7 @@ namespace HetsData.Repositories
                             .ThenInclude(z => z.Permission)
                 .FirstOrDefault(x => x.UserId == id);
 
-            if (user != null)
+            if (user != null && excludeInactiveRoles)
             {
                 // remove inactive roles
                 user.HetUserRoles = user.HetUserRoles
