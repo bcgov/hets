@@ -218,15 +218,11 @@ th {
   right: 6px;
   float: right;
   width: 30px;
-  //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-  //   background-image: url("../images/search-ico.png");
   background-position: 98% center;
   background-repeat: no-repeat;
 }
 
 #searchWidget .search .search-trigger {
-  //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-  //   background-image: url("../images/search-ico-blue.png");
   right: 0;
 }
 
@@ -285,8 +281,6 @@ th {
 }
 
 .navigationRibbon .level2Navigation a.current {
-  //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-  // background-image: url("../images/nav-ribbon-arrow.png");
   background-position: center bottom;
   background-repeat: no-repeat;
 }
@@ -660,8 +654,6 @@ ul.leftNav > li:first-child {
 }
 
 .contentPageLeftNavigation ul li.closed {
-  //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-  //   background-image: url("../images/sidecolumnnav_closed.gif");
   background-position: 0 2px;
 }
 
@@ -678,8 +670,6 @@ ul.leftNav > li:first-child {
 }
 
 .contentPageLeftNavigation ul li.open {
-  //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-  //   background-image: url("../images/sidecolumnnav_open.gif");
   background-position: 0 2px;
 }
 
@@ -829,9 +819,6 @@ ul.leftNav > li:first-child {
   position: absolute;
   top: 0;
   left: 36px;
-  //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-  //   background: url("/StaticWebResources/static/gov3/images/down-arrow.png")
-  // no-repeat scroll 0 0 transparent;
   height: 7px;
   width: 12px;
 }
@@ -840,9 +827,6 @@ ul.leftNav > li:first-child {
   position: absolute;
   bottom: 0;
   left: 36px;
-  //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-  //   background: url("/StaticWebResources/static/gov3/images/down-arrow.png")
-  // no-repeat scroll 0 0 transparent;
   height: 7px;
   width: 12px;
 }
@@ -876,10 +860,6 @@ ul.leftNav > li:first-child {
   height: 99%;
   width: 40px;
   z-index: 3;
-  //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-  //   background: #fff
-  //     url("/StaticWebResources/static/gov3/images/inlinesearch-button-off.png")
-  //     no-repeat left center;
 }
 
 .homepage-tile .tile-search.touchable {
@@ -890,10 +870,6 @@ ul.leftNav > li:first-child {
   height: 99%;
   width: 40px;
   z-index: 3;
-  //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-  //   background: #fff
-  //     url("/StaticWebResources/static/gov3/images/inlinesearch-button-off.png")
-  //     no-repeat left center;
 }
 
 .homepage-tile:hover .tile-search,
@@ -903,14 +879,6 @@ ul.leftNav > li:first-child {
 
 .homepage-tile .tile-search:hover {
   cursor: pointer;
-}
-
-.homepage-tile .tile-search:hover,
-.homepage-tile.flyout-expanded .tile-search {
-  //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-  //   background: #26639c
-  //     url("/StaticWebResources/static/gov3/images/inlinesearch-button-on.png")
-  //     no-repeat left center;
 }
 
 .homepage-tile .tile-search-flyout {
@@ -933,13 +901,6 @@ ul.leftNav > li:first-child {
   border: 1px solid #26639c;
   font-size: 16px;
   background: #fff;
-}
-
-.homepage-tile .tile-search-flyout input.placeholder {
-  //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-  //   background: #fff
-  //     url("/StaticWebResources/static/gov3/images/tile_searchbox_placeholder.png")
-  //     no-repeat left center;
 }
 
 .homepage-tile table.ss-gac-m {
@@ -1037,9 +998,6 @@ ul.leftNav > li:first-child {
 .homePageRightColumn ul > li,
 #footer ul.bulleted > li {
   padding-left: 15px;
-  //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-  //   background: url("/StaticWebResources/static/gov3/images/bullet.png") no-repeat
-  //     scroll 0 8px transparent;
   margin-bottom: 3px;
 }
 
@@ -1278,9 +1236,6 @@ img.back-to-top:hover {
   font-weight: 600;
   padding-left: 10px;
   text-transform: uppercase;
-  //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-  //   background: url("/StaticWebResources/static/gov3/images/bullet-arrow.png")
-  //     no-repeat scroll 0 4px transparent;
   margin-top: 10px;
 }
 
@@ -1415,8 +1370,6 @@ img.back-to-top:hover {
   }
   #header .menu-button.mini-menu-trigger,
   #header .search-button.mini-menu-trigger {
-    //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-    // background-image: url("../images/mini-menu/menu-open-mobile.png");
     background-repeat: no-repeat;
     background-color: transparent;
     border-radius: 0;
@@ -1435,8 +1388,6 @@ img.back-to-top:hover {
     border-right: 2px solid #4b5e73;
   }
   #header .search-button.mini-menu-trigger {
-    //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-    // background-image: url("../images/mini-menu/search-open-mobile.png");
     right: 70px;
   }
   #homeTemplate {
@@ -1535,8 +1486,6 @@ img.back-to-top:hover {
     padding-left: 100px;
   }
   .topic-menu-trigger {
-    //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-    // background-image: url("../images/mini-menu/section-nav-open.png");
     background-position: 97% center;
     background-repeat: no-repeat;
     color: #1a5a96;
@@ -1565,14 +1514,6 @@ img.back-to-top:hover {
     right: 0;
     top: 0;
     width: 50px;
-  }
-  #topicLeftNav li.open > .leftNav-item-wrapper .level-trigger {
-    //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-    // background-image: url("../images/mini-menu/section-nav-arrow-dn.png");
-  }
-  #topicLeftNav li.closed > .leftNav-item-wrapper .level-trigger {
-    //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-    // background-image: url("../images/mini-menu/section-nav-arrow-up.png");
   }
   #shareIcons {
     display: none;
@@ -1702,8 +1643,6 @@ img.back-to-top:hover {
 #header.collapsed-header .menu-button.mini-menu-trigger,
 #header.collapsed-header .search-button.mini-menu-trigger {
   background-color: transparent;
-  //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-  //   background-image: url("../images/mini-menu/menu-open-mobile.png");
   background-position: center center;
   background-repeat: no-repeat;
   border: medium none;
@@ -1724,8 +1663,6 @@ img.back-to-top:hover {
 }
 
 #header.collapsed-header .search-button.mini-menu-trigger {
-  //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-  //   background-image: url("../images/mini-menu/search-open-mobile.png");
   right: 70px;
 }
 
@@ -1898,20 +1835,7 @@ img.back-to-top:hover {
 
 .popular-services-search .homepage-tile .tile-search {
   display: block;
-  //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-  //   background: #26639c
-  //     url("/StaticWebResources/static/gov3/images/inlinesearch-button-on.png")
-  //     no-repeat scroll left center;
   height: 100%;
-}
-
-@media (max-width: 767px) {
-  .popular-services-search .homepage-tile .tile-search {
-    //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-    // background: #fff
-    //   url("/StaticWebResources/static/gov3/images/inlinesearch-button-off.png")
-    //   no-repeat scroll left center;
-  }
 }
 
 .popular-services-search .homepage-tile .tile-search-flyout {
@@ -1996,8 +1920,6 @@ td.alert-content-col {
 
 /* begin changes for [CLD-1454] */
 .panel-heading .collapseArrow {
-  //temporary fix. Note that the .pngs were commented out because these assets do not exist.
-  //   background-image: url("/StaticWebResources/static/gov3/images/accordion-chevron.png");
   background-size: 14px 14px;
   background-repeat: no-repeat;
   background-position: right 0px bottom 0px;
@@ -2009,7 +1931,7 @@ td.alert-content-col {
 
 .panel-heading .open {
   /*Point arrow upwards*/
-  webkit-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
   -moz-transform: rotate(180deg);
   -ms-transform: rotate(180deg);
   -o-transform: rotate(180deg);
