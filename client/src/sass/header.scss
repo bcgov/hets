@@ -3,15 +3,11 @@
 $nav-background-color: #38598a;
 $nav-background-color-test: #f9a825;
 $nav-background-color-dev: #448a38;
-//temporary fix remove trn color when environment is removed
-$nav-background-color-trn: #744e91;
 $nav-background-color-uat: #744e91;
 
 $nav-active-background-color: lighten($nav-background-color, 10%);
 $nav-active-background-color-test: lighten($nav-background-color-test, 10%);
 $nav-active-background-color-dev: lighten($nav-background-color-dev, 10%);
-//temporary fix remove trn color when environment is removed
-$nav-active-background-color-trn: lighten($nav-background-color-trn, 10%);
 $nav-active-background-color-uat: lighten($nav-background-color-uat, 10%);
 
 #header {
@@ -188,24 +184,6 @@ $nav-active-background-color-uat: lighten($nav-background-color-uat, 10%);
     .navbar-nav > .active > a:hover,
     .navbar-nav > .active > a:focus {
       background-color: $nav-active-background-color-uat;
-    }
-  }
-
-  &.env-trn {
-    background-color: $nav-background-color-trn;
-
-    .navbar-nav > li > .dropdown-menu,
-    .navbar-nav > .open > a,
-    .navbar-nav > .open > a:hover,
-    .navbar-nav > .open > a:focus {
-      background-color: $nav-background-color-trn;
-    }
-    .navbar-nav > li > .dropdown-menu > li > a:hover,
-    .navbar-nav > li > .dropdown-menu > li > a:focus,
-    .navbar-nav > .active > a,
-    .navbar-nav > .active > a:hover,
-    .navbar-nav > .active > a:focus {
-      background-color: $nav-active-background-color-trn;
     }
   }
 
