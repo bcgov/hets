@@ -187,24 +187,6 @@ $nav-active-background-color-uat: lighten($nav-background-color-uat, 10%);
     }
   }
 
-  &.env-trn {
-    background-color: $nav-background-color-trn;
-
-    .navbar-nav > li > .dropdown-menu,
-    .navbar-nav > .open > a,
-    .navbar-nav > .open > a:hover,
-    .navbar-nav > .open > a:focus {
-      background-color: $nav-background-color-trn;
-    }
-    .navbar-nav > li > .dropdown-menu > li > a:hover,
-    .navbar-nav > li > .dropdown-menu > li > a:focus,
-    .navbar-nav > .active > a,
-    .navbar-nav > .active > a:hover,
-    .navbar-nav > .active > a:focus {
-      background-color: $nav-active-background-color-trn;
-    }
-  }
-
   //#nav-link styles for setting active styles on nav links
 
   .nav-link {
