@@ -6,3 +6,5 @@ from "HET_DISTRICT" a
 where not exists (select 1
 from "HET_ROLLOVER_PROGRESS" b
 where b."DISTRICT_ID" = a."DISTRICT_ID");
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.het_log TO het_application_proxy;
