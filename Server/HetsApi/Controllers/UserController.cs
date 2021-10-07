@@ -81,6 +81,7 @@ namespace HetsApi.Controllers
             HetUser user = _context.HetUsers.AsNoTracking()
                 .Include(x => x.HetUserRoles)
                 .Include(x => x.HetUserDistricts)
+                .Include(x => x.HetUserFavourites)
                 .First(x => x.UserId == id);
 
             // delete user roles
@@ -93,6 +94,12 @@ namespace HetsApi.Controllers
             foreach (HetUserDistrict item in user.HetUserDistricts)
             {
                 _context.HetUserDistricts.Remove(item);
+            }
+
+            // delete user favourites
+            foreach (var item in user.HetUserFavourites)
+            {
+                _context.HetUserFavourites.Remove(item);
             }
 
             // delete user
