@@ -72,11 +72,6 @@ the UI whenever a [React Component](https://reactjs.org/docs/react-component.htm
 
 [Create React App](https://www.npmjs.com/package/create-react-app) is the tool used for the front-end build system. Inside the
 
-<!-- temporary fix using create react app I did not create any tests -->
-<!-- ### Running tests
-
-There are only a few unit tests for HETS at the moment which can be run with: `npm test`. -->
-
 ## Coding style
 
 Coding style for JS is enforced by [ESLint](https://eslint.org/). ESLint is run whenever the
@@ -85,10 +80,8 @@ fail to build the JS.
 
 ## Deployment
 
-<!-- temporary fix Not sure how it is deployed  -->
-<!-- Deployment is done by running `build.bat` which calls `gulp --production` to build a complete
-production optimized web application in dist/. The files in dist/ are then copied to the right spot
-in OpenShift. -->
+Please refer to Openshift ReadMe
+https://github.com/bcgov/hets/tree/1.9.3/openshift#readme 
 
 ## Built With
 
