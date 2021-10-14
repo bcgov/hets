@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace HetsData.Model
+namespace HetsData.Entities
 {
     /// <summary>
     /// Permission Database Model Extension
     /// </summary>
-    public sealed partial class HetPermission
+    public partial class HetPermission
     {
         /// <summary>
         /// Login (UI) Permission

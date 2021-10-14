@@ -1,10 +1,10 @@
 # OpenShift Deployment and Pipeline
 
-HETS (Hired Equipment Tracking System) makes use of BCDK and pipline-cli to manage OpenShift deployments. These tools enable a Github Pull Request (PR) based CI/CD pipeline. Once the Jenkins instance is configured and deployed, it will monitor Github repository for pull requests and start a new build based on that.
+HETS (Hired Equipment Tracking System) makes use of Github Actions and pipline-cli to manage OpenShift deployments. These tools enable a Github Pull Request (PR) based CI/CD pipeline. Github Actions will monitor Github repository for pull requests and start a new build based on that.
 
-This document will not go into the details of how to use BCDK and pipeline-cli. For documentation on those, you can refer to the following links
+This document will not go into the details of how to use Github Actions and pipeline-cli. For documentation on those, you can refer to the following links
 
-- [BCDK](https://github.com/BCDevOps/bcdk)
+- [Github Actions](https://docs.github.com/en/actions)
 - [pipeline-cli](https://github.com/BCDevOps/pipeline-cli)
 
 HETS is using the official BCDevOps Backup Container for backing up DB. Below is README file from [BCDevOps backup-container](https://github.com/BCDevOps/backup-container)
@@ -12,15 +12,6 @@ HETS is using the official BCDevOps Backup Container for backing up DB. Below is
 ## Prerequisites
 
 - Admin access to OpenShift namespaces, preferably using the standard BC Gov setup of `tools`, `dev`, `test` and `prod` namespaces
-- Github personal access token for an account that has contributor access to your repository. It needs to include `repo:status`, `repo_deployment`, `public_repo` and `admin:repo_hook` permissions
-
-### Github Personal Access Token
-
-The Github Personal Access Token is used to give Jenkins access to monitor your repository for changes and create the necessary webhooks. It is recommended to use a shared team Github account for this.
-
-The access token must have `repo:status`, `repo_deployment`, `public_repo` and `admin:repo_hook` permissions for the pipeline to work properly.
-
-Please refer to [Github's guide](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) for more details.
 
 ## Pipeline Setup
 
@@ -33,110 +24,31 @@ There are a few secret objects that must be created manually in the `dev`, `test
 You can use the following templates to create the secret objects. Make sure to replace the parameter variables with actual values encoded to base64.
 
 - [db-postgresql-secrets.yaml](secrets/db-postgresql-secrets.yaml)
-- [jenkins.yaml](secrets/jenkins.yaml)
+- [sso-secrets.yaml](secrets/sso-secrets.yaml)
 
 ### Configure Pipeline-cli
 
-The `.jenkins` and `.pipeline` directories contain the scripts genereated by the BCDK tool in order to use pipeline-cli against your OpenShift namespaces. The scripts in the `.jenkins` and `.pipeline` directories in this repository are configured to run against the official SBI OpenShift namespaces (`e0cee6-`).
+The `.pipeline` directory contain the scripts to use pipeline-cli against your OpenShift namespaces. The scripts in the `.pipeline` directory in this repository are configured to run against the official SBI OpenShift namespaces (`e0cee6-`).
 
-You will need to configure the scripts in the `.jenkins` and `.pipeline` directories to work with your OpenShift namespaces. There are two ways to do this:
+You will need to configure the scripts in the `.pipeline` directory to work with your OpenShift namespaces:
 
-1. Update the namespace values in both `lib/config.js` file and create the Jenkins secret objects maually.
-2. Re-run the BCDK tool to setup your namespaces and pipeline-cli automatically. However you will need to merge the generated scripts with the scripts in this repository.
+The pipeline scripts to configure are as follows
 
-#### Update Manually
-
-This is easier method to adapt the pipeline scripts to your namespaces. The scripts need to be updated are
-
-- [.jenkins/.pipeline/lib/config.js](/.jenkins/.pipeline/lib/config.js)
+- [.pipeline/lib/build.js](/.pipeline/lib/build.js)
+- [.pipeline/lib/clean.js](/.pipeline/lib/clean.js)
 - [.pipeline/lib/config.js](/.pipeline/lib/config.js)
-
-The values to modify are the `namespace` and `host` values. Update them to match your OpenShift namespaces.
-
-The last step is to create the Jenkins secret objects in the `tools` namespace. Use your Github username and personal access token.
-
-```yaml
-apiVersion: template.openshift.io/v1
-kind: Template
-objects:
-  - apiVersion: v1
-    kind: Secret
-    metadata:
-      annotations: null
-      name: template.${NAME}-slave-user
-    stringData:
-      metadata.name: template.${NAME}-slave-user
-      username: jenkins-slave
-  - apiVersion: v1
-    kind: Secret
-    metadata:
-      annotations: null
-      name: template.${NAME}-github
-    stringData:
-      metadata.name: template.${NAME}-github
-      username: ${GH_USERNAME}
-      password: ${GH_ACCESS_TOKEN}
-parameters:
-  - description: A name used for all objects
-    displayName: Name
-    name: NAME
-    required: true
-    value: jenkins
-  - name: GH_USERNAME
-    required: true
-  - description: GitHub Personal Access Token
-    name: GH_ACCESS_TOKEN
-    required: true
-```
-
-#### Update using BCDK
-
-Refer to the official [BCDK documentation](https://github.com/BCDevOps/bcdk) on how to use this method. After you have ran the BCDK generators, you will need to merge the generated scripts and the existing scripts in this repository.
-
-## Deploy Jenkins
-
-The Jenkins instance is used to run the pipeline automatically when pull requests are detected. For that to happen you will need to build and deploy Jenkins to the `tools` namespace
-
-**IMPORTANT!** Make sure the `jenkins-prod` service account from `tools` namespace have admin access to the `dev`, `test`, and `prod` namespaces. This allows Jenkins to deploy to the namespaces and perform cleanups.
-
-Use the following steps to deploy Jenkins. This assumes you have already logged in
-
-```
-# Switch to tools namespace
-oc project <namespace>-tools
-
-# Change working directory to .jenkins/.pipeline
-cd .jenkins/.pipeline
-
-# Install required NPM modules
-npm install
-
-# Build Jenkins from local code package
-# --dev-mode=true enables uploading local source code as an archive
-# dev-mode is useful for building changes without pushing to remote first
-# --pr=0 indicates pull request 0, generally used for dev-mode builds
-npm run build -- --pr=0 --dev-mode=true
-
-# Wait for builds to finish and deploy
-npm run deploy -- --pr=0 --env=prod
-
-# Optionally you can deploy as dev first
-# npm run deploy -- --pr=0 --env=dev
-```
-
-Once the prod Jenkins instance is running, you should see new webhooks created in your repository settings. Jenkins is now ready to monitor pull requests.
+- [.pipeline/lib/deploy.js](/.pipeline/lib/deploy.js)
+- [.pipeline/lib/utils.js](/.pipeline/lib/utils.js)
 
 ## Pull Request Build and Deploy
 
-Once Jenkins is properly configured and deployed, it is ready to monitor pull requests.
+Once Github Actions workflow (/.github/workflows/hets-build-deploy.yml) is properly configured, it is ready to monitor pull requests.
 
-Every pull request made to your repository will trigger a new build and create a standalone deployment in the `dev` namespace. This allows you to test new features independantly of other features.
+Every pull request made to master will trigger a new build and create a standalone deployment in the `dev` namespace. This allows you to test new features independantly of other features.
 
-If [configured properly](https://github.com/BCDevOps/bcdk#automatically-clean-up-pull-request-deployments), Jenkins will also automatically clean up the environments when a pull request is merged or closed.
+The Github Actions workflow (/.github/workflows/clean.yml) will also automatically clean up the environments when a pull request is closed.
 
-**Note!** Pull requests to a branch other than `master` will cause the pipeline to end after deploying the `dev` namespace. Pull requests to `master` will cause Jenkins to execute all the stages in the [Jenkinsfile](/Jenkinsfile) unless manually terminated.
-
-## Manually Build and Deploy
+## Manual Build and Deploy
 
 Use the following steps to manually build and deploy. This assumes you have already logged in.
 

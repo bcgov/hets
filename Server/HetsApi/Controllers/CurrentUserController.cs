@@ -2,18 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
-using HetsData.Model;
+using HetsData.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
+using AutoMapper;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -22,28 +23,21 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/users/current")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class CurrentUserController : Controller
+    public class CurrentUserController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
-        private readonly ILogger _logger;
-        private readonly IHostingEnvironment _env;
-        private readonly HttpContext _httpContext;
+        private readonly ILogger<CurrentUserController> _logger;
+        private readonly IWebHostEnvironment _env;
+        private readonly IMapper _mapper;
 
-        public CurrentUserController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory, IHostingEnvironment env)
+        public CurrentUserController(DbAppContext context, IConfiguration configuration, IMapper mapper, ILogger<CurrentUserController> logger, IWebHostEnvironment env)
         {
             _context = context;
             _configuration = configuration;
-            _logger = loggerFactory.CreateLogger(typeof(CurrentUserController));
+            _logger = logger;
             _env = env;
-            _httpContext = httpContextAccessor.HttpContext;
-
-            // set context data
-            User user = UserAccountHelper.GetUser(context, _httpContext);
-            _context.SmUserId = user.SmUserId;
-            _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.UserGuid;
-            _context.SmBusinessGuid = user.BusinessGuid;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -53,21 +47,19 @@ namespace HetsApi.Controllers
         /// <param name="favouriteType">type of favourite to return</param>
         [HttpGet]
         [Route("favourites/{favouriteType?}")]
-        [SwaggerOperation("UsersCurrentFavouritesFavouriteTypeGet")]
-        [SwaggerResponse(200, type: typeof(List<HetUserFavourite>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult UsersCurrentFavouritesFavouriteTypeGet([FromRoute]string favouriteType)
+        public virtual ActionResult<List<UserFavouriteDto>> UsersCurrentFavouritesFavouriteTypeGet([FromRoute] string favouriteType)
         {
             // get the current user id
             string userId = _context.SmUserId;
 
             // get initial results - must be limited to user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get favourites
-            IEnumerable<HetUserFavourite> favourites = _context.HetUserFavourite.AsNoTracking()
+            IEnumerable<HetUserFavourite> favourites = _context.HetUserFavourites.AsNoTracking()
                 .Include(x => x.User)
-                .Where(x => x.User.SmUserId == userId &&
+                .Where(x => x.User.SmUserId.ToUpper() == userId &&
                             x.DistrictId == districtId);
 
             if (favouriteType != null)
@@ -75,7 +67,7 @@ namespace HetsApi.Controllers
                 favourites = favourites.Where(x => x.Type == favouriteType);
             }
 
-            return new ObjectResult(new HetsResponse(favourites));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<UserFavouriteDto>>(favourites)));
         }
 
         /// <summary>
@@ -85,10 +77,8 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Favourite to delete</param>
         [HttpPost]
         [Route("favourites/{id}/delete")]
-        [SwaggerOperation("UsersCurrentFavouritesIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(HetUserFavourite))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult UsersCurrentFavouritesIdDeletePost([FromRoute]int id)
+        public virtual ActionResult<UserFavouriteDto> UsersCurrentFavouritesIdDeletePost([FromRoute] int id)
         {
             // get the current user id
             string userId = _context.SmUserId;
@@ -96,22 +86,22 @@ namespace HetsApi.Controllers
             // not found
             if (userId == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            bool exists = _context.HetUserFavourite
-                .Where(x => x.User.SmUserId == userId)
+            bool exists = _context.HetUserFavourites
+                .Where(x => x.User.SmUserId.ToUpper() == userId)
                 .Any(a => a.UserFavouriteId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // delete favourite
-            HetUserFavourite item = _context.HetUserFavourite.First(a => a.UserFavouriteId == id);
+            HetUserFavourite item = _context.HetUserFavourites.First(a => a.UserFavouriteId == id);
 
-            _context.HetUserFavourite.Remove(item);
+            _context.HetUserFavourites.Remove(item);
 
             // save the changes
             _context.SaveChanges();
 
-            return new ObjectResult(new HetsResponse(item));
+            return new ObjectResult(new HetsResponse(_mapper.Map<UserFavouriteDto>(item)));
         }
 
         /// <summary>
@@ -121,10 +111,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPost]
         [Route("favourites")]
-        [SwaggerOperation("UsersCurrentFavouritesPost")]
-        [SwaggerResponse(200, type: typeof(HetUserFavourite))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult UsersCurrentFavouritesPost([FromBody]HetUserFavourite item)
+        public virtual ActionResult<UserFavouriteDto> UsersCurrentFavouritesPost([FromBody] UserFavouriteDto item)
         {
             return UpdateFavourite(item);
         }
@@ -136,10 +124,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPut]
         [Route("favourites")]
-        [SwaggerOperation("UsersCurrentFavouritesPut")]
-        [SwaggerResponse(200, type: typeof(HetUserFavourite))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult UsersCurrentFavouritesPut([FromBody]HetUserFavourite item)
+        public virtual ActionResult<UserFavouriteDto> UsersCurrentFavouritesPut([FromBody] UserFavouriteDto item)
         {
             return UpdateFavourite(item);
         }
@@ -150,10 +136,8 @@ namespace HetsApi.Controllers
         /// <remarks>Get the currently logged in user</remarks>
         [HttpGet]
         [Route("")]
-        [SwaggerOperation("UsersCurrentGet")]
-        [SwaggerResponse(200, type: typeof(User))]
         [AllowAnonymous]
-        public virtual IActionResult UsersCurrentGet()
+        public virtual ActionResult<CurrentUserDto> UsersCurrentGet()
         {
             _logger.LogDebug("Get Current User");
 
@@ -167,26 +151,26 @@ namespace HetsApi.Controllers
             // not found - return an HTTP 401 error response
             if (string.IsNullOrEmpty(userId)) return StatusCode(401);
 
-            User user = new User();
+            CurrentUserDto user = new CurrentUserDto();
 
             if (string.IsNullOrEmpty(businessGuid))
             {
-                HetUser currentUser = _context.HetUser
+                HetUser currentUser = _context.HetUsers
                     .Include(x => x.District)
-                    .Include(x => x.HetUserRole)
+                    .Include(x => x.HetUserRoles)
                         .ThenInclude(y => y.Role)
-                            .ThenInclude(z => z.HetRolePermission)
+                            .ThenInclude(z => z.HetRolePermissions)
                                 .ThenInclude(z => z.Permission)
-                    .First(x => x.SmUserId == userId);
+                    .First(x => x.SmUserId.ToUpper() == userId);
 
                 // remove inactive roles
-                for (int i = currentUser.HetUserRole.Count - 1; i >= 0; i--)
+                for (int i = currentUser.HetUserRoles.Count - 1; i >= 0; i--)
                 {
-                    if (currentUser.HetUserRole.ElementAt(i).EffectiveDate > DateTime.UtcNow ||
-                        (currentUser.HetUserRole.ElementAt(i).ExpiryDate != null &&
-                         currentUser.HetUserRole.ElementAt(i).ExpiryDate < DateTime.UtcNow))
+                    if (currentUser.HetUserRoles.ElementAt(i).EffectiveDate > DateTime.UtcNow ||
+                        (currentUser.HetUserRoles.ElementAt(i).ExpiryDate != null &&
+                         currentUser.HetUserRoles.ElementAt(i).ExpiryDate < DateTime.UtcNow))
                     {
-                        currentUser.HetUserRole.Remove(currentUser.HetUserRole.ElementAt(i));
+                        currentUser.HetUserRoles.Remove(currentUser.HetUserRoles.ElementAt(i));
                     }
                 }
 
@@ -197,9 +181,9 @@ namespace HetsApi.Controllers
                 user.DisplayName = currentUser.GivenName + " " + currentUser.Surname;
                 user.UserGuid = currentUser.Guid;
                 user.BusinessUser = false;
-                user.District = currentUser.District;
-                user.HetUserDistrict = currentUser.HetUserDistrict;
-                user.HetUserRole = currentUser.HetUserRole;
+                user.District = _mapper.Map<DistrictDto>(currentUser.District);
+                user.UserDistricts = _mapper.Map<List<UserDistrictDto>>(currentUser.HetUserDistricts);
+                user.UserRoles = _mapper.Map<List<UserRoleDto>>(currentUser.HetUserRoles);
                 user.SmAuthorizationDirectory = currentUser.SmAuthorizationDirectory;
 
                 // set environment
@@ -224,17 +208,17 @@ namespace HetsApi.Controllers
             }
             else
             {
-                HetBusinessUser tmpUser = _context.HetBusinessUser.AsNoTracking()
-                    .Include(x => x.HetBusinessUserRole)
+                HetBusinessUser tmpUser = _context.HetBusinessUsers.AsNoTracking()
+                    .Include(x => x.HetBusinessUserRoles)
                         .ThenInclude(y => y.Role)
-                            .ThenInclude(z => z.HetRolePermission)
+                            .ThenInclude(z => z.HetRolePermissions)
                                 .ThenInclude(z => z.Permission)
-                    .FirstOrDefault(x => x.BceidUserId.Equals(userId, StringComparison.InvariantCultureIgnoreCase));
+                    .FirstOrDefault(x => x.BceidUserId.ToUpper() == userId);
 
                 if (tmpUser != null)
                 {
                     // get business
-                    HetBusiness business = _context.HetBusiness.AsNoTracking()
+                    HetBusiness business = _context.HetBusinesses.AsNoTracking()
                         .First(x => x.BusinessId == tmpUser.BusinessId);
 
                     user.Id = tmpUser.BusinessUserId;
@@ -250,7 +234,7 @@ namespace HetsApi.Controllers
 
                     int id = 0;
 
-                    foreach (HetBusinessUserRole role in tmpUser.HetBusinessUserRole)
+                    foreach (HetBusinessUserRole role in tmpUser.HetBusinessUserRoles)
                     {
                         id++;
 
@@ -262,12 +246,12 @@ namespace HetsApi.Controllers
                             Role = role.Role
                         };
 
-                        if (user.HetUserRole == null)
+                        if (user.UserRoles == null)
                         {
-                            user.HetUserRole = new List<HetUserRole>();
+                            user.UserRoles = new List<UserRoleDto>();
                         }
 
-                        user.HetUserRole.Add(userRole);
+                        user.UserRoles.Add(_mapper.Map<UserRoleDto>(userRole));
                     }
                 }
             }
@@ -280,10 +264,8 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("logoff")]
-        [SwaggerOperation("UserDistrictsIdLogoffPost")]
-        [SwaggerResponse(200, type: typeof(LogoffModel))]
         [AllowAnonymous]
-        public virtual IActionResult UsersCurrentLogoffPost()
+        public virtual ActionResult<LogoffModel> UsersCurrentLogoffPost()
         {
             // get the current user id
             string userId = _context.SmUserId;
@@ -292,25 +274,25 @@ namespace HetsApi.Controllers
             if (userId == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get user district
-            HetUserDistrict userDistrict = _context.HetUserDistrict.AsNoTracking()
+            HetUserDistrict userDistrict = _context.HetUserDistricts.AsNoTracking()
                 .Include(x => x.User)
                 .Include(x => x.District)
-                .FirstOrDefault(x => x.User.SmUserId == userId &&
+                .FirstOrDefault(x => x.User.SmUserId.ToUpper() == userId &&
                                      x.IsPrimary);
 
             // if we don't find a primary - look for the first one in the list
             if (userDistrict == null)
             {
-                userDistrict = _context.HetUserDistrict.AsNoTracking()
+                userDistrict = _context.HetUserDistricts.AsNoTracking()
                     .Include(x => x.User)
                     .Include(x => x.District)
-                    .FirstOrDefault(x => x.User.SmUserId == userId);
+                    .FirstOrDefault(x => x.User.SmUserId.ToUpper() == userId);
             }
 
             // update the current district for the user
             if (userDistrict != null)
             {
-                HetUser user = _context.HetUser.First(a => a.SmUserId == userId);
+                HetUser user = _context.HetUsers.First(a => a.SmUserId.ToUpper() == userId);
                 user.DistrictId = userDistrict.District.DistrictId;
 
                 _context.SaveChanges();
@@ -326,7 +308,8 @@ namespace HetsApi.Controllers
             else if (_env.IsStaging())
             {
                 logoffUrl = _configuration.GetSection("Constants:LogoffUrl-Test").Value;
-            }else if (_env.IsEnvironment("Training"))
+            }
+            else if (_env.IsEnvironment("Training"))
             {
                 logoffUrl = _configuration.GetSection("Constants:LogoffUrl-Training").Value;
             }
@@ -335,17 +318,15 @@ namespace HetsApi.Controllers
                 logoffUrl = _configuration.GetSection("Constants:LogoffUrl-UAT").Value;
             }
 
-            LogoffModel response = new LogoffModel {LogoffUrl = logoffUrl};
+            LogoffModel response = new LogoffModel { LogoffUrl = logoffUrl };
 
             return new ObjectResult(new HetsResponse(response));
         }
 
         #region Update Favourite
 
-        private IActionResult UpdateFavourite(HetUserFavourite item)
+        private ActionResult<UserFavouriteDto> UpdateFavourite(UserFavouriteDto item)
         {
-            item.User = null;
-
             // get the current user id
             string userId = _context.SmUserId;
 
@@ -353,32 +334,30 @@ namespace HetsApi.Controllers
             if (userId == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get initial results - must be limited to user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get user record
-            bool userExists = _context.HetUser.Any(a => a.SmUserId == userId);
+            bool userExists = _context.HetUsers.Any(a => a.SmUserId.ToUpper() == userId);
 
             if (!userExists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetUser user = _context.HetUser.AsNoTracking()
-                .First(a => a.SmUserId == userId);
+            HetUser user = _context.HetUsers.AsNoTracking()
+                .First(a => a.SmUserId.ToUpper() == userId);
 
             // get favourites
-            bool exists = _context.HetUserFavourite.Any(a => a.UserFavouriteId == item.UserFavouriteId);
+            bool exists = _context.HetUserFavourites.Any(a => a.UserFavouriteId == item.UserFavouriteId);
 
             HetUserFavourite favourite;
 
             if (exists)
             {
-                favourite = _context.HetUserFavourite
+                favourite = _context.HetUserFavourites
                     .First(a => a.UserFavouriteId == item.UserFavouriteId);
 
                 favourite.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                 favourite.Value = item.Value;
                 favourite.Name = item.Name;
                 favourite.IsDefault = item.IsDefault;
-
-                _context.HetUserFavourite.Update(favourite);
             }
             else
             {
@@ -392,7 +371,7 @@ namespace HetsApi.Controllers
                     IsDefault = item.IsDefault
                 };
 
-                _context.HetUserFavourite.Add(favourite);
+                _context.HetUserFavourites.Add(favourite);
             }
 
             // save the changes
@@ -401,10 +380,10 @@ namespace HetsApi.Controllers
             int favouriteId = favourite.UserFavouriteId;
 
             // get record and return
-            favourite = _context.HetUserFavourite.AsNoTracking()
+            favourite = _context.HetUserFavourites.AsNoTracking()
                 .First(x => x.UserFavouriteId == favouriteId);
 
-            return new ObjectResult(new HetsResponse(favourite));
+            return new ObjectResult(new HetsResponse(_mapper.Map<UserFavouriteDto>(favourite)));
         }
 
         #endregion

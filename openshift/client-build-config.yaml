@@ -6,7 +6,7 @@ metadata:
 labels:
   template: client-build
 objects:
-  - apiVersion: "v1"
+  - apiVersion: image.openshift.io/v1
     kind: ImageStream
     metadata:
       name: node
@@ -21,12 +21,10 @@ objects:
           name: "1"
           referencePolicy:
             type: Local
-  - apiVersion: v1
+  - apiVersion: image.openshift.io/v1
     kind: ImageStream
     metadata:
-      name: dotnet-21-rhel7
-      labels:
-        shared: "true"
+      name: nginx-116-rhel8
     spec:
       lookupPolicy:
         local: false
@@ -34,11 +32,11 @@ objects:
         - annotations: null
           from:
             kind: DockerImage
-            name: registry.redhat.io/dotnet/dotnet-21-rhel7:2.1-41
-          name: "2.1-41"
+            name: registry.redhat.io/rhel8/nginx-116:1-58
+          name: "1"
           referencePolicy:
             type: Local
-  - apiVersion: v1
+  - apiVersion: image.openshift.io/v1
     kind: ImageStream
     metadata:
       creationTimestamp: null
@@ -48,7 +46,7 @@ objects:
     spec:
       lookupPolicy:
         local: false
-  - apiVersion: v1
+  - apiVersion: build.openshift.io/v1
     kind: BuildConfig
     metadata:
       creationTimestamp: null
@@ -75,16 +73,13 @@ objects:
           uri: ${SOURCE_REPOSITORY_URL}
           ref: ${SOURCE_REPOSITORY_REF}
         type: Git
+        contextDir: client
       strategy:
-        type: Docker
         dockerStrategy:
           noCache: true
-          env:
-            - name: DOTNET_STARTUP_PROJECT
-              value: "${DOTNET_STARTUP_PROJECT}"
-          dockerfilePath: "${DOCKER_FILE_PATH}"
+        type: Docker
 parameters:
-  - description: Name of the project (SCHOOLBUS)
+  - description: Name of the project (HETS)
     displayName: PROJECT_NAME
     name: PROJECT_NAME
     required: true
@@ -114,13 +109,8 @@ parameters:
     name: SOURCE_REPOSITORY_REF
     required: false
     value: "master"
-  - name: DOCKER_FILE_PATH
-    displayName: Docker File Path
-    description: The path to the docker file defining the build.
-    required: false
-    value: "Client/Dockerfile"
-  - name: DOTNET_STARTUP_PROJECT
-    displayName: DotNet Startup Project
-    description: The path to the startup project for the .Net application.
+  - description: DEPLOY_SUBDIRECTORY
+    displayName: DEPLOY_SUBDIRECTORY
+    name: DEPLOY_SUBDIRECTORY
     required: true
-    value: "FrontEnd/FrontEnd/FrontEnd.csproj"
+    value: "/"

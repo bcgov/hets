@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace HetsData.Model
+namespace HetsData.Entities
 {
     /// <summary>
     /// Rental Request Database Model Extension
     /// </summary>
-    public sealed partial class HetRentalRequest
+    public partial class HetRentalRequest
     {
         /// <summary>
         /// Status Codes

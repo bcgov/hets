@@ -9,14 +9,14 @@ namespace HetsReport.Helpers
 {
     public static class SecurityHelper
     {
-        private const string Password = "$H3t_R3p0rt_S3c$riT1";
+        private const string DevPassword = "gIwE`Ed5Aep8@Zqrx$+h";
 
         public static void PasswordProtect(WordprocessingDocument wordDocument)
         {
             try
             {
                 // password protect document
-                string password = Password;
+                string password = Environment.GetEnvironmentVariable("MsWord__Password") ?? DevPassword; //workaround for accessing Configuration from static class :(
 
                 // generate the salt
                 byte[] arrSalt = new byte[16];

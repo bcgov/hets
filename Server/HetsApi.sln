@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsCommon", "HetsCommon\HetsCommon.csproj", "{FF1DB058-3D10-4065-A42B-E9EB5BEB0982}"
 EndProject
@@ -35,12 +35,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{FF1DB058-3D10-4065-A42B-E9EB5BEB0982} = {A9D01C84-816F-449E-B0B3-CA5CE4DB13A4}
-		{E88FFF3D-CE15-43E9-B1BE-4111E5862E2B} = {A9D01C84-816F-449E-B0B3-CA5CE4DB13A4}
-		{292B510E-6283-4616-AD2A-D8A994FD4285} = {A9D01C84-816F-449E-B0B3-CA5CE4DB13A4}
-		{7DFA1859-E5B0-4460-A5A5-5E5288A4AC94} = {A9D01C84-816F-449E-B0B3-CA5CE4DB13A4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BAABCEB5-DF1F-44BB-92B9-01FF124FABA6}

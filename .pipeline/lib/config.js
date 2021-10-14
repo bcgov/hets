@@ -1,9 +1,10 @@
 "use strict";
 const options = require("@bcgov/pipeline-cli").Util.parseArguments();
 const changeId = options.pr; //aka pull-request
-const version = "1.0.0";
+const version = "1.10.0";
 const name = "hets";
 
+Object.assign(options.git, { owner: "ychung-mot", repository: "hets" });
 const phases = {
   build: {
     namespace: "e0cee6-tools",
@@ -41,7 +42,7 @@ const phases = {
     client_memory: "100Mi",
   },
   test: {
-    namespace: "e0cee6-dev",
+    namespace: "e0cee6-test",
     name: `${name}`,
     phase: "test",
     changeId: changeId,
@@ -71,34 +72,11 @@ const phases = {
     suffix: `-uat`,
     instance: `${name}-uat`,
     version: `${version}`,
-    tag: `test-${version}`,
+    tag: `uat-${version}`,
     host: `hets-e0cee6-uat.apps.silver.devops.gov.bc.ca`,
     dbUser: "trdbhett",
     dbSize: "1Gi",
     dotnet_env: "UAT",
-    backupVolume: "hets",
-    backupVolumeSize: "1Gi",
-    verificationVolumeSize: "1Gi",
-    db_cpu: "500m",
-    db_memory: "512Mi",
-    api_cpu: "500m",
-    api_memory: "512Mi",
-    client_cpu: "100m",
-    client_memory: "100Mi",
-  },
-  train: {
-    namespace: "e0cee6-test",
-    name: `${name}`,
-    phase: "train",
-    changeId: changeId,
-    suffix: `-train`,
-    instance: `${name}-train`,
-    version: `${version}`,
-    tag: `train-${version}`,
-    host: `hets-e0cee6-train.apps.silver.devops.gov.bc.ca`,
-    dbUser: "trdbhett",
-    dbSize: "1Gi",
-    dotnet_env: "Training",
     backupVolume: "hets",
     backupVolumeSize: "1Gi",
     verificationVolumeSize: "1Gi",

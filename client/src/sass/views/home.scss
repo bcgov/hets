@@ -1,0 +1,31 @@
+@import '../variables.scss';
+
+#home_image {
+  height: 200px;
+}
+
+#home {
+  .fixed-width {
+    &.small .dropdown-toggle {
+      width: 125px;
+    }
+
+    .dropdown-toggle {
+      width: 150px;
+    }
+  }
+
+  .btn {
+    margin-right: 5px;
+  }
+
+  .rotation-list-form {
+    text-align: right;
+  }
+
+  @media only screen and (max-width: $screen-lg) {
+    .rotation-list-form {
+      text-align: left;
+    }
+  }
+}

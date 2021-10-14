@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using HetsData.Model;
+using HetsData.Dtos;
+using HetsData.Entities;
 
 namespace HetsData.Helpers
 {
@@ -14,7 +15,7 @@ namespace HetsData.Helpers
         public string ProvincialProjectNumber { get; set; }
         public float? HoursYtd { get; set; }
         public int MaximumHours { get; set; }
-        public List<HetTimeRecord> TimeRecords { get; set; }
+        public List<TimeRecordDto> TimeRecords { get; set; }
     }
 
     public class TimeRecordSearchLite

@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
-using HetsData.Model;
+using HetsData.Entities;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using HetsData.Dtos;
 
 namespace HetsApi.Controllers
 {
@@ -19,24 +19,17 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/timeRecords")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class TimeRecordController : Controller
+    public class TimeRecordController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
-        private readonly HttpContext _httpContext;
+        private readonly IMapper _mapper;
 
-        public TimeRecordController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public TimeRecordController(DbAppContext context, IConfiguration configuration, IMapper mapper)
         {
             _context = context;
             _configuration = configuration;
-            _httpContext = httpContextAccessor.HttpContext;
-
-            // set context data
-            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
-            _context.SmUserId = user.SmUserId;
-            _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.UserGuid;
-            _context.SmBusinessGuid = user.BusinessGuid;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -45,28 +38,26 @@ namespace HetsApi.Controllers
         /// <param name="id">id of TimeRecord to delete</param>
         [HttpPost]
         [Route("{id}/delete")]
-        [SwaggerOperation("TimeRecordsIdDeletePost")]
-        [SwaggerResponse(200, type: typeof(List<HetTimeRecord>))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult TimeRecordsIdDeletePost([FromRoute]int id)
+        public virtual ActionResult<TimeRecordDto> TimeRecordsIdDeletePost([FromRoute]int id)
         {
-            bool exists = _context.HetTimeRecord.Any(a => a.TimeRecordId == id);
+            bool exists = _context.HetTimeRecords.Any(a => a.TimeRecordId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetTimeRecord item = _context.HetTimeRecord.First(a => a.TimeRecordId == id);
+            HetTimeRecord item = _context.HetTimeRecords.First(a => a.TimeRecordId == id);
 
             if (item != null)
             {
-                _context.HetTimeRecord.Remove(item);
+                _context.HetTimeRecords.Remove(item);
 
                 // save the changes
                 _context.SaveChanges();
             }
 
-            return new ObjectResult(new HetsResponse(item));
+            return new ObjectResult(new HetsResponse(_mapper.Map<TimeRecordDto>(item)));
         }
 
         /// <summary>
@@ -79,10 +70,8 @@ namespace HetsApi.Controllers
         /// <param name="equipment">Equipment (comma separated list of id numbers)</param>
         [HttpGet]
         [Route("search")]
-        [SwaggerOperation("TimeRecordSearchGet")]
-        [SwaggerResponse(200, type: typeof(List<HetTimeRecord>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult TimeRecordSearchGet([FromQuery]string localAreas,
+        public virtual ActionResult<List<TimeRecordSearchLite>> TimeRecordSearchGet([FromQuery]string localAreas,
             [FromQuery]string projects, [FromQuery]string owners, [FromQuery]string equipment)
         {
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
@@ -91,10 +80,10 @@ namespace HetsApi.Controllers
             int?[] equipmentArray = ArrayHelper.ParseIntArray(equipment);
 
             // get initial results - must be limited to user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get fiscal year
-            HetDistrictStatus district = _context.HetDistrictStatus.AsNoTracking()
+            HetDistrictStatus district = _context.HetDistrictStatuses.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId == districtId);
 
             if (district?.CurrentFiscalYear == null) return new BadRequestObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
@@ -103,7 +92,7 @@ namespace HetsApi.Controllers
             DateTime fiscalStart = new DateTime(fiscalYear, 3, 31); // look for all records AFTER the 31st
 
             // only return active equipment / projects and agreements
-            IQueryable<HetTimeRecord> data = _context.HetTimeRecord.AsNoTracking()
+            IQueryable<HetTimeRecord> data = _context.HetTimeRecords.AsNoTracking()
                 .Include(x => x.RentalAgreement)
                     .ThenInclude(x => x.Project)
                 .Include(x => x.RentalAgreement)

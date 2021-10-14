@@ -7,8 +7,9 @@ using System.Reflection;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using HetsData.Dtos;
 using HetsData.Helpers;
-using HetsData.Model;
+using HetsData.Entities;
 using HetsReport.Helpers;
 
 namespace HetsReport
@@ -56,7 +57,7 @@ namespace HetsReport
                         // ******************************************************
                         // merge document content
                         // ******************************************************
-                        foreach (HetOwner owner in reportModel.Owners)
+                        foreach (var owner in reportModel.Owners)
                         {
                             ownerCount++;
 
@@ -69,8 +70,8 @@ namespace HetsReport
                                 string[] addressLabels = GetAddressLabels(owner.OrganizationName, owner.DoingBusinessAs, owner.Address1, owner.Address2);
                                 string[] addressInfo = GetAddressDetail(owner.OrganizationName, owner.DoingBusinessAs, owner.Address1, owner.Address2);
 
-                                string[] contactLabels = GetContactLabels(owner.PrimaryContact.WorkPhoneNumber, owner.PrimaryContact.MobilePhoneNumber, owner.PrimaryContact.FaxPhoneNumber);
-                                string[] contactInfo = GetContactDetail(owner.PrimaryContact.WorkPhoneNumber, owner.PrimaryContact.MobilePhoneNumber, owner.PrimaryContact.FaxPhoneNumber);
+                                string[] contactLabels = GetContactLabels(owner.PrimaryContact.WorkPhoneNumber, owner.PrimaryContact.MobilePhoneNumber, owner.PrimaryContact.FaxPhoneNumber, owner.PrimaryContact.EmailAddress);
+                                string[] contactInfo = GetContactDetail(owner.PrimaryContact.WorkPhoneNumber, owner.PrimaryContact.MobilePhoneNumber, owner.PrimaryContact.FaxPhoneNumber, owner.PrimaryContact.EmailAddress);
 
                                 Dictionary<string, string> values = new Dictionary<string, string>
                                 {
@@ -92,9 +93,11 @@ namespace HetsReport
                                     { "contactLabels0", contactLabels[0]},
                                     { "contactLabels1", contactLabels[1]},
                                     { "contactLabels2", contactLabels[2]},
+                                    { "contactLabels3", contactLabels[3]},
                                     { "contactInfo0", contactInfo[0]},
                                     { "contactInfo1", contactInfo[1]},
-                                    { "contactInfo2", contactInfo[2]}
+                                    { "contactInfo2", contactInfo[2]},
+                                    {"contactInfo3", contactInfo[3] }
                                 };
 
                                 // update classification number first [ClassificationNumber]
@@ -133,7 +136,7 @@ namespace HetsReport
                                 ownerDocument.MainDocumentPart.Document.Save();
 
                                 // setup table for equipment data
-                                Table equipmentTable = GenerateEquipmentTable(owner.HetEquipment);
+                                Table equipmentTable = GenerateEquipmentTable(owner.Equipment);
                                 Paragraph tableParagraph = null;
                                 found = false;
 
@@ -290,7 +293,7 @@ namespace HetsReport
             }
         }
 
-        private static Table GenerateEquipmentTable(IEnumerable<HetEquipment> equipmentList)
+        private static Table GenerateEquipmentTable(IEnumerable<EquipmentDto> equipmentList)
         {
             try
             {
@@ -339,8 +342,8 @@ namespace HetsReport
 
                 GridColumn gc1 = new GridColumn { Width = col1Width };
                 tableRow1.AppendChild(gc1);
-                tableRow1.AppendChild(SetupHeaderCell("Still own/ Re-register?", col1Width, true));
-
+                tableRow1.AppendChild(SetupHeaderCell(new string[] { "Still own /", "Re-register?" }, col1Width, true));
+                
                 GridColumn gc2 = new GridColumn { Width = col2Width };
                 tableRow1.AppendChild(gc2);
                 tableRow1.AppendChild(SetupHeaderCell("Local Area", col2Width, true));
@@ -368,7 +371,7 @@ namespace HetsReport
                 table.AppendChild(tableRow1);
 
                 // add rows for each equipment record
-                foreach (HetEquipment equipment in equipmentList)
+                foreach (var equipment in equipmentList)
                 {
                     TableRow tableRowEquipment = new TableRow();
 
@@ -389,7 +392,7 @@ namespace HetsReport
                     temp = "";
                     int row = 1;
 
-                    foreach (HetEquipmentAttachment attachment in equipment.HetEquipmentAttachment)
+                    foreach (var attachment in equipment.EquipmentAttachments)
                     {
                         temp = row == 1 ?
                             $"{attachment.Description}" :
@@ -415,6 +418,11 @@ namespace HetsReport
         }
 
         private static TableCell SetupHeaderCell(string text, string width, bool center = false)
+        {
+            return SetupHeaderCell(new string[] { text }, width, center);
+        }
+
+        private static TableCell SetupHeaderCell(string[] texts, string width, bool center = false)
         {
             try
             {
@@ -452,28 +460,12 @@ namespace HetsReport
 
                 tableCell.AppendChild(tableCellProperties);
 
-                // add text (with specific formatting)
-                Paragraph paragraph = new Paragraph() { RsidParagraphAddition = "00607D74", RsidRunAdditionDefault = "00607D74", ParagraphId = "6ED85602", TextId = "77777777" };
-
-                ParagraphProperties paragraphProperties = new ParagraphProperties();
-                ParagraphMarkRunProperties paragraphMarkRunProperties = new ParagraphMarkRunProperties();
-
-                paragraphMarkRunProperties.AppendChild(new Color { Val = "000000" });
-                paragraphMarkRunProperties.AppendChild(new RunFonts { Ascii = "Arial" });
-                paragraphMarkRunProperties.AppendChild(new FontSize() { Val = "7pt" });
-                paragraphMarkRunProperties.AppendChild(new Bold());
-
-                Justification justification = new Justification() { Val = JustificationValues.Left };
-                if (center) justification.Val = JustificationValues.Center;
-
-                paragraphProperties.AppendChild(paragraphMarkRunProperties);
-                paragraphProperties.AppendChild(justification);
-                paragraph.AppendChild(paragraphProperties);
-
-                paragraph.AppendChild(new Text(text));
-
-                // add to table cell
-                tableCell.AppendChild(paragraph);
+                foreach(var text in texts)
+                {
+                    var paragraph = CreateParagraph(text, center);
+                    // add to table cell
+                    tableCell.AppendChild(paragraph);
+                }
 
                 return tableCell;
             }
@@ -482,6 +474,30 @@ namespace HetsReport
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        private static Paragraph CreateParagraph(string text, bool center)
+        {
+            Paragraph paragraph = new Paragraph() { RsidParagraphAddition = "00607D74", RsidRunAdditionDefault = "00607D74", ParagraphId = "6ED85602", TextId = "77777777" };
+
+            ParagraphProperties paragraphProperties = new ParagraphProperties();
+            ParagraphMarkRunProperties paragraphMarkRunProperties = new ParagraphMarkRunProperties();
+
+            paragraphMarkRunProperties.AppendChild(new Color { Val = "000000" });
+            paragraphMarkRunProperties.AppendChild(new RunFonts { Ascii = "Arial" });
+            paragraphMarkRunProperties.AppendChild(new FontSize() { Val = "7pt" });
+            paragraphMarkRunProperties.AppendChild(new Bold());
+
+            Justification justification = new Justification() { Val = JustificationValues.Left };
+            if (center) justification.Val = JustificationValues.Center;
+
+            paragraphProperties.AppendChild(paragraphMarkRunProperties);
+            paragraphProperties.AppendChild(justification);
+            paragraph.AppendChild(paragraphProperties);
+
+            paragraph.AppendChild(new Text(text));
+
+            return paragraph;
         }
 
         private static TableCell SetupCell(string text, string width, bool center = false)
@@ -555,31 +571,30 @@ namespace HetsReport
             string address1, string address2)
         {
             string[] temp = new string[4];
+            int counter = 0;
 
             if (!string.IsNullOrEmpty(businessName))
             {
                 temp[0] = "Owner:";
+                counter++;
             }
 
             if (!string.IsNullOrEmpty(dbaName))
             {
-                if (string.IsNullOrEmpty(temp[0])) temp[0] = "Doing Business As:";
-                else temp[1] = "Doing Business As:";
+                temp[counter] = "Doing Business As:";
+                counter++;
             }
 
             if (!string.IsNullOrEmpty(address1))
             {
-                if (string.IsNullOrEmpty(temp[0])) temp[0] = "Address:";
-                else if (string.IsNullOrEmpty(temp[1])) temp[1] = "Address:";
-                else temp[2] = "Address:";
+                
+                temp[counter] = "Address:";
+                counter++;
             }
 
             if (!string.IsNullOrEmpty(address2))
             {
-                if (string.IsNullOrEmpty(temp[0])) temp[0] = " ";
-                else if (string.IsNullOrEmpty(temp[1])) temp[1] = " ";
-                else if (string.IsNullOrEmpty(temp[2])) temp[2] = " ";
-                else temp[3] = " ";
+                temp[counter] = " ";
             }
 
             return temp;
@@ -589,81 +604,91 @@ namespace HetsReport
             string address1, string address2)
         {
             string[] temp = new string[4];
+            int counter = 0;
 
             if (!string.IsNullOrEmpty(businessName))
             {
-                temp[0] = $"{businessName}";
+                temp[counter] = $"{businessName}";
+                counter++;
             }
 
             if (!string.IsNullOrEmpty(dbaName))
             {
-                if (string.IsNullOrEmpty(temp[0])) temp[0] = $"{dbaName}";
-                else temp[1] = $"{dbaName}";
+                temp[counter] = $"{dbaName}";
+                counter++;
             }
 
             if (!string.IsNullOrEmpty(address1))
             {
-                if (string.IsNullOrEmpty(temp[0])) temp[0] = $"{address1}";
-                else if (string.IsNullOrEmpty(temp[1])) temp[1] = $"{address1}";
-                else temp[2] = $"{address1}";
+                temp[counter] = $"{address1}";
+                counter++;
             }
 
             if (!string.IsNullOrEmpty(address2))
             {
-                if (string.IsNullOrEmpty(temp[0])) temp[0] = $"{address2}";
-                else if (string.IsNullOrEmpty(temp[1])) temp[1] = $"{address2}";
-                else if (string.IsNullOrEmpty(temp[2])) temp[2] = $"{address2}";
-                else temp[3] = $"{address2}";
+                temp[counter] = $"{address2}";
             }
 
             return temp;
         }
 
-        private static string[] GetContactLabels(string workPhoneNumber, string mobilePhoneNumber, string faxPhoneNumber)
+        private static string[] GetContactLabels(string workPhoneNumber, string mobilePhoneNumber, string faxPhoneNumber, string email)
         {
-            string[] temp = new string[3];
+            string[] temp = new string[4];
+            int counter = 0;
 
             if (!string.IsNullOrEmpty(workPhoneNumber))
             {
-                temp[0] = "Phone:";
+                temp[counter] = "Phone:";
+                counter++;
             }
 
             if (!string.IsNullOrEmpty(mobilePhoneNumber))
             {
-                if (string.IsNullOrEmpty(temp[0])) temp[0] = "Cell:";
-                else temp[1] = "Cell:";
+                temp[counter] = "Cell:";
+                counter++;
             }
 
             if (!string.IsNullOrEmpty(faxPhoneNumber))
             {
-                if (string.IsNullOrEmpty(temp[0])) temp[0] = "Fax:";
-                else if (string.IsNullOrEmpty(temp[1])) temp[1] = "Fax:";
-                else temp[2] = "Fax:";
+                temp[counter] = "Fax:";
+                counter++;
+            }
+
+            if (!string.IsNullOrEmpty(email) )
+            {
+                temp[counter] = "Email:";
             }
 
             return temp;
         }
 
-        private static string[] GetContactDetail(string workPhoneNumber, string mobilePhoneNumber, string faxPhoneNumber)
+        private static string[] GetContactDetail(string workPhoneNumber, string mobilePhoneNumber, string faxPhoneNumber, string emailAddress)
         {
-            string[] temp = new string[3];
+            string[] temp = new string[4];
+            int counter = 0;
 
             if (!string.IsNullOrEmpty(workPhoneNumber))
             {
-                temp[0] = $"{workPhoneNumber}";
+                temp[counter] = $"{workPhoneNumber}";
+                counter++;
             }
 
             if (!string.IsNullOrEmpty(mobilePhoneNumber))
             {
-                if (string.IsNullOrEmpty(temp[0])) temp[0] = $"{mobilePhoneNumber}";
-                else temp[1] = $"{mobilePhoneNumber}";
+                temp[counter] = $"{mobilePhoneNumber}";
+                counter++;
             }
 
             if (!string.IsNullOrEmpty(faxPhoneNumber))
             {
-                if (string.IsNullOrEmpty(temp[0])) temp[0] = $"{faxPhoneNumber}";
-                else if (string.IsNullOrEmpty(temp[1])) temp[1] = $"{faxPhoneNumber}";
-                else temp[2] = $"{faxPhoneNumber}";
+                temp[counter] = $"{faxPhoneNumber}";
+                counter++;
+            }
+
+            if (!string.IsNullOrEmpty(emailAddress))
+            {
+                temp[counter] = $"{emailAddress}";
             }
 
             return temp;

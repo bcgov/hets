@@ -1,0 +1,36 @@
+name: prune
+
+on:
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: ./.
+
+jobs:
+
+  clean-build-dev:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./.
+    steps:
+
+      - name: Prune builds and deployments & delete completed pods.
+        run: |
+          oc version
+          oc login --token=${{ secrets.OPENSHIFT_TOKEN}} --server=${{ secrets.OPENSHIFT_SERVER_URL }}
+          oc adm prune builds --keep-complete=0 --namespace=e0cee6-tools --confirm
+          oc adm prune builds --keep-failed=0 --namespace=e0cee6-tools --confirm
+          oc adm prune deployments --keep-failed=0 --namespace=e0cee6-dev --confirm
+          oc adm prune deployments --keep-complete=0 --namespace=e0cee6-dev --confirm
+          oc adm prune deployments --keep-failed=0 --namespace=e0cee6-test --confirm
+          oc adm prune deployments --keep-complete=0 --namespace=e0cee6-test --confirm
+          oc adm prune deployments --keep-failed=0 --namespace=e0cee6-prod --confirm
+          oc adm prune deployments --keep-complete=0 --namespace=e0cee6-prod --confirm
+          oc project e0cee6-dev
+          oc delete pod --field-selector=status.phase==Succeeded
+          oc project e0cee6-test
+          oc delete pod --field-selector=status.phase==Succeeded
+          oc project e0cee6-prod
+          oc delete pod --field-selector=status.phase==Succeeded

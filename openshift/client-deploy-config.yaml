@@ -24,15 +24,7 @@ objects:
       replicas: 1
       selector:
         deploymentconfig: ${NAME}${SUFFIX}
-      strategy:
-        activeDeadlineSeconds: 21600
-        rollingParams:
-          intervalSeconds: 1
-          maxSurge: 1
-          maxUnavailable: 1
-          timeoutSeconds: 600
-          updatePeriodSeconds: 1
-        type: Rolling
+      strategy: {}
       template:
         metadata:
           labels:
@@ -51,11 +43,33 @@ objects:
                 limits:
                   cpu: ${CPU}
                   memory: ${MEMORY}
+                livenessProbe:
+                  httpGet:
+                    path: /healthz
+                    port: 8080
+                initialDelaySeconds: 15
+                timeoutSeconds: 5
+                periodSeconds: 10
               env:
-                - name: API_SERVER
-                  value: "${PROJECT_NAME}-api${SUFFIX}:8080"
-                - name: ASPNETCORE_ENVIRONMENT
-                  value: "${ASPNETCORE_ENVIRONMENT}"
+                - name: REACT_APP_SSO_HOST
+                  valueFrom:
+                    secretKeyRef:
+                      name: sso-configs
+                      key: CLIENT_SSO_HOST
+                - name: REACT_APP_SSO_REALM
+                  valueFrom:
+                    secretKeyRef:
+                      name: sso-configs
+                      key: CLIENT_SSO_REALM
+                - name: REACT_APP_SSO_CLIENT
+                  valueFrom:
+                    secretKeyRef:
+                      name: sso-configs
+                      key: CLIENT_SSO_CLIENTID
+                - name: REACT_APP_API_HOST
+                  value: ${HOST}
+                - name: HETS_DEPLOY_SUFFIX
+                  value: ${SUFFIX}
       test: false
       triggers:
         - imageChangeParams:
@@ -130,11 +144,6 @@ parameters:
     name: HOST
     required: true
     value: ""
-  - name: ASPNETCORE_ENVIRONMENT
-    displayName: AspNetCore Environment
-    description: The ASP Net Core deployment environment setting.
-    required: true
-    value: Development
   - description: CPU
     displayName: CPU Request
     name: CPU

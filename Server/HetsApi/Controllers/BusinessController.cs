@@ -5,13 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Hosting;
-using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
-using HetsData.Helpers;
-using HetsData.Model;
+using HetsData.Entities;
+using AutoMapper;
+using HetsData.Dtos;
+using HetsData.Repositories;
 
 namespace HetsApi.Controllers
 {
@@ -20,26 +20,22 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/business")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class BusinessController : Controller
+    public class BusinessController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
         private readonly HttpContext _httpContext;
-        private readonly IHostingEnvironment _env;
+        private readonly IMapper _mapper;
+        private readonly IOwnerRepository _ownerRepo;
 
-        public BusinessController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IHostingEnvironment hostingEnv)
+        public BusinessController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, 
+            IMapper mapper, IOwnerRepository ownerRepo)
         {
             _context = context;
             _configuration = configuration;
             _httpContext = httpContextAccessor.HttpContext;
-            _env = hostingEnv;
-
-            // set context data
-            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
-            _context.SmUserId = user.SmUserId;
-            _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.UserGuid;
-            _context.SmBusinessGuid = user.BusinessGuid;
+            _mapper = mapper;
+            _ownerRepo = ownerRepo;
         }
 
         #region Get Business for the logged on business user
@@ -49,26 +45,24 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("")]
-        [SwaggerOperation("BceidBusinessGet")]
-        [SwaggerResponse(200, type: typeof(HetBusiness))]
         [RequiresPermission(HetPermission.BusinessLogin)]
-        public virtual IActionResult BceidBusinessGet()
+        public virtual ActionResult<BusinessDto> BceidBusinessGet()
         {
-            string businessGuid = UserAccountHelper.GetBusinessGuid(_httpContext, _env);
+            string businessGuid = _context.SmBusinessGuid;
 
             if (businessGuid == null) return new NotFoundObjectResult(new HetsResponse(""));
 
-            HetBusiness business = _context.HetBusiness.AsNoTracking()
-                .Include(x => x.HetOwner)
+            HetBusiness business = _context.HetBusinesses.AsNoTracking()
+                .Include(x => x.HetOwners)
                     .ThenInclude(y => y.PrimaryContact)
-                .Include(x => x.HetOwner)
+                .Include(x => x.HetOwners)
                     .ThenInclude(y => y.LocalArea)
                         .ThenInclude(z => z.ServiceArea.District)
                 .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             if (business == null) return new NotFoundObjectResult(new HetsResponse(""));
 
-            return new ObjectResult(new HetsResponse(business));
+            return new ObjectResult(new HetsResponse(_mapper.Map<BusinessDto>(business)));
         }
 
         #endregion
@@ -82,12 +76,10 @@ namespace HetsApi.Controllers
         /// <param name="postalCode"></param>
         [HttpGet]
         [Route("validateOwner")]
-        [SwaggerOperation("BceidValidateOwner")]
-        [SwaggerResponse(200, type: typeof(HetBusiness))]
         [RequiresPermission(HetPermission.BusinessLogin)]
-        public virtual IActionResult BceidValidateOwner([FromQuery]string sharedKey, [FromQuery]string postalCode)
+        public virtual ActionResult<BusinessDto> BceidValidateOwner([FromQuery]string sharedKey, [FromQuery]string postalCode)
         {
-            string businessGuid = UserAccountHelper.GetBusinessGuid(_httpContext, _env);
+            string businessGuid = _context.SmBusinessGuid;
 
             if (string.IsNullOrEmpty(sharedKey))
             {
@@ -101,20 +93,23 @@ namespace HetsApi.Controllers
                 return new BadRequestObjectResult(new HetsResponse("HETS-22", ErrorViewModel.GetDescription("HETS-22", _configuration)));
             }
 
-            bool exists = _context.HetBusiness.Any(a => a.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
+            bool exists = _context.HetBusinesses.Any(a => a.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get business
-            HetBusiness business = _context.HetBusiness.AsNoTracking()
+            HetBusiness business = _context.HetBusinesses.AsNoTracking()
                 .First(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
+            postalCode = postalCode.Replace(" ", "").ToLower();
+
             // find owner using shred key & postal code (exact match)
-            HetOwner owner = _context.HetOwner
+            HetOwner owner = _context.HetOwners
                 .Include(a => a.Business)
-                .FirstOrDefault(a => a.SharedKey.Equals(sharedKey) &&
-                                     a.PostalCode.Replace(" ", "").ToLower().Equals(postalCode.Replace(" ", "").ToLower(), StringComparison.InvariantCultureIgnoreCase));
+                .Where(a => a.SharedKey == sharedKey)
+                .ToList() //completes server evaluation before doing the client evaluation   
+                .FirstOrDefault(a => a.PostalCode.Replace(" ", "").Equals(postalCode.Replace(" ", ""), StringComparison.InvariantCultureIgnoreCase));
 
             // validate the key
             if (owner == null)
@@ -136,23 +131,22 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // get updated business record and return to the UI
-            business = _context.HetBusiness.AsNoTracking()
-                .Include(x => x.HetOwner)
+            business = _context.HetBusinesses.AsNoTracking()
+                .Include(x => x.HetOwners)
                     .ThenInclude(y => y.PrimaryContact)
-                .Include(x => x.HetOwner)
-                    .ThenInclude(y => y.Business)
-                .Include(x => x.HetOwner)
+                .Include(x => x.HetOwners)
                     .ThenInclude(y => y.LocalArea.ServiceArea.District)
                 .FirstOrDefault(a => a.BusinessId == business.BusinessId);
 
-            // get updated owner record (linked owner) and return to the UI too
-            if (business != null)
-            {
-                business.LinkedOwner = _context.HetOwner.AsNoTracking()
-                    .FirstOrDefault(x => x.OwnerId == ownerId);
-            }
+            var businessDto = _mapper.Map<BusinessDto>(business);
 
-            return new ObjectResult(new HetsResponse(business));
+            businessDto.LinkedOwner = _mapper.Map<OwnerDto>(
+                _context.HetOwners
+                .AsNoTracking()
+                .FirstOrDefault(x => x.OwnerId == ownerId)
+            );
+
+            return new ObjectResult(new HetsResponse(businessDto));
         }
 
         #endregion
@@ -164,15 +158,13 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("owners")]
-        [SwaggerOperation("BceidOwnersGet")]
-        [SwaggerResponse(200, type: typeof(List<HetOwner>))]
         [RequiresPermission(HetPermission.BusinessLogin)]
-        public virtual IActionResult BceidOwnersGet()
+        public virtual ActionResult<BusinessDto> BceidOwnersGet()
         {
             // get business
-            string businessGuid = UserAccountHelper.GetBusinessGuid(_httpContext, _env);
+            string businessGuid = _context.SmBusinessGuid;
 
-            HetBusiness business = _context.HetBusiness.AsNoTracking()
+            HetBusiness business = _context.HetBusinesses.AsNoTracking()
                 .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             if (business == null) return StatusCode(StatusCodes.Status401Unauthorized);
@@ -181,16 +173,14 @@ namespace HetsApi.Controllers
             if (!CanAccessBusiness(business.BusinessId)) return StatusCode(StatusCodes.Status401Unauthorized);
 
             // get business
-            HetBusiness businessDetail = _context.HetBusiness.AsNoTracking()
-                .Include(x => x.HetOwner)
+            HetBusiness businessDetail = _context.HetBusinesses.AsNoTracking()
+                .Include(x => x.HetOwners)
                     .ThenInclude(y => y.PrimaryContact)
-                .Include(x => x.HetOwner)
-                    .ThenInclude(y => y.Business)
-                .Include(x => x.HetOwner)
+                .Include(x => x.HetOwners)
                     .ThenInclude(y => y.LocalArea.ServiceArea.District)
                 .FirstOrDefault(a => a.BusinessId == business.BusinessId);
 
-            return new ObjectResult(new HetsResponse(businessDetail));
+            return new ObjectResult(new HetsResponse(_mapper.Map<BusinessDto>(businessDetail)));
         }
 
         /// <summary>
@@ -199,15 +189,13 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Owner to fetch</param>
         [HttpGet]
         [Route("owner/{id}")]
-        [SwaggerOperation("BceidOwnerIdGet")]
-        [SwaggerResponse(200, type: typeof(HetOwner))]
         [RequiresPermission(HetPermission.BusinessLogin)]
-        public virtual IActionResult BceidOwnerIdGet([FromRoute]int id)
+        public virtual ActionResult<OwnerDto> BceidOwnerIdGet([FromRoute]int id)
         {
             // get business
-            string businessGuid = UserAccountHelper.GetBusinessGuid(_httpContext, _env);
+            string businessGuid = _context.SmBusinessGuid;
 
-            HetBusiness business = _context.HetBusiness.AsNoTracking()
+            HetBusiness business = _context.HetBusinesses.AsNoTracking()
                 .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             if (business == null) return StatusCode(StatusCodes.Status401Unauthorized);
@@ -215,7 +203,7 @@ namespace HetsApi.Controllers
             // check access
             if (!CanAccessOwner(business.BusinessId, id)) return StatusCode(StatusCodes.Status401Unauthorized);
 
-            return new ObjectResult(new HetsResponse(OwnerHelper.GetRecord(id, _context, _configuration)));
+            return new ObjectResult(new HetsResponse(_ownerRepo.GetRecord(id)));
         }
 
         /// <summary>
@@ -225,15 +213,13 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Owner to fetch Equipment for</param>
         [HttpGet]
         [Route("owner/{id}/equipment")]
-        [SwaggerOperation("BceidOwnerEquipmentGet")]
-        [SwaggerResponse(200, type: typeof(List<HetEquipment>))]
         [RequiresPermission(HetPermission.BusinessLogin)]
-        public virtual IActionResult BceidOwnerEquipmentGet([FromRoute]int id)
+        public virtual ActionResult<List<EquipmentDto>> BceidOwnerEquipmentGet([FromRoute]int id)
         {
             // get business
-            string businessGuid = UserAccountHelper.GetBusinessGuid(_httpContext, _env);
+            string businessGuid = _context.SmBusinessGuid;
 
-            HetBusiness business = _context.HetBusiness.AsNoTracking()
+            HetBusiness business = _context.HetBusinesses.AsNoTracking()
                 .FirstOrDefault(x => x.BceidBusinessGuid.ToLower().Trim() == businessGuid.ToLower().Trim());
 
             if (business == null) return StatusCode(StatusCodes.Status401Unauthorized);
@@ -242,24 +228,22 @@ namespace HetsApi.Controllers
             if (!CanAccessOwner(business.BusinessId, id)) return StatusCode(StatusCodes.Status401Unauthorized);
 
             // retrieve the data and return
-            HetOwner owner = _context.HetOwner.AsNoTracking()
-                .Include(x => x.HetEquipment)
+            HetOwner owner = _context.HetOwners.AsNoTracking()
+                .Include(x => x.HetEquipments)
                     .ThenInclude(x => x.LocalArea.ServiceArea.District.Region)
-                .Include(x => x.HetEquipment)
+                .Include(x => x.HetEquipments)
                     .ThenInclude(x => x.DistrictEquipmentType)
-                .Include(x => x.HetEquipment)
-                    .ThenInclude(x => x.Owner)
-                .Include(x => x.HetEquipment)
-                    .ThenInclude(x => x.HetEquipmentAttachment)
-                .Include(x => x.HetEquipment)
-                    .ThenInclude(x => x.HetNote)
-                .Include(x => x.HetEquipment)
-                    .ThenInclude(x => x.HetDigitalFile)
-                .Include(x => x.HetEquipment)
-                    .ThenInclude(x => x.HetHistory)
+                .Include(x => x.HetEquipments)
+                    .ThenInclude(x => x.HetEquipmentAttachments)
+                .Include(x => x.HetEquipments)
+                    .ThenInclude(x => x.HetNotes)
+                .Include(x => x.HetEquipments)
+                    .ThenInclude(x => x.HetDigitalFiles)
+                .Include(x => x.HetEquipments)
+                    .ThenInclude(x => x.HetHistories)
                 .First(a => a.OwnerId == id);
 
-            return new ObjectResult(new HetsResponse(owner.HetEquipment));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<EquipmentDto>>(owner.HetEquipments)));
         }
 
         #endregion
@@ -269,22 +253,22 @@ namespace HetsApi.Controllers
         private bool CanAccessOwner(int businessId, int ownerId)
         {
             // validate that the current user can access this record
-            string userId = UserAccountHelper.GetUserId(_httpContext);
+            string userId = _context.SmUserId;
             bool isBusiness = UserAccountHelper.IsBusiness(_httpContext);
 
             // not a business user
             if (string.IsNullOrEmpty(userId) || !isBusiness) return false;
 
             // get business & owner record
-            HetOwner owner = _context.HetOwner.AsNoTracking()
+            HetOwner owner = _context.HetOwners.AsNoTracking()
                 .Include(x => x.Business)
-                    .ThenInclude(x => x.HetBusinessUser)
+                    .ThenInclude(x => x.HetBusinessUsers)
                 .FirstOrDefault(x => x.BusinessId == businessId &&
                                      x.OwnerId == ownerId);
 
             // get user
-            HetBusinessUser user = owner?.Business?.HetBusinessUser
-                .FirstOrDefault(x => x.BceidUserId.Equals(userId, StringComparison.InvariantCultureIgnoreCase));
+            HetBusinessUser user = owner?.Business?.HetBusinessUsers
+                .FirstOrDefault(x => x.BceidUserId.ToUpper() == userId);
 
             // no access to business or business doesn't exist
             return user != null;
@@ -293,20 +277,20 @@ namespace HetsApi.Controllers
         private bool CanAccessBusiness(int businessId)
         {
             // validate that the current user can access this record
-            string userId = UserAccountHelper.GetUserId(_httpContext);
+            string userId = _context.SmUserId;
             bool isBusiness = UserAccountHelper.IsBusiness(_httpContext);
 
             // not a business user
             if (string.IsNullOrEmpty(userId) || !isBusiness) return false;
 
             // get business record
-            HetBusiness business = _context.HetBusiness.AsNoTracking()
-                .Include(x => x.HetBusinessUser)
+            HetBusiness business = _context.HetBusinesses.AsNoTracking()
+                .Include(x => x.HetBusinessUsers)
                 .FirstOrDefault(x => x.BusinessId == businessId);
 
             // get user
-            HetBusinessUser user = business?.HetBusinessUser
-                .FirstOrDefault(x => x.BceidUserId.Equals(userId, StringComparison.InvariantCultureIgnoreCase));
+            HetBusinessUser user = business?.HetBusinessUsers
+                .FirstOrDefault(x => x.BceidUserId.ToUpper() == userId);
 
             // no access to business or business doesn't exist
             return user != null;

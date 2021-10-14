@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using HetsData.Model;
+using HetsData.Entities;
 
 namespace HetsData.Helpers
 {
@@ -26,7 +26,6 @@ namespace HetsData.Helpers
     public class SeniorityViewModel
     {
         public int Id { get; set; }
-        public string EquipmentType { get; set; }
         public string OwnerName { get; set; }
         public int? OwnerId { get; set; }
         public string Block { get; set; }
@@ -57,9 +56,15 @@ namespace HetsData.Helpers
     public class SeniorityListReportViewModel
     {
         public string Classification { get; set; }
-        public string PrintedOn { get; set; }
+        public string GeneratedOn { get; set; }
+        public string SeniorityListType { get; set; }
 
         public List<SeniorityListRecord> SeniorityListRecords { get; set; }
+
+        public SeniorityListReportViewModel()
+        {
+            SeniorityListRecords = new List<SeniorityListRecord>();
+        }
 
         public string ToJson()
         {
@@ -90,17 +95,17 @@ namespace HetsData.Helpers
             {
                 // validate data
                 if (context != null &&
-                    context.HetLocalArea.Any(x => x.LocalAreaId == localAreaId) &&
-                    context.HetDistrictEquipmentType.Any(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId))
+                    context.HetLocalAreas.Any(x => x.LocalAreaId == localAreaId) &&
+                    context.HetDistrictEquipmentTypes.Any(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId))
                 {
                     // get processing rules
                     SeniorityScoringRules scoringRules = new SeniorityScoringRules(seniorityScoringRules);
 
                     // get the associated equipment type
-                    HetDistrictEquipmentType districtEquipmentTypeRecord = context.HetDistrictEquipmentType
+                    HetDistrictEquipmentType districtEquipmentTypeRecord = context.HetDistrictEquipmentTypes
                         .First(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
-                    HetEquipmentType equipmentTypeRecord = context.HetEquipmentType
+                    HetEquipmentType equipmentTypeRecord = context.HetEquipmentTypes
                         .FirstOrDefault(x => x.EquipmentTypeId == districtEquipmentTypeRecord.EquipmentTypeId);
 
                     if (equipmentTypeRecord != null)
@@ -117,8 +122,7 @@ namespace HetsData.Helpers
                             : scoringRules.GetTotalBlocks();
 
                         // get all equipment records
-                        IQueryable<HetEquipment> data = context.HetEquipment
-                            .Include(x => x.EquipmentStatusType)
+                        IQueryable<HetEquipment> data = context.HetEquipments
                             .Where(x => x.LocalAreaId == localAreaId &&
                                         x.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
@@ -145,11 +149,7 @@ namespace HetsData.Helpers
                                 equipment.CalculateSeniority(seniorityScoring);
                                 equipment.SeniorityEffectiveDate = DateTime.UtcNow;
                             }
-
-                            context.HetEquipment.Update(equipment);
                         }
-
-                        context.SaveChanges();
 
                         // put equipment into the correct blocks
                         AssignBlocks(localAreaId, districtEquipmentTypeId, blockSize, totalBlocks, context);
@@ -173,21 +173,20 @@ namespace HetsData.Helpers
         /// <param name="totalBlocks"></param>
         /// <param name="context"></param>
         /// <param name="saveChanges"></param>
-        public static void AssignBlocks(int localAreaId, int districtEquipmentTypeId,
-            int blockSize, int totalBlocks, DbAppContext context, bool saveChanges = true)
+        public static void AssignBlocks(int localAreaId, int districtEquipmentTypeId, int blockSize, int totalBlocks, DbAppContext context)
         {
             try
             {
                 // get all equipment records
-                List<HetEquipment> data = context.HetEquipment
+                var data = context.HetEquipments
                     .Include(x => x.Owner)
                     .Where(x => x.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved &&
                                 x.LocalArea.LocalAreaId == localAreaId &&
                                 x.DistrictEquipmentTypeId == districtEquipmentTypeId)
+                    .ToList() //must be done before sorting because the client version of querying entities has been changed - EFCore 5 issue?
                     .OrderByDescending(x => x.Seniority)
-                        .ThenBy(x => x.ReceivedDate)
-                        .ThenBy(x => x.EquipmentCode)
-                    .Select(x => x)
+                    .ThenBy(x => x.ReceivedDate)
+                    .ThenBy(x => x.EquipmentCode)
                     .ToList();
 
                 // total blocks only counts the "main" blocks - we need to add 1 more for the remaining records
@@ -201,7 +200,7 @@ namespace HetsData.Helpers
                     // iterate the blocks and add the record
                     for (int i = 0; i < totalBlocks; i++)
                     {
-                        if (AddedToBlock(i, totalBlocks, blockSize, blocks, equipment, context, saveChanges))
+                        if (AddedToBlock(i, totalBlocks, blockSize, blocks, equipment))
                         {
                             break; // move to next record
                         }
@@ -216,8 +215,7 @@ namespace HetsData.Helpers
             }
         }
 
-        private static bool AddedToBlock(int currentBlock, int totalBlocks, int blockSize,
-            List<int>[] blocks, HetEquipment equipment, DbAppContext context, bool saveChanges = true)
+        private static bool AddedToBlock(int currentBlock, int totalBlocks, int blockSize, List<int>[] blocks, HetEquipment equipment)
         {
             try
             {
@@ -259,13 +257,6 @@ namespace HetsData.Helpers
                 equipment.BlockNumber = currentBlock + 1;
                 equipment.NumberInBlock = blocks[currentBlock].Count;
 
-                context.HetEquipment.Update(equipment);
-
-                if (saveChanges)
-                {
-                    context.SaveChanges();
-                }
-
                 // record added to the block
                 return true;
             }
@@ -290,7 +281,7 @@ namespace HetsData.Helpers
         /// <param name="context"></param>
         /// <returns></returns>
         public static SeniorityViewModel ToSeniorityViewModel(HetEquipment model, SeniorityScoringRules scoringRules,
-            HetRentalRequestRotationList rotationList, DbAppContext context)
+            int lastCalledEquipmentId, DbAppContext context)
         {
             SeniorityViewModel seniorityViewModel = new SeniorityViewModel();
 
@@ -310,31 +301,26 @@ namespace HetsData.Helpers
             int blockNumber = 0;
             if (model.BlockNumber != null)
             {
-                blockNumber = (int) model.BlockNumber;
+                blockNumber = (int)model.BlockNumber;
             }
 
             // get equipment block number
             int numberInBlock = 0;
             if (model.NumberInBlock != null)
             {
-                numberInBlock = (int) model.NumberInBlock;
+                numberInBlock = (int)model.NumberInBlock;
             }
 
             // *************************************************************
             // check if this record/owner was called last
             // *************************************************************
-            bool callLast = rotationList != null && rotationList.EquipmentId == model.EquipmentId;
+            bool callLast = lastCalledEquipmentId == model.EquipmentId;
             seniorityViewModel.LastCalled = callLast ? "Y" : " ";
 
             // *************************************************************
             // map data to view model
             // *************************************************************
             seniorityViewModel.Id = model.EquipmentId;
-
-            if (model.DistrictEquipmentType != null)
-            {
-                seniorityViewModel.EquipmentType = model.DistrictEquipmentType.DistrictEquipmentName;
-            }
 
             if (model.Owner != null)
             {
@@ -374,6 +360,43 @@ namespace HetsData.Helpers
         }
 
         #endregion
+
+        public static SeniorityViewModel ToSeniorityViewModel(HetRentalRequestSeniorityList equipment, int numberOfBlocks)
+        {
+            var seniorityViewModel = new SeniorityViewModel();
+
+            if (equipment == null) return seniorityViewModel;
+
+            var blockNumber = (int)equipment.BlockNumber;
+            var numberInBlock = (int)equipment.NumberInBlock;
+
+            // *************************************************************
+            // map data to view model
+            // *************************************************************
+            seniorityViewModel.Id = equipment.EquipmentId;
+            seniorityViewModel.OwnerName = equipment.Owner?.OrganizationName;
+            seniorityViewModel.OwnerId = equipment.OwnerId;
+            seniorityViewModel.Seniority = $"{equipment.Seniority:0.###}";
+            seniorityViewModel.YearMakeModelSize = $"{equipment.Year}/{equipment.Make}/{equipment.Model}/{equipment.Size}";
+            seniorityViewModel.EquipmentCode = equipment.EquipmentCode;
+            seniorityViewModel.YearsRegistered = equipment.YearsOfService.ToString();
+            seniorityViewModel.IsHired = equipment.WorkingNow ? "Y" : "N";
+            seniorityViewModel.LastCalled = equipment.LastCalled ? "Y" : " ";
+            seniorityViewModel.YtdHours = $"{equipment.YtdHours:0.###}";
+
+            // replacing Open with 3 (HETS-968 Rotation list -Wrong Block number for Open block)
+            seniorityViewModel.Block = blockNumber == numberOfBlocks ? "3" : blockNumber.ToString();
+
+            // format the hours
+            seniorityViewModel.HoursYearMinus1 = $"{equipment.ServiceHoursLastYear:0.###}";
+            seniorityViewModel.HoursYearMinus2 = $"{equipment.ServiceHoursTwoYearsAgo:0.###}";
+            seniorityViewModel.HoursYearMinus3 = $"{equipment.ServiceHoursThreeYearsAgo:0.###}";
+
+            // add the correct sorting order (numeric)
+            seniorityViewModel.SenioritySortOrder = EquipmentHelper.CalculateSenioritySortOrder(blockNumber, numberInBlock);
+
+            return seniorityViewModel;
+        }
     }
 
     #region Seniority Scoring Rules Class

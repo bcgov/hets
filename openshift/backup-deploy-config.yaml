@@ -111,15 +111,12 @@ objects:
                 - name: TABLE_SCHEMA
                   value: "${TABLE_SCHEMA}"
                 - name: DATABASE_USER
-                  valueFrom:
-                    secretKeyRef:
-                      name: "${PROJECT_NAME}-${DB_NAME}-${ENV}"
-                      key: "database-user"
+                  value: "${DB_ADMIN_USER}"
                 - name: DATABASE_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       name: "${PROJECT_NAME}-${DB_NAME}-${ENV}"
-                      key: "database-password"
+                      key: "admin-password"
                 - name: FTP_URL
                   valueFrom:
                     secretKeyRef:
@@ -136,11 +133,14 @@ objects:
                       name: "${FTP_SECRET_KEY}"
                       key: ftp-password
                 - name: WEBHOOK_URL
-                  value: ""
+                  valueFrom:
+                    secretKeyRef:
+                      name: webhook-url
+                      key: rocketchat-webhook-url
                 - name: ENVIRONMENT_FRIENDLY_NAME
-                  value: "${ENVIRONMENT_FRIENDLY_NAME}"
+                  value: "${NAME}-${ENV}"
                 - name: ENVIRONMENT_NAME
-                  value: "${ENVIRONMENT_NAME}"
+                  value: "${NAME_SPACE}-${ENV}"
               resources:
                 requests:
                   cpu: "${CPU_REQUEST}"
@@ -169,6 +169,11 @@ parameters:
       depending on your database provider
     required: true
     value: backup
+  - description: Name space of the project (HETS)
+    displayName: NAME_SPACE
+    name: NAME_SPACE
+    required: false
+    value: "e0cee6"
   - description: A name suffix used for all objects
     displayName: Suffix
     name: SUFFIX
@@ -222,6 +227,11 @@ parameters:
       'backup.conf' configuration.  The name of the database.
     required: false
     value: "hets"
+  - name: DB_ADMIN_USER
+    displayName: DB Admin User
+    description: Database admin account name to be used when backing up database.
+    required: false
+    value: "postgres"
   - name: MONGODB_AUTHENTICATION_DATABASE
     displayName: MongoDB Authentication Database
     description:

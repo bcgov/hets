@@ -17,7 +17,6 @@ module.exports = (settings) => {
     path.resolve(__dirname, "../../openshift")
   );
   var objects = [];
-
   const dbSecret = util.getSecret(
     oc,
     phases[phase].namespace,
@@ -109,7 +108,6 @@ module.exports = (settings) => {
           VERSION: phases[phase].tag,
           ENV: phases[phase].phase,
           HOST: phases[phase].host,
-          ASPNETCORE_ENVIRONMENT: phases[phase].dotnet_env,
           CPU: phases[phase].client_cpu,
           MEMORY: phases[phase].client_memory,
         },

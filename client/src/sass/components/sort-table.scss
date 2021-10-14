@@ -1,0 +1,53 @@
+.sort-table {
+  width: 100%;
+  overflow-y: auto;
+  position: relative;
+
+  @media print {
+    overflow-y: visible !important;
+
+    & th,
+    td {
+      overflow: visible;
+      word-wrap: break-word;
+    }
+  }
+
+  #sort-table-refreshing-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    pointer-events: none;
+
+    .spinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-top: -12px;
+      margin-left: -12px;
+    }
+  }
+
+  .table {
+    table-layout: fixed;
+
+    & th,
+    td {
+      padding: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    & th:hover,
+    td:hover {
+      overflow: visible;
+      word-wrap: break-word;
+    }
+  }
+}

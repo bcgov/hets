@@ -1,0 +1,40 @@
+// overrides react-bootstrap styles
+
+//in react-bootstrap v0.33 the button had a btn-default style. Changed in v1.6.1 to btn-primary.
+//below is needed to change style.
+.btn-custom {
+  color: #333;
+  background-color: #fff;
+  border-color: #ccc;
+
+  &:hover {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+  }
+
+  &:focus {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+  }
+
+  &:disabled {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+  }
+}
+
+//used to make error messages show up as red in .form-text for form dialogs
+.form-text {
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 80%;
+  color: #dc3545;
+}
+
+//used to ensure long words do not overflow in rows/cols overflow-wrap is inherited to all child elements.
+.row {
+  overflow-wrap: anywhere;
+}

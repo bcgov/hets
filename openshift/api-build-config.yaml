@@ -6,10 +6,10 @@ metadata:
 labels:
   template: api-build
 objects:
-  - apiVersion: v1
+  - apiVersion: image.openshift.io/v1
     kind: ImageStream
     metadata:
-      name: dotnet-21-rhel7
+      name: dotnet-50-rhel8
       labels:
         shared: "true"
     spec:
@@ -19,11 +19,11 @@ objects:
         - annotations: null
           from:
             kind: DockerImage
-            name: registry.redhat.io/dotnet/dotnet-21-rhel7:2.1-41
-          name: "2.1-41"
+            name: registry.redhat.io/rhel8/dotnet-50:5.0-4
+          name: "5.0"
           referencePolicy:
             type: Local
-  - apiVersion: v1
+  - apiVersion: image.openshift.io/v1
     kind: ImageStream
     metadata:
       name: postgresql-10-rhel8
@@ -41,13 +41,13 @@ objects:
           referencePolicy:
             type: Local
   - kind: ImageStream
-    apiVersion: v1
+    apiVersion: image.openshift.io/v1
     metadata:
         labels:
           shared: "true"
         name: "${NAME}"
   - kind: BuildConfig
-    apiVersion: v1
+    apiVersion: build.openshift.io/v1
     metadata:
       creationTimestamp: null
       labels:
@@ -82,7 +82,7 @@ objects:
               value: "${DOTNET_STARTUP_PROJECT}"
           from:
             kind: ImageStreamTag
-            name: dotnet-21-rhel7:2.1-41
+            name: "dotnet-50-rhel8:5.0"
 parameters:
   - description: Name of the project (HETS)
     displayName: PROJECT_NAME
@@ -108,7 +108,7 @@ parameters:
     displayName: SOURCE_REPOSITORY_URL
     name: SOURCE_REPOSITORY_URL
     required: false
-    value: "https://github.com/bcgov/hets.git"
+    value: ""
   - description: SOURCE_REPOSITORY_REF
     displayName: SOURCE_REPOSITORY_REF
     name: SOURCE_REPOSITORY_REF

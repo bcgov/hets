@@ -1,9 +1,9 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
+using HetsData.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace HetsApi.Authorization
 {
@@ -23,80 +23,40 @@ namespace HetsApi.Authorization
         }
     }
 
-    /// <summary>
-    /// Permission handler
-    /// </summary>
-    /// <remarks>
-    /// Must be registered with Dependency Injection
-    /// </remarks>
     public class PermissionHandler : AuthorizationHandler<PermissionRequirement>
     {
-        private readonly HttpContext _httpContext;
-        private readonly IHostingEnvironment _hostingEnv;
+        private ILogger<PermissionHandler> _logger;
+        private IHttpContextAccessor _httpContextAccessor;
 
-        public PermissionHandler(IHttpContextAccessor httpContextAccessor, IHostingEnvironment hostingEnv)
+        public PermissionHandler(ILogger<PermissionHandler> logger, IHttpContextAccessor httpContextAccessor)
         {
-            _httpContext = httpContextAccessor.HttpContext;
-            _hostingEnv = hostingEnv;
+            _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
-
-        /// <summary>
-        /// Permission Handler
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="requirement"></param>
-        /// <returns></returns>
-        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
         {
-            // **************************************************
-            // check if we have a Dev Environment Cookie
-            // **************************************************
-            if (_hostingEnv.IsDevelopment())
+            var user = context.User;
+
+            if (!user.Identity.IsAuthenticated)
             {
-                string temp = _httpContext.Request.Cookies["DEV-USER"];
-
-                if (!string.IsNullOrEmpty(temp))
-                {
-                    // access granted
-                    context.Succeed(requirement);
-
-                    await Task.CompletedTask;
-                    return;
-                }
-            }
-
-            // **************************************************
-            // check if we have a Business Dev Environment Cookie
-            // **************************************************
-            if (_hostingEnv.IsDevelopment())
-            {
-                string temp = _httpContext.Request.Cookies["BUS-USER"];
-
-                if (!string.IsNullOrEmpty(temp))
-                {
-                    // access granted
-                    context.Succeed(requirement);
-
-                    await Task.CompletedTask;
-                    return;
-                }
-            }
-
-            // **************************************************
-            // if not - check the users permissions
-            // **************************************************
-            if (context.User.HasPermissions(requirement.RequiredPermissions.ToArray()))
-            {
-                // access granted
-                context.Succeed(requirement);
-            }
-            else
-            {
-                // access denied
                 context.Fail();
+                return Task.CompletedTask;
             }
 
-            await Task.CompletedTask;
+            foreach (var permission in requirement.RequiredPermissions)
+            {
+                if (!user.HasClaim(HetUser.PermissionClaim, permission))
+                {
+                    _logger.LogInformation("RequiresPermission - {user} - {url} - {permission}", user.Identity.Name, _httpContextAccessor.HttpContext.Request.Path, permission);
+
+                    context.Fail();
+                    return Task.CompletedTask;
+                }
+            }
+
+            context.Succeed(requirement);
+            return Task.CompletedTask;
         }
     }
+
 }

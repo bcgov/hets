@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Swashbuckle.AspNetCore.Annotations;
 using HetsApi.Authorization;
 using HetsApi.Helpers;
 using HetsApi.Model;
 using HetsData.Helpers;
-using HetsData.Model;
+using HetsData.Entities;
+using HetsData.Repositories;
+using HetsData.Dtos;
+using AutoMapper;
 
 namespace HetsApi.Controllers
 {
@@ -20,24 +21,26 @@ namespace HetsApi.Controllers
     /// </summary>
     [Route("api/projects")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class ProjectController : Controller
+    public class ProjectController : ControllerBase
     {
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
-        private readonly HttpContext _httpContext;
+        private readonly IMapper _mapper;
+        private readonly IProjectRepository _projectRepo;
+        private readonly IRentalRequestRepository _rentalRequestRepo;
+        private readonly IRentalAgreementRepository _rentalAgreementRepo;
 
-        public ProjectController(DbAppContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public ProjectController(DbAppContext context, IConfiguration configuration, IMapper mapper,
+            IProjectRepository projectRepo,
+            IRentalRequestRepository rentalRequestRepo,
+            IRentalAgreementRepository rentalAgreementRepo)
         {
             _context = context;
             _configuration = configuration;
-            _httpContext = httpContextAccessor.HttpContext;
-
-            // set context data
-            User user = UserAccountHelper.GetUser(context, httpContextAccessor.HttpContext);
-            _context.SmUserId = user.SmUserId;
-            _context.DirectoryName = user.SmAuthorizationDirectory;
-            _context.SmUserGuid = user.UserGuid;
-            _context.SmBusinessGuid = user.BusinessGuid;
+            _mapper = mapper;
+            _projectRepo = projectRepo;
+            _rentalRequestRepo = rentalRequestRepo;
+            _rentalAgreementRepo = rentalAgreementRepo;
         }
 
         /// <summary>
@@ -46,15 +49,13 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Project to fetch</param>
         [HttpGet]
         [Route("{id}")]
-        [SwaggerOperation("ProjectsIdGet")]
-        [SwaggerResponse(200, type: typeof(HetProject))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult ProjectsIdGet([FromRoute]int id)
+        public virtual ActionResult<ProjectDto> ProjectsIdGet([FromRoute] int id)
         {
             // get current district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
-            return new ObjectResult(new HetsResponse(ProjectHelper.GetRecord(id, _context, districtId)));
+            return new ObjectResult(new HetsResponse(_projectRepo.GetRecord(id, districtId)));
         }
 
         /// <summary>
@@ -64,10 +65,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPut]
         [Route("{id}")]
-        [SwaggerOperation("ProjectsIdPut")]
-        [SwaggerResponse(200, type: typeof(HetProject))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult ProjectsIdPut([FromRoute]int id, [FromBody]HetProject item)
+        public virtual ActionResult<ProjectDto> ProjectsIdPut([FromRoute] int id, [FromBody] ProjectDto item)
         {
             if (item == null || id != item.ProjectId)
             {
@@ -75,13 +74,13 @@ namespace HetsApi.Controllers
                 return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
-            HetProject project = _context.HetProject.First(a => a.ProjectId == id);
+            HetProject project = _context.HetProjects.First(a => a.ProjectId == id);
 
             int? statusId = StatusHelper.GetStatusId(item.Status, "projectStatus", _context);
             if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
@@ -116,7 +115,7 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // retrieve updated project record to return to ui
-            return new ObjectResult(new HetsResponse(ProjectHelper.GetRecord(id, _context)));
+            return new ObjectResult(new HetsResponse(_projectRepo.GetRecord(id)));
         }
 
         /// <summary>
@@ -125,10 +124,8 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPost]
         [Route("")]
-        [SwaggerOperation("ProjectsPost")]
-        [SwaggerResponse(200, type: typeof(HetProject))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult ProjectsPost([FromBody]HetProject item)
+        public virtual ActionResult<ProjectDto> ProjectsPost([FromBody] ProjectDto item)
         {
             // not found
             if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -155,7 +152,7 @@ namespace HetsApi.Controllers
                 CostType = item.CostType
             };
 
-            _context.HetProject.Add(project);
+            _context.HetProjects.Add(project);
 
             // save record
             _context.SaveChanges();
@@ -163,7 +160,7 @@ namespace HetsApi.Controllers
             int id = project.ProjectId;
 
             // retrieve updated project record to return to ui
-            return new ObjectResult(new HetsResponse(ProjectHelper.GetRecord(id, _context)));
+            return new ObjectResult(new HetsResponse(_projectRepo.GetRecord(id)));
         }
 
         #region Project Search
@@ -181,25 +178,23 @@ namespace HetsApi.Controllers
         /// <param name="fiscalYear"></param>
         [HttpGet]
         [Route("search")]
-        [SwaggerOperation("ProjectsSearchGet")]
-        [SwaggerResponse(200, type: typeof(List<ProjectLite>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult ProjectsSearchGet([FromQuery]string districts,
-            [FromQuery]string project, [FromQuery]bool? hasRequests, [FromQuery]bool? hasHires,
-            [FromQuery]string status, [FromQuery]string projectNumber,
-            [FromQuery]string fiscalYear)
+        public virtual ActionResult<List<ProjectLite>> ProjectsSearchGet([FromQuery] string districts,
+            [FromQuery] string project, [FromQuery] bool? hasRequests, [FromQuery] bool? hasHires,
+            [FromQuery] string status, [FromQuery] string projectNumber,
+            [FromQuery] string fiscalYear)
         {
             int?[] districtTokens = ArrayHelper.ParseIntArray(districts);
 
             // get initial results - must be limited to user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
-            IQueryable<HetProject> data = _context.HetProject.AsNoTracking()
+            IQueryable<HetProject> data = _context.HetProjects.AsNoTracking()
                 .Include(x => x.ProjectStatusType)
                 .Include(x => x.District.Region)
                 .Include(x => x.PrimaryContact)
-                .Include(x => x.HetRentalAgreement)
-                .Include(x => x.HetRentalRequest)
+                .Include(x => x.HetRentalAgreements)
+                .Include(x => x.HetRentalRequests)
                 .Where(x => x.DistrictId.Equals(districtId));
 
             if (districtTokens != null && districts.Length > 0)
@@ -238,7 +233,7 @@ namespace HetsApi.Controllers
 
             foreach (HetProject item in data)
             {
-                result.Add(ProjectHelper.ToLiteModel(item));
+                result.Add(_projectRepo.ToLiteModel(item));
             }
 
             // return to the client
@@ -254,16 +249,14 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("")]
-        [SwaggerOperation("ProjectsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetProject>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult ProjectsGet([FromQuery]bool currentFiscal = true)
+        public virtual ActionResult<List<ProjectLite>> ProjectsGet([FromQuery] bool currentFiscal = true)
         {
             // get initial results - must be limited to user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get fiscal year
-            HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
+            HetDistrictStatus status = _context.HetDistrictStatuses.AsNoTracking()
                 .First(x => x.DistrictId == districtId);
 
             int? fiscalYear = status.CurrentFiscalYear;
@@ -274,7 +267,7 @@ namespace HetsApi.Controllers
             // HETS-1005 - Time entry tab search issues
             // * we need retrieve all projects that have been created this year
             //   since users can add time records to closed projects
-            IQueryable<HetProject> projects = _context.HetProject.AsNoTracking()
+            IQueryable<HetProject> projects = _context.HetProjects.AsNoTracking()
                 .Where(x => x.DistrictId.Equals(districtId) &&
                             (!currentFiscal || x.FiscalYear.Equals(fiscalYearStr)));
 
@@ -283,7 +276,7 @@ namespace HetsApi.Controllers
 
             foreach (HetProject item in projects)
             {
-                result.Add(ProjectHelper.ToLiteModel(item));
+                result.Add(_projectRepo.ToLiteModel(item));
             }
 
             // return to the client
@@ -295,18 +288,17 @@ namespace HetsApi.Controllers
         /// </summary>
         [HttpGet]
         [Route("agreementSummary")]
-        [SwaggerOperation("ProjectsGetAgreementSummary")]
-        [SwaggerResponse(200, type: typeof(List<ProjectAgreementSummary>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult ProjectsGetAgreementSummary()
+        public virtual ActionResult<List<ProjectAgreementSummary>> ProjectsGetAgreementSummary()
         {
             // get user's district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
-            List<ProjectAgreementSummary> result = _context.HetRentalAgreement.AsNoTracking()
+            var result = _context.HetRentalAgreements.AsNoTracking()
                 .Include(x => x.Project)
                 .Where(x => x.DistrictId.Equals(districtId) &&
                             !x.Number.StartsWith("BCBid"))
+                .ToList()
                 .GroupBy(x => x.Project, (p, agreements) => new ProjectAgreementSummary
                 {
                     Id = p.ProjectId,
@@ -330,31 +322,29 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Project to fetch agreements for</param>
         [HttpGet]
         [Route("{id}/rentalAgreements")]
-        [SwaggerOperation("ProjectsIdRentalAgreementsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetRentalAgreement>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult ProjectsIdRentalAgreementsGet([FromRoute]int id)
+        public virtual ActionResult<List<RentalAgreementDto>> ProjectsIdRentalAgreementsGet([FromRoute] int id)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            List<HetRentalAgreement> agreements = _context.HetProject.AsNoTracking()
+            List<HetRentalAgreement> agreements = _context.HetProjects.AsNoTracking()
                 .Include(x => x.ProjectStatusType)
-                .Include(x => x.HetRentalAgreement)
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(e => e.Equipment)
                         .ThenInclude(d => d.DistrictEquipmentType)
-                .Include(x => x.HetRentalAgreement)
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(e => e.Equipment)
-                        .ThenInclude(a => a.HetEquipmentAttachment)
-                .Include(x => x.HetRentalAgreement)
+                        .ThenInclude(a => a.HetEquipmentAttachments)
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(e => e.RentalAgreementStatusType)
                 .First(x => x.ProjectId == id)
-                .HetRentalAgreement
+                .HetRentalAgreements
                 .ToList();
 
-            return new ObjectResult(new HetsResponse(agreements));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<RentalAgreementDto>>(agreements)));
         }
 
         /// <summary>
@@ -364,33 +354,31 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPost]
         [Route("{id}/rentalAgreementClone")]
-        [SwaggerOperation("ProjectsRentalAgreementClonePost")]
-        [SwaggerResponse(200, type: typeof(HetRentalAgreement))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult ProjectsRentalAgreementClonePost([FromRoute]int id, [FromBody]ProjectRentalAgreementClone item)
+        public virtual ActionResult<RentalAgreementDto> ProjectsRentalAgreementClonePost([FromRoute] int id, [FromBody] ProjectRentalAgreementClone item)
         {
             // not found
             if (item == null || id != item.ProjectId) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get all agreements for this project
-            HetProject project = _context.HetProject
+            HetProject project = _context.HetProjects
                 .Include(x => x.ProjectStatusType)
-                .Include(x => x.HetRentalAgreement)
-                    .ThenInclude(y => y.HetRentalAgreementRate)
-                .Include(x => x.HetRentalAgreement)
-                    .ThenInclude(y => y.HetRentalAgreementCondition)
-                .Include(x => x.HetRentalAgreement)
+                .Include(x => x.HetRentalAgreements)
+                    .ThenInclude(y => y.HetRentalAgreementRates)
+                .Include(x => x.HetRentalAgreements)
+                    .ThenInclude(y => y.HetRentalAgreementConditions)
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(e => e.RentalAgreementStatusType)
-                .Include(x => x.HetRentalAgreement)
-                    .ThenInclude(y => y.HetTimeRecord)
+                .Include(x => x.HetRentalAgreements)
+                    .ThenInclude(y => y.HetTimeRecords)
                 .First(a => a.ProjectId == id);
 
-            List<HetRentalAgreement> agreements = project.HetRentalAgreement.ToList();
+            List<HetRentalAgreement> agreements = project.HetRentalAgreements.ToList();
 
             // check that the rental agreements exist
             exists = agreements.Any(a => a.RentalAgreementId == item.RentalAgreementId);
@@ -419,8 +407,8 @@ namespace HetsApi.Controllers
                 return new BadRequestObjectResult(new HetsResponse("HETS-12", ErrorViewModel.GetDescription("HETS-12", _configuration)));
             }
 
-            if (agreements[newRentalAgreementIndex].HetTimeRecord != null &&
-                agreements[newRentalAgreementIndex].HetTimeRecord.Count > 0)
+            if (agreements[newRentalAgreementIndex].HetTimeRecords != null &&
+                agreements[newRentalAgreementIndex].HetTimeRecords.Count > 0)
             {
                 // (RENTAL AGREEMENT) has time records
                 return new BadRequestObjectResult(new HetsResponse("HETS-13", ErrorViewModel.GetDescription("HETS-13", _configuration)));
@@ -436,9 +424,9 @@ namespace HetsApi.Controllers
             agreements[newRentalAgreementIndex].RatePeriodTypeId = agreements[agreementToCloneIndex].RatePeriodTypeId;
 
             // update rates
-            agreements[newRentalAgreementIndex].HetRentalAgreementRate = null;
+            agreements[newRentalAgreementIndex].HetRentalAgreementRates = null;
 
-            foreach (HetRentalAgreementRate rate in agreements[agreementToCloneIndex].HetRentalAgreementRate)
+            foreach (HetRentalAgreementRate rate in agreements[agreementToCloneIndex].HetRentalAgreementRates)
             {
                 HetRentalAgreementRate temp = new HetRentalAgreementRate
                 {
@@ -453,16 +441,16 @@ namespace HetsApi.Controllers
                     RatePeriodTypeId = rate.RatePeriodTypeId
                 };
 
-                if (agreements[newRentalAgreementIndex].HetRentalAgreementRate == null)
+                if (agreements[newRentalAgreementIndex].HetRentalAgreementRates == null)
                 {
-                    agreements[newRentalAgreementIndex].HetRentalAgreementRate = new List<HetRentalAgreementRate>();
+                    agreements[newRentalAgreementIndex].HetRentalAgreementRates = new List<HetRentalAgreementRate>();
                 }
 
-                agreements[newRentalAgreementIndex].HetRentalAgreementRate.Add(temp);
+                agreements[newRentalAgreementIndex].HetRentalAgreementRates.Add(temp);
             }
 
             // update overtime rates (and add if they don't exist)
-            List<HetProvincialRateType> overtime = _context.HetProvincialRateType.AsNoTracking()
+            List<HetProvincialRateType> overtime = _context.HetProvincialRateTypes.AsNoTracking()
                 .Where(x => x.Overtime)
                 .ToList();
 
@@ -471,14 +459,14 @@ namespace HetsApi.Controllers
                 bool found = false;
 
                 if (agreements[newRentalAgreementIndex] != null &&
-                    agreements[newRentalAgreementIndex].HetRentalAgreementRate != null)
+                    agreements[newRentalAgreementIndex].HetRentalAgreementRates != null)
                 {
-                    found = agreements[newRentalAgreementIndex].HetRentalAgreementRate.Any(x => x.ComponentName == overtimeRate.RateType);
+                    found = agreements[newRentalAgreementIndex].HetRentalAgreementRates.Any(x => x.ComponentName == overtimeRate.RateType);
                 }
 
                 if (found)
                 {
-                    HetRentalAgreementRate rate = agreements[newRentalAgreementIndex].HetRentalAgreementRate
+                    HetRentalAgreementRate rate = agreements[newRentalAgreementIndex].HetRentalAgreementRates
                         .First(x => x.ComponentName == overtimeRate.RateType);
 
                     rate.Rate = overtimeRate.Rate;
@@ -496,38 +484,38 @@ namespace HetsApi.Controllers
                         Overtime = overtimeRate.Overtime
                     };
 
-                    if (agreements[newRentalAgreementIndex].HetRentalAgreementRate == null)
+                    if (agreements[newRentalAgreementIndex].HetRentalAgreementRates == null)
                     {
-                        agreements[newRentalAgreementIndex].HetRentalAgreementRate = new List<HetRentalAgreementRate>();
+                        agreements[newRentalAgreementIndex].HetRentalAgreementRates = new List<HetRentalAgreementRate>();
                     }
 
-                    agreements[newRentalAgreementIndex].HetRentalAgreementRate.Add(newRate);
+                    agreements[newRentalAgreementIndex].HetRentalAgreementRates.Add(newRate);
                 }
             }
 
             // remove non-existent overtime rates
             List<string> remove =
-                (from overtimeRate in agreements[newRentalAgreementIndex].HetRentalAgreementRate
-                    where overtimeRate.Overtime
-                    let found = overtime.Any(x => x.RateType == overtimeRate.ComponentName)
-                    where !found
-                    select overtimeRate.ComponentName).ToList();
+                (from overtimeRate in agreements[newRentalAgreementIndex].HetRentalAgreementRates
+                 where overtimeRate.Overtime ?? false
+                 let found = overtime.Any(x => x.RateType == overtimeRate.ComponentName)
+                 where !found
+                 select overtimeRate.ComponentName).ToList();
 
             if (remove.Count > 0 &&
                 agreements[newRentalAgreementIndex] != null &&
-                agreements[newRentalAgreementIndex].HetRentalAgreementRate != null)
+                agreements[newRentalAgreementIndex].HetRentalAgreementRates != null)
             {
                 foreach (string component in remove)
                 {
-                    agreements[newRentalAgreementIndex].HetRentalAgreementRate.Remove(
-                        agreements[newRentalAgreementIndex].HetRentalAgreementRate.First(x => x.ComponentName == component));
+                    agreements[newRentalAgreementIndex].HetRentalAgreementRates.Remove(
+                        agreements[newRentalAgreementIndex].HetRentalAgreementRates.First(x => x.ComponentName == component));
                 }
             }
 
             // update conditions
-            agreements[newRentalAgreementIndex].HetRentalAgreementCondition = null;
+            agreements[newRentalAgreementIndex].HetRentalAgreementConditions = null;
 
-            foreach (HetRentalAgreementCondition condition in agreements[agreementToCloneIndex].HetRentalAgreementCondition)
+            foreach (HetRentalAgreementCondition condition in agreements[agreementToCloneIndex].HetRentalAgreementConditions)
             {
                 HetRentalAgreementCondition temp = new HetRentalAgreementCondition
                 {
@@ -535,12 +523,12 @@ namespace HetsApi.Controllers
                     ConditionName = condition.ConditionName
                 };
 
-                if (agreements[newRentalAgreementIndex].HetRentalAgreementCondition == null)
+                if (agreements[newRentalAgreementIndex].HetRentalAgreementConditions == null)
                 {
-                    agreements[newRentalAgreementIndex].HetRentalAgreementCondition = new List<HetRentalAgreementCondition>();
+                    agreements[newRentalAgreementIndex].HetRentalAgreementConditions = new List<HetRentalAgreementCondition>();
                 }
 
-                agreements[newRentalAgreementIndex].HetRentalAgreementCondition.Add(temp);
+                agreements[newRentalAgreementIndex].HetRentalAgreementConditions.Add(temp);
             }
 
             // save the changes
@@ -549,7 +537,7 @@ namespace HetsApi.Controllers
             // ******************************************************************
             // return update rental agreement to update the screen
             // ******************************************************************
-            return new ObjectResult(new HetsResponse(RentalAgreementHelper.GetRecord(item.RentalAgreementId, _context)));
+            return new ObjectResult(new HetsResponse(_rentalAgreementRepo.GetRecord(item.RentalAgreementId)));
         }
 
         #endregion
@@ -563,20 +551,18 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Project to fetch Time Records for</param>
         [HttpGet]
         [Route("{id}/timeRecords")]
-        [SwaggerOperation("ProjectIdTimeRecordsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetTimeRecord>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult HetProjectIdTimeRecordsGet([FromRoute]int id)
+        public virtual ActionResult<List<TimeRecordDto>> HetProjectIdTimeRecordsGet([FromRoute] int id)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get current district and fiscal year
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // get fiscal year
-            HetDistrictStatus status = _context.HetDistrictStatus.AsNoTracking()
+            HetDistrictStatus status = _context.HetDistrictStatuses.AsNoTracking()
                 .First(x => x.DistrictId == districtId);
 
             int? fiscalYear = status.CurrentFiscalYear;
@@ -585,21 +571,21 @@ namespace HetsApi.Controllers
             // fiscal year in the status table stores the "start" of the year
             DateTime fiscalYearStart = new DateTime((int)fiscalYear, 4, 1);
 
-            HetProject project = _context.HetProject.AsNoTracking()
-                .Include(x => x.HetRentalAgreement)
-                    .ThenInclude(t => t.HetTimeRecord)
+            HetProject project = _context.HetProjects.AsNoTracking()
+                .Include(x => x.HetRentalAgreements)
+                    .ThenInclude(t => t.HetTimeRecords)
                 .First(x => x.ProjectId == id);
 
             // create a single array of all time records
             List<HetTimeRecord> timeRecords = new List<HetTimeRecord>();
 
-            foreach (HetRentalAgreement rentalAgreement in project.HetRentalAgreement)
+            foreach (HetRentalAgreement rentalAgreement in project.HetRentalAgreements)
             {
                 // only add records from this fiscal year
-                timeRecords.AddRange(rentalAgreement.HetTimeRecord.Where(x => x.WorkedDate >= fiscalYearStart));
+                timeRecords.AddRange(rentalAgreement.HetTimeRecords.Where(x => x.WorkedDate >= fiscalYearStart));
             }
 
-            return new ObjectResult(new HetsResponse(timeRecords));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<TimeRecordDto>>(timeRecords)));
         }
 
         /// <summary>
@@ -610,34 +596,32 @@ namespace HetsApi.Controllers
         /// <param name="item">Adds to Project Time Records</param>
         [HttpPost]
         [Route("{id}/timeRecord")]
-        [SwaggerOperation("ProjectsIdTimeRecordsPost")]
-        [SwaggerResponse(200, type: typeof(HetTimeRecord))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult ProjectsIdTimeRecordsPost([FromRoute]int id, [FromBody]HetTimeRecord item)
+        public virtual ActionResult<List<TimeRecordDto>> ProjectsIdTimeRecordsPost([FromRoute] int id, [FromBody] TimeRecordDto item)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get project record
-            HetProject project = _context.HetProject.AsNoTracking()
-                .Include(x => x.HetRentalAgreement)
-                    .ThenInclude(t => t.HetTimeRecord)
+            HetProject project = _context.HetProjects.AsNoTracking()
+                .Include(x => x.HetRentalAgreements)
+                    .ThenInclude(t => t.HetTimeRecords)
                 .First(x => x.ProjectId == id);
 
-            List<HetRentalAgreement> agreements = project.HetRentalAgreement.ToList();
+            List<HetRentalAgreement> agreements = project.HetRentalAgreements.ToList();
 
             // ******************************************************************
             // must have a valid rental agreement id
             // ******************************************************************
-            if (item.RentalAgreement.RentalAgreementId == 0)
+            if (item.RentalAgreementId == null || item.RentalAgreementId == 0)
             {
                 // (RENTAL AGREEMENT) record not found
                 return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
-            exists = agreements.Any(a => a.RentalAgreementId == item.RentalAgreement.RentalAgreementId);
+            exists = agreements.Any(a => a.RentalAgreementId == item.RentalAgreementId);
 
             if (!exists)
             {
@@ -648,7 +632,7 @@ namespace HetsApi.Controllers
             // ******************************************************************
             // add or update time record
             // ******************************************************************
-            int rentalAgreementId = item.RentalAgreement.RentalAgreementId;
+            int rentalAgreementId = (int)item.RentalAgreementId;
 
             // set the time period type id
             int? timePeriodTypeId = StatusHelper.GetTimePeriodId(item.TimePeriod, _context);
@@ -657,7 +641,7 @@ namespace HetsApi.Controllers
             if (item.TimeRecordId > 0)
             {
                 // get time record
-                HetTimeRecord time = _context.HetTimeRecord.FirstOrDefault(x => x.TimeRecordId == item.TimeRecordId);
+                HetTimeRecord time = _context.HetTimeRecords.FirstOrDefault(x => x.TimeRecordId == item.TimeRecordId);
 
                 // not found
                 if (time == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -682,7 +666,7 @@ namespace HetsApi.Controllers
                     WorkedDate = item.WorkedDate
                 };
 
-                _context.HetTimeRecord.Add(time);
+                _context.HetTimeRecords.Add(time);
             }
 
             // save record
@@ -691,127 +675,20 @@ namespace HetsApi.Controllers
             // *************************************************************
             // return updated time records
             // *************************************************************
-            project = _context.HetProject.AsNoTracking()
-                .Include(x => x.HetRentalAgreement)
-                    .ThenInclude(t => t.HetTimeRecord)
+            project = _context.HetProjects.AsNoTracking()
+                .Include(x => x.HetRentalAgreements)
+                    .ThenInclude(t => t.HetTimeRecords)
                 .First(x => x.ProjectId == id);
 
             // create a single array of all time records
             List<HetTimeRecord> timeRecords = new List<HetTimeRecord>();
 
-            foreach (HetRentalAgreement rentalAgreement in project.HetRentalAgreement)
+            foreach (HetRentalAgreement rentalAgreement in project.HetRentalAgreements)
             {
-                timeRecords.AddRange(rentalAgreement.HetTimeRecord);
+                timeRecords.AddRange(rentalAgreement.HetTimeRecords);
             }
 
-            return new ObjectResult(new HetsResponse(timeRecords));
-        }
-
-        /// <summary>
-        /// Update or create an array of time records associated with a project
-        /// </summary>
-        /// <remarks>Adds Project Time Records</remarks>
-        /// <param name="id">id of Project to add a time record for</param>
-        /// <param name="items">Array of Project Time Records</param>
-        [HttpPost]
-        [Route("{id}/timeRecords")]
-        [SwaggerOperation("ProjectsIdTimeRecordsBulkPostAsync")]
-        [SwaggerResponse(200, type: typeof(HetTimeRecord))]
-        [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult ProjectsIdTimeRecordsBulkPostAsync([FromRoute]int id, [FromBody]HetTimeRecord[] items)
-        {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
-
-            // not found
-            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-
-            // get project record
-            HetProject project = _context.HetProject.AsNoTracking()
-                .Include(x => x.HetRentalAgreement)
-                .ThenInclude(t => t.HetTimeRecord)
-                .First(x => x.ProjectId == id);
-
-            List<HetRentalAgreement> agreements = project.HetRentalAgreement.ToList();
-
-            // ******************************************************************
-            // process each time record
-            // ******************************************************************
-            foreach (HetTimeRecord item in items)
-            {
-                // must have a valid rental agreement id
-                if (item.RentalAgreement.RentalAgreementId == 0)
-                {
-                    // (RENTAL AGREEMENT) record not found
-                    return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-                }
-
-                exists = agreements.Any(a => a.RentalAgreementId == item.RentalAgreement.RentalAgreementId);
-
-                if (!exists)
-                {
-                    // (RENTAL AGREEMENT) record not found
-                    return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-                }
-
-                // add or update time record
-                int rentalAgreementId = item.RentalAgreement.RentalAgreementId;
-
-                // set the time period type id
-                int? timePeriodTypeId = StatusHelper.GetTimePeriodId(item.TimePeriod, _context);
-                if (timePeriodTypeId == null) throw new DataException("Time Period Id cannot be null");
-
-                if (item.TimeRecordId > 0)
-                {
-                    // get time record
-                    HetTimeRecord time = _context.HetTimeRecord.FirstOrDefault(x => x.TimeRecordId == item.TimeRecordId);
-
-                    // not found
-                    if (time == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-
-                    time.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
-                    time.RentalAgreementId = rentalAgreementId;
-                    time.EnteredDate = DateTime.UtcNow;
-                    time.Hours = item.Hours;
-                    time.TimePeriod = item.TimePeriod;
-                    time.TimePeriodTypeId = (int)timePeriodTypeId;
-                    time.WorkedDate = item.WorkedDate;
-                }
-                else // add time record
-                {
-                    HetTimeRecord time = new HetTimeRecord
-                    {
-                        RentalAgreementId = rentalAgreementId,
-                        EnteredDate = DateTime.UtcNow,
-                        Hours = item.Hours,
-                        TimePeriod = item.TimePeriod,
-                        TimePeriodTypeId = (int)timePeriodTypeId,
-                        WorkedDate = item.WorkedDate
-                    };
-
-                    _context.HetTimeRecord.Add(time);
-                }
-
-                // save record
-                _context.SaveChanges();
-            }
-
-            // *************************************************************
-            // return updated time records
-            // *************************************************************
-            project = _context.HetProject.AsNoTracking()
-                .Include(x => x.HetRentalAgreement)
-                .ThenInclude(t => t.HetTimeRecord)
-                .First(x => x.ProjectId == id);
-
-            // create a single array of all time records
-            List<HetTimeRecord> timeRecords = new List<HetTimeRecord>();
-
-            foreach (HetRentalAgreement rentalAgreement in project.HetRentalAgreement)
-            {
-                timeRecords.AddRange(rentalAgreement.HetTimeRecord);
-            }
-
-            return new ObjectResult(new HetsResponse(timeRecords));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<TimeRecordDto>>(timeRecords)));
         }
 
         #endregion
@@ -825,23 +702,21 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Project to fetch Equipment for</param>
         [HttpGet]
         [Route("{id}/equipment")]
-        [SwaggerOperation("ProjectsIdEquipmentGet")]
-        [SwaggerResponse(200, type: typeof(List<HetRentalAgreement>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult ProjectsIdEquipmentGet([FromRoute]int id)
+        public virtual ActionResult<List<RentalAgreementDto>> ProjectsIdEquipmentGet([FromRoute] int id)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetProject project = _context.HetProject.AsNoTracking()
-                .Include(x => x.HetRentalAgreement)
+            HetProject project = _context.HetProjects.AsNoTracking()
+                .Include(x => x.HetRentalAgreements)
                     .ThenInclude(e => e.Equipment)
                         .ThenInclude(o => o.Owner)
                             .ThenInclude(c => c.PrimaryContact)
                 .First(x => x.ProjectId == id);
 
-            return new ObjectResult(new HetsResponse(project.HetRentalAgreement));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<RentalAgreementDto>>(project.HetRentalAgreements)));
         }
 
         #endregion
@@ -855,36 +730,34 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Project to fetch attachments for</param>
         [HttpGet]
         [Route("{id}/attachments")]
-        [SwaggerOperation("ProjectsIdAttachmentsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetDigitalFile>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult ProjectsIdAttachmentsGet([FromRoute]int id)
+        public virtual ActionResult<List<DigitalFileDto>> ProjectsIdAttachmentsGet([FromRoute] int id)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetProject project = _context.HetProject.AsNoTracking()
-                .Include(x => x.HetDigitalFile)
+            HetProject project = _context.HetProjects.AsNoTracking()
+                .Include(x => x.HetDigitalFiles)
                 .First(a => a.ProjectId == id);
 
             // extract the attachments and update properties for UI
             List<HetDigitalFile> attachments = new List<HetDigitalFile>();
 
-            foreach (HetDigitalFile attachment in project.HetDigitalFile)
+            foreach (HetDigitalFile attachment in project.HetDigitalFiles)
             {
                 if (attachment != null)
                 {
                     attachment.FileSize = attachment.FileContents.Length;
                     attachment.LastUpdateTimestamp = attachment.AppLastUpdateTimestamp;
                     attachment.LastUpdateUserid = attachment.AppLastUpdateUserid;
-
+                    attachment.UserName = UserHelper.GetUserName(attachment.LastUpdateUserid, _context);
                     attachments.Add(attachment);
                 }
             }
 
-            return new ObjectResult(new HetsResponse(attachments));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<DigitalFileDto>>(attachments)));
         }
 
         #endregion
@@ -898,21 +771,19 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Project to fetch Contacts for</param>
         [HttpGet]
         [Route("{id}/contacts")]
-        [SwaggerOperation("ProjectsIdContactsGet")]
-        [SwaggerResponse(200, type: typeof(List<HetContact>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult ProjectsIdContactsGet([FromRoute]int id)
+        public virtual ActionResult<List<ContactDto>> ProjectsIdContactsGet([FromRoute] int id)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetProject project = _context.HetProject.AsNoTracking()
-                .Include(x => x.HetContact)
+            HetProject project = _context.HetProjects.AsNoTracking()
+                .Include(x => x.HetContacts)
                 .First(a => a.ProjectId == id);
 
-            return new ObjectResult(new HetsResponse(project.HetContact.ToList()));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<ContactDto>>(project.HetContacts.ToList())));
         }
 
         /// <summary>
@@ -924,12 +795,10 @@ namespace HetsApi.Controllers
         /// <param name="item">Adds to Project Contact</param>
         [HttpPost]
         [Route("{id}/contacts/{primary}")]
-        [SwaggerOperation("ProjectsIdContactsPost")]
-        [SwaggerResponse(200, type: typeof(HetContact))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult ProjectsIdContactsPost([FromRoute]int id, [FromBody]HetContact item, bool primary)
+        public virtual ActionResult<ContactDto> ProjectsIdContactsPost([FromRoute] int id, [FromBody] ContactDto item, bool primary)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists || item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -937,14 +806,14 @@ namespace HetsApi.Controllers
             int contactId;
 
             // get project record
-            HetProject project = _context.HetProject
-                .Include(x => x.HetContact)
+            HetProject project = _context.HetProjects
+                .Include(x => x.HetContacts)
                 .First(a => a.ProjectId == id);
 
             // add or update contact
             if (item.ContactId > 0)
             {
-                HetContact contact = project.HetContact.FirstOrDefault(a => a.ContactId == item.ContactId);
+                HetContact contact = project.HetContacts.FirstOrDefault(a => a.ContactId == item.ContactId);
 
                 // not found
                 if (contact == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -992,7 +861,7 @@ namespace HetsApi.Controllers
                     Role = item.Role
                 };
 
-                _context.HetContact.Add(contact);
+                _context.HetContacts.Add(contact);
 
                 _context.SaveChanges();
 
@@ -1007,14 +876,14 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // get updated contact record
-            HetProject updatedProject = _context.HetProject.AsNoTracking()
-                .Include(x => x.HetContact)
+            HetProject updatedProject = _context.HetProjects.AsNoTracking()
+                .Include(x => x.HetContacts)
                 .First(a => a.ProjectId == id);
 
-            HetContact updatedContact = updatedProject.HetContact
+            HetContact updatedContact = updatedProject.HetContacts
                 .FirstOrDefault(a => a.ContactId == contactId);
 
-            return new ObjectResult(new HetsResponse(updatedContact));
+            return new ObjectResult(new HetsResponse(_mapper.Map<ContactDto>(updatedContact)));
         }
 
         /// <summary>
@@ -1025,54 +894,50 @@ namespace HetsApi.Controllers
         /// <param name="items">Replacement Project contacts.</param>
         [HttpPut]
         [Route("{id}/contacts")]
-        [SwaggerOperation("ProjectsIdContactsPut")]
-        [SwaggerResponse(200, type: typeof(List<HetContact>))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult ProjectsIdContactsPut([FromRoute]int id, [FromBody]HetContact[] items)
+        public virtual ActionResult<List<ContactDto>> ProjectsIdContactsPut([FromRoute] int id, [FromBody] ContactDto[] items)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists || items == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get project record
-            HetProject project = _context.HetProject.AsNoTracking()
-                .Include(x => x.HetContact)
+            HetProject project = _context.HetProjects
+                .Include(x => x.HetContacts)
                 .First(a => a.ProjectId == id);
 
             // adjust the incoming list
             for (int i = 0; i < items.Length; i++)
             {
-                HetContact item = items[i];
+                var item = items[i];
 
                 if (item != null)
                 {
-                    bool contactExists = _context.HetContact.Any(x => x.ContactId == item.ContactId);
+                    bool contactExists = project.HetContacts.Any(x => x.ContactId == item.ContactId);
 
                     if (contactExists)
                     {
-                        HetContact temp = _context.HetContact.First(x => x.ContactId == item.ContactId);
+                        HetContact contact = _context.HetContacts.First(x => x.ContactId == item.ContactId);
 
-                        temp.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
-                        temp.ProjectId = id;
-                        temp.Notes = item.Notes;
-                        temp.Address1 = item.Address1;
-                        temp.Address2 = item.Address2;
-                        temp.City = item.City;
-                        temp.EmailAddress = item.EmailAddress;
-                        temp.FaxPhoneNumber = item.FaxPhoneNumber;
-                        temp.GivenName = item.GivenName;
-                        temp.MobilePhoneNumber = item.MobilePhoneNumber;
-                        temp.PostalCode = item.PostalCode;
-                        temp.Province = item.Province;
-                        temp.Surname = item.Surname;
-                        temp.Role = item.Role;
-
-                        items[i] = temp;
+                        contact.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
+                        contact.ProjectId = id;
+                        contact.Notes = item.Notes;
+                        contact.Address1 = item.Address1;
+                        contact.Address2 = item.Address2;
+                        contact.City = item.City;
+                        contact.EmailAddress = item.EmailAddress;
+                        contact.FaxPhoneNumber = item.FaxPhoneNumber;
+                        contact.GivenName = item.GivenName;
+                        contact.MobilePhoneNumber = item.MobilePhoneNumber;
+                        contact.PostalCode = item.PostalCode;
+                        contact.Province = item.Province;
+                        contact.Surname = item.Surname;
+                        contact.Role = item.Role;
                     }
                     else
                     {
-                        HetContact temp = new HetContact
+                        HetContact contact = new HetContact
                         {
                             ProjectId = id,
                             Notes = item.Notes,
@@ -1089,18 +954,17 @@ namespace HetsApi.Controllers
                             Role = item.Role
                         };
 
-                        project.HetContact.Add(temp);
-                        items[i] = temp;
+                        project.HetContacts.Add(contact);
                     }
                 }
             }
 
             // remove contacts that are no longer attached.
-            foreach (HetContact contact in project.HetContact)
+            foreach (HetContact contact in project.HetContacts)
             {
                 if (contact != null && items.All(x => x.ContactId != contact.ContactId))
                 {
-                    _context.HetContact.Remove(contact);
+                    _context.HetContacts.Remove(contact);
                 }
             }
 
@@ -1108,11 +972,11 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // get updated contact records
-            HetProject updatedProject = _context.HetProject.AsNoTracking()
-                .Include(x => x.HetContact)
+            HetProject updatedProject = _context.HetProjects.AsNoTracking()
+                .Include(x => x.HetContacts)
                 .First(a => a.ProjectId == id);
 
-            return new ObjectResult(new HetsResponse(updatedProject.HetContact.ToList()));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<ContactDto>>(updatedProject.HetContacts.ToList())));
         }
 
         #endregion
@@ -1128,12 +992,10 @@ namespace HetsApi.Controllers
         /// <param name="limit">limits the number of records returned.</param>
         [HttpGet]
         [Route("{id}/history")]
-        [SwaggerOperation("ProjectsIdHistoryGet")]
-        [SwaggerResponse(200, type: typeof(List<HetHistory>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult ProjectsIdHistoryGet([FromRoute]int id, [FromQuery]int? offset, [FromQuery]int? limit)
+        public virtual ActionResult<List<History>> ProjectsIdHistoryGet([FromRoute] int id, [FromQuery] int? offset, [FromQuery] int? limit)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -1149,23 +1011,21 @@ namespace HetsApi.Controllers
         /// <param name="item"></param>
         [HttpPost]
         [Route("{id}/history")]
-        [SwaggerOperation("ProjectsIdHistoryPost")]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult ProjectsIdHistoryPost([FromRoute]int id, [FromBody]HetHistory item)
+        public virtual ActionResult<History> ProjectsIdHistoryPost([FromRoute] int id, [FromBody] History item)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             if (exists)
             {
                 HetHistory history = new HetHistory
                 {
-                    HistoryId = 0,
                     HistoryText = item.HistoryText,
-                    CreatedDate = item.CreatedDate,
+                    CreatedDate = DateTime.UtcNow,
                     ProjectId = id
                 };
 
-                _context.HetHistory.Add(history);
+                _context.HetHistories.Add(history);
                 _context.SaveChanges();
             }
 
@@ -1182,23 +1042,21 @@ namespace HetsApi.Controllers
         /// <param name="id">id of Project to fetch Notes for</param>
         [HttpGet]
         [Route("{id}/notes")]
-        [SwaggerOperation("ProjectsIdNotesGet")]
-        [SwaggerResponse(200, type: typeof(List<HetNote>))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult ProjectsIdNotesGet([FromRoute]int id)
+        public virtual IActionResult ProjectsIdNotesGet([FromRoute] int id)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            HetProject project = _context.HetProject.AsNoTracking()
-                .Include(x => x.HetNote)
+            HetProject project = _context.HetProjects.AsNoTracking()
+                .Include(x => x.HetNotes)
                 .First(x => x.ProjectId == id);
 
             List<HetNote> notes = new List<HetNote>();
 
-            foreach (HetNote note in project.HetNote)
+            foreach (HetNote note in project.HetNotes)
             {
                 if (note.IsNoLongerRelevant == false)
                 {
@@ -1206,7 +1064,7 @@ namespace HetsApi.Controllers
                 }
             }
 
-            return new ObjectResult(new HetsResponse(notes));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<NoteDto>>(notes)));
         }
 
         /// <summary>
@@ -1217,12 +1075,10 @@ namespace HetsApi.Controllers
         /// <param name="item">Project Note</param>
         [HttpPost]
         [Route("{id}/note")]
-        [SwaggerOperation("ProjectsIdNotePost")]
-        [SwaggerResponse(200, type: typeof(HetNote))]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual IActionResult ProjectsIdNotePost([FromRoute]int id, [FromBody]HetNote item)
+        public virtual ActionResult<List<NoteDto>> ProjectsIdNotePost([FromRoute] int id, [FromBody] NoteDto item)
         {
-            bool exists = _context.HetProject.Any(a => a.ProjectId == id);
+            bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -1231,7 +1087,7 @@ namespace HetsApi.Controllers
             if (item.NoteId > 0)
             {
                 // get note
-                HetNote note = _context.HetNote.FirstOrDefault(a => a.NoteId == item.NoteId);
+                HetNote note = _context.HetNotes.FirstOrDefault(a => a.NoteId == item.NoteId);
 
                 // not found
                 if (note == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -1250,19 +1106,19 @@ namespace HetsApi.Controllers
                     IsNoLongerRelevant = item.IsNoLongerRelevant
                 };
 
-                _context.HetNote.Add(note);
+                _context.HetNotes.Add(note);
             }
 
             _context.SaveChanges();
 
             // return updated note records
-            HetProject project = _context.HetProject.AsNoTracking()
-                .Include(x => x.HetNote)
+            HetProject project = _context.HetProjects.AsNoTracking()
+                .Include(x => x.HetNotes)
                 .First(x => x.ProjectId == id);
 
             List<HetNote> notes = new List<HetNote>();
 
-            foreach (HetNote note in project.HetNote)
+            foreach (HetNote note in project.HetNotes)
             {
                 if (note.IsNoLongerRelevant == false)
                 {
@@ -1270,7 +1126,7 @@ namespace HetsApi.Controllers
                 }
             }
 
-            return new ObjectResult(new HetsResponse(notes));
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<NoteDto>>(notes)));
         }
 
         #endregion
@@ -1283,15 +1139,13 @@ namespace HetsApi.Controllers
         /// <param name="name">name of the project to find</param>
         [HttpPost]
         [Route("projectsByName")]
-        [SwaggerOperation("ProjectsGetByName")]
-        [SwaggerResponse(200, type: typeof(HetRentalAgreement))]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult ProjectsGetByName([FromBody]string name)
+        public virtual ActionResult<List<ProjectLite>> ProjectsGetByName([FromBody] string name)
         {
             // get current users district
-            int? districtId = UserAccountHelper.GetUsersDistrictId(_context, _httpContext);
+            int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
-            HetDistrict district = _context.HetDistrict.AsNoTracking()
+            HetDistrict district = _context.HetDistricts.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId.Equals(districtId));
 
             if (district == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
@@ -1300,18 +1154,18 @@ namespace HetsApi.Controllers
             if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // find agreements
-            IQueryable<HetProject> data = _context.HetProject.AsNoTracking()
+            IQueryable<HetProject> data = _context.HetProjects.AsNoTracking()
                 .Include(x => x.ProjectStatusType)
                 .Include(x => x.District.Region)
                 .Include(x => x.PrimaryContact)
-                .Include(x => x.HetRentalAgreement)
-                .Include(x => x.HetRentalRequest)
+                .Include(x => x.HetRentalAgreements)
+                .Include(x => x.HetRentalRequests)
                 .Where(x => x.DistrictId.Equals(districtId));
 
             if (name != null)
             {
                 // allow for case insensitive search of project name
-                data = data.Where(x => string.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase));
+                data = data.Where(x => x.Name.ToUpper() == name.ToUpper());
             }
 
             // convert Project Model to the "ProjectLite" Model
@@ -1319,7 +1173,7 @@ namespace HetsApi.Controllers
 
             foreach (HetProject item in data)
             {
-                result.Add(ProjectHelper.ToLiteModel(item));
+                result.Add(_projectRepo.ToLiteModel(item));
             }
 
             // return to the client

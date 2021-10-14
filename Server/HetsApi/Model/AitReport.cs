@@ -1,4 +1,4 @@
-﻿using HetsData.Model;
+﻿using HetsData.Entities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

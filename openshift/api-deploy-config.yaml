@@ -71,12 +71,34 @@ objects:
                 limits:
                   cpu: ${CPU}
                   memory: ${MEMORY}
+              livenessProbe:
+                httpGet:
+                  path: /healthz
+                  port: 8080
+                initialDelaySeconds: 15
+                timeoutSeconds: 5
+                periodSeconds: 10
               env:
                 - name: ConnectionStrings__HETS
                   valueFrom:
                     secretKeyRef:
                       name: "${PROJECT_NAME}-${DB_NAME}-${ENV}"
                       key: connection-string
+                - name: JWT__Authority
+                  valueFrom:
+                    secretKeyRef:
+                      name: sso-configs
+                      key: JWT_SSO_AUTHORITY
+                - name: JWT__Audience
+                  valueFrom:
+                    secretKeyRef:
+                      name: sso-configs
+                      key: JWT_SSO_AUDIENCE
+                - name: MsWord__Password
+                  valueFrom:
+                    secretKeyRef:
+                      name: ms-word
+                      key: password
                 - name: ASPNETCORE_ENVIRONMENT
                   value: "${ASPNETCORE_ENVIRONMENT}"
                 - name: UploadPath
