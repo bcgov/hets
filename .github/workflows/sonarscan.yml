@@ -1,13 +1,12 @@
 name: SonarScan
 on:
-  push:
-    branches:
-      - master
   pull_request:
-    types: [synchronize, reopened]
+    branches:
+      - 'master'
+
 jobs:
   build:
-    name: Build
+    name: SonarScan
     runs-on: windows-latest
     steps:
       - name: Set up JDK 11
