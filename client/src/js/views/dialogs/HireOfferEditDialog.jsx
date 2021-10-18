@@ -274,6 +274,7 @@ class HireOfferEditDialog extends React.Component {
                       checked={this.state.offerStatus === STATUS_YES}
                       disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
                       label="Yes"
+                      id="hire-option-yes"
                       isInvalid={this.state.offerResponseError}
                     />
                   </FormGroup>
@@ -288,6 +289,7 @@ class HireOfferEditDialog extends React.Component {
                       checked={this.state.offerStatus === STATUS_NO}
                       disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
                       label="No"
+                      id="hire-option-no"
                       isInvalid={this.state.offerResponseError}
                     />
                   </FormGroup>
@@ -321,6 +323,7 @@ class HireOfferEditDialog extends React.Component {
                       onChange={() => this.offerStatusChanged(STATUS_FORCE_HIRE)}
                       checked={this.state.offerStatus === STATUS_FORCE_HIRE}
                       label="Force Hire"
+                      id="hire-option-force"
                       isInvalid={this.state.offerResponseError}
                     />
                   </FormGroup>
@@ -336,6 +339,7 @@ class HireOfferEditDialog extends React.Component {
                       checked={this.state.offerStatus === STATUS_ASKED}
                       disabled={!this.props.showAllResponseFields && !this.props.hireOffer.offerResponse}
                       label="Asked"
+                      id="hire-option-asked"
                       isInvalid={this.state.offerResponseError}
                     />
                   </FormGroup>
