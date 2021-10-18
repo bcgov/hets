@@ -222,7 +222,7 @@ class DistrictAdmin extends React.Component {
                         <ButtonGroup>
                           <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                             <OverlayTrigger
-                              trigger="focus"
+                              trigger="click"
                               placement="top"
                               rootClose
                               overlay={<Confirm onConfirm={this.deleteDistrictEquipmentType.bind(this, equipment)} />}
