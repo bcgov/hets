@@ -1,0 +1,7 @@
+.time-entry-dialog {
+  .row {
+    //used to ensure long words do not overflow in rows/cols overflow-wrap is inherited to all child elements.
+    //useful for long project names.
+    overflow-wrap: anywhere;
+  }
+}
