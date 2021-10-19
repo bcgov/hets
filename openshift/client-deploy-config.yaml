@@ -102,6 +102,7 @@ objects:
       creationTimestamp: null
       name: ${NAME}${SUFFIX}
     spec:
+      host: hets-e0cee6-${ENV}.apps.silver.devops.gov.bc.ca
       path: "/"
       port:
         targetPort: web
