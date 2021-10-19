@@ -12,7 +12,8 @@ const Confirm = forwardRef(({ onConfirm, onCancel, hide, children, title, ...res
     if (onCancel) {
       onCancel();
     }
-    //used to close popover on Cancel. Overlaytrigger must be set with trigger="click"
+    //used to close popover on Cancel. Overlaytrigger must be set with trigger="click" and rootClose
+    //(rootClose closes modal when you click outside of the box)
     document.body.click();
   };
 
