@@ -100,7 +100,7 @@ objects:
       annotations:
         haproxy.router.openshift.io/timeout: 1h
       creationTimestamp: null
-      name: ${NAME}
+      name: ${NAME}-${ENV}
     spec:
       host: ${HOST}
       path: "/"
