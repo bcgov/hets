@@ -26,7 +26,7 @@ const phases = {
     instance: `${name}-dev-${changeId}`,
     version: `${version}-${changeId}`,
     tag: `dev-${version}-${changeId}`,
-    host: `hets-${changeId}-e0cee6-dev.apps.silver.devops.gov.bc.ca`,
+    host: `hets-e0cee6-dev.apps.silver.devops.gov.bc.ca`,
     dotnet_env: "Development",
     dbUser: "trdbhetd",
     dbSize: "1Gi",
