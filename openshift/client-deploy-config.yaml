@@ -100,7 +100,7 @@ objects:
       annotations:
         haproxy.router.openshift.io/timeout: 1h
       creationTimestamp: null
-      name: ${NAME}${SUFFIX}
+      name: ${NAME}
     spec:
       host: hets-e0cee6-${ENV}.apps.silver.devops.gov.bc.ca
       path: "/"
