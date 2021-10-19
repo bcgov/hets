@@ -102,7 +102,7 @@ objects:
       creationTimestamp: null
       name: ${NAME}
     spec:
-      host: hets-e0cee6-${ENV}.apps.silver.devops.gov.bc.ca
+      host: ${HOST}
       path: "/"
       port:
         targetPort: web
