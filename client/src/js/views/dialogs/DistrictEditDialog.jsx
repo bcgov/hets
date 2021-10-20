@@ -79,8 +79,8 @@ class DistrictEditDialog extends React.Component {
 
         const district = {
           id: this.props.district.id,
-          user: { id: this.props.user.id },
-          district: { id: this.state.districtId },
+          userId: this.props.user.id,
+          districtId: this.state.districtId,
           isPrimary: this.state.isPrimary,
         };
 
