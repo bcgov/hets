@@ -59,6 +59,7 @@ objects:
           kind: ImageStreamTag
           name: node-python:1
       source:
+        type: Dockerfile
         dockerfile: |
           FROM image-registry.openshift-image-registry.svc:5000/e0cee6-tools/node:1 AS builder
           LABEL maintainer="young-jin.chung@gov.bc.ca"
