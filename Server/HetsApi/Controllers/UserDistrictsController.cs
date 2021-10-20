@@ -74,6 +74,9 @@ namespace HetsApi.Controllers
                 .Include(x => x.User)
                 .First(a => a.UserDistrictId == id);
 
+            // cannot delete record that is primary.
+            if (item.IsPrimary) return new BadRequestObjectResult(new HetsResponse("HETS-47", ErrorViewModel.GetDescription("HETS-47", _configuration)));
+
             int userId = item.User.UserId;
 
             // remove record
@@ -104,7 +107,7 @@ namespace HetsApi.Controllers
             if (id != item.UserDistrictId) return new BadRequestObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // district not provided
-            if (item.DistrictId == null) return new BadRequestObjectResult(new HetsResponse("HETS-18", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (item.DistrictId == null) return new BadRequestObjectResult(new HetsResponse("HETS-18", ErrorViewModel.GetDescription("HETS-18", _configuration)));
 
             // user not provided
             if (item.UserId == null) return new BadRequestObjectResult(new HetsResponse("HETS-17", ErrorViewModel.GetDescription("HETS-17", _configuration)));
@@ -128,9 +131,22 @@ namespace HetsApi.Controllers
             //User already has district being created
             if (districtExists) return new BadRequestObjectResult(new HetsResponse("HETS-46", ErrorViewModel.GetDescription("HETS-46", _configuration)));
 
+            //manage primary attribute logic      
             bool hasPrimary = false;
+            foreach (HetUserDistrict existingUserDistrict in userDistricts)
+            {
+                if (existingUserDistrict.IsPrimary)
+                {
+                    hasPrimary = true;
+                    break;
+                }
+            }
 
-            // add the record
+            if (!hasPrimary) //if the list does not have a primary district we force the new district to be primary.
+            {
+                item.IsPrimary = true;
+            }
+
             if (item.IsPrimary)
             {
                 item.IsPrimary = true;
@@ -142,24 +158,6 @@ namespace HetsApi.Controllers
                         existingUserDistrict.IsPrimary = false;
                         break;
                     }
-                }
-            }
-            else
-            {
-                item.IsPrimary = false;
-
-                foreach (HetUserDistrict existingUserDistrict in userDistricts)
-                {
-                    if (existingUserDistrict.IsPrimary)
-                    {
-                        hasPrimary = true;
-                        break;
-                    }
-                }
-
-                if (!hasPrimary)
-                {
-                    item.IsPrimary = true;
                 }
             }
 
@@ -191,7 +189,7 @@ namespace HetsApi.Controllers
             if (id != item.UserDistrictId) return new BadRequestObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // district not provided
-            if (item.DistrictId == null) return new BadRequestObjectResult(new HetsResponse("HETS-18", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (item.DistrictId == null) return new BadRequestObjectResult(new HetsResponse("HETS-18", ErrorViewModel.GetDescription("HETS-18", _configuration)));
 
             // user not provided
             if (item.UserId == null) return new BadRequestObjectResult(new HetsResponse("HETS-17", ErrorViewModel.GetDescription("HETS-17", _configuration)));
@@ -216,14 +214,25 @@ namespace HetsApi.Controllers
             // userDistrict to update - error if not found
             if (index < 0) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            bool hasPrimary = false;
-
-
             userDistricts.ElementAt(index).UserId = item.UserId;
             userDistricts.ElementAt(index).DistrictId = item.DistrictId;
 
-
             // manage the primary attribute
+            bool hasPrimary = false;
+            foreach (HetUserDistrict existingUserDistrict in userDistricts)
+            {
+                if (existingUserDistrict.IsPrimary)
+                {
+                    hasPrimary = true;
+                    break;
+                }
+            }
+
+            if (!hasPrimary) //if the list does not have a primary district we force the new district to be primary.
+            {
+                item.IsPrimary = true;
+            }
+
             if (item.IsPrimary)
             {
                 userDistricts.ElementAt(index).IsPrimary = true;
@@ -236,25 +245,6 @@ namespace HetsApi.Controllers
                         existingUserDistrict.IsPrimary = false;
                         break;
                     }
-                }
-            }
-            else
-            {
-                userDistricts[index].IsPrimary = false;
-
-                foreach (HetUserDistrict existingUserDistrict in userDistricts)
-                {
-                    if (existingUserDistrict.IsPrimary &&
-                        existingUserDistrict.UserDistrictId != item.UserDistrictId)
-                    {
-                        hasPrimary = true;
-                        break;
-                    }
-                }
-
-                if (!hasPrimary)
-                {
-                    userDistricts[index].IsPrimary = true;
                 }
             }
 
