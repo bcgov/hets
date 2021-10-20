@@ -249,8 +249,15 @@ namespace HetsApi.Controllers
                             item.IsPrimary = true;
                         }
                     }
+                    HetUserDistrict newUserDistrict = new HetUserDistrict
+                    {
+                        UserId = item.User.UserId,
+                        DistrictId = item.District.DistrictId,
+                        IsPrimary = item.IsPrimary
+                    };
 
-                    _context.HetUserDistricts.Add(_mapper.Map<HetUserDistrict>(item));
+                    _context.HetUserDistricts.Add(newUserDistrict);
+                    //_context.HetUserDistricts.Add(_mapper.Map<HetUserDistrict>(item));
                 }
             }
 
