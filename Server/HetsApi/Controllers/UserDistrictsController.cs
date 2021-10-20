@@ -91,11 +91,11 @@ namespace HetsApi.Controllers
         }
 
         /// <summary>
-        /// Create or update a User District
+        /// Create a User District
         /// </summary>
         /// <param name="id"></param>
         /// <param name="item"></param>
-        [HttpPost]
+        [HttpPut]
         [Route("{id}")]
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
         public virtual ActionResult<List<UserDistrictDto>> UserDistrictsIdPost([FromRoute] int id, [FromBody] UserDistrictDto item)
@@ -104,7 +104,94 @@ namespace HetsApi.Controllers
             if (id != item.UserDistrictId) return new BadRequestObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // district not provided
-            if (item.UserDistrictId == null) return new BadRequestObjectResult(new HetsResponse("HETS-18", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (item.DistrictId == null) return new BadRequestObjectResult(new HetsResponse("HETS-18", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // user not provided
+            if (item.UserId == null) return new BadRequestObjectResult(new HetsResponse("HETS-17", ErrorViewModel.GetDescription("HETS-17", _configuration)));
+
+            var user = _context.HetUsers.FirstOrDefault(a => a.UserId == item.UserId);
+            //user does not exist 
+            if (user == null) return new BadRequestObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            var district = _context.HetDistricts.FirstOrDefault(a => a.DistrictId == item.DistrictId);
+            //district does not exist
+            if (district == null) return new BadRequestObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // get userDistricts
+            List<HetUserDistrict> userDistricts = _context.HetUserDistricts
+                .Include(x => x.User)
+                .Include(x => x.District)
+                .Where(x => x.User.UserId == item.UserId)
+                .ToList();
+
+            bool districtExists = userDistricts.Exists(a => a.District.DistrictId == item.DistrictId);
+            //User already has district being created
+            if (districtExists) return new BadRequestObjectResult(new HetsResponse("HETS-46", ErrorViewModel.GetDescription("HETS-46", _configuration)));
+
+            bool hasPrimary = false;
+
+            // add the record
+            if (item.IsPrimary)
+            {
+                item.IsPrimary = true;
+
+                foreach (HetUserDistrict existingUserDistrict in userDistricts)
+                {
+                    if (existingUserDistrict.IsPrimary)
+                    {
+                        existingUserDistrict.IsPrimary = false;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                item.IsPrimary = false;
+
+                foreach (HetUserDistrict existingUserDistrict in userDistricts)
+                {
+                    if (existingUserDistrict.IsPrimary)
+                    {
+                        hasPrimary = true;
+                        break;
+                    }
+                }
+
+                if (!hasPrimary)
+                {
+                    item.IsPrimary = true;
+                }
+            }
+
+            _context.HetUserDistricts.Add(_mapper.Map<HetUserDistrict>(item));
+
+            _context.SaveChanges();
+
+            // return the updated user district records
+            List<HetUserDistrict> result = _context.HetUserDistricts.AsNoTracking()
+                .Include(x => x.User)
+                .Include(x => x.District)
+                .Where(x => x.User.UserId == item.UserId)
+                .ToList();
+
+            return new ObjectResult(new HetsResponse(_mapper.Map<List<UserDistrictDto>>(result)));
+        }
+
+        /// <summary>
+        /// Update a User District
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="item"></param>
+        [HttpPost]
+        [Route("{id}")]
+        [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
+        public virtual ActionResult<List<UserDistrictDto>> UserDistrictsIdPut([FromRoute] int id, [FromBody] UserDistrictDto item)
+        {
+            // record not found
+            if (id != item.UserDistrictId) return new BadRequestObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
+            // district not provided
+            if (item.DistrictId == null) return new BadRequestObjectResult(new HetsResponse("HETS-18", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // user not provided
             if (item.UserId == null) return new BadRequestObjectResult(new HetsResponse("HETS-17", ErrorViewModel.GetDescription("HETS-17", _configuration)));
@@ -124,104 +211,50 @@ namespace HetsApi.Controllers
                 .Where(x => x.User.UserId == item.UserId)
                 .ToList();
 
-            bool districtExists;
+            int index = userDistricts.FindIndex(a => a.UserDistrictId == item.UserDistrictId);
+
+            // userDistrict to update - error if not found
+            if (index < 0) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+
             bool hasPrimary = false;
 
-            // add or update user district
-            if (item.UserDistrictId > 0) //edit user district
+
+            userDistricts.ElementAt(index).UserId = item.UserId;
+            userDistricts.ElementAt(index).DistrictId = item.DistrictId;
+
+
+            // manage the primary attribute
+            if (item.IsPrimary)
             {
-                int index = userDistricts.FindIndex(a => a.UserDistrictId == item.UserDistrictId);
+                userDistricts.ElementAt(index).IsPrimary = true;
 
-                // user district to update not found
-                if (index < 0) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
-
-                // check if user already has this district
-                districtExists = userDistricts.Exists(a => a.District.DistrictId == item.DistrictId);
-
-                // update the record
-                if (!districtExists)
+                foreach (HetUserDistrict existingUserDistrict in userDistricts)
                 {
-                    userDistricts.ElementAt(index).UserId = item.UserId;
-                    userDistricts.ElementAt(index).DistrictId = item.DistrictId;
-
-                }
-
-                // manage the primary attribute
-                if (item.IsPrimary)
-                {
-                    userDistricts.ElementAt(index).IsPrimary = true;
-
-                    foreach (HetUserDistrict existingUserDistrict in userDistricts)
+                    if (existingUserDistrict.IsPrimary &&
+                        existingUserDistrict.UserDistrictId != item.UserDistrictId)
                     {
-                        if (existingUserDistrict.IsPrimary &&
-                            existingUserDistrict.UserDistrictId != item.UserDistrictId)
-                        {
-                            existingUserDistrict.IsPrimary = false;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    userDistricts[index].IsPrimary = false;
-
-                    foreach (HetUserDistrict existingUserDistrict in userDistricts)
-                    {
-                        if (existingUserDistrict.IsPrimary &&
-                            existingUserDistrict.UserDistrictId != item.UserDistrictId)
-                        {
-                            hasPrimary = true;
-                            break;
-                        }
-                    }
-
-                    if (!hasPrimary)
-                    {
-                        userDistricts[index].IsPrimary = true;
+                        existingUserDistrict.IsPrimary = false;
+                        break;
                     }
                 }
             }
-            else  // add user district
+            else
             {
-                // check user already has this district
-                districtExists = userDistricts.Exists(a => a.District.DistrictId == item.DistrictId);
+                userDistricts[index].IsPrimary = false;
 
-                // add the record
-                if (!districtExists)
+                foreach (HetUserDistrict existingUserDistrict in userDistricts)
                 {
-                    if (item.IsPrimary)
+                    if (existingUserDistrict.IsPrimary &&
+                        existingUserDistrict.UserDistrictId != item.UserDistrictId)
                     {
-                        item.IsPrimary = true;
-
-                        foreach (HetUserDistrict existingUserDistrict in userDistricts)
-                        {
-                            if (existingUserDistrict.IsPrimary)
-                            {
-                                existingUserDistrict.IsPrimary = false;
-                                break;
-                            }
-                        }
+                        hasPrimary = true;
+                        break;
                     }
-                    else
-                    {
-                        item.IsPrimary = false;
+                }
 
-                        foreach (HetUserDistrict existingUserDistrict in userDistricts)
-                        {
-                            if (existingUserDistrict.IsPrimary)
-                            {
-                                hasPrimary = true;
-                                break;
-                            }
-                        }
-
-                        if (!hasPrimary)
-                        {
-                            item.IsPrimary = true;
-                        }
-                    }
-                    
-                    _context.HetUserDistricts.Add(_mapper.Map<HetUserDistrict>(item));
+                if (!hasPrimary)
+                {
+                    userDistricts[index].IsPrimary = true;
                 }
             }
 
