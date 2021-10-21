@@ -121,10 +121,10 @@ namespace HetsApi.Controllers
             //User already has district being created
             if (districtExists) return new BadRequestObjectResult(new HetsResponse("HETS-46", ErrorViewModel.GetDescription("HETS-46", _configuration)));
 
-            //manage primary attribute logic      
-            bool hasPrimary = HasPrimaryHelper(userDistricts);
+            //manage primary attribute logic
 
-            if (!hasPrimary) //if userDistricts does not have a primary district we force the new district to be primary.
+            //if userDistricts does not have a primary district we force the new district to be primary.
+            if (!HasPrimaryHelper(userDistricts)) 
             {
                 item.IsPrimary = true;
             }
@@ -185,9 +185,9 @@ namespace HetsApi.Controllers
             userDistricts.ElementAt(index).DistrictId = item.DistrictId;
 
             // manage the primary attribute
-            bool hasPrimary = HasPrimaryHelper(userDistricts);
 
-            if (!hasPrimary) //if userDistricts does not have a primary district we force the new district to be primary.
+            //if userDistricts does not have a primary district we force the new district to be primary.
+            if (!HasPrimaryHelper(userDistricts)) 
             {
                 item.IsPrimary = true;
             }
