@@ -181,7 +181,7 @@ export function getUserDistricts(userId) {
 }
 
 export function addUserDistrict(district) {
-  return new ApiRequest(`/userdistricts/${district.id}`).put(district).then((response) => {
+  return new ApiRequest(`/userdistricts`).put(district).then((response) => {
     store.dispatch({
       type: Action.USER_DISTRICTS,
       userDistricts: response.data,
