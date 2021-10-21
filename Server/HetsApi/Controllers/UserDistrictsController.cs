@@ -214,7 +214,7 @@ namespace HetsApi.Controllers
         /// Helper function for PUT and POST userDistrict to check if there is an existing primary district. 
         /// Returns true if there is an existing primary. 
         /// </summary>
-        private bool HasPrimaryHelper(List<HetUserDistrict> userDistricts)
+        private static bool HasPrimaryHelper(List<HetUserDistrict> userDistricts)
         {
             bool hasPrimary = false;
 
@@ -233,7 +233,7 @@ namespace HetsApi.Controllers
         /// Helper function for PUT and POST userDistrict. 
         /// Sets all other userDistricts primary flag to false.
         /// </summary>
-        private void ResetUserDistrictPrimariesHelper(List<HetUserDistrict> userDistricts)
+        private static void ResetUserDistrictPrimariesHelper(List<HetUserDistrict> userDistricts)
         {
             foreach (HetUserDistrict existingUserDistrict in userDistricts)
             {
