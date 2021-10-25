@@ -10,6 +10,7 @@
     td {
       overflow: visible;
       word-wrap: break-word;
+      white-space: normal !important;
     }
   }
 
@@ -35,7 +36,7 @@
   }
 
   .table {
-    table-layout: fixed;
+    table-layout: auto;
 
     & th,
     td {

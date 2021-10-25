@@ -2,7 +2,8 @@
   #owners-top {
     margin: 0 5px 10px 5px;
 
-    #owner-notes-button, #owner-documents-button {
+    #owner-notes-button,
+    #owner-documents-button {
       margin-left: 5px;
     }
   }
@@ -30,11 +31,19 @@
       margin: 0;
     }
 
-    th, td {
+    th,
+    td {
       max-width: 125px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    & th:hover,
+    td:hover {
+      overflow: visible;
+      word-wrap: break-word;
+      white-space: normal;
     }
   }
 
