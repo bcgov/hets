@@ -160,13 +160,18 @@ class Owners extends React.Component {
         headers={[
           { field: 'ownerCode', title: 'Owner Code' },
           { field: 'localAreaName', title: 'Local Area' },
-          { field: 'organizationName', title: 'Company Name' },
+          { field: 'organizationName', title: 'Company Name', style: { width: '15%' } },
           { field: 'primaryContactName', title: 'Primary Contact Name' },
           { field: 'workPhoneNumber', title: 'Phone' },
           { field: 'mobilePhoneNumber', title: 'Cell Phone' },
           { field: 'equipmentCount', title: 'Equipment', style: { textAlign: 'center' } },
           { field: 'status', title: 'Status', style: { textAlign: 'center' } },
-          { field: 'addOwner', title: 'Add Owner', style: { textAlign: 'right' }, node: addOwnerButton },
+          {
+            field: 'addOwner',
+            title: 'Add Owner',
+            style: { textAlign: 'right', width: '100px' },
+            node: addOwnerButton,
+          },
         ]}
       >
         {_.map(ownerList, (owner) => {

@@ -60,14 +60,14 @@ class EquipmentTable extends React.Component {
           return (
             <tr key={equip.id} className={equip.status === Constant.EQUIPMENT_STATUS_CODE_APPROVED ? null : 'bg-info'}>
               <td>{equip.equipmentCode}</td>
-              <td>{equip.localArea}</td>
+              <td className="equipment-list-local-area-column">{equip.localArea}</td>
               <td>
                 <Link to={`${Constant.OWNERS_PATHNAME}/${equip.ownerId}`}>{equip.ownerName}</Link>
               </td>
               <td>{equip.equipmentType}</td>
-              <td>{equip.details}</td>
-              <td>{equip.attachmentCount}</td>
-              <td>
+              <td className="equipment-list-details-column">{equip.details}</td>
+              <td className="equipment-list-attachment-column">{equip.attachmentCount}</td>
+              <td className="equipment-list-project-column">
                 <Link to={`${Constant.PROJECTS_PATHNAME}/${equip.projectId}`}>{equip.projectName}</Link>
               </td>
               <td>{equip.status}</td>

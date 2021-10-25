@@ -161,12 +161,12 @@ namespace HetsApi.Controllers
             // ID from route/URI does not match body (item) id. 
             if (id != item.UserDistrictId) return new BadRequestObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            //user does not exist in database
             var user = _context.HetUsers.FirstOrDefault(a => a.UserId == item.UserId);
+            //user does not exist in database
             if (user == null) return new BadRequestObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            //district does not exist in database
             var district = _context.HetDistricts.FirstOrDefault(a => a.DistrictId == item.DistrictId);
+            //district does not exist in database
             if (district == null) return new BadRequestObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get userDistricts

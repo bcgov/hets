@@ -190,9 +190,9 @@ class TimeEntry extends React.Component {
         headers={[
           { field: 'localAreaLabel', title: 'Local Area' },
           { field: 'ownerCode', title: 'Owner Code' },
-          { field: 'ownerName', title: 'Company Name' },
+          { field: 'ownerName', title: 'Company Name', style: { width: '15%' } },
           { field: 'sortableEquipmentCode', title: 'Equip. ID' },
-          { field: 'equipmentDetails', title: 'Make/Model/Size/Year' },
+          { field: 'equipmentDetails', title: 'Make/Model/Size/Year', style: { width: '10%' } },
           { field: 'provincialProjectNumber', title: 'Project #' },
           { field: 'hours', title: 'Hours' },
           { field: 'workedDate', title: 'Date Worked' },
@@ -200,7 +200,7 @@ class TimeEntry extends React.Component {
           {
             field: 'addTime',
             title: 'Add Time Entry',
-            style: { textAlign: 'right' },
+            style: { textAlign: 'right', width: '90px' },
             node: addTimeEntryButton,
           },
         ]}

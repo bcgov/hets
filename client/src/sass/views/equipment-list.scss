@@ -15,6 +15,24 @@
   }
 }
 
+.equipment-list-project-column {
+  //used to prevent overflow issues when projectname is too long without spaces
+  max-width: 125px;
+}
+
+.equipment-list-local-area-column {
+  //needed to save space for expanded company name
+  max-width: 100px;
+}
+
+.equipment-list-details-column {
+  max-width: 75px;
+}
+
+.equipment-list-attachment-column {
+  text-align: center;
+}
+
 #equipment-detail {
   .top-container {
     margin: 0 5px;
