@@ -42,7 +42,8 @@
     margin-right: 5px;
   }
 
-  .btn, .checkbox-control {
+  .btn,
+  .checkbox-control {
     margin-left: 20px;
   }
 
@@ -52,15 +53,22 @@
       margin: 0;
     }
 
-    th:nth-child(2), td:nth-child(2), th:nth-child(11), td:nth-child(11) {
+    th:nth-child(2),
+    td:nth-child(2),
+    th:nth-child(11),
+    td:nth-child(11) {
       display: none;
     }
 
     td:nth-child(5) {
-      width: 250px;
+      max-width: 250px;
     }
 
-    // tr.blank-row {}
+    //prevents wrapping of the phone and cell phone numbers from cutting off 1 digit during printing.
+    td:nth-child(8),
+    td:nth-child(9) {
+      min-width: 80px;
+    }
 
     .attachment {
       display: inline-block;
@@ -79,7 +87,8 @@
   }
 }
 
-#confirm-dialog, #hire-offer-edit {
+#confirm-dialog,
+#hire-offer-edit {
   &.modal {
     z-index: 1040;
   }
