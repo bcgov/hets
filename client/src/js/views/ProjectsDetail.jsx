@@ -297,8 +297,9 @@ class ProjectsDetail extends React.Component {
           ) : (
             <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
               <OverlayTrigger
-                trigger="focus"
+                trigger="click"
                 placement="top"
+                rootClose
                 overlay={<Confirm onConfirm={this.confirmEndHire.bind(this, item)} />}
               >
                 <Button className="btn-custom" size="sm">

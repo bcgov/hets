@@ -452,7 +452,7 @@ class TimeEntryDialog extends React.Component {
             }
 
             return (
-              <div>
+              <div className="time-entry-dialog">
                 <Row>
                   <Col xs={3}>
                     <div className="text-label">Equipment ID</div>

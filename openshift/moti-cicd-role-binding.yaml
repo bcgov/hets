@@ -84,6 +84,13 @@ objects:
           - watch
           - delete
       - apiGroups:
+          - route.openshift.io
+          - ""
+        resources:
+          - routes/custom-host
+        verbs:
+          - create
+      - apiGroups:
           - ""
         resources:
           - configmaps

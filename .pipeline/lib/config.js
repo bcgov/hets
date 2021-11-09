@@ -1,7 +1,7 @@
 "use strict";
 const options = require("@bcgov/pipeline-cli").Util.parseArguments();
 const changeId = options.pr; //aka pull-request
-const version = "1.10.0";
+const version = "1.10.1";
 const name = "hets";
 
 Object.assign(options.git, { owner: "ychung-mot", repository: "hets" });
@@ -26,7 +26,7 @@ const phases = {
     instance: `${name}-dev-${changeId}`,
     version: `${version}-${changeId}`,
     tag: `dev-${version}-${changeId}`,
-    host: `hets-${changeId}-e0cee6-dev.apps.silver.devops.gov.bc.ca`,
+    host: `hets-e0cee6-dev.apps.silver.devops.gov.bc.ca`,
     dotnet_env: "Development",
     dbUser: "trdbhetd",
     dbSize: "1Gi",

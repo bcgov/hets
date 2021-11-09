@@ -33,8 +33,3 @@
   font-size: 80%;
   color: #dc3545;
 }
-
-//used to ensure long words do not overflow in rows/cols overflow-wrap is inherited to all child elements.
-.row {
-  overflow-wrap: anywhere;
-}
