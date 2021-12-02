@@ -108,13 +108,8 @@ namespace HetsApi
             {
                 options.Authority = Configuration.GetValue<string>("JWT:Authority");
                 options.Audience = Configuration.GetValue<string>("JWT:Audience");
-                options.RequireHttpsMetadata = false;
                 options.IncludeErrorDetails = true;
                 options.EventsType = typeof(HetsJwtBearerEvents);
-                //options.TokenValidationParameters = new TokenValidationParameters()
-                //{
-                //    ValidateAudience = false
-                //};
             });
 
             // setup authorization
