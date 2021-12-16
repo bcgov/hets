@@ -12,6 +12,35 @@ HETS is using the official BCDevOps Backup Container for backing up DB. Below is
 ## Prerequisites
 
 - Admin access to OpenShift namespaces, preferably using the standard BC Gov setup of `tools`, `dev`, `test` and `prod` namespaces
+- Redhat image pull [service account](docs/RedhatServiceAccount.md)
+
+### Redhat Docker Images
+
+You will need a Redhat image pull service account before you can continue. Refer to [this document](docs/RedhatServiceAccount.md) on how to create a Redhat image pull service account.
+
+CRT uses two Redhat Docker images and they will be imported as part of the build pipeline. This requires you to have the correct Redhat service account configured.
+
+1. [rhel8/dotnet-50](https://catalog.redhat.com/software/containers/rhel8/dotnet-50/5f6278e017452dea0fe47bae?container-tabs=gti&gti-tabs=get-the-source)
+2. [rhel8/nginx-116](https://catalog.redhat.com/software/containers/rhel8/nginx-116/5d400ae7bed8bd3809910782)
+3. [postgresql-10](https://catalog.redhat.com/software/containers/rhel8/postgresql-10/5ba0ae0ddd19c70b45cbf4cd)
+
+### Openshift Service Account Access Token
+
+The Openshift Service Account Access Token is used to give Github Actions access to login Openshift and build and deploy CRT application. In order to create the service account, roles and rolebindings, cd into openshift folder and login Openshift and run the following commands.
+
+```
+oc project e0cee6-tools
+
+oc process -f moti-cicd-service-account.yaml -p NAME=moti-cicd -p PROJECT=e0cee6 | oc apply -f -
+
+oc process -f moti-cicd-role-binding.yaml -p NAME=moti-cicd -p NAMESPACE=e0cee6-tools -p PROJECT=e0cee6 | oc apply -f -
+
+oc process -f moti-cicd-role-binding.yaml -p NAME=moti-cicd -p NAMESPACE=e0cee6-dev -p PROJECT=e0cee6 | oc apply -f -
+
+oc process -f moti-cicd-role-binding.yaml -p NAME=moti-cicd -p NAMESPACE=e0cee6-test -p PROJECT=e0cee6 | oc apply -f -
+
+oc process -f moti-cicd-role-binding.yaml -p NAME=moti-cicd -p NAMESPACE=e0cee6-prod -p PROJECT=e0cee6 | oc apply -f -
+```
 
 ## Pipeline Setup
 
@@ -46,7 +75,14 @@ Once Github Actions workflow (/.github/workflows/hets-build-deploy.yml) is prope
 
 Every pull request made to master will trigger a new build and create a standalone deployment in the `dev` namespace. This allows you to test new features independantly of other features.
 
-The Github Actions workflow (/.github/workflows/clean.yml) will also automatically clean up the environments when a pull request is closed.
+If [configured properly](https://github.com/BCDevOps/bcdk#automatically-clean-up-pull-request-deployments), you can clean up the environments when a pull request is merged or closed using
+
+```
+npm run clean -- --pr=<pr#> ---env=<env>
+
+# Alternative you can use --env=all if you have the transient option configured properly
+npm run clean -- --pr=<pr#> --env=all
+```
 
 ## Manual Build and Deploy
 

@@ -13,7 +13,7 @@ The application is being developed as an open source solution.
 ## Prerequisites
 
 - .Net 5 SDK
-- Node.JS v13.12.0
+- Node.JS v13.7.0 or newer
 - PostgreSQL 10
 
 ## Dependencies
