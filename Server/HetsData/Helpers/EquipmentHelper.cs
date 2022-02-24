@@ -7,8 +7,6 @@ using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using HetsData.Entities;
-using Hangfire.Server;
-using Hangfire.Console;
 using HetsApi.Helpers;
 using HetsData.Dtos;
 
@@ -390,19 +388,19 @@ namespace HetsData.Helpers
         /// Recalculates seniority for a specific local area and equipment type
         /// </summary>
         public static void RecalculateSeniority(int? localAreaId, int? districtEquipmentTypeId,
-            DbAppContext context, IConfiguration configuration)
+            DbAppContext context, IConfiguration configuration, HetEquipment changedEquipment = null)
         {
             IConfigurationSection scoringRules = configuration.GetSection("SeniorityScoringRules");
             string seniorityScoringRules = GetConfigJson(scoringRules);
 
-            RecalculateSeniority(localAreaId, districtEquipmentTypeId, context, seniorityScoringRules);
+            RecalculateSeniority(localAreaId, districtEquipmentTypeId, context, seniorityScoringRules, changedEquipment);
         }
 
         /// <summary>
         /// Recalculates seniority for a specific local area and equipment type
         /// </summary>
         public static void RecalculateSeniority(int? localAreaId, int? districtEquipmentTypeId,
-            DbAppContext context, string seniorityScoringRules)
+            DbAppContext context, string seniorityScoringRules, HetEquipment changedEquipment = null)
         {
             // check if the local area exists
             bool exists = context.HetLocalAreas.Any(a => a.LocalAreaId == localAreaId);
@@ -428,7 +426,7 @@ namespace HetsData.Helpers
             SeniorityListHelper.CalculateSeniorityList(localArea.LocalAreaId,
                 districtEquipmentType.DistrictEquipmentTypeId,
                 context,
-                seniorityScoringRules);
+                seniorityScoringRules, changedEquipment);
         }
 
         #endregion

@@ -89,7 +89,7 @@ namespace HetsData.Helpers
         /// <param name="context"></param>
         /// <param name="seniorityScoringRules"></param>
         public static void CalculateSeniorityList(int localAreaId, int districtEquipmentTypeId,
-            DbAppContext context, string seniorityScoringRules)
+            DbAppContext context, string seniorityScoringRules, HetEquipment changedEquipment = null)
         {
             try
             {
@@ -152,7 +152,7 @@ namespace HetsData.Helpers
                         }
 
                         // put equipment into the correct blocks
-                        AssignBlocks(localAreaId, districtEquipmentTypeId, blockSize, totalBlocks, context);
+                        AssignBlocks(localAreaId, districtEquipmentTypeId, blockSize, totalBlocks, context, changedEquipment);
                     }
                 }
             }
@@ -172,18 +172,44 @@ namespace HetsData.Helpers
         /// <param name="blockSize"></param>
         /// <param name="totalBlocks"></param>
         /// <param name="context"></param>
+        /// <param name="changedEquipment">
+        ///  Pass it when an equipment has changed locally (in memory) while EF is tracking the change.
+        ///  For example, when district equipment type of an equipment has been changed locally and hasn't bee saved to DB,
+        ///  The first query result (dataFromDb) won't have the locally changed equipment, so the equipment should be added to the result.
+        ///  If local changes are not about the scope of seniority calculation i.e. equipment status type, local area and district equipment type,
+        ///  you don't need to pass changedEquipment.
+        ///  This fix is not ideal but given the time constraint, it works. The fix is done for HETS-1341
+        /// </param>
         /// <param name="saveChanges"></param>
-        public static void AssignBlocks(int localAreaId, int districtEquipmentTypeId, int blockSize, int totalBlocks, DbAppContext context)
+        public static void AssignBlocks(int localAreaId, int districtEquipmentTypeId, int blockSize, int totalBlocks, DbAppContext context, HetEquipment changedEquipment = null)
         {
             try
             {
                 // get all equipment records
-                var data = context.HetEquipments
+                var dataFromDb = context.HetEquipments
                     .Include(x => x.Owner)
+                    .Include(x => x.EquipmentStatusType)
                     .Where(x => x.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved &&
-                                x.LocalArea.LocalAreaId == localAreaId &&
+                                x.LocalAreaId == localAreaId &&
                                 x.DistrictEquipmentTypeId == districtEquipmentTypeId)
-                    .ToList() //must be done before sorting because the client version of querying entities has been changed - EFCore 5 issue?
+                    .ToList();
+
+                if (changedEquipment != null && !dataFromDb.Any(x => x.EquipmentId == changedEquipment.EquipmentId))
+                {
+                    var dataToAdd = context.HetEquipments
+                    .Include(x => x.Owner)
+                    .Include(x => x.EquipmentStatusType)
+                    .FirstOrDefault(x => x.EquipmentId == changedEquipment.EquipmentId);
+
+                    if (dataToAdd != null)
+                        dataFromDb.Add(dataToAdd); 
+                }
+
+                //reselect with data that include local changes
+                var dataToProcess = dataFromDb
+                    .Where(x => x.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved &&
+                                x.LocalAreaId == localAreaId &&
+                                x.DistrictEquipmentTypeId == districtEquipmentTypeId)
                     .OrderByDescending(x => x.Seniority)
                     .ThenBy(x => x.ReceivedDate)
                     .ThenBy(x => x.EquipmentCode)
@@ -195,7 +221,7 @@ namespace HetsData.Helpers
                 // instantiate lists to hold equipment by block
                 List<int>[] blocks = new List<int>[totalBlocks];
 
-                foreach (HetEquipment equipment in data)
+                foreach (HetEquipment equipment in dataToProcess)
                 {
                     // iterate the blocks and add the record
                     for (int i = 0; i < totalBlocks; i++)
