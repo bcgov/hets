@@ -311,12 +311,12 @@ namespace HetsApi.Controllers
             if (rebuildSeniority)
             {
                 // update new area
-                EquipmentHelper.RecalculateSeniority(item.LocalAreaId, item.DistrictEquipmentTypeId, _context, _configuration);
+                EquipmentHelper.RecalculateSeniority(item.LocalAreaId, item.DistrictEquipmentTypeId, _context, _configuration, equipment);
 
                 // update old area
                 if (rebuildOldSeniority)
                 {
-                    EquipmentHelper.RecalculateSeniority((int)originalLocalAreaId, (int)originalDistrictEquipmentTypeId, _context, _configuration);
+                    EquipmentHelper.RecalculateSeniority((int)originalLocalAreaId, (int)originalDistrictEquipmentTypeId, _context, _configuration, equipment);
                 }
             }
 
@@ -454,7 +454,7 @@ namespace HetsApi.Controllers
             // recalculation seniority (if required)
             if (recalculateSeniority)
             {
-                EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration);
+                EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration, equipment);
             }
 
             // save the changes
