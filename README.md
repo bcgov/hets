@@ -22,7 +22,7 @@ The application is being developed as an open source solution.
 
 ## Repository Map
 
-- **client**: The javascript source for the user interface
+- **client**: The JavaScript source for the user interface
 - **Server**: The API Server
 
 ## Installation
