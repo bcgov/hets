@@ -207,7 +207,7 @@ namespace HetsData.Helpers
 
                 //reselect with data that include local changes
                 var dataToProcess = dataFromDb
-                    .Where(x => x.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved &&
+                    .Where(x => x.EquipmentStatusType != null && x.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved &&
                                 x.LocalAreaId == localAreaId &&
                                 x.DistrictEquipmentTypeId == districtEquipmentTypeId)
                     .OrderByDescending(x => x.Seniority)
