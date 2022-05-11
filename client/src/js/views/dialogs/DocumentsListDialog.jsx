@@ -109,6 +109,7 @@ class DocumentsListDialog extends React.Component {
         console.log(res.getResponseHeader('content-disposition'));
         fName = res.getResponseHeader('content-disposition').match(/(?<=filename=")(.*)(?="; filename)/)[0];
         console.log(fName);
+        fName = res.getResponseHeader('content-disposition').match(/(?<=filename=)(.*)(?=; filename)/)[0];
         saveAs(res.response, fName);
       })
       .catch((error) => {
