@@ -24,7 +24,6 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    environment: test
     defaults:
       run:
         working-directory: ./.pipeline
@@ -36,7 +35,6 @@ jobs:
       - name: Build
         run: |
           oc version
-          echo test ${{ secrets.OPENSHIFT_SERVER_URL }}
           oc login --token=${{ secrets.OPENSHIFT_TOKEN}} --server=${{ secrets.OPENSHIFT_SERVER_URL }}
           npm ci
           DEBUG=* npm run build -- --pr=${{ github.event.pull_request.number }} --git.branch.name=${{github.head_ref}} --git.ref=${{github.head_ref}}
