@@ -106,10 +106,13 @@ class DocumentsListDialog extends React.Component {
       .then((res) => {
         //use Header content-disposition for the file name
         //looks like ""attachment; filename=adobe.pdf; filename*=UTF-8''adobe.pdf""
+        console.log(res.getResponseHeader('content-disposition'));
         fName = res.getResponseHeader('content-disposition').match(/(?<=filename=")(.*)(?="; filename)/)[0];
+        console.log(fName);
         saveAs(res.response, fName);
       })
       .catch((error) => {
+        console.log("file name error");
         console.log(error);
         let message = error.message.split(`"`)[0].replace('"', ''); //extracts error message without HTML text.Odd issue where I can't detect \ so need to rely on "
         this.setState({ uploadError: message });
