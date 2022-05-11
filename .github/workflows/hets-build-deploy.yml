@@ -24,6 +24,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    environment: test
     defaults:
       run:
         working-directory: ./.pipeline
