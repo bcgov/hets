@@ -14,7 +14,7 @@
     color: hsl(0, 0, 90%) !important;
     opacity: 35%;
     -webkit-print-color-adjust: exact !important;
-    color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   .search-bar,
