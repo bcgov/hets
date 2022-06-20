@@ -165,7 +165,7 @@ parameters:
     displayName: PostgreSQL Database Name
     description: The name of the PostgreSQL database.
     required: true
-    value: schoolbus
+    value: hets
   - name: PERSISTENT_VOLUME_SIZE
     displayName: Persistent Volume Size
     description: The size of the persistent volume , e.g. 512Mi, 1Gi, 2Gi.
