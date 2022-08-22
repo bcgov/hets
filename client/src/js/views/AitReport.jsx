@@ -36,6 +36,11 @@ const THIS_FISCAL = 'This Fiscal';
 const LAST_FISCAL = 'Last Fiscal';
 const CUSTOM = 'Custom';
 
+var projectsRetrieved = [];
+var districtEquipmentTypesRetrieved = [];
+var equipmentRetrieved = [];
+var shouldReRender = true;
+
 class AitReport extends React.Component {
   static propTypes = {
     currentUser: PropTypes.object,
@@ -53,6 +58,7 @@ class AitReport extends React.Component {
   constructor(props) {
     super(props);
 
+
     var today = Moment();
 
     this.state = {
@@ -69,6 +75,7 @@ class AitReport extends React.Component {
         sortField: props.ui.sortField || 'rentalAgreementNumber',
         sortDesc: props.ui.sortDesc === true,
       },
+
     };
   }
 
@@ -108,6 +115,8 @@ class AitReport extends React.Component {
     Api.getDistrictEquipmentTypesAgreementSummary();
     Api.getEquipmentAgreementSummary();
 
+
+
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
       var defaultFavourite = _.find(this.props.favourites, (f) => f.isDefault);
@@ -117,8 +126,13 @@ class AitReport extends React.Component {
     }
   }
 
+  shouldComponentUpdate = (nextProps, nextState) => {
+    return shouldReRender;
+  }
+
   fetch = () => {
     Api.searchAitReport(this.buildSearchParams());
+    shouldReRender = true;
   };
 
   search = (e) => {
@@ -149,6 +163,7 @@ class AitReport extends React.Component {
   };
 
   updateSearchState = (state, callback) => {
+    shouldReRender = false;
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } } }, () => {
       store.dispatch({
         type: Action.UPDATE_AIT_SEARCH,
@@ -338,10 +353,12 @@ class AitReport extends React.Component {
   };
 
   getFilteredDistrictEquipmentType = () => {
-    return _.chain(this.props.districtEquipmentTypes.data)
-      .filter((x) => this.matchesDateFilter(x.agreementIds) && this.matchesProjectFilter(x.projectIds))
-      .sortBy('name')
-      .value();
+    var result = _.chain(this.props.districtEquipmentTypes.data)
+    .filter((x) => this.matchesDateFilter(x.agreementIds) && this.matchesProjectFilter(x.projectIds))
+    .sortBy('name')
+    .value();
+    return result;
+
   };
 
   getFilteredEquipment = () => {
@@ -356,15 +373,55 @@ class AitReport extends React.Component {
       .value();
   };
 
+  getAllData = () => {
+    if(projectsRetrieved.length === 0){
+      projectsRetrieved = _.chain(this.props.projects.data)
+    .filter((x) => this.matchesDateFilter(x.agreementIds))
+    .sortBy('name')
+    .value();
+    }
+    
+    if(projectsRetrieved.length > 0){
+      districtEquipmentTypesRetrieved = _.chain(this.props.districtEquipmentTypes.data)
+      .filter((x) => this.matchesDateFilter(x.agreementIds) && this.matchesProjectFilter(x.projectIds))
+      .sortBy('name')
+      .value();
+
+      if(districtEquipmentTypesRetrieved.length > 0){
+        equipmentRetrieved = _.chain(this.props.equipment.data)
+          .filter(
+            (x) =>
+              this.matchesDateFilter(x.agreementIds) &&
+              this.matchesProjectFilter(x.projectIds) &&
+              this.matchesDistrictEquipmentTypeFilter(x.districtEquipmentTypeId)
+          )
+          .sortBy('equipmentCode')
+          .value();
+    }
+            
+  }
+
+    if(shouldReRender || (projectsRetrieved.length > 0 && districtEquipmentTypesRetrieved.length > 0 && equipmentRetrieved.length > 0)){
+      shouldReRender = true;
+    }else{
+      shouldReRender = false;
+    }
+  };
+
   render() {
     var resultCount = '';
     if (this.props.aitResponses.loaded) {
       resultCount = '(' + Object.keys(this.props.aitResponses.data).length + ')';
     }
 
-    var projects = this.getFilteredProjects();
-    var districtEquipmentTypes = this.getFilteredDistrictEquipmentType();
-    var equipment = this.getFilteredEquipment();
+    // var projects = this.getFilteredProjects();
+    // var districtEquipmentTypes = this.getFilteredDistrictEquipmentType();
+    // var equipment = this.getFilteredEquipment();
+
+    this.getAllData();
+    var projects = projectsRetrieved;
+    var districtEquipmentTypes = districtEquipmentTypesRetrieved;
+    var equipment = equipmentRetrieved;
 
     return (
       <div id="rental-agreement-summary">
@@ -489,7 +546,9 @@ class AitReport extends React.Component {
 }
 
 function mapStateToProps(state) {
-  return {
+
+
+  var result = {
     currentUser: state.user,
     agreementSummaryLite: state.lookups.agreementSummaryLite,
     projects: state.lookups.projectsAgreementSummary,
@@ -500,6 +559,8 @@ function mapStateToProps(state) {
     search: state.search.aitResponses,
     ui: state.ui.aitResponses,
   };
+  
+  return result;
 }
 
 export default connect(mapStateToProps)(AitReport);
