@@ -162,8 +162,9 @@ class AitReport extends React.Component {
     });
   };
 
+
+
   updateSearchState = (state, callback) => {
-    shouldReRender = false;
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } } }, () => {
       store.dispatch({
         type: Action.UPDATE_AIT_SEARCH,
@@ -186,6 +187,21 @@ class AitReport extends React.Component {
       }
     });
   };
+
+    updateProjectState = (state, callback) => {
+      shouldReRender = false;
+      this.updateProjectSearchState(state, callback);
+    };
+  
+    updateEquipmentTypeState = (state, callback) => {
+      shouldReRender = false;
+      this.updateSearchState(state, callback);
+    };
+  
+    updateEquipmentState = (state, callback) => {
+      shouldReRender = false;
+      this.updateSearchState(state, callback);
+    };
 
   loadFavourite = (favourite) => {
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
@@ -282,7 +298,7 @@ class AitReport extends React.Component {
     var today = Moment();
     var startDate;
     var endDate;
-
+    shouldReRender = true;
     switch (state.dateRange) {
       case THIS_FISCAL:
         // Fiscal Year: Apr 1 - March 31
@@ -443,7 +459,7 @@ class AitReport extends React.Component {
                       disabled={!this.props.projects.loaded}
                       items={projects}
                       selectedIds={this.state.search.projectIds}
-                      updateState={this.updateProjectSearchState}
+                      updateState={this.updateProjectState}
                       showMaxItems={2}
                     />
                     <MultiDropdown
@@ -452,7 +468,7 @@ class AitReport extends React.Component {
                       items={districtEquipmentTypes}
                       disabled={!this.props.districtEquipmentTypes.loaded}
                       selectedIds={this.state.search.districtEquipmentTypes}
-                      updateState={this.updateSearchState}
+                      updateState={this.updateEquipmentTypeState}
                       showMaxItems={2}
                     />
                     <MultiDropdown
@@ -462,7 +478,7 @@ class AitReport extends React.Component {
                       items={equipment}
                       disabled={!this.props.equipment.loaded}
                       selectedIds={this.state.search.equipmentIds}
-                      updateState={this.updateSearchState}
+                      updateState={this.updateEquipmentState}
                       showMaxItems={2}
                     />
                     <FormInputControl
