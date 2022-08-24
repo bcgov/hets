@@ -36,11 +36,6 @@ const THIS_FISCAL = 'This Fiscal';
 const LAST_FISCAL = 'Last Fiscal';
 const CUSTOM = 'Custom';
 
-var projectsRetrieved = [];
-var districtEquipmentTypesRetrieved = [];
-var equipmentRetrieved = [];
-var shouldReRender = true;
-
 class AitReport extends React.Component {
   static propTypes = {
     currentUser: PropTypes.object,
@@ -129,7 +124,6 @@ class AitReport extends React.Component {
 
   fetch = () => {
     Api.searchAitReport(this.buildSearchParams());
-    shouldReRender = true;
   };
 
   search = (e) => {
@@ -184,21 +178,6 @@ class AitReport extends React.Component {
       }
     });
   };
-
-    updateProjectState = (state, callback) => {
-      shouldReRender = false;
-      this.updateProjectSearchState(state, callback);
-    };
-  
-    updateEquipmentTypeState = (state, callback) => {
-      shouldReRender = false;
-      this.updateSearchState(state, callback);
-    };
-  
-    updateEquipmentState = (state, callback) => {
-      shouldReRender = false;
-      this.updateSearchState(state, callback);
-    };
 
   loadFavourite = (favourite) => {
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
@@ -383,41 +362,6 @@ class AitReport extends React.Component {
       )
       .sortBy('equipmentCode')
       .value();
-  };
-
-  getAllData = () => {
-    if(projectsRetrieved.length === 0){
-      projectsRetrieved = _.chain(this.props.projects.data)
-    .filter((x) => this.matchesDateFilter(x.agreementIds))
-    .sortBy('name')
-    .value();
-    }
-    
-    if(projectsRetrieved.length > 0){
-      districtEquipmentTypesRetrieved = _.chain(this.props.districtEquipmentTypes.data)
-      .filter((x) => this.matchesDateFilter(x.agreementIds) && this.matchesProjectFilter(x.projectIds))
-      .sortBy('name')
-      .value();
-
-      if(districtEquipmentTypesRetrieved.length > 0){
-        equipmentRetrieved = _.chain(this.props.equipment.data)
-          .filter(
-            (x) =>
-              this.matchesDateFilter(x.agreementIds) &&
-              this.matchesProjectFilter(x.projectIds) &&
-              this.matchesDistrictEquipmentTypeFilter(x.districtEquipmentTypeId)
-          )
-          .sortBy('equipmentCode')
-          .value();
-    }
-            
-  }
-
-    if(shouldReRender || (projectsRetrieved.length > 0 && districtEquipmentTypesRetrieved.length > 0 && equipmentRetrieved.length > 0)){
-      shouldReRender = true;
-    }else{
-      shouldReRender = false;
-    }
   };
 
   render() {
