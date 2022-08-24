@@ -1451,8 +1451,10 @@ export function getProjectsAgreementSummary() {
       type: Action.UPDATE_PROJECTS_AGREEMENT_SUMMARY_LOOKUP,
       projects: projects,
     });
+
   });
 }
+
 
 export function getProjectsCurrentFiscal() {
   const silent = store.getState().lookups.projectsCurrentFiscal.loaded;
@@ -2781,6 +2783,8 @@ export function getDistrictEquipmentTypes() {
 
 export function getDistrictEquipmentTypesAgreementSummary() {
   const silent = store.getState().lookups.districtEquipmentTypesAgreementSummary.loaded;
+
+
   return new ApiRequest('/districtequipmenttypes/agreementSummary', { silent }).get().then((response) => {
     var districtEquipmentTypes = normalize(response.data);
 
@@ -2788,6 +2792,9 @@ export function getDistrictEquipmentTypesAgreementSummary() {
       type: Action.UPDATE_DISTRICT_EQUIPMENT_TYPES_AGREEMENT_SUMMARY_LOOKUP,
       districtEquipmentTypes,
     });
+
+
+
   });
 }
 
