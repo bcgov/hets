@@ -10,7 +10,11 @@ import store from './js/store';
 import 'bootstrap/dist/css/bootstrap.css';
 import './sass/main.scss';
 
-Keycloak.init(() => {
+var initOptions = {
+  pkceMethod: 'S256'
+};
+
+Keycloak.init((initOptions) => {
   ReactDOM.render(
     <Provider store={store}>
       <React.StrictMode>

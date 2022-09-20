@@ -31,6 +31,7 @@ using System.Text.Json;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.IdentityModel.Logging;
 
 namespace HetsApi
 {
@@ -48,6 +49,7 @@ namespace HetsApi
 
         public void ConfigureServices(IServiceCollection services)
         {
+            IdentityModelEventSource.ShowPII = true;
             string connectionString = GetConnectionString();
 
             // add http context accessor
