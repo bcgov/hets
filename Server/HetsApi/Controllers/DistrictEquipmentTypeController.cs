@@ -104,18 +104,19 @@ namespace HetsApi.Controllers
         {
             // get user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
-
             var summary = _context.HetRentalAgreements.AsNoTracking()
-                .Include(x => x.Equipment.DistrictEquipmentType)
-                .Where(x => x.DistrictId == districtId &&
-                            !x.Number.StartsWith("BCBid"))
-                .ToList()
-                .GroupBy(x => x.Equipment.DistrictEquipmentType, (t, agreements) => new DistrictEquipmentTypeAgreementSummary
+               .Include(x => x.Equipment.DistrictEquipmentType)
+               .Where(x => x.DistrictId == districtId &&
+                           !x.Number.StartsWith("BCBid"))
+               .ToList()
+               .OrderByDescending(x => x.DatedOn).GroupBy(x => x.Equipment.DistrictEquipmentTypeId).Select(x => x.FirstOrDefault()).ToList()
+               .GroupBy(x => x.Equipment.DistrictEquipmentType, (t, agreements) => new DistrictEquipmentTypeAgreementSummary
                 {
                     Id = t.DistrictEquipmentTypeId,
                     Name = t.DistrictEquipmentName,
                     AgreementIds = agreements.Select(y => y.RentalAgreementId).Distinct().ToList(),
                     ProjectIds = agreements.Select(y => y.ProjectId).Distinct().ToList(),
+
                 })
                 .ToList();
 

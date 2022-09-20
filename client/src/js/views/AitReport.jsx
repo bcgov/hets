@@ -53,6 +53,7 @@ class AitReport extends React.Component {
   constructor(props) {
     super(props);
 
+
     var today = Moment();
 
     this.state = {
@@ -69,7 +70,9 @@ class AitReport extends React.Component {
         sortField: props.ui.sortField || 'rentalAgreementNumber',
         sortDesc: props.ui.sortDesc === true,
       },
+
     };
+
   }
 
   buildSearchParams = () => {
@@ -107,6 +110,8 @@ class AitReport extends React.Component {
     Api.getProjectsAgreementSummary();
     Api.getDistrictEquipmentTypesAgreementSummary();
     Api.getEquipmentAgreementSummary();
+
+
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
@@ -147,6 +152,8 @@ class AitReport extends React.Component {
       store.dispatch({ type: Action.CLEAR_AIT_REPORT });
     });
   };
+
+
 
   updateSearchState = (state, callback) => {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } } }, () => {
@@ -267,7 +274,6 @@ class AitReport extends React.Component {
     var today = Moment();
     var startDate;
     var endDate;
-
     switch (state.dateRange) {
       case THIS_FISCAL:
         // Fiscal Year: Apr 1 - March 31
@@ -338,10 +344,12 @@ class AitReport extends React.Component {
   };
 
   getFilteredDistrictEquipmentType = () => {
-    return _.chain(this.props.districtEquipmentTypes.data)
-      .filter((x) => this.matchesDateFilter(x.agreementIds) && this.matchesProjectFilter(x.projectIds))
-      .sortBy('name')
-      .value();
+    var result = _.chain(this.props.districtEquipmentTypes.data)
+    .filter((x) => this.matchesDateFilter(x.agreementIds) && this.matchesProjectFilter(x.projectIds))
+    .sortBy('name')
+    .value();
+    return result;
+
   };
 
   getFilteredEquipment = () => {
@@ -365,7 +373,7 @@ class AitReport extends React.Component {
     var projects = this.getFilteredProjects();
     var districtEquipmentTypes = this.getFilteredDistrictEquipmentType();
     var equipment = this.getFilteredEquipment();
-
+    
     return (
       <div id="rental-agreement-summary">
         <PageHeader>
@@ -489,7 +497,9 @@ class AitReport extends React.Component {
 }
 
 function mapStateToProps(state) {
-  return {
+
+
+  var result = {
     currentUser: state.user,
     agreementSummaryLite: state.lookups.agreementSummaryLite,
     projects: state.lookups.projectsAgreementSummary,
@@ -500,6 +510,8 @@ function mapStateToProps(state) {
     search: state.search.aitResponses,
     ui: state.ui.aitResponses,
   };
+  
+  return result;
 }
 
 export default connect(mapStateToProps)(AitReport);
