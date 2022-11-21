@@ -11,6 +11,6 @@
         public const string InvalidDirectory = "Invalid Directory";
 
         public const string IDIR = "IDIR";
-        public const string BCEIDBIZ = "BCEID-BUSINESS";
+        public const string BCEIDBIZ = "BCEIDBUSINESS";
     }
 }

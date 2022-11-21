@@ -149,7 +149,7 @@ namespace HetsApi.Controllers
             _logger.LogDebug("Business Guid: {0}", businessGuid);
 
             // not found - return an HTTP 401 error response
-            if (string.IsNullOrEmpty(userId)) return StatusCode(401);
+            if (string.IsNullOrEmpty(userId) && string.IsNullOrEmpty(businessGuid)) return StatusCode(401);
 
             CurrentUserDto user = new CurrentUserDto();
 

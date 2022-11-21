@@ -13,7 +13,7 @@ namespace HetsApi.Extensions
             var username = principal.FindFirstValue("idir_username");
             var directory = usernames?[1].ToUpperInvariant();
 
-            var userGuidClaim = directory == Constants.IDIR ? "idir_user_guid" : "bceid_userid";
+            var userGuidClaim = directory == Constants.IDIR ? "idir_user_guid" : "bceid_user_guid";
 
             var userGuid = principal.FindFirstValue(userGuidClaim)?.ToUpperInvariant();
 
