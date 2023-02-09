@@ -10,10 +10,11 @@ namespace HetsApi.Extensions
             var preferredUsername = principal.FindFirstValue("preferred_username");
 
             var usernames = preferredUsername?.Split("@");
-            var username = usernames?[0].ToUpperInvariant();
+            var username = principal.FindFirstValue("idir_username");
             var directory = usernames?[1].ToUpperInvariant();
 
-            var userGuidClaim = directory == Constants.IDIR ? "idir_userid" : "bceid_userid";
+            var userGuidClaim = directory == Constants.IDIR ? "idir_user_guid" : "bceid_user_guid";
+
             var userGuid = principal.FindFirstValue(userGuidClaim)?.ToUpperInvariant();
 
             var bizGuid = directory == Constants.IDIR ? "" : principal.FindFirstValue("bceid_business_guid");
