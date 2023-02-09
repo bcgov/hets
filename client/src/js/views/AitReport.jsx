@@ -31,6 +31,7 @@ import {
   toZuluTime,
   dateIsBetween,
 } from '../utils/date';
+import { arrIntersection, hasArrsIntersect } from '../utils/set';
 
 const THIS_FISCAL = 'This Fiscal';
 const LAST_FISCAL = 'Last Fiscal';
@@ -242,16 +243,14 @@ class AitReport extends React.Component {
     );
   };
 
-  matchesDateFilter = (agreementIds) => {
+  getMatchedAgreementIds = () => {
     const startDate = Moment(this.state.search.startDate);
     const endDate = Moment(this.state.search.endDate);
 
-    const matchingAgreementIds = _.chain(this.props.agreementSummaryLite.data)
+    return _.chain(this.props.agreementSummaryLite.data)
       .filter((a) => dateIsBetween(Moment(a.datedOn), startDate, endDate))
       .map('id')
       .value();
-
-    return _.intersection(matchingAgreementIds, agreementIds).length > 0;
   };
 
   matchesProjectFilter = (projectIds) => {
@@ -259,7 +258,7 @@ class AitReport extends React.Component {
       return true;
     }
 
-    return _.intersection(this.state.search.projectIds, projectIds).length > 0;
+    return hasArrsIntersect(this.state.search.projectIds, projectIds);
   };
 
   matchesDistrictEquipmentTypeFilter = (districtEquipmentTypeId) => {
@@ -307,59 +306,62 @@ class AitReport extends React.Component {
     this.updateSearchState(state, this.filterSelectedProjects);
   };
 
-  updateProjectSearchState = (state) => {
-    this.updateSearchState(state, this.filterSelectedEquipmentType);
+  updateProjectSearchState = (searchState) => {
+    this.updateSearchState(searchState, this.filterSelectedEquipmentType);
   };
 
-  updateEquipmentTypeSearchState = (state) => {
-    this.updateSearchState(state, this.filterSelectedEquipment);
+  updateEquipmentTypeSearchState = (searchState) => {
+    this.updateSearchState(searchState, this.filterSelectedEquipment);
   };
 
   filterSelectedProjects = () => {
     var acceptableProjects = _.map(this.getFilteredProjects(), 'id');
-    var projectIds = _.intersection(this.state.search.projectIds, acceptableProjects);
-    this.updateSearchState({ projectIds: projectIds }, this.filterSelectedEquipmentType);
+    var projectIds = arrIntersection(this.state.search.projectIds, acceptableProjects);
+    this.updateSearchState({ 
+      projectIds: projectIds 
+    }, this.filterSelectedEquipmentType);
   };
 
   filterSelectedEquipmentType = () => {
     var acceptableDistrictEquipmentTypes = _.map(this.getFilteredDistrictEquipmentType(), 'id');
-    var districtEquipmentTypes = _.intersection(
+    var districtEquipmentTypes = arrIntersection(
       this.state.search.districtEquipmentTypes,
       acceptableDistrictEquipmentTypes
     );
-    this.updateSearchState({ districtEquipmentTypes: districtEquipmentTypes }, this.filterSelectedEquipment);
+    this.updateSearchState({ 
+      districtEquipmentTypes: districtEquipmentTypes 
+    }, this.filterSelectedEquipment);
   };
 
   filterSelectedEquipment = () => {
     var acceptableEquipmentIds = _.map(this.getFilteredEquipment(), 'id');
-    var equipmentIds = _.intersection(this.state.search.equipmentIds, acceptableEquipmentIds);
+    var equipmentIds = arrIntersection(this.state.search.equipmentIds, acceptableEquipmentIds);
     this.updateSearchState({ equipmentIds: equipmentIds });
   };
 
   getFilteredProjects = () => {
+    const matchedAgreementIds = this.getMatchedAgreementIds();
     return _.chain(this.props.projects.data)
-      .filter((x) => this.matchesDateFilter(x.agreementIds))
+      .filter((project) => hasArrsIntersect(project.agreementIds, matchedAgreementIds))
       .sortBy('name')
       .value();
   };
 
   getFilteredDistrictEquipmentType = () => {
-    var result = _.chain(this.props.districtEquipmentTypes.data)
-    .filter((x) => this.matchesDateFilter(x.agreementIds) && this.matchesProjectFilter(x.projectIds))
-    .sortBy('name')
-    .value();
-    return result;
-
+    const matchedAgreementIds = this.getMatchedAgreementIds();
+    return _.chain(this.props.districtEquipmentTypes.data)
+      .filter(equipmentType => hasArrsIntersect(equipmentType.agreementIds, matchedAgreementIds))
+      .filter(equipmentType => this.matchesProjectFilter(equipmentType.projectIds))
+      .sortBy('name')
+      .value();
   };
 
   getFilteredEquipment = () => {
+    const matchedAgreementIds = this.getMatchedAgreementIds();
     return _.chain(this.props.equipment.data)
-      .filter(
-        (x) =>
-          this.matchesDateFilter(x.agreementIds) &&
-          this.matchesProjectFilter(x.projectIds) &&
-          this.matchesDistrictEquipmentTypeFilter(x.districtEquipmentTypeId)
-      )
+      .filter(equipment => hasArrsIntersect(equipment.agreementIds, matchedAgreementIds))
+      .filter(equipment => this.matchesProjectFilter(equipment.projectIds))
+      .filter(equipment => this.matchesDistrictEquipmentTypeFilter(equipment.districtEquipmentTypeId))
       .sortBy('equipmentCode')
       .value();
   };

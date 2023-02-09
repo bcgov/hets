@@ -19,7 +19,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.22.2",
     "react": "^17.0.2",
-    "react-bootstrap": "^1.6.1",
+    "react-bootstrap": "^2.7.0",
     "react-datetime": "^3.0.4",
     "react-dom": "^16.8.4",
     "react-redux": "^6.0.1",
@@ -32,8 +32,8 @@
     "web-vitals": "^1.1.2"
   },
   "devDependencies": {
-    "node-sass": "^7.0.1",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "sass": "^1.58.0"
   },
   "scripts": {
     "start": "react-scripts start",
