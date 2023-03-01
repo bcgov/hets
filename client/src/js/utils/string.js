@@ -1,7 +1,8 @@
+import _ from "lodash";
 import * as Constant from "../constants";
 
-function toString(str) {
-  if (str === null || str === undefined) {
+export function toString(str) {
+  if (_.isNil(str)) {
     return "";
   }
   return String(str);
@@ -24,18 +25,19 @@ export function plural(num, singular, plural) {
 }
 
 export function concat(left, right, sep) {
-  if (!sep) {
+  sep = toString(sep);
+  if (sep === "") {
     sep = " ";
   }
-  var a = toString(left).trim();
-  var b = toString(right).trim();
-  if (a && b) {
+  const a = toString(left).trim();
+  const b = toString(right).trim();
+  if (a !== "" && b !== "") {
     return `${a}${sep}${b}`;
   }
-  if (a) {
+  if (a !== "") {
     return a;
   }
-  if (b) {
+  if (b !== "") {
     return b;
   }
   return "";
@@ -54,7 +56,7 @@ export function isBlank(str) {
 }
 
 export function isBlankOrZero(str) {
-  return toString(str).trim() === 0;
+  return isBlank(str) || Number(toString(str).trim()) === 0;
 }
 
 export function notBlank(str) {
@@ -62,24 +64,34 @@ export function notBlank(str) {
 }
 
 export function padLeft(str, padChar, len) {
-  if (!str || !padChar || !len) {
+  if (_.isNil(str)) {
     return "";
   }
-  if (str.length >= len) {
+
+  str = toString(str);
+  padChar = toString(padChar);
+
+  if (padChar.length !== 1) {
     return str;
   }
-  var pad = Array(len + 1).join(padChar);
+
+  const threshold = !_.isNumber(len) || len <= 0 ? 0 : Number(len);
+
+  if (str.length >= threshold) {
+    return str;
+  }
+  const pad = Array(len + 1).join(padChar);
   return pad.substring(str.length) + str;
 }
 
 export function formatPhoneNumber(str) {
-  var phoneNumber = toString(str);
-  var match = phoneNumber.match(Constant.NANP_REGEX);
+  const phoneNumber = toString(str);
+  const match = phoneNumber.match(Constant.NANP_REGEX);
   if (match) {
     match.shift();
 
-    var extension = match.pop();
-    var number = match
+    const extension = match.pop();
+    const number = match
       .filter((x) => {
         return x;
       })
@@ -90,14 +102,22 @@ export function formatPhoneNumber(str) {
 }
 
 export function onlyLetters(str) {
-  var a = toString(str).trim();
+  const a = toString(str).trim();
   return /^[a-zA-Z]+$/.test(a);
 }
 
 export function formatCurrency(number) {
-  if (number === null || number === undefined) {
+  if (_.isNil(number)) {
     return "";
   }
+  if (!_.isNumber(number)) {
+    const numberStr = toString(number).trim();
+    if (numberStr === "" || _.isNaN(Number(numberStr))) {
+      return "";
+    }
+    number = Number(numberStr);
+  }
+  
   return new Intl.NumberFormat("en-CA", {
     style: "currency",
     currency: "CAD",
