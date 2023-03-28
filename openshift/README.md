@@ -46,6 +46,12 @@ oc process -f moti-cicd-role-binding.yaml -p NAME=moti-cicd -p NAMESPACE=e0cee6-
 
 This section will describe the necessary steps required to configure the pipeline to run in your OpenShift environment.
 
+### Update API ConfigMap
+
+The API Server make use of the [api-appsettings.yaml](configmaps/api-appsettings.yaml) file for runtime configurations in OpenShift.
+
+The configmap replaces the default `appSettings.json` file from the `Server/HetsAPI` project via the `s2i run` script when a pod is starting up. So it is imporant it has the correct configurations.
+
 ### Create Secret Objects
 
 There are a few secret objects that must be created manually in the `dev`, `test`, and `prod` namespaces. These are required for the pods to function properly.
