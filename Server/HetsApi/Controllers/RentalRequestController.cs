@@ -290,7 +290,10 @@ namespace HetsApi.Controllers
             // build new list
             try
             {
-                rentalRequest = RentalRequestHelper.CreateRotationList(rentalRequest, _context, _configuration, _mapper);
+                rentalRequest = RentalRequestHelper.CreateRotationList(rentalRequest, _context, _configuration, _mapper, (errMessage, ex) => {
+                    _logger.LogError(errMessage);
+                    _logger.LogError(ex.ToString());
+                });
             }
             catch (Exception e)
             {
@@ -300,7 +303,7 @@ namespace HetsApi.Controllers
                     return new NotFoundObjectResult(new HetsResponse("HETS-42", ErrorViewModel.GetDescription("HETS-42", _configuration)));
                 }
 
-                Console.WriteLine(e);
+                _logger.LogError($"CreateRentalRequest exception: {e.ToString()}");
                 throw;
             }
 
@@ -540,7 +543,10 @@ namespace HetsApi.Controllers
             if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get the scoring rules
-            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
+            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration, (errMessage, ex) => {
+                _logger.LogError(errMessage);
+                _logger.LogError(ex.ToString());
+            });
 
             return new ObjectResult(new HetsResponse(_rentalRequestRepo.GetRecordWithRotationList(id, scoringRules)));
         }
@@ -720,7 +726,10 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // get the scoring rules
-            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
+            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration, (errMessage, ex) => {
+                _logger.LogError(errMessage);
+                _logger.LogError(ex.ToString());
+            });
 
             return new ObjectResult(new HetsResponse(_rentalRequestRepo.GetRecordWithRotationList(id, scoringRules)));
         }
@@ -1027,7 +1036,10 @@ namespace HetsApi.Controllers
             seniorityList.Classification = $"23010-22/{(fiscalYear - 1).ToString().Substring(2, 2)}-{fiscalYear.ToString().Substring(2, 2)}";
             seniorityList.GeneratedOn = $"{DateUtils.ConvertUtcToPacificTime(request.AppCreateTimestamp):dd-MM-yyyy H:mm:ss}";
 
-            var scoringRules = new SeniorityScoringRules(_configuration);
+            var scoringRules = new SeniorityScoringRules(_configuration, (errMessage, ex) => {
+                _logger.LogError(errMessage);
+                _logger.LogError(ex.ToString());
+            });
             var numberOfBlocks = request.DistrictEquipmentType.EquipmentType.IsDumpTruck
                 ? scoringRules.GetTotalBlocks("DumpTruck") + 1
                 : scoringRules.GetTotalBlocks() + 1;
@@ -1057,7 +1069,10 @@ namespace HetsApi.Controllers
             }
 
             string documentName = $"SeniorityList-{DateTime.Now:yyyy-MM-dd}{(counterCopy ? "-(CounterCopy)" : "")}.docx";
-            byte[] document = SeniorityList.GetSeniorityList(seniorityList, documentName, counterCopy);
+            byte[] document = SeniorityList.GetSeniorityList(seniorityList, documentName, counterCopy, (errMessage, ex) => {
+                _logger.LogError(errMessage);
+                _logger.LogError(ex.ToString());
+            });
 
             // return document
             FileContentResult result = new FileContentResult(document, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")

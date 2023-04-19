@@ -35,7 +35,7 @@ namespace HetsBceid
 
         private void RefreshCache(object source, ElapsedEventArgs e)
         {
-            Debug.WriteLine($"BCeID Cache clean up: {_accountCache.Keys.Count} entries.");
+            _logger.LogInformation($"BCeID Cache clean up: {_accountCache.Keys.Count} entries.");
             _accountCache.Clear();
         }
 
@@ -49,7 +49,7 @@ namespace HetsBceid
                 var key = username + "||" + userType;
                 if (_accountCache.ContainsKey(key))
                 {
-                    Debug.WriteLine($"BCeID cache hit: {key}");
+                    _logger.LogInformation($"BCeID cache hit: {key}");
                     return ("", _accountCache[key]);
                 }
 
@@ -57,7 +57,7 @@ namespace HetsBceid
 
                 if (account != null)
                 {
-                    Debug.WriteLine($"BCeID new key: {key}");
+                    _logger.LogInformation($"BCeID new key: {key}");
                     _accountCache[key] = account;
                 }
 

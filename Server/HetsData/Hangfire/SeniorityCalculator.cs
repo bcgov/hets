@@ -28,7 +28,7 @@ namespace HetsData.Hangfire
         /// <param name="connectionString"></param>
         [SkipSameJob]
         [AutomaticRetry(Attempts = 0)]
-        public void RecalculateSeniorityList(string seniorityScoringRules)
+        public void RecalculateSeniorityList(string seniorityScoringRules, Action<string> logInfoAction, Action<string, Exception> logErrorAction)
         {
             // get equipment status
             int? equipmentStatusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _dbContext);
@@ -37,7 +37,7 @@ namespace HetsData.Hangfire
                 throw new ArgumentException("Status Code not found");
             }
 
-            WriteLog("Recalculation Started");
+            WriteLog("Recalculation Started", logInfoAction);
 
             var equipments = _dbContext.HetEquipments
                 .Where(x => x.EquipmentStatusTypeId == equipmentStatusId)
@@ -50,18 +50,18 @@ namespace HetsData.Hangfire
             var count = 0;
             foreach (var equipment in equipments)
             {
-                EquipmentHelper.RecalculateSeniority(equipment.LocalAreaId, equipment.DistrictEquipmentTypeId, _dbContext, seniorityScoringRules);
-                WriteLog($"Processed {count} / {equipments.Count}");
+                EquipmentHelper.RecalculateSeniority(equipment.LocalAreaId, equipment.DistrictEquipmentTypeId, _dbContext, seniorityScoringRules, logErrorAction);
+                WriteLog($"Processed {count} / {equipments.Count}", logInfoAction);
             }
 
             _dbContext.SaveChanges();
 
-            WriteLog("Recalculation Finished");
+            WriteLog("Recalculation Finished", logInfoAction);
         }
 
-        private void WriteLog(string message)
+        private void WriteLog(string message, Action<string> logInfoAction)
         {
-            _logger.LogInformation($"Seniority Calculator[{_jobId}] {message}");
+            logInfoAction($"Seniority Calculator[{_jobId}] {message}");
         }
     }
 }

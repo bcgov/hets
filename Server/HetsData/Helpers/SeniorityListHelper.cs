@@ -89,7 +89,7 @@ namespace HetsData.Helpers
         /// <param name="context"></param>
         /// <param name="seniorityScoringRules"></param>
         public static void CalculateSeniorityList(int localAreaId, int districtEquipmentTypeId,
-            DbAppContext context, string seniorityScoringRules, HetEquipment changedEquipment = null)
+            DbAppContext context, string seniorityScoringRules, Action<string, Exception> logAction, HetEquipment changedEquipment = null)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace HetsData.Helpers
                     context.HetDistrictEquipmentTypes.Any(x => x.DistrictEquipmentTypeId == districtEquipmentTypeId))
                 {
                     // get processing rules
-                    SeniorityScoringRules scoringRules = new SeniorityScoringRules(seniorityScoringRules);
+                    SeniorityScoringRules scoringRules = new SeniorityScoringRules(seniorityScoringRules, logAction);
 
                     // get the associated equipment type
                     HetDistrictEquipmentType districtEquipmentTypeRecord = context.HetDistrictEquipmentTypes
@@ -152,14 +152,13 @@ namespace HetsData.Helpers
                         }
 
                         // put equipment into the correct blocks
-                        AssignBlocks(localAreaId, districtEquipmentTypeId, blockSize, totalBlocks, context, changedEquipment);
+                        AssignBlocks(localAreaId, districtEquipmentTypeId, blockSize, totalBlocks, context, logAction, changedEquipment);
                     }
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine("ERROR: CalculateSeniorityList");
-                Console.WriteLine(e);
+                logAction("ERROR: CalculateSeniorityList", e);
                 throw;
             }
         }
@@ -181,7 +180,9 @@ namespace HetsData.Helpers
         ///  This fix is not ideal but given the time constraint, it works. The fix is done for HETS-1341
         /// </param>
         /// <param name="saveChanges"></param>
-        public static void AssignBlocks(int localAreaId, int districtEquipmentTypeId, int blockSize, int totalBlocks, DbAppContext context, HetEquipment changedEquipment = null)
+        public static void AssignBlocks(
+            int localAreaId, int districtEquipmentTypeId, int blockSize, int totalBlocks, DbAppContext context, 
+            Action<string, Exception> logAction, HetEquipment changedEquipment = null)
         {
             try
             {
@@ -226,7 +227,7 @@ namespace HetsData.Helpers
                     // iterate the blocks and add the record
                     for (int i = 0; i < totalBlocks; i++)
                     {
-                        if (AddedToBlock(i, totalBlocks, blockSize, blocks, equipment))
+                        if (AddedToBlock(i, totalBlocks, blockSize, blocks, equipment, logAction))
                         {
                             break; // move to next record
                         }
@@ -235,13 +236,13 @@ namespace HetsData.Helpers
             }
             catch (Exception e)
             {
-                Console.WriteLine("ERROR: AssignBlocks");
-                Console.WriteLine(e);
+                logAction("ERROR: AssignBlocks", e);
                 throw;
             }
         }
 
-        private static bool AddedToBlock(int currentBlock, int totalBlocks, int blockSize, List<int>[] blocks, HetEquipment equipment)
+        private static bool AddedToBlock(
+            int currentBlock, int totalBlocks, int blockSize, List<int>[] blocks, HetEquipment equipment, Action<string, Exception> logAction)
         {
             try
             {
@@ -288,8 +289,7 @@ namespace HetsData.Helpers
             }
             catch (Exception e)
             {
-                Console.WriteLine("ERROR: AddedToBlock");
-                Console.WriteLine(e);
+                logAction("ERROR: AddedToBlock", e);
                 throw;
             }
         }
@@ -442,7 +442,7 @@ namespace HetsData.Helpers
         /// Scoring Rules Constructor
         /// </summary>
         /// <param name="configuration"></param>
-        public SeniorityScoringRules(IConfiguration configuration)
+        public SeniorityScoringRules(IConfiguration configuration, Action<string, Exception> logErrorAction)
         {
             try
             {
@@ -492,12 +492,12 @@ namespace HetsData.Helpers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logErrorAction("Error creating SeniorityScoringRules", e);
                 throw;
             }
         }
 
-        public SeniorityScoringRules(string seniorityScoringRules)
+        public SeniorityScoringRules(string seniorityScoringRules, Action<string, Exception> logErrorAction)
         {
             try
             {
@@ -518,7 +518,7 @@ namespace HetsData.Helpers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logErrorAction("Error creating SeniorityScoringRules", e);
                 throw;
             }
         }

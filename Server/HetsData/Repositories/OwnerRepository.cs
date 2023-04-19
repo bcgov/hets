@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace HetsData.Repositories
 {
@@ -26,12 +27,14 @@ namespace HetsData.Repositories
         private IMapper _mapper;
         private DbAppContext _dbContext;
         private IConfiguration _configuration;
+        private readonly ILogger<OwnerRepository> _logger;
 
-        public OwnerRepository(DbAppContext dbContext, IMapper mapper, IConfiguration configuration)
+        public OwnerRepository(DbAppContext dbContext, IMapper mapper, IConfiguration configuration, ILogger<OwnerRepository> logger)
         {
             _mapper = mapper;
             _dbContext = dbContext;
             _configuration = configuration;
+            _logger = logger;
         }
 
         #region Get an Owner record (plus associated records)
@@ -78,7 +81,10 @@ namespace HetsData.Repositories
                 foreach (HetEquipment equipment in owner.HetEquipments)
                 {
                     equipment.IsHired = EquipmentHelper.IsHired(id, _dbContext);
-                    equipment.NumberOfBlocks = EquipmentHelper.GetNumberOfBlocks(equipment, _configuration);
+                    equipment.NumberOfBlocks = EquipmentHelper.GetNumberOfBlocks(equipment, _configuration, (errMessage, ex) => {
+                        _logger.LogError(errMessage);
+                        _logger.LogError(ex.ToString());
+                    });
                     equipment.HoursYtd = EquipmentHelper.GetYtdServiceHours(id, _dbContext);
                     equipment.Status = equipment.EquipmentStatusType.EquipmentStatusTypeCode;
                     equipment.EquipmentNumber = int.Parse(Regex.Match(equipment.EquipmentCode, @"\d+").Value);
@@ -300,7 +306,7 @@ namespace HetsData.Repositories
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.LogError($"GetOwnerVerificationLetterData exception: {e.ToString()}");
                 throw;
             }
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Logging;
 
 #nullable disable
 
@@ -8,13 +9,16 @@ namespace HetsData.Entities
 {
     public partial class DbAppContext : DbContext
     {
+        private readonly ILogger<DbAppContext> _logger;
+
         public DbAppContext()
         {
         }
 
-        public DbAppContext(DbContextOptions<DbAppContext> options)
+        public DbAppContext(DbContextOptions<DbAppContext> options, ILogger<DbAppContext> logger)
             : base(options)
         {
+            _logger = logger;
         }
 
         public virtual DbSet<HetBatchReport> HetBatchReports { get; set; }

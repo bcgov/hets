@@ -18,7 +18,7 @@ namespace HetsData.Hangfire
             _jobId = Guid.NewGuid().ToString();
         }
 
-        public void MergeDistrictEquipmentTypes(string seniorityScoringRules)
+        public void MergeDistrictEquipmentTypes(string seniorityScoringRules, Action<string> logInfoAction, Action<string, Exception> logErrorAction)
         {
             // get equipment status
             int? equipmentStatusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _dbContext);
@@ -30,7 +30,7 @@ namespace HetsData.Hangfire
             // **************************************************
             // Phase 1: Identify Master District Equipment Types
             // **************************************************
-            WriteLog("Phase 1: Identify Master District Equipment Types");
+            WriteLog("Phase 1: Identify Master District Equipment Types", logInfoAction);
 
             // get records
             List<MergeRecord> masterList = _dbContext.HetDistrictEquipmentTypes
@@ -121,7 +121,7 @@ namespace HetsData.Hangfire
             // **************************************************
             // Phase 2: Update Master District Equipment Types
             // **************************************************
-            WriteLog("Phase 2: Update Master District Equipment Types");
+            WriteLog("Phase 2: Update Master District Equipment Types", logInfoAction);
 
             List<MergeRecord> masterRecords = masterList.Where(x => x.Master).ToList();
 
@@ -146,7 +146,7 @@ namespace HetsData.Hangfire
             // **************************************************
             // Phase 3: Update Non-Master District Equipment Types
             // **************************************************
-            WriteLog("Phase 3: Update Non-Master District Equipment Types");
+            WriteLog("Phase 3: Update Non-Master District Equipment Types", logInfoAction);
 
             List<MergeRecord> mergeRecords = masterList.Where(x => !x.Master).ToList();
 
@@ -197,7 +197,7 @@ namespace HetsData.Hangfire
             // **************************************************
             // Phase 4: Update seniority and block assignments
             // **************************************************
-            WriteLog("Phase 4: Update seniority and block assignments");
+            WriteLog("Phase 4: Update seniority and block assignments", logInfoAction);
 
             increment = 0;
 
@@ -215,7 +215,7 @@ namespace HetsData.Hangfire
                 foreach (HetLocalArea localArea in localAreas)
                 {
                     EquipmentHelper.RecalculateSeniority(localArea.LocalAreaId,
-                        detRecord.DistrictEquipmentTypeId, _dbContext, seniorityScoringRules);
+                        detRecord.DistrictEquipmentTypeId, _dbContext, seniorityScoringRules, logErrorAction);
                 }
 
                 // save changes to equipment records
@@ -230,7 +230,7 @@ namespace HetsData.Hangfire
             // **************************************************
             // Phase 5: Cleanup "empty" District Equipment Types
             // **************************************************
-            WriteLog("Phase 5: Cleanup empty District Equipment Types");
+            WriteLog("Phase 5: Cleanup empty District Equipment Types", logInfoAction);
 
             // get records
             List<HetDistrictEquipmentType> districtEquipmentTypes = _dbContext.HetDistrictEquipmentTypes.AsNoTracking()
@@ -287,9 +287,9 @@ namespace HetsData.Hangfire
             return name.Substring(0, start).Trim();
         }
 
-        private void WriteLog(string message)
+        private void WriteLog(string message, Action<string> logInfoAction)
         {
-            Console.WriteLine($"Seniority Calculator[{_jobId}] {message}");
+            logInfoAction($"Seniority Calculator[{_jobId}] {message}");
         }
     }
 }

@@ -311,12 +311,24 @@ namespace HetsApi.Controllers
             if (rebuildSeniority)
             {
                 // update new area
-                EquipmentHelper.RecalculateSeniority(item.LocalAreaId, item.DistrictEquipmentTypeId, _context, _configuration, equipment);
+                EquipmentHelper.RecalculateSeniority(
+                    item.LocalAreaId, item.DistrictEquipmentTypeId, _context, _configuration, 
+                    (errMessage, ex) => {
+                        _logger.LogError(errMessage);
+                        _logger.LogError(ex.ToString());
+                    }, 
+                    equipment);
 
                 // update old area
                 if (rebuildOldSeniority)
                 {
-                    EquipmentHelper.RecalculateSeniority((int)originalLocalAreaId, (int)originalDistrictEquipmentTypeId, _context, _configuration, equipment);
+                    EquipmentHelper.RecalculateSeniority(
+                        (int)originalLocalAreaId, (int)originalDistrictEquipmentTypeId, _context, _configuration, 
+                        (errMessage, ex) => {
+                            _logger.LogError(errMessage);
+                            _logger.LogError(ex.ToString());
+                        }, 
+                        equipment);
                 }
             }
 
@@ -454,7 +466,13 @@ namespace HetsApi.Controllers
             // recalculation seniority (if required)
             if (recalculateSeniority)
             {
-                EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration, equipment);
+                EquipmentHelper.RecalculateSeniority(
+                    localAreaId, districtEquipmentTypeId, _context, _configuration, 
+                    (errMessage, ex) => {
+                        _logger.LogError(errMessage);
+                        _logger.LogError(ex.ToString());
+                    }, 
+                    equipment);
             }
 
             // save the changes
@@ -528,7 +546,10 @@ namespace HetsApi.Controllers
             // recalculation seniority (if required)
             int? localAreaId = equipment.LocalAreaId;
             int? districtEquipmentTypeId = equipment.DistrictEquipmentTypeId;
-            EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration);
+            EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration, (errMessage, ex) => {
+                _logger.LogError(errMessage);
+                _logger.LogError(ex.ToString());
+            });
 
             // save the result of the seniority recalculation
             _context.SaveChanges();
@@ -551,8 +572,17 @@ namespace HetsApi.Controllers
             IConfigurationSection scoringRules = _configuration.GetSection("SeniorityScoringRules");
             string seniorityScoringRules = GetConfigJson(scoringRules);
 
+            Action<string> logInfoAction = (msg) => {
+                _logger.LogInformation(msg);
+            };
+
+            Action<string, Exception> logErrorAction = (errMessage, ex) => {
+                _logger.LogError(errMessage);
+                _logger.LogError(ex.ToString());
+            };
+
             // queue the job
-            BackgroundJob.Enqueue<SeniorityCalculator>(x => x.RecalculateSeniorityList(seniorityScoringRules));
+            BackgroundJob.Enqueue<SeniorityCalculator>(x => x.RecalculateSeniorityList(seniorityScoringRules, logInfoAction, logErrorAction));
 
             // return ok
             return new ObjectResult(new HetsResponse("Recalculate job added to hangfire"));
@@ -729,7 +759,10 @@ namespace HetsApi.Controllers
             }
 
             // convert Equipment Model to the "EquipmentLite" Model
-            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
+            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration, (errMessage, ex) => {
+                _logger.LogError(errMessage);
+                _logger.LogError(ex.ToString());
+            });
             List<EquipmentLiteDto> result = new List<EquipmentLiteDto>();
 
             var dataList = data.ToList();
@@ -1382,7 +1415,10 @@ namespace HetsApi.Controllers
             // convert Equipment Model to Pdf View Model
             // **********************************************************************
             SeniorityListReportViewModel seniorityList = new SeniorityListReportViewModel();
-            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
+            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration, (errMessage, ex) => {
+                _logger.LogError(errMessage);
+                _logger.LogError(ex.ToString());
+            });
             SeniorityListRecord listRecord = new SeniorityListRecord();
 
             // manage the rotation list data
@@ -1467,7 +1503,10 @@ namespace HetsApi.Controllers
 
             // convert to open xml document
             string documentName = $"SeniorityList-{DateTime.Now:yyyy-MM-dd}{(counterCopy ? "-(CounterCopy)" : "")}.docx";
-            byte[] document = SeniorityList.GetSeniorityList(seniorityList, documentName, counterCopy);
+            byte[] document = SeniorityList.GetSeniorityList(seniorityList, documentName, counterCopy, (errMessage, ex) => {
+                _logger.LogError(errMessage);
+                _logger.LogError(ex.ToString());
+            });
 
             // return document
             FileContentResult result = new FileContentResult(document, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
@@ -1505,7 +1544,7 @@ namespace HetsApi.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.LogError($"GetLastCalledEquipmentId exception: {e.ToString()}");
                 throw;
             }
         }

@@ -277,7 +277,10 @@ namespace HetsApi.Controllers
                 if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
                 // get processing rules
-                SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration);
+                SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration, (errMessage, ex) => {
+                    _logger.LogError(errMessage);
+                    _logger.LogError(ex.ToString());
+                });
 
                 // get active equipment
                 IQueryable<HetEquipment> equipmentListB = _context.HetEquipments
@@ -302,12 +305,22 @@ namespace HetsApi.Controllers
                         : scoringRules.GetTotalBlocks();
 
                     // update block assignments
-                    SeniorityListHelper.AssignBlocks(localAreaId, districtEquipmentTypeId, blockSize, totalBlocks, _context);
+                    SeniorityListHelper.AssignBlocks(
+                        localAreaId, districtEquipmentTypeId, blockSize, totalBlocks, _context, 
+                        (errMessage, ex) => {
+                            _logger.LogError(errMessage);
+                            _logger.LogError(ex.ToString());
+                        });
 
                     // update old area block assignments
                     if (oldLocalArea != null)
                     {
-                        SeniorityListHelper.AssignBlocks((int)oldLocalArea, districtEquipmentTypeId, blockSize, totalBlocks, _context);
+                        SeniorityListHelper.AssignBlocks(
+                            (int)oldLocalArea, districtEquipmentTypeId, blockSize, totalBlocks, _context, 
+                            (errMessage, ex) => {
+                                _logger.LogError(errMessage);
+                                _logger.LogError(ex.ToString());
+                            });
                     }
                 }
             }
@@ -412,7 +425,10 @@ namespace HetsApi.Controllers
                         }
 
                         // recalculate the seniority
-                        EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration);
+                        EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration, (errMessage, ex) => {
+                            _logger.LogError(errMessage);
+                            _logger.LogError(ex.ToString());
+                        });
 
                         // HETS-1119 - Add change of status comments to Notes
                         string equipmentStatusNote = $"(Status changed to: {equipment.Status}) {equipment.StatusComment}";
@@ -638,7 +654,10 @@ namespace HetsApi.Controllers
 
             // convert to open xml document
             string documentName = $"OwnerVerification-{DateTime.Now:yyyy-MM-dd}.docx";
-            byte[] document = OwnerVerification.GetOwnerVerification(reportModel, documentName);
+            byte[] document = OwnerVerification.GetOwnerVerification(reportModel, documentName, (errMessage, ex) => {
+                _logger.LogError(errMessage);
+                _logger.LogError(ex.ToString());
+            });
 
             // return document
             FileContentResult result = new FileContentResult(document, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
@@ -775,7 +794,10 @@ namespace HetsApi.Controllers
                     {
                         _logger.LogInformation("Owner Mailing Labels Pdf - HETS Pdf Service Response: OK");
 
-                        var pdfResponseBytes = GetPdf(response);
+                        var pdfResponseBytes = GetPdf(response, (errMessage, ex) => {
+                            _logger.LogError(errMessage);
+                            _logger.LogError(ex.ToString());
+                        });
 
                         // convert to string and log
                         string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
@@ -812,7 +834,7 @@ namespace HetsApi.Controllers
             return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
         }
 
-        private static byte[] GetPdf(HttpResponseMessage response)
+        private static byte[] GetPdf(HttpResponseMessage response, Action<string, Exception> logErrorAction)
         {
             try
             {
@@ -823,7 +845,8 @@ namespace HetsApi.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                
+                logErrorAction("GetPdf exception: ", e);
                 throw;
             }
         }
@@ -864,7 +887,10 @@ namespace HetsApi.Controllers
             }
 
             var fileName = $"MailingLabels-{DateTime.Now:yyyy-MM-dd-H-mm}.docx";
-            var file = MailingLabel.GetMailingLabel(owners);
+            var file = MailingLabel.GetMailingLabel(owners, (errMessage, ex) => {
+                _logger.LogError(errMessage);
+                _logger.LogError(ex.ToString());
+            });
 
             FileContentResult result = new FileContentResult(file, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             {
@@ -1209,7 +1235,10 @@ namespace HetsApi.Controllers
                     districtEquipmentTypes.Add(districtEquipmentTypeId);
 
                     // recalculate seniority
-                    EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration);
+                    EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration, (errMessage, ex) => {
+                        _logger.LogError(errMessage);
+                        _logger.LogError(ex.ToString());
+                    });
                 }
             }
 

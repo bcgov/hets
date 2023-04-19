@@ -13,6 +13,8 @@ using HetsData.Entities;
 using HetsData.Hangfire;
 using AutoMapper;
 using HetsData.Dtos;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace HetsApi.Controllers
 {
@@ -26,12 +28,14 @@ namespace HetsApi.Controllers
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+        private readonly ILogger<DistrictEquipmentTypeController> _logger;
 
-        public DistrictEquipmentTypeController(DbAppContext context, IConfiguration configuration, IMapper mapper)
+        public DistrictEquipmentTypeController(DbAppContext context, IConfiguration configuration, IMapper mapper, ILogger<DistrictEquipmentTypeController> logger)
         {
             _context = context;
             _configuration = configuration;
             _mapper = mapper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -271,7 +275,12 @@ namespace HetsApi.Controllers
 
                     foreach (HetLocalArea localArea in localAreas)
                     {
-                        EquipmentHelper.RecalculateSeniority(localArea.LocalAreaId, equipment.DistrictEquipmentTypeId, _context, seniorityScoringRules);
+                        EquipmentHelper.RecalculateSeniority(
+                            localArea.LocalAreaId, equipment.DistrictEquipmentTypeId, _context, seniorityScoringRules, 
+                            (errMessage, ex) => {
+                                _logger.LogError(errMessage);
+                                _logger.LogError(ex.ToString());
+                            });
                     }
                 }
             }
@@ -316,8 +325,20 @@ namespace HetsApi.Controllers
             IConfigurationSection scoringRules = _configuration.GetSection("SeniorityScoringRules");
             string seniorityScoringRules = GetConfigJson(scoringRules);
 
+            Action<string> logInfoAction = (msg) => {
+                _logger.LogInformation(msg);
+            };
+
+            Action<string, Exception> logErrorAction = (errMessage, ex) => {
+                _logger.LogError(errMessage);
+                _logger.LogError(ex.ToString());
+            };
+
             // queue the job
-            BackgroundJob.Enqueue<DistrictEquipmentTypesMerger>(x => x.MergeDistrictEquipmentTypes(seniorityScoringRules));
+            BackgroundJob.Enqueue<DistrictEquipmentTypesMerger>(x => x.MergeDistrictEquipmentTypes(
+                seniorityScoringRules, 
+                logInfoAction,
+                logErrorAction));
 
             // return ok
             return new ObjectResult(new HetsResponse("Merge job added to hangfire"));
