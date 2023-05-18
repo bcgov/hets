@@ -304,13 +304,13 @@ namespace HetsData.Helpers
         /// </summary>
         /// <param name="item"></param>
         /// <param name="configuration"></param>
-        public static int GetNumberOfBlocks(HetEquipment item, IConfiguration configuration)
+        public static int GetNumberOfBlocks(HetEquipment item, IConfiguration configuration, Action<string, Exception> logErrorAction)
         {
             int numberOfBlocks = -1;
 
             try
             {
-                SeniorityScoringRules scoringRules = new SeniorityScoringRules(configuration);
+                SeniorityScoringRules scoringRules = new SeniorityScoringRules(configuration, logErrorAction);
 
                 numberOfBlocks = item.DistrictEquipmentType.EquipmentType.IsDumpTruck ?
                     scoringRules.GetTotalBlocks("DumpTruck") + 1 : scoringRules.GetTotalBlocks() + 1;
@@ -388,19 +388,19 @@ namespace HetsData.Helpers
         /// Recalculates seniority for a specific local area and equipment type
         /// </summary>
         public static void RecalculateSeniority(int? localAreaId, int? districtEquipmentTypeId,
-            DbAppContext context, IConfiguration configuration, HetEquipment changedEquipment = null)
+            DbAppContext context, IConfiguration configuration, Action<string, Exception> logErrorAction, HetEquipment changedEquipment = null)
         {
             IConfigurationSection scoringRules = configuration.GetSection("SeniorityScoringRules");
             string seniorityScoringRules = GetConfigJson(scoringRules);
 
-            RecalculateSeniority(localAreaId, districtEquipmentTypeId, context, seniorityScoringRules, changedEquipment);
+            RecalculateSeniority(localAreaId, districtEquipmentTypeId, context, seniorityScoringRules, logErrorAction, changedEquipment);
         }
 
         /// <summary>
         /// Recalculates seniority for a specific local area and equipment type
         /// </summary>
         public static void RecalculateSeniority(int? localAreaId, int? districtEquipmentTypeId,
-            DbAppContext context, string seniorityScoringRules, HetEquipment changedEquipment = null)
+            DbAppContext context, string seniorityScoringRules, Action<string, Exception> logErrorAction, HetEquipment changedEquipment = null)
         {
             // check if the local area exists
             bool exists = context.HetLocalAreas.Any(a => a.LocalAreaId == localAreaId);
@@ -426,7 +426,9 @@ namespace HetsData.Helpers
             SeniorityListHelper.CalculateSeniorityList(localArea.LocalAreaId,
                 districtEquipmentType.DistrictEquipmentTypeId,
                 context,
-                seniorityScoringRules, changedEquipment);
+                seniorityScoringRules, 
+                logErrorAction, 
+                changedEquipment);
         }
 
         #endregion

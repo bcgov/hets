@@ -16,7 +16,7 @@ namespace HetsReport
     {
         private const string ResourceName = "HetsReport.Templates.RentalAgreement-Template.docx";
 
-        public static byte[] GetRentalAgreement(RentalAgreementDocViewModel reportModel, string name)
+        public static byte[] GetRentalAgreement(RentalAgreementDocViewModel reportModel, string name, Action<string, Exception> logErrorAction)
         {
             try
             {
@@ -220,7 +220,7 @@ namespace HetsReport
                     // secure & return completed document
                     // ******************************************************
                     wordDocument.CompressionOption = CompressionOption.Maximum;
-                    SecurityHelper.PasswordProtect(wordDocument);
+                    SecurityHelper.PasswordProtect(wordDocument, logErrorAction);
 
                     wordDocument.Close();
                     wordDocument.Dispose();
@@ -233,7 +233,7 @@ namespace HetsReport
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logErrorAction("GetRentalAgreement exception: ", e);
                 throw;
             }
         }

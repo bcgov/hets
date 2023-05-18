@@ -110,6 +110,9 @@ objects:
                   mountPath: "/uploads"
                 - name: "${NAME}${SUFFIX}-${NAME}-reports"
                   mountPath: "/reports"
+                - name: ${NAME}${SUFFIX}-config-volume
+                  mountPath: /opt/app-root/configmap
+                  readOnly: true
           volumes:
             - name: "${NAME}${SUFFIX}-${NAME}-docs"
               persistentVolumeClaim:
@@ -117,6 +120,10 @@ objects:
             - name: "${NAME}${SUFFIX}-${NAME}-reports"
               persistentVolumeClaim:
                 claimName: "${NAME}${SUFFIX}-${PERSISTENT_VOLUME_NAME_REPORTS}"
+            - name: ${NAME}${SUFFIX}-config-volume
+              configMap:
+                defaultMode: 420
+                name: api-appsettings-${ENV}
       test: false
       triggers:
         - imageChangeParams:

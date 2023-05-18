@@ -11,7 +11,7 @@ namespace HetsReport.Helpers
     {
         private const string DevPassword = "gIwE`Ed5Aep8@Zqrx$+h";
 
-        public static void PasswordProtect(WordprocessingDocument wordDocument)
+        public static void PasswordProtect(WordprocessingDocument wordDocument, Action<string, Exception> logErrorAction)
         {
             try
             {
@@ -163,7 +163,7 @@ namespace HetsReport.Helpers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logErrorAction("PasswordProtect exception: ", e);
                 throw;
             }
         }

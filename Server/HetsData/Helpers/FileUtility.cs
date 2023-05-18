@@ -5,7 +5,7 @@ namespace HetsData.Helpers
 {
     public static class FileUtility
     {
-        public static bool ByteArrayToFile(string folder, string fileName, byte[] byteArray)
+        public static bool ByteArrayToFile(string folder, string fileName, byte[] byteArray, Action<string, Exception> logErrorAction)
         {
             try
             {
@@ -24,12 +24,12 @@ namespace HetsData.Helpers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logErrorAction($"ByteArrayToFile exception: ", e);
                 throw;
             }
         }
 
-        public static byte[] FileToByteArray(string fileName)
+        public static byte[] FileToByteArray(string fileName, Action<string, Exception> logErrorAction)
         {
             try
             {
@@ -45,12 +45,12 @@ namespace HetsData.Helpers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logErrorAction($"FileToByteArray exception: ", e);
                 throw;
             }
         }
 
-        public static void DeleteFile(string fileName)
+        public static void DeleteFile(string fileName, Action<string, Exception> logErrorAction)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace HetsData.Helpers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logErrorAction($"DeleteFile exception: ", e);
                 throw;
             }
         }

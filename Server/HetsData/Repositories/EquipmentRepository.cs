@@ -10,6 +10,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace HetsData.Repositories
 {
@@ -24,12 +25,14 @@ namespace HetsData.Repositories
         private IMapper _mapper;
         private DbAppContext _dbContext;
         private IConfiguration _configuration;
+        private readonly ILogger<EquipmentRepository> _logger;
 
-        public EquipmentRepository(DbAppContext dbContext, IMapper mapper, IConfiguration configuration)
+        public EquipmentRepository(DbAppContext dbContext, IMapper mapper, IConfiguration configuration, ILogger<EquipmentRepository> logger)
         {
             _mapper = mapper;
             _dbContext = dbContext;
             _configuration = configuration;
+            _logger = logger;
         }
 
         /// <summary>
@@ -59,7 +62,10 @@ namespace HetsData.Repositories
             if (equipment != null)
             {
                 equipment.IsHired = EquipmentHelper.IsHired(equipmentId, _dbContext);
-                equipment.NumberOfBlocks = EquipmentHelper.GetNumberOfBlocks(equipment, _configuration);
+                equipment.NumberOfBlocks = EquipmentHelper.GetNumberOfBlocks(equipment, _configuration, (errMessage, ex) => {
+                    _logger.LogError(errMessage);
+                    _logger.LogError(ex.ToString());
+                });
                 equipment.HoursYtd = EquipmentHelper.GetYtdServiceHours(equipmentId, _dbContext);
                 equipment.Status = equipment.EquipmentStatusType.EquipmentStatusTypeCode;
 

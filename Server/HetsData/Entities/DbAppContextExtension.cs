@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.Logging;
 
 namespace HetsData.Entities
 {
@@ -49,7 +50,7 @@ namespace HetsData.Entities
                 }                
             }
 
-            Debug.WriteLine("Saving Import Data. Total Entries: " + records);
+            _logger.LogInformation($"Saving Import Data. Total Entries: {records}");
 
             int result;
 
@@ -59,7 +60,7 @@ namespace HetsData.Entities
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.LogError($"SaveChangesForImport exception: {e.ToString()}");
 
                 // e.InnerException.Message	"20180: Concurrency Failure 5"	string
                 if (e.InnerException != null &&
@@ -166,7 +167,7 @@ namespace HetsData.Entities
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.LogError($"SaveChanges exception: {e.ToString()}");
 
                 // e.InnerException.Message	"20180: Concurrency Failure 5"	string
                 if (e.InnerException != null &&

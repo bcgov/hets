@@ -114,7 +114,10 @@ namespace HetsImport.Import
                 // ************************************************************
                 // get processing rules
                 // ************************************************************
-                SeniorityScoringRules scoringRules = new SeniorityScoringRules(seniorityScoringRules);
+                SeniorityScoringRules scoringRules = new SeniorityScoringRules(seniorityScoringRules, (errMessage, ex) => {
+                    performContext.WriteLine(errMessage);
+                    performContext.WriteLine(ex.ToString());
+                });
 
                 // ************************************************************
                 // get all local areas 
@@ -162,7 +165,13 @@ namespace HetsImport.Import
                         int totalBlocks = equipmentTypeRecord.IsDumpTruck ? scoringRules.GetTotalBlocks("DumpTruck") : scoringRules.GetTotalBlocks();
 
                         // assign blocks
-                        SeniorityListHelper.AssignBlocks(localArea.LocalAreaId, districtEquipmentType.DistrictEquipmentTypeId, blockSize, totalBlocks, dbContext, false);
+                        SeniorityListHelper.AssignBlocks(
+                            localArea.LocalAreaId, districtEquipmentType.DistrictEquipmentTypeId, blockSize, totalBlocks, dbContext, 
+                            (errMessage, ex) => {
+                                performContext.WriteLine(errMessage);
+                                performContext.WriteLine(ex.ToString());
+                            },
+                            null);
 
                         // save change to database
                         if (ii++ % 100 == 0)

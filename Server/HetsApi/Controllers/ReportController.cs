@@ -10,6 +10,7 @@ using HetsData.Entities;
 using Microsoft.EntityFrameworkCore;
 using HetsData.Dtos;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 
 namespace HetsApi.Controllers
 {
@@ -23,12 +24,14 @@ namespace HetsApi.Controllers
         private readonly DbAppContext _context;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+        private readonly ILogger<ReportController> _logger;
 
-        public ReportController(DbAppContext context, IConfiguration configuration, IMapper mapper)
+        public ReportController(DbAppContext context, IConfiguration configuration, IMapper mapper, ILogger<ReportController> logger)
         {
             _context = context;
             _configuration = configuration;
             _mapper = mapper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -79,7 +82,10 @@ namespace HetsApi.Controllers
                 _context.HetBatchReports.Remove(report);
 
                 // delete file
-                FileUtility.DeleteFile(report.ReportLink);
+                FileUtility.DeleteFile(report.ReportLink, (errMessage, ex) => {
+                    _logger.LogError(errMessage);
+                    _logger.LogError(ex.ToString());
+                });
 
                 // save the changes
                 _context.SaveChanges();
@@ -108,7 +114,10 @@ namespace HetsApi.Controllers
             string reportName = report.ReportName + ".pdf";
 
             // get binary
-            byte[] reportBinary = FileUtility.FileToByteArray(report.ReportLink);
+            byte[] reportBinary = FileUtility.FileToByteArray(report.ReportLink, (errMessage, ex) => {
+                _logger.LogError(errMessage);
+                _logger.LogError(ex.ToString());
+            });
            
             // return content
             FileContentResult result = new FileContentResult(reportBinary, "application/pdf")

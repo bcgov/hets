@@ -280,3 +280,6 @@ __pycache__/
 
 *.DotSettings
 *.DotSettings.user
+
+# Override .s2i/bin
+!.s2i/bin

@@ -15,7 +15,7 @@ namespace HetsReport
         private const string ResourceName = "HetsReport.Templates.MailingLabel-Template.docx";
         private const double CentimeterToPoint = 28.3464566929134;
 
-        public static byte[] GetMailingLabel(List<HetOwner> owners)
+        public static byte[] GetMailingLabel(List<HetOwner> owners, Action<string, Exception> logErrorAction)
         {
             try
             {
@@ -34,12 +34,12 @@ namespace HetsReport
                         if (tableParagraph != null)
                         {
                             Run run = tableParagraph.AppendChild(new Run());
-                            run.AppendChild(CreateMailingLabels(owners));
+                            run.AppendChild(CreateMailingLabels(owners, logErrorAction));
                         }
 
                         labelDoc.Save();
                         labelDoc.CompressionOption = CompressionOption.Maximum;
-                        SecurityHelper.PasswordProtect(labelDoc);
+                        SecurityHelper.PasswordProtect(labelDoc, logErrorAction);
 
                         byteArray = GetByteArray(labelDoc);
                     }
@@ -49,7 +49,7 @@ namespace HetsReport
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logErrorAction("GetMailingLabel exception: ", e);
                 throw;
             }
         }
@@ -99,7 +99,7 @@ namespace HetsReport
             return null;
         }
 
-        private static Table CreateMailingLabels(List<HetOwner> owners)
+        private static Table CreateMailingLabels(List<HetOwner> owners, Action<string, Exception> logErrorAction)
         {
 
             try
@@ -135,8 +135,8 @@ namespace HetsReport
                     rowProps.AppendChild(new TableRowHeight { Val = CentimeterToDxa(5.08), HeightType = HeightRuleValues.Exact }); 
                     tableRow.AppendChild(rowProps);
 
-                    tableRow.AppendChild(SetupCell(ownerTuple.Item1, 10.16, 0.27));
-                    tableRow.AppendChild(SetupCell(ownerTuple.Item2, 10.16, 0.75)); //to add 0.48 cm
+                    tableRow.AppendChild(SetupCell(ownerTuple.Item1, 10.16, 0.27, logErrorAction));
+                    tableRow.AppendChild(SetupCell(ownerTuple.Item2, 10.16, 0.75, logErrorAction)); //to add 0.48 cm
 
                     table.AppendChild(tableRow);
                 }
@@ -145,7 +145,7 @@ namespace HetsReport
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logErrorAction("CreateMailingLabels exception: ", e);
                 throw;
             }
         }
@@ -165,7 +165,7 @@ namespace HetsReport
         }
 
 
-        private static TableCell SetupCell(HetOwner owner, double widthInCm, double start)
+        private static TableCell SetupCell(HetOwner owner, double widthInCm, double start, Action<string, Exception> logErrorAction)
         {
             try
             {
@@ -201,7 +201,7 @@ namespace HetsReport
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logErrorAction("SetupCell exception: ", e);
                 throw;
             }
         }

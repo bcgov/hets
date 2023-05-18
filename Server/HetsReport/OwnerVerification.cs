@@ -18,7 +18,7 @@ namespace HetsReport
     {
         private const string ResourceName = "HetsReport.Templates.OwnerVerification-Template.docx";
 
-        public static byte[] GetOwnerVerification(OwnerVerificationReportModel reportModel, string name)
+        public static byte[] GetOwnerVerification(OwnerVerificationReportModel reportModel, string name, Action<string, Exception> logErrorAction)
         {
             try
             {
@@ -136,7 +136,7 @@ namespace HetsReport
                                 ownerDocument.MainDocumentPart.Document.Save();
 
                                 // setup table for equipment data
-                                Table equipmentTable = GenerateEquipmentTable(owner.Equipment);
+                                Table equipmentTable = GenerateEquipmentTable(owner.Equipment, logErrorAction);
                                 Paragraph tableParagraph = null;
                                 found = false;
 
@@ -275,7 +275,7 @@ namespace HetsReport
                     // secure & return completed document
                     // ******************************************************
                     wordDocument.CompressionOption = CompressionOption.Maximum;
-                    SecurityHelper.PasswordProtect(wordDocument);
+                    SecurityHelper.PasswordProtect(wordDocument, logErrorAction);
 
                     wordDocument.Close();
                     wordDocument.Dispose();
@@ -288,12 +288,12 @@ namespace HetsReport
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logErrorAction("GetOwnerVerification exception: ", e);
                 throw;
             }
         }
 
-        private static Table GenerateEquipmentTable(IEnumerable<EquipmentDto> equipmentList)
+        private static Table GenerateEquipmentTable(IEnumerable<EquipmentDto> equipmentList, Action<string, Exception> logErrorAction)
         {
             try
             {
@@ -342,31 +342,31 @@ namespace HetsReport
 
                 GridColumn gc1 = new GridColumn { Width = col1Width };
                 tableRow1.AppendChild(gc1);
-                tableRow1.AppendChild(SetupHeaderCell(new string[] { "Still own /", "Re-register?" }, col1Width, true));
+                tableRow1.AppendChild(SetupHeaderCell(new string[] { "Still own /", "Re-register?" }, col1Width, logErrorAction, true));
                 
                 GridColumn gc2 = new GridColumn { Width = col2Width };
                 tableRow1.AppendChild(gc2);
-                tableRow1.AppendChild(SetupHeaderCell("Local Area", col2Width, true));
+                tableRow1.AppendChild(SetupHeaderCell("Local Area", col2Width, logErrorAction, true));
 
                 GridColumn gc3 = new GridColumn { Width = col3Width };
                 tableRow1.AppendChild(gc3);
-                tableRow1.AppendChild(SetupHeaderCell("Equipment Id", col3Width, true));
+                tableRow1.AppendChild(SetupHeaderCell("Equipment Id", col3Width, logErrorAction, true));
 
                 GridColumn gc4 = new GridColumn { Width = col4Width };
                 tableRow1.AppendChild(gc4);
-                tableRow1.AppendChild(SetupHeaderCell("Equipment Type", col4Width));
+                tableRow1.AppendChild(SetupHeaderCell("Equipment Type", col4Width, logErrorAction));
 
                 GridColumn gc5 = new GridColumn { Width = col5Width };
                 tableRow1.AppendChild(gc5);
-                tableRow1.AppendChild(SetupHeaderCell("Year/Make/Model/Serial Number/Size", col5Width));
+                tableRow1.AppendChild(SetupHeaderCell("Year/Make/Model/Serial Number/Size", col5Width, logErrorAction));
 
                 GridColumn gc6 = new GridColumn { Width = col6Width };
                 tableRow1.AppendChild(gc6);
-                tableRow1.AppendChild(SetupHeaderCell("Attachments", col6Width));
+                tableRow1.AppendChild(SetupHeaderCell("Attachments", col6Width, logErrorAction));
 
                 GridColumn gc7 = new GridColumn { Width = col7Width };
                 tableRow1.AppendChild(gc7);
-                tableRow1.AppendChild(SetupHeaderCell("Owner Comments (sold, retired, etc.)", col7Width, true));
+                tableRow1.AppendChild(SetupHeaderCell("Owner Comments (sold, retired, etc.)", col7Width, logErrorAction, true));
 
                 table.AppendChild(tableRow1);
 
@@ -380,13 +380,13 @@ namespace HetsReport
                     tableRowEquipment.AppendChild(equipmentRowProperties);
 
                     // add equipment data
-                    tableRowEquipment.AppendChild(SetupCell("Yes   No", col1Width, true));
-                    tableRowEquipment.AppendChild(SetupCell(equipment.LocalArea.Name, col2Width, true));
-                    tableRowEquipment.AppendChild(SetupCell(equipment.EquipmentCode, col3Width, true));
-                    tableRowEquipment.AppendChild(SetupCell(equipment.DistrictEquipmentType.DistrictEquipmentName, col4Width));
+                    tableRowEquipment.AppendChild(SetupCell("Yes   No", col1Width, logErrorAction, true));
+                    tableRowEquipment.AppendChild(SetupCell(equipment.LocalArea.Name, col2Width, logErrorAction, true));
+                    tableRowEquipment.AppendChild(SetupCell(equipment.EquipmentCode, col3Width, logErrorAction, true));
+                    tableRowEquipment.AppendChild(SetupCell(equipment.DistrictEquipmentType.DistrictEquipmentName, col4Width, logErrorAction));
 
                     string temp = $"{equipment.Year} / {equipment.Make} / {equipment.Model} / {equipment.SerialNumber} / {equipment.Size}";
-                    tableRowEquipment.AppendChild(SetupCell(temp, col5Width));
+                    tableRowEquipment.AppendChild(SetupCell(temp, col5Width, logErrorAction));
 
                     // attachments list
                     temp = "";
@@ -400,10 +400,10 @@ namespace HetsReport
 
                         row++;
                     }
-                    tableRowEquipment.AppendChild(SetupCell(temp, col6Width));
+                    tableRowEquipment.AppendChild(SetupCell(temp, col6Width, logErrorAction));
 
                     // last column (blank)
-                    tableRowEquipment.AppendChild(SetupCell("", col7Width));
+                    tableRowEquipment.AppendChild(SetupCell("", col7Width, logErrorAction));
 
                     table.AppendChild(tableRowEquipment);
                 }
@@ -412,17 +412,17 @@ namespace HetsReport
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logErrorAction("GenerateEquipmentTable exception: ", e);
                 throw;
             }
         }
 
-        private static TableCell SetupHeaderCell(string text, string width, bool center = false)
+        private static TableCell SetupHeaderCell(string text, string width, Action<string, Exception> logErrorAction, bool center = false)
         {
-            return SetupHeaderCell(new string[] { text }, width, center);
+            return SetupHeaderCell(new string[] { text }, width, logErrorAction, center);
         }
 
-        private static TableCell SetupHeaderCell(string[] texts, string width, bool center = false)
+        private static TableCell SetupHeaderCell(string[] texts, string width, Action<string, Exception> logErrorAction, bool center = false)
         {
             try
             {
@@ -471,7 +471,7 @@ namespace HetsReport
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logErrorAction("SetupHeaderCell exception: ", e);
                 throw;
             }
         }
@@ -500,7 +500,7 @@ namespace HetsReport
             return paragraph;
         }
 
-        private static TableCell SetupCell(string text, string width, bool center = false)
+        private static TableCell SetupCell(string text, string width, Action<string, Exception> logErrorAction, bool center = false)
         {
             try
             {
@@ -562,7 +562,7 @@ namespace HetsReport
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logErrorAction("SetupCell exception: ", e);
                 throw;
             }
         }

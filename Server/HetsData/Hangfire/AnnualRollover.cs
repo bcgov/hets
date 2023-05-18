@@ -88,7 +88,10 @@ namespace HetsData.Hangfire
                 var rolloverYear = FiscalHelper.GetCurrentFiscalStartYear();
 
                 // get processing rules
-                SeniorityScoringRules scoringRules = new SeniorityScoringRules(seniorityScoringRules);
+                SeniorityScoringRules scoringRules = new SeniorityScoringRules(seniorityScoringRules, (errMessage, ex) => {
+                    _logger.LogError(errMessage);
+                    _logger.LogError(ex.ToString());
+                });
 
                 // validate district id
                 HetDistrict district = _dbContextMain.HetDistricts
@@ -197,7 +200,12 @@ namespace HetsData.Hangfire
                         int localAreaId = localArea.LocalAreaId;
                         int equipmentTypeId = equipmentType.DistrictEquipmentTypeId;
 
-                        SeniorityListHelper.AssignBlocks(localAreaId, equipmentTypeId, blockSize, totalBlocks, _dbContextMain);
+                        SeniorityListHelper.AssignBlocks(
+                            localAreaId, equipmentTypeId, blockSize, totalBlocks, _dbContextMain, 
+                            (errMessage, ex) => {
+                                _logger.LogError(errMessage);
+                                _logger.LogError(ex.ToString());
+                            });
 
                         // increment counters and update status
                         equipmentCompleteCount++;
@@ -258,7 +266,7 @@ namespace HetsData.Hangfire
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.LogError($"AnnualRolloverJob exception: {e.ToString()}");
                 throw;
             }
         }
@@ -299,7 +307,7 @@ namespace HetsData.Hangfire
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.LogError($"UpdateProgress exception: {e.ToString()}");
                 throw;
             }
         }
@@ -326,7 +334,7 @@ namespace HetsData.Hangfire
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.LogError($"KickoffProgress exception: {e.ToString()}");
                 throw;
             }
         }

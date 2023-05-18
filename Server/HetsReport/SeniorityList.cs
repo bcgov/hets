@@ -16,7 +16,7 @@ namespace HetsReport
     {
         private const string ResourceName = "HetsReport.Templates.SeniorityList-Template.docx";
 
-        public static byte[] GetSeniorityList(SeniorityListReportViewModel reportModel, string name, bool counterCopy)
+        public static byte[] GetSeniorityList(SeniorityListReportViewModel reportModel, string name, bool counterCopy, Action<string, Exception> logErrorAction)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace HetsReport
                                 listDocument.MainDocumentPart.Document.Save();
 
                                 // setup table for seniority list
-                                Table seniorityTable = GenerateSeniorityTable(seniorityList.SeniorityList, seniorityList, counterCopy);
+                                Table seniorityTable = GenerateSeniorityTable(seniorityList.SeniorityList, seniorityList, counterCopy, logErrorAction);
 
                                 // find our paragraph
                                 Paragraph tableParagraph = null;
@@ -203,7 +203,7 @@ namespace HetsReport
                     // secure & return completed document
                     // ******************************************************
                     wordDocument.CompressionOption = CompressionOption.Maximum;
-                    SecurityHelper.PasswordProtect(wordDocument);
+                    SecurityHelper.PasswordProtect(wordDocument, logErrorAction);
 
                     wordDocument.Close();
                     wordDocument.Dispose();
@@ -216,12 +216,13 @@ namespace HetsReport
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logErrorAction("GetSeniorityList exception: ", e);
                 throw;
             }
         }
 
-        private static Table GenerateSeniorityTable(IEnumerable<SeniorityViewModel> seniorityList, SeniorityListRecord seniorityRecord, bool counterCopy)
+        private static Table GenerateSeniorityTable(
+            IEnumerable<SeniorityViewModel> seniorityList, SeniorityListRecord seniorityRecord, bool counterCopy, Action<string, Exception> logErrorAction)
         {
             try
             {
@@ -260,23 +261,23 @@ namespace HetsReport
                 tableRow1.AppendChild(rowProperties);
 
                 // add columns
-                tableRow1.AppendChild(SetupHeaderCell("Block", "800", true));
-                tableRow1.AppendChild(SetupHeaderCell("Equip ID", "1000"));
+                tableRow1.AppendChild(SetupHeaderCell("Block", "800", logErrorAction, true));
+                tableRow1.AppendChild(SetupHeaderCell("Equip ID", "1000", logErrorAction));
 
                 if (!counterCopy)
                 {
-                    tableRow1.AppendChild(SetupHeaderCell("Working Now", "850", true));
-                    tableRow1.AppendChild(SetupHeaderCell("Last Called", "850", true));
+                    tableRow1.AppendChild(SetupHeaderCell("Working Now", "850", logErrorAction, true));
+                    tableRow1.AppendChild(SetupHeaderCell("Last Called", "850", logErrorAction, true));
                 }
 
-                tableRow1.AppendChild(SetupHeaderCell("Company Name", "3000"));
-                tableRow1.AppendChild(SetupHeaderCell("Year/Make/Model/Size", "3000"));
-                tableRow1.AppendChild(SetupHeaderCell("YTD", "1000", true));
-                tableRow1.AppendChild(SetupHeaderCell(seniorityRecord.YearMinus1, "1000", true));
-                tableRow1.AppendChild(SetupHeaderCell(seniorityRecord.YearMinus2, "1000", true));
-                tableRow1.AppendChild(SetupHeaderCell(seniorityRecord.YearMinus3, "1000", true));
-                tableRow1.AppendChild(SetupHeaderCell("Yrs Reg", "1000", true));
-                tableRow1.AppendChild(SetupHeaderCell("Seniority", "1000", true));
+                tableRow1.AppendChild(SetupHeaderCell("Company Name", "3000", logErrorAction));
+                tableRow1.AppendChild(SetupHeaderCell("Year/Make/Model/Size", "3000", logErrorAction));
+                tableRow1.AppendChild(SetupHeaderCell("YTD", "1000", logErrorAction, true));
+                tableRow1.AppendChild(SetupHeaderCell(seniorityRecord.YearMinus1, "1000", logErrorAction, true));
+                tableRow1.AppendChild(SetupHeaderCell(seniorityRecord.YearMinus2, "1000", logErrorAction, true));
+                tableRow1.AppendChild(SetupHeaderCell(seniorityRecord.YearMinus3, "1000", logErrorAction, true));
+                tableRow1.AppendChild(SetupHeaderCell("Yrs Reg", "1000", logErrorAction, true));
+                tableRow1.AppendChild(SetupHeaderCell("Seniority", "1000", logErrorAction, true));
 
                 table.AppendChild(tableRow1);
 
@@ -288,23 +289,23 @@ namespace HetsReport
                     //if block changes add an empty row first
                     if (!prevBlock.Equals(seniority.Block))
                     {
-                        table.AppendChild(createTableRow(new SeniorityViewModel(), counterCopy));
+                        table.AppendChild(createTableRow(new SeniorityViewModel(), counterCopy, logErrorAction));
                         prevBlock = seniority.Block;
                     }
 
-                    table.AppendChild(createTableRow(seniority, counterCopy));
+                    table.AppendChild(createTableRow(seniority, counterCopy, logErrorAction));
                 }
 
                 return table;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logErrorAction("GenerateSeniorityTable exception: ", e);
                 throw;
             }
         }
 
-        private static TableRow createTableRow(SeniorityViewModel seniority, bool counterCopy)
+        private static TableRow createTableRow(SeniorityViewModel seniority, bool counterCopy, Action<string, Exception> logErrorAction)
         {
             //Tip: To create an empty row pass in "new SeniorityViewModel()" as an argument
             TableRow tableRowEquipment = new TableRow();
@@ -314,28 +315,28 @@ namespace HetsReport
             tableRowEquipment.AppendChild(equipmentRowProperties);
 
             // add equipment data
-            tableRowEquipment.AppendChild(SetupCell(seniority.Block, true));
-            tableRowEquipment.AppendChild(SetupCell(seniority.EquipmentCode));
+            tableRowEquipment.AppendChild(SetupCell(seniority.Block, logErrorAction, true));
+            tableRowEquipment.AppendChild(SetupCell(seniority.EquipmentCode, logErrorAction));
 
             if (!counterCopy)
             {
-                tableRowEquipment.AppendChild(SetupCell(seniority.IsHired, true));
-                tableRowEquipment.AppendChild(SetupCell(seniority.LastCalled, true));
+                tableRowEquipment.AppendChild(SetupCell(seniority.IsHired, logErrorAction, true));
+                tableRowEquipment.AppendChild(SetupCell(seniority.LastCalled, logErrorAction, true));
             }
 
-            tableRowEquipment.AppendChild(SetupCell(seniority.OwnerName));
-            tableRowEquipment.AppendChild(SetupCell(seniority.YearMakeModelSize));
-            tableRowEquipment.AppendChild(SetupCell(seniority.YtdHours, true));
-            tableRowEquipment.AppendChild(SetupCell(seniority.HoursYearMinus1, true));
-            tableRowEquipment.AppendChild(SetupCell(seniority.HoursYearMinus2, true));
-            tableRowEquipment.AppendChild(SetupCell(seniority.HoursYearMinus3, true));
-            tableRowEquipment.AppendChild(SetupCell(seniority.YearsRegistered, true));
-            tableRowEquipment.AppendChild(SetupCell(seniority.Seniority, true));
+            tableRowEquipment.AppendChild(SetupCell(seniority.OwnerName, logErrorAction));
+            tableRowEquipment.AppendChild(SetupCell(seniority.YearMakeModelSize, logErrorAction));
+            tableRowEquipment.AppendChild(SetupCell(seniority.YtdHours, logErrorAction, true));
+            tableRowEquipment.AppendChild(SetupCell(seniority.HoursYearMinus1, logErrorAction, true));
+            tableRowEquipment.AppendChild(SetupCell(seniority.HoursYearMinus2, logErrorAction, true));
+            tableRowEquipment.AppendChild(SetupCell(seniority.HoursYearMinus3, logErrorAction, true));
+            tableRowEquipment.AppendChild(SetupCell(seniority.YearsRegistered, logErrorAction, true));
+            tableRowEquipment.AppendChild(SetupCell(seniority.Seniority, logErrorAction, true));
 
             return tableRowEquipment;
         }
 
-        private static TableCell SetupHeaderCell(string text, string width, bool center = false)
+        private static TableCell SetupHeaderCell(string text, string width, Action<string, Exception> logErrorAction, bool center = false)
         {
             try
             {
@@ -395,12 +396,12 @@ namespace HetsReport
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logErrorAction("SetupHeaderCell exception: ", e);
                 throw;
             }
         }
 
-        private static TableCell SetupCell(string text, bool center = false)
+        private static TableCell SetupCell(string text, Action<string, Exception> logErrorAction, bool center = false)
         {
             try
             {
@@ -454,7 +455,7 @@ namespace HetsReport
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logErrorAction("SetupCell exception: ", e);
                 throw;
             }
         }

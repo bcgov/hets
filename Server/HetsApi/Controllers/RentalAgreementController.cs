@@ -366,7 +366,10 @@ namespace HetsApi.Controllers
 
             // convert to open xml document
             string documentName = $"{fileName}.docx";
-            byte[] document = RentalAgreement.GetRentalAgreement(reportModel, documentName);
+            byte[] document = RentalAgreement.GetRentalAgreement(reportModel, documentName, (errMessage, ex) => {
+                _logger.LogError(errMessage);
+                _logger.LogError(ex.ToString());
+            });
 
             // return document
             FileContentResult result = new FileContentResult(document, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")

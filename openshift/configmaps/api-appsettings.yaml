@@ -1,0 +1,178 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: "true"
+objects:
+  - apiVersion: v1
+    data:
+      appsettings.json: |-
+        {
+          "UpdateLocalDb": true,
+          "Constants": {
+            "HangfireUrl": "/hangfire",
+            "ErrorUrl": "/error",
+            "RentalAgreementPdfUrl": "/pdf/rentalAgreement",
+            "OwnerVerificationPdfUrl": "/pdf/ownerVerification",
+            "SeniorityListPdfUrl": "/pdf/seniorityList",
+            "OwnerMailingLabelsPdfUrl": "/pdf/ownerMailingLabels",
+            "SwaggerApiUrl": "/swagger/v1/swagger.json",
+            "LogoffUrl-Development": "https://logontest.gov.bc.ca/clp-cgi/logoff.cgi?returl=https://dev-hets.th.gov.bc.ca&retnow=1",
+            "LogoffUrl-Test": "https://logontest.gov.bc.ca/clp-cgi/logoff.cgi?returl=https://tst-hets.th.gov.bc.ca&retnow=1",
+            "LogoffUrl-Training": "https://logontest.gov.bc.ca/clp-cgi/logoff.cgi?returl=https://trn-hets.th.gov.bc.ca&retnow=1",
+            "LogoffUrl-UAT": "https://logontest.gov.bc.ca/clp-cgi/logoff.cgi?returl=https://uat-hets.th.gov.bc.ca&retnow=1",
+            "LogoffUrl-Production": "https://logon.gov.bc.ca/clp-cgi/logoff.cgi?returl=https://hets.th.gov.bc.ca&retnow=1",
+            "Version-Application": "Release 1.10.8.0",
+            "Version-Database": "Release 1.10.8.0",
+            "Maximum-Blank-Agreements": "3",
+            "ExceptionDescriptions": {
+              "HETS-01": "Record not found",
+              "HETS-02": "Record has been modified by another user",
+              "HETS-03": "Invalid Region",
+              "HETS-04": "Not data provided. Cannot create record",
+              "HETS-05": "Error generating rental agreement pdf document",
+              "HETS-06": "Rental Request is complete and cannot be updated",
+              "HETS-07": "Rental Request count cannot be less than equipment already hired",
+              "HETS-08": "Duplicate equipment already exists (Active equipment with the same Serial Number)",
+              "HETS-09": "Rental Agreements exist (cannot cancel request)",
+              "HETS-10": "Rental Request is complete (cannot cancel request)",
+              "HETS-11": "Rental Agreement to clone does not exist",
+              "HETS-12": "Rental Agreement is not active and cannot be updated",
+              "HETS-13": "Rental Agreement has existing time entry records and cannot be updated",
+              "HETS-14": "Owner verification array is empty. Cannot generate pdf document",
+              "HETS-15": "Error generating owner verification pdf document",
+              "HETS-16": "Owner verification district error (district is missing or owners are from different districts)",
+              "HETS-17": "User not provided. Cannot create or update record",
+              "HETS-18": "District not provided. Cannot create or update record",
+              "HETS-19": "Shared Key not provided. Cannot create Business to Owner relationship",
+              "HETS-20": "Invalid Shared Key or Postal Code. Cannot create Business to Owner relationship",
+              "HETS-21": "Invalid Shared Key. Owner already related to Business",
+              "HETS-22": "Postal Code not provided. Cannot create Business to Owner relationship",
+              "HETS-23": "Status Code not found",
+              "HETS-24": "Rate Period Type not found",
+              "HETS-25": "Rental Agreement must be In Progress. Cannot delete",
+              "HETS-26": "Rental Agreement must be in the User's District. Cannot delete",
+              "HETS-27": "Rental Agreement is already associated with a Rental Request. Cannot delete",
+              "HETS-28": "A rental request already exists for this area and equipment type",
+              "HETS-29": "The maximum number of blank rental agreements already exist for this district",
+              "HETS-30": "District Status not found",
+              "HETS-31": "Equipment transfer only can only happen between two owners in the same district",
+              "HETS-32": "Equipment transfer only can only happen between two active owners",
+              "HETS-33": "Invalid equipment record, cannot transfer between owners",
+              "HETS-34": "Equipment transfer only can only happen between two different owners",
+              "HETS-35": "No rental agreement found for this equipment and project",
+              "HETS-36": "No rental agreement found for the current fiscal year",
+              "HETS-37": "All equipment associated with this type must be Archived before it can be deleted",
+              "HETS-38": "An active or inactive account with this User Id already exists",
+              "HETS-39": "District Equipment Type has been deleted, equipment cannot be activated",
+              "HETS-40": "This owner has equipment that is part of an In Progress Rental Request. Release the list (finish hiring / delete) before making this change",
+              "HETS-41": "This equipment is part of an In Progress Rental Request. Release the list (finish hiring / delete) before making this change",
+              "HETS-42": "There is currently no equipment available to hire from this list",
+              "HETS-43": "Authorization failed",
+              "HETS-44": "Role record does not belong to user or one of the role records do not exist",
+              "HETS-45": "An active role already exists, cannot add a duplicate role",
+              "HETS-46": "Cannot create new user district because a duplicate entry was detected. Try editing the user's existing district.",
+              "HETS-47": "Cannot delete primary user district"
+            }
+          },
+          "SeniorityScoringRules": {
+            "EquipmentScore": {
+              "Default": 30,
+              "DumpTruck": 60
+            },
+            "BlockSize": {
+              "Default": 5,
+              "DumpTruck": 10
+            },
+            "TotalBlocks": {
+              "Default": 1,
+              "DumpTruck": 2
+            }
+          },
+          "MaximumHours": {
+            "Default": 300,
+            "DumpTruck": 600
+          },
+          "ConnectionStrings": {
+            "HETS": "Host=localhost;Username=postgres;Password=postgres;Database=hets;Port=9000;"
+          },
+          "JWT": {
+            "Authority": "https://dev.loginproxy.gov.bc.ca/auth/realms/<realmid>",
+            "Audience": "<app-id>"
+          },
+          "UploadPath": "D:\\Temp\\HETSUploads\\",
+          "ReportsPath": "D:\\Temp\\HETSReports\\",
+          "Serilog": {
+            "Using": ["Serilog.Sinks.PostgreSQL.Configuration"],
+            "MinimumLevel": {
+              "Default": "Information",
+              "Override": {
+                "Microsoft": "Warning",
+                "System": "Warning"
+              }
+            },
+            "WriteTo": [
+              {
+                "Name": "Async",
+                "Args": {
+                  "configure": [
+                    {
+                      "Name": "Console",
+                      "Args": {
+                        "outputTemplate": "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "Name": "PostgreSQL",
+                "Args": {
+                  "connectionString": "HETS",
+                  "tableName": "het_log",
+                  "needAutoCreateTable": true
+                }
+              }
+            ],
+            "Enrich": ["FromLogContext", "WithMachineName"]
+          },
+          "Columns": {
+            "message": "RenderedMessageColumnWriter",
+            "message_template": "MessageTemplateColumnWriter",
+            "level": {
+              "Name": "LevelColumnWriter",
+              "Args": {
+                "renderAsText": false
+              }
+            },
+            "timestamp": {
+              "Name": "TimestampColumnWriter",
+              "Args": {
+                "dbType": "Timestamp"
+              }
+            },
+            "exception": "ExceptionColumnWriter",
+            "log_event": "LogEventSerializedColumnWriter",
+            "props_test": {
+              "Name": "PropertiesColumnWriter",
+              "Args": { "dbType": "Json" }
+            },
+            "machine_name": {
+              "Name": "SinglePropertyColumnWriter",
+              "Args": {
+                "propertyName": "MachineName",
+                "writeMethod": "Raw"
+              }
+            }
+          }
+        }
+    kind: ConfigMap
+    metadata:
+      name: api-appsettings-${ENV}
+      labels:
+        shared: "true"
+parameters:
+  - description: Deployment environment (dev, test, uat, prod)
+    displayName: ENV
+    name: ENV
+    required: true
+    value: "dev"

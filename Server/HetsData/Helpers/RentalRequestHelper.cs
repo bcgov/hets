@@ -147,13 +147,13 @@ namespace HetsData.Helpers
         /// <param name="context"></param>
         /// <param name="configuration"></param>
         /// <returns></returns>
-        private static int GetNumberOfBlocks(HetRentalRequest item, DbAppContext context, IConfiguration configuration)
+        private static int GetNumberOfBlocks(HetRentalRequest item, DbAppContext context, IConfiguration configuration, Action<string, Exception> logErrorAction)
         {
             int numberOfBlocks = -1;
 
             try
             {
-                SeniorityScoringRules scoringRules = new SeniorityScoringRules(configuration);
+                SeniorityScoringRules scoringRules = new SeniorityScoringRules(configuration, logErrorAction);
 
                 // get record
                 HetDistrictEquipmentType equipment = context.HetDistrictEquipmentTypes.AsNoTracking()
@@ -183,7 +183,8 @@ namespace HetsData.Helpers
         /// <param name="request"></param>
         /// <param name="context"></param>
         /// <param name="configuration"></param>
-        public static HetRentalRequest CreateRotationList(HetRentalRequest request, DbAppContext context, IConfiguration configuration, IMapper mapper)
+        public static HetRentalRequest CreateRotationList(
+            HetRentalRequest request, DbAppContext context, IConfiguration configuration, IMapper mapper, Action<string, Exception> logErrorAction)
         {
             var hetRentalRequestRotationList = new List<HetRentalRequestRotationList>();
 
@@ -195,7 +196,7 @@ namespace HetsData.Helpers
             int currentSortOrder = 1;
 
             // get the number of blocks for this piece of equipment
-            int numberOfBlocks = GetNumberOfBlocks(request, context, configuration);
+            int numberOfBlocks = GetNumberOfBlocks(request, context, configuration, logErrorAction);
             numberOfBlocks = numberOfBlocks + 1;
 
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", context);
