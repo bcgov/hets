@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { ButtonGroup, Button, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
@@ -48,37 +49,34 @@ class NotesDialog extends React.Component {
     });
   };
 
-  onNoteAdded = (note) => {
-    this.props.saveNote(this.props.id, note).then((response) => {
-      this.props.getNotes(this.props.id);
-      this.setState({ notes: response });
-    });
+  onNoteAdded = async (note) => {
+    const response = await this.props.saveNote(this.props.id, note);
+    this.props.getNotes(this.props.id);
+    this.setState({ notes: response });
     this.closeNotesAddDialog();
   };
 
-  onNoteUpdated = (note) => {
+  onNoteUpdated = async (note) => {
     const noteId = note.id;
     const updatedNotes = this.state.notes.map((_note) => {
       return _note.id === noteId ? { ..._note, ...note } : _note;
     });
 
     this.setState({ notes: updatedNotes });
-    Api.updateNote(note).then(() => {
-      this.props.getNotes(this.props.id);
-    });
+    await this.props.dispatch(Api.updateNote(note));
+    this.props.getNotes(this.props.id);
     this.closeNotesAddDialog();
   };
 
-  deleteNote = (note) => {
+  deleteNote = async (note) => {
     const noteId = note.id;
     const updatedNotes = this.state.notes.filter((note) => {
       return note.id !== noteId;
     });
 
     this.setState({ notes: updatedNotes });
-    Api.deleteNote(note.id).then(() => {
-      this.props.getNotes(this.props.id);
-    });
+    await this.props.dispatch(Api.deleteNote(note.id));
+    this.props.getNotes(this.props.id);
   };
 
   editNote = (note) => {
@@ -94,7 +92,7 @@ class NotesDialog extends React.Component {
 
   render() {
     const notes = _.orderBy(this.state.notes, ['createDate'], ['desc']);
-    var headers = [{ field: 'date', title: 'Date' }, { field: 'note', title: 'Note' }, { field: 'blank' }];
+    const headers = [{ field: 'date', title: 'Date' }, { field: 'note', title: 'Note' }, { field: 'blank' }];
 
     const showNoNotesMessage = !notes || notes.length === 0;
 
@@ -139,4 +137,6 @@ class NotesDialog extends React.Component {
   }
 }
 
-export default NotesDialog;
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(null, mapDispatchToProps)(NotesDialog);

@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { Container, Row, Col } from 'react-bootstrap';
 import { FormControl, FormGroup, FormText, FormLabel } from 'react-bootstrap';
@@ -138,11 +139,12 @@ class SeniorityEditDialog extends React.Component {
     this.setState({ isSeniorityOverridden: true });
   };
 
-  formSubmitted = () => {
+  formSubmitted = async () => {
     if (this.isValid()) {
       if (this.didChange()) {
         this.setState({ isSaving: true });
 
+        const dispatch = this.props.dispatch;
         const equipment = {
           ...this.props.equipment,
           serviceHoursLastYear: (this.state.serviceHoursLastYear || 0).toFixed(2),
@@ -154,16 +156,13 @@ class SeniorityEditDialog extends React.Component {
           seniorityOverrideReason: this.state.seniorityOverrideReason,
         };
 
-        const promise = Api.updateEquipment(equipment);
-
-        promise.then(() => {
-          Log.equipmentSeniorityModified(this.props.equipment);
-          this.setState({ isSaving: false });
-          if (this.props.onSave) {
-            this.props.onSave();
-          }
-          this.props.onClose();
-        });
+        await dispatch(Api.updateEquipment(equipment));
+        await dispatch(Log.equipmentSeniorityModified(this.props.equipment));
+        this.setState({ isSaving: false });
+        if (this.props.onSave) {
+          this.props.onSave();
+        }
+        this.props.onClose();
       } else {
         this.props.onClose();
       }
@@ -294,4 +293,6 @@ class SeniorityEditDialog extends React.Component {
   }
 }
 
-export default SeniorityEditDialog;
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(null, mapDispatchToProps)(SeniorityEditDialog);

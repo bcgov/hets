@@ -10,7 +10,6 @@ import UsersEditDialog from './dialogs/UsersEditDialog.jsx';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
-import store from '../store';
 
 import AddButtonContainer from '../components/ui/AddButtonContainer.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
@@ -81,7 +80,7 @@ class Users extends React.Component {
   }
 
   fetch = () => {
-    Api.searchUsers(this.buildSearchParams());
+    this.props.dispatch(Api.searchUsers(this.buildSearchParams()));
   };
 
   search = (e) => {
@@ -97,14 +96,14 @@ class Users extends React.Component {
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
-      store.dispatch({ type: Action.UPDATE_USERS_SEARCH, users: this.state.search });
-      store.dispatch({ type: Action.CLEAR_USERS });
+      this.props.dispatch({ type: Action.UPDATE_USERS_SEARCH, users: this.state.search });
+      this.props.dispatch({ type: Action.CLEAR_USERS });
     });
   };
 
   updateSearchState = (state, callback) => {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } } }, () => {
-      store.dispatch({ type: Action.UPDATE_USERS_SEARCH, users: this.state.search });
+      this.props.dispatch({ type: Action.UPDATE_USERS_SEARCH, users: this.state.search });
       if (callback) {
         callback();
       }
@@ -113,7 +112,7 @@ class Users extends React.Component {
 
   updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
-      store.dispatch({ type: Action.UPDATE_USERS_UI, users: this.state.ui });
+      this.props.dispatch({ type: Action.UPDATE_USERS_UI, users: this.state.ui });
       if (callback) {
         callback();
       }
@@ -125,7 +124,7 @@ class Users extends React.Component {
   };
 
   delete = (user) => {
-    Api.deleteUser(user).then(() => {
+    this.props.dispatch(Api.deleteUser(user)).then(() => {
       this.fetch();
     });
   };
@@ -304,16 +303,16 @@ class Users extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    users: state.models.users,
-    user: state.models.user,
-    districts: state.lookups.districts,
-    favourites: state.models.favourites.user,
-    search: state.search.users,
-    ui: state.ui.users,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  users: state.models.users,
+  user: state.models.user,
+  districts: state.lookups.districts,
+  favourites: state.models.favourites.user,
+  search: state.search.users,
+  ui: state.ui.users,
+});
 
-export default connect(mapStateToProps)(Users);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(Users);

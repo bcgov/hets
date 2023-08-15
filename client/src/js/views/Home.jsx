@@ -7,7 +7,6 @@ import _ from 'lodash';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
-import store from '../store';
 
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
@@ -24,20 +23,20 @@ class Home extends React.Component {
   }
 
   fetch = () => {
-    Api.getSearchSummaryCounts();
+    this.props.dispatch(Api.getSearchSummaryCounts());
   };
 
   goToUnapprovedOwners = () => {
     var unapprovedStatus = Constant.OWNER_STATUS_CODE_PENDING;
 
     // update search parameters
-    store.dispatch({
+    this.props.dispatch({
       type: Action.UPDATE_OWNERS_SEARCH,
       owners: { statusCode: unapprovedStatus },
     });
 
     // perform search
-    Api.searchOwners({ status: unapprovedStatus });
+    this.props.dispatch(Api.searchOwners({ status: unapprovedStatus }));
 
     // navigate to search page
     this.props.history.push({ pathname: Constant.OWNERS_PATHNAME });
@@ -47,13 +46,13 @@ class Home extends React.Component {
     var unapprovedStatus = Constant.EQUIPMENT_STATUS_CODE_PENDING;
 
     // update search parameters
-    store.dispatch({
+    this.props.dispatch({
       type: Action.UPDATE_EQUIPMENT_LIST_SEARCH,
       equipmentList: { statusCode: Constant.EQUIPMENT_STATUS_CODE_PENDING },
     });
 
     // perform search
-    Api.searchEquipmentList({ status: unapprovedStatus });
+    this.props.dispatch(Api.searchEquipmentList({ status: unapprovedStatus }));
 
     // navigate to search page
     this.props.history.push({ pathname: Constant.EQUIPMENT_PATHNAME });
@@ -61,7 +60,7 @@ class Home extends React.Component {
 
   goToHiredEquipment = () => {
     // update search parameters
-    store.dispatch({
+    this.props.dispatch({
       type: Action.UPDATE_EQUIPMENT_LIST_SEARCH,
       equipmentList: {
         statusCode: Constant.EQUIPMENT_STATUS_CODE_APPROVED,
@@ -70,10 +69,10 @@ class Home extends React.Component {
     });
 
     // perform search
-    Api.searchEquipmentList({
+    this.props.dispatch(Api.searchEquipmentList({
       status: Constant.EQUIPMENT_STATUS_CODE_APPROVED,
       hired: true,
-    });
+    }));
 
     // navigate to search page
     this.props.history.push({ pathname: Constant.EQUIPMENT_PATHNAME });
@@ -81,7 +80,7 @@ class Home extends React.Component {
 
   goToBlockedRotationLists = () => {
     // update search parameters
-    store.dispatch({
+    this.props.dispatch({
       type: Action.UPDATE_RENTAL_REQUESTS_SEARCH,
       rentalRequests: {
         statusCode: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
@@ -89,9 +88,9 @@ class Home extends React.Component {
     });
 
     // perform search
-    Api.searchRentalRequests({
+    this.props.dispatch(Api.searchRentalRequests({
       status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
-    });
+    }));
 
     // navigate to search page
     this.props.history.push({ pathname: Constant.RENTAL_REQUESTS_PATHNAME });
@@ -131,11 +130,11 @@ class Home extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    searchSummaryCounts: state.lookups.searchSummaryCounts,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  searchSummaryCounts: state.lookups.searchSummaryCounts,
+});
 
-export default connect(mapStateToProps)(Home);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

@@ -41,7 +41,7 @@ class DistrictEquipmentTypeAddEditDialog extends React.Component {
   }
 
   componentDidMount() {
-    Api.getEquipmentTypes();
+    this.props.dispatch(Api.getEquipmentTypes());
   }
 
   updateState = (state, callback) => {
@@ -95,7 +95,7 @@ class DistrictEquipmentTypeAddEditDialog extends React.Component {
     return valid;
   };
 
-  formSubmitted = () => {
+  formSubmitted = async () => {
     if (this.isValid()) {
       if (this.didChange()) {
         this.setState({ isSaving: true });
@@ -108,18 +108,16 @@ class DistrictEquipmentTypeAddEditDialog extends React.Component {
           district: { id: this.props.currentUser.district.id },
         };
 
-        const promise =
-          equipmentType.id !== 0
-            ? Api.updateDistrictEquipmentType(equipmentType)
-            : Api.addDistrictEquipmentType(equipmentType);
+        const promise = equipmentType.id !== 0 ? 
+          Api.updateDistrictEquipmentType : 
+          Api.addDistrictEquipmentType;
 
-        promise.then(() => {
-          this.setState({ isSaving: false });
-          if (this.props.onSave) {
-            this.props.onSave();
-          }
-          this.props.onClose();
-        });
+        await this.props.dispatch(promise(equipmentType));
+        this.setState({ isSaving: false });
+        if (this.props.onSave) {
+          this.props.onSave();
+        }
+        this.props.onClose();
       } else {
         this.props.onClose();
       }
@@ -127,7 +125,7 @@ class DistrictEquipmentTypeAddEditDialog extends React.Component {
   };
 
   render() {
-    var equipmentTypes = _.sortBy(this.props.equipmentTypes.data, 'blueBookSection');
+    let equipmentTypes = _.sortBy(this.props.equipmentTypes.data, 'blueBookSection');
 
     return (
       <FormDialog
@@ -171,11 +169,11 @@ class DistrictEquipmentTypeAddEditDialog extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    equipmentTypes: state.lookups.equipmentTypes,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  equipmentTypes: state.lookups.equipmentTypes,
+});
 
-export default connect(mapStateToProps)(DistrictEquipmentTypeAddEditDialog);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(DistrictEquipmentTypeAddEditDialog);

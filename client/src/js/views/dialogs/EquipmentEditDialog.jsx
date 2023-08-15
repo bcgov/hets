@@ -62,7 +62,7 @@ class EquipmentEditDialog extends React.Component {
   }
 
   componentDidMount() {
-    Api.getDistrictEquipmentTypes();
+    this.props.dispatch(Api.getDistrictEquipmentTypes());
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -162,7 +162,7 @@ class EquipmentEditDialog extends React.Component {
     return valid;
   };
 
-  formSubmitted = () => {
+  formSubmitted = async () => {
     if (this.isValid()) {
       if (this.didChange()) {
         if (this.state.duplicateSerialNumberWarning) {
@@ -171,37 +171,37 @@ class EquipmentEditDialog extends React.Component {
           return this.saveEquipment();
         }
 
-        return Api.equipmentDuplicateCheck(this.props.equipment.id, this.state.serialNumber).then((response) => {
-          if (response.data.length > 0) {
-            const equipmentCodes = response.data.map((district) => {
-              return district.duplicateEquipment.equipmentCode;
-            });
-            var districts = _.chain(response.data)
-              .map((district) => district.districtName)
-              .uniq()
-              .value();
-            const districtsPlural = districts.length === 1 ? 'district' : 'districts';
-            this.setState({
-              serialNumberError: `Serial number is currently in use for the equipment ${equipmentCodes.join(
-                ', '
-              )}, in the following ${districtsPlural}: ${districts.join(', ')}`,
-              duplicateSerialNumberWarning: true,
-            });
-            return null;
-          } else {
-            this.setState({ duplicateSerialNumberWarning: false });
-            return this.saveEquipment();
-          }
-        });
+        const response = await this.props.dispatch(Api.equipmentDuplicateCheck(this.props.equipment.id, this.state.serialNumber));
+        if (response.data.length > 0) {
+          const equipmentCodes = response.data.map((district) => {
+            return district.duplicateEquipment.equipmentCode;
+          });
+          let districts = _.chain(response.data)
+            .map((district) => district.districtName)
+            .uniq()
+            .value();
+          const districtsPlural = districts.length === 1 ? 'district' : 'districts';
+          this.setState({
+            serialNumberError: `Serial number is currently in use for the equipment ${equipmentCodes.join(
+              ', '
+            )}, in the following ${districtsPlural}: ${districts.join(', ')}`,
+            duplicateSerialNumberWarning: true,
+          });
+          return null;
+        } else {
+          this.setState({ duplicateSerialNumberWarning: false });
+          return this.saveEquipment();
+        }
       } else {
         this.props.onClose();
       }
     }
   };
 
-  saveEquipment = () => {
+  saveEquipment = async () => {
     this.setState({ isSaving: true });
 
+    const dispatch = this.props.dispatch;
     const equipment = {
       ...this.props.equipment,
       localArea: { id: this.state.localAreaId },
@@ -218,16 +218,13 @@ class EquipmentEditDialog extends React.Component {
       pupLegalCapacity: this.state.pupLegalCapacity,
     };
 
-    const promise = Api.updateEquipment(equipment);
-
-    promise.then(() => {
-      Log.equipmentModified(this.props.equipment);
-      this.setState({ isSaving: false });
-      if (this.props.onSave) {
-        this.props.onSave();
-      }
-      this.props.onClose();
-    });
+    await dispatch(Api.updateEquipment(equipment));
+    await dispatch(Log.equipmentModified(this.props.equipment));
+    this.setState({ isSaving: false });
+    if (this.props.onSave) {
+      this.props.onSave();
+    }
+    this.props.onClose();
   };
 
   onLocalAreaChanged() {
@@ -455,12 +452,12 @@ class EquipmentEditDialog extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    localAreas: state.lookups.localAreas,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  localAreas: state.lookups.localAreas,
+  districtEquipmentTypes: state.lookups.districtEquipmentTypes,
+});
 
-export default connect(mapStateToProps)(EquipmentEditDialog);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(EquipmentEditDialog);

@@ -198,12 +198,9 @@ class HireOfferEditDialog extends React.Component {
   };
 
   saveHireOffer = () => {
-    var promise = Promise.resolve();
-
-    if (this.state.equipmentVerifiedActive) {
-      // Update Equipment's last verified date
-      promise = Api.verifyEquipmentActive(this.props.hireOffer.equipment.id);
-    }
+    const dispatch = this.props.dispatch;
+    const promise = this.state.equipmentVerifiedActive ? 
+      dispatch(Api.verifyEquipmentActive(this.props.hireOffer.equipment.id)) : Promise.resolve();
 
     promise.then(() => {
       const hireOffer = {
@@ -219,7 +216,7 @@ class HireOfferEditDialog extends React.Component {
         note: this.state.note,
       };
 
-      Api.updateRentalRequestRotationList(hireOffer, this.props.rentalRequest).then(() => {
+      dispatch(Api.updateRentalRequestRotationList(hireOffer, this.props.rentalRequest)).then(() => {
         this.setState({ isSaving: false });
         if (this.props.onSave) {
           this.props.onSave(hireOffer);
@@ -401,8 +398,7 @@ class HireOfferEditDialog extends React.Component {
   }
 }
 
-function mapStateToProps() {
-  return {};
-}
+const mapStateToProps = () => ({});
+const mapDispatchToProps = (dispatch) => ({ dispatch });
 
-export default connect(mapStateToProps)(HireOfferEditDialog);
+export default connect(mapStateToProps, mapDispatchToProps)(HireOfferEditDialog);

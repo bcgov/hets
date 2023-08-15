@@ -13,7 +13,6 @@ import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
 import * as Log from '../history';
-import store from '../store';
 
 import AddButtonContainer from '../components/ui/AddButtonContainer.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
@@ -159,7 +158,7 @@ class RentalRequests extends React.Component {
   }
 
   fetch = () => {
-    Api.searchRentalRequests(this.buildSearchParams());
+    this.props.dispatch(Api.searchRentalRequests(this.buildSearchParams()));
   };
 
   search = (e) => {
@@ -168,7 +167,8 @@ class RentalRequests extends React.Component {
   };
 
   clearSearch = () => {
-    var defaultSearchParameters = {
+    const dispatch = this.props.dispatch;
+    const defaultSearchParameters = {
       selectedLocalAreasIds: [],
       projectName: '',
       status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
@@ -176,14 +176,15 @@ class RentalRequests extends React.Component {
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
-      store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_SEARCH, rentalRequests: this.state.search });
-      store.dispatch({ type: Action.CLEAR_RENTAL_REQUESTS });
+      dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_SEARCH, rentalRequests: this.state.search });
+      dispatch({ type: Action.CLEAR_RENTAL_REQUESTS });
     });
   };
 
   updateSearchState = (state, callback) => {
+    const dispatch = this.props.dispatch;
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } } }, () => {
-      store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_SEARCH, rentalRequests: this.state.search });
+      dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_SEARCH, rentalRequests: this.state.search });
       if (callback) {
         callback();
       }
@@ -191,8 +192,9 @@ class RentalRequests extends React.Component {
   };
 
   updateUIState = (state, callback) => {
+    const dispatch = this.props.dispatch;
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
-      store.dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_UI, rentalRequests: this.state.ui });
+      dispatch({ type: Action.UPDATE_RENTAL_REQUESTS_UI, rentalRequests: this.state.ui });
       if (callback) {
         callback();
       }
@@ -203,10 +205,9 @@ class RentalRequests extends React.Component {
     this.updateSearchState(JSON.parse(favourite.value), this.fetch);
   };
 
-  deleteRequest = (request) => {
-    Api.cancelRentalRequest(request.id).then(() => {
-      this.fetch();
-    });
+  deleteRequest = async (request) => {
+    await this.props.dispatch(Api.cancelRentalRequest(request.id));
+    this.fetch();
   };
 
   openAddDialog = (viewOnly) => {
@@ -217,9 +218,8 @@ class RentalRequests extends React.Component {
     this.setState({ showAddDialog: false });
   };
 
-  newRentalAdded = (rentalRequest) => {
-    Log.rentalRequestAdded(rentalRequest);
-
+  newRentalAdded = async (rentalRequest) => {
+    await this.props.dispatch(Log.rentalRequestAdded(rentalRequest));
     this.props.history.push(`${Constant.RENTAL_REQUESTS_PATHNAME}/${rentalRequest.id}`);
   };
 
@@ -484,15 +484,15 @@ class RentalRequests extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    rentalRequests: state.models.rentalRequests,
-    localAreas: state.lookups.localAreas,
-    favourites: state.models.favourites.rentalRequests,
-    search: state.search.rentalRequests,
-    ui: state.ui.rentalRequests,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  rentalRequests: state.models.rentalRequests,
+  localAreas: state.lookups.localAreas,
+  favourites: state.models.favourites.rentalRequests,
+  search: state.search.rentalRequests,
+  ui: state.ui.rentalRequests,
+});
 
-export default connect(mapStateToProps)(RentalRequests);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(RentalRequests);

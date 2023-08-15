@@ -55,7 +55,7 @@ class OwnersEditDialog extends React.Component {
   }
 
   componentDidMount() {
-    Api.getOwnersLite();
+    this.props.dispatch(Api.getOwnersLite());
   }
 
   updateState = (state, callback) => {
@@ -181,7 +181,7 @@ class OwnersEditDialog extends React.Component {
           status: this.state.status,
         };
 
-        Api.updateOwner(owner).then(() => {
+        this.props.dispatch(Api.updateOwner(owner)).then(() => {
           if (this.props.onSave) {
             this.props.onSave();
           }
@@ -333,11 +333,11 @@ class OwnersEditDialog extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    owners: state.lookups.owners.lite,
-    localAreas: state.lookups.localAreas,
-  };
-}
+const mapStateToProps = (state) => ({
+  owners: state.lookups.owners.lite,
+  localAreas: state.lookups.localAreas,
+});
 
-export default connect(mapStateToProps)(OwnersEditDialog);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(OwnersEditDialog);

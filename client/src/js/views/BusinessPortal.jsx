@@ -8,7 +8,6 @@ import _ from 'lodash';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
-import store from '../store';
 
 import PageHeader from '../components/ui/PageHeader.jsx';
 import Spinner from '../components/Spinner.jsx';
@@ -55,7 +54,7 @@ class BusinessPortal extends React.Component {
   }
 
   fetch = () => {
-    return Api.getBusiness().then(() => {
+    return this.props.dispatch(Api.getBusiness()).then(() => {
       this.setState({ success: !_.isEmpty(this.props.business) });
     });
   };
@@ -65,8 +64,9 @@ class BusinessPortal extends React.Component {
   };
 
   updateOwnersUIState = (state, callback) => {
+    const dispatch = this.props.dispatch;
     this.setState({ uiOwners: { ...this.state.uiOwners, ...state } }, () => {
-      store.dispatch({ type: Action.UPDATE_OWNERS_UI, owners: this.state.uiOwners });
+      dispatch({ type: Action.UPDATE_OWNERS_UI, owners: this.state.uiOwners });
       if (callback) {
         callback();
       }
@@ -81,7 +81,7 @@ class BusinessPortal extends React.Component {
     e.persist();
 
     this.setState({ validating: true, errors: {} });
-    Api.validateOwner(this.state.secretKey, this.state.postalCode)
+    this.props.dispatch(Api.validateOwner(this.state.secretKey, this.state.postalCode))
       .then(() => {
         debugger;
         // clear input fields
@@ -265,12 +265,12 @@ class BusinessPortal extends React.Component {
   };
 }
 
-function mapStateToProps(state) {
-  return {
-    user: state.user,
-    business: state.models.business,
-    uiOwners: state.ui.owners,
-  };
-}
+const mapStateToProps = (state) => ({
+  user: state.user,
+  business: state.models.business,
+  uiOwners: state.ui.owners,
+});
 
-export default connect(mapStateToProps)(BusinessPortal);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(BusinessPortal);

@@ -8,7 +8,6 @@ import _ from 'lodash';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
-import store from '../store';
 
 import Spinner from '../components/Spinner.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
@@ -57,7 +56,7 @@ class BusinessOwner extends React.Component {
   }
 
   componentDidMount() {
-    store.dispatch({
+    this.props.dispatch({
       type: Action.SET_ACTIVE_OWNER_ID_UI,
       ownerId: this.props.match.params.ownerId,
     });
@@ -74,9 +73,9 @@ class BusinessOwner extends React.Component {
   }
 
   fetch = () => {
-    var ownerId = this.props.match.params.ownerId;
+    const ownerId = this.props.match.params.ownerId;
 
-    return Api.getOwnerForBusiness(ownerId)
+    return this.props.dispatch(Api.getOwnerForBusiness(ownerId))
       .then(() => {
         this.setState({ success: true });
       })
@@ -86,8 +85,9 @@ class BusinessOwner extends React.Component {
   };
 
   updateContactsUIState = (state, callback) => {
+    const dispatch = this.props.dispatch;
     this.setState({ uiContacts: { ...this.state.uiContacts, ...state } }, () => {
-      store.dispatch({ type: Action.UPDATE_OWNER_CONTACTS_UI, ownerContacts: this.state.uiContacts });
+      dispatch({ type: Action.UPDATE_OWNER_CONTACTS_UI, ownerContacts: this.state.uiContacts });
       if (callback) {
         callback();
       }
@@ -95,8 +95,9 @@ class BusinessOwner extends React.Component {
   };
 
   updateEquipmentUIState = (state, callback) => {
+    const dispatch = this.props.dispatch;
     this.setState({ uiEquipment: { ...this.state.uiEquipment, ...state } }, () => {
-      store.dispatch({ type: Action.UPDATE_OWNER_EQUIPMENT_UI, ownerEquipment: this.state.uiEquipment });
+      dispatch({ type: Action.UPDATE_OWNER_EQUIPMENT_UI, ownerEquipment: this.state.uiEquipment });
       if (callback) {
         callback();
       }
@@ -377,12 +378,12 @@ class BusinessOwner extends React.Component {
   };
 }
 
-function mapStateToProps(state) {
-  return {
-    owner: activeOwnerSelector(state),
-    uiEquipment: state.ui.ownerEquipment,
-    uiContacts: state.ui.ownerContacts,
-  };
-}
+const mapStateToProps = (state) => ({
+  owner: activeOwnerSelector(state),
+  uiEquipment: state.ui.ownerEquipment,
+  uiContacts: state.ui.ownerContacts,
+});
 
-export default connect(mapStateToProps)(BusinessOwner);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(BusinessOwner);

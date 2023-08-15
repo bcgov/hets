@@ -30,7 +30,7 @@ class StatusLetters extends React.Component {
   }
 
   componentDidMount() {
-    Api.getOwnersLite();
+    this.props.dispatch(Api.getOwnersLite());
   }
 
   updateState = (state, callback) => {
@@ -41,32 +41,30 @@ class StatusLetters extends React.Component {
     });
   };
 
-  getStatusLetters = () => {
+  getStatusLetters = async () => {
     const filename = 'StatusLetters-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';
-    Api.getStatusLettersDoc({
-      localAreas: this.state.localAreaIds,
-      owners: this.state.ownerIds,
-    })
-      .then((res) => {
-        saveAs(res, filename);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    try {
+      const res = await this.props.dispatch(Api.getStatusLettersDoc({
+        localAreas: this.state.localAreaIds,
+        owners: this.state.ownerIds,
+      }));
+      saveAs(res, filename);
+    } catch(error) {
+      console.log(error);
+    }
   };
 
-  getMailingLabel = () => {
+  getMailingLabel = async () => {
     const filename = 'MailingLabels-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';
-    Api.getMailingLabelsDoc({
-      localAreas: this.state.localAreaIds,
-      owners: this.state.ownerIds,
-    })
-      .then((res) => {
-        saveAs(res, filename);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    try {
+      const res = await this.props.dispatch(Api.getMailingLabelsDoc({
+        localAreas: this.state.localAreaIds,
+        owners: this.state.ownerIds,
+      }));
+      saveAs(res, filename);
+    } catch(error) {
+      console.log(error);
+    }
   };
 
   matchesLocalAreaFilter = (localAreaId) => {
@@ -138,11 +136,11 @@ class StatusLetters extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    localAreas: state.lookups.localAreas,
-    owners: state.lookups.owners.lite,
-  };
-}
+const mapStateToProps = (state) => ({
+  localAreas: state.lookups.localAreas,
+  owners: state.lookups.owners.lite,
+});
 
-export default connect(mapStateToProps)(StatusLetters);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(StatusLetters);

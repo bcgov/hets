@@ -19,7 +19,6 @@ import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
 import * as Log from '../history';
-import store from '../store';
 
 import BadgeLabel from '../components/BadgeLabel.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
@@ -88,16 +87,16 @@ class EquipmentDetail extends React.Component {
   }
 
   componentDidMount() {
-    store.dispatch({
+    this.props.dispatch({
       type: Action.SET_ACTIVE_EQUIPMENT_ID_UI,
       equipmentId: this.props.match.params.equipmentId,
     });
 
-    let equipmentId = this.props.match.params.equipmentId;
+    const equipmentId = this.props.match.params.equipmentId;
 
     // Notes and documents need be fetched every time as they are not equipment-specific in the store ATM
-    Api.getEquipmentNotes(equipmentId).then(() => this.setState({ loadingNotes: false }));
-    Api.getEquipmentDocuments(equipmentId).then(() => this.setState({ loadingDocuments: false }));
+    this.props.dispatch(Api.getEquipmentNotes(equipmentId)).then(() => this.setState({ loadingNotes: false }));
+    this.props.dispatch(Api.getEquipmentDocuments(equipmentId)).then(() => this.setState({ loadingDocuments: false }));
 
     // Re-fetch equipment every time
     Promise.all([this.fetch()]).then(() => {
@@ -107,7 +106,8 @@ class EquipmentDetail extends React.Component {
 
   fetch = () => {
     this.setState({ reloading: true });
-    return Api.getEquipment(this.props.match.params.equipmentId).then(() => this.setState({ reloading: false }));
+    return this.props.dispatch(Api.getEquipment(this.props.match.params.equipmentId))
+      .then(() => this.setState({ reloading: false }));
   };
 
   showNotes = () => {
@@ -128,7 +128,7 @@ class EquipmentDetail extends React.Component {
 
   updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
-      store.dispatch({
+      this.props.dispatch({
         type: Action.UPDATE_PHYSICAL_ATTACHMENTS_UI,
         equipmentPhysicalAttachments: this.state.ui,
       });
@@ -162,7 +162,7 @@ class EquipmentDetail extends React.Component {
 
   onStatusChanged = () => {
     this.closeChangeStatusDialog();
-    Api.getEquipmentNotes(this.props.equipment.id);
+    this.props.dispatch(Api.getEquipmentNotes(this.props.equipment.id));
   };
 
   openSeniorityDialog = () => {
@@ -185,7 +185,7 @@ class EquipmentDetail extends React.Component {
 
   physicalAttachmentsAdded = () => {
     var equipId = this.props.match.params.equipmentId;
-    Api.getEquipment(equipId);
+    this.props.dispatch(Api.getEquipment(equipId));
   };
 
   openPhysicalAttachmentEditDialog = (attachment) => {
@@ -201,19 +201,19 @@ class EquipmentDetail extends React.Component {
 
   physicalAttachmentEdited = () => {
     var equipId = this.props.match.params.equipmentId;
-    Api.getEquipment(equipId);
+    this.props.dispatch(Api.getEquipment(equipId));
   };
 
-  deletePhysicalAttachment = (attachmentId) => {
-    Api.deletePhysicalAttachment(attachmentId).then(() => {
-      let attachment = _.find(
-        this.props.equipment.equipmentAttachments,
-        (attachment) => attachment.id === attachmentId
-      );
-      Log.equipmentAttachmentDeleted(this.props.equipment, attachment.typeName);
-      var equipId = this.props.match.params.equipmentId;
-      Api.getEquipment(equipId);
-    });
+  deletePhysicalAttachment = async (attachmentId) => {
+    const dispatch = this.props.dispatch;
+    await dispatch(Api.deletePhysicalAttachment(attachmentId));
+    let attachment = _.find(
+      this.props.equipment.equipmentAttachments,
+      (attachment) => attachment.id === attachmentId
+    );
+    await dispatch(Log.equipmentAttachmentDeleted(this.props.equipment, attachment.typeName));
+    const equipId = this.props.match.params.equipmentId;
+    dispatch(Api.getEquipment(equipId));
   };
 
   getLastVerifiedStyle = (equipment) => {
@@ -247,6 +247,7 @@ class EquipmentDetail extends React.Component {
   render() {
     var equipment = this.props.equipment || {};
     const { loadingNotes, loadingDocuments } = this.state;
+    const { dispatch } = this.props;
 
     var lastVerifiedStyle = this.getLastVerifiedStyle(equipment);
 
@@ -601,8 +602,8 @@ class EquipmentDetail extends React.Component {
             show={this.state.showNotesDialog}
             id={this.props.match.params.equipmentId}
             notes={this.props.notes}
-            getNotes={Api.getEquipmentNotes}
-            saveNote={Api.addEquipmentNote}
+            getNotes={(equipmentId) => dispatch(Api.getEquipmentNotes(equipmentId))}
+            saveNote={(equipmentId, note) => dispatch(Api.addEquipmentNote(equipmentId, note))}
             onClose={this.closeNotesDialog}
           />
         )}
@@ -645,15 +646,15 @@ class EquipmentDetail extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    equipment: activeEquipmentSelector(state),
-    notes: state.models.equipmentNotes,
-    attachments: state.models.equipmentAttachments,
-    documents: state.models.documents,
-    history: state.models.equipmentHistory,
-    ui: state.ui.equipmentPhysicalAttachments,
-  };
-}
+const mapStateToProps = (state) => ({
+  equipment: activeEquipmentSelector(state),
+  notes: state.models.equipmentNotes,
+  attachments: state.models.equipmentAttachments,
+  documents: state.models.documents,
+  history: state.models.equipmentHistory,
+  ui: state.ui.equipmentPhysicalAttachments,
+});
 
-export default connect(mapStateToProps)(EquipmentDetail);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(EquipmentDetail);

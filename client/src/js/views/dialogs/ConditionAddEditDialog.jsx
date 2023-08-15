@@ -86,7 +86,7 @@ class ConditionAddEditDialog extends React.Component {
     });
   };
 
-  formSubmitted = () => {
+  formSubmitted = async () => {
     if (this.isValid()) {
       if (this.didChange()) {
         this.setState({ isSaving: true });
@@ -100,15 +100,14 @@ class ConditionAddEditDialog extends React.Component {
           district: { id: this.props.currentUser.district.id },
         };
 
-        const promise = this.state.isNew ? Api.addCondition(condition) : Api.updateCondition(condition);
+        const promise = this.state.isNew ? Api.addCondition : Api.updateCondition;
 
-        promise.then(() => {
-          this.setState({ isSaving: false });
-          if (this.props.onSave) {
-            this.props.onSave();
-          }
-          this.props.onClose();
-        });
+        await this.props.dispatch(promise(condition));
+        this.setState({ isSaving: false });
+        if (this.props.onSave) {
+          this.props.onSave();
+        }
+        this.props.onClose();
       } else {
         this.props.onClose();
       }
@@ -155,10 +154,10 @@ class ConditionAddEditDialog extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+});
 
-export default connect(mapStateToProps)(ConditionAddEditDialog);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(ConditionAddEditDialog);

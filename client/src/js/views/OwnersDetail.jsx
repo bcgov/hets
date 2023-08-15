@@ -20,7 +20,6 @@ import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
 import * as Log from '../history';
-import store from '../store';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
@@ -104,29 +103,31 @@ class OwnersDetail extends React.Component {
   }
 
   componentDidMount() {
-    store.dispatch({
+    this.props.dispatch({
       type: Action.SET_ACTIVE_OWNER_ID_UI,
       ownerId: this.props.match.params.ownerId,
     });
     const ownerId = this.props.match.params.ownerId;
 
     /* Documents need be fetched every time as they are not project specific in the store ATM */
-    Api.getOwnerDocuments(ownerId).then(() => this.setState({ loadingDocuments: false }));
+    this.props.dispatch(Api.getOwnerDocuments(ownerId))
+      .then(() => this.setState({ loadingDocuments: false }));
 
     // Re-fetch project and notes every time
-    Promise.all([this.fetch(), Api.getOwnerNotes(ownerId)]).then(() => {
+    Promise.all([this.fetch(), this.props.dispatch(Api.getOwnerNotes(ownerId))]).then(() => {
       this.setState({ loading: false });
     });
   }
 
   fetch = () => {
     this.setState({ reloading: true });
-    return Api.getOwner(this.props.match.params.ownerId).then(() => this.setState({ reloading: false }));
+    return this.props.dispatch(Api.getOwner(this.props.match.params.ownerId))
+      .then(() => this.setState({ reloading: false }));
   };
 
   updateContactsUIState = (state, callback) => {
     this.setState({ uiContacts: { ...this.state.uiContacts, ...state } }, () => {
-      store.dispatch({
+      this.props.dispatch({
         type: Action.UPDATE_OWNER_CONTACTS_UI,
         ownerContacts: this.state.uiContacts,
       });
@@ -138,7 +139,7 @@ class OwnersDetail extends React.Component {
 
   updateEquipmentUIState = (state, callback) => {
     this.setState({ uiEquipment: { ...this.state.uiEquipment, ...state } }, () => {
-      store.dispatch({
+      this.props.dispatch({
         type: Action.UPDATE_OWNER_EQUIPMENT_UI,
         ownerEquipment: this.state.uiEquipment,
       });
@@ -168,7 +169,7 @@ class OwnersDetail extends React.Component {
 
   onStatusChanged = () => {
     this.closeChangeStatusDialog();
-    Api.getOwnerNotes(this.props.owner.id);
+    this.props.dispatch(Api.getOwnerNotes(this.props.owner.id));
   };
 
   showDocuments = () => {
@@ -188,7 +189,7 @@ class OwnersDetail extends React.Component {
   };
 
   ownerSaved = () => {
-    Log.ownerModified(this.props.owner);
+    this.props.dispatch(Log.ownerModified(this.props.owner));
   };
 
   openContactDialog = (contactId) => {
@@ -214,8 +215,9 @@ class OwnersDetail extends React.Component {
   };
 
   deleteContact = (contact) => {
-    Api.deleteContact(contact).then(() => {
-      Log.ownerContactDeleted(this.props.owner, contact).then(() => {
+    const dispatch = this.props.dispatch;
+    dispatch(Api.deleteContact(contact)).then(() => {
+      dispatch(Log.ownerContactDeleted(this.props.owner, contact)).then(() => {
         // In addition to refreshing the contacts, we need to update the owner
         // to get primary contact info and history.
         this.fetch();
@@ -224,10 +226,10 @@ class OwnersDetail extends React.Component {
   };
 
   contactSaved = (contact) => {
-    var isNew = !contact.id;
-    var log = isNew ? Log.ownerContactAdded : Log.ownerContactUpdated;
+    const isNew = !contact.id;
+    const log = isNew ? Log.ownerContactAdded : Log.ownerContactUpdated;
 
-    log(this.props.owner, contact).then(() => {
+    this.props.dispatch(log(this.props.owner, contact)).then(() => {
       // In addition to refreshing the contacts, we need to update the owner
       // to get primary contact info and history.
       this.fetch();
@@ -244,22 +246,24 @@ class OwnersDetail extends React.Component {
     this.setState({ showEquipmentDialog: false });
   };
 
-  equipmentSaved = (equipment) => {
+  equipmentSaved = async (equipment) => {
+    const { dispatch, history, owner } = this.props;
     this.closeEquipmentDialog();
-    Log.ownerEquipmentAdded(this.props.owner, equipment);
-    Log.equipmentAdded(equipment);
+    await dispatch(Log.ownerEquipmentAdded(owner, equipment));
+    await dispatch(Log.equipmentAdded(equipment));
     // Open it up
-    this.props.history.push(`${Constant.EQUIPMENT_PATHNAME}/${equipment.id}`, {
-      returnUrl: `${Constant.OWNERS_PATHNAME}/${this.props.owner.id}`,
+    history.push(`${Constant.EQUIPMENT_PATHNAME}/${equipment.id}`, {
+      returnUrl: `${Constant.OWNERS_PATHNAME}/${owner.id}`,
     });
   };
 
-  equipmentVerifyAll = () => {
-    var now = today();
-    var owner = this.props.owner;
+  equipmentVerifyAll = async () => {
+    const now = today();
+    let owner = this.props.owner;
+    const dispatch = this.props.dispatch;
 
     // Update the last verified date on all pieces of equipment
-    var equipmentList = _.map(owner.equipmentList, (equipment) => {
+    let equipmentList = _.map(owner.equipmentList, (equipment) => {
       return {
         ...equipment,
         lastVerifiedDate: toZuluTime(now),
@@ -267,27 +271,27 @@ class OwnersDetail extends React.Component {
       };
     });
 
-    Api.updateOwnerEquipment(owner, equipmentList).then(() => {
-      //thought about using response data to log, however the server response doesn't contain equipment.History entity which breaks logging
-      equipmentList.forEach((updatedEquipment) => {
-        Log.ownerEquipmentVerified(this.props.owner, updatedEquipment);
-      });
-      this.fetch();
+    await dispatch(Api.updateOwnerEquipment(owner, equipmentList));
+    //thought about using response data to log, however the server response doesn't contain equipment.History entity which breaks logging
+    owner = this.props.owner;
+    equipmentList.forEach(async (updatedEquipment) => {
+      await dispatch(Log.ownerEquipmentVerified(owner, updatedEquipment));
     });
+    this.fetch();
   };
 
-  equipmentVerify = (equipment) => {
-    const updatedEquipment = {
+  equipmentVerify = async (equipment) => {
+    const { dispatch, owner } = this.props;
+    let updatedEquipment = {
       ...equipment,
       lastVerifiedDate: toZuluTime(today()),
-      owner: { id: this.props.owner.id },
+      owner: { id: owner.id },
     };
 
-    Log.ownerEquipmentVerified(this.props.owner, updatedEquipment);
+    await dispatch(Log.ownerEquipmentVerified(owner, updatedEquipment));
 
-    Api.updateEquipment(updatedEquipment).then(() => {
-      this.fetch();
-    });
+    await dispatch(Api.updateEquipment(updatedEquipment));
+    this.fetch();
   };
 
   openPolicyDialog = () => {
@@ -299,7 +303,7 @@ class OwnersDetail extends React.Component {
   };
 
   policySaved = () => {
-    Log.ownerModifiedPolicy(this.props.owner);
+    this.props.dispatch(Log.ownerModifiedPolicy(this.props.owner));
   };
 
   openPolicyDocumentsDialog = () => {
@@ -330,6 +334,7 @@ class OwnersDetail extends React.Component {
   render() {
     const { loading, loadingDocuments } = this.state;
     var owner = this.props.owner || {};
+    const dispatch = this.props.dispatch;
 
     var isApproved = owner.status === Constant.OWNER_STATUS_CODE_APPROVED;
     var restrictEquipmentAddTooltip = 'Equipment can only be added to an approved owner.';
@@ -771,8 +776,8 @@ class OwnersDetail extends React.Component {
             show={this.state.showNotesDialog}
             id={this.props.match.params.ownerId}
             notes={owner.notes}
-            getNotes={Api.getOwnerNotes}
-            saveNote={Api.addOwnerNote}
+            getNotes={(ownerId) => dispatch(Api.getOwnerNotes(ownerId))}
+            saveNote={(ownerId, note) => dispatch(Api.addOwnerNote(ownerId, note))}
             onClose={this.closeNotesDialog}
           />
         )}
@@ -812,7 +817,7 @@ class OwnersDetail extends React.Component {
             show={this.state.showContactDialog}
             contact={this.state.contact}
             parent={owner}
-            saveContact={Api.saveOwnerContact}
+            saveContact={(owner, contact) => dispatch(Api.saveOwnerContact(owner, contact))}
             defaultPrimary={owner.contacts.length === 0}
             onSave={this.contactSaved}
             onClose={this.closeContactDialog}
@@ -833,13 +838,13 @@ class OwnersDetail extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    owner: activeOwnerSelector(state),
-    documents: state.models.documents,
-    uiContacts: state.ui.ownerContacts,
-    uiEquipment: state.ui.ownerEquipment,
-  };
-}
+const mapStateToProps = (state) => ({
+  owner: activeOwnerSelector(state),
+  documents: state.models.documents,
+  uiContacts: state.ui.ownerContacts,
+  uiEquipment: state.ui.ownerEquipment,
+});
 
-export default connect(mapStateToProps)(OwnersDetail);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(OwnersDetail);

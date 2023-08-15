@@ -18,7 +18,6 @@ import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
 import * as Log from '../history';
-import store from '../store';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
@@ -88,7 +87,8 @@ class ProjectsDetail extends React.Component {
   componentDidMount() {
     //dispatch Set_ACTIVE_PROJECT_ID_UI needed for activeProjectSelector(state) to work. Solution uses redux state to pass argument values to another selector.
     //https://github.com/reduxjs/reselect#q-how-do-i-create-a-selector-that-takes-an-argument
-    store.dispatch({
+    const dispatch = this.props.dispatch;
+    dispatch({
       type: Action.SET_ACTIVE_PROJECT_ID_UI,
       projectId: this.props.match.params.projectId,
     });
@@ -97,7 +97,8 @@ class ProjectsDetail extends React.Component {
     const projectId = this.props.match.params.projectId;
 
     /* Documents need be fetched every time as they are not project specific in the store ATM */
-    Api.getProjectDocuments(projectId).then(() => this.setState({ loadingDocuments: false }));
+    dispatch(Api.getProjectDocuments(projectId))
+      .then(() => this.setState({ loadingDocuments: false }));
 
     // Only show loading spinner if there is no existing project in the store
     if (project) {
@@ -105,14 +106,15 @@ class ProjectsDetail extends React.Component {
     }
 
     // Re-fetch project and notes every time
-    Promise.all([this.fetch(), Api.getProjectNotes(projectId)]).then(() => {
+    Promise.all([this.fetch(), dispatch(Api.getProjectNotes(projectId))]).then(() => {
       this.setState({ loading: false });
     });
   }
 
   fetch = () => {
     this.setState({ reloading: true });
-    return Api.getProject(this.props.match.params.projectId).then(() => this.setState({ reloading: false }));
+    return this.props.dispatch(Api.getProject(this.props.match.params.projectId))
+      .then(() => this.setState({ reloading: false }));
   };
 
   updateState = (state, callback) => {
@@ -121,7 +123,7 @@ class ProjectsDetail extends React.Component {
 
   updateContactsUIState = (state, callback) => {
     this.setState({ uiContacts: { ...this.state.uiContacts, ...state } }, () => {
-      store.dispatch({ type: Action.UPDATE_PROJECT_CONTACTS_UI, projectContacts: this.state.uiContacts });
+      this.props.dispatch({ type: Action.UPDATE_PROJECT_CONTACTS_UI, projectContacts: this.state.uiContacts });
       if (callback) {
         callback();
       }
@@ -177,18 +179,19 @@ class ProjectsDetail extends React.Component {
   };
 
   deleteContact = (contact) => {
-    Api.deleteContact(contact).then(() => {
-      Log.projectContactDeleted(this.props.project, contact).then(() => {
+    const dispatch = this.props.dispatch;
+    dispatch(Api.deleteContact(contact)).then(() => {
+      dispatch(Log.projectContactDeleted(this.props.project, contact)).then(() => {
         this.fetch();
       });
     });
   };
 
   contactSaved = (contact) => {
-    var isNew = !contact.id;
-    var log = isNew ? Log.projectContactAdded : Log.projectContactUpdated;
+    const isNew = !contact.id;
+    const log = isNew ? Log.projectContactAdded : Log.projectContactUpdated;
 
-    log(this.props.project, contact).then(() => {
+    this.props.dispatch(log(this.props.project, contact)).then(() => {
       // In addition to refreshing the contacts, we need to update the owner
       // to get primary contact info and history.
       this.fetch();
@@ -205,19 +208,17 @@ class ProjectsDetail extends React.Component {
     this.setState({ showAddRequestDialog: false });
   };
 
-  newRentalAdded = (rentalRequest) => {
-    this.fetch();
-
-    Log.projectRentalRequestAdded(this.props.project, rentalRequest);
-
+  newRentalAdded = async (rentalRequest) => {
+    await this.fetch();
+    await this.props.dispatch(Log.projectRentalRequestAdded(this.props.project, rentalRequest));
     this.props.history.push(`${Constant.RENTAL_REQUESTS_PATHNAME}/${rentalRequest.id}`);
   };
 
-  confirmEndHire = (item) => {
-    Api.releaseRentalAgreement(item.id).then(() => {
-      Api.getProject(this.props.match.params.projectId);
-      Log.projectEquipmentReleased(this.props.project, item.equipment);
-    });
+  confirmEndHire = async (item) => {
+    const dispatch = this.props.dispatch;
+    await dispatch(Api.releaseRentalAgreement(item.id));
+    await dispatch(Api.getProject(this.props.match.params.projectId));
+    dispatch(Log.projectEquipmentReleased(this.props.project, item.equipment));
   };
 
   openTimeEntryDialog = (rentalAgreement) => {
@@ -233,10 +234,9 @@ class ProjectsDetail extends React.Component {
     this.setState({ showTimeEntryDialog: false });
   };
 
-  cancelRequest = (request) => {
-    Api.cancelRentalRequest(request.id).then(() => {
-      this.fetch();
-    });
+  cancelRequest = async (request) => {
+    await this.props.dispatch(Api.cancelRentalRequest(request.id));
+    this.fetch();
   };
 
   renderRentalRequestListItem = (item) => {
@@ -324,22 +324,24 @@ class ProjectsDetail extends React.Component {
     return _.pull([Constant.PROJECT_STATUS_CODE_ACTIVE, Constant.PROJECT_STATUS_CODE_COMPLETED], project.status);
   };
 
-  updateStatusState = (state) => {
-    if (state !== this.props.project.status) {
-      const project = {
-        ...this.props.project,
+  updateStatusState = async (state) => {
+    const { dispatch, project } = this.props;
+    if (state !== project.status) {
+      const updatedProject = {
+        ...project,
         status: state,
       };
 
-      store.dispatch({ type: Action.UPDATE_PROJECT, project });
-      Log.projectModifiedStatus(project);
-      Api.updateProject(project);
+      await dispatch({ type: Action.UPDATE_PROJECT, updatedProject });
+      await dispatch(Log.projectModifiedStatus(updatedProject));
+      await dispatch(Api.updateProject(updatedProject));
     }
   };
 
   render() {
     const { loading, loadingDocuments } = this.state;
     var project = this.props.project || {};
+    const dispatch = this.props.dispatch;
 
     // As per business requirements:
     // "Lists the records - requests then rental agreements, within the groups, list in largest-to-smallest ID order (aka reverse chronological create)."
@@ -651,8 +653,8 @@ class ProjectsDetail extends React.Component {
           <NotesDialog
             show={this.state.showNotesDialog}
             id={String(this.props.match.params.projectId)}
-            getNotes={Api.getProjectNotes}
-            saveNote={Api.addProjectNote}
+            getNotes={(projectId) => dispatch(Api.getProjectNotes(projectId))}
+            saveNote={(projectId, note) => dispatch(Api.addProjectNote(projectId, note))}
             onClose={this.closeNotesDialog}
             notes={project.notes}
           />
@@ -684,7 +686,7 @@ class ProjectsDetail extends React.Component {
         {this.state.showContactDialog && (
           <ContactsEditDialog
             show={this.state.showContactDialog}
-            saveContact={Api.saveProjectContact}
+            saveContact={(project, contact) => dispatch(Api.saveProjectContact(project, contact))}
             contact={this.state.contact}
             parent={project}
             onSave={this.contactSaved}
@@ -696,12 +698,12 @@ class ProjectsDetail extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    project: activeProjectSelector(state),
-    documents: state.models.documents,
-    uiContacts: state.ui.projectContacts,
-  };
-}
+const mapStateToProps = (state) => ({
+  project: activeProjectSelector(state),
+  documents: state.models.documents,
+  uiContacts: state.ui.projectContacts,
+});
 
-export default connect(mapStateToProps)(ProjectsDetail);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProjectsDetail);

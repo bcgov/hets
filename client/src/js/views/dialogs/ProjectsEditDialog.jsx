@@ -10,7 +10,6 @@ import _ from 'lodash';
 import * as Action from '../../actionTypes';
 import * as Api from '../../api';
 import * as Log from '../../history';
-import store from '../../store';
 
 import DropdownControl from '../../components/DropdownControl.jsx';
 import FormDialog from '../../components/FormDialog.jsx';
@@ -51,7 +50,7 @@ class ProjectsEditDialog extends React.Component {
   }
 
   componentDidMount() {
-    Api.getProjects();
+    this.props.dispatch(Api.getProjects());
   }
 
   updateState = (state, callback) => {
@@ -147,9 +146,10 @@ class ProjectsEditDialog extends React.Component {
     return valid;
   };
 
-  formSubmitted = () => {
+  formSubmitted = async () => {
     if (this.isValid()) {
       if (this.didChange()) {
+        const dispatch = this.props.dispatch;
         const project = {
           ...this.props.project,
           id: this.props.project.id,
@@ -168,11 +168,9 @@ class ProjectsEditDialog extends React.Component {
           concurrencyControlNumber: this.state.concurrencyControlNumber,
         };
 
-        store.dispatch({ type: Action.UPDATE_PROJECT, project });
-
-        Log.projectModified(this.props.project);
-
-        Api.updateProject(project);
+        dispatch({ type: Action.UPDATE_PROJECT, project });
+        await dispatch(Log.projectModified(this.props.project));
+        await dispatch(Api.updateProject(project));
       }
 
       this.props.onClose();
@@ -309,11 +307,11 @@ class ProjectsEditDialog extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    fiscalYears: state.lookups.fiscalYears,
-    projects: state.lookups.projects,
-  };
-}
+const mapStateToProps = (state) => ({
+  fiscalYears: state.lookups.fiscalYears,
+  projects: state.lookups.projects,
+});
 
-export default connect(mapStateToProps)(ProjectsEditDialog);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProjectsEditDialog);

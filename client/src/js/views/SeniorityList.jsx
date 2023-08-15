@@ -35,7 +35,7 @@ class SeniorityList extends React.Component {
   }
 
   fetch = () => {
-    Api.getDistrictEquipmentTypes();
+    this.props.dispatch(Api.getDistrictEquipmentTypes());
   };
 
   updateState = (state) => {
@@ -60,20 +60,21 @@ class SeniorityList extends React.Component {
       .value();
   };
 
-  getRotationList = (counterCopy) => {
+  getRotationList = async (counterCopy) => {
     const filename =
       'SeniorityList-' +
       formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) +
       (counterCopy ? '-(CounterCopy)' : '') +
       '.docx';
 
-    Api.equipmentSeniorityListDoc(this.state.selectedLocalAreaIds, this.state.selectedEquipmentTypeIds, counterCopy)
-      .then((res) => {
-        saveAs(res, filename);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    try {
+      const res = await this.props.dispatch(
+        Api.equipmentSeniorityListDoc(this.state.selectedLocalAreaIds, this.state.selectedEquipmentTypeIds, counterCopy));
+
+      saveAs(res, filename);
+    } catch(error) {
+      console.log(error);
+    }
   };
 
   render() {
@@ -124,12 +125,12 @@ class SeniorityList extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
-    localAreas: state.lookups.localAreas,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  districtEquipmentTypes: state.lookups.districtEquipmentTypes,
+  localAreas: state.lookups.localAreas,
+});
 
-export default connect(mapStateToProps)(SeniorityList);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(SeniorityList);

@@ -14,7 +14,6 @@ import { request, buildApiPath } from '../../utils/http';
 import * as Action from '../../actionTypes';
 import * as Api from '../../api';
 import * as Constant from '../../constants';
-import store from '../../store';
 
 import DeleteButton from '../../components/DeleteButton.jsx';
 import ModalDialog from '../../components/ModalDialog.jsx';
@@ -60,8 +59,9 @@ class DocumentsListDialog extends React.Component {
   }
 
   updateUIState = (state, callback) => {
+    const dispatch = this.props.dispatch;
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
-      store.dispatch({ type: Action.UPDATE_DOCUMENTS_UI, documents: this.state.ui });
+      dispatch({ type: Action.UPDATE_DOCUMENTS_UI, documents: this.state.ui });
       if (callback) {
         callback();
       }
@@ -81,48 +81,47 @@ class DocumentsListDialog extends React.Component {
   };
 
   formatDocuments = () => {
-    var documents = _.map(this.props.documents, (document) => {
+    const documents = _.map(this.props.documents, (document) => {
       return {
         ...document,
         formattedTimestamp: formatDateTime(document.lastUpdateTimestamp, Constant.DATE_TIME_LOG),
       };
     });
     this.setState({
-      documents: documents,
+      documents,
     });
   };
 
-  deleteDocument = (document) => {
-    Api.deleteDocument(document).then(() => {
-      this.props.parent.documentDeleted(this.props.parent, document);
-      return this.fetch();
-    });
+  deleteDocument = async (document) => {
+    await this.props.dispatch(Api.deleteDocument(document));
+    this.props.parent.documentDeleted(this.props.parent, document);
+    return this.fetch();
   };
 
-  downloadDocument = (document) => {
+  downloadDocument = async (document) => {
+    const dispatch = this.props.dispatch;
     let fName = '';
-    Api.getDownloadDocument(document)
-      .getBlob()
-      .then((res) => {
-        //use Header content-disposition for the file name
-        //looks like ""attachment; filename=adobe.pdf; filename*=UTF-8''adobe.pdf""
-        console.log(res.getResponseHeader('content-disposition'));
-        fName = res.getResponseHeader('content-disposition').match(/(?<=filename=)(.*)(?=; filename)/)[0];
-        console.log(fName);
-        saveAs(res.response, fName);
-      })
-      .catch((error) => {
-        console.log("file name error");
-        console.log(error);
-        let message = error.message.split(`"`)[0].replace('"', ''); //extracts error message without HTML text.Odd issue where I can't detect \ so need to rely on "
-        this.setState({ uploadError: message });
-      });
+    try {
+      const res = await dispatch(Api.getDownloadDocument(document));
+      //use Header content-disposition for the file name
+      //looks like ""attachment; filename=adobe.pdf; filename*=UTF-8''adobe.pdf""
+      console.log(res.getResponseHeader('content-disposition'));
+      fName = res.getResponseHeader('content-disposition').match(/(?<=filename=)(.*)(?=; filename)/)[0];
+      console.log(fName);
+      saveAs(res.response, fName);
+    } catch (error) {
+      console.log("file name error");
+      console.log(error);
+      let message = error.message.split(`"`)[0].replace('"', ''); //extracts error message without HTML text.Odd issue where I can't detect \ so need to rely on "
+      this.setState({ uploadError: message });
+    }
   };
 
-  uploadFiles = (files) => {
+  uploadFiles = async (files) => {
+    const dispatch = this.props.dispatch;
     this.setState({ uploadError: '' });
 
-    var invalidFiles = _.filter(files, (file) => file.size > Constant.MAX_ATTACHMENT_FILE_SIZE);
+    let invalidFiles = _.filter(files, (file) => file.size > Constant.MAX_ATTACHMENT_FILE_SIZE);
     if (invalidFiles.length > 0) {
       this.setState({ uploadError: 'One of the selected files is too large.' });
       return;
@@ -130,27 +129,27 @@ class DocumentsListDialog extends React.Component {
 
     this.setState({ uploadInProgress: true, percentUploaded: 0 });
 
-    var options = {
+    const options = {
       method: 'POST',
       files: [...files],
       onUploadProgress: (percentComplete) => {
-        var percent = Math.round(percentComplete);
+        const percent = Math.round(percentComplete);
         this.setState({ percentUploaded: percent });
       },
     };
-    this.uploadPromise = request(buildApiPath(this.props.parent.uploadDocumentPath), options).then(
-      () => {
-        _.map(files, (file) => {
-          this.props.parent.documentAdded(this.props.parent, file.name);
-        });
-        this.setState({ uploadInProgress: false, percentUploaded: null });
-        this.fetch();
-      },
-      (err) => {
-        let message = err.message.split(`"`)[0].replace('"', ''); //extracts error message without HTML text.Odd issue where I can't detect \ so need to rely on "
-        this.setState({ uploadInProgress: false, uploadError: message });
-      }
-    );
+
+    try {
+      this.uploadPromise = await dispatch(request(buildApiPath(this.props.parent.uploadDocumentPath), options));
+      _.map(files, (file) => {
+        this.props.parent.documentAdded(this.props.parent, file.name);
+      });
+      this.setState({ uploadInProgress: false, percentUploaded: null });
+      this.fetch();
+    } catch(err) {
+      //extracts error message without HTML text.Odd issue where I can't detect \ so need to rely on "
+      const message = err.message.split(`"`)[0].replace('"', ''); 
+      this.setState({ uploadInProgress: false, uploadError: message });
+    }
   };
 
   render() {
@@ -262,12 +261,12 @@ class DocumentsListDialog extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    documents: state.models.documents,
-    users: state.lookups.users,
-    ui: state.ui.documents,
-  };
-}
+const mapStateToProps = (state) => ({
+  documents: state.models.documents,
+  users: state.lookups.users,
+  ui: state.ui.documents,
+});
 
-export default connect(mapStateToProps)(DocumentsListDialog);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(DocumentsListDialog);

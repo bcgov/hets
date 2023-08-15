@@ -10,7 +10,6 @@ import ProjectsAddDialog from './dialogs/ProjectsAddDialog.jsx';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
-import store from '../store';
 
 import AddButtonContainer from '../components/ui/AddButtonContainer.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
@@ -86,7 +85,7 @@ class Projects extends React.Component {
   }
 
   fetch = () => {
-    Api.searchProjects(this.buildSearchParams());
+    this.props.dispatch(Api.searchProjects(this.buildSearchParams()));
   };
 
   search = (e) => {
@@ -95,7 +94,7 @@ class Projects extends React.Component {
   };
 
   clearSearch = () => {
-    var defaultSearchParameters = {
+    const defaultSearchParameters = {
       statusCode: Constant.PROJECT_STATUS_CODE_ACTIVE,
       projectName: '',
       projectNumber: '',
@@ -103,14 +102,14 @@ class Projects extends React.Component {
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
-      store.dispatch({ type: Action.UPDATE_PROJECTS_SEARCH, projects: this.state.search });
-      store.dispatch({ type: Action.CLEAR_PROJECTS });
+      this.props.dispatch({ type: Action.UPDATE_PROJECTS_SEARCH, projects: this.state.search });
+      this.props.dispatch({ type: Action.CLEAR_PROJECTS });
     });
   };
 
   updateSearchState = (state, callback) => {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } } }, () => {
-      store.dispatch({ type: Action.UPDATE_PROJECTS_SEARCH, projects: this.state.search });
+      this.props.dispatch({ type: Action.UPDATE_PROJECTS_SEARCH, projects: this.state.search });
       if (callback) {
         callback();
       }
@@ -119,7 +118,7 @@ class Projects extends React.Component {
 
   updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
-      store.dispatch({ type: Action.UPDATE_PROJECTS_UI, projects: this.state.ui });
+      this.props.dispatch({ type: Action.UPDATE_PROJECTS_UI, projects: this.state.ui });
       if (callback) {
         callback();
       }
@@ -309,14 +308,14 @@ class Projects extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    fiscalYears: state.lookups.fiscalYears,
-    projects: state.models.projects,
-    favourites: state.models.favourites.project,
-    search: state.search.projects,
-    ui: state.ui.projects,
-  };
-}
+const mapStateToProps = (state) => ({
+  fiscalYears: state.lookups.fiscalYears,
+  projects: state.models.projects,
+  favourites: state.models.favourites.project,
+  search: state.search.projects,
+  ui: state.ui.projects,
+});
 
-export default connect(mapStateToProps)(Projects);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(Projects);

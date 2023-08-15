@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { FormGroup, FormText, FormLabel, FormControl } from 'react-bootstrap';
 import Moment from 'moment';
 
@@ -116,7 +117,8 @@ class RentalRequestsEditDialog extends React.Component {
     return valid;
   };
 
-  formSubmitted = () => {
+  formSubmitted = async () => {
+    const dispatch = this.props.dispatch;
     if (this.isValid()) {
       if (this.didChange()) {
         const rentalRequest = {
@@ -133,12 +135,11 @@ class RentalRequestsEditDialog extends React.Component {
           ],
         };
 
-        Api.updateRentalRequest(rentalRequest).then(() => {
-          Log.rentalRequestModified(this.props.rentalRequest);
-          if (this.props.onSave) {
-            this.props.onSave();
-          }
-        });
+        await dispatch(Api.updateRentalRequest(rentalRequest));
+        await dispatch(Log.rentalRequestModified(this.props.rentalRequest));
+        if (this.props.onSave) {
+          this.props.onSave();
+        }
       }
 
       this.props.onClose();
@@ -235,4 +236,6 @@ class RentalRequestsEditDialog extends React.Component {
   }
 }
 
-export default RentalRequestsEditDialog;
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(null, mapDispatchToProps)(RentalRequestsEditDialog);

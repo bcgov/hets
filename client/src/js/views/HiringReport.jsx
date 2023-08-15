@@ -8,7 +8,6 @@ import _ from 'lodash';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
-import store from '../store';
 
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SearchBar from '../components/ui/SearchBar.jsx';
@@ -51,9 +50,9 @@ class HiringReport extends React.Component {
   }
 
   componentDidMount() {
-    Api.getProjectsCurrentFiscal();
-    Api.getEquipmentHires();
-    Api.getOwnersLiteHires();
+    this.props.dispatch(Api.getProjectsCurrentFiscal());
+    this.props.dispatch(Api.getEquipmentHires());
+    this.props.dispatch(Api.getOwnersLiteHires());
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
@@ -87,7 +86,7 @@ class HiringReport extends React.Component {
   };
 
   fetch = () => {
-    Api.searchHiringReport(this.buildSearchParams());
+    this.props.dispatch(Api.searchHiringReport(this.buildSearchParams()));
   };
 
   search = (e) => {
@@ -104,17 +103,17 @@ class HiringReport extends React.Component {
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
-      store.dispatch({
+      this.props.dispatch({
         type: Action.UPDATE_HIRING_RESPONSES_SEARCH,
         hiringResponses: this.state.search,
       });
-      store.dispatch({ type: Action.CLEAR_HIRING_RESPONSES });
+      this.props.dispatch({ type: Action.CLEAR_HIRING_RESPONSES });
     });
   };
 
   updateSearchState = (state, callback) => {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } } }, () => {
-      store.dispatch({
+      this.props.dispatch({
         type: Action.UPDATE_HIRING_RESPONSES_SEARCH,
         hiringResponses: this.state.search,
       });
@@ -126,7 +125,7 @@ class HiringReport extends React.Component {
 
   updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
-      store.dispatch({
+      this.props.dispatch({
         type: Action.UPDATE_HIRING_RESPONSES_UI,
         hiringResponses: this.state.ui,
       });
@@ -372,17 +371,17 @@ class HiringReport extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    projects: state.lookups.projectsCurrentFiscal,
-    localAreas: state.lookups.localAreas,
-    owners: state.lookups.owners.hires,
-    equipment: state.lookups.equipment.hires,
-    hiringResponses: state.models.hiringResponses,
-    favourites: state.models.favourites.hiringReport,
-    search: state.search.hiringResponses,
-    ui: state.ui.hiringResponses,
-  };
-}
+const mapStateToProps = (state) => ({
+  projects: state.lookups.projectsCurrentFiscal,
+  localAreas: state.lookups.localAreas,
+  owners: state.lookups.owners.hires,
+  equipment: state.lookups.equipment.hires,
+  hiringResponses: state.models.hiringResponses,
+  favourites: state.models.favourites.hiringReport,
+  search: state.search.hiringResponses,
+  ui: state.ui.hiringResponses,
+});
 
-export default connect(mapStateToProps)(HiringReport);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(HiringReport);

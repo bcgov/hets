@@ -35,10 +35,10 @@ class Rollover extends React.Component {
   }
 
   componentDidMount() {
-    var user = this.props.currentUser;
-    var status = this.props.rolloverStatus;
+    const user = this.props.currentUser;
+    const status = this.props.rolloverStatus;
 
-    Api.getRolloverStatus(this.props.currentUser.district.id).then(() => {
+    this.props.dispatch(Api.getRolloverStatus(this.props.currentUser.district.id)).then(() => {
       this.setState({ loading: false });
 
       if (!user.hasPermission(Constant.PERMISSION_DISTRICT_ROLLOVER) && !status.rolloverActive) {
@@ -65,8 +65,9 @@ class Rollover extends React.Component {
 
   refreshStatus = () => {
     const districtId = this.props.currentUser.district.id;
+    const dispatch = this.props.dispatch;
 
-    Api.getRolloverStatus(districtId).then(() => {
+    dispatch(Api.getRolloverStatus(districtId)).then(() => {
       const status = this.props.rolloverStatus;
 
       if (!status.rolloverActive && this.state.refreshStatusTimerId !== null) {
@@ -76,17 +77,17 @@ class Rollover extends React.Component {
 
       if (status.rolloverComplete) {
         // refresh fiscal years
-        Api.getFiscalYears(districtId);
+        dispatch(Api.getFiscalYears(districtId));
       }
     });
   };
 
   initiateRollover = () => {
-    Api.initiateRollover(this.props.currentUser.district.id);
+    this.props.dispatch(Api.initiateRollover(this.props.currentUser.district.id));
   };
 
   dismissRolloverNotice = () => {
-    Api.dismissRolloverMessage(this.props.currentUser.district.id);
+    this.props.dispatch(Api.dismissRolloverMessage(this.props.currentUser.district.id));
   };
 
   updateState = (state, callback) => {
@@ -237,11 +238,11 @@ class Rollover extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    rolloverStatus: state.lookups.rolloverStatus,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  rolloverStatus: state.lookups.rolloverStatus,
+});
 
-export default connect(mapStateToProps)(Rollover);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(Rollover);

@@ -54,8 +54,8 @@ class DistrictAdmin extends React.Component {
   }
 
   componentDidMount() {
-    Api.getRentalConditions();
-    Api.getDistrictEquipmentTypes();
+    this.props.dispatch(Api.getRentalConditions());
+    this.props.dispatch(Api.getDistrictEquipmentTypes());
   }
 
   updateEquipmentUIState = (state, callback) => {
@@ -75,10 +75,10 @@ class DistrictAdmin extends React.Component {
     this.setState({ condition: condition }, this.showConditionAddEditDialog);
   };
 
-  deleteCondition = (condition) => {
-    Api.deleteCondition(condition.id).then(() => {
-      Api.getRentalConditions();
-    });
+  deleteCondition = async (condition) => {
+    const dispatch = this.props.dispatch;
+    await dispatch(Api.deleteCondition(condition.id));
+    dispatch(Api.getRentalConditions());
   };
 
   showConditionAddEditDialog = () => {
@@ -98,7 +98,7 @@ class DistrictAdmin extends React.Component {
   };
 
   conditionSaved = () => {
-    Api.getRentalConditions();
+    this.props.dispatch(Api.getRentalConditions());
   };
 
   showDistrictEquipmentTypeAddEditDialog = () => {
@@ -122,24 +122,25 @@ class DistrictAdmin extends React.Component {
   };
 
   districtEquipmentTypeSaved = () => {
-    Api.getDistrictEquipmentTypes();
+    this.props.dispatch(Api.getDistrictEquipmentTypes());
   };
 
-  deleteDistrictEquipmentType = (equipment) => {
-    Api.deleteDistrictEquipmentType(equipment)
-      .then(() => {
-        return Api.getDistrictEquipmentTypes();
-      })
-      .catch((error) => {
-        if (error.status === 400 && error.errorCode === 'HETS-37') {
-          this.setState({
-            showDistrictEquipmentTypeErrorDialog: true,
-            districtEquipmentTypeError: error.errorDescription,
-          });
-        } else {
-          throw error;
-        }
-      });
+  deleteDistrictEquipmentType = async (equipment) => {
+    const dispatch = this.props.dispatch;
+
+    try {
+      await dispatch(Api.deleteDistrictEquipmentType(equipment));
+      dispatch(Api.getDistrictEquipmentTypes());
+    } catch(error) {
+      if (error.status === 400 && error.errorCode === 'HETS-37') {
+        this.setState({
+          showDistrictEquipmentTypeErrorDialog: true,
+          districtEquipmentTypeError: error.errorDescription,
+        });
+      } else {
+        throw error;
+      }
+    }
   };
 
   render() {
@@ -380,14 +381,14 @@ class DistrictAdmin extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    rentalConditions: state.lookups.rentalConditions,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
-    equipmentTypes: state.lookups.equipmentTypes,
-    uiEquipment: state.ui.districtEquipment,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  rentalConditions: state.lookups.rentalConditions,
+  districtEquipmentTypes: state.lookups.districtEquipmentTypes,
+  equipmentTypes: state.lookups.equipmentTypes,
+  uiEquipment: state.ui.districtEquipment,
+});
 
-export default connect(mapStateToProps)(DistrictAdmin);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(DistrictAdmin);
