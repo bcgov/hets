@@ -20,8 +20,10 @@ namespace HetsReport.Helpers
 
                 // generate the salt
                 byte[] arrSalt = new byte[16];
-                RandomNumberGenerator rand = new RNGCryptoServiceProvider();
-                rand.GetNonZeroBytes(arrSalt);
+                using (RandomNumberGenerator rand = RandomNumberGenerator.Create())
+                {
+                    rand.GetNonZeroBytes(arrSalt);
+                }
 
                 // array to hold key values
                 byte[] generatedKey = new byte[4];
@@ -118,7 +120,7 @@ namespace HetsReport.Helpers
                 // implementation Notes List:
                 // --> Word requires that the initial hash of the password with the salt not be considered in the count
                 //     The initial hash of salt + key is not included in the iteration count
-                HashAlgorithm sha1 = new SHA1Managed();
+                HashAlgorithm sha1 = SHA1.Create();
                 generatedKey = sha1.ComputeHash(generatedKey);
                 byte[] iterator = new byte[4];
 

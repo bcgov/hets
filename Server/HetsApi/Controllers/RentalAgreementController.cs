@@ -17,6 +17,7 @@ using HetsReport;
 using HetsData.Dtos;
 using HetsData.Repositories;
 using AutoMapper;
+using HetsCommon;
 
 namespace HetsApi.Controllers
 {
@@ -1222,7 +1223,9 @@ namespace HetsApi.Controllers
         [HttpGet]
         [RequiresPermission(HetPermission.Login)]
         [Route("latest/{projectId}/{equipmentId}")]
-        public virtual ActionResult<RentalAgreementDto> GetLatestRentalAgreement([FromRoute] int projectId, [FromRoute] int equipmentId)
+        public virtual ActionResult<RentalAgreementDto> GetLatestRentalAgreement(
+            [FromRoute] int projectId, 
+            [FromRoute] int equipmentId)
         {
             // find the latest rental agreement
             HetRentalAgreement agreement = _context.HetRentalAgreements.AsNoTracking()
@@ -1231,7 +1234,9 @@ namespace HetsApi.Controllers
                                      x.ProjectId == projectId);
 
             // if nothing exists - return an error message
-            if (agreement == null) return new NotFoundObjectResult(new HetsResponse("HETS-35", ErrorViewModel.GetDescription("HETS-35", _configuration)));
+            if (agreement == null) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-35", ErrorViewModel.GetDescription("HETS-35", _configuration)));
 
             // get user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
@@ -1241,14 +1246,19 @@ namespace HetsApi.Controllers
                 .First(x => x.DistrictId == districtId);
 
             int? fiscalYearStart = status.CurrentFiscalYear;
-            if (fiscalYearStart == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (fiscalYearStart == null) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
-            DateTime fiscalStart = new DateTime((int)fiscalYearStart, 4, 1);
+            DateTime fiscalStart = DateUtils.ConvertPacificToUtcTime(
+                new DateTime((int)fiscalYearStart, 4, 1, 0, 0, 0));
 
             // validate that agreement is in the current fiscal year
             DateTime agreementDate = agreement.DatedOn ?? agreement.DbCreateTimestamp;
 
-            if (agreementDate < fiscalStart) return new NotFoundObjectResult(new HetsResponse("HETS-36", ErrorViewModel.GetDescription("HETS-36", _configuration)));
+            if (agreementDate < fiscalStart) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-36", ErrorViewModel.GetDescription("HETS-36", _configuration)));
 
             // return to the client
             return new ObjectResult(new HetsResponse(_mapper.Map<RentalAgreementDto>(agreement)));

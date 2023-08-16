@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using AutoMapper;
+using HetsCommon;
 using HetsData.Dtos;
 using HetsData.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -385,20 +386,22 @@ namespace HetsData.Helpers
             HetDistrictStatus districtStatus = context.HetDistrictStatuses.AsNoTracking()
                 .First(x => x.DistrictId == localArea.ServiceArea.DistrictId);
 
-            DateTime fiscalStart = districtStatus.RolloverEndDate ?? new DateTime(0001, 01, 01, 00, 00, 00);
+            DateTime fiscalStart = districtStatus.RolloverEndDate ?? new DateTime(0001, 01, 01, 00, 00, 00, DateTimeKind.Utc);
             int fiscalYear = Convert.ToInt32(districtStatus.NextFiscalYear); // status table uses the start of the year
             rentalRequest.FiscalYear = fiscalYear;
 
-            if (fiscalStart == new DateTime(0001, 01, 01, 00, 00, 00))
+            if (fiscalStart == new DateTime(0001, 01, 01, 00, 00, 00, DateTimeKind.Utc))
             {                
-                fiscalStart = new DateTime(fiscalYear - 1, 4, 1);
+                fiscalStart = DateUtils.ConvertPacificToUtcTime(
+                    new DateTime(fiscalYear - 1, 4, 1, 0, 0, 0));
             }
 
             // get the last rotation list created this fiscal year
             bool previousRequestExists = context.HetRentalRequests
-                .Any(x => x.DistrictEquipmentType.DistrictEquipmentTypeId == disEquipmentTypeId &&
-                          x.LocalArea.LocalAreaId == localAreaId &&
-                          x.AppCreateTimestamp >= fiscalStart);
+                .Any(x => 
+                    x.DistrictEquipmentType.DistrictEquipmentTypeId == disEquipmentTypeId 
+                    && x.LocalArea.LocalAreaId == localAreaId 
+                    && x.AppCreateTimestamp >= fiscalStart);
 
             // *****************************************************************
             // if we don't have a request for the current fiscal,

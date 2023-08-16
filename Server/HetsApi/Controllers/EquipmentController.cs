@@ -101,25 +101,31 @@ namespace HetsApi.Controllers
 
             // get active status
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
-            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) 
+                return new BadRequestObjectResult(
+                    new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get fiscal year
             HetDistrictStatus status = _context.HetDistrictStatuses.AsNoTracking()
                 .First(x => x.DistrictId == districtId);
 
             int? fiscalYear = status.CurrentFiscalYear;
-            if (fiscalYear == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (fiscalYear == null) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // fiscal year in the status table stores the "start" of the year
-            DateTime fiscalYearStart = new DateTime((int)fiscalYear, 3, 31);
+            DateTime fiscalYearStart = DateUtils.ConvertPacificToUtcTime(
+                new DateTime((int)fiscalYear, 3, 31));
 
             // get all active owners for this district (and any projects they're associated with)
             var equipments = _context.HetRentalAgreements.AsNoTracking()
                 .Include(x => x.Project)
                 .Include(x => x.Equipment)
-                .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId == districtId &&
-                            x.Equipment.EquipmentStatusTypeId == statusId &&
-                            x.Project.DbCreateTimestamp > fiscalYearStart)
+                .Where(x => 
+                    x.Equipment.LocalArea.ServiceArea.DistrictId == districtId 
+                    && x.Equipment.EquipmentStatusTypeId == statusId 
+                    && x.Project.DbCreateTimestamp > fiscalYearStart)
                 .ToList()
                 .GroupBy(x => x.Equipment, (e, agreements) => new EquipmentLiteList
                 {
@@ -511,14 +517,14 @@ namespace HetsApi.Controllers
 
             // determine end of current fiscal year
             DateTime fiscalEnd;
-
-            if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
+            DateTime now = DateTime.Now;
+            if (now.Month == 1 || now.Month == 2 || now.Month == 3)
             {
-                fiscalEnd = new DateTime(DateTime.UtcNow.Year, 3, 31);
+                fiscalEnd = DateUtils.ConvertPacificToUtcTime(new DateTime(now.Year, 3, 31, 0, 0, 0));
             }
             else
             {
-                fiscalEnd = new DateTime(DateTime.UtcNow.AddYears(1).Year, 3, 31);
+                fiscalEnd = DateUtils.ConvertPacificToUtcTime(new DateTime(now.AddYears(1).Year, 3, 31, 0, 0, 0));
             }
 
             // is this a leap year?
@@ -1340,7 +1346,10 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("seniorityListDoc")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual IActionResult EquipmentSeniorityListDocGet([FromQuery]string localAreas, [FromQuery]string types, [FromQuery]bool counterCopy = false)
+        public virtual IActionResult EquipmentSeniorityListDocGet(
+            [FromQuery]string localAreas, 
+            [FromQuery]string types, 
+            [FromQuery]bool counterCopy = false)
         {
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
             int?[] typesArray = ArrayHelper.ParseIntArray(types);
@@ -1352,7 +1361,9 @@ namespace HetsApi.Controllers
             HetDistrictStatus districtStatus = _context.HetDistrictStatuses.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId == districtId);
 
-            if (districtStatus?.NextFiscalYear == null) return new BadRequestObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
+            if (districtStatus?.NextFiscalYear == null) 
+                return new BadRequestObjectResult(
+                    new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
 
             //// HETS-1195: Adjust seniority list and rotation list for lists hired between Apr1 and roll over
             //// ** Need to use the "rollover date" to ensure we don't include records created
@@ -1364,18 +1375,20 @@ namespace HetsApi.Controllers
             //    new DateTime(fiscalYear, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 23, 59, 59) :
             //    new DateTime(fiscalYear, fiscalEnd.Month, fiscalEnd.Day, 23, 59, 59);
 
-            DateTime fiscalStart = districtStatus.RolloverEndDate ?? new DateTime(0001, 01, 01, 00, 00, 00);
+            DateTime fiscalStart = districtStatus.RolloverEndDate ?? new DateTime(0001, 01, 01, 00, 00, 00, DateTimeKind.Utc);
             int fiscalYear = Convert.ToInt32(districtStatus.NextFiscalYear);
 
-            if (fiscalStart == new DateTime(0001, 01, 01, 00, 00, 00))
+            if (fiscalStart == new DateTime(0001, 01, 01, 00, 00, 00, DateTimeKind.Utc))
             {
                 fiscalYear = Convert.ToInt32(districtStatus.NextFiscalYear); // status table uses the start of the year
-                fiscalStart = new DateTime(fiscalYear - 1, 4, 1);
+                fiscalStart = DateUtils.ConvertPacificToUtcTime(new DateTime(fiscalYear - 1, 4, 1, 0, 0, 0));
             }
 
             // get status id
             int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _context);
-            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) 
+                return new BadRequestObjectResult(
+                    new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get equipment record
             IQueryable<HetEquipment> data = _context.HetEquipments.AsNoTracking()

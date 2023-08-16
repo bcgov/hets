@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using HetsCommon;
 
 namespace HetsData.Repositories
 {
@@ -129,11 +130,14 @@ namespace HetsData.Repositories
 
             if (fiscalYear != null)
             {
-                DateTime fiscalYearStart = new DateTime((int)fiscalYear, 4, 1);
+                DateTime fiscalYearStart = DateUtils.ConvertPacificToUtcTime(
+                    new DateTime((int)fiscalYear, 4, 1, 0, 0, 0));
 
                 timeRecord.TimeRecords = new List<TimeRecordDto>();
-                timeRecord.TimeRecords
-                    .AddRange(_mapper.Map<List<TimeRecordDto>>(agreement.HetTimeRecords.Where(x => x.WorkedDate >= fiscalYearStart)));
+                timeRecord.TimeRecords.AddRange(
+                    _mapper.Map<List<TimeRecordDto>>(
+                        agreement.HetTimeRecords.Where(x => 
+                            x.WorkedDate >= fiscalYearStart)));
             }
 
             timeRecord.EquipmentCode = equipmentCode;

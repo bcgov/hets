@@ -11,6 +11,7 @@ using HetsData.Entities;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using HetsData.Dtos;
+using HetsCommon;
 
 namespace HetsApi.Controllers
 {
@@ -89,7 +90,8 @@ namespace HetsApi.Controllers
             if (district?.CurrentFiscalYear == null) return new BadRequestObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
 
             int fiscalYear = (int)district.CurrentFiscalYear; // status table uses the start of the year
-            DateTime fiscalStart = new DateTime(fiscalYear, 3, 31); // look for all records AFTER the 31st
+            DateTime fiscalStart = DateUtils.ConvertPacificToUtcTime(
+                new DateTime(fiscalYear, 3, 31, 0, 0, 0)); // look for all records AFTER the 31st
 
             // only return active equipment / projects and agreements
             IQueryable<HetTimeRecord> data = _context.HetTimeRecords.AsNoTracking()
@@ -105,8 +107,9 @@ namespace HetsApi.Controllers
                 .Include(x => x.RentalAgreement)
                     .ThenInclude(x => x.Equipment)
                         .ThenInclude(z => z.Owner)
-                .Where(x => x.RentalAgreement.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
-                            x.WorkedDate > fiscalStart);
+                .Where(x => 
+                    x.RentalAgreement.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId) 
+                    && x.WorkedDate > fiscalStart);
 
             if (localAreasArray != null && localAreasArray.Length > 0)
             {

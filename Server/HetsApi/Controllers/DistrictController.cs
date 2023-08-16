@@ -15,6 +15,7 @@ using Hangfire.Storage;
 using Hangfire.Common;
 using HetsData.Dtos;
 using AutoMapper;
+using HetsCommon;
 
 namespace HetsApi.Controllers
 {
@@ -90,10 +91,14 @@ namespace HetsApi.Controllers
         [AllowAnonymous]
         public virtual ActionResult<List<LocalAreaDto>> DistrictLocalAreasGet([FromRoute]int id)
         {
+            var now = DateTime.UtcNow;
+            var nowDate = DateUtils.ConvertPacificToUtcTime(
+                new DateTime(now.Year, now.Month, now.Day, 0, 0, 0));
             List<HetLocalArea> localAreas = _context.HetLocalAreas.AsNoTracking()
-                .Where(x => x.ServiceArea.District.DistrictId == id && 
-                        x.StartDate <= DateTime.UtcNow.Date && 
-                        (x.EndDate > DateTime.UtcNow.Date || x.EndDate == null))
+                .Where(x => 
+                    x.ServiceArea.District.DistrictId == id 
+                    && x.StartDate <= nowDate 
+                    && (x.EndDate > nowDate || x.EndDate == null))
                 .OrderBy(x => x.Name)
                 .ToList();
 
@@ -126,7 +131,10 @@ namespace HetsApi.Controllers
             var progress = _context.HetRolloverProgresses.FirstOrDefault(a => a.DistrictId == id);
 
             // not found
-            if (progress == null) return new ObjectResult(new HetsResponse(new RolloverProgressDto { DistrictId = id, ProgressPercentage = null }));
+            if (progress == null) 
+                return new ObjectResult(
+                    new HetsResponse(
+                        new RolloverProgressDto { DistrictId = id, ProgressPercentage = null }));
 
             if (!jobExists)
             {
@@ -134,7 +142,9 @@ namespace HetsApi.Controllers
             }
 
             // get status of current district
-            return new ObjectResult(new HetsResponse(new RolloverProgressDto { DistrictId = id, ProgressPercentage = progress.ProgressPercentage }));
+            return new ObjectResult(
+                new HetsResponse(
+                    new RolloverProgressDto { DistrictId = id, ProgressPercentage = progress.ProgressPercentage }));
         }
 
         private string GetJobFingerprint(Hangfire.Common.Job job)
@@ -203,18 +213,22 @@ namespace HetsApi.Controllers
             bool exists = _context.HetDistricts.Any(a => a.DistrictId == id);
 
             // not found
-            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // determine the current fiscal year
             DateTime fiscalStart;
-
-            if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
+            DateTime now = DateTime.Now;
+            if (now.Month == 1 || now.Month == 2 || now.Month == 3)
             {
-                fiscalStart = new DateTime(DateTime.UtcNow.AddYears(-1).Year, 4, 1);
+                fiscalStart = DateUtils.ConvertPacificToUtcTime(
+                    new DateTime(now.AddYears(-1).Year, 4, 1, 0, 0, 0));
             }
             else
             {
-                fiscalStart = new DateTime(DateTime.UtcNow.Year, 4, 1);
+                fiscalStart = DateUtils.ConvertPacificToUtcTime(
+                    new DateTime(now.Year, 4, 1, 0, 0, 0));
             }
 
             // get record and ensure it isn't already processing

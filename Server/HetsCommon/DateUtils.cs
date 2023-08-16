@@ -96,8 +96,10 @@ namespace HetsCommon
 
         public static (DateTime utcDateFrom, DateTime utcDateTo) GetUtcDateRange(DateTime pstDateFrom, DateTime pstDateTo)
         {
-            pstDateFrom = pstDateFrom.Date;
-            pstDateTo = pstDateTo.Date.AddDays(1).AddSeconds(-1);
+            pstDateFrom = new DateTime(pstDateFrom.Year, pstDateFrom.Month, pstDateFrom.Day, 0, 0, 0);
+            pstDateTo = new DateTime(pstDateTo.Year, pstDateTo.Month, pstDateTo.Day, 0, 0, 0)
+                .AddDays(1)
+                .AddSeconds(-1);
 
             var utcDateFrom = ConvertPacificToUtcTime(pstDateFrom);
             var utcDateTo = ConvertPacificToUtcTime(pstDateTo);

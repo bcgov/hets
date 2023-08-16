@@ -955,10 +955,13 @@ namespace HetsApi.Controllers
             HetDistrictStatus district = _context.HetDistrictStatuses.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId == districtId);
 
-            if (district?.CurrentFiscalYear == null) return new BadRequestObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
+            if (district?.CurrentFiscalYear == null) 
+                return new BadRequestObjectResult(
+                    new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
 
             int fiscalYear = (int)district.CurrentFiscalYear; // status table uses the start of the year
-            DateTime fiscalStart = new DateTime(fiscalYear, 3, 31); // look for all records AFTER the 31st
+            DateTime fiscalStart = DateUtils.ConvertPacificToUtcTime(
+                new DateTime(fiscalYear, 3, 31, 0, 0, 0)); // look for all records AFTER the 31st
 
             IQueryable<HetRentalRequestRotationList> data = _context.HetRentalRequestRotationLists.AsNoTracking()
                 .Include(x => x.RentalRequest)
@@ -968,9 +971,10 @@ namespace HetsApi.Controllers
                     .ThenInclude(y => y.Project)
                 .Include(x => x.Equipment)
                     .ThenInclude(y => y.Owner)
-                .Where(x => x.RentalRequest.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
-                            x.AskedDateTime > fiscalStart &&
-                            (x.IsForceHire == true || x.OfferResponse.ToLower() == "no"));
+                .Where(x => 
+                    x.RentalRequest.LocalArea.ServiceArea.DistrictId.Equals(districtId)
+                    && x.AskedDateTime > fiscalStart 
+                    && (x.IsForceHire == true || x.OfferResponse.ToLower() == "no"));
 
             if (localAreasArray != null && localAreasArray.Length > 0)
             {
@@ -1023,10 +1027,12 @@ namespace HetsApi.Controllers
                 .FirstOrDefault(a => a.RentalRequestId == id);
 
             if (request == null) 
-                return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             var fiscalYear = request.FiscalYear;
-            var fiscalStart = new DateTime(fiscalYear - 1, 4, 1);
+            var fiscalStart = DateUtils.ConvertPacificToUtcTime(
+                new DateTime(fiscalYear - 1, 4, 1, 0, 0, 0));
 
             var yearMinus1 = $"{fiscalYear - 2}/{fiscalYear - 1}";
             var yearMinus2 = $"{fiscalYear - 3}/{fiscalYear - 2}";

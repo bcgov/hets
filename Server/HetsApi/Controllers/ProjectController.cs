@@ -13,6 +13,7 @@ using HetsData.Entities;
 using HetsData.Repositories;
 using HetsData.Dtos;
 using AutoMapper;
+using HetsCommon;
 
 namespace HetsApi.Controllers
 {
@@ -566,10 +567,13 @@ namespace HetsApi.Controllers
                 .First(x => x.DistrictId == districtId);
 
             int? fiscalYear = status.CurrentFiscalYear;
-            if (fiscalYear == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (fiscalYear == null) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // fiscal year in the status table stores the "start" of the year
-            DateTime fiscalYearStart = new DateTime((int)fiscalYear, 4, 1);
+            DateTime fiscalYearStart = DateUtils.ConvertPacificToUtcTime(
+                new DateTime((int)fiscalYear, 4, 1, 0, 0, 0));
 
             HetProject project = _context.HetProjects.AsNoTracking()
                 .Include(x => x.HetRentalAgreements)

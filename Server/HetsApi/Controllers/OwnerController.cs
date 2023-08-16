@@ -21,6 +21,7 @@ using HetsReport;
 using HetsData.Repositories;
 using HetsData.Dtos;
 using AutoMapper;
+using HetsCommon;
 
 namespace HetsApi.Controllers
 {
@@ -165,17 +166,22 @@ namespace HetsApi.Controllers
 
             // get active status
             int? statusId = StatusHelper.GetStatusId(HetOwner.StatusApproved, "ownerStatus", _context);
-            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) 
+                return new BadRequestObjectResult(
+                    new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get fiscal year
             HetDistrictStatus status = _context.HetDistrictStatuses.AsNoTracking()
                 .First(x => x.DistrictId == districtId);
 
             int? fiscalYear = status.CurrentFiscalYear;
-            if (fiscalYear == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (fiscalYear == null) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // fiscal year in the status table stores the "start" of the year
-            DateTime fiscalYearStart = new DateTime((int)fiscalYear, 3, 31);
+            DateTime fiscalYearStart = DateUtils.ConvertPacificToUtcTime(
+                new DateTime((int)fiscalYear, 3, 31, 0, 0, 0));
 
             // get all active owners for this district (and any projects they're associated with)
             var owners = _context.HetRentalAgreements.AsNoTracking()
@@ -1106,10 +1112,13 @@ namespace HetsApi.Controllers
             HetDistrictStatus district = _context.HetDistrictStatuses.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId == currentOwner.LocalArea.ServiceArea.District.DistrictId);
 
-            if (district?.CurrentFiscalYear == null) return new NotFoundObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
+            if (district?.CurrentFiscalYear == null) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
 
             int fiscalYear = (int)district.CurrentFiscalYear; // status table uses the start of the year
-            DateTime fiscalStart = new DateTime(fiscalYear, 4, 1);
+            DateTime fiscalStart = DateUtils.ConvertPacificToUtcTime(
+                new DateTime(fiscalYear, 4, 1, 0, 0, 0));
 
             //***************************************************************
             // process each piece of equipment in the provided list

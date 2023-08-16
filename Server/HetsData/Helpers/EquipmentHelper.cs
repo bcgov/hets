@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using HetsData.Entities;
 using HetsApi.Helpers;
 using HetsData.Dtos;
+using HetsCommon;
 
 namespace HetsData.Helpers
 {
@@ -359,8 +360,11 @@ namespace HetsData.Helpers
                 fiscalYear = (int)district.NextFiscalYear; // status table uses the start of the year
             }
 
-            DateTime fiscalEnd = new DateTime(fiscalYear, 3, 31);
-            DateTime fiscalStart = new DateTime(fiscalYear - 1, 4, 1);
+            DateTime fiscalEnd = DateUtils.ConvertPacificToUtcTime(
+                new DateTime(fiscalYear, 3, 31, 0, 0, 0));
+
+            DateTime fiscalStart = DateUtils.ConvertPacificToUtcTime(
+                new DateTime(fiscalYear - 1, 4, 1, 0, 0, 0));
 
             // *******************************************************************************
             // get all the time data for the current fiscal year
