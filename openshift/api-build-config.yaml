@@ -9,7 +9,8 @@ objects:
   - apiVersion: image.openshift.io/v1
     kind: ImageStream
     metadata:
-      name: dotnet-50-rhel8
+      # name: dotnet-50-rhel8
+      name: dotnet-70
       labels:
         shared: "true"
     spec:
@@ -19,8 +20,10 @@ objects:
         - annotations: null
           from:
             kind: DockerImage
-            name: registry.redhat.io/rhel8/dotnet-50:5.0-4
-          name: "5.0"
+            # name: registry.redhat.io/rhel8/dotnet-50:5.0-4
+            name: registry.redhat.io/rhel8/dotnet-70:7.0-18
+          # name: "5.0"
+          name: "7.0"
           referencePolicy:
             type: Local
   - apiVersion: image.openshift.io/v1
@@ -82,7 +85,8 @@ objects:
               value: "${DOTNET_STARTUP_PROJECT}"
           from:
             kind: ImageStreamTag
-            name: "dotnet-50-rhel8:5.0"
+            # name: "dotnet-50-rhel8:5.0"
+            name: "dotnet-70:7.0"
 parameters:
   - description: Name of the project (HETS)
     displayName: PROJECT_NAME
