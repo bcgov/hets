@@ -64,21 +64,15 @@ namespace HetsData.Helpers
                 .OrderByDescending(y => y.AppLastUpdateTimestamp)
                 .ToList();
 
-            if (offset == null)
-            {
-                offset = 0;
-            }
+            offset ??= 0;
 
-            if (limit == null)
-            {
-                limit = data.Count - offset;
-            }
+            limit ??= data.Count - offset;
 
-            List<History> result = new List<History>();
+            List<History> result = new();
 
             for (int i = (int)offset; i < data.Count && i < offset + limit; i++)
             {
-                History temp = new History();
+                History temp = new();
 
                 if (data[i] != null)
                 {

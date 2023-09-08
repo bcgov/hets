@@ -127,12 +127,8 @@ namespace HetsData.Helpers
                                         x.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
                         // get status id
-                        int? eqStatusId =
-                            StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", context);
-                        if (eqStatusId == null)
-                        {
-                            throw new ArgumentException("Status Code not found");
-                        }
+                        int? eqStatusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", context) 
+                            ?? throw new ArgumentException("Status Code not found");
 
                         // update the seniority score
                         foreach (HetEquipment equipment in data)

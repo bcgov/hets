@@ -93,7 +93,8 @@ namespace HetsApi.Controllers
         {
             var now = DateTime.UtcNow;
             var nowDate = DateUtils.ConvertPacificToUtcTime(
-                new DateTime(now.Year, now.Month, now.Day, 0, 0, 0));
+                new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Unspecified));
+
             List<HetLocalArea> localAreas = _context.HetLocalAreas.AsNoTracking()
                 .Where(x => 
                     x.ServiceArea.District.DistrictId == id 
@@ -223,12 +224,12 @@ namespace HetsApi.Controllers
             if (now.Month == 1 || now.Month == 2 || now.Month == 3)
             {
                 fiscalStart = DateUtils.ConvertPacificToUtcTime(
-                    new DateTime(now.AddYears(-1).Year, 4, 1, 0, 0, 0));
+                    new DateTime(now.AddYears(-1).Year, 4, 1, 0, 0, 0, DateTimeKind.Unspecified));
             }
             else
             {
                 fiscalStart = DateUtils.ConvertPacificToUtcTime(
-                    new DateTime(now.Year, 4, 1, 0, 0, 0));
+                    new DateTime(now.Year, 4, 1, 0, 0, 0, DateTimeKind.Unspecified));
             }
 
             // get record and ensure it isn't already processing

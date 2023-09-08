@@ -361,10 +361,10 @@ namespace HetsData.Helpers
             }
 
             DateTime fiscalEnd = DateUtils.ConvertPacificToUtcTime(
-                new DateTime(fiscalYear, 3, 31, 0, 0, 0));
+                new DateTime(fiscalYear, 3, 31, 0, 0, 0, DateTimeKind.Unspecified));
 
             DateTime fiscalStart = DateUtils.ConvertPacificToUtcTime(
-                new DateTime(fiscalYear - 1, 4, 1, 0, 0, 0));
+                new DateTime(fiscalYear - 1, 4, 1, 0, 0, 0, DateTimeKind.Unspecified));
 
             // *******************************************************************************
             // get all the time data for the current fiscal year
@@ -611,21 +611,15 @@ namespace HetsData.Helpers
                 .OrderByDescending(y => y.AppLastUpdateTimestamp)
                 .ToList();
 
-            if (offset == null)
-            {
-                offset = 0;
-            }
+            offset ??= 0;
 
-            if (limit == null)
-            {
-                limit = data.Count - offset;
-            }
+            limit ??= data.Count - offset;
 
-            List<History> result = new List<History>();
+            List<History> result = new();
 
             for (int i = (int)offset; i < data.Count && i < offset + limit; i++)
             {
-                History temp = new History();
+                History temp = new();
 
                 if (data[i] != null)
                 {

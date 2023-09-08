@@ -229,7 +229,7 @@ namespace HetsData.Entities
                 DateTime currentTime = DateTime.UtcNow;
 
                 // create the audit entry.
-                HetSeniorityAudit seniorityAudit = new HetSeniorityAudit
+                HetSeniorityAudit seniorityAudit = new()
                 {
                     BlockNumber = original.BlockNumber,
                     EndDate = currentTime
@@ -243,7 +243,6 @@ namespace HetsData.Entities
                 seniorityAudit.AppLastUpdateTimestamp = currentTime;
                 seniorityAudit.AppCreateUserid = smUserId;
                 seniorityAudit.AppLastUpdateUserid = smUserId;
-
                 seniorityAudit.EquipmentId = tempChangedId;
                 seniorityAudit.LocalAreaId = tempLocalAreaId;
                 seniorityAudit.OwnerId = tempOwnerId;

@@ -88,7 +88,7 @@ namespace HetsData.Hangfire
                 var rolloverYear = FiscalHelper.GetCurrentFiscalStartYear();
 
                 // get processing rules
-                SeniorityScoringRules scoringRules = new SeniorityScoringRules(seniorityScoringRules, (errMessage, ex) => {
+                SeniorityScoringRules scoringRules = new(seniorityScoringRules, (errMessage, ex) => {
                     _logger.LogError(errMessage);
                     _logger.LogError(ex.ToString());
                 });
@@ -130,7 +130,8 @@ namespace HetsData.Hangfire
                 }
 
                 //// determine the "Rollover Date" (required for testing)
-                //DateTime rolloverDate = new DateTime(rolloverYear, DateTime.UtcNow.Month, DateTime.UtcNow.Day);
+                //DateTime rolloverDate = new DateTime(
+                //    rolloverYear, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 0, 0, 0, DateTimeKind.Utc);
                 //status.CurrentFiscalYear = rolloverYear;
                 //status.NextFiscalYear = rolloverYear + 1;
 
@@ -266,7 +267,7 @@ namespace HetsData.Hangfire
             }
             catch (Exception e)
             {
-                _logger.LogError($"AnnualRolloverJob exception: {e.ToString()}");
+                _logger.LogError($"AnnualRolloverJob exception: {e}");
                 throw;
             }
         }

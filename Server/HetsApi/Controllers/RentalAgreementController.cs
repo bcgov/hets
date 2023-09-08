@@ -413,18 +413,22 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("{id}/timeRecords")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual ActionResult<TimeRecordLite> RentalAgreementsIdTimeRecordsGet([FromRoute] int id)
+        public virtual ActionResult<TimeRecordLite> RentalAgreementsIdTimeRecordsGet(
+            [FromRoute] int id)
         {
             bool exists = _context.HetRentalAgreements.Any(a => a.RentalAgreementId == id);
 
             // not found
-            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get current district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
 
             // return time records
-            return new ObjectResult(new HetsResponse(_rentalAgreementRepo.GetTimeRecords(id, districtId)));
+            return new ObjectResult(
+                new HetsResponse(_rentalAgreementRepo.GetTimeRecords(id, districtId)));
         }
 
         /// <summary>
@@ -436,7 +440,9 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/timeRecord")]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual ActionResult<TimeRecordLite> RentalAgreementsIdTimeRecordsPost([FromRoute] int id, [FromBody] TimeRecordDto item)
+        public virtual ActionResult<TimeRecordLite> RentalAgreementsIdTimeRecordsPost(
+            [FromRoute] int id, 
+            [FromBody] TimeRecordDto item)
         {
             bool exists = _context.HetRentalAgreements.Any(a => a.RentalAgreementId == id);
 
@@ -445,8 +451,8 @@ namespace HetsApi.Controllers
                 return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // set the time period type id
-            int? timePeriodTypeId = StatusHelper.GetTimePeriodId(item.TimePeriod, _context);
-            if (timePeriodTypeId == null) throw new DataException("Time Period Id cannot be null");
+            int? timePeriodTypeId = StatusHelper.GetTimePeriodId(item.TimePeriod, _context) 
+                ?? throw new DataException("Time Period Id cannot be null");
 
             // get current district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
@@ -458,7 +464,9 @@ namespace HetsApi.Controllers
                 HetTimeRecord time = _context.HetTimeRecords.First(a => a.TimeRecordId == item.TimeRecordId);
 
                 // not found
-                if (time == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                if (time == null) 
+                    return new NotFoundObjectResult(
+                        new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                 time.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                 time.EnteredDate = DateTime.UtcNow;
@@ -469,7 +477,7 @@ namespace HetsApi.Controllers
             }
             else // add time record
             {
-                HetTimeRecord time = new HetTimeRecord
+                HetTimeRecord time = new()
                 {
                     RentalAgreementId = id,
                     EnteredDate = DateTime.UtcNow,
@@ -485,7 +493,8 @@ namespace HetsApi.Controllers
             _context.SaveChanges();
 
             // retrieve updated time records to return to ui
-            return new ObjectResult(new HetsResponse(_rentalAgreementRepo.GetTimeRecords(id, districtId)));
+            return new ObjectResult(
+                new HetsResponse(_rentalAgreementRepo.GetTimeRecords(id, districtId)));
         }
 
         /// <summary>
@@ -497,12 +506,16 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/timeRecords")]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual ActionResult<TimeRecordLite> RentalAgreementsIdTimeRecordsBulkPostAsync([FromRoute] int id, [FromBody] TimeRecordDto[] items)
+        public virtual ActionResult<TimeRecordLite> RentalAgreementsIdTimeRecordsBulkPostAsync(
+            [FromRoute] int id, 
+            [FromBody] TimeRecordDto[] items)
         {
             bool exists = _context.HetRentalAgreements.Any(a => a.RentalAgreementId == id);
 
             // not found
-            if (!exists || items == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists || items == null) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get current district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
@@ -511,8 +524,8 @@ namespace HetsApi.Controllers
             foreach (var item in items)
             {
                 // set the time period type id
-                int? timePeriodTypeId = StatusHelper.GetTimePeriodId(item.TimePeriod, _context);
-                if (timePeriodTypeId == null) throw new DataException("Time Period Id cannot be null");
+                int? timePeriodTypeId = StatusHelper.GetTimePeriodId(item.TimePeriod, _context) 
+                    ?? throw new DataException("Time Period Id cannot be null");
 
                 // add or update time record
                 if (item.TimeRecordId > 0)
@@ -521,7 +534,9 @@ namespace HetsApi.Controllers
                     HetTimeRecord time = _context.HetTimeRecords.First(a => a.TimeRecordId == item.TimeRecordId);
 
                     // not found
-                    if (time == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                    if (time == null) 
+                        return new NotFoundObjectResult(
+                            new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                     time.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                     time.EnteredDate = DateTime.UtcNow;
@@ -532,7 +547,7 @@ namespace HetsApi.Controllers
                 }
                 else // add time record
                 {
-                    HetTimeRecord time = new HetTimeRecord
+                    HetTimeRecord time = new()
                     {
                         RentalAgreementId = id,
                         EnteredDate = DateTime.UtcNow,
@@ -549,7 +564,8 @@ namespace HetsApi.Controllers
             }
 
             // retrieve updated time records to return to ui
-            return new ObjectResult(new HetsResponse(_rentalAgreementRepo.GetTimeRecords(id, districtId)));
+            return new ObjectResult(
+                new HetsResponse(_rentalAgreementRepo.GetTimeRecords(id, districtId)));
         }
 
         #endregion
@@ -1251,7 +1267,7 @@ namespace HetsApi.Controllers
                     new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             DateTime fiscalStart = DateUtils.ConvertPacificToUtcTime(
-                new DateTime((int)fiscalYearStart, 4, 1, 0, 0, 0));
+                new DateTime((int)fiscalYearStart, 4, 1, 0, 0, 0, DateTimeKind.Unspecified));
 
             // validate that agreement is in the current fiscal year
             DateTime agreementDate = agreement.DatedOn ?? agreement.DbCreateTimestamp;
@@ -1312,9 +1328,13 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("aitReport")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual ActionResult<List<RentalRequestHires>> AitReportGet([FromQuery] string projects,
-            [FromQuery] string districtEquipmentTypes, [FromQuery] string equipment, [FromQuery] string rentalAgreementNumber,
-            [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
+        public virtual ActionResult<List<RentalRequestHires>> AitReportGet(
+            [FromQuery] string projects,
+            [FromQuery] string districtEquipmentTypes, 
+            [FromQuery] string equipment, 
+            [FromQuery] string rentalAgreementNumber,
+            [FromQuery] DateTime? startDate, 
+            [FromQuery] DateTime? endDate)
         {
             int?[] projectArray = ArrayHelper.ParseIntArray(projects);
             int?[] districtEquipmentTypeArray = ArrayHelper.ParseIntArray(districtEquipmentTypes);
@@ -1336,7 +1356,8 @@ namespace HetsApi.Controllers
 
             if (!string.IsNullOrWhiteSpace(rentalAgreementNumber))
             {
-                agreements = agreements.Where(x => x.Number.ToUpper().Contains(rentalAgreementNumber.Trim().ToUpper()));
+                agreements = agreements.Where(x => 
+                    x.Number.ToUpper().Contains(rentalAgreementNumber.Trim().ToUpper()));
             }
 
             if (projectArray != null && projectArray.Length > 0)
@@ -1346,7 +1367,8 @@ namespace HetsApi.Controllers
 
             if (districtEquipmentTypeArray != null && districtEquipmentTypeArray.Length > 0)
             {
-                agreements = agreements.Where(x => districtEquipmentTypeArray.Contains(x.Equipment.DistrictEquipmentTypeId));
+                agreements = agreements.Where(x => 
+                    districtEquipmentTypeArray.Contains(x.Equipment.DistrictEquipmentTypeId));
             }
 
             if (equipmentArray != null && equipmentArray.Length > 0)
@@ -1354,14 +1376,14 @@ namespace HetsApi.Controllers
                 agreements = agreements.Where(x => equipmentArray.Contains(x.EquipmentId));
             }
 
-            if (startDate != null)
+            if (startDate is DateTime startDt)
             {
-                agreements = agreements.Where(x => x.DatedOn >= startDate);
+                agreements = agreements.Where(x => x.DatedOn >= DateUtils.AsUTC(startDt));
             }
 
-            if (endDate != null)
+            if (endDate is DateTime endDt)
             {
-                agreements = agreements.Where(x => x.DatedOn <= endDate);
+                agreements = agreements.Where(x => x.DatedOn <= DateUtils.AsUTC(endDt));
             }
 
             var result = agreements

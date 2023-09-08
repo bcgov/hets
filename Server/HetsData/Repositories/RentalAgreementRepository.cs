@@ -126,12 +126,12 @@ namespace HetsData.Repositories
             }
 
             // fiscal year in the status table stores the "start" of the year
-            TimeRecordLite timeRecord = new TimeRecordLite();
+            TimeRecordLite timeRecord = new();
 
             if (fiscalYear != null)
             {
                 DateTime fiscalYearStart = DateUtils.ConvertPacificToUtcTime(
-                    new DateTime((int)fiscalYear, 4, 1, 0, 0, 0));
+                    new DateTime((int)fiscalYear, 4, 1, 0, 0, 0, DateTimeKind.Unspecified));
 
                 timeRecord.TimeRecords = new List<TimeRecordDto>();
                 timeRecord.TimeRecords.AddRange(
@@ -180,7 +180,7 @@ namespace HetsData.Repositories
         /// <returns></returns>
         public RentalAgreementDocViewModel GetRentalAgreementReportModel(RentalAgreementDto agreement, string agreementCity)
         {
-            RentalAgreementDocViewModel docModel = new RentalAgreementDocViewModel();
+            RentalAgreementDocViewModel docModel = new();
 
             if (agreement != null)
             {
@@ -194,7 +194,7 @@ namespace HetsData.Repositories
                 docModel.RateComment = agreement.RateComment;
                 docModel.RatePeriod = agreement.RatePeriodType.Description;
                 docModel.AgreementCity = agreement.AgreementCity;
-                docModel.DatedOn = (agreement.DatedOn ?? DateTime.UtcNow).ToString("MM/dd/yyyy");
+                docModel.DatedOn = DateUtils.AsUTC(agreement.DatedOn ?? DateTime.UtcNow).ToString("MM/dd/yyyy");
                 docModel.DoingBusinessAs = agreement.Equipment.Owner.DoingBusinessAs;
                 docModel.EmailAddress = agreement.Equipment.Owner.PrimaryContact.EmailAddress;
 
@@ -204,8 +204,12 @@ namespace HetsData.Repositories
                 if (string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.City))
                     tempAddress = $"{agreement.Equipment.Owner.City}";
 
-                if (!string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.City) && agreement.Equipment.Owner.City.Trim() != tempAddress.Trim())
+                if (!string.IsNullOrEmpty(tempAddress) 
+                    && !string.IsNullOrEmpty(agreement.Equipment.Owner.City) 
+                    && agreement.Equipment.Owner.City.Trim() != tempAddress.Trim())
+                {
                     tempAddress = $"{tempAddress}, {agreement.Equipment.Owner.City}";
+                }
 
                 if (string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.Province))
                     tempAddress = $"{agreement.Equipment.Owner.Province}";
@@ -266,7 +270,7 @@ namespace HetsData.Repositories
         {
             string result = "";
 
-            if (dateObject != null)
+            if (dateObject is DateTime dateObj)
             {
                 // since the PDF template is raw HTML and won't convert a date object, we must adjust the time zone here
                 TimeZoneInfo tzi;
@@ -293,18 +297,7 @@ namespace HetsData.Repositories
                     }
                 }
 
-                DateTime dt;
-
-                if (tzi != null)
-                {
-                    dt = TimeZoneInfo.ConvertTime((DateTime)dateObject, tzi);
-
-                }
-                else
-                {
-                    dt = (DateTime)dateObject;
-
-                }
+                DateTime dt = tzi != null ? TimeZoneInfo.ConvertTime(dateObj, tzi) : dateObj;
 
                 result = dt.ToString("yyyy-MMM-dd").ToUpper();
             }

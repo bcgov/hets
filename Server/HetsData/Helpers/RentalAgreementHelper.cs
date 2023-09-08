@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using HetsData.Entities;
 using HetsData.Dtos;
 using HetsCommon;
@@ -111,7 +109,7 @@ namespace HetsData.Helpers
 
                 // fiscal year in the status table stores the "start" of the year
                 DateTime fiscalYearStart = DateUtils.ConvertPacificToUtcTime(
-                    new DateTime((int)fiscalYear, 4, 1, 0, 0, 0));
+                    new DateTime((int)fiscalYear, 4, 1, 0, 0, 0, DateTimeKind.Unspecified));
 
                 fiscalYear++;
 
@@ -165,7 +163,7 @@ namespace HetsData.Helpers
                 int districtId = district.DistrictId;
 
                 DateTime fiscalYearStart = DateUtils.ConvertPacificToUtcTime(
-                    new DateTime(fiscalYear - 1, 1, 1, 0, 0, 0));
+                    new DateTime(fiscalYear - 1, 1, 1, 0, 0, 0, DateTimeKind.Unspecified));
 
                 // count the number of rental agreements in the system (for this district)
                 HetRentalAgreement agreement = context.HetRentalAgreements.AsNoTracking()

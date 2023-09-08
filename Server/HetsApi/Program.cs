@@ -162,8 +162,7 @@ try
     var app = builder.Build();
 
     // Use services here
-    var env = app.Environment;
-    if (env.IsDevelopment())
+    if (app.Environment.IsDevelopment())
         app.UseDeveloperExceptionPage();
 
     app.UseMiddleware<ExceptionMiddleware>();

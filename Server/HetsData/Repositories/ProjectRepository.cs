@@ -171,7 +171,7 @@ namespace HetsData.Repositories
                 if (fiscalYear != null && project != null)
                 {
                     DateTime fiscalYearStart = DateUtils.ConvertPacificToUtcTime(
-                        new DateTime((int)fiscalYear, 4, 1, 0, 0, 0));
+                        new DateTime((int)fiscalYear, 4, 1, 0, 0, 0, DateTimeKind.Unspecified));
 
                     project.FiscalYearStartDate = fiscalYearStart;
                 }

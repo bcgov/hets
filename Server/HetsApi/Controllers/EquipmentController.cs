@@ -116,7 +116,7 @@ namespace HetsApi.Controllers
 
             // fiscal year in the status table stores the "start" of the year
             DateTime fiscalYearStart = DateUtils.ConvertPacificToUtcTime(
-                new DateTime((int)fiscalYear, 3, 31));
+                new DateTime((int)fiscalYear, 3, 31, 0, 0, 0, DateTimeKind.Unspecified));
 
             // get all active owners for this district (and any projects they're associated with)
             var equipments = _context.HetRentalAgreements.AsNoTracking()
@@ -520,11 +520,13 @@ namespace HetsApi.Controllers
             DateTime now = DateTime.Now;
             if (now.Month == 1 || now.Month == 2 || now.Month == 3)
             {
-                fiscalEnd = DateUtils.ConvertPacificToUtcTime(new DateTime(now.Year, 3, 31, 0, 0, 0));
+                fiscalEnd = DateUtils.ConvertPacificToUtcTime(
+                    new DateTime(now.Year, 3, 31, 0, 0, 0, DateTimeKind.Unspecified));
             }
             else
             {
-                fiscalEnd = DateUtils.ConvertPacificToUtcTime(new DateTime(now.AddYears(1).Year, 3, 31, 0, 0, 0));
+                fiscalEnd = DateUtils.ConvertPacificToUtcTime(
+                    new DateTime(now.AddYears(1).Year, 3, 31, 0, 0, 0, DateTimeKind.Unspecified));
             }
 
             // is this a leap year?
@@ -662,18 +664,29 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("search")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual ActionResult<EquipmentLiteDto> EquipmentSearchGet([FromQuery]string localAreas, [FromQuery]string types,
-            [FromQuery]string equipmentAttachment, [FromQuery]int? owner, [FromQuery]string status,
-            [FromQuery]bool? hired, [FromQuery]DateTime? notVerifiedSinceDate,
-            [FromQuery]string equipmentId = null, [FromQuery]string ownerName = null,
-            [FromQuery]string projectName = null, [FromQuery]bool twentyYears = false)
+        public virtual ActionResult<EquipmentLiteDto> EquipmentSearchGet(
+            [FromQuery]string localAreas, 
+            [FromQuery]string types,
+            [FromQuery]string equipmentAttachment, 
+            [FromQuery]int? owner, 
+            [FromQuery]string status,
+            [FromQuery]bool? hired, 
+            [FromQuery]DateTime? notVerifiedSinceDate,
+            [FromQuery]string equipmentId = null, 
+            [FromQuery]string ownerName = null,
+            [FromQuery]string projectName = null, 
+            [FromQuery]bool twentyYears = false)
         {
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
             int?[] typesArray = ArrayHelper.ParseIntArray(types);
 
             // get agreement status
-            int? agreementStatusId = StatusHelper.GetStatusId(HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
-            if (agreementStatusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            int? agreementStatusId = StatusHelper.GetStatusId(
+                HetRentalAgreement.StatusActive, "rentalAgreementStatus", _context);
+
+            if (agreementStatusId == null) 
+                return new BadRequestObjectResult(
+                    new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // get initial results - must be limited to user's district
             int? districtId = UserAccountHelper.GetUsersDistrictId(_context);
@@ -753,9 +766,10 @@ namespace HetsApi.Controllers
                 data = data.Where(x => typesArray.Contains(x.DistrictEquipmentType.DistrictEquipmentTypeId));
             }
 
-            if (notVerifiedSinceDate != null)
+            if (notVerifiedSinceDate is DateTime notVerifiedSince)
             {
-                data = data.Where(x => x.LastVerifiedDate < notVerifiedSinceDate);
+                DateTime notVerifiedSinceUTC = DateUtils.AsUTC(notVerifiedSince);
+                data = data.Where(x => x.LastVerifiedDate < notVerifiedSinceUTC);
             }
 
             // Ministry refer to the EquipmentCode as the "equipmentId" - its not the db id
@@ -765,11 +779,11 @@ namespace HetsApi.Controllers
             }
 
             // convert Equipment Model to the "EquipmentLite" Model
-            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration, (errMessage, ex) => {
+            SeniorityScoringRules scoringRules = new(_configuration, (errMessage, ex) => {
                 _logger.LogError(errMessage);
                 _logger.LogError(ex.ToString());
             });
-            List<EquipmentLiteDto> result = new List<EquipmentLiteDto>();
+            List<EquipmentLiteDto> result = new();
 
             var dataList = data.ToList();
 
@@ -1155,14 +1169,16 @@ namespace HetsApi.Controllers
             bool exists = _context.HetEquipments.Any(a => a.EquipmentId == id);
 
             // not found
-            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetEquipment equipment = _context.HetEquipments.AsNoTracking()
                 .Include(x => x.HetDigitalFiles)
                 .First(a => a.EquipmentId == id);
 
             // extract the attachments and update properties for UI
-            List<HetDigitalFile> attachments = new List<HetDigitalFile>();
+            List<HetDigitalFile> attachments = new();
 
             foreach (HetDigitalFile attachment in equipment.HetDigitalFiles)
             {
@@ -1179,7 +1195,8 @@ namespace HetsApi.Controllers
                 }
             }
             
-            return new ObjectResult(new HetsResponse(_mapper.Map<List<DigitalFileDto>>(attachments)));
+            return new ObjectResult(
+                new HetsResponse(_mapper.Map<List<DigitalFileDto>>(attachments)));
         }
 
         #endregion
@@ -1221,7 +1238,7 @@ namespace HetsApi.Controllers
 
             if (exists)
             {
-                HetHistory history = new HetHistory
+                HetHistory history = new()
                 {
                     HistoryId = 0,
                     HistoryText = item.HistoryText,
@@ -1368,20 +1385,25 @@ namespace HetsApi.Controllers
             //// HETS-1195: Adjust seniority list and rotation list for lists hired between Apr1 and roll over
             //// ** Need to use the "rollover date" to ensure we don't include records created
             ////    after April 1 (but before rollover)
-            //DateTime fiscalEnd = district.RolloverEndDate ?? new DateTime(0001, 01, 01, 00, 00, 00);
-            //int fiscalYear = Convert.ToInt32(district.NextFiscalYear); // status table uses the start of the year
+            // DateTime fiscalEnd = DateUtils.AsUTC(district.RolloverEndDate ?? new DateTime(0001, 01, 01, 00, 00, 00, DateTimeKind.Utc));
+            // int fiscalYear = Convert.ToInt32(district.NextFiscalYear); // status table uses the start of the year
 
-            //fiscalEnd = fiscalEnd == new DateTime(0001, 01, 01, 00, 00, 00) ?
-            //    new DateTime(fiscalYear, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 23, 59, 59) :
-            //    new DateTime(fiscalYear, fiscalEnd.Month, fiscalEnd.Day, 23, 59, 59);
+            // fiscalEnd = fiscalEnd == new DateTime(0001, 01, 01, 00, 00, 00, DateTimeKind.Utc) ?
+            //    DateUtils.ConvertPacificToUtcTime(
+            //        new DateTime(fiscalYear, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 23, 59, 59, DateTimeKind.Unspecified)) :
+            //    DateUtils.ConvertPacificToUtcTime(
+            //        new DateTime(fiscalYear, fiscalEnd.Month, fiscalEnd.Day, 23, 59, 59, DateTimeKind.Unspecified));
 
-            DateTime fiscalStart = districtStatus.RolloverEndDate ?? new DateTime(0001, 01, 01, 00, 00, 00, DateTimeKind.Utc);
+            DateTime fiscalStart = DateUtils.AsUTC(
+                districtStatus.RolloverEndDate ?? new DateTime(0001, 01, 01, 00, 00, 00, DateTimeKind.Utc));
+
             int fiscalYear = Convert.ToInt32(districtStatus.NextFiscalYear);
 
             if (fiscalStart == new DateTime(0001, 01, 01, 00, 00, 00, DateTimeKind.Utc))
             {
                 fiscalYear = Convert.ToInt32(districtStatus.NextFiscalYear); // status table uses the start of the year
-                fiscalStart = DateUtils.ConvertPacificToUtcTime(new DateTime(fiscalYear - 1, 4, 1, 0, 0, 0));
+                fiscalStart = DateUtils.ConvertPacificToUtcTime(
+                    new DateTime(fiscalYear - 1, 4, 1, 0, 0, 0, DateTimeKind.Unspecified));
             }
 
             // get status id
@@ -1427,12 +1449,12 @@ namespace HetsApi.Controllers
             // **********************************************************************
             // convert Equipment Model to Pdf View Model
             // **********************************************************************
-            SeniorityListReportViewModel seniorityList = new SeniorityListReportViewModel();
-            SeniorityScoringRules scoringRules = new SeniorityScoringRules(_configuration, (errMessage, ex) => {
+            SeniorityListReportViewModel seniorityList = new();
+            SeniorityScoringRules scoringRules = new(_configuration, (errMessage, ex) => {
                 _logger.LogError(errMessage);
                 _logger.LogError(ex.ToString());
             });
-            SeniorityListRecord listRecord = new SeniorityListRecord();
+            SeniorityListRecord listRecord = new();
 
             // manage the rotation list data
             int lastCalledEquipmentId = 0;
@@ -1441,18 +1463,9 @@ namespace HetsApi.Controllers
 
             foreach (HetEquipment item in items)
             {
-                if (listRecord.LocalAreaName != item.LocalArea.Name ||
-                    listRecord.DistrictEquipmentTypeName != item.DistrictEquipmentType.DistrictEquipmentName)
+                if (IsListRecordDifferent(listRecord, item.LocalArea.Name, item.DistrictEquipmentType.DistrictEquipmentName))
                 {
-                    if (!string.IsNullOrEmpty(listRecord.LocalAreaName))
-                    {
-                        if (seniorityList.SeniorityListRecords == null)
-                        {
-                            seniorityList.SeniorityListRecords = new List<SeniorityListRecord>();
-                        }
-
-                        seniorityList.SeniorityListRecords.Add(listRecord);
-                    }
+                    seniorityList.SeniorityListRecords = AddSeniorityListRecord(seniorityList.SeniorityListRecords, listRecord);
 
                     listRecord = new SeniorityListRecord
                     {
@@ -1464,65 +1477,49 @@ namespace HetsApi.Controllers
                         SeniorityList = new List<SeniorityViewModel>()
                     };
 
-                    if (item.LocalArea.ServiceArea?.District != null)
-                    {
-                        listRecord.DistrictName = item.LocalArea.ServiceArea.District.Name;
-                    }
+                    listRecord.DistrictName = GetListRecordDistrictName(listRecord.DistrictName, item.LocalArea.ServiceArea?.District);
 
                     // get the rotation info for the first block
-                    if (item.BlockNumber != null) currentBlock = (int) item.BlockNumber;
+                    currentBlock = GetCurrentBlock(currentBlock, item.BlockNumber);
 
                     lastCalledEquipmentId = GetLastCalledEquipmentId(item.LocalArea.LocalAreaId,
                         item.DistrictEquipmentType.DistrictEquipmentTypeId,
                         currentBlock, fiscalStart);
                 }
-                else if (item.BlockNumber != null && currentBlock != item.BlockNumber)
+                else if (IsBlockNumberDifferent(currentBlock, item.BlockNumber))
                 {
                     // get the rotation info for the next block
-                    currentBlock = (int)item.BlockNumber;
+                    currentBlock = GetCurrentBlock(currentBlock, item.BlockNumber);
 
                     lastCalledEquipmentId = GetLastCalledEquipmentId(item.LocalArea.LocalAreaId,
                         item.DistrictEquipmentType.DistrictEquipmentTypeId,
                         currentBlock, fiscalStart);
                 }
 
-                listRecord.SeniorityList.Add(SeniorityListHelper.ToSeniorityViewModel(item, scoringRules, lastCalledEquipmentId, _context));
+                listRecord.SeniorityList.Add(
+                    SeniorityListHelper.ToSeniorityViewModel(item, scoringRules, lastCalledEquipmentId, _context));
             }
 
             // add last record
-            if (!string.IsNullOrEmpty(listRecord.LocalAreaName))
-            {
-                if (seniorityList.SeniorityListRecords == null)
-                {
-                    seniorityList.SeniorityListRecords = new List<SeniorityListRecord>();
-                }
-
-                seniorityList.SeniorityListRecords.Add(listRecord);
-            }
+            seniorityList.SeniorityListRecords = AddSeniorityListRecord(seniorityList.SeniorityListRecords, listRecord);
 
             // sort seniority lists
-            if (seniorityList.SeniorityListRecords != null)
-            {
-                foreach (SeniorityListRecord list in seniorityList.SeniorityListRecords)
-                {
-                    list.SeniorityList = list.SeniorityList.OrderBy(x => x.SenioritySortOrder).ToList();
-                }
-            }
+            seniorityList.SeniorityListRecords = SortSeniorityLists(seniorityList.SeniorityListRecords);
 
             // classification, print date, type (counterCopy or Year to Date)
             seniorityList.Classification = $"23010-22/{(fiscalYear - 1).ToString().Substring(2, 2)}-{fiscalYear.ToString().Substring(2, 2)}";
             seniorityList.GeneratedOn = $"{DateUtils.ConvertUtcToPacificTime(DateTime.UtcNow):dd-MM-yyyy H:mm:ss}";
-            seniorityList.SeniorityListType = counterCopy ? "Counter-Copy" : "Year-to-Date";
+            seniorityList.SeniorityListType = GetSeniorityListType(counterCopy);
 
             // convert to open xml document
-            string documentName = $"SeniorityList-{DateTime.Now:yyyy-MM-dd}{(counterCopy ? "-(CounterCopy)" : "")}.docx";
+            string documentName = GetDocumentName(counterCopy);
             byte[] document = SeniorityList.GetSeniorityList(seniorityList, documentName, counterCopy, (errMessage, ex) => {
                 _logger.LogError(errMessage);
                 _logger.LogError(ex.ToString());
             });
 
             // return document
-            FileContentResult result = new FileContentResult(document, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            FileContentResult result = new(document, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             {
                 FileDownloadName = documentName
             };
@@ -1530,6 +1527,59 @@ namespace HetsApi.Controllers
             Response.Headers.Add("Content-Disposition", "inline; filename=" + documentName);
 
             return result;
+        }
+
+        private bool IsListRecordDifferent(SeniorityListRecord listRecord, string localAreaName, string districtEquipmentTypeName)
+        {
+            return listRecord.LocalAreaName != localAreaName 
+                || listRecord.DistrictEquipmentTypeName != districtEquipmentTypeName;
+        }
+
+        private bool IsBlockNumberDifferent(int currentBlock, int? blockNumber)
+        {
+            return blockNumber != null && currentBlock != blockNumber;
+        }
+
+        private int GetCurrentBlock(int currentBlock, int? blockNumber)
+        {
+            return blockNumber ?? currentBlock;
+        }
+
+        private string GetListRecordDistrictName(string defaultDistrictName, HetDistrict district)
+        {
+            return district != null ? district.Name : defaultDistrictName;
+        }
+
+        private List<SeniorityListRecord> AddSeniorityListRecord(List<SeniorityListRecord> records, SeniorityListRecord listRecord)
+        {
+            if (!string.IsNullOrEmpty(listRecord.LocalAreaName))
+            {
+                records ??= new List<SeniorityListRecord>();
+                records.Add(listRecord);
+            }
+
+            return records;
+        }
+
+        private List<SeniorityListRecord> SortSeniorityLists(List<SeniorityListRecord> records)
+        {
+            if (records == null) return records;
+
+            foreach (SeniorityListRecord record in records)
+            {
+                record.SeniorityList = record.SeniorityList.OrderBy(x => x.SenioritySortOrder).ToList();
+            }
+            return records;
+        }
+
+        private string GetSeniorityListType(bool counterCopy)
+        {
+            return counterCopy ? "Counter-Copy" : "Year-to-Date";
+        }
+
+        private string GetDocumentName(bool counterCopy)
+        {
+            return $"SeniorityList-{DateTime.Now:yyyy-MM-dd}{(counterCopy ? "-(CounterCopy)" : "")}.docx";
         }
 
         private int GetLastCalledEquipmentId(int localAreaId, int districtEquipmentTypeId, int currentBlock, DateTime fiscalStart)
@@ -1557,7 +1607,7 @@ namespace HetsApi.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"GetLastCalledEquipmentId exception: {e.ToString()}");
+                _logger.LogError($"GetLastCalledEquipmentId exception: {e}");
                 throw;
             }
         }
