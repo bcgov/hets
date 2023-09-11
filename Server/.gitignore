@@ -277,7 +277,6 @@ __pycache__/
 
 # SonarQube
 *.sonarqube
-.github/workflows/sonar-scan.yml
 
 *.DotSettings
 *.DotSettings.user

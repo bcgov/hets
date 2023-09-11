@@ -19,3 +19,5 @@ applicationHost.config
 *.DotSettings
 *.DotSettings.user
 node_modules/
+
+.github/workflows/sonar-scan.yml
