@@ -129,12 +129,6 @@ namespace HetsData.Hangfire
                     return;
                 }
 
-                //// determine the "Rollover Date" (required for testing)
-                //DateTime rolloverDate = new DateTime(
-                //    rolloverYear, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 0, 0, 0, DateTimeKind.Utc);
-                //status.CurrentFiscalYear = rolloverYear;
-                //status.NextFiscalYear = rolloverYear + 1;
-
                 // get all district equipment types
                 List<HetDistrictEquipmentType> equipmentTypes = _dbContextMain.HetDistrictEquipmentTypes
                     .Include(x => x.EquipmentType)
@@ -267,12 +261,12 @@ namespace HetsData.Hangfire
             }
             catch (Exception e)
             {
-                _logger.LogError($"AnnualRolloverJob exception: {e}");
+                _logger.LogError("AnnualRolloverJob exception: {e}", e);
                 throw;
             }
         }
 
-        private void UpdateStatusComplete(HetDistrictStatus status, int localAreaCompleteCount, int equipmentCompleteCount)
+        private static void UpdateStatusComplete(HetDistrictStatus status, int localAreaCompleteCount, int equipmentCompleteCount)
         {
             var rolloverYear = FiscalHelper.GetCurrentFiscalStartYear();
 

@@ -23,6 +23,7 @@ using HetsData.Dtos;
 using AutoMapper;
 using HetsCommon;
 using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Drawing.Charts;
 
 namespace HetsApi.Controllers
 {
@@ -723,125 +724,129 @@ namespace HetsApi.Controllers
             // convert to list
             List<HetOwner> ownerList = ownerRecords.ToList();
 
-            if (ownerList.Any())
+            if (!ownerList.Any())
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration))); // record not found
+
+            // generate pdf document name [unique portion only]
+            string fileName = "MailingLabels";
+
+            // setup model for submission to the Pdf service
+            MailingLabelPdfViewModel model = new()
             {
-                // generate pdf document name [unique portion only]
-                string fileName = "MailingLabels";
+                ReportDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                Title = fileName,
+                DistrictId = ownerList[0].LocalArea.ServiceArea.District.DistrictId,
+                LabelRow = new List<MailingLabelRowModel>()
+            };
 
-                // setup model for submission to the Pdf service
-                MailingLabelPdfViewModel model = new()
+            // add owner records
+            int column = 1;
+
+            foreach (HetOwner owner in ownerRecords)
+            {
+                if (!IsDistrictSame(owner.LocalArea.ServiceArea.District, model.DistrictId))
                 {
-                    ReportDate = DateTime.Now.ToString("yyyy-MM-dd"),
-                    Title = fileName,
-                    DistrictId = ownerList[0].LocalArea.ServiceArea.District.DistrictId,
-                    LabelRow = new List<MailingLabelRowModel>()
-                };
-
-                // add owner records
-                int column = 1;
-
-                foreach (HetOwner owner in ownerRecords)
-                {
-                    if (owner.LocalArea.ServiceArea.District == null ||
-                        owner.LocalArea.ServiceArea.District.DistrictId != model.DistrictId)
-                    {
-                        // missing district - data error [HETS-16]
-                        return new BadRequestObjectResult(
-                            new HetsResponse("HETS-16", ErrorViewModel.GetDescription("HETS-16", _configuration)));
-                    }
-
-                    owner.ReportDate = model.ReportDate;
-                    owner.Title = model.Title;
-                    owner.DistrictId = model.DistrictId;
-
-                    switch (column)
-                    {
-                        case 1:
-                            model.LabelRow.Add(new MailingLabelRowModel());
-                            model.LabelRow.Last().OwnerColumn1 = _mapper.Map<OwnerDto>(owner);
-                            break;
-                        default:
-                            model.LabelRow.Last().OwnerColumn2 = _mapper.Map<OwnerDto>(owner);
-                            column = 0;
-                            break;
-                    }
-
-                    column++;
+                    // missing district - data error [HETS-16]
+                    return new BadRequestObjectResult(
+                        new HetsResponse("HETS-16", ErrorViewModel.GetDescription("HETS-16", _configuration)));
                 }
 
-                // setup payload
-                string payload = JsonConvert.SerializeObject(model, new JsonSerializerSettings
+                owner.ReportDate = model.ReportDate;
+                owner.Title = model.Title;
+                owner.DistrictId = model.DistrictId;
+
+                switch (column)
                 {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                    Formatting = Formatting.Indented,
-                    DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                    DateTimeZoneHandling = DateTimeZoneHandling.Utc
-                });
-
-                _logger.LogInformation("Owner Mailing Labels Pdf - Payload Length: {0}", payload.Length);
-
-                // pass the request on to the Pdf Micro Service
-                string pdfHost = _configuration["PDF_SERVICE_NAME"];
-                string pdfUrl = _configuration.GetSection("Constants:OwnerMailingLabelsPdfUrl").Value;
-                string targetUrl = pdfHost + pdfUrl;
-
-                targetUrl = targetUrl + "/" + fileName;
-
-                _logger.LogInformation("Owner Mailing Labels Pdf - HETS Pdf Service Url: {0}", targetUrl);
-
-                // call the MicroService
-                try
-                {
-                    HttpClient client = new();
-                    StringContent stringContent = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-
-                    _logger.LogInformation("Owner Mailing Labels Pdf - Calling HETS Pdf Service");
-                    HttpResponseMessage response = client.PostAsync(targetUrl, stringContent).Result;
-
-                    // success
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        _logger.LogInformation("Owner Mailing Labels Pdf - HETS Pdf Service Response: OK");
-
-                        var pdfResponseBytes = GetPdf(response, (errMessage, ex) => {
-                            _logger.LogError(errMessage);
-                            _logger.LogError(ex.ToString());
-                        });
-
-                        // convert to string and log
-                        string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
-
-                        fileName = fileName + $"-{DateTime.Now:yyyy-MM-dd-H-mm}" + ".pdf";
-
-                        _logger.LogInformation("Owner Mailing Labels Pdf - HETS Pdf Filename: {0}", fileName);
-                        _logger.LogInformation("Owner Mailing Labels Pdf - HETS Pdf Size: {0}", pdfResponse.Length);
-
-                        // return content
-                        FileContentResult result = new(pdfResponseBytes, "application/pdf")
-                        {
-                            FileDownloadName = fileName
-                        };
-
-                        Response.Headers.Add("Content-Disposition", "inline; filename=" + fileName);
-
-                        return result;
-                    }
-
-                    _logger.LogInformation("Owner Mailing Labels Pdf - HETS Pdf Service Response: {0}", response.StatusCode);
-                }
-                catch (Exception ex)
-                {
-                    Debug.Write("Error generating pdf: " + ex.Message);
-                    return new BadRequestObjectResult(new HetsResponse("HETS-15", ErrorViewModel.GetDescription("HETS-15", _configuration)));
+                    case 1:
+                        model.LabelRow.Add(new MailingLabelRowModel());
+                        model.LabelRow.Last().OwnerColumn1 = _mapper.Map<OwnerDto>(owner);
+                        break;
+                    default:
+                        model.LabelRow.Last().OwnerColumn2 = _mapper.Map<OwnerDto>(owner);
+                        column = 0;
+                        break;
                 }
 
-                // problem occured
-                return new BadRequestObjectResult(new HetsResponse("HETS-15", ErrorViewModel.GetDescription("HETS-15", _configuration)));
+                column++;
             }
 
-            // record not found
-            return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            // setup payload
+            string payload = JsonConvert.SerializeObject(model, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Newtonsoft.Json.Formatting.Indented,
+                DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                DateTimeZoneHandling = DateTimeZoneHandling.Utc
+            });
+
+            _logger.LogInformation("Owner Mailing Labels Pdf - Payload Length: {payloadLength}", payload.Length);
+
+            // pass the request on to the Pdf Micro Service
+            string pdfHost = _configuration["PDF_SERVICE_NAME"];
+            string pdfUrl = _configuration.GetSection("Constants:OwnerMailingLabelsPdfUrl").Value;
+            string targetUrl = pdfHost + pdfUrl;
+
+            targetUrl = targetUrl + "/" + fileName;
+
+            _logger.LogInformation("Owner Mailing Labels Pdf - HETS Pdf Service Url: {targetUrl}", targetUrl);
+
+            // call the MicroService
+            try
+            {
+                HttpClient client = new();
+                StringContent stringContent = new(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+
+                _logger.LogInformation("Owner Mailing Labels Pdf - Calling HETS Pdf Service");
+                HttpResponseMessage response = client.PostAsync(targetUrl, stringContent).Result;
+
+                // success
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    _logger.LogInformation("Owner Mailing Labels Pdf - HETS Pdf Service Response: OK");
+
+                    var pdfResponseBytes = GetPdf(response, (errMessage, ex) => {
+                        _logger.LogError("{errMessage}", errMessage);
+                        _logger.LogError("{exception}", ex);
+                    });
+
+                    // convert to string and log
+                    string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
+
+                    fileName = fileName + $"-{DateTime.Now:yyyy-MM-dd-H-mm}" + ".pdf";
+
+                    _logger.LogInformation("Owner Mailing Labels Pdf - HETS Pdf Filename: {fileName}", fileName);
+                    _logger.LogInformation("Owner Mailing Labels Pdf - HETS Pdf Size: {pdfResponseLength}", pdfResponse.Length);
+
+                    // return content
+                    FileContentResult result = new(pdfResponseBytes, "application/pdf")
+                    {
+                        FileDownloadName = fileName
+                    };
+
+                    Response.Headers.Add("Content-Disposition", "inline; filename=" + fileName);
+
+                    return result;
+                }
+
+                _logger.LogInformation("Owner Mailing Labels Pdf - HETS Pdf Service Response: {statusCode}", response.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                Debug.Write("Error generating pdf: " + ex.Message);
+                return new BadRequestObjectResult(
+                    new HetsResponse("HETS-15", ErrorViewModel.GetDescription("HETS-15", _configuration)));
+            }
+
+            // problem occured
+            return new BadRequestObjectResult(
+                new HetsResponse("HETS-15", ErrorViewModel.GetDescription("HETS-15", _configuration)));
+        }
+
+        private static bool IsDistrictSame(HetDistrict district, int districtId)
+        {
+            return district is not null && district.DistrictId == districtId;
         }
 
         private static byte[] GetPdf(HttpResponseMessage response, Action<string, Exception> logErrorAction)
@@ -1188,7 +1193,7 @@ namespace HetsApi.Controllers
                     PupLegalCapacity = equipmentToTransfer.PupLegalCapacity
                 };
 
-                newEquipment.HetEquipmentAttachments = 
+                newEquipment.HetEquipmentAttachments =
                     GetEquipmentAttachments(newEquipment.HetEquipmentAttachments, equipmentToTransfer);
 
                 // seniority information:
@@ -1227,23 +1232,23 @@ namespace HetsApi.Controllers
                     _mapper.Map<List<EquipmentDto>>(equipmentsToTransfer)));
         }
 
-        private bool EquipmentDoesntBelongToOwner(HetEquipment equipmentToTransfer, HetOwner currentOwner)
+        private static bool EquipmentDoesntBelongToOwner(HetEquipment equipmentToTransfer, HetOwner currentOwner)
         {
             return equipmentToTransfer == null || equipmentToTransfer.OwnerId != currentOwner.OwnerId;
         }
 
-        private bool OwnerOrEquipmentNotFound(bool ownerExists, bool targetOwnerExists, EquipmentDto[] items)
+        private static bool OwnerOrEquipmentNotFound(bool ownerExists, bool targetOwnerExists, EquipmentDto[] items)
         {
             return !ownerExists || !targetOwnerExists || items == null;
         }
 
-        private bool OwnersInDifferentDistricts(HetOwner currentOwner, HetOwner targetOwner)
+        private static bool OwnersInDifferentDistricts(HetOwner currentOwner, HetOwner targetOwner)
         {
             return currentOwner.LocalArea.ServiceArea.District.DistrictId 
                 != targetOwner.LocalArea.ServiceArea.District.DistrictId;
         }
 
-        private bool OwnersNotActive(HetOwner currentOwner, HetOwner targetOwner, int? ownerStatusId)
+        private static bool OwnersNotActive(HetOwner currentOwner, HetOwner targetOwner, int? ownerStatusId)
         {
             return currentOwner.OwnerStatusTypeId != ownerStatusId 
                 || targetOwner.OwnerStatusTypeId != ownerStatusId;
@@ -1269,8 +1274,8 @@ namespace HetsApi.Controllers
 
                     // recalculate seniority
                     EquipmentHelper.RecalculateSeniority(localAreaId, districtEquipmentTypeId, _context, _configuration, (errMessage, ex) => {
-                        _logger.LogError(errMessage);
-                        _logger.LogError(ex.ToString());
+                        _logger.LogError("{errMessage}", errMessage);
+                        _logger.LogError("{exception}", ex);
                     });
                 }
             }
@@ -1278,24 +1283,25 @@ namespace HetsApi.Controllers
             return equipmentsToTransfer;
         }
 
-        private ICollection<HetEquipmentAttachment> GetEquipmentAttachments(
+        private static ICollection<HetEquipmentAttachment> GetEquipmentAttachments(
             ICollection<HetEquipmentAttachment> existingAttachments, HetEquipment equipmentToTransfer)
         {
             var attachments = existingAttachments ?? new List<HetEquipmentAttachment>();
-            foreach (HetEquipmentAttachment attachment in equipmentToTransfer.HetEquipmentAttachments)
-            {
-                HetEquipmentAttachment newAttachment = new()
-                {
-                    Description = attachment.TypeName,
-                    TypeName = attachment.TypeName
-                };
+            var newAttachments = equipmentToTransfer.HetEquipmentAttachments
+                .Select(attachment => new HetEquipmentAttachment
+                    {
+                        Description = attachment.TypeName,
+                        TypeName = attachment.TypeName
+                    });
 
-                attachments.Add(newAttachment);
+            foreach (HetEquipmentAttachment attachment in newAttachments)
+            {
+                attachments.Add(attachment);
             }
             return attachments;
         }
 
-        private HetEquipment IncludeSeniorityWithEquipment(
+        private static HetEquipment IncludeSeniorityWithEquipment(
             bool includeSeniority, HetEquipment newEquipment, HetEquipment equipmentToTransfer)
         {
             if (includeSeniority)

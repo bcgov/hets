@@ -291,7 +291,7 @@ namespace HetsData.Repositories
             }
             catch (Exception e)
             {
-                _logger.LogError($"GetOwnerVerificationLetterData exception: {e}");
+                _logger.LogError("GetOwnerVerificationLetterData exception: {e}", e);
                 throw;
             }
         }

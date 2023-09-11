@@ -573,6 +573,17 @@ namespace HetsData.Helpers
             }
             #endregion
 
+            ResetRemainingBlocksSortOrder(
+                startBlockIndex, numberOfBlocks, masterSortOrder, startEquipInBlock, hetRentalRequestRotationList);
+        }
+
+        private static void ResetRemainingBlocksSortOrder(
+            int startBlockIndex, 
+            int numberOfBlocks, 
+            int masterSortOrder, 
+            (HetEquipment equipment, int position)[] startEquipInBlock,
+            List<HetRentalRequestRotationList> hetRentalRequestRotationList)
+        {
             #region remaining blocks if any
             for (int blockIndex = startBlockIndex + 1; blockIndex < numberOfBlocks; blockIndex++)
             {

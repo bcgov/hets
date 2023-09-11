@@ -18,6 +18,9 @@ using HetsData.Repositories;
 using HetsData.Dtos;
 using AutoMapper;
 using HetsCommon;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using DocumentFormat.OpenXml.Drawing;
+using System.Reflection.Metadata.Ecma335;
 
 namespace HetsApi.Controllers
 {
@@ -703,15 +706,16 @@ namespace HetsApi.Controllers
                 .Where(x => x.LocalArea.ServiceArea.DistrictId.Equals(districtId));
 
             // filter results based on search criteria
-            if (localAreasArray != null && localAreasArray.Length > 0)
+            if (!IsArrayEmpty(localAreasArray))
             {
                 data = data.Where(x => localAreasArray.Contains(x.LocalArea.LocalAreaId));
             }
 
             if (equipmentAttachment != null)
             {
-                data = data.Where(x => x.HetEquipmentAttachments
-                    .Any(y => y.TypeName.ToLower().Contains(equipmentAttachment.ToLower())));
+                data = data.Where(x => 
+                    x.HetEquipmentAttachments.Any(y => 
+                        y.TypeName.ToLower().Contains(equipmentAttachment.ToLower())));
             }
 
             if (owner != null)
@@ -719,13 +723,7 @@ namespace HetsApi.Controllers
                 data = data.Where(x => x.Owner.OwnerId == owner);
             }
 
-            if (ownerName != null)
-            {
-                data = data.Where(x => 
-                  x.Owner.OrganizationName.ToLower().Contains(ownerName.ToLower()) || 
-                  x.Owner.DoingBusinessAs.ToLower().Contains(ownerName.ToLower())
-                );
-            }
+            data = WithOwnerName(data, ownerName);
 
             if (status != null)
             {
@@ -737,31 +735,9 @@ namespace HetsApi.Controllers
                 }
             }
 
-            if (projectName != null)
-            {
-                IQueryable<int?> hiredEquipmentQuery = _context.HetRentalAgreements.AsNoTracking()
-                    .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId))
-                    .Where(agreement => agreement.RentalAgreementStatusTypeId == agreementStatusId)
-                    .Select(agreement => agreement.EquipmentId)
-                    .Distinct();
+            data = QueryByProjectNameOrHired(data, projectName, hired, districtId, agreementStatusId);
 
-                data = data.Where(e => hiredEquipmentQuery.Contains(e.EquipmentId));
-
-                data = data.Where(x => x.HetRentalAgreements
-                    .Any(y => y.Project.Name.ToLower().Contains(projectName.ToLower())));
-            }
-            else if (hired == true)
-            {
-                IQueryable<int?> hiredEquipmentQuery = _context.HetRentalAgreements.AsNoTracking()
-                    .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId))
-                    .Where(agreement => agreement.RentalAgreementStatusTypeId == agreementStatusId)
-                    .Select(agreement => agreement.EquipmentId)
-                    .Distinct();
-
-                data = data.Where(e => hiredEquipmentQuery.Contains(e.EquipmentId));
-            }
-
-            if (typesArray != null && typesArray.Length > 0)
+            if (!IsArrayEmpty(typesArray))
             {
                 data = data.Where(x => typesArray.Contains(x.DistrictEquipmentType.DistrictEquipmentTypeId));
             }
@@ -780,21 +756,17 @@ namespace HetsApi.Controllers
 
             // convert Equipment Model to the "EquipmentLite" Model
             SeniorityScoringRules scoringRules = new(_configuration, (errMessage, ex) => {
-                _logger.LogError(errMessage);
-                _logger.LogError(ex.ToString());
+                _logger.LogError("{errMessage}", errMessage);
+                _logger.LogError("{exception}", ex.ToString());
             });
+
             List<EquipmentLiteDto> result = new();
 
             var dataList = data.ToList();
 
             // HETS-942 - Search for Equipment > 20 yrs
             // ** only return equipment that are 20 years and older (using the equipment Year)
-            if (twentyYears)
-            {
-                var twentyYearsInt = DateTime.Now.Year - 20;
-                dataList = dataList.Where(x => string.IsNullOrWhiteSpace(x.Year) || int.Parse(x.Year) <= twentyYearsInt)
-                    .ToList();
-            }
+            dataList = EquipmentsOlderTwentyYears(dataList, twentyYears);
 
             foreach (HetEquipment item in dataList)
             {
@@ -803,6 +775,56 @@ namespace HetsApi.Controllers
 
             // return to the client
             return new ObjectResult(new HetsResponse(result));
+        }
+
+        private static bool IsArrayEmpty(int?[] arr)
+        {
+            return arr is null || arr.Length == 0;
+        }
+
+        private static IQueryable<HetEquipment> WithOwnerName(IQueryable<HetEquipment> data, string ownerName)
+        {
+            if (ownerName == null) return data;
+            return data.Where(x =>
+                x.Owner.OrganizationName.ToLower().Contains(ownerName.ToLower()) 
+                || x.Owner.DoingBusinessAs.ToLower().Contains(ownerName.ToLower()));
+        }
+
+        private static List<HetEquipment> EquipmentsOlderTwentyYears(List<HetEquipment> equipments, bool twentyYears)
+        {
+            if (twentyYears)
+            {
+                var twentyYearsInt = DateTime.Now.Year - 20;
+                return equipments
+                    .Where(x => string.IsNullOrWhiteSpace(x.Year) || int.Parse(x.Year) <= twentyYearsInt)
+                    .ToList();
+            }
+            return equipments;
+        }
+
+        private IQueryable<HetEquipment> QueryByProjectNameOrHired(
+            IQueryable<HetEquipment> data, 
+            string projectName, 
+            bool? hired,
+            int? districtId,
+            int? agreementStatusId)
+        {
+            if (projectName is null && hired != true) return data;
+
+            IQueryable<int?> hiredEquipmentQuery = _context.HetRentalAgreements.AsNoTracking()
+                .Where(x => x.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId))
+                .Where(agreement => agreement.RentalAgreementStatusTypeId == agreementStatusId)
+                .Select(agreement => agreement.EquipmentId)
+                .Distinct();
+
+            data = data.Where(e => hiredEquipmentQuery.Contains(e.EquipmentId));
+
+            if (projectName is not null)
+            {
+                return data.Where(x => x.HetRentalAgreements
+                    .Any(y => y.Project.Name.ToLower().Contains(projectName.ToLower())));
+            }
+            return data;
         }
 
         #endregion
@@ -1385,15 +1407,6 @@ namespace HetsApi.Controllers
             //// HETS-1195: Adjust seniority list and rotation list for lists hired between Apr1 and roll over
             //// ** Need to use the "rollover date" to ensure we don't include records created
             ////    after April 1 (but before rollover)
-            // DateTime fiscalEnd = DateUtils.AsUTC(district.RolloverEndDate ?? new DateTime(0001, 01, 01, 00, 00, 00, DateTimeKind.Utc));
-            // int fiscalYear = Convert.ToInt32(district.NextFiscalYear); // status table uses the start of the year
-
-            // fiscalEnd = fiscalEnd == new DateTime(0001, 01, 01, 00, 00, 00, DateTimeKind.Utc) ?
-            //    DateUtils.ConvertPacificToUtcTime(
-            //        new DateTime(fiscalYear, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 23, 59, 59, DateTimeKind.Unspecified)) :
-            //    DateUtils.ConvertPacificToUtcTime(
-            //        new DateTime(fiscalYear, fiscalEnd.Month, fiscalEnd.Day, 23, 59, 59, DateTimeKind.Unspecified));
-
             DateTime fiscalStart = DateUtils.AsUTC(
                 districtStatus.RolloverEndDate ?? new DateTime(0001, 01, 01, 00, 00, 00, DateTimeKind.Utc));
 
@@ -1514,8 +1527,8 @@ namespace HetsApi.Controllers
             // convert to open xml document
             string documentName = GetDocumentName(counterCopy);
             byte[] document = SeniorityList.GetSeniorityList(seniorityList, documentName, counterCopy, (errMessage, ex) => {
-                _logger.LogError(errMessage);
-                _logger.LogError(ex.ToString());
+                _logger.LogError("{errMessage}", errMessage);
+                _logger.LogError("{exception}", ex.ToString());
             });
 
             // return document
@@ -1529,28 +1542,29 @@ namespace HetsApi.Controllers
             return result;
         }
 
-        private bool IsListRecordDifferent(SeniorityListRecord listRecord, string localAreaName, string districtEquipmentTypeName)
+        private static bool IsListRecordDifferent(SeniorityListRecord listRecord, string localAreaName, string districtEquipmentTypeName)
         {
             return listRecord.LocalAreaName != localAreaName 
                 || listRecord.DistrictEquipmentTypeName != districtEquipmentTypeName;
         }
 
-        private bool IsBlockNumberDifferent(int currentBlock, int? blockNumber)
+        private static bool IsBlockNumberDifferent(int currentBlock, int? blockNumber)
         {
             return blockNumber != null && currentBlock != blockNumber;
         }
 
-        private int GetCurrentBlock(int currentBlock, int? blockNumber)
+        private static int GetCurrentBlock(int currentBlock, int? blockNumber)
         {
             return blockNumber ?? currentBlock;
         }
 
-        private string GetListRecordDistrictName(string defaultDistrictName, HetDistrict district)
+        private static string GetListRecordDistrictName(string defaultDistrictName, HetDistrict district)
         {
             return district != null ? district.Name : defaultDistrictName;
         }
 
-        private List<SeniorityListRecord> AddSeniorityListRecord(List<SeniorityListRecord> records, SeniorityListRecord listRecord)
+        private static List<SeniorityListRecord> AddSeniorityListRecord(
+            List<SeniorityListRecord> records, SeniorityListRecord listRecord)
         {
             if (!string.IsNullOrEmpty(listRecord.LocalAreaName))
             {
@@ -1561,7 +1575,7 @@ namespace HetsApi.Controllers
             return records;
         }
 
-        private List<SeniorityListRecord> SortSeniorityLists(List<SeniorityListRecord> records)
+        private static List<SeniorityListRecord> SortSeniorityLists(List<SeniorityListRecord> records)
         {
             if (records == null) return records;
 
@@ -1572,17 +1586,18 @@ namespace HetsApi.Controllers
             return records;
         }
 
-        private string GetSeniorityListType(bool counterCopy)
+        private static string GetSeniorityListType(bool counterCopy)
         {
             return counterCopy ? "Counter-Copy" : "Year-to-Date";
         }
 
-        private string GetDocumentName(bool counterCopy)
+        private static string GetDocumentName(bool counterCopy)
         {
             return $"SeniorityList-{DateTime.Now:yyyy-MM-dd}{(counterCopy ? "-(CounterCopy)" : "")}.docx";
         }
 
-        private int GetLastCalledEquipmentId(int localAreaId, int districtEquipmentTypeId, int currentBlock, DateTime fiscalStart)
+        private int GetLastCalledEquipmentId(
+            int localAreaId, int districtEquipmentTypeId, int currentBlock, DateTime fiscalStart)
         {
             try
             {
@@ -1595,19 +1610,21 @@ namespace HetsApi.Controllers
                 HetRentalRequestRotationList blockRotation = _context.HetRentalRequestRotationLists.AsNoTracking()
                     .Include(x => x.Equipment)
                     .Include(x => x.RentalRequest)
-                    .OrderByDescending(x => x.RentalRequestId).ThenByDescending(x => x.RotationListSortOrder)
-                    .FirstOrDefault(x => x.RentalRequest.DistrictEquipmentTypeId == districtEquipmentTypeId &&
-                                         x.RentalRequest.LocalAreaId == localAreaId &&
-                                         x.RentalRequest.AppCreateTimestamp >= fiscalStart &&
-                                         x.Equipment.BlockNumber == currentBlock &&
-                                         x.WasAsked == true &&
-                                         x.IsForceHire != true);
+                    .OrderByDescending(x => x.RentalRequestId)
+                    .ThenByDescending(x => x.RotationListSortOrder)
+                    .FirstOrDefault(x => 
+                        x.RentalRequest.DistrictEquipmentTypeId == districtEquipmentTypeId 
+                        && x.RentalRequest.LocalAreaId == localAreaId 
+                        && x.RentalRequest.AppCreateTimestamp >= fiscalStart 
+                        && x.Equipment.BlockNumber == currentBlock 
+                        && x.WasAsked == true 
+                        && x.IsForceHire != true);
 
                 return blockRotation == null ? 0 : (int)blockRotation.EquipmentId;
             }
             catch (Exception e)
             {
-                _logger.LogError($"GetLastCalledEquipmentId exception: {e}");
+                _logger.LogError("GetLastCalledEquipmentId exception: {e}", e.ToString());
                 throw;
             }
         }
