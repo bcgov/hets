@@ -1270,7 +1270,7 @@ namespace HetsApi.Controllers
                 new DateTime((int)fiscalYearStart, 4, 1, 0, 0, 0, DateTimeKind.Unspecified));
 
             // validate that agreement is in the current fiscal year
-            DateTime agreementDate = agreement.DatedOn ?? agreement.DbCreateTimestamp;
+            DateTime agreementDate = DateUtils.AsUTC(agreement.DatedOn ?? agreement.DbCreateTimestamp);
 
             if (agreementDate < fiscalStart) 
                 return new NotFoundObjectResult(
@@ -1378,12 +1378,14 @@ namespace HetsApi.Controllers
 
             if (startDate is DateTime startDt)
             {
-                agreements = agreements.Where(x => x.DatedOn >= DateUtils.AsUTC(startDt));
+                DateTime startDtUtc = DateUtils.AsUTC(startDt);
+                agreements = agreements.Where(x => x.DatedOn >= startDtUtc);
             }
 
             if (endDate is DateTime endDt)
             {
-                agreements = agreements.Where(x => x.DatedOn <= DateUtils.AsUTC(endDt));
+                DateTime endDtUtc = DateUtils.AsUTC(endDt);
+                agreements = agreements.Where(x => x.DatedOn <= endDtUtc);
             }
 
             var result = agreements

@@ -290,12 +290,13 @@ namespace HetsData.Helpers
             if (districtEquipmentTypeId == null || localAreaId == null) return null;
 
             // if this is not block 1 - check that we have "asked" anyone in the previous list
+            DateTime fiscalStartUtc = DateUtils.AsUTC(fiscalStart);
             var rotationListquery = context.HetRentalRequestRotationLists.AsNoTracking()
                 .Include(x => x.RentalRequest)
                 .Include(x => x.Equipment)
                 .Where(x => x.RentalRequest.DistrictEquipmentTypeId == districtEquipmentTypeId &&
                             x.RentalRequest.LocalAreaId == localAreaId &&
-                            x.RentalRequest.AppCreateTimestamp >= fiscalStart &&
+                            x.RentalRequest.AppCreateTimestamp >= fiscalStartUtc &&
                             x.BlockNumber == blockNumber && //use historical block number of the equipment
                             x.WasAsked == true &&
                             x.IsForceHire != true)
@@ -394,9 +395,9 @@ namespace HetsData.Helpers
             int fiscalYear = Convert.ToInt32(districtStatus.NextFiscalYear); // status table uses the start of the year
             rentalRequest.FiscalYear = fiscalYear;
 
-            DateTime fiscalStart = districtStatus.RolloverEndDate ??
-                DateUtils.ConvertPacificToUtcTime(
-                    new DateTime(fiscalYear - 1, 4, 1, 0, 0, 0, DateTimeKind.Unspecified));
+            DateTime fiscalStart = DateUtils.AsUTC(
+                districtStatus.RolloverEndDate ?? DateUtils.ConvertPacificToUtcTime(
+                    new DateTime(fiscalYear - 1, 4, 1, 0, 0, 0, DateTimeKind.Unspecified)));
 
             // *****************************************************************
             // if we don't have a request for the current fiscal,
@@ -486,11 +487,12 @@ namespace HetsData.Helpers
             DbAppContext context, int? disEquipmentTypeId, int? localAreaId, DateTime fiscalStart)
         {
             // get the last rotation list created this fiscal year
+            DateTime fiscalStartUtc = DateUtils.AsUTC(fiscalStart);
             return context.HetRentalRequests
                 .Any(x =>
                     x.DistrictEquipmentType.DistrictEquipmentTypeId == disEquipmentTypeId
                     && x.LocalArea.LocalAreaId == localAreaId
-                    && x.AppCreateTimestamp >= fiscalStart);
+                    && x.AppCreateTimestamp >= fiscalStartUtc);
         }
 
         private static void SetSeniorityListLastCalled(

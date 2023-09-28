@@ -500,12 +500,14 @@ namespace HetsApi.Controllers
 
             if (startDate is DateTime startDt)
             {
-                data = data.Where(x => x.ExpectedStartDate >= DateUtils.AsUTC(startDt));
+                DateTime startDtUtc = DateUtils.AsUTC(startDt);
+                data = data.Where(x => x.ExpectedStartDate >= startDtUtc);
             }
 
             if (endDate is DateTime endDt)
             {
-                data = data.Where(x => x.ExpectedStartDate <= DateUtils.AsUTC(endDt));
+                DateTime endDtUtc = DateUtils.AsUTC(endDt);
+                data = data.Where(x => x.ExpectedStartDate <= endDtUtc);
             }
 
             if (status != null)

@@ -1601,6 +1601,8 @@ namespace HetsApi.Controllers
         {
             try
             {
+                fiscalStart = DateUtils.AsUTC(fiscalStart);
+
                 // HETS-824 = BVT - Corrections to Seniority List PDF
                 //   * This column should contain "Y" against the equipment that
                 //     last responded (whether Yes/No) in a block

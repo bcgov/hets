@@ -1323,6 +1323,8 @@ namespace HetsApi.Controllers
 
             // we also need to update all of the associated rental agreements
             // (for this fiscal year)
+            fiscalStart = DateUtils.AsUTC(fiscalStart);
+
             IQueryable<HetRentalAgreement> agreements = _context.HetRentalAgreements
                 .Where(x => x.EquipmentId == equipmentToTransfer.EquipmentId &&
                             x.DatedOn >= fiscalStart);
@@ -1900,10 +1902,12 @@ namespace HetsApi.Controllers
                     && (
                         x.WorkSafeBcexpiryDate == null 
                         || wcbExpiry == null 
+                        || wcbExpiryUTC == null
                         || x.WorkSafeBcexpiryDate < wcbExpiryUTC) 
                     && (
                         x.CglendDate == null 
                         || cglExpiry == null 
+                        || cglExpiryUTC == null
                         || x.CglendDate < cglExpiryUTC));
 
             if (localAreasArray != null && localAreasArray.Length > 0)
