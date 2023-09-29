@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using HetsCommon;
 
 namespace HetsData.Repositories
 {
@@ -145,7 +146,7 @@ namespace HetsData.Repositories
                 {
                     temp.HistoryText = data[i].HistoryText;
                     temp.Id = data[i].HistoryId;
-                    temp.LastUpdateTimestamp = data[i].AppLastUpdateTimestamp;
+                    temp.LastUpdateTimestamp = DateUtils.AsUTC(data[i].AppLastUpdateTimestamp);
                     temp.LastUpdateUserid = data[i].AppLastUpdateUserid;
                     temp.AffectedEntityId = data[i].OwnerId;
                 }

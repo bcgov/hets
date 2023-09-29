@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
+using HetsCommon;
 
 namespace HetsData.Repositories
 {
@@ -64,8 +65,13 @@ namespace HetsData.Repositories
 
                 requestLite.Status = request.RentalRequestStatusType.Description;
                 requestLite.EquipmentCount = request.EquipmentCount;
-                requestLite.ExpectedEndDate = request.ExpectedEndDate;
-                requestLite.ExpectedStartDate = request.ExpectedStartDate;
+                requestLite.ExpectedEndDate = 
+                    request.ExpectedEndDate is DateTime expectedEndDateUtc ? 
+                        DateUtils.AsUTC(expectedEndDateUtc) : null;
+
+                requestLite.ExpectedStartDate = 
+                    request.ExpectedStartDate is DateTime expectedStartDateUtc ? 
+                        DateUtils.AsUTC(expectedStartDateUtc) : null;
             }
 
             return requestLite;
@@ -119,7 +125,7 @@ namespace HetsData.Repositories
                 .FirstOrDefault(a => a.RentalRequestId == id);
 
             //pull out the date that request was last updated
-            var requestDate = request.AppLastUpdateTimestamp;
+            var requestDate = DateUtils.AsUTC(request.AppLastUpdateTimestamp);
 
             foreach (var rrrl in request.HetRentalRequestRotationLists)
             {

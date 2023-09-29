@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using HetsCommon;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
@@ -252,9 +253,9 @@ namespace HetsData.Entities
                     seniorityAudit.OwnerOrganizationName = seniorityAudit.Owner.OrganizationName;
                 }
 
-                if (original.SeniorityEffectiveDate != null)
+                if (original.SeniorityEffectiveDate is DateTime seniorityEffectiveDateUtc)
                 {
-                    seniorityAudit.StartDate = (DateTime)original.SeniorityEffectiveDate;
+                    seniorityAudit.StartDate = DateUtils.AsUTC(seniorityEffectiveDateUtc);
                 }
 
                 seniorityAudit.Seniority = original.Seniority;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using HetsCommon;
 using HetsData.Dtos;
 using HetsData.Entities;
 
@@ -55,14 +56,15 @@ namespace HetsData.Helpers
         /// <param name="timeRecord"></param>
         public static TimeRecordSearchLite ToLiteModel(HetTimeRecord timeRecord)
         {
-            TimeRecordSearchLite timeLite = new TimeRecordSearchLite();
+            TimeRecordSearchLite timeLite = new();
 
             if (timeRecord != null)
             {
                 timeLite.Id = timeRecord.TimeRecordId;
                 timeLite.Hours = timeRecord.Hours;
-                timeLite.WorkedDate = timeRecord.WorkedDate;
-                timeLite.EnteredDate = timeRecord.EnteredDate;
+                timeLite.WorkedDate = DateUtils.AsUTC(timeRecord.WorkedDate);
+                timeLite.EnteredDate = timeRecord.EnteredDate is DateTime enteredDateUtc ? 
+                    DateUtils.AsUTC(enteredDateUtc) : null;
                 timeLite.RentalAgreementId = timeRecord.RentalAgreement.RentalAgreementId;
                 timeLite.LocalAreaId = timeRecord.RentalAgreement.Equipment.LocalArea.LocalAreaId;
                 timeLite.LocalAreaName = timeRecord.RentalAgreement.Equipment.LocalArea.Name;

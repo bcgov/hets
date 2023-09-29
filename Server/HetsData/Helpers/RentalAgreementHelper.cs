@@ -62,12 +62,13 @@ namespace HetsData.Helpers
         /// <param name="agreement"></param>
         public static RentalAgreementSummaryLite ToSummaryLiteModel(HetRentalAgreement agreement)
         {
-            RentalAgreementSummaryLite agreementSummary = new RentalAgreementSummaryLite();
+            RentalAgreementSummaryLite agreementSummary = new();
 
             if (agreement != null)
             {
                 agreementSummary.Id = agreement.RentalAgreementId;
-                agreementSummary.DatedOn = agreement.DatedOn;
+                agreementSummary.DatedOn = 
+                    agreement.DatedOn is DateTime datedOnUtc ? DateUtils.AsUTC(datedOnUtc) : null;
             }
 
             return agreementSummary;

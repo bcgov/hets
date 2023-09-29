@@ -658,7 +658,7 @@ namespace HetsApi.Controllers
                 time.Hours = item.Hours;
                 time.TimePeriod = item.TimePeriod;
                 time.TimePeriodTypeId = (int)timePeriodTypeId;
-                time.WorkedDate = item.WorkedDate;
+                time.WorkedDate = DateUtils.AsUTC(item.WorkedDate);
             }
             else // add time record
             {
@@ -669,7 +669,7 @@ namespace HetsApi.Controllers
                     Hours = item.Hours,
                     TimePeriod = item.TimePeriod,
                     TimePeriodTypeId = (int)timePeriodTypeId,
-                    WorkedDate = item.WorkedDate
+                    WorkedDate = DateUtils.AsUTC(item.WorkedDate)
                 };
 
                 _context.HetTimeRecords.Add(time);
@@ -759,7 +759,7 @@ namespace HetsApi.Controllers
                 if (attachment != null)
                 {
                     attachment.FileSize = attachment.FileContents.Length;
-                    attachment.LastUpdateTimestamp = attachment.AppLastUpdateTimestamp;
+                    attachment.LastUpdateTimestamp = DateUtils.AsUTC(attachment.AppLastUpdateTimestamp);
                     attachment.LastUpdateUserid = attachment.AppLastUpdateUserid;
                     attachment.UserName = UserHelper.GetUserName(attachment.LastUpdateUserid, _context);
                     attachments.Add(attachment);

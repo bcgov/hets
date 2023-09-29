@@ -223,7 +223,7 @@ namespace HetsData.Helpers
                     0;
 
                 equipmentLite.AttachmentCount = CalculateAttachmentCount(equipment.HetEquipmentAttachments.ToList());
-                equipmentLite.LastVerifiedDate = equipment.LastVerifiedDate;
+                equipmentLite.LastVerifiedDate = DateUtils.AsUTC(equipment.LastVerifiedDate);
                 equipmentLite.Status = equipment.EquipmentStatusType.EquipmentStatusTypeCode;
                 equipmentLite.LocalArea = equipment.LocalArea.Name;
 
@@ -625,7 +625,7 @@ namespace HetsData.Helpers
                 {
                     temp.HistoryText = data[i].HistoryText;
                     temp.Id = data[i].HistoryId;
-                    temp.LastUpdateTimestamp = data[i].AppLastUpdateTimestamp;
+                    temp.LastUpdateTimestamp = DateUtils.AsUTC(data[i].AppLastUpdateTimestamp);
                     temp.LastUpdateUserid = data[i].AppLastUpdateUserid;
                     temp.AffectedEntityId = data[i].EquipmentId;
                 }

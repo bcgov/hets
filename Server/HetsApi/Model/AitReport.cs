@@ -1,9 +1,7 @@
-﻿using HetsData.Entities;
+﻿using HetsCommon;
+using HetsData.Entities;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace HetsApi.Model
 {
@@ -50,8 +48,11 @@ namespace HetsApi.Model
                 ProjectNumber = agreement.Project?.ProvincialProjectNumber,
                 ProjectName = agreement.Project?.Name,
 
-                DatedOn = agreement.DatedOn,
-                StartDate = agreement.EstimateStartWork,
+                DatedOn = agreement.DatedOn is DateTime datedOnUtc ? 
+                    DateUtils.AsUTC(datedOnUtc) : null,
+                    
+                StartDate = agreement.EstimateStartWork is DateTime estimateStartWorkUtc ? 
+                    DateUtils.AsUTC(estimateStartWorkUtc) : null,
             };
 
             return report;

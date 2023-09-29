@@ -96,7 +96,8 @@ namespace HetsData.Helpers
                 // project data
                 requestLite.ProjectId = request.RentalRequest.Project.ProjectId;
                 requestLite.ProjectNumber = request.RentalRequest.Project.ProvincialProjectNumber;
-                requestLite.NoteDate = request.OfferResponseDatetime;
+                requestLite.NoteDate = request.OfferResponseDatetime is DateTime offerResponseDtUtc 
+                    ? DateUtils.AsUTC(offerResponseDtUtc) : null;
 
                 // Note Type -
                 // * Not hired (for recording the response NO for hiring.
@@ -323,12 +324,13 @@ namespace HetsData.Helpers
             if (districtEquipmentTypeId == null || localAreaId == null) return null;
 
             // if this is not block 1 - check that we have "asked" anyone in the previous list
+            DateTime fiscalStartUtc = DateUtils.AsUTC(fiscalStart);
             var rotationListquery = context.HetRentalRequestRotationLists.AsNoTracking()
                 .Include(x => x.RentalRequest)
                 .Include(x => x.Equipment)
                 .Where(x => x.RentalRequest.DistrictEquipmentTypeId == districtEquipmentTypeId &&
                             x.RentalRequest.LocalAreaId == localAreaId &&
-                            x.RentalRequest.AppCreateTimestamp >= fiscalStart &&
+                            x.RentalRequest.AppCreateTimestamp >= fiscalStartUtc &&
                             x.BlockNumber == blockNumber && //use historical block number of the equipment
                             x.WasAsked == true &&
                             x.IsForceHire != true)
@@ -687,7 +689,7 @@ namespace HetsData.Helpers
                 {
                     temp.HistoryText = data[i].HistoryText;
                     temp.Id = data[i].HistoryId;
-                    temp.LastUpdateTimestamp = data[i].AppLastUpdateTimestamp;
+                    temp.LastUpdateTimestamp = DateUtils.AsUTC(data[i].AppLastUpdateTimestamp);
                     temp.LastUpdateUserid = data[i].AppLastUpdateUserid;
                     temp.AffectedEntityId = data[i].RentalRequestId;
                 }

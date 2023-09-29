@@ -292,25 +292,31 @@ namespace HetsApi.Controllers
 
             // update equipment record
             equipment.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
-            equipment.ApprovedDate = item.ApprovedDate;
+            if (item.ApprovedDate is DateTime approvedDateUtc)
+            {
+                equipment.ApprovedDate = DateUtils.AsUTC(approvedDateUtc);
+            }
             equipment.EquipmentCode = item.EquipmentCode;
             equipment.Make = item.Make;
             equipment.Model = item.Model;
             equipment.Operator = item.Operator;
-            equipment.ReceivedDate = item.ReceivedDate;
+            equipment.ReceivedDate = DateUtils.AsUTC(item.ReceivedDate);
             equipment.LicencePlate = item.LicencePlate;
             equipment.SerialNumber = item.SerialNumber;
             equipment.Size = item.Size;
             equipment.YearsOfService = item.YearsOfService;
             equipment.Year = item.Year;
-            equipment.LastVerifiedDate = item.LastVerifiedDate;
+            equipment.LastVerifiedDate = DateUtils.AsUTC(item.LastVerifiedDate);
             equipment.IsSeniorityOverridden = item.IsSeniorityOverridden;
             equipment.SeniorityOverrideReason = item.SeniorityOverrideReason;
             equipment.Type = item.Type;
             equipment.ServiceHoursLastYear = item.ServiceHoursLastYear;
             equipment.ServiceHoursTwoYearsAgo = item.ServiceHoursTwoYearsAgo;
             equipment.ServiceHoursThreeYearsAgo = item.ServiceHoursThreeYearsAgo;
-            equipment.SeniorityEffectiveDate = item.SeniorityEffectiveDate;
+            if (item.SeniorityEffectiveDate is DateTime seniorityEffectiveDateUtc)
+            {
+                equipment.SeniorityEffectiveDate = DateUtils.AsUTC(seniorityEffectiveDateUtc);
+            }
             equipment.LicencedGvw = item.LicencedGvw;
             equipment.LegalCapacity = item.LegalCapacity;
             equipment.PupLegalCapacity = item.PupLegalCapacity;
@@ -1207,7 +1213,7 @@ namespace HetsApi.Controllers
                 if (attachment != null)
                 {
                     attachment.FileSize = attachment.FileContents.Length;
-                    attachment.LastUpdateTimestamp = attachment.AppLastUpdateTimestamp;
+                    attachment.LastUpdateTimestamp = DateUtils.AsUTC(attachment.AppLastUpdateTimestamp);
                     attachment.LastUpdateUserid = attachment.AppLastUpdateUserid;
 
                     // don't send the file content
@@ -1601,7 +1607,7 @@ namespace HetsApi.Controllers
         {
             try
             {
-                fiscalStart = DateUtils.AsUTC(fiscalStart);
+                DateTime fiscalStartUtc = DateUtils.AsUTC(fiscalStart);
 
                 // HETS-824 = BVT - Corrections to Seniority List PDF
                 //   * This column should contain "Y" against the equipment that
@@ -1617,7 +1623,7 @@ namespace HetsApi.Controllers
                     .FirstOrDefault(x => 
                         x.RentalRequest.DistrictEquipmentTypeId == districtEquipmentTypeId 
                         && x.RentalRequest.LocalAreaId == localAreaId 
-                        && x.RentalRequest.AppCreateTimestamp >= fiscalStart 
+                        && x.RentalRequest.AppCreateTimestamp >= fiscalStartUtc 
                         && x.Equipment.BlockNumber == currentBlock 
                         && x.WasAsked == true 
                         && x.IsForceHire != true);

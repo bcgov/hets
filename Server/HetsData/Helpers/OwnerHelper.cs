@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using HetsData.Entities;
 using HetsData.Dtos;
+using HetsCommon;
 
 namespace HetsData.Helpers
 {
@@ -192,9 +193,13 @@ namespace HetsData.Helpers
                 }
 
                 ownerLite.WcbNumber = owner.WorkSafeBcpolicyNumber;
-                ownerLite.WcbExpiryDate = owner.WorkSafeBcexpiryDate;
+                ownerLite.WcbExpiryDate = 
+                    owner.WorkSafeBcexpiryDate is DateTime wcbExpiryDateUtc ? 
+                        DateUtils.AsUTC(wcbExpiryDateUtc) : null;
                 ownerLite.CglNumber = owner.CglPolicyNumber;
-                ownerLite.CglExpiryDate = owner.CglendDate;
+                ownerLite.CglExpiryDate = 
+                    owner.CglendDate is DateTime cglEndDateUtc ? 
+                        DateUtils.AsUTC(cglEndDateUtc) : null;
             }
 
             return ownerLite;

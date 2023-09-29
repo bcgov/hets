@@ -97,18 +97,23 @@ namespace HetsApi.Controllers
         [HttpPut]
         [Route("{id}")]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual ActionResult<RentalRequestDto> RentalRequestsIdPut([FromRoute]int id, [FromBody]RentalRequestDto item)
+        public virtual ActionResult<RentalRequestDto> RentalRequestsIdPut(
+            [FromRoute]int id, 
+            [FromBody]RentalRequestDto item)
         {
             if (item == null || id != item.RentalRequestId)
             {
                 // not found
-                return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
             bool exists = _context.HetRentalRequests.Any(a => a.RentalRequestId == id);
 
             // not found
-            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             HetRentalRequest rentalRequest = _context.HetRentalRequests
@@ -144,40 +149,48 @@ namespace HetsApi.Controllers
                 hiredCount > item.EquipmentCount)
             {
                 //"HETS-07": "Rental Request count cannot be less than equipment already hired"
-                return new BadRequestObjectResult(new HetsResponse("HETS-07", ErrorViewModel.GetDescription("HETS-07", _configuration)));
+                return new BadRequestObjectResult(
+                    new HetsResponse("HETS-07", ErrorViewModel.GetDescription("HETS-07", _configuration)));
             }
 
             // if the number of hired records is now "over the count" - then close
             if (hiredCount >= item.EquipmentCount)
             {
                 int? statusIdComplete = StatusHelper.GetStatusId(HetRentalRequest.StatusComplete, "rentalRequestStatus", _context);
-                if (statusIdComplete == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+                if (statusIdComplete == null) 
+                    return new BadRequestObjectResult(
+                        new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
                 item.RentalRequestStatusTypeId = (int)statusIdComplete;
                 item.Status = "Complete";
             }
 
             int? statusId = StatusHelper.GetStatusId(item.Status, "rentalRequestStatus", _context);
-            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) 
+                return new BadRequestObjectResult(
+                    new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // update rental request
             rentalRequest.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             rentalRequest.RentalRequestStatusTypeId = (int)statusId;
             rentalRequest.EquipmentCount = item.EquipmentCount;
-            rentalRequest.ExpectedEndDate = item.ExpectedEndDate;
-            rentalRequest.ExpectedStartDate = item.ExpectedStartDate;
+            if (item.ExpectedEndDate is DateTime expectedEndDateUtc)
+            {
+                rentalRequest.ExpectedEndDate = DateUtils.AsUTC(expectedEndDateUtc);
+            }
+            if (item.ExpectedStartDate is DateTime expectedStartDateUtc)
+            {
+                rentalRequest.ExpectedStartDate = DateUtils.AsUTC(expectedStartDateUtc);
+            }
             rentalRequest.ExpectedHours = item.ExpectedHours;
 
             // do we have any attachments (only a single string is ever stored)
             if (item.RentalRequestAttachments != null &&
                 item.RentalRequestAttachments.Count > 0)
             {
-                if (rentalRequest.HetRentalRequestAttachments == null)
-                {
-                    rentalRequest.HetRentalRequestAttachments = new List<HetRentalRequestAttachment>();
-                }
+                rentalRequest.HetRentalRequestAttachments ??= new List<HetRentalRequestAttachment>();
 
-                HetRentalRequestAttachment attachment = new HetRentalRequestAttachment
+                HetRentalRequestAttachment attachment = new()
                 {
                     Attachment = item.RentalRequestAttachments[0].Attachment
                 };
@@ -226,7 +239,9 @@ namespace HetsApi.Controllers
         private ActionResult<RentalRequestDto> CreateRentalRequest(RentalRequestDto item, bool noProject = false)
         {
             // not found
-            if (item == null) return new BadRequestObjectResult(new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
+            if (item == null) 
+                return new BadRequestObjectResult(
+                    new HetsResponse("HETS-04", ErrorViewModel.GetDescription("HETS-04", _configuration)));
 
             // check if we have an existing rental request for the same
             // local area and equipment type - if so - throw an error
@@ -236,12 +251,14 @@ namespace HetsApi.Controllers
             //
             // Note: leaving the "New" code in place in case this changes in the future
             int? statusIdInProgress = StatusHelper.GetStatusId(HetRentalRequest.StatusInProgress, "rentalRequestStatus", _context);
-            if (statusIdInProgress == null) return new NotFoundObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusIdInProgress == null) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             List<HetRentalRequest> requests = _context.HetRentalRequests
-                .Where(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentType.DistrictEquipmentTypeId &&
-                            x.LocalAreaId == item.LocalArea.LocalAreaId &&
-                            x.RentalRequestStatusTypeId == statusIdInProgress)
+                .Where(x => x.DistrictEquipmentTypeId == item.DistrictEquipmentType.DistrictEquipmentTypeId
+                    && x.LocalAreaId == item.LocalArea.LocalAreaId 
+                    && x.RentalRequestStatusTypeId == statusIdInProgress)
                 .ToList();
 
             // in Progress Rental Request already exists
@@ -271,16 +288,24 @@ namespace HetsApi.Controllers
             }
 
             // create new rental request
-            HetRentalRequest rentalRequest = new HetRentalRequest
+            HetRentalRequest rentalRequest = new()
             {
                 LocalAreaId = item.LocalArea.LocalAreaId,
                 DistrictEquipmentTypeId = item.DistrictEquipmentType.DistrictEquipmentTypeId,
                 RentalRequestStatusTypeId = (int)statusIdInProgress,
                 EquipmentCount = item.EquipmentCount,
-                ExpectedEndDate = item.ExpectedEndDate,
-                ExpectedStartDate = item.ExpectedStartDate,
                 ExpectedHours = item.ExpectedHours
             };
+
+            if (item.ExpectedEndDate is DateTime expectedEndDateUtc)
+            {
+                rentalRequest.ExpectedEndDate = DateUtils.AsUTC(expectedEndDateUtc);
+            }
+
+            if (item.ExpectedStartDate is DateTime expectedStartDateUtc)
+            {
+                rentalRequest.ExpectedStartDate = DateUtils.AsUTC(expectedStartDateUtc);
+            }
 
             // is this a "project-less" request? - can't be hired from
             if (!noProject)
@@ -320,7 +345,7 @@ namespace HetsApi.Controllers
             if (item.RentalRequestAttachments != null &&
                 item.RentalRequestAttachments.Count > 0)
             {
-                HetRentalRequestAttachment attachment = new HetRentalRequestAttachment
+                HetRentalRequestAttachment attachment = new()
                 {
                     Attachment = item.RentalRequestAttachments.ElementAt(0).Attachment
                 };
@@ -714,7 +739,9 @@ namespace HetsApi.Controllers
                 rentalAgreement.RentalAgreementStatusTypeId = (int)statusIdAgreement;
                 rentalAgreement.DatedOn = DateTime.UtcNow;
                 rentalAgreement.EstimateHours = request.ExpectedHours;
-                rentalAgreement.EstimateStartWork = request.ExpectedStartDate;
+                if (request.ExpectedStartDate is DateTime expectedStartDateUtc) {
+                    rentalAgreement.EstimateStartWork = DateUtils.AsUTC(expectedStartDateUtc);
+                }
                 rentalAgreement.RentalRequestId = request.RentalRequestId;
                 rentalAgreement.RentalRequestRotationListId = requestRotationList.RentalRequestRotationListId;
 
@@ -848,7 +875,7 @@ namespace HetsApi.Controllers
                 if (attachment != null)
                 {
                     attachment.FileSize = attachment.FileContents.Length;
-                    attachment.LastUpdateTimestamp = attachment.AppLastUpdateTimestamp;
+                    attachment.LastUpdateTimestamp = DateUtils.AsUTC(attachment.AppLastUpdateTimestamp);
                     attachment.LastUpdateUserid = attachment.AppLastUpdateUserid;
                     attachment.UserName = UserHelper.GetUserName(attachment.LastUpdateUserid, _context);
                     attachments.Add(attachment);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using HetsCommon;
 using HetsData.Dtos;
 using HetsData.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -78,7 +79,7 @@ namespace HetsData.Helpers
                 {
                     temp.HistoryText = data[i].HistoryText;
                     temp.Id = data[i].HistoryId;
-                    temp.LastUpdateTimestamp = data[i].AppLastUpdateTimestamp;
+                    temp.LastUpdateTimestamp = DateUtils.AsUTC(data[i].AppLastUpdateTimestamp);
                     temp.LastUpdateUserid = data[i].AppLastUpdateUserid;
                     temp.AffectedEntityId = data[i].ProjectId;
                 }

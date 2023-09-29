@@ -244,10 +244,16 @@ namespace HetsApi.Controllers
 
             owner.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
             owner.CglCompany = item.CglCompany;
-            owner.CglendDate = item.CglendDate;
+            if (item.CglendDate is DateTime cglEndDateUtc)
+            {
+                owner.CglendDate = DateUtils.AsUTC(cglEndDateUtc);
+            }
             owner.CglPolicyNumber = item.CglPolicyNumber;
             owner.LocalAreaId = item.LocalArea.LocalAreaId;
-            owner.WorkSafeBcexpiryDate = item.WorkSafeBcexpiryDate;
+            if (item.WorkSafeBcexpiryDate is DateTime workSafeBcExpiryDateUtc)
+            {
+                owner.WorkSafeBcexpiryDate = DateUtils.AsUTC(workSafeBcExpiryDateUtc);
+            }
             owner.WorkSafeBcpolicyNumber = item.WorkSafeBcpolicyNumber;
             owner.IsMaintenanceContractor = item.IsMaintenanceContractor;
             owner.OrganizationName = item.OrganizationName;
@@ -468,21 +474,23 @@ namespace HetsApi.Controllers
         public virtual ActionResult<OwnerDto> OwnersPost([FromBody]OwnerDto item)
         {
             // not found
-            if (item == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (item == null) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get status id
             int? statusId = StatusHelper.GetStatusId(item.Status, "ownerStatus", _context);
-            if (statusId == null) return new BadRequestObjectResult(new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
+            if (statusId == null) 
+                return new BadRequestObjectResult(
+                    new HetsResponse("HETS-23", ErrorViewModel.GetDescription("HETS-23", _configuration)));
 
             // create record
-            HetOwner owner = new HetOwner
+            HetOwner owner = new()
             {
                 OwnerStatusTypeId = (int)statusId,
                 CglCompany = item.CglCompany,
-                CglendDate = item.CglendDate,
                 CglPolicyNumber = item.CglPolicyNumber,
                 LocalAreaId = item.LocalArea.LocalAreaId,
-                WorkSafeBcexpiryDate = item.WorkSafeBcexpiryDate,
                 WorkSafeBcpolicyNumber = item.WorkSafeBcpolicyNumber,
                 IsMaintenanceContractor = item.IsMaintenanceContractor ?? false,
                 OrganizationName = item.OrganizationName,
@@ -498,6 +506,16 @@ namespace HetsApi.Controllers
                 ArchiveCode = "N",
                 MeetsResidency = item.MeetsResidency
             };
+
+            if (item.CglendDate is DateTime cglEndDateUtc)
+            {
+                owner.CglendDate = DateUtils.AsUTC(cglEndDateUtc);
+            }
+
+            if (item.WorkSafeBcexpiryDate is DateTime workSafeBcExpiryDateUtc)
+            {
+                owner.WorkSafeBcexpiryDate = DateUtils.AsUTC(workSafeBcExpiryDateUtc);
+            }
 
             if (!string.IsNullOrEmpty(item.RegisteredCompanyNumber))
             {
@@ -1172,7 +1190,6 @@ namespace HetsApi.Controllers
                     Make = equipmentToTransfer.Make,
                     Model = equipmentToTransfer.Model,
                     Operator = equipmentToTransfer.Operator,
-                    ReceivedDate = equipmentToTransfer.ReceivedDate,
                     LicencePlate = equipmentToTransfer.LicencePlate,
                     SerialNumber = equipmentToTransfer.SerialNumber,
                     Size = equipmentToTransfer.Size,
@@ -1180,7 +1197,7 @@ namespace HetsApi.Controllers
                     RefuseRate = equipmentToTransfer.RefuseRate,
                     YearsOfService = 0,
                     Year = equipmentToTransfer.Year,
-                    LastVerifiedDate = equipmentToTransfer.LastVerifiedDate,
+                    LastVerifiedDate = DateUtils.AsUTC(equipmentToTransfer.LastVerifiedDate),
                     IsSeniorityOverridden = false,
                     SeniorityOverrideReason = "",
                     Type = equipmentToTransfer.Type,
@@ -1192,6 +1209,11 @@ namespace HetsApi.Controllers
                     LegalCapacity = equipmentToTransfer.LegalCapacity,
                     PupLegalCapacity = equipmentToTransfer.PupLegalCapacity
                 };
+
+                if (equipmentToTransfer.ReceivedDate is DateTime receivedDateUtc)
+                {
+                    newEquipment.ReceivedDate = DateUtils.AsUTC(receivedDateUtc);
+                }
 
                 newEquipment.HetEquipmentAttachments =
                     GetEquipmentAttachments(newEquipment.HetEquipmentAttachments, equipmentToTransfer);
@@ -1311,7 +1333,10 @@ namespace HetsApi.Controllers
                 newEquipment.ServiceHoursThreeYearsAgo = equipmentToTransfer.ServiceHoursThreeYearsAgo;
                 newEquipment.YearsOfService = equipmentToTransfer.YearsOfService;
                 newEquipment.Seniority = equipmentToTransfer.Seniority;
-                newEquipment.ApprovedDate = equipmentToTransfer.ApprovedDate;
+                if (equipmentToTransfer.ApprovedDate is DateTime approvedDateUtc)
+                {
+                    newEquipment.ApprovedDate = DateUtils.AsUTC(approvedDateUtc);
+                }
             }
             return newEquipment;
         }
@@ -1323,11 +1348,11 @@ namespace HetsApi.Controllers
 
             // we also need to update all of the associated rental agreements
             // (for this fiscal year)
-            fiscalStart = DateUtils.AsUTC(fiscalStart);
+            DateTime fiscalStartUtc = DateUtils.AsUTC(fiscalStart);
 
             IQueryable<HetRentalAgreement> agreements = _context.HetRentalAgreements
                 .Where(x => x.EquipmentId == equipmentToTransfer.EquipmentId &&
-                            x.DatedOn >= fiscalStart);
+                            x.DatedOn >= fiscalStartUtc);
 
             foreach (HetRentalAgreement agreement in agreements)
             {
@@ -1366,7 +1391,7 @@ namespace HetsApi.Controllers
                 if (attachment != null)
                 {
                     attachment.FileSize = attachment.FileContents.Length;
-                    attachment.LastUpdateTimestamp = attachment.AppLastUpdateTimestamp;
+                    attachment.LastUpdateTimestamp = DateUtils.AsUTC(attachment.AppLastUpdateTimestamp);
                     attachment.LastUpdateUserid = attachment.AppLastUpdateUserid;
                     attachment.UserName = UserHelper.GetUserName(attachment.LastUpdateUserid, _context);
                     attachments.Add(attachment);
