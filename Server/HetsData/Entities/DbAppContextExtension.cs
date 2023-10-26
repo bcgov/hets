@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -109,12 +110,58 @@ namespace HetsData.Entities
             }
         }
 
+
+
+        public void UpdateDateTimeProperties(object entity)
+        {
+            UpdateDateTimePropertiesRecursively(entity, "Entity");
+        }
+
+        private void UpdateDateTimePropertiesRecursively(object obj, string objName)
+        {
+            if (obj == null)
+                return;
+
+            Type type = obj.GetType();
+            PropertyInfo[] properties = type.GetProperties();
+
+            foreach (PropertyInfo property in properties)
+            {
+                object propertyValue = property.GetValue(obj);
+                string propertyName = $"{objName}.{property.Name}";
+
+                if (propertyValue is DateTime)
+                {
+                    DateTime tempDateTime = (DateTime)propertyValue;
+
+                    if (tempDateTime.Kind != DateTimeKind.Utc)
+                    {
+                        tempDateTime = DateTime.SpecifyKind(tempDateTime, DateTimeKind.Utc); // Update the Kind to Utc
+                        property.SetValue(obj, tempDateTime); // Set the updated value back to the object
+                        //Console.WriteLine($"DateTime property found: {propertyName} - {tempDateTime}");
+                    }
+                }
+
+                if (propertyValue is IEnumerable enumerable && propertyValue.GetType() != typeof(string))
+                {
+                    int index = 0;
+                    foreach (var item in enumerable)
+                    {
+                        string indexedPropertyName = $"{propertyName}[{index}]";
+                        UpdateDateTimePropertiesRecursively(item, indexedPropertyName);
+                        index++;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Override for Save Changes to implement the audit log
         /// </summary>
         /// <returns></returns>
         public override int SaveChanges()
         {
+
             // get all of the modified records
             List<EntityEntry> modifiedEntries = ChangeTracker.Entries()
                     .Where(e => e.State == EntityState.Added ||
@@ -134,14 +181,14 @@ namespace HetsData.Entities
                     SetAuditProperty(entry.Entity, "AppLastUpdateUserDirectory", DirectoryName);
                     SetAuditProperty(entry.Entity, "AppLastUpdateUserGuid", SmUserGuid);
                     SetAuditProperty(entry.Entity, "AppLastUpdateTimestamp", currentTime);
-                    
+
                     if (entry.State == EntityState.Added)
                     {
                         SetAuditProperty(entry.Entity, "AppCreateUserid", SmUserId);
                         SetAuditProperty(entry.Entity, "AppCreateUserDirectory", DirectoryName);
                         SetAuditProperty(entry.Entity, "AppCreateUserGuid", SmUserGuid);
                         SetAuditProperty(entry.Entity, "AppCreateTimestamp", currentTime);
-                        SetAuditProperty(entry.Entity, "ConcurrencyControlNumber", 1);                        
+                        SetAuditProperty(entry.Entity, "ConcurrencyControlNumber", 1);
                     }
                     else
                     {
@@ -151,10 +198,14 @@ namespace HetsData.Entities
                     }
                 }
 
+                
+
                 if (entry.Entity is HetEquipment)
                 {
                     DoEquipmentAudit(seniorityAudits, entry, SmUserId);
                 }
+
+                UpdateDateTimeProperties(entry.Entity);
             }
 
             // *************************************************
