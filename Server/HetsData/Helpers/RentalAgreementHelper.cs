@@ -13,7 +13,14 @@ namespace HetsData.Helpers
     public class RentalAgreementSummaryLite
     {
         public int Id { get; set; }
-        public DateTime? DatedOn { get; set; }
+
+        private DateTime? _datedOn;
+        public DateTime? DatedOn {
+            get => _datedOn is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _datedOn = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
     }
 
     public class RentalAgreementDocViewModel

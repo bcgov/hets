@@ -73,7 +73,15 @@ namespace HetsData.Helpers
         public string EquipmentPrefix { get; set; }
         public int EquipmentNumber { get; set; }
         public int AttachmentCount { get; set; }
-        public DateTime? LastVerifiedDate { get; set; }
+
+        private DateTime? _lastVerifiedDate;
+        public DateTime? LastVerifiedDate {
+            get => _lastVerifiedDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _lastVerifiedDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public int SenioritySortOrder { get; set; }
         public string ProjectName { get; set; }
         public int ProjectId { get; set; }

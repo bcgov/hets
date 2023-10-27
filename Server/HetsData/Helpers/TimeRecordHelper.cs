@@ -23,8 +23,21 @@ namespace HetsData.Helpers
     {
         public int Id { get; set; }
         public float? Hours { get; set; }
-        public DateTime WorkedDate { get; set; }
-        public DateTime? EnteredDate { get; set; }
+
+        private DateTime _workedDate = new(0001, 01, 01, 00, 00, 00, DateTimeKind.Utc);
+        public DateTime WorkedDate {
+            get => DateTime.SpecifyKind(_workedDate, DateTimeKind.Utc);
+            set => _workedDate = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+        }
+
+        private DateTime? _enteredDate;
+        public DateTime? EnteredDate {
+            get => _enteredDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _enteredDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public string LocalAreaName { get; set; }
         public int LocalAreaId { get; set; }
         public int ServiceAreaId { get; set; }

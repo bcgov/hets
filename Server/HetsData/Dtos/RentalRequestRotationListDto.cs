@@ -14,12 +14,28 @@ namespace HetsData.Dtos
         [JsonProperty("Id")]
         public int RentalRequestRotationListId { get; set; }
         public int RotationListSortOrder { get; set; }
-        public DateTime? AskedDateTime { get; set; }
+
+        private DateTime? _askedDateTime;
+        public DateTime? AskedDateTime {
+            get => _askedDateTime is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _askedDateTime = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public bool? WasAsked { get; set; }
         public string OfferResponse { get; set; }
         public string OfferResponseNote { get; set; }
         public string OfferRefusalReason { get; set; }
-        public DateTime? OfferResponseDatetime { get; set; }
+
+        private DateTime? _offerResponseDatetime;
+        public DateTime? OfferResponseDatetime {
+            get => _offerResponseDatetime is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _offerResponseDatetime = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public bool? IsForceHire { get; set; }
         public string Note { get; set; }
         public int? EquipmentId { get; set; }

@@ -28,8 +28,21 @@ namespace HetsApi.Model
         public string ProjectNumber { get; set; }
         public string ProjectName { get; set; }
 
-        public DateTime? DatedOn { get; set; }
-        public DateTime? StartDate { get; set; }
+        private DateTime? _datedOn;
+        public DateTime? DatedOn {
+            get => _datedOn is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _datedOn = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
+        private DateTime? _startDate;
+        public DateTime? StartDate {
+            get => _startDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _startDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
 
         public static AitReport MapFromHetRentalAgreement(HetRentalAgreement agreement)
         {

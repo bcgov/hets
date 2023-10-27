@@ -46,7 +46,7 @@ namespace HetsData.Entities
                     else
                     {
                         int controlNumber = (int)GetAuditProperty(entry.Entity, "ConcurrencyControlNumber");
-                        controlNumber = controlNumber + 1;
+                        controlNumber++;
                         SetAuditProperty(entry.Entity, "ConcurrencyControlNumber", controlNumber);
                     }
                 }                
@@ -110,51 +110,6 @@ namespace HetsData.Entities
             }
         }
 
-
-
-        public void UpdateDateTimeProperties(object entity)
-        {
-            UpdateDateTimePropertiesRecursively(entity, "Entity");
-        }
-
-        private void UpdateDateTimePropertiesRecursively(object obj, string objName)
-        {
-            if (obj == null)
-                return;
-
-            Type type = obj.GetType();
-            PropertyInfo[] properties = type.GetProperties();
-
-            foreach (PropertyInfo property in properties)
-            {
-                object propertyValue = property.GetValue(obj);
-                string propertyName = $"{objName}.{property.Name}";
-
-                if (propertyValue is DateTime)
-                {
-                    DateTime tempDateTime = (DateTime)propertyValue;
-
-                    if (tempDateTime.Kind != DateTimeKind.Utc)
-                    {
-                        tempDateTime = DateTime.SpecifyKind(tempDateTime, DateTimeKind.Utc); // Update the Kind to Utc
-                        property.SetValue(obj, tempDateTime); // Set the updated value back to the object
-                        //Console.WriteLine($"DateTime property found: {propertyName} - {tempDateTime}");
-                    }
-                }
-
-                if (propertyValue is IEnumerable enumerable && propertyValue.GetType() != typeof(string))
-                {
-                    int index = 0;
-                    foreach (var item in enumerable)
-                    {
-                        string indexedPropertyName = $"{propertyName}[{index}]";
-                        UpdateDateTimePropertiesRecursively(item, indexedPropertyName);
-                        index++;
-                    }
-                }
-            }
-        }
-
         /// <summary>
         /// Override for Save Changes to implement the audit log
         /// </summary>
@@ -171,7 +126,7 @@ namespace HetsData.Entities
             // manage the audit columns and the concurrency column
             DateTime currentTime = DateTime.UtcNow;
 
-            List<HetSeniorityAudit> seniorityAudits = new List<HetSeniorityAudit>();
+            List<HetSeniorityAudit> seniorityAudits = new();
 
             foreach (EntityEntry entry in modifiedEntries)
             {
@@ -193,19 +148,15 @@ namespace HetsData.Entities
                     else
                     {
                         int controlNumber = (int)GetAuditProperty(entry.Entity, "ConcurrencyControlNumber");
-                        controlNumber = controlNumber + 1;
+                        controlNumber++;
                         SetAuditProperty(entry.Entity, "ConcurrencyControlNumber", controlNumber);
                     }
                 }
-
-                
 
                 if (entry.Entity is HetEquipment)
                 {
                     DoEquipmentAudit(seniorityAudits, entry, SmUserId);
                 }
-
-                UpdateDateTimeProperties(entry.Entity);
             }
 
             // *************************************************

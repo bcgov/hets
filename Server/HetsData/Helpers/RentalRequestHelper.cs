@@ -24,8 +24,23 @@ namespace HetsData.Helpers
         public ContactDto PrimaryContact { get; set; }
         public string Status { get; set; }
         public int? ProjectId { get; set; }
-        public DateTime? ExpectedStartDate { get; set; }
-        public DateTime? ExpectedEndDate { get; set; }
+
+        private DateTime? _expectedStartDate;
+        public DateTime? ExpectedStartDate {
+            get => _expectedStartDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _expectedStartDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
+        private DateTime? _expectedEndDate;
+        public DateTime? ExpectedEndDate {
+            get => _expectedEndDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _expectedEndDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public int YesCount { get; set; }
     }
 
@@ -47,7 +62,15 @@ namespace HetsData.Helpers
         public string EquipmentYear { get; set; }
         public int ProjectId { get; set; }
         public string ProjectNumber { get; set; }
-        public DateTime? NoteDate { get; set; }
+
+        private DateTime? _noteDate;
+        public DateTime? NoteDate {
+            get => _noteDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _noteDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public string NoteType { get; set; }
         public string Reason { get; set; }
         public string OfferResponseNote { get; set; }

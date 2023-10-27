@@ -48,9 +48,24 @@ namespace HetsData.Helpers
         public string PrimaryContactNumber { get; set; }
         public string PrimaryContactCell { get; set; }
         public string WcbNumber { get; set; }
-        public DateTime? WcbExpiryDate { get; set; }
+
+        private DateTime? _wcbExpiryDate;
+        public DateTime? WcbExpiryDate {
+            get => _wcbExpiryDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _wcbExpiryDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public string CglNumber { get; set; }
-        public DateTime? CglExpiryDate { get; set; }
+
+        private DateTime? _cglExpiryDate;
+        public DateTime? CglExpiryDate {
+            get => _cglExpiryDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _cglExpiryDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
     }
 
     public class OwnerLiteProjects

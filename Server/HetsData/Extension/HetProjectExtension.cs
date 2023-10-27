@@ -21,6 +21,12 @@ namespace HetsData.Entities
         public string Status { get; set; }
 
         [NotMapped]
-        public DateTime FiscalYearStartDate { get; set; }
+        private DateTime _fiscalYearStartDate = new(0001, 01, 01, 00, 00, 00, DateTimeKind.Utc);
+
+        [NotMapped]
+        public DateTime FiscalYearStartDate {
+            get => DateTime.SpecifyKind(_fiscalYearStartDate, DateTimeKind.Utc);
+            set => _fiscalYearStartDate = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+        }
     }
 }
