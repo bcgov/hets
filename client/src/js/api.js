@@ -1701,7 +1701,7 @@ export const addRentalRequest = (rentalRequest, viewOnly) => async (dispatch) =>
   });
 
   dispatch(getEquipmentHires());
-
+  rentalRequest.id = rentalRequestResponse.id;
   return rentalRequest;
 };
 
