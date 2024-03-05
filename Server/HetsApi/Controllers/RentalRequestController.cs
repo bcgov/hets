@@ -1197,7 +1197,10 @@ namespace HetsApi.Controllers
             {
                 listRecord.SeniorityList.Add(SeniorityListHelper.ToSeniorityViewModel(equipment, numberOfBlocks));
             }
-
+            // TH-112626
+            listRecord.SeniorityList = listRecord.SeniorityList
+                .OrderByDescending(x => Convert.ToDecimal(x.Seniority))
+                .ToList();
             string documentName = $"SeniorityList-{DateTime.Now:yyyy-MM-dd}{(counterCopy ? "-(CounterCopy)" : "")}.docx";
             byte[] document = SeniorityList.GetSeniorityList(seniorityList, documentName, counterCopy, (errMessage, ex) => {
                 _logger.LogError(errMessage);

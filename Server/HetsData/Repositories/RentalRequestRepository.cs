@@ -196,7 +196,17 @@ namespace HetsData.Repositories
                     }
                 }
             }
-
+            // TH-112626
+            // Sorting the RentalRequestRotationList based on Equipment.Seniority
+            var sortedList = request.HetRentalRequestRotationLists
+                .OrderByDescending(x => x.Equipment.Seniority)
+                .ToList();
+            // Updating RotationListSortOrder based on the sorted list
+            for (int i = 0; i < sortedList.Count; i++)
+            {
+                sortedList[i].RotationListSortOrder = i + 1;
+            }
+            request.HetRentalRequestRotationLists = sortedList;
             return _mapper.Map<RentalRequestDto>(request);
         }
 
