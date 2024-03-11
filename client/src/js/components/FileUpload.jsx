@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { Button, OverlayTrigger, Tooltip, ProgressBar } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -31,14 +32,15 @@ class FileUpload extends React.Component {
     };
   }
 
-  uploadFiles = () => {
+  uploadFiles = async () => {
+    const dispatch = this.props.dispatch;
     this.setState({ uploadInProgress: true, percentUploaded: 0 });
 
-    var options = {
+    const options = {
       method: 'POST',
       files: this.props.files,
       onUploadProgress: (percentComplete) => {
-        var percent = Math.round(percentComplete);
+        const percent = Math.round(percentComplete);
         this.setState({ percentUploaded: percent });
         if (this.props.onUploadProgress) {
           this.props.onUploadProgress(percent);
@@ -46,20 +48,18 @@ class FileUpload extends React.Component {
       },
     };
 
-    this.uploadPromise = request(buildApiPath(this.props.path || FILE_UPLOAD_PATH), options).then(
-      () => {
-        this.setState({ uploadInProgress: false, percentUploaded: null });
-        if (this.props.onUploadFinished) {
-          this.props.onUploadFinished(true);
-        }
-      },
-      (err) => {
-        this.setState({ uploadInProgress: false, fileUploadError: err });
-        if (this.props.onUploadFinished) {
-          this.props.onUploadFinished(err);
-        }
+    try {
+      this.uploadPromise = await dispatch(request(buildApiPath(this.props.path || FILE_UPLOAD_PATH), options));
+      this.setState({ uploadInProgress: false, percentUploaded: null });
+      if (this.props.onUploadFinished) {
+        this.props.onUploadFinished(true);
       }
-    );
+    } catch (err) {
+      this.setState({ uploadInProgress: false, fileUploadError: err });
+      if (this.props.onUploadFinished) {
+        this.props.onUploadFinished(err);
+      }
+    }
   };
 
   reset = () => {
@@ -101,7 +101,7 @@ class FileUpload extends React.Component {
         );
       } else {
         uploadProgressBar = (
-          <ProgressBar active now={this.state.percentUploaded} label={`${this.state.percentUploaded}%`} min={5} />
+          <ProgressBar now={this.state.percentUploaded} label={`${this.state.percentUploaded}%`} min={5} />
         );
       }
     } else {
@@ -128,4 +128,6 @@ class FileUpload extends React.Component {
   }
 }
 
-export default FileUpload;
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(null, mapDispatchToProps)(FileUpload);

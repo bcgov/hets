@@ -18,18 +18,27 @@ if (process.env.NODE_ENV !== "production") {
   middleware.push(freeze);
 }
 
-// Note passing middleware as the last argument to createStore requires redux@>=3.1.0
-const store = createStore(
-  allReducers,
-  composeEnhancers(applyMiddleware(...middleware))
-);
+const setupStore = () => {
+  // Note passing middleware as the last argument to createStore requires redux@>=3.1.0
+  const store = createStore(
+    allReducers,
+    composeEnhancers(applyMiddleware(...middleware))
+  );
 
-if (process.env.NODE_ENV !== "production") {
-  if (module.hot) {
-    module.hot.accept("./reducers/all", () =>
-      store.replaceReducer(require("./reducers/all").default)
-    );
+  if (process.env.NODE_ENV !== "production") {
+    if (module.hot) {
+      module.hot.accept("./reducers/all", () =>
+        store.replaceReducer(require("./reducers/all").default)
+      );
+    }
   }
-}
 
-export default store;
+  return store;
+};
+
+const store = setupStore();
+
+export {
+  store,
+  setupStore,
+};

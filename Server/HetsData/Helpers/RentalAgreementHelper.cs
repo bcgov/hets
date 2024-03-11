@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using HetsData.Entities;
 using HetsData.Dtos;
+using HetsCommon;
 
 namespace HetsData.Helpers
 {
@@ -14,7 +13,14 @@ namespace HetsData.Helpers
     public class RentalAgreementSummaryLite
     {
         public int Id { get; set; }
-        public DateTime? DatedOn { get; set; }
+
+        private DateTime? _datedOn;
+        public DateTime? DatedOn {
+            get => _datedOn is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _datedOn = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
     }
 
     public class RentalAgreementDocViewModel
@@ -63,12 +69,13 @@ namespace HetsData.Helpers
         /// <param name="agreement"></param>
         public static RentalAgreementSummaryLite ToSummaryLiteModel(HetRentalAgreement agreement)
         {
-            RentalAgreementSummaryLite agreementSummary = new RentalAgreementSummaryLite();
+            RentalAgreementSummaryLite agreementSummary = new();
 
             if (agreement != null)
             {
                 agreementSummary.Id = agreement.RentalAgreementId;
-                agreementSummary.DatedOn = agreement.DatedOn;
+                agreementSummary.DatedOn = 
+                    agreement.DatedOn is DateTime datedOnUtc ? DateUtils.AsUTC(datedOnUtc) : null;
             }
 
             return agreementSummary;
@@ -103,19 +110,22 @@ namespace HetsData.Helpers
 
                 // get fiscal year
                 HetDistrictStatus status = context.HetDistrictStatuses.AsNoTracking()
-                .First(x => x.DistrictId == districtId);
+                    .First(x => x.DistrictId == districtId);
 
                 int? fiscalYear = status.CurrentFiscalYear;
                 if (fiscalYear == null) return result;
 
                 // fiscal year in the status table stores the "start" of the year
-                DateTime fiscalYearStart = new DateTime((int)fiscalYear, 4, 1);
-                fiscalYear = fiscalYear + 1;
+                DateTime fiscalYearStart = DateUtils.ConvertPacificToUtcTime(
+                    new DateTime((int)fiscalYear, 4, 1, 0, 0, 0, DateTimeKind.Unspecified));
+
+                fiscalYear++;
 
                 // count the number of rental agreements in the system in this district
                 int currentCount = context.HetRentalAgreements
-                    .Count(x => x.DistrictId == districtId &&
-                                x.AppCreateTimestamp >= fiscalYearStart);
+                    .Count(x => 
+                        x.DistrictId == districtId 
+                        && x.AppCreateTimestamp >= fiscalYearStart);
 
                 currentCount++;
 
@@ -123,9 +133,11 @@ namespace HetsData.Helpers
                 // * FY-DD-####
                 //   FY = last 2 digits of the year
                 //   DD - District(2 digits - 1 to 11)
-                result = fiscalYear.ToString().Substring(2, 2) + "-" +
-                         ministryDistrictId + "-" +
-                         currentCount.ToString("D4");
+                result = fiscalYear.ToString().Substring(2, 2)
+                    + "-" 
+                    + ministryDistrictId 
+                    + "-" 
+                    + currentCount.ToString("D4");
             }
 
             return result;
@@ -158,15 +170,17 @@ namespace HetsData.Helpers
                 int districtNumber = district.MinistryDistrictId;
                 int districtId = district.DistrictId;
 
-                DateTime fiscalYearStart = new DateTime(fiscalYear - 1, 1, 1);
+                DateTime fiscalYearStart = DateUtils.ConvertPacificToUtcTime(
+                    new DateTime(fiscalYear - 1, 1, 1, 0, 0, 0, DateTimeKind.Unspecified));
 
                 // count the number of rental agreements in the system (for this district)
                 HetRentalAgreement agreement = context.HetRentalAgreements.AsNoTracking()
                     .Include(x => x.Project.District)
                     .OrderBy(x => x.RentalAgreementId)
-                    .LastOrDefault(x => x.DistrictId == districtId &&
-                                        x.AppCreateTimestamp >= fiscalYearStart &&
-                                        x.Number.Contains("-D"));
+                    .LastOrDefault(x => 
+                        x.DistrictId == districtId 
+                        && x.AppCreateTimestamp >= fiscalYearStart 
+                        && x.Number.Contains("-D"));
 
                 if (agreement != null)
                 {

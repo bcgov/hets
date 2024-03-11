@@ -26,7 +26,7 @@ namespace HetsData.Entities
             {
                 if (value != null)
                 {
-                    AppLastUpdateTimestamp = (DateTime)value;
+                    AppLastUpdateTimestamp = DateTime.SpecifyKind((DateTime)value, DateTimeKind.Utc);
                 }
             }
         }

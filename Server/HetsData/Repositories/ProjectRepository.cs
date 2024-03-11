@@ -5,6 +5,7 @@ using HetsData.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using HetsCommon;
 
 namespace HetsData.Repositories
 {
@@ -169,7 +170,9 @@ namespace HetsData.Repositories
                 // fiscal year in the status table stores the "start" of the year
                 if (fiscalYear != null && project != null)
                 {
-                    DateTime fiscalYearStart = new DateTime((int)fiscalYear, 4, 1);
+                    DateTime fiscalYearStart = DateUtils.ConvertPacificToUtcTime(
+                        new DateTime((int)fiscalYear, 4, 1, 0, 0, 0, DateTimeKind.Unspecified));
+
                     project.FiscalYearStartDate = fiscalYearStart;
                 }
             }

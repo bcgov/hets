@@ -11,7 +11,7 @@ namespace HetsData.Helpers
             // seed random number generator
             decimal temp = (DateTime.Now.Millisecond * 1000 / id) + (id * DateTime.Now.Millisecond);
             int seed = Convert.ToInt32(Math.Round(temp, 0));
-            Random rnd = new Random(seed);
+            Random rnd = new(seed);
 
             // create random string
             char[] chars = new char[maxLength];

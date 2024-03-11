@@ -21,8 +21,8 @@ objects:
             "LogoffUrl-Training": "https://logontest.gov.bc.ca/clp-cgi/logoff.cgi?returl=https://trn-hets.th.gov.bc.ca&retnow=1",
             "LogoffUrl-UAT": "https://logontest.gov.bc.ca/clp-cgi/logoff.cgi?returl=https://uat-hets.th.gov.bc.ca&retnow=1",
             "LogoffUrl-Production": "https://logon.gov.bc.ca/clp-cgi/logoff.cgi?returl=https://hets.th.gov.bc.ca&retnow=1",
-            "Version-Application": "Release 1.10.8.0",
-            "Version-Database": "Release 1.10.8.0",
+            "Version-Application": "Release 1.10.9.0",
+            "Version-Database": "Release 1.10.9.0",
             "Maximum-Blank-Agreements": "3",
             "ExceptionDescriptions": {
               "HETS-01": "Record not found",
@@ -93,7 +93,7 @@ objects:
             "DumpTruck": 600
           },
           "ConnectionStrings": {
-            "HETS": "Host=localhost;Username=postgres;Password=postgres;Database=hets;Port=9000;"
+            "HETS": "Host=localhost;Username=postgres;Password=postgres;Database=hets;"
           },
           "JWT": {
             "Authority": "https://dev.loginproxy.gov.bc.ca/auth/realms/<realmid>",

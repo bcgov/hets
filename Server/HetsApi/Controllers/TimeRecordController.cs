@@ -11,6 +11,7 @@ using HetsData.Entities;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using HetsData.Dtos;
+using HetsCommon;
 
 namespace HetsApi.Controllers
 {
@@ -71,8 +72,11 @@ namespace HetsApi.Controllers
         [HttpGet]
         [Route("search")]
         [RequiresPermission(HetPermission.Login)]
-        public virtual ActionResult<List<TimeRecordSearchLite>> TimeRecordSearchGet([FromQuery]string localAreas,
-            [FromQuery]string projects, [FromQuery]string owners, [FromQuery]string equipment)
+        public virtual ActionResult<List<TimeRecordSearchLite>> TimeRecordSearchGet(
+            [FromQuery]string localAreas,
+            [FromQuery]string projects, 
+            [FromQuery]string owners, 
+            [FromQuery]string equipment)
         {
             int?[] localAreasArray = ArrayHelper.ParseIntArray(localAreas);
             int?[] projectArray = ArrayHelper.ParseIntArray(projects);
@@ -86,10 +90,13 @@ namespace HetsApi.Controllers
             HetDistrictStatus district = _context.HetDistrictStatuses.AsNoTracking()
                 .FirstOrDefault(x => x.DistrictId == districtId);
 
-            if (district?.CurrentFiscalYear == null) return new BadRequestObjectResult(new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
+            if (district?.CurrentFiscalYear == null) 
+                return new BadRequestObjectResult(
+                    new HetsResponse("HETS-30", ErrorViewModel.GetDescription("HETS-30", _configuration)));
 
             int fiscalYear = (int)district.CurrentFiscalYear; // status table uses the start of the year
-            DateTime fiscalStart = new DateTime(fiscalYear, 3, 31); // look for all records AFTER the 31st
+            DateTime fiscalStart = DateUtils.ConvertPacificToUtcTime(
+                new DateTime(fiscalYear, 3, 31, 0, 0, 0, DateTimeKind.Unspecified)); // look for all records AFTER the 31st
 
             // only return active equipment / projects and agreements
             IQueryable<HetTimeRecord> data = _context.HetTimeRecords.AsNoTracking()
@@ -105,8 +112,9 @@ namespace HetsApi.Controllers
                 .Include(x => x.RentalAgreement)
                     .ThenInclude(x => x.Equipment)
                         .ThenInclude(z => z.Owner)
-                .Where(x => x.RentalAgreement.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId) &&
-                            x.WorkedDate > fiscalStart);
+                .Where(x => 
+                    x.RentalAgreement.Equipment.LocalArea.ServiceArea.DistrictId.Equals(districtId) 
+                    && x.WorkedDate > fiscalStart);
 
             if (localAreasArray != null && localAreasArray.Length > 0)
             {
@@ -129,7 +137,7 @@ namespace HetsApi.Controllers
             }
 
             // convert Time Model to the "TimeLite" Model
-            List<TimeRecordSearchLite> result = new List<TimeRecordSearchLite>();
+            List<TimeRecordSearchLite> result = new();
 
             foreach (HetTimeRecord item in data)
             {

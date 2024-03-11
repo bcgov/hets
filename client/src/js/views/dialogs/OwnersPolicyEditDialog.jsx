@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { FormGroup, FormLabel, FormText, Row, Col } from 'react-bootstrap';
 
 import * as Constant from '../../constants';
@@ -103,7 +104,7 @@ class OwnersPolicyEditDialog extends React.Component {
           cglEndDate: toZuluTime(this.state.cglEndDate),
         };
 
-        Api.updateOwner(owner).then(() => {
+        this.props.dispatch(Api.updateOwner(owner)).then(() => {
           if (this.props.onSave) {
             this.props.onSave();
           }
@@ -190,4 +191,6 @@ class OwnersPolicyEditDialog extends React.Component {
   }
 }
 
-export default OwnersPolicyEditDialog;
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(null, mapDispatchToProps)(OwnersPolicyEditDialog);

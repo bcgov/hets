@@ -10,6 +10,8 @@ using HetsData.Entities;
 using AutoMapper;
 using HetsData.Dtos;
 using HetsData.Repositories;
+using HetsCommon;
+using System;
 
 namespace HetsApi.Controllers
 {
@@ -374,7 +376,9 @@ namespace HetsApi.Controllers
             bool exists = _context.HetUsers.Any(x => x.UserId == id);
 
             // not found
-            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // get record
             var user = _userRepo.GetRecord(id);
@@ -392,32 +396,42 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/roles")]
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
-        public virtual ActionResult<List<UserRoleDto>> UsersIdRolesPost([FromRoute] int id, [FromBody] UserRoleDto item)
+        public virtual ActionResult<List<UserRoleDto>> UsersIdRolesPost(
+            [FromRoute] int id, 
+            [FromBody] UserRoleDto item)
         {
             //check for user
             bool exists = _context.HetUsers.Any(x => x.UserId == id);
-            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // check the role id
             bool roleExists = _context.HetRoles.Any(x => x.RoleId == item.RoleId);
-            if (!roleExists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!roleExists) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // check the user exists and return only active roles
             var user = _userRepo.GetRecord(id, excludeInactiveRoles: true);
-            if (user == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (user == null) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             //check if user already has the same role active
             bool activeRoleExists = user.UserRoles.Any(x => x.RoleId == item.RoleId);
-            if (activeRoleExists) return new NotFoundObjectResult(new HetsResponse("HETS-45", ErrorViewModel.GetDescription("HETS-45", _configuration)));
+            if (activeRoleExists) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-45", ErrorViewModel.GetDescription("HETS-45", _configuration)));
 
 
             // create a new UserRole record
-            HetUserRole userRole = new HetUserRole
+            HetUserRole userRole = new()
             {
                 RoleId = item.RoleId,
                 UserId = id,
-                EffectiveDate = item.EffectiveDate,
-                ExpiryDate = item.ExpiryDate
+                EffectiveDate = DateUtils.AsUTC(item.EffectiveDate),
+                ExpiryDate = item.ExpiryDate is DateTime expiryDateUtc ? DateUtils.AsUTC(expiryDateUtc) : null,
             };
 
             _context.HetUserRoles.Add(userRole);
@@ -440,24 +454,32 @@ namespace HetsApi.Controllers
         [HttpPut]
         [Route("{id}/roles")]
         [RequiresPermission(HetPermission.UserManagement, HetPermission.WriteAccess)]
-        public virtual ActionResult<List<UserRoleDto>> UsersIdRolesPut([FromRoute] int id, [FromBody] UserRoleDto[] items)
+        public virtual ActionResult<List<UserRoleDto>> UsersIdRolesPut(
+            [FromRoute] int id, 
+            [FromBody] UserRoleDto[] items)
         {
 
             //confirm user exists
             bool userExists = _context.HetUsers.Any(x => x.UserId == id);
-            if (!userExists || items == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!userExists || items == null) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             //confirm all items belong to the user, using UserRoleId
             //confirm all items exist in database
             foreach (var item in items)
             {
                 var result = _context.HetUserRoles.FirstOrDefault(x => x.UserRoleId == item.UserRoleId && x.UserId == id);
-                if (result == null) return new NotFoundObjectResult(new HetsResponse("HETS-44", ErrorViewModel.GetDescription("HETS-44", _configuration)));
+                if (result == null) 
+                    return new NotFoundObjectResult(
+                        new HetsResponse("HETS-44", ErrorViewModel.GetDescription("HETS-44", _configuration)));
             }
 
             // get record
             var user = _userRepo.GetRecord(id);
-            if (user.UserRoles == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (user.UserRoles == null) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // iterate the roles and update effective date
             foreach (var item in items)
@@ -466,7 +488,9 @@ namespace HetsApi.Controllers
 
                 if (role.ExpiryDate != item.ExpiryDate)
                 {
-                    role.ExpiryDate = item.ExpiryDate;
+                    role.ExpiryDate = 
+                        item.ExpiryDate is DateTime expiryDateUtc ? 
+                            DateUtils.AsUTC(expiryDateUtc) : null;
                 }
             }
             _context.SaveChanges();

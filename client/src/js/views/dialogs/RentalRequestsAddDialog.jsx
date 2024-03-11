@@ -55,9 +55,9 @@ class RentalRequestsAddDialog extends React.Component {
   }
 
   componentDidMount() {
-    Api.getDistrictEquipmentTypes();
+    this.props.dispatch(Api.getDistrictEquipmentTypes());
     if (this.canChangeProject()) {
-      Api.getProjectsCurrentFiscal();
+      this.props.dispatch(Api.getProjectsCurrentFiscal());
     }
   }
 
@@ -178,14 +178,15 @@ class RentalRequestsAddDialog extends React.Component {
     // TODO Restrict the available local areas to a project service area
   };
 
-  formSubmitted = () => {
+  formSubmitted = async () => {
     if (this.isValid()) {
       if (this.didChange()) {
         this.setState({ isSaving: true });
 
+        const dispatch = this.props.dispatch;
         const { rentalRequestAttachments } = this.state;
 
-        var request = {
+        const request = {
           project: { id: this.state.projectId },
           localArea: { id: this.state.localAreaId },
           districtEquipmentType: { id: this.state.equipmentTypeId },
@@ -202,21 +203,19 @@ class RentalRequestsAddDialog extends React.Component {
           ],
         };
 
-        Api.addRentalRequest(request, this.props.viewOnly)
-          .then((response) => {
-            this.setState({ isSaving: false });
-
-            this.props.onRentalAdded(response);
-            this.props.onClose();
-          })
-          .catch((error) => {
-            this.setState({ isSaving: false });
-            if (error.status === 400 && error.errorCode === 'HETS-28') {
-              this.setState({ savingError: error.errorDescription });
-            } else {
-              throw error;
-            }
-          });
+        try {
+          const response = await dispatch(Api.addRentalRequest(request, this.props.viewOnly));
+          this.setState({ isSaving: false });
+          this.props.onRentalAdded(response);
+          this.props.onClose();
+        } catch (error) {
+          this.setState({ isSaving: false });
+          if (error.status === 400 && error.errorCode === 'HETS-28') {
+            this.setState({ savingError: error.errorDescription });
+          } else {
+            throw error;
+          }
+        }
       }
     }
   };
@@ -396,13 +395,13 @@ class RentalRequestsAddDialog extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    localAreas: state.lookups.localAreas,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
-    projects: state.lookups.projectsCurrentFiscal,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  localAreas: state.lookups.localAreas,
+  districtEquipmentTypes: state.lookups.districtEquipmentTypes,
+  projects: state.lookups.projectsCurrentFiscal,
+});
 
-export default connect(mapStateToProps)(RentalRequestsAddDialog);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(RentalRequestsAddDialog);

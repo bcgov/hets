@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using HetsCommon;
 using HetsData.Dtos;
 using HetsData.Entities;
 
@@ -22,8 +23,21 @@ namespace HetsData.Helpers
     {
         public int Id { get; set; }
         public float? Hours { get; set; }
-        public DateTime WorkedDate { get; set; }
-        public DateTime? EnteredDate { get; set; }
+
+        private DateTime _workedDate = new(0001, 01, 01, 00, 00, 00, DateTimeKind.Utc);
+        public DateTime WorkedDate {
+            get => DateTime.SpecifyKind(_workedDate, DateTimeKind.Utc);
+            set => _workedDate = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+        }
+
+        private DateTime? _enteredDate;
+        public DateTime? EnteredDate {
+            get => _enteredDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _enteredDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public string LocalAreaName { get; set; }
         public int LocalAreaId { get; set; }
         public int ServiceAreaId { get; set; }
@@ -55,14 +69,15 @@ namespace HetsData.Helpers
         /// <param name="timeRecord"></param>
         public static TimeRecordSearchLite ToLiteModel(HetTimeRecord timeRecord)
         {
-            TimeRecordSearchLite timeLite = new TimeRecordSearchLite();
+            TimeRecordSearchLite timeLite = new();
 
             if (timeRecord != null)
             {
                 timeLite.Id = timeRecord.TimeRecordId;
                 timeLite.Hours = timeRecord.Hours;
-                timeLite.WorkedDate = timeRecord.WorkedDate;
-                timeLite.EnteredDate = timeRecord.EnteredDate;
+                timeLite.WorkedDate = DateUtils.AsUTC(timeRecord.WorkedDate);
+                timeLite.EnteredDate = timeRecord.EnteredDate is DateTime enteredDateUtc ? 
+                    DateUtils.AsUTC(enteredDateUtc) : null;
                 timeLite.RentalAgreementId = timeRecord.RentalAgreement.RentalAgreementId;
                 timeLite.LocalAreaId = timeRecord.RentalAgreement.Equipment.LocalArea.LocalAreaId;
                 timeLite.LocalAreaName = timeRecord.RentalAgreement.Equipment.LocalArea.Name;

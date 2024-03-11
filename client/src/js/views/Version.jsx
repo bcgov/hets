@@ -35,30 +35,29 @@ class Version extends React.Component {
 
   componentDidMount() {
     this.setState({ loading: true });
-    Api.getVersion().finally(() => {
+    this.props.dispatch(Api.getVersion()).finally(() => {
       this.fetchLocal().finally(() => {
         this.setState({ loading: false });
       });
     });
   }
 
-  fetchLocal = () => {
-    return request('buildinfo.html', { silent: true })
-      .then((xhr) => {
-        if (xhr.status === 200) {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(xhr.responseText, 'text/html');
+  fetchLocal = async () => {
+    try {
+      const xhr = await this.props.dispatch(request('buildinfo.html', { silent: true }));
+      if (xhr.status === 200) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(xhr.responseText, 'text/html');
 
-          this.setState({
-            buildTime: doc.getElementById('buildtime').dataset.buildtime,
-            version: doc.getElementById('version').textContent,
-            commit: doc.getElementById('commit').textContent,
-          });
-        }
-      })
-      .catch((err) => {
-        console.error('Failed to find buildinfo: ', err);
-      });
+        this.setState({
+          buildTime: doc.getElementById('buildtime').dataset.buildtime,
+          version: doc.getElementById('version').textContent,
+          commit: doc.getElementById('commit').textContent,
+        });
+      }
+    } catch(err) {
+      console.error('Failed to find buildinfo: ', err);
+    };
   };
 
   showRaw = (e) => {
@@ -188,10 +187,10 @@ class Version extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    version: state.version,
-  };
-}
+const mapStateToProps = (state) => ({
+  version: state.version,
+});
 
-export default connect(mapStateToProps)(Version);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(Version);

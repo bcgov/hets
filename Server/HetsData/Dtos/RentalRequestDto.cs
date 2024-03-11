@@ -15,8 +15,23 @@ namespace HetsData.Dtos
         [JsonProperty("Id")]
         public int RentalRequestId { get; set; }
         public int EquipmentCount { get; set; }
-        public DateTime? ExpectedStartDate { get; set; }
-        public DateTime? ExpectedEndDate { get; set; }
+
+        private DateTime? _expectedStartDate;
+        public DateTime? ExpectedStartDate {
+            get => _expectedStartDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _expectedStartDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
+        private DateTime? _expectedEndDate;
+        public DateTime? ExpectedEndDate {
+            get => _expectedEndDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _expectedEndDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public int? ExpectedHours { get; set; }
         public int? FirstOnRotationListId { get; set; }
         public int RentalRequestStatusTypeId { get; set; }

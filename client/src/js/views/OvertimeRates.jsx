@@ -34,7 +34,7 @@ class OvertimeRates extends React.Component {
   }
 
   fetch = () => {
-    Api.getOvertimeRateTypes();
+    this.props.dispatch(Api.getOvertimeRateTypes());
   };
 
   editRate = (overtimeRateType) => {
@@ -118,11 +118,11 @@ class OvertimeRates extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    overtimeRateTypes: state.lookups.overtimeRateTypes,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  overtimeRateTypes: state.lookups.overtimeRateTypes,
+});
 
-export default connect(mapStateToProps)(OvertimeRates);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(OvertimeRates);

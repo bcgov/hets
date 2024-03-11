@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { FormGroup, FormLabel, FormText } from 'react-bootstrap';
 import _ from 'lodash';
 
@@ -85,7 +86,9 @@ class ChangeStatusDialog extends React.Component {
     return requirements;
   };
 
-  formSubmitted = () => {
+  formSubmitted = async () => {
+    const dispatch = this.props.dispatch;
+
     if (this.isValid()) {
       this.setState({ isSaving: true });
       const status = {
@@ -93,36 +96,37 @@ class ChangeStatusDialog extends React.Component {
         status: this.props.status,
         statusComment: this.state.comment,
       };
-      var currentStatus = this.props.owner.status;
-      var equipmentList = { ...this.props.owner.equipmentList };
+      const currentStatus = this.props.owner.status;
+      let equipmentList = { ...this.props.owner.equipmentList };
 
-      return Api.changeOwnerStatus(status)
-        .then(() => {
-          this.setState({ isSaving: false });
-          this.props.onStatusChanged(status);
-          Log.ownerModifiedStatus(this.props.owner, status.status, status.statusComment);
-          // If owner status goes from approved to unapproved/archived or unapproved to archived
-          // this will change all it's equipment statuses. This should be reflected in the equipment history.
-          if (
-            (currentStatus === Constant.OWNER_STATUS_CODE_APPROVED ||
-              currentStatus === Constant.OWNER_STATUS_CODE_PENDING) &&
-            (status.status === Constant.OWNER_STATUS_CODE_PENDING ||
-              status.status === Constant.OWNER_STATUS_CODE_ARCHIVED)
-          ) {
-            _.map(equipmentList, (equipment) => {
-              if (equipment.status !== status.status) {
-                Log.equipmentStatusModified(equipment, status.status, status.statusComment);
-              }
-            });
-          }
-        })
-        .catch((error) => {
-          if (error.status === 400 && error.errorCode === 'HETS-40') {
-            this.setState({ commentError: error.errorDescription });
-          } else {
-            throw error;
-          }
-        });
+      try {
+        await dispatch(Api.changeOwnerStatus(status));
+        this.setState({ isSaving: false });
+        this.props.onStatusChanged(status);
+
+        await dispatch(Log.ownerModifiedStatus(this.props.owner, status.status, status.statusComment));
+
+        // If owner status goes from approved to unapproved/archived or unapproved to archived
+        // this will change all it's equipment statuses. This should be reflected in the equipment history.
+        if (
+          (currentStatus === Constant.OWNER_STATUS_CODE_APPROVED ||
+            currentStatus === Constant.OWNER_STATUS_CODE_PENDING) &&
+          (status.status === Constant.OWNER_STATUS_CODE_PENDING ||
+            status.status === Constant.OWNER_STATUS_CODE_ARCHIVED)
+        ) {
+          _.map(equipmentList, async (equipment) => {
+            if (equipment.status !== status.status) {
+              await dispatch(Log.equipmentStatusModified(equipment, status.status, status.statusComment));
+            }
+          });
+        }
+      } catch (error) {
+        if (error.status === 400 && error.errorCode === 'HETS-40') {
+          this.setState({ commentError: error.errorDescription });
+        } else {
+          throw error;
+        }
+      }
     }
   };
 
@@ -175,4 +179,6 @@ class ChangeStatusDialog extends React.Component {
   }
 }
 
-export default ChangeStatusDialog;
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(null, mapDispatchToProps)(ChangeStatusDialog);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using AutoMapper;
+using HetsCommon;
 using HetsData.Dtos;
 using HetsData.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -23,8 +24,23 @@ namespace HetsData.Helpers
         public ContactDto PrimaryContact { get; set; }
         public string Status { get; set; }
         public int? ProjectId { get; set; }
-        public DateTime? ExpectedStartDate { get; set; }
-        public DateTime? ExpectedEndDate { get; set; }
+
+        private DateTime? _expectedStartDate;
+        public DateTime? ExpectedStartDate {
+            get => _expectedStartDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _expectedStartDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
+        private DateTime? _expectedEndDate;
+        public DateTime? ExpectedEndDate {
+            get => _expectedEndDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _expectedEndDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public int YesCount { get; set; }
     }
 
@@ -46,7 +62,15 @@ namespace HetsData.Helpers
         public string EquipmentYear { get; set; }
         public int ProjectId { get; set; }
         public string ProjectNumber { get; set; }
-        public DateTime? NoteDate { get; set; }
+
+        private DateTime? _noteDate;
+        public DateTime? NoteDate {
+            get => _noteDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _noteDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public string NoteType { get; set; }
         public string Reason { get; set; }
         public string OfferResponseNote { get; set; }
@@ -69,14 +93,13 @@ namespace HetsData.Helpers
         /// <returns></returns>
         public static RentalRequestHires ToHiresModel(HetRentalRequestRotationList request, HetUser user)
         {
-            RentalRequestHires requestLite = new RentalRequestHires();
+            RentalRequestHires requestLite = new();
 
             if (request != null)
             {
                 requestLite.Id = request.RentalRequestRotationListId;
                 requestLite.OwnerId = request.Equipment.OwnerId ?? 0;
                 requestLite.EquipmentId = request.EquipmentId ?? 0;
-
                 requestLite.LocalAreaName = request.RentalRequest.LocalArea.Name;
                 requestLite.ServiceAreaId = request.RentalRequest.LocalArea.ServiceArea.ServiceAreaId;
 
@@ -96,8 +119,8 @@ namespace HetsData.Helpers
                 // project data
                 requestLite.ProjectId = request.RentalRequest.Project.ProjectId;
                 requestLite.ProjectNumber = request.RentalRequest.Project.ProvincialProjectNumber;
-
-                requestLite.NoteDate = request.OfferResponseDatetime;
+                requestLite.NoteDate = request.OfferResponseDatetime is DateTime offerResponseDtUtc 
+                    ? DateUtils.AsUTC(offerResponseDtUtc) : null;
 
                 // Note Type -
                 // * Not hired (for recording the response NO for hiring.
@@ -197,10 +220,10 @@ namespace HetsData.Helpers
 
             // get the number of blocks for this piece of equipment
             int numberOfBlocks = GetNumberOfBlocks(request, context, configuration, logErrorAction);
-            numberOfBlocks = numberOfBlocks + 1;
+            numberOfBlocks++;
 
-            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", context);
-            if (statusId == null) throw new ArgumentException("Status Id cannot be null");
+            int? statusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", context) 
+                ?? throw new ArgumentException("Status Id cannot be null");
 
             // get the equipment based on the current seniority list for the area
             // (and sort the results based on block then
@@ -220,7 +243,7 @@ namespace HetsData.Helpers
 
                 for (int i = 0; i < listSize; i++)
                 {
-                    HetRentalRequestRotationList rentalRequestRotationList = new HetRentalRequestRotationList
+                    HetRentalRequestRotationList rentalRequestRotationList = new()
                     {
                         Equipment = blockEquipment[i],
                         EquipmentId = blockEquipment[i].EquipmentId,
@@ -280,18 +303,24 @@ namespace HetsData.Helpers
             }
         }
 
-        private static HetEquipment LastAskedByBlockInRotationList(int blockNumber, int? districtEquipmentTypeId,
-            int? localAreaId, DateTime fiscalStart, DbAppContext context, List<HetRentalRequestRotationList> hetRentalRequestRotationList)
+        private static HetEquipment LastAskedByBlockInRotationList(
+            int blockNumber, 
+            int? districtEquipmentTypeId,
+            int? localAreaId, 
+            DateTime fiscalStart, 
+            DbAppContext context, 
+            List<HetRentalRequestRotationList> hetRentalRequestRotationList)
         {
             if (districtEquipmentTypeId == null || localAreaId == null) return null;
 
             // if this is not block 1 - check that we have "asked" anyone in the previous list
+            DateTime fiscalStartUtc = DateUtils.AsUTC(fiscalStart);
             var rotationListquery = context.HetRentalRequestRotationLists.AsNoTracking()
                 .Include(x => x.RentalRequest)
                 .Include(x => x.Equipment)
                 .Where(x => x.RentalRequest.DistrictEquipmentTypeId == districtEquipmentTypeId &&
                             x.RentalRequest.LocalAreaId == localAreaId &&
-                            x.RentalRequest.AppCreateTimestamp >= fiscalStart &&
+                            x.RentalRequest.AppCreateTimestamp >= fiscalStartUtc &&
                             x.BlockNumber == blockNumber && //use historical block number of the equipment
                             x.WasAsked == true &&
                             x.IsForceHire != true)
@@ -307,18 +336,24 @@ namespace HetsData.Helpers
             return null;
         }
 
-        private static HetEquipment LastAskedByBlockInSeniorityList(int blockNumber, int? districtEquipmentTypeId,
-            int? localAreaId, DateTime fiscalStart, DbAppContext context, List<HetRentalRequestSeniorityList> hetRentalRequestSeniorityList)
+        private static HetEquipment LastAskedByBlockInSeniorityList(
+            int blockNumber, 
+            int? districtEquipmentTypeId,
+            int? localAreaId, 
+            DateTime fiscalStart, 
+            DbAppContext context, 
+            List<HetRentalRequestSeniorityList> hetRentalRequestSeniorityList)
         {
             if (districtEquipmentTypeId == null || localAreaId == null) return null;
 
             // if this is not block 1 - check that we have "asked" anyone in the previous list
+            DateTime fiscalStartUtc = DateUtils.AsUTC(fiscalStart);
             var rotationListquery = context.HetRentalRequestRotationLists.AsNoTracking()
                 .Include(x => x.RentalRequest)
                 .Include(x => x.Equipment)
                 .Where(x => x.RentalRequest.DistrictEquipmentTypeId == districtEquipmentTypeId &&
                             x.RentalRequest.LocalAreaId == localAreaId &&
-                            x.RentalRequest.AppCreateTimestamp >= fiscalStart &&
+                            x.RentalRequest.AppCreateTimestamp >= fiscalStartUtc &&
                             x.BlockNumber == blockNumber && //use historical block number of the equipment
                             x.WasAsked == true &&
                             x.IsForceHire != true)
@@ -350,25 +385,22 @@ namespace HetsData.Helpers
         /// <param name="rentalRequest"></param>
         /// <param name="numberOfBlocks"></param>
         /// <param name="context"></param>
-        public static HetRentalRequest SetupNewRotationList(HetRentalRequest rentalRequest, int numberOfBlocks, DbAppContext context)
+        public static HetRentalRequest SetupNewRotationList(
+            HetRentalRequest rentalRequest, int numberOfBlocks, DbAppContext context)
         {
             // remove hired equipment from the list
             DropHiredEquipment((List<HetRentalRequestRotationList>)rentalRequest.HetRentalRequestRotationLists, context);
 
-            // set working now - if an equipment is dropped, it's working now.
-            foreach(var equipment in rentalRequest.HetRentalRequestSeniorityLists)
-            {
-                if (!rentalRequest.HetRentalRequestRotationLists.Any(x => x.EquipmentId == equipment.EquipmentId))
-                {
-                    equipment.WorkingNow = true;
-                }
-            }
+            SetWorkingNow(rentalRequest);
 
             // nothing to do!
             if (rentalRequest.HetRentalRequestRotationLists.Count <= 0) return rentalRequest;
 
             // sort our new rotation list
-            var hetRentalRequestRotationList = rentalRequest.HetRentalRequestRotationLists.OrderBy(x => x.RotationListSortOrder).ToList();
+            var hetRentalRequestRotationList = rentalRequest.HetRentalRequestRotationLists
+                .OrderBy(x => x.RotationListSortOrder)
+                .ToList();
+
             rentalRequest.HetRentalRequestRotationLists = hetRentalRequestRotationList;
 
             int? disEquipmentTypeId = rentalRequest.DistrictEquipmentTypeId;
@@ -385,26 +417,18 @@ namespace HetsData.Helpers
             HetDistrictStatus districtStatus = context.HetDistrictStatuses.AsNoTracking()
                 .First(x => x.DistrictId == localArea.ServiceArea.DistrictId);
 
-            DateTime fiscalStart = districtStatus.RolloverEndDate ?? new DateTime(0001, 01, 01, 00, 00, 00);
             int fiscalYear = Convert.ToInt32(districtStatus.NextFiscalYear); // status table uses the start of the year
             rentalRequest.FiscalYear = fiscalYear;
 
-            if (fiscalStart == new DateTime(0001, 01, 01, 00, 00, 00))
-            {                
-                fiscalStart = new DateTime(fiscalYear - 1, 4, 1);
-            }
-
-            // get the last rotation list created this fiscal year
-            bool previousRequestExists = context.HetRentalRequests
-                .Any(x => x.DistrictEquipmentType.DistrictEquipmentTypeId == disEquipmentTypeId &&
-                          x.LocalArea.LocalAreaId == localAreaId &&
-                          x.AppCreateTimestamp >= fiscalStart);
+            DateTime fiscalStart = DateUtils.AsUTC(
+                districtStatus.RolloverEndDate ?? DateUtils.ConvertPacificToUtcTime(
+                    new DateTime(fiscalYear - 1, 4, 1, 0, 0, 0, DateTimeKind.Unspecified)));
 
             // *****************************************************************
             // if we don't have a request for the current fiscal,
             // ** pick the first one in the list and we are done.
             // *****************************************************************
-            if (!previousRequestExists)
+            if (!PreviousRequestExists(context, disEquipmentTypeId, localAreaId, fiscalStart))
             {
                 var firstOnList = hetRentalRequestRotationList[0];
                 rentalRequest.FirstOnRotationListId = firstOnList.EquipmentId;
@@ -429,57 +453,26 @@ namespace HetsData.Helpers
                 startEquipInBlock[blockIndex].position = -1;
 
                 // get the last asked equipment id for this "block". This method ensures that the returned equipment exists in our list.
-                var lastEquipmentInRotationList = LastAskedByBlockInRotationList(blockNumber, rentalRequest.DistrictEquipmentTypeId, rentalRequest.LocalAreaId,
-                    fiscalStart, context, hetRentalRequestRotationList);
+                var lastEquipmentInRotationList = LastAskedByBlockInRotationList(
+                    blockNumber, 
+                    rentalRequest.DistrictEquipmentTypeId, 
+                    rentalRequest.LocalAreaId,
+                    fiscalStart, 
+                    context, 
+                    hetRentalRequestRotationList);
 
-                var lastEquipmentInSeniorityList = LastAskedByBlockInSeniorityList(blockNumber, rentalRequest.DistrictEquipmentTypeId, rentalRequest.LocalAreaId,
-                    fiscalStart, context, rentalRequest.HetRentalRequestSeniorityLists.ToList());
+                var lastEquipmentInSeniorityList = LastAskedByBlockInSeniorityList(
+                    blockNumber, 
+                    rentalRequest.DistrictEquipmentTypeId, 
+                    rentalRequest.LocalAreaId,
+                    fiscalStart, 
+                    context, 
+                    rentalRequest.HetRentalRequestSeniorityLists.ToList());
 
-                if (lastEquipmentInSeniorityList != null)
-                {
-                    rentalRequest.HetRentalRequestSeniorityLists
-                        .First(x => x.EquipmentId == lastEquipmentInSeniorityList.EquipmentId)
-                        .LastCalled = true;
-                }
+                SetSeniorityListLastCalled(rentalRequest, lastEquipmentInSeniorityList);
 
-                // nothing found for this block - start at 0
-                if (lastEquipmentInRotationList == null && hetRentalRequestRotationList.Count > 0)
-                {
-                    for (int i = 0; i < hetRentalRequestRotationList.Count; i++)
-                    {
-                        if (hetRentalRequestRotationList[i].BlockNumber != blockNumber) continue;
-
-                        startEquipInBlock[blockIndex].equipment = hetRentalRequestRotationList[i].Equipment;
-                        startEquipInBlock[blockIndex].position = i;
-                        break;
-                    }
-                }
-                else
-                {
-                    //we know the equipment exists in the list
-                    var foundIndex = hetRentalRequestRotationList.FindIndex(x => x.EquipmentId == lastEquipmentInRotationList.EquipmentId);
-
-                    //find the next record which has the same block
-                    for (int i = foundIndex + 1; i < hetRentalRequestRotationList.Count; i++)
-                    {
-                        if (hetRentalRequestRotationList[i].BlockNumber != blockNumber) continue;
-
-                        startEquipInBlock[blockIndex].equipment = hetRentalRequestRotationList[i].Equipment;
-                        startEquipInBlock[blockIndex].position = i;
-                        break;
-                    }
-                }
-
-                //if we haven't found a start equip yet, choose the first one in the block.
-                if (startEquipInBlock[blockIndex].equipment == null)
-                {
-                    var foundIndex = hetRentalRequestRotationList.FindIndex(x => x.BlockNumber == blockNumber);
-                    if (foundIndex >= 0)
-                    {
-                        startEquipInBlock[blockIndex].equipment = hetRentalRequestRotationList[foundIndex].Equipment;
-                        startEquipInBlock[blockIndex].position = foundIndex;
-                    }
-                }
+                SetNextStartEquipWithSameBlock(
+                    hetRentalRequestRotationList, lastEquipmentInRotationList, startEquipInBlock, blockNumber, blockIndex);
             }
 
             // find the starting equipment and its block number on the list
@@ -497,6 +490,93 @@ namespace HetsData.Helpers
             // *****************************************************************
             // Reset the rotation list sort order
             // *****************************************************************
+            ResetRotationListSortOrder(
+                startEquipInBlock, startBlockIndex, hetRentalRequestRotationList, startBlockNumber, numberOfBlocks);
+
+            return rentalRequest;
+        }
+
+        private static void SetWorkingNow(HetRentalRequest rentalRequest)
+        {
+            // set working now - if an equipment is dropped, it's working now.
+            foreach (var equipment in rentalRequest.HetRentalRequestSeniorityLists)
+            {
+                if (!rentalRequest.HetRentalRequestRotationLists.Any(x => x.EquipmentId == equipment.EquipmentId))
+                {
+                    equipment.WorkingNow = true;
+                }
+            }
+        }
+
+        private static bool PreviousRequestExists(
+            DbAppContext context, int? disEquipmentTypeId, int? localAreaId, DateTime fiscalStart)
+        {
+            // get the last rotation list created this fiscal year
+            DateTime fiscalStartUtc = DateUtils.AsUTC(fiscalStart);
+            return context.HetRentalRequests
+                .Any(x =>
+                    x.DistrictEquipmentType.DistrictEquipmentTypeId == disEquipmentTypeId
+                    && x.LocalArea.LocalAreaId == localAreaId
+                    && x.AppCreateTimestamp >= fiscalStartUtc);
+        }
+
+        private static void SetSeniorityListLastCalled(
+            HetRentalRequest rentalRequest, HetEquipment lastEquipmentInSeniorityList)
+        {
+            if (lastEquipmentInSeniorityList != null)
+            {
+                rentalRequest.HetRentalRequestSeniorityLists
+                    .First(x => x.EquipmentId == lastEquipmentInSeniorityList.EquipmentId)
+                    .LastCalled = true;
+            }
+        }
+
+        private static void SetStartEquipInBlock(
+            (HetEquipment equipment, int position)[] startEquipInBlock, int blockIndex, HetEquipment equipment, int position)
+        {
+            startEquipInBlock[blockIndex].equipment = equipment;
+            startEquipInBlock[blockIndex].position = position;
+        } 
+
+        private static void SetNextStartEquipWithSameBlock(
+            List<HetRentalRequestRotationList> hetRentalRequestRotationList, 
+            HetEquipment lastEquipmentInRotationList,
+            (HetEquipment equipment, int position)[] startEquipInBlock,
+            int blockNumber, 
+            int blockIndex)
+        {
+            int startIndex =
+                (lastEquipmentInRotationList == null && hetRentalRequestRotationList.Count > 0) 
+                    ? 0 // nothing found for this block - start at 0
+                    : 1 + hetRentalRequestRotationList
+                        .FindIndex(x => x.EquipmentId == lastEquipmentInRotationList.EquipmentId); // we know the equipment exists in the list
+
+            // find the next record which has the same block
+            for (int i = startIndex; i < hetRentalRequestRotationList.Count; i++)
+            {
+                if (hetRentalRequestRotationList[i].BlockNumber != blockNumber) continue;
+
+                SetStartEquipInBlock(
+                    startEquipInBlock, blockIndex, hetRentalRequestRotationList[i].Equipment, i);
+                break;
+            }
+
+            // if we haven't found a start equip yet, choose the first one in the block.
+            var foundIndex = hetRentalRequestRotationList.FindIndex(x => x.BlockNumber == blockNumber);
+            if (startEquipInBlock[blockIndex].equipment == null && foundIndex >= 0)
+            {
+                SetStartEquipInBlock(
+                    startEquipInBlock, blockIndex, hetRentalRequestRotationList[foundIndex].Equipment, foundIndex);
+            }
+        }
+
+        private static void ResetRotationListSortOrder(
+            (HetEquipment equipment, int position)[] startEquipInBlock,
+            int startBlockIndex,
+            List<HetRentalRequestRotationList> hetRentalRequestRotationList,
+            int startBlockNumber,
+            int numberOfBlocks)
+        {
             int masterSortOrder = 0;
 
             #region starting block
@@ -520,6 +600,17 @@ namespace HetsData.Helpers
             }
             #endregion
 
+            ResetRemainingBlocksSortOrder(
+                startBlockIndex, numberOfBlocks, masterSortOrder, startEquipInBlock, hetRentalRequestRotationList);
+        }
+
+        private static void ResetRemainingBlocksSortOrder(
+            int startBlockIndex, 
+            int numberOfBlocks, 
+            int masterSortOrder, 
+            (HetEquipment equipment, int position)[] startEquipInBlock,
+            List<HetRentalRequestRotationList> hetRentalRequestRotationList)
+        {
             #region remaining blocks if any
             for (int blockIndex = startBlockIndex + 1; blockIndex < numberOfBlocks; blockIndex++)
             {
@@ -544,8 +635,6 @@ namespace HetsData.Helpers
                 }
             }
             #endregion
-
-            return rentalRequest;
         }
 
         /// <summary>
@@ -609,27 +698,21 @@ namespace HetsData.Helpers
                 .OrderByDescending(y => y.AppLastUpdateTimestamp)
                 .ToList();
 
-            if (offset == null)
-            {
-                offset = 0;
-            }
+            offset ??= 0;
 
-            if (limit == null)
-            {
-                limit = data.Count - offset;
-            }
+            limit ??= data.Count - offset;
 
-            List<History> result = new List<History>();
+            List<History> result = new();
 
             for (int i = (int)offset; i < data.Count && i < offset + limit; i++)
             {
-                History temp = new History();
+                History temp = new();
 
                 if (data[i] != null)
                 {
                     temp.HistoryText = data[i].HistoryText;
                     temp.Id = data[i].HistoryId;
-                    temp.LastUpdateTimestamp = data[i].AppLastUpdateTimestamp;
+                    temp.LastUpdateTimestamp = DateUtils.AsUTC(data[i].AppLastUpdateTimestamp);
                     temp.LastUpdateUserid = data[i].AppLastUpdateUserid;
                     temp.AffectedEntityId = data[i].RentalRequestId;
                 }

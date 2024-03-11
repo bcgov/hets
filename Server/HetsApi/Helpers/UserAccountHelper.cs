@@ -118,10 +118,7 @@ namespace HetsApi.Helpers
                 user = GetUserByGuid(guid, context);
             }
 
-            if (user == null)
-            {
-                user = GetUserBySmUserId(username, context);
-            }
+            user ??= GetUserBySmUserId(username, context);
 
             if (user == null)
             {
@@ -224,7 +221,8 @@ namespace HetsApi.Helpers
         /// <param name="bizGuid"></param>
         /// <param name="guid"></param>
         /// <returns></returns>
-        public static HetBusinessUser GetBusinessUser(DbAppContext context, string username, string bizGuid, string bizName, string email, string guid)
+        public static HetBusinessUser GetBusinessUser(
+            DbAppContext context, string username, string bizGuid, string bizName, string email, string guid)
         {
             // find the business
             HetBusiness business = context.HetBusinesses.AsNoTracking()
@@ -309,7 +307,7 @@ namespace HetsApi.Helpers
                 }
 
                 // add the "Business Logon" role
-                HetBusinessUserRole userRole = new HetBusinessUserRole
+                HetBusinessUserRole userRole = new()
                 {
                     RoleId = StatusHelper.GetRoleId("Business BCeID", context),
                     EffectiveDate = DateTime.UtcNow.AddMinutes(-10),

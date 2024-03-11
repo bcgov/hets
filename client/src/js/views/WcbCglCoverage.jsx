@@ -9,7 +9,6 @@ import Moment from 'moment';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
-import store from '../store';
 
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SearchBar from '../components/ui/SearchBar.jsx';
@@ -77,7 +76,7 @@ class WcbCglCoverage extends React.Component {
   };
 
   componentDidMount() {
-    Api.getOwnersLite();
+    this.props.dispatch(Api.getOwnersLite());
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
@@ -89,7 +88,7 @@ class WcbCglCoverage extends React.Component {
   }
 
   fetch = () => {
-    Api.searchOwnersCoverage(this.buildSearchParams());
+    this.props.dispatch(Api.searchOwnersCoverage(this.buildSearchParams()));
   };
 
   search = (e) => {
@@ -106,17 +105,17 @@ class WcbCglCoverage extends React.Component {
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
-      store.dispatch({
+      this.props.dispatch({
         type: Action.UPDATE_OWNERS_COVERAGE_SEARCH,
         ownersCoverage: this.state.search,
       });
-      store.dispatch({ type: Action.CLEAR_OWNERS_COVERAGE });
+      this.props.dispatch({ type: Action.CLEAR_OWNERS_COVERAGE });
     });
   };
 
   updateSearchState = (state, callback) => {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } } }, () => {
-      store.dispatch({
+      this.props.dispatch({
         type: Action.UPDATE_OWNERS_COVERAGE_SEARCH,
         ownersCoverage: this.state.search,
       });
@@ -128,7 +127,7 @@ class WcbCglCoverage extends React.Component {
 
   updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
-      store.dispatch({
+      this.props.dispatch({
         type: Action.UPDATE_OWNERS_COVERAGE_UI,
         ownersCoverage: this.state.ui,
       });
@@ -316,15 +315,15 @@ class WcbCglCoverage extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    localAreas: state.lookups.localAreas,
-    owners: state.lookups.owners.lite,
-    ownersCoverage: state.models.ownersCoverage,
-    favourites: state.models.favourites.ownersCoverage,
-    search: state.search.ownersCoverage,
-    ui: state.ui.ownersCoverage,
-  };
-}
+const mapStateToProps = (state) => ({
+  localAreas: state.lookups.localAreas,
+  owners: state.lookups.owners.lite,
+  ownersCoverage: state.models.ownersCoverage,
+  favourites: state.models.favourites.ownersCoverage,
+  search: state.search.ownersCoverage,
+  ui: state.ui.ownersCoverage,
+});
 
-export default connect(mapStateToProps)(WcbCglCoverage);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(WcbCglCoverage);

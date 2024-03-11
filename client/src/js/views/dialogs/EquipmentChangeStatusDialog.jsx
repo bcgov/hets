@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { FormGroup, FormLabel, FormText } from 'react-bootstrap';
 
 import * as Api from '../../api';
@@ -49,28 +50,28 @@ class EquipmentChangeStatusDialog extends React.Component {
     return valid;
   };
 
-  formSubmitted = () => {
+  formSubmitted = async () => {
     if (this.isValid()) {
       this.setState({ isSaving: true });
+      const dispatch = this.props.dispatch;
       const status = {
         id: this.props.equipment.id,
         status: this.props.status,
         statusComment: this.state.comment,
       };
 
-      Api.changeEquipmentStatus(status)
-        .then(() => {
-          this.setState({ isSaving: false });
-          this.props.onStatusChanged();
-          Log.equipmentStatusModified(this.props.equipment, status.status, status.statusComment);
-        })
-        .catch((error) => {
-          if (error.status === 400 && (error.errorCode === 'HETS-39' || error.errorCode === 'HETS-41')) {
-            this.setState({ commentError: error.errorDescription });
-          } else {
-            throw error;
-          }
-        });
+      try {
+        await dispatch(Api.changeEquipmentStatus(status));
+        this.setState({ isSaving: false });
+        this.props.onStatusChanged();
+        await dispatch(Log.equipmentStatusModified(this.props.equipment, status.status, status.statusComment));
+      } catch (error) {
+        if (error.status === 400 && (error.errorCode === 'HETS-39' || error.errorCode === 'HETS-41')) {
+          this.setState({ commentError: error.errorDescription });
+        } else {
+          throw error;
+        }
+      }
     }
   };
 
@@ -103,4 +104,6 @@ class EquipmentChangeStatusDialog extends React.Component {
   }
 }
 
-export default EquipmentChangeStatusDialog;
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(null, mapDispatchToProps)(EquipmentChangeStatusDialog);

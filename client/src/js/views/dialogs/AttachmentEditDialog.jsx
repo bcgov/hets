@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 
@@ -56,11 +57,12 @@ class AttachmentEditDialog extends React.Component {
     return valid;
   };
 
-  formSubmitted = () => {
+  formSubmitted = async () => {
     if (this.isValid()) {
       if (this.didChange()) {
         this.setState({ isSaving: true });
 
+        const dispatch = this.props.dispatch;
         const attachment = {
           id: this.props.attachment.id,
           typeName: this.state.typeName,
@@ -68,16 +70,13 @@ class AttachmentEditDialog extends React.Component {
           equipment: { id: this.props.equipment.id },
         };
 
-        const promise = Api.updatePhysicalAttachment(attachment);
-
-        promise.then(() => {
-          Log.equipmentAttachmentUpdated(this.props.equipment, attachment.typeName);
-          this.setState({ isSaving: false });
-          if (this.props.onSave) {
-            this.props.onSave();
-          }
-          this.props.onClose();
-        });
+        await dispatch(Api.updatePhysicalAttachment(attachment));
+        await dispatch(Log.equipmentAttachmentUpdated(this.props.equipment, attachment.typeName));
+        this.setState({ isSaving: false });
+        if (this.props.onSave) {
+          this.props.onSave();
+        }
+        this.props.onClose();
       } else {
         this.props.onClose();
       }
@@ -109,4 +108,6 @@ class AttachmentEditDialog extends React.Component {
   }
 }
 
-export default AttachmentEditDialog;
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(null, mapDispatchToProps)(AttachmentEditDialog);

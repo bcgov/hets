@@ -13,6 +13,7 @@ using HetsData.Entities;
 using HetsData.Repositories;
 using HetsData.Dtos;
 using AutoMapper;
+using HetsCommon;
 
 namespace HetsApi.Controllers
 {
@@ -566,10 +567,13 @@ namespace HetsApi.Controllers
                 .First(x => x.DistrictId == districtId);
 
             int? fiscalYear = status.CurrentFiscalYear;
-            if (fiscalYear == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (fiscalYear == null) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             // fiscal year in the status table stores the "start" of the year
-            DateTime fiscalYearStart = new DateTime((int)fiscalYear, 4, 1);
+            DateTime fiscalYearStart = DateUtils.ConvertPacificToUtcTime(
+                new DateTime((int)fiscalYear, 4, 1, 0, 0, 0, DateTimeKind.Unspecified));
 
             HetProject project = _context.HetProjects.AsNoTracking()
                 .Include(x => x.HetRentalAgreements)
@@ -577,7 +581,7 @@ namespace HetsApi.Controllers
                 .First(x => x.ProjectId == id);
 
             // create a single array of all time records
-            List<HetTimeRecord> timeRecords = new List<HetTimeRecord>();
+            List<HetTimeRecord> timeRecords = new();
 
             foreach (HetRentalAgreement rentalAgreement in project.HetRentalAgreements)
             {
@@ -635,8 +639,8 @@ namespace HetsApi.Controllers
             int rentalAgreementId = (int)item.RentalAgreementId;
 
             // set the time period type id
-            int? timePeriodTypeId = StatusHelper.GetTimePeriodId(item.TimePeriod, _context);
-            if (timePeriodTypeId == null) throw new DataException("Time Period Id cannot be null");
+            int? timePeriodTypeId = StatusHelper.GetTimePeriodId(item.TimePeriod, _context) 
+                ?? throw new DataException("Time Period Id cannot be null");
 
             if (item.TimeRecordId > 0)
             {
@@ -644,7 +648,9 @@ namespace HetsApi.Controllers
                 HetTimeRecord time = _context.HetTimeRecords.FirstOrDefault(x => x.TimeRecordId == item.TimeRecordId);
 
                 // not found
-                if (time == null) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+                if (time == null) 
+                    return new NotFoundObjectResult(
+                        new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
                 time.ConcurrencyControlNumber = item.ConcurrencyControlNumber;
                 time.RentalAgreementId = rentalAgreementId;
@@ -652,18 +658,18 @@ namespace HetsApi.Controllers
                 time.Hours = item.Hours;
                 time.TimePeriod = item.TimePeriod;
                 time.TimePeriodTypeId = (int)timePeriodTypeId;
-                time.WorkedDate = item.WorkedDate;
+                time.WorkedDate = DateUtils.AsUTC(item.WorkedDate);
             }
             else // add time record
             {
-                HetTimeRecord time = new HetTimeRecord
+                HetTimeRecord time = new()
                 {
                     RentalAgreementId = rentalAgreementId,
                     EnteredDate = DateTime.UtcNow,
                     Hours = item.Hours,
                     TimePeriod = item.TimePeriod,
                     TimePeriodTypeId = (int)timePeriodTypeId,
-                    WorkedDate = item.WorkedDate
+                    WorkedDate = DateUtils.AsUTC(item.WorkedDate)
                 };
 
                 _context.HetTimeRecords.Add(time);
@@ -681,14 +687,15 @@ namespace HetsApi.Controllers
                 .First(x => x.ProjectId == id);
 
             // create a single array of all time records
-            List<HetTimeRecord> timeRecords = new List<HetTimeRecord>();
+            List<HetTimeRecord> timeRecords = new();
 
             foreach (HetRentalAgreement rentalAgreement in project.HetRentalAgreements)
             {
                 timeRecords.AddRange(rentalAgreement.HetTimeRecords);
             }
 
-            return new ObjectResult(new HetsResponse(_mapper.Map<List<TimeRecordDto>>(timeRecords)));
+            return new ObjectResult(
+                new HetsResponse(_mapper.Map<List<TimeRecordDto>>(timeRecords)));
         }
 
         #endregion
@@ -736,28 +743,31 @@ namespace HetsApi.Controllers
             bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             // not found
-            if (!exists) return new NotFoundObjectResult(new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
+            if (!exists) 
+                return new NotFoundObjectResult(
+                    new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
 
             HetProject project = _context.HetProjects.AsNoTracking()
                 .Include(x => x.HetDigitalFiles)
                 .First(a => a.ProjectId == id);
 
             // extract the attachments and update properties for UI
-            List<HetDigitalFile> attachments = new List<HetDigitalFile>();
+            List<HetDigitalFile> attachments = new();
 
             foreach (HetDigitalFile attachment in project.HetDigitalFiles)
             {
                 if (attachment != null)
                 {
                     attachment.FileSize = attachment.FileContents.Length;
-                    attachment.LastUpdateTimestamp = attachment.AppLastUpdateTimestamp;
+                    attachment.LastUpdateTimestamp = DateUtils.AsUTC(attachment.AppLastUpdateTimestamp);
                     attachment.LastUpdateUserid = attachment.AppLastUpdateUserid;
                     attachment.UserName = UserHelper.GetUserName(attachment.LastUpdateUserid, _context);
                     attachments.Add(attachment);
                 }
             }
 
-            return new ObjectResult(new HetsResponse(_mapper.Map<List<DigitalFileDto>>(attachments)));
+            return new ObjectResult(
+                new HetsResponse(_mapper.Map<List<DigitalFileDto>>(attachments)));
         }
 
         #endregion
@@ -1012,13 +1022,15 @@ namespace HetsApi.Controllers
         [HttpPost]
         [Route("{id}/history")]
         [RequiresPermission(HetPermission.Login, HetPermission.WriteAccess)]
-        public virtual ActionResult<History> ProjectsIdHistoryPost([FromRoute] int id, [FromBody] History item)
+        public virtual ActionResult<History> ProjectsIdHistoryPost(
+            [FromRoute] int id, 
+            [FromBody] History item)
         {
             bool exists = _context.HetProjects.Any(a => a.ProjectId == id);
 
             if (exists)
             {
-                HetHistory history = new HetHistory
+                HetHistory history = new()
                 {
                     HistoryText = item.HistoryText,
                     CreatedDate = DateTime.UtcNow,
@@ -1029,7 +1041,8 @@ namespace HetsApi.Controllers
                 _context.SaveChanges();
             }
 
-            return new ObjectResult(new HetsResponse(ProjectHelper.GetHistoryRecords(id, null, null, _context)));
+            return new ObjectResult(
+                new HetsResponse(ProjectHelper.GetHistoryRecords(id, null, null, _context)));
         }
 
         #endregion

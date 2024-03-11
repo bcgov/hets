@@ -23,7 +23,6 @@ import DistrictEditDialog from './dialogs/DistrictEditDialog.jsx';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
-import store from '../store';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
@@ -77,7 +76,7 @@ class UsersDetail extends React.Component {
     // if new user
     if (this.props.match.params.userId === '0') {
       // Clear the user store
-      store.dispatch({
+      this.props.dispatch({
         type: Action.UPDATE_USER,
         user: {
           id: 0,
@@ -102,8 +101,8 @@ class UsersDetail extends React.Component {
   fetch = () => {
     this.setState({ loading: true });
     Promise.all([
-      Api.getUser(this.props.match.params.userId),
-      Api.getUserDistricts(this.props.match.params.userId),
+      this.props.dispatch(Api.getUser(this.props.match.params.userId)),
+      this.props.dispatch(Api.getUserDistricts(this.props.match.params.userId)),
     ]).then(() => {
       this.setState({ loading: false });
     });
@@ -111,7 +110,7 @@ class UsersDetail extends React.Component {
 
   updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
-      store.dispatch({ type: Action.UPDATE_USER_ROLES_UI, userRoles: this.state.ui });
+      this.props.dispatch({ type: Action.UPDATE_USER_ROLES_UI, userRoles: this.state.ui });
       if (callback) {
         callback();
       }
@@ -157,7 +156,7 @@ class UsersDetail extends React.Component {
       };
     });
 
-    Api.updateUserRoles(this.props.user.id, userRoles);
+    this.props.dispatch(Api.updateUserRoles(this.props.user.id, userRoles));
     this.closeUserRoleDialog();
   };
 
@@ -183,14 +182,14 @@ class UsersDetail extends React.Component {
   };
 
   deleteDistrict = (district) => {
-    Api.deleteUserDistrict(district).then((response) => {
+    this.props.dispatch(Api.deleteUserDistrict(district)).then((response) => {
       this.updateCurrentUserDistricts(response.data);
     });
   };
 
   updateCurrentUserDistricts = (districts) => {
     if (this.props.user.id === this.props.currentUser.id) {
-      store.dispatch({ type: Action.CURRENT_USER_DISTRICTS, currentUserDistricts: districts });
+      this.props.dispatch({ type: Action.CURRENT_USER_DISTRICTS, currentUserDistricts: districts });
     }
   };
 
@@ -570,14 +569,14 @@ class ExpireOverlay extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    user: state.models.user,
-    ui: state.ui.userRoles,
-    userDistricts: state.models.userDistricts,
-    districts: state.lookups.districts,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  user: state.models.user,
+  ui: state.ui.userRoles,
+  userDistricts: state.models.userDistricts,
+  districts: state.lookups.districts,
+});
 
-export default connect(mapStateToProps)(UsersDetail);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(UsersDetail);

@@ -17,12 +17,28 @@ namespace HetsData.Dtos
         public int RentalAgreementId { get; set; }
         public string Number { get; set; }
         public int? EstimateHours { get; set; }
-        public DateTime? EstimateStartWork { get; set; }
+
+        private DateTime? _estimateStartWork;
+        public DateTime? EstimateStartWork {
+            get => _estimateStartWork is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _estimateStartWork = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public string Note { get; set; }
         public float? EquipmentRate { get; set; }
         public string RateComment { get; set; }
         public int RatePeriodTypeId { get; set; }
-        public DateTime? DatedOn { get; set; }
+
+        private DateTime? _datedOn;
+        public DateTime? DatedOn {
+            get => _datedOn is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _datedOn = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public string AgreementCity { get; set; }
         public int RentalAgreementStatusTypeId { get; set; }
         public int? EquipmentId { get; set; }

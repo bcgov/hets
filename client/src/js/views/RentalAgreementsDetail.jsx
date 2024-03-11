@@ -17,7 +17,6 @@ import CloneDialog from './dialogs/CloneDialog.jsx';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
-import store from '../store';
 
 import ColDisplay from '../components/ColDisplay.jsx';
 import DeleteButton from '../components/DeleteButton.jsx';
@@ -61,7 +60,7 @@ class RentalAgreementsDetail extends React.Component {
   }
 
   componentDidMount() {
-    store.dispatch({
+    this.props.dispatch({
       type: Action.SET_ACTIVE_RENTAL_AGREEMENT_ID_UI,
       rentalAgreementId: this.props.match.params.rentalAgreementId,
     });
@@ -75,7 +74,7 @@ class RentalAgreementsDetail extends React.Component {
   }
 
   fetch = () => {
-    return Api.getRentalAgreement(this.props.match.params.rentalAgreementId);
+    return this.props.dispatch(Api.getRentalAgreement(this.props.match.params.rentalAgreementId));
   };
 
   updateState = (state, callback) => {
@@ -119,7 +118,7 @@ class RentalAgreementsDetail extends React.Component {
   };
 
   deleteRentalRate = (rentalRate) => {
-    Api.deleteRentalRate(rentalRate).then(() => {
+    this.props.dispatch(Api.deleteRentalRate(rentalRate)).then(() => {
       // In addition to refreshing the rental rates, we need to update the rental agreement to get
       // possibly new info.
       this.fetch();
@@ -144,12 +143,12 @@ class RentalAgreementsDetail extends React.Component {
     });
   };
 
-  deleteCondition = (rentalCondition) => {
-    Api.deleteRentalCondition(rentalCondition).then(() => {
-      // In addition to refreshing the rental condition, we need to update the rental agreement to
-      // get possibly new info.
-      this.fetch();
-    });
+  deleteCondition = async (rentalCondition) => {
+    await this.props.dispatch(Api.deleteRentalCondition(rentalCondition));
+    
+    // In addition to refreshing the rental condition, we need to update the rental agreement to
+    // get possibly new info.
+    this.fetch();
   };
 
   openOvertimeNotesDialog = () => {
@@ -160,13 +159,12 @@ class RentalAgreementsDetail extends React.Component {
     this.setState({ showOvertimeNotesDialog: false });
   };
 
-  generateRentalAgreementDocument = () => {
-    let request = Api.generateRentalAgreementDocument(this.props.match.params.rentalAgreementId);
-    let fname = `rental-agreement-${formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME)}`;
+  generateRentalAgreementDocument = async () => {
+    const dispatch = this.props.dispatch;
+    const fname = `rental-agreement-${formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME)}`;
 
-    request.getBlob().then((res) => {
-      saveAs(res.response, fname);
-    });
+    const res = await dispatch(Api.generateRentalAgreementDocument(this.props.match.params.rentalAgreementId));
+    saveAs(res.response, fname);
   };
 
   openCloneDialog = () => {
@@ -718,10 +716,10 @@ class RentalAgreementsDetail extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    rentalAgreement: activeRentalAgreementSelector(state),
-  };
-}
+const mapStateToProps = (state) => ({
+  rentalAgreement: activeRentalAgreementSelector(state),
+});
 
-export default connect(mapStateToProps)(RentalAgreementsDetail);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(RentalAgreementsDetail);

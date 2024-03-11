@@ -32,16 +32,40 @@ namespace HetsData.Entities
         public string Province { get; set; }
         public int OwnerStatusTypeId { get; set; }
         public string StatusComment { get; set; }
-        public DateTime? ArchiveDate { get; set; }
+
+        private DateTime? _archiveDate;
+        public DateTime? ArchiveDate {
+            get => _archiveDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _archiveDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public string ArchiveCode { get; set; }
         public string ArchiveReason { get; set; }
         public int? LocalAreaId { get; set; }
         public int? PrimaryContactId { get; set; }
         public string CglCompany { get; set; }
         public string CglPolicyNumber { get; set; }
-        public DateTime? CglendDate { get; set; }
+
+        private DateTime? _cglendDate;
+        public DateTime? CglendDate {
+            get => _cglendDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _cglendDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public string WorkSafeBcpolicyNumber { get; set; }
-        public DateTime? WorkSafeBcexpiryDate { get; set; }
+
+        private DateTime? _workSafeBcexpiryDate;
+        public DateTime? WorkSafeBcexpiryDate {
+            get => _workSafeBcexpiryDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _workSafeBcexpiryDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public bool? IsMaintenanceContractor { get; set; }
         public bool MeetsResidency { get; set; }
         public int? BusinessId { get; set; }
@@ -49,14 +73,37 @@ namespace HetsData.Entities
         public string AppCreateUserDirectory { get; set; }
         public string AppCreateUserGuid { get; set; }
         public string AppCreateUserid { get; set; }
-        public DateTime AppCreateTimestamp { get; set; }
+
+        private DateTime _appCreateTimestamp = new(0001, 01, 01, 00, 00, 00, DateTimeKind.Utc);
+        public DateTime AppCreateTimestamp {
+            get => DateTime.SpecifyKind(_appCreateTimestamp, DateTimeKind.Utc);
+            set => _appCreateTimestamp = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+        }
+        
         public string AppLastUpdateUserDirectory { get; set; }
         public string AppLastUpdateUserGuid { get; set; }
         public string AppLastUpdateUserid { get; set; }
-        public DateTime AppLastUpdateTimestamp { get; set; }
+
+        private DateTime _appLastUpdateTimestamp = new(0001, 01, 01, 00, 00, 00, DateTimeKind.Utc);
+        public DateTime AppLastUpdateTimestamp {
+            get => DateTime.SpecifyKind(_appLastUpdateTimestamp, DateTimeKind.Utc);
+            set => _appLastUpdateTimestamp = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+        }
+        
         public string DbCreateUserId { get; set; }
-        public DateTime DbCreateTimestamp { get; set; }
-        public DateTime DbLastUpdateTimestamp { get; set; }
+
+        private DateTime _dbCreateTimestamp = new(0001, 01, 01, 00, 00, 00, DateTimeKind.Utc);
+        public DateTime DbCreateTimestamp {
+            get => DateTime.SpecifyKind(_dbCreateTimestamp, DateTimeKind.Utc);
+            set => _dbCreateTimestamp = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+        }
+
+        private DateTime _dbLastUpdateTimestamp = new(0001, 01, 01, 00, 00, 00, DateTimeKind.Utc);
+        public DateTime DbLastUpdateTimestamp {
+            get => DateTime.SpecifyKind(_dbLastUpdateTimestamp, DateTimeKind.Utc);
+            set => _dbLastUpdateTimestamp = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+        }
+        
         public string DbLastUpdateUserId { get; set; }
         public int ConcurrencyControlNumber { get; set; }
 

@@ -127,12 +127,8 @@ namespace HetsData.Helpers
                                         x.DistrictEquipmentTypeId == districtEquipmentTypeId);
 
                         // get status id
-                        int? eqStatusId =
-                            StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", context);
-                        if (eqStatusId == null)
-                        {
-                            throw new ArgumentException("Status Code not found");
-                        }
+                        int? eqStatusId = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", context) 
+                            ?? throw new ArgumentException("Status Code not found");
 
                         // update the seniority score
                         foreach (HetEquipment equipment in data)
@@ -207,8 +203,18 @@ namespace HetsData.Helpers
                 }
 
                 //reselect with data that include local changes
+                //var dataToProcess = dataFromDb
+                //    .Where(x => x.EquipmentStatusType != null && x.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved &&
+                //                x.LocalAreaId == localAreaId &&
+                //                x.DistrictEquipmentTypeId == districtEquipmentTypeId)
+                //    .OrderByDescending(x => x.Seniority)
+                //    .ThenBy(x => x.ReceivedDate)
+                //    .ThenBy(x => x.EquipmentCode)
+                //    .ToList();
+
+                // TH-112626: check if the equipment is archived or approved when the user wants to to bring back the equipment from archived to approved 
                 var dataToProcess = dataFromDb
-                    .Where(x => x.EquipmentStatusType != null && x.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved &&
+                    .Where(x => x.EquipmentStatusType != null && (x.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusApproved || x.EquipmentStatusType.EquipmentStatusTypeCode == HetEquipment.StatusArchived) &&
                                 x.LocalAreaId == localAreaId &&
                                 x.DistrictEquipmentTypeId == districtEquipmentTypeId)
                     .OrderByDescending(x => x.Seniority)

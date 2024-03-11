@@ -9,7 +9,6 @@ import _ from 'lodash';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
-import store from '../store';
 
 import FormInputControl from '../components/FormInputControl.jsx';
 import Spinner from '../components/Spinner.jsx';
@@ -52,8 +51,8 @@ class RolesDetail extends React.Component {
   componentDidMount() {
     if (this.state.isNew) {
       // Clear the role and permissions store
-      store.dispatch({ type: Action.UPDATE_ROLE, role: {} });
-      store.dispatch({
+      this.props.dispatch({ type: Action.UPDATE_ROLE, role: {} });
+      this.props.dispatch({
         type: Action.UPDATE_ROLE_PERMISSIONS,
         rolePermissions: {},
       });
@@ -63,8 +62,8 @@ class RolesDetail extends React.Component {
   }
 
   fetch = () => {
-    var rolePromise = Api.getRole(this.props.match.params.roleId);
-    var permissionsPromise = Api.getRolePermissions(this.props.match.params.roleId);
+    const rolePromise = this.props.dispatch(Api.getRole(this.props.match.params.roleId));
+    const permissionsPromise = this.props.dispatch(Api.getRolePermissions(this.props.match.params.roleId));
 
     this.setState({ loading: true });
     Promise.all([rolePromise, permissionsPromise]).then(() => {
@@ -139,12 +138,12 @@ class RolesDetail extends React.Component {
 
   savePermissions = () => {
     if (this.didChangePermissions()) {
-      Api.updateRolePermissions(
+      this.props.dispatch(Api.updateRolePermissions(
         this.props.role.id,
         _.map(this.state.selectedPermissionIds, (id) => {
           return { id: id };
         })
-      ).then(() => {
+      )).then(() => {
         this.returnToList();
       });
     } else {
@@ -162,20 +161,20 @@ class RolesDetail extends React.Component {
     if (this.isValid()) {
       if (this.didChangeRole()) {
         if (this.state.isNew) {
-          Api.addRole({
+          this.props.dispatch(Api.addRole({
             name: this.state.name,
             description: this.state.description,
-          }).then(() => {
+          })).then(() => {
             this.savePermissions();
           });
         } else {
-          Api.updateRole({
+          this.props.dispatch(Api.updateRole({
             ...this.props.role,
             ...{
               name: this.state.name,
               description: this.state.description,
             },
-          }).then(() => {
+          })).then(() => {
             this.savePermissions();
           });
         }
@@ -315,13 +314,13 @@ class RolesDetail extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    role: state.models.role,
-    rolePermissions: state.models.rolePermissions,
-    permissions: state.lookups.permissions,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  role: state.models.role,
+  rolePermissions: state.models.rolePermissions,
+  permissions: state.lookups.permissions,
+});
 
-export default connect(mapStateToProps)(RolesDetail);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(RolesDetail);

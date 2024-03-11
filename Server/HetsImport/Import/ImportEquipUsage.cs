@@ -11,6 +11,7 @@ using Hangfire.Server;
 using Hangfire.Console.Progress;
 using HetsData.Helpers;
 using HetsData.Model;
+using HetsCommon;
 
 namespace HetsImport.Import
 {
@@ -228,14 +229,16 @@ namespace HetsImport.Import
                 // so ignore all others
                 // ***********************************************
                 DateTime fiscalStart;
-                
-                if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
+                DateTime now = DateTime.Now;
+                if (now.Month == 1 || now.Month == 2 || now.Month == 3)
                 {
-                    fiscalStart = new DateTime(DateTime.UtcNow.AddYears(-1).Year, 4, 1);
+                    fiscalStart = DateUtils.ConvertPacificToUtcTime(
+                        new DateTime(now.AddYears(-1).Year, 4, 1, 0, 0, 0));
                 }
                 else
                 {
-                    fiscalStart = new DateTime(DateTime.UtcNow.Year, 4, 1);
+                    fiscalStart = DateUtils.ConvertPacificToUtcTime(
+                        new DateTime(now.Year, 4, 1, 0, 0, 0));
                 }
 
                 string tempRecordDate = oldObject.Worked_Dt;

@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { FormGroup, FormText, FormLabel, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -89,25 +90,23 @@ class AttachmentAddDialog extends React.Component {
     }
   };
 
-  formSubmitted = () => {
+  formSubmitted = async () => {
     if (this.isValid()) {
       if (this.didChange()) {
         this.setState({ isSaving: true });
 
+        const dispatch = this.props.dispatch;
         const attachmentTypeNames = this.state.forms.map((form) => form.typeName);
 
-        const promise = Api.addPhysicalAttachments(this.props.equipment.id, attachmentTypeNames);
-
-        promise.then(() => {
-          attachmentTypeNames.forEach((typeName) => {
-            Log.equipmentAttachmentAdded(this.props.equipment, typeName);
-          });
-          this.setState({ isSaving: false });
-          if (this.props.onSave) {
-            this.props.onSave();
-          }
-          this.props.onClose();
+        await dispatch(Api.addPhysicalAttachments(this.props.equipment.id, attachmentTypeNames));
+        attachmentTypeNames.forEach(async (typeName) => {
+          await dispatch(Log.equipmentAttachmentAdded(this.props.equipment, typeName));
         });
+        this.setState({ isSaving: false });
+        if (this.props.onSave) {
+          this.props.onSave();
+        }
+        this.props.onClose();
       } else {
         this.props.onClose();
       }
@@ -158,4 +157,6 @@ class AttachmentAddDialog extends React.Component {
   }
 }
 
-export default AttachmentAddDialog;
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(null, mapDispatchToProps)(AttachmentAddDialog);

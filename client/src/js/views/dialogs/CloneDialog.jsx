@@ -39,8 +39,8 @@ class CloneDialog extends React.Component {
   }
 
   componentDidMount() {
-    var getProjectRentalAgreementsPromise = Api.getProjectRentalAgreements(this.props.rentalAgreement.project.id);
-    var getEquipmentRentalAgreementsPromise = Api.getEquipmentRentalAgreements(this.props.rentalAgreement.equipment.id);
+    const getProjectRentalAgreementsPromise = this.props.dispatch(Api.getProjectRentalAgreements(this.props.rentalAgreement.project.id));
+    const getEquipmentRentalAgreementsPromise = this.props.dispatch(Api.getEquipmentRentalAgreements(this.props.rentalAgreement.equipment.id));
     this.setState({ loading: true });
     return Promise.all([getProjectRentalAgreementsPromise, getEquipmentRentalAgreementsPromise]).finally(() => {
       this.setState({ loading: false });
@@ -72,7 +72,7 @@ class CloneDialog extends React.Component {
       if (this.didChange()) {
         this.setState({ isSaving: true });
 
-        var data = {
+        const data = {
           projectId: this.props.rentalAgreement.project.id,
           agreementToCloneId: parseInt(this.state.rentalAgreementId, 10),
           rentalAgreementId: this.props.rentalAgreement.id,
@@ -81,8 +81,8 @@ class CloneDialog extends React.Component {
 
         const promise =
           this.state.type === Constant.BY_EQUIPMENT
-            ? Api.cloneEquipmentRentalAgreement(data)
-            : Api.cloneProjectRentalAgreement(data);
+            ? this.props.dispatch(Api.cloneEquipmentRentalAgreement(data))
+            : this.props.dispatch(Api.cloneProjectRentalAgreement(data));
 
         promise
           .then(() => {
@@ -218,11 +218,11 @@ class CloneDialog extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    projectRentalAgreements: state.models.projectRentalAgreements,
-    equipmentRentalAgreements: state.models.equipmentRentalAgreements,
-  };
-}
+const mapStateToProps = (state) => ({
+  projectRentalAgreements: state.models.projectRentalAgreements,
+  equipmentRentalAgreements: state.models.equipmentRentalAgreements,
+});
 
-export default connect(mapStateToProps)(CloneDialog);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(CloneDialog);

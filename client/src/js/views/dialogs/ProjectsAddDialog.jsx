@@ -48,7 +48,7 @@ class ProjectsAddDialog extends React.Component {
   }
 
   componentDidMount() {
-    Api.getProjects();
+    this.props.dispatch(Api.getProjects());
   }
 
   updateState = (state, callback) => {
@@ -120,12 +120,13 @@ class ProjectsAddDialog extends React.Component {
     return valid;
   };
 
-  formSubmitted = () => {
+  formSubmitted = async () => {
+    const dispatch = this.props.dispatch;
     if (this.isValid()) {
       if (this.didChange()) {
         this.setState({ isSaving: true });
 
-        var project = {
+        const project = {
           name: this.state.name,
           fiscalYear: this.state.fiscalYear,
           provincialProjectNumber: this.state.provincialProjectNumber,
@@ -141,16 +142,13 @@ class ProjectsAddDialog extends React.Component {
           information: this.state.information,
         };
 
-        const promise = Api.addProject(project);
-
-        promise.then((newProject) => {
-          Log.projectAdded(newProject);
-          this.setState({ isSaving: false });
-          if (this.props.onSave) {
-            this.props.onSave(newProject);
-          }
-          this.props.onClose();
-        });
+        const newProject = await dispatch(Api.addProject(project));
+        dispatch(Log.projectAdded(newProject));
+        this.setState({ isSaving: false });
+        if (this.props.onSave) {
+          this.props.onSave(newProject);
+        }
+        this.props.onClose();
       } else {
         this.props.onClose();
       }
@@ -293,12 +291,12 @@ class ProjectsAddDialog extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    projects: state.lookups.projects,
-    fiscalYears: state.lookups.fiscalYears,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  projects: state.lookups.projects,
+  fiscalYears: state.lookups.fiscalYears,
+});
 
-export default connect(mapStateToProps)(ProjectsAddDialog);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProjectsAddDialog);

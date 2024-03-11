@@ -9,7 +9,7 @@ import { ApiError } from './utils/http';
 
 import * as Constant from './constants';
 import * as Action from './actionTypes';
-import store from './store';
+import { store } from './store';
 
 import { ProgressBar } from 'react-bootstrap';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -44,44 +44,44 @@ import FourOhFour from './views/404.jsx';
 
 import addIconsToLibrary from './fontAwesome';
 
-export async function keepAlive() {
+export const keepAlive = async () => {
   try {
     await keycloak.updateToken(70);
   } catch {
     console.log('Failed to refresh the token, or the session has expired');
   }
-}
+};
 
 window.setInterval(keepAlive, Constant.SESSION_KEEP_ALIVE_INTERVAL);
 
-function showSessionTimoutDialog() {
+const showSessionTimoutDialog = () => {
   store.dispatch({ type: Action.SHOW_SESSION_TIMEOUT_DIALOG });
-}
+};
 
 var sessionTimeoutTimer = window.setInterval(showSessionTimoutDialog, Constant.SESSION_TIMEOUT);
 
-export function resetSessionTimeoutTimer() {
+export const resetSessionTimeoutTimer = () => {
   window.clearInterval(sessionTimeoutTimer);
   sessionTimeoutTimer = window.setInterval(showSessionTimoutDialog, Constant.SESSION_TIMEOUT);
-}
+};
 
-export function getLookups(user) {
+export const getLookups = (user) => (dispatch) => {
   if (user.businessUser) {
     return Promise.resolve();
-  } else {
-    var districtId = user.district.id;
-    return Promise.all([
-      Api.getDistricts(),
-      Api.getRegions(),
-      Api.getServiceAreas(),
-      Api.getLocalAreas(districtId),
-      Api.getFiscalYears(districtId),
-      Api.getPermissions(),
-      Api.getCurrentUserDistricts(),
-      Api.getFavourites(),
-    ]);
   }
-}
+
+  const districtId = user.district.id;
+  return Promise.all([
+    dispatch(Api.getDistricts()),
+    dispatch(Api.getRegions()),
+    dispatch(Api.getServiceAreas()),
+    dispatch(Api.getLocalAreas(districtId)),
+    dispatch(Api.getFiscalYears(districtId)),
+    dispatch(Api.getPermissions()),
+    dispatch(Api.getCurrentUserDistricts()),
+    dispatch(Api.getFavourites()),
+  ]);
+};
 
 const Routes = (user) => {
   //render Routes based on user permissions
@@ -257,7 +257,7 @@ const CommonRoutes = () => {
 //additional components
 const Unauthorized = () => <>Unauthorized</>;
 
-const App = ({ user }) => {
+const App = ({ user, dispatch }) => {
   const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState(null);
   const [loadProgress, setLoadProgress] = useState(5);
@@ -265,16 +265,16 @@ const App = ({ user }) => {
   useEffect(() => {
     addIconsToLibrary();
     setLoadProgress(33);
-    Api.getCurrentUser()
+    dispatch(Api.getCurrentUser())
       .then((user) => {
         setLoadProgress(75);
-        return getLookups(user);
+        return dispatch(getLookups(user));
       })
       .then(() => {
         setLoading(false);
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
 
         if (error instanceof ApiError) {
           setApiError(error.message);
@@ -322,10 +322,10 @@ const App = ({ user }) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.user,
-  };
-};
+const mapStateToProps = (state) => ({
+  user: state.user,
+});
 
-export default connect(mapStateToProps, null)(App);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

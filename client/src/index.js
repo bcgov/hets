@@ -5,7 +5,7 @@ import reportWebVitals from './reportWebVitals';
 
 import * as Keycloak from './js/Keycloak';
 import { Provider } from 'react-redux';
-import store from './js/store';
+import { store } from './js/store';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import './sass/main.scss';

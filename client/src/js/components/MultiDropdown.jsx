@@ -128,7 +128,11 @@ class MultiDropdown extends React.Component {
     this.setState({ open: open }, () => {
       if (this.myRef.current) {
         //without a delay focus will not shift to input box when using keyboard shortcuts. I think the focus is called before input is rendered.
-        setTimeout(() => this.myRef.current.focus(), 100);
+        setTimeout(() => {
+          if (this.myRef.current && this.myRef.current.focus) {
+            this.myRef.current.focus();
+          }
+        }, 100);
       }
     });
   };

@@ -11,7 +11,6 @@ import TimeEntryDialog from './dialogs/TimeEntryDialog.jsx';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
-import store from '../store';
 
 import AddButtonContainer from '../components/ui/AddButtonContainer.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
@@ -60,9 +59,9 @@ class TimeEntry extends React.Component {
   }
 
   componentDidMount() {
-    Api.getProjectsCurrentFiscal();
-    Api.getEquipmentTs();
-    Api.getOwnersLiteTs();
+    this.props.dispatch(Api.getProjectsCurrentFiscal());
+    this.props.dispatch(Api.getEquipmentTs());
+    this.props.dispatch(Api.getOwnersLiteTs());
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
@@ -96,7 +95,7 @@ class TimeEntry extends React.Component {
   };
 
   fetch = () => {
-    Api.searchTimeEntries(this.buildSearchParams());
+    this.props.dispatch(Api.searchTimeEntries(this.buildSearchParams()));
   };
 
   search = (e) => {
@@ -113,17 +112,17 @@ class TimeEntry extends React.Component {
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
-      store.dispatch({
+      this.props.dispatch({
         type: Action.UPDATE_TIME_ENTRIES_SEARCH,
         timeEntries: this.state.search,
       });
-      store.dispatch({ type: Action.CLEAR_TIME_ENTRIES });
+      this.props.dispatch({ type: Action.CLEAR_TIME_ENTRIES });
     });
   };
 
   updateSearchState = (state, callback) => {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } } }, () => {
-      store.dispatch({
+      this.props.dispatch({
         type: Action.UPDATE_TIME_ENTRIES_SEARCH,
         timeEntries: this.state.search,
       });
@@ -135,7 +134,7 @@ class TimeEntry extends React.Component {
 
   updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
-      store.dispatch({
+      this.props.dispatch({
         type: Action.UPDATE_TIME_ENTRIES_UI,
         timeEntries: this.state.ui,
       });
@@ -439,17 +438,17 @@ class TimeEntry extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    projects: state.lookups.projectsCurrentFiscal,
-    localAreas: state.lookups.localAreas,
-    owners: state.lookups.owners.ts,
-    equipment: state.lookups.equipment.ts,
-    timeEntries: state.models.timeEntries,
-    favourites: state.models.favourites.timeEntry,
-    search: state.search.timeEntries,
-    ui: state.ui.timeEntries,
-  };
-}
+const mapStateToProps = (state) => ({
+  projects: state.lookups.projectsCurrentFiscal,
+  localAreas: state.lookups.localAreas,
+  owners: state.lookups.owners.ts,
+  equipment: state.lookups.equipment.ts,
+  timeEntries: state.models.timeEntries,
+  favourites: state.models.favourites.timeEntry,
+  search: state.search.timeEntries,
+  ui: state.ui.timeEntries,
+});
 
-export default connect(mapStateToProps)(TimeEntry);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(TimeEntry);

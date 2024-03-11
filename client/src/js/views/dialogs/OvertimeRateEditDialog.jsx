@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { FormGroup, FormText, FormLabel, Row, Col } from 'react-bootstrap';
 
@@ -77,12 +78,12 @@ class OvertimeRateEditDialog extends React.Component {
     return valid;
   };
 
-  formSubmitted = () => {
+  formSubmitted = async () => {
     if (this.isValid()) {
       if (this.didChange()) {
         this.setState({ isSaving: true });
 
-        var rateType = {
+        const rateType = {
           id: this.state.rateId,
           rateType: this.state.rateType,
           description: this.state.description,
@@ -92,15 +93,12 @@ class OvertimeRateEditDialog extends React.Component {
           active: true,
         };
 
-        const promise = Api.updateOvertimeRateType(rateType);
-
-        promise.then(() => {
-          this.setState({ isSaving: false });
-          if (this.props.onSave) {
-            this.props.onSave();
-          }
-          this.props.onClose();
-        });
+        await this.props.dispatch(Api.updateOvertimeRateType(rateType));
+        this.setState({ isSaving: false });
+        if (this.props.onSave) {
+          this.props.onSave();
+        }
+        this.props.onClose();
       } else {
         this.props.onClose();
       }
@@ -157,4 +155,6 @@ class OvertimeRateEditDialog extends React.Component {
   }
 }
 
-export default OvertimeRateEditDialog;
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(null, mapDispatchToProps)(OvertimeRateEditDialog);

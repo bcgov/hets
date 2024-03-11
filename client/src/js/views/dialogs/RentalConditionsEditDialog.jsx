@@ -44,7 +44,7 @@ class RentalConditionsEditDialog extends React.Component {
   }
 
   componentDidMount() {
-    Api.getRentalConditions();
+    this.props.dispatch(Api.getRentalConditions());
   }
 
   updateState = (value) => {
@@ -94,7 +94,7 @@ class RentalConditionsEditDialog extends React.Component {
   };
 
   formSubmitted = () => {
-    const { rentalAgreementId, onSave, onClose } = this.props;
+    const { rentalAgreementId, onSave, onClose, dispatch } = this.props;
 
     if (this.isValid()) {
       if (this.didChange()) {
@@ -110,8 +110,8 @@ class RentalConditionsEditDialog extends React.Component {
         });
 
         (this.state.isNew
-          ? Api.addRentalConditions(rentalAgreementId, conditions)
-          : Api.updateRentalCondition(_.first(conditions))
+          ? dispatch(Api.addRentalConditions(rentalAgreementId, conditions))
+          : dispatch(Api.updateRentalCondition(_.first(conditions)))
         ).then(() => {
           if (onSave) {
             onSave();
@@ -220,10 +220,10 @@ class RentalConditionsEditDialog extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    rentalConditions: state.lookups.rentalConditions,
-  };
-}
+const mapStateToProps = (state) => ({
+  rentalConditions: state.lookups.rentalConditions,
+});
 
-export default connect(mapStateToProps)(RentalConditionsEditDialog);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(RentalConditionsEditDialog);

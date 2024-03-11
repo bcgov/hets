@@ -158,7 +158,7 @@ class UsersEditDialog extends React.Component {
         const isNewUser = this.state.isNew;
         const addOrUpdateUser = isNewUser ? Api.addUser : Api.updateUser;
 
-        addOrUpdateUser(user).then(
+        this.props.dispatch(addOrUpdateUser(user)).then(
           (userResponse) => {
             this.setState({ isSaving: false });
 
@@ -283,10 +283,7 @@ class UsersEditDialog extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    districts: state.lookups.districts,
-  };
-}
+const mapStateToProps = (state) => ({ districts: state.lookups.districts });
+const mapDispatchToProps = (dispatch) => ({ dispatch });
 
-export default connect(mapStateToProps)(UsersEditDialog);
+export default connect(mapStateToProps, mapDispatchToProps)(UsersEditDialog);

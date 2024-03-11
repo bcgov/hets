@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using HetsCommon;
 
 namespace HetsData.Repositories
 {
@@ -19,7 +20,8 @@ namespace HetsData.Repositories
         OwnerDto GetRecord(int id);
         bool RentalRequestStatus(int id);
         List<History> GetHistoryRecords(int id, int? offset, int? limit);
-        OwnerVerificationReportModel GetOwnerVerificationLetterData(int?[] localAreas, int?[] owners, int? equipmentStatusId, int? ownerStatusId, int? districtId);
+        OwnerVerificationReportModel GetOwnerVerificationLetterData(
+            int?[] localAreas, int?[] owners, int? equipmentStatusId, int? ownerStatusId, int? districtId);
     }
 
     public class OwnerRepository : IOwnerRepository
@@ -47,11 +49,8 @@ namespace HetsData.Repositories
         public OwnerDto GetRecord(int id)
         {
             // get equipment status types
-            int? statusIdArchived = StatusHelper.GetStatusId(HetEquipment.StatusArchived, "equipmentStatus", _dbContext);
-            if (statusIdArchived == null)
-            {
-                throw new ArgumentException("Status Code not found");
-            }
+            int? statusIdArchived = StatusHelper.GetStatusId(HetEquipment.StatusArchived, "equipmentStatus", _dbContext) 
+                ?? throw new ArgumentException("Status Code not found");
 
             // get owner record
             HetOwner owner = _dbContext.HetOwners.AsNoTracking()
@@ -107,18 +106,12 @@ namespace HetsData.Repositories
         public bool RentalRequestStatus(int id)
         {
             // get equipment status types
-            int? statusIdActive = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _dbContext);
-            if (statusIdActive == null)
-            {
-                throw new ArgumentException("Status Code not found");
-            }
+            int? statusIdActive = StatusHelper.GetStatusId(HetEquipment.StatusApproved, "equipmentStatus", _dbContext) 
+                ?? throw new ArgumentException("Status Code not found");
 
             // get rental request status type
-            int? statusIdInProgress = StatusHelper.GetStatusId(HetRentalRequest.StatusInProgress, "rentalRequestStatus", _dbContext);
-            if (statusIdInProgress == null)
-            {
-                throw new ArgumentException("Status Code not found");
-            }
+            int? statusIdInProgress = StatusHelper.GetStatusId(HetRentalRequest.StatusInProgress, "rentalRequestStatus", _dbContext) 
+                ?? throw new ArgumentException("Status Code not found");
 
             return _dbContext.HetRentalRequestRotationLists.AsNoTracking()
                 .Include(x => x.RentalRequest)
@@ -126,7 +119,6 @@ namespace HetsData.Repositories
                 .Any(x => x.Equipment.OwnerId == id &&
                           x.Equipment.EquipmentStatusTypeId == statusIdActive &&
                           x.RentalRequest.RentalRequestStatusTypeId == statusIdInProgress);
-
         }
 
 
@@ -140,27 +132,21 @@ namespace HetsData.Repositories
                 .OrderByDescending(y => y.AppLastUpdateTimestamp)
                 .ToList();
 
-            if (offset == null)
-            {
-                offset = 0;
-            }
+            offset ??= 0;
 
-            if (limit == null)
-            {
-                limit = data.Count - offset;
-            }
+            limit ??= data.Count - offset;
 
-            List<History> result = new List<History>();
+            List<History> result = new();
 
             for (int i = (int)offset; i < data.Count && i < offset + limit; i++)
             {
-                History temp = new History();
+                History temp = new();
 
                 if (data[i] != null)
                 {
                     temp.HistoryText = data[i].HistoryText;
                     temp.Id = data[i].HistoryId;
-                    temp.LastUpdateTimestamp = data[i].AppLastUpdateTimestamp;
+                    temp.LastUpdateTimestamp = DateUtils.AsUTC(data[i].AppLastUpdateTimestamp);
                     temp.LastUpdateUserid = data[i].AppLastUpdateUserid;
                     temp.AffectedEntityId = data[i].OwnerId;
                 }
@@ -265,7 +251,7 @@ namespace HetsData.Repositories
                         owner.LocalAreaName = model.LocalAreaName;
 
                         // classification
-                        owner.Classification = $"23010-23/{model.MinistryDistrictId.ToString()}/{owner.OwnerCode}";
+                        owner.Classification = $"23010-23/{model.MinistryDistrictId}/{owner.OwnerCode}";
 
                         if (!string.IsNullOrEmpty(owner.SharedKey))
                         {
@@ -306,7 +292,7 @@ namespace HetsData.Repositories
             }
             catch (Exception e)
             {
-                _logger.LogError($"GetOwnerVerificationLetterData exception: {e.ToString()}");
+                _logger.LogError("GetOwnerVerificationLetterData exception: {e}", e);
                 throw;
             }
         }

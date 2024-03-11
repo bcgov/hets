@@ -11,6 +11,8 @@ using Microsoft.EntityFrameworkCore;
 using HetsData.Dtos;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
+using System;
+using HetsCommon;
 
 namespace HetsApi.Controllers
 {
@@ -53,8 +55,8 @@ namespace HetsApi.Controllers
                 {
                     ReportId = x.ReportId,
                     DistrictId = x.DistrictId,
-                    StartDate = x.StartDate,
-                    EndDate = x.EndDate,
+                    StartDate = x.StartDate is DateTime startDateUtc ? DateUtils.AsUTC(startDateUtc) : null,
+                    EndDate = x.EndDate is DateTime endDateUtc ? DateUtils.AsUTC(endDateUtc) : null,
                     Complete = x.Complete ?? false
                 }).ToList();
 

@@ -42,22 +42,22 @@ class TopNav extends React.Component {
     showNav: true,
   };
 
-  updateUserDistrict = (state) => {
-    var district = _.find(this.props.currentUserDistricts.data, (district) => {
+  updateUserDistrict = async (state) => {
+    const district = _.find(this.props.currentUserDistricts.data, (district) => {
       return district.district.id === parseInt(state.districtId);
     });
-    Api.switchUserDistrict(district.id).then(() => {
-      this.props.history.push(Constant.HOME_PATHNAME);
-      window.location.reload();
-    });
+    await this.props.dispatch(Api.switchUserDistrict(district.id));
+    this.props.history.push(Constant.HOME_PATHNAME);
+    window.location.reload();
   };
 
   dismissRolloverNotice = () => {
-    Api.dismissRolloverMessage(this.props.currentUser.district.id);
+    this.props.dispatch(Api.dismissRolloverMessage(this.props.currentUser.district.id));
   };
 
   render() {
-    var userDistricts = _.map(this.props.currentUserDistricts.data, (district) => {
+    const dispatch = this.props.dispatch;
+    const userDistricts = _.map(this.props.currentUserDistricts.data, (district) => {
       return {
         ...district,
         districtName: district.district.name,
@@ -65,9 +65,9 @@ class TopNav extends React.Component {
       };
     });
 
-    var navigationDisabled = this.props.rolloverStatus.rolloverActive;
+    const navigationDisabled = this.props.rolloverStatus.rolloverActive;
 
-    var environmentClass = '';
+    let environmentClass = '';
     if (this.props.currentUser.environment === 'Development') {
       environmentClass = 'env-dev';
     } else if (this.props.currentUser.environment === 'Test') {
@@ -171,13 +171,13 @@ class TopNav extends React.Component {
                       </Nav.Item>
                     </Authorize>
                     <Authorize
-                      condition={any(
+                      condition={dispatch(any(
                         Constant.PERMISSION_ADMIN,
                         Constant.PERMISSION_USER_MANAGEMENT,
                         Constant.PERMISSION_ROLES_AND_PERMISSIONS,
                         Constant.PERMISSION_DISTRICT_ROLLOVER,
                         Constant.PERMISSION_VERSION
-                      )}
+                      ))}
                     >
                       <NavDropdown id="admin-dropdown" title="Administration" disabled={navigationDisabled} as="li">
                         <Authorize requires={Constant.PERMISSION_ADMIN}>
@@ -283,13 +283,13 @@ class TopNav extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    showWorkingIndicator: state.ui.requests.waiting,
-    currentUserDistricts: state.models.currentUserDistricts,
-    rolloverStatus: state.lookups.rolloverStatus,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  showWorkingIndicator: state.ui.requests.waiting,
+  currentUserDistricts: state.models.currentUserDistricts,
+  rolloverStatus: state.lookups.rolloverStatus,
+});
 
-export default connect(mapStateToProps, null, null, { pure: false })(withRouter(TopNav));
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps, null, { pure: false })(withRouter(TopNav));

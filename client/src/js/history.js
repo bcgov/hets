@@ -67,12 +67,12 @@ export function makeHistoryEntity(type, entity) {
 }
 
 // Log a history event
-export function log(historyEntity, event, ...entities) {
+export const log = (historyEntity, event, ...entities) => async (dispatch) => {
   // prepend the 'parent' entity
   entities.unshift(historyEntity);
 
   // Build the history text
-  var historyText = JSON.stringify({
+  const historyText = JSON.stringify({
     // The event text, with entity placeholders
     text: event,
     // The array of entities
@@ -80,7 +80,7 @@ export function log(historyEntity, event, ...entities) {
   });
 
   // Choose the correct API call.
-  var addHistoryPromise = null;
+  let addHistoryPromise = null;
 
   switch (historyEntity.type) {
     case Constant.HISTORY_OWNER:
@@ -107,13 +107,11 @@ export function log(historyEntity, event, ...entities) {
   }
 
   if (addHistoryPromise) {
-    return addHistoryPromise(historyEntity.id, {
-      historyText: historyText,
-    });
+    return await dispatch(addHistoryPromise(historyEntity.id, { historyText }));
   }
 
   return null;
-}
+};
 
 function buildLink(entity, closeFunc) {
   // Return a link if the entity has a path; just the description otherwise.
@@ -153,25 +151,25 @@ export function renderEvent(historyText, closeFunc) {
   }
 }
 
-export function get(historyEntity, offset, limit) {
+export const get = (historyEntity, offset, limit) => async (dispatch) => {
   // If not showing all, then just fetch the first 10 entries
-  var params = {
+  const params = {
     offset: offset || 0,
     limit: limit || null,
   };
 
   switch (historyEntity.type) {
     case Constant.HISTORY_OWNER:
-      return Api.getOwnerHistory(historyEntity.id, params);
+      return await dispatch(Api.getOwnerHistory(historyEntity.id, params));
 
     case Constant.HISTORY_PROJECT:
-      return Api.getProjectHistory(historyEntity.id, params);
+      return await dispatch(Api.getProjectHistory(historyEntity.id, params));
 
     case Constant.HISTORY_EQUIPMENT:
-      return Api.getEquipmentHistory(historyEntity.id, params);
+      return await dispatch(Api.getEquipmentHistory(historyEntity.id, params));
 
     case Constant.HISTORY_REQUEST:
-      return Api.getRentalRequestHistory(historyEntity.id, params);
+      return await dispatch(Api.getRentalRequestHistory(historyEntity.id, params));
 
     case Constant.HISTORY_USER:
     case Constant.HISTORY_ROLE:
@@ -181,184 +179,184 @@ export function get(historyEntity, offset, limit) {
   }
 
   return null;
-}
+};
 
 // Logging
-export function ownerAdded(owner) {
-  return log(owner.historyEntity, OWNER_ADDED);
-}
+export const ownerAdded = (owner) => async (dispatch) => {
+  return await dispatch(log(owner.historyEntity, OWNER_ADDED));
+};
 
-export function ownerModified(owner) {
-  return log(owner.historyEntity, OWNER_MODIFIED);
-}
+export const ownerModified = (owner) => async (dispatch) => {
+  return await dispatch(log(owner.historyEntity, OWNER_MODIFIED));
+};
 
-export function ownerModifiedStatus(owner, status, statusComment) {
-  return log(owner.historyEntity, OWNER_MODIFIED_STATUS, { description: status }, { description: statusComment });
-}
+export const ownerModifiedStatus = (owner, status, statusComment) => async (dispatch) => {
+  return await dispatch(log(owner.historyEntity, OWNER_MODIFIED_STATUS, { description: status }, { description: statusComment }));
+};
 
-export function ownerContactAdded(owner, contact) {
-  return log(owner.historyEntity, OWNER_CONTACT_ADDED, contact.historyEntity);
-}
+export const ownerContactAdded = (owner, contact) => async (dispatch) => {
+  return await dispatch(log(owner.historyEntity, OWNER_CONTACT_ADDED, contact.historyEntity));
+};
 
-export function ownerContactUpdated(owner, contact) {
-  return log(owner.historyEntity, OWNER_CONTACT_UPDATED, contact.historyEntity);
-}
+export const ownerContactUpdated = (owner, contact) => async (dispatch) => {
+  return await dispatch(log(owner.historyEntity, OWNER_CONTACT_UPDATED, contact.historyEntity));
+};
 
-export function ownerContactDeleted(owner, contact) {
-  return log(owner.historyEntity, OWNER_CONTACT_DELETED, contact.historyEntity);
-}
+export const ownerContactDeleted = (owner, contact) => async (dispatch) => {
+  return await dispatch(log(owner.historyEntity, OWNER_CONTACT_DELETED, contact.historyEntity));
+};
 
-export function ownerModifiedPolicy(owner) {
-  return log(owner.historyEntity, OWNER_MODIFIED_POLICY);
-}
+export const ownerModifiedPolicy = (owner) => async (dispatch) => {
+  return await dispatch(log(owner.historyEntity, OWNER_MODIFIED_POLICY));
+};
 
-export function ownerEquipmentAdded(owner, equipment) {
-  return log(owner.historyEntity, OWNER_EQUIPMENT_ADDED, equipment.historyEntity);
-}
+export const ownerEquipmentAdded = (owner, equipment) => async (dispatch) => {
+  return await dispatch(log(owner.historyEntity, OWNER_EQUIPMENT_ADDED, equipment.historyEntity));
+};
 
-export function ownerEquipmentVerified(owner, equipment) {
-  return log(owner.historyEntity, OWNER_EQUIPMENT_VERIFIED, equipment.historyEntity);
-}
+export const ownerEquipmentVerified = (owner, equipment) => async (dispatch) => {
+  return await dispatch(log(owner.historyEntity, OWNER_EQUIPMENT_VERIFIED, equipment.historyEntity));
+};
 
-export function ownerDocumentAdded(owner, document) {
-  return log(owner.historyEntity, OWNER_DOCUMENT_ADDED, {
+export const ownerDocumentAdded = (owner, document) => async (dispatch) => {
+  return await dispatch(log(owner.historyEntity, OWNER_DOCUMENT_ADDED, {
     description: document,
-  });
-}
+  }));
+};
 
-export function ownerDocumentsAdded(owner) {
-  return log(owner.historyEntity, OWNER_DOCUMENTS_ADDED);
-}
+export const ownerDocumentsAdded = (owner) => async (dispatch) => {
+  return await dispatch(log(owner.historyEntity, OWNER_DOCUMENTS_ADDED));
+};
 
-export function ownerDocumentDeleted(owner, document) {
-  return log(owner.historyEntity, OWNER_DOCUMENT_DELETED, document.historyEntity);
-}
+export const ownerDocumentDeleted = (owner, document) => async (dispatch) => {
+  return await dispatch(log(owner.historyEntity, OWNER_DOCUMENT_DELETED, document.historyEntity));
+};
 
-export function projectAdded(project) {
-  return log(project.historyEntity, PROJECT_ADDED);
-}
+export const projectAdded = (project) => async (dispatch) => {
+  return await dispatch(log(project.historyEntity, PROJECT_ADDED));
+};
 
-export function projectModified(project) {
-  return log(project.historyEntity, PROJECT_MODIFIED);
-}
+export const projectModified = (project) => async (dispatch) => {
+  return await dispatch(log(project.historyEntity, PROJECT_MODIFIED));
+};
 
-export function projectModifiedStatus(project) {
-  return log(project.historyEntity, PROJECT_MODIFIED_STATUS, {
+export const projectModifiedStatus = (project) => async (dispatch) => {
+  return await dispatch(log(project.historyEntity, PROJECT_MODIFIED_STATUS, {
     description: project.status,
-  });
-}
+  }));
+};
 
-export function projectContactAdded(project, contact) {
-  return log(project.historyEntity, PROJECT_CONTACT_ADDED, contact.historyEntity);
-}
+export const projectContactAdded = (project, contact) => async (dispatch) => {
+  return await dispatch(log(project.historyEntity, PROJECT_CONTACT_ADDED, contact.historyEntity));
+};
 
-export function projectContactUpdated(project, contact) {
-  return log(project.historyEntity, PROJECT_CONTACT_UPDATED, contact.historyEntity);
-}
+export const projectContactUpdated = (project, contact) => async (dispatch) => {
+  return await dispatch(log(project.historyEntity, PROJECT_CONTACT_UPDATED, contact.historyEntity));
+};
 
-export function projectContactDeleted(project, contact) {
-  return log(project.historyEntity, PROJECT_CONTACT_DELETED, contact.historyEntity);
-}
+export const projectContactDeleted = (project, contact) => async (dispatch) => {
+  return await dispatch(log(project.historyEntity, PROJECT_CONTACT_DELETED, contact.historyEntity));
+};
 
-export function projectDocumentAdded(project, document) {
-  return log(project.historyEntity, PROJECT_DOCUMENT_ADDED, {
+export const projectDocumentAdded = (project, document) => async (dispatch) => {
+  return await dispatch(log(project.historyEntity, PROJECT_DOCUMENT_ADDED, {
     description: document,
-  });
-}
+  }));
+};
 
-export function projectDocumentsAdded(project) {
-  return log(project.historyEntity, PROJECT_DOCUMENTS_ADDED);
-}
+export const projectDocumentsAdded = (project) => async (dispatch) => {
+  return await dispatch(log(project.historyEntity, PROJECT_DOCUMENTS_ADDED));
+};
 
-export function projectDocumentDeleted(project, document) {
-  return log(project.historyEntity, PROJECT_DOCUMENT_DELETED, document.historyEntity);
-}
+export const projectDocumentDeleted = (project, document) => async (dispatch) => {
+  return await dispatch(log(project.historyEntity, PROJECT_DOCUMENT_DELETED, document.historyEntity));
+};
 
-export function projectEquipmentReleased(project, equipment) {
-  return log(project.historyEntity, PROJECT_EQUIPMENT_RELEASED, equipment.historyEntity);
-}
+export const projectEquipmentReleased = (project, equipment) => async (dispatch) => {
+  return await dispatch(log(project.historyEntity, PROJECT_EQUIPMENT_RELEASED, equipment.historyEntity));
+};
 
-export function projectRentalRequestAdded(project, rentalRequest) {
-  return log(project.historyEntity, PROJECT_RENTAL_REQUEST_ADDED, rentalRequest.historyEntity);
-}
+export const projectRentalRequestAdded = (project, rentalRequest) => async (dispatch) => {
+  return await dispatch(log(project.historyEntity, PROJECT_RENTAL_REQUEST_ADDED, rentalRequest.historyEntity));
+};
 
-export function equipmentAdded(equipment) {
-  return log(equipment.historyEntity, EQUIPMENT_ADDED);
-}
+export const equipmentAdded = (equipment) => async (dispatch) => {
+  return await dispatch(log(equipment.historyEntity, EQUIPMENT_ADDED));
+};
 
-export function equipmentModified(equipment) {
-  return log(equipment.historyEntity, EQUIPMENT_MODIFIED);
-}
+export const equipmentModified = (equipment) => async (dispatch) => {
+  return await dispatch(log(equipment.historyEntity, EQUIPMENT_MODIFIED));
+};
 
-export function equipmentSeniorityModified(equipment) {
-  return log(equipment.historyEntity, EQUIPMENT_SENIORITY_MODIFIED);
-}
+export const equipmentSeniorityModified = (equipment) => async (dispatch) => {
+  return await dispatch(log(equipment.historyEntity, EQUIPMENT_SENIORITY_MODIFIED));
+};
 
-export function equipmentStatusModified(equipment, status, statusComment) {
-  return log(
+export const equipmentStatusModified = (equipment, status, statusComment) => async (dispatch) => {
+  return await dispatch(log(
     equipment.historyEntity,
     EQUIPMENT_STATUS_MODIFIED,
     { description: status },
     { description: statusComment }
-  );
-}
+  ));
+};
 
-export function equipmentDocumentAdded(equipment, document) {
-  return log(equipment.historyEntity, EQUIPMENT_DOCUMENT_ADDED, {
+export const equipmentDocumentAdded = (equipment, document) => async (dispatch) => {
+  return await dispatch(log(equipment.historyEntity, EQUIPMENT_DOCUMENT_ADDED, {
     description: document,
-  });
-}
+  }));
+};
 
-export function equipmentDocumentsAdded(equipment) {
-  return log(equipment.historyEntity, EQUIPMENT_DOCUMENTS_ADDED);
-}
+export const equipmentDocumentsAdded = (equipment) => async (dispatch) => {
+  return await dispatch(log(equipment.historyEntity, EQUIPMENT_DOCUMENTS_ADDED));
+};
 
-export function equipmentDocumentDeleted(equipment, document) {
-  return log(equipment.historyEntity, EQUIPMENT_DOCUMENT_DELETED, document.historyEntity);
-}
+export const equipmentDocumentDeleted = (equipment, document) => async (dispatch) => {
+  return await dispatch(log(equipment.historyEntity, EQUIPMENT_DOCUMENT_DELETED, document.historyEntity));
+};
 
-export function equipmentAttachmentAdded(equipment, attachment) {
-  return log(equipment.historyEntity, EQUIPMENT_ATTACHMENT_ADDED, {
+export const equipmentAttachmentAdded = (equipment, attachment) => async (dispatch) => {
+  return await dispatch(log(equipment.historyEntity, EQUIPMENT_ATTACHMENT_ADDED, {
     description: attachment,
-  });
-}
+  }));
+};
 
-export function equipmentAttachmentUpdated(equipment, attachment) {
-  return log(equipment.historyEntity, EQUIPMENT_ATTACHMENT_UPDATED, {
+export const equipmentAttachmentUpdated = (equipment, attachment) => async (dispatch) => {
+  return await dispatch(log(equipment.historyEntity, EQUIPMENT_ATTACHMENT_UPDATED, {
     description: attachment,
-  });
-}
+  }));
+};
 
-export function equipmentAttachmentDeleted(equipment, attachment) {
-  return log(equipment.historyEntity, EQUIPMENT_ATTACHMENT_DELETED, {
+export const equipmentAttachmentDeleted = (equipment, attachment) => async (dispatch) => {
+  return await dispatch(log(equipment.historyEntity, EQUIPMENT_ATTACHMENT_DELETED, {
     description: attachment,
-  });
-}
+  }));
+};
 
-export function rentalRequestAdded(rentalRequest) {
-  return log(rentalRequest.historyEntity, RENTAL_REQUEST_ADDED);
-}
+export const rentalRequestAdded = (rentalRequest) => async (dispatch) => {
+  return await dispatch(log(rentalRequest.historyEntity, RENTAL_REQUEST_ADDED));
+};
 
-export function rentalRequestModified(rentalRequest) {
-  return log(rentalRequest.historyEntity, RENTAL_REQUEST_MODIFIED);
-}
+export const rentalRequestModified = (rentalRequest) => async (dispatch) => {
+  return await dispatch(log(rentalRequest.historyEntity, RENTAL_REQUEST_MODIFIED));
+};
 
-export function rentalRequestDocumentAdded(rentalRequest, document) {
-  return log(rentalRequest.historyEntity, RENTAL_REQUEST_DOCUMENT_ADDED, {
+export const rentalRequestDocumentAdded = (rentalRequest, document) => async (dispatch) => {
+  return await dispatch(log(rentalRequest.historyEntity, RENTAL_REQUEST_DOCUMENT_ADDED, {
     description: document,
-  });
-}
+  }));
+};
 
-export function rentalRequestDocumentsAdded(rentalRequest) {
-  return log(rentalRequest.historyEntity, RENTAL_REQUEST_DOCUMENTS_ADDED);
-}
+export const rentalRequestDocumentsAdded = (rentalRequest) => async (dispatch) => {
+  return await dispatch(log(rentalRequest.historyEntity, RENTAL_REQUEST_DOCUMENTS_ADDED));
+};
 
-export function rentalRequestDocumentDeleted(rentalRequest, document) {
-  return log(rentalRequest.historyEntity, RENTAL_REQUEST_DOCUMENT_DELETED, document.historyEntity);
-}
+export const rentalRequestDocumentDeleted = (rentalRequest, document) => async (dispatch) => {
+  return await dispatch(log(rentalRequest.historyEntity, RENTAL_REQUEST_DOCUMENT_DELETED, document.historyEntity));
+};
 
-export function rentalRequestEquipmentHired(rentalRequest, equipment, offerResponse) {
-  return log(rentalRequest.historyEntity, RENTAL_REQUEST_EQUIPMENT_HIRED, equipment.historyEntity, {
+export const rentalRequestEquipmentHired = (rentalRequest, equipment, offerResponse) => async (dispatch) => {
+  return await dispatch(log(rentalRequest.historyEntity, RENTAL_REQUEST_EQUIPMENT_HIRED, equipment.historyEntity, {
     description: offerResponse,
-  });
-}
+  }));
+};

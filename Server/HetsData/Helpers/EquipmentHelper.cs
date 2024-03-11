@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using HetsData.Entities;
 using HetsApi.Helpers;
 using HetsData.Dtos;
+using HetsCommon;
 
 namespace HetsData.Helpers
 {
@@ -72,7 +73,15 @@ namespace HetsData.Helpers
         public string EquipmentPrefix { get; set; }
         public int EquipmentNumber { get; set; }
         public int AttachmentCount { get; set; }
-        public DateTime? LastVerifiedDate { get; set; }
+
+        private DateTime? _lastVerifiedDate;
+        public DateTime? LastVerifiedDate {
+            get => _lastVerifiedDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _lastVerifiedDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public int SenioritySortOrder { get; set; }
         public string ProjectName { get; set; }
         public int ProjectId { get; set; }
@@ -222,7 +231,7 @@ namespace HetsData.Helpers
                     0;
 
                 equipmentLite.AttachmentCount = CalculateAttachmentCount(equipment.HetEquipmentAttachments.ToList());
-                equipmentLite.LastVerifiedDate = equipment.LastVerifiedDate;
+                equipmentLite.LastVerifiedDate = DateUtils.AsUTC(equipment.LastVerifiedDate);
                 equipmentLite.Status = equipment.EquipmentStatusType.EquipmentStatusTypeCode;
                 equipmentLite.LocalArea = equipment.LocalArea.Name;
 
@@ -359,8 +368,11 @@ namespace HetsData.Helpers
                 fiscalYear = (int)district.NextFiscalYear; // status table uses the start of the year
             }
 
-            DateTime fiscalEnd = new DateTime(fiscalYear, 3, 31);
-            DateTime fiscalStart = new DateTime(fiscalYear - 1, 4, 1);
+            DateTime fiscalEnd = DateUtils.ConvertPacificToUtcTime(
+                new DateTime(fiscalYear, 3, 31, 0, 0, 0, DateTimeKind.Unspecified));
+
+            DateTime fiscalStart = DateUtils.ConvertPacificToUtcTime(
+                new DateTime(fiscalYear - 1, 4, 1, 0, 0, 0, DateTimeKind.Unspecified));
 
             // *******************************************************************************
             // get all the time data for the current fiscal year
@@ -607,27 +619,21 @@ namespace HetsData.Helpers
                 .OrderByDescending(y => y.AppLastUpdateTimestamp)
                 .ToList();
 
-            if (offset == null)
-            {
-                offset = 0;
-            }
+            offset ??= 0;
 
-            if (limit == null)
-            {
-                limit = data.Count - offset;
-            }
+            limit ??= data.Count - offset;
 
-            List<History> result = new List<History>();
+            List<History> result = new();
 
             for (int i = (int)offset; i < data.Count && i < offset + limit; i++)
             {
-                History temp = new History();
+                History temp = new();
 
                 if (data[i] != null)
                 {
                     temp.HistoryText = data[i].HistoryText;
                     temp.Id = data[i].HistoryId;
-                    temp.LastUpdateTimestamp = data[i].AppLastUpdateTimestamp;
+                    temp.LastUpdateTimestamp = DateUtils.AsUTC(data[i].AppLastUpdateTimestamp);
                     temp.LastUpdateUserid = data[i].AppLastUpdateUserid;
                     temp.AffectedEntityId = data[i].EquipmentId;
                 }

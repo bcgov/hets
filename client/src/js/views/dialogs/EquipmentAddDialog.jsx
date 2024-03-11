@@ -53,7 +53,7 @@ class EquipmentAddDialog extends React.Component {
   }
 
   componentDidMount() {
-    Api.getDistrictEquipmentTypes();
+    this.props.dispatch(Api.getDistrictEquipmentTypes());
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -160,7 +160,7 @@ class EquipmentAddDialog extends React.Component {
     return valid;
   };
 
-  formSubmitted = () => {
+  formSubmitted = async () => {
     if (this.isValid()) {
       if (this.state.duplicateSerialNumberWarning) {
         // proceed regardless of duplicates
@@ -170,30 +170,29 @@ class EquipmentAddDialog extends React.Component {
 
       this.setState({ isSaving: true });
 
-      return Api.equipmentDuplicateCheck(0, this.state.serialNumber).then((response) => {
-        this.setState({ isSaving: false });
+      const response = await this.props.dispatch(Api.equipmentDuplicateCheck(0, this.state.serialNumber));;
+      this.setState({ isSaving: false });
 
-        if (response.data.length > 0) {
-          const equipmentCodes = response.data.map((district) => {
-            return district.duplicateEquipment.equipmentCode;
-          });
-          var districts = _.chain(response.data)
-            .map((district) => district.districtName)
-            .uniq()
-            .value();
-          const districtsPlural = districts.length === 1 ? 'district' : 'districts';
-          this.setState({
-            serialNumberError: `Serial number is currently in use for the equipment ${equipmentCodes.join(
-              ', '
-            )}, in the following ${districtsPlural}: ${districts.join(', ')}`,
-            duplicateSerialNumberWarning: true,
-          });
-          return null;
-        } else {
-          this.setState({ duplicateSerialNumberWarning: false });
-          return this.saveEquipment();
-        }
-      });
+      if (response.data.length > 0) {
+        const equipmentCodes = response.data.map((district) => {
+          return district.duplicateEquipment.equipmentCode;
+        });
+        let districts = _.chain(response.data)
+          .map((district) => district.districtName)
+          .uniq()
+          .value();
+        const districtsPlural = districts.length === 1 ? 'district' : 'districts';
+        this.setState({
+          serialNumberError: `Serial number is currently in use for the equipment ${equipmentCodes.join(
+            ', '
+          )}, in the following ${districtsPlural}: ${districts.join(', ')}`,
+          duplicateSerialNumberWarning: true,
+        });
+        return null;
+      } else {
+        this.setState({ duplicateSerialNumberWarning: false });
+        return this.saveEquipment();
+      }
     }
   };
 
@@ -218,7 +217,7 @@ class EquipmentAddDialog extends React.Component {
         status: Constant.EQUIPMENT_STATUS_CODE_PENDING,
       };
 
-      return Api.addEquipment(equipment).then((savedEquipment) => {
+      return this.props.dispatch(Api.addEquipment(equipment)).then((savedEquipment) => {
         this.setState({ isSaving: false });
         this.props.onSave(savedEquipment);
       });
@@ -367,12 +366,12 @@ class EquipmentAddDialog extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    localAreas: state.lookups.localAreas,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  localAreas: state.lookups.localAreas,
+  districtEquipmentTypes: state.lookups.districtEquipmentTypes,
+});
 
-export default connect(mapStateToProps)(EquipmentAddDialog);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(EquipmentAddDialog);
