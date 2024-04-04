@@ -45,7 +45,7 @@ class UserRoleAddDialog extends React.Component {
 
   componentDidMount() {
     this.setState({ loading: true });
-    Api.getRoles().then(() => {
+    this.props.dispatch(Api.getRoles()).then(() => {
       this.setState({ loading: false });
     });
   }
@@ -108,7 +108,7 @@ class UserRoleAddDialog extends React.Component {
           expiryDate: toZuluTime(this.state.expiryDate),
         };
 
-        Api.addUserRole(this.props.user.id, userRole).then(() => {
+        this.props.dispatch(Api.addUserRole(this.props.user.id, userRole)).then(() => {
           this.setState({ isSaving: false });
           if (this.props.onSave) {
             this.props.onSave();
@@ -205,11 +205,11 @@ class UserRoleAddDialog extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    roles: state.lookups.roles,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  roles: state.lookups.roles,
+});
 
-export default connect(mapStateToProps)(UserRoleAddDialog);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserRoleAddDialog);

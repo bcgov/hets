@@ -88,7 +88,7 @@ namespace HetsData.Hangfire
                 var rolloverYear = FiscalHelper.GetCurrentFiscalStartYear();
 
                 // get processing rules
-                SeniorityScoringRules scoringRules = new SeniorityScoringRules(seniorityScoringRules, (errMessage, ex) => {
+                SeniorityScoringRules scoringRules = new(seniorityScoringRules, (errMessage, ex) => {
                     _logger.LogError(errMessage);
                     _logger.LogError(ex.ToString());
                 });
@@ -128,11 +128,6 @@ namespace HetsData.Hangfire
                     WriteLog("Equipment Status not found");
                     return;
                 }
-
-                //// determine the "Rollover Date" (required for testing)
-                //DateTime rolloverDate = new DateTime(rolloverYear, DateTime.UtcNow.Month, DateTime.UtcNow.Day);
-                //status.CurrentFiscalYear = rolloverYear;
-                //status.NextFiscalYear = rolloverYear + 1;
 
                 // get all district equipment types
                 List<HetDistrictEquipmentType> equipmentTypes = _dbContextMain.HetDistrictEquipmentTypes
@@ -266,12 +261,12 @@ namespace HetsData.Hangfire
             }
             catch (Exception e)
             {
-                _logger.LogError($"AnnualRolloverJob exception: {e.ToString()}");
+                _logger.LogError("AnnualRolloverJob exception: {e}", e);
                 throw;
             }
         }
 
-        private void UpdateStatusComplete(HetDistrictStatus status, int localAreaCompleteCount, int equipmentCompleteCount)
+        private static void UpdateStatusComplete(HetDistrictStatus status, int localAreaCompleteCount, int equipmentCompleteCount)
         {
             var rolloverYear = FiscalHelper.GetCurrentFiscalStartYear();
 

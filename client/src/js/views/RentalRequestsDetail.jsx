@@ -17,7 +17,6 @@ import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
 import * as Log from '../history';
-import store from '../store';
 
 import CheckboxControl from '../components/CheckboxControl.jsx';
 import ColDisplay from '../components/ColDisplay.jsx';
@@ -78,7 +77,8 @@ class RentalRequestsDetail extends React.Component {
   }
 
   componentDidMount() {
-    store.dispatch({
+    const dispatch = this.props.dispatch;
+    dispatch({
       type: Action.SET_ACTIVE_RENTAL_REQUEST_ID_UI,
       rentalRequestId: this.props.match.params.rentalRequestId,
     });
@@ -86,23 +86,23 @@ class RentalRequestsDetail extends React.Component {
     const rentalRequestId = this.props.match.params.rentalRequestId;
 
     /* Documents need be fetched every time as they are not rentalRequest specific in the store ATM */
-    Api.getRentalRequestDocuments(rentalRequestId).then(() => this.setState({ loadingDocuments: false }));
+    dispatch(Api.getRentalRequestDocuments(rentalRequestId))
+      .then(() => this.setState({ loadingDocuments: false }));
 
     // Re-fetch rental request, rotationlist, and notes every time
     Promise.all([
       this.fetch(),
-      Api.getRentalRequestNotes(rentalRequestId),
-      Api.getRentalRequestRotationList(rentalRequestId),
+      dispatch(Api.getRentalRequestNotes(rentalRequestId)),
+      dispatch(Api.getRentalRequestRotationList(rentalRequestId)),
     ]).then(() => {
       this.setState({ loading: false });
     });
   }
 
-  fetch = () => {
+  fetch = async () => {
     this.setState({ reloading: true });
-    return Api.getRentalRequest(this.props.match.params.rentalRequestId).then(() =>
-      this.setState({ reloading: false })
-    );
+    await this.props.dispatch(Api.getRentalRequest(this.props.match.params.rentalRequestId));
+    this.setState({ reloading: false });
   };
 
   updateState = (state, callback) => {
@@ -110,8 +110,9 @@ class RentalRequestsDetail extends React.Component {
   };
 
   updateContactsUIState = (state, callback) => {
+    const dispatch = this.props.dispatch;
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
-      store.dispatch({
+      dispatch({
         type: Action.UPDATE_PROJECT_CONTACTS_UI,
         projectContacts: this.state.ui,
       });
@@ -148,7 +149,10 @@ class RentalRequestsDetail extends React.Component {
   };
 
   rentalRequestSaved = () => {
-    Promise.all([this.fetch(), Api.getRentalRequestRotationList(this.props.match.params.rentalRequestId)]);
+    Promise.all([
+      this.fetch(), 
+      this.props.dispatch(Api.getRentalRequestRotationList(this.props.match.params.rentalRequestId))
+    ]);
   };
 
   openHireOfferDialog = (hireOffer, showAllResponseFields) => {
@@ -163,12 +167,12 @@ class RentalRequestsDetail extends React.Component {
     this.setState({ showHireOfferDialog: false });
   };
 
-  hireOfferSaved = (hireOffer) => {
-    Log.rentalRequestEquipmentHired(this.props.rentalRequest, hireOffer.equipment, hireOffer.offerResponse);
+  hireOfferSaved = async (hireOffer) => {
+    await this.props.dispatch(Log.rentalRequestEquipmentHired(this.props.rentalRequest, hireOffer.equipment, hireOffer.offerResponse));
 
     this.closeHireOfferDialog();
 
-    var rotationListItem = _.find(this.props.rentalRequest.rotationList, (i) => i.id === hireOffer.id);
+    let rotationListItem = _.find(this.props.rentalRequest.rotationList, (i) => i.id === hireOffer.id);
     if (rotationListItem && rotationListItem.rentalAgreementId && !hireOffer.rentalAgreementId) {
       // navigate to rental agreement if it was newly generated
       this.props.history.push(`${Constant.RENTAL_AGREEMENTS_PATHNAME}/${rotationListItem.rentalAgreementId}`);
@@ -178,15 +182,14 @@ class RentalRequestsDetail extends React.Component {
     }
   };
 
-  printSeniorityList = () => {
-    let filename = 'SeniorityList-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';
-    Api.rentalRequestSeniorityList(this.props.rentalRequest.id)
-      .then((res) => {
-        saveAs(res, filename);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  printSeniorityList = async () => {
+    const filename = 'SeniorityList-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';
+    try {
+      const res = await this.props.dispatch(Api.rentalRequestSeniorityList(this.props.rentalRequest.id));
+      saveAs(res, filename);
+    } catch(error) {
+      console.log(error);
+    }
   };
 
   addRequest = () => {};
@@ -207,10 +210,11 @@ class RentalRequestsDetail extends React.Component {
 
   render() {
     const { loading, loadingDocuments } = this.state;
-    var rentalRequest = this.props.rentalRequest || {};
+    const rentalRequest = this.props.rentalRequest || {};
+    const dispatch = this.props.dispatch;
 
-    var viewOnly = !rentalRequest.projectId;
-    var canEditRequest = !viewOnly && rentalRequest.status !== Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
+    const viewOnly = !rentalRequest.projectId;
+    const canEditRequest = !viewOnly && rentalRequest.status !== Constant.RENTAL_REQUEST_STATUS_CODE_COMPLETED;
 
     return (
       <div id="rental-requests-detail">
@@ -569,8 +573,8 @@ class RentalRequestsDetail extends React.Component {
             id={String(this.props.match.params.rentalRequestId)}
             show={this.state.showNotesDialog}
             notes={this.props.rentalRequest.notes}
-            getNotes={Api.getRentalRequestNotes}
-            saveNote={Api.addRentalRequestNote}
+            getNotes={(rentalRequestId) => dispatch(Api.getRentalRequestNotes(rentalRequestId))}
+            saveNote={(rentalRequestId, note) => dispatch(Api.addRentalRequestNote(rentalRequestId, note))}
             onClose={this.closeNotesDialog}
           />
         )}
@@ -579,11 +583,11 @@ class RentalRequestsDetail extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    rentalRequest: activeRentalRequestSelector(state),
-    documents: state.models.documents,
-  };
-}
+const mapStateToProps = (state) => ({
+  rentalRequest: activeRentalRequestSelector(state),
+  documents: state.models.documents,
+});
 
-export default connect(mapStateToProps)(RentalRequestsDetail);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(RentalRequestsDetail);

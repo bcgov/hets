@@ -27,16 +27,40 @@ namespace HetsData.Dtos
         public string Province { get; set; }
         public int OwnerStatusTypeId { get; set; }
         public string StatusComment { get; set; }
-        public DateTime? ArchiveDate { get; set; }
+
+        private DateTime? _archiveDate;
+        public DateTime? ArchiveDate {
+            get => _archiveDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _archiveDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public string ArchiveCode { get; set; }
         public string ArchiveReason { get; set; }
         public int? LocalAreaId { get; set; }
         public int? PrimaryContactId { get; set; }
         public string CglCompany { get; set; }
         public string CglPolicyNumber { get; set; }
-        public DateTime? CglendDate { get; set; }
+
+        private DateTime? _cglendDate;
+        public DateTime? CglendDate {
+            get => _cglendDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _cglendDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public string WorkSafeBcpolicyNumber { get; set; }
-        public DateTime? WorkSafeBcexpiryDate { get; set; }
+
+        private DateTime? _workSafeBcexpiryDate;
+        public DateTime? WorkSafeBcexpiryDate {
+            get => _workSafeBcexpiryDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _workSafeBcexpiryDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public bool? IsMaintenanceContractor { get; set; }
         public bool MeetsResidency { get; set; }
         public int? BusinessId { get; set; }

@@ -8,7 +8,6 @@ import _ from 'lodash';
 import * as Action from '../actionTypes';
 import * as Constant from '../constants';
 import * as History from '../history';
-import store from '../store';
 
 import SortTable from './SortTable.jsx';
 import Spinner from './Spinner.jsx';
@@ -58,7 +57,7 @@ class HistoryComponent extends React.Component {
 
   updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
-      store.dispatch({ type: Action.UPDATE_HISTORY_UI, history: this.state.ui });
+      this.props.dispatch({ type: Action.UPDATE_HISTORY_UI, history: this.state.ui });
       if (callback) {
         callback();
       }
@@ -79,12 +78,13 @@ class HistoryComponent extends React.Component {
       }
     }
 
-    return History.get(this.props.historyEntity, 0, first ? API_LIMIT : null).finally(() => {
-      this.setState({
-        loading: false,
-        canShowMore: first && Object.keys(this.props.history).length >= API_LIMIT,
+    return this.props.dispatch(History.get(this.props.historyEntity, 0, first ? API_LIMIT : null))
+      .finally(() => {
+        this.setState({
+          loading: false,
+          canShowMore: first && Object.keys(this.props.history).length >= API_LIMIT,
+        });
       });
-    });
   };
 
   showMore = () => {
@@ -178,14 +178,13 @@ class HistoryComponent extends React.Component {
 
 const makeMapStateToProps = () => {
   const getHistorySelector = makeGetHistorySelector();
-  const mapStateToProps = (state, props) => {
-    return {
-      history: getHistorySelector(state, props),
-      users: state.lookups.users,
-      ui: state.ui.history,
-    };
-  };
-  return mapStateToProps;
+  return (state, props) => ({
+    history: getHistorySelector(state, props),
+    users: state.lookups.users,
+    ui: state.ui.history,
+  });
 };
 
-export default connect(makeMapStateToProps)(HistoryComponent);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(makeMapStateToProps, mapDispatchToProps)(HistoryComponent);

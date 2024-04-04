@@ -20,8 +20,10 @@ namespace HetsReport.Helpers
 
                 // generate the salt
                 byte[] arrSalt = new byte[16];
-                RandomNumberGenerator rand = new RNGCryptoServiceProvider();
-                rand.GetNonZeroBytes(arrSalt);
+                using (RandomNumberGenerator rand = RandomNumberGenerator.Create())
+                {
+                    rand.GetNonZeroBytes(arrSalt);
+                }
 
                 // array to hold key values
                 byte[] generatedKey = new byte[4];
@@ -118,8 +120,7 @@ namespace HetsReport.Helpers
                 // implementation Notes List:
                 // --> Word requires that the initial hash of the password with the salt not be considered in the count
                 //     The initial hash of salt + key is not included in the iteration count
-                HashAlgorithm sha1 = new SHA1Managed();
-                generatedKey = sha1.ComputeHash(generatedKey);
+                generatedKey = SHA1.HashData(generatedKey);
                 byte[] iterator = new byte[4];
 
                 for (int intTmp = 0; intTmp < iterations; intTmp++)
@@ -131,7 +132,7 @@ namespace HetsReport.Helpers
                     iterator[3] = Convert.ToByte((intTmp & 0xFF000000) >> 24);
 
                     generatedKey = ConcatByteArrays(iterator, generatedKey);
-                    generatedKey = sha1.ComputeHash(generatedKey);
+                    generatedKey = SHA1.HashData(generatedKey);
                 }
 
                 DocumentProtection documentProtection = new DocumentProtection { Edit = DocumentProtectionValues.ReadOnly };
@@ -155,7 +156,7 @@ namespace HetsReport.Helpers
 
                 wordDocument.ExtendedFilePropertiesPart.Properties.Save();
 
-                DocumentProtection dp = new DocumentProtection {Edit = DocumentProtectionValues.Comments, Enforcement = true};
+                DocumentProtection dp = new DocumentProtection { Edit = DocumentProtectionValues.Comments, Enforcement = true };
 
                 wordDocument.MainDocumentPart.DocumentSettingsPart.Settings.AppendChild(dp);
 

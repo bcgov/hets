@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { Container, Row, Col, FormGroup, FormLabel } from 'react-bootstrap';
 import _ from 'lodash';
 
@@ -42,7 +43,7 @@ class RentalAgreementOvertimeNotesDialog extends React.Component {
   };
 
   formSubmitted = () => {
-    const { onSave, onClose } = this.props;
+    const { onSave, onClose, dispatch } = this.props;
     if (this.isValid()) {
       if (this.didChange()) {
         const rentalAgreement = {
@@ -51,7 +52,7 @@ class RentalAgreementOvertimeNotesDialog extends React.Component {
           note: this.state.note,
         };
 
-        Api.updateRentalAgreement(rentalAgreement).then(() => {
+        dispatch(Api.updateRentalAgreement(rentalAgreement)).then(() => {
           if (onSave) {
             onSave();
           }
@@ -117,4 +118,6 @@ class RentalAgreementOvertimeNotesDialog extends React.Component {
   }
 }
 
-export default RentalAgreementOvertimeNotesDialog;
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(null, mapDispatchToProps)(RentalAgreementOvertimeNotesDialog);

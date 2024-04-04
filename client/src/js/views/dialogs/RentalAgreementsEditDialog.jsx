@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { Row, Col } from 'react-bootstrap';
 import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 
@@ -98,7 +99,7 @@ class RentalAgreementsEditDialog extends React.Component {
           agreementCity: this.state.agreementCity,
         };
 
-        Api.updateRentalAgreement(rentalAgreement).then(() => {
+        this.props.dispatch(Api.updateRentalAgreement(rentalAgreement)).then(() => {
           if (this.props.onSave) {
             this.props.onSave();
           }
@@ -180,4 +181,6 @@ class RentalAgreementsEditDialog extends React.Component {
   }
 }
 
-export default RentalAgreementsEditDialog;
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(null, mapDispatchToProps)(RentalAgreementsEditDialog);

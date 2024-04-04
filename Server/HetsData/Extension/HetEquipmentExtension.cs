@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HetsCommon;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HetsData.Entities
@@ -143,15 +144,17 @@ namespace HetsData.Entities
 
             if (now.Month == 1 || now.Month == 2 || now.Month == 3)
             {
-                fiscalEnd = new DateTime(now.Year, 3, 31);
+                fiscalEnd = DateUtils.ConvertPacificToUtcTime(
+                    new DateTime(now.Year, 3, 31, 0, 0, 0, DateTimeKind.Unspecified));
             }
             else
             {
-                fiscalEnd = new DateTime(now.AddYears(1).Year, 3, 31);
+                fiscalEnd = DateUtils.ConvertPacificToUtcTime(
+                    new DateTime(now.AddYears(1).Year, 3, 31, 0, 0, 0, DateTimeKind.Unspecified));
             }
 
             // calculate and set the To Date
-            YearsOfService = YearsOfService + 1;
+            YearsOfService++;
             ToDate = fiscalEnd;
         }
 

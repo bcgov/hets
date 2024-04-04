@@ -52,26 +52,26 @@ class Main extends React.Component {
 
   // redirects regular users to rollover page if rollover in progress
   redirectIfRolloverActive(path) {
-    var onBusinessPage = path.indexOf(Constant.BUSINESS_PORTAL_PATHNAME) === 0;
-    var onRolloverPage = path === Constant.ROLLOVER_PATHNAME;
+    const onBusinessPage = path.indexOf(Constant.BUSINESS_PORTAL_PATHNAME) === 0;
+    const onRolloverPage = path === Constant.ROLLOVER_PATHNAME;
     if (onBusinessPage || onRolloverPage) {
       return;
     }
 
-    var { user } = this.props;
+    const { user, dispatch } = this.props;
     if (!user.district) {
       return;
     }
 
     const districtId = user.district.id;
-    Api.getRolloverStatus(districtId).then(() => {
+    dispatch(Api.getRolloverStatus(districtId)).then(() => {
       const status = this.props.lookups.rolloverStatus;
 
       if (status.rolloverActive) {
         this.props.history.push(Constant.ROLLOVER_PATHNAME);
       } else if (status.rolloverComplete) {
         // refresh fiscal years
-        Api.getFiscalYears(districtId);
+        dispatch(Api.getFiscalYears(districtId));
       }
     });
   }
@@ -128,17 +128,16 @@ class Main extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    showSessionTimeoutDialog: state.ui.showSessionTimeoutDialog,
-    showErrorDialog: state.ui.showErrorDialog,
-    user: state.user,
-    lookups: state.lookups,
-  };
-}
+const mapStateToProps = (state) => ({
+  showSessionTimeoutDialog: state.ui.showSessionTimeoutDialog,
+  showErrorDialog: state.ui.showErrorDialog,
+  user: state.user,
+  lookups: state.lookups,
+});
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ unhandledApiError, closeSessionTimeoutDialog }, dispatch);
-}
+const mapDispatchToProps = (dispatch) => ({
+  dispatch,
+  ...bindActionCreators({ unhandledApiError, closeSessionTimeoutDialog }, dispatch)
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Main));

@@ -79,8 +79,8 @@ class TimeEntryDialog extends React.Component {
 
   componentDidMount() {
     if (this.state.selectingAgreement) {
-      Api.getProjectsCurrentFiscal();
-      Api.getEquipmentLite();
+      this.props.dispatch(Api.getProjectsCurrentFiscal());
+      this.props.dispatch(Api.getEquipmentLite());
     } else {
       this.setState({ loaded: false });
       Promise.all([!this.props.project ? this.fetchProject(this.props.projectId) : null, this.fetchTimeRecords()]).then(
@@ -92,11 +92,11 @@ class TimeEntryDialog extends React.Component {
   }
 
   fetchTimeRecords = () => {
-    return Api.getRentalAgreementTimeRecords(this.state.rentalAgreementId);
+    return this.props.dispatch(Api.getRentalAgreementTimeRecords(this.state.rentalAgreementId));
   };
 
   fetchProject = (projectId) => {
-    return Api.getProject(projectId).then((project) => {
+    return this.props.dispatch(Api.getProject(projectId)).then((project) => {
       this.setState({ projectFiscalYearStartDate: project.fiscalYearStartDate });
     });
   };
@@ -127,7 +127,7 @@ class TimeEntryDialog extends React.Component {
     if (this.validateSelectAgreement()) {
       this.setState({ isSaving: true });
 
-      Api.getLatestRentalAgreement(this.state.equipmentId, this.state.projectId)
+      this.props.dispatch(Api.getLatestRentalAgreement(this.state.equipmentId, this.state.projectId))
         .then((agreement) => {
           this.setState({ loaded: false, rentalAgreementId: agreement.id });
           return Promise.all([this.fetchProject(this.state.projectId), this.fetchTimeRecords()]).then(() => {
@@ -225,21 +225,20 @@ class TimeEntryDialog extends React.Component {
       if (this.didChange()) {
         this.setState({ isSaving: true });
 
-        var timeEntry = { ...this.state.timeEntry };
+        let timeEntry = { ...this.state.timeEntry };
         Object.keys(timeEntry).forEach((key) => {
           timeEntry[key].hours = (timeEntry[key].hours || 0).toFixed(2);
         });
 
-        const promise = Api.addRentalAgreementTimeRecords(this.state.rentalAgreementId, timeEntry);
-
-        promise.then(() => {
-          this.setState({ isSaving: false });
-          if (this.props.multipleEntryAllowed) {
-            this.resetStateToSelectAgreement(true);
-          } else {
-            this.props.onClose();
-          }
-        });
+        this.props.dispatch(Api.addRentalAgreementTimeRecords(this.state.rentalAgreementId, timeEntry))
+          .then(() => {
+            this.setState({ isSaving: false });
+            if (this.props.multipleEntryAllowed) {
+              this.resetStateToSelectAgreement(true);
+            } else {
+              this.props.onClose();
+            }
+          });
       } else {
         this.props.onClose();
       }
@@ -302,8 +301,9 @@ class TimeEntryDialog extends React.Component {
   };
 
   deleteTimeRecord = (timeRecord) => {
-    Api.deleteTimeRecord(timeRecord.id).then(() => {
-      Api.getRentalAgreementTimeRecords(this.state.rentalAgreementId);
+    const dispatch = this.props.dispatch;
+    dispatch(Api.deleteTimeRecord(timeRecord.id)).then(() => {
+      dispatch(Api.getRentalAgreementTimeRecords(this.state.rentalAgreementId));
     });
   };
 
@@ -575,12 +575,12 @@ class TimeEntryDialog extends React.Component {
   };
 }
 
-function mapStateToProps(state) {
-  return {
-    rentalAgreementTimeRecords: state.models.rentalAgreementTimeRecords,
-    projects: state.lookups.projectsCurrentFiscal,
-    equipment: state.lookups.equipment.ts,
-  };
-}
+const mapStateToProps = (state) => ({
+  rentalAgreementTimeRecords: state.models.rentalAgreementTimeRecords,
+  projects: state.lookups.projectsCurrentFiscal,
+  equipment: state.lookups.equipment.ts,
+});
 
-export default connect(mapStateToProps)(TimeEntryDialog);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(TimeEntryDialog);

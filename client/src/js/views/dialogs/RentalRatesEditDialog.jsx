@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { Row, Col } from 'react-bootstrap';
 import { FormGroup, FormText, FormLabel, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -125,7 +126,7 @@ class RentalRatesEditDialog extends React.Component {
   };
 
   formSubmitted = () => {
-    const { rentalAgreement, onSave, onClose } = this.props;
+    const { rentalAgreement, onSave, onClose, dispatch } = this.props;
 
     if (this.isValid()) {
       if (this.didChange()) {
@@ -143,13 +144,14 @@ class RentalRatesEditDialog extends React.Component {
           };
         });
 
-        (this.state.isNew ? Api.addRentalRates(rentalAgreement.id, rates) : Api.updateRentalRate(_.first(rates))).then(
-          () => {
-            if (onSave) {
-              onSave();
-            }
-          }
-        );
+        (this.state.isNew ? 
+          dispatch(Api.addRentalRates(rentalAgreement.id, rates)) : 
+          dispatch(Api.updateRentalRate(_.first(rates))))
+            .then(() => {
+              if (onSave) {
+                onSave();
+              }
+            });
       }
 
       onClose();
@@ -283,4 +285,6 @@ class RentalRatesEditDialog extends React.Component {
   }
 }
 
-export default RentalRatesEditDialog;
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(null, mapDispatchToProps)(RentalRatesEditDialog);

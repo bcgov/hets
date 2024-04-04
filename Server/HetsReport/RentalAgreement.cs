@@ -207,11 +207,9 @@ namespace HetsReport
 
                             wordDocument = (WordprocessingDocument) agreementDocument.Clone(documentStream);
 
-                            agreementDocument.Close();
                             agreementDocument.Dispose();
                         }
 
-                        wordTemplate.Close();
                         wordTemplate.Dispose();
                         templateStream.Close();
                     }
@@ -222,7 +220,6 @@ namespace HetsReport
                     wordDocument.CompressionOption = CompressionOption.Maximum;
                     SecurityHelper.PasswordProtect(wordDocument, logErrorAction);
 
-                    wordDocument.Close();
                     wordDocument.Dispose();
 
                     documentStream.Seek(0, SeekOrigin.Begin);

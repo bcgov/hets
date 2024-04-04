@@ -9,7 +9,6 @@ import Moment from 'moment';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
-import store from '../store';
 
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SearchBar from '../components/ui/SearchBar.jsx';
@@ -31,7 +30,7 @@ import {
   toZuluTime,
   dateIsBetween,
 } from '../utils/date';
-import { arrIntersection, hasArrsIntersect } from '../utils/set';
+import { arrIntersection, arrayToSet, setIntersection } from '../utils/set';
 
 const THIS_FISCAL = 'This Fiscal';
 const LAST_FISCAL = 'Last Fiscal';
@@ -54,8 +53,7 @@ class AitReport extends React.Component {
   constructor(props) {
     super(props);
 
-
-    var today = Moment();
+    const today = Moment();
 
     this.state = {
       search: {
@@ -71,13 +69,11 @@ class AitReport extends React.Component {
         sortField: props.ui.sortField || 'rentalAgreementNumber',
         sortDesc: props.ui.sortDesc === true,
       },
-
     };
-
   }
 
   buildSearchParams = () => {
-    var searchParams = {
+    const searchParams = {
       rentalAgreementNumber: this.state.search.rentalAgreementNumber || '',
     };
 
@@ -93,8 +89,8 @@ class AitReport extends React.Component {
       searchParams.equipment = this.state.search.equipmentIds;
     }
 
-    var startDate = Moment(this.state.search.startDate);
-    var endDate = Moment(this.state.search.endDate);
+    const startDate = Moment(this.state.search.startDate);
+    const endDate = Moment(this.state.search.endDate);
 
     if (startDate && startDate.isValid()) {
       searchParams.startDate = toZuluTime(startDate.startOf('day'));
@@ -107,16 +103,14 @@ class AitReport extends React.Component {
   };
 
   componentDidMount() {
-    Api.getRentalAgreementSummaryLite();
-    Api.getProjectsAgreementSummary();
-    Api.getDistrictEquipmentTypesAgreementSummary();
-    Api.getEquipmentAgreementSummary();
-
-
+    this.props.dispatch(Api.getRentalAgreementSummaryLite());
+    this.props.dispatch(Api.getProjectsAgreementSummary());
+    this.props.dispatch(Api.getDistrictEquipmentTypesAgreementSummary());
+    this.props.dispatch(Api.getEquipmentAgreementSummary());
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
-      var defaultFavourite = _.find(this.props.favourites, (f) => f.isDefault);
+      const defaultFavourite = _.find(this.props.favourites, (f) => f.isDefault);
       if (defaultFavourite) {
         this.loadFavourite(defaultFavourite);
       }
@@ -124,7 +118,7 @@ class AitReport extends React.Component {
   }
 
   fetch = () => {
-    Api.searchAitReport(this.buildSearchParams());
+    this.props.dispatch(Api.searchAitReport(this.buildSearchParams()));
   };
 
   search = (e) => {
@@ -133,9 +127,9 @@ class AitReport extends React.Component {
   };
 
   clearSearch = () => {
-    var today = Moment();
+    const today = Moment();
 
-    var defaultSearchParameters = {
+    const defaultSearchParameters = {
       projectIds: [],
       districtEquipmentTypes: [],
       equipmentIds: [],
@@ -146,22 +140,14 @@ class AitReport extends React.Component {
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
-      store.dispatch({
-        type: Action.UPDATE_AIT_SEARCH,
-        aitResponses: this.state.search,
-      });
-      store.dispatch({ type: Action.CLEAR_AIT_REPORT });
+      this.props.updateAitSearch(this.state.search);
+      this.props.clearAitReport();
     });
   };
 
-
-
   updateSearchState = (state, callback) => {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } } }, () => {
-      store.dispatch({
-        type: Action.UPDATE_AIT_SEARCH,
-        aitResponses: this.state.search,
-      });
+      this.props.updateAitSearch(this.state.search);
       if (callback) {
         callback();
       }
@@ -170,10 +156,7 @@ class AitReport extends React.Component {
 
   updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
-      store.dispatch({
-        type: Action.UPDATE_AIT_REPORT_UI,
-        aitResponses: this.state.ui,
-      });
+      this.props.updateAitReportUi(this.state.ui);
       if (callback) {
         callback();
       }
@@ -193,8 +176,8 @@ class AitReport extends React.Component {
       return <Alert variant="success">No results</Alert>;
     }
 
-    var aitResponses = _.sortBy(this.props.aitResponses.data, (response) => {
-      var sortValue = response[this.state.ui.sortField];
+    let aitResponses = _.sortBy(this.props.aitResponses.data, (response) => {
+      const sortValue = response[this.state.ui.sortField];
       if (typeof sortValue === 'string') {
         return sortValue.toLowerCase();
       }
@@ -243,36 +226,20 @@ class AitReport extends React.Component {
     );
   };
 
-  getMatchedAgreementIds = () => {
+  getAgreementIdsWithinDateRange = () => {
     const startDate = Moment(this.state.search.startDate);
     const endDate = Moment(this.state.search.endDate);
 
     return _.chain(this.props.agreementSummaryLite.data)
-      .filter((a) => dateIsBetween(Moment(a.datedOn), startDate, endDate))
+      .filter((agreement) => dateIsBetween(Moment(agreement.datedOn), startDate, endDate))
       .map('id')
       .value();
   };
 
-  matchesProjectFilter = (projectIds) => {
-    if (this.state.search.projectIds.length === 0) {
-      return true;
-    }
-
-    return hasArrsIntersect(this.state.search.projectIds, projectIds);
-  };
-
-  matchesDistrictEquipmentTypeFilter = (districtEquipmentTypeId) => {
-    if (this.state.search.districtEquipmentTypes.length === 0) {
-      return true;
-    }
-
-    return _.includes(this.state.search.districtEquipmentTypes, districtEquipmentTypeId);
-  };
-
   updateDateRangeSearchState = (state) => {
-    var today = Moment();
-    var startDate;
-    var endDate;
+    const today = Moment();
+    let startDate;
+    let endDate;
     switch (state.dateRange) {
       case THIS_FISCAL:
         // Fiscal Year: Apr 1 - March 31
@@ -307,74 +274,86 @@ class AitReport extends React.Component {
   };
 
   updateProjectSearchState = (searchState) => {
-    this.updateSearchState(searchState, this.filterSelectedEquipmentType);
+    this.updateSearchState(searchState, () => {
+      const availableProjectIds = this.getFilteredProjects().map(project => project.id);
+      this.filterSelectedEquipmentType(availableProjectIds);
+    });
   };
 
   updateEquipmentTypeSearchState = (searchState) => {
-    this.updateSearchState(searchState, this.filterSelectedEquipment);
+    this.updateSearchState(searchState, () => {
+      const availableProjectIds = this.getFilteredProjects().map(project => project.id);
+      const availableEquipmentTypeIds = this.getFilteredDistrictEquipmentType(availableProjectIds).map(eqType => eqType.id);
+      this.filterSelectedEquipment(availableProjectIds, availableEquipmentTypeIds);
+    });
   };
 
   filterSelectedProjects = () => {
-    var acceptableProjects = _.map(this.getFilteredProjects(), 'id');
-    var projectIds = arrIntersection(this.state.search.projectIds, acceptableProjects);
-    this.updateSearchState({ 
-      projectIds: projectIds 
-    }, this.filterSelectedEquipmentType);
+    const availableProjects = _.map(this.getFilteredProjects(), 'id');
+    const projectIds = arrIntersection(this.state.search.projectIds, availableProjects);
+    this.updateSearchState({ projectIds }, () => this.filterSelectedEquipmentType(availableProjects));
   };
 
-  filterSelectedEquipmentType = () => {
-    var acceptableDistrictEquipmentTypes = _.map(this.getFilteredDistrictEquipmentType(), 'id');
-    var districtEquipmentTypes = arrIntersection(
-      this.state.search.districtEquipmentTypes,
-      acceptableDistrictEquipmentTypes
-    );
-    this.updateSearchState({ 
-      districtEquipmentTypes: districtEquipmentTypes 
-    }, this.filterSelectedEquipment);
+  filterSelectedEquipmentType = (availableProjectIds) => {
+    const availableEquipmentTypes = _.map(this.getFilteredDistrictEquipmentType(availableProjectIds), 'id');
+    const districtEquipmentTypes = arrIntersection(this.state.search.districtEquipmentTypes, availableEquipmentTypes);
+    this.updateSearchState({ districtEquipmentTypes }, () => this.filterSelectedEquipment(availableProjectIds, availableEquipmentTypes));
   };
 
-  filterSelectedEquipment = () => {
-    var acceptableEquipmentIds = _.map(this.getFilteredEquipment(), 'id');
-    var equipmentIds = arrIntersection(this.state.search.equipmentIds, acceptableEquipmentIds);
-    this.updateSearchState({ equipmentIds: equipmentIds });
+  filterSelectedEquipment = (availableProjectIds, availableEquipmentTypeIds) => {
+    const availableEquipmentIds = _.map(this.getFilteredEquipment(availableProjectIds, availableEquipmentTypeIds), 'id');
+    const equipmentIds = arrIntersection(this.state.search.equipmentIds, availableEquipmentIds);
+    this.updateSearchState({ equipmentIds });
   };
 
   getFilteredProjects = () => {
-    const matchedAgreementIds = this.getMatchedAgreementIds();
+    const availableAgreementIdSet = arrayToSet(this.getAgreementIdsWithinDateRange());
+    
     return _.chain(this.props.projects.data)
-      .filter((project) => hasArrsIntersect(project.agreementIds, matchedAgreementIds))
-      .sortBy('name')
+      .filter(project => setIntersection(arrayToSet(project.agreementIds), availableAgreementIdSet).size > 0)
+      .uniqBy("id")
+      .sortBy("name")
       .value();
   };
 
-  getFilteredDistrictEquipmentType = () => {
-    const matchedAgreementIds = this.getMatchedAgreementIds();
+  getFilteredDistrictEquipmentType = (availableProjectIds) => {
+    const availableAgreementIdSet = arrayToSet(this.getAgreementIdsWithinDateRange());
+    const availableProjectIdSet = this.state.search.projectIds.length === 0 ?
+      arrayToSet(availableProjectIds) : arrayToSet(this.state.search.projectIds);
+    
     return _.chain(this.props.districtEquipmentTypes.data)
-      .filter(equipmentType => hasArrsIntersect(equipmentType.agreementIds, matchedAgreementIds))
-      .filter(equipmentType => this.matchesProjectFilter(equipmentType.projectIds))
+      .filter(equipmentType => 
+        setIntersection(arrayToSet(equipmentType.agreementIds), availableAgreementIdSet).size > 0 && 
+        setIntersection(arrayToSet(equipmentType.projectIds), availableProjectIdSet).size > 0)
+      .uniqBy("id")
       .sortBy('name')
       .value();
   };
 
-  getFilteredEquipment = () => {
-    const matchedAgreementIds = this.getMatchedAgreementIds();
+  getFilteredEquipment = (availableProjectIds, availableEquipmentTypeIds) => {
+    const availableAgreementIdSet = arrayToSet(this.getAgreementIdsWithinDateRange());
+    const availableProjectIdSet = this.state.search.projectIds.length === 0 ?
+      arrayToSet(availableProjectIds) : arrayToSet(this.state.search.projectIds);
+    const availableEquipmentTypeIdSet = this.state.search.districtEquipmentTypes.length === 0 ?
+      arrayToSet(availableEquipmentTypeIds) : arrayToSet(this.state.search.districtEquipmentTypes);
+    
     return _.chain(this.props.equipment.data)
-      .filter(equipment => hasArrsIntersect(equipment.agreementIds, matchedAgreementIds))
-      .filter(equipment => this.matchesProjectFilter(equipment.projectIds))
-      .filter(equipment => this.matchesDistrictEquipmentTypeFilter(equipment.districtEquipmentTypeId))
+      .filter(equipment => 
+        setIntersection(arrayToSet(equipment.agreementIds), availableAgreementIdSet).size > 0 &&
+        setIntersection(arrayToSet(equipment.projectIds), availableProjectIdSet).size > 0 &&
+        availableEquipmentTypeIdSet.has(equipment.districtEquipmentTypeId))
+      .uniqBy("id")
       .sortBy('equipmentCode')
       .value();
   };
 
   render() {
-    var resultCount = '';
-    if (this.props.aitResponses.loaded) {
-      resultCount = '(' + Object.keys(this.props.aitResponses.data).length + ')';
-    }
-
-    var projects = this.getFilteredProjects();
-    var districtEquipmentTypes = this.getFilteredDistrictEquipmentType();
-    var equipment = this.getFilteredEquipment();
+    const resultCount = this.props.aitResponses.loaded ? `(${Object.keys(this.props.aitResponses.data).length})` : '';
+    const projects = this.getFilteredProjects();
+    const projectIds = projects.map(project => project.id);
+    const districtEquipmentTypes = this.getFilteredDistrictEquipmentType(projectIds);
+    const equipmentTypeIds = districtEquipmentTypes.map(eqType => eqType.id);
+    const equipments = this.getFilteredEquipment(projectIds, equipmentTypeIds);
     
     return (
       <div id="rental-agreement-summary">
@@ -412,7 +391,7 @@ class AitReport extends React.Component {
                       id="equipmentIds"
                       placeholder="Equipment"
                       fieldName="equipmentCode"
-                      items={equipment}
+                      items={equipments}
                       disabled={!this.props.equipment.loaded}
                       selectedIds={this.state.search.equipmentIds}
                       updateState={this.updateSearchState}
@@ -498,22 +477,35 @@ class AitReport extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  agreementSummaryLite: state.lookups.agreementSummaryLite,
+  projects: state.lookups.projectsAgreementSummary,
+  districtEquipmentTypes: state.lookups.districtEquipmentTypesAgreementSummary,
+  equipment: state.lookups.equipment.agreementSummary,
+  aitResponses: state.models.aitResponses,
+  favourites: state.models.favourites.aitReport,
+  search: state.search.aitResponses,
+  ui: state.ui.aitResponses,
+});
 
+const mapDispatchToProps = (dispatch) => ({
+  updateAitSearch: (search) => {
+    dispatch({
+      type: Action.UPDATE_AIT_SEARCH,
+      aitResponses: search,
+    });
+  },
+  clearAitReport: () => {
+    dispatch({ type: Action.CLEAR_AIT_REPORT });
+  },
+  updateAitReportUi: (ui) => {
+    dispatch({
+      type: Action.UPDATE_AIT_REPORT_UI,
+      aitResponses: ui,
+    });
+  },
+  dispatch,
+});
 
-  var result = {
-    currentUser: state.user,
-    agreementSummaryLite: state.lookups.agreementSummaryLite,
-    projects: state.lookups.projectsAgreementSummary,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypesAgreementSummary,
-    equipment: state.lookups.equipment.agreementSummary,
-    aitResponses: state.models.aitResponses,
-    favourites: state.models.favourites.aitReport,
-    search: state.search.aitResponses,
-    ui: state.ui.aitResponses,
-  };
-  
-  return result;
-}
-
-export default connect(mapStateToProps)(AitReport);
+export default connect(mapStateToProps, mapDispatchToProps)(AitReport);

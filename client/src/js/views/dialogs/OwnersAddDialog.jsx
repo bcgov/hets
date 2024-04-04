@@ -75,7 +75,7 @@ class OwnersAddDialog extends React.Component {
   }
 
   componentDidMount() {
-    Api.getOwnersLite();
+    this.props.dispatch(Api.getOwnersLite());
   }
 
   updateState = (state, callback) => {
@@ -260,11 +260,13 @@ class OwnersAddDialog extends React.Component {
   };
 
   formSubmitted = () => {
+    const dispatch = this.props.dispatch;
+
     if (this.isValid()) {
       if (this.didChange()) {
         this.setState({ isSaving: true });
 
-        var owner = {
+        const owner = {
           organizationName: this.state.name,
           doingBusinessAs: this.state.doingBusinessAs,
           givenName: this.state.givenName,
@@ -287,15 +289,14 @@ class OwnersAddDialog extends React.Component {
           status: this.state.status,
         };
 
-        const promise = Api.addOwner(owner);
-
-        promise.then((newOwner) => {
-          Log.ownerAdded(newOwner);
-          this.setState({ isSaving: false });
-          if (this.props.onSave) {
-            this.props.onSave(newOwner);
-          }
-          this.props.onClose();
+        dispatch(Api.addOwner(owner)).then((newOwner) => {
+          dispatch(Log.ownerAdded(newOwner)).then(() => {
+            this.setState({ isSaving: false });
+            if (this.props.onSave) {
+              this.props.onSave(newOwner);
+            }
+            this.props.onClose();
+          });
         });
       } else {
         this.props.onClose();
@@ -522,12 +523,12 @@ class OwnersAddDialog extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    owners: state.lookups.owners.lite,
-    localAreas: state.lookups.localAreas,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  owners: state.lookups.owners.lite,
+  localAreas: state.lookups.localAreas,
+});
 
-export default connect(mapStateToProps)(OwnersAddDialog);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(OwnersAddDialog);

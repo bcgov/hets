@@ -34,7 +34,7 @@ namespace HetsData.Entities
 
         private List<Claim> GetClaims()
         {
-            List<Claim> claims = new List<Claim>
+            List<Claim> claims = new()
             {
                 new Claim(ClaimTypes.Name, BceidUserId),
                 new Claim(ClaimTypes.Actor, "BusinessUser")
@@ -84,7 +84,7 @@ namespace HetsData.Entities
 
         private List<HetRole> GetActiveRoles()
         {
-            List<HetRole> roles = new List<HetRole>();
+            List<HetRole> roles = new();
 
             if (HetBusinessUserRoles == null)
             {

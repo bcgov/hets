@@ -7,7 +7,15 @@ namespace HetsData.Dtos
     {
         [JsonProperty("Id")]
         public int HistoryId { get; set; }
-        public DateTime? CreatedDate { get; set; }
+
+        private DateTime? _createdDate;
+        public DateTime? CreatedDate {
+            get => _createdDate is DateTime dt ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+            set => _createdDate = (value.HasValue && value.Value is DateTime dt) ? 
+                DateTime.SpecifyKind(dt, DateTimeKind.Utc) : null;
+        }
+        
         public string HistoryText { get; set; }
         public int? EquipmentId { get; set; }
         public int? OwnerId { get; set; }

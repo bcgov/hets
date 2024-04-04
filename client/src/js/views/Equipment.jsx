@@ -8,7 +8,6 @@ import Moment from 'moment';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
-import store from '../store';
 
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SearchBar from '../components/ui/SearchBar.jsx';
@@ -109,7 +108,7 @@ class Equipment extends React.Component {
   };
 
   componentDidMount() {
-    Api.getDistrictEquipmentTypes();
+    this.props.dispatch(Api.getDistrictEquipmentTypes());
 
     // If this is the first load, then look for a default favourite
     if (_.isEmpty(this.props.search)) {
@@ -121,7 +120,7 @@ class Equipment extends React.Component {
   }
 
   fetch = () => {
-    Api.searchEquipmentList(this.buildSearchParams());
+    this.props.dispatch(Api.searchEquipmentList(this.buildSearchParams()));
   };
 
   search = (e) => {
@@ -144,17 +143,17 @@ class Equipment extends React.Component {
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
-      store.dispatch({
+      this.props.dispatch({
         type: Action.UPDATE_EQUIPMENT_LIST_SEARCH,
         equipmentList: this.state.search,
       });
-      store.dispatch({ type: Action.CLEAR_EQUIPMENT_LIST });
+      this.props.dispatch({ type: Action.CLEAR_EQUIPMENT_LIST });
     });
   };
 
   updateSearchState = (state, callback) => {
     this.setState({ search: { ...this.state.search, ...state } }, () => {
-      store.dispatch({
+      this.props.dispatch({
         type: Action.UPDATE_EQUIPMENT_LIST_SEARCH,
         equipmentList: this.state.search,
       });
@@ -166,7 +165,7 @@ class Equipment extends React.Component {
 
   updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
-      store.dispatch({
+      this.props.dispatch({
         type: Action.UPDATE_EQUIPMENT_LIST_UI,
         equipmentList: this.state.ui,
       });
@@ -360,16 +359,16 @@ class Equipment extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    equipmentList: state.models.equipmentList,
-    localAreas: state.lookups.localAreas,
-    districtEquipmentTypes: state.lookups.districtEquipmentTypes,
-    favourites: state.models.favourites.equipment,
-    search: state.search.equipmentList,
-    ui: state.ui.equipmentList,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  equipmentList: state.models.equipmentList,
+  localAreas: state.lookups.localAreas,
+  districtEquipmentTypes: state.lookups.districtEquipmentTypes,
+  favourites: state.models.favourites.equipment,
+  search: state.search.equipmentList,
+  ui: state.ui.equipmentList,
+});
 
-export default connect(mapStateToProps)(Equipment);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(Equipment);

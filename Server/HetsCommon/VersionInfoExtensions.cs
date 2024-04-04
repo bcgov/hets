@@ -41,7 +41,7 @@ namespace HetsCommon
         {
             DateTime creationTime = File.GetLastWriteTimeUtc(assembly.Location);
 
-            ApplicationVersionInfo info = new ApplicationVersionInfo()
+            ApplicationVersionInfo info = new()
             {
                 Name = assembly.GetName().Name,
                 Version = assembly.GetName().Version.ToString(),
@@ -63,11 +63,6 @@ namespace HetsCommon
         private static IEnumerable<VersionInfo> ToIEnumerableVersionInfo(this AssemblyName[] assemblyNames)
         {
             return assemblyNames.Select(d => new VersionInfo() { Name = d.Name, Version = d.Version.ToString() }).ToList();
-        }
-
-        private static DateTime GetCreationTime(this Assembly assembly)
-        {
-            return File.GetCreationTime(assembly.Location);
         }
     }
 }

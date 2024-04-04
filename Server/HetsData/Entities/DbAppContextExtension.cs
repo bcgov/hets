@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using HetsCommon;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
@@ -44,7 +46,7 @@ namespace HetsData.Entities
                     else
                     {
                         int controlNumber = (int)GetAuditProperty(entry.Entity, "ConcurrencyControlNumber");
-                        controlNumber = controlNumber + 1;
+                        controlNumber++;
                         SetAuditProperty(entry.Entity, "ConcurrencyControlNumber", controlNumber);
                     }
                 }                
@@ -114,6 +116,7 @@ namespace HetsData.Entities
         /// <returns></returns>
         public override int SaveChanges()
         {
+
             // get all of the modified records
             List<EntityEntry> modifiedEntries = ChangeTracker.Entries()
                     .Where(e => e.State == EntityState.Added ||
@@ -123,7 +126,7 @@ namespace HetsData.Entities
             // manage the audit columns and the concurrency column
             DateTime currentTime = DateTime.UtcNow;
 
-            List<HetSeniorityAudit> seniorityAudits = new List<HetSeniorityAudit>();
+            List<HetSeniorityAudit> seniorityAudits = new();
 
             foreach (EntityEntry entry in modifiedEntries)
             {
@@ -133,19 +136,19 @@ namespace HetsData.Entities
                     SetAuditProperty(entry.Entity, "AppLastUpdateUserDirectory", DirectoryName);
                     SetAuditProperty(entry.Entity, "AppLastUpdateUserGuid", SmUserGuid);
                     SetAuditProperty(entry.Entity, "AppLastUpdateTimestamp", currentTime);
-                    
+
                     if (entry.State == EntityState.Added)
                     {
                         SetAuditProperty(entry.Entity, "AppCreateUserid", SmUserId);
                         SetAuditProperty(entry.Entity, "AppCreateUserDirectory", DirectoryName);
                         SetAuditProperty(entry.Entity, "AppCreateUserGuid", SmUserGuid);
                         SetAuditProperty(entry.Entity, "AppCreateTimestamp", currentTime);
-                        SetAuditProperty(entry.Entity, "ConcurrencyControlNumber", 1);                        
+                        SetAuditProperty(entry.Entity, "ConcurrencyControlNumber", 1);
                     }
                     else
                     {
                         int controlNumber = (int)GetAuditProperty(entry.Entity, "ConcurrencyControlNumber");
-                        controlNumber = controlNumber + 1;
+                        controlNumber++;
                         SetAuditProperty(entry.Entity, "ConcurrencyControlNumber", controlNumber);
                     }
                 }
@@ -229,7 +232,7 @@ namespace HetsData.Entities
                 DateTime currentTime = DateTime.UtcNow;
 
                 // create the audit entry.
-                HetSeniorityAudit seniorityAudit = new HetSeniorityAudit
+                HetSeniorityAudit seniorityAudit = new()
                 {
                     BlockNumber = original.BlockNumber,
                     EndDate = currentTime
@@ -243,7 +246,6 @@ namespace HetsData.Entities
                 seniorityAudit.AppLastUpdateTimestamp = currentTime;
                 seniorityAudit.AppCreateUserid = smUserId;
                 seniorityAudit.AppLastUpdateUserid = smUserId;
-
                 seniorityAudit.EquipmentId = tempChangedId;
                 seniorityAudit.LocalAreaId = tempLocalAreaId;
                 seniorityAudit.OwnerId = tempOwnerId;
@@ -253,9 +255,9 @@ namespace HetsData.Entities
                     seniorityAudit.OwnerOrganizationName = seniorityAudit.Owner.OrganizationName;
                 }
 
-                if (original.SeniorityEffectiveDate != null)
+                if (original.SeniorityEffectiveDate is DateTime seniorityEffectiveDateUtc)
                 {
-                    seniorityAudit.StartDate = (DateTime)original.SeniorityEffectiveDate;
+                    seniorityAudit.StartDate = DateUtils.AsUTC(seniorityEffectiveDateUtc);
                 }
 
                 seniorityAudit.Seniority = original.Seniority;

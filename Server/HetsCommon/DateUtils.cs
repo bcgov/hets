@@ -18,13 +18,27 @@ namespace HetsCommon
                 return (true, (DateTime)val);
             }
 
-            var formats = new string[] { "yyyyMMdd", "yyyy-MM-dd", "yyyy/MM/dd", "yyyy.MM.dd", "yyyyMd", "yyyy-M-d", "yyyy/M/dd", "yyyy.M.d" };
+            var formats = new string[] { 
+                "yyyyMMdd", 
+                "yyyy-MM-dd", 
+                "yyyy/MM/dd", 
+                "yyyy.MM.dd", 
+                "yyyyMd", 
+                "yyyy-M-d", 
+                "yyyy/M/dd", 
+                "yyyy.M.d" 
+            };
+
             var dateStr = val.ToString();
 
             if (string.IsNullOrWhiteSpace(dateStr))
                 return (true, null);
 
-            return (DateTime.TryParseExact(dateStr, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate), parsedDate);
+            return (
+                DateTime.TryParseExact(
+                    dateStr, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate), 
+                parsedDate
+            );
         }
 
         public static string CovertToString(DateTime date)
@@ -40,17 +54,9 @@ namespace HetsCommon
         /// <returns></returns>
         public static DateTime ConvertUtcToPacificTime(DateTime utcDate)
         {
-            var date = ConvertTimeFromUtc(utcDate, VancouverTimeZone);
-
-            if (date != null)
-                return (DateTime)date;
-
-            date = ConvertTimeFromUtc(utcDate, PacificTimeZone);
-
-            if (date != null)
-                return (DateTime)date;
-
-            return utcDate;
+            return ConvertTimeFromUtc(utcDate, VancouverTimeZone)
+                ?? ConvertTimeFromUtc(utcDate, PacificTimeZone)
+                ?? utcDate;
         }
 
         private static DateTime? ConvertTimeFromUtc(DateTime date, string timeZoneId)
@@ -68,17 +74,15 @@ namespace HetsCommon
 
         public static DateTime ConvertPacificToUtcTime(DateTime pstDate)
         {
-            var date = ConvertTimeToUtc(pstDate, VancouverTimeZone);
+            return ConvertTimeToUtc(pstDate, VancouverTimeZone) 
+                ?? ConvertTimeToUtc(pstDate, PacificTimeZone) 
+                ?? AsUTC(pstDate);
+        }
 
-            if (date != null)
-                return (DateTime)date;
-
-            date = ConvertTimeToUtc(pstDate, PacificTimeZone);
-
-            if (date != null)
-                return (DateTime)date;
-
-            return pstDate;
+        public static DateTime AsUTC(DateTime dt)
+        {
+            return new DateTime(
+                dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, dt.Microsecond, DateTimeKind.Utc);
         }
 
         private static DateTime? ConvertTimeToUtc(DateTime date, string timeZoneId)
@@ -96,8 +100,10 @@ namespace HetsCommon
 
         public static (DateTime utcDateFrom, DateTime utcDateTo) GetUtcDateRange(DateTime pstDateFrom, DateTime pstDateTo)
         {
-            pstDateFrom = pstDateFrom.Date;
-            pstDateTo = pstDateTo.Date.AddDays(1).AddSeconds(-1);
+            pstDateFrom = new DateTime(pstDateFrom.Year, pstDateFrom.Month, pstDateFrom.Day, 0, 0, 0, DateTimeKind.Unspecified);
+            pstDateTo = new DateTime(pstDateTo.Year, pstDateTo.Month, pstDateTo.Day, 0, 0, 0, DateTimeKind.Unspecified)
+                .AddDays(1)
+                .AddSeconds(-1);
 
             var utcDateFrom = ConvertPacificToUtcTime(pstDateFrom);
             var utcDateTo = ConvertPacificToUtcTime(pstDateTo);

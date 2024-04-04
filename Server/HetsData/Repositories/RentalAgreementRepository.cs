@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using HetsCommon;
 
 namespace HetsData.Repositories
 {
@@ -125,15 +126,18 @@ namespace HetsData.Repositories
             }
 
             // fiscal year in the status table stores the "start" of the year
-            TimeRecordLite timeRecord = new TimeRecordLite();
+            TimeRecordLite timeRecord = new();
 
             if (fiscalYear != null)
             {
-                DateTime fiscalYearStart = new DateTime((int)fiscalYear, 4, 1);
+                DateTime fiscalYearStart = DateUtils.ConvertPacificToUtcTime(
+                    new DateTime((int)fiscalYear, 4, 1, 0, 0, 0, DateTimeKind.Unspecified));
 
                 timeRecord.TimeRecords = new List<TimeRecordDto>();
-                timeRecord.TimeRecords
-                    .AddRange(_mapper.Map<List<TimeRecordDto>>(agreement.HetTimeRecords.Where(x => x.WorkedDate >= fiscalYearStart)));
+                timeRecord.TimeRecords.AddRange(
+                    _mapper.Map<List<TimeRecordDto>>(
+                        agreement.HetTimeRecords.Where(x => 
+                            x.WorkedDate >= fiscalYearStart)));
             }
 
             timeRecord.EquipmentCode = equipmentCode;
@@ -176,93 +180,101 @@ namespace HetsData.Repositories
         /// <returns></returns>
         public RentalAgreementDocViewModel GetRentalAgreementReportModel(RentalAgreementDto agreement, string agreementCity)
         {
-            RentalAgreementDocViewModel docModel = new RentalAgreementDocViewModel();
+            RentalAgreementDocViewModel docModel = new();
 
-            if (agreement != null)
+            if (agreement is null) return docModel;
+
+            docModel.AgreementCity = agreementCity;
+            docModel.Equipment = agreement.Equipment;
+            docModel.EquipmentRate = agreement.EquipmentRate;
+            docModel.EstimateHours = agreement.EstimateHours;
+            docModel.EstimateStartWork = ConvertDate(agreement.EstimateStartWork);
+            docModel.Number = agreement.Number;
+            docModel.Project = agreement.Project;
+            docModel.RateComment = agreement.RateComment;
+            docModel.RatePeriod = agreement.RatePeriodType.Description;
+            docModel.AgreementCity = agreement.AgreementCity;
+            docModel.DatedOn = DateUtils.AsUTC(agreement.DatedOn ?? DateTime.UtcNow).ToString("MM/dd/yyyy");
+            docModel.DoingBusinessAs = agreement.Equipment.Owner.DoingBusinessAs;
+            docModel.EmailAddress = agreement.Equipment.Owner.PrimaryContact.EmailAddress;
+
+            agreement.Equipment.Owner.Address2 = FormatOwnerAddress(agreement);
+
+            // format the note
+            if (!string.IsNullOrEmpty(agreement.Note))
             {
-                docModel.AgreementCity = agreementCity;
-                docModel.Equipment = agreement.Equipment;
-                docModel.EquipmentRate = agreement.EquipmentRate;
-                docModel.EstimateHours = agreement.EstimateHours;
-                docModel.EstimateStartWork = ConvertDate(agreement.EstimateStartWork);
-                docModel.Number = agreement.Number;
-                docModel.Project = agreement.Project;
-                docModel.RateComment = agreement.RateComment;
-                docModel.RatePeriod = agreement.RatePeriodType.Description;
-                docModel.AgreementCity = agreement.AgreementCity;
-                docModel.DatedOn = (agreement.DatedOn ?? DateTime.UtcNow).ToString("MM/dd/yyyy");
-                docModel.DoingBusinessAs = agreement.Equipment.Owner.DoingBusinessAs;
-                docModel.EmailAddress = agreement.Equipment.Owner.PrimaryContact.EmailAddress;
+                string temp = Regex.Replace(agreement.Note, @"\n", "<BR>");
+                string[] tempArray = temp.Split("<BR>");
 
-                // format owner address
-                string tempAddress = agreement.Equipment.Owner.Address2;
+                docModel.Note = new List<NoteLine>();
 
-                if (string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.City))
-                    tempAddress = $"{agreement.Equipment.Owner.City}";
-
-                if (!string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.City) && agreement.Equipment.Owner.City.Trim() != tempAddress.Trim())
-                    tempAddress = $"{tempAddress}, {agreement.Equipment.Owner.City}";
-
-                if (string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.Province))
-                    tempAddress = $"{agreement.Equipment.Owner.Province}";
-
-                if (!string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.Province))
-                    tempAddress = $"{tempAddress}, {agreement.Equipment.Owner.Province}";
-
-                if (string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.PostalCode))
-                    tempAddress = $"{agreement.Equipment.Owner.PostalCode}";
-
-                if (!string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.PostalCode))
-                    tempAddress = $"{tempAddress}  {agreement.Equipment.Owner.PostalCode}";
-
-                agreement.Equipment.Owner.Address2 = tempAddress;
-
-                // format the note
-                if (!string.IsNullOrEmpty(agreement.Note))
+                foreach (string row in tempArray)
                 {
-                    string temp = Regex.Replace(agreement.Note, @"\n", "<BR>");
-                    string[] tempArray = temp.Split("<BR>");
-
-                    docModel.Note = new List<NoteLine>();
-
-                    foreach (string row in tempArray)
-                    {
-                        NoteLine line = new NoteLine { Line = row };
-                        docModel.Note.Add(line);
-                    }
+                    NoteLine line = new() { Line = row };
+                    docModel.Note.Add(line);
                 }
-
-                // ensure they are ordered the way they were added
-                docModel.RentalAgreementConditions = agreement.RentalAgreementConditions
-                    .OrderBy(x => x.RentalAgreementConditionId)
-                    .ToList();
-
-                docModel.RentalAgreementRates = agreement.RentalAgreementRates.Where(x => x.Active).ToList();
-                docModel.Status = agreement.RentalAgreementStatusType.Description;
-                docModel.ConditionsPresent = agreement.RentalAgreementConditions.Count > 0;
-
-                foreach (var condition in docModel.RentalAgreementConditions)
-                {
-                    if (!string.IsNullOrEmpty(condition.Comment))
-                    {
-                        condition.ConditionName = condition.Comment;
-                    }
-                }
-
-                docModel = CalculateTotals(docModel);
-
-                // classification (Rental Agreement)
-                docModel.Classification = $"23010-30/{agreement.Number}";
             }
+
+            // ensure they are ordered the way they were added
+            docModel.RentalAgreementConditions = agreement.RentalAgreementConditions
+                .OrderBy(x => x.RentalAgreementConditionId)
+                .ToList();
+
+            docModel.RentalAgreementRates = agreement.RentalAgreementRates.Where(x => x.Active).ToList();
+            docModel.Status = agreement.RentalAgreementStatusType.Description;
+            docModel.ConditionsPresent = agreement.RentalAgreementConditions.Count > 0;
+
+            foreach (var condition in docModel.RentalAgreementConditions)
+            {
+                if (!string.IsNullOrEmpty(condition.Comment))
+                {
+                    condition.ConditionName = condition.Comment;
+                }
+            }
+
+            docModel = CalculateTotals(docModel);
+
+            // classification (Rental Agreement)
+            docModel.Classification = $"23010-30/{agreement.Number}";
 
             return docModel;
         }
 
-        private string ConvertDate(DateTime? dateObject)
+        private static string FormatOwnerAddress(RentalAgreementDto agreement)
+        {
+            // format owner address
+            string tempAddress = agreement.Equipment.Owner.Address2;
+
+            if (string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.City))
+                tempAddress = $"{agreement.Equipment.Owner.City}";
+
+            if (!string.IsNullOrEmpty(tempAddress)
+                && !string.IsNullOrEmpty(agreement.Equipment.Owner.City)
+                && agreement.Equipment.Owner.City.Trim() != tempAddress.Trim())
+            {
+                tempAddress = $"{tempAddress}, {agreement.Equipment.Owner.City}";
+            }
+
+            if (string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.Province))
+                tempAddress = $"{agreement.Equipment.Owner.Province}";
+
+            if (!string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.Province))
+                tempAddress = $"{tempAddress}, {agreement.Equipment.Owner.Province}";
+
+            if (string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.PostalCode))
+                tempAddress = $"{agreement.Equipment.Owner.PostalCode}";
+
+            if (!string.IsNullOrEmpty(tempAddress) && !string.IsNullOrEmpty(agreement.Equipment.Owner.PostalCode))
+                tempAddress = $"{tempAddress}  {agreement.Equipment.Owner.PostalCode}";
+
+            return tempAddress;
+        }
+
+        private static string ConvertDate(DateTime? dateObject)
         {
             string result = "";
 
-            if (dateObject != null)
+            if (dateObject is DateTime dateObj)
             {
                 // since the PDF template is raw HTML and won't convert a date object, we must adjust the time zone here
                 TimeZoneInfo tzi;
@@ -289,18 +301,7 @@ namespace HetsData.Repositories
                     }
                 }
 
-                DateTime dt;
-
-                if (tzi != null)
-                {
-                    dt = TimeZoneInfo.ConvertTime((DateTime)dateObject, tzi);
-
-                }
-                else
-                {
-                    dt = (DateTime)dateObject;
-
-                }
+                DateTime dt = tzi != null ? TimeZoneInfo.ConvertTime(dateObj, tzi) : dateObj;
 
                 result = dt.ToString("yyyy-MMM-dd").ToUpper();
             }

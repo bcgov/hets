@@ -9,7 +9,6 @@ import OwnersAddDialog from './dialogs/OwnersAddDialog.jsx';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
-import store from '../store';
 
 import AddButtonContainer from '../components/ui/AddButtonContainer.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
@@ -91,7 +90,7 @@ class Owners extends React.Component {
   }
 
   fetch = () => {
-    Api.searchOwners(this.buildSearchParams());
+    this.props.dispatch(Api.searchOwners(this.buildSearchParams()));
   };
 
   search = () => {
@@ -107,14 +106,14 @@ class Owners extends React.Component {
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
-      store.dispatch({ type: Action.UPDATE_OWNERS_SEARCH, owners: this.state.search });
-      store.dispatch({ type: Action.CLEAR_OWNERS });
+      this.props.dispatch({ type: Action.UPDATE_OWNERS_SEARCH, owners: this.state.search });
+      this.props.dispatch({ type: Action.CLEAR_OWNERS });
     });
   };
 
   updateSearchState = (state, callback) => {
     this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } } }, () => {
-      store.dispatch({ type: Action.UPDATE_OWNERS_SEARCH, owners: this.state.search });
+      this.props.dispatch({ type: Action.UPDATE_OWNERS_SEARCH, owners: this.state.search });
       if (callback) {
         callback();
       }
@@ -123,7 +122,7 @@ class Owners extends React.Component {
 
   updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
-      store.dispatch({ type: Action.UPDATE_OWNERS_UI, owners: this.state.ui });
+      this.props.dispatch({ type: Action.UPDATE_OWNERS_UI, owners: this.state.ui });
       if (callback) {
         callback();
       }
@@ -316,15 +315,15 @@ class Owners extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    ownerList: state.models.owners,
-    localAreas: state.lookups.localAreas,
-    favourites: state.models.favourites.owner,
-    search: state.search.owners,
-    ui: state.ui.owners,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  ownerList: state.models.owners,
+  localAreas: state.lookups.localAreas,
+  favourites: state.models.favourites.owner,
+  search: state.search.owners,
+  ui: state.ui.owners,
+});
 
-export default connect(mapStateToProps)(Owners);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(Owners);

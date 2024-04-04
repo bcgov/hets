@@ -127,8 +127,6 @@ namespace HetsReport
                                     }
 
                                     wordDocument = (WordprocessingDocument)listDocument.Clone(documentStream);
-
-                                    listDocument.Close();
                                     listDocument.Dispose();
                                 }
                                 else
@@ -176,7 +174,6 @@ namespace HetsReport
 
                                     AlternativeFormatImportPart chunk = mainPart.AddAlternativeFormatImportPart(AlternativeFormatImportPartType.WordprocessingML, altChunkId);
 
-                                    listDocument.Close();
                                     listDocument.Dispose();
 
                                     listStream.Seek(0, SeekOrigin.Begin);
@@ -194,7 +191,6 @@ namespace HetsReport
                             }
                         }
 
-                        wordTemplate.Close();
                         wordTemplate.Dispose();
                         templateStream.Close();
                     }
@@ -205,7 +201,6 @@ namespace HetsReport
                     wordDocument.CompressionOption = CompressionOption.Maximum;
                     SecurityHelper.PasswordProtect(wordDocument, logErrorAction);
 
-                    wordDocument.Close();
                     wordDocument.Dispose();
 
                     documentStream.Seek(0, SeekOrigin.Begin);

@@ -9,7 +9,6 @@ import _ from 'lodash';
 import * as Action from '../actionTypes';
 import * as Api from '../api';
 import * as Constant from '../constants';
-import store from '../store';
 
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SearchBar from '../components/ui/SearchBar.jsx';
@@ -54,14 +53,14 @@ class Roles extends React.Component {
 
   fetch = () => {
     this.setState({ loading: true });
-    Api.searchRoles().finally(() => {
+    this.props.dispatch(Api.searchRoles()).finally(() => {
       this.setState({ loading: false });
     });
   };
 
   updateSearchState = (state, callback) => {
     this.setState({ search: { ...this.state.search, ...state } }, () => {
-      store.dispatch({
+      this.props.dispatch({
         type: Action.UPDATE_ROLES_SEARCH,
         roles: this.state.search,
       });
@@ -73,7 +72,7 @@ class Roles extends React.Component {
 
   updateUIState = (state, callback) => {
     this.setState({ ui: { ...this.state.ui, ...state } }, () => {
-      store.dispatch({ type: Action.UPDATE_ROLES_UI, roles: this.state.ui });
+      this.props.dispatch({ type: Action.UPDATE_ROLES_UI, roles: this.state.ui });
       if (callback) {
         callback();
       }
@@ -81,7 +80,7 @@ class Roles extends React.Component {
   };
 
   delete = (role) => {
-    Api.deleteRole(role).then(() => {
+    this.props.dispatch(Api.deleteRole(role)).then(() => {
       this.fetch();
     });
   };
@@ -201,13 +200,13 @@ class Roles extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    currentUser: state.user,
-    roles: state.models.roles,
-    search: state.search.roles,
-    ui: state.ui.roles,
-  };
-}
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  roles: state.models.roles,
+  search: state.search.roles,
+  ui: state.ui.roles,
+});
 
-export default connect(mapStateToProps)(Roles);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(Roles);

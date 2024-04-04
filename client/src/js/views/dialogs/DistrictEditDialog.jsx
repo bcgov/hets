@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import _ from 'lodash';
 import { FormGroup, FormText } from 'react-bootstrap';
 
@@ -84,7 +85,8 @@ class DistrictEditDialog extends React.Component {
           isPrimary: this.state.isPrimary,
         };
 
-        const promise = this.state.isNew ? Api.addUserDistrict(district) : Api.editUserDistrict(district);
+        const promise = this.state.isNew ? 
+          this.props.dispatch(Api.addUserDistrict(district)) : this.props.dispatch(Api.editUserDistrict(district));
 
         promise.then((response) => {
           this.setState({ isSaving: false });
@@ -147,4 +149,6 @@ class DistrictEditDialog extends React.Component {
   }
 }
 
-export default DistrictEditDialog;
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(null, mapDispatchToProps)(DistrictEditDialog);

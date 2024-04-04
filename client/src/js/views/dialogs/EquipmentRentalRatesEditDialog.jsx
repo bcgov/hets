@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { Container, Row, Col } from 'react-bootstrap';
 import { FormGroup, FormText, FormLabel } from 'react-bootstrap';
 
@@ -85,7 +86,7 @@ class EquipmentRentalRatesEditDialog extends React.Component {
           rateComment: this.state.rateComment,
         };
 
-        Api.updateRentalAgreement(rentalAgreement).then(() => {
+        this.props.dispatch(Api.updateRentalAgreement(rentalAgreement)).then(() => {
           if (this.props.onSave) {
             this.props.onSave();
           }
@@ -167,4 +168,6 @@ class EquipmentRentalRatesEditDialog extends React.Component {
   }
 }
 
-export default EquipmentRentalRatesEditDialog;
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(null, mapDispatchToProps)(EquipmentRentalRatesEditDialog);

@@ -34,7 +34,7 @@ namespace HetsData.Entities
 
         private List<Claim> GetClaims()
         {
-            List<Claim> claims = new List<Claim> { new Claim(ClaimTypes.Name, SmUserId) };
+            List<Claim> claims = new() { new Claim(ClaimTypes.Name, SmUserId) };
 
             if (!string.IsNullOrEmpty(Surname))
                 claims.Add(new Claim(ClaimTypes.Surname, Surname));
@@ -83,7 +83,7 @@ namespace HetsData.Entities
 
         private List<HetRole> GetActiveRoles()
         {
-            List<HetRole> roles = new List<HetRole>();
+            List<HetRole> roles = new();
 
             if (HetUserRoles == null)
             {

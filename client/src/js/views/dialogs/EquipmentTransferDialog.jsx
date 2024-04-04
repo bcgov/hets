@@ -55,7 +55,7 @@ class EquipmentTransferDialog extends React.Component {
   }
 
   componentDidMount() {
-    Api.getOwnersLite();
+    this.props.dispatch(Api.getOwnersLite());
   }
 
   updateState = (state, callback) => {
@@ -324,7 +324,7 @@ class EquipmentTransferDialog extends React.Component {
         transferFunc = function () {
           if (this.validateSelectOwner()) {
             var ownerId = this.getOwner(this.state.donorOwnerCode).id;
-            Api.getOwnerEquipment(ownerId);
+            this.props.dispatch(Api.getOwnerEquipment(ownerId));
 
             this.setState({ stage: STAGE_SELECT_EQUIPMENT });
           }
@@ -354,7 +354,7 @@ class EquipmentTransferDialog extends React.Component {
           var equipment = _.filter(this.props.equipment.data, (x) => _.includes(this.state.selectedEquipmentIds, x.id));
           var includeSeniority = this.state.seniorityOption === OPTION_EQUIPMENT_AND_SENIORITY.id;
 
-          Api.transferEquipment(donorOwnerId, recipientOwnerId, equipment, includeSeniority)
+          this.props.dispatch(Api.transferEquipment(donorOwnerId, recipientOwnerId, equipment, includeSeniority))
             .catch((error) => {
               if (
                 error.status === 400 &&
@@ -415,11 +415,11 @@ class EquipmentTransferDialog extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    equipment: state.models.ownerEquipment,
-    owners: state.lookups.owners.lite,
-  };
-}
+const mapStateToProps = (state) => ({
+  equipment: state.models.ownerEquipment,
+  owners: state.lookups.owners.lite,
+});
 
-export default connect(mapStateToProps)(EquipmentTransferDialog);
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(EquipmentTransferDialog);
