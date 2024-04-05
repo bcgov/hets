@@ -412,7 +412,7 @@ export default function modelsReducer(state = DEFAULT_MODELS, action) {
 
     case Action.ADD_PROJECT:
     case Action.UPDATE_PROJECT: {
-      const projectId = action.project.id;
+      const projectId = action.project !== undefined? action.project.id: action.updatedProject.id;
       const project = {
         notes: [],
         ...state.project[projectId],
