@@ -142,6 +142,9 @@ namespace HetsApi.Helpers
                     updUser.AppLastUpdateUserGuid = guid;
                     updUser.AppLastUpdateUserid = username;
                     updUser.AppLastUpdateTimestamp = DateTime.UtcNow;
+                    updUser.AppCreateTimestamp = updUser.AppCreateTimestamp.ToUniversalTime();
+                    updUser.DbCreateTimestamp = updUser.DbCreateTimestamp.ToUniversalTime();
+                    updUser.DbLastUpdateTimestamp = updUser.DbLastUpdateTimestamp.ToUniversalTime();
 
                     context.HetUsers.Update(updUser);
 
