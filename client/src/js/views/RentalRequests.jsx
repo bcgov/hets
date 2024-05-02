@@ -216,7 +216,12 @@ class RentalRequests extends React.Component {
 
   closeAddDialog = () => {
     this.setState({ showAddDialog: false });
+    this.fetch();
   };
+
+
+
+
 
   newRentalAdded = async (rentalRequest) => {
     await this.props.dispatch(Log.rentalRequestAdded(rentalRequest));
@@ -373,7 +378,7 @@ class RentalRequests extends React.Component {
                         CUSTOM,
                       ]}
                     />
-                    <Button id="search-button" variant="primary" type="submit">
+                    <Button id="search-button" variant="primary" type="submit" >
                       Search
                     </Button>
                     <Button className="btn-custom" id="clear-search-button" onClick={this.clearSearch}>
