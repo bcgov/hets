@@ -216,10 +216,15 @@ class RentalRequests extends React.Component {
 
   closeAddDialog = () => {
     this.setState({ showAddDialog: false });
-    this.fetch();
   };
 
 
+  handleNewAddedRequestId = (id) => {
+    this.setState({ newAddedRequestId: id });
+    const currentPathname = this.props.location.pathname;
+    const newUrl = `${currentPathname}/${id}`;
+    this.props.history.push(newUrl);
+  };
 
 
 
@@ -482,6 +487,7 @@ class RentalRequests extends React.Component {
             viewOnly={this.state.addViewOnly}
             onRentalAdded={this.newRentalAdded}
             onClose={this.closeAddDialog}
+            onNewRentalQuestIdGenerated={this.handleNewAddedRequestId}
           />
         )}
       </div>
