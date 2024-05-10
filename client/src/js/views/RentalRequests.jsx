@@ -218,6 +218,16 @@ class RentalRequests extends React.Component {
     this.setState({ showAddDialog: false });
   };
 
+
+  handleNewAddedRequestId = (id) => {
+    this.setState({ newAddedRequestId: id });
+    const currentPathname = this.props.location.pathname;
+    const newUrl = `${currentPathname}/${id}`;
+    this.props.history.push(newUrl);
+  };
+
+
+
   newRentalAdded = async (rentalRequest) => {
     await this.props.dispatch(Log.rentalRequestAdded(rentalRequest));
     this.props.history.push(`${Constant.RENTAL_REQUESTS_PATHNAME}/${rentalRequest.id}`);
@@ -373,7 +383,7 @@ class RentalRequests extends React.Component {
                         CUSTOM,
                       ]}
                     />
-                    <Button id="search-button" variant="primary" type="submit">
+                    <Button id="search-button" variant="primary" type="submit" >
                       Search
                     </Button>
                     <Button className="btn-custom" id="clear-search-button" onClick={this.clearSearch}>
@@ -477,6 +487,7 @@ class RentalRequests extends React.Component {
             viewOnly={this.state.addViewOnly}
             onRentalAdded={this.newRentalAdded}
             onClose={this.closeAddDialog}
+            onNewRentalQuestIdGenerated={this.handleNewAddedRequestId}
           />
         )}
       </div>

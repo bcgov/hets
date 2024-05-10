@@ -205,8 +205,9 @@ class RentalRequestsAddDialog extends React.Component {
 
         try {
           const response = await dispatch(Api.addRentalRequest(request, this.props.viewOnly));
-          this.setState({ isSaving: false });
+          this.setState({ isSaving: false, newAddedRequestId: response.id});
           this.props.onRentalAdded(response);
+          this.props.onNewRentalQuestIdGenerated(response.id);
           this.props.onClose();
         } catch (error) {
           this.setState({ isSaving: false });
