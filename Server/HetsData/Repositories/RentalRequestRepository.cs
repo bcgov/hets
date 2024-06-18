@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using HetsCommon;
 using System.Collections.Generic;
+using Hangfire.Server;
 
 namespace HetsData.Repositories
 {
@@ -226,10 +227,13 @@ namespace HetsData.Repositories
                 var lastCalledInGroup = sortedSeniorityList.Where(x => x.LastCalled).ToList();
                 var dicBlockCount = new Dictionary<int?, int>();
                 var dicBlockFirstItem = new Dictionary<int?, string>();
+                
                 var dicBlockItemsBefore = new Dictionary<int?, int>();
                 var dicBlockItemsAfter = new Dictionary<int?, int>();
                 var dicBlockBeforeItems = new Dictionary<int?, List<HetRentalRequestSeniorityList>>();
                 var dicBlockAfterItems = new Dictionary<int?, List<HetRentalRequestSeniorityList>>();
+                var dicBlockAllItems = new Dictionary<int?, List<HetRentalRequestSeniorityList>>();
+
                 for (int i = 0; i < lastCalledInGroup.Count; i++)
                 {
                     var itemsCount = sortedList.Where(x => x.BlockNumber == lastCalledInGroup[i].BlockNumber).ToList().Count;
@@ -245,7 +249,7 @@ namespace HetsData.Repositories
                 }
 
                 var groupedByBlock = sortedSeniorityList.GroupBy(item => item.BlockNumber);
-
+                Dictionary<string, int> orders = new Dictionary<string, int>();
                 foreach (var block in groupedByBlock)
                 {
                     int countBefore = 0;
@@ -259,18 +263,19 @@ namespace HetsData.Repositories
                         if (item.LastCalled == true)
                         {
                             foundTrue = true;
+                            continue;
                         }
                         else
                         {
                             if (foundTrue)
                             {
-                                countAfter++;
-                                itemsAfter.Add(item);
+                                countBefore++;
+                                itemsBefore.Add(item);
                             }
                             else
                             {
-                                countBefore++;
-                                itemsBefore.Add(item);
+                                countAfter++;
+                                itemsAfter.Add(item);
                             }
                         }
                     }
@@ -280,28 +285,41 @@ namespace HetsData.Repositories
                     dicBlockAfterItems.Add(block.Key, itemsAfter);
                 }
 
-                for (int i = 0; i < sortedList.Count; i++)
+                int tempOrder = 0;
+
+                foreach (var kvp in dicBlockBeforeItems)
                 {
-                    if (dicBlockFirstItem.Keys.Contains(sortedList[i].BlockNumber))
+                    int? key = kvp.Key;
+                    var items = kvp.Value;
+
+                    foreach (var item in items)
                     {
-                        var order = sortedList[i].RotationListSortOrder;
+                        tempOrder++;
+                        orders.Add(item.EquipmentCode, tempOrder);
 
-                        if (dicBlockBeforeItems[sortedList[i].BlockNumber].Where(x => x.EquipmentCode == sortedList[i].Equipment.EquipmentCode).ToList().Count != 0)
-                        {
-                            order = order + dicBlockItemsAfter[sortedList[i].BlockNumber];
-                        }
-
-                        if (dicBlockAfterItems[sortedList[i].BlockNumber].Where(x => x.EquipmentCode == sortedList[i].Equipment.EquipmentCode).ToList().Count != 0)
-                        {
-                            order = order - dicBlockItemsBefore[sortedList[i].BlockNumber] + 1;
-                        }
-                        sortedList[i].RotationListSortOrder = order;
                     }
-                    else
+
+                    foreach (var item in dicBlockAfterItems[key])
                     {
-                        continue;
+                        tempOrder++;
+                        orders.Add(item.EquipmentCode, tempOrder);
+                    }
+
+                    // last called item should be at the end of the group
+                    var lastCalled = sortedSeniorityList.Where(x => x.BlockNumber == key && x.LastCalled).FirstOrDefault();
+                    if (lastCalled != null)
+                    {
+                        tempOrder++;
+                        orders.Add(lastCalled.EquipmentCode, tempOrder);
                     }
                 }
+
+                for (int i = 0; i < sortedList.Count; i++)
+                {
+                    var currentOrder = orders.Where(x => x.Key == sortedList[i].Equipment.EquipmentCode).FirstOrDefault().Value;
+                    sortedList[i].RotationListSortOrder = currentOrder;
+                }
+
             }
             catch (Exception ex)
             {
