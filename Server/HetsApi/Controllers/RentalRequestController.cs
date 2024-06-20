@@ -1199,7 +1199,10 @@ namespace HetsApi.Controllers
             }
             // TH-112626
             listRecord.SeniorityList = listRecord.SeniorityList
-                .OrderByDescending(x => Convert.ToDecimal(x.Seniority))
+                // TH-115131
+                //.OrderByDescending(x => Convert.ToDecimal(x.Seniority))
+                .OrderBy(x => x.Block)
+                .ThenByDescending(x => Convert.ToDecimal(x.Seniority))
                 .ToList();
             string documentName = $"SeniorityList-{DateTime.Now:yyyy-MM-dd}{(counterCopy ? "-(CounterCopy)" : "")}.docx";
             byte[] document = SeniorityList.GetSeniorityList(seniorityList, documentName, counterCopy, (errMessage, ex) => {

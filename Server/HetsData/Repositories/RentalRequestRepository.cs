@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
 using HetsCommon;
+using System.Collections.Generic;
+using Hangfire.Server;
 
 namespace HetsData.Repositories
 {
@@ -213,6 +215,117 @@ namespace HetsData.Repositories
             {
                 sortedList[i].RotationListSortOrder = i + 1;
             }
+
+            // TH-115131
+            // Recalculate the rotationListSortOrder based on LastCall
+            try
+            {
+                var sortedSeniorityList = request.HetRentalRequestSeniorityLists
+                .OrderBy(x => x.BlockNumber)
+                .ThenByDescending(x => Convert.ToDecimal(x.Seniority))
+                .ToList();
+                var lastCalledInGroup = sortedSeniorityList.Where(x => x.LastCalled).ToList();
+                var dicBlockCount = new Dictionary<int?, int>();
+                var dicBlockFirstItem = new Dictionary<int?, string>();
+                
+                var dicBlockItemsBefore = new Dictionary<int?, int>();
+                var dicBlockItemsAfter = new Dictionary<int?, int>();
+                var dicBlockBeforeItems = new Dictionary<int?, List<HetRentalRequestSeniorityList>>();
+                var dicBlockAfterItems = new Dictionary<int?, List<HetRentalRequestSeniorityList>>();
+                var dicBlockAllItems = new Dictionary<int?, List<HetRentalRequestSeniorityList>>();
+
+                for (int i = 0; i < lastCalledInGroup.Count; i++)
+                {
+                    var itemsCount = sortedList.Where(x => x.BlockNumber == lastCalledInGroup[i].BlockNumber).ToList().Count;
+                    dicBlockCount.Add(lastCalledInGroup[i].BlockNumber, itemsCount);
+
+                }
+                for (int i = 1; i < sortedSeniorityList.Count; i++)
+                {
+                    if (sortedSeniorityList[i - 1].BlockNumber == sortedSeniorityList[i].BlockNumber && sortedSeniorityList[i - 1].LastCalled == true && sortedSeniorityList[i].LastCalled == false)
+                    {
+                        dicBlockFirstItem.Add(sortedSeniorityList[i].BlockNumber, sortedSeniorityList[i].EquipmentCode);
+                    }
+                }
+
+                var groupedByBlock = sortedSeniorityList.GroupBy(item => item.BlockNumber);
+                Dictionary<string, int> orders = new Dictionary<string, int>();
+                foreach (var block in groupedByBlock)
+                {
+                    int countBefore = 0;
+                    int countAfter = 0;
+                    bool foundTrue = false;
+                    var itemsBefore = new List<HetRentalRequestSeniorityList>();
+                    var itemsAfter = new List<HetRentalRequestSeniorityList>();
+
+                    foreach (var item in block)
+                    {
+                        if (item.LastCalled == true)
+                        {
+                            foundTrue = true;
+                            continue;
+                        }
+                        else
+                        {
+                            if (foundTrue)
+                            {
+                                countBefore++;
+                                itemsBefore.Add(item);
+                            }
+                            else
+                            {
+                                countAfter++;
+                                itemsAfter.Add(item);
+                            }
+                        }
+                    }
+                    dicBlockItemsBefore.Add(block.Key, countBefore);
+                    dicBlockItemsAfter.Add(block.Key, countAfter);
+                    dicBlockBeforeItems.Add(block.Key, itemsBefore);
+                    dicBlockAfterItems.Add(block.Key, itemsAfter);
+                }
+
+                int tempOrder = 0;
+
+                foreach (var kvp in dicBlockBeforeItems)
+                {
+                    int? key = kvp.Key;
+                    var items = kvp.Value;
+
+                    foreach (var item in items)
+                    {
+                        tempOrder++;
+                        orders.Add(item.EquipmentCode, tempOrder);
+
+                    }
+
+                    foreach (var item in dicBlockAfterItems[key])
+                    {
+                        tempOrder++;
+                        orders.Add(item.EquipmentCode, tempOrder);
+                    }
+
+                    // last called item should be at the end of the group
+                    var lastCalled = sortedSeniorityList.Where(x => x.BlockNumber == key && x.LastCalled).FirstOrDefault();
+                    if (lastCalled != null)
+                    {
+                        tempOrder++;
+                        orders.Add(lastCalled.EquipmentCode, tempOrder);
+                    }
+                }
+
+                for (int i = 0; i < sortedList.Count; i++)
+                {
+                    var currentOrder = orders.Where(x => x.Key == sortedList[i].Equipment.EquipmentCode).FirstOrDefault().Value;
+                    sortedList[i].RotationListSortOrder = currentOrder;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Rotation list order calculation error: " + ex.Message);
+            }
+            
             request.HetRentalRequestRotationLists = sortedList;
             return _mapper.Map<RentalRequestDto>(request);
         }
