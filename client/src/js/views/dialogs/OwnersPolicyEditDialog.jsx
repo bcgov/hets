@@ -29,7 +29,7 @@ class OwnersPolicyEditDialog extends React.Component {
     this.state = {
       workSafeBCPolicyNumber: owner.workSafeBCPolicyNumber || '',
       workSafeBCExpiryDate: owner.workSafeBCExpiryDate || '',
-      cglCompanyName: owner.cglCompanyName || '',
+      cglCompany: owner.cglCompany || '',
       cglPolicyNumber: owner.cglPolicyNumber || '',
       cglEndDate: owner.cglEndDate || '',
 
@@ -52,7 +52,7 @@ class OwnersPolicyEditDialog extends React.Component {
     if (this.state.workSafeBCExpiryDate !== owner.workSafeBCExpiryDate) {
       return true;
     }
-    if (this.state.cglCompanyName !== owner.cglCompanyName) {
+    if (this.state.cglCompany !== owner.cglCompany) {
       return true;
     }
     if (this.state.cglPolicyNumber !== owner.cglPolicyNumber) {
@@ -99,7 +99,7 @@ class OwnersPolicyEditDialog extends React.Component {
           ...this.props.owner,
           workSafeBCPolicyNumber: this.state.workSafeBCPolicyNumber,
           workSafeBCExpiryDate: toZuluTime(this.state.workSafeBCExpiryDate),
-          cglCompanyName: this.state.cglCompanyName,
+          cglCompany: this.state.cglCompany,
           cglPolicyNumber: this.state.cglPolicyNumber,
           cglEndDate: toZuluTime(this.state.cglEndDate),
         };
@@ -155,11 +155,11 @@ class OwnersPolicyEditDialog extends React.Component {
         </Row>
         <Row>
           <Col xs={12}>
-            <FormGroup controlId="cglCompanyName">
+            <FormGroup controlId="cglCompany">
               <FormLabel>CGL Insurance Company</FormLabel>
               <FormInputControl
                 type="text"
-                value={this.state.cglCompanyName}
+                value={this.state.cglCompany}
                 updateState={this.updateState}
                 maxLength={Constant.MAX_LENGTH_CGL_COMPANY_NAME}
               />

@@ -505,7 +505,7 @@ class OwnersDetail extends React.Component {
                       </Col>
                       <Col lg={4} md={6} sm={12} xs={12}>
                         <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="CGL Insurance Company">
-                          {owner.cglCompanyName}
+                          {owner.cglCompany}
                         </ColDisplay>
                       </Col>
                       <Col lg={4} md={6} sm={12} xs={12}>
