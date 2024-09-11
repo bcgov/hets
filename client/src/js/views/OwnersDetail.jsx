@@ -498,7 +498,7 @@ class OwnersDetail extends React.Component {
                           {owner.workSafeBCPolicyNumber}
                         </ColDisplay>
                       </Col>
-                      <Col lg={4} md={6} sm={12} xs={12}>
+                      <Col lg={4} md={6} sm={12} xs={12} hidden>
                         <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="WCB Expiry Date">
                           {formatDateTime(owner.workSafeBCExpiryDate, Constant.DATE_YEAR_SHORT_MONTH_DAY)}
                         </ColDisplay>
@@ -513,7 +513,7 @@ class OwnersDetail extends React.Component {
                           {owner.cglPolicyNumber}
                         </ColDisplay>
                       </Col>
-                      <Col lg={4} md={6} sm={12} xs={12}>
+                      <Col lg={4} md={6} sm={12} xs={12} hidden>
                         <ColDisplay labelProps={{ xs: 6 }} fieldProps={{ xs: 6 }} label="CGL Policy End Date">
                           {formatDateTime(owner.cglEndDate, Constant.DATE_YEAR_SHORT_MONTH_DAY)}
                         </ColDisplay>

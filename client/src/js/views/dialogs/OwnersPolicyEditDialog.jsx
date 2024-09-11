@@ -125,7 +125,7 @@ class OwnersPolicyEditDialog extends React.Component {
         onSubmit={this.formSubmitted}
       >
         <Row>
-          <Col xs={6}>
+          <Col xs={12}>
             <FormGroup controlId="workSafeBCPolicyNumber">
               <FormLabel>
                 WCB Number <sup>*</sup>
@@ -141,7 +141,7 @@ class OwnersPolicyEditDialog extends React.Component {
             </FormGroup>
           </Col>
           <Col xs={6}>
-            <FormGroup controlId="workSafeBCExpiryDate">
+            <FormGroup controlId="workSafeBCExpiryDate" hidden>
               <FormLabel>WCB Expiry Date</FormLabel>
               <DateControl
                 id="workSafeBCExpiryDate"
@@ -167,14 +167,14 @@ class OwnersPolicyEditDialog extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col xs={6}>
+          <Col xs={12}>
             <FormGroup controlId="cglPolicyNumber">
               <FormLabel>CGL Policy Number</FormLabel>
               <FormInputControl type="text" value={this.state.cglPolicyNumber} updateState={this.updateState} />
             </FormGroup>
           </Col>
           <Col xs={6}>
-            <FormGroup controlId="cglEndDate">
+            <FormGroup controlId="cglEndDate" hidden>
               <FormLabel>CGL Policy End Date</FormLabel>
               <DateControl
                 id="cglEndDate"
