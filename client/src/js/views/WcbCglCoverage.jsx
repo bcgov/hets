@@ -12,15 +12,15 @@ import * as Constant from '../constants';
 
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SearchBar from '../components/ui/SearchBar.jsx';
-import DateControl from '../components/DateControl.jsx';
+// import DateControl from '../components/DateControl.jsx';
 import Favourites from '../components/Favourites.jsx';
 import Form from '../components/Form.jsx';
 import MultiDropdown from '../components/MultiDropdown.jsx';
 import SortTable from '../components/SortTable.jsx';
 import Spinner from '../components/Spinner.jsx';
 import PrintButton from '../components/PrintButton.jsx';
-
-import { formatDateTime, toZuluTime } from '../utils/date';
+// import { formatDateTime, toZuluTime } from '../utils/date';
+import { toZuluTime } from '../utils/date';
 
 class WcbCglCoverage extends React.Component {
   static propTypes = {
@@ -170,9 +170,9 @@ class WcbCglCoverage extends React.Component {
           { field: 'primaryContactNumber', title: 'Phone' },
           { field: 'primaryContactCell', title: 'Cell' },
           { field: 'wcbNumber', title: 'WCB Number' },
-          { field: 'wcbExpiryDate', title: 'WCB Expires' },
+          // { field: 'wcbExpiryDate', title: 'WCB Expires' },
           { field: 'cglNumber', title: 'CGL Policy' },
-          { field: 'cglExpiryDate', title: 'CGL Expires' },
+          // { field: 'cglExpiryDate', title: 'CGL Expires' },
         ]}
       >
         {_.map(ownersCoverage, (entry) => {
@@ -186,9 +186,9 @@ class WcbCglCoverage extends React.Component {
               <td>{entry.primaryContactNumber}</td>
               <td>{entry.primaryContactCell}</td>
               <td>{entry.wcbNumber}</td>
-              <td>{formatDateTime(entry.wcbExpiryDate, 'YYYY-MMM-DD')}</td>
+              {/* <td>{formatDateTime(entry.wcbExpiryDate, 'YYYY-MMM-DD')}</td> */}
               <td>{entry.cglNumber}</td>
-              <td>{formatDateTime(entry.cglExpiryDate, 'YYYY-MMM-DD')}</td>
+              {/* <td>{formatDateTime(entry.cglExpiryDate, 'YYYY-MMM-DD')}</td> */}
             </tr>
           );
         })}
@@ -261,7 +261,7 @@ class WcbCglCoverage extends React.Component {
                     updateState={this.updateSearchState}
                     showMaxItems={2}
                   />
-                  <DateControl
+                  {/* <DateControl
                     id="wcbExpiry"
                     date={this.state.search.wcbExpiry}
                     updateState={this.updateSearchState}
@@ -274,7 +274,7 @@ class WcbCglCoverage extends React.Component {
                     updateState={this.updateSearchState}
                     label="CGL Exp Before:"
                     title="CGL Expiry Before"
-                  />
+                  /> */}
                   <Button id="search-button" variant="primary" type="submit">
                     Search
                   </Button>
