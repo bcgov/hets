@@ -1,34 +1,30 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-class Main extends React.Component {
-  static propTypes = {
-    location: PropTypes.object,
-  };
+const Main = ({ location }) => {
+  const [path, setPath] = useState(location.pathname);
 
-  constructor(props) {
-    super(props);
+  useEffect(() => {
+    setPath(location.pathname);
+  }, [location.pathname]);
 
-    this.state = {
-      path: props.location.pathname,
-    };
-  }
+  return (
+    <div id="not-found-screen">
+      <h1>
+        Not found <span>:(</span>
+      </h1>
 
-  render() {
-    return (
-      <div id="not-found-screen">
-        <h1>
-          Not found <span>:(</span>
-        </h1>
+      <p>
+        Sorry, but the page you were trying to view ({path}) does not exist. You can try going to the{' '}
+        <Link to={'/'}>home</Link> page.
+      </p>
+    </div>
+  );
+};
 
-        <p>
-          Sorry, but the page you were trying to view ({this.state.path}) does not exist. You can try going to the{' '}
-          <Link to={'/'}>home</Link> page.
-        </p>
-      </div>
-    );
-  }
-}
+Main.propTypes = {
+  location: PropTypes.object,
+};
 
 export default Main;
