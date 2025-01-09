@@ -21,27 +21,32 @@ class Version extends React.Component {
     version: PropTypes.object,
   };
 
+  // Constructor to initialize the component state
   constructor(props) {
     super(props);
 
     this.state = {
-      loading: false,
-      showRawSection: false,
-      buildtime: '',
-      version: '',
-      commit: '',
+      loading: false,           // Indicates if the data is being loaded
+      showRawSection: false,    // Toggles visibility of raw version data
+      buildtime: '',            // Holds build time from local data
+      version: '',              // Holds version information from local data
+      commit: '',               // Holds commit hash from local data
     };
   }
 
+  // Component lifecycle method that runs when the component mounts
   componentDidMount() {
     this.setState({ loading: true });
-    this.props.dispatch(Api.getVersion()).finally(() => {
-      this.fetchLocal().finally(() => {
-        this.setState({ loading: false });
+    // Dispatching API request to get version info and then fetching local version info
+    this.props.dispatch(Api.getVersion())
+      .finally(() => {
+        this.fetchLocal().finally(() => {
+          this.setState({ loading: false });
+        });
       });
-    });
   }
 
+  // Fetch local version information from 'buildinfo.html'
   fetchLocal = async () => {
     try {
       const xhr = await this.props.dispatch(request('buildinfo.html', { silent: true }));
@@ -49,17 +54,19 @@ class Version extends React.Component {
         const parser = new DOMParser();
         const doc = parser.parseFromString(xhr.responseText, 'text/html');
 
+        // Setting the state with parsed build info
         this.setState({
           buildTime: doc.getElementById('buildtime').dataset.buildtime,
           version: doc.getElementById('version').textContent,
           commit: doc.getElementById('commit').textContent,
         });
       }
-    } catch(err) {
+    } catch (err) {
       console.error('Failed to find buildinfo: ', err);
-    };
+    }
   };
 
+  // Toggle visibility of raw version data
   showRaw = (e) => {
     if (this.state.showRawSection) {
       this.setState({ showRawSection: false });
@@ -70,6 +77,7 @@ class Version extends React.Component {
     }
   };
 
+  // Placeholder email function (currently not implemented)
   email = () => {};
 
   render() {
@@ -78,17 +86,20 @@ class Version extends React.Component {
         <PageHeader id="version-header">
           Version
           <div id="version-buttons" style={{ float: 'right' }}>
+            {/* Button for email (currently unimplemented) */}
             <Unimplemented>
               <Button className="mr-2 btn-custom" onClick={this.email}>
                 <FontAwesomeIcon icon="envelope" title="E-mail" />
               </Button>
             </Unimplemented>
+            {/* Print Button for version details */}
             <PrintButton />
           </div>
         </PageHeader>
 
         {(() => {
           if (this.state.loading) {
+            // Show spinner while loading version data
             return (
               <div style={{ textAlign: 'center' }}>
                 <Spinner />
@@ -96,17 +107,19 @@ class Version extends React.Component {
             );
           }
 
-          var applicationVersion = {};
+          // Retrieve version information from props (redux state)
+          let applicationVersion = {};
           if (this.props.version.applicationVersions && this.props.version.applicationVersions.length > 0) {
             applicationVersion = this.props.version.applicationVersions[0];
           }
-          var databaseVersion = {};
+          let databaseVersion = {};
           if (this.props.version.databaseVersions && this.props.version.databaseVersions.length > 0) {
             databaseVersion = this.props.version.databaseVersions[0];
           }
 
           return (
             <div id="version-details">
+              {/* Client Version Details */}
               <div className="well">
                 <h3>Client</h3>
                 <div className="clearfix">
@@ -124,6 +137,8 @@ class Version extends React.Component {
                   </ColDisplay>
                 </div>
               </div>
+
+              {/* Application Version Details */}
               <div className="well">
                 <h3>Application</h3>
                 <div className="clearfix">
@@ -150,6 +165,8 @@ class Version extends React.Component {
                   </ColDisplay>
                 </div>
               </div>
+
+              {/* Database Version Details */}
               <div className="well">
                 <h3>Database</h3>
                 <div className="clearfix">
@@ -170,9 +187,13 @@ class Version extends React.Component {
                   </ColDisplay>
                 </div>
               </div>
+
+              {/* Toggle raw version data visibility */}
               <Button className="btn-custom" onClick={this.showRaw}>
                 Show Raw Versions
               </Button>
+
+              {/* Raw version data (hidden initially) */}
               <div
                 style={{ marginTop: '20px', wordWrap: 'break-word' }}
                 className={this.state.showRawSection ? 'well' : 'd-none'}
@@ -187,10 +208,13 @@ class Version extends React.Component {
   }
 }
 
+// Mapping state to props to get version information from Redux store
 const mapStateToProps = (state) => ({
   version: state.version,
 });
 
+// Mapping dispatch to props to allow dispatching actions from the component
 const mapDispatchToProps = (dispatch) => ({ dispatch });
 
+// Connecting the component to Redux store
 export default connect(mapStateToProps, mapDispatchToProps)(Version);

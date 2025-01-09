@@ -1,6 +1,5 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Form } from 'react-bootstrap';
 import _ from 'lodash';
@@ -19,148 +18,114 @@ import PrintButton from '../components/PrintButton.jsx';
 
 import { formatDateTime } from '../utils/date';
 
-class HiringReport extends React.Component {
-  static propTypes = {
-    projects: PropTypes.object,
-    localAreas: PropTypes.object,
-    owners: PropTypes.object,
-    equipment: PropTypes.object,
-    hiringResponses: PropTypes.object,
-    favourites: PropTypes.object,
-    search: PropTypes.object,
-    ui: PropTypes.object,
-    router: PropTypes.object,
-  };
+const HiringReport = () => {
+  const dispatch = useDispatch();
 
-  constructor(props) {
-    super(props);
+  const {
+    projects,
+    localAreas,
+    owners,
+    equipment,
+    hiringResponses,
+    favourites,
+    search: searchProps,
+    ui: uiProps,
+  } = useSelector((state) => ({
+    projects: state.lookups.projectsCurrentFiscal,
+    localAreas: state.lookups.localAreas,
+    owners: state.lookups.owners.hires,
+    equipment: state.lookups.equipment.hires,
+    hiringResponses: state.models.hiringResponses,
+    favourites: state.models.favourites.hiringReport,
+    search: state.search.hiringResponses,
+    ui: state.ui.hiringResponses,
+  }));
 
-    this.state = {
-      search: {
-        projectIds: props.search.projectIds || [],
-        localAreaIds: props.search.localAreaIds || [],
-        ownerIds: props.search.ownerIds || [],
-        equipmentIds: props.search.equipmentIds || [],
-      },
-      ui: {
-        sortField: props.ui.sortField || 'name',
-        sortDesc: props.ui.sortDesc === true,
-      },
-    };
-  }
+  const [search, setSearch] = useState({
+    projectIds: searchProps.projectIds || [],
+    localAreaIds: searchProps.localAreaIds || [],
+    ownerIds: searchProps.ownerIds || [],
+    equipmentIds: searchProps.equipmentIds || [],
+  });
 
-  componentDidMount() {
-    this.props.dispatch(Api.getProjectsCurrentFiscal());
-    this.props.dispatch(Api.getEquipmentHires());
-    this.props.dispatch(Api.getOwnersLiteHires());
+  const [ui, setUI] = useState({
+    sortField: uiProps.sortField || 'name',
+    sortDesc: uiProps.sortDesc === true,
+  });
 
-    // If this is the first load, then look for a default favourite
-    if (_.isEmpty(this.props.search)) {
-      var defaultFavourite = _.find(this.props.favourites, (f) => f.isDefault);
+  useEffect(() => {
+    dispatch(Api.getProjectsCurrentFiscal());
+    dispatch(Api.getEquipmentHires());
+    dispatch(Api.getOwnersLiteHires());
+
+    if (_.isEmpty(searchProps)) {
+      const defaultFavourite = _.find(favourites, (f) => f.isDefault);
       if (defaultFavourite) {
-        this.loadFavourite(defaultFavourite);
+        loadFavourite(defaultFavourite);
       }
     }
-  }
+  }, [dispatch, favourites, searchProps]);
 
-  buildSearchParams = () => {
-    var searchParams = {};
+  const buildSearchParams = () => ({
+    ...(search.projectIds.length > 0 && { projects: search.projectIds }),
+    ...(search.localAreaIds.length > 0 && { localAreas: search.localAreaIds }),
+    ...(search.ownerIds.length > 0 && { owners: search.ownerIds }),
+    ...(search.equipmentIds.length > 0 && { equipment: search.equipmentIds }),
+  });
 
-    if (this.state.search.projectIds.length > 0) {
-      searchParams.projects = this.state.search.projectIds;
-    }
-
-    if (this.state.search.localAreaIds.length > 0) {
-      searchParams.localAreas = this.state.search.localAreaIds;
-    }
-
-    if (this.state.search.ownerIds.length > 0) {
-      searchParams.owners = this.state.search.ownerIds;
-    }
-
-    if (this.state.search.equipmentIds.length > 0) {
-      searchParams.equipment = this.state.search.equipmentIds;
-    }
-
-    return searchParams;
+  const fetch = () => {
+    dispatch(Api.searchHiringReport(buildSearchParams()));
   };
 
-  fetch = () => {
-    this.props.dispatch(Api.searchHiringReport(this.buildSearchParams()));
-  };
-
-  search = (e) => {
+  const handleSearch = (e) => {
     e.preventDefault();
-    this.fetch();
+    fetch();
   };
 
-  clearSearch = () => {
-    var defaultSearchParameters = {
+  const clearSearch = () => {
+    const defaultSearchParameters = {
       projectIds: [],
       localAreaIds: [],
       ownerIds: [],
       equipmentIds: [],
     };
-
-    this.setState({ search: defaultSearchParameters }, () => {
-      this.props.dispatch({
-        type: Action.UPDATE_HIRING_RESPONSES_SEARCH,
-        hiringResponses: this.state.search,
-      });
-      this.props.dispatch({ type: Action.CLEAR_HIRING_RESPONSES });
-    });
+    setSearch(defaultSearchParameters);
+    dispatch({ type: Action.UPDATE_HIRING_RESPONSES_SEARCH, hiringResponses: defaultSearchParameters });
+    dispatch({ type: Action.CLEAR_HIRING_RESPONSES });
   };
 
-  updateSearchState = (state, callback) => {
-    this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } } }, () => {
-      this.props.dispatch({
-        type: Action.UPDATE_HIRING_RESPONSES_SEARCH,
-        hiringResponses: this.state.search,
-      });
-      if (callback) {
-        callback();
-      }
-    });
+  const updateSearchState = (state, callback) => {
+    setSearch((prev) => ({ ...prev, ...state }));
+    dispatch({ type: Action.UPDATE_HIRING_RESPONSES_SEARCH, hiringResponses: { ...search, ...state } });
+    if (callback) callback();
   };
 
-  updateUIState = (state, callback) => {
-    this.setState({ ui: { ...this.state.ui, ...state } }, () => {
-      this.props.dispatch({
-        type: Action.UPDATE_HIRING_RESPONSES_UI,
-        hiringResponses: this.state.ui,
-      });
-      if (callback) {
-        callback();
-      }
-    });
+  const updateUIState = (state, callback) => {
+    setUI((prev) => ({ ...prev, ...state }));
+    dispatch({ type: Action.UPDATE_HIRING_RESPONSES_UI, hiringResponses: { ...ui, ...state } });
+    if (callback) callback();
   };
 
-  loadFavourite = (favourite) => {
-    this.updateSearchState(JSON.parse(favourite.value), this.fetch);
+  const loadFavourite = (favourite) => {
+    updateSearchState(JSON.parse(favourite.value), fetch);
   };
 
-  renderResults = () => {
-    if (Object.keys(this.props.hiringResponses.data).length === 0) {
+  const renderResults = () => {
+    if (_.isEmpty(hiringResponses.data)) {
       return <Alert variant="success">No results</Alert>;
     }
 
-    var hiringResponses = _.sortBy(this.props.hiringResponses.data, (response) => {
-      var sortValue = response[this.state.ui.sortField];
-      if (typeof sortValue === 'string') {
-        return sortValue.toLowerCase();
-      }
-      return sortValue;
-    });
+    const sortedResponses = _.sortBy(hiringResponses.data, (response) =>
+      typeof response[ui.sortField] === 'string' ? response[ui.sortField].toLowerCase() : response[ui.sortField]
+    );
 
-    if (this.state.ui.sortDesc) {
-      _.reverse(hiringResponses);
-    }
+    if (ui.sortDesc) _.reverse(sortedResponses);
 
     return (
       <SortTable
-        sortField={this.state.ui.sortField}
-        sortDesc={this.state.ui.sortDesc}
-        onSort={this.updateUIState}
+        sortField={ui.sortField}
+        sortDesc={ui.sortDesc}
+        onSort={updateUIState}
         headers={[
           { field: 'localAreaLabel', title: 'Local Area' },
           { field: 'ownerCode', title: 'Owner Code' },
@@ -174,9 +139,9 @@ class HiringReport extends React.Component {
           { field: 'userId', title: 'User ID' },
         ]}
       >
-        {_.map(hiringResponses, (entry) => {
-          var reason = entry.reason === Constant.HIRING_REFUSAL_OTHER ? entry.offerResponseNote : entry.reason;
-
+        {sortedResponses.map((entry) => {
+          const reason =
+            entry.reason === Constant.HIRING_REFUSAL_OTHER ? entry.offerResponseNote : entry.reason;
           return (
             <tr key={entry.id}>
               <td>{entry.localAreaLabel}</td>
@@ -190,7 +155,7 @@ class HiringReport extends React.Component {
               <td>{entry.equipmentDetails}</td>
               <td>
                 <Link to={`${Constant.PROJECTS_PATHNAME}/${entry.projectId}`}>
-                  {entry.projectNumber ? entry.projectNumber : 'N/A'}
+                  {entry.projectNumber || 'N/A'}
                 </Link>
               </td>
               <td>{formatDateTime(entry.noteDate, 'YYYY-MMM-DD')}</td>
@@ -206,182 +171,105 @@ class HiringReport extends React.Component {
     );
   };
 
-  matchesProjectFilter = (projectIds) => {
-    if (this.state.search.projectIds.length === 0) {
-      return true;
-    }
+  const projectsSorted = _.sortBy(projects.data, 'name');
+  const localAreasSorted = _.sortBy(localAreas, 'name');
+  const filteredOwners = _.sortBy(
+    owners.data.filter(
+      (owner) => _.intersection(search.projectIds, owner.projectIds).length > 0 || search.projectIds.length === 0
+    ),
+    'organizationName'
+  );
+  const filteredEquipment = _.sortBy(
+    equipment.data.filter(
+      (equip) =>
+        (_.intersection(search.projectIds, equip.projectIds).length > 0 || search.projectIds.length === 0) &&
+        (_.includes(search.ownerIds, equip.ownerId) || search.ownerIds.length === 0)
+    ),
+    'equipmentCode'
+  );
 
-    return _.intersection(this.state.search.projectIds, projectIds).length > 0;
-  };
+  return (
+    <div id="hiring-report">
+      <PageHeader>
+        Hiring Report - Not Hired / Force Hire ({hiringResponses.loaded && Object.keys(hiringResponses.data).length})
+        <ButtonGroup>
+          <PrintButton disabled={!hiringResponses.loaded} />
+        </ButtonGroup>
+      </PageHeader>
+      <SearchBar>
+        <Form onSubmit={handleSearch}>
+          <Row>
+            <Col xs={9} sm={10} id="filters">
+              <ButtonToolbar>
+                <MultiDropdown
+                  id="projectIds"
+                  disabled={!projects.loaded}
+                  placeholder="Projects"
+                  fieldName="label"
+                  items={projectsSorted}
+                  selectedIds={search.projectIds}
+                  updateState={(state) => updateSearchState({ projectIds: state })}
+                  showMaxItems={2}
+                />
+                <MultiDropdown
+                  id="localAreaIds"
+                  placeholder="Local Areas"
+                  items={localAreasSorted}
+                  selectedIds={search.localAreaIds}
+                  updateState={(state) => updateSearchState({ localAreaIds: state })}
+                  showMaxItems={2}
+                />
+                <MultiDropdown
+                  id="ownerIds"
+                  disabled={!owners.loaded}
+                  placeholder="Companies"
+                  fieldName="organizationName"
+                  items={filteredOwners}
+                  selectedIds={search.ownerIds}
+                  updateState={(state) => updateSearchState({ ownerIds: state })}
+                  showMaxItems={2}
+                />
+                <MultiDropdown
+                  id="equipmentIds"
+                  disabled={!equipment.loaded}
+                  placeholder="Equipment"
+                  fieldName="equipmentCode"
+                  items={filteredEquipment}
+                  selectedIds={search.equipmentIds}
+                  updateState={(state) => updateSearchState({ equipmentIds: state })}
+                  showMaxItems={2}
+                />
+                <Button id="search-button" variant="primary" type="submit">
+                  Search
+                </Button>
+                <Button className="btn-custom" id="clear-search-button" onClick={clearSearch}>
+                  Clear
+                </Button>
+              </ButtonToolbar>
+            </Col>
+            <Col xs={3} sm={2} id="search-buttons">
+              <Row className="float-right">
+                <Favourites
+                  id="hiring-report-faves-dropdown"
+                  type="hiringReport"
+                  favourites={favourites}
+                  data={search}
+                  onSelect={loadFavourite}
+                />
+              </Row>
+            </Col>
+          </Row>
+        </Form>
+      </SearchBar>
+      {hiringResponses.loading ? (
+        <div style={{ textAlign: 'center' }}>
+          <Spinner />
+        </div>
+      ) : (
+        hiringResponses.loaded && renderResults()
+      )}
+    </div>
+  );
+};
 
-  matchesLocalAreaFilter = (localAreaId) => {
-    if (this.state.search.localAreaIds.length === 0) {
-      return true;
-    }
-
-    return _.includes(this.state.search.localAreaIds, localAreaId);
-  };
-
-  matchesOwnerFilter = (ownerId) => {
-    if (this.state.search.ownerIds.length === 0) {
-      return true;
-    }
-
-    return _.includes(this.state.search.ownerIds, ownerId);
-  };
-
-  updateProjectSearchState = (state) => {
-    this.updateSearchState(state, this.filterSelectedOwners);
-  };
-
-  updateLocalAreaSearchState = (state) => {
-    this.updateSearchState(state, this.filterSelectedOwners);
-  };
-
-  updateOwnerSearchState = (state) => {
-    this.updateSearchState(state, this.filterSelectedEquipment);
-  };
-
-  filterSelectedOwners = () => {
-    var acceptableOwnerIds = _.map(this.getFilteredOwners(), 'id');
-    var ownerIds = _.intersection(this.state.search.ownerIds, acceptableOwnerIds);
-    this.updateSearchState({ ownerIds: ownerIds }, this.filterSelectedEquipment);
-  };
-
-  filterSelectedEquipment = () => {
-    var acceptableEquipmentIds = _.map(this.getFilteredEquipment(), 'id');
-    var equipmentIds = _.intersection(this.state.search.equipmentIds, acceptableEquipmentIds);
-    this.updateSearchState({ equipmentIds: equipmentIds });
-  };
-
-  getFilteredOwners = () => {
-    return _.chain(this.props.owners.data)
-      .filter((x) => this.matchesProjectFilter(x.projectIds) && this.matchesLocalAreaFilter(x.localAreaId))
-      .sortBy('organizationName')
-      .value();
-  };
-
-  getFilteredEquipment = () => {
-    return _.chain(this.props.equipment.data)
-      .filter((x) => this.matchesProjectFilter(x.projectIds) && this.matchesOwnerFilter(x.ownerId))
-      .sortBy('equipmentCode')
-      .value();
-  };
-
-  render() {
-    var resultCount = '';
-    if (this.props.hiringResponses.loaded) {
-      resultCount = '(' + Object.keys(this.props.hiringResponses.data).length + ')';
-    }
-
-    var projects = _.sortBy(this.props.projects.data, 'name');
-    var localAreas = _.sortBy(this.props.localAreas, 'name');
-    var owners = this.getFilteredOwners();
-    var equipment = this.getFilteredEquipment();
-
-    return (
-      <div id="hiring-report">
-        <PageHeader>
-          Hiring Report - Not Hired / Force Hire {resultCount}
-          <ButtonGroup>
-            <PrintButton disabled={!this.props.hiringResponses.loaded} />
-          </ButtonGroup>
-        </PageHeader>
-        <SearchBar>
-          <Form onSubmit={this.search}>
-            <Row>
-              <Col xs={9} sm={10} id="filters">
-                <ButtonToolbar>
-                  <MultiDropdown
-                    id="projectIds"
-                    disabled={!this.props.projects.loaded}
-                    placeholder="Projects"
-                    fieldName="label"
-                    items={projects}
-                    selectedIds={this.state.search.projectIds}
-                    updateState={this.updateProjectSearchState}
-                    showMaxItems={2}
-                  />
-                  <MultiDropdown
-                    id="localAreaIds"
-                    placeholder="Local Areas"
-                    items={localAreas}
-                    selectedIds={this.state.search.localAreaIds}
-                    updateState={this.updateLocalAreaSearchState}
-                    showMaxItems={2}
-                  />
-                  <MultiDropdown
-                    id="ownerIds"
-                    disabled={!this.props.owners.loaded}
-                    placeholder="Companies"
-                    fieldName="organizationName"
-                    items={owners}
-                    selectedIds={this.state.search.ownerIds}
-                    updateState={this.updateOwnerSearchState}
-                    showMaxItems={2}
-                  />
-                  <MultiDropdown
-                    id="equipmentIds"
-                    disabled={!this.props.equipment.loaded}
-                    placeholder="Equipment"
-                    fieldName="equipmentCode"
-                    items={equipment}
-                    selectedIds={this.state.search.equipmentIds}
-                    updateState={this.updateSearchState}
-                    showMaxItems={2}
-                  />
-                  <Button id="search-button" variant="primary" type="submit">
-                    Search
-                  </Button>
-                  <Button className="btn-custom" id="clear-search-button" onClick={this.clearSearch}>
-                    Clear
-                  </Button>
-                </ButtonToolbar>
-              </Col>
-              <Col xs={3} sm={2} id="search-buttons">
-                <Row className="float-right">
-                  <Favourites
-                    id="hiring-report-faves-dropdown"
-                    type="hiringReport"
-                    favourites={this.props.favourites}
-                    data={this.state.search}
-                    onSelect={this.loadFavourite}
-                  />
-                </Row>
-              </Col>
-            </Row>
-          </Form>
-        </SearchBar>
-
-        {(() => {
-          if (this.props.hiringResponses.loading) {
-            return (
-              <div style={{ textAlign: 'center' }}>
-                <Spinner />
-              </div>
-            );
-          }
-
-          if (this.props.hiringResponses.loaded) {
-            return this.renderResults();
-          }
-        })()}
-      </div>
-    );
-  }
-}
-
-const mapStateToProps = (state) => ({
-  projects: state.lookups.projectsCurrentFiscal,
-  localAreas: state.lookups.localAreas,
-  owners: state.lookups.owners.hires,
-  equipment: state.lookups.equipment.hires,
-  hiringResponses: state.models.hiringResponses,
-  favourites: state.models.favourites.hiringReport,
-  search: state.search.hiringResponses,
-  ui: state.ui.hiringResponses,
-});
-
-const mapDispatchToProps = (dispatch) => ({ dispatch });
-
-export default connect(mapStateToProps, mapDispatchToProps)(HiringReport);
+export default HiringReport;

@@ -1,5 +1,5 @@
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col, Button } from 'react-bootstrap';
 import _ from 'lodash';
@@ -11,56 +11,47 @@ import * as Constant from '../constants';
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
 
-class Home extends React.Component {
-  static propTypes = {
-    currentUser: PropTypes.object,
-    searchSummaryCounts: PropTypes.object,
-    history: PropTypes.object,
-  };
+const Home = ({ currentUser, searchSummaryCounts, history, dispatch }) => {
+  
+  useEffect(() => {
+    dispatch(Api.getSearchSummaryCounts());
+  }, [dispatch]);
 
-  componentDidMount() {
-    this.fetch();
-  }
+  const goToUnapprovedOwners = () => {
+    const unapprovedStatus = Constant.OWNER_STATUS_CODE_PENDING;
 
-  fetch = () => {
-    this.props.dispatch(Api.getSearchSummaryCounts());
-  };
-
-  goToUnapprovedOwners = () => {
-    var unapprovedStatus = Constant.OWNER_STATUS_CODE_PENDING;
-
-    // update search parameters
-    this.props.dispatch({
+    // Update search parameters
+    dispatch({
       type: Action.UPDATE_OWNERS_SEARCH,
       owners: { statusCode: unapprovedStatus },
     });
 
-    // perform search
-    this.props.dispatch(Api.searchOwners({ status: unapprovedStatus }));
+    // Perform search
+    dispatch(Api.searchOwners({ status: unapprovedStatus }));
 
-    // navigate to search page
-    this.props.history.push({ pathname: Constant.OWNERS_PATHNAME });
+    // Navigate to search page
+    history.push({ pathname: Constant.OWNERS_PATHNAME });
   };
 
-  goToUnapprovedEquipment = () => {
-    var unapprovedStatus = Constant.EQUIPMENT_STATUS_CODE_PENDING;
+  const goToUnapprovedEquipment = () => {
+    const unapprovedStatus = Constant.EQUIPMENT_STATUS_CODE_PENDING;
 
-    // update search parameters
-    this.props.dispatch({
+    // Update search parameters
+    dispatch({
       type: Action.UPDATE_EQUIPMENT_LIST_SEARCH,
-      equipmentList: { statusCode: Constant.EQUIPMENT_STATUS_CODE_PENDING },
+      equipmentList: { statusCode: unapprovedStatus },
     });
 
-    // perform search
-    this.props.dispatch(Api.searchEquipmentList({ status: unapprovedStatus }));
+    // Perform search
+    dispatch(Api.searchEquipmentList({ status: unapprovedStatus }));
 
-    // navigate to search page
-    this.props.history.push({ pathname: Constant.EQUIPMENT_PATHNAME });
+    // Navigate to search page
+    history.push({ pathname: Constant.EQUIPMENT_PATHNAME });
   };
 
-  goToHiredEquipment = () => {
-    // update search parameters
-    this.props.dispatch({
+  const goToHiredEquipment = () => {
+    // Update search parameters
+    dispatch({
       type: Action.UPDATE_EQUIPMENT_LIST_SEARCH,
       equipmentList: {
         statusCode: Constant.EQUIPMENT_STATUS_CODE_APPROVED,
@@ -68,73 +59,92 @@ class Home extends React.Component {
       },
     });
 
-    // perform search
-    this.props.dispatch(Api.searchEquipmentList({
+    // Perform search
+    dispatch(Api.searchEquipmentList({
       status: Constant.EQUIPMENT_STATUS_CODE_APPROVED,
       hired: true,
     }));
 
-    // navigate to search page
-    this.props.history.push({ pathname: Constant.EQUIPMENT_PATHNAME });
+    // Navigate to search page
+    history.push({ pathname: Constant.EQUIPMENT_PATHNAME });
   };
 
-  goToBlockedRotationLists = () => {
-    // update search parameters
-    this.props.dispatch({
+  const goToBlockedRotationLists = () => {
+    // Update search parameters
+    dispatch({
       type: Action.UPDATE_RENTAL_REQUESTS_SEARCH,
       rentalRequests: {
         statusCode: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
       },
     });
 
-    // perform search
-    this.props.dispatch(Api.searchRentalRequests({
+    // Perform search
+    dispatch(Api.searchRentalRequests({
       status: Constant.RENTAL_REQUEST_STATUS_CODE_IN_PROGRESS,
     }));
 
-    // navigate to search page
-    this.props.history.push({ pathname: Constant.RENTAL_REQUESTS_PATHNAME });
+    // Navigate to search page
+    history.push({ pathname: Constant.RENTAL_REQUESTS_PATHNAME });
   };
 
-  render() {
-    var counts = this.props.searchSummaryCounts;
+  const counts = searchSummaryCounts;
 
-    return (
-      <div id="home">
-        <PageHeader>
-          {this.props.currentUser.fullName}
-          <br />
-          {this.props.currentUser.districtName} District
-        </PageHeader>
-        <div className="well">
-          <SubHeader title="Summary" />
-          <Row>
-            <Col md={12} className="btn-container">
-              <Button variant="primary" className="btn-custom" onClick={this.goToUnapprovedOwners}>
-                Unapproved owners {!_.isEmpty(counts) && `(${counts.unapprovedOwners})`}
-              </Button>
-              <Button variant="primary" className="btn-custom" onClick={this.goToUnapprovedEquipment}>
-                Unapproved equipment {!_.isEmpty(counts) && `(${counts.unapprovedEquipment})`}
-              </Button>
-              <Button variant="primary" className="btn-custom" onClick={this.goToHiredEquipment}>
-                Currently hired equipment {!_.isEmpty(counts) && `(${counts.hiredEquipment})`}
-              </Button>
-              <Button variant="primary" className="btn-custom" onClick={this.goToBlockedRotationLists}>
-                Blocked rotation lists {!_.isEmpty(counts) && `(${counts.inProgressRentalRequests})`}
-              </Button>
-            </Col>
-          </Row>
-        </div>
+  return (
+    <div id="home">
+      <PageHeader>
+        {currentUser.fullName}
+        <br />
+        {currentUser.districtName} District
+      </PageHeader>
+      <div className="well">
+        <SubHeader title="Summary" />
+        <Row>
+          <Col md={12} className="btn-container">
+            <Button
+              variant="primary"
+              className="btn-custom"
+              onClick={goToUnapprovedOwners}
+            >
+              Unapproved owners {!_.isEmpty(counts) && `(${counts.unapprovedOwners})`}
+            </Button>
+            <Button
+              variant="primary"
+              className="btn-custom"
+              onClick={goToUnapprovedEquipment}
+            >
+              Unapproved equipment {!_.isEmpty(counts) && `(${counts.unapprovedEquipment})`}
+            </Button>
+            <Button
+              variant="primary"
+              className="btn-custom"
+              onClick={goToHiredEquipment}
+            >
+              Currently hired equipment {!_.isEmpty(counts) && `(${counts.hiredEquipment})`}
+            </Button>
+            <Button
+              variant="primary"
+              className="btn-custom"
+              onClick={goToBlockedRotationLists}
+            >
+              Blocked rotation lists {!_.isEmpty(counts) && `(${counts.inProgressRentalRequests})`}
+            </Button>
+          </Col>
+        </Row>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
+
+Home.propTypes = {
+  currentUser: PropTypes.object,
+  searchSummaryCounts: PropTypes.object,
+  history: PropTypes.object,
+  dispatch: PropTypes.func.isRequired,
+};
 
 const mapStateToProps = (state) => ({
   currentUser: state.user,
   searchSummaryCounts: state.lookups.searchSummaryCounts,
 });
 
-const mapDispatchToProps = (dispatch) => ({ dispatch });
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(mapStateToProps)(Home);
