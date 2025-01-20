@@ -1,58 +1,44 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
+const Countdown = ({ time, onEnd }) => {
+  const [timeLeft, setTimeLeft] = useState(time);
+  const [minutes, setMinutes] = useState(Math.floor(time / 60));
+  const [seconds, setSeconds] = useState(time % 60 < 10 ? '0' + (time % 60) : time % 60);
+  const [fired, setFired] = useState(false);
 
-class Countdown extends React.Component {
-  static propTypes = {
-    time: PropTypes.number,
-    onEnd: PropTypes.func,
-  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        const newTimeLeft = prevTime - 1;
+        const newMinutes = Math.floor(newTimeLeft / 60);
+        const newSeconds = newTimeLeft % 60 < 10 ? '0' + (newTimeLeft % 60) : newTimeLeft % 60;
 
-  constructor(props) {
-    super(props);
+        setMinutes(newMinutes);
+        setSeconds(newSeconds);
 
-    this.state = {
-      timeLeft: props.time,
-      minutes: parseInt(props.time / 60, 10),
-      seconds: parseInt(props.time % 60, 10) < 10 ? '0' + parseInt(props.time % 60, 10) : parseInt(props.time % 60, 10),
-      fired: false,
-    };
-  }
-
-  componentDidMount() {
-    this.startTimer();
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.state.interval);
-  }
-
-  startTimer = () => {
-    let interval = setInterval(function () {
-      let timeLeft = this.state.timeLeft - 1;
-      let minutes = parseInt(timeLeft / 60, 10);
-      let seconds = parseInt(timeLeft % 60, 10);
-
-      seconds = seconds < 10 ? '0' + seconds : seconds;
-
-      this.setState({ timeLeft, minutes, seconds }, () => {
-        if (timeLeft < 0 && !this.state.fired) {
-          this.props.onEnd();
-          this.setState({ fired: true });
+        if (newTimeLeft < 0 && !fired) {
+          onEnd();
+          setFired(true);
         }
+
+        return newTimeLeft;
       });
-    }.bind(this), 1000);
-    this.setState({ interval });
-  };
+    }, 1000);
 
-  render() {
-    return (
-      <span className="timer">
-        { this.state.minutes > 0 && `${this.state.minutes}m`} {this.state.seconds}s
-      </span>
-    );
-  }
-}
+    return () => clearInterval(interval);
+  }, [fired, onEnd]);
 
+  return (
+    <span className="timer">
+      {minutes > 0 && `${minutes}m`} {seconds}s
+    </span>
+  );
+};
+
+Countdown.propTypes = {
+  time: PropTypes.number,
+  onEnd: PropTypes.func,
+};
 
 export default Countdown;
