@@ -22,8 +22,10 @@ objects:
       name: ${NAME}${SUFFIX}
     spec:
       replicas: 1
-      # selector:
+      selector:
       #   deploymentconfig: ${NAME}${SUFFIX}
+        matchLabels:
+            name: "${NAME}-${SUFFIX}"
       strategy: {}
       template:
         metadata:

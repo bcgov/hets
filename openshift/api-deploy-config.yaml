@@ -42,6 +42,9 @@ objects:
       name: ${NAME}${SUFFIX}
     spec:
       replicas: 1
+      selector:
+        matchLabels:
+            name: "${NAME}-${SUFFIX}"
       strategy:
         activeDeadlineSeconds: 21600
         rollingParams:

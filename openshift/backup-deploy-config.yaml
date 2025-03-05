@@ -63,7 +63,9 @@ objects:
         type: Recreate
       replicas: 1
       selector:
-        name: "${NAME}-${ENV}"
+        # name: "${NAME}-${ENV}"
+        matchLabels:
+          name: "${NAME}-${ENV}"
       template:
         metadata:
           name: "${NAME}-${ENV}"
