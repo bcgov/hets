@@ -11,8 +11,10 @@ objects:
       shared: "true"
     spec:
       replicas: 1
-      # selector:
+      selector:
       #   deploymentconfig: ${NAME}-${ENV}
+        matchLabels:
+            deployment: ${NAME}-${ENV}
       strategy:
         activeDeadlineSeconds: 21600
         resources: {}
