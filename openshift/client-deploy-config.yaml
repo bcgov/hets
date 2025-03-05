@@ -29,7 +29,7 @@ objects:
       template:
         metadata:
           labels:
-            deployment: ${NAME}${SUFFIX}
+            name: ${NAME}${SUFFIX}
         spec:
           containers:
             - image: ${NAME}:${VERSION}
