@@ -23,9 +23,9 @@ objects:
     spec:
       accessModes:
         - ReadWriteOnce
-      # resources:
-      #   requests:
-      #     storage: "${PERSISTENT_VOLUME_SIZE}"
+      resources:
+        requests:
+          storage: "${PERSISTENT_VOLUME_SIZE}"
   - kind: PersistentVolumeClaim
     apiVersion: v1
     metadata:
