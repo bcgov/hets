@@ -50,8 +50,8 @@ objects:
       ftp-url: "${FTP_URL}"
       ftp-user: "${FTP_USER}"
       ftp-password: "${FTP_PASSWORD}"
-  - kind: DeploymentConfig
-    apiVersion: v1
+  - kind: Deployment
+    apiVersion: apps/v1
     metadata:
       name: "${NAME}-${ENV}"
       labels:

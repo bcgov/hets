@@ -36,14 +36,12 @@ objects:
       resources:
         requests:
           storage: "${PERSISTENT_VOLUME_SIZE}"
-  - kind: DeploymentConfig
-    apiVersion: v1
+  - kind: Deployment
+    apiVersion: apps/v1
     metadata:
       name: ${NAME}${SUFFIX}
     spec:
       replicas: 1
-      selector:
-        deploymentconfig: ${NAME}${SUFFIX}
       strategy:
         activeDeadlineSeconds: 21600
         rollingParams:
@@ -52,25 +50,25 @@ objects:
           maxUnavailable: 1
           timeoutSeconds: 600
           updatePeriodSeconds: 1
-        type: Rolling
+        type: RollingUpdate
       template:
         metadata:
           labels:
-            deploymentconfig: ${NAME}${SUFFIX}
+            deployment: ${NAME}${SUFFIX}
         spec:
           containers:
-            - image: ${NAME}:${VERSION}
+            - image: image-registry.openshift-image-registry.svc:5000/e0cee6-${ENV}/${NAME}:${VERSION}
               name: api
               ports:
               - containerPort: 8080
                 protocol: TCP
-              resources:
-                requests:
-                  cpu: ${CPU}
-                  memory: ${MEMORY}
-                limits:
-                  cpu: ${CPU}
-                  memory: ${MEMORY}
+              # resources:
+              #   requests:
+              #     cpu: ${CPU}
+              #     memory: ${MEMORY}
+              #   limits:
+              #     cpu: ${CPU}
+              #     memory: ${MEMORY}
               livenessProbe:
                 httpGet:
                   path: /healthz
@@ -147,7 +145,7 @@ objects:
           protocol: TCP
           targetPort: 8080
       selector:
-        deploymentconfig: ${NAME}${SUFFIX}
+        deployment: ${NAME}${SUFFIX}
 parameters:
   - description: Name of the project (HETS)
     displayName: PROJECT_NAME
