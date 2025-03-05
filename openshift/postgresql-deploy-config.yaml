@@ -117,9 +117,9 @@ objects:
       storageClassName: "${PERSISTENT_VOLUME_CLASS}"
       accessModes:
         - ReadWriteOnce
-      # resources:
-      #   requests:
-      #     storage: "${PERSISTENT_VOLUME_SIZE}"
+      resources:
+        requests:
+          storage: "${PERSISTENT_VOLUME_SIZE}"
   - kind: Service
     apiVersion: v1
     metadata:
