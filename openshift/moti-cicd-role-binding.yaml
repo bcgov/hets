@@ -95,7 +95,7 @@ objects:
         resources:
           - configmaps
           - endpoints
-          - persistentvolumeclaims
+          # - persistentvolumeclaims
           - replicationcontrollers
           - replicationcontrollers/scale
           - secrets
