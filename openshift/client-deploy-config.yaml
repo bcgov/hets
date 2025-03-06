@@ -88,7 +88,7 @@ objects:
       creationTimestamp: null
       name: ${NAME}${SUFFIX}
       labels:
-        deployment: ${NAME}${SUFFIX}
+        name: ${NAME}${SUFFIX}
     spec:
       ports:
         - name: web
@@ -96,7 +96,7 @@ objects:
           protocol: TCP
           targetPort: 8080
       selector:
-        deployment: ${NAME}${SUFFIX}
+        name: ${NAME}${SUFFIX}
   - apiVersion: route.openshift.io/v1
     kind: Route
     metadata:
