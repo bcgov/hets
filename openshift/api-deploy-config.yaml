@@ -39,14 +39,14 @@ objects:
   - kind: Deployment
     apiVersion: apps/v1
     metadata:
-      deployment: ${NAME}${SUFFIX}
+      name: ${NAME}${SUFFIX}
       labels:
-        deployment: ${NAME}${SUFFIX}
+        name: ${NAME}${SUFFIX}
     spec:
       replicas: 1
       selector:
         matchLabels:
-          deployment: ${NAME}${SUFFIX}
+          name: ${NAME}${SUFFIX}
       strategy:
         activeDeadlineSeconds: 21600
         rollingParams:
@@ -59,7 +59,7 @@ objects:
       template:
         metadata:
           labels:
-            deployment: ${NAME}${SUFFIX}
+            name: ${NAME}${SUFFIX}
         spec:
           containers:
             - image: image-registry.openshift-image-registry.svc:5000/e0cee6-${ENV}/${NAME}:${VERSION}
@@ -142,7 +142,7 @@ objects:
     kind: Service
     metadata:
       creationTimestamp: null
-      deployment: ${NAME}${SUFFIX}
+      name: ${NAME}${SUFFIX}
     spec:
       ports:
         - name: web
@@ -150,7 +150,7 @@ objects:
           protocol: TCP
           targetPort: 8080
       selector:
-        deployment: ${NAME}${SUFFIX}
+        name: ${NAME}${SUFFIX}
 parameters:
   - description: Name of the project (HETS)
     displayName: PROJECT_NAME
