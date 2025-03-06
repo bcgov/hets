@@ -59,7 +59,7 @@ objects:
       template:
         metadata:
           labels:
-            name: ${NAME}${SUFFIX}
+            deployment: ${NAME}${SUFFIX}
         spec:
           containers:
             - image: image-registry.openshift-image-registry.svc:5000/e0cee6-${ENV}/${NAME}:${VERSION}
