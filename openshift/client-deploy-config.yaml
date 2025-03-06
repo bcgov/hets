@@ -35,7 +35,7 @@ objects:
             - image: image-registry.openshift-image-registry.svc:5000/e0cee6-${ENV}/${NAME}:${VERSION}
               name: client
               ports:
-              - containerPort: 8888
+              - containerPort: 8080
                 protocol: TCP
               # resources:
               #   requests:
@@ -47,7 +47,7 @@ objects:
                 livenessProbe:
                   httpGet:
                     path: /healthz
-                    port: 8888
+                    port: 8080
                 initialDelaySeconds: 15
                 timeoutSeconds: 5
                 periodSeconds: 10
@@ -92,9 +92,9 @@ objects:
     spec:
       ports:
         - name: web
-          port: 8888
+          port: 8080
           protocol: TCP
-          targetPort: 8888
+          targetPort: 8080
       selector:
         deployment: ${NAME}${SUFFIX}
   - apiVersion: route.openshift.io/v1
