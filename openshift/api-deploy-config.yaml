@@ -141,6 +141,8 @@ objects:
     metadata:
       creationTimestamp: null
       name: ${NAME}${SUFFIX}
+      labels:
+        name: ${NAME}${SUFFIX}
     spec:
       ports:
         - name: web
@@ -148,7 +150,7 @@ objects:
           protocol: TCP
           targetPort: 8080
       selector:
-        deployment: ${NAME}${SUFFIX}
+        name: ${NAME}${SUFFIX}
 parameters:
   - description: Name of the project (HETS)
     displayName: PROJECT_NAME
