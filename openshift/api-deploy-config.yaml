@@ -37,7 +37,7 @@ objects:
         requests:
           storage: "${PERSISTENT_VOLUME_SIZE}"
   - kind: Deployment
-    apiVersion: v1
+    apiVersion: apps/v1
     metadata:
       name: ${NAME}${SUFFIX}
       labels:
