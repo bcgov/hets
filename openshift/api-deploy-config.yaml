@@ -39,14 +39,14 @@ objects:
   - kind: Deployment
     apiVersion: apps/v1
     metadata:
-      name: ${NAME}${SUFFIX}
+      name: ${PROJECT_NAME}-${NAME}${SUFFIX}
       labels:
-        name: ${NAME}${SUFFIX}
+        name: ${PROJECT_NAME}-${NAME}${SUFFIX}
     spec:
       replicas: 1
       selector:
         matchLabels:
-          name: ${NAME}${SUFFIX}
+          name: ${PROJECT_NAME}-${NAME}${SUFFIX}
       strategy:
         activeDeadlineSeconds: 21600
         rollingParams:
@@ -142,7 +142,7 @@ objects:
     kind: Service
     metadata:
       creationTimestamp: null
-      name: ${NAME}${SUFFIX}
+      name: ${PROJECT_NAME}-${NAME}${SUFFIX}
     spec:
       ports:
         - name: web
@@ -150,7 +150,7 @@ objects:
           protocol: TCP
           targetPort: 8080
       selector:
-        name: ${NAME}${SUFFIX}
+        name: ${PROJECT_NAME}-${NAME}${SUFFIX}
 parameters:
   - description: Name of the project (HETS)
     displayName: PROJECT_NAME
