@@ -37,16 +37,15 @@ objects:
         requests:
           storage: "${PERSISTENT_VOLUME_SIZE}"
   - kind: Deployment
-    apiVersion: apps/v1
+    apiVersion: v1
     metadata:
-      # name: ${NAME}${SUFFIX}
+      name: ${NAME}${SUFFIX}
       labels:
         name: ${NAME}${SUFFIX}
     spec:
       replicas: 1
       selector:
-        matchLabels:
-          name: ${NAME}${SUFFIX}
+        name: ${NAME}${SUFFIX}
       strategy:
         activeDeadlineSeconds: 21600
         rollingParams:
@@ -62,18 +61,18 @@ objects:
             name: ${NAME}${SUFFIX}
         spec:
           containers:
-            - image: image-registry.openshift-image-registry.svc:5000/e0cee6-${ENV}/${NAME}:${VERSION}
+            - image: ${NAME}:${VERSION}
               name: api
               ports:
               - containerPort: 8080
                 protocol: TCP
-              # resources:
-              #   requests:
-              #     cpu: ${CPU}
-              #     memory: ${MEMORY}
-              #   limits:
-              #     cpu: ${CPU}
-              #     memory: ${MEMORY}
+              resources:
+                requests:
+                  cpu: ${CPU}
+                  memory: ${MEMORY}
+                limits:
+                  cpu: ${CPU}
+                  memory: ${MEMORY}
               livenessProbe:
                 httpGet:
                   path: /healthz
