@@ -40,8 +40,8 @@ objects:
     apiVersion: apps/v1
     metadata:
       name: ${NAME}${SUFFIX}
-      labels:
-        name: ${NAME}${SUFFIX}
+      # labels:
+      #   name: ${NAME}${SUFFIX}
     spec:
       replicas: 1
       selector:
