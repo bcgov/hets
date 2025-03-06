@@ -143,8 +143,6 @@ objects:
     metadata:
       creationTimestamp: null
       name: ${NAME}${SUFFIX}
-      labels:
-        name: ${NAME}${SUFFIX}
     spec:
       ports:
         - name: web
