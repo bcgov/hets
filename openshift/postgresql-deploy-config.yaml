@@ -8,14 +8,14 @@ objects:
     metadata:
       name: ${NAME}-${ENV}
       labels:
-        deployment: ${NAME}-${ENV}
+        name: ${NAME}-${ENV}
     labels:
       shared: "true"
     spec:
       replicas: 1
       selector:
         matchLabels:
-          deployment: ${NAME}-${ENV}
+          name: ${NAME}-${ENV}
       strategy:
         activeDeadlineSeconds: 21600
         resources: {}
@@ -126,7 +126,7 @@ objects:
       name: ${NAME}-${ENV}
       labels:
         shared: "true"
-        deployment: ${NAME}-${ENV}
+        name: ${NAME}-${ENV}
     spec:
       ports:
         - name: postgresql
@@ -134,7 +134,7 @@ objects:
           port: 5432
           targetPort: 5432
       selector:
-        deployment: ${NAME}-${ENV}
+        name: ${NAME}-${ENV}
 parameters:
   - description: Name of the project (HETS)
     displayName: PROJECT_NAME
