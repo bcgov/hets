@@ -26,7 +26,7 @@ objects:
         metadata:
           name: ${NAME}-${ENV}
           labels:
-            deployment: ${NAME}-${ENV}
+            name: ${NAME}-${ENV}
         spec:
           containers:
             - image: image-registry.openshift-image-registry.svc:5000/e0cee6-tools/${IMAGE_STREAM_TAG}
