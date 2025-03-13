@@ -1,4 +1,4 @@
-# SchoolBusAPI - ASP.NET Core 1.0 Server
+# HetsAPI - ASP.NET Core 1.0 Server
 
 API Sample
 
@@ -19,7 +19,7 @@ build.bat
 ## Run in Docker
 
 ```
-cd src/SchoolBusAPI
-docker build -t SchoolBusAPI .
-docker run -p 5000:5000 SchoolBusAPI
+cd src/HetsAPI
+docker build -t HetsAPI .
+docker run -p 5000:5000 HetsAPI
 ```

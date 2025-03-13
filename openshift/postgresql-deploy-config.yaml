@@ -3,16 +3,19 @@ apiVersion: template.openshift.io/v1
 metadata:
   name: ${PROJECT_NAME}
 objects:
-  - apiVersion: v1
-    kind: DeploymentConfig
+  - apiVersion: apps/v1
+    kind: Deployment
     metadata:
       name: ${NAME}-${ENV}
+      labels:
+        name: ${NAME}-${ENV}
     labels:
       shared: "true"
     spec:
       replicas: 1
       selector:
-        deploymentconfig: ${NAME}-${ENV}
+        matchLabels:
+          name: ${NAME}-${ENV}
       strategy:
         activeDeadlineSeconds: 21600
         resources: {}
@@ -23,7 +26,7 @@ objects:
         metadata:
           name: ${NAME}-${ENV}
           labels:
-            deploymentconfig: ${NAME}-${ENV}
+            name: ${NAME}-${ENV}
         spec:
           containers:
             - image: image-registry.openshift-image-registry.svc:5000/e0cee6-tools/${IMAGE_STREAM_TAG}
@@ -50,26 +53,26 @@ objects:
               ports:
                 - containerPort: 5432
                   protocol: TCP
-              resources:
-                requests:
-                  cpu: ${CPU}
-                  memory: ${MEMORY}
-                limits:
-                  cpu: ${CPU}
-                  memory: ${MEMORY}
+              # resources:
+              #   requests:
+              #     cpu: ${CPU}
+              #     memory: ${MEMORY}
+              #   limits:
+              #     cpu: ${CPU}
+              #     memory: ${MEMORY}
               terminationMessagePath: /dev/termination-log
               terminationMessagePolicy: File
               volumeMounts:
                 - name: "${NAME}-${ENV}-data"
                   mountPath: "/var/lib/pgsql/data"
-              livenessProbe:
-                tcpSocket:
-                  port: 5432
-                initialDelaySeconds: 30
-                timeoutSeconds: 1
-                periodSeconds: 10
-                successThreshold: 1
-                failureThreshold: 3
+              # livenessProbe:
+              #   tcpSocket:
+              #     port: 5432
+              #   initialDelaySeconds: 30
+              #   timeoutSeconds: 1
+              #   periodSeconds: 10
+              #   successThreshold: 1
+              #   failureThreshold: 3
               readinessProbe:
                 exec:
                   command:
@@ -121,8 +124,9 @@ objects:
     apiVersion: v1
     metadata:
       name: ${NAME}-${ENV}
-    labels:
-      shared: "true"
+      labels:
+        shared: "true"
+        name: ${NAME}-${ENV}
     spec:
       ports:
         - name: postgresql
@@ -130,7 +134,7 @@ objects:
           port: 5432
           targetPort: 5432
       selector:
-        deploymentconfig: ${NAME}-${ENV}
+        name: ${NAME}-${ENV}
 parameters:
   - description: Name of the project (HETS)
     displayName: PROJECT_NAME
@@ -165,7 +169,7 @@ parameters:
     displayName: PostgreSQL Database Name
     description: The name of the PostgreSQL database.
     required: true
-    value: schoolbus
+    value: hets
   - name: PERSISTENT_VOLUME_SIZE
     displayName: Persistent Volume Size
     description: The size of the persistent volume , e.g. 512Mi, 1Gi, 2Gi.
