@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { connect } from 'react-redux';
 import { Row, Col, ButtonToolbar, Button } from 'react-bootstrap';
 import _ from 'lodash';
 import { saveAs } from 'file-saver';
@@ -14,123 +14,133 @@ import MultiDropdown from '../components/MultiDropdown.jsx';
 
 import { formatDateTimeUTCToLocal } from '../utils/date';
 
-const StatusLetters = () => {
-  const dispatch = useDispatch();
-  const localAreas = useSelector((state) => state.lookups.localAreas);
-  const owners = useSelector((state) => state.lookups.owners.lite);
-
-  const [localAreaIds, setLocalAreaIds] = useState([]);
-  const [ownerIds, setOwnerIds] = useState([]);
-
-  useEffect(() => {
-    dispatch(Api.getOwnersLite());
-  }, [dispatch]);
-
-  const updateState = (state, callback) => {
-    if (state.localAreaIds !== undefined) setLocalAreaIds(state.localAreaIds);
-    if (state.ownerIds !== undefined) setOwnerIds(state.ownerIds);
-    if (callback) callback();
+class StatusLetters extends React.Component {
+  static propTypes = {
+    localAreas: PropTypes.object,
+    owners: PropTypes.object,
   };
 
-  const getStatusLetters = async () => {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      localAreaIds: [],
+      ownerIds: [],
+    };
+  }
+
+  componentDidMount() {
+    this.props.dispatch(Api.getOwnersLite());
+  }
+
+  updateState = (state, callback) => {
+    this.setState(state, () => {
+      if (callback) {
+        callback();
+      }
+    });
+  };
+
+  getStatusLetters = async () => {
     const filename = 'StatusLetters-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';
     try {
-      const res = await dispatch(
-        Api.getStatusLettersDoc({
-          localAreas: localAreaIds,
-          owners: ownerIds,
-        })
-      );
+      const res = await this.props.dispatch(Api.getStatusLettersDoc({
+        localAreas: this.state.localAreaIds,
+        owners: this.state.ownerIds,
+      }));
       saveAs(res, filename);
-    } catch (error) {
+    } catch(error) {
       console.log(error);
     }
   };
 
-  const getMailingLabel = async () => {
+  getMailingLabel = async () => {
     const filename = 'MailingLabels-' + formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) + '.docx';
     try {
-      const res = await dispatch(
-        Api.getMailingLabelsDoc({
-          localAreas: localAreaIds,
-          owners: ownerIds,
-        })
-      );
+      const res = await this.props.dispatch(Api.getMailingLabelsDoc({
+        localAreas: this.state.localAreaIds,
+        owners: this.state.ownerIds,
+      }));
       saveAs(res, filename);
-    } catch (error) {
+    } catch(error) {
       console.log(error);
     }
   };
 
-  const matchesLocalAreaFilter = (localAreaId) => {
-    if (localAreaIds.length === 0) {
+  matchesLocalAreaFilter = (localAreaId) => {
+    if (this.state.localAreaIds.length === 0) {
       return true;
     }
-    return _.includes(localAreaIds, localAreaId);
+
+    return _.includes(this.state.localAreaIds, localAreaId);
   };
 
-  const updateLocalAreaState = (state) => {
-    updateState(state, filterSelectedOwners);
+  updateLocalAreaState = (state) => {
+    this.updateState(state, this.filterSelectedOwners);
   };
 
-  const filterSelectedOwners = () => {
-    const acceptableOwnerIds = _.map(getFilteredOwners(), 'id');
-    const filteredOwnerIds = _.intersection(ownerIds, acceptableOwnerIds);
-    setOwnerIds(filteredOwnerIds);
+  filterSelectedOwners = () => {
+    var acceptableOwnerIds = _.map(this.getFilteredOwners(), 'id');
+    var ownerIds = _.intersection(this.state.ownerIds, acceptableOwnerIds);
+    this.updateState({ ownerIds: ownerIds });
   };
 
-  const getFilteredOwners = () => {
-    return _.chain(owners.data)
-      .filter((x) => matchesLocalAreaFilter(x.localAreaId))
+  getFilteredOwners = () => {
+    return _.chain(this.props.owners.data)
+      .filter((x) => this.matchesLocalAreaFilter(x.localAreaId))
       .sortBy('organizationName')
       .value();
   };
 
-  const sortedLocalAreas = _.sortBy(localAreas, 'name');
-  const filteredOwners = getFilteredOwners();
+  render() {
+    var localAreas = _.sortBy(this.props.localAreas, 'name');
+    var owners = this.getFilteredOwners();
 
-  return (
-    <div id="status-letters">
-      <PageHeader>Status Letters</PageHeader>
-      <SearchBar>
-        <Row>
-          <Col md={12} id="filters">
-            <ButtonToolbar>
-              <MultiDropdown
-                id="localAreaIds"
-                placeholder="Local Areas"
-                items={sortedLocalAreas}
-                selectedIds={localAreaIds}
-                updateState={updateLocalAreaState}
-                showMaxItems={2}
-              />
-              <MultiDropdown
-                id="ownerIds"
-                placeholder="Companies"
-                fieldName="organizationName"
-                items={filteredOwners}
-                disabled={!owners.loaded}
-                selectedIds={ownerIds}
-                updateState={updateState}
-                showMaxItems={2}
-              />
-              <Button onClick={getStatusLetters} variant="primary">
-                Status Letters
-              </Button>
-              <Button onClick={getMailingLabel} variant="primary">
-                Mailing Labels
-              </Button>
-            </ButtonToolbar>
-          </Col>
-        </Row>
-      </SearchBar>
-    </div>
-  );
-};
+    return (
+      <div id="status-letters">
+        <PageHeader>Status Letters</PageHeader>
+        <SearchBar>
+          <Row>
+            <Col md={12} id="filters">
+              <ButtonToolbar>
+                <MultiDropdown
+                  id="localAreaIds"
+                  placeholder="Local Areas"
+                  items={localAreas}
+                  selectedIds={this.state.localAreaIds}
+                  updateState={this.updateLocalAreaState}
+                  showMaxItems={2}
+                />
+                <MultiDropdown
+                  id="ownerIds"
+                  placeholder="Companies"
+                  fieldName="organizationName"
+                  items={owners}
+                  disabled={!this.props.owners.loaded}
+                  selectedIds={this.state.ownerIds}
+                  updateState={this.updateState}
+                  showMaxItems={2}
+                />
+                <Button onClick={this.getStatusLetters} variant="primary">
+                  Status Letters
+                </Button>
+                <Button onClick={this.getMailingLabel} variant="primary">
+                  Mailing Labels
+                </Button>
+              </ButtonToolbar>
+            </Col>
+          </Row>
+        </SearchBar>
+      </div>
+    );
+  }
+}
 
-StatusLetters.propTypes = {
-  localAreas: PropTypes.object,
-  owners: PropTypes.object,
-};
+const mapStateToProps = (state) => ({
+  localAreas: state.lookups.localAreas,
+  owners: state.lookups.owners.lite,
+});
 
-export default StatusLetters;
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(StatusLetters);

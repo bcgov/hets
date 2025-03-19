@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import { Alert, Dropdown, ButtonGroup, Button, Col, Row } from 'react-bootstrap';
+import { Alert, Dropdown, ButtonGroup, Button } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
@@ -13,127 +14,139 @@ import EditButton from '../components/EditButton.jsx';
 import Authorize from '../components/Authorize.jsx';
 import EditFavouritesDialog from '../views/dialogs/EditFavouritesDialog';
 
-const Favourites = (props) => {
-  const { id, className, title, type, favourites, data, onSelect, dispatch } = props;
+class Favourites extends React.Component {
+  static propTypes = {
+    id: PropTypes.string,
+    className: PropTypes.string,
+    title: PropTypes.string,
+    type: PropTypes.string.isRequired,
+    favourites: PropTypes.object.isRequired,
+    data: PropTypes.object.isRequired,
+    onSelect: PropTypes.func.isRequired,
+  };
 
-  const [favouriteToEdit, setFavouriteToEdit] = useState({});
-  const [showEditDialog, setShowEditDialog] = useState(false);
-  const [open, setOpen] = useState(false);
+  constructor(props) {
+    super(props);
 
-  const addFavourite = () => {
-    editFavourite({
-      type: type,
+    this.state = {
+      favouriteToEdit: {},
+      showEditDialog: false,
+      open: false,
+    };
+  }
+
+  addFavourite = () => {
+    this.editFavourite({
+      type: this.props.type,
       name: '',
       isDefault: false,
-      value: JSON.stringify(data),
+      value: JSON.stringify(this.props.data),
     });
   };
 
-  const editFavourite = (favourite) => {
-    setFavouriteToEdit(favourite);
-    openDialog();
+  editFavourite = (favourite) => {
+    this.setState({ favouriteToEdit: favourite });
+    this.openDialog();
   };
 
-  const favoriteSaved = (favourite) => {
+  favoriteSaved = (favourite) => {
+    // Make sure there's only one default
     if (favourite.isDefault) {
-      const oldDefault = _.find(favourites, (f) => f.isDefault);
+      var oldDefault = _.find(this.props.favourites, (f) => f.isDefault);
       if (oldDefault && favourite.id !== oldDefault.id) {
-        dispatch(
-          Api.updateFavourite({
-            ...oldDefault,
-            isDefault: false,
-          })
-        );
+        this.props.dispatch(Api.updateFavourite({
+          ...oldDefault,
+          isDefault: false,
+        }));
       }
     }
-    closeDialog();
+
+    this.closeDialog();
   };
 
-  const deleteFavourite = (favourite) => {
-    dispatch(Api.deleteFavourite(favourite));
+  deleteFavourite = (favourite) => {
+    this.props.dispatch(Api.deleteFavourite(favourite));
   };
 
-  const selectFavourite = (favourite) => {
-    toggle(false);
-    onSelect(favourite);
+  selectFavourite = (favourite) => {
+    this.toggle(false);
+    this.props.onSelect(favourite);
   };
 
-  const openDialog = () => {
-    setShowEditDialog(true);
+  openDialog = () => {
+    this.setState({ showEditDialog: true });
   };
 
-  const closeDialog = () => {
-    setShowEditDialog(false);
+  closeDialog = () => {
+    this.setState({ showEditDialog: false });
   };
 
-  const toggle = (isOpen) => {
-    setOpen(isOpen);
+  toggle = (open) => {
+    this.setState({ open: open });
   };
 
-  const dropdownTitle = title || 'Favourites';
-  const dropdownClassName = `favourites ${className || ''}`;
+  render() {
+    var title = this.props.title || 'Favourites';
+    var className = `favourites ${this.props.className || ''} `;
 
-  return (
-    <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
-      <Dropdown id={id} className={dropdownClassName} show={open} onToggle={toggle}>
-        <Dropdown.Toggle className="btn-custom">{dropdownTitle}</Dropdown.Toggle>
+    return (
+      <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
+        <Dropdown id={this.props.id} className={className} title={title} open={this.state.open} onToggle={this.toggle}>
+          <Dropdown.Toggle className="btn-custom">{title}</Dropdown.Toggle>
 
-        <Dropdown.Menu>
-          <div className="favourites-button-bar">
-            <Button onClick={addFavourite}>Favourite Current Selection</Button>
-          </div>
+          <Dropdown.Menu>
+            <div className="favourites-button-bar">
+              <Button onClick={this.addFavourite}>Favourite Current Selection</Button>
+            </div>
+            {(() => {
+              if (Object.keys(this.props.favourites).length === 0) {
+                return (
+                  <Alert variant="success" style={{ margin: '5px' }}>
+                    No favourites
+                  </Alert>
+                );
+              }
 
-          {Object.keys(favourites).length === 0 ? (
-            <Alert variant="success" style={{ margin: '5px' }}>
-              No favourites
-            </Alert>
-          ) : (
-            <ul>
-              {_.map(favourites, (favourite) => (
-                <li key={favourite.id}>
-                  <Row>
-                    <Col md={1}>{favourite.isDefault ? <FontAwesomeIcon icon="star" /> : ''}</Col>
-                    <Col md={8}>
-                      <span className="favourite__item" onClick={() => selectFavourite(favourite)}>
-                        {favourite.name}
-                      </span>
-                    </Col>
-                    <Col md={3}>
-                      <ButtonGroup>
-                        <DeleteButton name="Favourite" onConfirm={() => deleteFavourite(favourite)} />
-                        <EditButton name="Favourite" onClick={() => editFavourite(favourite)} />
-                      </ButtonGroup>
-                    </Col>
-                  </Row>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Dropdown.Menu>
+              return (
+                <ul>
+                  {_.map(this.props.favourites, (favourite) => {
+                    return (
+                      <li key={favourite.id}>
+                        <Row>
+                          <Col md={1}>{favourite.isDefault ? <FontAwesomeIcon icon="star" /> : ''}</Col>
+                          <Col md={8}>
+                            <span className="favourite__item" onClick={this.selectFavourite.bind(this, favourite)}>
+                              {favourite.name}
+                            </span>
+                          </Col>
+                          <Col md={3}>
+                            <ButtonGroup>
+                              <DeleteButton name="Favourite" onConfirm={this.deleteFavourite.bind(this, favourite)} />
+                              <EditButton name="Favourite" onClick={this.editFavourite.bind(this, favourite)} />
+                            </ButtonGroup>
+                          </Col>
+                        </Row>
+                      </li>
+                    );
+                  })}
+                </ul>
+              );
+            })()}
+          </Dropdown.Menu>
 
-        {showEditDialog && (
-          <EditFavouritesDialog
-            show={showEditDialog}
-            favourite={favouriteToEdit}
-            onSave={favoriteSaved}
-            onClose={closeDialog}
-          />
-        )}
-      </Dropdown>
-    </Authorize>
-  );
-};
-
-Favourites.propTypes = {
-  id: PropTypes.string,
-  className: PropTypes.string,
-  title: PropTypes.string,
-  type: PropTypes.string.isRequired,
-  favourites: PropTypes.object.isRequired,
-  data: PropTypes.object.isRequired,
-  onSelect: PropTypes.func.isRequired,
-  dispatch: PropTypes.func.isRequired,
-};
+          {this.state.showEditDialog ? (
+            <EditFavouritesDialog
+              show={this.state.showEditDialog}
+              favourite={this.state.favouriteToEdit}
+              onSave={this.favoriteSaved}
+              onClose={this.closeDialog}
+            />
+          ) : null}
+        </Dropdown>
+      </Authorize>
+    );
+  }
+}
 
 const mapDispatchToProps = (dispatch) => ({ dispatch });
 

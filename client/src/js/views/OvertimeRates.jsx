@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
+import { connect } from 'react-redux';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
@@ -13,93 +13,116 @@ import TableControl from '../components/TableControl.jsx';
 import Spinner from '../components/Spinner.jsx';
 import OvertimeRateEditDialog from './dialogs/OvertimeRateEditDialog.jsx';
 
-const OvertimeRates = () => {
-  const dispatch = useDispatch();
-  const currentUser = useSelector((state) => state.user);
-  const overtimeRateTypes = useSelector((state) => state.lookups.overtimeRateTypes);
-
-  const [showOvertimeRateEditDialog, setShowOvertimeRateEditDialog] = useState(false);
-  const [overtimeRateType, setOvertimeRateType] = useState({});
-
-  useEffect(() => {
-    fetchOvertimeRateTypes();
-  }, []);
-
-  const fetchOvertimeRateTypes = () => {
-    dispatch(Api.getOvertimeRateTypes());
+class OvertimeRates extends React.Component {
+  static propTypes = {
+    currentUser: PropTypes.object,
+    overtimeRateTypes: PropTypes.array,
+    router: PropTypes.object,
   };
 
-  const editRate = (overtimeRateType) => {
-    setOvertimeRateType(overtimeRateType);
-    setShowOvertimeRateEditDialog(true);
-  };
+  constructor(props) {
+    super(props);
 
-  const closeOvertimeRateEditDialog = () => {
-    setShowOvertimeRateEditDialog(false);
-  };
-
-  const overtimeRateSaved = () => {
-    fetchOvertimeRateTypes();
-  };
-
-  if (!currentUser.hasPermission(Constant.PERMISSION_ADMIN)) {
-    return <div>You do not have permission to view this page.</div>;
+    this.state = {
+      showOvertimeRateEditDialog: false,
+      overtimeRateType: {},
+    };
   }
 
-  return (
-    <div id="overtime-rates">
-      <PageHeader>Manage Rental Agreement Overtime Rates</PageHeader>
+  componentDidMount() {
+    this.fetch();
+  }
 
-      <div className="well">
-        {overtimeRateTypes.length === 0 ? (
-          <div style={{ textAlign: 'center' }}>
-            <Spinner />
-          </div>
-        ) : (
-          <TableControl
-            headers={[
-              { field: 'rateType', title: 'Rate Code' },
-              { field: 'description', title: 'Description' },
-              { field: 'value', title: 'Value' },
-              { field: 'blank' },
-            ]}
-          >
-            {_.map(overtimeRateTypes, (overtimeRateType) => (
-              <tr key={overtimeRateType.id}>
-                <td>{overtimeRateType.rateType}</td>
-                <td>{overtimeRateType.description}</td>
-                <td>{`$${overtimeRateType.rate.toFixed(2)}/Hr`}</td>
-                <td style={{ textAlign: 'right' }}>
-                  <Button
-                    className="btn-custom"
-                    title="Edit Rate"
-                    size="sm"
-                    onClick={() => editRate(overtimeRateType)}
-                  >
-                    <FontAwesomeIcon icon="edit" />
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </TableControl>
+  fetch = () => {
+    this.props.dispatch(Api.getOvertimeRateTypes());
+  };
+
+  editRate = (overtimeRateType) => {
+    this.setState({ overtimeRateType: overtimeRateType }, this.showOvertimeRateEditDialog);
+  };
+
+  showOvertimeRateEditDialog = () => {
+    this.setState({ showOvertimeRateEditDialog: true });
+  };
+
+  closeOvertimeRateEditDialog = () => {
+    this.setState({ showOvertimeRateEditDialog: false });
+  };
+
+  overtimeRateSaved = () => {
+    this.fetch();
+  };
+
+  render() {
+    if (!this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)) {
+      return <div>You do not have permission to view this page.</div>;
+    }
+
+    return (
+      <div id="overtime-rates">
+        <PageHeader>Manage Rental Agreement Overtime Rates</PageHeader>
+
+        <div className="well">
+          {(() => {
+            if (this.props.overtimeRateTypes.length === 0) {
+              return (
+                <div style={{ textAlign: 'center' }}>
+                  <Spinner />
+                </div>
+              );
+            }
+
+            return (
+              <TableControl
+                headers={[
+                  { field: 'rateType', title: 'Rate Code' },
+                  { field: 'description', title: 'Description' },
+                  { field: 'value', title: 'Value' },
+                  { field: 'blank' },
+                ]}
+              >
+                {_.map(this.props.overtimeRateTypes, (overtimeRateType) => {
+                  return (
+                    <tr key={overtimeRateType.id}>
+                      <td>{overtimeRateType.rateType}</td>
+                      <td>{overtimeRateType.description}</td>
+                      <td>{`$${overtimeRateType.rate.toFixed(2)}/Hr`}</td>
+                      <td style={{ textAlign: 'right' }}>
+                        <Button
+                          className="btn-custom"
+                          title="Edit Rate"
+                          size="sm"
+                          onClick={this.editRate.bind(this, overtimeRateType)}
+                        >
+                          <FontAwesomeIcon icon="edit" />
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </TableControl>
+            );
+          })()}
+        </div>
+
+        {this.state.showOvertimeRateEditDialog && (
+          <OvertimeRateEditDialog
+            show={this.state.showOvertimeRateEditDialog}
+            onClose={this.closeOvertimeRateEditDialog}
+            onSave={this.overtimeRateSaved}
+            overtimeRateType={this.state.overtimeRateType}
+          />
         )}
       </div>
+    );
+  }
+}
 
-      {showOvertimeRateEditDialog && (
-        <OvertimeRateEditDialog
-          show={showOvertimeRateEditDialog}
-          onClose={closeOvertimeRateEditDialog}
-          onSave={overtimeRateSaved}
-          overtimeRateType={overtimeRateType}
-        />
-      )}
-    </div>
-  );
-};
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  overtimeRateTypes: state.lookups.overtimeRateTypes,
+});
 
-OvertimeRates.propTypes = {
-  currentUser: PropTypes.object,
-  overtimeRateTypes: PropTypes.array,
-};
+const mapDispatchToProps = (dispatch) => ({ dispatch });
 
-export default OvertimeRates;
+export default connect(mapStateToProps, mapDispatchToProps)(OvertimeRates);

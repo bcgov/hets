@@ -103,7 +103,10 @@ class HiringReport extends React.Component {
     };
 
     this.setState({ search: defaultSearchParameters }, () => {
-      this.props.dispatch({ type: Action.UPDATE_HIRING_RESPONSES_SEARCH, hiringResponses: this.state.search });
+      this.props.dispatch({
+        type: Action.UPDATE_HIRING_RESPONSES_SEARCH,
+        hiringResponses: this.state.search,
+      });
       this.props.dispatch({ type: Action.CLEAR_HIRING_RESPONSES });
     });
   };

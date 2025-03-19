@@ -2,19 +2,25 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Badge } from 'react-bootstrap';
 
-const BadgeLabel = ({ bsPrefix, variant, className, children }) => {
-  return (
-    <Badge bsPrefix={bsPrefix} variant={variant} className={`badge-label ${className || ''}`}>
-      {children}
-    </Badge>
-  );
-};
+class BadgeLabel extends React.Component {
+  static propTypes = {
+    bsPrefix: PropTypes.string,
+    variant: PropTypes.string,
+    className: PropTypes.string,
+    children: PropTypes.node,
+  };
 
-BadgeLabel.propTypes = {
-  bsPrefix: PropTypes.string,
-  variant: PropTypes.string,
-  className: PropTypes.string,
-  children: PropTypes.node,
-};
+  render() {
+    return (
+      <Badge
+        bsPrefix={this.props.bsPrefix}
+        variant={this.props.variant}
+        className={`badge-label ${this.props.className || ''}`}
+      >
+        {this.props.children}
+      </Badge>
+    );
+  }
+}
 
 export default BadgeLabel;

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { connect } from 'react-redux';
 import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
@@ -20,103 +20,118 @@ import Spinner from '../components/Spinner.jsx';
 import PrintButton from '../components/PrintButton.jsx';
 import Authorize from '../components/Authorize.jsx';
 
-const Roles = () => {
-  const dispatch = useDispatch();
-  const roles = useSelector((state) => state.models.roles);
-  const currentUser = useSelector((state) => state.user);
-  const search = useSelector((state) => state.search.roles);
-  const ui = useSelector((state) => state.ui.roles);
-
-  const [loading, setLoading] = useState(true);
-  const [searchState, setSearchState] = useState({
-    key: search.key || 'name',
-    text: search.text || '',
-    params: search.params || null,
-  });
-  const [uiState, setUIState] = useState({
-    sortField: ui.sortField || 'name',
-    sortDesc: ui.sortDesc === true,
-  });
-
-  useEffect(() => {
-    fetch();
-  }, []);
-
-  const fetch = () => {
-    setLoading(true);
-    dispatch(Api.searchRoles()).finally(() => {
-      setLoading(false);
-    });
+class Roles extends React.Component {
+  static propTypes = {
+    roles: PropTypes.object,
+    currentUser: PropTypes.object,
+    search: PropTypes.object,
+    ui: PropTypes.object,
   };
 
-  const updateSearchState = (state, callback) => {
-    setSearchState((prevState) => ({ ...prevState, ...state }));
-    dispatch({
-      type: Action.UPDATE_ROLES_SEARCH,
-      roles: { ...searchState, ...state },
-    });
-    if (callback) {
-      callback();
-    }
-  };
+  constructor(props) {
+    super(props);
 
-  const updateUIState = (state, callback) => {
-    setUIState((prevState) => ({ ...prevState, ...state }));
-    dispatch({ type: Action.UPDATE_ROLES_UI, roles: { ...uiState, ...state } });
-    if (callback) {
-      callback();
-    }
-  };
+    this.state = {
+      loading: true,
 
-  const deleteRole = (role) => {
-    dispatch(Api.deleteRole(role)).then(() => {
-      fetch();
-    });
-  };
+      search: {
+        key: props.search.key || 'name',
+        text: props.search.text || '',
+        params: props.search.params || null,
+      },
 
-  const numRoles = loading ? '...' : Object.keys(roles).length;
-
-  if (
-    !currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) &&
-    !currentUser.hasPermission(Constant.PERMISSION_ADMIN)
-  ) {
-    return <div>You do not have permission to view this page.</div>;
+      ui: {
+        sortField: props.ui.sortField || 'name',
+        sortDesc: props.ui.sortDesc === true,
+      },
+    };
   }
 
-  return (
-    <div id="roles-list">
-      <PageHeader>
-        Roles ({numRoles})
-        <ButtonGroup id="roles-buttons" className="float-right">
-          <PrintButton />
-        </ButtonGroup>
-      </PageHeader>
-      <SearchBar>
-        <Row>
-          <Col xs={9} sm={10} id="filters">
-            <ButtonToolbar>
-              <SearchControl
-                className="d-flex"
-                id="search"
-                search={searchState}
-                updateState={updateSearchState}
-                items={[
-                  { id: 'name', name: 'Name' },
-                  { id: 'description', name: 'Description' },
-                ]}
-              />
-            </ButtonToolbar>
-          </Col>
-        </Row>
-      </SearchBar>
+  componentDidMount() {
+    this.fetch();
+  }
 
-      {loading ? (
-        <div style={{ textAlign: 'center' }}>
-          <Spinner />
-        </div>
-      ) : (
-        (() => {
-          const addRoleButton = (
+  fetch = () => {
+    this.setState({ loading: true });
+    this.props.dispatch(Api.searchRoles()).finally(() => {
+      this.setState({ loading: false });
+    });
+  };
+
+  updateSearchState = (state, callback) => {
+    this.setState({ search: { ...this.state.search, ...state } }, () => {
+      this.props.dispatch({
+        type: Action.UPDATE_ROLES_SEARCH,
+        roles: this.state.search,
+      });
+      if (callback) {
+        callback();
+      }
+    });
+  };
+
+  updateUIState = (state, callback) => {
+    this.setState({ ui: { ...this.state.ui, ...state } }, () => {
+      this.props.dispatch({ type: Action.UPDATE_ROLES_UI, roles: this.state.ui });
+      if (callback) {
+        callback();
+      }
+    });
+  };
+
+  delete = (role) => {
+    this.props.dispatch(Api.deleteRole(role)).then(() => {
+      this.fetch();
+    });
+  };
+
+  render() {
+    var numRoles = this.state.loading ? '...' : Object.keys(this.props.roles).length;
+
+    if (
+      !this.props.currentUser.hasPermission(Constant.PERMISSION_ROLES_AND_PERMISSIONS) &&
+      !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)
+    ) {
+      return <div>You do not have permission to view this page.</div>;
+    }
+
+    return (
+      <div id="roles-list">
+        <PageHeader>
+          Roles ({numRoles})
+          <ButtonGroup id="roles-buttons" className="float-right">
+            <PrintButton />
+          </ButtonGroup>
+        </PageHeader>
+        <SearchBar>
+          <Row>
+            <Col xs={9} sm={10} id="filters">
+              <ButtonToolbar>
+                <SearchControl
+                  className="d-flex"
+                  id="search"
+                  search={this.state.search}
+                  updateState={this.updateSearchState}
+                  items={[
+                    { id: 'name', name: 'Name' },
+                    { id: 'description', name: 'Description' },
+                  ]}
+                />
+              </ButtonToolbar>
+            </Col>
+          </Row>
+        </SearchBar>
+
+        {(() => {
+          if (this.state.loading) {
+            return (
+              <div style={{ textAlign: 'center' }}>
+                <Spinner />
+              </div>
+            );
+          }
+
+          var addRoleButton = (
             <Link to={`${Constant.ROLES_PATHNAME}/0`}>
               <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
                 <Button className="btn-custom" title="Add Role" size="sm">
@@ -126,33 +141,32 @@ const Roles = () => {
               </Authorize>
             </Link>
           );
-
-          if (Object.keys(roles).length === 0) {
+          if (Object.keys(this.props.roles).length === 0) {
             return <Alert variant="success">No roles {addRoleButton}</Alert>;
           }
 
-          const filteredRoles = _.sortBy(
-            _.filter(roles, (role) => {
-              if (!searchState.params) {
+          var roles = _.sortBy(
+            _.filter(this.props.roles, (role) => {
+              if (!this.state.search.params) {
                 return true;
               }
               return (
-                role[searchState.key] &&
-                role[searchState.key].toLowerCase().indexOf(searchState.text.toLowerCase()) !== -1
+                role[this.state.search.key] &&
+                role[this.state.search.key].toLowerCase().indexOf(this.state.search.text.toLowerCase()) !== -1
               );
             }),
-            uiState.sortField
+            this.state.ui.sortField
           );
 
-          if (uiState.sortDesc) {
-            _.reverse(filteredRoles);
+          if (this.state.ui.sortDesc) {
+            _.reverse(roles);
           }
 
           return (
             <SortTable
-              sortField={uiState.sortField}
-              sortDesc={uiState.sortDesc}
-              onSort={updateUIState}
+              sortField={this.state.ui.sortField}
+              sortDesc={this.state.ui.sortDesc}
+              onSort={this.updateUIState}
               headers={[
                 { field: 'name', title: 'Name' },
                 { field: 'description', title: 'Description' },
@@ -164,31 +178,35 @@ const Roles = () => {
                 },
               ]}
             >
-              {_.map(filteredRoles, (role) => (
-                <tr key={role.id}>
-                  <td>{role.name}</td>
-                  <td>{role.description}</td>
-                  <td style={{ textAlign: 'right' }}>
-                    <ButtonGroup>
-                      <DeleteButton onConfirm={() => deleteRole(role)} name="Role" />
-                      <EditButton pathname={`${Constant.ROLES_PATHNAME}/${role.id}`} name="Role" />
-                    </ButtonGroup>
-                  </td>
-                </tr>
-              ))}
+              {_.map(roles, (role) => {
+                return (
+                  <tr key={role.id}>
+                    <td>{role.name}</td>
+                    <td>{role.description}</td>
+                    <td style={{ textAlign: 'right' }}>
+                      <ButtonGroup>
+                        <DeleteButton onConfirm={this.delete.bind(this, role)} name="Role" />
+                        <EditButton pathname={`${Constant.ROLES_PATHNAME}/${role.id}`} name="Role" />
+                      </ButtonGroup>
+                    </td>
+                  </tr>
+                );
+              })}
             </SortTable>
           );
-        })()
-      )}
-    </div>
-  );
-};
+        })()}
+      </div>
+    );
+  }
+}
 
-Roles.propTypes = {
-  roles: PropTypes.object,
-  currentUser: PropTypes.object,
-  search: PropTypes.object,
-  ui: PropTypes.object,
-};
+const mapStateToProps = (state) => ({
+  currentUser: state.user,
+  roles: state.models.roles,
+  search: state.search.roles,
+  ui: state.ui.roles,
+});
 
-export default Roles;
+const mapDispatchToProps = (dispatch) => ({ dispatch });
+
+export default connect(mapStateToProps, mapDispatchToProps)(Roles);

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup } from 'react-bootstrap';
@@ -22,47 +22,52 @@ import PrintButton from '../components/PrintButton.jsx';
 // import { formatDateTime, toZuluTime } from '../utils/date';
 import { toZuluTime } from '../utils/date';
 
-const WcbCglCoverage = (props) => {
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState({
-    localAreaIds: props.search.localAreaIds || [],
-    ownerIds: props.search.ownerIds || [],
-    wcbExpiry: props.search.wcbExpiry || '',
-    cglExpiry: props.search.cglExpiry || '',
-  });
-  const [ui, setUi] = useState({
-    sortField: props.ui.sortField || 'localAreaLabel',
-    sortDesc: props.ui.sortDesc === true,
-  });
+class WcbCglCoverage extends React.Component {
+  static propTypes = {
+    localAreas: PropTypes.object,
+    owners: PropTypes.object,
+    ownersCoverage: PropTypes.object,
+    favourites: PropTypes.object,
+    search: PropTypes.object,
+    ui: PropTypes.object,
+    router: PropTypes.object,
+  };
 
-  useEffect(() => {
-    props.dispatch(Api.getOwnersLite());
+  constructor(props) {
+    super(props);
 
-    if (_.isEmpty(props.search)) {
-      const defaultFavourite = _.find(props.favourites, (f) => f.isDefault);
-      if (defaultFavourite) {
-        loadFavourite(defaultFavourite);
-      }
+    this.state = {
+      loading: true,
+      search: {
+        localAreaIds: props.search.localAreaIds || [],
+        ownerIds: props.search.ownerIds || [],
+        wcbExpiry: props.search.wcbExpiry || '',
+        cglExpiry: props.search.cglExpiry || '',
+      },
+      ui: {
+        sortField: props.ui.sortField || 'localAreaLabel',
+        sortDesc: props.ui.sortDesc === true,
+      },
+    };
+  }
+
+  buildSearchParams = () => {
+    var searchParams = {};
+
+    if (this.state.search.localAreaIds.length > 0) {
+      searchParams.localAreas = this.state.search.localAreaIds;
     }
-  }, [props.search, props.favourites, props.dispatch]);
 
-  const buildSearchParams = () => {
-    const searchParams = {};
-
-    if (search.localAreaIds.length > 0) {
-      searchParams.localAreas = search.localAreaIds;
+    if (this.state.search.ownerIds.length > 0) {
+      searchParams.owners = this.state.search.ownerIds;
     }
 
-    if (search.ownerIds.length > 0) {
-      searchParams.owners = search.ownerIds;
-    }
-
-    const wcbExpiryDate = Moment(search.wcbExpiry);
+    var wcbExpiryDate = Moment(this.state.search.wcbExpiry);
     if (wcbExpiryDate && wcbExpiryDate.isValid()) {
       searchParams.wcbExpiry = toZuluTime(wcbExpiryDate.startOf('day'));
     }
 
-    const cglExpiryDate = Moment(search.cglExpiry);
+    var cglExpiryDate = Moment(this.state.search.cglExpiry);
     if (cglExpiryDate && cglExpiryDate.isValid()) {
       searchParams.cglExpiry = toZuluTime(cglExpiryDate.startOf('day'));
     }
@@ -70,81 +75,94 @@ const WcbCglCoverage = (props) => {
     return searchParams;
   };
 
-  const fetch = () => {
-    props.dispatch(Api.searchOwnersCoverage(buildSearchParams()));
+  componentDidMount() {
+    this.props.dispatch(Api.getOwnersLite());
+
+    // If this is the first load, then look for a default favourite
+    if (_.isEmpty(this.props.search)) {
+      var defaultFavourite = _.find(this.props.favourites, (f) => f.isDefault);
+      if (defaultFavourite) {
+        this.loadFavourite(defaultFavourite);
+      }
+    }
+  }
+
+  fetch = () => {
+    this.props.dispatch(Api.searchOwnersCoverage(this.buildSearchParams()));
   };
 
-  const searchHandler = (e) => {
+  search = (e) => {
     e.preventDefault();
-    fetch();
+    this.fetch();
   };
 
-  const clearSearch = () => {
-    const defaultSearchParameters = {
+  clearSearch = () => {
+    var defaultSearchParameters = {
       localAreaIds: [],
       ownerIds: [],
       wcbExpiry: '',
       cglExpiry: '',
     };
 
-    setSearch(defaultSearchParameters);
-    props.dispatch({
-      type: Action.UPDATE_OWNERS_COVERAGE_SEARCH,
-      ownersCoverage: defaultSearchParameters,
-    });
-    props.dispatch({ type: Action.CLEAR_OWNERS_COVERAGE });
-  };
-
-  const updateSearchState = (state, callback) => {
-    setSearch((prevSearch) => {
-      const updatedSearch = { ...prevSearch, ...state, loaded: true };
-      props.dispatch({
+    this.setState({ search: defaultSearchParameters }, () => {
+      this.props.dispatch({
         type: Action.UPDATE_OWNERS_COVERAGE_SEARCH,
-        ownersCoverage: updatedSearch,
+        ownersCoverage: this.state.search,
       });
-      if (callback) callback();
-      return updatedSearch;
+      this.props.dispatch({ type: Action.CLEAR_OWNERS_COVERAGE });
     });
   };
 
-  const updateUIState = (state, callback) => {
-    setUi((prevUi) => {
-      const updatedUi = { ...prevUi, ...state };
-      props.dispatch({
+  updateSearchState = (state, callback) => {
+    this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } } }, () => {
+      this.props.dispatch({
+        type: Action.UPDATE_OWNERS_COVERAGE_SEARCH,
+        ownersCoverage: this.state.search,
+      });
+      if (callback) {
+        callback();
+      }
+    });
+  };
+
+  updateUIState = (state, callback) => {
+    this.setState({ ui: { ...this.state.ui, ...state } }, () => {
+      this.props.dispatch({
         type: Action.UPDATE_OWNERS_COVERAGE_UI,
-        ownersCoverage: updatedUi,
+        ownersCoverage: this.state.ui,
       });
-      if (callback) callback();
-      return updatedUi;
+      if (callback) {
+        callback();
+      }
     });
   };
 
-  const loadFavourite = (favourite) => {
-    updateSearchState(JSON.parse(favourite.value), fetch);
+  loadFavourite = (favourite) => {
+    this.updateSearchState(JSON.parse(favourite.value), this.fetch);
   };
 
-  const renderResults = () => {
-    if (Object.keys(props.ownersCoverage.data).length === 0) {
+  renderResults = () => {
+    if (Object.keys(this.props.ownersCoverage.data).length === 0) {
       return <Alert variant="success">No results</Alert>;
     }
 
-    let ownersCoverage = _.sortBy(props.ownersCoverage.data, (entry) => {
-      const sortValue = entry[ui.sortField];
+    var ownersCoverage = _.sortBy(this.props.ownersCoverage.data, (entry) => {
+      var sortValue = entry[this.state.ui.sortField];
       if (typeof sortValue === 'string') {
         return sortValue.toLowerCase();
       }
       return sortValue;
     });
 
-    if (ui.sortDesc) {
+    if (this.state.ui.sortDesc) {
       _.reverse(ownersCoverage);
     }
 
     return (
       <SortTable
-        sortField={ui.sortField}
-        sortDesc={ui.sortDesc}
-        onSort={updateUIState}
+        sortField={this.state.ui.sortField}
+        sortDesc={this.state.ui.sortDesc}
+        onSort={this.updateUIState}
         headers={[
           { field: 'localAreaLabel', title: 'Local Area' },
           { field: 'ownerCode', title: 'Owner Code' },
@@ -157,7 +175,6 @@ const WcbCglCoverage = (props) => {
           // { field: 'cglExpiryDate', title: 'CGL Expires' },
         ]}
       >
-<<<<<<< HEAD
         {_.map(ownersCoverage, (entry) => {
           return (
             <tr key={entry.id}>
@@ -175,53 +192,35 @@ const WcbCglCoverage = (props) => {
             </tr>
           );
         })}
-=======
-        {_.map(ownersCoverage, (entry) => (
-          <tr key={entry.id}>
-            <td>{entry.localAreaLabel}</td>
-            <td>{entry.ownerCode}</td>
-            <td>
-              <Link to={`${Constant.OWNERS_PATHNAME}/${entry.id}`}>{entry.organizationName}</Link>
-            </td>
-            <td>{entry.primaryContactNumber}</td>
-            <td>{entry.primaryContactCell}</td>
-            <td>{entry.wcbNumber}</td>
-            <td>{formatDateTime(entry.wcbExpiryDate, 'YYYY-MMM-DD')}</td>
-            <td>{entry.cglNumber}</td>
-            <td>{formatDateTime(entry.cglExpiryDate, 'YYYY-MMM-DD')}</td>
-          </tr>
-        ))}
->>>>>>> RefractoredCode
       </SortTable>
     );
   };
 
-  const matchesLocalAreaFilter = (localAreaId) => {
-    return search.localAreaIds.length === 0 || _.includes(search.localAreaIds, localAreaId);
+  matchesLocalAreaFilter = (localAreaId) => {
+    if (this.state.search.localAreaIds.length === 0) {
+      return true;
+    }
+
+    return _.includes(this.state.search.localAreaIds, localAreaId);
   };
 
-  const updateLocalAreaSearchState = (state) => {
-    updateSearchState(state, filterSelectedOwners);
+  updateLocalAreaSearchState = (state) => {
+    this.updateSearchState(state, this.filterSelectedOwners);
   };
 
-  const filterSelectedOwners = () => {
-    const acceptableOwnerIds = _.map(getFilteredOwners(), 'id');
-    const ownerIds = _.intersection(search.ownerIds, acceptableOwnerIds);
-    updateSearchState({ ownerIds }, filterSelectedEquipment);
+  filterSelectedOwners = () => {
+    var acceptableOwnerIds = _.map(this.getFilteredOwners(), 'id');
+    var ownerIds = _.intersection(this.state.search.ownerIds, acceptableOwnerIds);
+    this.updateSearchState({ ownerIds: ownerIds }, this.filterSelectedEquipment);
   };
 
-  const filterSelectedEquipment = () => {
-    // Logic to filter equipment based on the selected owners
-  };
-
-  const getFilteredOwners = () => {
-    return _.chain(props.owners.data)
-      .filter((x) => matchesLocalAreaFilter(x.localAreaId))
+  getFilteredOwners = () => {
+    return _.chain(this.props.owners.data)
+      .filter((x) => this.matchesLocalAreaFilter(x.localAreaId))
       .sortBy('organizationName')
       .value();
   };
 
-<<<<<<< HEAD
   render() {
     var resultCount = '';
     if (this.props.ownersCoverage.loaded) {
@@ -313,109 +312,8 @@ const WcbCglCoverage = (props) => {
         })()}
       </div>
     );
-=======
-  let resultCount = '';
-  if (props.ownersCoverage.loaded) {
-    resultCount = `(${Object.keys(props.ownersCoverage.data).length})`;
->>>>>>> RefractoredCode
   }
-
-  const localAreas = _.sortBy(props.localAreas, 'name');
-  const owners = getFilteredOwners();
-
-  return (
-    <div id="wcg-cgl-coverage">
-      <PageHeader>
-        WCB / CGL Coverage {resultCount}
-        <ButtonGroup>
-          <PrintButton disabled={!props.ownersCoverage.loaded} />
-        </ButtonGroup>
-      </PageHeader>
-      <SearchBar>
-        <Form onSubmit={searchHandler}>
-          <Row>
-            <Col xs={9} sm={10} id="filters">
-              <ButtonToolbar>
-                <MultiDropdown
-                  id="localAreaIds"
-                  placeholder="Local Areas"
-                  items={localAreas}
-                  selectedIds={search.localAreaIds}
-                  updateState={updateLocalAreaSearchState}
-                  showMaxItems={2}
-                />
-                <MultiDropdown
-                  id="ownerIds"
-                  disabled={!props.owners.loaded}
-                  placeholder="Companies"
-                  fieldName="organizationName"
-                  items={owners}
-                  selectedIds={search.ownerIds}
-                  updateState={updateSearchState}
-                  showMaxItems={2}
-                />
-                <DateControl
-                  id="wcbExpiry"
-                  date={search.wcbExpiry}
-                  updateState={updateSearchState}
-                  label="WCB Exp Before:"
-                  title="WCB Expiry Before"
-                />
-                <DateControl
-                  id="cglExpiry"
-                  date={search.cglExpiry}
-                  updateState={updateSearchState}
-                  label="CGL Exp Before:"
-                  title="CGL Expiry Before"
-                />
-                <Button id="search-button" variant="primary" type="submit">
-                  Search
-                </Button>
-                <Button className="btn-custom" id="clear-search-button" onClick={clearSearch}>
-                  Clear
-                </Button>
-              </ButtonToolbar>
-            </Col>
-            <Col xs={3} sm={2} id="search-buttons">
-              <Row className="float-right">
-                <Favourites
-                  id="wcg-cgl-coverage-faves-dropdown"
-                  type="ownersCoverage"
-                  favourites={props.favourites}
-                  data={search}
-                  onSelect={loadFavourite}
-                />
-              </Row>
-            </Col>
-          </Row>
-        </Form>
-      </SearchBar>
-
-      {(() => {
-        if (props.ownersCoverage.loading) {
-          return (
-            <div style={{ textAlign: 'center' }}>
-              <Spinner />
-            </div>
-          );
-        }
-        if (props.ownersCoverage.loaded) {
-          return renderResults();
-        }
-      })()}
-    </div>
-  );
-};
-
-WcbCglCoverage.propTypes = {
-  localAreas: PropTypes.object,
-  owners: PropTypes.object,
-  ownersCoverage: PropTypes.object,
-  favourites: PropTypes.object,
-  search: PropTypes.object,
-  ui: PropTypes.object,
-  router: PropTypes.object,
-};
+}
 
 const mapStateToProps = (state) => ({
   localAreas: state.lookups.localAreas,

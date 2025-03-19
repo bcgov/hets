@@ -5,29 +5,31 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 
-const EditButton = ({ view, hide, pathname, onClick, name, ...rest }) => {
-  const Buttonprops = _.omit(rest, 'view', 'name', 'hide', 'pathname');
+class EditButton extends React.Component {
+  static propTypes = {
+    pathname: PropTypes.string,
+    onClick: PropTypes.func,
+    view: PropTypes.bool,
+    name: PropTypes.string,
+    hide: PropTypes.bool,
+  };
 
-  const button = (
-    <Button
-      title={`${view ? 'View' : 'Edit'} ${name}`}
-      size="sm"
-      className={hide ? 'd-none' : 'btn-custom'}
-      onClick={onClick}
-      {...Buttonprops}
-    >
-      <FontAwesomeIcon icon={view ? 'edit' : 'pencil-alt'} />
-    </Button>
-  );
+  render() {
+    var props = _.omit(this.props, 'view', 'name', 'hide', 'pathname');
 
-  return pathname ? <Link to={pathname}> {button} </Link> : button;
-};
-EditButton.propTypes = {
-  pathname: PropTypes.string,
-  onClick: PropTypes.func,
-  view: PropTypes.bool,
-  name: PropTypes.string,
-  hide: PropTypes.bool,
-};
+    var button = (
+      <Button
+        title={`${this.props.view ? 'View' : 'Edit'} ${this.props.name}`}
+        size="sm"
+        className={this.props.hide ? 'd-none' : 'btn-custom'}
+        {...props}
+      >
+        <FontAwesomeIcon icon={this.props.view ? 'edit' : 'pencil-alt'} />
+      </Button>
+    );
+
+    return this.props.pathname ? <Link to={this.props.pathname}> {button} </Link> : button;
+  }
+}
 
 export default EditButton;
