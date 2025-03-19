@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, InputGroup, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
@@ -25,138 +25,116 @@ import Spinner from '../components/Spinner.jsx';
 import PrintButton from '../components/PrintButton.jsx';
 import Authorize from '../components/Authorize.jsx';
 
-class Users extends React.Component {
-  static propTypes = {
-    currentUser: PropTypes.object,
-    users: PropTypes.object,
-    user: PropTypes.object,
-    districts: PropTypes.object,
-    favourites: PropTypes.object,
-    search: PropTypes.object,
-    ui: PropTypes.object,
-    history: PropTypes.object,
-  };
+const Users = ({ currentUser, users, favourites, search, districts, ui, history }) => {
+  const [showUsersEditDialog, setShowUsersEditDialog] = useState(false);
+  const [searchState, setSearchState] = useState({
+    selectedDistrictsIds: search.selectedDistrictsIds || [],
+    surname: search.surname || '',
+    hideInactive: search.hideInactive || true,
+  });
+  const [uiState, setUiState] = useState({
+    sortField: ui.sortField || 'surname',
+    sortDesc: ui.sortDesc === true,
+  });
 
-  constructor(props) {
-    super(props);
+  const dispatch = useDispatch();
 
-    this.state = {
-      showUsersEditDialog: false,
-
-      search: {
-        selectedDistrictsIds: props.search.selectedDistrictsIds || [],
-        surname: props.search.surname || '',
-        hideInactive: props.search.hideInactive || true,
-      },
-
-      ui: {
-        sortField: props.ui.sortField || 'surname',
-        sortDesc: props.ui.sortDesc === true,
-      },
-    };
-  }
-
-  buildSearchParams = () => {
-    var searchParams = {
-      includeInactive: !this.state.search.hideInactive,
-      surname: this.state.search.surname,
+  const buildSearchParams = () => {
+    let searchParams = {
+      includeInactive: !searchState.hideInactive,
+      surname: searchState.surname,
     };
 
-    if (this.state.search.selectedDistrictsIds.length > 0) {
-      searchParams.districts = this.state.search.selectedDistrictsIds;
+    if (searchState.selectedDistrictsIds.length > 0) {
+      searchParams.districts = searchState.selectedDistrictsIds;
     }
 
     return searchParams;
   };
 
-  componentDidMount() {
-    // If this is the first load, then look for a default favourite
-    if (_.isEmpty(this.props.search)) {
-      var defaultFavourite = _.find(this.props.favourites, (f) => f.isDefault);
+  useEffect(() => {
+    if (_.isEmpty(search)) {
+      const defaultFavourite = _.find(favourites, (f) => f.isDefault);
       if (defaultFavourite) {
-        this.loadFavourite(defaultFavourite);
+        loadFavourite(defaultFavourite);
       }
     }
-  }
+  }, [search, favourites]);
 
-  fetch = () => {
-    this.props.dispatch(Api.searchUsers(this.buildSearchParams()));
+  const fetch = () => {
+    dispatch(Api.searchUsers(buildSearchParams()));
   };
 
-  search = (e) => {
+  const searchHandler = (e) => {
     e.preventDefault();
-    this.fetch();
+    fetch();
   };
 
-  clearSearch = () => {
-    var defaultSearchParameters = {
+  const clearSearch = () => {
+    const defaultSearchParameters = {
       selectedDistrictsIds: [],
       surname: '',
       hideInactive: true,
     };
 
-    this.setState({ search: defaultSearchParameters }, () => {
-      this.props.dispatch({ type: Action.UPDATE_USERS_SEARCH, users: this.state.search });
-      this.props.dispatch({ type: Action.CLEAR_USERS });
+    setSearchState(defaultSearchParameters, () => {
+      dispatch({ type: Action.UPDATE_USERS_SEARCH, users: searchState });
+      dispatch({ type: Action.CLEAR_USERS });
     });
   };
 
-  updateSearchState = (state, callback) => {
-    this.setState({ search: { ...this.state.search, ...state, ...{ loaded: true } } }, () => {
-      this.props.dispatch({ type: Action.UPDATE_USERS_SEARCH, users: this.state.search });
-      if (callback) {
-        callback();
-      }
+  const updateSearchState = (state, callback) => {
+    setSearchState({ ...searchState, ...state, loaded: true }, () => {
+      dispatch({ type: Action.UPDATE_USERS_SEARCH, users: searchState });
+      if (callback) callback();
     });
   };
 
-  updateUIState = (state, callback) => {
-    this.setState({ ui: { ...this.state.ui, ...state } }, () => {
-      this.props.dispatch({ type: Action.UPDATE_USERS_UI, users: this.state.ui });
-      if (callback) {
-        callback();
-      }
+  const updateUIState = (state, callback) => {
+    setUiState({ ...uiState, ...state }, () => {
+      dispatch({ type: Action.UPDATE_USERS_UI, users: uiState });
+      if (callback) callback();
     });
   };
 
-  loadFavourite = (favourite) => {
-    this.updateSearchState(JSON.parse(favourite.value), this.fetch);
+  const loadFavourite = (favourite) => {
+    updateSearchState(JSON.parse(favourite.value), fetch);
   };
 
-  delete = (user) => {
-    this.props.dispatch(Api.deleteUser(user)).then(() => {
-      this.fetch();
+  const deleteUser = (user) => {
+    dispatch(Api.deleteUser(user)).then(() => {
+      fetch();
     });
   };
 
-  openUsersEditDialog = () => {
-    this.setState({ showUsersEditDialog: true });
+  const openUsersEditDialog = () => {
+    setShowUsersEditDialog(true);
   };
 
-  closeUsersEditDialog = () => {
-    this.setState({ showUsersEditDialog: false });
+  const closeUsersEditDialog = () => {
+    setShowUsersEditDialog(false);
   };
 
-  onUserSaved = (user) => {
-    this.closeUsersEditDialog();
-    this.props.history.push(`${Constant.USERS_PATHNAME}/${user.id}`);
+  const onUserSaved = (user) => {
+    closeUsersEditDialog();
+    history.push(`${Constant.USERS_PATHNAME}/${user.id}`);
   };
 
-  renderResults = (addUserButton) => {
-    if (Object.keys(this.props.users.data).length === 0) {
+  const renderResults = (addUserButton) => {
+    if (Object.keys(users.data).length === 0) {
       return <Alert variant="success">No users {addUserButton}</Alert>;
     }
 
-    var users = _.sortBy(this.props.users.data, this.state.ui.sortField);
-    if (this.state.ui.sortDesc) {
-      _.reverse(users);
+    let sortedUsers = _.sortBy(users.data, uiState.sortField);
+    if (uiState.sortDesc) {
+      _.reverse(sortedUsers);
     }
 
     return (
       <SortTable
-        sortField={this.state.ui.sortField}
-        sortDesc={this.state.ui.sortDesc}
-        onSort={this.updateUIState}
+        sortField={uiState.sortField}
+        sortDesc={uiState.sortDesc}
+        onSort={updateUIState}
         headers={[
           { field: 'surname', title: 'Surname' },
           { field: 'givenName', title: 'First Name' },
@@ -165,154 +143,157 @@ class Users extends React.Component {
           { field: 'addUser', title: 'Add User', style: { textAlign: 'right' }, node: addUserButton },
         ]}
       >
-        {_.map(users, (user) => {
-          return (
-            <tr key={user.id} className={user.active ? null : 'bg-info'}>
-              <td>{user.surname}</td>
-              <td>{user.givenName}</td>
-              <td>{user.smUserId}</td>
-              <td>{user.districtName}</td>
-              <td style={{ textAlign: 'right' }}>
-                <ButtonGroup>
-                  <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
-                    <DeleteButton onConfirm={this.delete.bind(this, user)} name="User" />
-                    <EditButton pathname={`${Constant.USERS_PATHNAME}/${user.id}`} name="User" />
-                  </Authorize>
-                </ButtonGroup>
-              </td>
-            </tr>
-          );
-        })}
+        {_.map(sortedUsers, (user) => (
+          <tr key={user.id} className={user.active ? null : 'bg-info'}>
+            <td>{user.surname}</td>
+            <td>{user.givenName}</td>
+            <td>{user.smUserId}</td>
+            <td>{user.districtName}</td>
+            <td style={{ textAlign: 'right' }}>
+              <ButtonGroup>
+                <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
+                  <DeleteButton onConfirm={() => deleteUser(user)} name="User" />
+                  <EditButton pathname={`${Constant.USERS_PATHNAME}/${user.id}`} name="User" />
+                </Authorize>
+              </ButtonGroup>
+            </td>
+          </tr>
+        ))}
       </SortTable>
     );
   };
 
-  render() {
-    var districts = _.sortBy(this.props.districts, 'name');
+  const districtsSorted = _.sortBy(districts, 'name');
 
-    if (
-      !this.props.currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) &&
-      !this.props.currentUser.hasPermission(Constant.PERMISSION_ADMIN)
-    ) {
-      return <div>You do not have permission to view this page.</div>;
-    }
-
-    var resultCount = '';
-    if (this.props.users.loaded) {
-      resultCount = '(' + Object.keys(this.props.users.data).length + ')';
-    }
-
-    return (
-      <div id="users-list">
-        <PageHeader>
-          Users {resultCount}
-          <ButtonGroup id="users-buttons">
-            <PrintButton disabled={!this.props.users.loaded} />
-          </ButtonGroup>
-        </PageHeader>
-        <SearchBar>
-          <Form onSubmit={this.search}>
-            <Row>
-              <Col sm={10} id="filters">
-                <ButtonToolbar>
-                  <MultiDropdown
-                    id="selectedDistrictsIds"
-                    placeholder="Districts"
-                    items={districts}
-                    selectedIds={this.state.search.selectedDistrictsIds}
-                    updateState={this.updateSearchState}
-                    showMaxItems={2}
-                  />
-                  <InputGroup>
-                    <InputGroup.Prepend>
-                      <InputGroup.Text>Surname</InputGroup.Text>
-                    </InputGroup.Prepend>
-                    <FormInputControl
-                      id="surname"
-                      type="text"
-                      value={this.state.search.surname}
-                      updateState={this.updateSearchState}
-                    />
-                  </InputGroup>
-                  <CheckboxControl
-                    inline
-                    id="hideInactive"
-                    checked={this.state.search.hideInactive}
-                    updateState={this.updateSearchState}
-                    label="Hide Inactive"
-                  />
-
-                  <Button id="search-button" variant="primary" type="submit">
-                    Search
-                  </Button>
-                  <Button className="btn-custom" id="clear-search-button" onClick={this.clearSearch}>
-                    Clear
-                  </Button>
-                </ButtonToolbar>
-              </Col>
-              <Col sm={2} id="search-buttons">
-                <Row className="float-right">
-                  <Favourites
-                    id="users-faves-dropdown"
-                    type="user"
-                    favourites={this.props.favourites}
-                    data={this.state.search}
-                    onSelect={this.loadFavourite}
-                  />
-                </Row>
-              </Col>
-            </Row>
-          </Form>
-        </SearchBar>
-
-        {(() => {
-          if (this.props.users.loading) {
-            return (
-              <div style={{ textAlign: 'center' }}>
-                <Spinner />
-              </div>
-            );
-          }
-
-          var addUserButton = (
-            <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
-              <Button className="btn-custom" title="Add User" size="sm" onClick={this.openUsersEditDialog}>
-                <FontAwesomeIcon icon="plus" />
-                &nbsp;<strong>Add User</strong>
-              </Button>
-            </Authorize>
-          );
-
-          if (this.props.users.loaded) {
-            return this.renderResults(addUserButton);
-          }
-
-          return <AddButtonContainer>{addUserButton}</AddButtonContainer>;
-        })()}
-
-        {this.state.showUsersEditDialog && (
-          <UsersEditDialog
-            isNew
-            show={this.state.showUsersEditDialog}
-            onSave={this.onUserSaved}
-            onClose={this.closeUsersEditDialog}
-          />
-        )}
-      </div>
-    );
+  if (
+    !currentUser.hasPermission(Constant.PERMISSION_USER_MANAGEMENT) &&
+    !currentUser.hasPermission(Constant.PERMISSION_ADMIN)
+  ) {
+    return <div>You do not have permission to view this page.</div>;
   }
-}
+
+  let resultCount = '';
+  if (users.loaded) {
+    resultCount = `(${Object.keys(users.data).length})`;
+  }
+
+  return (
+    <div id="users-list">
+      <PageHeader>
+        Users {resultCount}
+        <ButtonGroup id="users-buttons">
+          <PrintButton disabled={!users.loaded} />
+        </ButtonGroup>
+      </PageHeader>
+      <SearchBar>
+        <Form onSubmit={searchHandler}>
+          <Row>
+            <Col sm={10} id="filters">
+              <ButtonToolbar>
+                <MultiDropdown
+                  id="selectedDistrictsIds"
+                  placeholder="Districts"
+                  items={districtsSorted}
+                  selectedIds={searchState.selectedDistrictsIds}
+                  updateState={updateSearchState}
+                  showMaxItems={2}
+                />
+                <InputGroup>
+                  <InputGroup.Prepend>
+                    <InputGroup.Text>Surname</InputGroup.Text>
+                  </InputGroup.Prepend>
+                  <FormInputControl
+                    id="surname"
+                    type="text"
+                    value={searchState.surname}
+                    updateState={updateSearchState}
+                  />
+                </InputGroup>
+                <CheckboxControl
+                  inline
+                  id="hideInactive"
+                  checked={searchState.hideInactive}
+                  updateState={updateSearchState}
+                  label="Hide Inactive"
+                />
+
+                <Button id="search-button" variant="primary" type="submit">
+                  Search
+                </Button>
+                <Button className="btn-custom" id="clear-search-button" onClick={clearSearch}>
+                  Clear
+                </Button>
+              </ButtonToolbar>
+            </Col>
+            <Col sm={2} id="search-buttons">
+              <Row className="float-right">
+                <Favourites
+                  id="users-faves-dropdown"
+                  type="user"
+                  favourites={favourites}
+                  data={searchState}
+                  onSelect={loadFavourite}
+                />
+              </Row>
+            </Col>
+          </Row>
+        </Form>
+      </SearchBar>
+
+      {(() => {
+        if (users.loading) {
+          return (
+            <div style={{ textAlign: 'center' }}>
+              <Spinner />
+            </div>
+          );
+        }
+
+        const addUserButton = (
+          <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
+            <Button className="btn-custom" title="Add User" size="sm" onClick={openUsersEditDialog}>
+              <FontAwesomeIcon icon="plus" />
+              &nbsp;<strong>Add User</strong>
+            </Button>
+          </Authorize>
+        );
+
+        if (users.loaded) {
+          return renderResults(addUserButton);
+        }
+
+        return <AddButtonContainer>{addUserButton}</AddButtonContainer>;
+      })()}
+
+      {showUsersEditDialog && (
+        <UsersEditDialog
+          isNew
+          show={showUsersEditDialog}
+          onSave={onUserSaved}
+          onClose={closeUsersEditDialog}
+        />
+      )}
+    </div>
+  );
+};
+
+Users.propTypes = {
+  currentUser: PropTypes.object,
+  users: PropTypes.object,
+  favourites: PropTypes.object,
+  search: PropTypes.object,
+  districts: PropTypes.object,
+  ui: PropTypes.object,
+  history: PropTypes.object,
+};
 
 const mapStateToProps = (state) => ({
   currentUser: state.user,
   users: state.models.users,
-  user: state.models.user,
-  districts: state.lookups.districts,
   favourites: state.models.favourites.user,
   search: state.search.users,
   ui: state.ui.users,
+  districts: state.lookups.districts,
 });
 
-const mapDispatchToProps = (dispatch) => ({ dispatch });
-
-export default connect(mapStateToProps, mapDispatchToProps)(Users);
+export default connect(mapStateToProps)(Users);

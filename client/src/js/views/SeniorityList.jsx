@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Row, Col, ButtonToolbar, Button } from 'react-bootstrap';
 import _ from 'lodash';
 import { saveAs } from 'file-saver';
@@ -14,40 +14,34 @@ import MultiDropdown from '../components/MultiDropdown.jsx';
 
 import { formatDateTimeUTCToLocal } from '../utils/date';
 
-class SeniorityList extends React.Component {
-  static propTypes = {
-    currentUser: PropTypes.object,
-    districtEquipmentTypes: PropTypes.object,
-    localAreas: PropTypes.object,
+const SeniorityList = () => {
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.user);
+  const districtEquipmentTypes = useSelector((state) => state.lookups.districtEquipmentTypes);
+  const localAreas = useSelector((state) => state.lookups.localAreas);
+
+  const [selectedEquipmentTypeIds, setSelectedEquipmentTypeIds] = useState([]);
+  const [selectedLocalAreaIds, setSelectedLocalAreaIds] = useState([]);
+
+  useEffect(() => {
+    fetch();
+  }, []);
+
+  const fetch = () => {
+    dispatch(Api.getDistrictEquipmentTypes());
   };
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      selectedEquipmentTypeIds: [],
-      selectedLocalAreaIds: [],
-    };
-  }
-
-  componentDidMount() {
-    this.fetch();
-  }
-
-  fetch = () => {
-    this.props.dispatch(Api.getDistrictEquipmentTypes());
+  const updateState = (state) => {
+    if (state.selectedEquipmentTypeIds !== undefined) setSelectedEquipmentTypeIds(state.selectedEquipmentTypeIds);
+    if (state.selectedLocalAreaIds !== undefined) setSelectedLocalAreaIds(state.selectedLocalAreaIds);
   };
 
-  updateState = (state) => {
-    this.setState(state);
+  const onLocalAreasChanged = () => {
+    setSelectedEquipmentTypeIds([]);
   };
 
-  onLocalAreasChanged = () => {
-    this.setState({ selectedEquipmentTypeIds: [] });
-  };
-
-  getFilteredEquipmentTypes = (localAreaIds) => {
-    return _.chain(this.props.districtEquipmentTypes.data)
+  const getFilteredEquipmentTypes = (localAreaIds) => {
+    return _.chain(districtEquipmentTypes.data)
       .filter(
         (type) =>
           (type.equipmentCount > 0 && localAreaIds.length === 0) ||
@@ -60,7 +54,7 @@ class SeniorityList extends React.Component {
       .value();
   };
 
-  getRotationList = async (counterCopy) => {
+  const getRotationList = async (counterCopy) => {
     const filename =
       'SeniorityList-' +
       formatDateTimeUTCToLocal(new Date(), Constant.DATE_TIME_FILENAME) +
@@ -68,69 +62,65 @@ class SeniorityList extends React.Component {
       '.docx';
 
     try {
-      const res = await this.props.dispatch(
-        Api.equipmentSeniorityListDoc(this.state.selectedLocalAreaIds, this.state.selectedEquipmentTypeIds, counterCopy));
+      const res = await dispatch(
+        Api.equipmentSeniorityListDoc(selectedLocalAreaIds, selectedEquipmentTypeIds, counterCopy)
+      );
 
       saveAs(res, filename);
-    } catch(error) {
+    } catch (error) {
       console.log(error);
     }
   };
 
-  render() {
-    var localAreas = _.chain(this.props.localAreas).sortBy('name').value();
+  const localAreasSorted = _.sortBy(localAreas, 'name');
+  const filteredEquipmentTypes = getFilteredEquipmentTypes(selectedLocalAreaIds);
 
-    var districtEquipmentTypes = this.getFilteredEquipmentTypes(this.state.selectedLocalAreaIds);
+  return (
+    <div id="seniority-list">
+      <PageHeader>Seniority List</PageHeader>
+      <SearchBar>
+        <Row>
+          <Col md={12} id="filters">
+            <ButtonToolbar className="btn-container">
+              <MultiDropdown
+                id="selectedLocalAreaIds"
+                className="fixed-width small"
+                placeholder="Local Areas"
+                items={localAreasSorted}
+                selectedIds={selectedLocalAreaIds}
+                updateState={updateState}
+                onChange={onLocalAreasChanged}
+                showMaxItems={2}
+              />
+              <MultiDropdown
+                id="selectedEquipmentTypeIds"
+                className="fixed-width"
+                placeholder="Equipment Types"
+                fieldName="districtEquipmentName"
+                items={filteredEquipmentTypes}
+                disabled={!districtEquipmentTypes.loaded}
+                selectedIds={selectedEquipmentTypeIds}
+                updateState={updateState}
+                showMaxItems={2}
+              />
+              <Button onClick={() => getRotationList(false)} variant="primary">
+                Seniority List
+              </Button>
+              <Button onClick={() => getRotationList(true)} variant="primary">
+                Seniority List (Counter Copy)
+              </Button>
+            </ButtonToolbar>
+          </Col>
+        </Row>
+      </SearchBar>
+    </div>
+  );
+};
 
-    return (
-      <div id="seniority-list">
-        <PageHeader>Seniority List</PageHeader>
-        <SearchBar>
-          <Row>
-            <Col md={12} id="filters">
-              <ButtonToolbar className="btn-container">
-                <MultiDropdown
-                  id="selectedLocalAreaIds"
-                  className="fixed-width small"
-                  placeholder="Local Areas"
-                  items={localAreas}
-                  selectedIds={this.state.selectedLocalAreaIds}
-                  updateState={this.updateState}
-                  onChange={this.onLocalAreasChanged}
-                  showMaxItems={2}
-                />
-                <MultiDropdown
-                  id="selectedEquipmentTypeIds"
-                  className="fixed-width"
-                  placeholder="Equipment Types"
-                  fieldName="districtEquipmentName"
-                  items={districtEquipmentTypes}
-                  disabled={!this.props.districtEquipmentTypes.loaded}
-                  selectedIds={this.state.selectedEquipmentTypeIds}
-                  updateState={this.updateState}
-                  showMaxItems={2}
-                />
-                <Button onClick={() => this.getRotationList(false)} variant="primary">
-                  Seniority List
-                </Button>
-                <Button onClick={() => this.getRotationList(true)} variant="primary">
-                  Seniority List (Counter Copy)
-                </Button>
-              </ButtonToolbar>
-            </Col>
-          </Row>
-        </SearchBar>
-      </div>
-    );
-  }
-}
+SeniorityList.propTypes = {
+  currentUser: PropTypes.object,
+  districtEquipmentTypes: PropTypes.object,
+  localAreas: PropTypes.object,
+};
 
-const mapStateToProps = (state) => ({
-  currentUser: state.user,
-  districtEquipmentTypes: state.lookups.districtEquipmentTypes,
-  localAreas: state.lookups.localAreas,
-});
-
-const mapDispatchToProps = (dispatch) => ({ dispatch });
-
-export default connect(mapStateToProps, mapDispatchToProps)(SeniorityList);
+export default SeniorityList;

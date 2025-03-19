@@ -1,7 +1,8 @@
+import React, { useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import React from 'react';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
+
 import * as Api from '../api';
 import * as Constant from '../constants';
 import { logout } from '../Keycloak';
@@ -15,129 +16,112 @@ import Countdown from '../components/Countdown.jsx';
 
 import { resetSessionTimeoutTimer, keepAlive } from '../App.jsx';
 import { ApiError } from '../utils/http';
-import { bindActionCreators } from 'redux';
 
-class Main extends React.Component {
-  static propTypes = {
-    children: PropTypes.object,
-    showNav: PropTypes.bool,
-    showSessionTimeoutDialog: PropTypes.bool,
-    showErrorDialog: PropTypes.bool,
-    user: PropTypes.object,
-    lookups: PropTypes.object,
+const Main = ({ children, showNav }) => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const location = useLocation();
 
-    unhandledApiError: PropTypes.func,
-    closeSessionTimeoutDialog: PropTypes.func,
-  };
+  const {
+    showSessionTimeoutDialog,
+    showErrorDialog,
+    user,
+    lookups,
+  } = useSelector((state) => ({
+    showSessionTimeoutDialog: state.ui.showSessionTimeoutDialog,
+    showErrorDialog: state.ui.showErrorDialog,
+    user: state.user,
+    lookups: state.lookups,
+  }));
 
-  componentDidMount() {
-    window.addEventListener('unhandledrejection', this.unhandledRejection);
+  const redirectIfRolloverActive = useCallback(
+    (path) => {
+      const onBusinessPage = path.startsWith(Constant.BUSINESS_PORTAL_PATHNAME);
+      const onRolloverPage = path === Constant.ROLLOVER_PATHNAME;
+      if (onBusinessPage || onRolloverPage) return;
 
-    if (this.props.user.hasPermission(Constant.PERMISSION_LOGIN)) {
-      this.redirectIfRolloverActive(this.props.location.pathname);
-      return;
-    }
-  }
+      if (!user.district) return;
 
-  componentDidUpdate(prevProps) {
-    //this is the converted hashHistory change listener to check for rollOverStatus whenever user navigates. Only check if user is not BCeiD
-    //by checking for Login permission.
-    if (
-      prevProps.location.pathname !== this.props.location.pathname &&
-      this.props.user.hasPermission(Constant.PERMISSION_LOGIN)
-    ) {
-      this.redirectIfRolloverActive(this.props.location.pathname);
-    }
-  }
+      const districtId = user.district.id;
+      dispatch(Api.getRolloverStatus(districtId)).then(() => {
+        const status = lookups.rolloverStatus;
 
-  // redirects regular users to rollover page if rollover in progress
-  redirectIfRolloverActive(path) {
-    const onBusinessPage = path.indexOf(Constant.BUSINESS_PORTAL_PATHNAME) === 0;
-    const onRolloverPage = path === Constant.ROLLOVER_PATHNAME;
-    if (onBusinessPage || onRolloverPage) {
-      return;
-    }
+        if (status.rolloverActive) {
+          history.push(Constant.ROLLOVER_PATHNAME);
+        } else if (status.rolloverComplete) {
+          dispatch(Api.getFiscalYears(districtId));
+        }
+      });
+    },
+    [dispatch, history, lookups.rolloverStatus, user.district]
+  );
 
-    const { user, dispatch } = this.props;
-    if (!user.district) {
-      return;
-    }
-
-    const districtId = user.district.id;
-    dispatch(Api.getRolloverStatus(districtId)).then(() => {
-      const status = this.props.lookups.rolloverStatus;
-
-      if (status.rolloverActive) {
-        this.props.history.push(Constant.ROLLOVER_PATHNAME);
-      } else if (status.rolloverComplete) {
-        // refresh fiscal years
-        dispatch(Api.getFiscalYears(districtId));
+  useEffect(() => {
+    const unhandledRejection = (e) => {
+      const err = e.reason;
+      if (err instanceof ApiError) {
+        dispatch(unhandledApiError(err));
       }
-    });
-  }
+    };
 
-  unhandledRejection = (e) => {
-    var err = e.reason;
+    window.addEventListener('unhandledrejection', unhandledRejection);
 
-    if (err instanceof ApiError) {
-      this.props.unhandledApiError(err);
+    if (user.hasPermission(Constant.PERMISSION_LOGIN)) {
+      redirectIfRolloverActive(location.pathname);
     }
-  };
 
-  onCloseSessionTimeoutDialog = async () => {
+    return () => {
+      window.removeEventListener('unhandledrejection', unhandledRejection);
+    };
+  }, [dispatch, location.pathname, redirectIfRolloverActive, user]);
+
+  useEffect(() => {
+    if (user.hasPermission(Constant.PERMISSION_LOGIN)) {
+      redirectIfRolloverActive(location.pathname);
+    }
+  }, [location.pathname, redirectIfRolloverActive, user]);
+
+  const onCloseSessionTimeoutDialog = async () => {
     try {
-      keepAlive(); //function from App.js to keep session alive
+      keepAlive();
       resetSessionTimeoutTimer();
-      this.props.closeSessionTimeoutDialog();
+      dispatch(closeSessionTimeoutDialog());
     } catch {
       console.log('Failed to refresh the token, or the session has expired');
     }
   };
 
-  onEndSession = () => {
+  const onEndSession = () => {
     logout();
-    this.props.closeSessionTimeoutDialog();
+    dispatch(closeSessionTimeoutDialog());
   };
 
-  componentWillUnmount() {
-    window.removeEventListener('unhandledrejection', this.unhandledRejection);
-  }
-
-  render() {
-    return (
-      <div id="main">
-        <TopNav showNav={this.props.showNav} />
-        <div id="screen" className="template container" style={{ paddingTop: 10 }}>
-          {this.props.children}
-        </div>
-        <Footer />
-        <ConfirmDialog
-          title="Session Expiry"
-          show={this.props.showSessionTimeoutDialog}
-          onClose={this.onEndSession}
-          onSave={this.onCloseSessionTimeoutDialog}
-          closeText="End Session"
-          saveText="Keep Session"
-        >
-          Your session will time out in <Countdown time={300} onEnd={this.onEndSession} />. Would you like to keep the
-          session active or end the session?
-        </ConfirmDialog>
-        <ErrorDialog show={this.props.showErrorDialog} />
+  return (
+    <div id="main">
+      <TopNav showNav={showNav} />
+      <div id="screen" className="template container" style={{ paddingTop: 10 }}>
+        {children}
       </div>
-    );
-  }
-}
+      <Footer />
+      <ConfirmDialog
+        title="Session Expiry"
+        show={showSessionTimeoutDialog}
+        onClose={onEndSession}
+        onSave={onCloseSessionTimeoutDialog}
+        closeText="End Session"
+        saveText="Keep Session"
+      >
+        Your session will time out in <Countdown time={300} onEnd={onEndSession} />. Would you like to keep the session
+        active or end the session?
+      </ConfirmDialog>
+      <ErrorDialog show={showErrorDialog} />
+    </div>
+  );
+};
 
-const mapStateToProps = (state) => ({
-  showSessionTimeoutDialog: state.ui.showSessionTimeoutDialog,
-  showErrorDialog: state.ui.showErrorDialog,
-  user: state.user,
-  lookups: state.lookups,
-});
+Main.propTypes = {
+  children: PropTypes.node,
+  showNav: PropTypes.bool,
+};
 
-const mapDispatchToProps = (dispatch) => ({
-  dispatch,
-  ...bindActionCreators({ unhandledApiError, closeSessionTimeoutDialog }, dispatch)
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Main));
+export default Main;
