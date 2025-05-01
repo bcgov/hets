@@ -94,7 +94,7 @@ objects:
           volumes:
             - name: "${NAME}-${ENV}-data"
               persistentVolumeClaim:
-                claimName: ${NAME}-${ENV}-psql-16-pvc
+                claimName: ${NAME}-${ENV}-psql16-pvc
       test: false
       triggers:
         - type: ConfigChange
@@ -110,7 +110,7 @@ objects:
   - kind: PersistentVolumeClaim
     apiVersion: v1
     metadata:
-      name: ${NAME}-${ENV}-pvc
+      name: ${NAME}-${ENV}-psql16-pvc
       labels:
         shared: "true"
     spec:
