@@ -74,16 +74,6 @@ objects:
                 - name: HETS_DEPLOY_SUFFIX
                   value: ${SUFFIX}
       test: false
-      triggers:
-        - imageChangeParams:
-            automatic: true
-            containerNames:
-              - client
-            from:
-              kind: ImageStreamTag
-              name: ${NAME}:${VERSION}
-          type: ImageChange
-        - type: ConfigChange
   - apiVersion: v1 #service: client
     kind: Service
     metadata:
