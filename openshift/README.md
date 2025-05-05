@@ -22,7 +22,7 @@ CRT uses two Redhat Docker images and they will be imported as part of the build
 
 1. [rhel8/dotnet-50](https://catalog.redhat.com/software/containers/rhel8/dotnet-50/5f6278e017452dea0fe47bae?container-tabs=gti&gti-tabs=get-the-source)
 2. [rhel8/nginx-116](https://catalog.redhat.com/software/containers/rhel8/nginx-116/5d400ae7bed8bd3809910782)
-3. [postgresql-10](https://catalog.redhat.com/software/containers/rhel8/postgresql-10/5ba0ae0ddd19c70b45cbf4cd)
+3. [postgresql-16](https://catalog.redhat.com/software/containers/rhel8/postgresql-16/657c148efd40a94aa696f28e)
 
 ### Openshift Service Account Access Token
 
