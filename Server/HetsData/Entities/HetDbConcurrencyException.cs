@@ -17,9 +17,5 @@ namespace HetsData.Entities
         public HetsDbConcurrencyException(string message, Exception inner) : base(message, inner)
         {
         }
-
-        protected HetsDbConcurrencyException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
     }
 }

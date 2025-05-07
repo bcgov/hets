@@ -17,8 +17,6 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Microsoft.Extensions.DependencyInjection;
 using HetsData.Mappings;
-using Serilog.Ui.Web;
-using Serilog.Ui.PostgreSqlProvider;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using HetsApi.Authorization;
 using Hangfire;
@@ -33,13 +31,20 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Newtonsoft.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
+using Serilog.Ui.Web;
+using Serilog.Ui.PostgreSqlProvider;
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
 
     // Register services here
-    builder.Host.UseSerilog();
+    builder.Host.UseSerilog((context, config) =>
+    {
+        config.ReadFrom.Configuration(context.Configuration);
+    });
+
     builder.Configuration.AddEnvironmentVariables();
 
     Log.Logger = new LoggerConfiguration()
@@ -51,6 +56,9 @@ try
 
     // add http context accessor
     builder.Services.AddHttpContextAccessor();
+
+    // Inject TimeProvider
+    builder.Services.AddSingleton(TimeProvider.System);
 
     // add auto mapper
     var mappingConfig = new MapperConfiguration(cfg =>
@@ -87,6 +95,7 @@ try
                 .Build();
             options.Filters.Add(new AuthorizeFilter(policy));
         })
+
         .AddNewtonsoftJson(options =>
         {
             options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -94,6 +103,12 @@ try
             options.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.IsoDateFormat;
             options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+        })
+        .AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            options.JsonSerializerOptions.WriteIndented = true;
         });
 
     builder.Services.AddAuthentication(options =>
@@ -143,6 +158,8 @@ try
         options.WorkerCount = 1;
     });
 
+    // Swagger
+    builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(options =>
     {
         options.SwaggerDoc("v1", new OpenApiInfo
@@ -154,16 +171,18 @@ try
     });
 
     builder.Services.AddHealthChecks().AddNpgSql(
-        connectionString, 
-        name: "HETS-DB-Check", 
-        failureStatus: HealthStatus.Degraded, 
+        connectionString,
+        name: "HETS-DB-Check",
+        failureStatus: HealthStatus.Degraded,
         tags: new string[] { "postgresql", "db" });
 
     var app = builder.Build();
 
     // Use services here
     if (app.Environment.IsDevelopment())
+    {
         app.UseDeveloperExceptionPage();
+    }
 
     app.UseMiddleware<ExceptionMiddleware>();
 
@@ -176,7 +195,8 @@ try
                new
                {
                    checks = r.Entries.Select(e =>
-                      new {
+                      new
+                      {
                           description = e.Key,
                           status = e.Value.Status.ToString(),
                           tags = e.Value.Tags,
@@ -188,13 +208,6 @@ try
         }
     };
 
-    app.UseHealthChecks("/healthz", healthCheckOptions);
-    app.UseHangfireDashboard();
-    app.UseRouting();
-    app.UseAuthentication();
-    app.UseAuthorization();
-    app.UseSerilogUi();
-    app.MapControllers();
     app.UseSwagger();
     string swaggerApi = builder.Configuration.GetSection("Constants:SwaggerApiUrl").Value;
     app.UseSwaggerUI(options =>
@@ -203,12 +216,33 @@ try
         options.DocExpansion(DocExpansion.None);
     });
 
+    app.UseRouting();
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.UseSerilogUi();
+    app.MapControllers();
+    app.UseHangfireDashboard();
+
+    app.MapHealthChecks("/health", new HealthCheckOptions
+    {
+        ResponseWriter = async (context, report) =>
+        {
+            context.Response.ContentType = "application/json";
+            var result = JsonSerializer.Serialize(new
+            {
+                status = report.Status.ToString(),
+                checks = report.Entries.Select(e => new { key = e.Key, status = e.Value.Status.ToString() })
+            });
+            await context.Response.WriteAsync(result);
+        }
+    });
+
     app.Run();
-} 
+}
 catch (Exception ex)
 {
     Log.Fatal(ex, "Application terminated unexpectedly");
-} 
+}
 finally
 {
     Log.CloseAndFlush();
