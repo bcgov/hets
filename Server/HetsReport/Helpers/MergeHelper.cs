@@ -342,8 +342,9 @@ namespace HetsReport.Helpers
             {
                 Run run = runs[cursor];
 
-                if (run.HasChildren && run.Descendants<FieldChar>().Any() &&
-                    (run.Descendants<FieldChar>().First().FieldCharType & FieldCharValues.Begin) == FieldCharValues.Begin)
+                if (run.HasChildren &&
+                    run.Descendants<FieldChar>().Any() &&
+                    run.Descendants<FieldChar>().FirstOrDefault()?.FieldCharType?.Value == FieldCharValues.Begin)
                 {
                     List<Run> innerRuns = new List<Run> { run };
 
@@ -362,8 +363,9 @@ namespace HetsReport.Helpers
                         if (run.HasChildren && run.Descendants<FieldCode>().Any())
                             instruction += run.GetFirstChild<FieldCode>().Text;
 
-                        if (run.HasChildren && run.Descendants<FieldChar>().Any() &&
-                            (run.Descendants<FieldChar>().First().FieldCharType & FieldCharValues.End) == FieldCharValues.End)
+                        if (run.HasChildren &&
+                            run.Descendants<FieldChar>().Any() &&
+                            run.Descendants<FieldChar>().FirstOrDefault()?.FieldCharType?.Value == FieldCharValues.End)
                         {
                             found = true;
                         }

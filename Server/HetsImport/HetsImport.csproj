@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
 	<Description>Conversion code for the HETS application</Description>
     <Copyright>Copyright© 2017, Province of British Columbia</Copyright>
     <AssemblyTitle>Hets Import</AssemblyTitle>
