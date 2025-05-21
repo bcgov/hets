@@ -223,7 +223,8 @@ try
     app.MapControllers();
     app.UseHangfireDashboard();
 
-    app.MapHealthChecks("/health", new HealthCheckOptions
+
+    app.MapHealthChecks("/healthz", new HealthCheckOptions
     {
         ResponseWriter = async (context, report) =>
         {
