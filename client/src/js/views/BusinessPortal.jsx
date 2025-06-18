@@ -196,7 +196,7 @@ class BusinessPortal extends React.Component {
               />
               <p>
                 The Hired Equipment Program is for owners/operators who have a dump truck, bulldozer, backhoe or other
-                piece of equipment they want to hire out to the Ministry Transportation and Infrastructure for day
+                piece of equipment they want to hire out to the Ministry Transportation and Transit for day
                 labour and emergency projects.
               </p>
               <p>
