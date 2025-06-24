@@ -12,7 +12,7 @@
   <PropertyGroup>
     <VersionPrefix>1.0.0.0</VersionPrefix>
     <VersionSuffix>sprint1</VersionSuffix>
-    <Version>1.10.13.0</Version>
+    <Version>3.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

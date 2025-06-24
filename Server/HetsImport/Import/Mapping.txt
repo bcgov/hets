@@ -159,7 +159,7 @@ Mapping from XML files to the HETS_Database in PostGreSQL:
     <Service_Area_Desc>South Island CA</Service_Area_Desc>
     <District_Area_Id>1</District_Area_Id>
     <Last_Year_End_Shift>2016      </Last_Year_End_Shift>
-    <Address>Ministry of Transportation and Infrastructure|Saanich Area Office|Suite 240 4460 Chatterton Way|Victoria, B.C.|V8X 5J2</Address>
+    <Address>Ministry of Transportation and Transit|Saanich Area Office|Suite 240 4460 Chatterton Way|Victoria, B.C.|V8X 5J2</Address>
     <Phone>(250) 952-4515</Phone>
     <Fax>(250) 952-4508</Fax>
     <Sup_Docs>Proof of Ownership (e.g., Copy of current Vehicle Registration, Lease to Purchase Agreement, Bill of Sale, Insurance Documents)|WCB Registration Number</Sup_Docs>
