@@ -38,6 +38,21 @@ $nav-active-background-color-uat: lighten($nav-background-color-uat, 10%);
   }
 }
 
+#header {
+  &.env-dev #header-main {
+    background-color: $nav-background-color-dev;
+  }
+
+  &.env-test #header-main {
+    background-color: $nav-background-color-test;
+  }
+
+  &.env-trn #header-main,
+  &.env-uat #header-main {
+    background-color: $nav-background-color-uat;
+  }
+}
+
 #top-nav {
   margin-bottom: 0;
   background-color: $nav-background-color;

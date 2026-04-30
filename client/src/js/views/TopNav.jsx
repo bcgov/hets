@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter, NavLink } from 'react-router-dom';
+import classNames from 'classnames';
 import _ from 'lodash';
 import {
   Navbar,
@@ -79,7 +80,7 @@ class TopNav extends React.Component {
     }
 
     return (
-      <div id="header" className="sticky-top">
+      <div id="header" className={classNames('sticky-top', environmentClass)}>
         <Navbar id="header-main">
           <Container className={'justify-content-start'}>
             <Navbar.Brand href="http://www2.gov.bc.ca/gov/content/home">
