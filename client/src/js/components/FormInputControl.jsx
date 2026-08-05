@@ -16,10 +16,14 @@ class FormInputControl extends React.Component {
   componentDidMount() {
     //timeout needed to set focus. Otherwise the focus is called before input is rendered.
     if (this.props.autoFocus) {
-      setTimeout(() => {
-        this.input.focus();
+      this.focusTimeout = setTimeout(() => {
+        this.input?.focus();
       }, 200);
     }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.focusTimeout);
   }
 
   changed = (e) => {
