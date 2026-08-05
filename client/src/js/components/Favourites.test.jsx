@@ -1,5 +1,5 @@
-import { setupServer } from "msw/lib/node";
-import { rest } from "msw";
+import { setupServer } from "msw/node";
+import { http, HttpResponse } from "msw";
 
 import { keycloak } from "../Keycloak";
 import { setupStore } from "../store";
@@ -16,33 +16,33 @@ const mockKeycloakUpdateToken = jest.spyOn(keycloak, "updateToken");
 mockKeycloakUpdateToken.mockResolvedValue(Promise.resolve(false));
 
 const server = setupServer(
-  rest.post("/api/users/current/favourites/:favouriteId/delete", async (req, res, ctx) => {
-    const id = Number(req.params.favouriteId);
+  http.post("/api/users/current/favourites/:favouriteId/delete", ({ params }) => {
+    const id = Number(params.favouriteId);
     const fav = Object.values(getFavourites().customFav).find(f => f.id === id);
     if (!fav) {
-      return res(ctx.status(404));
+      return new HttpResponse(null, { status: 404 });
     }
-    return res(ctx.json({
+    return HttpResponse.json({
       data: fav,
-    }));
+    });
   }),
-  rest.post("/api/users/current/favourites", async (req, res, ctx) => {
-    const reqBody = await req.json();
+  http.post("/api/users/current/favourites", async ({ request }) => {
+    const reqBody = await request.json();
     const favName = reqBody.name;
     const resFav = Object.values(getFavourites().customFav).find(f => f.name === favName);
     if (!resFav) {
-      return res(ctx.status(404));
+      return new HttpResponse(null, { status: 404 });
     }
-    return res(ctx.json({
+    return HttpResponse.json({
       data: resFav,
-    }));
+    });
   }),
-  rest.put("/api/users/current/favourites", async (req, res, ctx) => {
-    const reqBody = await req.json();
+  http.put("/api/users/current/favourites", async ({ request }) => {
+    const reqBody = await request.json();
     const { id, name, isDefault } = reqBody;
     const fav = Object.values(getFavourites().customFav).find(f => f.id === id);
     if (!fav) {
-      return res(ctx.status(404));
+      return new HttpResponse(null, { status: 404 });
     }
 
     const resFav = {
@@ -50,9 +50,9 @@ const server = setupServer(
       name,
       isDefault,
     };
-    return res(ctx.json({
+    return HttpResponse.json({
       data: resFav,
-    }));
+    });
   }),
 );
 

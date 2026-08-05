@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import Countdown from "./Countdown";
 
 describe("Countdown component display", () => {
@@ -37,6 +37,10 @@ describe("Countdown component display", () => {
 });
 
 describe("Countdown component counting down", () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   test("Countdown counts down correctly", () => {
     // Arrange
     jest.useFakeTimers();
@@ -45,7 +49,12 @@ describe("Countdown component counting down", () => {
     expect(screen.getByText("05s")).toBeVisible();
 
     // Act
-    jest.advanceTimersToNextTimer(2);
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
 
     // Assert
     expect(screen.getByText("03s")).toBeVisible();
@@ -61,7 +70,12 @@ describe("Countdown component counting down", () => {
     render(<Countdown time={1} onEnd={onEnd} />); 
     
     // Act
-    jest.advanceTimersToNextTimer(2);
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
 
     // Assert
     expect(finished).toBe(true);

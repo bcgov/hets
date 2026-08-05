@@ -1,6 +1,6 @@
 /* eslint-disable testing-library/no-node-access */
 /* eslint-disable testing-library/no-container */
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { setupServer } from "msw/node";
 import { waitFor } from '@testing-library/react';
 
@@ -24,39 +24,17 @@ const mockKeycloakUpdateToken = jest.spyOn(keycloak, "updateToken");
 mockKeycloakUpdateToken.mockResolvedValue(Promise.resolve(false));
 
 const server = setupServer(
-  rest.get("/api/users/current", (_, res, ctx) => {
-    return res(ctx.json(getCurrentUser()));
-  }),
-  rest.get("/api/districts", (_, res, ctx) => {
-    return res(ctx.json(getDistricts()));
-  }),
-  rest.get("/api/regions", (_, res, ctx) => {
-    return res(ctx.json(getRegions()));
-  }),
-  rest.get("/api/serviceareas", (_, res, ctx) => {
-    return res(ctx.json(getServiceAreas()));
-  }),
-  rest.get("/api/districts/:district/localAreas", (_, res, ctx) => {
-    return res(ctx.json(getLocalAreas()));
-  }),
-  rest.get("/api/districts/:district/fiscalYears", (_, res, ctx) => {
-    return res(ctx.json(getFiscalYears()));
-  }),
-  rest.get("/api/permissions", (_, res, ctx) => {
-    return res(ctx.json(getPermissions()));
-  }),
-  rest.get("/api/userdistricts", (_, res, ctx) => {
-    return res(ctx.json(getUserDistricts()));
-  }),
-  rest.get("/api/users/current/favourites", (_, res, ctx) => {
-    return res(ctx.json(getCurrentUserFavourites()));
-  }),
-  rest.get("/api/districts/:district/rolloverStatus", (_, res, ctx) => {
-    return res(ctx.json(getRolloverStatus()));
-  }),
-  rest.get("/api/counts", (_, res, ctx) => {
-    return res(ctx.json(getCounts()));
-  }),
+  http.get("/api/users/current", () => HttpResponse.json(getCurrentUser())),
+  http.get("/api/districts", () => HttpResponse.json(getDistricts())),
+  http.get("/api/regions", () => HttpResponse.json(getRegions())),
+  http.get("/api/serviceareas", () => HttpResponse.json(getServiceAreas())),
+  http.get("/api/districts/:district/localAreas", () => HttpResponse.json(getLocalAreas())),
+  http.get("/api/districts/:district/fiscalYears", () => HttpResponse.json(getFiscalYears())),
+  http.get("/api/permissions", () => HttpResponse.json(getPermissions())),
+  http.get("/api/userdistricts", () => HttpResponse.json(getUserDistricts())),
+  http.get("/api/users/current/favourites", () => HttpResponse.json(getCurrentUserFavourites())),
+  http.get("/api/districts/:district/rolloverStatus", () => HttpResponse.json(getRolloverStatus())),
+  http.get("/api/counts", () => HttpResponse.json(getCounts())),
 );
 
 let store;
