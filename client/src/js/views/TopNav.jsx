@@ -88,7 +88,7 @@ class TopNav extends React.Component {
                 <img
                   title="Government of B.C."
                   alt="Government of B.C."
-                  src={`${process.env.PUBLIC_URL}/images/gov/gov3_bc_logo.png`}
+                  src={`${import.meta.env.BASE_URL}images/gov/gov3_bc_logo.png`}
                 />
               </div>
             </Navbar.Brand>

@@ -1,11 +1,11 @@
 import Keycloak from 'keycloak-js';
 
 const keycloakConfig = {
-  url: window.RUNTIME_REACT_APP_SSO_HOST ? window.RUNTIME_REACT_APP_SSO_HOST : process.env.REACT_APP_SSO_HOST,
-  realm: window.RUNTIME_REACT_APP_SSO_REALM ? window.RUNTIME_REACT_APP_SSO_REALM : process.env.REACT_APP_SSO_REALM,
+  url: window.RUNTIME_REACT_APP_SSO_HOST ? window.RUNTIME_REACT_APP_SSO_HOST : import.meta.env.REACT_APP_SSO_HOST,
+  realm: window.RUNTIME_REACT_APP_SSO_REALM ? window.RUNTIME_REACT_APP_SSO_REALM : import.meta.env.REACT_APP_SSO_REALM,
   clientId: window.RUNTIME_REACT_APP_SSO_CLIENT
     ? window.RUNTIME_REACT_APP_SSO_CLIENT
-    : process.env.REACT_APP_SSO_CLIENT,
+    : import.meta.env.REACT_APP_SSO_CLIENT,
 };
 
 export const keycloak = new Keycloak(keycloakConfig);
