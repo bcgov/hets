@@ -12,8 +12,8 @@ The application is being developed as an open source solution.
 
 ## Prerequisites
 
-- .Net 5 SDK
-- Node.JS v13.7.0 or newer
+- .NET 8 SDK
+- Node.js 20.19 or newer (Node.js 24 LTS recommended)
 - PostgreSQL 16
 
 ## Dependencies
@@ -37,7 +37,7 @@ Refer to [this document](openshift/README.md) for OpenShift Deployment and Pipel
 
 **Client Code**
 
-- Run npm install from the client directory to configure the client build environment
+- Run npm ci from the client directory to configure the client build environment
 - The frameworks used for this application are React/Redux.
 
 **API Services**
