@@ -188,7 +188,7 @@ namespace HetsData.Repositories
             docModel.Equipment = agreement.Equipment;
             docModel.EquipmentRate = agreement.EquipmentRate;
             docModel.EstimateHours = agreement.EstimateHours;
-            docModel.EstimateStartWork = ConvertDate(agreement.EstimateStartWork);
+            docModel.EstimateStartWork = DateUtils.FormatDateOnly(agreement.EstimateStartWork);
             docModel.Number = agreement.Number;
             docModel.Project = agreement.Project;
             docModel.RateComment = agreement.RateComment;
@@ -268,45 +268,6 @@ namespace HetsData.Repositories
                 tempAddress = $"{tempAddress}  {agreement.Equipment.Owner.PostalCode}";
 
             return tempAddress;
-        }
-
-        private static string ConvertDate(DateTime? dateObject)
-        {
-            string result = "";
-
-            if (dateObject is DateTime dateObj)
-            {
-                // since the PDF template is raw HTML and won't convert a date object, we must adjust the time zone here
-                TimeZoneInfo tzi;
-
-                try
-                {
-                    // try the iana time zone first.
-                    tzi = TimeZoneInfo.FindSystemTimeZoneById("America / Vancouver");
-                }
-                catch
-                {
-                    tzi = null;
-                }
-
-                if (tzi == null)
-                {
-                    try
-                    {
-                        tzi = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
-                    }
-                    catch
-                    {
-                        tzi = null;
-                    }
-                }
-
-                DateTime dt = tzi != null ? TimeZoneInfo.ConvertTime(dateObj, tzi) : dateObj;
-
-                result = dt.ToString("yyyy-MMM-dd").ToUpper();
-            }
-
-            return result;
         }
 
         /// <summary>
