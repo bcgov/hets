@@ -16,12 +16,13 @@ using HetsApi.Middlewares;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using HetsData.Mappings;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using HetsApi.Authorization;
 using Hangfire;
 using Hangfire.PostgreSql;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using System.Net.Mime;
 using System.Text.Json;
 using System.Linq;
@@ -32,8 +33,9 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Newtonsoft.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
-using Serilog.Ui.Web;
-using Serilog.Ui.PostgreSqlProvider;
+using Serilog.Ui.Core.Extensions;
+using Serilog.Ui.Web.Extensions;
+using Serilog.Ui.PostgreSqlProvider.Extensions;
 
 try
 {
@@ -62,15 +64,18 @@ try
 
     // add auto mapper
     var mappingConfig = new MapperConfiguration(cfg =>
-    {
-        cfg.AddProfile(new EntityToDtoProfile());
-        cfg.AddProfile(new DtoToEntityProfile());
-        cfg.AddProfile(new EntityToEntityProfile());
-    });
+        {
+            cfg.AddProfile(new EntityToDtoProfile());
+            cfg.AddProfile(new DtoToEntityProfile());
+            cfg.AddProfile(new EntityToEntityProfile());
+        },
+        NullLoggerFactory.Instance);
 
     var mapper = mappingConfig.CreateMapper();
     builder.Services.AddSingleton(mapper);
-    builder.Services.AddSerilogUi(options => options.UseNpgSql(connectionString, "het_log"));
+    builder.Services.AddSerilogUi(options => options.UseNpgSql(databaseOptions => databaseOptions
+        .WithConnectionString(connectionString)
+        .WithTable("het_log")));
 
     // add database context
     builder.Services.AddDbContext<DbAppContext>(options =>
@@ -150,7 +155,7 @@ try
             .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
             .UseSimpleAssemblyNameTypeSerializer()
             .UseRecommendedSerializerSettings()
-            .UsePostgreSqlStorage(connectionString)
+            .UsePostgreSqlStorage(options => options.UseNpgsqlConnection(connectionString))
     );
 
     builder.Services.AddHangfireServer(options =>
