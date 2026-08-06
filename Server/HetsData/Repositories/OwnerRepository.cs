@@ -201,7 +201,7 @@ namespace HetsData.Repositories
                     // get address and contact info
                     string address = ownerList[0].LocalArea.ServiceArea.Address;
 
-                    address = address.Replace("Ministry of Transportation and Infrastructure", "Ministry of Transportation and Transit");
+                    address = MinistryNameHelper.UseCurrentName(address);
 
                     if (!string.IsNullOrEmpty(address))
                     {
