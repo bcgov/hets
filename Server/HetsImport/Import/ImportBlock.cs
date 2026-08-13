@@ -12,6 +12,7 @@ using Hangfire.Server;
 using Hangfire.Console.Progress;
 using HetsData.Helpers;
 using HetsData.Model;
+using HetsCommon;
 
 namespace HetsImport.Import
 {
@@ -611,4 +612,3 @@ namespace HetsImport.Import
         }
     }
 }
-

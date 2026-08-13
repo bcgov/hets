@@ -7,7 +7,7 @@ namespace HetsCommon.Tests;
 public class DateUtilsTests
 {
     [Theory]
-    [InlineData(2026, 3, 9, 0, 0, 0, 2026, 3, 8, 17, 0, 0)]
+    [InlineData(2026, 3, 8, 10, 0, 0, 2026, 3, 8, 3, 0, 0)]
     [InlineData(2026, 11, 1, 9, 0, 0, 2026, 11, 1, 2, 0, 0)]
     [InlineData(2026, 12, 15, 12, 0, 0, 2026, 12, 15, 5, 0, 0)]
     public void ConvertUtcToPacificTime_UsesPermanentUtcMinusSevenAfterEffectiveDate(
@@ -23,7 +23,7 @@ public class DateUtilsTests
     }
 
     [Theory]
-    [InlineData(2026, 3, 9, 0, 0, 0, 2026, 3, 9, 7, 0, 0)]
+    [InlineData(2026, 3, 8, 3, 0, 0, 2026, 3, 8, 10, 0, 0)]
     [InlineData(2026, 11, 1, 2, 0, 0, 2026, 11, 1, 9, 0, 0)]
     [InlineData(2026, 12, 15, 5, 0, 0, 2026, 12, 15, 12, 0, 0)]
     public void ConvertPacificToUtcTime_UsesPermanentUtcMinusSevenAfterEffectiveDate(
