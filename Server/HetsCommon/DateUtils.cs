@@ -8,6 +8,15 @@ namespace HetsCommon
         public const string VancouverTimeZone = "America/Vancouver";
         public const string PacificTimeZone = "Pacific Standard Time";
 
+        // Supporting Permanent Pacific Time (UTC-7) after March 9, 2026, as per the new regulation.
+        // System zone stays for historical data
+        // Does not allow stale OS time-zone data to reintroduce the former November fallback
+        private static readonly DateTime PermanentPacificTimeEffectiveUtc =
+            new(2026, 3, 9, 0, 0, 0, DateTimeKind.Utc);
+        private static readonly DateTime PermanentPacificTimeEffectiveLocal =
+            new(2026, 3, 9, 0, 0, 0, DateTimeKind.Unspecified);
+        private static readonly TimeSpan PermanentPacificOffset = TimeSpan.FromHours(-7);
+
         public static (bool parsed, DateTime? parsedDate) ParseDate(object val)
         {
             if (val == null)
@@ -62,6 +71,11 @@ namespace HetsCommon
         /// <returns></returns>
         public static DateTime ConvertUtcToPacificTime(DateTime utcDate)
         {
+            if (utcDate >= PermanentPacificTimeEffectiveUtc)
+            {
+                return DateTime.SpecifyKind(utcDate + PermanentPacificOffset, DateTimeKind.Unspecified);
+            }
+
             return ConvertTimeFromUtc(utcDate, VancouverTimeZone)
                 ?? ConvertTimeFromUtc(utcDate, PacificTimeZone)
                 ?? utcDate;
@@ -82,9 +96,19 @@ namespace HetsCommon
 
         public static DateTime ConvertPacificToUtcTime(DateTime pstDate)
         {
+            if (pstDate >= PermanentPacificTimeEffectiveLocal)
+            {
+                return DateTime.SpecifyKind(pstDate - PermanentPacificOffset, DateTimeKind.Utc);
+            }
+
             return ConvertTimeToUtc(pstDate, VancouverTimeZone) 
                 ?? ConvertTimeToUtc(pstDate, PacificTimeZone) 
                 ?? AsUTC(pstDate);
+        }
+
+        public static DateTime GetPacificNow()
+        {
+            return ConvertUtcToPacificTime(DateTime.UtcNow);
         }
 
         public static DateTime AsUTC(DateTime dt)
