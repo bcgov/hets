@@ -142,7 +142,7 @@ namespace HetsImport.Import
                 // so ignore all others
                 // ***********************************************
                 DateTime fiscalStart;
-                DateTime now = DateTime.Now;
+                DateTime now = DateUtils.GetPacificNow();
                 if (now.Month == 1 || now.Month == 2 || now.Month == 3)
                 {
                     fiscalStart = DateUtils.ConvertPacificToUtcTime(
@@ -410,5 +410,4 @@ namespace HetsImport.Import
         }
     }
 }
-
 

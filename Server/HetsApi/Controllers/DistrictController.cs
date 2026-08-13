@@ -91,7 +91,7 @@ namespace HetsApi.Controllers
         [AllowAnonymous]
         public virtual ActionResult<List<LocalAreaDto>> DistrictLocalAreasGet([FromRoute]int id)
         {
-            var now = DateTime.UtcNow;
+            var now = DateUtils.GetPacificNow();
             var nowDate = DateUtils.ConvertPacificToUtcTime(
                 new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, DateTimeKind.Unspecified));
 
@@ -220,7 +220,7 @@ namespace HetsApi.Controllers
 
             // determine the current fiscal year
             DateTime fiscalStart;
-            DateTime now = DateTime.Now;
+            DateTime now = DateUtils.GetPacificNow();
             if (now.Month == 1 || now.Month == 2 || now.Month == 3)
             {
                 fiscalStart = DateUtils.ConvertPacificToUtcTime(

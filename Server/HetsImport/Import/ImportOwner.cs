@@ -12,6 +12,7 @@ using Hangfire.Console.Progress;
 using Hangfire.Server;
 using HetsData.Helpers;
 using HetsData.Model;
+using HetsCommon;
 
 namespace HetsImport.Import
 {
@@ -73,7 +74,7 @@ namespace HetsImport.Import
                         temp = SecretKeyHelper.RandomString(4, owner.OwnerId);
                     }
 
-                    key = temp + "-" + DateTime.UtcNow.Year + "-" + key;
+                    key = temp + "-" + DateUtils.GetPacificNow().Year + "-" + key;
 
                     // get owner and update
                     HetOwner ownerRecord = dbContext.HetOwner.First(x => x.OwnerId == owner.OwnerId);
@@ -920,5 +921,3 @@ namespace HetsImport.Import
         }
     }
 }
-
-
