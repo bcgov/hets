@@ -47,6 +47,14 @@ namespace HetsCommon
         }
 
         /// <summary>
+        /// Formats a business date without applying a time zone conversion.
+        /// </summary>
+        public static string FormatDateOnly(DateTime? date)
+        {
+            return date?.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture).ToUpperInvariant() ?? "";
+        }
+
+        /// <summary>
         /// Returns Pacific time if VancouverTimeZone or PacificTimeZone is defined in the system
         /// Otherwise return UTC time.
         /// </summary>
