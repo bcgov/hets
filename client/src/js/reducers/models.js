@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import produce from 'immer';
+import { produce } from 'immer';
 
 import * as Action from '../actionTypes';
 import { findAndUpdate } from '../utils/array';

@@ -12,7 +12,7 @@ and testing purposes.
 
 The following software requirements are required:
 
-1. [Node](https://nodejs.org/en/download/) (at least version 8)
+1. [Node](https://nodejs.org/en/download/) (version 20.19 or newer; Node.js 24 LTS recommended)
 2. [git](https://git-scm.com/downloads)
 
 ### Installing
@@ -26,11 +26,8 @@ The following software requirements are required:
 2. Install the Node module dependencies. You will need to be in the hets/client/ directory.
 
    ```
-   npm install
+   npm ci
    ```
-
-   **Note**: The installation of [node-sass](https://www.npmjs.com/package/node-sass) might fail
-   depending on the target platform because of a missing C compiler.
 
 3. Run the local dev server
 
@@ -70,7 +67,7 @@ The web application uses [Webpack](https://webpack.js.org/)’s
 [Hot Module Replacement](https://webpack.js.org/concepts/hot-module-replacement/) which will update
 the UI whenever a [React Component](https://reactjs.org/docs/react-component.html) is saved on disk.
 
-[Create React App](https://www.npmjs.com/package/create-react-app) is the tool used for the front-end build system. Inside the
+[Vite](https://vite.dev/) is used for the front-end build system and development server.
 
 ## Coding style
 

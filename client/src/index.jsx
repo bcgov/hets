@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import App from './js/App';
 import reportWebVitals from './reportWebVitals';
 
@@ -11,13 +11,13 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './sass/main.scss';
 
 Keycloak.init(() => {
-  ReactDOM.render(
+  const root = createRoot(document.getElementById('root'));
+  root.render(
     <Provider store={store}>
       <React.StrictMode>
         <App />
       </React.StrictMode>
-    </Provider>,
-    document.getElementById('root')
+    </Provider>
   );
 });
 

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "This a pipeliene script",
   "engines": {
-    "node": ">=8"
+    "node": "^20.19.0 || >=22.12.0"
   },
   "scripts": {
     "debug": "DEBUG=* node build.js",

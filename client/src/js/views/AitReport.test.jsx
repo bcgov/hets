@@ -1,5 +1,5 @@
-import { rest } from "msw";
-import { setupServer } from "msw/lib/node";
+import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
 import Moment from "moment";
 
 import { setupStore } from "../store";
@@ -44,21 +44,11 @@ const getEndLastFiscal = () => {
 };
 
 const server = setupServer(
-  rest.get("/api/projects/agreementSummary", async (_, res, ctx) => {
-    return res(ctx.json(getProjects()));
-  }),
-  rest.get("/api/equipment/agreementSummary", async (_, res, ctx) => {
-    return res(ctx.json(getEquipments()));
-  }),
-  rest.get("/api/districtequipmenttypes/agreementSummary", async (_, res, ctx) => {
-    return res(ctx.json(getEquipmentTypes()));
-  }),
-  rest.get("/api/rentalagreements/summaryLite", async (_, res, ctx) => {
-    return res(ctx.json(getRentalAgreementsLite(getStartCurrFiscal())));
-  }),
-  rest.get("/api/rentalAgreements/aitReport", async (_, res, ctx) => {
-    return res(ctx.json(searchAitReport(getStartCurrFiscal())));
-  }),
+  http.get("/api/projects/agreementSummary", () => HttpResponse.json(getProjects())),
+  http.get("/api/equipment/agreementSummary", () => HttpResponse.json(getEquipments())),
+  http.get("/api/districtequipmenttypes/agreementSummary", () => HttpResponse.json(getEquipmentTypes())),
+  http.get("/api/rentalagreements/summaryLite", () => HttpResponse.json(getRentalAgreementsLite(getStartCurrFiscal()))),
+  http.get("/api/rentalAgreements/aitReport", () => HttpResponse.json(searchAitReport(getStartCurrFiscal()))),
 );
 
 let store;

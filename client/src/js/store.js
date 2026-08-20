@@ -1,5 +1,6 @@
 import { createStore, applyMiddleware, compose } from "redux";
-import thunk from "redux-thunk";
+import freeze from "redux-freeze";
+import { thunk } from "redux-thunk";
 
 import allReducers from "./reducers/all";
 
@@ -12,9 +13,8 @@ const composeEnhancers =
 
 const middleware = [thunk];
 
-if (process.env.NODE_ENV !== "production") {
+if (!import.meta.env.PROD) {
   // Only add this redux store mutation detection middleware in dev
-  const freeze = require("redux-freeze");
   middleware.push(freeze);
 }
 
@@ -25,12 +25,10 @@ const setupStore = () => {
     composeEnhancers(applyMiddleware(...middleware))
   );
 
-  if (process.env.NODE_ENV !== "production") {
-    if (module.hot) {
-      module.hot.accept("./reducers/all", () =>
-        store.replaceReducer(require("./reducers/all").default)
-      );
-    }
+  if (import.meta.hot) {
+    import.meta.hot.accept("./reducers/all", (nextModule) => {
+      store.replaceReducer(nextModule.default);
+    });
   }
 
   return store;
