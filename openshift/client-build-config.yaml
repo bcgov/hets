@@ -18,7 +18,7 @@ objects:
           from:
             kind: DockerImage
             name: docker.io/node:24-alpine
-          name: "1"
+          name: "24"
           referencePolicy:
             type: Local
   - apiVersion: image.openshift.io/v1
@@ -57,11 +57,11 @@ objects:
       output:
         to:
           kind: ImageStreamTag
-          name: node-python:1
+          name: node-python:24
       source:
         type: Dockerfile
         dockerfile: |
-          FROM image-registry.openshift-image-registry.svc:5000/e0cee6-tools/node:1 AS builder
+          FROM image-registry.openshift-image-registry.svc:5000/e0cee6-tools/node:24 AS builder
           LABEL maintainer="young-jin.chung@gov.bc.ca"
           RUN apk add --no-cache --virtual .gyp \
             python3 \
@@ -69,6 +69,9 @@ objects:
             g++
       strategy:
         dockerStrategy:
+          from:
+            kind: ImageStreamTag
+            name: node:24
           noCache: true
         type: Docker
   - apiVersion: image.openshift.io/v1

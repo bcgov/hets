@@ -12,6 +12,7 @@ using Hangfire.Server;
 using Hangfire.Console.Progress;
 using HetsData.Helpers;
 using HetsData.Model;
+using HetsCommon;
 
 namespace HetsImport.Import
 {
@@ -122,8 +123,8 @@ namespace HetsImport.Import
                         LocalAreaId = listItem.LocalAreaId,
                         DistrictEquipmentTypeId = listItem.DistrictEquipmentTypeId,
                         RentalRequestStatusTypeId = (int) statusIdComplete,
-                        ExpectedStartDate = DateTime.Now,
-                        ExpectedEndDate = DateTime.Now,
+                        ExpectedStartDate = DateUtils.AsUTC(DateUtils.GetPacificNow().Date),
+                        ExpectedEndDate = DateUtils.AsUTC(DateUtils.GetPacificNow().Date),
                         EquipmentCount = 1,
                         ExpectedHours = 0,
                         AppCreateUserid = systemId,
@@ -171,10 +172,10 @@ namespace HetsImport.Import
                             EquipmentId = listItem.AskNextBlock1Id,
                             BlockNumber = 1,
                             RotationListSortOrder = 1,
-                            AskedDateTime = DateTime.Now,
+                            AskedDateTime = DateTime.UtcNow,
                             WasAsked = true,
                             OfferResponse = "Yes",
-                            OfferResponseDatetime = DateTime.Now,
+                            OfferResponseDatetime = DateTime.UtcNow,
                             IsForceHire = false,
                             Note = "CONVERSION",
                             AppCreateUserid = systemId,
@@ -196,10 +197,10 @@ namespace HetsImport.Import
                             EquipmentId = listItem.AskNextBlock2Id,
                             BlockNumber = 2,
                             RotationListSortOrder = 2,
-                            AskedDateTime = DateTime.Now,
+                            AskedDateTime = DateTime.UtcNow,
                             WasAsked = true,
                             OfferResponse = "Yes",
-                            OfferResponseDatetime = DateTime.Now,
+                            OfferResponseDatetime = DateTime.UtcNow,
                             IsForceHire = false,
                             Note = "CONVERSION",
                             AppCreateUserid = systemId,
@@ -230,10 +231,10 @@ namespace HetsImport.Import
                             EquipmentId = listItem.AskNextBlockOpenId,
                             BlockNumber = equipment.BlockNumber,
                             RotationListSortOrder = 3,
-                            AskedDateTime = DateTime.Now,
+                            AskedDateTime = DateTime.UtcNow,
                             WasAsked = true,
                             OfferResponse = "Yes",
-                            OfferResponseDatetime = DateTime.Now,
+                            OfferResponseDatetime = DateTime.UtcNow,
                             IsForceHire = false,
                             Note = "CONVERSION",
                             AppCreateUserid = systemId,
@@ -611,5 +612,3 @@ namespace HetsImport.Import
         }
     }
 }
-
-

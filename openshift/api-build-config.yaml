@@ -20,8 +20,8 @@ objects:
         - annotations: null
           from:
             kind: DockerImage
-            name: registry.redhat.io/rhel8/dotnet-80:latest
-          name: "8.0"
+            name: registry.redhat.io/rhel8/dotnet-80:8.0.129-1786585358
+          name: "8.0-1786585358"
           referencePolicy:
             type: Local
   - kind: ImageStream
@@ -66,7 +66,7 @@ objects:
               value: "${DOTNET_STARTUP_PROJECT}"
           from:
             kind: ImageStreamTag
-            name: "dotnet-80:8.0-17.20250416204713"
+            name: "dotnet-80:8.0-1786585358"
 parameters:
   - description: Name of the project (HETS)
     displayName: PROJECT_NAME

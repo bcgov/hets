@@ -532,7 +532,7 @@ namespace HetsApi.Controllers
                 temp = SecretKeyHelper.RandomString(4, item.OrganizationName.Length);
             }
 
-            key = temp + "-" + DateTime.UtcNow.Year + "-" + key;
+            key = temp + "-" + DateUtils.GetPacificNow().Year + "-" + key;
 
             owner.SharedKey = key;
 
@@ -679,7 +679,7 @@ namespace HetsApi.Controllers
                 = _ownerRepo.GetOwnerVerificationLetterData(parameters.LocalAreas, parameters.Owners, statusId, ownerStatusId, districtId);
 
             // convert to open xml document
-            string documentName = $"OwnerVerification-{DateTime.Now:yyyy-MM-dd}.docx";
+            string documentName = $"OwnerVerification-{DateUtils.GetPacificNow():yyyy-MM-dd}.docx";
             byte[] document = OwnerVerification.GetOwnerVerification(reportModel, documentName, (errMessage, ex) => {
                 _logger.LogError(errMessage);
                 _logger.LogError(ex.ToString());
@@ -752,7 +752,7 @@ namespace HetsApi.Controllers
             // setup model for submission to the Pdf service
             MailingLabelPdfViewModel model = new()
             {
-                ReportDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                ReportDate = DateUtils.GetPacificNow().ToString("yyyy-MM-dd"),
                 Title = fileName,
                 DistrictId = ownerList[0].LocalArea.ServiceArea.District.DistrictId,
                 LabelRow = new List<MailingLabelRowModel>()
@@ -832,7 +832,7 @@ namespace HetsApi.Controllers
                     // convert to string and log
                     string pdfResponse = Encoding.Default.GetString(pdfResponseBytes);
 
-                    fileName = fileName + $"-{DateTime.Now:yyyy-MM-dd-H-mm}" + ".pdf";
+                    fileName = fileName + $"-{DateUtils.GetPacificNow():yyyy-MM-dd-H-mm}" + ".pdf";
 
                     _logger.LogInformation("Owner Mailing Labels Pdf - HETS Pdf Filename: {fileName}", fileName);
                     _logger.LogInformation("Owner Mailing Labels Pdf - HETS Pdf Size: {pdfResponseLength}", pdfResponse.Length);
@@ -920,7 +920,7 @@ namespace HetsApi.Controllers
                     new HetsResponse("HETS-01", ErrorViewModel.GetDescription("HETS-01", _configuration)));
             }
 
-            var fileName = $"MailingLabels-{DateTime.Now:yyyy-MM-dd-H-mm}.docx";
+            var fileName = $"MailingLabels-{DateUtils.GetPacificNow():yyyy-MM-dd-H-mm}.docx";
             var file = MailingLabel.GetMailingLabel(owners, (errMessage, ex) => {
                 _logger.LogError(errMessage);
                 _logger.LogError(ex.ToString());
@@ -1808,7 +1808,7 @@ namespace HetsApi.Controllers
                     temp = SecretKeyHelper.RandomString(4, owner.OwnerId);
                 }
 
-                key = temp + "-" + DateTime.UtcNow.Year + "-" + key;
+                key = temp + "-" + DateUtils.GetPacificNow().Year + "-" + key;
 
                 // get owner and update
                 HetOwner ownerRecord = _context.HetOwners.First(x => x.OwnerId == owner.OwnerId);
@@ -1863,7 +1863,7 @@ namespace HetsApi.Controllers
                     temp = SecretKeyHelper.RandomString(4, owner.OwnerId);
                 }
 
-                key = temp + "-" + DateTime.UtcNow.Year + "-" + key;
+                key = temp + "-" + DateUtils.GetPacificNow().Year + "-" + key;
 
                 // get owner and update
                 HetOwner ownerRecord = _context.HetOwners.First(x => x.OwnerId == owner.OwnerId);
