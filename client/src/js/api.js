@@ -9,6 +9,7 @@ import { daysAgo, sortableDateTime, today } from './utils/date';
 
 import _ from 'lodash';
 import Moment from 'moment';
+import { versionUpdated } from './reducers/version';
 
 const normalize = (response) => _.fromPairs(response.map((object) => [object.id, object]));
 
@@ -192,15 +193,6 @@ export const deleteUserDistrict = (district) => async (dispatch) => {
 
 export const switchUserDistrict = (districtId) => async (dispatch) => {
   return await dispatch(new ApiRequest(`/userdistricts/${districtId}/switch`).post());
-};
-
-export const getSearchSummaryCounts = () => async (dispatch) => {
-  const response = await dispatch(new ApiRequest('/counts').get());
-  dispatch({
-    type: Action.UPDATE_SEARCH_SUMMARY_COUNTS,
-    searchSummaryCounts: response.data,
-  });
-  return response;
 };
 
 ////////////////////
@@ -2727,7 +2719,7 @@ export const getRentalConditions = () => async (dispatch) => {
 
 export const getVersion = () => async (dispatch) => {
   const response = await dispatch(new ApiRequest('/version').get());
-  dispatch({ type: Action.UPDATE_VERSION, version: response });
+  dispatch(versionUpdated(response));
 };
 
 ////////////////////

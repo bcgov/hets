@@ -84,7 +84,6 @@ const DEFAULT_LOOKUPS = {
   },
   users: {},
   rolloverStatus: {},
-  searchSummaryCounts: {},
 };
 
 export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
@@ -267,9 +266,6 @@ export default function lookupsReducer(state = DEFAULT_LOOKUPS, action) {
 
     case Action.UPDATE_OVERTIME_RATE_TYPES_LOOKUP:
       return { ...state, overtimeRateTypes: action.overtimeRateTypes };
-
-    case Action.UPDATE_SEARCH_SUMMARY_COUNTS:
-      return { ...state, searchSummaryCounts: action.searchSummaryCounts };
 
     default:
       return state;
