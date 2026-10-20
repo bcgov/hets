@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import classNames from 'classnames';
 import _ from 'lodash';
 import {
@@ -28,6 +28,7 @@ import DropdownControl from '../components/DropdownControl.jsx';
 import Authorize, { any } from '../components/Authorize';
 
 import { formatDateTimeUTCToLocal } from '../utils/date';
+import { withRouter } from '../components/withRouter';
 
 class TopNav extends React.Component {
   static propTypes = {

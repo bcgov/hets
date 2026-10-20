@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from '../components/withRouter';
 import { connect } from 'react-redux';
 import * as Api from '../api';
 import * as Constant from '../constants';
