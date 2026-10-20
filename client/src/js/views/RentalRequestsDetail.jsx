@@ -241,7 +241,7 @@ class RentalRequestsDetail extends React.Component {
             </Button>
           </Col>
           <Col sm={3}>
-            <div className="float-right">
+            <div className="float-end">
               <ReturnButton />
             </div>
           </Col>
@@ -345,7 +345,7 @@ class RentalRequestsDetail extends React.Component {
                 disabled={loading}
                 disabledTooltip="Please wait for the request information to finish loading."
               >
-                <FontAwesomeIcon icon="print" title="Print Seniority List" className="mr-1" />
+                <FontAwesomeIcon icon="print" title="Print Seniority List" className="me-1" />
                 <span>Seniority List</span>
               </TooltipButton>
               <CheckboxControl

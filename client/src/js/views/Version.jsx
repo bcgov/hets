@@ -79,7 +79,7 @@ class Version extends React.Component {
           Version
           <div id="version-buttons" style={{ float: 'right' }}>
             <Unimplemented>
-              <Button className="mr-2 btn-custom" onClick={this.email}>
+              <Button className="me-2 btn-custom" onClick={this.email}>
                 <FontAwesomeIcon icon="envelope" title="E-mail" />
               </Button>
             </Unimplemented>

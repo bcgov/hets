@@ -317,7 +317,7 @@ class Equipment extends React.Component {
                 </Row>
               </Col>
               <Col xs={3} sm={2} id="search-buttons">
-                <Row className="float-right">
+                <Row className="float-end">
                   <Favourites
                     id="faves-dropdown"
                     type="equipment"
@@ -326,12 +326,12 @@ class Equipment extends React.Component {
                     onSelect={this.loadFavourite}
                   />
                 </Row>
-                <Row className="float-right">
+                <Row className="float-end">
                   <Button id="search-button" variant="primary" type="submit">
                     Search
                   </Button>
                 </Row>
-                <Row className="float-right">
+                <Row className="float-end">
                   <Button id="clear-search-button" className="btn-custom" onClick={this.clearSearch}>
                     Clear
                   </Button>

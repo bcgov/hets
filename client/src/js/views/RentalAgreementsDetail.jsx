@@ -180,7 +180,7 @@ class RentalAgreementsDetail extends React.Component {
     const rentalAgreement = this.props.rentalAgreement || {};
 
     var buttons = (
-      <div className="float-right">
+      <div className="float-end">
         <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
           <Button className="btn-custom" disabled={!rentalAgreement.isActive} onClick={this.openCloneDialog}>
             Copy Other Rental Agreement
@@ -380,7 +380,7 @@ class RentalAgreementsDetail extends React.Component {
                   onClick={this.addRentalRate.bind(this, true)}
                   enabledTooltip="These rates will be added to the total, along with the equipment pay rate."
                 >
-                  <FontAwesomeIcon icon="plus" className="mr-1" />
+                  <FontAwesomeIcon icon="plus" className="me-1" />
                   <span>Add Included Rates and Attachments</span>
                 </TooltipButton>
               </Authorize>
@@ -469,7 +469,7 @@ class RentalAgreementsDetail extends React.Component {
                   onClick={this.addRentalRate.bind(this, false)}
                   enabledTooltip="These rates will NOT be added to the total."
                 >
-                  <FontAwesomeIcon icon="plus" className="mr-1" />
+                  <FontAwesomeIcon icon="plus" className="me-1" />
                   <span>Add Other Rates and Attachments</span>
                 </TooltipButton>
               </Authorize>
@@ -558,7 +558,7 @@ class RentalAgreementsDetail extends React.Component {
                   className="no-margin btn-custom"
                   onClick={this.addCondition}
                 >
-                  <FontAwesomeIcon icon="plus" className="mr-1" />
+                  <FontAwesomeIcon icon="plus" className="me-1" />
                   <span>Add</span>
                 </Button>
               </Authorize>

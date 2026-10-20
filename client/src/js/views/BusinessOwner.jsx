@@ -134,7 +134,7 @@ class BusinessOwner extends React.Component {
               </Badge>
             </Col>
             <Col sm={3}>
-              <div className="float-right">
+              <div className="float-end">
                 <PrintButton />
                 <ReturnButton />
               </div>
@@ -351,7 +351,7 @@ class BusinessOwner extends React.Component {
               <Row id="owners-top">
                 <Col sm={9}></Col>
                 <Col sm={3}>
-                  <div className="float-right">
+                  <div className="float-end">
                     <ReturnButton />
                   </div>
                 </Col>

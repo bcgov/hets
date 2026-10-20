@@ -284,7 +284,7 @@ class WcbCglCoverage extends React.Component {
                 </ButtonToolbar>
               </Col>
               <Col xs={3} sm={2} id="search-buttons">
-                <Row className="float-right">
+                <Row className="float-end">
                   <Favourites
                     id="wcg-cgl-coverage-faves-dropdown"
                     type="ownersCoverage"

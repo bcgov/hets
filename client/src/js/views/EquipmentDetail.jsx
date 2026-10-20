@@ -279,7 +279,7 @@ class EquipmentDetail extends React.Component {
                         />
                       )}
                       <Button
-                        className="mr-1 ml-1 btn-custom"
+                        className="me-1 ms-1 btn-custom"
                         title="Notes"
                         onClick={this.showNotes}
                         disabled={loadingNotes}
@@ -297,7 +297,7 @@ class EquipmentDetail extends React.Component {
                     </Row>
                   </Col>
                   <Col sm={3}>
-                    <div className="float-right">
+                    <div className="float-end">
                       <PrintButton />
                       <ReturnButton />
                     </div>

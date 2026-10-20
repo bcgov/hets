@@ -216,7 +216,7 @@ class UsersDetail extends React.Component {
               )}
             </Col>
             <Col sm={4}>
-              <div className="float-right">
+              <div className="float-end">
                 <PrintButton />
                 <ReturnButton />
               </div>
@@ -546,8 +546,8 @@ class ExpireOverlay extends React.Component {
     var props = _.omit(this.props, 'onSave', 'hide', 'userRole');
     return (
       <Popover id="users-role-popover" {...props}>
-        <Popover.Title>Set Expiry Date</Popover.Title>
-        <Popover.Content>
+        <Popover.Header>Set Expiry Date</Popover.Header>
+        <Popover.Body>
           <Form inline onSubmit={this.saveUserRole}>
             <FormGroup controlId="expiryDate">
               <DateControl
@@ -559,11 +559,11 @@ class ExpireOverlay extends React.Component {
               />
               <FormText>{this.state.expiryDateError}</FormText>
             </FormGroup>
-            <Button variant="primary" onClick={this.saveUserRole} className="float-right">
+            <Button variant="primary" onClick={this.saveUserRole} className="float-end">
               Save
             </Button>
           </Form>
-        </Popover.Content>
+        </Popover.Body>
       </Popover>
     );
   }

@@ -417,7 +417,7 @@ class RentalRequests extends React.Component {
                 })()}
               </Col>
               <Col xs={3} sm={2} id="search-buttons">
-                <Row className="float-right">
+                <Row className="float-end">
                   <Favourites
                     id="rental-requests-faves-dropdown"
                     type="rentalRequests"

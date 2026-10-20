@@ -562,7 +562,7 @@ class TimeEntryDialog extends React.Component {
                 </Button>
               )}
               {this.state.numberOfInputs > 1 && (
-                <Button size="sm" className="btn-custom ml-3" onClick={this.removeTimeEntryInput}>
+                <Button size="sm" className="btn-custom ms-3" onClick={this.removeTimeEntryInput}>
                   <FontAwesomeIcon icon="minus" />
                   &nbsp;<strong>Remove</strong>
                 </Button>

@@ -138,9 +138,9 @@ class AttachmentAddDialog extends React.Component {
             </FormGroup>
           ))}
         </div>
-        <div className="text-right">
+        <div className="text-end">
           {forms.length > 1 && (
-            <Button size="sm" className="mr-2 btn-custom" onClick={this.removeInput}>
+            <Button size="sm" className="me-2 btn-custom" onClick={this.removeInput}>
               <FontAwesomeIcon icon="minus" />
               &nbsp;<strong>Remove</strong>
             </Button>

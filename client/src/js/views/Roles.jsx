@@ -99,7 +99,7 @@ class Roles extends React.Component {
       <div id="roles-list">
         <PageHeader>
           Roles ({numRoles})
-          <ButtonGroup id="roles-buttons" className="float-right">
+          <ButtonGroup id="roles-buttons" className="float-end">
             <PrintButton />
           </ButtonGroup>
         </PageHeader>
