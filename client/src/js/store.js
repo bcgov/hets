@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 import allReducers from './reducers/all';
+import { serverApi } from './services/serverApi';
 
 const setupStore = () => {
   const store = configureStore({
@@ -10,7 +11,7 @@ const setupStore = () => {
       getDefaultMiddleware({
         // The legacy user model intentionally stores hasPermission as a function.
         serializableCheck: false,
-      }),
+      }).concat(serverApi.middleware),
   });
 
   if (import.meta.hot) {

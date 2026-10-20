@@ -64,4 +64,11 @@ test('renders main component', async () => {
 
   const mainComponent = view.container.querySelector("#main");
   expect(mainComponent).toBeInTheDocument();
+
+  await waitFor(() => {
+    const queries = Object.values(store.getState().serverApi.queries);
+    expect(queries).toHaveLength(1);
+    expect(queries[0].status).toBe('fulfilled');
+  });
+  expect(view.getByText('Unapproved equipment (4)')).toBeInTheDocument();
 });

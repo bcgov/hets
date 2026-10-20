@@ -7,6 +7,7 @@ import { keycloak } from './Keycloak';
 
 import * as Api from './api';
 import { ApiError } from './utils/http';
+import { registerSessionTimeoutReset } from './utils/sessionTimeout';
 
 import * as Constant from './constants';
 import * as Action from './actionTypes';
@@ -67,6 +68,8 @@ export const resetSessionTimeoutTimer = () => {
   window.clearInterval(sessionTimeoutTimer);
   sessionTimeoutTimer = window.setInterval(showSessionTimoutDialog, Constant.SESSION_TIMEOUT);
 };
+
+registerSessionTimeoutReset(resetSessionTimeoutTimer);
 
 export const getLookups = (user) => (dispatch) => {
   if (user.businessUser) {
