@@ -21,8 +21,8 @@
       },
       "Microsoft.AspNetCore.JsonPatch": {
         "type": "Transitive",
-        "resolved": "8.0.29",
-        "contentHash": "t4BRuRlei/93OABVE89KzYAlE5uHNezfLZQUMdp8tl3F1Jyw/h74Zk2QTYZ9zyns4NYf0GpkMufoXV6berx6tQ==",
+        "resolved": "8.0.32",
+        "contentHash": "M7AOh2aNdLMrF5QmoOuBMFYaz2qkjQUFMDV0oQKTxhXhLOT6SponedUNlw8V1Im9dcrOh2qRYHzOFSvmfOEeNA==",
         "dependencies": {
           "Microsoft.CSharp": "4.7.0",
           "Newtonsoft.Json": "13.0.3"
@@ -1015,7 +1015,7 @@
           "Hangfire.Console": "[1.4.3, )",
           "Hangfire.Core": "[1.8.24, )",
           "HetsCommon": "[1.9.3, )",
-          "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "[8.0.29, )",
+          "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "[8.0.32, )",
           "Microsoft.EntityFrameworkCore": "[8.0.32, )",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "[8.0.11, )",
           "System.Net.Http": "[4.3.4, )",
@@ -1054,11 +1054,11 @@
       },
       "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
         "type": "CentralTransitive",
-        "requested": "[8.0.29, )",
-        "resolved": "8.0.29",
-        "contentHash": "D+L9on/3JoEYY4cxhE9El1sRuG2OQaKkoMQYT5Mseee5akHo74qYCvJg/nMf51Wmm9umvzkqY8Nc6AqGW1DryQ==",
+        "requested": "[8.0.32, )",
+        "resolved": "8.0.32",
+        "contentHash": "Hn87IXOJodaVnAH4Z9zVVyU4TV6SP8IqfgcRAvVmbz50Zf5+UiuC/E3J6JzsHpXdKBoISTFPlM3AMns2AyXeMA==",
         "dependencies": {
-          "Microsoft.AspNetCore.JsonPatch": "8.0.29",
+          "Microsoft.AspNetCore.JsonPatch": "8.0.32",
           "Newtonsoft.Json": "13.0.3",
           "Newtonsoft.Json.Bson": "1.0.2"
         }
