@@ -16,7 +16,7 @@
     "immer": "^11.1.15",
     "keycloak-js": "^26.2.4",
     "lodash": "^4.18.1",
-    "moment": "^2.30.1",
+    "moment": "^2.31.0",
     "react": "^18.3.1",
     "react-bootstrap": "^1.6.8",
     "react-datetime": "^3.3.1",
@@ -39,7 +39,7 @@
     "msw": "^2.15.0",
     "sass": "^1.102.0",
     "vite": "^8.2.0",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.12"
   },
   "scripts": {
     "start": "vite",
