@@ -1,0 +1,67 @@
+name: verify
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  server:
+    name: Server build and tests
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: |
+          dotnet restore Server/HetsApi.sln
+          dotnet restore Server/HetsBceid/HetsBceid.csproj
+
+      - name: Build
+        run: |
+          dotnet build Server/HetsApi.sln --configuration Release --no-restore
+          dotnet build Server/HetsBceid/HetsBceid.csproj --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test Server/HetsApi.sln --configuration Release --no-build --no-restore
+
+  client:
+    name: Client build and tests
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: client
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
