@@ -16,7 +16,7 @@ const AuthorizedRoute = ({ user, requires, ...rest }) => {
 
 AuthorizedRoute.propTypes = {
   requires: PropTypes.string.isRequired,
-  component: PropTypes.func,
+  component: PropTypes.elementType,
 };
 
 const mapStateToProps = (state) => {

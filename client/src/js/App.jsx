@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import AuthorizedRoute from './components/AuthorizedRoute';
@@ -14,33 +14,34 @@ import { store } from './store';
 import { ProgressBar } from 'react-bootstrap';
 import ErrorBoundary from './components/ErrorBoundary';
 import Main from './views/Main.jsx';
-import Home from './views/Home.jsx';
-import BusinessPortal from './views/BusinessPortal.jsx';
-import BusinessOwner from './views/BusinessOwner.jsx';
-import Equipment from './views/Equipment.jsx';
-import EquipmentDetail from './views/EquipmentDetail.jsx';
-import Owners from './views/Owners.jsx';
-import OwnersDetail from './views/OwnersDetail.jsx';
-import Projects from './views/Projects.jsx';
-import ProjectsDetail from './views/ProjectsDetail.jsx';
-import RentalRequests from './views/RentalRequests.jsx';
-import RentalRequestsDetail from './views/RentalRequestsDetail.jsx';
-import RentalAgreementsDetail from './views/RentalAgreementsDetail.jsx';
-import OvertimeRates from './views/OvertimeRates.jsx';
-import Users from './views/Users.jsx';
-import UsersDetail from './views/UsersDetail.jsx';
-import Roles from './views/Roles.jsx';
-import RolesDetail from './views/RolesDetail.jsx';
-import Rollover from './views/Rollover.jsx';
-import DistrictAdmin from './views/DistrictAdmin.jsx';
-import TimeEntry from './views/TimeEntry.jsx';
-import SeniorityList from './views/SeniorityList.jsx';
-import StatusLetters from './views/StatusLetters.jsx';
-import HiringReport from './views/HiringReport.jsx';
-import WcbCglCoverage from './views/WcbCglCoverage.jsx';
-import AitReport from './views/AitReport.jsx';
-import Version from './views/Version.jsx';
-import FourOhFour from './views/404.jsx';
+
+const Home = lazy(() => import('./views/Home.jsx'));
+const BusinessPortal = lazy(() => import('./views/BusinessPortal.jsx'));
+const BusinessOwner = lazy(() => import('./views/BusinessOwner.jsx'));
+const Equipment = lazy(() => import('./views/Equipment.jsx'));
+const EquipmentDetail = lazy(() => import('./views/EquipmentDetail.jsx'));
+const Owners = lazy(() => import('./views/Owners.jsx'));
+const OwnersDetail = lazy(() => import('./views/OwnersDetail.jsx'));
+const Projects = lazy(() => import('./views/Projects.jsx'));
+const ProjectsDetail = lazy(() => import('./views/ProjectsDetail.jsx'));
+const RentalRequests = lazy(() => import('./views/RentalRequests.jsx'));
+const RentalRequestsDetail = lazy(() => import('./views/RentalRequestsDetail.jsx'));
+const RentalAgreementsDetail = lazy(() => import('./views/RentalAgreementsDetail.jsx'));
+const OvertimeRates = lazy(() => import('./views/OvertimeRates.jsx'));
+const Users = lazy(() => import('./views/Users.jsx'));
+const UsersDetail = lazy(() => import('./views/UsersDetail.jsx'));
+const Roles = lazy(() => import('./views/Roles.jsx'));
+const RolesDetail = lazy(() => import('./views/RolesDetail.jsx'));
+const Rollover = lazy(() => import('./views/Rollover.jsx'));
+const DistrictAdmin = lazy(() => import('./views/DistrictAdmin.jsx'));
+const TimeEntry = lazy(() => import('./views/TimeEntry.jsx'));
+const SeniorityList = lazy(() => import('./views/SeniorityList.jsx'));
+const StatusLetters = lazy(() => import('./views/StatusLetters.jsx'));
+const HiringReport = lazy(() => import('./views/HiringReport.jsx'));
+const WcbCglCoverage = lazy(() => import('./views/WcbCglCoverage.jsx'));
+const AitReport = lazy(() => import('./views/AitReport.jsx'));
+const Version = lazy(() => import('./views/Version.jsx'));
+const FourOhFour = lazy(() => import('./views/404.jsx'));
 
 import addIconsToLibrary from './fontAwesome';
 
@@ -315,7 +316,9 @@ const App = ({ user, dispatch }) => {
     <Router>
       <Main showNav={user.hasPermission(Constant.PERMISSION_LOGIN)}>
         <ErrorBoundary>
-          <Switch>{Routes(user)}</Switch>
+          <Suspense fallback={<p id="route-loading">Loading page&hellip;</p>}>
+            <Switch>{Routes(user)}</Switch>
+          </Suspense>
         </ErrorBoundary>
       </Main>
     </Router>
