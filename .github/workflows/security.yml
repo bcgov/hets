@@ -1,0 +1,70 @@
+name: security
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: "17 14 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependency-review:
+    name: Dependency review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Review dependency changes
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: moderate
+
+  audits:
+    name: Dependency audits
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Audit NuGet dependencies
+        run: |
+          dotnet restore Server/HetsApi.sln --locked-mode -p:NuGetAudit=true -p:NuGetAuditLevel=high -warnaserror:NU1903,NU1904
+          dotnet restore Server/HetsBceid/HetsBceid.csproj --locked-mode -p:NuGetAudit=true -p:NuGetAuditLevel=high -warnaserror:NU1903,NU1904
+          dotnet restore Server/HetsImport/HetsImport.csproj --locked-mode -p:NuGetAudit=true -p:NuGetAuditLevel=high -warnaserror:NU1903,NU1904
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            client/package-lock.json
+            .pipeline/package-lock.json
+
+      - name: Audit client dependencies
+        working-directory: client
+        run: |
+          npm ci
+          npm audit --audit-level=high
+
+      - name: Audit pipeline dependencies
+        working-directory: .pipeline
+        run: |
+          npm ci
+          npm audit --audit-level=high
