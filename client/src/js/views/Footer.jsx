@@ -62,4 +62,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, null, null, { pure: false })(Footer);
+export default connect(mapStateToProps)(Footer);
