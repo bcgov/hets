@@ -29,8 +29,8 @@ jobs:
 
       - name: Restore
         run: |
-          dotnet restore Server/HetsApi.sln
-          dotnet restore Server/HetsBceid/HetsBceid.csproj
+          dotnet restore Server/HetsApi.sln --locked-mode
+          dotnet restore Server/HetsBceid/HetsBceid.csproj --locked-mode
 
       - name: Build
         run: |
