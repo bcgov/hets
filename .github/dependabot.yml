@@ -1,0 +1,98 @@
+version: 2
+updates:
+  - package-ecosystem: nuget
+    directory: /Server
+    schedule:
+      interval: weekly
+      day: monday
+      time: "14:00"
+      timezone: America/Vancouver
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
+      - dotnet
+    groups:
+      dotnet-framework:
+        patterns:
+          - Microsoft.AspNetCore.*
+          - Microsoft.EntityFrameworkCore*
+          - Microsoft.Extensions.*
+          - Npgsql*
+        update-types:
+          - minor
+          - patch
+      hangfire:
+        patterns:
+          - Hangfire*
+        update-types:
+          - minor
+          - patch
+      serilog:
+        patterns:
+          - Serilog*
+        update-types:
+          - minor
+          - patch
+      test-tooling:
+        patterns:
+          - Microsoft.NET.Test.Sdk
+          - coverlet.collector
+          - xunit*
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: npm
+    directory: /client
+    schedule:
+      interval: weekly
+      day: monday
+      time: "14:30"
+      timezone: America/Vancouver
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
+      - javascript
+    groups:
+      react-runtime:
+        patterns:
+          - react
+          - react-dom
+          - react-redux
+          - redux
+          - redux-thunk
+          - reselect
+        update-types:
+          - minor
+          - patch
+      vite-toolchain:
+        dependency-type: development
+        patterns:
+          - vite
+          - vitest
+          - "@vitejs/*"
+          - "@testing-library/*"
+          - jsdom
+          - msw
+          - sass
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: npm
+    directory: /.pipeline
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - pipeline
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - github-actions
