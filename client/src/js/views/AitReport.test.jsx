@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import Moment from "moment";
+import Dayjs from '../utils/dayjs';
 
 import { setupStore } from "../store";
 import * as Action from "../actionTypes";
@@ -24,22 +24,22 @@ const mockKeycloakUpdateToken = jest.spyOn(keycloak, "updateToken");
 mockKeycloakUpdateToken.mockResolvedValue(Promise.resolve(false));
 
 const getStartCurrFiscal = () => {
-  const currDateTime = Moment();
+  const currDateTime = Dayjs();
   return startOfCurrentFiscal(currDateTime);
 };
 
 const getEndCurrFiscal = () => {
-  const currDateTime = Moment();
+  const currDateTime = Dayjs();
   return endOfCurrentFiscal(currDateTime);
 };
 
 const getStartLastFiscal = () => {
-  const currDateTime = Moment();
+  const currDateTime = Dayjs();
   return startOfPreviousFiscal(currDateTime);
 };
 
 const getEndLastFiscal = () => {
-  const currDateTime = Moment();
+  const currDateTime = Dayjs();
   return endOfPreviousFiscal(currDateTime);
 };
 
@@ -106,7 +106,7 @@ describe("AitReport rendering filters", () => {
     const startCurrFiscal = getStartCurrFiscal();
     const endCurrFiscal = getEndCurrFiscal();
     const agreementIds = getRentalAgreementsLite(startCurrFiscal).data
-      .filter(agreement => dateIsBetween(Moment.utc(agreement.datedOn), Moment.utc(startCurrFiscal), Moment.utc(endCurrFiscal)))
+      .filter(agreement => dateIsBetween(Dayjs.utc(agreement.datedOn), Dayjs.utc(startCurrFiscal), Dayjs.utc(endCurrFiscal)))
       .map(agreement => agreement.id);
     
     const projects = getProjects().data.filter(proj => hasArrsIntersect(proj.agreementIds, agreementIds));
@@ -144,7 +144,7 @@ describe("AitReport rendering filters", () => {
     const startPrevFiscal = getStartLastFiscal();
     const endPrevFiscal = getEndLastFiscal();
     const agreementIds = getRentalAgreementsLite(startCurrFiscal).data
-      .filter(agreement => dateIsBetween(Moment(agreement.datedOn), Moment(startPrevFiscal), Moment(endPrevFiscal)))
+      .filter(agreement => dateIsBetween(Dayjs(agreement.datedOn), Dayjs(startPrevFiscal), Dayjs(endPrevFiscal)))
       .map(agreement => agreement.id);
     
     const projects = getProjects().data
@@ -187,25 +187,25 @@ describe("AitReport rendering filters", () => {
     const startCurrFiscal = getStartCurrFiscal();
     const startPrevFiscal = getStartLastFiscal();
     const endPrevFiscal = getEndLastFiscal();
-    const now = Moment();
-    const nowDateStr = Moment(now).format("YYYY-MM-DD");
+    const now = Dayjs();
+    const nowDateStr = Dayjs(now).format("YYYY-MM-DD");
 
     const dateFromInput = screen.getAllByDisplayValue(nowDateStr)[0];
     await user.click(dateFromInput);
     await user.pointer([{target: dateFromInput, offset: 0, keys: '[MouseLeft>]'}, {offset: 10}]);
-    await user.paste(Moment(startPrevFiscal).format("YYYY-MM-DD"));
+    await user.paste(Dayjs(startPrevFiscal).format("YYYY-MM-DD"));
     
-    expect(dateFromInput).toHaveValue(Moment(startPrevFiscal).format("YYYY-MM-DD"));
+    expect(dateFromInput).toHaveValue(Dayjs(startPrevFiscal).format("YYYY-MM-DD"));
     
     const dateToInput = screen.getAllByDisplayValue(nowDateStr)[0];
     await user.click(dateToInput);
     await user.pointer([{target: dateToInput, offset: 0, keys: '[MouseLeft>]'}, {offset: 10}]);
-    await user.paste(Moment(endPrevFiscal).format("YYYY-MM-DD"));
+    await user.paste(Dayjs(endPrevFiscal).format("YYYY-MM-DD"));
     
-    expect(dateToInput).toHaveValue(Moment(endPrevFiscal).format("YYYY-MM-DD"));
+    expect(dateToInput).toHaveValue(Dayjs(endPrevFiscal).format("YYYY-MM-DD"));
     
     const agreementIds = getRentalAgreementsLite(startCurrFiscal).data
-      .filter(agreement => dateIsBetween(Moment(agreement.datedOn), Moment(startPrevFiscal), Moment(endPrevFiscal)))
+      .filter(agreement => dateIsBetween(Dayjs(agreement.datedOn), Dayjs(startPrevFiscal), Dayjs(endPrevFiscal)))
       .map(agreement => agreement.id);
     
     const projects = getProjects().data

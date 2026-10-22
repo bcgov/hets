@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Form } from 'react-bootstrap';
 import _ from 'lodash';
-import Moment from 'moment';
+import Dayjs from '../utils/dayjs';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -53,7 +53,7 @@ class AitReport extends React.Component {
   constructor(props) {
     super(props);
 
-    const today = Moment();
+    const today = Dayjs();
 
     this.state = {
       search: {
@@ -89,8 +89,8 @@ class AitReport extends React.Component {
       searchParams.equipment = this.state.search.equipmentIds;
     }
 
-    const startDate = Moment(this.state.search.startDate);
-    const endDate = Moment(this.state.search.endDate);
+    const startDate = Dayjs(this.state.search.startDate);
+    const endDate = Dayjs(this.state.search.endDate);
 
     if (startDate && startDate.isValid()) {
       searchParams.startDate = toZuluTime(startDate.startOf('day'));
@@ -127,7 +127,7 @@ class AitReport extends React.Component {
   };
 
   clearSearch = () => {
-    const today = Moment();
+    const today = Dayjs();
 
     const defaultSearchParameters = {
       projectIds: [],
@@ -227,17 +227,17 @@ class AitReport extends React.Component {
   };
 
   getAgreementIdsWithinDateRange = () => {
-    const startDate = Moment(this.state.search.startDate);
-    const endDate = Moment(this.state.search.endDate);
+    const startDate = Dayjs(this.state.search.startDate);
+    const endDate = Dayjs(this.state.search.endDate);
 
     return _.chain(this.props.agreementSummaryLite.data)
-      .filter((agreement) => dateIsBetween(Moment(agreement.datedOn), startDate, endDate))
+      .filter((agreement) => dateIsBetween(Dayjs(agreement.datedOn), startDate, endDate))
       .map('id')
       .value();
   };
 
   updateDateRangeSearchState = (state) => {
-    const today = Moment();
+    const today = Dayjs();
     let startDate;
     let endDate;
     switch (state.dateRange) {

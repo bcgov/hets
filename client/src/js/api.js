@@ -8,7 +8,7 @@ import { lastFirstName, firstLastName, concat } from './utils/string';
 import { daysAgo, sortableDateTime, today } from './utils/date';
 
 import _ from 'lodash';
-import Moment from 'moment';
+import Dayjs from './utils/dayjs';
 import { versionUpdated } from './reducers/version';
 
 const normalize = (response) => _.fromPairs(response.map((object) => [object.id, object]));
@@ -407,7 +407,7 @@ const parseEquipment = (equipment) => (dispatch) => {
   // e.g. "Open-500" or "1-744"
   equipment.seniorityText = getBlockDisplayName(equipment.blockNumber, equipment.numberOfBlocks, equipment.seniority);
 
-  equipment.currentYear = Moment().year();
+  equipment.currentYear = Dayjs().year();
   equipment.lastYear = equipment.currentYear - 1;
   equipment.twoYearsAgo = equipment.currentYear - 2;
   equipment.threeYearsAgo = equipment.currentYear - 3;

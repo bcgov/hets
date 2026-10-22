@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup } from 'react-bootstrap';
 import _ from 'lodash';
-import Moment from 'moment';
+import Dayjs from '../utils/dayjs';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -62,12 +62,12 @@ class WcbCglCoverage extends React.Component {
       searchParams.owners = this.state.search.ownerIds;
     }
 
-    var wcbExpiryDate = Moment(this.state.search.wcbExpiry);
+    var wcbExpiryDate = Dayjs(this.state.search.wcbExpiry);
     if (wcbExpiryDate && wcbExpiryDate.isValid()) {
       searchParams.wcbExpiry = toZuluTime(wcbExpiryDate.startOf('day'));
     }
 
-    var cglExpiryDate = Moment(this.state.search.cglExpiry);
+    var cglExpiryDate = Dayjs(this.state.search.cglExpiry);
     if (cglExpiryDate && cglExpiryDate.isValid()) {
       searchParams.cglExpiry = toZuluTime(cglExpiryDate.startOf('day'));
     }
