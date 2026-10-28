@@ -20,7 +20,7 @@ while true; do
 
   if [ "$attempt" -ge "$max_attempts" ] ||
     ! grep -Eqi \
-      'i/o timeout|TLS handshake timeout|connection reset by peer|Unable to connect to the server|temporarily unavailable' \
+      'i/o timeout|TLS handshake timeout|connection reset by peer|Unable to connect to the server|connection refused|temporarily unavailable' \
       "$log_file"; then
     rm -f "$log_file"
     exit "$command_status"
