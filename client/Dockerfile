@@ -1,5 +1,10 @@
-FROM image-registry.openshift-image-registry.svc:5000/e0cee6-tools/node-python:1 AS builder
+FROM image-registry.openshift-image-registry.svc:5000/e0cee6-tools/node:1 AS builder
 LABEL maintainer="young-jin.chung@gov.bc.ca"
+
+RUN apk add --no-cache --virtual .gyp \
+  python3 \
+  make \
+  g++
 
 COPY . ./src
 
