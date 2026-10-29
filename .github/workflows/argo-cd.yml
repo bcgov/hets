@@ -12,7 +12,9 @@ on:
         type: string
     secrets:
       GITOPS_REPO_PAT:
-        required: true
+        required: false
+      GITOPS_REPO_DEPLOY_KEY:
+        required: false
   workflow_dispatch:
     inputs:
       environment:
@@ -53,12 +55,13 @@ jobs:
       - name: Require trusted workflow and supported environment
         env:
           GITOPS_TOKEN: ${{ secrets.GITOPS_REPO_PAT }}
+          GITOPS_SSH_KEY: ${{ secrets.GITOPS_REPO_DEPLOY_KEY }}
         run: |
           set -euo pipefail
           test "$GITHUB_REF" = refs/heads/master
           case "$TARGET_ENVIRONMENT" in dev|test|uat|prod) ;; *) exit 1 ;; esac
-          if [[ -z "$GITOPS_TOKEN" ]]; then
-            echo 'Configure GITOPS_REPO_PAT with contents read/write access to bcgov-c/tenant-gitops-e0cee6.' >&2
+          if [[ -z "$GITOPS_TOKEN" && -z "$GITOPS_SSH_KEY" ]]; then
+            echo 'Configure GITOPS_REPO_DEPLOY_KEY (repository-scoped write deploy key) or GITOPS_REPO_PAT for bcgov-c/tenant-gitops-e0cee6.' >&2
             exit 1
           fi
       - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
@@ -74,7 +77,8 @@ jobs:
         with:
           repository: bcgov-c/tenant-gitops-e0cee6
           ref: main
-          token: ${{ secrets.GITOPS_REPO_PAT }}
+          token: ${{ secrets.GITOPS_REPO_PAT || github.token }}
+          ssh-key: ${{ secrets.GITOPS_REPO_DEPLOY_KEY }}
           path: gitops-repo
       - name: Install manifest renderer
         run: |
