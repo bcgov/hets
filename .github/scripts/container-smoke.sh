@@ -20,16 +20,23 @@ cleanup() {
 trap cleanup EXIT
 docker network create "$network" > /dev/null
 
+wait_for_dependency() {
+  for ((attempt = 0; attempt < 60; attempt++)); do
+    if "$@" > /dev/null 2>&1; then return 0; fi
+    sleep 1
+  done
+  docker logs "$dependency" >&2
+  return 1
+}
+
 if [[ "$component" == api ]]; then
   docker run -d --name "$dependency" --network "$network" \
     --network-alias hets-db-smoke \
     -e POSTGRES_PASSWORD=ephemeral-smoke-only -e POSTGRES_DB=hets \
     postgres:16-alpine > /dev/null
-  for attempt in {1..60}; do
-    if docker exec "$dependency" pg_isready -U postgres -d hets > /dev/null 2>&1; then break; fi
-    sleep 1
-  done
-  docker exec "$dependency" pg_isready -U postgres -d hets
+  # The init server uses only a Unix socket and restarts before the real server.
+  wait_for_dependency docker exec "$dependency" pg_isready -h 127.0.0.1 -U postgres -d hets
+  docker exec "$dependency" pg_isready -h 127.0.0.1 -U postgres -d hets
   jq '.Serilog.WriteTo = [{"Name":"Console"}]' Server/HetsApi/appsettings.json \
     > "$test_directory/appsettings.json"
   chmod 755 "$test_directory"
@@ -50,6 +57,8 @@ class Handler(BaseHTTPRequestHandler):
  def do_GET(self):
   self.send_response(200); self.end_headers(); self.wfile.write(self.path.encode())
 HTTPServer(("0.0.0.0", 8080), Handler).serve_forever()' > /dev/null
+  wait_for_dependency docker exec "$dependency" python -c \
+    'from urllib.request import urlopen; assert urlopen("http://127.0.0.1:8080/ready").status == 200'
   docker run -d --name "$app" --network "$network" --user 1001230000:0 \
     -p 127.0.0.1::8080 \
     -e 'REACT_APP_SSO_HOST=https://sso.example.test/auth?x="quoted"' \
