@@ -5,7 +5,7 @@ import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, Form } from 'react
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
-import Moment from 'moment';
+import Dayjs from '../utils/dayjs';
 
 import RentalRequestsAddDialog from './dialogs/RentalRequestsAddDialog.jsx';
 
@@ -92,7 +92,7 @@ class RentalRequests extends React.Component {
     // Time period drop-down; e.g. "This Month"
     var startDate;
     var endDate;
-    var today = Moment();
+    var today = Dayjs();
 
     switch (this.state.search.dateRange) {
       case WITHIN_30_DAYS:
@@ -100,11 +100,11 @@ class RentalRequests extends React.Component {
         break;
       case THIS_MONTH:
         startDate = today.startOf('month');
-        endDate = Moment(startDate).endOf('month');
+        endDate = Dayjs(startDate).endOf('month');
         break;
       case THIS_QUARTER:
         startDate = today.startOf('quarter');
-        endDate = Moment(startDate).endOf('quarter');
+        endDate = Dayjs(startDate).endOf('quarter');
         break;
       case THIS_FISCAL:
         // Fiscal Year: Apr 1 - March 31
@@ -113,11 +113,11 @@ class RentalRequests extends React.Component {
         break;
       case LAST_MONTH:
         startDate = today.subtract(1, 'month').startOf('month');
-        endDate = Moment(startDate).endOf('month');
+        endDate = Dayjs(startDate).endOf('month');
         break;
       case LAST_QUARTER:
         startDate = today.subtract(1, 'quarter').startOf('quarter');
-        endDate = Moment(startDate).endOf('quarter');
+        endDate = Dayjs(startDate).endOf('quarter');
         break;
       case LAST_FISCAL:
         // Fiscal Year: Apr 1 - March 31
@@ -125,8 +125,8 @@ class RentalRequests extends React.Component {
         endDate = endOfPreviousFiscal(today);
         break;
       case CUSTOM:
-        startDate = Moment(this.state.search.startDate);
-        endDate = Moment(this.state.search.endDate);
+        startDate = Dayjs(this.state.search.startDate);
+        endDate = Dayjs(this.state.search.endDate);
         break;
       default:
         break;
@@ -417,7 +417,7 @@ class RentalRequests extends React.Component {
                 })()}
               </Col>
               <Col xs={3} sm={2} id="search-buttons">
-                <Row className="float-right">
+                <Row className="float-end">
                   <Favourites
                     id="rental-requests-faves-dropdown"
                     type="rentalRequests"

@@ -1,16 +1,22 @@
-FROM image-registry.openshift-image-registry.svc:5000/e0cee6-tools/node-python:1 AS builder
-LABEL maintainer="young-jin.chung@gov.bc.ca"
+FROM node:24-alpine@sha256:8a32c8cf649a49915a66e81e7a609223c708d0adabf288ee3f4077d765542f85 AS build
+ARG SOURCE_REVISION=unknown
+WORKDIR /src
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+RUN npm run build && node scripts/build-info.mjs
 
-COPY . ./src
-
-RUN cd ./src && npm ci && npm run build
-
-FROM image-registry.openshift-image-registry.svc:5000/e0cee6-tools/nginx-116-rhel8:1
-
-COPY --from=builder /src/build/. /tmp/src
-COPY --from=builder /src/nginx-start/. /tmp/src/nginx-start
-COPY --from=builder /src/nginx.conf.tmpl /tmp/src/nginx.conf.tmpl
-
-RUN $STI_SCRIPTS_PATH/assemble
-
-CMD $STI_SCRIPTS_PATH/run
+FROM nginx:1.30.6-alpine@sha256:0e52bd054126cdc040b1276c0af347aeb02a41b9cfe305d6094767ac30e97949 AS runtime
+ARG SOURCE_REVISION=unknown
+ENV OPENSHIFT_BUILD_COMMIT=${SOURCE_REVISION}
+RUN apk add --no-cache jq \
+    && rm /etc/nginx/conf.d/default.conf
+COPY --from=build /src/build/ /usr/share/nginx/html/
+COPY nginx.conf.tmpl /opt/hets/nginx.conf.tmpl
+COPY container-entrypoint.sh /usr/local/bin/hets-client-start
+RUN chgrp -R 0 /usr/share/nginx/html /etc/nginx \
+    && chmod -R g=u /usr/share/nginx/html /etc/nginx \
+    && chmod 755 /usr/local/bin/hets-client-start
+USER 1001:0
+EXPOSE 8080
+ENTRYPOINT ["/usr/local/bin/hets-client-start"]

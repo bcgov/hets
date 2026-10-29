@@ -368,7 +368,7 @@ class ProjectsDetail extends React.Component {
                   disabledTooltip={STATUS_NOT_EDITABLE_MESSAGE}
                   onSelect={this.updateStatusState}
                 />
-                <Button title="Notes" className="ml-1 mr-1 btn-custom" disabled={loading} onClick={this.showNotes}>
+                <Button title="Notes" className="ms-1 me-1 btn-custom" disabled={loading} onClick={this.showNotes}>
                   Notes ({loading ? ' ' : project.notes?.length})
                 </Button>
                 <Button
@@ -382,7 +382,7 @@ class ProjectsDetail extends React.Component {
                 </Button>
               </Col>
               <Col sm={3}>
-                <div className="float-right">
+                <div className="float-end">
                   <PrintButton disabled={loading} />
                   <ReturnButton />
                 </div>

@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from '../../../utils/dayjs';
 
 export const searchAitReport = (dateTime) => {
   return {
@@ -13,8 +13,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 19,
         projectNumber: "8953",
         projectName: "Test Project 19",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(1, "months").add(7, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(1, "months").add(7, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(1, "months").add(7, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(1, "months").add(7, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 684,
@@ -26,8 +26,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 19,
         projectNumber: "8953",
         projectName: "Test Project 19",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(1, "months").add(5, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(1, "months").add(5, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(1, "months").add(5, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(1, "months").add(5, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 636,
@@ -39,8 +39,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 19,
         projectNumber: "8953",
         projectName: "Test Project 19",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(19, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(19, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(19, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(19, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 637,
@@ -52,8 +52,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 19,
         projectNumber: "8953",
         projectName: "Test Project 19",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(17, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(17, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(17, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(17, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 608,
@@ -65,8 +65,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 19,
         projectNumber: "8953",
         projectName: "Test Project 19",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(15, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(15, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(15, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(15, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 606,
@@ -78,8 +78,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 19,
         projectNumber: "8953",
         projectName: "Test Project 19",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(5, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(5, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(5, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(5, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 607,
@@ -91,8 +91,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 19,
         projectNumber: "8953",
         projectName: "Test Project 19",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(4, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(4, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(4, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(4, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 622,
@@ -104,8 +104,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 35,
         projectNumber: "5633",
         projectName: "Test Project 35",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(3, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(3, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(3, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(3, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 621,
@@ -117,8 +117,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 35,
         projectNumber: "5633",
         projectName: "Test Project 35",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(2, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(2, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(2, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(2, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 697,
@@ -130,8 +130,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 62,
         projectNumber: "5196",
         projectName: "Test Project 62",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(1, "months").add(2, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(1, "months").add(2, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(1, "months").add(2, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(1, "months").add(2, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 695,
@@ -143,8 +143,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 73,
         projectNumber: "1918",
         projectName: "Test Project 73",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(28, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(28, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(28, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(28, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 699,
@@ -156,8 +156,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 78,
         projectNumber: "8578",
         projectName: "Test Project 78",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(1, "months").add(4, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(1, "months").add(4, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(1, "months").add(4, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(1, "months").add(4, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 698,
@@ -169,8 +169,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 78,
         projectNumber: "8578",
         projectName: "Test Project 78",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(1, "months").add(3, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(1, "months").add(3, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(1, "months").add(3, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(1, "months").add(3, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 694,
@@ -182,8 +182,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 78,
         projectNumber: "8578",
         projectName: "Test Project 78",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(1, "months").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(1, "months").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(1, "months").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(1, "months").hour(0).minute(0).second(0).format()
       },
       {
         id: 612,
@@ -195,8 +195,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 78,
         projectNumber: "8578",
         projectName: "Test Project 78",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(8, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(8, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(8, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(8, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 616,
@@ -208,8 +208,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 182,
         projectNumber: "182",
         projectName: "Test Project 182",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(12, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(12, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(12, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(12, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 615,
@@ -221,8 +221,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 182,
         projectNumber: "182",
         projectName: "Test Project 182",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(10, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(10, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(10, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(10, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 686,
@@ -234,8 +234,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 179,
         projectNumber: "TEST-179",
         projectName: "Test Project 179",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(22, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(22, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(22, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(22, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 685,
@@ -247,8 +247,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 179,
         projectNumber: "TEST-179",
         projectName: "Test Project 179",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(21, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(21, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(21, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(21, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 674,
@@ -260,8 +260,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 179,
         projectNumber: "TEST-179",
         projectName: "Test Project 179",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(18, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(18, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(18, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(18, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 624,
@@ -273,8 +273,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 179,
         projectNumber: "TEST-179",
         projectName: "Test Project 179",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(14, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(14, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(14, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(14, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 627,
@@ -286,8 +286,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 179,
         projectNumber: "TEST-179",
         projectName: "Test Project 179",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(13, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(13, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(13, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(13, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 623,
@@ -299,8 +299,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 179,
         projectNumber: "TEST-179",
         projectName: "Test Project 179",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(11, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(11, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(11, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(11, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 673,
@@ -312,8 +312,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 179,
         projectNumber: "TEST-179",
         projectName: "Test Project 179",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(7, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(7, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(7, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(7, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 806,
@@ -325,8 +325,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 149,
         projectNumber: "78",
         projectName: "Test Project 149",
-        datedOn: moment.utc(dateTime).add(9, "days").format(),
-        startDate: moment.utc(dateTime).add(9, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).add(9, "days").format(),
+        startDate: dayjs.utc(dateTime).add(9, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 807,
@@ -338,8 +338,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 149,
         projectNumber: "78",
         projectName: "Test Project 149",
-        datedOn: moment.utc(dateTime).add(8, "days").format(),
-        startDate: moment.utc(dateTime).add(8, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).add(8, "days").format(),
+        startDate: dayjs.utc(dateTime).add(8, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 815,
@@ -351,8 +351,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 180,
         projectNumber: "Testproj-180",
         projectName: "Test Project 180",
-        datedOn: moment.utc(dateTime).add(16, "days").format(),
-        startDate: moment.utc(dateTime).add(16, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).add(16, "days").format(),
+        startDate: dayjs.utc(dateTime).add(16, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 814,
@@ -364,8 +364,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 180,
         projectNumber: "Testproj-180",
         projectName: "Test Project 180",
-        datedOn: moment.utc(dateTime).add(15, "days").format(),
-        startDate: moment.utc(dateTime).add(15, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).add(15, "days").format(),
+        startDate: dayjs.utc(dateTime).add(15, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 813,
@@ -377,8 +377,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 180,
         projectNumber: "Testproj-180",
         projectName: "Test Project 180",
-        datedOn: moment.utc(dateTime).add(14, "days").format(),
-        startDate: moment.utc(dateTime).add(14, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).add(14, "days").format(),
+        startDate: dayjs.utc(dateTime).add(14, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 811,
@@ -390,8 +390,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 180,
         projectNumber: "Testproj-180",
         projectName: "Test Project 180",
-        datedOn: moment.utc(dateTime).add(13, "days").format(),
-        startDate: moment.utc(dateTime).add(13, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).add(13, "days").format(),
+        startDate: dayjs.utc(dateTime).add(13, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 693,
@@ -403,8 +403,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 180,
         projectNumber: "Testproj-180",
         projectName: "Test Project 180",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(1, "months").add(6, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(1, "months").add(6, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(1, "months").add(6, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(1, "months").add(6, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 812,
@@ -416,8 +416,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 180,
         projectNumber: "Testproj-180",
         projectName: "Test Project 180",
-        datedOn: moment.utc(dateTime).add(12, "days").format(),
-        startDate: moment.utc(dateTime).add(12, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).add(12, "days").format(),
+        startDate: dayjs.utc(dateTime).add(12, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 810,
@@ -429,8 +429,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 180,
         projectNumber: "Testproj-180",
         projectName: "Test Project 180",
-        datedOn: moment.utc(dateTime).add(11, "days").format(),
-        startDate: moment.utc(dateTime).add(11, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).add(11, "days").format(),
+        startDate: dayjs.utc(dateTime).add(11, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 809,
@@ -442,8 +442,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 180,
         projectNumber: "Testproj-180",
         projectName: "Test Project 180",
-        datedOn: moment.utc(dateTime).add(10, "days").format(),
-        startDate: moment.utc(dateTime).add(10, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).add(10, "days").format(),
+        startDate: dayjs.utc(dateTime).add(10, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 692,
@@ -455,8 +455,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 180,
         projectNumber: "Testproj-180",
         projectName: "Test Project 180",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(27, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(27, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(27, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(27, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 688,
@@ -468,8 +468,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 180,
         projectNumber: "Testproj-180",
         projectName: "Test Project 180",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(26, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(26, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(26, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(26, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 690,
@@ -481,8 +481,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 180,
         projectNumber: "Testproj-180",
         projectName: "Test Project 180",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(25, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(25, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(25, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(25, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 687,
@@ -494,8 +494,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 180,
         projectNumber: "Testproj-180",
         projectName: "Test Project 180",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(24, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(24, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(24, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(24, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 691,
@@ -507,8 +507,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 180,
         projectNumber: "Testproj-180",
         projectName: "Test Project 180",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(23, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(23, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(23, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(23, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 689,
@@ -520,8 +520,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 180,
         projectNumber: "Testproj-180",
         projectName: "Test Project 180",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(20, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(20, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(20, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(20, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 683,
@@ -533,8 +533,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 180,
         projectNumber: "Testproj-180",
         projectName: "Test Project 180",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(16, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(16, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(16, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(16, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 614,
@@ -546,8 +546,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 180,
         projectNumber: "Testproj-180",
         projectName: "Test Project 180",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(9, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(9, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(9, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(9, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 611,
@@ -559,8 +559,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 180,
         projectNumber: "Testproj-180",
         projectName: "Test Project 180",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(6, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(6, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(6, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(6, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 609,
@@ -572,8 +572,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 180,
         projectNumber: "Testproj-180",
         projectName: "Test Project 180",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(1, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(1, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(1, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(1, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 799,
@@ -585,8 +585,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 311,
         projectNumber: "123456",
         projectName: "Test Project 311",
-        datedOn: moment.utc(dateTime).add(1, "days").format(),
-        startDate: moment.utc(dateTime).add(1, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).add(1, "days").format(),
+        startDate: dayjs.utc(dateTime).add(1, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 696,
@@ -598,8 +598,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 311,
         projectNumber: "123456",
         projectName: "Test Project 311",
-        datedOn: moment.utc(dateTime).subtract(1, "years").add(1, "months").add(1, "days").format(),
-        startDate: moment.utc(dateTime).subtract(1, "years").add(1, "months").add(1, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).subtract(1, "years").add(1, "months").add(1, "days").format(),
+        startDate: dayjs.utc(dateTime).subtract(1, "years").add(1, "months").add(1, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 805,
@@ -611,8 +611,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 344,
         projectNumber: "123456789",
         projectName: "Test Project 344",
-        datedOn: moment.utc(dateTime).add(7, "days").format(),
-        startDate: moment.utc(dateTime).add(7, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).add(7, "days").format(),
+        startDate: dayjs.utc(dateTime).add(7, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 804,
@@ -624,8 +624,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 344,
         projectNumber: "123456789",
         projectName: "Test Project 344",
-        datedOn: moment.utc(dateTime).add(6, "days").format(),
-        startDate: moment.utc(dateTime).add(6, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).add(6, "days").format(),
+        startDate: dayjs.utc(dateTime).add(6, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 803,
@@ -637,8 +637,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 344,
         projectNumber: "123456789",
         projectName: "Test Project 344",
-        datedOn: moment.utc(dateTime).add(5, "days").format(),
-        startDate: moment.utc(dateTime).add(5, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).add(5, "days").format(),
+        startDate: dayjs.utc(dateTime).add(5, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 802,
@@ -650,8 +650,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 344,
         projectNumber: "123456789",
         projectName: "Test Project 344",
-        datedOn: moment.utc(dateTime).add(4, "days").format(),
-        startDate: moment.utc(dateTime).add(4, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).add(4, "days").format(),
+        startDate: dayjs.utc(dateTime).add(4, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 800,
@@ -663,8 +663,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 344,
         projectNumber: "123456789",
         projectName: "Test Project 344",
-        datedOn: moment.utc(dateTime).add(3, "days").format(),
-        startDate: moment.utc(dateTime).add(3, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).add(3, "days").format(),
+        startDate: dayjs.utc(dateTime).add(3, "days").hour(0).minute(0).second(0).format()
       },
       {
         id: 801,
@@ -676,8 +676,8 @@ export const searchAitReport = (dateTime) => {
         projectId: 344,
         projectNumber: "123456789",
         projectName: "Test Project 344",
-        datedOn: moment.utc(dateTime).add(2, "days").format(),
-        startDate: moment.utc(dateTime).add(2, "days").hour(0).minute(0).second(0).format()
+        datedOn: dayjs.utc(dateTime).add(2, "days").format(),
+        startDate: dayjs.utc(dateTime).add(2, "days").hour(0).minute(0).second(0).format()
       }
     ],
   }

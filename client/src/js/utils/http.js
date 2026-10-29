@@ -4,7 +4,7 @@ import * as Action from '../actionTypes';
 import { keycloak } from '../Keycloak';
 
 import * as Constant from '../constants';
-import { resetSessionTimeoutTimer } from '../App';
+import { resetSessionTimeout } from './sessionTimeout';
 
 var numRequestsInFlight = 0;
 
@@ -67,7 +67,7 @@ export const request = (path, options) => async (dispatch) => {
   try {
     if (await keycloak.updateToken(5)) {
       //if token expires within 70 seconds it gets updated will return true to trigger resetSessionTimeoutTimer refresh.
-      resetSessionTimeoutTimer();
+      resetSessionTimeout();
     }
   } catch {
     console.log('Failed to refresh the token, or the session has expired');

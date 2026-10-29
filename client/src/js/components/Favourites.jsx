@@ -91,7 +91,7 @@ class Favourites extends React.Component {
 
     return (
       <Authorize requires={Constant.PERMISSION_WRITE_ACCESS}>
-        <Dropdown id={this.props.id} className={className} title={title} open={this.state.open} onToggle={this.toggle}>
+        <Dropdown id={this.props.id} className={className} title={title} show={this.state.open} onToggle={this.toggle}>
           <Dropdown.Toggle className="btn-custom">{title}</Dropdown.Toggle>
 
           <Dropdown.Menu>

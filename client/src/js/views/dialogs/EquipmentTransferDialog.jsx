@@ -398,7 +398,7 @@ class EquipmentTransferDialog extends React.Component {
         show={this.props.show}
         footer={
           <span>
-            <Button className="btn-custom mr-1" onClick={this.props.onClose}>
+            <Button className="btn-custom me-1" onClick={this.props.onClose}>
               Close
             </Button>
             {displayTransferButton && (

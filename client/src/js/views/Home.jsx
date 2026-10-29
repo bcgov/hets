@@ -10,20 +10,13 @@ import * as Constant from '../constants';
 
 import PageHeader from '../components/ui/PageHeader.jsx';
 import SubHeader from '../components/ui/SubHeader.jsx';
+import { useGetSearchSummaryCountsQuery } from '../services/serverApi';
 
 class Home extends React.Component {
   static propTypes = {
     currentUser: PropTypes.object,
     searchSummaryCounts: PropTypes.object,
     history: PropTypes.object,
-  };
-
-  componentDidMount() {
-    this.fetch();
-  }
-
-  fetch = () => {
-    this.props.dispatch(Api.getSearchSummaryCounts());
   };
 
   goToUnapprovedOwners = () => {
@@ -132,9 +125,13 @@ class Home extends React.Component {
 
 const mapStateToProps = (state) => ({
   currentUser: state.user,
-  searchSummaryCounts: state.lookups.searchSummaryCounts,
 });
 
 const mapDispatchToProps = (dispatch) => ({ dispatch });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+const HomeWithSummaryCounts = (props) => {
+  const { data = {} } = useGetSearchSummaryCountsQuery();
+  return <Home {...props} searchSummaryCounts={data} />;
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeWithSummaryCounts);

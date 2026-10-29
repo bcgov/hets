@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Container, Row, Col, FormGroup, FormLabel, FormText, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
-import Moment from 'moment';
+import Dayjs from '../../utils/dayjs';
 
 import * as Api from '../../api';
 
@@ -184,7 +184,7 @@ class TimeEntryDialog extends React.Component {
         timeEntryErrorsObj[key] = state;
         valid = false;
       } else {
-        var date = Moment.utc(timeEntry[key].date);
+        var date = Dayjs.utc(timeEntry[key].date);
         if (this.isBeforeFiscalStartDate(date)) {
           let state = { ...timeEntry[key], errorDate: 'Date must be in the current fiscal year' };
           timeEntryErrorsObj[key] = state;
@@ -206,7 +206,7 @@ class TimeEntryDialog extends React.Component {
           }
         });
         Object.keys(this.props.rentalAgreementTimeRecords.timeRecords).forEach((index) => {
-          var existingDate = Moment.utc(this.props.rentalAgreementTimeRecords.timeRecords[index].workedDate);
+          var existingDate = Dayjs.utc(this.props.rentalAgreementTimeRecords.timeRecords[index].workedDate);
           if (date.isSame(existingDate)) {
             let state = { ...timeEntry[key], errorDate: 'Time record for this date already exists' };
             timeEntryErrorsObj[key] = state;
@@ -322,12 +322,12 @@ class TimeEntryDialog extends React.Component {
   };
 
   isBeforeFiscalStartDate = (date) => {
-    return date.isBefore(Moment(this.state.projectFiscalYearStartDate));
+    return date.valueOf() < Dayjs(this.state.projectFiscalYearStartDate).valueOf();
   };
 
   isInFuture = (date) => {
     // The next Saturday is allowed but not after
-    return date.isAfter(Moment().day(6));
+    return date.valueOf() > Dayjs().day(6).valueOf();
   };
 
   isSaturdayOrMarch31st = (date) => {
@@ -562,7 +562,7 @@ class TimeEntryDialog extends React.Component {
                 </Button>
               )}
               {this.state.numberOfInputs > 1 && (
-                <Button size="sm" className="btn-custom ml-3" onClick={this.removeTimeEntryInput}>
+                <Button size="sm" className="btn-custom ms-3" onClick={this.removeTimeEntryInput}>
                   <FontAwesomeIcon icon="minus" />
                   &nbsp;<strong>Remove</strong>
                 </Button>

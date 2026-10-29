@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
 import AuthorizedRoute from './components/AuthorizedRoute';
+import { withRouter } from './components/withRouter';
 import { keycloak } from './Keycloak';
 
 import * as Api from './api';
 import { ApiError } from './utils/http';
+import { registerSessionTimeoutReset } from './utils/sessionTimeout';
 
 import * as Constant from './constants';
 import * as Action from './actionTypes';
@@ -14,33 +16,35 @@ import { store } from './store';
 import { ProgressBar } from 'react-bootstrap';
 import ErrorBoundary from './components/ErrorBoundary';
 import Main from './views/Main.jsx';
-import Home from './views/Home.jsx';
-import BusinessPortal from './views/BusinessPortal.jsx';
-import BusinessOwner from './views/BusinessOwner.jsx';
-import Equipment from './views/Equipment.jsx';
-import EquipmentDetail from './views/EquipmentDetail.jsx';
-import Owners from './views/Owners.jsx';
-import OwnersDetail from './views/OwnersDetail.jsx';
-import Projects from './views/Projects.jsx';
-import ProjectsDetail from './views/ProjectsDetail.jsx';
-import RentalRequests from './views/RentalRequests.jsx';
-import RentalRequestsDetail from './views/RentalRequestsDetail.jsx';
-import RentalAgreementsDetail from './views/RentalAgreementsDetail.jsx';
-import OvertimeRates from './views/OvertimeRates.jsx';
-import Users from './views/Users.jsx';
-import UsersDetail from './views/UsersDetail.jsx';
-import Roles from './views/Roles.jsx';
-import RolesDetail from './views/RolesDetail.jsx';
-import Rollover from './views/Rollover.jsx';
-import DistrictAdmin from './views/DistrictAdmin.jsx';
-import TimeEntry from './views/TimeEntry.jsx';
-import SeniorityList from './views/SeniorityList.jsx';
-import StatusLetters from './views/StatusLetters.jsx';
-import HiringReport from './views/HiringReport.jsx';
-import WcbCglCoverage from './views/WcbCglCoverage.jsx';
-import AitReport from './views/AitReport.jsx';
-import Version from './views/Version.jsx';
-import FourOhFour from './views/404.jsx';
+
+const lazyRoute = (loader) => withRouter(lazy(loader));
+const Home = lazyRoute(() => import('./views/Home.jsx'));
+const BusinessPortal = lazyRoute(() => import('./views/BusinessPortal.jsx'));
+const BusinessOwner = lazyRoute(() => import('./views/BusinessOwner.jsx'));
+const Equipment = lazyRoute(() => import('./views/Equipment.jsx'));
+const EquipmentDetail = lazyRoute(() => import('./views/EquipmentDetail.jsx'));
+const Owners = lazyRoute(() => import('./views/Owners.jsx'));
+const OwnersDetail = lazyRoute(() => import('./views/OwnersDetail.jsx'));
+const Projects = lazyRoute(() => import('./views/Projects.jsx'));
+const ProjectsDetail = lazyRoute(() => import('./views/ProjectsDetail.jsx'));
+const RentalRequests = lazyRoute(() => import('./views/RentalRequests.jsx'));
+const RentalRequestsDetail = lazyRoute(() => import('./views/RentalRequestsDetail.jsx'));
+const RentalAgreementsDetail = lazyRoute(() => import('./views/RentalAgreementsDetail.jsx'));
+const OvertimeRates = lazyRoute(() => import('./views/OvertimeRates.jsx'));
+const Users = lazyRoute(() => import('./views/Users.jsx'));
+const UsersDetail = lazyRoute(() => import('./views/UsersDetail.jsx'));
+const Roles = lazyRoute(() => import('./views/Roles.jsx'));
+const RolesDetail = lazyRoute(() => import('./views/RolesDetail.jsx'));
+const Rollover = lazyRoute(() => import('./views/Rollover.jsx'));
+const DistrictAdmin = lazyRoute(() => import('./views/DistrictAdmin.jsx'));
+const TimeEntry = lazyRoute(() => import('./views/TimeEntry.jsx'));
+const SeniorityList = lazyRoute(() => import('./views/SeniorityList.jsx'));
+const StatusLetters = lazyRoute(() => import('./views/StatusLetters.jsx'));
+const HiringReport = lazyRoute(() => import('./views/HiringReport.jsx'));
+const WcbCglCoverage = lazyRoute(() => import('./views/WcbCglCoverage.jsx'));
+const AitReport = lazyRoute(() => import('./views/AitReport.jsx'));
+const Version = lazyRoute(() => import('./views/Version.jsx'));
+const FourOhFour = lazyRoute(() => import('./views/404.jsx'));
 
 import addIconsToLibrary from './fontAwesome';
 
@@ -65,6 +69,8 @@ export const resetSessionTimeoutTimer = () => {
   sessionTimeoutTimer = window.setInterval(showSessionTimoutDialog, Constant.SESSION_TIMEOUT);
 };
 
+registerSessionTimeoutReset(resetSessionTimeoutTimer);
+
 export const getLookups = (user) => (dispatch) => {
   if (user.businessUser) {
     return Promise.resolve();
@@ -83,7 +89,7 @@ export const getLookups = (user) => (dispatch) => {
   ]);
 };
 
-const Routes = (user) => {
+const buildRoutes = (user) => {
   //render Routes based on user permissions
   if (user.hasPermission(Constant.PERMISSION_BUSINESS_LOGIN)) {
     return BusinessRoutes(user);
@@ -93,164 +99,61 @@ const Routes = (user) => {
     return AdminRoutes(user);
   }
 
-  return <Redirect to={Constant.UNAUTHORIZED_PATHNAME} />;
+  return <Route path="*" element={<Navigate replace to={Constant.UNAUTHORIZED_PATHNAME} />} />;
 };
 
 const BusinessRoutes = (user) => {
   return (
-    <Switch>
-      <Route exact path="/">
-        <Redirect to={Constant.BUSINESS_PORTAL_PATHNAME} />
-      </Route>
-      <Route path={Constant.BUSINESS_PORTAL_PATHNAME} exact component={BusinessPortal} />
-      <Route path={`${Constant.BUSINESS_DETAILS_PATHNAME}/:ownerId`} component={BusinessOwner} />
+    <>
+      <Route path="/" element={<Navigate replace to={Constant.BUSINESS_PORTAL_PATHNAME} />} />
+      <Route path={Constant.BUSINESS_PORTAL_PATHNAME} element={<BusinessPortal />} />
+      <Route path={`${Constant.BUSINESS_DETAILS_PATHNAME}/:ownerId`} element={<BusinessOwner />} />
       {CommonRoutes()}
-    </Switch>
+    </>
   );
 };
 
 const AdminRoutes = (user) => {
   return (
-    <Switch>
-      <Route exact path="/">
-        <Redirect to={Constant.HOME_PATHNAME} />
-      </Route>
-      <AuthorizedRoute requires={Constant.PERMISSION_LOGIN} path={Constant.HOME_PATHNAME} exact component={Home} />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_LOGIN}
-        path={Constant.EQUIPMENT_PATHNAME}
-        exact
-        component={Equipment}
-      />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_LOGIN}
-        path={`${Constant.EQUIPMENT_PATHNAME}/:equipmentId`}
-        exact
-        component={EquipmentDetail}
-      />
-      <AuthorizedRoute requires={Constant.PERMISSION_LOGIN} path={Constant.OWNERS_PATHNAME} exact component={Owners} />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_LOGIN}
-        path={`${Constant.OWNERS_PATHNAME}/:ownerId`}
-        exact
-        component={OwnersDetail}
-      />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_LOGIN}
-        path={`${Constant.OWNERS_PATHNAME}/:ownerId${Constant.CONTACTS_PATHNAME}/:contactId`}
-        exact
-        component={OwnersDetail}
-      />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_LOGIN}
-        path={Constant.PROJECTS_PATHNAME}
-        exact
-        component={Projects}
-      />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_LOGIN}
-        path={`${Constant.PROJECTS_PATHNAME}/:projectId`}
-        exact
-        component={ProjectsDetail}
-      />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_LOGIN}
-        path={`${Constant.PROJECTS_PATHNAME}/:projectId${Constant.CONTACTS_PATHNAME}/:contactId`}
-        exact
-        component={ProjectsDetail}
-      />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_LOGIN}
-        path={Constant.RENTAL_REQUESTS_PATHNAME}
-        exact
-        component={RentalRequests}
-      />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_LOGIN}
-        path={`${Constant.RENTAL_REQUESTS_PATHNAME}/:rentalRequestId`}
-        exact
-        component={RentalRequestsDetail}
-      />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_LOGIN}
-        path={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/:rentalAgreementId`}
-        exact
-        component={RentalAgreementsDetail}
-      />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_ADMIN}
-        path={Constant.OVERTIME_RATES_PATHNAME}
-        exact
-        component={OvertimeRates}
-      />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_USER_MANAGEMENT}
-        path={Constant.USERS_PATHNAME}
-        exact
-        component={Users}
-      />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_USER_MANAGEMENT}
-        path={`${Constant.USERS_PATHNAME}/:userId`}
-        exact
-        component={UsersDetail}
-      />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_ROLES_AND_PERMISSIONS}
-        path={Constant.ROLES_PATHNAME}
-        exact
-        component={Roles}
-      />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_ROLES_AND_PERMISSIONS}
-        path={`${Constant.ROLES_PATHNAME}/:roleId`}
-        exact
-        component={RolesDetail}
-      />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_DISTRICT_ROLLOVER}
-        path={Constant.ROLLOVER_PATHNAME}
-        component={Rollover}
-      />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT}
-        path={Constant.DISTRICT_ADMIN_PATHNAME}
-        component={DistrictAdmin}
-      />
-      <AuthorizedRoute requires={Constant.PERMISSION_LOGIN} path={Constant.TIME_ENTRY_PATHNAME} component={TimeEntry} />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_LOGIN}
-        path={Constant.SENIORITY_LIST_PATHNAME}
-        component={SeniorityList}
-      />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_LOGIN}
-        path={Constant.STATUS_LETTERS_REPORT_PATHNAME}
-        component={StatusLetters}
-      />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_LOGIN}
-        path={Constant.HIRING_REPORT_PATHNAME}
-        component={HiringReport}
-      />
-      <AuthorizedRoute
-        requires={Constant.PERMISSION_LOGIN}
-        path={Constant.OWNERS_COVERAGE_PATHNAME}
-        component={WcbCglCoverage}
-      />
-      <AuthorizedRoute requires={Constant.PERMISSION_LOGIN} path={Constant.AIT_REPORT_PATHNAME} component={AitReport} />
-      <AuthorizedRoute requires={Constant.PERMISSION_VERSION} path={Constant.VERSION_PATHNAME} component={Version} />
+    <>
+      <Route path="/" element={<Navigate replace to={Constant.HOME_PATHNAME} />} />
+      <Route path={Constant.HOME_PATHNAME} element={<AuthorizedRoute requires={Constant.PERMISSION_LOGIN} component={Home} />} />
+      <Route path={Constant.EQUIPMENT_PATHNAME} element={<AuthorizedRoute requires={Constant.PERMISSION_LOGIN} component={Equipment} />} />
+      <Route path={`${Constant.EQUIPMENT_PATHNAME}/:equipmentId`} element={<AuthorizedRoute requires={Constant.PERMISSION_LOGIN} component={EquipmentDetail} />} />
+      <Route path={Constant.OWNERS_PATHNAME} element={<AuthorizedRoute requires={Constant.PERMISSION_LOGIN} component={Owners} />} />
+      <Route path={`${Constant.OWNERS_PATHNAME}/:ownerId`} element={<AuthorizedRoute requires={Constant.PERMISSION_LOGIN} component={OwnersDetail} />} />
+      <Route path={`${Constant.OWNERS_PATHNAME}/:ownerId${Constant.CONTACTS_PATHNAME}/:contactId`} element={<AuthorizedRoute requires={Constant.PERMISSION_LOGIN} component={OwnersDetail} />} />
+      <Route path={Constant.PROJECTS_PATHNAME} element={<AuthorizedRoute requires={Constant.PERMISSION_LOGIN} component={Projects} />} />
+      <Route path={`${Constant.PROJECTS_PATHNAME}/:projectId`} element={<AuthorizedRoute requires={Constant.PERMISSION_LOGIN} component={ProjectsDetail} />} />
+      <Route path={`${Constant.PROJECTS_PATHNAME}/:projectId${Constant.CONTACTS_PATHNAME}/:contactId`} element={<AuthorizedRoute requires={Constant.PERMISSION_LOGIN} component={ProjectsDetail} />} />
+      <Route path={Constant.RENTAL_REQUESTS_PATHNAME} element={<AuthorizedRoute requires={Constant.PERMISSION_LOGIN} component={RentalRequests} />} />
+      <Route path={`${Constant.RENTAL_REQUESTS_PATHNAME}/:rentalRequestId`} element={<AuthorizedRoute requires={Constant.PERMISSION_LOGIN} component={RentalRequestsDetail} />} />
+      <Route path={`${Constant.RENTAL_AGREEMENTS_PATHNAME}/:rentalAgreementId`} element={<AuthorizedRoute requires={Constant.PERMISSION_LOGIN} component={RentalAgreementsDetail} />} />
+      <Route path={Constant.OVERTIME_RATES_PATHNAME} element={<AuthorizedRoute requires={Constant.PERMISSION_ADMIN} component={OvertimeRates} />} />
+      <Route path={Constant.USERS_PATHNAME} element={<AuthorizedRoute requires={Constant.PERMISSION_USER_MANAGEMENT} component={Users} />} />
+      <Route path={`${Constant.USERS_PATHNAME}/:userId`} element={<AuthorizedRoute requires={Constant.PERMISSION_USER_MANAGEMENT} component={UsersDetail} />} />
+      <Route path={Constant.ROLES_PATHNAME} element={<AuthorizedRoute requires={Constant.PERMISSION_ROLES_AND_PERMISSIONS} component={Roles} />} />
+      <Route path={`${Constant.ROLES_PATHNAME}/:roleId`} element={<AuthorizedRoute requires={Constant.PERMISSION_ROLES_AND_PERMISSIONS} component={RolesDetail} />} />
+      <Route path={Constant.ROLLOVER_PATHNAME} element={<AuthorizedRoute requires={Constant.PERMISSION_DISTRICT_ROLLOVER} component={Rollover} />} />
+      <Route path={Constant.DISTRICT_ADMIN_PATHNAME} element={<AuthorizedRoute requires={Constant.PERMISSION_DISTRICT_CODE_TABLE_MANAGEMENT} component={DistrictAdmin} />} />
+      <Route path={Constant.TIME_ENTRY_PATHNAME} element={<AuthorizedRoute requires={Constant.PERMISSION_LOGIN} component={TimeEntry} />} />
+      <Route path={Constant.SENIORITY_LIST_PATHNAME} element={<AuthorizedRoute requires={Constant.PERMISSION_LOGIN} component={SeniorityList} />} />
+      <Route path={Constant.STATUS_LETTERS_REPORT_PATHNAME} element={<AuthorizedRoute requires={Constant.PERMISSION_LOGIN} component={StatusLetters} />} />
+      <Route path={Constant.HIRING_REPORT_PATHNAME} element={<AuthorizedRoute requires={Constant.PERMISSION_LOGIN} component={HiringReport} />} />
+      <Route path={Constant.OWNERS_COVERAGE_PATHNAME} element={<AuthorizedRoute requires={Constant.PERMISSION_LOGIN} component={WcbCglCoverage} />} />
+      <Route path={Constant.AIT_REPORT_PATHNAME} element={<AuthorizedRoute requires={Constant.PERMISSION_LOGIN} component={AitReport} />} />
+      <Route path={Constant.VERSION_PATHNAME} element={<AuthorizedRoute requires={Constant.PERMISSION_VERSION} component={Version} />} />
       {CommonRoutes()}
-    </Switch>
+    </>
   );
 };
 
 const CommonRoutes = () => {
   return (
-    <Switch>
-      <Route path={Constant.UNAUTHORIZED_PATHNAME} component={Unauthorized} />
-      <Route path="*" component={FourOhFour} />
-    </Switch>
+    <>
+      <Route path={Constant.UNAUTHORIZED_PATHNAME} element={<Unauthorized />} />
+      <Route path="*" element={<FourOhFour />} />
+    </>
   );
 };
 
@@ -315,7 +218,9 @@ const App = ({ user, dispatch }) => {
     <Router>
       <Main showNav={user.hasPermission(Constant.PERMISSION_LOGIN)}>
         <ErrorBoundary>
-          <Switch>{Routes(user)}</Switch>
+          <Suspense fallback={<p id="route-loading">Loading page&hellip;</p>}>
+            <Routes>{buildRoutes(user)}</Routes>
+          </Suspense>
         </ErrorBoundary>
       </Main>
     </Router>

@@ -1,0 +1,115 @@
+name: CD - Update GitOps repository
+run-name: "GitOps update to ${{ inputs.environment }} with ${{ inputs.tag }}"
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+    secrets:
+      GITOPS_REPO_PAT:
+        required: false
+      GITOPS_REPO_DEPLOY_KEY:
+        required: false
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        required: true
+        type: choice
+        options: [dev, test, uat, prod]
+      tag:
+        description: Existing sha-<commit>, pr-<number>, rc_x.y.z or vX.Y.Z image tag
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  packages: read
+
+# All environments update the same Git branch. Serialize writes across them.
+concurrency:
+  group: gitops-e0cee6
+  cancel-in-progress: false
+
+jobs:
+  update-gitops:
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      TARGET_ENVIRONMENT: ${{ inputs.environment }}
+      IMAGE_TAG: ${{ inputs.tag }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 24
+      - name: Require trusted workflow and supported environment
+        env:
+          GITOPS_TOKEN: ${{ secrets.GITOPS_REPO_PAT }}
+          GITOPS_SSH_KEY: ${{ secrets.GITOPS_REPO_DEPLOY_KEY }}
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = refs/heads/master
+          case "$TARGET_ENVIRONMENT" in dev|test|uat|prod) ;; *) exit 1 ;; esac
+          if [[ -z "$GITOPS_TOKEN" && -z "$GITOPS_SSH_KEY" ]]; then
+            echo 'Configure GITOPS_REPO_DEPLOY_KEY (repository-scoped write deploy key) or GITOPS_REPO_PAT for bcgov-c/tenant-gitops-e0cee6.' >&2
+            exit 1
+          fi
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: '1.27.x'
+          cache: false
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+      - name: Verify matching source revisions and resolve immutable digests
+        run: node .github/scripts/images.mjs resolve "$IMAGE_TAG" "$TARGET_ENVIRONMENT" > "$RUNNER_TEMP/hets-release.json"
+      - name: Check out private tenant GitOps repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          repository: bcgov-c/tenant-gitops-e0cee6
+          ref: main
+          token: ${{ secrets.GITOPS_REPO_PAT || github.token }}
+          ssh-key: ${{ secrets.GITOPS_REPO_DEPLOY_KEY }}
+          path: gitops-repo
+      - name: Install manifest renderer
+        run: |
+          go install sigs.k8s.io/kustomize/kustomize/v5@v5.8.3
+          echo "KUSTOMIZE_COMMAND=$(go env GOPATH)/bin/kustomize build" >> "$GITHUB_ENV"
+      - name: Update the selected overlays and validate
+        run: |
+          set -euo pipefail
+          ruby gitops-repo/scripts/set-images.rb "$TARGET_ENVIRONMENT" "$RUNNER_TEMP/hets-release.json"
+          ruby gitops-repo/scripts/validate.rb
+      - name: Commit desired state
+        working-directory: gitops-repo
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- \
+            "components/api/overlays/${TARGET_ENVIRONMENT}/kustomization.yaml" \
+            "components/client/overlays/${TARGET_ENVIRONMENT}/kustomization.yaml" \
+            "argocd/env-apps/${TARGET_ENVIRONMENT}/release.json"
+          if git diff --cached --quiet; then
+            echo 'The requested image digests are already recorded.'
+          else
+            git commit -m "[HETS-1385] Deploy HETS to ${TARGET_ENVIRONMENT} with ${IMAGE_TAG}"
+            git push origin HEAD:main
+          fi
+          {
+            echo "GitOps desired state updated for $TARGET_ENVIRONMENT."
+            echo 'Argo CD sync, rollout health and application smoke checks must confirm deployment success.'
+          } >> "$GITHUB_STEP_SUMMARY"

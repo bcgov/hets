@@ -136,7 +136,7 @@ class FilterDropdown extends React.Component {
         id={id}
         title={disabled ? null : this.state.title}
         disabled={disabled}
-        open={this.state.open}
+        show={this.state.open}
         onToggle={this.toggle}
       >
         <Dropdown.Toggle className={classNames('btn-custom', { 'form-control is-invalid': this.props.isInvalid })}>

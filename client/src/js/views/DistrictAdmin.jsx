@@ -331,7 +331,7 @@ class DistrictAdmin extends React.Component {
                 code.
               </Col>
               <Col xs={3}>
-                <span className="float-right">
+                <span className="float-end">
                   <Button className="btn-custom" onClick={this.showEquipmentTransferDialog}>
                     Equipment Transfer
                   </Button>

@@ -5,7 +5,7 @@ import { Row, Col, Alert, Button, ButtonGroup, Badge, OverlayTrigger } from 'rea
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
-import Moment from 'moment';
+import Dayjs from '../utils/dayjs';
 import { saveAs } from 'file-saver';
 
 import HireOfferEditDialog from './dialogs/HireOfferEditDialog.jsx';
@@ -201,7 +201,7 @@ class RentalRequestsDetail extends React.Component {
     } else if (listItem.offerResponse === STATUS_NO) {
       text = listItem.offerRefusalReason;
     } else if (listItem.offerResponse === STATUS_ASKED) {
-      text = `${listItem.offerResponse} (${Moment(listItem.askedDateTime).format('YYYY-MM-DD hh:mm A')})`;
+      text = `${listItem.offerResponse} (${Dayjs(listItem.askedDateTime).format('YYYY-MM-DD hh:mm A')})`;
     } else if (listItem.offerResponse === STATUS_FORCE_HIRE || listItem.offerResponse === STATUS_YES) {
       text = listItem.offerResponse;
     }
@@ -241,7 +241,7 @@ class RentalRequestsDetail extends React.Component {
             </Button>
           </Col>
           <Col sm={3}>
-            <div className="float-right">
+            <div className="float-end">
               <ReturnButton />
             </div>
           </Col>
@@ -345,7 +345,7 @@ class RentalRequestsDetail extends React.Component {
                 disabled={loading}
                 disabledTooltip="Please wait for the request information to finish loading."
               >
-                <FontAwesomeIcon icon="print" title="Print Seniority List" className="mr-1" />
+                <FontAwesomeIcon icon="print" title="Print Seniority List" className="me-1" />
                 <span>Seniority List</span>
               </TooltipButton>
               <CheckboxControl
