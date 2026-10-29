@@ -1,0 +1,36 @@
+name: Create Production v Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      rc_tag:
+        description: Existing RC version, for example rc_1.2.3
+        required: true
+        type: string
+      version_tag:
+        description: Matching release version, for example v1.2.3
+        required: true
+        type: string
+      deploy_to_prod:
+        description: Update PROD GitOps state after creating the release
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    uses: ./.github/workflows/release-images.yml
+    with:
+      source_tag: ${{ inputs.rc_tag }}
+      release_tag: ${{ inputs.version_tag }}
+  deploy-prod:
+    needs: [release]
+    if: inputs.deploy_to_prod
+    uses: ./.github/workflows/argo-cd.yml
+    with:
+      environment: prod
+      tag: ${{ inputs.version_tag }}
+    secrets: inherit

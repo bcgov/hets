@@ -1,11 +1,14 @@
 FROM node:24-alpine@sha256:8a32c8cf649a49915a66e81e7a609223c708d0adabf288ee3f4077d765542f85 AS build
+ARG SOURCE_REVISION=unknown
 WORKDIR /src
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
-RUN npm run build
+RUN npm run build && node scripts/build-info.mjs
 
 FROM nginx:1.30.6-alpine@sha256:0e52bd054126cdc040b1276c0af347aeb02a41b9cfe305d6094767ac30e97949 AS runtime
+ARG SOURCE_REVISION=unknown
+ENV OPENSHIFT_BUILD_COMMIT=${SOURCE_REVISION}
 RUN apk add --no-cache jq \
     && rm /etc/nginx/conf.d/default.conf
 COPY --from=build /src/build/ /usr/share/nginx/html/

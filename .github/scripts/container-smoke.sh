@@ -67,10 +67,15 @@ done
 test "$healthy" = true
 test "$(docker exec "$app" id -u)" = 1001230000
 
-if [[ "$component" == client ]]; then
+expected_commit="$(docker exec "$app" printenv OPENSHIFT_BUILD_COMMIT)"
+test -n "$expected_commit"
+if [[ "$component" == api ]]; then
+  test "$(curl --fail --silent "$address/api/server/version" | jq -r .commit)" = "$expected_commit"
+else
   curl --fail --silent "$address/owners/123" | grep -q '<div id="root">'
   curl --fail --silent "$address/js/env.config.js" --output "$test_directory/env.config.js"
-  node --input-type=module - "$test_directory/env.config.js" <<'JS'
+  curl --fail --silent "$address/buildinfo.html" --output "$test_directory/buildinfo.html"
+  node --input-type=module - "$test_directory/env.config.js" "$expected_commit" "$test_directory/buildinfo.html" <<'JS'
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
@@ -78,6 +83,10 @@ const context = { window: {} };
 vm.runInNewContext(readFileSync(process.argv[2], 'utf8'), context);
 assert.equal(context.window.RUNTIME_REACT_APP_SSO_HOST, 'https://sso.example.test/auth?x="quoted"');
 assert.equal(context.window.RUNTIME_REACT_APP_SSO_REALM, 'smoke');
+assert.equal(context.window.RUNTIME_OPENSHIFT_BUILD_COMMIT, process.argv[3]);
+const info = readFileSync(process.argv[4], 'utf8');
+assert.ok(info.includes('id="buildtime" data-buildtime="'));
+assert.ok(info.includes('id="commit">' + process.argv[3]));
 JS
   test "$(curl --fail --silent "$address/api/ping")" = /api/ping
   test "$(curl --fail --silent "$address/swagger/v1/swagger.json")" = /swagger/v1/swagger.json

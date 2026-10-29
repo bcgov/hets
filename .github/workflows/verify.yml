@@ -1,17 +1,14 @@
 name: verify
 
 on:
-  pull_request:
-  push:
-    branches:
-      - master
+  workflow_call:
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: verify-${{ github.workflow }}-${{ github.ref }}
+  group: verify-${{ github.workflow }}-${{ github.ref }}-${{ github.run_id }}
   cancel-in-progress: true
 
 jobs:
@@ -21,6 +18,9 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
 
       - name: Set up .NET SDK
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
@@ -49,6 +49,9 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
 
       - name: Set up Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
@@ -64,4 +67,26 @@ jobs:
         run: npm test
 
       - name: Build
-        run: npm run build
+        env:
+          SOURCE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          npm run build
+          node scripts/build-info.mjs
+
+  deployment-scripts:
+    name: Deployment script checks
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 24
+      - name: Test immutable image resolution
+        run: node --test .github/scripts/*.test.mjs
+      - name: Check container startup scripts
+        run: |
+          sh -n Server/container-entrypoint.sh client/container-entrypoint.sh
+          bash -n .github/scripts/container-smoke.sh

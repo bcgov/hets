@@ -1,3 +1,5 @@
+# Retained for rollback during GitOps adoption. This directory is not executed
+# by GitHub Actions. Restore deliberately only after disabling Argo reconciliation.
 name: hets-build-deploy
 
 # Controls when the action will run.

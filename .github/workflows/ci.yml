@@ -1,0 +1,131 @@
+name: Build and Push to GHCR
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: images-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Application checks
+    uses: ./.github/workflows/verify.yml
+
+  builds:
+    name: Build ${{ matrix.package }}
+    needs: [checks]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - package: api
+            context: Server
+            file: Server/Dockerfile
+          - package: client
+            context: client
+            file: client/Dockerfile
+    env:
+      SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      PUBLISH: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 24
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - name: Log in to GHCR
+        if: env.PUBLISH == 'true'
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+      - name: Resolve image tags
+        id: tags
+        env:
+          PACKAGE: ${{ matrix.package }}
+        run: |
+          set -euo pipefail
+          {
+            echo 'images<<EOF'
+            echo "ghcr.io/bcgov/hets/${PACKAGE}:sha-${SOURCE_SHA}"
+            if [[ -n "$PR_NUMBER" ]]; then
+              echo "ghcr.io/bcgov/hets/${PACKAGE}:pr-${PR_NUMBER}"
+            fi
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+      - name: Build image for runtime checks
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.file }}
+          platforms: linux/amd64
+          load: true
+          tags: hets-smoke/${{ matrix.package }}:test
+          build-args: SOURCE_REVISION=${{ env.SOURCE_SHA }}
+          cache-from: type=gha,scope=${{ matrix.package }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.package }}
+      - name: Check runtime with an arbitrary OpenShift UID
+        env:
+          PACKAGE: ${{ matrix.package }}
+        run: bash .github/scripts/container-smoke.sh "$PACKAGE"
+      - name: Publish verified image
+        id: publish
+        if: env.PUBLISH == 'true'
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.file }}
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.tags.outputs.images }}
+          build-args: SOURCE_REVISION=${{ env.SOURCE_SHA }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/bcgov/hets
+            org.opencontainers.image.revision=${{ env.SOURCE_SHA }}
+          annotations: |
+            index:org.opencontainers.image.source=https://github.com/bcgov/hets
+            index:org.opencontainers.image.revision=${{ env.SOURCE_SHA }}
+          provenance: mode=max
+          sbom: true
+          cache-from: type=gha,scope=${{ matrix.package }}
+      - name: Attest published image
+        if: env.PUBLISH == 'true'
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3
+        with:
+          subject-name: ghcr.io/bcgov/hets/${{ matrix.package }}
+          subject-digest: ${{ steps.publish.outputs.digest }}
+          push-to-registry: true
+
+  builds-required:
+    name: Builds Required
+    if: always()
+    needs: [checks, builds]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Require successful tests and container checks
+        env:
+          CHECK_RESULT: ${{ needs.checks.result }}
+          BUILD_RESULT: ${{ needs.builds.result }}
+        run: |
+          test "$CHECK_RESULT" = success
+          test "$BUILD_RESULT" = success

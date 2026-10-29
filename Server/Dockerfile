@@ -14,8 +14,10 @@ RUN dotnet publish HetsApi/HetsApi.csproj --configuration Release \
     --no-restore --output /app/publish /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0@sha256:ea721098d6ea2894ff9bd8387821a1659d4765d6c014b8d648bb1da16f016f5a AS runtime
+ARG SOURCE_REVISION=unknown
 WORKDIR /app
 ENV ASPNETCORE_URLS=http://+:8080
+ENV OPENSHIFT_BUILD_COMMIT=${SOURCE_REVISION}
 COPY --from=build /app/publish .
 COPY container-entrypoint.sh /usr/local/bin/hets-api-start
 

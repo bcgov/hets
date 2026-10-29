@@ -1,0 +1,36 @@
+name: Create Test rc Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_tag:
+        description: Existing sha-<full commit> image tag
+        required: true
+        type: string
+      rc_tag:
+        description: RC version, for example rc_1.2.3
+        required: true
+        type: string
+      deploy_to_test:
+        description: Update TEST GitOps state after creating the RC
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    uses: ./.github/workflows/release-images.yml
+    with:
+      source_tag: ${{ inputs.source_tag }}
+      release_tag: ${{ inputs.rc_tag }}
+  deploy-test:
+    needs: [release]
+    if: inputs.deploy_to_test
+    uses: ./.github/workflows/argo-cd.yml
+    with:
+      environment: test
+      tag: ${{ inputs.rc_tag }}
+    secrets: inherit
