@@ -96,3 +96,17 @@ updates:
     labels:
       - dependencies
       - github-actions
+
+  - package-ecosystem: docker
+    directory: /Server
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
+
+  - package-ecosystem: docker
+    directory: /client
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
