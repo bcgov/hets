@@ -14,4 +14,8 @@ describe("BadgeLabel displays properly", () => {
     // Assert
     expect(screen.getByText(text)).toBeVisible();
   });
+  test("uses the requested Bootstrap background color", () => {
+    render(<BadgeLabel bg="danger">!</BadgeLabel>);
+    expect(screen.getByText('!')).toHaveClass('bg-danger');
+  });
 });

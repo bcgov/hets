@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+component="${1:?Usage: container-smoke.sh api|client}"
+case "$component" in api|client) ;; *) exit 1 ;; esac
+docker info > /dev/null
+test_directory="$(mktemp -d)"
+prefix="hets-smoke-$(basename "$test_directory" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-')"
+network="$prefix-network"
+app="$prefix-app"
+dependency="$prefix-dependency"
+cleanup() {
+  result=$?
+  if [[ "$result" != 0 ]]; then docker logs "$app" 2>&1 || true; fi
+  docker rm -fv "$app" "$dependency" > /dev/null 2>&1 || true
+  docker network rm "$network" > /dev/null 2>&1 || true
+  # Generated diagnostics contain only credentials for an ephemeral database.
+  exit "$result"
+}
+trap cleanup EXIT
+docker network create "$network" > /dev/null
+
+wait_for_dependency() {
+  for ((attempt = 0; attempt < 60; attempt++)); do
+    if "$@" > /dev/null 2>&1; then return 0; fi
+    sleep 1
+  done
+  docker logs "$dependency" >&2
+  return 1
+}
+
+if [[ "$component" == api ]]; then
+  docker run -d --name "$dependency" --network "$network" \
+    --network-alias hets-db-smoke \
+    -e POSTGRES_PASSWORD=ephemeral-smoke-only -e POSTGRES_DB=hets \
+    postgres:16-alpine > /dev/null
+  # The init server uses only a Unix socket and restarts before the real server.
+  wait_for_dependency docker exec "$dependency" pg_isready -h 127.0.0.1 -U postgres -d hets
+  docker exec "$dependency" pg_isready -h 127.0.0.1 -U postgres -d hets
+  jq '.Serilog.WriteTo = [{"Name":"Console"}]' Server/HetsApi/appsettings.json \
+    > "$test_directory/appsettings.json"
+  chmod 755 "$test_directory"
+  chmod 644 "$test_directory/appsettings.json"
+  docker run -d --name "$app" --network "$network" --user 1001230000:0 \
+    -p 127.0.0.1::8080 \
+    --mount "type=bind,src=$test_directory/appsettings.json,dst=/opt/app-root/configmap/appsettings.json,readonly" \
+    --tmpfs /uploads:rw,mode=0777 --tmpfs /reports:rw,mode=0777 \
+    -e 'ConnectionStrings__HETS=Host=hets-db-smoke;Database=hets;Username=postgres;Password=ephemeral-smoke-only' \
+    -e JWT__Authority=https://example.invalid -e JWT__Audience=smoke \
+    -e UploadPath=/uploads/ -e ReportsPath=/reports/ \
+    hets-smoke/api:test > /dev/null
+else
+  docker run -d --name "$dependency" --network "$network" \
+    --network-alias hets-api-smoke python:3.13-alpine \
+    python -u -c 'from http.server import BaseHTTPRequestHandler, HTTPServer
+class Handler(BaseHTTPRequestHandler):
+ def do_GET(self):
+  self.send_response(200); self.end_headers(); self.wfile.write(self.path.encode())
+HTTPServer(("0.0.0.0", 8080), Handler).serve_forever()' > /dev/null
+  wait_for_dependency docker exec "$dependency" python -c \
+    'from urllib.request import urlopen; assert urlopen("http://127.0.0.1:8080/ready").status == 200'
+  docker run -d --name "$app" --network "$network" --user 1001230000:0 \
+    -p 127.0.0.1::8080 \
+    -e 'REACT_APP_SSO_HOST=https://sso.example.test/auth?x="quoted"' \
+    -e REACT_APP_SSO_REALM=smoke -e REACT_APP_SSO_CLIENT=smoke \
+    -e REACT_APP_API_HOST=hets.example.test -e HETS_DEPLOY_SUFFIX=-smoke \
+    hets-smoke/client:test > /dev/null
+fi
+
+address="http://$(docker port "$app" 8080/tcp)"
+healthy=false
+for attempt in {1..90}; do
+  if curl --fail --silent "$address/healthz" > /dev/null; then healthy=true; break; fi
+  sleep 1
+done
+test "$healthy" = true
+test "$(docker exec "$app" id -u)" = 1001230000
+
+expected_commit="$(docker exec "$app" printenv OPENSHIFT_BUILD_COMMIT)"
+test -n "$expected_commit"
+if [[ "$component" == api ]]; then
+  test "$(curl --fail --silent "$address/api/server/version" | jq -r .commit)" = "$expected_commit"
+else
+  curl --fail --silent "$address/owners/123" | grep -q '<div id="root">'
+  curl --fail --silent "$address/js/env.config.js" --output "$test_directory/env.config.js"
+  curl --fail --silent "$address/buildinfo.html" --output "$test_directory/buildinfo.html"
+  node --input-type=module - "$test_directory/env.config.js" "$expected_commit" "$test_directory/buildinfo.html" <<'JS'
+import { readFileSync } from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const context = { window: {} };
+vm.runInNewContext(readFileSync(process.argv[2], 'utf8'), context);
+assert.equal(context.window.RUNTIME_REACT_APP_SSO_HOST, 'https://sso.example.test/auth?x="quoted"');
+assert.equal(context.window.RUNTIME_REACT_APP_SSO_REALM, 'smoke');
+assert.equal(context.window.RUNTIME_OPENSHIFT_BUILD_COMMIT, process.argv[3]);
+const info = readFileSync(process.argv[4], 'utf8');
+assert.ok(info.includes('id="buildtime" data-buildtime="'));
+assert.ok(info.includes('id="commit">' + process.argv[3]));
+JS
+  test "$(curl --fail --silent "$address/api/ping")" = /api/ping
+  test "$(curl --fail --silent "$address/swagger/v1/swagger.json")" = /swagger/v1/swagger.json
+fi
+echo "$component: health and runtime checks passed with arbitrary UID 1001230000."

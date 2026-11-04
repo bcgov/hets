@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { FormGroup, FormText, FormLabel, Alert } from 'react-bootstrap';
 import _ from 'lodash';
-import Moment from 'moment';
+import Dayjs from '../../utils/dayjs';
 
 import * as Api from '../../api';
 import * as Constant from '../../constants';
@@ -158,7 +158,7 @@ class RentalRequestsAddDialog extends React.Component {
       valid = false;
     }
 
-    if (Moment(this.state.expectedEndDate).isBefore(this.state.expectedStartDate)) {
+    if (Dayjs(this.state.expectedEndDate).isBefore(this.state.expectedStartDate)) {
       this.setState({ expectedEndDateError: 'End date must be later than the start date' });
       valid = false;
     }

@@ -224,9 +224,7 @@ class Users extends React.Component {
                     showMaxItems={2}
                   />
                   <InputGroup>
-                    <InputGroup.Prepend>
-                      <InputGroup.Text>Surname</InputGroup.Text>
-                    </InputGroup.Prepend>
+                    <InputGroup.Text>Surname</InputGroup.Text>
                     <FormInputControl
                       id="surname"
                       type="text"
@@ -251,7 +249,7 @@ class Users extends React.Component {
                 </ButtonToolbar>
               </Col>
               <Col sm={2} id="search-buttons">
-                <Row className="float-right">
+                <Row className="float-end">
                   <Favourites
                     id="users-faves-dropdown"
                     type="user"

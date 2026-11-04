@@ -378,12 +378,12 @@ class OwnersDetail extends React.Component {
                   Documents ({loadingDocuments ? ' ' : Object.keys(this.props.documents).length})
                 </Button>
               </ButtonGroup>
-              <Badge variant="secondary" className={owner.isMaintenanceContractor ? '' : 'd-none'} bg="secondary">
+              <Badge className={owner.isMaintenanceContractor ? '' : 'd-none'} bg="secondary">
                 Maintenance Contractor
               </Badge>
             </Col>
             <Col sm={3}>
-              <div className="float-right">
+              <div className="float-end">
                 <PrintButton disabled={loading} />
                 <ReturnButton />
               </div>
@@ -620,7 +620,7 @@ class OwnersDetail extends React.Component {
                   <div className="d-flex align-items-baseline">
                     <CheckboxControl
                       id="showAttachments"
-                      className="mr-3"
+                      className="me-3"
                       inline
                       updateState={this.updateState}
                       label={<small>Show Attachments</small>}
@@ -637,7 +637,7 @@ class OwnersDetail extends React.Component {
                           <TooltipButton
                             disabled={!isApproved}
                             disabledTooltip={restrictEquipmentVerifyTooltip}
-                            className="mr-3 btn-custom"
+                            className="me-3 btn-custom"
                             title="Verify All Equipment"
                             size="sm"
                           >

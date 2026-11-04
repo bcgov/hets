@@ -64,4 +64,21 @@ test('renders main component', async () => {
 
   const mainComponent = view.container.querySelector("#main");
   expect(mainComponent).toBeInTheDocument();
+
+  await waitFor(() => {
+    const queries = Object.values(store.getState().serverApi.queries);
+    expect(queries).toHaveLength(1);
+    expect(queries[0].status).toBe('fulfilled');
+  });
+  expect(view.getByText('Unapproved equipment (4)')).toBeInTheDocument();
+});
+
+test('shows a server error when the summary counts query fails', async () => {
+  server.use(http.get('/api/counts', () => HttpResponse.json({ error: { description: 'Unavailable' } }, { status: 503 })));
+  const view = renderWithProviders(<App />, { store });
+  await waitFor(() => {
+    expect(view.getByText('Server Error')).toBeInTheDocument();
+  });
+  expect(store.getState().ui.requests.waiting).toBe(false);
+  expect(store.getState().ui.requests.error.status).toBe(503);
 });

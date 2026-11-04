@@ -50,7 +50,7 @@ class SubHeader extends React.Component {
     return (
       <h3 id={id} className={classNames('clearfix', 'ui-subheader', className)}>
         {title}
-        <span className="float-right">{editButton}</span>
+        <span className="float-end">{editButton}</span>
       </h3>
     );
   }

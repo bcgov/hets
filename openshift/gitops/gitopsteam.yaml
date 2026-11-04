@@ -1,0 +1,16 @@
+# Bootstrap once with oc create; keep outside application reconciliation.
+# Membership matches HMCR's GitOpsTeam and the current HETS tools administrator.
+apiVersion: warden.devops.gov.bc.ca/v1alpha1
+kind: GitOpsTeam
+metadata:
+  name: gitopsteam-e0cee6
+  namespace: e0cee6-tools
+spec:
+  gitOpsMembers:
+    admins:
+      - ionwyn
+  projectMembers:
+    maintainers:
+      - ionwyn@github
+    nonprod:
+      - ionwyn@github

@@ -126,15 +126,15 @@ class BusinessOwner extends React.Component {
         <div>
           <Row id="owners-top">
             <Col sm={9}>
-              <Badge variant={owner?.status === Constant.OWNER_STATUS_CODE_APPROVED ? 'success' : 'danger'}>
+              <Badge bg={owner?.status === Constant.OWNER_STATUS_CODE_APPROVED ? 'success' : 'danger'}>
                 {owner?.status}
               </Badge>
-              <Badge className={owner?.isMaintenanceContractor ? '' : 'd-none'} variant="secondary">
+              <Badge className={owner?.isMaintenanceContractor ? '' : 'd-none'} bg="secondary">
                 Maintenance Contractor
               </Badge>
             </Col>
             <Col sm={3}>
-              <div className="float-right">
+              <div className="float-end">
                 <PrintButton />
                 <ReturnButton />
               </div>
@@ -351,7 +351,7 @@ class BusinessOwner extends React.Component {
               <Row id="owners-top">
                 <Col sm={9}></Col>
                 <Col sm={3}>
-                  <div className="float-right">
+                  <div className="float-end">
                     <ReturnButton />
                   </div>
                 </Col>

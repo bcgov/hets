@@ -163,7 +163,7 @@ class MultiDropdown extends React.Component {
         className={`multi-dropdown ${this.props.className || ''}`}
         id={this.props.id}
         title={this.state.title}
-        open={this.state.open}
+        show={this.state.open}
         onToggle={this.toggle}
         disabled={this.props.disabled}
       >

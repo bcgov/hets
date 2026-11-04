@@ -279,7 +279,7 @@ class EquipmentDetail extends React.Component {
                         />
                       )}
                       <Button
-                        className="mr-1 ml-1 btn-custom"
+                        className="me-1 ms-1 btn-custom"
                         title="Notes"
                         onClick={this.showNotes}
                         disabled={loadingNotes}
@@ -297,20 +297,20 @@ class EquipmentDetail extends React.Component {
                     </Row>
                   </Col>
                   <Col sm={3}>
-                    <div className="float-right">
+                    <div className="float-end">
                       <PrintButton />
                       <ReturnButton />
                     </div>
                   </Col>
                 </Row>
                 <Row id="equipment-bottom">
-                  <Badge variant="secondary" className={equipment.isMaintenanceContractor ? '' : 'hide'}>
+                  <Badge bg="secondary" className={equipment.isMaintenanceContractor ? '' : 'hide'}>
                     Maintenance Contractor
                   </Badge>
-                  <Badge variant={equipment.isHired ? 'success' : 'secondary'}>
+                  <Badge bg={equipment.isHired ? 'success' : 'secondary'}>
                     {equipment.isHired ? 'Hired' : 'Not Hired'}
                   </Badge>
-                  <Badge variant={lastVerifiedStyle}>
+                  <Badge bg={lastVerifiedStyle}>
                     Last Verified: {formatDateTime(equipment.lastVerifiedDate, Constant.DATE_YEAR_SHORT_MONTH_DAY)}
                   </Badge>
                 </Row>
@@ -407,7 +407,7 @@ class EquipmentDetail extends React.Component {
                       <Col lg={4} md={6} sm={12} xs={12}>
                         <ColDisplay labelProps={{ xs: 4 }} fieldProps={{ xs: 8 }} label="Serial Number">
                           {equipment.serialNumber}
-                          {equipment.hasDuplicates ? <BadgeLabel variant="danger">!</BadgeLabel> : null}
+                          {equipment.hasDuplicates ? <BadgeLabel bg="danger">!</BadgeLabel> : null}
                         </ColDisplay>
                       </Col>
                       {equipment.isDumpTruck && (

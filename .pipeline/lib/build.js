@@ -2,7 +2,7 @@
 const { OpenShiftClientX } = require("@bcgov/pipeline-cli");
 const path = require("path");
 
-module.exports = (settings) => {
+module.exports = async (settings) => {
   const phases = settings.phases;
   const options = settings.options;
   const oc = new OpenShiftClientX(
@@ -53,5 +53,22 @@ module.exports = (settings) => {
     phases[phase].changeId,
     phases[phase].instance
   );
-  oc.applyAndBuild(objects);
+
+  // Apply the build resources once, then start only the application builds.
+  // OpenShiftClientX.applyAndBuild() scans every historical image in each
+  // output image stream before deciding whether to reuse an image. The HETS
+  // streams contain years of history, making that scan slow and vulnerable to
+  // transient API failures. The build configurations already use no-cache
+  // strategies, so direct builds are deterministic and avoid that scan.
+  oc.apply(objects);
+
+  const buildConfigs = [
+    `${phases[phase].name}-api${phases[phase].suffix}`,
+    `${phases[phase].name}-client${phases[phase].suffix}`,
+  ];
+
+  for (const buildConfig of buildConfigs) {
+    console.log(`Starting and waiting for ${buildConfig}`);
+    await oc.startBuild(`BuildConfig/${buildConfig}`, { wait: "true" });
+  }
 };

@@ -155,7 +155,11 @@ try
             .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
             .UseSimpleAssemblyNameTypeSerializer()
             .UseRecommendedSerializerSettings()
-            .UsePostgreSqlStorage(options => options.UseNpgsqlConnection(connectionString))
+            .UsePostgreSqlStorage(options => options.UseNpgsqlConnection(connectionString),
+                new PostgreSqlStorageOptions
+                {
+                    PrepareSchemaIfNecessary = builder.Configuration.GetValue<bool>("Hangfire:PrepareSchemaIfNecessary", true)
+                })
     );
 
     builder.Services.AddHangfireServer(options =>

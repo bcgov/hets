@@ -5,11 +5,10 @@
 
 
 worker_processes auto;
-error_log /var/log/nginx/error.log;
-pid /run/nginx.pid;
+error_log /dev/stderr;
+pid /tmp/nginx.pid;
 
 # Load dynamic modules. See /usr/share/doc/nginx/README.dynamic.
-include /usr/share/nginx/modules/*.conf;
 
 events {
     worker_connections 1024;
@@ -20,7 +19,12 @@ http {
                       '$status $body_bytes_sent "$http_referer" '
                       '"$http_user_agent" "$http_x_forwarded_for"';
 
-    access_log  /var/log/nginx/access.log  main;
+    access_log /dev/stdout main;
+    client_body_temp_path /tmp/client_temp;
+    proxy_temp_path /tmp/proxy_temp;
+    fastcgi_temp_path /tmp/fastcgi_temp;
+    uwsgi_temp_path /tmp/uwsgi_temp;
+    scgi_temp_path /tmp/scgi_temp;
 
     sendfile            on;
     tcp_nopush          on;
@@ -56,7 +60,7 @@ http {
     # Load modular configuration files from the /etc/nginx/conf.d directory.
     # See http://nginx.org/en/docs/ngx_core_module.html#include
     # for more information.
-    include /opt/app-root/etc/nginx.d/*.conf;
+    include /etc/nginx/conf.d/*.conf;
 
     server {
         listen       8080 default_server;
@@ -68,6 +72,12 @@ http {
         add_header Cache-Control "private, no-store, no-cache, must-revalidate";
 
         client_max_body_size 5M;
+
+        location = /healthz {
+            access_log off;
+            default_type text/plain;
+            return 200 'ok';
+        }
 
         location /api/ {
             proxy_connect_timeout 1800;
@@ -92,7 +102,7 @@ http {
         }
 
         location / {
-            root   /opt/app-root/src;
+            root   /usr/share/nginx/html;
             index  index.html index.htm;
 
             try_files $uri /index.html =404;

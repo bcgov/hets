@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Alert, Row, Col, ButtonToolbar, Button, ButtonGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import _ from 'lodash';
-import Moment from 'moment';
+import Dayjs from '../utils/dayjs';
 
 import * as Action from '../actionTypes';
 import * as Api from '../api';
@@ -99,7 +99,7 @@ class Equipment extends React.Component {
       searchParams.projectName = this.state.search.projectName;
     }
 
-    var notVerifiedSinceDate = Moment(this.state.search.lastVerifiedDate);
+    var notVerifiedSinceDate = Dayjs(this.state.search.lastVerifiedDate);
     if (notVerifiedSinceDate && notVerifiedSinceDate.isValid()) {
       searchParams.notverifiedsincedate = toZuluTime(notVerifiedSinceDate.startOf('day'));
     }
@@ -317,7 +317,7 @@ class Equipment extends React.Component {
                 </Row>
               </Col>
               <Col xs={3} sm={2} id="search-buttons">
-                <Row className="float-right">
+                <Row className="float-end">
                   <Favourites
                     id="faves-dropdown"
                     type="equipment"
@@ -326,12 +326,12 @@ class Equipment extends React.Component {
                     onSelect={this.loadFavourite}
                   />
                 </Row>
-                <Row className="float-right">
+                <Row className="float-end">
                   <Button id="search-button" variant="primary" type="submit">
                     Search
                   </Button>
                 </Row>
-                <Row className="float-right">
+                <Row className="float-end">
                   <Button id="clear-search-button" className="btn-custom" onClick={this.clearSearch}>
                     Clear
                   </Button>
