@@ -1204,7 +1204,7 @@ namespace HetsApi.Controllers
                 .OrderBy(x => x.Block)
                 .ThenByDescending(x => Convert.ToDecimal(x.Seniority))
                 .ToList();
-            string documentName = $"SeniorityList-{DateTime.Now:yyyy-MM-dd}{(counterCopy ? "-(CounterCopy)" : "")}.docx";
+            string documentName = $"SeniorityList-{DateUtils.GetPacificNow():yyyy-MM-dd}{(counterCopy ? "-(CounterCopy)" : "")}.docx";
             byte[] document = SeniorityList.GetSeniorityList(seniorityList, documentName, counterCopy, (errMessage, ex) => {
                 _logger.LogError(errMessage);
                 _logger.LogError(ex.ToString());

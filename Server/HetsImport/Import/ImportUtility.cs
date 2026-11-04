@@ -10,6 +10,7 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using HetsData.Model;
 using Microsoft.EntityFrameworkCore;
+using HetsCommon;
 
 namespace HetsImport.Import
 {    
@@ -34,8 +35,8 @@ namespace HetsImport.Import
                 OldKey = oldKey,
                 NewTable = newTable,
                 NewKey = newKey,
-                AppCreateTimestamp = DateTime.Now,
-                AppLastUpdateTimestamp = DateTime.Now
+                AppCreateTimestamp = DateTime.UtcNow,
+                AppLastUpdateTimestamp = DateTime.UtcNow
             };
 
             dbContext.HetImportMap.Add(importMap);
@@ -76,7 +77,7 @@ namespace HetsImport.Import
                     {
                         importMap.NewTable = newTable;
                         importMap.OldKey = Math.Max(int.Parse(oldKey), maxProgressCount).ToString();
-                        importMap.AppLastUpdateTimestamp = DateTime.Now;
+                        importMap.AppLastUpdateTimestamp = DateTime.UtcNow;
 
                         dbContext.HetImportMap.Update(importMap);
                     }

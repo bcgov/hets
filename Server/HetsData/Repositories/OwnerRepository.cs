@@ -222,7 +222,7 @@ namespace HetsData.Repositories
                     // setup model document generation
                     model = new OwnerVerificationReportModel
                     {
-                        ReportDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                        ReportDate = DateUtils.GetPacificNow().ToString("yyyy-MM-dd"),
                         Title = fileName,
                         DistrictId = ownerList[0].LocalArea.ServiceArea.District.DistrictId,
                         MinistryDistrictId = ownerList[0].LocalArea.ServiceArea.District.MinistryDistrictId,

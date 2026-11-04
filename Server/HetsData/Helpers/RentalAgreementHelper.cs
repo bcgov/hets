@@ -157,7 +157,7 @@ namespace HetsData.Helpers
             // validate item
             if (district?.DistrictId != null)
             {
-                DateTime currentTime = DateTime.UtcNow;
+                DateTime currentTime = DateUtils.GetPacificNow();
 
                 int fiscalYear = currentTime.Year;
 

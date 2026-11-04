@@ -1,4 +1,4 @@
-FROM image-registry.openshift-image-registry.svc:5000/e0cee6-tools/node-python:1 AS builder
+FROM image-registry.openshift-image-registry.svc:5000/e0cee6-tools/node-python:24 AS builder
 LABEL maintainer="young-jin.chung@gov.bc.ca"
 
 COPY . ./src

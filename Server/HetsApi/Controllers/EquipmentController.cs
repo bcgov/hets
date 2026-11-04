@@ -526,7 +526,7 @@ namespace HetsApi.Controllers
 
             // determine end of current fiscal year
             DateTime fiscalEnd;
-            DateTime now = DateTime.Now;
+            DateTime now = DateUtils.GetPacificNow();
             if (now.Month == 1 || now.Month == 2 || now.Month == 3)
             {
                 fiscalEnd = DateUtils.ConvertPacificToUtcTime(
@@ -800,7 +800,7 @@ namespace HetsApi.Controllers
         {
             if (twentyYears)
             {
-                var twentyYearsInt = DateTime.Now.Year - 20;
+                var twentyYearsInt = DateUtils.GetPacificNow().Year - 20;
                 return equipments
                     .Where(x => string.IsNullOrWhiteSpace(x.Year) || int.Parse(x.Year) <= twentyYearsInt)
                     .ToList();
@@ -1599,7 +1599,7 @@ namespace HetsApi.Controllers
 
         private static string GetDocumentName(bool counterCopy)
         {
-            return $"SeniorityList-{DateTime.Now:yyyy-MM-dd}{(counterCopy ? "-(CounterCopy)" : "")}.docx";
+            return $"SeniorityList-{DateUtils.GetPacificNow():yyyy-MM-dd}{(counterCopy ? "-(CounterCopy)" : "")}.docx";
         }
 
         private int GetLastCalledEquipmentId(

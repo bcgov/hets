@@ -1,4 +1,5 @@
 ﻿using System;
+using HetsCommon;
 
 namespace HetsApi.Helpers
 {
@@ -6,13 +7,14 @@ namespace HetsApi.Helpers
     {
         public static int GetCurrentFiscalStartYear()
         {
-            if (DateTime.UtcNow.Month == 1 || DateTime.UtcNow.Month == 2 || DateTime.UtcNow.Month == 3)
+            DateTime pacificNow = DateUtils.GetPacificNow();
+            if (pacificNow.Month == 1 || pacificNow.Month == 2 || pacificNow.Month == 3)
             {
-                return DateTime.UtcNow.AddYears(-1).Year;
+                return pacificNow.AddYears(-1).Year;
             }
             else
             {
-                return DateTime.UtcNow.Year;
+                return pacificNow.Year;
             }
         }
     }

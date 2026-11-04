@@ -10,7 +10,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsApi", "HetsApi\HetsApi.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsReport", "HetsReport\HetsReport.csproj", "{7DFA1859-E5B0-4460-A5A5-5E5288A4AC94}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsCommon.Tests", "HetsCommon.Tests\HetsCommon.Tests.csproj", "{4B58551E-2DAE-4BC0-90D9-093CA63D7955}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HetsCommon.Tests", "HetsCommon.Tests\HetsCommon.Tests.csproj", "{6B383629-84FB-4A9B-BD07-15341D87D300}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,10 +34,10 @@ Global
 		{7DFA1859-E5B0-4460-A5A5-5E5288A4AC94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DFA1859-E5B0-4460-A5A5-5E5288A4AC94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DFA1859-E5B0-4460-A5A5-5E5288A4AC94}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4B58551E-2DAE-4BC0-90D9-093CA63D7955}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4B58551E-2DAE-4BC0-90D9-093CA63D7955}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4B58551E-2DAE-4BC0-90D9-093CA63D7955}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4B58551E-2DAE-4BC0-90D9-093CA63D7955}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B383629-84FB-4A9B-BD07-15341D87D300}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B383629-84FB-4A9B-BD07-15341D87D300}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B383629-84FB-4A9B-BD07-15341D87D300}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B383629-84FB-4A9B-BD07-15341D87D300}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

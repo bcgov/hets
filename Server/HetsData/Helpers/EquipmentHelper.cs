@@ -357,7 +357,7 @@ namespace HetsData.Helpers
             HetDistrictStatus district = context.HetDistrictStatuses.AsNoTracking()
                 .First(x => x.DistrictId == equipment.LocalArea.ServiceArea.DistrictId);
 
-            var fiscalYear = DateTime.Today.Year;
+            var fiscalYear = DateUtils.GetPacificNow().Year;
 
             if (district?.NextFiscalYear == null)
             {
