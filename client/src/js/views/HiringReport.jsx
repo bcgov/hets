@@ -339,7 +339,7 @@ class HiringReport extends React.Component {
                 </ButtonToolbar>
               </Col>
               <Col xs={3} sm={2} id="search-buttons">
-                <Row className="float-right">
+                <Row className="float-end">
                   <Favourites
                     id="hiring-report-faves-dropdown"
                     type="hiringReport"

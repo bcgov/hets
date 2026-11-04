@@ -8,7 +8,8 @@ import { lastFirstName, firstLastName, concat } from './utils/string';
 import { daysAgo, sortableDateTime, today } from './utils/date';
 
 import _ from 'lodash';
-import Moment from 'moment';
+import Dayjs from './utils/dayjs';
+import { versionUpdated } from './reducers/version';
 
 const normalize = (response) => _.fromPairs(response.map((object) => [object.id, object]));
 
@@ -192,15 +193,6 @@ export const deleteUserDistrict = (district) => async (dispatch) => {
 
 export const switchUserDistrict = (districtId) => async (dispatch) => {
   return await dispatch(new ApiRequest(`/userdistricts/${districtId}/switch`).post());
-};
-
-export const getSearchSummaryCounts = () => async (dispatch) => {
-  const response = await dispatch(new ApiRequest('/counts').get());
-  dispatch({
-    type: Action.UPDATE_SEARCH_SUMMARY_COUNTS,
-    searchSummaryCounts: response.data,
-  });
-  return response;
 };
 
 ////////////////////
@@ -415,7 +407,7 @@ const parseEquipment = (equipment) => (dispatch) => {
   // e.g. "Open-500" or "1-744"
   equipment.seniorityText = getBlockDisplayName(equipment.blockNumber, equipment.numberOfBlocks, equipment.seniority);
 
-  equipment.currentYear = Moment().year();
+  equipment.currentYear = Dayjs().year();
   equipment.lastYear = equipment.currentYear - 1;
   equipment.twoYearsAgo = equipment.currentYear - 2;
   equipment.threeYearsAgo = equipment.currentYear - 3;
@@ -2727,7 +2719,7 @@ export const getRentalConditions = () => async (dispatch) => {
 
 export const getVersion = () => async (dispatch) => {
   const response = await dispatch(new ApiRequest('/version').get());
-  dispatch({ type: Action.UPDATE_VERSION, version: response });
+  dispatch(versionUpdated(response));
 };
 
 ////////////////////

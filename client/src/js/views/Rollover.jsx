@@ -109,7 +109,7 @@ class Rollover extends React.Component {
             aria-valuemax="100"
             style={{ width: `${status.progressPercentage}%` }}
           >
-            <span className="sr-only">{status.progressPercentage}% Complete</span>
+            <span className="visually-hidden">{status.progressPercentage}% Complete</span>
           </div>
         </div>
       </div>
@@ -199,7 +199,7 @@ class Rollover extends React.Component {
               </Confirm>
             }
           >
-            <Button className="float-right" disabled={rolloverButtonDisabled} title="Roll Over">
+            <Button className="float-end" disabled={rolloverButtonDisabled} title="Roll Over">
               Roll Over
             </Button>
           </OverlayTrigger>

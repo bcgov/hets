@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from '../components/withRouter';
 import { connect } from 'react-redux';
 import * as Api from '../api';
 import * as Constant from '../constants';
@@ -13,8 +13,9 @@ import ConfirmDialog from './dialogs/ConfirmDialog.jsx';
 import ErrorDialog from './dialogs/ErrorDialog.jsx';
 import Countdown from '../components/Countdown.jsx';
 
-import { resetSessionTimeoutTimer, keepAlive } from '../App.jsx';
+import { keepAlive } from '../App.jsx';
 import { ApiError } from '../utils/http';
+import { resetSessionTimeout } from '../utils/sessionTimeout';
 import { bindActionCreators } from 'redux';
 
 class Main extends React.Component {
@@ -87,7 +88,7 @@ class Main extends React.Component {
   onCloseSessionTimeoutDialog = async () => {
     try {
       keepAlive(); //function from App.js to keep session alive
-      resetSessionTimeoutTimer();
+      resetSessionTimeout();
       this.props.closeSessionTimeoutDialog();
     } catch {
       console.log('Failed to refresh the token, or the session has expired');

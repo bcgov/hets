@@ -137,7 +137,7 @@ class DropdownControl extends React.Component {
         {...props}
         className={`dropdown-control ${this.props.className || ''}`}
         title={this.state.title}
-        open={this.state.open}
+        show={this.state.open}
         onToggle={this.toggle}
       >
         <Dropdown.Toggle className={classNames('btn-custom', { 'form-control is-invalid': this.props.isInvalid })}>
@@ -151,7 +151,7 @@ class DropdownControl extends React.Component {
                 <Dropdown.Item
                   key={this.state.simple ? '' : 0}
                   eventKey={this.state.simple ? '' : 0}
-                  onSelect={() => this.itemSelected(0)}
+                  onClick={() => this.itemSelected(0)}
                 >
                   {typeof this.props.blankLine === 'string' ? this.props.blankLine : ' '}
                 </Dropdown.Item>
@@ -165,7 +165,7 @@ class DropdownControl extends React.Component {
                   <Dropdown.Item
                     key={this.state.simple ? item : item.id}
                     eventKey={this.state.simple ? item : item.id}
-                    onSelect={() => this.itemSelected(item?.id || item)}
+                    onClick={() => this.itemSelected(item?.id || item)}
                   >
                     {this.state.simple ? item : item[this.state.fieldName]}
                   </Dropdown.Item>
@@ -179,8 +179,8 @@ class DropdownControl extends React.Component {
                       rootClose
                       overlay={
                         <Popover id={`popover-${item.id}`}>
-                          <Popover.Title>{item[this.state.fieldName]}</Popover.Title>
-                          <Popover.Content>{item.hoverText}</Popover.Content>
+                          <Popover.Header>{item[this.state.fieldName]}</Popover.Header>
+                          <Popover.Body>{item.hoverText}</Popover.Body>
                         </Popover>
                       }
                     >

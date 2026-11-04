@@ -1,15 +1,17 @@
-import * as Action from "../actionTypes";
+import { createSlice } from '@reduxjs/toolkit';
 
 const DEFAULT_VERSION = {
   applicationVersions: [{}],
   databaseVersions: [{}],
 };
 
-export default function versionReducer(state = DEFAULT_VERSION, action) {
-  switch (action.type) {
-    case Action.UPDATE_VERSION:
-      return { ...state, ...action.version };
-    default:
-      return state;
-  }
-}
+const versionSlice = createSlice({
+  name: 'version',
+  initialState: DEFAULT_VERSION,
+  reducers: {
+    versionUpdated: (state, action) => ({ ...state, ...action.payload }),
+  },
+});
+
+export const { versionUpdated } = versionSlice.actions;
+export default versionSlice.reducer;

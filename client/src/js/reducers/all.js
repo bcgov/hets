@@ -6,6 +6,7 @@ import searchReducer from './search';
 import modelsReducer from './models';
 import lookupsReducer from './lookups';
 import versionReducer from './version';
+import { serverApi } from '../services/serverApi';
 
 
 export default combineReducers({
@@ -15,4 +16,5 @@ export default combineReducers({
   models  : modelsReducer,
   lookups : lookupsReducer,
   version : versionReducer,
+  [serverApi.reducerPath]: serverApi.reducer,
 });

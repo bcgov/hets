@@ -19,8 +19,8 @@ const Confirm = forwardRef(({ onConfirm, onCancel, hide, children, title, ...res
 
   return (
     <Popover id="confirm" ref={ref} {...rest}>
-      <Popover.Title>{title}</Popover.Title>
-      <Popover.Content>
+      <Popover.Header>{title}</Popover.Header>
+      <Popover.Body>
         {children}
         <div style={{ textAlign: 'center', marginTop: '6px' }}>
           <ButtonGroup>
@@ -32,7 +32,7 @@ const Confirm = forwardRef(({ onConfirm, onCancel, hide, children, title, ...res
             </Button>
           </ButtonGroup>
         </div>
-      </Popover.Content>
+      </Popover.Body>
     </Popover>
   );
 });

@@ -199,7 +199,7 @@ class ContactsEditDialog extends React.Component {
       <span>
         Contact
         {this.state.isPrimary ? (
-          <Badge variant="success">Primary</Badge>
+          <Badge bg="success">Primary</Badge>
         ) : (
           <Button title="Make Primary Contact" onClick={this.makePrimary}>
             Make Primary

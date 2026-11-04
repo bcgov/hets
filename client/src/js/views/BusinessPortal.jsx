@@ -227,7 +227,7 @@ class BusinessPortal extends React.Component {
               <FormInputControl
                 type="text"
                 placeholder="Please enter your secret key here"
-                className="mr-5"
+                className="me-5"
                 disabled={this.state.validating}
                 defaultValue={this.state.secretKey}
                 updateState={this.updateState}
@@ -238,7 +238,7 @@ class BusinessPortal extends React.Component {
               <FormInputControl
                 type="text"
                 placeholder="Postal code"
-                className="mr-5"
+                className="me-5"
                 disabled={this.state.validating}
                 defaultValue={this.state.postalCode}
                 updateState={this.updateState}

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import classNames from 'classnames';
 import _ from 'lodash';
 import {
@@ -28,6 +28,7 @@ import DropdownControl from '../components/DropdownControl.jsx';
 import Authorize, { any } from '../components/Authorize';
 
 import { formatDateTimeUTCToLocal } from '../utils/date';
+import { withRouter } from '../components/withRouter';
 
 class TopNav extends React.Component {
   static propTypes = {
@@ -217,7 +218,7 @@ class TopNav extends React.Component {
               </>
             )}
             {this.props.showNav && (
-              <div id="navbar-right" className="float-right d-flex">
+              <div id="navbar-right" className="float-end d-flex">
                 {this.props.rolloverStatus.displayRolloverMessage && this.props.rolloverStatus.rolloverComplete && (
                   <OverlayTrigger
                     trigger="click"
@@ -225,8 +226,8 @@ class TopNav extends React.Component {
                     rootClose
                     overlay={
                       <Popover id="rollover-notice">
-                        <Popover.Title>Roll Over Complete</Popover.Title>
-                        <Popover.Content>
+                        <Popover.Header>Roll Over Complete</Popover.Header>
+                        <Popover.Body>
                           <p>
                             The hired equipment roll over has been completed on{' '}
                             {formatDateTimeUTCToLocal(
@@ -242,11 +243,11 @@ class TopNav extends React.Component {
                           <Button onClick={this.dismissRolloverNotice} variant="primary">
                             Dismiss
                           </Button>
-                        </Popover.Content>
+                        </Popover.Body>
                       </Popover>
                     }
                   >
-                    <Button id="rollover-notice-button" className="mr-5" variant="info" size="sm">
+                    <Button id="rollover-notice-button" className="me-5" variant="info" size="sm">
                       Roll Over Complete
                       <FontAwesomeIcon icon="exclamation-circle" />
                     </Button>
@@ -293,4 +294,4 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({ dispatch });
 
-export default connect(mapStateToProps, mapDispatchToProps, null, { pure: false })(withRouter(TopNav));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(TopNav));
