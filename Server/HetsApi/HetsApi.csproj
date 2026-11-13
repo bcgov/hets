@@ -36,7 +36,7 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="8.0.2" />
-    <PackageReference Include="AutoMapper" Version="16.2.0" />
+    <PackageReference Include="AutoMapper" Version="16.3.0" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.8.24" />
     <PackageReference Include="HangFire.Core" Version="1.8.24" />
     <PackageReference Include="Hangfire.PostgreSql" Version="1.21.1" />
